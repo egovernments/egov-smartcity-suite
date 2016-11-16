@@ -41,7 +41,9 @@ package org.egov.egf.utils;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -91,6 +93,18 @@ public class FinancialUtils {
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
+    public static final Map<String, String> VOUCHER_SUBTYPES = new HashMap<String, String>() {
+        private static final long serialVersionUID = -2168753508482839041L;
+
+        {
+            put(FinancialConstants.JOURNALVOUCHER_NAME_GENERAL, FinancialConstants.GENERAL);
+            put(FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS, FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS);
+            put(FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE, FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE);
+            put(FinancialConstants.STANDARD_SUBTYPE_FIXED_ASSET, FinancialConstants.STANDARD_SUBTYPE_FIXED_ASSET);
+            put(FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
+        }
+    };
+
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public EgwStatus getStatusByModuleAndCode(final String moduleType, final String code) {
         return egwStatusHibernateDAO.getStatusByModuleAndCode(moduleType, code);
@@ -116,7 +130,7 @@ public class FinancialUtils {
             assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
 
         if (assignObj != null) {
-            asignList = new ArrayList<Assignment>();
+            asignList = new ArrayList<>();
             asignList.add(assignObj);
         } else if (assignObj == null && approvalPosition != null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
@@ -125,7 +139,7 @@ public class FinancialUtils {
         if (asignList != null)
             nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
 
-        String approverDetails = "";
+        String approverDetails;
         if (!status.getCode().equals(FinancialConstants.WORKFLOW_STATUS_CODE_REJECTED.toString()))
             approverDetails = id + ","
                     + getApproverName(approvalPosition) + ","
@@ -145,7 +159,7 @@ public class FinancialUtils {
         if (approvalPosition != null)
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
         if (assignment != null) {
-            asignList = new ArrayList<Assignment>();
+            asignList = new ArrayList<>();
             asignList.add(assignment);
         } else if (assignment == null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());

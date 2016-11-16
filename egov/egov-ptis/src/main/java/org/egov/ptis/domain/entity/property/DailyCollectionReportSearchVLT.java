@@ -1,20 +1,13 @@
 package org.egov.ptis.domain.entity.property;
 
-import static org.egov.search.domain.Filter.rangeFilter;
-import static org.egov.search.domain.Filter.termsStringFilter;
-import org.egov.ptis.constants.PropertyTaxConstants;
+import org.jboss.logging.Logger;
 
+import javax.validation.ValidationException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
-import javax.validation.ValidationException;
-
-import org.egov.search.domain.Filter;
-import org.egov.search.domain.Filters;
-import org.jboss.logging.Logger;
 
 public class DailyCollectionReportSearchVLT {
 	private static final Logger logger = Logger.getLogger(DailyCollectionReportSearchVLT.class);
@@ -126,7 +119,7 @@ public class DailyCollectionReportSearchVLT {
 		this.ulbName = ulbName;
 	}
 
-	public Filters searchCollectionFilters() {
+	/*public Filters searchCollectionFilters() {
 		final List<Filter> andFilters = new ArrayList<>(0);
 		logger.info("searchCollectionFilters,clauses.cityname:" + ulbName);
 		andFilters.add(termsStringFilter("clauses.cityname", ulbName));
@@ -152,7 +145,7 @@ public class DailyCollectionReportSearchVLT {
 		if (logger.isDebugEnabled())
 			logger.debug("finished property tax filters");
 		return Filters.withAndFilters(andFilters);
-	}
+	}*/
 
 	public String searchQuery() {
 		return searchText;

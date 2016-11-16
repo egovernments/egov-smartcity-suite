@@ -65,10 +65,11 @@ public class BaseRegisterResultAdaptor implements JsonSerializer<BaseRegisterRes
                 null != baseRegisterResultObj.getDoorNo() ? baseRegisterResultObj.getDoorNo().toString() : "");
         jsonObject.addProperty("categoryType",
                 null != baseRegisterResultObj.getCategoryType() ? baseRegisterResultObj.getCategoryType() : "");
+        jsonObject.addProperty("waterSource", baseRegisterResultObj.getWaterSource());
         jsonObject.addProperty("usageType",
-                null != baseRegisterResultObj.getCategoryType() ? baseRegisterResultObj.getUsageType() : "");
+                null != baseRegisterResultObj.getUsageType() ? baseRegisterResultObj.getUsageType() : "");
         jsonObject.addProperty("pipeSize",
-                null != baseRegisterResultObj.getCategoryType() ? baseRegisterResultObj.getPipeSize() : "");
+                null != baseRegisterResultObj.getPipeSize() ? baseRegisterResultObj.getPipeSize() : "");
         jsonObject.addProperty("period",
                 null != baseRegisterResultObj.getPeriod() ? baseRegisterResultObj.getPeriod() : "");
         jsonObject.addProperty("arrears", baseRegisterResultObj.getArrears());

@@ -96,6 +96,7 @@ public class CitizenService {
         citizen.addRole(roleService.getRoleByName(CITIZEN_ROLE_NAME));
         citizen.updateNextPwdExpiryDate(applicationProperties.userPasswordExpiryInDays());
         citizen.setPassword(passwordEncoder.encode(citizen.getPassword()));
+        citizen.setActive(true);
         citizenRepository.saveAndFlush(citizen);
         messagingService.sendSMS(citizen.getMobileNumber(), getMessage("citizen.reg.sms"));
         messagingService.sendEmail(citizen.getEmailId(), getMessage("citizen.reg.mail.subject"),

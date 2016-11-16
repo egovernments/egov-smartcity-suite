@@ -133,6 +133,7 @@ public class SewerageTaxConstants {
     public static final String ROLE_SEWERAGETAX_ADMINISTRATOR ="Sewerage Tax Administrator";
     public static final String ROLE_SEWERAGETAX_APPROVER=    "Sewerage Tax Approver";
     public static final String ROLE_SEWERAGETAX_REPORTVIEWER = "Sewerage Tax Report Viewer";
+    public static final String ROLE_STMS_VIEW_ACCESS_ROLE = "STMS_VIEW_ACCESS_ROLE";
 
     public static final String MODE = "mode";
     public static final String APPROVAL_POSITION = "approvalPosition";
@@ -291,4 +292,10 @@ public class SewerageTaxConstants {
     //DCB Report wardwise
     public static final String BOUNDARYTYPE_WARD="Ward";
     public static final String HIERARCHYTYPE_REVENUE="REVENUE";
+    
+    //property types
+    public static final String RESIDENTIAL ="RESIDENTIAL";
+    public static final String NONRESIDENTIAL = "NON_RESIDENTIAL";
+    public static final String MIXED ="MIXED";
+    public static final String ALL="ALL";
 }

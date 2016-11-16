@@ -41,7 +41,6 @@ package org.egov.commons;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
-import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,15 +53,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import static org.egov.commons.Vouchermis.SEQ_VOUCHERMIS;
+
 @Entity
 @Table(name = "VOUCHERMIS")
-@SequenceGenerator(name = Vouchermis.SEQ_VOUCHERMIS, sequenceName = Vouchermis.SEQ_VOUCHERMIS, allocationSize = 1)
+@SequenceGenerator(name = SEQ_VOUCHERMIS, sequenceName = SEQ_VOUCHERMIS, allocationSize = 1)
 public class Vouchermis implements java.io.Serializable {
 
-    private static final long serialVersionUID = 1L;
     public static final String SEQ_VOUCHERMIS = "SEQ_VOUCHERMIS";
-
-    @DocumentId
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(generator = SEQ_VOUCHERMIS, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -99,6 +98,13 @@ public class Vouchermis implements java.io.Serializable {
     private String budgetaryAppnumber;
     private Boolean budgetCheckReq = true;
 
+    public Vouchermis() {
+    }
+
+    public Vouchermis(Long id) {
+        this.id = id;
+    }
+
     public Boolean isBudgetCheckReq() {
         return budgetCheckReq;
     }
@@ -113,13 +119,6 @@ public class Vouchermis implements java.io.Serializable {
 
     public void setFunctionary(Functionary functionary) {
         this.functionary = functionary;
-    }
-
-    public Vouchermis() {
-    }
-
-    public Vouchermis(Long id) {
-        this.id = id;
     }
 
     /*

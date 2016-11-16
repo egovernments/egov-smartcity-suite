@@ -43,8 +43,6 @@ package org.egov.infra.admin.master.entity;
 import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.search.domain.Searchable;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -56,25 +54,22 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import static org.egov.infra.admin.master.entity.Department.SEQ_DEPARTMENT;
+
 @Entity
-@Unique(id = "id", tableName = "eg_department", columnName = { "name", "code" }, fields = { "name",
-        "code" }, enableDfltMsg = true)
+@Unique(fields = {"name", "code"}, enableDfltMsg = true)
 @Table(name = "eg_department")
-@Searchable
-@SequenceGenerator(name = Department.SEQ_DEPARTMENT, sequenceName = Department.SEQ_DEPARTMENT, allocationSize = 1)
+@SequenceGenerator(name = SEQ_DEPARTMENT, sequenceName = SEQ_DEPARTMENT, allocationSize = 1)
 public class Department extends AbstractAuditable {
 
-    private static final long serialVersionUID = 7630238192598939863L;
     public static final String SEQ_DEPARTMENT = "SEQ_EG_DEPARTMENT";
-
+    private static final long serialVersionUID = 7630238192598939863L;
     @Expose
-    @DocumentId
     @Id
     @GeneratedValue(generator = SEQ_DEPARTMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Length(min = 1, max = 128)
-    @Searchable(name = "name")
     @SafeHtml
     private String name;
 

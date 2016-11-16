@@ -356,7 +356,7 @@ public class WorksConstants {
     public static final String NON_TENDERED = "NONTENDERED";
 
     public static final String LUMP_SUM = "LUMPSUM";
-
+    
     public static final String CONTRACTOR_RETENTION_MONEY_PURPOSE = "RETENTION_MONEY";
 
     public static final String CONTRACTOR_SECURITY_DEPOSITE_PURPOSE = "Security Deposit";
@@ -387,5 +387,25 @@ public class WorksConstants {
     public static final String APPCONFIG_NOMINATION_AMOUNT = "NOMINATION_AMOUNT_LIMIT";
     
     public static final String NOMINATION = "Nomination";
+    
+    public final static String SECTOR_COLUMN_HEADER_NAME = "SECTOR";
 
+    public final static String DISTRICT_COLUMN_HEADER_NAME = "District Name";
+
+    public final static String ULB_COLUMN_HEADER_NAME = "ULB Name";
+
+    public final static String WORKSMILESTONE_TYPEOFWORKNAME_COLUMN_NAME = "lineestimatetypeofworkname";
+
+    public final static String WORKSMILESTONE_DISTNAME_COLUMN_NAME = "distname";
+
+    public final static String WORKSMILESTONE_ULBNAME_COLUMN_NAME = "ulbname";
+
+    public final static String WORKSMILESTONE_ULBCODE_COLUMN_NAME = "ulbcode";
+
+    public final static String WORKSMILESTONE_LOASTATUS_COLUMN_NAME = "loastatus";
+
+    public final static String WORKSMILESTONE_MILESTONESTATUS_COLUMN_NAME = "milestonestatus";
+
+    public final static String WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME = "lineestimatedetailid";
+    
 }

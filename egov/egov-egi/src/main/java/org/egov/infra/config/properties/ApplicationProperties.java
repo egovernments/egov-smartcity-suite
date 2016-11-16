@@ -98,6 +98,9 @@ public class ApplicationProperties {
     public static final String REDIS_HOST_PORT = "redis.host.port";
     public static final String MASTER_SERVER = "master.server";
     public static final String FLYWAY_VALIDATEON_MIGRATE = "flyway.validateon.migrate";
+    private static final String SEARCH_HOSTS = "elasticsearch.hosts";
+    private static final String SEARCH_PORT = "elasticsearch.port";
+    private static final String SEARCH_CLUSTER_NAME = "elasticsearch.cluster.name";
 
     @Autowired
     private Environment environment;
@@ -265,4 +268,17 @@ public class ApplicationProperties {
     public boolean flywayValidateonMigrate() {
         return this.environment.getProperty(FLYWAY_VALIDATEON_MIGRATE, Boolean.class);
     }
+
+    public List<String> searchHosts() {
+        return Arrays.asList(environment.getProperty(SEARCH_HOSTS).split(","));
+    }
+
+    public int searchPort() {
+        return Integer.parseInt(environment.getProperty(SEARCH_PORT));
+    }
+
+    public String searchClusterName() {
+        return environment.getProperty(SEARCH_CLUSTER_NAME);
+    }
+
 }

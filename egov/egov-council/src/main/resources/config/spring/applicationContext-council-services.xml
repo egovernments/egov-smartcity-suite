@@ -46,4 +46,12 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
 	   default-lazy-init="true">
 	<context:component-scan base-package="org.egov.council" />
+	 <bean id="councilPreamblePersistenceService" parent="abstractPersistenceService">
+        <constructor-arg name="type" value="org.egov.council.entity.CouncilPreamble" />
+    </bean>
+
+    <bean id="CouncilPreambleInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+        <constructor-arg index="0" ref="councilPreamblePersistenceService"/>
+    </bean>
+    
 </beans>

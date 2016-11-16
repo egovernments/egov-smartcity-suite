@@ -51,7 +51,6 @@ import org.egov.lcms.transactions.entity.LcInterimOrderDocuments;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseInterimOrder;
 import org.egov.lcms.transactions.repository.LegalCaseInterimOrderRepository;
-import org.egov.lcms.transactions.repository.LegalCaseRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,9 +68,6 @@ public class LegalCaseInterimOrderService {
     private LegalCaseUtil legalCaseUtil;
 
     @Autowired
-    private LegalCaseRepository legalCaseRepository;
-
-    @Autowired
     public LegalCaseInterimOrderService(final LegalCaseInterimOrderRepository legalCaseInterimOrderRepository) {
         this.legalCaseInterimOrderRepository = legalCaseInterimOrderRepository;
     }
@@ -85,7 +81,7 @@ public class LegalCaseInterimOrderService {
         final List<LcInterimOrderDocuments> interiomOrderDoc = legalCaseUtil
                 .getLcInterimOrderDocumentList(legalCaseInterimOrder);
         processAndStoreApplicationDocuments(legalCaseInterimOrder, interiomOrderDoc);
-        legalCaseRepository.save(legalCaseInterimOrder.getLegalCase());
+        /* legalCaseRepository.save(legalCaseInterimOrder.getLegalCase()); */
         return legalCaseInterimOrderRepository.save(legalCaseInterimOrder);
     }
 

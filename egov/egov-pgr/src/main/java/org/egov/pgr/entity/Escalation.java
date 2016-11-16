@@ -42,9 +42,6 @@ package org.egov.pgr.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Designation;
-import org.egov.search.domain.Searchable;
-import org.egov.search.util.Serializer;
-import org.json.simple.JSONObject;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -59,15 +56,15 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import static org.egov.pgr.entity.Escalation.SEQ_ESCALATION;
+
 @Entity
 @Table(name = "egpgr_escalation")
-@Searchable
-@SequenceGenerator(name = Escalation.SEQ_ESCALATION, sequenceName = Escalation.SEQ_ESCALATION, allocationSize = 1)
+@SequenceGenerator(name = SEQ_ESCALATION, sequenceName = SEQ_ESCALATION, allocationSize = 1)
 public class Escalation extends AbstractAuditable {
 
-    private static final long serialVersionUID = -1317277378596990014L;
     public static final String SEQ_ESCALATION = "SEQ_EGPGR_ESCALATION";
-
+    private static final long serialVersionUID = -1317277378596990014L;
     @Id
     @GeneratedValue(generator = SEQ_ESCALATION, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -76,14 +73,12 @@ public class Escalation extends AbstractAuditable {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "complaint_type_id")
-    @Searchable
     private ComplaintType complaintType;
 
     @Valid
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "designation_id")
-    @Searchable
     private Designation designation;
 
     @Column(name = "no_of_hrs")
@@ -121,7 +116,4 @@ public class Escalation extends AbstractAuditable {
         this.noOfHrs = noOfHrs;
     }
 
-    public JSONObject toJsonObject() {
-        return Serializer.fromJson(Serializer.toJson(this), JSONObject.class);
-    }
 }

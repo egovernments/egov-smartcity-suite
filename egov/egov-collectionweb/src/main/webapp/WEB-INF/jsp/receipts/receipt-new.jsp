@@ -252,7 +252,7 @@ function validate()
 		}
 		if(document.getElementById("callbackForApportioning").value=="false")	
 		{	
- 			billingtotal=document.forms[0].totalAmountToBeCollected.value;
+ 			billingtotal=document.forms[0].totalAmntToBeCollected.value;
 		}
 		else
 		{	
@@ -1104,12 +1104,12 @@ function showHideMandataryMark(obj){
 	    			<s:text name="billreceipt.payment.totalamt.tobereceived"/>
 	   				<span class="bold">
 	    			
-	   				<input style="border:0px;background-color:#FFFFCC;font-weight:bold;" type="text" name="totalamounttobepaid" id="totalamounttobepaid" readonly="readonly" value='<s:property value="%{totalAmountToBeCollected}" />' >
+	   				<input style="border:0px;background-color:#FFFFCC;font-weight:bold;" type="text" name="totalamounttobepaid" id="totalamounttobepaid" readonly="readonly" value='<s:property value="%{totalAmntToBeCollected}" />' >
 	   				</span>
 	   			</s:if>
 	   			<s:text name="billreceipt.payment.totalamt.received"/><span><input style="border:0px;background-color:#FFFFCC;font-weight:bold;" type="text" name="totalamountdisplay" id="totalamountdisplay" readonly="readonly" tabindex='-1'></span>
    			</div>
-   			<s:hidden label="totalAmountToBeCollected" name="totalAmountToBeCollected" value="%{totalAmountToBeCollected}"/>
+   			<s:hidden label="totalAmntToBeCollected" name="totalAmntToBeCollected" value="%{totalAmntToBeCollected}"/>
     	</td></tr>
   	
 	  	<tr><td>

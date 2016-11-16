@@ -468,5 +468,10 @@ public class AssignmentService {
             queryResult.setParameter("primary", Boolean.valueOf(employeePositionSearch.getIsPrimary()));
         return queryResult;
     }
+    
+    public List<Assignment> getAllAssignmentForEmployeeNameLike(final String empName) {
+        return assignmentRepository.getAllAssignmentForEmployeeNameLike(new Date(), empName);
+    }
+
 
 }

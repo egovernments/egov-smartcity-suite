@@ -39,28 +39,12 @@
  */
 package org.egov.restapi.web.rest;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
-import org.egov.restapi.model.WaterConnectionSearchRequest;
-import org.egov.search.domain.Page;
-import org.egov.search.domain.SearchResult;
-import org.egov.search.domain.Sort;
-import org.egov.search.service.SearchService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import static java.util.Arrays.asList;
 
 @RestController
 public class RestWaterConnectionSearchController {
 
-    @Autowired
+   /* @Autowired
     private SearchService searchService;
 
     @RequestMapping(value = "/watercharges/searchconnection", method = RequestMethod.POST)
@@ -78,5 +62,5 @@ public class RestWaterConnectionSearchController {
         final Gson gson = gsonBuilder.registerTypeAdapter(SearchResult.class, new ConnectionSearchAdaptor()).create();
         final String json = gson.toJson(object);
         return json;
-    }
+    }*/
 }

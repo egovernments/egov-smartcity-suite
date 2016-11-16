@@ -80,5 +80,5 @@
 </div>
 
 <div class="text-center">
-	<button type="button" id="populateAccountDetails" class="btn" align="center"><spring:message code="lbl.done"/></button>
+	<button type="button" id="populateAccountDetails" class="btn btn-secondary" align="center"><spring:message code="lbl.done"/></button>
 </div>

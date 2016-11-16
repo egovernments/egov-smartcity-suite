@@ -299,7 +299,9 @@ public class SearchPropertyAction extends BaseFormAction {
                 addActionError(getText("error.msg.demandInactive"));
                 return COMMON_FORM;
             } else if (basicProperty.getActiveProperty().getPropertyDetail().getPropertyTypeMaster().getCode()
-                    .equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_EWSHS)) {
+                    .equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_EWSHS)
+                    && !applicationType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT)
+                    && !applicationType.equalsIgnoreCase(APPLICATION_TYPE_TAX_EXEMTION)) {
                 addActionError(getText("EWSHS.transaction.error"));
                 return COMMON_FORM;
             }
@@ -335,12 +337,14 @@ public class SearchPropertyAction extends BaseFormAction {
         	}
         	activePropertyId = basicProperty.getActiveProperty().getId().toString();
         }
-        
-        boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(assessmentNum);
-        if (hasChildPropertyUnderWorkflow) {
-            addActionError(getText("error.msg.child.underworkflow"));
-            return COMMON_FORM;
+        if (APPLICATION_TYPE_BIFURCATE_ASSESSENT.equals(applicationType)) {
+            List<PropertyStatusValues> propertyStatusValues = propertyService.findChildrenForProperty(basicProperty);
+            if (propertyStatusValues.isEmpty()) {
+                addActionError(getText("error.nochild.exists.bifurcation"));
+                return COMMON_FORM;
+            }
         }
+    
 
         if (APPLICATION_TYPE_REVISION_PETITION.equals(applicationType)) {
             if (isDemandActive) {

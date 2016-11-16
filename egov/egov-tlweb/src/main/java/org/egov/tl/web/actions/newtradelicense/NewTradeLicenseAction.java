@@ -40,30 +40,18 @@
 
 package org.egov.tl.web.actions.newtradelicense;
 
-import static org.egov.tl.utils.Constants.LOCALITY;
-import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
+import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.Licensee;
@@ -77,12 +65,24 @@ import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.tl.utils.Constants.LOCALITY;
+import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
+
 @ParentPackage("egov")
-@Results({ @Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
+@Results({@Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
         @Result(name = Constants.ACKNOWLEDGEMENT, location = "newTradeLicense-acknowledgement.jsp"),
         @Result(name = Constants.MESSAGE, location = "newTradeLicense-message.jsp"),
         @Result(name = Constants.BEFORE_RENEWAL, location = "newTradeLicense-beforeRenew.jsp"),
-        @Result(name = Constants.ACKNOWLEDGEMENT_RENEW, location = "newTradeLicense-acknowledgement_renew.jsp") })
+        @Result(name = Constants.ACKNOWLEDGEMENT_RENEW, location = "newTradeLicense-acknowledgement_renew.jsp")})
 public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     private static final long serialVersionUID = 1L;
@@ -96,8 +96,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
-    @Autowired
-    private PositionMasterService positionMasterService;
+
 
     public NewTradeLicenseAction() {
         tradeLicense.setLicensee(new Licensee());
@@ -136,7 +135,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                 || license().getState().getValue().contains(Constants.WF_STATE_INSPECTION_APPROVED_STR)
                 || license().getState().getValue().contains(Constants.WF_SECOND_LVL_FEECOLLECTED)
                 || license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_APPROVED_CODE)
-                        && license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))
+                && license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))
             mode = Constants.DISABLE_APPROVER_MODE;
         else if (licenseUtils.isDigitalSignEnabled() &&
                 license().getState().getValue().equals(Constants.DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED)
@@ -147,8 +146,8 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                 && license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE)
                 || license().getState().getValue().contains(Constants.WF_LICENSE_CREATED))
             message = Constants.PENDING_COLLECTION_MSG;
-        if (!license().getState().getOwnerPosition()
-                .equals(positionMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId()))) {
+        List<Position> positionList = positionMasterService.getPositionsForEmployee(securityUtils.getCurrentUser().getId(), new Date());
+        if (!positionList.isEmpty() && !positionList.contains(license().getState().getOwnerPosition())) {
             ServletActionContext.getResponse().setContentType("text/html");
             ServletActionContext.getResponse().getWriter()
                     .write("<center style='color:red;font-weight:bolder'>Workflow item is in "
@@ -281,7 +280,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String getAdditionalRule() {
         if (renewAppType != null && renewAppType.equals(Constants.RENEWAL_LIC_APPTYPE)
                 || tradeLicense != null && tradeLicense.getLicenseAppType() != null
-                        && tradeLicense.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
+                && tradeLicense.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
             return Constants.RENEW_ADDITIONAL_RULE;
         else
             return Constants.NEW_ADDITIONAL_RULE;

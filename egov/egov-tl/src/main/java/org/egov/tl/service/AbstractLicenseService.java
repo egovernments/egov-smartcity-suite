@@ -94,6 +94,7 @@ import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.repository.LicenseRepository;
+import org.egov.tl.service.es.LicenseApplicationIndexService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseNumberUtils;
 import org.egov.tl.utils.LicenseUtils;
@@ -136,7 +137,7 @@ public abstract class AbstractLicenseService<T extends License> {
     protected PersistenceService<LicenseDocumentType, Long> licenseDocumentTypeService;
 
     @Autowired
-    protected TradeLicenseUpdateIndexService updateIndexService;
+    protected LicenseApplicationIndexService licenseApplicationIndexService;
 
     @Autowired
     protected SecurityUtils securityUtils;
@@ -154,18 +155,14 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Autowired
     protected LicenseStatusService licenseStatusService;
-
-    @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
-
     @Autowired
     protected LicenseAppTypeService licenseAppTypeService;
-
     @Autowired
     protected PositionMasterService positionMasterService;
-
     @Autowired
     protected NatureOfBusinessService natureOfBusinessService;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Autowired
     private LicenseUtils licenseUtils;
@@ -198,9 +195,8 @@ public abstract class AbstractLicenseService<T extends License> {
         processAndStoreDocument(license.getDocuments(), license);
         transitionWorkFlow(license, workflowBean);
         licenseRepository.save(license);
+        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
-        updateIndexService.updateTradeLicenseIndexes(license);
-
     }
 
     private BigDecimal raiseNewDemand(final T license) {
@@ -415,7 +411,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator.getPosition());
         this.licenseRepository.save(license);
         sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
-        updateIndexService.updateTradeLicenseIndexes(license);
+        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
     }
 
     @Transactional

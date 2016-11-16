@@ -39,19 +39,12 @@
  */
 package org.egov.wtms.application.entity;
 
-import static org.egov.search.domain.Filter.rangeFilter;
-import static org.egov.search.domain.Filter.termsStringFilter;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import javax.validation.ValidationException;
 
-import org.egov.search.domain.Filter;
-import org.egov.search.domain.Filters;
 import org.jboss.logging.Logger;
 
 public class DailyWTCollectionReportSearch {
@@ -60,21 +53,17 @@ public class DailyWTCollectionReportSearch {
     private String toDate;
     private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
-    private List<String> consumerCode = new ArrayList<String>();
     private String collectionMode;
     private String collectionOperator;
     private String revenueWard;
     private String searchText;
-    private String ulbName;
-
     private String status;
-
-    public List<String> getConsumerCode() {
-        return consumerCode;
-    }
-
-    public void setConsumerCode(final List<String> consumerCode) {
-        this.consumerCode = consumerCode;
+    private String ulbName;
+    private String receiptnumber;
+   
+    
+    public String getFromDate() {
+        return fromDate;
     }
 
     public void setFromDate(final String fromDate) {
@@ -86,6 +75,10 @@ public class DailyWTCollectionReportSearch {
             } catch (final ParseException e) {
                 throw new ValidationException(e.getMessage());
             }
+    }
+
+    public String getToDate() {
+        return toDate;
     }
 
     public void setToDate(final String toDate) {
@@ -103,14 +96,6 @@ public class DailyWTCollectionReportSearch {
             } catch (final ParseException e) {
                 throw new ValidationException(e.getMessage());
             }
-    }
-
-    public String getFromDate() {
-        return fromDate;
-    }
-
-    public String getToDate() {
-        return toDate;
     }
 
     public String getCollectionMode() {
@@ -161,33 +146,18 @@ public class DailyWTCollectionReportSearch {
         this.ulbName = ulbName;
     }
 
-    public Filters searchCollectionFilters() {
-        final List<Filter> andFilters = new ArrayList<>(0);
-        andFilters.add(termsStringFilter("clauses.cityname", ulbName));
-        andFilters.add(termsStringFilter("clauses.channel", collectionMode));
-        andFilters.add(termsStringFilter("clauses.receiptcreator", collectionOperator));
-        andFilters.add(termsStringFilter("clauses.billingservice", "Water Tax"));
-        andFilters.add(termsStringFilter("clauses.status", status));
-        if (!consumerCode.isEmpty()) {
-            final String[] consumerCodes = consumerCode.toArray(new String[consumerCode.size()]);
-            andFilters.add(termsStringFilter("common.consumercode", consumerCodes));
-        }
-        andFilters.add(rangeFilter("searchable.receiptdate", fromDate, toDate));
-        if (logger.isDebugEnabled())
-            logger.debug("finished filters");
-        logger.info("$$$$$$$$$$$$$$$$ Filters : " + andFilters);
-        return Filters.withAndFilters(andFilters);
-    }
-
-    public Filters searchConnectionForWardFilters() {
-        final List<Filter> andFilters = new ArrayList<>(0);
-        andFilters.add(termsStringFilter("clauses.ulbname", ulbName));
-        andFilters.add(termsStringFilter("clauses.ward", revenueWard));
-        return Filters.withAndFilters(andFilters);
-    }
-
     public String searchQuery() {
         return searchText;
     }
 
+    public String getReceiptnumber() {
+        return receiptnumber;
+    }
+
+    public void setReceiptnumber(String receiptnumber) {
+        this.receiptnumber = receiptnumber;
+    }
+   
+
+  
 }

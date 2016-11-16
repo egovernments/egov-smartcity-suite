@@ -40,135 +40,110 @@
 
 package org.egov.pgr.web.contract;
 
-import org.egov.search.domain.Filter;
-import org.egov.search.domain.Filters;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 import static org.egov.infra.utils.DateUtils.TO_DEFAULT_DATE_FORMAT;
 import static org.egov.infra.utils.DateUtils.endOfGivenDate;
 import static org.egov.infra.utils.DateUtils.startOfGivenDate;
-import static org.egov.search.domain.Filter.queryStringFilter;
-import static org.egov.search.domain.Filter.rangeFilter;
-import static org.egov.search.domain.Filter.termsStringFilter;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 
 public class ComplaintSearchRequest {
-    public static final String SEARCH_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm";
-
-    private String searchText;
-    private String complaintNumber;
-    private String complainantName;
-    private String complaintStatus;
-    private String complainantPhoneNumber;
-    private String complainantEmail;
-    private String receivingCenter;
-    private String complaintType;
-    private String complaintDateFrom;
-    private String complaintDateTo;
     private String fromDate;
     private String toDate;
-    private String complaintDepartment;
-    private String location;
-    private String currentUlb;
 
-    public void setSearchText(final String searchText) {
-        this.searchText = searchText;
+    private BoolQueryBuilder searchQueryBuilder;
+
+    public ComplaintSearchRequest() {
+        searchQueryBuilder = QueryBuilders.boolQuery().filter(QueryBuilders.matchAllQuery());
     }
 
-    public void setComplaintNumber(final String complaintNumber) {
-        this.complaintNumber = complaintNumber;
-    }
-
-    public void setCurrentUlb(final String currentUlb) {
-        this.currentUlb = currentUlb;
+    public void setComplaintNumber(String complaintNumber) {
+        if (isNotBlank(complaintNumber))
+            searchQueryBuilder.filter(matchQuery("crn", complaintNumber));
     }
 
     public void setComplaintStatus(final String complaintStatus) {
-        this.complaintStatus = complaintStatus;
+        if (isNotBlank(complaintStatus))
+            searchQueryBuilder.filter(matchQuery("complaintStatusName", complaintStatus));
     }
 
-    public void setComplainantName(final String complainantName) {
-        this.complainantName = complainantName;
+    public void setComplainantName(String complainantName) {
+        if (isNotBlank(complainantName))
+            searchQueryBuilder.filter(matchQuery("complainantName", complainantName));
     }
 
     public void setLocation(final String location) {
-        this.location = location;
+        if (isNotBlank(location))
+            searchQueryBuilder.filter(matchQuery("wardName", location));
     }
 
     public void setComplainantPhoneNumber(final String phoneNumber) {
-        complainantPhoneNumber = phoneNumber;
+        if (isNotBlank(phoneNumber))
+            searchQueryBuilder.filter(matchQuery("complainantMobile", phoneNumber));
     }
 
     public void setComplainantEmail(final String email) {
-        complainantEmail = email;
+        if (isNotBlank(email))
+            searchQueryBuilder.filter(matchQuery("complainantEmail", email));
     }
 
     public void setReceivingCenter(final String receivingCenter) {
-        this.receivingCenter = receivingCenter;
+        if (isNotBlank(receivingCenter))
+            searchQueryBuilder.filter(matchQuery("receivingMode", receivingCenter));
     }
 
     public void setComplaintType(final String complaintType) {
-        this.complaintType = complaintType;
+        if (isNotBlank(complaintType))
+            searchQueryBuilder.filter(matchQuery("complaintTypeName", complaintType));
     }
 
     public void setFromDate(final String fromDate) {
-        if(fromDate != null)
-            this.fromDate = startOfGivenDate(TO_DEFAULT_DATE_FORMAT.parseDateTime(fromDate)).toString(SEARCH_DATE_FORMAT);
+        if (fromDate != null)
+            this.fromDate = startOfGivenDate(TO_DEFAULT_DATE_FORMAT.parseDateTime(fromDate)).toString(ES_DATE_FORMAT);
     }
 
     public void setToDate(final String toDate) {
-        if(toDate != null)
-            this.toDate = endOfGivenDate(TO_DEFAULT_DATE_FORMAT.parseDateTime(toDate)).toString(SEARCH_DATE_FORMAT);
+        if (toDate != null)
+            this.toDate = endOfGivenDate(TO_DEFAULT_DATE_FORMAT.parseDateTime(toDate)).toString(ES_DATE_FORMAT);
     }
 
     public void setComplaintDepartment(final String complaintDepartment) {
-        this.complaintDepartment = complaintDepartment;
+        if (isNotBlank(complaintDepartment))
+            searchQueryBuilder.filter(matchQuery("departmentName", complaintDepartment));
     }
 
     public void setComplaintDate(final String complaintDate) {
         if (null != complaintDate) {
             DateTime currentDate = new DateTime();
-            complaintDateTo = endOfGivenDate(currentDate).toString(SEARCH_DATE_FORMAT);
-            if (complaintDate.equalsIgnoreCase("today")) {
-                complaintDateFrom = currentDate.withTimeAtStartOfDay().toString(SEARCH_DATE_FORMAT);
-            } else if (complaintDate.equalsIgnoreCase("all")) {
-                complaintDateFrom = null;
-                complaintDateTo = null;
-            } else if (complaintDate.equalsIgnoreCase("lastsevendays")) {
-                complaintDateFrom = currentDate.minusDays(7).toString(SEARCH_DATE_FORMAT);
-            } else if (complaintDate.equalsIgnoreCase("lastthirtydays")) {
-                complaintDateFrom = currentDate.minusDays(30).toString(SEARCH_DATE_FORMAT);
-            } else if (complaintDate.equalsIgnoreCase("lastninetydays")) {
-                complaintDateFrom = currentDate.minusDays(90).toString(SEARCH_DATE_FORMAT);
+            this.toDate = endOfGivenDate(currentDate).toString(ES_DATE_FORMAT);
+            if ("today".equalsIgnoreCase(complaintDate)) {
+                this.fromDate = currentDate.withTimeAtStartOfDay().toString(ES_DATE_FORMAT);
+            } else if ("lastsevendays".equalsIgnoreCase(complaintDate)) {
+                this.fromDate = currentDate.minusDays(7).toString(ES_DATE_FORMAT);
+            } else if ("lastthirtydays".equalsIgnoreCase(complaintDate)) {
+                this.fromDate = currentDate.minusDays(30).toString(ES_DATE_FORMAT);
+            } else if ("lastninetydays".equalsIgnoreCase(complaintDate)) {
+                this.fromDate = currentDate.minusDays(90).toString(ES_DATE_FORMAT);
             } else {
-                complaintDateFrom = null;
-                complaintDateTo = null;
+                this.fromDate = null;
+                this.toDate = null;
             }
         }
 
     }
 
-    public Filters searchFilters() {
-        final List<Filter> andFilters = new ArrayList<>();
-        andFilters.add(termsStringFilter("clauses.citydetails.name", currentUlb));
-        andFilters.add(termsStringFilter("clauses.crn", complaintNumber));
-        andFilters.add(queryStringFilter("common.citizen.name", complainantName));
-        andFilters.add(queryStringFilter("common.citizen.mobile", complainantPhoneNumber));
-        andFilters.add(queryStringFilter("common.citizen.email", complainantEmail));
-        andFilters.add(queryStringFilter("clauses.status.name", complaintStatus));
-        andFilters.add(queryStringFilter("clauses.receivingMode", receivingCenter));
-        andFilters.add(queryStringFilter("searchable.complaintType.name", complaintType));
-        andFilters.add(rangeFilter("common.createdDate", complaintDateFrom, complaintDateTo));
-        andFilters.add(rangeFilter("common.createdDate", fromDate, toDate));
-        andFilters.add(termsStringFilter("clauses.department.name", complaintDepartment));
-        andFilters.add(queryStringFilter("common.boundary.name", location));
-        return Filters.withAndFilters(andFilters);
-    }
+    public BoolQueryBuilder query() {
+        searchQueryBuilder.filter(matchQuery("cityCode", ApplicationThreadLocals.getCityCode()));
+        if (isNotBlank(this.fromDate) || isNotBlank(this.toDate))
+            searchQueryBuilder.must(rangeQuery("createdDate")
+                    .from(this.fromDate).to(this.toDate));
 
-    public String searchQuery() {
-        return searchText;
+        return searchQueryBuilder;
     }
-
 }

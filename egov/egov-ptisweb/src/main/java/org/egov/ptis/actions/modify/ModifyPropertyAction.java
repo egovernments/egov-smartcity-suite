@@ -442,12 +442,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                     return BALANCE;
                 }
             }
-            boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(basicProp
-                    .getUpicNo());
-            if (hasChildPropertyUnderWorkflow) {
-                setWfErrorMsg(getText("error.msg.child.underworkflow"));
-                return TARGET_WORKFLOW_ERROR;
-            }
 
             setOldProperty((PropertyImpl) getBasicProp().getProperty());
             if (propWF == null && (propertyModel == null || propertyModel.getId() == null))

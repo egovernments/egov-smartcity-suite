@@ -102,7 +102,7 @@ import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.service.TradeLicenseSmsAndEmailService;
-import org.egov.tl.service.TradeLicenseUpdateIndexService;
+import org.egov.tl.service.es.LicenseApplicationIndexService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.joda.time.DateTime;
@@ -119,11 +119,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class LicenseBillService extends BillServiceInterface implements BillingIntegrationService {
-    private static final Logger LOG = LoggerFactory.getLogger(LicenseBillService.class);
-
-    protected License license;
     public static final String TL_FUNCTION_CODE = "1500";
-
+    private static final Logger LOG = LoggerFactory.getLogger(LicenseBillService.class);
+    protected License license;
     @Autowired
     private EgBillDetailsDao egBillDetailsDao;
 
@@ -144,7 +142,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     private AssignmentService assignmentService;
 
     @Autowired
-    private TradeLicenseUpdateIndexService updateIndexService;
+    private LicenseApplicationIndexService licenseApplicationIndexService;
 
     @Autowired
     private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
@@ -396,9 +394,9 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
                 if (ld.getLicense().getState() != null)
                     updateWorkflowState(ld.getLicense());
+                licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(ld.getLicense());
                 tradeLicenseSmsAndEmailService.sendSMsAndEmailOnCollection(ld.getLicense(), billReceipt.getReceiptDate(),
                         ld.getLicense().getCurrentLicenseFee());
-                updateIndexService.updateTradeLicenseIndexes(ld.getLicense());
             } else if (billReceipt.getEvent().equals(EVENT_RECEIPT_CANCELLED))
                 reconcileCollForRcptCancel(demand, billReceipt);
             else if (billReceipt.getEvent().equals(EVENT_INSTRUMENT_BOUNCED))
@@ -416,8 +414,11 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
      */
     @Transactional
     public void updateWorkflowState(final License licenseObj) {
-        final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(licenseObj.getCreatedBy().getId());
-        Position pos = wfInitiator.getPosition();
+        final List<Assignment> assignments = assignmentService
+                .getAllActiveEmployeeAssignmentsByEmpId(licenseObj.getCreatedBy().getId());
+        Position pos = null;
+        if (!assignments.isEmpty())
+            pos = assignments.get(0).getPosition();
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
         final Boolean digitalSignEnabled = licenseUtils.isDigitalSignEnabled();

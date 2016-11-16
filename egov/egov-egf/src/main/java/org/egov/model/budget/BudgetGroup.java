@@ -39,6 +39,14 @@
  */
 package org.egov.model.budget;
 
+import org.egov.commons.CChartOfAccounts;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.utils.BudgetAccountType;
+import org.egov.utils.BudgetingType;
+import org.hibernate.validator.constraints.Length;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -52,25 +60,16 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.commons.CChartOfAccounts;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.utils.BudgetAccountType;
-import org.egov.utils.BudgetingType;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.validator.constraints.Length;
+import static org.egov.model.budget.BudgetGroup.SEQ_BUDGETGROUP;
 
 @Entity
 @Table(name = "EGF_BUDGETGROUP")
-@SequenceGenerator(name = BudgetGroup.SEQ_BUDGETGROUP, sequenceName = BudgetGroup.SEQ_BUDGETGROUP, allocationSize = 1)
-@Unique(fields = "name", id = "id", columnName = "NAME", tableName = "EGF_BUDGETGROUP", enableDfltMsg = true)
+@SequenceGenerator(name = SEQ_BUDGETGROUP, sequenceName = SEQ_BUDGETGROUP, allocationSize = 1)
+@Unique(fields = "name", enableDfltMsg = true)
 public class BudgetGroup extends AbstractAuditable {
 
-    private static final long serialVersionUID = 8907540544512153346L;
     public static final String SEQ_BUDGETGROUP = "SEQ_EGF_BUDGETGROUP";
-
-    @DocumentId
+    private static final long serialVersionUID = 8907540544512153346L;
     @Id
     @GeneratedValue(generator = SEQ_BUDGETGROUP, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -162,6 +161,10 @@ public class BudgetGroup extends AbstractAuditable {
         return isActive;
     }
 
+    public void setIsActive(final Boolean isActive) {
+        this.isActive = isActive;
+    }
+
     @Override
     public Long getId() {
         return id;
@@ -170,10 +173,6 @@ public class BudgetGroup extends AbstractAuditable {
     @Override
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public void setIsActive(final Boolean isActive) {
-        this.isActive = isActive;
     }
 
 }

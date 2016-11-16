@@ -62,6 +62,8 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_PAYMEN
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -87,13 +89,12 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.elasticsearch.entity.ApplicationIndex;
+import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
+import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
+import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.search.elastic.entity.ApplicationIndex;
-import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
-import org.egov.infra.search.elastic.entity.enums.ApprovalStatus;
-import org.egov.infra.search.elastic.entity.enums.ClosureStatus;
-import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.entity.State;
@@ -107,11 +108,11 @@ import org.egov.stms.autonumber.SewerageApplicationNumberGenerator;
 import org.egov.stms.autonumber.SewerageCloseConnectionNoticeNumberGenerator;
 import org.egov.stms.autonumber.SewerageEstimationNumberGenerator;
 import org.egov.stms.autonumber.SewerageWorkOrderNumberGenerator;
-import org.egov.stms.elasticSearch.service.SewerageIndexService;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.masters.service.DocumentTypeMasterService;
 import org.egov.stms.notice.entity.SewerageNotice;
 import org.egov.stms.notice.service.SewerageNoticeService;
+import org.egov.stms.service.es.SewerageIndexService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageApplicationDetailsDocument;
 import org.egov.stms.transactions.entity.SewerageDemandConnection;
@@ -133,6 +134,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class SewerageApplicationDetailsService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SewerageApplicationDetailsService.class);
+    private static final String STMS_APPLICATION_VIEW = "/stms/existing/sewerage/view/%s/%s";
 
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
@@ -388,6 +390,38 @@ public class SewerageApplicationDetailsService {
     }
 
     public void updateIndexes(final SewerageApplicationDetails sewerageApplicationDetails) {
+        final SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
+        try {
+            if (sewerageApplicationDetails.getConnection() != null
+                    && sewerageApplicationDetails.getConnection().getExecutionDate() != null) {
+                final String executionDate = myFormat.format(sewerageApplicationDetails.getConnection().getExecutionDate());
+                sewerageApplicationDetails.getConnection().setExecutionDate(myFormat.parse(executionDate));
+            }
+            if (sewerageApplicationDetails.getDisposalDate() != null) {
+                final String disposalDate = myFormat.format(sewerageApplicationDetails.getDisposalDate());
+                sewerageApplicationDetails.setDisposalDate(myFormat.parse(disposalDate));
+            }
+            if (sewerageApplicationDetails.getApplicationDate() != null) {
+                final String applicationDate = myFormat.format(sewerageApplicationDetails.getApplicationDate());
+                sewerageApplicationDetails.setApplicationDate(myFormat.parse(applicationDate));
+            }
+            if (sewerageApplicationDetails.getEstimationDate() != null) {
+                final String estimationDate = myFormat.format(sewerageApplicationDetails.getEstimationDate());
+                sewerageApplicationDetails.setEstimationDate(myFormat.parse(estimationDate));
+            }
+            if (sewerageApplicationDetails.getWorkOrderDate() != null) {
+                final String workOrderDate = myFormat.format(sewerageApplicationDetails.getWorkOrderDate());
+                sewerageApplicationDetails.setWorkOrderDate(myFormat.parse(workOrderDate));
+            }
+            if (sewerageApplicationDetails.getClosureNoticeDate() != null) {
+                final String closureNoticeDate = myFormat.format(sewerageApplicationDetails.getClosureNoticeDate());
+                sewerageApplicationDetails.setClosureNoticeDate(myFormat.parse(closureNoticeDate));
+            }
+        } catch (final ParseException e) {
+            LOG.error("Exception parsing Date " + e.getMessage());
+        }
+
         // TODO : Need to make Rest API call to get assessmentdetails
         final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(
                 sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(),
@@ -449,7 +483,7 @@ public class SewerageApplicationDetailsService {
         // update existing application index
         if (applicationIndex != null && null != sewerageApplicationDetails.getId()) {
             applicationIndex.setStatus(sewerageApplicationDetails.getStatus().getDescription());
-            applicationIndex.setOwnername(user != null ? user.getUsername() + "::" + user.getName() : "");
+            applicationIndex.setOwnerName(user != null ? user.getUsername() + "::" + user.getName() : "");
             // applicationIndex.setApplicantAddress(assessmentDetails.getPropertyAddress());
 
             /*
@@ -492,25 +526,22 @@ public class SewerageApplicationDetailsService {
             if (sewerageApplicationDetails.getApplicationDate() == null)
                 sewerageApplicationDetails.setApplicationDate(new Date());
             // final String url = "/stms/application/view/" + sewerageApplicationDetails.getApplicationNumber();
-            final String url = "/stms/existing/sewerage/view/" + sewerageApplicationDetails.getApplicationNumber() + "/"
-                    + sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier();
             if (LOG.isDebugEnabled())
                 LOG.debug("Application Index creation Started... ");
-            final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
-                    APPL_INDEX_MODULE_NAME, sewerageApplicationDetails.getApplicationNumber(),
-                    sewerageApplicationDetails.getApplicationDate(), sewerageApplicationDetails.getApplicationType()
-                            .getName(),
-                    consumerName.toString(), sewerageApplicationDetails.getStatus()
-                            .getDescription().toString(),
-                    url, assessmentDetails.getPropertyAddress(),
-                    user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
-            if (sewerageApplicationDetails.getDisposalDate() != null)
-                applicationIndexBuilder.disposalDate(sewerageApplicationDetails.getDisposalDate());
-            applicationIndexBuilder.mobileNumber(mobileNumber.toString());
-            applicationIndexBuilder.aadharNumber(aadharNumber.toString());
-            applicationIndexBuilder.approved(ApprovalStatus.INPROGRESS);
-            applicationIndexBuilder.closed(ClosureStatus.NO);
-            applicationIndex = applicationIndexBuilder.build();
+            applicationIndex = ApplicationIndex.builder().withModuleName(APPL_INDEX_MODULE_NAME)
+                    .withApplicationNumber(sewerageApplicationDetails.getApplicationNumber())
+                    .withApplicationDate(sewerageApplicationDetails.getApplicationDate())
+                    .withApplicationType(sewerageApplicationDetails.getApplicationType().getName())
+                    .withApplicantName(consumerName.toString())
+                    .withStatus(sewerageApplicationDetails.getStatus().getDescription()).withUrl(
+                            String.format(STMS_APPLICATION_VIEW, sewerageApplicationDetails.getApplicationNumber(),
+                                    sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier()))
+                    .withApplicantAddress(assessmentDetails.getPropertyAddress())
+                    .withOwnername(user.getUsername() + "::" + user.getName())
+                    .withChannel(Source.SYSTEM.toString()).withDisposalDate(sewerageApplicationDetails.getDisposalDate())
+                    .withMobileNumber(mobileNumber.toString()).withClosed(ClosureStatus.NO)
+                    .withAadharNumber(aadharNumber.toString())
+                    .withApproved(ApprovalStatus.INPROGRESS).build();
             applicationIndexService.createApplicationIndex(applicationIndex);
             if (LOG.isDebugEnabled())
                 LOG.debug("Application Index creation completed...");
@@ -538,7 +569,8 @@ public class SewerageApplicationDetailsService {
         return entityManager.unwrap(Session.class);
     }
 
-    public Map showApprovalDetailsByApplcationCurState(final SewerageApplicationDetails sewerageApplicationDetails) {
+    public Map<String, String> showApprovalDetailsByApplcationCurState(
+            final SewerageApplicationDetails sewerageApplicationDetails) {
         final Map<String, String> modelParams = new HashMap<String, String>();
         if (sewerageApplicationDetails.getState() != null) {
             final String currentState = sewerageApplicationDetails.getState().getValue();

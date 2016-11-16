@@ -41,5 +41,5 @@
 package org.egov.ptis.domain.entity.enums;
 
 public enum TransactionType {
-	CREATE, MODIFY, TRANSFER, WRITEOFF
+	CREATE, MODIFY, TRANSFER, WRITEOFF ,DEACTIVATE
 }

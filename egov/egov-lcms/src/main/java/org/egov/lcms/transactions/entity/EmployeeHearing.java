@@ -39,6 +39,13 @@
  */
 package org.egov.lcms.transactions.entity;
 
+import com.google.gson.annotations.Expose;
+import org.egov.eis.entity.Employee;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -51,27 +58,18 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
-import org.egov.eis.entity.Employee;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.envers.AuditOverride;
-import org.hibernate.envers.AuditOverrides;
-import org.hibernate.envers.Audited;
-import org.hibernate.search.annotations.DocumentId;
-
-import com.google.gson.annotations.Expose;
+import static org.egov.lcms.transactions.entity.EmployeeHearing.SEQ_EGLC_EMPHEARING;
 
 @Entity
 @Table(name = "eglc_employeehearing")
-@SequenceGenerator(name = EmployeeHearing.SEQ_EGLC_EMPHEARING, sequenceName = EmployeeHearing.SEQ_EGLC_EMPHEARING, allocationSize = 1)
-@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
-        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+@SequenceGenerator(name = SEQ_EGLC_EMPHEARING, sequenceName = SEQ_EGLC_EMPHEARING, allocationSize = 1)
+@AuditOverrides({@AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate")})
 public class EmployeeHearing extends AbstractAuditable {
 
-    private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_EMPHEARING = "seq_eglc_employeehearing";
-
+    private static final long serialVersionUID = 1517694643078084884L;
     @Expose
-    @DocumentId
     @Id
     @GeneratedValue(generator = SEQ_EGLC_EMPHEARING, strategy = GenerationType.SEQUENCE)
     private Long id;

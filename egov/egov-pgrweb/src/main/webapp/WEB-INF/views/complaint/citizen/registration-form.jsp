@@ -58,7 +58,7 @@
 					<c:if test="${not empty complaintTypes}">
 						<div class="form-group">
 							<label class="col-sm-3 control-label"><spring:message code="lbl.top.grievance.types" /></label>
-							<div class="col-sm-6 add-margin">
+							<div class="col-sm-6 add-margin"  id="topcomplaint">
 								<c:forEach items="${complaintTypes}" var="complaintType">
 									<a onclick="setComplaintTypeId('${complaintType.id}','${complaintType.category.id}')" 
 									href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct"

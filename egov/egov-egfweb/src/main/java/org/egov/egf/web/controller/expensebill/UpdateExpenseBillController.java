@@ -40,28 +40,28 @@
 package org.egov.egf.web.controller.expensebill;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.commons.Accountdetailtype;
-import org.egov.commons.service.AccountdetailtypeService;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.commons.service.CheckListService;
-import org.egov.commons.utils.EntityType;
 import org.egov.egf.expensebill.service.ExpenseBillService;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.models.EgChecklists;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.model.bills.EgBillPayeedetails;
-import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
-import org.egov.utils.CheckListHelper;
+import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -78,6 +78,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/expensebill")
 public class UpdateExpenseBillController extends BaseBillController {
 
+    private static final String APPROVAL_DESIGNATION = "approvalDesignation";
+
+    private static final String EG_BILLREGISTER = "egBillregister";
+
+    private static final String APPROVAL_POSITION = "approvalPosition";
+
+    private static final String EXPENSEBILL_VIEW = "expensebill-view";
+
     @Autowired
     private ExpenseBillService expenseBillService;
 
@@ -86,14 +94,7 @@ public class UpdateExpenseBillController extends BaseBillController {
     private ChartOfAccountsService chartOfAccountsService;
 
     @Autowired
-    private AccountdetailtypeService accountdetailtypeService;
-
-    @Autowired
     private FinancialUtils financialUtils;
-
-    @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
 
     @Autowired
     private CheckListService checkListService;
@@ -102,10 +103,9 @@ public class UpdateExpenseBillController extends BaseBillController {
         super(appConfigValuesService);
     }
 
-    @ModelAttribute
+    @ModelAttribute(EG_BILLREGISTER)
     public EgBillregister getEgBillregister(@PathVariable final String billId) {
-        final EgBillregister egBillregister = expenseBillService.getById(Long.parseLong(billId));
-        return egBillregister;
+        return expenseBillService.getById(Long.parseLong(billId));
     }
 
     @RequestMapping(value = "/update/{billId}", method = RequestMethod.GET)
@@ -120,16 +120,23 @@ public class UpdateExpenseBillController extends BaseBillController {
                 expenseBillService.getHistory(egBillregister.getState(), egBillregister.getStateHistory()));
         prepareWorkflow(model, egBillregister, new WorkflowContainer());
         egBillregister.getBillDetails().addAll(egBillregister.getEgBilldetailes());
-        model.addAttribute("mode", "view");
-        prepareBillDetails(egBillregister);
-        prepareCheckList(egBillregister);
-        model.addAttribute("egBillregister", egBillregister);
-        return "expensebill-view";
+        prepareBillDetailsForView(egBillregister);
+        prepareCheckListForEdit(egBillregister, model);
+        model.addAttribute(EG_BILLREGISTER, egBillregister);
+        if (egBillregister.getState() != null
+                && FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())) {
+            prepareValidActionListByCutOffDate(model);
+            model.addAttribute("mode", "edit");
+            return "expensebill-update";
+        } else {
+            model.addAttribute("mode", "view");
+            return EXPENSEBILL_VIEW;
+        }
     }
 
     @RequestMapping(value = "/update/{billId}", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute("egBillregister") final EgBillregister egBillregister,
-            final BindingResult errors, final RedirectAttributes redirectAttributes, final Model model,
+    public String update(@Valid @ModelAttribute(EG_BILLREGISTER) final EgBillregister egBillregister,
+            final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model,
             final HttpServletRequest request, @RequestParam final String workFlowAction)
             throws ApplicationException, IOException {
 
@@ -145,27 +152,43 @@ public class UpdateExpenseBillController extends BaseBillController {
         if (request.getParameter("approvalComent") != null)
             approvalComment = request.getParameter("approvalComent");
 
-        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+        if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
 
         if ((approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
-                && request.getParameter("approvalPosition") != null
-                && !request.getParameter("approvalPosition").isEmpty())
-            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+                && request.getParameter(APPROVAL_POSITION) != null
+                && !request.getParameter(APPROVAL_POSITION).isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
 
-        if (errors.hasErrors()) {
+        if (egBillregister.getStatus() != null
+                && FinancialConstants.CONTINGENCYBILL_REJECTED_STATUS.equals(egBillregister.getStatus().getCode())) {
+            populateBillDetails(egBillregister);
+            validateBillNumber(egBillregister, resultBinder);
+            validateLedgerAndSubledger(egBillregister, resultBinder);
+        }
+        if (resultBinder.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("stateType", egBillregister.getClass().getSimpleName());
-            model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
-            model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
+            model.addAttribute(APPROVAL_DESIGNATION, request.getParameter(APPROVAL_DESIGNATION));
+            model.addAttribute(APPROVAL_POSITION, request.getParameter(APPROVAL_POSITION));
             prepareWorkflow(model, egBillregister, new WorkflowContainer());
-            return "expensebill-view";
+            model.addAttribute(APPROVAL_DESIGNATION, request.getParameter(APPROVAL_DESIGNATION));
+            model.addAttribute(APPROVAL_POSITION, request.getParameter(APPROVAL_POSITION));
+            model.addAttribute("designation", request.getParameter("designation"));
+            if (egBillregister.getState() != null
+                    && FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())) {
+                prepareValidActionListByCutOffDate(model);
+                model.addAttribute("mode", "edit");
+                return "expensebill-update";
+            } else {
+                model.addAttribute("mode", "view");
+                return EXPENSEBILL_VIEW;
+            }
         } else {
             if (null != workFlowAction)
                 updatedEgBillregister = expenseBillService.update(egBillregister, approvalPosition, approvalComment, null,
                         workFlowAction);
-
-            redirectAttributes.addFlashAttribute("egBillregister", updatedEgBillregister);
+            redirectAttributes.addFlashAttribute(EG_BILLREGISTER, updatedEgBillregister);
 
             // For Get Configured ApprovalPosition from workflow history
             if (approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
@@ -187,54 +210,29 @@ public class UpdateExpenseBillController extends BaseBillController {
         setDropDownValues(model);
         egBillregister.getBillDetails().addAll(egBillregister.getEgBilldetailes());
         model.addAttribute("mode", "readOnly");
-        prepareBillDetails(egBillregister);
-        model.addAttribute("egBillregister", egBillregister);
-        return "expensebill-view";
-    }
-
-    private void prepareBillDetails(final EgBillregister egBillregister) {
-        for (final EgBilldetails details : egBillregister.getBillDetails()) {
-            details.setChartOfAccounts(chartOfAccountsService.findById(details.getGlcodeid().longValue(), false));
-            egBillregister.getBillPayeedetails().addAll(details.getEgBillPaydetailes());
-        }
-        for (final EgBillPayeedetails payeeDetails : egBillregister.getBillPayeedetails()) {
-            payeeDetails.getEgBilldetailsId().setChartOfAccounts(
-                    chartOfAccountsService.findById(payeeDetails.getEgBilldetailsId().getGlcodeid().longValue(), false));
-            final Accountdetailtype detailType = accountdetailtypeService.findOne(payeeDetails.getAccountDetailTypeId());
-            EntityType entity = null;
-            String dataType = "";
-            try {
-                final String table = detailType.getFullQualifiedName();
-                final Class<?> service = Class.forName(table);
-                final String tableName = service.getSimpleName();
-                final java.lang.reflect.Method method = service.getMethod("getId");
-
-                dataType = method.getReturnType().getSimpleName();
-                if ("Long".equals(dataType))
-                    entity = (EntityType) persistenceService.find("from " + tableName + " where id=? order by name",
-                            payeeDetails.getAccountDetailKeyId()
-                                    .longValue());
-                else
-                    entity = (EntityType) persistenceService.find("from " + tableName + " where id=? order by name",
-                            payeeDetails.getAccountDetailKeyId());
-            } catch (final Exception e) {
-                throw new ApplicationRuntimeException(e.getMessage());
-            }
-            payeeDetails.setDetailTypeName(detailType.getName());
-            payeeDetails.setDetailKeyName(entity.getName());
-
-        }
+        prepareBillDetailsForView(egBillregister);
+        prepareCheckList(egBillregister);
+        model.addAttribute(EG_BILLREGISTER, egBillregister);
+        return EXPENSEBILL_VIEW;
     }
 
     private void prepareCheckList(final EgBillregister egBillregister) {
-        CheckListHelper helper;
         final List<EgChecklists> checkLists = checkListService.getByObjectId(egBillregister.getId());
-        for (final EgChecklists checkList : checkLists) {
-            helper = new CheckListHelper();
-            helper.setName(checkList.getAppconfigvalue().getValue());
-            helper.setVal(checkList.getChecklistvalue());
-            egBillregister.getCheckLists().add(helper);
+        egBillregister.getCheckLists().addAll(checkLists);
+    }
+
+    private void prepareCheckListForEdit(final EgBillregister egBillregister, final Model model) {
+        final List<EgChecklists> checkLists = checkListService.getByObjectId(egBillregister.getId());
+        egBillregister.getCheckLists().addAll(checkLists);
+        final StringBuilder selectedCheckList = new StringBuilder();
+        for (final EgChecklists checkList : egBillregister.getCheckLists()) {
+            selectedCheckList.append(checkList.getAppconfigvalue().getId());
+            selectedCheckList.append("-");
+            selectedCheckList.append(checkList.getChecklistvalue());
+            selectedCheckList.append(",");
         }
+        if (!checkLists.isEmpty())
+            model.addAttribute("selectedCheckList", selectedCheckList.toString().substring(0, selectedCheckList.length() - 1));
     }
 
     @Override

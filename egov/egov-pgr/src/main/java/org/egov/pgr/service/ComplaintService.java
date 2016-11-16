@@ -40,34 +40,6 @@
 
 package org.egov.pgr.service;
 
-import static org.egov.pgr.entity.enums.ComplaintStatus.FORWARDED;
-import static org.egov.pgr.entity.enums.ComplaintStatus.PROCESSING;
-import static org.egov.pgr.entity.enums.ComplaintStatus.REGISTERED;
-import static org.egov.pgr.entity.enums.ComplaintStatus.REOPENED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMMENT;
-import static org.egov.pgr.utils.constants.PGRConstants.DATE;
-import static org.egov.pgr.utils.constants.PGRConstants.DELIMITER_COLON;
-import static org.egov.pgr.utils.constants.PGRConstants.DEPT;
-import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
-import static org.egov.pgr.utils.constants.PGRConstants.STATUS;
-import static org.egov.pgr.utils.constants.PGRConstants.UPDATEDBY;
-import static org.egov.pgr.utils.constants.PGRConstants.UPDATEDUSERTYPE;
-import static org.egov.pgr.utils.constants.PGRConstants.USER;
-import static org.egov.pgr.utils.constants.PGRConstants.USERTYPE;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.validation.ValidationException;
-
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
@@ -89,6 +61,7 @@ import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.ComplaintStatus;
 import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.repository.ComplaintRepository;
+import org.egov.pgr.service.es.ComplaintIndexService;
 import org.egov.pgr.utils.constants.PGRConstants;
 import org.egov.pims.commons.Position;
 import org.egov.portal.entity.CitizenInbox;
@@ -110,67 +83,79 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.validation.ValidationException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+
+import static org.egov.pgr.entity.enums.ComplaintStatus.FORWARDED;
+import static org.egov.pgr.entity.enums.ComplaintStatus.PROCESSING;
+import static org.egov.pgr.entity.enums.ComplaintStatus.REGISTERED;
+import static org.egov.pgr.entity.enums.ComplaintStatus.REOPENED;
+import static org.egov.pgr.utils.constants.PGRConstants.COMMENT;
+import static org.egov.pgr.utils.constants.PGRConstants.DATE;
+import static org.egov.pgr.utils.constants.PGRConstants.DELIMITER_COLON;
+import static org.egov.pgr.utils.constants.PGRConstants.DEPT;
+import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
+import static org.egov.pgr.utils.constants.PGRConstants.STATUS;
+import static org.egov.pgr.utils.constants.PGRConstants.UPDATEDBY;
+import static org.egov.pgr.utils.constants.PGRConstants.UPDATEDUSERTYPE;
+import static org.egov.pgr.utils.constants.PGRConstants.USER;
+import static org.egov.pgr.utils.constants.PGRConstants.USERTYPE;
+
 @Service
 @Transactional(readOnly = true)
 public class ComplaintService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ComplaintService.class);
-
-    @Autowired
-    private ComplaintRepository complaintRepository;
-
-    @Autowired
-    private ComplaintStatusService complaintStatusService;
-
-    @Autowired
-    private SecurityUtils securityUtils;
-
-    @Autowired
-    private ComplaintRouterService complaintRouterService;
-
-    @Autowired
-    private EisCommonService eisCommonService;
-
-    @Autowired
-    private CitizenInboxService citizenInboxService;
-
-    @Autowired
-    private BoundaryService boundaryService;
-
-    @Autowired
-    private MessagingService messagingService;
-
-    @Autowired
-    private ApplicationNumberGenerator applicationNumberGenerator;
-
-    @Autowired
-    private EscalationService escalationService;
-
-    @Autowired
-    private PositionMasterService positionMasterService;
-
-    @Autowired
-    private RoleService roleService;
-
-    @Autowired
-    private AssignmentService assignmentService;
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    final String[] pendingStatus = { "REGISTERED", "FORWARDED", "PROCESSING", "NOTCOMPLETED", "REOPENED" };
-    final String[] completedStatus = { "COMPLETED", "WITHDRAWN", "CLOSED" };
-    final String[] rejectedStatus = { "REJECTED" };
-    final String[] resolvedStatus = { "COMPLETED", "WITHDRAWN", "CLOSED", "REJECTED" };
-
     public final String COMPLAINT_ALL = "ALL";
     public final String COMPLAINT_PENDING = "PENDING";
     public final String COMPLAINT_COMPLETED = "COMPLETED";
     public final String COMPLAINT_REJECTED = "REJECTED";
-
     public final String COMPLAINTS_FILED = "FILED";
     public final String COMPLAINTS_RESOLVED = "RESOLVED";
     public final String COMPLAINTS_UNRESOLVED = "UNRESOLVED";
+    final String[] pendingStatus = {"REGISTERED", "FORWARDED", "PROCESSING", "NOTCOMPLETED", "REOPENED"};
+    final String[] completedStatus = {"COMPLETED", "WITHDRAWN", "CLOSED"};
+    final String[] rejectedStatus = {"REJECTED"};
+    final String[] resolvedStatus = {"COMPLETED", "WITHDRAWN", "CLOSED", "REJECTED"};
+    @Autowired
+    private ComplaintRepository complaintRepository;
+    @Autowired
+    private ComplaintStatusService complaintStatusService;
+    @Autowired
+    private SecurityUtils securityUtils;
+    @Autowired
+    private ComplaintRouterService complaintRouterService;
+    @Autowired
+    private EisCommonService eisCommonService;
+    @Autowired
+    private CitizenInboxService citizenInboxService;
+    @Autowired
+    private BoundaryService boundaryService;
+    @Autowired
+    private MessagingService messagingService;
+    @Autowired
+    private ApplicationNumberGenerator applicationNumberGenerator;
+    @Autowired
+    private EscalationService escalationService;
+    @Autowired
+    private PositionMasterService positionMasterService;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private AssignmentService assignmentService;
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Autowired
+    private ComplaintIndexService complaintIndexService;
 
     @Transactional
     public Complaint createComplaint(final Complaint complaint) throws ValidationException {
@@ -203,7 +188,7 @@ public class ComplaintService {
                 .withStateValue(complaint.getStatus().getName()).withOwner(assignee).withDateInfo(new Date());
 
         complaint.setAssignee(assignee);
-        complaint.setEscalationDate(new DateTime());
+        complaint.setEscalationDate(new Date());
         complaint.setEscalationDate(escalationService.getExpiryDate(complaint));
 
         if (null != complaint.getComplaintType() && null != complaint.getComplaintType().getDepartment())
@@ -211,11 +196,13 @@ public class ComplaintService {
         else if (null != assignee)
             complaint.setDepartment(assignee.getDeptDesig().getDepartment());
 
-        final Complaint savedComplaint = complaintRepository.save(complaint);
-        pushMessage(savedComplaint);
+        complaintRepository.save(complaint);
+        pushMessage(complaint);
         sendEmailandSms(complaint);
 
-        return savedComplaint;
+        complaintIndexService.createComplaintIndex(complaint);
+
+        return complaint;
     }
 
     /**
@@ -271,18 +258,20 @@ public class ComplaintService {
                         .withOwner(complaint.getState().getOwnerPosition());
         }
 
-        final Complaint savedComplaint = complaintRepository.saveAndFlush(complaint);
-        pushMessage(savedComplaint);
+        complaintRepository.saveAndFlush(complaint);
+        pushMessage(complaint);
 
         if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString()) ||
                 complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString()))
-            sendSmsOnCompletion(savedComplaint);
+            sendSmsOnCompletion(complaint);
         if (!complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString()) &&
                 !complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString())
                 && !complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString()))
-            sendSmsToOfficials(savedComplaint);
+            sendSmsToOfficials(complaint);
+        
+        complaintIndexService.updateComplaintIndex(complaint, approvalPosition, approvalComent);
 
-        return savedComplaint;
+        return complaint;
     }
 
     public Complaint getComplaintById(final Long complaintID) {
@@ -375,7 +364,7 @@ public class ComplaintService {
             user = !assignmentList.isEmpty() ? assignmentList.get(0).getEmployee() : null;
             map.put(USER, null != user
                     ? user.getUsername() + DELIMITER_COLON + user.getName() + DELIMITER_COLON
-                            + ownerPosition.getDeptDesig().getDesignation().getName()
+                    + ownerPosition.getDeptDesig().getDesignation().getName()
                     : NOASSIGNMENT + DELIMITER_COLON + ownerPosition.getName());
             map.put(USERTYPE, null != user ? user.getType() : StringUtils.EMPTY);
             map.put(DEPT, null != ownerPosition.getDeptDesig().getDepartment()
@@ -412,7 +401,7 @@ public class ComplaintService {
                             .put(USER,
                                     null != user
                                             ? user.getUsername() + DELIMITER_COLON + user.getName() + DELIMITER_COLON
-                                                    + owner.getDeptDesig().getDesignation().getName()
+                                            + owner.getDeptDesig().getDesignation().getName()
                                             : NOASSIGNMENT + DELIMITER_COLON + owner.getName());
                     HistoryMap.put(USERTYPE, null != user ? user.getType() : StringUtils.EMPTY);
                     HistoryMap.put(DEPT, null != owner.getDeptDesig().getDepartment()
@@ -530,7 +519,7 @@ public class ComplaintService {
     }
 
     public List<Complaint> getNearByComplaint(final int page, final float lat, final float lng, final int distance,
-            final int pageSize) {
+                                              final int pageSize) {
         final Long offset = new Long((page - 1) * pageSize);
         final Long limit = new Long(pageSize + 1);
         return complaintRepository.findByNearestComplaint(securityUtils.getCurrentUser().getId(), new Float(lat),
@@ -561,7 +550,7 @@ public class ComplaintService {
 
     public List<Complaint> getPendingGrievances() {
         final User user = securityUtils.getCurrentUser();
-        final String[] pendingStatus = { "REGISTERED", "FORWARDED", "PROCESSING", "NOTCOMPLETED", "REOPENED" };
+        final String[] pendingStatus = {"REGISTERED", "FORWARDED", "PROCESSING", "NOTCOMPLETED", "REOPENED"};
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint")
                 .createAlias("complaint.state", "state").createAlias("complaint.status", "status");
         criteria.add(Restrictions.in("status.name", pendingStatus));

@@ -39,11 +39,6 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.search.annotations.DocumentId;
-
-import javax.persistence.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,16 +46,35 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.springframework.web.multipart.MultipartFile;
+
 @Entity
 @Table(name = "egpt_document")
 @SequenceGenerator(name = Document.SEQ_DOCUMENT, sequenceName = Document.SEQ_DOCUMENT, allocationSize = 1)
 public class Document extends AbstractAuditable {
 
-    private static final long serialVersionUID = 7655384098687964458L;
     public static final String SEQ_DOCUMENT = "SEQ_EGPT_DOCUMENT";
+    private static final long serialVersionUID = 7655384098687964458L;
     @Id
     @GeneratedValue(generator = SEQ_DOCUMENT, strategy = GenerationType.SEQUENCE)
-    @DocumentId
     private Long id;
     @ManyToOne
     @JoinColumn(name = "type")
@@ -74,6 +88,8 @@ public class Document extends AbstractAuditable {
     private Set<FileStoreMapper> files = new HashSet<>();
 
     @Transient
+    private MultipartFile[] file;
+    @Transient
     private List<File> uploads = new ArrayList<>();
     @Transient
     private List<String> uploadsFileName = new ArrayList<>();
@@ -81,13 +97,13 @@ public class Document extends AbstractAuditable {
     private List<String> uploadsContentType = new ArrayList<>();
 
     @Override
-    protected void setId(final Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     @Override
-    public Long getId() {
-        return id;
+    protected void setId(final Long id) {
+        this.id = id;
     }
 
     public DocumentType getType() {
@@ -152,5 +168,13 @@ public class Document extends AbstractAuditable {
 
     public void setUploadsContentType(final List<String> uploadsContentType) {
         this.uploadsContentType = uploadsContentType;
+    }
+
+    public MultipartFile[] getFile() {
+        return file;
+    }
+
+    public void setFile(MultipartFile[] file) {
+        this.file = file;
     }
 }

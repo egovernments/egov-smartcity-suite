@@ -46,7 +46,6 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.entity.contract.StateInfoBuilder;
 import org.egov.pims.commons.Position;
-import org.egov.search.domain.Searchable;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
@@ -64,13 +63,31 @@ import java.util.List;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @MappedSuperclass
-@Searchable
 public abstract class StateAware extends AbstractAuditable {
     private static final long serialVersionUID = 5776408218810221246L;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "STATE_ID")
     private State state;
+
+    public static Comparator<? super StateAware> byCreatedDate() {
+        return (stateAware_1, stateAware_2) -> {
+            int returnVal = 1;
+            if (stateAware_1 == null)
+                returnVal = stateAware_2 == null ? 0 : -1;
+            else if (stateAware_2 == null)
+                returnVal = 1;
+            else {
+                final Date first_date = stateAware_1.getState().getCreatedDate();
+                final Date second_date = stateAware_2.getState().getCreatedDate();
+                if (first_date.after(second_date))
+                    returnVal = -1;
+                else if (first_date.equals(second_date))
+                    returnVal = 0;
+            }
+            return returnVal;
+        };
+    }
 
     /**
      * Need to overridden by the implementing class to give details about the State <I>Used by Inbox to fetch the State Detail at
@@ -185,7 +202,7 @@ public abstract class StateAware extends AbstractAuditable {
         if (state != null && !stateIsEnded())
             throw new ApplicationRuntimeException("Could not reinitiate Workflow, existing workflow not ended.");
         else
-            state = null; 
+            state = null;
         return this;
     }
 
@@ -198,7 +215,7 @@ public abstract class StateAware extends AbstractAuditable {
         state.setOwnerPosition(owner);
         return this;
     }
-    
+
     public final StateAware withInitiator(final Position owner) {
         state.setInitiatorPosition(owner);
         return this;
@@ -256,25 +273,6 @@ public abstract class StateAware extends AbstractAuditable {
         state.setOwnerUser(null);
         state.setOwnerPosition(null);
         state.setInitiatorPosition(null);
-    }
-
-    public static Comparator<? super StateAware> byCreatedDate() {
-        return (stateAware_1, stateAware_2) -> {
-            int returnVal = 1;
-            if (stateAware_1 == null)
-                returnVal = stateAware_2 == null ? 0 : -1;
-            else if (stateAware_2 == null)
-                returnVal = 1;
-            else {
-                final Date first_date = stateAware_1.getState().getCreatedDate();
-                final Date second_date = stateAware_2.getState().getCreatedDate();
-                if (first_date.after(second_date))
-                    returnVal = -1;
-                else if (first_date.equals(second_date))
-                    returnVal = 0;
-            }
-            return returnVal;
-        };
     }
 
     protected StateInfoBuilder buildStateInfo() {

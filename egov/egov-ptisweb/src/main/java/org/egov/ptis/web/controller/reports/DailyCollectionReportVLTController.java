@@ -1,36 +1,41 @@
 package org.egov.ptis.web.controller.reports;
 
-import static java.util.Arrays.asList;
+import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_VLT;
+import static org.egov.ptis.constants.PropertyTaxConstants.COLLECTION_INDEX_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.DATEFORMATTER_YYYY_MM_DD;
+import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_YYYYMMDD;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.collection.entity.es.CollectionDocument;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.entity.Source;
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.entity.property.DailyCollectionReportSearch;
 import org.egov.ptis.domain.entity.property.DailyCollectionReportSearchVLT;
 import org.egov.ptis.domain.service.report.ReportService;
-import org.egov.search.domain.Document;
-import org.egov.search.domain.Page;
-import org.egov.search.domain.SearchResult;
-import org.egov.search.domain.Sort;
-import org.egov.search.service.SearchService;
-import org.elasticsearch.search.sort.SortOrder;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -38,13 +43,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-
 @Controller
 @RequestMapping(value = "/report/dailyCollectionVLT")
 public class DailyCollectionReportVLTController {
 
     private static final String DAILY_COLLECTION_FORM = "dailyCollectionVLT-form";
-    private static final Logger logger = Logger.getLogger(DailyCollectionReportVLTController.class);
+    private static final Logger LOGGER = Logger.getLogger(DailyCollectionReportVLTController.class);
     @Autowired
     private ReportService reportService;
 
@@ -56,8 +60,9 @@ public class DailyCollectionReportVLTController {
 
     @Autowired
     private BoundaryService boundaryService;
+
     @Autowired
-    private SearchService searchService;
+    private ElasticsearchTemplate elasticsearchTemplate;
 
     @ModelAttribute
     public void getReportModel(final Model model) {
@@ -90,41 +95,47 @@ public class DailyCollectionReportVLTController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public List<Document> searchCollection(@ModelAttribute final DailyCollectionReportSearchVLT searchRequest) {
-
-        SearchResult propertyIndexSearchResult = null;
-        SearchResult collectionIndexSearchResult = null;
-        List<String> consumerCodes = new ArrayList<String>();
-        final List<Document> searchResultFomatted = new ArrayList<Document>(0);
-        final Sort sortByAssessment = Sort.by().field("clauses.revwardname", SortOrder.ASC);
+    public List<CollectionDocument> searchCollection(@ModelAttribute final DailyCollectionReportSearch searchRequest) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         searchRequest.setUlbName(cityWebsite.getName());
-        
-        if (StringUtils.isNotBlank(searchRequest.getRevenueWard())) {
-            propertyIndexSearchResult = searchService.search(asList(Index.APPTIS.toString()),
-                    asList(IndexType.PTISDETAILS.toString()), searchRequest.searchQuery(),
-                    searchRequest.searchProperyForWardFilters(), sortByAssessment, Page.NULL);
-            for (Document PTDocument : propertyIndexSearchResult.getDocuments()) {
-                Map<String, String> PTCommonMap = (Map<String, String>) PTDocument.getResource().get("common");
-                consumerCodes.add(PTCommonMap.get("consumercode"));
-            }
-            searchRequest.setConsumerCode(consumerCodes);
-            collectionIndexSearchResult = getCollectionIndex(searchRequest);
-        } else {
-            collectionIndexSearchResult = getCollectionIndex(searchRequest);
-        }
+        final BoolQueryBuilder boolQuery = getQueryBasedOnInput(searchRequest);
+        SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME).withQuery(boolQuery)
+                .addAggregation(AggregationBuilders.count("receipt_count").field("consumerCode"))
+                .build();
+        final Aggregations collCountAggr = elasticsearchTemplate.query(searchQuery, response -> response.getAggregations());
 
-        for (final Document collectionIndexDocument : collectionIndexSearchResult.getDocuments()) {
-            searchResultFomatted.add(collectionIndexDocument);
-        }
-        return searchResultFomatted;
+        final ValueCount aggr = collCountAggr.get("receipt_count");
+        searchQuery = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME).withQuery(boolQuery)
+                .addAggregation(AggregationBuilders.count("receipt_count").field("consumerCode"))
+                .withPageable(new PageRequest(0,
+                        Long.valueOf(aggr.getValue()).intValue() == 0 ? 1 : Long.valueOf(aggr.getValue()).intValue()))
+                .build();
+        final List<CollectionDocument> collIndexList = elasticsearchTemplate.queryForList(searchQuery, CollectionDocument.class);
+
+        return collIndexList;
+
     }
 
-    private SearchResult getCollectionIndex(final DailyCollectionReportSearchVLT searchRequest) {
-        final Sort sortByReceiptDate = Sort.by().field("searchable.receiptdate", SortOrder.ASC);
-        logger.info("getCollectionIndex, searchRequest fromDate:" + searchRequest.getFromDate()+"|searchRequest toDate:"+searchRequest.getToDate()+"|searchRequest ulbname:"+searchRequest.getUlbName());
-        return searchService.search(asList(Index.COLLECTION.toString()),
-                asList(IndexType.COLLECTION_BIFURCATION.toString()), searchRequest.searchQuery(),
-                searchRequest.searchCollectionFilters(), sortByReceiptDate, Page.NULL);
+    private BoolQueryBuilder getQueryBasedOnInput(final DailyCollectionReportSearch searchRequest) {
+        final Date fromDate = DateUtils.getDate(searchRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
+        final Date toDate = org.apache.commons.lang3.time.DateUtils.addDays(
+                DateUtils.getDate(searchRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
+                1);
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+                .filter(QueryBuilders.matchQuery("billingService", COLLECION_BILLING_SERVICE_VLT))
+                .filter(QueryBuilders.rangeQuery("receiptDate").gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
+                        .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false));
+        if (StringUtils.isNotBlank(searchRequest.getCollectionMode()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("channel", searchRequest.getCollectionMode()));
+        if (StringUtils.isNotBlank(searchRequest.getCollectionOperator()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("receiptCreator", searchRequest.getCollectionOperator()));
+        if (StringUtils.isNotBlank(searchRequest.getStatus()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("status", searchRequest.getStatus()));
+        if (StringUtils.isNotBlank(searchRequest.getUlbName()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityName", searchRequest.getUlbName()));
+        if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("revenueWard", searchRequest.getRevenueWard()));
+
+        return boolQuery;
     }
 }

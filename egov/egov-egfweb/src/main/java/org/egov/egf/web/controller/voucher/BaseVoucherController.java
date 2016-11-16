@@ -39,18 +39,26 @@
  */
 package org.egov.egf.web.controller.voucher;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.egov.commons.CVoucherHeader;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+
+import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
 /**
  * @author venki
@@ -69,6 +77,9 @@ public abstract class BaseVoucherController extends GenericWorkFlowController {
     @SuppressWarnings("deprecation")
     @Autowired
     private EgovMasterDataCaching masterDataCache;
+
+    @Autowired
+    private VoucherTypeForULB voucherTypeForULB;
 
     @Autowired
     public BaseVoucherController(final AppConfigValueService appConfigValuesService) {
@@ -108,13 +119,44 @@ public abstract class BaseVoucherController extends GenericWorkFlowController {
         if (headerFields.contains("field"))
             model.addAttribute("fields", masterDataCache.get("egi-ward"));
         if (headerFields.contains("scheme"))
-            model.addAttribute("schemes", Collections.EMPTY_LIST);
+            model.addAttribute("schemes", Collections.emptyList());
         if (headerFields.contains("subscheme"))
-            model.addAttribute("subschemes", Collections.EMPTY_LIST);
+            model.addAttribute("subschemes", Collections.emptyList());
 
         model.addAttribute("headerFields", headerFields);
         model.addAttribute("mandatoryFields", mandatoryFields);
+    }
 
+    protected void prepareValidActionListByCutOffDate(final Model model) {
+        final List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService
+                .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
+                        FinancialConstants.KEY_DATAENTRYCUTOFFDATE);
+
+        if (!cutOffDateconfigValue.isEmpty()) {
+            final DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+            model.addAttribute("validActionList",
+                    Arrays.asList(FinancialConstants.BUTTONFORWARD, FinancialConstants.CREATEANDAPPROVE));
+            try {
+                model.addAttribute("cutOffDate",
+                        DateUtils.getDefaultFormattedDate(df.parse(cutOffDateconfigValue.get(0).getValue())));
+            } catch (final ParseException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    protected Boolean isVoucherNumberGenerationAuto(final CVoucherHeader voucherHeader) {
+        String vNumGenMode;
+        if (voucherHeader.getType() != null
+                && FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL.equalsIgnoreCase(voucherHeader.getType()))
+            vNumGenMode = voucherTypeForULB.readVoucherTypes(FinancialConstants.JOURNAL);
+        else
+            vNumGenMode = voucherTypeForULB.readVoucherTypes(voucherHeader.getType());
+        if (!FinancialConstants.AUTO.equalsIgnoreCase(vNumGenMode)) {
+            mandatoryFields.add("vouchernumber");
+            return true;
+        } else
+            return false;
     }
 
 }

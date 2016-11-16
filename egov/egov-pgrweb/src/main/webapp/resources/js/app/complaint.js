@@ -41,6 +41,11 @@
 var currentType = "";
 jQuery(document).ready(function($)
 {
+	
+	$('html, body').animate({
+		scrollTop: 0
+	});
+	 
 	$('#complaintTypeCategory').change(function() {
 		$('#complaintType').find('option:gt(0)').remove();
 		if (this.value === '') {
@@ -143,6 +148,11 @@ jQuery(document).ready(function($)
 			    content: "Enter your present residential address!"
 			  },
 			  {
+			    element: "#topcomplaint",
+			    title: "Top Grievance Types",
+			    content: "Select your grievance from here or else choose it from below grievance category and grievance type!"
+			  },
+			  {
 			    element: "#complaintTypeCategory",
 			    title: "Grievance Category",
 			    content: "Select your grievance category!"
@@ -165,7 +175,7 @@ jQuery(document).ready(function($)
 			  {
 			    element: "#location-tour",
 			    title: "Grievance Location",
-			    content: "Enter your grievance location or select it from the map icon!"
+			    content: "Enter your grievance location or click on the location icon to select your desired location from the map!"
 			  },
 			  {
 			    element: "#landmarkDetails",
@@ -183,7 +193,7 @@ jQuery(document).ready(function($)
 			    content: "Finally, Click here to submit your grievance!"
 			  }],
 			  storage: false,
-			  duration: 5000,
+			  duration: 6000,
 			  onShown: function (tour) {
 				  //console.log(tour.getCurrentStep());
 				  var step = tour.getCurrentStep();
@@ -196,15 +206,17 @@ jQuery(document).ready(function($)
 				  }else if(step == 3){
 					  typingfeel('Colorado U.S', '#address');
 				  }else if(step == 4){
-					  $('#complaintTypeCategory').val('1').attr("selected", "selected");
+					  //typingfeel('Colorado U.S', '#address');
 				  }else if(step == 5){
+					  $('#complaintTypeCategory').val('1').attr("selected", "selected");
+				  }else if(step == 6){
 					  $('<option>').val('1').text('Absenteesim of sweepers').appendTo('#complaintType');
 					  $('#complaintType').val('1').attr("selected", "selected");
-				  }else if(step == 6){
+				  }else if(step == 7){
 					  typingfeel('Dog menace in madiwala', '#doc');
-				  }else if(step == 8){ 
+				  }else if(step == 9){ 
 				    typingfeelintypeahead('Rev','#location','Revenue, Zone-4, Srikakulam  Municipality');
-				  }else if(step == 9){
+				  }else if(step == 10){
 					  typingfeel('Spencer Plaza', '#landmarkDetails');
 				  }
 			  },

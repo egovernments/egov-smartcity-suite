@@ -46,18 +46,18 @@
 	<div class="panel-heading custom_form_panel_heading">
 		<div class="panel-title"><spring:message  code="lbl.subledger.details"/></div>
 	</div>
-	<div  style="padding: 0 15px;">
-		<div class="form-group">
-			<label class="col-sm-3 control-label text-right">
-				<spring:message code="lbl.payto" /> <span class="mandatory"></span>
-			</label>
-			<div class="col-sm-3 add-margin">
-				<c:out default="N/A" value="${egBillregister.egBillregistermis.payto}" />
-			</div>
-			<label class="col-sm-2 control-label text-right">
-			</label>
-			<div class="col-sm-3 add-margin">
-			</div>
+	<div class="panel-body">
+		<div class="row add-border">
+				<div class="col-md-3 col-xs-6 add-margin">
+					<spring:message code="lbl.payto" />
+				</div>
+				<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
+					<c:out default="N/A" value="${egBillregister.egBillregistermis.payto}" />
+				</div>
+				<div class="col-md-3 col-xs-6 add-margin">
+				</div>
+				<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-email">
+				</div>
 		</div>
 	</div>
 </div>

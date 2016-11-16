@@ -41,7 +41,6 @@
 package org.egov.infra.workflow.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
@@ -52,17 +51,17 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import static org.egov.infra.workflow.entity.WorkflowAction.SEQ_WF_ACTION;
+
 @Entity
 @Table(name = "EG_WF_ACTION")
-@SequenceGenerator(name = WorkflowAction.SEQ_WF_ACTION, sequenceName = WorkflowAction.SEQ_WF_ACTION, allocationSize = 1)
+@SequenceGenerator(name = SEQ_WF_ACTION, sequenceName = SEQ_WF_ACTION, allocationSize = 1)
 public class WorkflowAction extends AbstractAuditable {
 
-    private static final long serialVersionUID = -7940804129929823917L;
     static final String SEQ_WF_ACTION = "SEQ_EG_WF_ACTION";
-
+    private static final long serialVersionUID = -7940804129929823917L;
     @Id
     @GeneratedValue(generator = SEQ_WF_ACTION, strategy = GenerationType.SEQUENCE)
-    @DocumentId
     private Long id;
 
     @NotNull
@@ -87,33 +86,33 @@ public class WorkflowAction extends AbstractAuditable {
     }
 
     @Override
-    protected void setId(final Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     @Override
-    public Long getId() {
-        return id;
+    protected void setId(final Long id) {
+        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public String getType() {
-        return type;
-    }
-
     protected void setName(final String name) {
         this.name = name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     protected void setDescription(final String description) {
         this.description = description;
+    }
+
+    public String getType() {
+        return type;
     }
 
     protected void setType(final String type) {

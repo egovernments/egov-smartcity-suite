@@ -67,8 +67,7 @@ import javax.validation.constraints.NotNull;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.utils.CheckListHelper;
-import org.hibernate.search.annotations.DocumentId;
+import org.egov.infstr.models.EgChecklists;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
@@ -84,7 +83,6 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     private static final long serialVersionUID = -4312140421386028968L;
 
     public static final String SEQ_EG_BILLREGISTER = "SEQ_EG_BILLREGISTER";
-    @DocumentId
     @Id
     @GeneratedValue(generator = SEQ_EG_BILLREGISTER, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -156,7 +154,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     private List<EgBillPayeedetails> billPayeedetails = new ArrayList<EgBillPayeedetails>(0);
 
     @Transient
-    private List<CheckListHelper> checkLists = new ArrayList<CheckListHelper>(0);
+    private List<EgChecklists> checkLists = new ArrayList<EgChecklists>(0);
 
     @Transient
     private Long approvalDepartment;
@@ -467,11 +465,11 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
         this.billPayeedetails = billPayeedetails;
     }
 
-    public List<CheckListHelper> getCheckLists() {
+    public List<EgChecklists> getCheckLists() {
         return checkLists;
     }
 
-    public void setCheckLists(final List<CheckListHelper> checkLists) {
+    public void setCheckLists(final List<EgChecklists> checkLists) {
         this.checkLists = checkLists;
     }
 

@@ -40,11 +40,9 @@
 
 package org.egov.stms.elasticSearch.entity;
 
-import org.egov.search.domain.Document;
-
 public class SewerageDailyCollectionReport {
     
-    private Document collectionDocument;
+    /*private Document collectionDocument;
     private Document sewerageSearchDocument;
     public Document getCollectionDocument() {
         return collectionDocument;
@@ -57,6 +55,6 @@ public class SewerageDailyCollectionReport {
     }
     public void setSewerageSearchDocument(Document sewerageSearchDocument) {
         this.sewerageSearchDocument = sewerageSearchDocument;
-    }
+    }*/
 
 }

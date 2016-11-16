@@ -107,7 +107,7 @@ public class DefaultersWTReportService {
                     + " and dcbinfo.arr_balance+dcbinfo.curr_balance <" + toAmount);
         queryStr.append(" and dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "'");
         if (ward != null && !ward.isEmpty())
-            queryStr.append(" and wardboundary.name = '" + ward + "'");
+            queryStr.append(" and wardboundary.id = '" + ward + "'");
         final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
         final Long count = ((BigInteger) finalQuery.uniqueResult()).longValue();
         return count;
@@ -127,7 +127,7 @@ public class DefaultersWTReportService {
                     + " and dcbinfo.arr_balance+dcbinfo.curr_balance <" + toAmount);
         queryStr.append(" and dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "'");
         if (ward != null && !ward.isEmpty())
-            queryStr.append(" and wardboundary.name = '" + ward + "'");
+            queryStr.append(" and wardboundary.id = '" + ward + "'");
         if (!topDefaulters.isEmpty())
             queryStr.append(" limit " + topDefaulters);
         queryStr.append(") as count");

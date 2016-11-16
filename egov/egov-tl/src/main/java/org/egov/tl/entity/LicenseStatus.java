@@ -41,7 +41,6 @@
 package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -63,7 +62,6 @@ public class LicenseStatus extends AbstractPersistable<Long> {
 
     @Id
     @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
-    @DocumentId
     private Long id;
 
     @NotBlank

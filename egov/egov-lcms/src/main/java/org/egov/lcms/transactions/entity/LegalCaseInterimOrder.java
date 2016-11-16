@@ -60,6 +60,7 @@ import javax.persistence.TemporalType;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.egov.eis.entity.Employee;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
@@ -81,7 +82,7 @@ import org.hibernate.validator.constraints.Length;
  * "sendtoStandingCounsel.greaterThan.iodate")
  */
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
-    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class LegalCaseInterimOrder extends AbstractAuditable {
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_LCINTERIMORDER = "SEQ_EGLC_LCINTERIMORDER";
@@ -90,7 +91,6 @@ public class LegalCaseInterimOrder extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_EGLC_LCINTERIMORDER, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-   
     @Valid
     @NotNull
     @JoinColumn(name = "LEGALCASE", nullable = false)
@@ -159,15 +159,32 @@ public class LegalCaseInterimOrder extends AbstractAuditable {
     @Audited
     private String referenceNumber;
 
+    @Audited
+    @Column(name = "actionitem")
+    private String actionItem;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee")
+    @Audited
+    private Employee employee;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "duedate")
+    @Audited
+    private Date dueDate;
+
+    @Audited
+    @Column(name = "actiontaken")
+    private String actionTaken;
+
     @OneToMany(mappedBy = "legalCaseInterimOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @NotAudited
     private List<LcInterimOrderDocuments> lcInterimOrderDocuments = new ArrayList<LcInterimOrderDocuments>(0);
-    
+
     @OneToMany(mappedBy = "legalCaseInterimOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Audited
     private List<VacateStay> vacateStay = new ArrayList<VacateStay>(0);
 
-   
     @Override
     public Long getId() {
         return id;
@@ -318,13 +335,46 @@ public class LegalCaseInterimOrder extends AbstractAuditable {
     public void setLegalCase(final LegalCase legalCase) {
         this.legalCase = legalCase;
     }
+
     public List<VacateStay> getVacateStay() {
+
         return vacateStay;
     }
 
-    public void setVacateStay(List<VacateStay> vacateStay) {
+    public void setVacateStay(final List<VacateStay> vacateStay) {
         this.vacateStay = vacateStay;
     }
 
+    public String getActionItem() {
+        return actionItem;
+    }
+
+    public void setActionItem(final String actionItem) {
+        this.actionItem = actionItem;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(final Employee employee) {
+        this.employee = employee;
+    }
+
+    public Date getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(final Date dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public String getActionTaken() {
+        return actionTaken;
+    }
+
+    public void setActionTaken(final String actionTaken) {
+        this.actionTaken = actionTaken;
+    }
 
 }

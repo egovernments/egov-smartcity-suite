@@ -40,6 +40,12 @@
 
 package org.egov.tl.service;
 
+import static org.egov.tl.utils.Constants.DELIMITER_HYPEN;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -52,17 +58,16 @@ import org.egov.tl.entity.FeeType;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.egov.tl.entity.NatureOfBusiness;
+import org.egov.tl.entity.UnitOfMeasurement;
 import org.egov.tl.repository.FeeMatrixRepository;
+import org.egov.tl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -137,6 +142,11 @@ public class FeeMatrixService<T extends License> {
         final NatureOfBusiness permanent = (NatureOfBusiness) persistenceService
                 .find("from org.egov.tl.entity.NatureOfBusiness where   name='Permanent'");
         String uniqueNo;
+        UnitOfMeasurement uom = null;
+        final FeeType feeType = feeTypeService.findByName(Constants.LICENSE_FEE_TYPE);
+        for (final LicenseSubCategoryDetails scd : license.getTradeName().getLicenseSubCategoryDetails())
+            if (scd.getFeeType().equals(feeType))
+                uom = scd.getUom();
         if (isnew_renewfee_same && ispermanent_temporaryfee_same)
             uniqueNo = generateFeeMatirixUniqueNo(license, newapp, permanent);
         else if (isnew_renewfee_same)
@@ -150,15 +160,14 @@ public class FeeMatrixService<T extends License> {
 
         final List<FeeMatrixDetail> feeMatrixDetailList = new ArrayList<FeeMatrixDetail>();
         final CFinancialYear financialYearByDate = financialYearDAO.getFinancialYearByDate(applicationDate);
-        //TODO The following line of code will evaluate wrong when there are multiple subcategorydetails
-        final Long uomId = license.getTradeName().getLicenseSubCategoryDetails().iterator().next().getUom().getId();
         for (final FeeType fee : feeTypeService.findAll())
             if (fee.getFeeProcessType().equals(FeeType.FeeProcessType.RANGE))
                 switchLoop: switch (fee.getCode()) {
                 // First find License Fee with UOM
                 case "LF":
                     final FeeMatrix feeMatrix = feeMatrixRepository
-                            .findByUniqueNo(uniqueNo + "-" + fee.getId() + "-" + uomId + "-" + financialYearByDate.getId());
+                            .findByUniqueNo(uniqueNo + DELIMITER_HYPEN + fee.getId() + DELIMITER_HYPEN + uom.getId()
+                                    + DELIMITER_HYPEN + financialYearByDate.getId());
                     if (feeMatrix == null)
                         throw new ValidationException("TL-002", "TL-002");
                     final FeeMatrixDetail feeMatrixDetail = feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,
@@ -179,24 +188,27 @@ public class FeeMatrixService<T extends License> {
     }
 
     private String generateFeeMatirixUniqueNo(final T license, final NatureOfBusiness permanent) {
-        return new StringBuilder().append(permanent.getId()).append("-").append(license.getLicenseAppType().getId())
-                .append("-").append(license.getCategory().getId()).append("-").append(license.getTradeName().getId()).toString();
+        return new StringBuilder().append(permanent.getId()).append(DELIMITER_HYPEN).append(license.getLicenseAppType().getId())
+                .append(DELIMITER_HYPEN).append(license.getCategory().getId()).append(DELIMITER_HYPEN)
+                .append(license.getTradeName().getId()).toString();
     }
 
     private String generateFeeMatirixUniqueNo(final T license) {
-        return new StringBuilder().append(license.getNatureOfBusiness().getId()).append("-")
-                .append(license.getLicenseAppType().getId()).append("-").append(license.getCategory().getId())
-                .append("-").append(license.getTradeName().getId()).toString();
+        return new StringBuilder().append(license.getNatureOfBusiness().getId()).append(DELIMITER_HYPEN)
+                .append(license.getLicenseAppType().getId()).append(DELIMITER_HYPEN).append(license.getCategory().getId())
+                .append(DELIMITER_HYPEN).append(license.getTradeName().getId()).toString();
     }
 
     private String generateFeeMatirixUniqueNo(final T license, final LicenseAppType apptype) {
-        return new StringBuilder().append(license.getNatureOfBusiness().getId()).append("-").append(apptype.getId())
-                .append("-").append(license.getCategory().getId()).append("-").append(license.getTradeName().getId()).toString();
+        return new StringBuilder().append(license.getNatureOfBusiness().getId()).append(DELIMITER_HYPEN).append(apptype.getId())
+                .append(DELIMITER_HYPEN).append(license.getCategory().getId()).append(DELIMITER_HYPEN)
+                .append(license.getTradeName().getId()).toString();
     }
 
     private String generateFeeMatirixUniqueNo(final T license, final LicenseAppType apptype,
             final NatureOfBusiness natureOfBusiness) {
-        return new StringBuilder().append(natureOfBusiness.getId()).append("-").append(apptype.getId())
-                .append("-").append(license.getCategory().getId()).append("-").append(license.getTradeName().getId()).toString();
+        return new StringBuilder().append(natureOfBusiness.getId()).append(DELIMITER_HYPEN).append(apptype.getId())
+                .append(DELIMITER_HYPEN).append(license.getCategory().getId()).append(DELIMITER_HYPEN)
+                .append(license.getTradeName().getId()).toString();
     }
 }

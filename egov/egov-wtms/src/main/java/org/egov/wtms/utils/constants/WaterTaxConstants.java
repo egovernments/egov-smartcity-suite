@@ -39,6 +39,8 @@
  */
 package org.egov.wtms.utils.constants;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -313,4 +315,20 @@ public class WaterTaxConstants {
     public static final String DOCUMENTNAMEFORBILL = "DemandBill";
     public static final Integer QUARTZ_BULKBILL_JOBS = 3;
     public static final String WATERCHARGES_CONSUMERCODE = "consumerCode";
+    public static final String APPLICATION_TAX_INDEX_NAME = "applications";
+    public static final String COLLECTION_INDEX_NAME = "receipts";
+    public static final String WATER_TAX_INDEX_NAME = "waterchargeconsumer";
+    public static final String COLLECION_BILLING_SERVICE_WTMS = "Water Tax";
+    public static final BigDecimal BIGDECIMAL_100 = new BigDecimal("100");
+    
+    public static final String DASHBOARD_GROUPING_DISTRICTWISE = "district";
+    public static final String DASHBOARD_GROUPING_ULBWISE = "ulb";
+    public static final String DASHBOARD_GROUPING_REGIONWISE = "region";
+    public static final String DASHBOARD_GROUPING_GRADEWISE = "grade";
+    public static final String DASHBOARD_GROUPING_WARDWISE = "ward";
+    public static final String DASHBOARD_GROUPING_CITYWISE = "city";
+    public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
+    public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
+
+
 }

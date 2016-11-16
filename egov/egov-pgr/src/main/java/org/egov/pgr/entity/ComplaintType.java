@@ -43,12 +43,9 @@ package org.egov.pgr.entity;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.search.domain.Searchable;
-import org.egov.search.util.Serializer;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
-import org.json.simple.JSONObject;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -62,15 +59,15 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-@Entity
-@Unique(id = "id", tableName = "egpgr_complainttype", fields = { "name", "code" }, columnName = { "name", "code" }, enableDfltMsg = true)
-@Table(name = "egpgr_complainttype")
-@Searchable
-@SequenceGenerator(name = ComplaintType.SEQ_COMPLAINTTYPE, sequenceName = ComplaintType.SEQ_COMPLAINTTYPE, allocationSize = 1)
-public class ComplaintType extends AbstractAuditable {
-    private static final long serialVersionUID = 8904645810221559541L;
-    public static final String SEQ_COMPLAINTTYPE = "SEQ_EGPGR_COMPLAINTTYPE";
+import static org.egov.pgr.entity.ComplaintType.SEQ_COMPLAINTTYPE;
 
+@Entity
+@Unique(fields = {"name", "code"}, enableDfltMsg = true)
+@Table(name = "egpgr_complainttype")
+@SequenceGenerator(name = SEQ_COMPLAINTTYPE, sequenceName = SEQ_COMPLAINTTYPE, allocationSize = 1)
+public class ComplaintType extends AbstractAuditable {
+    public static final String SEQ_COMPLAINTTYPE = "SEQ_EGPGR_COMPLAINTTYPE";
+    private static final long serialVersionUID = 8904645810221559541L;
     @Id
     @GeneratedValue(generator = SEQ_COMPLAINTTYPE, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -79,7 +76,6 @@ public class ComplaintType extends AbstractAuditable {
     @SafeHtml
     @Length(max = 150)
     @Column(name = "name")
-    @Searchable
     private String name;
 
     @NotBlank
@@ -155,10 +151,6 @@ public class ComplaintType extends AbstractAuditable {
 
     public void setDescription(final String description) {
         this.description = description;
-    }
-
-    public JSONObject toJsonObject() {
-        return Serializer.fromJson(Serializer.toJson(this), JSONObject.class);
     }
 
     public Integer getSlaHours() {

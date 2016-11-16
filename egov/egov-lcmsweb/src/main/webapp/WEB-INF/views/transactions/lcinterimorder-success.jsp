@@ -47,10 +47,11 @@
 	modelAttribute="legalCaseInterimOrder" id="legalCaseInterimOrderform">
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />
 	<input type="hidden" id="lcNumber" name="lcNumber"
-		value="${legalCaseInterimOrder.legalCase.lcNumber}" /> 
-		<%-- <form:hidden path="" name="lcInterimOrderId" id="lcInterimOrderId" value="${legalCaseInterimOrderId}" class="form-control table-input hidden-input"/> --%>
+		value="${legalCaseInterimOrder.legalCase.lcNumber}" />
+	<%-- <form:hidden path="" name="lcInterimOrderId" id="lcInterimOrderId" value="${legalCaseInterimOrderId}" class="form-control table-input hidden-input"/> --%>
 
-	 <input type="hidden" name="lcInterimOrderId" value="${legalCaseInterimOrder.id}" />
+	<input type="hidden" name="lcInterimOrderId"
+		value="${legalCaseInterimOrder.id}" />
 	<input type="hidden" name="mode" value="${mode}" />
 	<div class="main-content">
 		<div class="row">
@@ -74,8 +75,8 @@
 								<spring:message code="lbl.iodate" />
 							</div>
 							<div class="col-md-3 col-xs-6 add-margin view-content">
-								<fmt:formatDate value="${legalCaseInterimOrder.ioDate}" var="ioDate"
-									pattern="dd/MM/yyyy" />
+								<fmt:formatDate value="${legalCaseInterimOrder.ioDate}"
+									var="ioDate" pattern="dd/MM/yyyy" />
 								<c:out value="${ioDate}" />
 							</div>
 						</div>
@@ -92,28 +93,60 @@
 							<div class="col-sm-3 add-margin view-content">
 								${legalCaseInterimOrder.notes}</div>
 						</div>
-						<c:choose>
-						<c:when test="${legalCaseInterimOrder.interimOrder.interimOrderType == 'Stay' ||
-						legalCaseInterimOrder.interimOrder.interimOrderType == 'Stay on Condition'}">
 						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
-								<spring:message code="lbl.sendtostandingcounsel" />
+								<spring:message code="lbl.actionitem" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<fmt:formatDate pattern="dd/MM/yyyy"
-									value="${legalCaseInterimOrder.sendtoStandingCounsel}" />
-							</div>
+								${legalCaseInterimOrder.actionItem}</div>
+
 							<div class="col-xs-3 add-margin">
-								<spring:message code="lbl.petitionfiledon" />
+								<spring:message code="lbl.actiontaken" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<fmt:formatDate pattern="dd/MM/yyyy"
-									value="${legalCaseInterimOrder.petitionFiledOn}" />
-							</div>
+								${legalCaseInterimOrder.actionTaken}</div>
 						</div>
-						</c:when>
-					</c:choose>
-					<c:choose>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.duedate" />
+							</div>
+							<div class="col-md-3 col-xs-6 add-margin view-content">
+								<fmt:formatDate value="${legalCaseInterimOrder.dueDate}"
+									var="duDate" pattern="dd/MM/yyyy" />
+								<c:out value="${duDate}" />
+							</div>
+
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.officerresponsible" />
+							</div>
+							<div class="col-sm-3 add-margin view-content">
+								${legalCaseInterimOrder.employee.name}</div>
+								<input type="hidden" id="employeeName" name="employeeName"
+		value="${legalCaseInterimOrder.employee.name}" />  
+						</div>
+						<c:choose>
+							<c:when
+								test="${legalCaseInterimOrder.interimOrder.interimOrderType == 'Stay' ||
+						legalCaseInterimOrder.interimOrder.interimOrderType == 'Stay on Condition'}">
+								<div class="row add-border">
+									<div class="col-xs-3 add-margin">
+										<spring:message code="lbl.sendtostandingcounsel" />
+									</div>
+									<div class="col-sm-3 add-margin view-content">
+										<fmt:formatDate pattern="dd/MM/yyyy"
+											value="${legalCaseInterimOrder.sendtoStandingCounsel}" />
+									</div>
+									<div class="col-xs-3 add-margin">
+										<spring:message code="lbl.petitionfiledon" />
+									</div>
+									<div class="col-sm-3 add-margin view-content">
+										<fmt:formatDate pattern="dd/MM/yyyy"
+											value="${legalCaseInterimOrder.petitionFiledOn}" />
+									</div>
+								</div>
+							</c:when>
+						</c:choose>
+						<%-- <c:choose>
 						<c:when test="${legalCaseInterimOrder.interimOrder.interimOrderType == 'Report file'}">
 						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
@@ -148,24 +181,25 @@
 							</div>
 						</div>
 							</c:when>
-					</c:choose>
+					</c:choose> --%>
 					</div>
 				</div>
 			</div>
 		</div>
-			<jsp:include page="lcinterimorderdocuments-view.jsp"></jsp:include>
-			 <input type="hidden" name="lcInterimOrderDocList" value="${lcInterimOrderDocList}" />
+		<jsp:include page="lcinterimorderdocuments-view.jsp"></jsp:include>
+		<input type="hidden" name="lcInterimOrderDocList"
+			value="${lcInterimOrderDocList}" />
 		<div class="row text-center">
 			<div class="add-margin">
-			<button type="button" class="btn btn-default" id="buttonBack"
+				<button type="button" class="btn btn-default" id="buttonBack"
 					onclick="goback()">
 					<spring:message code="lbl.back" />
 				</button>
 				<a href="javascript:void(0)" class="btn btn-default"
 					onclick="self.close()">Close</a>
-				</div>
+			</div>
 		</div>
-</div>		
+	</div>
 </form:form>
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
@@ -175,3 +209,6 @@
 	src="<cdn:url value='/resources/js/app/lcInterimOrderHelper.js?rnd=${app_release_no}'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/js/app/legalcaseSearch.js?rnd=${app_release_no}'/>"></script>
+	<script
+	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+	<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">

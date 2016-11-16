@@ -45,6 +45,7 @@
 	<c:if test="${not empty message}">
 					<div role="alert">${message}</div>
 				</c:if>
+				<input type="hidden" id="mode" name="mode" value="${mode}" />
 	<%@ include file="lcinterimorder-form.jsp"%>
 	<jsp:include page="lcinterimorderdocuments-view.jsp"></jsp:include>
 	 <input type="hidden" name="lcInterimOrderDocList" value="${lcInterimOrderDocList}" />
@@ -54,6 +55,8 @@
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />
 	<input type="hidden" id="lcNumber" name="lcNumber"
 		value="${legalCaseInterimOrder.legalCase.lcNumber}" />  
+		<input type="hidden" id="employeeName" name="employeeName"
+		value="${legalCaseInterimOrder.employee.name}" />  
 		<input type="hidden" name="interimOrders" value="${interimOrders}" />
 		
 	</div>
@@ -76,3 +79,6 @@
 	src="<cdn:url value='/resources/js/app/lcInterimOrderHelper.js?rnd=${app_release_no}'/>"></script>
 	<script type="text/javascript"
 	src="<cdn:url value='/resources/js/app/legalcaseSearch.js?rnd=${app_release_no}'/>"></script>
+	<script
+	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+	<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">

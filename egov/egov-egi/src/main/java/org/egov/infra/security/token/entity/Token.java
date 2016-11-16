@@ -41,7 +41,6 @@
 package org.egov.infra.security.token.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
@@ -61,7 +60,6 @@ public class Token extends AbstractAuditable {
     public static final String SEQ_TOKEN = "SEQ_EG_TOKEN";
     private static final long serialVersionUID = 2506253781972631115L;
 
-    @DocumentId
     @Id
     @GeneratedValue(generator = SEQ_TOKEN, strategy = GenerationType.SEQUENCE)
     private Long id;

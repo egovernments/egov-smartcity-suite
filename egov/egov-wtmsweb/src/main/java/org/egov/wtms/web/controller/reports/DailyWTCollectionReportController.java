@@ -39,10 +39,8 @@
  */
 package org.egov.wtms.web.controller.reports;
 
-import static java.util.Arrays.asList;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -51,11 +49,10 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.es.CollectionDocument;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.entity.Source;
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.City;
@@ -64,15 +61,20 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.search.domain.Document;
-import org.egov.search.domain.Page;
-import org.egov.search.domain.SearchResult;
-import org.egov.search.domain.Sort;
-import org.egov.search.service.SearchService;
 import org.egov.wtms.application.entity.DailyWTCollectionReportSearch;
-import org.elasticsearch.search.sort.SortOrder;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -85,13 +87,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class DailyWTCollectionReportController {
 
     @Autowired
-    private SearchService searchService;
-
-    @Autowired
     public EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Autowired
     public AssignmentService assignmentService;
+
+    @Autowired
+    private ElasticsearchTemplate elasticsearchTemplate;
 
     @Autowired
     public AppConfigValueService appConfigValueService;
@@ -146,39 +148,56 @@ public class DailyWTCollectionReportController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public List<Document> searchCollection(@ModelAttribute final DailyWTCollectionReportSearch searchRequest) {
-
-        SearchResult consumerIndexSearchResult = null;
-        SearchResult collectionIndexSearchResult = null;
-        final List<String> consumerCodes = new ArrayList<String>();
-        final List<Document> searchResultFomatted = new ArrayList<Document>(0);
-        final Sort sortByAssessment = Sort.by().field("clauses.ward", SortOrder.ASC);
+    public List<CollectionDocument> searchCollection(@ModelAttribute final DailyWTCollectionReportSearch searchRequest) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         searchRequest.setUlbName(cityWebsite.getName());
+        String receiptCount="receipt_count";
+        final BoolQueryBuilder boolQuery = getCollectionFilterQuery(searchRequest);
 
-        if (StringUtils.isNotBlank(searchRequest.getRevenueWard())) {
-            consumerIndexSearchResult = searchService.search(asList(Index.WATERCHARGES.toString()),
-                    asList(IndexType.CONNECTIONSEARCH.toString()), searchRequest.searchQuery(),
-                    searchRequest.searchConnectionForWardFilters(), sortByAssessment, Page.NULL);
-            for (final Document consumerDocument : consumerIndexSearchResult.getDocuments()) {
-                final Map<String, String> consumerCommonMap = (Map<String, String>) consumerDocument.getResource().get(
-                        "clauses");
-                consumerCodes.add(consumerCommonMap.get("consumercode"));
+        SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(WaterTaxConstants.COLLECTION_INDEX_NAME).withQuery(boolQuery)
+                .addAggregation(AggregationBuilders.count(receiptCount).field("consumerCode"))
+                .build();
+        final Aggregations collCountAggr = elasticsearchTemplate.query(searchQuery, response -> response.getAggregations());
+
+        final ValueCount aggr = collCountAggr.get(receiptCount);
+        searchQuery = new NativeSearchQueryBuilder().withIndices(WaterTaxConstants.COLLECTION_INDEX_NAME).withQuery(boolQuery)
+                .addAggregation(AggregationBuilders.count(receiptCount).field("consumerCode"))
+                .withPageable(new PageRequest(0,
+                        Long.valueOf(aggr.getValue()).intValue() == 0 ? 1 : Long.valueOf(aggr.getValue()).intValue()))
+                .build();
+        return  elasticsearchTemplate.queryForList(searchQuery, CollectionDocument.class);
+
+
+    }
+
+    private BoolQueryBuilder getCollectionFilterQuery(final DailyWTCollectionReportSearch searchRequest) {
+         Date fromDate=null;
+          Date toDate=null;
+        if(searchRequest.getFromDate()!=null){
+          fromDate = DateUtils.getDate(searchRequest.getFromDate(), WaterTaxConstants.DATE_FORMAT_YYYYMMDD);
+        }
+          if(searchRequest.getToDate()!=null){
+          toDate = org.apache.commons.lang3.time.DateUtils.addDays(
+                DateUtils.getDate(searchRequest.getToDate(), WaterTaxConstants.DATE_FORMAT_YYYYMMDD),
+                1);
             }
-            searchRequest.setConsumerCode(consumerCodes);
-            collectionIndexSearchResult = getCollectionIndex(searchRequest);
-        } else
-            collectionIndexSearchResult = getCollectionIndex(searchRequest);
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+                .filter(QueryBuilders.matchQuery("billingService", WaterTaxConstants.COLLECION_BILLING_SERVICE_WTMS))
+                .filter(QueryBuilders.rangeQuery("receiptDate").gte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(fromDate))
+                        .lte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false));
 
-        for (final Document collectionIndexDocument : collectionIndexSearchResult.getDocuments())
-            searchResultFomatted.add(collectionIndexDocument);
-        return searchResultFomatted;
+        if (StringUtils.isNotBlank(searchRequest.getCollectionMode()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("channel", searchRequest.getCollectionMode()));
+        if (StringUtils.isNotBlank(searchRequest.getCollectionOperator()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("receiptCreator", searchRequest.getCollectionOperator()));
+        if (StringUtils.isNotBlank(searchRequest.getStatus()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("status", searchRequest.getStatus()));
+        if (StringUtils.isNotBlank(searchRequest.getUlbName()))
+           boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityName", searchRequest.getUlbName()));
+        if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("revenueWard", searchRequest.getRevenueWard()));
+
+        return boolQuery;
     }
 
-    private SearchResult getCollectionIndex(final DailyWTCollectionReportSearch searchRequest) {
-        final Sort sortByReceiptDate = Sort.by().field("searchable.receiptdate", SortOrder.ASC);
-        return searchService.search(asList(Index.COLLECTION.toString()),
-                asList(IndexType.COLLECTION_BIFURCATION.toString()), searchRequest.searchQuery(),
-                searchRequest.searchCollectionFilters(), sortByReceiptDate, Page.NULL);
-    }
 }

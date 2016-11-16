@@ -56,7 +56,6 @@ import javax.persistence.Transient;
 
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.search.annotations.DocumentId;
 
 @Entity
 @Table(name = "EG_CHECKLISTS")
@@ -69,7 +68,7 @@ public class EgChecklists extends AbstractAuditable implements Serializable {
     private static final long serialVersionUID = -3245474955686333063L;
 
     public static final String SEQ_EG_CHECKLISTS = "SEQ_EG_CHECKLISTS";
-    @DocumentId
+
     @Id
     @GeneratedValue(generator = SEQ_EG_CHECKLISTS, strategy = GenerationType.SEQUENCE)
     private Long id;

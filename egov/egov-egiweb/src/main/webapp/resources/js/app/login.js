@@ -121,11 +121,27 @@ $(document).ready(function()
 	}
 	
 	$("#signin-action").click(function(e){
-		if(!checklocation){
-			$('#j_username').trigger('blur');
+		if($('#signform').valid()){
+			//console.log('Form valid');
+			if(!checklocation){
+				$('#j_username').trigger('blur');
+				e.preventDefault();
+			}
+		}else{
+			//console.log('Form not valid');
 			e.preventDefault();
 		}
-		
+	});
+	
+	$("#signform").validate({
+	    rules: {
+	    	j_username: "required",
+	    	j_password: "required"
+	    },
+	    messages: {
+	    	j_username: "Please enter your Mobile Number / Login ID",
+	    	j_password: "Please enter your password"
+	    }
 	});
 	
 	if(navigator.cookieEnabled){
