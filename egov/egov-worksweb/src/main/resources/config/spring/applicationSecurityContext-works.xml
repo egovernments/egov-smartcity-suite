@@ -66,11 +66,8 @@
 				<security:filter-chain pattern="/reports/ajax-estimateabstractreportbytypeofworkwise" filters="none" />
 				<security:filter-chain pattern="/reports/estimateabstractreport/typeofworkwise/pdf" filters="none" />
 				<security:filter-chain pattern="/lineestimate/getsubtypeofwork" filters="none" />
-<<<<<<< HEAD
 				<security:filter-chain pattern="/contractorportal/**" filters="none" />
-=======
 				<security:filter-chain pattern="/public/**" filters="none"/>
->>>>>>> develop
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list> 
 		</constructor-arg>
