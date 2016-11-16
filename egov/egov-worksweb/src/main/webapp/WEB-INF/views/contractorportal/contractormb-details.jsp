@@ -46,6 +46,11 @@
 		<div class="panel-title">
 			<spring:message code="title.mb.details" />
 		</div>
+		<div align="right" class="openCloseAll">
+		<input type="button" value="Close All Measurements" class="btn btn-sm btn-secondary"
+			onclick="closeAllmsheet()" /> <input type="button" class="btn btn-sm btn-secondary"
+			value="Open All Measurements" onclick="openAllmsheet()" />
+		</div>
 	</div>
 	<div class="panel-body" id="sorHeaderTable">
 		<table class="table table-bordered" style="overflow: auto;" id="tblsor">
@@ -106,7 +111,34 @@
 						</td>
 						<td>
 							<form:input type="hidden" path="contractorMBDetails[${item.index }].rate" value="${details.workOrderActivity.activity.rate }" id="unitRate_${item.index }" class="form-control table-input text-right"/>
-							<form:input path="contractorMBDetails[${item.index }].quantity" value="${details.quantity }" id="quantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" class="form-control input-sm text-right quantity" maxlength="64" onblur="calculateActivityAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+							
+							<div class="input-group" style="width:150px">
+								<c:choose>
+	            	        		<c:when test="${!details.workOrderActivity.workOrderMeasurementSheets.isEmpty() }">
+	                	    			<form:input path="contractorMBDetails[${item.index }].quantity" readonly="true" value="${details.quantity }" id="quantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control input-sm text-right quantity" maxlength="64" onblur="calculateActivityAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+	                    			</c:when>
+	                    			<c:otherwise>
+	                    				<form:input path="contractorMBDetails[${item.index }].quantity" value="${details.quantity }" id="quantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control input-sm text-right quantity" maxlength="64" onblur="calculateActivityAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+		                    		</c:otherwise>
+		                    	</c:choose>
+								<c:choose>
+									<c:when test="${!details.workOrderActivity.workOrderMeasurementSheets.isEmpty() }">
+										<span class="input-group-addon openmbsheet" name="contractorMBDetails[${item.index }].msadd" id="contractorMBDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"><i  class="fa fa-plus-circle" aria-hidden="true"></i></span>
+									</c:when>
+									<c:otherwise>
+										<span style="display: none;" class="input-group-addon openmbsheet" name="contractorMBDetails[${item.index }].msadd" id="contractorMBDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"><i  class="fa fa-plus-circle" aria-hidden="true"></i></span>
+									</c:otherwise>
+								</c:choose>
+							</div>
+						</td>
+						<td hidden="true">
+							<c:set var="net" value="0" />
+							<c:set var="total" value="0" />
+                            <input class="classmspresent" type="hidden" disabled="disabled" name="contractorMBDetails[${item.index }].mspresent" id="contractorMBDetails[${item.index }].mspresent" data-idx="0"/>
+                            <input class="classmsopen" type="hidden" disabled="disabled" name="contractorMBDetails[${item.index }].msopen" id="contractorMBDetails[${item.index }].msopen" data-idx="0"/>
+							<span  class="contractorMBDetails[${item.index }].mstd" id="contractorMBDetails[${item.index }].mstd" data-idx="0">
+								<%@ include file="contractormb-measurementsheet-edit.jsp"%>
+							</span>
 						</td>
 						<td align="right">
 							<form:input type="hidden" path="contractorMBDetails[${item.index }].amount" value="${details.amount }" id="hiddenAmount_${item.index }" class="form-control table-input text-right"/>

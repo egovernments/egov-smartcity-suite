@@ -42,6 +42,7 @@ package org.egov.works.contractorportal.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -49,6 +50,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -87,6 +90,10 @@ public class ContractorMBDetails extends AbstractAuditable {
     private double rate;
 
     private double amount;
+
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "contractorMBDetails", targetEntity = ContractorMBMeasurementSheet.class)
+    @OrderBy("id")
+    private List<ContractorMBMeasurementSheet> measurementSheets = new ArrayList<>();
 
     public List<ValidationError> validate() {
         final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
@@ -148,4 +155,13 @@ public class ContractorMBDetails extends AbstractAuditable {
     public void setAmount(final double amount) {
         this.amount = amount;
     }
+
+    public List<ContractorMBMeasurementSheet> getMeasurementSheets() {
+        return measurementSheets;
+    }
+
+    public void setMeasurementSheets(final List<ContractorMBMeasurementSheet> measurementSheets) {
+        this.measurementSheets = measurementSheets;
+    }
+
 }

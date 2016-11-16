@@ -80,3 +80,5 @@
 
 <script type="text/javascript"
 	src="<cdn:url value='/resources/js/contractorportal/contractormb.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/js/contractorportal/contractormbmsheet.js?rnd=${app_release_no}'/>"></script>

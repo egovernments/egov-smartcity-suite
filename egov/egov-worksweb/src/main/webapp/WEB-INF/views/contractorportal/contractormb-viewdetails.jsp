@@ -38,6 +38,11 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 <div class="panel panel-primary" data-collapsed="0">
+	<div align="right" class="openCloseAll">
+		<input type="button" value="Close All Measurements" class="btn btn-sm btn-secondary"
+			onclick="closeAllmsheet()" /> <input type="button" class="btn btn-sm btn-secondary"
+			value="Open All Measurements" onclick="openAllmsheet()" />
+	</div>
 	<div class="panel-body">
 		<table class="table table-bordered" style="overflow: auto;">
 			<thead>
@@ -95,6 +100,23 @@
 						</td>
 						<td align="right">
 							<span class="spansorslno">${details.quantity }</span>
+							<c:choose>
+								<c:when test="${!details.measurementSheets.isEmpty() }">
+									<button class="btn btn-default openmbsheet" name="contractorMBDetails[${item.index }].msadd" id="contractorMBDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+								</c:when>
+								<c:otherwise>
+									<button style="display: none;" class="btn btn-default openmbsheet" name="contractorMBDetails[${item.index }].msadd" id="contractorMBDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+								</c:otherwise>
+							</c:choose>
+						</td>
+						<td hidden="true">
+							<c:set var="net" value="0" />
+							<c:set var="total" value="0" />
+                            <input class="classmspresent" type="hidden" disabled="disabled" name="contractorMBDetails[${item.index }].mspresent" id="contractorMBDetails[${item.index }].mspresent" data-idx="0"/>
+                            <input class="classmsopen" type="hidden" disabled="disabled" name="contractorMBDetails[${item.index }].msopen" id="contractorMBDetails[${item.index }].msopen" data-idx="0"/>
+							<span  class="contractorMBDetails[${item.index }].mstd" id="contractorMBDetails[${item.index }].mstd" data-idx="0">
+								<%@ include file="contractormb-measurementsheet-view.jsp"%>
+							</span>
 						</td>
 						<td align="right">
 							<c:choose>

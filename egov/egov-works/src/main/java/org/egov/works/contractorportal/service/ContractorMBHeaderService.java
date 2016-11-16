@@ -58,6 +58,7 @@ import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.works.autonumber.ContractorMBNumberGenerator;
 import org.egov.works.contractorportal.entity.ContractorMBDetails;
 import org.egov.works.contractorportal.entity.ContractorMBHeader;
+import org.egov.works.contractorportal.entity.ContractorMBMeasurementSheet;
 import org.egov.works.contractorportal.repository.ContractorMBHeaderRepository;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
@@ -127,6 +128,8 @@ public class ContractorMBHeaderService {
             if (details.getAmount() > 0) {
                 details.setWorkOrderActivity(
                         workOrderActivityService.getWorkOrderActivityById(details.getWorkOrderActivity().getId()));
+                for (final ContractorMBMeasurementSheet cmbms : details.getMeasurementSheets())
+                    cmbms.setContractorMBDetails(details);
                 details.setContractorMBHeader(contractorMBHeader);
                 filteredDetails.add(details);
             }
