@@ -40,12 +40,16 @@
 
 package org.egov.stms.service.es;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.collection.entity.es.CollectionDocument;
@@ -62,6 +66,7 @@ import org.egov.stms.elasticSearch.entity.SewerageNoticeSearchRequest;
 import org.egov.stms.entity.es.SewerageIndex;
 import org.egov.stms.repository.es.SewerageIndexRepository;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -69,6 +74,7 @@ import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
@@ -87,6 +93,9 @@ public class SewerageIndexService {
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
+
+    @Autowired
+    private SewerageApplicationDetailsService sewerageApplicationDetailsService;
 
     public SewerageIndex createSewarageIndex(final SewerageApplicationDetails sewerageApplicationDetails,
             final AssessmentDetails assessmentDetails) {
@@ -336,10 +345,78 @@ public class SewerageIndexService {
     }
 
     public List<SewerageIndex> getNoticeSearchResultByBoolQuery(final BoolQueryBuilder boolQuery) {
-        List<SewerageIndex> resultList = new ArrayList<>();
+        List<SewerageIndex> resultList;
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
                 .withSort(new FieldSortBuilder("consumerName").order(SortOrder.DESC)).build();
         resultList = elasticsearchTemplate.queryForList(searchQuery, SewerageIndex.class);
         return resultList;
+    }
+
+    public Map<String, List<SewerageApplicationDetails>> wardWiseBoolQueryFilter(final String ulbName,
+            final List<String> wardList, final List<String> propertyTypeList) {
+        final Map<String, List<SewerageApplicationDetails>> dcbMap = new HashMap<>();
+
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("ulbName", ulbName));
+        boolQuery = boolQuery.filter(QueryBuilders.termsQuery("propertyType", propertyTypeList));
+        boolQuery = boolQuery.filter(QueryBuilders.termsQuery("ward", wardList));
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
+                .withPageable(new PageRequest(0, 250)).withSort(new FieldSortBuilder("applicationDate").order(SortOrder.DESC))
+                .build();
+
+        final Iterable<SewerageIndex> searchResultList = sewerageIndexRepository.search(searchQuery);
+
+        for (final SewerageIndex indexObj : searchResultList) {
+            List<SewerageApplicationDetails> appList;
+            final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
+                    .findByApplicationNumber(indexObj.getApplicationNumber());
+
+            if (sewerageApplicationDetails != null
+                    && !sewerageApplicationDetails.getApplicationType().getCode().equals(CLOSESEWERAGECONNECTION))
+                if (dcbMap.get(indexObj.getWard()) != null)
+                    dcbMap.get(indexObj.getWard()).add(sewerageApplicationDetails);
+                else {
+                    appList = new ArrayList<>();
+                    appList.add(sewerageApplicationDetails);
+                    dcbMap.put(indexObj.getWard(), appList);
+                }
+        }
+        return dcbMap;
+    }
+
+    public Map<String, List<SewerageApplicationDetails>> wardWiseConnectionQueryFilter(final List<String> propertyTypeList,
+            final String ward, final String ulbName) {
+        final Map<String, List<SewerageApplicationDetails>> resultMap = new HashMap<>();
+        final List<SewerageApplicationDetails> resultList = new ArrayList<>();
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("ulbName", ulbName));
+        boolQuery = boolQuery.filter(QueryBuilders.termsQuery("propertyType", propertyTypeList));
+        if (StringUtils.isNotBlank(ward))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ward", ward));
+
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
+                .withPageable(new PageRequest(0, 250)).withSort(new FieldSortBuilder("applicationDate").order(SortOrder.DESC))
+                .build();
+
+        final Iterable<SewerageIndex> indexList = sewerageIndexRepository.search(searchQuery);
+        for (final SewerageIndex index : indexList) {
+            final List<SewerageApplicationDetails> appList = new ArrayList<>();
+            final SewerageApplicationDetails applicationDetails = sewerageApplicationDetailsService
+                    .findByApplicationNumber(index.getApplicationNumber());
+
+            if (resultList.isEmpty())
+                resultList.add(applicationDetails);
+            if (applicationDetails != null) {
+                applicationDetails.setOwnerName(index.getConsumerName());
+
+                if (resultMap.isEmpty())
+                    resultMap.put(applicationDetails.getApplicationNumber(), resultList);
+                else if (resultMap.get(applicationDetails.getApplicationNumber()) != null)
+                    resultMap.get(applicationDetails.getApplicationNumber()).add(applicationDetails);
+                else {
+                    appList.add(applicationDetails);
+                    resultMap.put(applicationDetails.getApplicationNumber(), appList);
+                }
+            }
+        }
+        return resultMap;
     }
 }

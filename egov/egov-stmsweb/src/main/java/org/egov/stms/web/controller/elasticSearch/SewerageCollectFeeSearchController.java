@@ -147,7 +147,7 @@ public class SewerageCollectFeeSearchController {
         final List<String> roleList = new ArrayList<>();
         final Map<String, String> actionMap = new HashMap<>();
         SewerageApplicationDetails sewerageApplicationDetails = null;
-        SewerageSearchResult searchActions = null;
+        SewerageSearchResult searchActions;
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         if (cityWebsite != null)
             searchRequest.setUlbName(cityWebsite.getName());
@@ -173,13 +173,13 @@ public class SewerageCollectFeeSearchController {
             for (final Role role : sewerageTaxUtils.getLoginUserRoles())
                 roleList.add(role.getName());
             if (sewerageApplicationDetails != null
-                    && (sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_COLLECTINSPECTIONFEE) ||
-                            sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_ESTIMATENOTICEGEN))) {
+                    && (APPLICATION_STATUS_COLLECTINSPECTIONFEE.equals(sewerageApplicationDetails.getStatus().getCode()) ||
+                            APPLICATION_STATUS_ESTIMATENOTICEGEN.equals(sewerageApplicationDetails.getStatus().getCode()))) {
                 searchActions = SewerageActionDropDownUtil.getSearchResultWithActions(roleList,
                         sewerageIndex.getApplicationStatus(), sewerageApplicationDetails);
                 if (searchActions != null && searchActions.getActions() != null)
                     for (final Map.Entry<String, String> entry : searchActions.getActions().entrySet())
-                        if (entry.getValue() == COLLECTDONATIONCHARHGES)
+                        if (COLLECTDONATIONCHARHGES.equals(entry.getValue()))
                             actionMap.put(entry.getKey(), entry.getValue());
                 searchResult.setActions(actionMap);
             }

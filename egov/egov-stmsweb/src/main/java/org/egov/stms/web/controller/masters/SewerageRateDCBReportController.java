@@ -38,13 +38,36 @@
  */
 package org.egov.stms.web.controller.masters;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ALL;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.BOUNDARYTYPE_WARD;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.HIERARCHYTYPE_REVENUE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MIXED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NONRESIDENTIAL;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.RESIDENTIAL;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.pojo.DCBReportWardwiseResult;
+import org.egov.stms.service.es.SewerageIndexService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageDCBReporService;
@@ -57,15 +80,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/reports")
@@ -76,33 +94,37 @@ public class SewerageRateDCBReportController {
 
     @Autowired
     private SewerageDCBReporService sewerageDCBReporService;
-    
+
     @Autowired
     private BoundaryService boundaryService;
 
     @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
-    
+
     @PersistenceContext
     EntityManager entityManager;
-    
+
     @Autowired
     private CityService cityService;
-    
-    @Autowired 
+
+    @Autowired
     private ApplicationProperties applicationProperties;
 
-    @ModelAttribute 
-    public DCBReportWardwiseResult dCBReportWardWise(){
+    @Autowired
+    private SewerageIndexService sewerageIndexService;
+
+    @ModelAttribute
+    public DCBReportWardwiseResult dCBReportWardWise() {
         return new DCBReportWardwiseResult();
     }
-    
+
     @RequestMapping(value = "/sewerageRateReportView/{consumernumber}/{assessmentnumber}", method = RequestMethod.GET)
-    public ModelAndView getSewerageRateReport(@ModelAttribute SewerageApplicationDetails sewerageApplicationDetails,
-            @PathVariable final String consumernumber, @PathVariable final String assessmentnumber, final Model model,
+    public ModelAndView getSewerageRateReport(@PathVariable final String consumernumber,
+            @PathVariable final String assessmentnumber, final Model model,
             final ModelMap modelMap, final HttpServletRequest request) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        String currentDate = formatter.format(new Date());
+        SewerageApplicationDetails sewerageApplicationDetails = null;
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        final String currentDate = formatter.format(new Date());
         if (consumernumber != null) {
             sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(consumernumber);
             if (sewerageApplicationDetails != null) {
@@ -118,149 +140,111 @@ public class SewerageRateDCBReportController {
         }
         return new ModelAndView("report-sewerageRate-view", "sewerageApplicationDetails", sewerageApplicationDetails);
     }
-    
-    @RequestMapping(value="/dcb-report-wardwise", method=RequestMethod.GET)
-    public String WardwiseSearch(@ModelAttribute DCBReportWardwiseResult dcbReportWardwiseResult, final Model model ){
-       // List<Boundary> wardsList=boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", "REVENUE");
-        model.addAttribute("dcbReportWardwiseResult",dcbReportWardwiseResult);
-        List<String> propertytype= new ArrayList<String>();
-        for(PropertyType s : PropertyType.values()){
-        propertytype.add(s.toString());
-        }
-        List<String> boundaryList = new ArrayList<String>();
-        List<Boundary> bList = new ArrayList<Boundary>();
-        boundaryList.add("ALL");
+
+    @RequestMapping(value = "/dcb-report-wardwise", method = RequestMethod.GET)
+    public String wardWiseSearch(@ModelAttribute final DCBReportWardwiseResult dcbReportWardwiseResult, final Model model) {
+        model.addAttribute("dcbReportWardwiseResult", dcbReportWardwiseResult);
+        final List<String> propertytype = new ArrayList<>();
+        for (final PropertyType s : PropertyType.values())
+            propertytype.add(s.toString());
+        final List<String> boundaryList = new ArrayList<>();
+        List<Boundary> bList;
+        boundaryList.add(ALL);
         bList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", "REVENUE");
-        for(Boundary b : bList){
+        for (final Boundary b : bList)
             boundaryList.add(b.toString());
-        }
         model.addAttribute("propertyType", propertytype);
-        model.addAttribute("wards",boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", "REVENUE"));
+        model.addAttribute("wards", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", "REVENUE"));
         return "sewerage-dcbwardwise";
     }
-    
-    
-    /*@RequestMapping(value="/dcbReportWardwiseList", method = RequestMethod.GET)
+
+    @RequestMapping(value = "/dcbReportWardwiseList", method = RequestMethod.GET)
     public @ResponseBody void searchApplication(@ModelAttribute final DCBReportWardwiseResult searchRequest, final Model model,
             final HttpServletResponse response) throws IOException {
-        List<Boundary> wardList = new ArrayList<Boundary>();
-        List<Boundary> wards = new ArrayList<Boundary>();
-        String wardValue = null;
+        final List<Boundary> wardList = new ArrayList<>();
+        List<DCBReportWardwiseResult> wardwiseResultList;
+        final List<Boundary> wards = new ArrayList<>();
+        final List<String> propertyTypeList = new ArrayList<>();
         String[] wardIds;
-        Map<String, List<SewerageApplicationDetails>> dcbMap = new HashMap<String, List<SewerageApplicationDetails>>();
-        if(searchRequest.getMode()!=null){
+        final List<String> wardNames = new ArrayList<>();
+        Map<String, List<SewerageApplicationDetails>> dcbMap;
+        if (searchRequest.getMode() != null) {
             wardIds = searchRequest.getMode().split("~");
-            for(String idValue : wardIds){
-                Boundary ward = boundaryService.getBoundaryById(Long.parseLong(idValue));
-                if(ward!=null)
+            for (final String idValue : wardIds) {
+                final Boundary ward = boundaryService.getBoundaryById(Long.parseLong(idValue));
+                if (ward != null)
                     wardList.add(ward);
             }
         }
-        if(wardList!=null && !wardList.isEmpty()){
+        if (wardList != null && !wardList.isEmpty())
             searchRequest.setWards(wardList);
-        }
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         searchRequest.setUlbName(cityWebsite.getName());
-        final Sort sort = Sort.by().field("clauses.applicationdate", SortOrder.DESC);
-        if(null!=searchRequest.getWards() && !searchRequest.getWards().isEmpty() && searchRequest.getWards().get(0)!=null){
+        if (null != searchRequest.getWards() && !searchRequest.getWards().isEmpty() && searchRequest.getWards().get(0) != null)
             wards.addAll(searchRequest.getWards());
-        }
-        else{
-            wards.addAll(boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(BOUNDARYTYPE_WARD, HIERARCHYTYPE_REVENUE));
-        }
-        
-        for(Boundary boundary : wards){
-           if(boundary!=null){
-            searchRequest.setRevenueWard(boundary.getLocalName());
-            model.addAttribute("wardId", boundary.getId());
-           }
-        final SearchResult searchResult = searchService.search(asList(Index.SEWARAGE.toString()),
-                asList(IndexType.SEWARAGESEARCH.toString()), searchRequest.searchQuery(),
-                searchRequest.searchFilters(), sort, Page.NULL);
-        
-            for (Document document : searchResult.getDocuments()) {
-                Map<String, String> searchableObjects = (Map<String, String>) document.getResource().get("searchable");
-                Map<String, String> clausesObject = (Map<String, String>) document.getResource().get("clauses");
-                List<SewerageApplicationDetails> appList = null;
-                wardValue = clausesObject.get("revwardname");
-                SewerageApplicationDetails sewerageAppDtl = sewerageApplicationDetailsService
-                        .findByApplicationNumber(searchableObjects.get("consumernumber"));
-                // close connection application is not taken as it does not have the current demand. 
-                if (sewerageAppDtl != null && !sewerageAppDtl.getApplicationType().getCode().equals(CLOSESEWERAGECONNECTION)) {
-                    if (null != dcbMap.get(wardValue)) {
-                        dcbMap.get(wardValue).add(sewerageAppDtl);
-                    } else {
-                        appList = new ArrayList<SewerageApplicationDetails>();
-                        appList.add(sewerageAppDtl);
-                        dcbMap.put(wardValue, appList);
-                    }
+        else
+            wards.addAll(
+                    boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(BOUNDARYTYPE_WARD, HIERARCHYTYPE_REVENUE));
 
-                }
+        for (final Boundary boundary : wards)
+            if (boundary != null) {
+                searchRequest.setRevenueWard(boundary.getLocalName());
+                model.addAttribute("wardId", boundary.getId());
+                if (boundary.getLocalName() != null)
+                    wardNames.add(boundary.getLocalName());
             }
-        }
+
+        if (searchRequest.getPropertyType().equals(ALL)) {
+            propertyTypeList.add(RESIDENTIAL);
+            propertyTypeList.add(NONRESIDENTIAL);
+            propertyTypeList.add(MIXED);
+        } else
+            propertyTypeList.add(searchRequest.getPropertyType());
+
+        dcbMap = sewerageIndexService.wardWiseBoolQueryFilter(searchRequest.getUlbName(), wardNames, propertyTypeList);
+        wardwiseResultList = sewerageDCBReporService.getSewerageRateDCBWardwiseReport(dcbMap, searchRequest.getPropertyType());
 
         IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
-                .toJson(sewerageDCBReporService.getSewerageRateDCBWardwiseReport(dcbMap, searchRequest.getPropertyType()))
+                .toJson(wardwiseResultList)
                 + "}", response.getWriter());
+
     }
-    
-    @RequestMapping(value="/dcbViewWardConnections/{id}", method=RequestMethod.GET)
-    public String getConnectionDCBReport(@ModelAttribute final DCBReportWardwiseResult searchRequest, final Model model, @PathVariable final String id, final HttpServletRequest request){
+
+    @RequestMapping(value = "/dcbViewWardConnections/{id}", method = RequestMethod.GET)
+    public String getConnectionDCBReport(@ModelAttribute final DCBReportWardwiseResult searchRequest, final Model model,
+            @PathVariable final String id, final HttpServletRequest request) {
         String propType = null;
-        Long wardId = null;
+        String ulbName;
+        Long wardId;
         String revenueWard = null;
-        String[] wardDtl = id.split("~");
-        List<String> wardList = new ArrayList<String>();
-        List<SewerageApplicationDetails> applicationDetailList = new ArrayList<SewerageApplicationDetails>();
-        Map<String, List<SewerageApplicationDetails>> wardConnectionMap = new HashMap<String, List<SewerageApplicationDetails>>();
-        for(String value : wardDtl){
+        final List<String> propertyTypeList = new ArrayList<>();
+        final String[] wardDtl = id.split("~");
+        final List<String> wardList = new ArrayList<>();
+        Map<String, List<SewerageApplicationDetails>> wardConnectionMap;
+        for (final String value : wardDtl)
             wardList.add(value);
-        }
         wardId = Long.parseLong(wardList.get(0));
-        if(wardId!=null){
-        Boundary boundary = boundaryService.getBoundaryById(wardId);
-        revenueWard = boundary.getLocalName();
+        if (wardId != null) {
+            final Boundary boundary = boundaryService.getBoundaryById(wardId);
+            revenueWard = boundary.getLocalName();
         }
-        if(wardList.size()==2){
-            if(null!=wardList.get(1) || wardList.get(1)!=""){
+        if (wardList.size() == 2 && wardList.get(1) != null && wardList.get(1) != "")
             propType = wardList.get(1);
-            }
-        }
-        
+
+        if (propType != null && ALL.equals(propType)) {
+            propertyTypeList.add(NONRESIDENTIAL);
+            propertyTypeList.add(MIXED);
+            propertyTypeList.add(RESIDENTIAL);
+        } else
+            propertyTypeList.add(propType);
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        searchRequest.setUlbName(cityWebsite.getName());
-        final Sort sort = Sort.by().field("clauses.applicationdate", SortOrder.DESC);
-        searchRequest.setPropertyType(propType);
-        searchRequest.setRevenueWard(revenueWard);
-        final SearchResult searchResult = searchService.search(asList(Index.SEWARAGE.toString()),
-                asList(IndexType.SEWARAGESEARCH.toString()), searchRequest.searchQuery(),
-                searchRequest.searchFilters(), sort, Page.NULL);
-        
-        for(Document document : searchResult.getDocuments()){
-            Map<String, String> searchableObjects = (Map<String,String>)document.getResource().get("searchable");
-            List<SewerageApplicationDetails> appList = new ArrayList<SewerageApplicationDetails>();
-            SewerageApplicationDetails sewerageAppDtl=sewerageApplicationDetailsService.findByApplicationNumber(searchableObjects.get("consumernumber"));
-            if(sewerageAppDtl!=null)
-            sewerageAppDtl.setOwnerName(searchableObjects.get("consumername"));
-            if(applicationDetailList.isEmpty())
-              if(sewerageAppDtl!=null){
-                    applicationDetailList.add(sewerageAppDtl);
-              }
-            if(null!=sewerageAppDtl){
-                if(wardConnectionMap.isEmpty()){
-                    wardConnectionMap.put(sewerageAppDtl.getApplicationNumber(), applicationDetailList);
-                }
-                else if(wardConnectionMap.get(sewerageAppDtl.getApplicationNumber())!=null){
-                    wardConnectionMap.get(sewerageAppDtl.getApplicationNumber()).add(sewerageAppDtl);
-                }
-                else{
-                    appList.add(sewerageAppDtl);
-                    wardConnectionMap.put(sewerageAppDtl.getApplicationNumber(), appList);
-                }
-            }
-        }
+        ulbName = cityWebsite.getName();
+
+        wardConnectionMap = sewerageIndexService.wardWiseConnectionQueryFilter(propertyTypeList, revenueWard, ulbName);
+
         model.addAttribute("revenueWard", revenueWard);
-        model.addAttribute("dcbResultList",sewerageDCBReporService.getSewerageDCBWardConnections(wardConnectionMap, propType, request));
+        model.addAttribute("dcbResultList",
+                sewerageDCBReporService.getSewerageDCBWardConnections(wardConnectionMap, propType, request));
         return "sewerage-dcbWardConnections";
-    }*/
+    }
 }
