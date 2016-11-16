@@ -193,4 +193,9 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
             + " A.fromDate<=:givenDate and A.toDate>=:givenDate order by A.primary, A.toDate desc")
     public List<Assignment> findAllAssignmentsByHODDeptAndGivenDate(@Param("deptId") Long deptId,
             @Param("givenDate") Date givenDate);
+
+    @Query(" from Assignment A where  A.primary=true and A.fromDate<=:givenDate and A.toDate>=:givenDate "
+            + " and A.employee.name like '%'||:empName||'%' order by A.employee.name desc")
+    public List<Assignment> getAllAssignmentForEmployeeNameLike(@Param("givenDate") Date givenDate,
+            @Param("empName") String empName);
 }

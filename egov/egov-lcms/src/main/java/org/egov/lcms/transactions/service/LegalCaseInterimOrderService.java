@@ -46,12 +46,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.egov.commons.EgwStatus;
+import org.egov.eis.service.EmployeeService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.lcms.transactions.entity.LcInterimOrderDocuments;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseInterimOrder;
 import org.egov.lcms.transactions.repository.LegalCaseInterimOrderRepository;
-import org.egov.lcms.transactions.repository.LegalCaseRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +69,7 @@ public class LegalCaseInterimOrderService {
     private LegalCaseUtil legalCaseUtil;
 
     @Autowired
-    private LegalCaseRepository legalCaseRepository;
+    private EmployeeService employeeService;
 
     @Autowired
     public LegalCaseInterimOrderService(final LegalCaseInterimOrderRepository legalCaseInterimOrderRepository) {
@@ -85,7 +85,8 @@ public class LegalCaseInterimOrderService {
         final List<LcInterimOrderDocuments> interiomOrderDoc = legalCaseUtil
                 .getLcInterimOrderDocumentList(legalCaseInterimOrder);
         processAndStoreApplicationDocuments(legalCaseInterimOrder, interiomOrderDoc);
-        legalCaseRepository.save(legalCaseInterimOrder.getLegalCase());
+        legalCaseInterimOrder.setEmployee(employeeService.getEmployeeById(legalCaseInterimOrder.getEmployee().getId()));
+        /* legalCaseRepository.save(legalCaseInterimOrder.getLegalCase()); */
         return legalCaseInterimOrderRepository.save(legalCaseInterimOrder);
     }
 

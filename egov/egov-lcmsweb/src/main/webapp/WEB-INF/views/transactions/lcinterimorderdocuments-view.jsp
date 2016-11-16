@@ -46,7 +46,7 @@
 <table class="table table-bordered">
 <thead>
 		<tr>
-			<th>Uploaded Documents:</th>
+			<th><spring:message code="lbl.complianceorder" /></th>
 			
 		</tr>
 	</thead>
