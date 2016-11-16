@@ -260,8 +260,8 @@ public class ContractorBillRegisterService {
                 isEditable = true;
         }
 
-        if ((contractorBillRegister.getStatus().getCode()
-                .equals(ContractorBillRegister.BillStatus.REJECTED.toString())) || isEditable) {
+        if (contractorBillRegister.getStatus().getCode()
+                .equals(ContractorBillRegister.BillStatus.REJECTED.toString()) || isEditable) {
 
             if (workFlowAction.equalsIgnoreCase(WorksConstants.FORWARD_ACTION.toString()))
                 populateAndSaveMBHeader(contractorBillRegister);

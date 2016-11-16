@@ -190,9 +190,9 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         }
 
         try {
-            if ((contractorBillRegister.getStatus().getCode()
+            if (contractorBillRegister.getStatus().getCode()
                     .equals(ContractorBillRegister.BillStatus.REJECTED.toString())
-                    && workFlowAction.equals(WorksConstants.FORWARD_ACTION)) || isEditable)
+                    && workFlowAction.equals(WorksConstants.FORWARD_ACTION) || isEditable)
                 contractorBillRegisterService.checkBudgetAndGenerateBANumber(contractorBillRegister);
         } catch (final ValidationException e) {
             // TODO: Used ApplicationRuntimeException for time being since there
@@ -207,8 +207,8 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
              */
         }
 
-        if ((contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.REJECTED.toString())
-                && workFlowAction.equals(WorksConstants.FORWARD_ACTION) && mode.equals("edit")) || isEditable) {
+        if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.REJECTED.toString())
+                && WorksConstants.FORWARD_ACTION.equals(workFlowAction) && WorksConstants.EDIT.equals(mode) || isEditable) {
 
             validateInput(contractorBillRegister, contractorBillRegister.getWorkOrderEstimate(), errors, request);
             contractorBillRegister.getEgBilldetailes().clear();
@@ -391,8 +391,8 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
         workflowContainer.setAmountRule(contractorBillRegister.getBillamount());
         prepareWorkflow(model, contractorBillRegister, workflowContainer);
-        if ((contractorBillRegister.getState() != null
-                && contractorBillRegister.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED)) || isEditable)
+        if (contractorBillRegister.getState() != null
+                && contractorBillRegister.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED) || isEditable)
             model.addAttribute("mode", "edit");
         else
             model.addAttribute("mode", "view");

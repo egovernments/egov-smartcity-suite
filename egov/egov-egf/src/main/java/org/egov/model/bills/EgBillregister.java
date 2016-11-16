@@ -81,8 +81,8 @@ import org.hibernate.validator.constraints.Length;
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(name = EgBillregister.SEQ_EG_BILLREGISTER, sequenceName = EgBillregister.SEQ_EG_BILLREGISTER, allocationSize = 1)
 @AuditOverrides({
-    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
-    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate")
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate")
 })
 @Audited
 public class EgBillregister extends StateAware implements java.io.Serializable {
@@ -94,18 +94,18 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     private static final long serialVersionUID = -4312140421386028968L;
 
     public static final String SEQ_EG_BILLREGISTER = "SEQ_EG_BILLREGISTER";
-    
+
     @Id
     @GeneratedValue(generator = SEQ_EG_BILLREGISTER, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @NotNull
     @Length(min = 1)
     private String billnumber;
-    
+
     @NotNull
     private Date billdate;
-    
+
     @NotNull
     private BigDecimal billamount;
 
@@ -123,7 +123,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
 
     @NotAudited
     private String billtype;
-    
+
     @NotNull
     @NotAudited
     private String expendituretype;
@@ -156,17 +156,17 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     @JoinColumn(name = "statusid", nullable = true)
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private EgwStatus status;
-    
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "egBillregister", targetEntity = EgBillregistermis.class)
     @NotAudited
     private EgBillregistermis egBillregistermis;
 
     @NotAudited
     private String worksdetailId;
-    
+
     @Transient
     private User approver;
-    
+
     @Transient
     private Date approvedOn;
 
