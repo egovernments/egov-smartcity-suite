@@ -267,10 +267,10 @@ public class SewerageIndexService {
     public List<DailySTCollectionReportSearch> getDCRSewerageReportResult(final DailySTCollectionReportSearch searchRequest,
             final BoolQueryBuilder boolQuery,
             final FieldSortBuilder fieldSortBuilder) throws ParseException {
-        List<CollectionDocument> collectionResultList = new ArrayList<>();
+        List<CollectionDocument> collectionResultList;
         final List<DailySTCollectionReportSearch> dcrCollectionList = new ArrayList<>();
         final List<DailySTCollectionReportSearch> resultList = new ArrayList<>();
-        List<SewerageIndex> sewerageResultList = new ArrayList<>();
+        List<SewerageIndex> sewerageResultList;
         DailySTCollectionReportSearch dcrReportObject;
         final SearchQuery receiptSearchQuery = new NativeSearchQueryBuilder().withIndices("receipts")
                 .withQuery(boolQuery).withSort(new FieldSortBuilder("receiptDate").order(SortOrder.DESC)).build();

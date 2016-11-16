@@ -58,6 +58,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -228,10 +229,10 @@ public class SewerageRateDCBReportController {
             final Boundary boundary = boundaryService.getBoundaryById(wardId);
             revenueWard = boundary.getLocalName();
         }
-        if (wardList.size() == 2 && wardList.get(1) != null && wardList.get(1) != "")
+        if (wardList.size() == 2 && StringUtils.isNotBlank(wardList.get(1)))
             propType = wardList.get(1);
 
-        if (propType != null && ALL.equals(propType)) {
+        if (ALL.equals(propType)) {
             propertyTypeList.add(NONRESIDENTIAL);
             propertyTypeList.add(MIXED);
             propertyTypeList.add(RESIDENTIAL);
