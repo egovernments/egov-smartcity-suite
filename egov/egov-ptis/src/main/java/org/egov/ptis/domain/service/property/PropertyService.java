@@ -2000,8 +2000,8 @@ public class PropertyService {
                         .withApplicantAddress(property.getBasicProperty().getAddress().toString()).withOwnername(user.getUsername() + "::" + user.getName())
                         .withChannel(source).withMobileNumber(owner.getMobileNumber())
                         .withAadharNumber(owner.getAadhaarNumber()).withConsumerCode(property.getBasicProperty().getUpicNo())
-                        .withClosed(property.getState().getValue().equals(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO)
-                        .withApproved(property.getState().getValue().equals(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().equals(WF_STATE_REJECTED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
+                        .withClosed(property.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO)
+                        .withApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().contains(WF_STATE_REJECTED)||property.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
                         .build();
 
                 applicationIndexService.createApplicationIndex(applicationIndex);
@@ -2015,6 +2015,8 @@ public class PropertyService {
                     applicationIndex.setOwnerName(user.getUsername()+"::"+user.getName());
                     applicationIndex.setMobileNumber(owner.getMobileNumber());
                     applicationIndex.setAadharNumber(owner.getAadhaarNumber());
+                    applicationIndex.setClosed(property.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO);
+                    applicationIndex.setApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().contains(WF_STATE_REJECTED)||property.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS);
                 }
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
@@ -2033,13 +2035,15 @@ public class PropertyService {
                         .withApplicantAddress(property.getBasicProperty().getAddress().toString()).withOwnername(user.getUsername() + "::" + user.getName())
                         .withChannel(source).withMobileNumber(owner.getMobileNumber())
                         .withAadharNumber(owner.getAadhaarNumber()).withConsumerCode(property.getBasicProperty().getUpicNo())
-                        .withClosed(property.getState().getValue().equals(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO)
-                        .withApproved(property.getState().getValue().equals(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().equals(WF_STATE_REJECTED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
+                        .withClosed(property.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO)
+                        .withApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().contains(WF_STATE_REJECTED)||property.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
                         .build();
                 applicationIndexService.createApplicationIndex(applicationIndex);
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
                 applicationIndex.setOwnerName(user.getUsername()+"::"+user.getName());
+                applicationIndex.setClosed(property.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO);
+                applicationIndex.setApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().contains(WF_STATE_REJECTED)||property.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS);
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
@@ -2057,8 +2061,8 @@ public class PropertyService {
                         .withApplicantAddress(property.getBasicProperty().getAddress().toString()).withOwnername(user.getUsername() + "::" + user.getName())
                         .withChannel(source).withMobileNumber(owner.getMobileNumber())
                         .withAadharNumber(owner.getAadhaarNumber()).withConsumerCode(property.getBasicProperty().getUpicNo())
-                        .withClosed(property.getState().getValue().equals(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO)
-                        .withApproved(property.getState().getValue().equals(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().equals(WF_STATE_REJECTED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
+                        .withClosed(property.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO)
+                        .withApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().contains(WF_STATE_REJECTED)||property.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
                         .build();
                 applicationIndexService.createApplicationIndex(applicationIndex);
             } else {
@@ -2067,6 +2071,8 @@ public class PropertyService {
                 applicationIndex.setOwnerName(user.getUsername()+"::"+user.getName());
                 applicationIndex.setMobileNumber(owner.getMobileNumber());
                 applicationIndex.setAadharNumber(owner.getAadhaarNumber());
+                applicationIndex.setClosed(property.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO);
+                applicationIndex.setApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().contains(WF_STATE_REJECTED)||property.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS);
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
