@@ -61,20 +61,20 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.works.abstractestimate.entity.EstimatePhotographs;
 import org.egov.works.abstractestimate.entity.ProjectCode;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGW_LINEESTIMATE_DETAILS")
-@Unique(id = "id", tableName = "EGW_LINEESTIMATE_DETAILS", columnName = {"estimatenumber"}, fields = {
-        "estimateNumber"}, enableDfltMsg = true)
+@Unique(id = "id", tableName = "EGW_LINEESTIMATE_DETAILS", columnName = { "estimatenumber" }, fields = {
+        "estimateNumber" }, enableDfltMsg = true)
 @SequenceGenerator(name = LineEstimateDetails.SEQ_EGW_LINEESTIMATE_DETAILS, sequenceName = LineEstimateDetails.SEQ_EGW_LINEESTIMATE_DETAILS, allocationSize = 1)
 public class LineEstimateDetails extends AbstractAuditable {
 
+    private static final long serialVersionUID = -7610751834625536363L;
+
     public static final String SEQ_EGW_LINEESTIMATE_DETAILS = "SEQ_EGW_LINEESTIMATE_DETAILS";
 
-    @DocumentId
     @Id
     @GeneratedValue(generator = SEQ_EGW_LINEESTIMATE_DETAILS, strategy = GenerationType.SEQUENCE)
     private Long id;
