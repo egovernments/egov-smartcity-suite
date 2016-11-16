@@ -62,8 +62,10 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -178,6 +180,9 @@ public class LineEstimateService {
 
     @Autowired
     private LineEstimateAppropriationService lineEstimateAppropriationService;
+
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -1196,6 +1201,25 @@ public class LineEstimateService {
                             "error.governmentApprovalDate.lessthan.budgetappropriation");
             }
         }
+    }
+
+    public void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {
+        Integer index = 0;
+        BigDecimal estimateAmount = BigDecimal.ZERO;
+        for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
+            if (led.getQuantity() <= 0)
+                errors.rejectValue("lineEstimateDetails[" + index + "].quantity", "error.quantity.required");
+            estimateAmount = estimateAmount.add(led.getEstimateAmount());
+            index++;
+        }
+        final List<AppConfigValues> nominationValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_NOMINATION_AMOUNT);
+        final AppConfigValues value = nominationValue.get(0);
+        if (value.getValue() != null && !value.getValue().isEmpty()
+                && Double.parseDouble(estimateAmount.toString()) > Double.parseDouble(value.getValue()))
+            errors.reject("error.lineestimate.modeofentrustment",
+                    new String[] { estimateAmount.toString() },
+                    "error.lineestimate.modeofentrustment");
     }
 
 }

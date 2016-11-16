@@ -106,47 +106,6 @@ function renderPdf() {
 	window.open("/egworks/lineestimate/lineEstimatePDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
-$('.btn-primary').click(function(){
-	var button = $(this).attr('id');
-	if (button != null && button == 'Approve') {
-		$('#approvalComent').removeAttr('required');
-		var budgetAppropriationDate = $('#budgetAppropriationDate').data('datepicker').date;
-		var standingCommitteeApprovalDate = $("standingCommitteeApprovalDate").val();
-		if(standingCommitteeApprovalDate != undefined && standingCommitteeApprovalDate != "") {
-			 var standingCommitteDate = $('#standingCommitteeApprovalDate').data('datepicker').date;
-			 if(standingCommitteDate < budgetAppropriationDate) {
-				 bootbox.alert($("#errorstandingcommitteapprovaldate").val());
-				 return false;
-			 } 
-		}
-		var councilResolutionDate = $("#councilResolutionDate").val();
-		 if(councilResolutionDate != undefined && councilResolutionDate != "") {
-			 var resolutionDate = $('#councilResolutionDate').data('datepicker').date;
-			 if(resolutionDate < budgetAppropriationDate) {
-				 bootbox.alert($("#errorcouncilresolutiondate").val());
-				 return false;
-			 } 
-		 }
-		/* var contractCommitteeApprovalDate = $("#contractCommitteeApprovalDate").val();
-		 if(contractCommitteeApprovalDate != undefined && contractCommitteeApprovalDate != "") {
-			 var contractCommitteDate = $('#contractCommitteeApprovalDate').data('datepicker').date;
-			 if(contractCommitteDate < budgetAppropriationDate) {
-				 bootbox.alert($("#errorcontractcommiteeapprovaldate").val());
-				 return false;
-			 }
-		 }*/
-		 var governmentApprovalDate = $("#governmentApprovalDate").val();
-		 if(governmentApprovalDate != undefined && governmentApprovalDate != "") {
-			 var govtApprovalDate = $("governmentApprovalDate").val();
-			 if(govtApprovalDate < budgetAppropriationDate) {
-				 bootbox.alert($("#errorgovernmentapprovaldate").val());
-				 return false;
-			 } 
-		 }
-	} else {
-		return validateWorkFlowApprover(button);
-	}
-});
 function getSchemsByFundId(fundId) {
 	if ($('#fund').val() === '') {
 		   $('#scheme').empty();
@@ -638,7 +597,53 @@ function validateWorkFlowApprover(name) {
 		$('#approvalPosition').attr('required', 'required');
 		$('#approvalComent').removeAttr('required');
 		
+		var modeOfEntrustment = $('#modeOfAllotment').val();
+		var estimateTotal = $('#estimateTotal').html();
+		var nominationValue = $('#nominationValue').val();
+		var message = "Nomination mode of entrustment can be awarded for the estimates with value less than Rs." + nominationValue + "/- .Please enter proper value";
+		if(modeOfEntrustment == 'Nomination' && parseFloat(estimateTotal) > parseFloat(nominationValue) ){
+			bootbox.alert(message);
+			return false;
+		}
+
 	}
+	
+	if (button != null && button == 'Approve') {
+		$('#approvalComent').removeAttr('required');
+		var budgetAppropriationDate = $('#budgetAppropriationDate').data('datepicker').date;
+		var standingCommitteeApprovalDate = $("standingCommitteeApprovalDate").val();
+		if(standingCommitteeApprovalDate != undefined && standingCommitteeApprovalDate != "") {
+			 var standingCommitteDate = $('#standingCommitteeApprovalDate').data('datepicker').date;
+			 if(standingCommitteDate < budgetAppropriationDate) {
+				 bootbox.alert($("#errorstandingcommitteapprovaldate").val());
+				 return false;
+			 } 
+		}
+		var councilResolutionDate = $("#councilResolutionDate").val();
+		 if(councilResolutionDate != undefined && councilResolutionDate != "") {
+			 var resolutionDate = $('#councilResolutionDate').data('datepicker').date;
+			 if(resolutionDate < budgetAppropriationDate) {
+				 bootbox.alert($("#errorcouncilresolutiondate").val());
+				 return false;
+			 } 
+		 }
+		/* var contractCommitteeApprovalDate = $("#contractCommitteeApprovalDate").val();
+		 if(contractCommitteeApprovalDate != undefined && contractCommitteeApprovalDate != "") {
+			 var contractCommitteDate = $('#contractCommitteeApprovalDate').data('datepicker').date;
+			 if(contractCommitteDate < budgetAppropriationDate) {
+				 bootbox.alert($("#errorcontractcommiteeapprovaldate").val());
+				 return false;
+			 }
+		 }*/
+		 var governmentApprovalDate = $("#governmentApprovalDate").val();
+		 if(governmentApprovalDate != undefined && governmentApprovalDate != "") {
+			 var govtApprovalDate = $("governmentApprovalDate").val();
+			 if(govtApprovalDate < budgetAppropriationDate) {
+				 bootbox.alert($("#errorgovernmentapprovaldate").val());
+				 return false;
+			 } 
+		 }
+	} 
 
 	document.forms[0].submit;
 	return true;

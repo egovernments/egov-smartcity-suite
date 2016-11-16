@@ -97,7 +97,11 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right"><spring:message code="lbl.status" /></label>
 								<div class="col-sm-3 control-label text-left">
-									<input class="form-control" value='L1 Tender finalised' disabled="disabled"/>
+									<form:select path="egwStatus" data-first-option="false" id="egwStatus" class="form-control">
+										<form:option value=""> <spring:message code="lbl.select" /> </form:option>
+										<form:options items="${egwStatus}" itemValue="code" itemLabel="description"/>
+									</form:select>
+									<form:errors path="egwStatus" cssClass="add-margin error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.workidentificationnumber" /></label>
 								<div class="col-sm-3 add-margin">
@@ -110,6 +114,12 @@
 								<div class="col-sm-3 add-margin">
 								<form:checkbox path="spillOverFlag" id="spillOverFlag" />
 								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-7 add-margin">
+								</div>
+									<div class="col-sm-5 add-margin error-msg text-right"><spring:message code="msg.footnote.modeofentrustment" /></div>
+								
 							</div>
 						</div>
 					</div>

@@ -173,6 +173,14 @@ $('#Save').click(function(){
 		}
 		return true;
 	}
+	var modeOfEntrustment = $('#modeOfAllotment').val();
+	var estimateTotal = $('#estimateTotal').html();
+	var nominationValue = $('#nominationValue').val();
+	var message = "Nomination mode of entrustment can be awarded for the estimates with value less than Rs." + nominationValue + "/- .Please enter proper value";
+	if(modeOfEntrustment == 'Nomination' && parseFloat(estimateTotal) > parseFloat(nominationValue) ){
+		bootbox.alert(message);
+		return false;
+	}
 	if (button != null && button == 'Save' && !status) {
 		var flag = true;
 				

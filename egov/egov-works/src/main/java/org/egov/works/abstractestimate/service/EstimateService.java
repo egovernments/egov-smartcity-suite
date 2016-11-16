@@ -890,9 +890,6 @@ public class EstimateService {
         queryStr.append(
                 " and exists (select act.abstractEstimate from Activity as act where estimate.id = act.abstractEstimate.id )");
 
-        queryStr.append(
-                " and exists (select off.id from OfflineStatus as off where off.objectId = estimate.id and off.objectType = :objectType and upper(off.egwStatus.code) = upper(:offStatus) )");
-
         if (abstractEstimateForLoaSearchRequest != null) {
             if (abstractEstimateForLoaSearchRequest.getAdminSanctionNumber() != null)
                 queryStr.append(
@@ -910,14 +907,29 @@ public class EstimateService {
                         " and estimate.createdBy.id = :createdById");
             if (abstractEstimateForLoaSearchRequest.getWorkIdentificationNumber() != null)
                 queryStr.append(" and upper(estimate.projectCode.code) = upper(:projectCode)");
+
         }
+
+        if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null && abstractEstimateForLoaSearchRequest.getEgwStatus()
+                .equalsIgnoreCase(OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString()))
+            queryStr.append(
+                    " and exists (select off.id from OfflineStatus as off where off.objectId = estimate.id and off.objectType = :objectType and upper(off.egwStatus.code) = upper(:offStatus) )");
+        else if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null && abstractEstimateForLoaSearchRequest.getEgwStatus()
+                .equalsIgnoreCase(WorksConstants.APPROVED))
+            queryStr.append(
+                    " and estimate.lineEstimateDetails.lineEstimate.modeOfAllotment = :modeOfAllotment");
+        else
+            queryStr.append(
+                    " and (exists (select off.id from OfflineStatus as off where off.objectId = estimate.id and off.objectType = :objectType and upper(off.egwStatus.code) = upper(:offStatus) ) or estimate.lineEstimateDetails.lineEstimate.modeOfAllotment = :modeOfAllotment)");
+
         queryStr.append(" and estimate.lineEstimateDetails.lineEstimate.spillOverFlag = :spillOverFlag");
-        final Query query = setQueryParametersForModifyLOA(abstractEstimateForLoaSearchRequest, queryStr);
+
+        final Query query = setQueryParametersForCreateLOA(abstractEstimateForLoaSearchRequest, queryStr);
         abstractEstimates = query.getResultList();
         return abstractEstimates;
     }
 
-    private Query setQueryParametersForModifyLOA(final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest,
+    private Query setQueryParametersForCreateLOA(final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest,
             final StringBuilder queryStr) {
         final Query qry = entityManager.createQuery(queryStr.toString());
         if (abstractEstimateForLoaSearchRequest != null) {
@@ -938,8 +950,19 @@ public class EstimateService {
             qry.setParameter("spillOverFlag", abstractEstimateForLoaSearchRequest.isSpillOverFlag());
             qry.setParameter("woStatus", WorksConstants.CANCELLED_STATUS);
             qry.setParameter("aeStatus", AbstractEstimate.EstimateStatus.APPROVED.toString());
+        }
+        if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null && abstractEstimateForLoaSearchRequest.getEgwStatus()
+                .equalsIgnoreCase(OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString())) {
             qry.setParameter("objectType", WorksConstants.ABSTRACTESTIMATE);
             qry.setParameter("offStatus", AbstractEstimate.OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
+        } else if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null
+                && abstractEstimateForLoaSearchRequest.getEgwStatus()
+                        .equalsIgnoreCase(WorksConstants.APPROVED))
+            qry.setParameter("modeOfAllotment", WorksConstants.NOMINATION);
+        else {
+            qry.setParameter("objectType", WorksConstants.ABSTRACTESTIMATE);
+            qry.setParameter("offStatus", AbstractEstimate.OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
+            qry.setParameter("modeOfAllotment", WorksConstants.NOMINATION);
         }
         return qry;
     }
@@ -1182,7 +1205,8 @@ public class EstimateService {
         List<AbstractEstimate> abstractEstimateList = new ArrayList<AbstractEstimate>();
         final StringBuilder queryStr = new StringBuilder(500);
         queryStr.append(
-                "select distinct(ae) from AbstractEstimate ae where ae.parent is null and ae.egwStatus.code =:abstractEstimateStatus and not exists (select distinct(woe.estimate) from WorkOrderEstimate as woe where woe.estimate.id = ae.id and woe.workOrder.egwStatus.code != :workOrderStatus )");
+                "select distinct(ae) from AbstractEstimate ae where ae.parent is null and ae.egwStatus.code =:abstractEstimateStatus and ae.lineEstimateDetails.lineEstimate.modeOfAllotment != :modeOfAllotment and not exists (select distinct(woe.estimate) from WorkOrderEstimate as woe where woe.estimate.id = ae.id and woe.workOrder.egwStatus.code != :workOrderStatus )");
+
         if (abstractEstimateForLoaSearchRequest != null) {
             if (abstractEstimateForLoaSearchRequest.getAbstractEstimateNumber() != null)
                 queryStr.append(" and upper(ae.estimateNumber) =:abstractEstimateNumber");
@@ -1230,6 +1254,7 @@ public class EstimateService {
             }
             qry.setParameter("abstractEstimateStatus", WorksConstants.APPROVED);
             qry.setParameter("workOrderStatus", WorksConstants.CANCELLED_STATUS);
+            qry.setParameter("modeOfAllotment", WorksConstants.NOMINATION);
 
         }
         return qry;
@@ -1238,7 +1263,7 @@ public class EstimateService {
     public List<String> getAbstractEstimateNumbersToSetOfflineStatus(final String code) {
         final List<String> estimateNumbers = abstractEstimateRepository
                 .findAbstractEstimateNumbersToSetOfflineStatus("%" + code + "%",
-                        WorksConstants.APPROVED, WorksConstants.CANCELLED_STATUS);
+                        WorksConstants.APPROVED, WorksConstants.CANCELLED_STATUS, WorksConstants.NOMINATION);
         return estimateNumbers;
     }
 

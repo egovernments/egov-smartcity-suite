@@ -181,6 +181,15 @@ public class SearchAbstractEstimateController {
         model.addAttribute("abstractEstimateForLoaSearchRequest", abstractEstimateForLoaSearchRequest);
         model.addAttribute("abstractEstimateCreatedByUsers", abstractEstimateCreatedByUsers);
         model.addAttribute("departments", departments);
+
+        final List<EgwStatus> egwStatuses = egwStatusHibernateDAO.getStatusByModule(WorksConstants.ABSTRACTESTIMATE);
+        final List<EgwStatus> newEgwStatuses = new ArrayList<EgwStatus>();
+        for (final EgwStatus egwStatus : egwStatuses)
+            if (egwStatus.getCode().equalsIgnoreCase(WorksConstants.APPROVED)
+                    || egwStatus.getCode().equalsIgnoreCase(OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString()))
+                newEgwStatuses.add(egwStatus);
+        model.addAttribute("egwStatus", newEgwStatuses);
+
         return "searchAbstractEstimateForLoa-search";
     }
 

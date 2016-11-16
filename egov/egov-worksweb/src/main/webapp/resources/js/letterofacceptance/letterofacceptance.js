@@ -82,8 +82,6 @@ $(document).ready(function(){
 			
 		});
 		
-		if($('#tenderFinalizedPercentage').val() == 0) 
-			$('#tenderFinalizedPercentage').val('');
 		if($('#tenderFinalizedPercentage').val() < 0) {
 			$('#tenderFinalizedPercentage').val(Math.abs($('#tenderFinalizedPercentage').val()));
 			$('.number-sign button').html('<span class="sign-text">-</span> &nbsp;<span class="caret"></span>');
@@ -264,8 +262,6 @@ function validateWorkFlowApprover(name) {
 }
 
 function loadDefaultsOnSubmit()	{
-	if($('#tenderFinalizedPercentage').val() == '' || $('#tenderFinalizedPercentage').val() < 0) 
-		$('#tenderFinalizedPercentage').val(0);
 	if($('#workOrderAmount').val() == '' || $('#workOrderAmount').val() < 0) 
 		$('#workOrderAmount').val(0);
 	if($('#securityDeposit').val() == '' || $('#securityDeposit').val() < 0) 

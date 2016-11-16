@@ -60,6 +60,8 @@ import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
@@ -150,6 +152,9 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private LineEstimateAppropriationService lineEstimateAppropriationService;
+    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     @ModelAttribute
     public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
@@ -234,6 +239,8 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                     .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
                 validateBudgetAmount(lineEstimate, errors);
+        if(workFlowAction.equals(WorksConstants.FORWARD_ACTION))
+            lineEstimateService.validateLineEstimateDetails(lineEstimate, errors);
         if (errors.hasErrors()) {
             setDropDownValues(model);
             return loadViewData(model, request, lineEstimate);
@@ -411,6 +418,13 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                             lineEstimate.getLineEstimateDetails().get(0).getEstimateNumber());
             model.addAttribute("budgetAppropriationDate", lineEstimateAppropriation.getBudgetUsage().getUpdatedTime());
         }
+        
+        final List<AppConfigValues> nominationValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_NOMINATION_AMOUNT);
+        final AppConfigValues value = nominationValue.get(0);
+        if (!value.getValue().isEmpty())
+            model.addAttribute("nominationValue", value.getValue());
+        
         return "newLineEstimate-edit";
     }
 

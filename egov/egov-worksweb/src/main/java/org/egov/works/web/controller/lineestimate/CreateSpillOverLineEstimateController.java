@@ -205,6 +205,7 @@ public class CreateSpillOverLineEstimateController {
 
     private void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {
         Integer index = 0;
+        BigDecimal estimateAmount = BigDecimal.ZERO;
         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
 
             final LineEstimateDetails estimateNumber = lineEstimateDetailService
@@ -224,6 +225,7 @@ public class CreateSpillOverLineEstimateController {
                 errors.rejectValue("lineEstimateDetails[" + index + "].projectCode.code", "error.win.unique");
             if (led.getQuantity() <= 0)
                 errors.rejectValue("lineEstimateDetails[" + index + "].quantity", "error.quantity.required");
+            estimateAmount = estimateAmount.add(led.getEstimateAmount());
             index++;
         }
         final SimpleDateFormat dateformatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -237,6 +239,14 @@ public class CreateSpillOverLineEstimateController {
                     "error.spilloverle.cutoffdate");
         if (lineEstimate.getLineEstimateDate().after(currFinYearStartDate) && lineEstimate.isBillsCreated())
             errors.reject("error.spilloverle.bills.checked", "error.spilloverle.bills.checked");
+
+        final List<AppConfigValues> nominationValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_NOMINATION_AMOUNT);
+        final AppConfigValues value = nominationValue.get(0);
+        if (Double.parseDouble(estimateAmount.toString()) > Double.parseDouble(value.getValue()))
+            errors.reject("error.lineestimate.modeofentrustment",
+                    new String[] { estimateAmount.toString() },
+                    "error.lineestimate.modeofentrustment");
 
     }
 
@@ -281,6 +291,12 @@ public class CreateSpillOverLineEstimateController {
 
         model.addAttribute("cuttOffDate", worksUtils.getCutOffDate());
         model.addAttribute("currFinDate", worksUtils.getFinancialYearByDate(new Date()).getStartingDate());
+
+        final List<AppConfigValues> nominationValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_NOMINATION_AMOUNT);
+        final AppConfigValues value = nominationValue.get(0);
+        if (!value.getValue().isEmpty())
+            model.addAttribute("nominationValue", value.getValue());
     }
 
     @RequestMapping(value = "/spillover-lineestimate-success", method = RequestMethod.GET)

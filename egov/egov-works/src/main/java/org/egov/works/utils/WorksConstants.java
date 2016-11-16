@@ -383,5 +383,9 @@ public class WorksConstants {
     public static final String REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION = "Pending Technical Sanction";
 
     public static final String CONTRACTOR_MEASUREMENTS = "ContractorMeasurements";
+    
+    public static final String APPCONFIG_NOMINATION_AMOUNT = "NOMINATION_AMOUNT_LIMIT";
+    
+    public static final String NOMINATION = "Nomination";
 
 }

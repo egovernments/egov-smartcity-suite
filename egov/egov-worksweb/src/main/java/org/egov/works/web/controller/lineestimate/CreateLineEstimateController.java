@@ -58,7 +58,9 @@ import org.egov.egf.budget.model.BudgetControlType;
 import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -146,6 +148,9 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
 
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
+
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
             final Model model) throws ApplicationException {
@@ -175,7 +180,8 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             throws ApplicationException, IOException {
         setDropDownValues(model);
         validateBudgetHead(lineEstimate, errors);
-        validateLineEstimateDetails(lineEstimate, errors);
+        lineEstimateService.validateLineEstimateDetails(lineEstimate, errors);
+
         if (errors.hasErrors()) {
             model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
 
@@ -238,6 +244,12 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         model.addAttribute("locations", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 WorksConstants.LOCATION_BOUNDARYTYPE, WorksConstants.LOCATION_HIERARCHYTYPE));
+
+        final List<AppConfigValues> nominationValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_NOMINATION_AMOUNT);
+        final AppConfigValues value = nominationValue.get(0);
+        if (!value.getValue().isEmpty())
+            model.addAttribute("nominationValue", value.getValue());
     }
 
     @RequestMapping(value = "/downloadLineEstimateDoc", method = RequestMethod.GET)
@@ -385,12 +397,4 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         return message;
     }
 
-    private void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {
-        Integer index = 0;
-        for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-            if (led.getQuantity() <= 0)
-                errors.rejectValue("lineEstimateDetails[" + index + "].quantity", "error.quantity.required");
-            index++;
-        }
-    }
 }
