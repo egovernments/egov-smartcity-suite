@@ -159,8 +159,8 @@ public class ViewPropertyAction extends BaseFormAction {
             }
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("viewForm : BasicProperty : " + basicProperty);
-
-            property = (PropertyImpl) getBasicProperty().getProperty();
+            if (property == null)
+                property = (PropertyImpl) getBasicProperty().getProperty();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("viewForm : Property : " + property);
             Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
@@ -183,7 +183,8 @@ public class ViewPropertyAction extends BaseFormAction {
                     }
                 }
                 viewMap.put("ownerAddress", ownerAddress == null ? NOT_AVAILABLE : ownerAddress);
-                viewMap.put("ownershipType", basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster()
+                viewMap.put("ownershipType", basicProperty.getProperty() != null ? basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType()
+                        : property.getPropertyDetail().getPropertyTypeMaster()
                         .getType());
             }
             if (!property.getIsExemptedFromTax()) {
@@ -304,7 +305,7 @@ public class ViewPropertyAction extends BaseFormAction {
             if (appType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
                     || appType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT)
                     || appType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)) {
-                final Property property = propertyImplService.find("from PropertyImpl where applicationNo=?", appNo);
+                property = (PropertyImpl) propertyImplService.find("from PropertyImpl where applicationNo=?", appNo);
                 setBasicProperty(property.getBasicProperty());
             } else if (appType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)) {
                 final RevisionPetition rp = revisionPetitionPersistenceService.find(

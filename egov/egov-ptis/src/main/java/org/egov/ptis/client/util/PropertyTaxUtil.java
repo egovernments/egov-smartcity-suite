@@ -1576,28 +1576,30 @@ public class PropertyTaxUtil {
                 + "where bp.active = true " + "and (p.status = 'A' or p.status = 'I' or p.status = 'W') "
                 + "and p = :property " + "and ptd.egInstallmentMaster = :installment";
 
-        final Ptdemand ptDemand = (Ptdemand) entityManager.unwrap(Session.class).createQuery(query)
-                .setEntity("property", property).setEntity("installment", currentInstallment).list().get(0);
+        List<Ptdemand> ptDemandList = entityManager.unwrap(Session.class).createQuery(query)
+                .setEntity("property", property).setEntity("installment", currentInstallment).list();
+        if (!ptDemandList.isEmpty()) {
+            final Ptdemand ptDemand = ptDemandList.get(0);
+            for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {
 
-        for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {
+                demandReason = dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode();
 
-            demandReason = dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode();
-
-            if (!demandReasonExcludeList.contains(demandReason)) {
-                installment = dmdDet.getEgDemandReason().getEgInstallmentMaster();
-                if (installment.equals(currYearInstMap.get(CURRENTYEAR_FIRST_HALF))) {
-                    totalCurrentDemand = totalCurrentDemand.add(dmdDet.getAmount());
-                    totalCurrentCollection = totalCurrentCollection.add(dmdDet.getAmtCollected());
-                    firstHalfReasonDemandDetails.put(dmdDet.getEgDemandReason().getEgDemandReasonMaster()
-                            .getReasonMaster(), dmdDet.getAmount());
-                } else if (installment.equals(currYearInstMap.get(CURRENTYEAR_SECOND_HALF))) {
-                    totalNextInstDemand = totalNextInstDemand.add(dmdDet.getAmount());
-                    totalNextInstCollection = totalNextInstCollection.add(dmdDet.getAmtCollected());
-                    secondHalfReasonDemandDetails.put(dmdDet.getEgDemandReason().getEgDemandReasonMaster()
-                            .getReasonMaster(), dmdDet.getAmount());
-                } else {
-                    totalArrearDemand = totalArrearDemand.add(dmdDet.getAmount());
-                    totalArrearCollection = totalArrearCollection.add(dmdDet.getAmtCollected());
+                if (!demandReasonExcludeList.contains(demandReason)) {
+                    installment = dmdDet.getEgDemandReason().getEgInstallmentMaster();
+                    if (installment.equals(currYearInstMap.get(CURRENTYEAR_FIRST_HALF))) {
+                        totalCurrentDemand = totalCurrentDemand.add(dmdDet.getAmount());
+                        totalCurrentCollection = totalCurrentCollection.add(dmdDet.getAmtCollected());
+                        firstHalfReasonDemandDetails.put(dmdDet.getEgDemandReason().getEgDemandReasonMaster()
+                                .getReasonMaster(), dmdDet.getAmount());
+                    } else if (installment.equals(currYearInstMap.get(CURRENTYEAR_SECOND_HALF))) {
+                        totalNextInstDemand = totalNextInstDemand.add(dmdDet.getAmount());
+                        totalNextInstCollection = totalNextInstCollection.add(dmdDet.getAmtCollected());
+                        secondHalfReasonDemandDetails.put(dmdDet.getEgDemandReason().getEgDemandReasonMaster()
+                                .getReasonMaster(), dmdDet.getAmount());
+                    } else {
+                        totalArrearDemand = totalArrearDemand.add(dmdDet.getAmount());
+                        totalArrearCollection = totalArrearCollection.add(dmdDet.getAmtCollected());
+                    }
                 }
             }
         }
