@@ -154,7 +154,7 @@ public class ApplicationSearchController {
     private BoolQueryBuilder getFilterQuery(final ApplicationSearchRequest searchRequest) {
         final City cityWebsite = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("cityName", cityWebsite.getName()));
+        boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("cityName", cityWebsite.getName()));
         if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("applicantName", searchRequest.getApplicantName()));
         if (StringUtils.isNotBlank(searchRequest.getConsumerCode()))
