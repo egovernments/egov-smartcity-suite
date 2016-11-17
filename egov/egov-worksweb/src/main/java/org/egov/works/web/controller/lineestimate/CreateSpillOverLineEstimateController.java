@@ -153,6 +153,7 @@ public class CreateSpillOverLineEstimateController {
         model.addAttribute("documentDetails", lineEstimate.getDocumentDetails());
 
         model.addAttribute("mode", null);
+        lineEstimateService.loadModelValues(lineEstimate, model);
 
         return "spillOverLineEstimate-form";
     }
@@ -240,9 +241,9 @@ public class CreateSpillOverLineEstimateController {
         if (lineEstimate.getLineEstimateDate().after(currFinYearStartDate) && lineEstimate.isBillsCreated())
             errors.reject("error.spilloverle.bills.checked", "error.spilloverle.bills.checked");
 
-        final List<AppConfigValues> nominationValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final List<AppConfigValues> nominationLimit = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_NOMINATION_AMOUNT);
-        final AppConfigValues value = nominationValue.get(0);
+        final AppConfigValues value = nominationLimit.get(0);
         if (Double.parseDouble(estimateAmount.toString()) > Double.parseDouble(value.getValue()))
             errors.reject("error.lineestimate.modeofentrustment",
                     new String[] { estimateAmount.toString() },
@@ -292,11 +293,6 @@ public class CreateSpillOverLineEstimateController {
         model.addAttribute("cuttOffDate", worksUtils.getCutOffDate());
         model.addAttribute("currFinDate", worksUtils.getFinancialYearByDate(new Date()).getStartingDate());
 
-        final List<AppConfigValues> nominationValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_NOMINATION_AMOUNT);
-        final AppConfigValues value = nominationValue.get(0);
-        if (!value.getValue().isEmpty())
-            model.addAttribute("nominationValue", value.getValue());
     }
 
     @RequestMapping(value = "/spillover-lineestimate-success", method = RequestMethod.GET)

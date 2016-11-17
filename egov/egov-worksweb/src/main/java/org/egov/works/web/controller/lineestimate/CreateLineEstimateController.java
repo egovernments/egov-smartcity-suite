@@ -58,9 +58,7 @@ import org.egov.egf.budget.model.BudgetControlType;
 import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -148,9 +146,6 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
 
-    @Autowired
-    private AppConfigValueService appConfigValuesService;
-
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
             final Model model) throws ApplicationException {
@@ -168,6 +163,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         prepareWorkflow(model, lineEstimate, new WorkflowContainer());
 
         model.addAttribute("mode", null);
+        lineEstimateService.loadModelValues(lineEstimate, model);
 
         return "newLineEstimate-form";
     }
@@ -245,11 +241,6 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("locations", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 WorksConstants.LOCATION_BOUNDARYTYPE, WorksConstants.LOCATION_HIERARCHYTYPE));
 
-        final List<AppConfigValues> nominationValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_NOMINATION_AMOUNT);
-        final AppConfigValues value = nominationValue.get(0);
-        if (!value.getValue().isEmpty())
-            model.addAttribute("nominationValue", value.getValue());
     }
 
     @RequestMapping(value = "/downloadLineEstimateDoc", method = RequestMethod.GET)

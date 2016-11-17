@@ -386,8 +386,6 @@ public class WorksConstants {
     
     public static final String APPCONFIG_NOMINATION_AMOUNT = "NOMINATION_AMOUNT_LIMIT";
     
-    public static final String NOMINATION = "Nomination";
-    
     public final static String SECTOR_COLUMN_HEADER_NAME = "SECTOR";
 
     public final static String DISTRICT_COLUMN_HEADER_NAME = "District Name";
@@ -395,6 +393,8 @@ public class WorksConstants {
     public final static String ULB_COLUMN_HEADER_NAME = "ULB Name";
 
     public final static String WORKSMILESTONE_TYPEOFWORKNAME_COLUMN_NAME = "lineestimatetypeofworkname";
+
+    public static final String NOMINATION_NAME = "NOMINATION_NAME";
 
     public final static String WORKSMILESTONE_DISTNAME_COLUMN_NAME = "distname";
 

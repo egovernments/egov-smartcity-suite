@@ -932,6 +932,8 @@ public class EstimateService {
     private Query setQueryParametersForCreateLOA(final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest,
             final StringBuilder queryStr) {
         final Query qry = entityManager.createQuery(queryStr.toString());
+        final List<AppConfigValues> nominationName = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.NOMINATION_NAME);
         if (abstractEstimateForLoaSearchRequest != null) {
             if (abstractEstimateForLoaSearchRequest.getAdminSanctionNumber() != null)
                 qry.setParameter("adminSanctionNumber", "%" + abstractEstimateForLoaSearchRequest.getAdminSanctionNumber() + "%");
@@ -958,11 +960,11 @@ public class EstimateService {
         } else if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null
                 && abstractEstimateForLoaSearchRequest.getEgwStatus()
                         .equalsIgnoreCase(WorksConstants.APPROVED))
-            qry.setParameter("modeOfAllotment", WorksConstants.NOMINATION);
+            qry.setParameter("modeOfAllotment", !nominationName.isEmpty() ? nominationName.get(0).getValue() : "");
         else {
             qry.setParameter("objectType", WorksConstants.ABSTRACTESTIMATE);
             qry.setParameter("offStatus", AbstractEstimate.OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
-            qry.setParameter("modeOfAllotment", WorksConstants.NOMINATION);
+            qry.setParameter("modeOfAllotment", !nominationName.isEmpty() ? nominationName.get(0).getValue() : "");
         }
         return qry;
     }
@@ -1235,6 +1237,9 @@ public class EstimateService {
             final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest,
             final StringBuilder queryStr) {
         final Query qry = entityManager.createQuery(queryStr.toString());
+        final List<AppConfigValues> nominationName = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.NOMINATION_NAME);
+
         if (abstractEstimateForLoaSearchRequest != null) {
             if (abstractEstimateForLoaSearchRequest.getAbstractEstimateNumber() != null)
                 qry.setParameter("abstractEstimateNumber",
@@ -1254,16 +1259,20 @@ public class EstimateService {
             }
             qry.setParameter("abstractEstimateStatus", WorksConstants.APPROVED);
             qry.setParameter("workOrderStatus", WorksConstants.CANCELLED_STATUS);
-            qry.setParameter("modeOfAllotment", WorksConstants.NOMINATION);
+            qry.setParameter("modeOfAllotment", !nominationName.isEmpty() ? nominationName.get(0).getValue() : "");
 
         }
         return qry;
     }
 
     public List<String> getAbstractEstimateNumbersToSetOfflineStatus(final String code) {
+        final List<AppConfigValues> nominationName = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.NOMINATION_NAME);
+
         final List<String> estimateNumbers = abstractEstimateRepository
                 .findAbstractEstimateNumbersToSetOfflineStatus("%" + code + "%",
-                        WorksConstants.APPROVED, WorksConstants.CANCELLED_STATUS, WorksConstants.NOMINATION);
+                        WorksConstants.APPROVED, WorksConstants.CANCELLED_STATUS,
+                        !nominationName.isEmpty() ? nominationName.get(0).getValue() : "");
         return estimateNumbers;
     }
 

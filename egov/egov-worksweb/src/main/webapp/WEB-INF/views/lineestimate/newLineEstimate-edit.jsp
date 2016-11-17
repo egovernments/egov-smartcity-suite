@@ -56,7 +56,7 @@
 			<input type="hidden" id="errorcontractcommiteeapprovaldate" value="<spring:message code='error.contractCommitteeApprovalDate.lessthan.budgetappropriation' />" />
 			<input type="hidden" id="errorstandingcommitteapprovaldate" value="<spring:message code='error.standingCommitteeApprovalDate.lessthan.budgetappropriation' />" />
 			<input type="hidden" id="errorgovernmentapprovaldate" value="<spring:message code='error.governmentApprovalDate.lessthan.budgetappropriation' />" />
-			<input type="hidden" id="nominationValue" value="${nominationValue}">
+			<input type="hidden" id="nominationLimit" value="${nominationLimit}">
 			<div class="row">
 				<div class="col-md-12">
 					<c:if test="${mode != 'view' && mode != 'readOnly' }">

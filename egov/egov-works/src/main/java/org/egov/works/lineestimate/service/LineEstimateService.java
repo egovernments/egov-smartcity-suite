@@ -111,6 +111,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -1212,14 +1213,23 @@ public class LineEstimateService {
             estimateAmount = estimateAmount.add(led.getEstimateAmount());
             index++;
         }
-        final List<AppConfigValues> nominationValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final List<AppConfigValues> nominationLimit = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_NOMINATION_AMOUNT);
-        final AppConfigValues value = nominationValue.get(0);
+        final AppConfigValues value = nominationLimit.get(0);
         if (value.getValue() != null && !value.getValue().isEmpty()
                 && Double.parseDouble(estimateAmount.toString()) > Double.parseDouble(value.getValue()))
             errors.reject("error.lineestimate.modeofentrustment",
                     new String[] { estimateAmount.toString() },
                     "error.lineestimate.modeofentrustment");
+    }
+
+    public void loadModelValues(final LineEstimate lineEstimate, final Model model) {
+        final List<AppConfigValues> nominationLimit = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_NOMINATION_AMOUNT);
+        final AppConfigValues value = nominationLimit.get(0);
+        if (!value.getValue().isEmpty())
+            model.addAttribute("nominationLimit", value.getValue());
+
     }
 
 }
