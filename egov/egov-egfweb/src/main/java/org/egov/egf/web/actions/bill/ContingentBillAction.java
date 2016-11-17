@@ -838,7 +838,7 @@ public class ContingentBillAction extends BaseBillAction {
         commonBean.setBillDate(cbill.getBilldate());
         commonBean.setBillNumber(cbill.getBillnumber());
         if (null != cbill.getEgBillregistermis().getEgBillSubType())
-            commonBean.setBillSubType(cbill.getEgBillregistermis().getEgBillSubType().getId());
+            commonBean.setBillSubType(cbill.getEgBillregistermis().getEgBillSubType().getId().intValue());
         commonBean.setInwardSerialNumber(cbill.getEgBillregistermis().getInwardSerialNumber());
         commonBean.setPartyBillNumber(cbill.getEgBillregistermis().getPartyBillNumber());
         commonBean.setPartyBillDate(cbill.getEgBillregistermis().getPartyBillDate());

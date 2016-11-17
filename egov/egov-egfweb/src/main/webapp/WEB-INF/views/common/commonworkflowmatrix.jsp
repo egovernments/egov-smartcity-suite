@@ -87,6 +87,7 @@
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.approverdesignation"/><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
+						<input type="hidden" id="approvalDesignationValue" value="${approvalDesignation }" />
 							<form:select path="" data-first-option="false" name="approvalDesignation"
 								id="approvalDesignation" cssClass="form-control" onfocus="callAlertForDepartment();"
 								cssErrorClass="form-control error" required="required">  
@@ -100,6 +101,7 @@
 					<div class="show-row form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.approver"/><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
+						<input type="hidden" id="approvalPositionValue" value="${approvalPosition }" />
 						<form:select path="" data-first-option="false" 
 							id="approvalPosition" name="approvalPosition" cssClass="form-control" onfocus="callAlertForDesignation();" 
 							cssErrorClass="form-control error" required="required">  

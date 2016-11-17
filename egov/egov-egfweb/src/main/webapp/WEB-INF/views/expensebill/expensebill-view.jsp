@@ -48,15 +48,15 @@
         position:fixed;z-index:9999;top:85px;right:20px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
       }
    .position_alert1{
-        position:fixed;z-index:9999;top:85px;right:440px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
+        position:fixed;z-index:9999;top:85px;right:520px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
       }
    .position_alert2{
-     position:fixed;z-index:9999;top:85px;right:200px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
+     position:fixed;z-index:9999;top:85px;right:270px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
    }
 </style>
 <form:form name="expenseBillForm" role="form" action="" modelAttribute="egBillregister" id="egBillregister" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
  	<div class="position_alert">
-		<spring:message	code="lbl.expense.bill.amount" /> : &#8377 <span id="expenseBillAmount"><c:out value="${expenseBillAmount}" default="0.0"></c:out></span>
+		<spring:message	code="lbl.netpayable.amount" /> : &#8377 <span id="expenseNetPayableAmount"><c:out value="${expenseNetPayableAmount}" default="0.0"></c:out></span>
 	</div>
 	<div class="position_alert1">
 		<spring:message code="lbl.total.debit.amount" />  : &#8377 <span id="expenseBillTotalDebitAmount"> <c:out value="${expenseBillTotalDebitAmount}" default="0.0"></c:out></span>
@@ -75,6 +75,7 @@
    <input type="hidden" id="id" value="${egBillregister.id }" /> 
    <input type="hidden" name="mode" id="mode" value="${mode }" />
    <form:hidden path="billamount" id="billamount" class ="billamount" value="${egBillregister.billamount }"/>
+   <form:hidden path="" name="netPayableAmount" id="netPayableAmount" value="${netPayableAmount}"/>
 	<div class="panel-title text-center" style="color: green;">
 		<c:out value="${message}" /><br />
 	</div>

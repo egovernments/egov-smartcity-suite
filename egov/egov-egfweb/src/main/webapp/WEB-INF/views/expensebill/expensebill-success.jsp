@@ -57,6 +57,7 @@
 				</div>
 			</div>
 		</div>
-	</div>					
+	</div>			
+	<div class="text-center"><input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();" /></div>		
 </div>					
 </div>

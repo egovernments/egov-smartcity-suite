@@ -84,7 +84,7 @@
 		<form:hidden path="" name="fundSourceId" id="fundSourceId" value="${egBillregister.egBillregistermis.fundsource.id }"/>
 			<c:choose>
 				<c:when test="${mandatoryFields.contains('fundsource')}">
-					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.sourcefund" />
+					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.sourcefund" />${fundsources}
 						<span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">

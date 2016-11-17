@@ -181,8 +181,7 @@ public class AjaxCommonController {
                 coa.setIsSubLedger(false);
             else
                 coa.setIsSubLedger(true);
-        final String jsonResponse = toJSON(chartOfAccounts, CChartOfAccounts.class, ChartOfAccountsAdaptor.class);
-        return jsonResponse;
+        return toJSON(chartOfAccounts, CChartOfAccounts.class, ChartOfAccountsAdaptor.class);
     }
 
     @RequestMapping(value = "/getnetpayablecodesbyaccountdetailtype", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -195,19 +194,18 @@ public class AjaxCommonController {
                 coa.setIsSubLedger(false);
             else
                 coa.setIsSubLedger(true);
-        final String jsonResponse = toJSON(chartOfAccounts, CChartOfAccounts.class, ChartOfAccountsAdaptor.class);
-        return jsonResponse;
+        return toJSON(chartOfAccounts, CChartOfAccounts.class, ChartOfAccountsAdaptor.class);
     }
 
     @RequestMapping(value = "/getchecklistbybillsubtype", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<AppConfigValues> getCheckListByBillSubType(
             @RequestParam("billSubType") final String billSubType) {
-        final EgBillSubType egBillSubType = egBillSubTypeService.getById(Integer.parseInt(billSubType));
+        final EgBillSubType egBillSubType = egBillSubTypeService.getById(Long.parseLong(billSubType));
 
-        List<AppConfigValues> checkList = new ArrayList<AppConfigValues>();
+        List<AppConfigValues> checkList;
         checkList = appConfigValueService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
                 egBillSubType.getName());
-        if (checkList.size() == 0)
+        if (checkList == null || checkList.isEmpty())
             checkList = appConfigValueService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
                     FinancialConstants.CBILL_DEFAULTCHECKLISTNAME);
 

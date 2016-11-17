@@ -40,26 +40,22 @@
 package org.egov.egf.web.controller.expensebill;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.commons.service.CheckListService;
 import org.egov.egf.expensebill.service.ExpenseBillService;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.utils.DateUtils;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.EgChecklists;
+import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +74,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/expensebill")
 public class UpdateExpenseBillController extends BaseBillController {
 
+    private static final String NET_PAYABLE_AMOUNT = "netPayableAmount";
+
     private static final String APPROVAL_DESIGNATION = "approvalDesignation";
 
     private static final String EG_BILLREGISTER = "egBillregister";
@@ -85,6 +83,8 @@ public class UpdateExpenseBillController extends BaseBillController {
     private static final String APPROVAL_POSITION = "approvalPosition";
 
     private static final String EXPENSEBILL_VIEW = "expensebill-view";
+
+    private static final String NET_PAYABLE_ID = "netPayableId";
 
     @Autowired
     private ExpenseBillService expenseBillService;
@@ -118,14 +118,22 @@ public class UpdateExpenseBillController extends BaseBillController {
             model.addAttribute("currentState", egBillregister.getState().getValue());
         model.addAttribute("workflowHistory",
                 expenseBillService.getHistory(egBillregister.getState(), egBillregister.getStateHistory()));
+
         prepareWorkflow(model, egBillregister, new WorkflowContainer());
         egBillregister.getBillDetails().addAll(egBillregister.getEgBilldetailes());
         prepareBillDetailsForView(egBillregister);
+        final List<CChartOfAccounts> expensePayableAccountList = chartOfAccountsService
+                .getNetPayableCodesByAccountDetailType(0);
+        for (final EgBilldetails details : egBillregister.getBillDetails())
+            if (expensePayableAccountList != null && !expensePayableAccountList.isEmpty()
+                    && expensePayableAccountList.contains(details.getChartOfAccounts())) {
+                model.addAttribute(NET_PAYABLE_ID, details.getChartOfAccounts().getId());
+                model.addAttribute(NET_PAYABLE_AMOUNT, details.getCreditamount());
+            }
         prepareCheckListForEdit(egBillregister, model);
         model.addAttribute(EG_BILLREGISTER, egBillregister);
         if (egBillregister.getState() != null
                 && FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())) {
-            prepareValidActionListByCutOffDate(model);
             model.addAttribute("mode", "edit");
             return "expensebill-update";
         } else {
@@ -169,11 +177,11 @@ public class UpdateExpenseBillController extends BaseBillController {
         if (resultBinder.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("stateType", egBillregister.getClass().getSimpleName());
-            model.addAttribute(APPROVAL_DESIGNATION, request.getParameter(APPROVAL_DESIGNATION));
-            model.addAttribute(APPROVAL_POSITION, request.getParameter(APPROVAL_POSITION));
             prepareWorkflow(model, egBillregister, new WorkflowContainer());
             model.addAttribute(APPROVAL_DESIGNATION, request.getParameter(APPROVAL_DESIGNATION));
             model.addAttribute(APPROVAL_POSITION, request.getParameter(APPROVAL_POSITION));
+            model.addAttribute(NET_PAYABLE_ID, request.getParameter(NET_PAYABLE_ID));
+            model.addAttribute(NET_PAYABLE_AMOUNT, request.getParameter(NET_PAYABLE_AMOUNT));
             model.addAttribute("designation", request.getParameter("designation"));
             if (egBillregister.getState() != null
                     && FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())) {
@@ -185,9 +193,30 @@ public class UpdateExpenseBillController extends BaseBillController {
                 return EXPENSEBILL_VIEW;
             }
         } else {
-            if (null != workFlowAction)
-                updatedEgBillregister = expenseBillService.update(egBillregister, approvalPosition, approvalComment, null,
-                        workFlowAction);
+            try {
+                if (null != workFlowAction)
+                    updatedEgBillregister = expenseBillService.update(egBillregister, approvalPosition, approvalComment, null,
+                            workFlowAction);
+            } catch (final ValidationException e) {
+                setDropDownValues(model);
+                model.addAttribute("stateType", egBillregister.getClass().getSimpleName());
+                prepareWorkflow(model, egBillregister, new WorkflowContainer());
+                model.addAttribute(APPROVAL_DESIGNATION, request.getParameter(APPROVAL_DESIGNATION));
+                model.addAttribute(APPROVAL_POSITION, request.getParameter(APPROVAL_POSITION));
+                model.addAttribute(NET_PAYABLE_ID, request.getParameter(NET_PAYABLE_ID));
+                model.addAttribute(NET_PAYABLE_AMOUNT, request.getParameter(NET_PAYABLE_AMOUNT));
+                model.addAttribute("designation", request.getParameter("designation"));
+                if (egBillregister.getState() != null
+                        && FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())) {
+                    prepareValidActionListByCutOffDate(model);
+                    model.addAttribute("mode", "edit");
+                    return "expensebill-update";
+                } else {
+                    model.addAttribute("mode", "view");
+                    return EXPENSEBILL_VIEW;
+                }
+            }
+
             redirectAttributes.addFlashAttribute(EG_BILLREGISTER, updatedEgBillregister);
 
             // For Get Configured ApprovalPosition from workflow history
@@ -212,6 +241,12 @@ public class UpdateExpenseBillController extends BaseBillController {
         model.addAttribute("mode", "readOnly");
         prepareBillDetailsForView(egBillregister);
         prepareCheckList(egBillregister);
+        final List<CChartOfAccounts> expensePayableAccountList = chartOfAccountsService
+                .getNetPayableCodesByAccountDetailType(0);
+        for (final EgBilldetails details : egBillregister.getBillDetails())
+            if (expensePayableAccountList != null && !expensePayableAccountList.isEmpty()
+                    && expensePayableAccountList.contains(details.getChartOfAccounts()))
+                model.addAttribute(NET_PAYABLE_AMOUNT, details.getCreditamount());
         model.addAttribute(EG_BILLREGISTER, egBillregister);
         return EXPENSEBILL_VIEW;
     }

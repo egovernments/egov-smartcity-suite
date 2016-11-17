@@ -1,14 +1,11 @@
 $schemeId = 0;
 $subSchemeId = 0;
-$fundSourceId = 0;
 
 $(document).ready(function(){
 	$schemeId = $('#schemeId').val();
 	$subSchemeId = $('#subSchemeId').val();
-	$fundSourceId = $('#fundSourceId').val();
 	loadScheme($('#fund').val());
 	loadSubScheme($schemeId);
-	loadFundSource($subSchemeId);
 	var functionName = new Bloodhound({
 		datumTokenizer : function(datum) {
 			return Bloodhound.tokenizers.whitespace(datum.value);
@@ -57,8 +54,6 @@ function loadScheme(fundId){
 		$('#scheme').append($('<option>').text('Select from below').attr('value', ''));
 		$('#subScheme').empty();
 		$('#subScheme').append($('<option>').text('Select from below').attr('value', ''));
-		$('#fundSource').empty();
-		$('#fundSource').append($('<option>').text('Select from below').attr('value', ''));
 		return;
 	} else {
 		
@@ -125,53 +120,13 @@ function loadSubScheme(schemeId){
 	}
 }
 
-function loadFundSource(subSchemeId){
-	if (!subSchemeId) {
-		$('#fundSource').empty();
-		$('#fundSource').append($('<option>').text('Select from below').attr('value', ''));
-		return;
-	} else {
-		
-		$.ajax({
-			method : "GET",
-			url : "/EGF/common/getfundsourcesbysubschemeid",
-			data : {
-				subSchemeId : subSchemeId
-			},
-			async : true
-		}).done(
-				function(response) {
-					$('#fundSource').empty();
-					$('#fundSource').append($("<option value=''>Select from below</option>"));
-					var output = '<option value="">Select from below</option>';
-					$.each(response, function(index, value) {
-						var selected="";
-						if($fundSourceId)
-						{
-							if($fundSourceId==value.id)
-							{
-								selected="selected";
-							}
-						}
-						$('#fundSource').append($('<option '+ selected +'>').text(value.name).attr('value', value.id));
-					});
-				});
-		
-	}
-}
-
 $('#fund').change(function () {
 	$schemeId = "";
 	$subSchemeId = "";
-	$fundSourceId = "";
 	loadScheme($('#fund').val());
 });
 
 
 $('#scheme').change(function () {
 	loadSubScheme($('#scheme').val());
-});
-
-$('#subScheme').change(function () {
-	loadFundSource($('#subScheme').val());
 });

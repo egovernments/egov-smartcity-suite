@@ -45,10 +45,12 @@ import java.math.BigDecimal;
 import org.egov.works.elasticsearch.model.WorksMilestoneIndexResponse;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.JsonObject;
 
 @Service
+@Transactional(readOnly = true)
 public class WorksReportJsonAdaptorHelper {
     private static final String JAN_01_TO_15_TARGET = "Jan 01 to 15 target";
     private static final String JAN_01_TO_15_ACTUAL = "Jan 01 to 15 actual";

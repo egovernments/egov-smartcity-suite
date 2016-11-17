@@ -82,14 +82,30 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
 
     public List<CChartOfAccounts> getSubledgerAccountCodesForAccountDetailTypeAndNonSubledgers(
             final Integer accountDetailTypeId, final String glcode) {
-        if (accountDetailTypeId == 0 || accountDetailTypeId == -1)
-            return findAllBy(
-                    "from CChartOfAccounts a where a.isActiveForPosting=true and a.classification=4 and size(a.chartOfAccountDetails) = 0 and glcode like ? order by a.id",
-                    glcode + "%");
-        else
-            return findAllBy(
-                    "from CChartOfAccounts  a LEFT OUTER JOIN  fetch a.chartOfAccountDetails  b where (size(a.chartOfAccountDetails) = 0 or b.detailTypeId.id=?)and a.isActiveForPosting=true and a.classification=4 and a.glcode like ? order by a.id",
-                    accountDetailTypeId, glcode + "%");
+        final List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey(
+                "EGF", "contingencyBillPurposeIds");
+        final List<Long> contingencyBillPurposeIds = new ArrayList<>();
+        for (final AppConfigValues av : configValuesByModuleAndKey)
+            contingencyBillPurposeIds.add(Long.valueOf(av.getValue()));
+
+        if (accountDetailTypeId == 0 || accountDetailTypeId == -1) {
+            final Query entitysQuery = getSession()
+                    .createQuery(
+                            " from CChartOfAccounts a where a.isActiveForPosting=true and a.classification=4 and size(a.chartOfAccountDetails) = 0 and (glcode like :glcode or lower(name) like :name) and (purposeId is null or purposeId not in (:ids)) order by a.id");
+            entitysQuery.setString("glcode", glcode + "%");
+            entitysQuery.setString("name", glcode.toLowerCase() + "%");
+            entitysQuery.setParameterList("ids", contingencyBillPurposeIds);
+            return entitysQuery.list();
+        } else {
+            final Query entitysQuery = getSession()
+                    .createQuery(
+                            " from CChartOfAccounts  a LEFT OUTER JOIN  fetch a.chartOfAccountDetails  b where (size(a.chartOfAccountDetails) = 0 or b.detailTypeId.id=:accountDetailTypeId)and a.isActiveForPosting=true and a.classification=4 and (a.glcode like :glcode or lower(a.name) like :name) and (purposeId is null or purposeId not in (:ids)) order by a.id");
+            entitysQuery.setInteger("accountDetailTypeId", accountDetailTypeId);
+            entitysQuery.setString("glcode", glcode + "%");
+            entitysQuery.setString("name", glcode.toLowerCase() + "%");
+            entitysQuery.setParameterList("ids", contingencyBillPurposeIds);
+            return entitysQuery.list();
+        }
     }
 
     public List<CChartOfAccounts> getAccountCodeByPurpose(final Integer purposeId) {
