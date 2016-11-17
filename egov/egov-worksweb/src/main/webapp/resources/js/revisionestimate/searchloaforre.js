@@ -194,6 +194,7 @@ $('#btncreatere').click(function(e) {
 				$('#errorMessage').html('');
 				$.each(json, function(key, value){
 					$('#errorMessage').append(value + '</br>');
+					window.scrollTo(0, 0);
 				});
 				$('#errorMessage').show();
 			}
