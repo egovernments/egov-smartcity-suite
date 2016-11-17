@@ -90,7 +90,6 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
@@ -2211,7 +2210,6 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     @Transactional
     public BudgetDetail transitionWorkFlow(final BudgetDetail budgetDetail, final WorkflowBean workflowBean) {
-        final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
         final Assignment userAssignment = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date()).get(0);
         Position pos = null;
@@ -2222,24 +2220,22 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             if (wfInitiator.equals(userAssignment))
                 budgetDetail.transition(true).end().withSenderName(user.getName())
-                        .withComments(workflowBean.getApproverComments()).withDateInfo(currentDate.toDate());
+                        .withComments(workflowBean.getApproverComments()).withDateInfo(new Date());
             else {
                 final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
                 budgetDetail.transition(true).withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments()).withStateValue(stateValue)
-                        .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
+                        .withDateInfo(new Date()).withOwner(wfInitiator.getPosition())
                         .withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);
             }
 
         } else if (FinancialConstants.BUTTONVERIFY.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            final WorkFlowMatrix wfmatrix = budgetDetailWFService.getWfMatrix(budgetDetail.getStateType(), null, null,
-                    null, budgetDetail.getCurrentState().getValue(), null);
             budgetDetail.transition(true).withSenderName(user.getName())
                     .withComments(workflowBean.getApproverComments())
-                    .withStateValue(wfmatrix.getCurrentDesignation() + " Approved").withDateInfo(currentDate.toDate())
-                    .withOwner(pos).withNextAction(wfmatrix.getNextAction());
+                    .withStateValue(" Approved").withDateInfo(new Date())
+                    .withOwner(pos);
             budgetDetail.transition(true).end().withSenderName(user.getName())
-                    .withComments(workflowBean.getApproverComments()).withDateInfo(currentDate.toDate());
+                    .withComments(workflowBean.getApproverComments()).withDateInfo(new Date());
             budgetDetail.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
                     FinancialConstants.BUDGETDETAIL_VERIFIED_STATUS));
         } else if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
@@ -2247,14 +2243,12 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                     FinancialConstants.WORKFLOW_STATE_CANCELLED));
             budgetDetail.transition(true).end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED)
                     .withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-                    .withDateInfo(currentDate.toDate());
+                    .withDateInfo(new Date());
         } else if (FinancialConstants.BUTTONSAVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             if (budgetDetail.getState() == null) {
-                final WorkFlowMatrix wfmatrix = budgetDetailWFService.getWfMatrix(budgetDetail.getStateType(), null,
-                        null, null, workflowBean.getCurrentState(), null);
                 budgetDetail.transition().start().withSenderName(user.getName())
-                        .withComments(workflowBean.getApproverComments()).withStateValue(wfmatrix.getCurrentState())
-                        .withDateInfo(currentDate.toDate()).withOwner(userAssignment.getPosition());
+                        .withComments(workflowBean.getApproverComments()).withStateValue(FinancialConstants.WORKFLOW_STATE_NEW)
+                        .withDateInfo(new Date()).withOwner(userAssignment.getPosition());
                 budgetDetail.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
                         FinancialConstants.WORKFLOW_STATE_NEW));
             }
@@ -2263,25 +2257,21 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 pos = (Position) persistenceService.find("from Position where id=?",
                         workflowBean.getApproverPositionId());
             if (null == budgetDetail.getState()) {
-                final WorkFlowMatrix wfmatrix = budgetDetailWFService.getWfMatrix(budgetDetail.getStateType(), null,
-                        null, null, workflowBean.getCurrentState(), null);
                 budgetDetail.transition().start().withSenderName(user.getName())
-                        .withComments(workflowBean.getApproverComments()).withStateValue(wfmatrix.getNextState())
-                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction());
+                        .withComments(workflowBean.getApproverComments())
+                        .withStateValue(FinancialConstants.BUDGETDETAIL_CREATED_STATUS)
+                        .withDateInfo(new Date()).withOwner(pos);
                 budgetDetail.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
                         FinancialConstants.BUDGETDETAIL_CREATED_STATUS));
             } else if (budgetDetail.getCurrentState().getNextAction() != null
-                    && budgetDetail.getCurrentState().getNextAction().equalsIgnoreCase("END"))
+                    && budgetDetail.getCurrentState().getNextAction().equalsIgnoreCase(FinancialConstants.WORKFLOWENDSTATE))
                 budgetDetail.transition(true).end().withSenderName(user.getName())
-                        .withComments(workflowBean.getApproverComments()).withDateInfo(currentDate.toDate());
-            else {
-                final WorkFlowMatrix wfmatrix = budgetDetailWFService.getWfMatrix(budgetDetail.getStateType(), null,
-                        null, null, budgetDetail.getCurrentState().getValue(), null);
+                        .withComments(workflowBean.getApproverComments()).withDateInfo(new Date());
+            else
                 budgetDetail.transition(true).withSenderName(user.getName())
-                        .withComments(workflowBean.getApproverComments()).withStateValue(wfmatrix.getNextState())
-                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction());
-
-            }
+                        .withComments(workflowBean.getApproverComments())
+                        .withStateValue(FinancialConstants.BUDGETDETAIL_CREATED_STATUS)
+                        .withDateInfo(new Date()).withOwner(pos);
         }
         return budgetDetail;
     }

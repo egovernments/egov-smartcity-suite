@@ -89,14 +89,10 @@ public class BudgetDefinitionService {
     }
 
     private String generateMaterializedPath(final Budget budget) {
-
-        if (budget.getParent() == null) {
-            final Long rootBudgetsCount = budgetDefinitionRepository.getRootBudgetsCount();
-            return String.valueOf(rootBudgetsCount == null ? 1 : rootBudgetsCount + 1);
-
-        } else
-            return budget.getParent().getMaterializedPath() + "."
-                    + budgetDefinitionRepository.getChildBudgetsCount(budget.getParent()) + 1;
+        return budget.getParent() == null ? String.valueOf(budgetDefinitionRepository.getRootBudgetsCount() + 1)
+                : budget.getParent().getMaterializedPath()
+                        .concat(".")
+                        .concat(String.valueOf(budgetDefinitionRepository.getChildBudgetsCount(budget.getParent()) + 1));
     }
 
     @Transactional
@@ -152,8 +148,11 @@ public class BudgetDefinitionService {
     }
 
     public List<Budget> getParentList(final String isbere, final Long financialYearId, final List<Long> budgetIdList) {
-        return budgetDefinitionRepository.findByIsbereIsAndFinancialYearIdIsAndIdNotIn(isbere, financialYearId,
-                budgetIdList);
+        if (budgetIdList.isEmpty())
+            return budgetDefinitionRepository.findByIsActiveBudgetTrueAndIsbereIsAndFinancialYearIdIs(isbere, financialYearId);
+        else
+            return budgetDefinitionRepository.findByIsbereIsAndFinancialYearIdIsAndIdNotIn(isbere, financialYearId,
+                    budgetIdList);
     }
 
     /**
@@ -212,7 +211,8 @@ public class BudgetDefinitionService {
     }
 
     public Long getApproved(final Long financialYearId) {
-        return budgetDefinitionRepository.countByStatusIdInAndFinancialYearIdIsAndIsbereIs(getBudgetApprovedStatus().getId(),
+        return budgetDefinitionRepository.countByIdNotInAndStatusIdInAndFinancialYearIdIsAndIsbereIs(
+                budgetDefinitionRepository.findParentBudget(), getBudgetApprovedStatus().getId(),
                 financialYearId, RE);
 
     }

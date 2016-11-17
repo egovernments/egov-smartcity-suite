@@ -69,7 +69,6 @@ public interface FinancialConstants {
     public static final String STANDARD_EXPENDITURETYPE_PURCHASE = "Purchase";
     public static final String STANDARD_EXPENDITURETYPE_SALARY = "Salary";
     public static final String STANDARD_EXPENDITURETYPE_PENSION = "Pension";
-    
 
     public static final String BILLTYPE_FINAL_BILL = "Final Bill";
     public static final String BILLTYPE_PART_BILL = "Part Bill";
@@ -239,7 +238,7 @@ public interface FinancialConstants {
     public static final String KEY_DEFAULTTXNMISATTRRIBUTES = "DEFAULTTXNMISATTRRIBUTES";
     public static final String KEY_CONTINGENCYBILLPURPOSEIDS = "contingencyBillPurposeIds";
     public static final String KEY_CONTINGENCYBILLDEFAULTPURPOSEID = "contingencyBillDefaultPurposeId";
-    
+
     public static final String TYPEOFACCOUNT_PAYMENTS = "PAYMENTS";
     public static final String TYPEOFACCOUNT_RECEIPTS = "RECEIPTS";
     public static final String TYPEOFACCOUNT_RECEIPTS_PAYMENTS = "RECEIPTS_PAYMENTS";
@@ -338,7 +337,7 @@ public interface FinancialConstants {
 
     public static final String BUDGET = "BUDGET";
     public static final String BUDGETDETAIL = "BUDGETDETAIL";
-    public static final String BUDGETDETAIL_CREATED_STATUS = "CREATED";
+    public static final String BUDGETDETAIL_CREATED_STATUS = "Created";
     public static final String BUDGETDETAIL_VERIFIED_STATUS = "VERIFIED";
     public static final String WORKFLOWTYPE_EXPENSE_BILL_DISPLAYNAME = "Expense Bill";
 

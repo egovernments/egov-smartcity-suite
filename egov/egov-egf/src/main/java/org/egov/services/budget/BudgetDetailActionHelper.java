@@ -48,6 +48,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -70,6 +71,8 @@ public class BudgetDetailActionHelper {
     @Autowired
     private BudgetDefinitionService budgetDefinitionService;
     @Autowired
+    private PositionMasterService positionMasterService;
+    @Autowired
     @Qualifier("budgetService")
     private BudgetService budgetService;
     @Autowired
@@ -83,32 +86,29 @@ public class BudgetDetailActionHelper {
     private SecurityUtils securityUtils;
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
-
     private static Logger LOGGER = Logger.getLogger(BudgetDetailActionHelper.class);
     private static final String REFERENCEBUDGET = "no.reference.budget";
 
     @Transactional
     public void create(final BudgetDetailHelperBean parameterObject) {
 
-        if (!parameterObject.addNewDetails) {
+        if (!parameterObject.addNewDetails)
             deleteExisting(parameterObject.budgetDetail.getBudget(), parameterObject.searchFunctionId,
                     parameterObject.budgetGroupId);
-        }
-
+        final Position pos = positionMasterService.getPositionById(parameterObject.workflowBean.getApproverPositionId());
         saveBudgetDetails(true, parameterObject.budgetDetail.getBudget(), parameterObject.budgetDetailList,
                 parameterObject.beAmounts, parameterObject.egwStatus, parameterObject.workflowBean,
-                parameterObject.owner);
-        if (parameterObject.budgetDetail.getBudget().getState() == null) {
+                pos);
+        if (parameterObject.budgetDetail.getBudget().getState() == null)
             parameterObject.budgetDetail.getBudget().transition().start()
                     .withSenderName(securityUtils.getCurrentUser().getName())
                     .withComments(parameterObject.workflowBean.getApproverComments()).withStateValue("Created")
-                    .withDateInfo(new Date()).withOwner(parameterObject.owner);
-        } else {
+                    .withDateInfo(new Date()).withOwner(pos);
+        else
             parameterObject.budgetDetail.getBudget().transition()
                     .withSenderName(securityUtils.getCurrentUser().getName())
                     .withComments(parameterObject.workflowBean.getApproverComments()).withStateValue("Created")
-                    .withDateInfo(new Date()).withOwner(parameterObject.owner);
-        }
+                    .withDateInfo(new Date()).withOwner(pos);
 
         budgetDefinitionService.update(parameterObject.budgetDetail.getBudget());
 
@@ -119,26 +119,22 @@ public class BudgetDetailActionHelper {
             final WorkflowBean workflowBean, final Position owner) {
 
         int index = 0;
-        Budget refBudget = null;
-        final String sender = securityUtils.getCurrentUser().getName();
-
+        Budget refBudget;
         refBudget = budgetService.getReferenceBudgetFor(budget);
-        if (refBudget == null) {
+        if (refBudget == null)
             throw new ValidationException(Arrays.asList(new ValidationError(REFERENCEBUDGET, REFERENCEBUDGET)));
-        }
 
         int i = 0;
-        BudgetDetail beNextYear;  
+        BudgetDetail beNextYear;
         for (final BudgetDetail detail : budgetDetailList) {
-            if (detail != null) {
+            if (detail != null)
                 detail.setId(null);
-            }
-            final BudgetDetail reCurrentYear = budgetDetailService.setRelatedEntitesOn(detail);
+            BudgetDetail reCurrentYear = budgetDetailService.setRelatedEntitesOn(detail);
             reCurrentYear.setUniqueNo(budgetDetailService.generateUniqueNo(reCurrentYear));
-            reCurrentYear.setStatus(egwStatus);
             budgetDetailService.applyAuditing(reCurrentYear);
+            reCurrentYear = budgetDetailService.transitionWorkFlow(reCurrentYear, workflowBean);
+            budgetDetailService.applyAuditing(reCurrentYear.getState());
             budgetDetailService.persist(reCurrentYear);
-            transit(reCurrentYear, sender, workflowBean, owner);
 
             beNextYear = new BudgetDetail();
             beNextYear.copyFrom(detail);
@@ -148,7 +144,11 @@ public class BudgetDetailActionHelper {
             beNextYear.setAnticipatoryAmount(reCurrentYear.getAnticipatoryAmount());
             beNextYear = budgetDetailService.setRelatedEntitesOn(beNextYear);
             beNextYear.setUniqueNo(budgetDetailService.generateUniqueNo(beNextYear));
-            beNextYear.setStatus(egwStatus);
+            if (workflowBean.getWorkFlowAction().equalsIgnoreCase(FinancialConstants.BUTTONSAVE))
+                beNextYear.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
+                        FinancialConstants.WORKFLOW_STATE_NEW));
+            else
+                beNextYear.setStatus(egwStatus);
             budgetDetailService.applyAuditing(beNextYear);
             budgetDetailService.persist(beNextYear);
 
@@ -170,75 +170,58 @@ public class BudgetDetailActionHelper {
 
     private void deleteExisting(final Budget budget, final Long searchfunctionid, final Long searchbudgetGroupid) {
 
-        if (LOGGER.isInfoEnabled()) {
+        if (LOGGER.isInfoEnabled())
             LOGGER.info("Initiating deletion ..........");
-        }
         final Budget referenceBudgetFor = budgetService.getReferenceBudgetFor(budget);
         final StringBuffer addlCondtion = new StringBuffer(150);
 
         addlCondtion.append("delete from egf_budgetdetail where budget=:budgetid ");
-        if (referenceBudgetFor != null) {
-            addlCondtion.append(" or budget=:referenceBudget ");
-        }
-        if (searchfunctionid != null && searchfunctionid != 0) {
+        addlCondtion.append("and status not in (SELECT id FROM egw_status   WHERE code ='NEW')");
+        if (referenceBudgetFor != null)
+            addlCondtion
+                    .append(" or (budget=:referenceBudget and status not in (SELECT id FROM egw_status   WHERE code ='NEW'))");
+        if (searchfunctionid != null && searchfunctionid != 0)
             addlCondtion.append("and function.id=:functionid");
-        }
-        if (searchbudgetGroupid != null && searchbudgetGroupid != 0) {
+        if (searchbudgetGroupid != null && searchbudgetGroupid != 0)
             addlCondtion.append("and budgetGroup.id=:budgetGroupid");
-        }
         new ArrayList<BudgetDetail>();
         final Query qry = persistenceService.getSession().createSQLQuery(addlCondtion.toString());
         qry.setLong("budgetid", budget.getId());
-        if (referenceBudgetFor != null) {
+        if (referenceBudgetFor != null)
             qry.setLong("referenceBudget", referenceBudgetFor.getId());
-        }
-        if (searchfunctionid != null && searchfunctionid != 0) {
+        if (searchfunctionid != null && searchfunctionid != 0)
             qry.setLong("functionid", searchfunctionid);
-        }
-        if (searchbudgetGroupid != null && searchbudgetGroupid != 0) {
+        if (searchbudgetGroupid != null && searchbudgetGroupid != 0)
             qry.setLong("budgetGroupid", searchbudgetGroupid);
-        }
-        // budgetDetailService.delete(qry);
         qry.executeUpdate();
-        // persistenceService.getSession().createSQLQuery(qry.getQueryString()).executeUpdate();
-
-    }
-
-    public void transit(final BudgetDetail detail, final String sender, final WorkflowBean workflowBean,
-            final Position owner) {
-        detail.transition().start().withSenderName(sender).withComments(workflowBean.getApproverComments())
-                .withStateValue("Created").withDateInfo(new Date()).withOwner(owner);
-
     }
 
     @Transactional
     public void update(final List<BudgetProposalBean> bpBeanList, final WorkflowBean workflowBean) {
         BudgetDetail bd;
         BudgetDetail be;
-        Date currDate=new Date();
-
         for (final BudgetProposalBean bpBean : bpBeanList) {
-            if (bpBean == null || bpBean.getId() == null) {
+            if (bpBean == null || bpBean.getId() == null)
                 continue;
-            }
             bd = budgetDetailService.find("from BudgetDetail where id=?", bpBean.getId());
             bd.setOriginalAmount(bpBean.getProposedRE());
             be = budgetDetailService.find("from BudgetDetail where id=?", bpBean.getNextYrId());
             be.setOriginalAmount(bpBean.getProposedBE());
-            if (bpBean.getDocumentNumber() != null) {
+            if (bpBean.getDocumentNumber() != null)
                 bd.setDocumentNumber(bpBean.getDocumentNumber());
-            }
-            bd.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
-                    FinancialConstants.BUDGETDETAIL_VERIFIED_STATUS));
-            bd.transition(true).withSenderName(securityUtils.getCurrentUser().getName())
-                    .withComments(workflowBean.getApproverComments()).withStateValue("Verified")
-                    .withDateInfo(currDate);
 
+            bd = budgetDetailService.transitionWorkFlow(bd, workflowBean);
+
+            if (workflowBean.getWorkFlowAction().contains("Verify"))
+                be.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
+                        FinancialConstants.BUDGETDETAIL_VERIFIED_STATUS));
+            else
+                be.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
+                        FinancialConstants.BUDGETDETAIL_CREATED_STATUS));
             budgetDetailService.applyAuditing(bd.getState());
             budgetDetailService.update(bd);
             budgetDetailService.update(be);
         }
-
     }
 
 }

@@ -45,7 +45,6 @@ import java.util.List;
 import org.egov.commons.EgwStatus;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.voucher.WorkflowBean;
-import org.egov.pims.commons.Position;
 
 public class BudgetDetailHelperBean {
     public Boolean addNewDetails;
@@ -56,12 +55,11 @@ public class BudgetDetailHelperBean {
     public Long budgetGroupId;
     public Long searchFunctionId;
     public WorkflowBean workflowBean;
-    public Position owner;
 
     public BudgetDetailHelperBean(final Boolean addNewDetails, final List<BigDecimal> beAmounts,
             final List<BudgetDetail> budgetDetailList, final EgwStatus egwStatus, final BudgetDetail budgetDetail,
             final Long budgetGroupId,
-            final Long searchFunctionId, final WorkflowBean workflowBean, final Position owner) {
+            final Long searchFunctionId, final WorkflowBean workflowBean) {
         this.addNewDetails = addNewDetails;
         this.beAmounts = beAmounts;
         this.budgetDetailList = budgetDetailList;
@@ -70,6 +68,5 @@ public class BudgetDetailHelperBean {
         this.budgetGroupId = budgetGroupId;
         this.searchFunctionId = searchFunctionId;
         this.workflowBean = workflowBean;
-        this.owner = owner;
     }
 }
