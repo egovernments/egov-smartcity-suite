@@ -112,4 +112,4 @@
 	type="text/javascript"></script>
 <script
 	src="<cdn:url  value='/resources/js/masters/sewerageRates.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url  value='/resources/javascript/helper.js' context='/stms'/>"></script>
+<script src="<cdn:url  value='/resources/javascript/helper.js?rnd=${app_release_no}'/>"></script>
