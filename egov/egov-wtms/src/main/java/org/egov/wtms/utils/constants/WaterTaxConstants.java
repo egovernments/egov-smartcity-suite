@@ -329,6 +329,15 @@ public class WaterTaxConstants {
     public static final String DASHBOARD_GROUPING_CITYWISE = "city";
     public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
     public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
+    public static final String WATERCHARGETOTALDEMAND = "totalDemand";
+    public static final String REGIONNAMEAGGREGATIONFIELD = "regionName";
+    public static final String DISTRICTNAMEAGGREGATIONFIELD = "districtName";
+    public static final String CITYNAMEAGGREGATIONFIELD = "cityName";
+    
+    public static final String REVENUEWARDAGGREGATIONFIELD = "revenueWard";
+    
+    
+
 
 
 }

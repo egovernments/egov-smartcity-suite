@@ -89,7 +89,7 @@ public class RestWaterTaxController {
     @RequestMapping(value = "rest/watertax/totaldemandamount/", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public WaterTaxDue getTotalDemand() throws JsonGenerationException, JsonMappingException, IOException {
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(WATER_TAX_INDEX_NAME)
-                .addAggregation(AggregationBuilders.sum("totaldemand").field("currentDemand")).build();
+                .addAggregation(AggregationBuilders.sum("totaldemand").field("totalDemand")).build();
         final Aggregations aggregations = elasticsearchTemplate.query(searchQuery,
                 response -> response.getAggregations());
         final Sum aggr = aggregations.get("totaldemand");

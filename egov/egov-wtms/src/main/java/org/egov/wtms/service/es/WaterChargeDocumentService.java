@@ -116,12 +116,12 @@ public class WaterChargeDocumentService {
         }
         final Map<String, Object> cityInfo = cityService.cityDataAsMap();
         waterChargeDocument.setZone(assessmentDetails.getBoundaryDetails().getZoneName());
-        waterChargeDocument.setWard(assessmentDetails.getBoundaryDetails().getWardName());
+        waterChargeDocument.setRevenueWard(assessmentDetails.getBoundaryDetails().getWardName());
         waterChargeDocument.setAdminWard(assessmentDetails.getBoundaryDetails().getAdminWardName());
         waterChargeDocument.setDoorNo(assessmentDetails.getHouseNo());
         waterChargeDocument.setTotalDue(assessmentDetails.getPropertyDetails().getTaxDue().longValue());
         waterChargeDocument.setIsLegacy(waterConnectionDetails.getLegacy());
-        waterChargeDocument.setGrade(defaultString((String) cityInfo.get(CITY_CORP_GRADE_KEY)));
+        waterChargeDocument.setCityGrade(defaultString((String) cityInfo.get(CITY_CORP_GRADE_KEY)));
         waterChargeDocument.setRegionName(defaultString((String) cityInfo.get(CITY_REGION_NAME_KEY)));
         waterChargeDocument.setClosureType(waterConnectionDetails.getCloseConnectionType() != null
                 ? waterConnectionDetails.getCloseConnectionType() : "");
@@ -140,7 +140,9 @@ public class WaterChargeDocumentService {
         waterChargeDocument.setWaterSource(waterConnectionDetails.getWaterSource().getWaterSourceType());
         waterChargeDocument.setPropertyType(waterConnectionDetails.getPropertyType().getName());
         waterChargeDocument.setCategory(waterConnectionDetails.getCategory().getName());
-        waterChargeDocument.setUlbName(defaultString((String) cityInfo.get(CITY_NAME_KEY)));
+        waterChargeDocument.setCityName(defaultString((String) cityInfo.get(CITY_NAME_KEY)));
+        waterChargeDocument.setCityCode(defaultString((String) cityInfo.get(cityService.getCityCode())));
+
         waterChargeDocument.setSumpCapacity(waterConnectionDetails.getSumpCapacity());
         waterChargeDocument.setPipeSize(waterConnectionDetails.getPipeSize().getCode());
         waterChargeDocument.setNumberOfPerson(waterConnectionDetails.getNumberOfPerson() != null
@@ -178,7 +180,7 @@ public class WaterChargeDocumentService {
             monthlyRate = BigDecimal.ZERO.longValue();
         return monthlyRate;
     }
-
+//need to add TotalDemand and TotalCollection for both update and create watertax Index
     public WaterChargeDocument createWaterChargeIndex(final WaterConnectionDetails waterConnectionDetails,
             final AssessmentDetails assessmentDetails, final BigDecimal amountTodisplayInIndex) {
         WaterChargeDocument waterChargeDocument=null;
@@ -212,12 +214,12 @@ public class WaterChargeDocumentService {
             final Map<String, Object> cityInfo = cityService.cityDataAsMap();
             waterChargeDocument = WaterChargeDocument.builder()
                     .withZone(assessmentDetails.getBoundaryDetails().getZoneName())
-                    .withWard(assessmentDetails.getBoundaryDetails().getWardName())
+                    .withRevenueWard(assessmentDetails.getBoundaryDetails().getWardName())
                     .withAdminward(assessmentDetails.getBoundaryDetails().getAdminWardName())
                     .withDoorNo(assessmentDetails.getHouseNo())
                     .withTotaldue(assessmentDetails.getPropertyDetails().getTaxDue().longValue())
                     .withIslegacy(waterConnectionDetails.getLegacy())
-                    .withGrade(defaultString((String) cityInfo.get(CITY_CORP_GRADE_KEY)))
+                    .withCityGrade(defaultString((String) cityInfo.get(CITY_CORP_GRADE_KEY)))
                     .withRegionname(defaultString((String) cityInfo.get(CITY_REGION_NAME_KEY)))
                     .withClosureType(waterConnectionDetails.getCloseConnectionType() != null
                             ? waterConnectionDetails.getCloseConnectionType() : "")
@@ -235,7 +237,8 @@ public class WaterChargeDocumentService {
                     .withWatersource(waterConnectionDetails.getWaterSource().getWaterSourceType())
                     .withPropertytype(waterConnectionDetails.getPropertyType().getName())
                     .withCategory(waterConnectionDetails.getCategory().getName())
-                    .withUlbname(defaultString((String) cityInfo.get(CITY_NAME_KEY)))
+                    .withCityName(defaultString((String) cityInfo.get(CITY_NAME_KEY)))
+                    .withCityCode(defaultString((String) cityInfo.get(cityService.getCityCode())))
                     .withSumpcapacity(waterConnectionDetails.getSumpCapacity())
                     .withPipesize(waterConnectionDetails.getPipeSize().getCode())
                     .withNumberOfPerson(waterConnectionDetails.getNumberOfPerson() != null
