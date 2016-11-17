@@ -46,7 +46,9 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -64,7 +66,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class WaterChargeDashboardService {
-
 
     @Autowired
     private WaterChargeCollectionDocService waterChargeCollDocService;
@@ -85,7 +86,8 @@ public class WaterChargeDashboardService {
         final String wtmsRestURL = format(PropertyTaxConstants.WTMS_TOTALDEMAND_RESTURL,
                 WebUtils.extractRequestDomainURL(request, false));
         final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
-        return waterTaxInfo.get("currentDemand") == null ? BigDecimal.ZERO : new BigDecimal(Double.valueOf((Double) waterTaxInfo.get("currentDemand")));
+        return waterTaxInfo.get("currentDemand") == null ? BigDecimal.ZERO
+                : new BigDecimal(Double.valueOf((Double) waterTaxInfo.get("currentDemand")));
     }
 
     /**
@@ -99,7 +101,7 @@ public class WaterChargeDashboardService {
 
         final Map<String, List<WaterChargeDashBoardResponse>> responsemap = new HashMap<String, List<WaterChargeDashBoardResponse>>();
         final List<WaterChargeDashBoardResponse> collectionTotalResponseList = waterChargeCollDocService
-                .getCompleteCollectionIndexDetails(waterChargeDashBoardRequest);
+                .getFullCollectionIndexDtls(waterChargeDashBoardRequest);
 
         final List<WaterChargeDashBoardResponse> collectionTrends = waterChargeCollDocService
                 .getMonthwiseCollectionDetails(waterChargeDashBoardRequest);
@@ -124,12 +126,12 @@ public class WaterChargeDashboardService {
     public Map<String, List<WaterChargeDashBoardResponse>> getReceiptDetails(
             final WaterChargeDashBoardRequest collectionDetailsRequest) {
 
-        Map<String, List<WaterChargeDashBoardResponse>> finalReceiptCountForwaterTaxMap = new HashMap<String, List<WaterChargeDashBoardResponse>>();
-        List<WaterChargeDashBoardResponse> receiptDetailsList = waterChargeCollDocService
+        final Map<String, List<WaterChargeDashBoardResponse>> finalReceiptCountForwaterTaxMap = new HashMap<String, List<WaterChargeDashBoardResponse>>();
+        final List<WaterChargeDashBoardResponse> receiptDetailsList = waterChargeCollDocService
                 .getTotalReceiptsCount(collectionDetailsRequest);
-        List<WaterChargeDashBoardResponse> receiptTrends = waterChargeCollDocService
+        final List<WaterChargeDashBoardResponse> receiptTrends = waterChargeCollDocService
                 .getMonthwiseReceiptsTrend(collectionDetailsRequest);
-        List<WaterChargeDashBoardResponse> receiptTableData = waterChargeCollDocService
+        final List<WaterChargeDashBoardResponse> receiptTableData = waterChargeCollDocService
                 .getReceiptTableData(collectionDetailsRequest);
 
         finalReceiptCountForwaterTaxMap.put("receiptDetailsCount", receiptDetailsList);
@@ -150,6 +152,15 @@ public class WaterChargeDashboardService {
         return waterChargeElasticSearchService.getTopTenTaxPerformers(collectionDetailsRequest);
     }
 
-   
+    /**
+     * Returns Bottom Ten ULB's Tax Producers
+     *
+     * @param collectionDetailsRequest
+     * @return
+     */
+    public TaxPayerResponseDetails getBottomTenTaxProducers(
+            final WaterChargeDashBoardRequest waterChargeDashBoardRequest) {
+        return waterChargeElasticSearchService.getBottomTenTaxPerformers(waterChargeDashBoardRequest);
 
+    }
 }

@@ -95,10 +95,17 @@ public class WaterChargeCollectionDocService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WaterChargeCollectionDocService.class);
 
-    private static final String consumerCodeIndex = "consumerCode";
-    private static final String receiptcountIndex = "receipt_count";
-    private static final String receiptDateIndex = "receiptDate";
-    private static final String collectiontotal = "collectiontotal";
+    private static final String CNSUMER_CODEINDEX = "consumerCode";
+    private static final String RECEIPT_COUNT_INDEX = "receipt_count";
+    private static final String RECEIPT_DATEINDEX = "receiptDate";
+    private static final String COLLECTION_TOTAL = "collectiontotal";
+    private static final String BILLING_SERVICE = "billingService";
+    private static final String TOTAL_AMOUNT = "totalAmount";
+    private static final String CANCELLED = "Cancelled";
+    private static final String STATUS = "status";
+    private static final String BY_CITY = "by_city";
+    private static final String CITYCODE = "cityCode";
+    private static final String AGGR_DATE = "date_agg";
 
     @Autowired
     private CFinancialYearService cFinancialYearService;
@@ -116,19 +123,19 @@ public class WaterChargeCollectionDocService {
      */
     public BigDecimal getConsolidatedCollForYears(final Date fromDate, final Date toDate, final String billingService) {
         final QueryBuilder queryBuilder = QueryBuilders.boolQuery()
-                .must(QueryBuilders.rangeQuery(receiptDateIndex)
+                .must(QueryBuilders.rangeQuery(RECEIPT_DATEINDEX)
                         .gte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                         .lte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
-                .must(QueryBuilders.matchQuery("billingService", billingService))
-                .mustNot(QueryBuilders.matchQuery("status", "Cancelled"));
+                .must(QueryBuilders.matchQuery(BILLING_SERVICE, billingService))
+                .mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
         final SearchQuery searchQueryColl = new NativeSearchQueryBuilder()
                 .withIndices(WaterTaxConstants.COLLECTION_INDEX_NAME).withQuery(queryBuilder)
-                .addAggregation(AggregationBuilders.sum(collectiontotal).field("totalAmount")).build();
+                .addAggregation(AggregationBuilders.sum(COLLECTION_TOTAL).field(TOTAL_AMOUNT)).build();
 
         final Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl,
                 response -> response.getAggregations());
 
-        final Sum aggr = collAggr.get(collectiontotal);
+        final Sum aggr = collAggr.get(COLLECTION_TOTAL);
         return BigDecimal.valueOf(aggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
     }
 
@@ -179,7 +186,7 @@ public class WaterChargeCollectionDocService {
             boolQuery = boolQuery
                     .filter(QueryBuilders.rangeQuery(WaterTaxConstants.WATERCHARGETOTALDEMAND).from(0).to(null));
         else if (indexName.equals(WaterTaxConstants.COLLECTION_INDEX_NAME))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("billingService", COLLECION_BILLING_SERVICE_WTMS));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(BILLING_SERVICE, COLLECION_BILLING_SERVICE_WTMS));
         if (boolQuery != null) {
             if (StringUtils.isNotBlank(collectionDetailsRequest.getRegionName()))
                 boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WaterTaxConstants.REGIONNAMEAGGREGATIONFIELD,
@@ -193,8 +200,7 @@ public class WaterChargeCollectionDocService {
                         collectionDetailsRequest.getUlbGrade()));
 
             if (StringUtils.isNotBlank(collectionDetailsRequest.getUlbCode()))
-                boolQuery = boolQuery
-                        .filter(QueryBuilders.matchQuery("cityCode", collectionDetailsRequest.getUlbCode()));
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITYCODE, collectionDetailsRequest.getUlbCode()));
         }
         return boolQuery;
     }
@@ -226,10 +232,10 @@ public class WaterChargeCollectionDocService {
      * @param collectionDetailsRequest
      * @param collectionIndexDetails
      */
-    public List<WaterChargeDashBoardResponse> getCompleteCollectionIndexDetails(
+    public List<WaterChargeDashBoardResponse> getFullCollectionIndexDtls(
             final WaterChargeDashBoardRequest collectionDetailsRequest) {
 
-        final List<WaterChargeDashBoardResponse> collectionIndexDetailsList = new ArrayList<WaterChargeDashBoardResponse>();
+        final List<WaterChargeDashBoardResponse> collectionIndexDetailsList = new ArrayList<>();
         final WaterChargeDashBoardResponse collectionIndexDetails = new WaterChargeDashBoardResponse();
         Date fromDate;
         Date toDate;
@@ -353,22 +359,22 @@ public class WaterChargeCollectionDocService {
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest,
                 WaterTaxConstants.COLLECTION_INDEX_NAME);
         boolQuery = boolQuery
-                .filter(QueryBuilders.rangeQuery(receiptDateIndex)
+                .filter(QueryBuilders.rangeQuery(RECEIPT_DATEINDEX)
                         .gte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                         .lte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
-                .mustNot(QueryBuilders.matchQuery("status", "Cancelled"));
+                .mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
         if (StringUtils.isNotBlank(cityName))
             boolQuery = boolQuery
                     .filter(QueryBuilders.matchQuery(WaterTaxConstants.CITYNAMEAGGREGATIONFIELD, cityName));
 
         final SearchQuery searchQueryColl = new NativeSearchQueryBuilder()
                 .withIndices(WaterTaxConstants.COLLECTION_INDEX_NAME).withQuery(boolQuery)
-                .addAggregation(AggregationBuilders.sum(collectiontotal).field("totalAmount")).build();
+                .addAggregation(AggregationBuilders.sum(COLLECTION_TOTAL).field(TOTAL_AMOUNT)).build();
 
         final Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl,
                 response -> response.getAggregations());
 
-        final Sum aggr = collAggr.get(collectiontotal);
+        final Sum aggr = collAggr.get(COLLECTION_TOTAL);
         final Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken by getCollectionBetweenDates() is (millisecs) : " + timeTaken);
@@ -431,7 +437,7 @@ public class WaterChargeCollectionDocService {
         Long startTime = System.currentTimeMillis();
         // For today collection
         final Map<String, BigDecimal> todayCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
-                toDate, WaterTaxConstants.COLLECTION_INDEX_NAME, "totalAmount", aggregationField);
+                toDate, WaterTaxConstants.COLLECTION_INDEX_NAME, TOTAL_AMOUNT, aggregationField);
 
         /**
          * For collection and demand between the date ranges if dates are sent
@@ -451,7 +457,7 @@ public class WaterChargeCollectionDocService {
 
         // For current year's till date collection
         final Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
-                toDate, WaterTaxConstants.COLLECTION_INDEX_NAME, "totalAmount", aggregationField);
+                toDate, WaterTaxConstants.COLLECTION_INDEX_NAME, TOTAL_AMOUNT, aggregationField);
         // For total demand
         final Map<String, BigDecimal> totalDemandMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
                 toDate, WATER_TAX_INDEX_NAME, WaterTaxConstants.WATERCHARGETOTALDEMAND, aggregationField);
@@ -462,7 +468,7 @@ public class WaterChargeCollectionDocService {
         final Map<String, BigDecimal> lytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest,
                 org.apache.commons.lang3.time.DateUtils.addYears(fromDate, -1),
                 org.apache.commons.lang3.time.DateUtils.addYears(toDate, -1), WaterTaxConstants.COLLECTION_INDEX_NAME,
-                "totalAmount", aggregationField);
+                TOTAL_AMOUNT, aggregationField);
         Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken by getCollectionAndDemandValues() is (millisecs) : " + timeTaken);
@@ -536,16 +542,16 @@ public class WaterChargeCollectionDocService {
     public Map<String, BigDecimal> getCollectionAndDemandValues(
             final WaterChargeDashBoardRequest collectionDetailsRequest, final Date fromDate, final Date toDate,
             final String indexName, final String fieldName, final String aggregationField) {
-        final String by_city = "by_city";
+
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, indexName);
         if (indexName.equals(WaterTaxConstants.COLLECTION_INDEX_NAME))
             boolQuery = boolQuery
-                    .filter(QueryBuilders.rangeQuery(receiptDateIndex)
+                    .filter(QueryBuilders.rangeQuery(RECEIPT_DATEINDEX)
                             .gte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                             .lte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
-                    .mustNot(QueryBuilders.matchQuery("status", "Cancelled"));
+                    .mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
 
-        final AggregationBuilder aggregation = AggregationBuilders.terms(by_city).field(aggregationField).size(120)
+        final AggregationBuilder aggregation = AggregationBuilders.terms(BY_CITY).field(aggregationField).size(120)
                 .subAggregation(AggregationBuilders.sum("total").field(fieldName));
 
         final SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName).withQuery(boolQuery)
@@ -554,7 +560,7 @@ public class WaterChargeCollectionDocService {
         final Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl,
                 response -> response.getAggregations());
 
-        final StringTerms cityAggr = collAggr.get(by_city);
+        final StringTerms cityAggr = collAggr.get(BY_CITY);
         final Map<String, BigDecimal> cytdCollMap = new HashMap<>();
         for (final Terms.Bucket entry : cityAggr.getBuckets()) {
             final Sum aggr = entry.getAggregations().get("total");
@@ -607,7 +613,7 @@ public class WaterChargeCollectionDocService {
             monthwiseColl = new LinkedHashMap<>();
             final Aggregations collAggr = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate,
                     toDate);
-            final Histogram dateaggs = collAggr.get("date_agg");
+            final Histogram dateaggs = collAggr.get(AGGR_DATE);
 
             for (final Histogram.Bucket entry : dateaggs.getBuckets()) {
                 dateArr = entry.getKeyAsString().split("T");
@@ -694,15 +700,15 @@ public class WaterChargeCollectionDocService {
             final WaterChargeDashBoardRequest collectionDetailsRequest, final Date fromDate, final Date toDate) {
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest,
                 WaterTaxConstants.COLLECTION_INDEX_NAME);
-        boolQuery = boolQuery.mustNot(QueryBuilders.matchQuery("status", "Cancelled"));
+        boolQuery = boolQuery.mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
         @SuppressWarnings("rawtypes")
-        final AggregationBuilder monthAggregation = AggregationBuilders.dateHistogram("date_agg")
-                .field(receiptDateIndex).interval(DateHistogramInterval.MONTH)
-                .subAggregation(AggregationBuilders.sum("current_total").field("totalAmount"));
+        final AggregationBuilder monthAggregation = AggregationBuilders.dateHistogram(AGGR_DATE)
+                .field(RECEIPT_DATEINDEX).interval(DateHistogramInterval.MONTH)
+                .subAggregation(AggregationBuilders.sum("current_total").field(TOTAL_AMOUNT));
 
         final SearchQuery searchQueryColl = new NativeSearchQueryBuilder()
                 .withIndices(WaterTaxConstants.COLLECTION_INDEX_NAME)
-                .withQuery(boolQuery.filter(QueryBuilders.rangeQuery(receiptDateIndex)
+                .withQuery(boolQuery.filter(QueryBuilders.rangeQuery(RECEIPT_DATEINDEX)
                         .gte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                         .lte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false)))
                 .addAggregation(monthAggregation).build();
@@ -720,7 +726,7 @@ public class WaterChargeCollectionDocService {
             final WaterChargeDashBoardRequest collectionDetailsRequest) {
         Date fromDate;
         Date toDate;
-        final List<WaterChargeDashBoardResponse> receiptDetailsList = new ArrayList<WaterChargeDashBoardResponse>();
+        final List<WaterChargeDashBoardResponse> receiptDetailsList = new ArrayList<>();
         final WaterChargeDashBoardResponse receiptDetails = new WaterChargeDashBoardResponse();
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
@@ -779,18 +785,18 @@ public class WaterChargeCollectionDocService {
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest,
                 WaterTaxConstants.COLLECTION_INDEX_NAME);
         boolQuery = boolQuery
-                .filter(QueryBuilders.rangeQuery(receiptDateIndex)
+                .filter(QueryBuilders.rangeQuery(RECEIPT_DATEINDEX)
                         .gte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                         .lte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
-                .mustNot(QueryBuilders.matchQuery("status", "Cancelled"));
+                .mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
 
         final SearchQuery searchQueryColl = new NativeSearchQueryBuilder()
                 .withIndices(WaterTaxConstants.COLLECTION_INDEX_NAME).withQuery(boolQuery)
-                .addAggregation(AggregationBuilders.count(receiptcountIndex).field(consumerCodeIndex)).build();
+                .addAggregation(AggregationBuilders.count(RECEIPT_COUNT_INDEX).field(CNSUMER_CODEINDEX)).build();
 
         final Aggregations collCountAggr = elasticsearchTemplate.query(searchQueryColl,
                 response -> response.getAggregations());
-        final ValueCount aggr = collCountAggr.get(receiptcountIndex);
+        final ValueCount aggr = collCountAggr.get(RECEIPT_COUNT_INDEX);
         return Long.valueOf(aggr.getValue());
     }
 
@@ -803,7 +809,6 @@ public class WaterChargeCollectionDocService {
 
     public List<WaterChargeDashBoardResponse> getMonthwiseReceiptsTrend(
             final WaterChargeDashBoardRequest collectionDetailsRequest) {
-
         final List<WaterChargeDashBoardResponse> rcptTrendsList = new ArrayList<>();
         WaterChargeDashBoardResponse rcptsTrend;
         Date fromDate;
@@ -841,7 +846,7 @@ public class WaterChargeCollectionDocService {
 
             final Aggregations collAggregation = getReceiptsCountForConsecutiveYears(collectionDetailsRequest, fromDate,
                     toDate);
-            final Histogram dateaggs = collAggregation.get("date_agg");
+            final Histogram dateaggs = collAggregation.get(AGGR_DATE);
 
             for (final Histogram.Bucket entry : dateaggs.getBuckets()) {
                 dateArr = entry.getKeyAsString().split("T");
@@ -928,14 +933,14 @@ public class WaterChargeCollectionDocService {
             final Date fromDate, final Date toDate) {
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest,
                 WaterTaxConstants.COLLECTION_INDEX_NAME);
-        boolQuery = boolQuery.mustNot(QueryBuilders.matchQuery("status", "Cancelled"));
+        boolQuery = boolQuery.mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
 
-        final AggregationBuilder monthAggregation = AggregationBuilders.dateHistogram("date_agg")
-                .field(receiptDateIndex).interval(DateHistogramInterval.MONTH)
-                .subAggregation(AggregationBuilders.count(receiptcountIndex).field("receiptNumber"));
+        final AggregationBuilder monthAggregation = AggregationBuilders.dateHistogram(AGGR_DATE)
+                .field(RECEIPT_DATEINDEX).interval(DateHistogramInterval.MONTH)
+                .subAggregation(AggregationBuilders.count(RECEIPT_COUNT_INDEX).field("receiptNumber"));
         final SearchQuery searchQueryColl = new NativeSearchQueryBuilder()
                 .withIndices(WaterTaxConstants.COLLECTION_INDEX_NAME)
-                .withQuery(boolQuery.filter(QueryBuilders.rangeQuery(receiptDateIndex)
+                .withQuery(boolQuery.filter(QueryBuilders.rangeQuery(RECEIPT_DATEINDEX)
                         .gte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                         .lte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false)))
                 .addAggregation(monthAggregation).build();
@@ -990,7 +995,7 @@ public class WaterChargeCollectionDocService {
         }
         Long startTime = System.currentTimeMillis();
         final Map<String, BigDecimal> currDayCollMap = getCollectionAndDemandCountResults(collectionDetailsRequest,
-                fromDate, toDate, WaterTaxConstants.COLLECTION_INDEX_NAME, consumerCodeIndex, aggregationField);
+                fromDate, toDate, WaterTaxConstants.COLLECTION_INDEX_NAME, CNSUMER_CODEINDEX, aggregationField);
         /**
          * For collections between the date ranges if dates are sent in the
          * request, consider the same, else calculate from current year start
@@ -1006,13 +1011,13 @@ public class WaterChargeCollectionDocService {
             toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
         }
         final Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandCountResults(collectionDetailsRequest,
-                fromDate, toDate, WaterTaxConstants.COLLECTION_INDEX_NAME, consumerCodeIndex, aggregationField);
+                fromDate, toDate, WaterTaxConstants.COLLECTION_INDEX_NAME, CNSUMER_CODEINDEX, aggregationField);
 
         // For last year's till date collections
         final Map<String, BigDecimal> lytdCollMap = getCollectionAndDemandCountResults(collectionDetailsRequest,
                 org.apache.commons.lang3.time.DateUtils.addYears(fromDate, -1),
                 org.apache.commons.lang3.time.DateUtils.addYears(toDate, -1), WaterTaxConstants.COLLECTION_INDEX_NAME,
-                consumerCodeIndex, aggregationField);
+                CNSUMER_CODEINDEX, aggregationField);
         Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken by getCollectionAndDemandCountResults() is : (millisecs) " + timeTaken);
@@ -1062,12 +1067,12 @@ public class WaterChargeCollectionDocService {
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, indexName);
         if (indexName.equals(WaterTaxConstants.COLLECTION_INDEX_NAME))
             boolQuery = boolQuery
-                    .filter(QueryBuilders.rangeQuery(receiptDateIndex)
+                    .filter(QueryBuilders.rangeQuery(RECEIPT_DATEINDEX)
                             .gte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                             .lte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
-                    .mustNot(QueryBuilders.matchQuery("status", "Cancelled"));
+                    .mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
 
-        final AggregationBuilder aggregation = AggregationBuilders.terms("by_city").field(aggregationField).size(120)
+        final AggregationBuilder aggregation = AggregationBuilders.terms(BY_CITY).field(aggregationField).size(120)
                 .subAggregation(AggregationBuilders.count("total_count").field(fieldName));
 
         final SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName).withQuery(boolQuery)
@@ -1076,7 +1081,7 @@ public class WaterChargeCollectionDocService {
         final Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl,
                 response -> response.getAggregations());
 
-        final StringTerms cityAggr = collAggr.get("by_city");
+        final StringTerms cityAggr = collAggr.get(BY_CITY);
         final Map<String, BigDecimal> cytdCollMap = new HashMap<>();
         for (final Terms.Bucket entry : cityAggr.getBuckets()) {
             final ValueCount aggr = entry.getAggregations().get("total_count");
@@ -1095,9 +1100,10 @@ public class WaterChargeCollectionDocService {
     public List<BillCollectorIndex> getBillCollectorDetails(
             final WaterChargeDashBoardRequest collectionDetailsRequest) {
         final SearchQuery searchQueryColl = new NativeSearchQueryBuilder()
-                .withIndices(PropertyTaxConstants.BILL_COLLECTOR_INDEX_NAME).withFields("billCollector", "revenueWard")
+                .withIndices(PropertyTaxConstants.BILL_COLLECTOR_INDEX_NAME)
+                .withFields("billCollector", WaterTaxConstants.REVENUEWARDAGGREGATIONFIELD)
                 .withQuery(QueryBuilders.boolQuery()
-                        .filter(QueryBuilders.matchQuery("cityCode", collectionDetailsRequest.getUlbCode())))
+                        .filter(QueryBuilders.matchQuery(CITYCODE, collectionDetailsRequest.getUlbCode())))
                 .withSort(new FieldSortBuilder("billCollector").order(SortOrder.ASC))
                 .withPageable(new PageRequest(0, 250)).build();
         return elasticsearchTemplate.queryForList(searchQueryColl, BillCollectorIndex.class);

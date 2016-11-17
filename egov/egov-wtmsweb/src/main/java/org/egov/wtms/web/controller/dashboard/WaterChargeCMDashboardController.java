@@ -57,7 +57,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
 @RequestMapping(value = { "/public/dashboard", "/dashboard" })
 public class WaterChargeCMDashboardController {
@@ -80,9 +79,8 @@ public class WaterChargeCMDashboardController {
         final Map<String, List<WaterChargeDashBoardResponse>> collectionDetails = waterChargeDashboardService
                 .getCollectionIndexDetails(collectionDetailsRequest);
         final Long timeTaken = System.currentTimeMillis() - startTime;
-        if(LOGGER.isDebugEnabled()){
-        LOGGER.debug("Time taken to serve collectiondashboard is (millisecs): " + timeTaken );
-        }
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken to serve collectiondashboard is (millisecs): " + timeTaken);
         return collectionDetails;
     }
 
@@ -95,15 +93,14 @@ public class WaterChargeCMDashboardController {
 
     @RequestMapping(value = "/waterchargereceipttransactions", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, List<WaterChargeDashBoardResponse>> getReceiptTransactions(
-            @RequestBody WaterChargeDashBoardRequest collectionDetailsRequest) throws IOException {
-        Long startTime = System.currentTimeMillis();
+            @RequestBody final WaterChargeDashBoardRequest collectionDetailsRequest) throws IOException {
+        final Long startTime = System.currentTimeMillis();
         final Map<String, List<WaterChargeDashBoardResponse>> collReceiptDetails = waterChargeDashboardService
                 .getReceiptDetails(collectionDetailsRequest);
-        Long timeTaken = System.currentTimeMillis() -
+        final Long timeTaken = System.currentTimeMillis() -
                 startTime;
-        if(LOGGER.isDebugEnabled()){
-        LOGGER.debug("Time taken to serve receipttransactions is  (millisecs): " + timeTaken );
-        }
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken to serve receipttransactions is  (millisecs): " + timeTaken);
         return collReceiptDetails;
 
     }
@@ -116,16 +113,31 @@ public class WaterChargeCMDashboardController {
      * @throws IOException
      */
     @RequestMapping(value = "/waterchargetoptentaxers", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public TaxPayerResponseDetails getTopTenTaxProducers(@RequestBody WaterChargeDashBoardRequest collectionDetailsRequest)
+    public TaxPayerResponseDetails getTopTenTaxProducers(@RequestBody final WaterChargeDashBoardRequest collectionDetailsRequest)
             throws IOException {
-        Long startTime = System.currentTimeMillis();
-        TaxPayerResponseDetails taxPayerDetails = waterChargeDashboardService.getTopTenTaxProducers(collectionDetailsRequest);
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        if(LOGGER.isDebugEnabled()){
-        LOGGER.debug("Time taken to serve toptentaxers is :  (millisecs)" + timeTaken );
-        }
+        final Long startTime = System.currentTimeMillis();
+        final TaxPayerResponseDetails taxPayerDetails = waterChargeDashboardService
+                .getTopTenTaxProducers(collectionDetailsRequest);
+        final Long timeTaken = System.currentTimeMillis() - startTime;
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken to serve toptentaxers is :  (millisecs)" + timeTaken);
         return taxPayerDetails;
     }
-   
+
+    @RequestMapping(value = "/bottomtentaxers", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public TaxPayerResponseDetails getBottomTenTaxProducers(
+            @RequestBody final WaterChargeDashBoardRequest waterChargeDashBoardRequest) throws IOException {
+        final Long startTime = System.currentTimeMillis();
+        LOGGER.debug("CollectionDetailsRequest input : regionName = " + waterChargeDashBoardRequest.getRegionName()
+                + ", districtName = " + waterChargeDashBoardRequest.getDistrictName() + ", ulbGrade = "
+                + waterChargeDashBoardRequest.getUlbGrade() + ", ulbCode = " + waterChargeDashBoardRequest.getUlbCode()
+                + ", fromDate = " + waterChargeDashBoardRequest.getFromDate() + ", toDate = "
+                + waterChargeDashBoardRequest.getToDate() + ", type = " + waterChargeDashBoardRequest.getType());
+        final TaxPayerResponseDetails taxPayerDetails = waterChargeDashboardService
+                .getBottomTenTaxProducers(waterChargeDashBoardRequest);
+        final Long timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug("Time taken to serve bottomtentaxers is : " + timeTaken + " (millisecs)");
+        return taxPayerDetails;
+    }
 
 }
