@@ -100,4 +100,8 @@ public interface BudgetDefinitionRepository extends JpaRepository<Budget, java.l
     Long countByStatusIdNotInAndFinancialYearIdIsAndIsbereIsAndIdNotIn(Integer statusId, Long financialYearId, String bere,
             List<Long> budgetId);
 
+    @Query("select count(b) from Budget b  where b.materializedPath like :path||'%' and b.status.code not in ('Approved')")
+    Long countNotApprovedBudgetByMaterializedPath(@Param("path") String path);
+
+    Budget findByMaterializedPath(final String path);
 }

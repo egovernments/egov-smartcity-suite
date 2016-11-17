@@ -268,7 +268,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
         }
 
         populateBudgetDetailReport();
-        return Constants.DETAILLIST;
+        return Constants.LIST;
     }
 
     private void populateBudgetDetailReport() {

@@ -243,4 +243,12 @@ public class BudgetDefinitionService {
     public EgwStatus getBudgetApprovedStatus() {
         return egwStatusHibernate.getStatusByModuleAndCode(FinancialConstants.BUDGET, FinancialConstants.WORKFLOW_STATE_APPROVED);
     }
+
+    public Budget getParentBudgetForApprovedChildBudgets(final Budget budget) {
+        final String bgMaterializedPath = budget.getMaterializedPath().substring(0,
+                budget.getMaterializedPath().lastIndexOf('.') + 1);
+        return budgetDefinitionRepository.countNotApprovedBudgetByMaterializedPath(bgMaterializedPath) > 0 ? null
+                : budgetDefinitionRepository
+                        .findByMaterializedPath(bgMaterializedPath.substring(0, bgMaterializedPath.length() - 1));
+    }
 }

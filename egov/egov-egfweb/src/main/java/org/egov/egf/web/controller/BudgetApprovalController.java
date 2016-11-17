@@ -72,7 +72,6 @@ import com.google.gson.GsonBuilder;
 @Controller
 @RequestMapping("/budgetapproval")
 public class BudgetApprovalController {
-    private static final String RE = "RE";
     private static final String BUDGETAPPROVAL_SEARCH = "budgetapproval-search";
     private static final String BUDGETAPPROVAL_RESULT = "budgetapproval-result";
     @Autowired
@@ -139,16 +138,22 @@ public class BudgetApprovalController {
             final Budget bg = budgetDefinitionRepository.findByReferenceBudgetId(Long.valueOf(checkListId));
             bg.setStatus(budgetDefinitionService.getBudgetApprovedStatus());
             budgetDefinitionService.update(bg);
-            if (budgetDefinitionService.getNotApprovedBudgetCount(budget.getFinancialYear().getId()) == 0) {
-                final Budget mainREBudget = budgetDefinitionRepository
-                        .findByIsbereIsAndFinancialYearIdIsAndIsPrimaryBudgetTrueAndParentIsNull(RE,
-                                budget.getFinancialYear().getId())
-                        .get(0);
-                mainREBudget.setStatus(budgetDefinitionService.getBudgetApprovedStatus());
-                budgetDefinitionService.update(mainREBudget);
-                final Budget mainBEBudget = budgetDefinitionRepository.findByReferenceBudgetId(mainREBudget.getId());
-                mainBEBudget.setStatus(budgetDefinitionService.getBudgetApprovedStatus());
-                budgetDefinitionService.update(mainBEBudget);
+            final Budget parentREBudget = budgetDefinitionService.getParentBudgetForApprovedChildBudgets(budget);
+            if (parentREBudget != null) {
+                parentREBudget.setStatus(budgetDefinitionService.getBudgetApprovedStatus());
+                budgetDefinitionService.update(parentREBudget);
+                final Budget referenceParentREBudget = budgetDefinitionRepository.findByReferenceBudgetId(parentREBudget.getId());
+                referenceParentREBudget.setStatus(budgetDefinitionService.getBudgetApprovedStatus());
+                budgetDefinitionService.update(referenceParentREBudget);
+                final Budget rootREBudget = budgetDefinitionService.getParentBudgetForApprovedChildBudgets(parentREBudget);
+                if (rootREBudget != null) {
+                    rootREBudget.setStatus(budgetDefinitionService.getBudgetApprovedStatus());
+                    budgetDefinitionService.update(rootREBudget);
+                    final Budget rootBEBudget = budgetDefinitionRepository.findByReferenceBudgetId(rootREBudget.getId());
+                    rootBEBudget.setStatus(budgetDefinitionService.getBudgetApprovedStatus());
+                    budgetDefinitionService.update(rootBEBudget);
+                }
+
             }
         }
 
