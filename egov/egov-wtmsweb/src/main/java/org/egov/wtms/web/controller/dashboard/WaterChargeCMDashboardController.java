@@ -124,7 +124,7 @@ public class WaterChargeCMDashboardController {
         return taxPayerDetails;
     }
 
-    @RequestMapping(value = "/bottomtentaxers", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/waterchargebottomtentaxers", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public TaxPayerResponseDetails getBottomTenTaxProducers(
             @RequestBody final WaterChargeDashBoardRequest waterChargeDashBoardRequest) throws IOException {
         final Long startTime = System.currentTimeMillis();
