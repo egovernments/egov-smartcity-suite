@@ -75,12 +75,15 @@ public class MarriageRegistrationIndexService {
             registrationSearch
                     .setApplicationNo(registration.getApplicationNo() != null ? registration.getApplicationNo() : "");
             registrationSearch.setConsumerNumber(registration.getApplicationNo() != null ? registration.getApplicationNo() : "");
-            registrationSearch.setRegistrationNo(registration.getRegistrationNo() != null ? registration.getRegistrationNo() : "");
+            registrationSearch
+                    .setRegistrationNo(registration.getRegistrationNo() != null ? registration.getRegistrationNo() : "");
             registrationSearch.setApplicationType(applicationType);
             registrationSearch.setDateOfMarriage(
                     registration.getDateOfMarriage() != null ? registration.getDateOfMarriage() : new Date());
-            registrationSearch.setFeePaid(registration.getFeePaid() != null ?BigDecimal.valueOf(registration.getFeePaid()):BigDecimal.ZERO);
-            registrationSearch.setRegistrationDate(registration.getApplicationDate()!= null ? registration.getApplicationDate() : new Date());
+            registrationSearch.setFeePaid(registration.getFeePaid() != null ? BigDecimal.valueOf(registration.getFeePaid())
+                    : BigDecimal.ZERO);
+            registrationSearch.setRegistrationDate(registration.getApplicationDate() != null ? registration.getApplicationDate()
+                    : new Date());
             registrationSearch.setApplicationCreatedBy(
                     registration.getCreatedBy().getName() != null ? registration.getCreatedBy().getName() : "");
             registrationSearch
@@ -200,16 +203,16 @@ public class MarriageRegistrationIndexService {
                 }
             }
 
-            if (registration.getPriest() != null && registration.getPriest().getName() != null) {
-                registrationSearch.setPriestName(registration.getPriest().getName().getFirstName() != null
+            if (registration.getPriest() != null) {
+                registrationSearch.setPriestName(registration.getPriest().getName() != null
                         ? registration.getPriest().getName().getFirstName() : "");
                 registrationSearch
-                        .setPriestAddress(registration.getPriest().getContactInfo().getResidenceAddress() != null
+                        .setPriestAddress(registration.getPriest().getContactInfo() != null
                                 ? registration.getPriest().getContactInfo().getResidenceAddress() : "");
-                registrationSearch.setPriestReligion(registration.getPriest().getReligion().getDescription() != null
-                        ? registration.getPriest().getReligion().getDescription() : "");
+                registrationSearch.setPriestReligion(registration.getPriest().getReligion() != null
+                        ? registration.getPriest().getReligion().getName() : "");
             }
-            for (final MarriageCertificate certificate : registration.getMarriageCertificate()){
+            for (final MarriageCertificate certificate : registration.getMarriageCertificate())
                 if (certificate != null) {
                     registrationSearch.setCertificateNo(
                             certificate.getCertificateNo() != null ? certificate.getCertificateNo() : "");
@@ -218,7 +221,6 @@ public class MarriageRegistrationIndexService {
                     registrationSearch.setCertificateDate(certificate.getCertificateDate());
                     registrationSearch.setCertificateIssued(certificate.isCertificateIssued());
                 }
-            }
             registrationSearch.setActive(registration.isActive());
             registrationSearch.setApplicationStatus(
                     registration.getStatus().getDescription() != null ? registration.getStatus().getDescription() : "");
