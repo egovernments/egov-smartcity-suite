@@ -43,6 +43,7 @@ package org.egov.works.web.adaptor;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 
+import org.egov.infra.utils.DateUtils;
 import org.egov.works.elasticsearch.model.WorksMilestoneIndexResponse;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,8 +55,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 @Component
-public class WorksMilestoneIndexJsonAdaptor implements JsonSerializer<WorksMilestoneIndexResponse> {
-
+public class WorksSectorReportJsonAdaptor implements JsonSerializer<WorksMilestoneIndexResponse> {
     @Autowired
     private WorksReportJsonAdaptorHelper worksReportJsonAdaptorHelper;
 
@@ -64,21 +64,41 @@ public class WorksMilestoneIndexJsonAdaptor implements JsonSerializer<WorksMiles
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (response != null) {
-            jsonObject.addProperty(response.getReporttype(), response.getName());
-            jsonObject.addProperty("Total no of works", response.getTotalnoofworks());
-            jsonObject.addProperty("Total estimated cost in lakhs",
-                    BigDecimal.valueOf(response.getTotalestimatedcostinlakhs() / 100000).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                            .toString());
-            jsonObject.addProperty("Total work order value in lakhs",
-                    BigDecimal.valueOf(response.getTotalworkordervalueinlakhs() / 100000).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                            .toString());
+
+            jsonObject.addProperty("District Name", response.getDistrictname());
+            jsonObject.addProperty("ULB Name", response.getUlbname());
+            jsonObject.addProperty("Sector", response.getTypeofwork());
+            jsonObject.addProperty("Fund", response.getFund());
+
+            if (response.getScheme() != null)
+                jsonObject.addProperty("Scheme", response.getScheme());
+            else
+                jsonObject.addProperty("Scheme", "NA");
+            if (response.getSubscheme() != null)
+                jsonObject.addProperty("Sub Scheme", response.getSubscheme());
+            else
+                jsonObject.addProperty("Sub Scheme", "NA");
+            jsonObject.addProperty("Ward", response.getWard());
+            jsonObject.addProperty("Estimate Number", response.getEstimatenumber());
+            jsonObject.addProperty("Work Identification Number", response.getWin());
+            jsonObject.addProperty("Name of the work", response.getNameofthework());
+            jsonObject.addProperty("Estimated cost in lakhs", BigDecimal.valueOf(response.getTotalestimatedcostinlakhs() / 100000)
+                    .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+            jsonObject.addProperty("Agreement Number", response.getAgreementnumber());
+            jsonObject.addProperty("Agreement Date",
+                    response.getAgreementdate() != null ? DateUtils.getDefaultFormattedDate(response.getAgreementdate()) : "");
+            jsonObject.addProperty("Contractor Name and code", response.getContractornamecode());
+            jsonObject.addProperty("Contract Period(in days)", response.getContractperiod());
+            jsonObject.addProperty("Work order value in lakhs",
+                    BigDecimal.valueOf(response.getTotalworkordervalueinlakhs() / 100000)
+                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             jsonObject.addProperty("Total bill amount in lakhs",
                     BigDecimal.valueOf(response.getTotalbillamountinlakhs() / 100000).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
             jsonObject.addProperty("Total paid amount in lakhs",
                     BigDecimal.valueOf(response.getTotalpaidamountinlakhs() / 100000).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
-            jsonObject.addProperty("Milestone not created", response.getMilestonenotcreatedcount());
+            jsonObject.addProperty("Is Milestone created", response.getIsmilestonecreated());
             final DateTime currentDate = new DateTime();
             switch (currentDate.getMonthOfYear()) {
             case 1:
@@ -131,6 +151,7 @@ public class WorksMilestoneIndexJsonAdaptor implements JsonSerializer<WorksMiles
 
             jsonObject.addProperty("Financial progress %",
                     BigDecimal.valueOf(response.getFinancialprogress()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+            jsonObject.addProperty("Latest updated time stamp", response.getLatestupdatedtimestamp());
         }
         return jsonObject;
     }

@@ -285,6 +285,9 @@ public class WorksTransactionIndex {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String workstatus;
 
+    @Field(type = FieldType.Date)
+    private Date createddate;
+
     public String getId() {
         return id;
     }
@@ -899,6 +902,14 @@ public class WorksTransactionIndex {
 
     public void setWorkstatus(final String workstatus) {
         this.workstatus = workstatus;
+    }
+
+    public Date getCreateddate() {
+        return createddate;
+    }
+
+    public void setCreateddate(final Date createddate) {
+        this.createddate = createddate;
     }
 
 }
