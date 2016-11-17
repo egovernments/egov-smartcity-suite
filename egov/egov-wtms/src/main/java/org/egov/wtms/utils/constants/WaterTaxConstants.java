@@ -333,7 +333,7 @@ public class WaterTaxConstants {
     public static final String REGIONNAMEAGGREGATIONFIELD = "regionName";
     public static final String DISTRICTNAMEAGGREGATIONFIELD = "districtName";
     public static final String CITYNAMEAGGREGATIONFIELD = "cityName";
-    
+    public static final String CITYGRADEAGGREGATIONFIELD =  "cityGrade";
     public static final String REVENUEWARDAGGREGATIONFIELD = "revenueWard";
     
     

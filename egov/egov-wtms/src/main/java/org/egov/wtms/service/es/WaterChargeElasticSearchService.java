@@ -40,7 +40,6 @@
 
 package org.egov.wtms.service.es;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_TAX_INDEX_NAME;
 
@@ -85,24 +84,27 @@ import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
 @Service
-public class WaterChargeElasticSearchIndexService {
+public class WaterChargeElasticSearchService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WaterChargeElasticSearchIndexService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WaterChargeElasticSearchService.class);
 
     private final WaterChargeDocumentRepository waterChargeIndexRepository;
+
+    private static final String vartotalcollection = "total_collection";
+    private static final String aggregationfield = "by_aggregationField";
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
     @Autowired
-    private WTCollectionIndexElasticSearchService collectionIndexElasticSearchService;
+    private WaterChargeCollectionDocService waterChargeCollDocService;
 
     @Autowired
-    public WaterChargeElasticSearchIndexService(final WaterChargeDocumentRepository waterChargeIndexRepository) {
+    public WaterChargeElasticSearchService(final WaterChargeDocumentRepository waterChargeIndexRepository) {
         this.waterChargeIndexRepository = waterChargeIndexRepository;
     }
 
-    public Page<WaterChargeDocument> findByConsumercode(final String consumerCode, final PageRequest pageRequest) {
+    public Page<WaterChargeDocument> findByConsumercode(final String consumerCode) {
         return waterChargeIndexRepository.findByConsumerCode(consumerCode, new PageRequest(0, 10));
     }
 
@@ -154,7 +156,7 @@ public class WaterChargeElasticSearchIndexService {
         Long startTime = System.currentTimeMillis();
         final BigDecimal totalDemand = getTotalDemandBasedOnInputFilters(waterChargedashBoardRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getTotalDemandBasedOnInputFilters() is : " + timeTaken + " (millisecs) ");
+        LOGGER.debug("Time taken by getTotalDemandBasedOnInputFilters() is (millisecs) : " + timeTaken);
 
         startTime = System.currentTimeMillis();
         final int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
@@ -168,21 +170,20 @@ public class WaterChargeElasticSearchIndexService {
         // performance = (current year tilldate collection * 100)/(proportional
         // demand)
         collectionIndexDetails.setPerformance(collectionIndexDetails.getCurrentYearTillDateColl()
-                .multiply(PropertyTaxConstants.BIGDECIMAL_100).divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
+                .multiply(WaterTaxConstants.BIGDECIMAL_100).divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
         // variance = ((currentYearCollection -
         // lastYearCollection)*100)/lastYearCollection
         BigDecimal variation = BigDecimal.ZERO;
         if (collectionIndexDetails.getLastYearTillDateColl().compareTo(BigDecimal.ZERO) == 0)
-            variation = PropertyTaxConstants.BIGDECIMAL_100;
+            variation = WaterTaxConstants.BIGDECIMAL_100;
         else
             variation = collectionIndexDetails.getCurrentYearTillDateColl()
                     .subtract(collectionIndexDetails.getLastYearTillDateColl())
-                    .multiply(PropertyTaxConstants.BIGDECIMAL_100)
+                    .multiply(WaterTaxConstants.BIGDECIMAL_100)
                     .divide(collectionIndexDetails.getLastYearTillDateColl(), 1, BigDecimal.ROUND_HALF_UP);
         collectionIndexDetails.setLastYearVar(variation);
         timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug(
-                "Time taken for setting values in getConsolidatedDemandInfo() is : " + timeTaken + " (millisecs) ");
+        LOGGER.debug("Time taken for setting values in getConsolidatedDemandInfo() is (millisecs) : " + timeTaken);
         final ErrorDetails errorDetails = new ErrorDetails();
         errorDetails.setErrorCode(WaterTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
         errorDetails.setErrorMessage(WaterTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
@@ -198,8 +199,8 @@ public class WaterChargeElasticSearchIndexService {
      * @return
      */
     public BigDecimal getTotalDemandBasedOnInputFilters(final WaterChargeDashBoardRequest waterChargedashBoardRequest) {
-        final BoolQueryBuilder boolQuery = collectionIndexElasticSearchService
-                .prepareWhereClause(waterChargedashBoardRequest, null);
+        final BoolQueryBuilder boolQuery = waterChargeCollDocService.prepareWhereClause(waterChargedashBoardRequest,
+                null);
         final SearchQuery searchQueryColl = new NativeSearchQueryBuilder()
                 .withIndices(WATER_TAX_INDEX_NAME).withQuery(boolQuery).addAggregation(AggregationBuilders
                         .sum(WaterTaxConstants.WATERCHARGETOTALDEMAND).field(WaterTaxConstants.WATERCHARGETOTALDEMAND))
@@ -227,7 +228,7 @@ public class WaterChargeElasticSearchIndexService {
                 .equalsIgnoreCase(PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE)) {
             // Fetch the ward wise data for the filters
             final List<TaxPayerDetails> wardWiseTaxProducers = returnUlbWiseAggregationResults(
-                    waterChargedashBoardRequest, PROPERTY_TAX_INDEX_NAME, false, "total_collection", 250, true);
+                    waterChargedashBoardRequest, PROPERTY_TAX_INDEX_NAME, false, vartotalcollection, 250, true);
             final Map<String, TaxPayerDetails> wardWiseTaxPayersDetails = new HashMap<>();
             final Map<String, List<TaxPayerDetails>> billCollectorWiseMap = new LinkedHashMap<>();
             final List<TaxPayerDetails> taxPayerDetailsList = new ArrayList<>();
@@ -240,15 +241,13 @@ public class WaterChargeElasticSearchIndexService {
             // Prepare Bill Collector wise tax payers details
             prepareTaxersInfoForBillCollectors(waterChargedashBoardRequest, billCollectorWiseMap,
                     billCollectorWiseTaxPayerDetails);
-            taxProducers = getTaxPayersForBillCollector(waterChargedashBoardRequest, false, wardWiseTaxProducers,
-                    billCollectorWiseTaxPayerDetails, true);
-            taxAchievers = getTaxPayersForBillCollector(waterChargedashBoardRequest, false, wardWiseTaxProducers,
-                    billCollectorWiseTaxPayerDetails, false);
+            taxProducers = getTaxPayersForBillCollector(false, billCollectorWiseTaxPayerDetails, true);
+            taxAchievers = getTaxPayersForBillCollector(false, billCollectorWiseTaxPayerDetails, false);
         } else {
             taxProducers = returnUlbWiseAggregationResults(waterChargedashBoardRequest, WATER_TAX_INDEX_NAME, false,
-                    "total_collection", 10, false);
+                    vartotalcollection, 10, false);
             taxAchievers = returnUlbWiseAggregationResults(waterChargedashBoardRequest, WATER_TAX_INDEX_NAME, false,
-                    "total_collection", 120, false);
+                    vartotalcollection, 120, false);
         }
         topTaxPerformers.setProducers(taxProducers);
         topTaxPerformers.setAchievers(taxAchievers);
@@ -266,9 +265,9 @@ public class WaterChargeElasticSearchIndexService {
             final WaterChargeDashBoardRequest waterChargedashBoardRequest) {
         final TaxPayerResponseDetails topTaxPerformers = new TaxPayerResponseDetails();
         final List<TaxPayerDetails> taxProducers = returnUlbWiseAggregationResults(waterChargedashBoardRequest,
-                WATER_TAX_INDEX_NAME, true, "total_collection", 10, false);
+                WATER_TAX_INDEX_NAME, true, vartotalcollection, 10, false);
         final List<TaxPayerDetails> taxAchievers = returnUlbWiseAggregationResults(waterChargedashBoardRequest,
-                WATER_TAX_INDEX_NAME, true, "total_collection", 120, false);
+                WATER_TAX_INDEX_NAME, true, vartotalcollection, 120, false);
 
         topTaxPerformers.setProducers(taxProducers);
         topTaxPerformers.setAchievers(taxAchievers);
@@ -289,12 +288,12 @@ public class WaterChargeElasticSearchIndexService {
             final WaterChargeDashBoardRequest waterChargedashBoardRequest, final String indexName, final Boolean order,
             final String orderingAggregationName, final int size, final boolean isBillCollectorWise) {
         final List<TaxPayerDetails> taxPayers = new ArrayList<>();
-        final BoolQueryBuilder boolQuery = collectionIndexElasticSearchService
-                .prepareWhereClause(waterChargedashBoardRequest, null);
+        final BoolQueryBuilder boolQuery = waterChargeCollDocService.prepareWhereClause(waterChargedashBoardRequest,
+                null);
 
         // orderingAggregationName is the aggregation name by which we have to
         // order the results
-        // IN this case can be one of "totaldemand" or "total_collection" or
+        // IN this case can be one of "totaldemand" or vartotalcollection or
         // "avg_achievement"
         String groupingField;
         if (StringUtils.isNotBlank(waterChargedashBoardRequest.getUlbCode())
@@ -302,24 +301,25 @@ public class WaterChargeElasticSearchIndexService {
                         && waterChargedashBoardRequest.getType().equals(WaterTaxConstants.DASHBOARD_GROUPING_WARDWISE))
             groupingField = WaterTaxConstants.REVENUEWARDAGGREGATIONFIELD;
         else
-            groupingField = WaterTaxConstants.REVENUEWARDAGGREGATIONFIELD;
+            groupingField = WaterTaxConstants.CITYNAMEAGGREGATIONFIELD;
 
         Long startTime = System.currentTimeMillis();
+        @SuppressWarnings("rawtypes")
         AggregationBuilder aggregation;
-        SearchQuery searchQueryColl = null;
+        SearchQuery searchQueryColl;
         // Apply the ordering and max results size only if the type is not
         // billcollector
         if (!isBillCollectorWise) {
-            aggregation = AggregationBuilders.terms("by_aggregationField").field(groupingField).size(size)
+            aggregation = AggregationBuilders.terms(aggregationfield).field(groupingField).size(size)
                     .order(Terms.Order.aggregation(orderingAggregationName, order))
                     .subAggregation(AggregationBuilders.sum("totaldemand").field("totalDemand"))
-                    .subAggregation(AggregationBuilders.sum("total_collection").field("totalCollection"));
+                    .subAggregation(AggregationBuilders.sum(vartotalcollection).field("totalCollection"));
             searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName).withQuery(boolQuery)
                     .addAggregation(aggregation).build();
         } else {
-            aggregation = AggregationBuilders.terms("by_aggregationField").field(groupingField).size(250)
+            aggregation = AggregationBuilders.terms(aggregationfield).field(groupingField).size(250)
                     .subAggregation(AggregationBuilders.sum("totaldemand").field("totalDemand"))
-                    .subAggregation(AggregationBuilders.sum("total_collection").field("totalCollection"));
+                    .subAggregation(AggregationBuilders.sum(vartotalcollection).field("totalCollection"));
             searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName).withQuery(boolQuery)
                     .withPageable(new PageRequest(0, 250)).addAggregation(aggregation).build();
         }
@@ -328,7 +328,7 @@ public class WaterChargeElasticSearchIndexService {
                 response -> response.getAggregations());
 
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by ulbWiseAggregations is : " + timeTaken + " (millisecs) ");
+        LOGGER.debug("Time taken by ulbWiseAggregations is (millisecs) : " + timeTaken);
 
         TaxPayerDetails taxDetail;
         startTime = System.currentTimeMillis();
@@ -336,7 +336,7 @@ public class WaterChargeElasticSearchIndexService {
         final Date toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
         final Date lastYearFromDate = org.apache.commons.lang3.time.DateUtils.addYears(fromDate, -1);
         final Date lastYearToDate = org.apache.commons.lang3.time.DateUtils.addYears(toDate, -1);
-        final StringTerms totalAmountAggr = collAggr.get("by_aggregationField");
+        final StringTerms totalAmountAggr = collAggr.get(aggregationfield);
         for (final Terms.Bucket entry : totalAmountAggr.getBuckets()) {
             taxDetail = new TaxPayerDetails();
             taxDetail.setRegionName(waterChargedashBoardRequest.getRegionName());
@@ -350,7 +350,7 @@ public class WaterChargeElasticSearchIndexService {
             // Proportional Demand = (totalDemand/12)*noOfmonths
             final int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
             final Sum totalDemandAggregation = entry.getAggregations().get(WaterTaxConstants.WATERCHARGETOTALDEMAND);
-            final Sum totalCollectionAggregation = entry.getAggregations().get("total_collection");
+            final Sum totalCollectionAggregation = entry.getAggregations().get(vartotalcollection);
             final BigDecimal totalDemandValue = BigDecimal.valueOf(totalDemandAggregation.getValue()).setScale(0,
                     BigDecimal.ROUND_HALF_UP);
             final BigDecimal totalCollections = BigDecimal.valueOf(totalCollectionAggregation.getValue()).setScale(0,
@@ -363,25 +363,22 @@ public class WaterChargeElasticSearchIndexService {
             taxDetail.setAchievement(totalCollections.multiply(WaterTaxConstants.BIGDECIMAL_100)
                     .divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
             taxDetail.setCurrentYearTillDateBalDmd(proportionalDemand.subtract(totalCollections));
-            final BigDecimal lastYearCollection = collectionIndexElasticSearchService.getCollectionBetweenDates(
+            final BigDecimal lastYearCollection = waterChargeCollDocService.getCollectionBetweenDates(
                     waterChargedashBoardRequest, lastYearFromDate, lastYearToDate, fieldName);
-            // TotalCollectionsForDatesForUlb(waterChargedashBoardRequest,
-            // lastYearFromDate, lastYearToDate,fieldName);
-            taxDetail.setLastYearTillDateColl(lastYearCollection);
             // variance = ((currentYearCollection -
             // lastYearCollection)*100)/lastYearCollection
             BigDecimal variation = BigDecimal.ZERO;
             if (lastYearCollection.compareTo(BigDecimal.ZERO) == 0)
-                variation = PropertyTaxConstants.BIGDECIMAL_100;
+                variation = WaterTaxConstants.BIGDECIMAL_100;
             else
-                variation = totalCollections.subtract(lastYearCollection).multiply(PropertyTaxConstants.BIGDECIMAL_100)
+                variation = totalCollections.subtract(lastYearCollection).multiply(WaterTaxConstants.BIGDECIMAL_100)
                         .divide(lastYearCollection, 1, BigDecimal.ROUND_HALF_UP);
             taxDetail.setLastYearVar(variation);
             taxPayers.add(taxDetail);
         }
         timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken for setting values in returnUlbWiseAggregationResults() is : " + timeTaken
-                + " (millisecs) ");
+        LOGGER.debug(
+                "Time taken for setting values in returnUlbWiseAggregationResults() is (millisecs) : " + timeTaken);
         return returnTopResults(taxPayers, size, order);
     }
 
@@ -422,9 +419,11 @@ public class WaterChargeElasticSearchIndexService {
      */
     private void prepareBillCollectorWiseMapData(final WaterChargeDashBoardRequest waterChargedashBoardRequest,
             final Map<String, TaxPayerDetails> wardWiseTaxPayersDetails,
-            final Map<String, List<TaxPayerDetails>> billCollectorWiseMap, List<TaxPayerDetails> taxPayerDetailsList) {
+            final Map<String, List<TaxPayerDetails>> billCollectorWiseMap,
+            final List<TaxPayerDetails> taxPayerDetailsList) {
+        List<TaxPayerDetails> taxPayerDetailsListTemp;
 
-        final List<BillCollectorIndex> billCollectorsList = collectionIndexElasticSearchService
+        final List<BillCollectorIndex> billCollectorsList = waterChargeCollDocService
                 .getBillCollectorDetails(waterChargedashBoardRequest);
         for (final BillCollectorIndex billCollIndex : billCollectorsList)
             if (wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()) != null)
@@ -432,9 +431,9 @@ public class WaterChargeElasticSearchIndexService {
                     taxPayerDetailsList.add(wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()));
                     billCollectorWiseMap.put(billCollIndex.getBillCollector(), taxPayerDetailsList);
                 } else if (!billCollectorWiseMap.containsKey(billCollIndex.getBillCollector())) {
-                    taxPayerDetailsList = new ArrayList<>();
-                    taxPayerDetailsList.add(wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()));
-                    billCollectorWiseMap.put(billCollIndex.getBillCollector(), taxPayerDetailsList);
+                    taxPayerDetailsListTemp = new ArrayList<>();
+                    taxPayerDetailsListTemp.add(wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()));
+                    billCollectorWiseMap.put(billCollIndex.getBillCollector(), taxPayerDetailsListTemp);
                 } else
                     billCollectorWiseMap.get(billCollIndex.getBillCollector())
                             .add(wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()));
@@ -450,9 +449,7 @@ public class WaterChargeElasticSearchIndexService {
      * @param isForProducers
      * @return
      */
-    private List<TaxPayerDetails> getTaxPayersForBillCollector(
-            final WaterChargeDashBoardRequest waterChargedashBoardRequest, final boolean order,
-            final List<TaxPayerDetails> wardWiseTaxProducers,
+    private List<TaxPayerDetails> getTaxPayersForBillCollector(final boolean order,
             final List<TaxPayerDetails> billCollectorWiseTaxPayerDetails, final boolean isForProducers) {
         final Map<BigDecimal, TaxPayerDetails> sortedTaxersMap = new HashMap<>();
         // For propducers, prepare sorted list of totalCollection
@@ -521,13 +518,11 @@ public class WaterChargeElasticSearchIndexService {
             taxPayerDetails.setCurrentYearTillDateBalDmd(cytdDmd.subtract(cytdColl));
             taxPayerDetails.setTotalDmd(totalDmd);
             taxPayerDetails.setLastYearTillDateColl(lytdColl);
-            taxPayerDetails
-                    .setAchievement(cytdColl.multiply(BIGDECIMAL_100).divide(cytdDmd, 1, BigDecimal.ROUND_HALF_UP));
-            if (lytdColl.compareTo(BigDecimal.ZERO) == 0) {
-            } else
-                cytdColl.subtract(lytdColl).multiply(PropertyTaxConstants.BIGDECIMAL_100).divide(lytdColl, 1,
+            taxPayerDetails.setAchievement(
+                    cytdColl.multiply(WaterTaxConstants.BIGDECIMAL_100).divide(cytdDmd, 1, BigDecimal.ROUND_HALF_UP));
+            if (lytdColl.compareTo(BigDecimal.ZERO) > 0)
+                cytdColl.subtract(lytdColl).multiply(WaterTaxConstants.BIGDECIMAL_100).divide(lytdColl, 1,
                         BigDecimal.ROUND_HALF_UP);
-
             billCollectorWiseTaxPayerDetails.add(taxPayerDetails);
         }
     }

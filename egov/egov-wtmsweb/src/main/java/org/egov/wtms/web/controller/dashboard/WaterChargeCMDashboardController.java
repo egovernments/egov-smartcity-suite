@@ -66,8 +66,6 @@ public class WaterChargeCMDashboardController {
     @Autowired
     private WaterChargeDashboardService waterChargeDashboardService;
 
-
-
     /**
      * Provides Collection Index details across all ULBs
      *
@@ -82,7 +80,9 @@ public class WaterChargeCMDashboardController {
         final Map<String, List<WaterChargeDashBoardResponse>> collectionDetails = waterChargeDashboardService
                 .getCollectionIndexDetails(collectionDetailsRequest);
         final Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve collectiondashboard is : " + timeTaken + " (millisecs)");
+        if(LOGGER.isDebugEnabled()){
+        LOGGER.debug("Time taken to serve collectiondashboard is (millisecs): " + timeTaken );
+        }
         return collectionDetails;
     }
 
@@ -101,7 +101,9 @@ public class WaterChargeCMDashboardController {
                 .getReceiptDetails(collectionDetailsRequest);
         Long timeTaken = System.currentTimeMillis() -
                 startTime;
-        LOGGER.debug("Time taken to serve receipttransactions is : " + timeTaken + " (millisecs)");
+        if(LOGGER.isDebugEnabled()){
+        LOGGER.debug("Time taken to serve receipttransactions is  (millisecs): " + timeTaken );
+        }
         return collReceiptDetails;
 
     }
@@ -119,7 +121,9 @@ public class WaterChargeCMDashboardController {
         Long startTime = System.currentTimeMillis();
         TaxPayerResponseDetails taxPayerDetails = waterChargeDashboardService.getTopTenTaxProducers(collectionDetailsRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve toptentaxers is : " + timeTaken + " (millisecs)");
+        if(LOGGER.isDebugEnabled()){
+        LOGGER.debug("Time taken to serve toptentaxers is :  (millisecs)" + timeTaken );
+        }
         return taxPayerDetails;
     }
    

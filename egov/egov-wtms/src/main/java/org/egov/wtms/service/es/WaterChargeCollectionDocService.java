@@ -91,9 +91,14 @@ import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
 @Service
-public class WTCollectionIndexElasticSearchService {
+public class WaterChargeCollectionDocService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WTCollectionIndexElasticSearchService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WaterChargeCollectionDocService.class);
+
+    private static final String consumerCodeIndex = "consumerCode";
+    private static final String receiptcountIndex = "receipt_count";
+    private static final String receiptDateIndex = "receiptDate";
+    private static final String collectiontotal = "collectiontotal";
 
     @Autowired
     private CFinancialYearService cFinancialYearService;
@@ -111,19 +116,19 @@ public class WTCollectionIndexElasticSearchService {
      */
     public BigDecimal getConsolidatedCollForYears(final Date fromDate, final Date toDate, final String billingService) {
         final QueryBuilder queryBuilder = QueryBuilders.boolQuery()
-                .must(QueryBuilders.rangeQuery("receiptDate")
+                .must(QueryBuilders.rangeQuery(receiptDateIndex)
                         .gte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                         .lte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
                 .must(QueryBuilders.matchQuery("billingService", billingService))
                 .mustNot(QueryBuilders.matchQuery("status", "Cancelled"));
         final SearchQuery searchQueryColl = new NativeSearchQueryBuilder()
                 .withIndices(WaterTaxConstants.COLLECTION_INDEX_NAME).withQuery(queryBuilder)
-                .addAggregation(AggregationBuilders.sum("collectiontotal").field("totalAmount")).build();
+                .addAggregation(AggregationBuilders.sum(collectiontotal).field("totalAmount")).build();
 
         final Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl,
                 response -> response.getAggregations());
 
-        final Sum aggr = collAggr.get("collectiontotal");
+        final Sum aggr = collAggr.get(collectiontotal);
         return BigDecimal.valueOf(aggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
     }
 
@@ -170,24 +175,27 @@ public class WTCollectionIndexElasticSearchService {
         if (indexName == null)
             boolQuery = boolQuery
                     .filter(QueryBuilders.rangeQuery(WaterTaxConstants.WATERCHARGETOTALDEMAND).from(0).to(null));
-        else if (indexName.equals(WaterTaxConstants.WATER_TAX_INDEX_NAME))
+        else if (WaterTaxConstants.WATER_TAX_INDEX_NAME.equals(indexName))
             boolQuery = boolQuery
                     .filter(QueryBuilders.rangeQuery(WaterTaxConstants.WATERCHARGETOTALDEMAND).from(0).to(null));
         else if (indexName.equals(WaterTaxConstants.COLLECTION_INDEX_NAME))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("billingService", COLLECION_BILLING_SERVICE_WTMS));
-        if (StringUtils.isNotBlank(collectionDetailsRequest.getRegionName()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WaterTaxConstants.REGIONNAMEAGGREGATIONFIELD,
-                    collectionDetailsRequest.getRegionName()));
-        if (StringUtils.isNotBlank(collectionDetailsRequest.getDistrictName()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WaterTaxConstants.DISTRICTNAMEAGGREGATIONFIELD,
-                    collectionDetailsRequest.getDistrictName()));
+        if (boolQuery != null) {
+            if (StringUtils.isNotBlank(collectionDetailsRequest.getRegionName()))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WaterTaxConstants.REGIONNAMEAGGREGATIONFIELD,
+                        collectionDetailsRequest.getRegionName()));
+            if (StringUtils.isNotBlank(collectionDetailsRequest.getDistrictName()))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WaterTaxConstants.DISTRICTNAMEAGGREGATIONFIELD,
+                        collectionDetailsRequest.getDistrictName()));
 
-        if (StringUtils.isNotBlank(collectionDetailsRequest.getUlbGrade()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityGrade", collectionDetailsRequest.getUlbGrade()));
+            if (StringUtils.isNotBlank(collectionDetailsRequest.getUlbGrade()))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WaterTaxConstants.CITYGRADEAGGREGATIONFIELD,
+                        collectionDetailsRequest.getUlbGrade()));
 
-        if (StringUtils.isNotBlank(collectionDetailsRequest.getUlbCode()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityCode", collectionDetailsRequest.getUlbCode()));
-
+            if (StringUtils.isNotBlank(collectionDetailsRequest.getUlbCode()))
+                boolQuery = boolQuery
+                        .filter(QueryBuilders.matchQuery("cityCode", collectionDetailsRequest.getUlbCode()));
+        }
         return boolQuery;
     }
 
@@ -220,9 +228,9 @@ public class WTCollectionIndexElasticSearchService {
      */
     public List<WaterChargeDashBoardResponse> getCompleteCollectionIndexDetails(
             final WaterChargeDashBoardRequest collectionDetailsRequest) {
+
         final List<WaterChargeDashBoardResponse> collectionIndexDetailsList = new ArrayList<WaterChargeDashBoardResponse>();
         final WaterChargeDashBoardResponse collectionIndexDetails = new WaterChargeDashBoardResponse();
-
         Date fromDate;
         Date toDate;
         BigDecimal todayColl = BigDecimal.ZERO;
@@ -277,8 +285,8 @@ public class WTCollectionIndexElasticSearchService {
                 org.apache.commons.lang3.time.DateUtils.addYears(toDate, -1), null);
         collectionIndexDetails.setLastYearTillDateColl(tillDateColl);
         final Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getCompleteCollectionIndexDetails() is : " + timeTaken + " (millisecs) ");
-
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken by getCompleteCollectionIndexDetails() is (millisecs) : " + timeTaken);
         /**
          * For fetching total demand between the date ranges if dates are sent
          * in the request, consider fromDate and toDate+1 , else calculate from
@@ -295,8 +303,8 @@ public class WTCollectionIndexElasticSearchService {
         }
         // starts from
         final BigDecimal totalDemand = getTotalDemandBasedOnInputFilters(collectionDetailsRequest);
-        LOGGER.debug("Time taken by getTotalDemandBasedOnInputFilters() is : " + timeTaken + " (millisecs) ");
-
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken by getTotalDemandBasedOnInputFilters() is (millisecs): " + timeTaken);
         final int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
         collectionIndexDetails.setTotalDmd(totalDemand);
 
@@ -309,22 +317,21 @@ public class WTCollectionIndexElasticSearchService {
         // demand)
         if (proportionalDemand.compareTo(BigDecimal.ZERO) > 0)
             collectionIndexDetails.setPerformance(
-                    collectionIndexDetails.getCurrentYearTillDateColl().multiply(PropertyTaxConstants.BIGDECIMAL_100)
+                    collectionIndexDetails.getCurrentYearTillDateColl().multiply(WaterTaxConstants.BIGDECIMAL_100)
                             .divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
         // variance = ((currentYearCollection -
         // lastYearCollection)*100)/lastYearCollection
-        BigDecimal variation = BigDecimal.ZERO;
+        BigDecimal variation;
         if (collectionIndexDetails.getLastYearTillDateColl().compareTo(BigDecimal.ZERO) == 0)
-            variation = PropertyTaxConstants.BIGDECIMAL_100;
+            variation = WaterTaxConstants.BIGDECIMAL_100;
         else
             variation = collectionIndexDetails.getCurrentYearTillDateColl()
                     .subtract(collectionIndexDetails.getLastYearTillDateColl())
-                    .multiply(PropertyTaxConstants.BIGDECIMAL_100)
+                    .multiply(WaterTaxConstants.BIGDECIMAL_100)
                     .divide(collectionIndexDetails.getLastYearTillDateColl(), 1, BigDecimal.ROUND_HALF_UP);
         collectionIndexDetails.setLastYearVar(variation);
-        LOGGER.debug(
-                "Time taken for setting values in getConsolidatedDemandInfo() is : " + timeTaken + " (millisecs) ");
-
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken for setting values in getConsolidatedDemandInfo() is (millisecs): " + timeTaken);
         collectionIndexDetailsList.add(collectionIndexDetails);
         return collectionIndexDetailsList;
     }
@@ -342,10 +349,11 @@ public class WTCollectionIndexElasticSearchService {
     public BigDecimal getCollectionBetweenDates(final WaterChargeDashBoardRequest collectionDetailsRequest,
             final Date fromDate, final Date toDate, final String cityName) {
         final Long startTime = System.currentTimeMillis();
+
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest,
                 WaterTaxConstants.COLLECTION_INDEX_NAME);
         boolQuery = boolQuery
-                .filter(QueryBuilders.rangeQuery("receiptDate")
+                .filter(QueryBuilders.rangeQuery(receiptDateIndex)
                         .gte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                         .lte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
                 .mustNot(QueryBuilders.matchQuery("status", "Cancelled"));
@@ -355,14 +363,15 @@ public class WTCollectionIndexElasticSearchService {
 
         final SearchQuery searchQueryColl = new NativeSearchQueryBuilder()
                 .withIndices(WaterTaxConstants.COLLECTION_INDEX_NAME).withQuery(boolQuery)
-                .addAggregation(AggregationBuilders.sum("collectiontotal").field("totalAmount")).build();
+                .addAggregation(AggregationBuilders.sum(collectiontotal).field("totalAmount")).build();
 
         final Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl,
                 response -> response.getAggregations());
 
-        final Sum aggr = collAggr.get("collectiontotal");
+        final Sum aggr = collAggr.get(collectiontotal);
         final Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getCollectionBetweenDates() is : " + timeTaken + " (millisecs) ");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken by getCollectionBetweenDates() is (millisecs) : " + timeTaken);
         return BigDecimal.valueOf(aggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
     }
 
@@ -399,7 +408,7 @@ public class WTCollectionIndexElasticSearchService {
             else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ULBWISE))
                 aggregationField = WaterTaxConstants.CITYNAMEAGGREGATIONFIELD;
             else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_GRADEWISE))
-                aggregationField = "cityGrade";
+                aggregationField = WaterTaxConstants.CITYGRADEAGGREGATIONFIELD;
             else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_WARDWISE))
                 aggregationField = WaterTaxConstants.REVENUEWARDAGGREGATIONFIELD;
 
@@ -455,13 +464,12 @@ public class WTCollectionIndexElasticSearchService {
                 org.apache.commons.lang3.time.DateUtils.addYears(toDate, -1), WaterTaxConstants.COLLECTION_INDEX_NAME,
                 "totalAmount", aggregationField);
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getCollectionAndDemandValues() is : " + timeTaken + " (millisecs) ");
-
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken by getCollectionAndDemandValues() is (millisecs) : " + timeTaken);
         startTime = System.currentTimeMillis();
         for (final Map.Entry<String, BigDecimal> entry : cytdCollMap.entrySet()) {
             collIndData = new WaterChargeDashBoardResponse();
             name = entry.getKey();
-            System.out.println(name);
             if (aggregationField.equals(WaterTaxConstants.REGIONNAMEAGGREGATIONFIELD))
                 collIndData.setRegionName(name);
             else if (aggregationField.equals(WaterTaxConstants.DISTRICTNAMEAGGREGATIONFIELD)) {
@@ -471,7 +479,7 @@ public class WTCollectionIndexElasticSearchService {
                 collIndData.setUlbName(name);
                 collIndData.setDistrictName(collectionDetailsRequest.getDistrictName());
                 collIndData.setUlbGrade(collectionDetailsRequest.getUlbGrade());
-            } else if (aggregationField.equals("cityGrade"))
+            } else if (aggregationField.equals(WaterTaxConstants.CITYGRADEAGGREGATIONFIELD))
                 collIndData.setUlbGrade(name);
             else if (WaterTaxConstants.REVENUEWARDAGGREGATIONFIELD.equals(aggregationField))
                 collIndData.setWardName(name);
@@ -486,7 +494,7 @@ public class WTCollectionIndexElasticSearchService {
             collIndData.setCurrentYearTillDateDmd(cytdDmd);
             if (cytdDmd != BigDecimal.valueOf(0)) {
                 balance = cytdDmd.subtract(collIndData.getCurrentYearTillDateColl());
-                performance = collIndData.getCurrentYearTillDateColl().multiply(PropertyTaxConstants.BIGDECIMAL_100)
+                performance = collIndData.getCurrentYearTillDateColl().multiply(WaterTaxConstants.BIGDECIMAL_100)
                         .divide(cytdDmd, 1, BigDecimal.ROUND_HALF_UP);
                 collIndData.setPerformance(performance);
                 collIndData.setCurrentYearTillDateBalDmd(balance);
@@ -498,17 +506,18 @@ public class WTCollectionIndexElasticSearchService {
             // variance = ((currentYearCollection -
             // lastYearCollection)*100)/lastYearCollection
             if (collIndData.getLastYearTillDateColl().compareTo(BigDecimal.ZERO) == 0)
-                variance = PropertyTaxConstants.BIGDECIMAL_100;
+                variance = WaterTaxConstants.BIGDECIMAL_100;
             else
                 variance = collIndData.getCurrentYearTillDateColl().subtract(collIndData.getLastYearTillDateColl())
-                        .multiply(PropertyTaxConstants.BIGDECIMAL_100)
+                        .multiply(WaterTaxConstants.BIGDECIMAL_100)
                         .divide(collIndData.getLastYearTillDateColl(), 1, BigDecimal.ROUND_HALF_UP);
             collIndData.setLastYearVar(variance);
             collIndDataList.add(collIndData);
         }
 
         timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken for setting values in getResponseTableData() is : " + timeTaken + " (millisecs) ");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken for setting values in getResponseTableData() is (millisecs): " + timeTaken);
         return collIndDataList;
     }
 
@@ -527,15 +536,16 @@ public class WTCollectionIndexElasticSearchService {
     public Map<String, BigDecimal> getCollectionAndDemandValues(
             final WaterChargeDashBoardRequest collectionDetailsRequest, final Date fromDate, final Date toDate,
             final String indexName, final String fieldName, final String aggregationField) {
+        final String by_city = "by_city";
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, indexName);
         if (indexName.equals(WaterTaxConstants.COLLECTION_INDEX_NAME))
             boolQuery = boolQuery
-                    .filter(QueryBuilders.rangeQuery("receiptDate")
+                    .filter(QueryBuilders.rangeQuery(receiptDateIndex)
                             .gte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                             .lte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
                     .mustNot(QueryBuilders.matchQuery("status", "Cancelled"));
 
-        final AggregationBuilder aggregation = AggregationBuilders.terms("by_city").field(aggregationField).size(120)
+        final AggregationBuilder aggregation = AggregationBuilders.terms(by_city).field(aggregationField).size(120)
                 .subAggregation(AggregationBuilders.sum("total").field(fieldName));
 
         final SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName).withQuery(boolQuery)
@@ -544,7 +554,7 @@ public class WTCollectionIndexElasticSearchService {
         final Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl,
                 response -> response.getAggregations());
 
-        final StringTerms cityAggr = collAggr.get("by_city");
+        final StringTerms cityAggr = collAggr.get(by_city);
         final Map<String, BigDecimal> cytdCollMap = new HashMap<>();
         for (final Terms.Bucket entry : cityAggr.getBuckets()) {
             final Sum aggr = entry.getAggregations().get("total");
@@ -631,8 +641,10 @@ public class WTCollectionIndexElasticSearchService {
             finYearEndDate = org.apache.commons.lang3.time.DateUtils.addYears(finYearEndDate, -1);
         }
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getMonthwiseCollectionsForConsecutiveYears() for 3 consecutive years is : "
-                + timeTaken + " (millisecs) ");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug(
+                    "Time taken by getMonthwiseCollectionsForConsecutiveYears() for 3 consecutive years is (millisecs): "
+                            + timeTaken);
 
         startTime = System.currentTimeMillis();
         /**
@@ -665,8 +677,8 @@ public class WTCollectionIndexElasticSearchService {
                 collTrendsList.add(collTrend);
             }
         timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug(
-                "Time taken setting values in getMonthwiseCollectionDetails() is : " + timeTaken + " (millisecs) ");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken setting values in getMonthwiseCollectionDetails() is (millisecs) : " + timeTaken);
         return collTrendsList;
     }
 
@@ -683,20 +695,19 @@ public class WTCollectionIndexElasticSearchService {
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest,
                 WaterTaxConstants.COLLECTION_INDEX_NAME);
         boolQuery = boolQuery.mustNot(QueryBuilders.matchQuery("status", "Cancelled"));
-        final AggregationBuilder monthAggregation = AggregationBuilders.dateHistogram("date_agg").field("receiptDate")
-                .interval(DateHistogramInterval.MONTH)
+        @SuppressWarnings("rawtypes")
+        final AggregationBuilder monthAggregation = AggregationBuilders.dateHistogram("date_agg")
+                .field(receiptDateIndex).interval(DateHistogramInterval.MONTH)
                 .subAggregation(AggregationBuilders.sum("current_total").field("totalAmount"));
 
         final SearchQuery searchQueryColl = new NativeSearchQueryBuilder()
                 .withIndices(WaterTaxConstants.COLLECTION_INDEX_NAME)
-                .withQuery(boolQuery.filter(QueryBuilders.rangeQuery("receiptDate")
+                .withQuery(boolQuery.filter(QueryBuilders.rangeQuery(receiptDateIndex)
                         .gte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                         .lte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false)))
                 .addAggregation(monthAggregation).build();
 
-        final Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl,
-                response -> response.getAggregations());
-        return collAggr;
+        return elasticsearchTemplate.query(searchQueryColl, response -> response.getAggregations());
     }
 
     /**
@@ -748,8 +759,8 @@ public class WTCollectionIndexElasticSearchService {
 
         receiptDetails.setLastYearTillDateRcptsCount(receiptsCount);
         final Long timeTaken = System.currentTimeMillis() - startTime;
-
-        LOGGER.debug("Time taken by getTotalReceiptCountsForDates() for all dates is : " + timeTaken + " (millisecs) ");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken by getTotalReceiptCountsForDates() for all dates is (millisecs) : " + timeTaken);
         receiptDetailsList.add(receiptDetails);
         return receiptDetailsList;
     }
@@ -768,18 +779,18 @@ public class WTCollectionIndexElasticSearchService {
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest,
                 WaterTaxConstants.COLLECTION_INDEX_NAME);
         boolQuery = boolQuery
-                .filter(QueryBuilders.rangeQuery("receiptDate")
+                .filter(QueryBuilders.rangeQuery(receiptDateIndex)
                         .gte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                         .lte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
                 .mustNot(QueryBuilders.matchQuery("status", "Cancelled"));
 
         final SearchQuery searchQueryColl = new NativeSearchQueryBuilder()
                 .withIndices(WaterTaxConstants.COLLECTION_INDEX_NAME).withQuery(boolQuery)
-                .addAggregation(AggregationBuilders.count("receipt_count").field("consumerCode")).build();
+                .addAggregation(AggregationBuilders.count(receiptcountIndex).field(consumerCodeIndex)).build();
 
         final Aggregations collCountAggr = elasticsearchTemplate.query(searchQueryColl,
                 response -> response.getAggregations());
-        final ValueCount aggr = collCountAggr.get("receipt_count");
+        final ValueCount aggr = collCountAggr.get(receiptcountIndex);
         return Long.valueOf(aggr.getValue());
     }
 
@@ -857,8 +868,9 @@ public class WTCollectionIndexElasticSearchService {
             finYearEndDate = org.apache.commons.lang3.time.DateUtils.addYears(finYearEndDate, -1);
         }
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getReceiptsCountForConsecutiveYears() for 3 consecutive years is : " + timeTaken
-                + " (millisecs) ");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken by getReceiptsCountForConsecutiveYears() for 3 consecutive years is (millisecs) : "
+                    + timeTaken);
         startTime = System.currentTimeMillis();
         /**
          * If dates are passed in request, get result for the date range, else
@@ -899,8 +911,8 @@ public class WTCollectionIndexElasticSearchService {
             }
 
         timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug(
-                "Time taken foro setting values in getMonthwiseReceiptsTrend() is : " + timeTaken + " (millisecs) ");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken foro setting values in getMonthwiseReceiptsTrend() is (millisecs): " + timeTaken);
         return rcptTrendsList;
 
     }
@@ -918,18 +930,17 @@ public class WTCollectionIndexElasticSearchService {
                 WaterTaxConstants.COLLECTION_INDEX_NAME);
         boolQuery = boolQuery.mustNot(QueryBuilders.matchQuery("status", "Cancelled"));
 
-        final AggregationBuilder monthAggregation = AggregationBuilders.dateHistogram("date_agg").field("receiptDate")
-                .interval(DateHistogramInterval.MONTH)
-                .subAggregation(AggregationBuilders.count("receipt_count").field("receiptNumber"));
+        final AggregationBuilder monthAggregation = AggregationBuilders.dateHistogram("date_agg")
+                .field(receiptDateIndex).interval(DateHistogramInterval.MONTH)
+                .subAggregation(AggregationBuilders.count(receiptcountIndex).field("receiptNumber"));
         final SearchQuery searchQueryColl = new NativeSearchQueryBuilder()
                 .withIndices(WaterTaxConstants.COLLECTION_INDEX_NAME)
-                .withQuery(boolQuery.filter(QueryBuilders.rangeQuery("receiptDate")
+                .withQuery(boolQuery.filter(QueryBuilders.rangeQuery(receiptDateIndex)
                         .gte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                         .lte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false)))
                 .addAggregation(monthAggregation).build();
-        final Aggregations collCountAggr = elasticsearchTemplate.query(searchQueryColl,
-                response -> response.getAggregations());
-        return collCountAggr;
+        return elasticsearchTemplate.query(searchQueryColl, response -> response.getAggregations());
+
     }
 
     /**
@@ -959,11 +970,11 @@ public class WTCollectionIndexElasticSearchService {
             else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_DISTRICTWISE))
                 aggregationField = WaterTaxConstants.DISTRICTNAMEAGGREGATIONFIELD;
             else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ULBWISE))
-                aggregationField = "cityName";
+                aggregationField = WaterTaxConstants.CITYNAMEAGGREGATIONFIELD;
             else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_GRADEWISE))
-                aggregationField = "cityGrade";
+                aggregationField = WaterTaxConstants.CITYGRADEAGGREGATIONFIELD;
             else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_WARDWISE))
-                aggregationField = "revenueWard";
+                aggregationField = WaterTaxConstants.REVENUEWARDAGGREGATIONFIELD;
         /**
          * For Current day's collection if dates are sent in the request,
          * consider the toDate, else take date range between current date +1 day
@@ -979,7 +990,7 @@ public class WTCollectionIndexElasticSearchService {
         }
         Long startTime = System.currentTimeMillis();
         final Map<String, BigDecimal> currDayCollMap = getCollectionAndDemandCountResults(collectionDetailsRequest,
-                fromDate, toDate, WaterTaxConstants.COLLECTION_INDEX_NAME, "consumerCode", aggregationField);
+                fromDate, toDate, WaterTaxConstants.COLLECTION_INDEX_NAME, consumerCodeIndex, aggregationField);
         /**
          * For collections between the date ranges if dates are sent in the
          * request, consider the same, else calculate from current year start
@@ -995,16 +1006,16 @@ public class WTCollectionIndexElasticSearchService {
             toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
         }
         final Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandCountResults(collectionDetailsRequest,
-                fromDate, toDate, WaterTaxConstants.COLLECTION_INDEX_NAME, "consumerCode", aggregationField);
+                fromDate, toDate, WaterTaxConstants.COLLECTION_INDEX_NAME, consumerCodeIndex, aggregationField);
 
         // For last year's till date collections
         final Map<String, BigDecimal> lytdCollMap = getCollectionAndDemandCountResults(collectionDetailsRequest,
                 org.apache.commons.lang3.time.DateUtils.addYears(fromDate, -1),
                 org.apache.commons.lang3.time.DateUtils.addYears(toDate, -1), WaterTaxConstants.COLLECTION_INDEX_NAME,
-                "consumerCode", aggregationField);
+                consumerCodeIndex, aggregationField);
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getCollectionAndDemandCountResults() is : " + timeTaken + " (millisecs) ");
-
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken by getCollectionAndDemandCountResults() is : (millisecs) " + timeTaken);
         startTime = System.currentTimeMillis();
         for (final Map.Entry<String, BigDecimal> entry : cytdCollMap.entrySet()) {
             receiptData = new WaterChargeDashBoardResponse();
@@ -1018,7 +1029,7 @@ public class WTCollectionIndexElasticSearchService {
                 receiptData.setUlbName(name);
                 receiptData.setDistrictName(collectionDetailsRequest.getDistrictName());
                 receiptData.setUlbGrade(collectionDetailsRequest.getUlbGrade());
-            } else if (aggregationField.equals("cityGrade"))
+            } else if (WaterTaxConstants.CITYGRADEAGGREGATIONFIELD.equals(aggregationField))
                 receiptData.setUlbGrade(name);
             else if (WaterTaxConstants.REVENUEWARDAGGREGATIONFIELD.equals(aggregationField))
                 receiptData.setWardName(name);
@@ -1040,7 +1051,8 @@ public class WTCollectionIndexElasticSearchService {
             receiptDataList.add(receiptData);
         }
         timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken for setting values in getReceiptTableData() is : " + timeTaken + " (millisecs) ");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken for setting values in getReceiptTableData() is (millisecs): " + timeTaken);
         return receiptDataList;
     }
 
@@ -1050,7 +1062,7 @@ public class WTCollectionIndexElasticSearchService {
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, indexName);
         if (indexName.equals(WaterTaxConstants.COLLECTION_INDEX_NAME))
             boolQuery = boolQuery
-                    .filter(QueryBuilders.rangeQuery("receiptDate")
+                    .filter(QueryBuilders.rangeQuery(receiptDateIndex)
                             .gte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                             .lte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
                     .mustNot(QueryBuilders.matchQuery("status", "Cancelled"));
@@ -1088,9 +1100,7 @@ public class WTCollectionIndexElasticSearchService {
                         .filter(QueryBuilders.matchQuery("cityCode", collectionDetailsRequest.getUlbCode())))
                 .withSort(new FieldSortBuilder("billCollector").order(SortOrder.ASC))
                 .withPageable(new PageRequest(0, 250)).build();
-        final List<BillCollectorIndex> billCollectorsList = elasticsearchTemplate.queryForList(searchQueryColl,
-                BillCollectorIndex.class);
-        return billCollectorsList;
+        return elasticsearchTemplate.queryForList(searchQueryColl, BillCollectorIndex.class);
     }
 
 }
