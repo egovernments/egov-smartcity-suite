@@ -350,7 +350,7 @@ public class WaterChargeDocument {
         this.waterSource = waterSource;
     }
 
-    public boolean isLegacy() {
+    public boolean getIsLegacy() {
         return isLegacy;
     }
 
