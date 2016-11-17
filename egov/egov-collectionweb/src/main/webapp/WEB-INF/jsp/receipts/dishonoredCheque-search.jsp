@@ -56,6 +56,12 @@
 		});
 	}
 
+	function resetValues()
+	{
+		jQuery("select").val(-1);
+		jQuery(":text").val("");
+	}
+
 	function validateFormAndSubmit() {
 		var accountType = dom.get("instrumentMode").value;
 		var accountDDNo = dom.get("chequeNumber").value;
@@ -182,7 +188,6 @@
 	}
 
 	function openVoucher(vid){
-		console.log('vid--->'+vid);
 		var url = "/EGF/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+ vid;
 		window.open(url,'','width=900, height=700');
 	}
@@ -194,6 +199,13 @@
 	        	jQuery(this).prop('checked', true);
 	        }
 	    });
+	    var accNum = '<s:property value="accountNumber"/>';
+	    jQuery.when(getAccountNumbers(dom.get('bankBranchId').value)).then(function(){
+	        console.log("All done");
+	    });
+	    setTimeout(function(){
+	    	 jQuery('#accountNumber').val(accNum);
+	    }, 1000);
 	});
 </script>
 </head>
@@ -243,7 +255,7 @@
 					<td class="bluebox"><s:text
 							name="dishonorcheque.instrumentmode" />:<span class="mandatory1">*</span></td>
 					<td class="bluebox"><s:select headerValue="--Select--"
-							headerKey="0" list="instrumentModesMap" listKey="key"
+							headerKey="-1" list="instrumentModesMap" listKey="key"
 							id="instrumentMode" listValue="value" label="instrumentMode"
 							name="instrumentMode" /></td>
 				</tr>
@@ -274,7 +286,7 @@
 					<td><input type="button" class="buttonsubmit" value="VIEW"
 						id="searchButton" onclick="return validateFormAndSubmit();" />&nbsp;</td>
 					<td><input type="button" class="button" value="RESET"
-						id="resetbutton" name="clear" onclick="this.form.reset();">&nbsp;</td>
+						id="resetbutton" name="clear" onclick="resetValues();">&nbsp;</td>
 					<td><input type="button" class="button" value="CLOSE"
 						id="closeButton" name="closeButton" onclick="window.close();" /></td>
 				</tr>
