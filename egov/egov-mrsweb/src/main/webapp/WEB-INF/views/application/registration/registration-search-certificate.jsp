@@ -165,4 +165,4 @@
 <%-- <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>"> --%>
 
-<script src="<cdn:url value='/resources/js/app/registration-certificate.js'/> "></script>
+<script src="<cdn:url value='/resources/js/app/registration-certificate.js?rnd=${app_release_no}'/> "></script>

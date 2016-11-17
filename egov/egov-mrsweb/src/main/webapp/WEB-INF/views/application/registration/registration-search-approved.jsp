@@ -82,4 +82,4 @@
 <script	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 
-<script src="<cdn:url value='/resources/js/app/registrationsearch-approved.js'/> "></script>
+<script src="<cdn:url value='/resources/js/app/registrationsearch-approved.js?rnd=${app_release_no}'/> "></script>

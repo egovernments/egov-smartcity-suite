@@ -122,4 +122,4 @@
 </div>
  
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-<script src="<cdn:url value='/resources/js/app/registration.js'/> "></script>
+<script src="<cdn:url value='/resources/js/app/registration.js?rnd=${app_release_no}'/> "></script>

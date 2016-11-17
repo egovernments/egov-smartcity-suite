@@ -121,5 +121,5 @@
 <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
 
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/feesearch.js'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/feesearch.js?rnd=${app_release_no}'/>"></script>
 

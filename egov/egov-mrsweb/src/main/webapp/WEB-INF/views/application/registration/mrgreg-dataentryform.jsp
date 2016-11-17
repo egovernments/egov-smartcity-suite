@@ -127,4 +127,4 @@
 </div>
 
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-<script src="<cdn:url value='/resources/js/app/mrgregdataentry.js'/> "></script> 
+<script src="<cdn:url value='/resources/js/app/mrgregdataentry.js?rnd=${app_release_no}'/> "></script> 
