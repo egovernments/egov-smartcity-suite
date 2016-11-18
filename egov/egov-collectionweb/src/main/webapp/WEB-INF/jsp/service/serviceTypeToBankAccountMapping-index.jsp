@@ -74,6 +74,11 @@
 		document.forms[0].action=obj;
 		document.forms[0].submit;
 	}
+
+	function resetValues()
+	{
+		jQuery("select").val(-1);
+	}
 </script>
 </head>
 <body>
@@ -153,7 +158,8 @@
 				<s:submit name="sumbit" cssClass="buttonsubmit" id="button32"
 					onclick="document.serviceBankMappingForm.action='serviceTypeToBankAccountMapping-search.action';"
 					value="View" />
-				<s:reset name="reset" cssClass="button" id="button" value="Reset" />
+					<input type="button" class="button" value="Reset"
+						id="resetbutton" name="clear" onclick="resetValues();">
 				<input name="close" type="button" class="button" id="button"
 					onclick="window.close()" value="Close" />
 			</div>
