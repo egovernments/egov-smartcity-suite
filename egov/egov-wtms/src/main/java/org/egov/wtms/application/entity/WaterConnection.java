@@ -73,6 +73,10 @@ public class WaterConnection extends AbstractAuditable {
     @SafeHtml
     @Length(min = 3, max = 50)
     private String consumerCode;
+    
+    @SafeHtml
+    @Length(min = 3, max = 50)
+    private String oldConsumerNumber;
 
     @NotNull
     @SafeHtml
@@ -162,4 +166,13 @@ public class WaterConnection extends AbstractAuditable {
         this.initialReading = initialReading;
     }
 
+    public String getOldConsumerNumber() {
+        return oldConsumerNumber;
+    }
+
+    public void setOldConsumerNumber(String oldConsumerNumber) {
+        this.oldConsumerNumber = oldConsumerNumber;
+    }
+
+    
 }
