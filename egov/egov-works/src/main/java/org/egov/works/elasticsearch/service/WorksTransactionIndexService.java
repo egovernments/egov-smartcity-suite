@@ -47,11 +47,12 @@ import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_LOASTATUS_COLUM
 import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_TYPEOFWORKNAME_COLUMN_NAME;
 import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_ULBNAME_COLUMN_NAME;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.infra.utils.DateUtils;
 import org.egov.works.elasticsearch.model.WorksIndexsRequest;
 import org.egov.works.elasticsearch.model.WorksMilestoneIndexResponse;
 import org.egov.works.elasticsearch.model.WorksTransactionIndex;
@@ -81,6 +82,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class WorksTransactionIndexService {
 
+    public static final String DFT_DATE_FORMAT = "dd/MM/yyyy HH.mm.ss";
+
     private static final String BY_AGGREGATION_FIELD = "by_aggregationField";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorksTransactionIndexService.class);
@@ -96,15 +99,22 @@ public class WorksTransactionIndexService {
         Long startTime;
         Long timeTaken;
         final BoolQueryBuilder boolQuery = prepareWhereClause(worksIndexsRequest);
-        final SearchQuery searchQuery;
+        SearchQuery searchQuery;
         final List<WorksTransactionIndex> worksTransactionIndexs;
         final List<WorksMilestoneIndexResponse> resultList = new ArrayList<>();
         WorksMilestoneIndexResponse wmIndexResponse;
         startTime = System.currentTimeMillis();
+
         searchQuery = new NativeSearchQueryBuilder().withIndices(WORKSTRANSACTION_INDEX_NAME)
-                .withPageable(new PageRequest(0, 1000))
                 .withQuery(boolQuery)
                 .build();
+        final Long count = elasticsearchTemplate.count(searchQuery);
+
+        searchQuery = new NativeSearchQueryBuilder().withIndices(WORKSTRANSACTION_INDEX_NAME)
+                .withPageable(new PageRequest(0, count.intValue()))
+                .withQuery(boolQuery)
+                .build();
+
         worksTransactionIndexs = elasticsearchTemplate.queryForList(searchQuery, WorksTransactionIndex.class);
 
         for (final WorksTransactionIndex response : worksTransactionIndexs) {
@@ -120,12 +130,13 @@ public class WorksTransactionIndexService {
             wmIndexResponse.setEstimatenumber(response.getEstimatenumber());
             wmIndexResponse.setWin(response.getEstimatewin());
             wmIndexResponse.setNameofthework(response.getNameofthework());
-            wmIndexResponse.setContractornamecode(response.getLoanameofagency() + "/" + response.getLoacontractorcode());
+            wmIndexResponse.setContractornamecode(response.getLoanameofagency() + "/" + response.getLoacontractor());
             wmIndexResponse.setAgreementnumber(response.getLoanumber());
             wmIndexResponse.setAgreementdate(response.getAgreementdate());
             wmIndexResponse.setWorkstatus(response.getWorkstatus());
             wmIndexResponse.setContractperiod(response.getLoacontractperiod());
-            wmIndexResponse.setLatestupdatedtimestamp(DateUtils.getDefaultFormattedDate(response.getCreateddate()));
+            wmIndexResponse.setLatestupdatedtimestamp(
+                    new SimpleDateFormat(DFT_DATE_FORMAT, Locale.getDefault()).format(response.getCreateddate()));
 
             resultList.add(wmIndexResponse);
         }
