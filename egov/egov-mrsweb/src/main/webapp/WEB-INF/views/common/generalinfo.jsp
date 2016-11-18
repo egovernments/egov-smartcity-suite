@@ -54,24 +54,26 @@
 <div class="panel-body">
 <form:hidden path="id"/>
 <div class="row add-border">
+<div class="col-sm-3 "><spring:message code="lbl.reissue.application.no"/></div>
+	<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.applicationNo}" /></div>
 	<div class="col-sm-3 "><spring:message code="lbl.application.no"/></div>
 	<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.applicationNo}" /></div>
-	<div class="col-sm-3 "><spring:message code="lbl.registration.no"/></div>
-	<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.registrationNo}" /></div>
 </div>
 <div class="row add-border">
+<div class="col-sm-3 "><spring:message code="lbl.registration.no"/></div>
+	<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.registrationNo}" /></div>
 	<div  class="col-sm-3 "><spring:message code="lbl.date.of.marriage"/></div>
 	<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.dateOfMarriage}" /></div>
-	<div  class="col-sm-3 "><spring:message code="lbl.zone"/></div>
-	<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.zone.name}" /></div>
 </div>
 <div class="row add-border">
+<div  class="col-sm-3 "><spring:message code="lbl.zone"/></div>
+	<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.zone.name}" /></div>
 	<div  class="col-sm-3 "><spring:message code="lbl.law"/></div>
 	<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.marriageAct.name}"/></div>
-	<div  class="col-sm-3 "><spring:message code="lbl.place.of.marriage"/></div>
-	<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.placeOfMarriage}" /></div>
 </div>
 <div class="row add-border">
+<div  class="col-sm-3 "><spring:message code="lbl.place.of.marriage"/></div>
+	<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.placeOfMarriage}" /></div>
 <div class="col-sm-3 "><spring:message code="lbl.registrationunit"/></div>
 	<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.marriageRegistrationUnit.name}" /></div>
 </div>
