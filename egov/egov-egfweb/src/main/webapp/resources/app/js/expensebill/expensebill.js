@@ -76,30 +76,38 @@ $(document).ready(function(){
 $('.btn-primary').click(function(){
 	var button = $(this).attr('id');
 	if (button != null && (button == 'Forward')) {
+		if(!validateWorkFlowApprover(button))
+			return false;
 		if(!$("form").valid())
 			return false;
-		if(!validate())
-				return false;
-		if(validateWorkFlowApprover(button)){
+		if(validate()){
 			deleteHiddenSubledgerRow();
 			return true;
-		}
+		}else
+			return false;
+		
 	}else if (button != null && (button == 'Create And Approve')) {
 		$('#approvalDepartment').removeAttr('required');
 		$('#approvalDesignation').removeAttr('required');
 		$('#approvalPosition').removeAttr('required');
 		$('#approvalComent').removeAttr('required');
+		if(!validateWorkFlowApprover(button))
+			return false;
 		if(!$("form").valid())
 			return false;
-		if(!validate())
-				return false;
-		if(validateWorkFlowApprover(button)){
+		if(validate()){
 			deleteHiddenSubledgerRow();
 			return true;
-		}
-	} else if(validateWorkFlowApprover(button)){
-		deleteHiddenSubledgerRow();
-		return true;
+		}else
+			return false;
+	} else{
+		if(!validateWorkFlowApprover(button))
+			return false;
+		if($("form").valid()){
+			deleteHiddenSubledgerRow();
+			return true;
+		}else
+			return false;
 	}
 	return false;
 });
@@ -853,7 +861,7 @@ function validateWorkFlowApprover(name) {
 	}else
 		return true;
 	
-	return false;
+	return true;
 }
 function validateCutOff()
 {
