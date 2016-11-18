@@ -72,7 +72,7 @@
 
 							<div class="col-sm-2 add-margin">
 								<form:select cssClass="form-control" id="department"
-									name="department" path="department">
+									name="department" path="department" onchange="getPosition();">
 									<option value="">
 										<spring:message code="lbl.select" />
 									</option>
@@ -88,7 +88,7 @@
 
 							<div class="col-sm-3 add-margin">
 								<form:select cssClass="form-control" id="designation"
-									name="designation" path="designation">
+									name="designation" path="designation" onchange="getPosition();">
 									<option value="">
 										<spring:message code="lbl.select" />
 									</option>
@@ -104,7 +104,7 @@
 
 							<div class="col-sm-2 add-margin">
 								<form:select cssClass="form-control" id="position"
-									name="position" path="position">
+									name="position" path="position" >
 									<option value="">
 										<spring:message code="lbl.select" />
 									</option>
@@ -113,7 +113,7 @@
 								</form:select>
 							</div>
 							<div class="col-sm-2">
-								<label for="field-1" class="control-label">Primary/Temp</label>
+								<label for="field-1" class="control-label"><spring:message code="lbl.primary.temp" /></label>
 							</div>
 
 							<div class="col-sm-2 add-margin">
@@ -134,7 +134,9 @@
 
 						</div>
 						<div class="text-center">
-							<button type="button" class="btn btn-primary" id="btnsearch">Submit</button>
+							<button type="button" class="btn btn-primary" id="btnsearch"><spring:message code="lbl.submit" /></button>
+							<a href="javascript:void(0)" class="btn btn-default"
+								onclick="self.close()"><spring:message code="lbl.close" /></a>
 
 						</div>
 					</div>
@@ -142,19 +144,17 @@
 			</div>
 		</div>
 	</div>
+	
 	<div class="row">
 		<div>
 			<div id="empAssignment-header"
-				class="col-md-12 table-header text-left"></div>
+				class="col-md-12 table-header text-left">
+								<input type="hidden" value="Employee Position Report" id="pdfTitle"/>
+				</div>
 			<div class="col-md-12 form-group report-table-container">
 				<table class="table table-bordered datatable" id="tblempassign">
 				</table>
 			</div>
-		</div>
-		<div class="text-center">
-			<button class="btn btn-danger" type="reset">Reset</button>
-			<a href="javascript:void(0)" class="btn btn-default"
-				onclick="self.close()">Close</a>
 		</div>
 	</div>
 
