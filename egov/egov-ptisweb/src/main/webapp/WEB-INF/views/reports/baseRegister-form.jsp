@@ -88,7 +88,13 @@
 						</div>
 					</div>
 				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.only.exempted" /></label>
+					<div class="col-sm-3 add-margin" style="margin-bottom: 15px;">
+						<form:checkbox path="exemptedCase" id="exemptedCase"/>
+					</div>
 				</div>
+			</div>
 				<div class="row">
 	       			<div class="text-center">
 	       				<button type="button" class="btn btn-primary" id="baseRegisterReportSearch"><spring:message code="lbl.search"/></button>
