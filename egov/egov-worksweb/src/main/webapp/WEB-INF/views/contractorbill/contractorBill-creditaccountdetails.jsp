@@ -346,19 +346,9 @@
 				<!-- <td> 
 						<input type="text" id="creditAccountHead" class="form-control" disabled> 
 					</td> -->
-				<td>
-					<c:choose>
-						<c:when test="${isBillEditable == true }">
-							<input type="text" id="netPayableAmount"
-								name="netPayableAmount" value="${netPayableAmount}"
-								class="form-control text-right">
-						</c:when>
-						<c:otherwise>
-							<input type="text" id="netPayableAmount"
-								name="netPayableAmount" value="${netPayableAmount}"
-								class="form-control text-right" readonly="true"> <%-- <form:errors path="netPayableAmount" cssClass="add-margin error-msg" /> --%>
-						</c:otherwise>
-					</c:choose>
+				<td><input type="text" id="netPayableAmount"
+					name="netPayableAmount" value="${netPayableAmount}"
+					class="form-control text-right" readonly="true"> <%-- <form:errors path="netPayableAmount" cssClass="add-margin error-msg" /> --%>
 				</td>
 			</tr>
 		</tbody>
