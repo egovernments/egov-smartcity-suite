@@ -57,7 +57,11 @@ import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
@@ -194,12 +198,20 @@ public class ApplicationSearchController {
     }
 
     public List<ApplicationDocument> findAllAppicationIndexByFilter(final ApplicationSearchRequest searchRequest) {
-
         final BoolQueryBuilder query = getFilterQuery(searchRequest);
-
-        final SearchQuery searchQuery = new NativeSearchQueryBuilder()
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .addAggregation(AggregationBuilders.count("application_count").field("applicationNumber"))
                 .withIndices(WaterTaxConstants.APPLICATION_TAX_INDEX_NAME).withQuery(query).build();
-
+        
+        final Aggregations applicationCountAggr = elasticsearchTemplate.query(searchQuery,
+                response -> response.getAggregations());
+        final ValueCount aggr = applicationCountAggr.get("application_count");
+        
+        searchQuery = new NativeSearchQueryBuilder().withIndices(WaterTaxConstants.APPLICATION_TAX_INDEX_NAME).withQuery(query)
+                .addAggregation(AggregationBuilders.count("application_count").field("applicationNumber"))
+                .withPageable(new PageRequest(0,
+                        Long.valueOf(aggr.getValue()).intValue() == 0 ? 1 : Long.valueOf(aggr.getValue()).intValue()))
+                .build();
         final List<ApplicationDocument> sampleEntities = elasticsearchTemplate.queryForList(searchQuery,
                 ApplicationDocument.class);
         return sampleEntities;
