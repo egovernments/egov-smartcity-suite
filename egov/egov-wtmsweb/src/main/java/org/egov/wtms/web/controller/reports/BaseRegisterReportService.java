@@ -68,7 +68,7 @@ public class BaseRegisterReportService {
 
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
-                "select dcbinfo.hscno as \"consumerNo\",dcbinfo.propertyid as \"assementNo\", dcbinfo.username as \"ownerName\",dcbinfo.categorytype as \"categoryType\",dcbinfo.username as \"period\",");
+                "select dcbinfo.hscno as \"consumerNo\",dcbinfo.oldhscno as \"oldConsumerNo\",dcbinfo.propertyid as \"assementNo\", dcbinfo.username as \"ownerName\",dcbinfo.categorytype as \"categoryType\",dcbinfo.username as \"period\",");
         queryStr.append(
                 "dcbinfo.houseno as \"doorNo\", dcbinfo.connectiontype as \"connectionType\" , dcbinfo.arr_demand as \"arrears\" ,  dcbinfo.curr_demand as \"current\" ,  ");
         queryStr.append(
