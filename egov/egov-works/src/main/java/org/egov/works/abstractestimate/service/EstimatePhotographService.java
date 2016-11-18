@@ -100,7 +100,7 @@ public class EstimatePhotographService {
 
     public List<EstimatePhotographs> getEstimatePhotographs(final MultipartFile[] files, final Object object)
             throws IOException {
-        List<EstimatePhotographs> estimatePhotographsList = new ArrayList<EstimatePhotographs>();
+        final List<EstimatePhotographs> estimatePhotographsList = new ArrayList<EstimatePhotographs>();
         Method method = null;
         try {
             method = object.getClass().getMethod("getId", null);
@@ -110,31 +110,32 @@ public class EstimatePhotographService {
             throw new ApplicationRuntimeException("lineestimate.document.error", e);
         }
         File compressedImageFile = null;
-        if (files != null && files.length > 0 && !files[0].isEmpty()) 
+        if (files != null && files.length > 0 && !files[0].isEmpty())
             compressedImageFile = compressImage(files);
 
         final EstimatePhotographs estimatePhotographs = new EstimatePhotographs();
         estimatePhotographs.setFileStore(fileStoreService.store(compressedImageFile, files[0].getOriginalFilename(),
                 files[0].getContentType(), WorksConstants.FILESTORE_MODULECODE));
         estimatePhotographsList.add(estimatePhotographs);
+        compressedImageFile.delete();
 
         return estimatePhotographsList;
     }
 
     public File compressImage(final MultipartFile[] files) throws IOException, FileNotFoundException {
-        
-        BufferedImage image = ImageIO.read(files[0].getInputStream());
-        File compressedImageFile = new File(files[0].getOriginalFilename());
-        OutputStream os = new FileOutputStream(compressedImageFile);
+
+        final BufferedImage image = ImageIO.read(files[0].getInputStream());
+        final File compressedImageFile = new File(files[0].getOriginalFilename());
+        final OutputStream os = new FileOutputStream(compressedImageFile);
         String fileExtenstion = files[0].getOriginalFilename();
         fileExtenstion = fileExtenstion.substring(fileExtenstion.lastIndexOf(".") + 1);
-        Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName(fileExtenstion);
-        ImageWriter writer = (ImageWriter) writers.next();
-        ImageOutputStream ios = ImageIO.createImageOutputStream(os);
+        final Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName(fileExtenstion);
+        final ImageWriter writer = writers.next();
+        final ImageOutputStream ios = ImageIO.createImageOutputStream(os);
         writer.setOutput(ios);
-        ImageWriteParam param = writer.getDefaultWriteParam();
+        final ImageWriteParam param = writer.getDefaultWriteParam();
 
-        if(!fileExtenstion.equalsIgnoreCase("png")){
+        if (!fileExtenstion.equalsIgnoreCase("png")) {
             param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
             param.setCompressionQuality(0.5f);
         }
