@@ -157,7 +157,8 @@ public class ViewEstimatePhotographController {
 
         model.addAttribute("photographStages", photographStages);
 
-        model.addAttribute("mode", request.getParameter("mode") != null ? request.getParameter("mode") : "");
+        model.addAttribute(WorksConstants.MODE,
+                request.getParameter(WorksConstants.MODE) != null ? request.getParameter(WorksConstants.MODE) : "");
         return "estimatePhotographs-view";
     }
 

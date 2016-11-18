@@ -54,6 +54,7 @@ import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateDetailService;
+import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -155,7 +156,8 @@ public class UploadEstimatePhotographController {
         model.addAttribute("photographStages", photographStages);
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("estimatePhotographTrackStage", WorkProgress.values());
-        model.addAttribute("mode", request.getParameter("mode") != null ? request.getParameter("mode") : "");
+        model.addAttribute(WorksConstants.MODE,
+                request.getParameter(WorksConstants.MODE) != null ? request.getParameter(WorksConstants.MODE) : "");
         return "estimatePhotographs-form";
     }
 

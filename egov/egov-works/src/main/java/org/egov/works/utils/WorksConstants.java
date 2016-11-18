@@ -45,7 +45,7 @@ public class WorksConstants {
     public static final String WORKS_MODULE_NAME = "Works Management";
     public static final String EGF_MODULE_NAME = "EGF";
     public static final String alphaNumericwithspecialchar = "[0-9a-zA-Z-& :,/.()@]+";
-    public static final String ALPHANUMERICWITHALLSPECIALCHAR = "[0-9a-zA-Z_@./#&+-/!(){}\",^$%*|=;:<>?`~ ]+"; 
+    public static final String ALPHANUMERICWITHALLSPECIALCHAR = "[0-9a-zA-Z_@./#&+-/!(){}\",^$%*|=;:<>?`~ ]+";
     public static final String ALPHANUMERICWITHALLSPECIALCHARWITHOUTSPACE = "[0-9a-zA-Z_@./#&+/-/!(){}\",^$%*|=;:<>?`~]+";
     public static final String TEMPLATENAME_COMPLETIONCERTIFICATE = "completionCertificate";
     public static final String PARAMETERNAME_WORKCOMPLETIONINFO = "workCompletionInfo";
@@ -356,7 +356,7 @@ public class WorksConstants {
     public static final String NON_TENDERED = "NONTENDERED";
 
     public static final String LUMP_SUM = "LUMPSUM";
-    
+
     public static final String CONTRACTOR_RETENTION_MONEY_PURPOSE = "RETENTION_MONEY";
 
     public static final String CONTRACTOR_SECURITY_DEPOSITE_PURPOSE = "Security Deposit";
@@ -383,9 +383,9 @@ public class WorksConstants {
     public static final String REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION = "Pending Technical Sanction";
 
     public static final String CONTRACTOR_MEASUREMENTS = "ContractorMeasurements";
-    
+
     public static final String APPCONFIG_NOMINATION_AMOUNT = "NOMINATION_AMOUNT_LIMIT";
-    
+
     public final static String SECTOR_COLUMN_HEADER_NAME = "SECTOR";
 
     public final static String DISTRICT_COLUMN_HEADER_NAME = "District Name";
@@ -407,8 +407,10 @@ public class WorksConstants {
     public final static String WORKSMILESTONE_MILESTONESTATUS_COLUMN_NAME = "milestonestatus";
 
     public final static String WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME = "lineestimatedetailid";
-    
+
     public static final String BILL_MODIFIER_EXAMINER_OF_ACCOUNTS = "Examiner of Accounts";
-    
+
     public static final String BILL_MODIFIER_ASSISTANT_EXAMINER_OF_ACCOUNTS = "Assistant Examiner of accounts";
+
+    public static final String MODE = "mode";
 }

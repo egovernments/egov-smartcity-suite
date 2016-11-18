@@ -39,7 +39,6 @@
   --%>
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
-		<div class="position_alert3"><spring:message code="lbl.pagetotal" /> : &#8377 <span id="pageTotal"></span></div>
 		<div class="panel-title">
 			<spring:message code="title.mb.details" />
 		</div>
