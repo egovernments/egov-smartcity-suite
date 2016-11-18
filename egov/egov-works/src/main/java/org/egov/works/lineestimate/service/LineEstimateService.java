@@ -1229,7 +1229,9 @@ public class LineEstimateService {
         final AppConfigValues value = nominationLimit.get(0);
         if (!value.getValue().isEmpty())
             model.addAttribute("nominationLimit", value.getValue());
-
+        final List<AppConfigValues> nominationName = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.NOMINATION_NAME);
+        model.addAttribute("nominationName", !nominationName.isEmpty() ? nominationName.get(0).getValue() : "");
     }
 
 }

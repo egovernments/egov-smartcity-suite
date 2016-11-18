@@ -38,10 +38,16 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 <div class="panel panel-primary" data-collapsed="0">
-	<div align="right" class="openCloseAll">
+	<div class="panel-heading">
+		<div class="position_alert3"><spring:message code="lbl.pagetotal" /> : &#8377 <span id="pageTotal"></span></div>
+		<div class="panel-title">
+			<spring:message code="title.mb.details" />
+		</div>
+		<div align="right" class="openCloseAll">
 		<input type="button" value="Close All Measurements" class="btn btn-sm btn-secondary"
 			onclick="closeAllmsheet()" /> <input type="button" class="btn btn-sm btn-secondary"
 			value="Open All Measurements" onclick="openAllmsheet()" />
+		</div>
 	</div>
 	<div class="panel-body">
 		<table class="table table-bordered" style="overflow: auto;">

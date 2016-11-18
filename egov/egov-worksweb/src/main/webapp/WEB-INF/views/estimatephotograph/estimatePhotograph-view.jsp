@@ -68,6 +68,7 @@
 <input type="hidden" value="<spring:message code="error.date.todate.fromdate" />" id="errorToDateAndFromDate" />
 		<input type="hidden" value='${photographStages}'  id = "photographStages"/>
 		<input type="hidden" value="${lineEstimateDetails.id}" id="ledId" name="ledId"/>
+		<input type="hidden" id="mode" value="${mode}" />
 		<div class="row">
 	<div class="col-md-12">
 		 		<div class="panel panel-primary" data-collapsed="0">
@@ -75,6 +76,7 @@
 						<div class="panel-heading">
 							<%-- <div class="panel-title" style="text-align:left;"><spring:message code="lbl.header" /></div> --%>
 						</div>
+						<c:if test="${mode == ''}"> 
 						<div class="row add-border">
 								<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.abstractestimatenumber" />.</div> 
 								<div class="col-md-2 col-xs-6 add-margin view-content">
@@ -95,6 +97,15 @@
 							</div>
 							</c:if>
 						</div>
+						</c:if>
+						<c:if test="${mode == 'contractorPortal'}"> 
+							<div class="row add-border">
+								<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.workordernumber" />.</div>
+								<div class="col-md-9 col-xs-12 add-margin view-content">
+									<c:out value="${workOrder.workOrderNumber}"/>
+								</div>
+							</div>
+						</c:if>
 						<%-- <c:if test="${abstractEstimate != null}"> 
  --%>						<div class="row add-border">
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.nameofwork" />.</div>

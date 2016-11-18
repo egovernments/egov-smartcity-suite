@@ -88,7 +88,8 @@ public class UploadEstimatePhotographController {
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showUploadEstimatePhotographForm(
             @ModelAttribute("estimatePhotographs") final EstimatePhotographs estimatePhotographs, final Model model,
-            final HttpServletRequest request) throws ApplicationException {
+            final HttpServletRequest request, @RequestParam(value = "mode", required = false) final String mode)
+            throws ApplicationException {
         final Long lineEstimateDetailsId = Long.valueOf(request.getParameter("lineEstimateDetailsId"));
 
         final List<EstimatePhotographs> photographsBefore = estimatePhotographService
@@ -108,7 +109,8 @@ public class UploadEstimatePhotographController {
             before.addProperty("name", ep.getFileStore().getFileName());
             before.addProperty("type", "image/jpg");
             before.addProperty("file",
-                    "/egi/downloadfile?fileStoreId=" + ep.getFileStore().getFileStoreId() + "&moduleName=WMS");
+                    "/egworks/estimatephotograph/downloadphotgraphs?fileStoreId=" + ep.getFileStore().getFileStoreId()
+                            + "&moduleName=WMS");
             before.addProperty("key", ep.getFileStore().getId());
             array.add(before);
         }
@@ -121,7 +123,8 @@ public class UploadEstimatePhotographController {
             after.addProperty("name", ep.getFileStore().getFileName());
             after.addProperty("type", "image/jpg");
             after.addProperty("file",
-                    "/egi/downloadfile?fileStoreId=" + ep.getFileStore().getFileStoreId() + "&moduleName=WMS");
+                    "/egworks/estimatephotograph/downloadphotgraphs?fileStoreId=" + ep.getFileStore().getFileStoreId()
+                            + "&moduleName=WMS");
             after.addProperty("key", ep.getFileStore().getId());
             array.add(after);
         }
@@ -133,7 +136,8 @@ public class UploadEstimatePhotographController {
             final JsonObject during = new JsonObject();
             during.addProperty("name", ep.getFileStore().getFileName());
             during.addProperty("type", "image/jpg");
-            during.addProperty("file", "/egi/downloadfile?fileStoreId=" + ep.getFileStore().getFileStoreId() + "&moduleName=WMS");
+            during.addProperty("file", "/egworks/estimatephotograph/downloadphotgraphs?fileStoreId="
+                    + ep.getFileStore().getFileStoreId() + "&moduleName=WMS");
             during.addProperty("key", ep.getFileStore().getId());
             array.add(during);
         }
@@ -151,6 +155,7 @@ public class UploadEstimatePhotographController {
         model.addAttribute("photographStages", photographStages);
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("estimatePhotographTrackStage", WorkProgress.values());
+        model.addAttribute("mode", request.getParameter("mode") != null ? request.getParameter("mode") : "");
         return "estimatePhotographs-form";
     }
 

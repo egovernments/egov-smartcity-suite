@@ -68,6 +68,11 @@
 				<security:filter-chain pattern="/lineestimate/getsubtypeofwork" filters="none" />
 				<security:filter-chain pattern="/contractorportal/**" filters="none" />
 				<security:filter-chain pattern="/public/**" filters="none"/>
+				<security:filter-chain pattern="/estimatephotograph/newform" filters="none" />
+				<security:filter-chain pattern="/estimatephotograph/upload/**" filters="none" />
+				<security:filter-chain pattern="/estimatephotograph/update/**" filters="none" />
+				<security:filter-chain pattern="/estimatephotograph/view" filters="none" />
+				<security:filter-chain pattern="/estimatephotograph/downloadphotgraphs" filters="none" />
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list> 
 		</constructor-arg>

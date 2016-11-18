@@ -192,3 +192,13 @@ $('#contractormbs').click(function(event) {
 	event.preventDefault();
 	window.open("/egworks/contractorportal/mb/contractormbs/" + $('#workOrderEstimateId').val(), '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 });
+
+$('#viewEstimatePhotograph').click(function(event) {
+	event.preventDefault();
+	window.open("/egworks/estimatephotograph/view?lineEstimateDetailsId=" + $('#lineEstimateDetailsId').val() + "&mode=contractorPortal", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+});
+
+$('#uploadEstimatePhotograph').click(function(event) {
+	event.preventDefault();
+	window.open("/egworks/estimatephotograph/newform?lineEstimateDetailsId=" + $('#lineEstimateDetailsId').val() + "&mode=contractorPortal", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+});

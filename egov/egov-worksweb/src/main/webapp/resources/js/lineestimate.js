@@ -600,8 +600,9 @@ function validateWorkFlowApprover(name) {
 		var modeOfEntrustment = $('#modeOfAllotment').val();
 		var estimateTotal = $('#estimateTotal').html();
 		var nominationLimit = $('#nominationLimit').val();
+		var nominationName = $('#nominationName').val();
 		var message = "Nomination mode of entrustment can be awarded for the estimates with value less than Rs." + nominationLimit + "/- .Please enter proper value";
-		if(modeOfEntrustment == 'Nomination' && parseFloat(estimateTotal) > parseFloat(nominationLimit) ){
+		if(modeOfEntrustment == nominationName && parseFloat(estimateTotal) > parseFloat(nominationLimit) ){
 			bootbox.alert(message);
 			return false;
 		}

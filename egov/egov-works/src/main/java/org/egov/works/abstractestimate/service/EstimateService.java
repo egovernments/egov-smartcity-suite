@@ -932,8 +932,7 @@ public class EstimateService {
     private Query setQueryParametersForCreateLOA(final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest,
             final StringBuilder queryStr) {
         final Query qry = entityManager.createQuery(queryStr.toString());
-        final List<AppConfigValues> nominationName = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WorksConstants.WORKS_MODULE_NAME, WorksConstants.NOMINATION_NAME);
+        final List<AppConfigValues> nominationName = getNominationName();
         if (abstractEstimateForLoaSearchRequest != null) {
             if (abstractEstimateForLoaSearchRequest.getAdminSanctionNumber() != null)
                 qry.setParameter("adminSanctionNumber", "%" + abstractEstimateForLoaSearchRequest.getAdminSanctionNumber() + "%");
@@ -1237,8 +1236,7 @@ public class EstimateService {
             final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest,
             final StringBuilder queryStr) {
         final Query qry = entityManager.createQuery(queryStr.toString());
-        final List<AppConfigValues> nominationName = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WorksConstants.WORKS_MODULE_NAME, WorksConstants.NOMINATION_NAME);
+        final List<AppConfigValues> nominationName = getNominationName();
 
         if (abstractEstimateForLoaSearchRequest != null) {
             if (abstractEstimateForLoaSearchRequest.getAbstractEstimateNumber() != null)
@@ -1266,8 +1264,7 @@ public class EstimateService {
     }
 
     public List<String> getAbstractEstimateNumbersToSetOfflineStatus(final String code) {
-        final List<AppConfigValues> nominationName = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WorksConstants.WORKS_MODULE_NAME, WorksConstants.NOMINATION_NAME);
+        final List<AppConfigValues> nominationName = getNominationName();
 
         final List<String> estimateNumbers = abstractEstimateRepository
                 .findAbstractEstimateNumbersToSetOfflineStatus("%" + code + "%",
@@ -1449,6 +1446,12 @@ public class EstimateService {
             }
         return true;
 
+    }
+
+    private List<AppConfigValues> getNominationName() {
+        final List<AppConfigValues> nominationName = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.NOMINATION_NAME);
+        return nominationName;
     }
 
 }

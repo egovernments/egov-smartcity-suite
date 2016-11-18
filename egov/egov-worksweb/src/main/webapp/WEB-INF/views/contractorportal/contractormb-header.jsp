@@ -43,6 +43,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <input type="hidden" id="workOrderEstimateId" value="${contractorMB.workOrderEstimate.id }" />
+<input type="hidden" id="lineEstimateDetailsId" value="${contractorMB.workOrderEstimate.estimate.lineEstimateDetails.id }" />
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title" style="text-align: left;">
@@ -107,7 +108,19 @@
 			</div>
 			<c:if test="${mode != 'view' }">
 				<div class="row add-border">
-					<div class="col-md-2 add-margin"><a href="javascript:void(0);" id="contractormbs"><spring:message code="lbl.old.contractormbs" /></a></div> 
+					<div class="col-md-2 add-margin"><a href="javascript:void(0);" id="contractormbs"><spring:message code="lbl.old.contractormbs" /></a></div>
+				</div>
+			</c:if>
+		</div>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+			</div>
+			<c:if test="${mode != 'view' }">
+				<div class="row add-border">
+					<div class="col-md-3 add-margin"><a href="javascript:void(0);" id="uploadEstimatePhotograph"><spring:message code="lbl.uploadestimatephotograph" /></a></div>
+					<div class="col-md-3 add-margin"><a href="javascript:void(0);" id="viewEstimatePhotograph"><spring:message code="lbl.viewestimatephotograph" /></a></div>
 				</div>
 			</c:if>
 		</div>

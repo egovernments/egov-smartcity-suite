@@ -39,11 +39,14 @@
  */
 package org.egov.works.web.controller.estimatephotograph;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.utils.FileStoreUtils;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.EstimatePhotographs;
 import org.egov.works.abstractestimate.entity.EstimatePhotographs.WorkProgress;
@@ -52,6 +55,7 @@ import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateDetailService;
+import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -79,8 +83,13 @@ public class ViewEstimatePhotographController {
     @Autowired
     private LineEstimateDetailService lineEstimateDetailService;
 
+    @Autowired
+    private FileStoreUtils fileStoreUtils;
+
     @RequestMapping(value = "/view", method = RequestMethod.GET)
-    public String viewMilestoneTemplate(@RequestParam final Long lineEstimateDetailsId, final Model model,
+    public String viewMilestoneTemplate(@RequestParam final Long lineEstimateDetailsId,
+            @RequestParam(value = "mode", required = false) final String mode,
+            final Model model,
             final HttpServletRequest request)
             throws ApplicationException {
 
@@ -102,7 +111,8 @@ public class ViewEstimatePhotographController {
             before.addProperty("name", ep.getFileStore().getFileName());
             before.addProperty("type", "image/jpg");
             before.addProperty("file",
-                    "/egi/downloadfile?fileStoreId=" + ep.getFileStore().getFileStoreId() + "&moduleName=WMS");
+                    "/egworks/estimatephotograph/downloadphotgraphs?fileStoreId=" + ep.getFileStore().getFileStoreId()
+                            + "&moduleName=WMS");
             before.addProperty("key", ep.getFileStore().getId());
             array.add(before);
         }
@@ -115,7 +125,8 @@ public class ViewEstimatePhotographController {
             after.addProperty("name", ep.getFileStore().getFileName());
             after.addProperty("type", "image/jpg");
             after.addProperty("file",
-                    "/egi/downloadfile?fileStoreId=" + ep.getFileStore().getFileStoreId() + "&moduleName=WMS");
+                    "/egworks/estimatephotograph/downloadphotgraphs?fileStoreId=" + ep.getFileStore().getFileStoreId()
+                            + "&moduleName=WMS");
             after.addProperty("key", ep.getFileStore().getId());
             array.add(after);
         }
@@ -127,7 +138,8 @@ public class ViewEstimatePhotographController {
             final JsonObject during = new JsonObject();
             during.addProperty("name", ep.getFileStore().getFileName());
             during.addProperty("type", "image/jpg");
-            during.addProperty("file", "/egi/downloadfile?fileStoreId=" + ep.getFileStore().getFileStoreId() + "&moduleName=WMS");
+            during.addProperty("file", "/egworks/estimatephotograph/downloadphotgraphs?fileStoreId="
+                    + ep.getFileStore().getFileStoreId() + "&moduleName=WMS");
             during.addProperty("key", ep.getFileStore().getId());
             array.add(during);
         }
@@ -144,7 +156,17 @@ public class ViewEstimatePhotographController {
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
 
         model.addAttribute("photographStages", photographStages);
+
+        model.addAttribute("mode", request.getParameter("mode") != null ? request.getParameter("mode") : "");
         return "estimatePhotographs-view";
+    }
+
+    @RequestMapping(value = "/downloadphotgraphs", method = RequestMethod.GET)
+    public void viewUploadedDocuments(@RequestParam final String fileStoreId,
+            final HttpServletRequest request, final HttpServletResponse response)
+            throws IOException {
+        fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, WorksConstants.FILESTORE_MODULECODE, false, response);
+
     }
 
 }

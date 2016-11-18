@@ -53,6 +53,7 @@
 		<form:form name="lineEstimateForm" role="form" action="create" modelAttribute="lineEstimate" id="lineEstimate" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 			<form:hidden id="mode" path=""  value="${mode}"/>
 			<input type="hidden" id="nominationLimit" value="${nominationLimit}">
+			<input type="hidden" id="nominationName" value="${nominationName}">
 			<div class="row">
 				<div class="col-md-12">
 					<jsp:include page="lineEstimateHeader.jsp"/>
