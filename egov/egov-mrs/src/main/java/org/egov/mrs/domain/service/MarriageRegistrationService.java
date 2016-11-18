@@ -307,7 +307,7 @@ public class MarriageRegistrationService {
             }
         registration.setActive(true);
         registration.setLegacy(true);
-        registration.setRegistrationNo(marriageRegistrationNumberGenerator.generateMarriageRegistrationNumber(registration));
+       // registration.setRegistrationNo(marriageRegistrationNumberGenerator.generateMarriageRegistrationNumber(registration));
         create(registration);
         marriageRegistrationUpdateIndexesService.updateIndexes(registration);
         return registration.getApplicationNo();         

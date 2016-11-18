@@ -137,6 +137,22 @@ $(document).ready( function () {
 		}
 	})
 	
+	$('input[id$="husband.contactInfo.mobileNo"]').blur( function () {
+		 var mobileno =  $(this).val();
+			if (mobileno.length < 10) {
+				bootbox.alert("Please enter 10 digit mobile number");
+				$(this).val('');
+			}
+	})
+	
+	$('input[id$="wife.contactInfo.mobileNo"]').blur( function () {
+		var mobileno =  $(this).val();
+		if (mobileno.length < 10) {
+			bootbox.alert("Please enter 10 digit mobile number");
+			$(this).val('');
+		}
+	})
+	
 	$('.witnessage').blur( function () {
 		var age = parseInt( $(this).val() );
 		if (age != null && age != undefined && (age < 18)) {

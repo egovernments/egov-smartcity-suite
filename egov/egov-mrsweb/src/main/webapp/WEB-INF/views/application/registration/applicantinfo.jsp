@@ -207,7 +207,7 @@
 		<spring:message code="lbl.phoneno"/><span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3">
-		<form:input path="${applicant}.contactInfo.mobileNo" id="${applicant}.contactInfo.mobileNo" type="text" cssClass="form-control low-width patternvalidation" data-pattern="number" maxlength="10" placeholder="" autocomplete="off" required="required" />
+		<form:input path="${applicant}.contactInfo.mobileNo" id="${applicant}.contactInfo.mobileNo" type="text" cssClass="form-control low-width patternvalidation" data-pattern="number" minlength="10" maxlength="10" placeholder="" autocomplete="off" required="required" />
                  <form:errors path="${applicant}.contactInfo.mobileNo" cssClass="add-margin error-msg"/>
 	</div>
 	<label class="col-sm-2 control-label">

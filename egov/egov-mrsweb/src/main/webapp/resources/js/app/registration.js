@@ -144,6 +144,22 @@ $(document).ready( function () {
 		}
 	})
 	
+	$('input[id$="husband.contactInfo.mobileNo"]').blur( function () {
+		 var mobileno =  $(this).val();
+			if (mobileno.length < 10) {
+				bootbox.alert("Please enter 10 digit mobile number");
+				$(this).val('');
+			}
+	})
+	
+	$('input[id$="wife.contactInfo.mobileNo"]').blur( function () {
+		var mobileno =  $(this).val();
+		if (mobileno.length < 10) {
+			bootbox.alert("Please enter 10 digit mobile number");
+			$(this).val('');
+		}
+	})
+	
 	$('input[id$="husband.ageInYearsAsOnMarriage"]').blur( function () {
 		var age = parseInt( $(this).val() );
 		if (age != null && age != undefined && (age < 21)) {
@@ -167,6 +183,15 @@ $(document).ready( function () {
 			$(this).val('');
 		}
 	})
+	
+	$('.mobilenum').blur( function () {
+	 var mobileno = $(this).val();
+		if (mobileno.length < 10) {
+			bootbox.alert("Please enter 10 digit mobile number");
+			$(this).val('');
+		}
+	})
+	
 	$('a[id^="signature"]').click( function () {
 		var content = $( $(this).siblings('input[type="hidden"]') ).val();
 		var value = "data:image/jpeg;base64," + content ;
