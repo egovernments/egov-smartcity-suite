@@ -106,6 +106,7 @@ public class ReportService {
     private static final String COURTCASE_EWSHS = "COURTCASE-EWSHS";
     private static final String EWSHS = "EWSHS";
     private static final String PRIVATE = "PRIVATE";
+    private static final String PMV_QUERY = "select distinct pmv from PropertyMaterlizeView pmv where pmv.isActive = true ";
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
     private PersistenceService propPerServ;
     private Properties taxRateProps = null;
@@ -130,11 +131,15 @@ public class ReportService {
      * @param block
      * @return
      */
-    public List<BaseRegisterResult> getPropertyByWardAndBlock(final String ward, final String block) {
+    public List<BaseRegisterResult> getPropertyByWardAndBlock(final String ward, final String block, final boolean exemptedCase) {
 
         final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv where pmv.isActive = true ");
-
+        if(exemptedCase){
+            queryStr.append(PMV_QUERY);
+            queryStr.append(" and pmv.isExempted = true ");
+        }
+        else
+            queryStr.append(PMV_QUERY);
         if (StringUtils.isNotBlank(ward))
             queryStr.append(" and pmv.ward.id=:ward ");
         if (StringUtils.isNotBlank(block))
@@ -148,9 +153,9 @@ public class ReportService {
             query.setLong("block", Long.valueOf(block));
 
         List<PropertyMaterlizeView> properties = query.list();
-        List<BaseRegisterResult> baseRegisterResultList = new LinkedList<BaseRegisterResult>();
+        List<BaseRegisterResult> baseRegisterResultList = new LinkedList<>();
         for (PropertyMaterlizeView propMatView : properties) {
-            List<FloorDetailsView> floorDetails = new LinkedList<FloorDetailsView>(propMatView.getFloorDetails());
+            List<FloorDetailsView> floorDetails = new LinkedList<>(propMatView.getFloorDetails());
             if (floorDetails.size() > 1) {
                 addMultipleFloors(baseRegisterResultList, propMatView, floorDetails);
             } else {
@@ -194,7 +199,7 @@ public class ReportService {
         BigDecimal totalColl;
         BigDecimal currColl;
 
-        List<InstDmdCollMaterializeView> instDemandCollList = new LinkedList<InstDmdCollMaterializeView>(
+        List<InstDmdCollMaterializeView> instDemandCollList = new LinkedList<>(
                 propMatView.getInstDmdColl());
         Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         for (InstDmdCollMaterializeView instDmdCollObj : instDemandCollList) {
@@ -216,8 +221,8 @@ public class ReportService {
             }
         }
 
-        String arrearPerFrom = "";
-        String arrearPerTo = "";
+        String arrearPerFrom;
+        String arrearPerTo;
         if (instDemandCollList.size() > 1) {
             arrearPerTo = dateFormatter.format(DateUtils.add(propertyTaxCommonUtils.getCurrentInstallment().getFromDate(), Calendar.DAY_OF_MONTH, -1));
             arrearPerFrom = dateFormatter.format(instDemandCollList.get(0).getInstallment().getFromDate());
@@ -252,7 +257,7 @@ public class ReportService {
 
     private void addMultipleFloors(List<BaseRegisterResult> baseRegisterResultList, PropertyMaterlizeView propMatView,
                                    List<FloorDetailsView> floorDetails) {
-        BaseRegisterResult baseRegisterResultObj = null;
+        BaseRegisterResult baseRegisterResultObj;
         int count = 0;
         for (FloorDetailsView floorview : floorDetails) {
             if (count == 0) {
@@ -929,10 +934,15 @@ public class ReportService {
      * @param block
      * @return
      */
-    public List<BaseRegisterVLTResult> getVLTPropertyByWardAndBlock(final String ward, final String block) {
+    public List<BaseRegisterVLTResult> getVLTPropertyByWardAndBlock(final String ward, final String block, final boolean exemptedCase) {
         BigDecimal taxRate = getTaxRate(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX);
         final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv where pmv.isActive = true ");
+        if(exemptedCase){
+            queryStr.append(PMV_QUERY);
+            queryStr.append(" and pmv.isExempted = true ");
+        }
+        else
+            queryStr.append(PMV_QUERY);
 
         if (StringUtils.isNotBlank(ward))
             queryStr.append(" and pmv.ward.id=:ward ");
@@ -947,14 +957,14 @@ public class ReportService {
             query.setLong("block", Long.valueOf(block));
 
         List<PropertyMaterlizeView> properties = query.list();
-        List<BaseRegisterVLTResult> baseRegisterVLTResultList = new LinkedList<BaseRegisterVLTResult>();
+        List<BaseRegisterVLTResult> baseRegisterVLTResultList = new LinkedList<>();
 
         for (PropertyMaterlizeView propMatView : properties) {
             BigDecimal currFirstHalfLibCess = BigDecimal.ZERO;
             BigDecimal currSecondHalfLibCess = BigDecimal.ZERO;
             BigDecimal arrLibCess = BigDecimal.ZERO;
-            BasicProperty basicProperty = null;
-            BaseRegisterVLTResult baseRegisterVLTResultObj = null;
+            BasicProperty basicProperty;
+            BaseRegisterVLTResult baseRegisterVLTResultObj;
             baseRegisterVLTResultObj = new BaseRegisterVLTResult();
             baseRegisterVLTResultObj.setAssessmentNo(propMatView.getPropertyId());
             baseRegisterVLTResultObj.setWard(propMatView.getWard() != null ? (propMatView.getWard().getName() + " ," + propMatView.getWard().getBoundaryNum()) : "");
@@ -971,7 +981,7 @@ public class ReportService {
             if (propMatView.getMarketValue() != null && propMatView.getCapitalValue() != null)
                 baseRegisterVLTResultObj.setHigherValueForImposedtax(propMatView.getMarketValue().compareTo(propMatView.getCapitalValue()) > 0 ? propMatView.getMarketValue().setScale(2, BigDecimal.ROUND_HALF_UP) : propMatView.getCapitalValue().setScale(2, BigDecimal.ROUND_HALF_UP));
             baseRegisterVLTResultObj.setIsExempted(propMatView.getIsExempted() != null ? (propMatView.getIsExempted() ? "Yes" : "No") : "");
-            List<InstDmdCollMaterializeView> instDemandCollList = new LinkedList<InstDmdCollMaterializeView>(
+            List<InstDmdCollMaterializeView> instDemandCollList = new LinkedList<>(
                     propMatView.getInstDmdColl());
             Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
             for (InstDmdCollMaterializeView instDmdCollObj : instDemandCollList) {
@@ -1016,8 +1026,8 @@ public class ReportService {
             baseRegisterVLTResultObj.setCurrentColl(currColl);
             baseRegisterVLTResultObj.setTotalColl(totalColl);
 
-            String arrearPerFrom = "";
-            String arrearPerTo = "";
+            String arrearPerFrom;
+            String arrearPerTo;
             if (instDemandCollList.size() > 1 && ((arrTotal.subtract(arrColl).compareTo(BigDecimal.ZERO)) > 1)) {
                 arrearPerTo = dateFormatter.format(DateUtils.add(propertyTaxCommonUtils.getCurrentInstallment().getFromDate(), Calendar.DAY_OF_MONTH, -1));
                 arrearPerFrom = dateFormatter.format(instDemandCollList.get(0).getInstallment().getFromDate());
