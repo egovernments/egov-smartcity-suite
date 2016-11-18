@@ -55,17 +55,17 @@
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.fullname"/></div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${priest.name.firstName}" ></c:out>&nbsp; &nbsp;
-			<c:out value="${priest.name.middleName}"></c:out>&nbsp; &nbsp;
-			<c:out value="${priest.name.lastName}"></c:out>
+			<c:out value="${registration.priest.name.firstName}" ></c:out>&nbsp; &nbsp;
+			<c:out value="${registration.priest.name.middleName}"></c:out>&nbsp; &nbsp;
+			<c:out value="${registration.priest.name.lastName}"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.religion"/></div>
-		<div class="col-sm-3 add-margin view-content"><c:out value="${priest.religion.name}" ></c:out></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${registration.priest.religion.name}" ></c:out></div>
 	</div>
 	
 	<div class="row add-border">
 			<div class="col-sm-3 add-margin"><spring:message code="lbl.residence.address"/></div>
-			<div class="col-sm-3 add-margin view-content"><c:out value="${priest.contactInfo.residenceAddress}"></c:out></div>
+			<div class="col-sm-3 add-margin view-content"><c:out value="${registration.priest.contactInfo.residenceAddress}"></c:out></div>
 	</div>
 </div>
 	
