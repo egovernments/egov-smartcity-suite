@@ -891,20 +891,22 @@ public class ReportService {
             finalSelectQry = "select count(pi.upicno) as \"assessmentCount\",cast(id as integer) as \"boundaryId\",boundary.name as \"boundaryName\", ";
             finalGrpQry = " group by boundary.id,boundary.name order by boundary.name";
         }
+        if (propertyTypes == null)
+            whereQry = whereQry + " and pi.proptymaster not in (select id from egpt_property_type_master where code = 'VAC_LAND') ";
         if (mode.equalsIgnoreCase(WARDWISE)) {
             if (param != 0)
-                whereQry = " and pi.WARDID = " + param;
+                whereQry = whereQry + " and pi.WARDID = " + param;
             if (propertyTypes != null && !propertyTypes.isEmpty())
                 whereQry = whereQry + " and pi.proptymaster in (" + propertyTypeIds + ") ";
             boundaryQry = " and pi.wardid=boundary.id ";
         } else if (mode.equalsIgnoreCase(BLOCKWISE)) {
-            whereQry = " and pi.wardid = " + param;
+            whereQry = whereQry + " and pi.wardid = " + param;
             if (propertyTypes != null && !propertyTypes.isEmpty())
                 whereQry = whereQry + " and pi.proptymaster in (" + propertyTypeIds + ") ";
             boundaryQry = " and pi.blockid=boundary.id ";
         } else if (mode.equalsIgnoreCase(PROPERTY)) {
             finalSelectQry = "select distinct pi.upicno as \"assessmentNo\", pi.houseno as \"houseNo\", pi.ownersname as \"ownerName\", ";
-            whereQry = " and pi.blockid = " + param;
+            whereQry = whereQry + " and pi.blockid = " + param;
             if (propertyTypes != null && !propertyTypes.isEmpty())
                 whereQry = whereQry + " and pi.proptymaster in (" + propertyTypeIds + ") ";
             boundaryQry = "";
