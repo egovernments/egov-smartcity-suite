@@ -148,7 +148,7 @@ public class PropertyTaxElasticSearchIndexService {
                 return response.getAggregations();
             }
         });
-        
+
         Sum aggr = aggregations.get(TOTALDEMAND);
         return BigDecimal.valueOf(aggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
     }
@@ -590,20 +590,25 @@ public class PropertyTaxElasticSearchIndexService {
             Map<String, TaxPayerDetails> wardWiseTaxPayersDetails,
             Map<String, List<TaxPayerDetails>> billCollectorWiseMap, List<TaxPayerDetails> taxPayerDetailsList) {
 
+        String billCollectorNameNumber;
         List<BillCollectorIndex> billCollectorsList = collectionIndexElasticSearchService
                 .getBillCollectorDetails(collectionDetailsRequest);
         for (BillCollectorIndex billCollIndex : billCollectorsList) {
-            if (wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()) != null) {
+            if (wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()) != null
+                    && StringUtils.isNotBlank(billCollIndex.getRevenueWard())) {
+                billCollectorNameNumber = billCollIndex.getBillCollector().concat("~")
+                        .concat(StringUtils.isBlank(billCollIndex.getMobileNumber()) ? StringUtils.EMPTY
+                                : billCollIndex.getMobileNumber());
                 if (billCollectorWiseMap.isEmpty()) {
                     taxPayerDetailsList.add(wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()));
-                    billCollectorWiseMap.put(billCollIndex.getBillCollector(), taxPayerDetailsList);
+                    billCollectorWiseMap.put(billCollectorNameNumber, taxPayerDetailsList);
                 } else {
-                    if (!billCollectorWiseMap.containsKey(billCollIndex.getBillCollector())) {
+                    if (!billCollectorWiseMap.containsKey(billCollectorNameNumber)) {
                         taxPayerDetailsList = new ArrayList<>();
                         taxPayerDetailsList.add(wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()));
-                        billCollectorWiseMap.put(billCollIndex.getBillCollector(), taxPayerDetailsList);
+                        billCollectorWiseMap.put(billCollectorNameNumber, taxPayerDetailsList);
                     } else {
-                        billCollectorWiseMap.get(billCollIndex.getBillCollector())
+                        billCollectorWiseMap.get(billCollectorNameNumber)
                                 .add(wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()));
                     }
                 }
@@ -669,6 +674,7 @@ public class PropertyTaxElasticSearchIndexService {
         BigDecimal totalDmd;
         BigDecimal variance;
         TaxPayerDetails taxPayerDetails;
+        String[] billCollectorNameNumberArr;
         for (Entry<String, List<TaxPayerDetails>> entry : billCollectorWiseMap.entrySet()) {
             taxPayerDetails = new TaxPayerDetails();
             cytdColl = BigDecimal.ZERO;
@@ -676,13 +682,16 @@ public class PropertyTaxElasticSearchIndexService {
             cytdDmd = BigDecimal.ZERO;
             totalDmd = BigDecimal.ZERO;
             variance = BigDecimal.ZERO;
+            billCollectorNameNumberArr = entry.getKey().split("~");
             for (TaxPayerDetails taxPayer : entry.getValue()) {
                 totalDmd = totalDmd.add(taxPayer.getTotalDmd() == null ? BigDecimal.ZERO : taxPayer.getTotalDmd());
                 cytdColl = cytdColl.add(taxPayer.getCytdColl() == null ? BigDecimal.ZERO : taxPayer.getCytdColl());
                 cytdDmd = cytdDmd.add(taxPayer.getCytdDmd() == null ? BigDecimal.ZERO : taxPayer.getCytdDmd());
                 lytdColl = lytdColl.add(taxPayer.getLytdColl() == null ? BigDecimal.ZERO : taxPayer.getLytdColl());
             }
-            taxPayerDetails.setBillCollector(entry.getKey());
+            taxPayerDetails.setBillCollector(billCollectorNameNumberArr[0]);
+            taxPayerDetails
+                    .setMobileNumber(billCollectorNameNumberArr.length > 1 ? billCollectorNameNumberArr[1] : StringUtils.EMPTY);
             taxPayerDetails.setRegionName(collectionDetailsRequest.getRegionName());
             taxPayerDetails.setDistrictName(collectionDetailsRequest.getDistrictName());
             taxPayerDetails.setUlbGrade(collectionDetailsRequest.getUlbGrade());
