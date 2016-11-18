@@ -324,7 +324,8 @@ public class CVoucherHeader extends StateAware {
 
     @Override
     public String getStateDetails() {
-        return voucherNumber + "-" + getState().getComments();
+
+        return getState().getComments().isEmpty() ? voucherNumber : voucherNumber + "-" + getState().getComments();
     }
 
     public Set<CGeneralLedger> getGeneralledger() {
@@ -442,7 +443,7 @@ public class CVoucherHeader extends StateAware {
         return approvalDepartment;
     }
 
-    public void setApprovalDepartment(Long approvalDepartment) {
+    public void setApprovalDepartment(final Long approvalDepartment) {
         this.approvalDepartment = approvalDepartment;
     }
 
@@ -450,7 +451,7 @@ public class CVoucherHeader extends StateAware {
         return approvalComent;
     }
 
-    public void setApprovalComent(String approvalComent) {
+    public void setApprovalComent(final String approvalComent) {
         this.approvalComent = approvalComent;
     }
 

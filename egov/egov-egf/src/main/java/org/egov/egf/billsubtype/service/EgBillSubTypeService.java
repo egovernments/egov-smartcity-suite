@@ -74,7 +74,7 @@ public class EgBillSubTypeService {
         this.egBillSubTypeRepository = egBillSubTypeRepository;
     }
 
-    public EgBillSubType getById(final Integer id) {
+    public EgBillSubType getById(final Long id) {
         return egBillSubTypeRepository.findOne(id);
     }
 

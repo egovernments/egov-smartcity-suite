@@ -266,10 +266,6 @@ public class ExpenseBillService {
                     && egBillregister.getEgBillregistermis().getFund().getId() != null)
                 egBillregister.getEgBillregistermis().setFund(
                         fundService.findOne(egBillregister.getEgBillregistermis().getFund().getId()));
-            if (egBillregister.getEgBillregistermis().getEgBillSubType() != null
-                    && egBillregister.getEgBillregistermis().getEgBillSubType().getId() != null)
-                egBillregister.getEgBillregistermis().setEgBillSubType(
-                        egBillSubTypeService.getById(egBillregister.getEgBillregistermis().getEgBillSubType().getId()));
             if (egBillregister.getEgBillregistermis().getScheme() != null
                     && egBillregister.getEgBillregistermis().getScheme().getId() != null)
                 egBillregister.getEgBillregistermis().setScheme(
@@ -292,6 +288,13 @@ public class ExpenseBillService {
 
             deleteCheckList(updatedegBillregister);
             createCheckList(updatedegBillregister, checkLists);
+            egBillregister.getEgBillregistermis().setBudgetaryAppnumber(null);
+            try {
+                checkBudgetAndGenerateBANumber(egBillregister);
+            } catch (final ValidationException e) {
+                throw new ValidationException(e.getErrors());
+            }
+
         }
         if (updatedegBillregister != null) {
             if (workFlowAction.equals(FinancialConstants.CREATEANDAPPROVE))
@@ -342,21 +345,19 @@ public class ExpenseBillService {
 
     }
 
+    @Transactional(readOnly = true)
     public boolean isBillNumberGenerationAuto() {
         final List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey(
                 FinancialConstants.MODULE_NAME_APPCONFIG, FinancialConstants.KEY_BILLNUMBER_APPCONFIG);
-        if (configValuesByModuleAndKey.size() > 0)
+        if (!configValuesByModuleAndKey.isEmpty())
             return "Y".equals(configValuesByModuleAndKey.get(0).getValue());
         else
             return false;
     }
 
     private String getNextBillNumber(final EgBillregister bill) {
-
         final ExpenseBillNumberGenerator b = beanResolver.getAutoNumberServiceFor(ExpenseBillNumberGenerator.class);
-        final String billNumber = b.getNextNumber(bill);
-
-        return billNumber;
+        return b.getNextNumber(bill);
     }
 
     public void createExpenseBillRegisterWorkflowTransition(final EgBillregister egBillregister,
@@ -382,7 +383,7 @@ public class ExpenseBillService {
         } else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
                 pos = positionMasterService.getPositionById(approvalPosition);
-            WorkFlowMatrix wfmatrix = null;
+            WorkFlowMatrix wfmatrix;
             if (null == egBillregister.getState()) {
                 wfmatrix = egBillregisterRegisterWorkflowService.getWfMatrix(egBillregister.getStateType(), null,
                         null, additionalRule, currState, null);
@@ -425,8 +426,7 @@ public class ExpenseBillService {
         else if (wfmatrix != null)
             approvalPosition = financialUtils.getApproverPosition(wfmatrix.getNextDesignation(),
                     egBillregister.getState(), egBillregister.getCreatedBy().getId());
-        if (workFlowAction.equals(FinancialConstants.BUTTONCANCEL)
-                && wfmatrix.getNextState().equals(FinancialConstants.WORKFLOW_STATE_CREATED))
+        if (workFlowAction.equals(FinancialConstants.BUTTONCANCEL))
             approvalPosition = null;
 
         return approvalPosition;
@@ -434,13 +434,13 @@ public class ExpenseBillService {
 
     public List<HashMap<String, Object>> getHistory(final State state, final List<StateHistory> history) {
         User user = null;
-        final List<HashMap<String, Object>> historyTable = new ArrayList<HashMap<String, Object>>();
-        final HashMap<String, Object> map = new HashMap<String, Object>(0);
+        final List<HashMap<String, Object>> historyTable = new ArrayList<>();
+        final HashMap<String, Object> map = new HashMap<>(0);
         if (null != state) {
             if (!history.isEmpty() && history != null)
                 Collections.reverse(history);
             for (final StateHistory stateHistory : history) {
-                final HashMap<String, Object> HistoryMap = new HashMap<String, Object>(0);
+                final HashMap<String, Object> HistoryMap = new HashMap<>(0);
                 HistoryMap.put("date", stateHistory.getDateInfo());
                 HistoryMap.put("comments", stateHistory.getComments());
                 HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"

@@ -226,7 +226,7 @@ public class WorksTransactionIndex {
     private String loanameofagency;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String loacontractorcode;
+    private String loacontractor;
 
     @Field(type = FieldType.Double)
     private Double loasecuritydeposit;
@@ -284,6 +284,9 @@ public class WorksTransactionIndex {
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String workstatus;
+
+    @Field(type = FieldType.Date)
+    private Date createddate;
 
     public String getId() {
         return id;
@@ -741,12 +744,12 @@ public class WorksTransactionIndex {
         this.loanameofagency = loanameofagency;
     }
 
-    public String getLoacontractorcode() {
-        return loacontractorcode;
+    public String getLoacontractor() {
+        return loacontractor;
     }
 
-    public void setLoacontractorcode(final String loacontractorcode) {
-        this.loacontractorcode = loacontractorcode;
+    public void setLoacontractor(final String loacontractor) {
+        this.loacontractor = loacontractor;
     }
 
     public Double getLoasecuritydeposit() {
@@ -899,6 +902,14 @@ public class WorksTransactionIndex {
 
     public void setWorkstatus(final String workstatus) {
         this.workstatus = workstatus;
+    }
+
+    public Date getCreateddate() {
+        return createddate;
+    }
+
+    public void setCreateddate(final Date createddate) {
+        this.createddate = createddate;
     }
 
 }

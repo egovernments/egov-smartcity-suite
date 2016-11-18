@@ -173,21 +173,19 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
     }
 
     protected void handleDuplicateBudgetDetailError(final ValidationException e) {
-        for (final ValidationError error : e.getErrors()) {
+        for (final ValidationError error : e.getErrors())
             if ("budgetDetail.duplicate".equals(error.getKey())) {
                 headerDisabled = true;
                 break;
             }
-        }
         throw e;
     }
 
     @Override
     public void populateSavedbudgetDetailListFor(final Budget budget) {
-        if (budget != null && budget.getId() != null) {
+        if (budget != null && budget.getId() != null)
             savedbudgetDetailList = budgetDetailService.findAllBy(
                     "from BudgetDetail where budget.id=? order by function.name,budgetGroup.name", budget.getId());
-        }
     }
 
     @Override
@@ -223,9 +221,8 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
     @ValidationErrorPage(value = NEWRE)
     @Action(value = "/budget/budgetProposalDetail-loadBudgetDetailList")
     public String loadBudgetDetailList() {
-        if (addNewDetails) {
+        if (addNewDetails)
             return addNewDetails();
-        }
         final Long id = budgetDetail.getBudget().getId();
         showRe = true;
         getDetailsFilterdBy();
@@ -235,9 +232,8 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
         setReferenceBudget(budgetService.getReferenceBudgetFor(budget));
         budgetDocumentNumber = budget.getDocumentNumber();
         budgetAmountView = new ArrayList<BudgetAmountView>(savedbudgetDetailList.size());
-        for (int i = 0; i < savedbudgetDetailList.size(); i++) {
+        for (int i = 0; i < savedbudgetDetailList.size(); i++)
             budgetAmountView.add(new BudgetAmountView());
-        }
         budgetDetailList = savedbudgetDetailList;
         populateBeNextYearAmountsAndBEAmounts();
         populateFinancialYear();
@@ -252,9 +248,8 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
     @Action(value = "/budget/budgetProposalDetail-loadNewBudgetDetailList")
     public String loadNewBudgetDetailList() {
         LOGGER.info("Initiating load budgets .....");
-        if (addNewDetails) {
+        if (addNewDetails)
             return addNewDetails();
-        }
         final Long id = budgetDetail.getBudget().getId();
         showRe = true;
         // getDetailsFilterdBy();
@@ -264,9 +259,8 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
         setReferenceBudget(budgetService.getReferenceBudgetFor(budget));
         budgetDocumentNumber = budget.getDocumentNumber();
         budgetAmountView = new ArrayList<BudgetAmountView>(savedbudgetDetailList.size());
-        for (int i = 0; i < savedbudgetDetailList.size(); i++) {
+        for (int i = 0; i < savedbudgetDetailList.size(); i++)
             budgetAmountView.add(new BudgetAmountView());
-        }
         budgetDetailList = savedbudgetDetailList;
         populateBeNextYearAmountsAndBEAmounts();
         populateFinancialYear();
@@ -327,16 +321,14 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
             sqlQuery.setInteger("deptId", deptId).setString("accountType", accountType);
             sqlQuery.addScalar(NAME).addScalar("id", LongType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(CFunction.class));
-            if (!sqlQuery.list().isEmpty()) {
+            if (!sqlQuery.list().isEmpty())
                 functionList = sqlQuery.list();
-            } else {
+            else
                 functionList = employeeService.getAllFunctions();
-            }
-            if (functionList.isEmpty()) {
+            if (functionList.isEmpty())
                 dropdownData.put(functionLists, functionService.findAll());
-            } else {
+            else
                 dropdownData.put(functionLists, functionList);
-            }
         }
         return FUNCTION;
     }
@@ -363,9 +355,8 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
     public void prepare() {
         super.prepare();
         populateSavedbudgetDetailListFor(budgetDetail.getBudget());
-        if (parameters.containsKey("re")) {
+        if (parameters.containsKey("re"))
             dropdownData.put("budgetList", Collections.EMPTY_LIST);
-        }
         loadAjaxedFunctionAndBudgetGroup();
     }
 
@@ -376,48 +367,40 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
 
     public String getActionMessage() {
         if (getActionMessages() != null && getActionMessages().iterator() != null
-                && getActionMessages().iterator().next() != null) {
+                && getActionMessages().iterator().next() != null)
             return getActionMessages().iterator().next().toString();
-        } else {
+        else
             return "";
-        }
     }
 
     private void populateBeNextYearAmounts() {
-        if (savedbudgetDetailList == null || savedbudgetDetailList.size() == 0) {
+        if (savedbudgetDetailList == null || savedbudgetDetailList.size() == 0)
             return;
-        }
         final Budget referenceBudgetFor = budgetService.getReferenceBudgetFor(savedbudgetDetailList.get(0).getBudget());
         if (referenceBudgetFor != null) {
             final List<BudgetDetail> result = budgetDetailService.findAllBy("from BudgetDetail where budget.id=?",
                     referenceBudgetFor.getId());
-            for (final BudgetDetail budgetDetail : savedbudgetDetailList) {
-                for (final BudgetDetail row : result) {
-                    if (compareDetails(row, budgetDetail)) {
+            for (final BudgetDetail budgetDetail : savedbudgetDetailList)
+                for (final BudgetDetail row : result)
+                    if (compareDetails(row, budgetDetail))
                         beNextYearAmounts.put(budgetDetail.getId(), row.getOriginalAmount().setScale(2));
-                    }
-                }
-            }
         }
     }
 
     private void populateBeNextYearAmountsAndBEAmounts() {
-        if (savedbudgetDetailList == null || savedbudgetDetailList.size() == 0) {
+        if (savedbudgetDetailList == null || savedbudgetDetailList.size() == 0)
             return;
-        }
         beAmounts = new ArrayList<BigDecimal>(savedbudgetDetailList.size());
         final Budget referenceBudgetFor = budgetService.getReferenceBudgetFor(savedbudgetDetailList.get(0).getBudget());
         if (referenceBudgetFor != null) {
             final List<BudgetDetail> result = budgetDetailService.findAllBy("from BudgetDetail where budget.id=?",
                     referenceBudgetFor.getId());
-            for (final BudgetDetail budgetDetail : savedbudgetDetailList) {
-                for (final BudgetDetail row : result) {
+            for (final BudgetDetail budgetDetail : savedbudgetDetailList)
+                for (final BudgetDetail row : result)
                     if (compareDetails(row, budgetDetail)) {
                         beNextYearAmounts.put(budgetDetail.getId(), row.getOriginalAmount().setScale(2));
                         beAmounts.add(row.getOriginalAmount());
                     }
-                }
-            }
         }
     }
 
@@ -445,9 +428,8 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
             headerDisabled = true;
             BudgetDetail beNextYear = new BudgetDetail();
 
-            if (addNewDetails) {
+            if (addNewDetails)
                 beNextYear.transition(true).withStateValue("END").withOwner(getPosition()).withComments("");
-            }
             beNextYear.copyFrom(detail);
             beNextYear.setBudget(refBudget);
             beNextYear.setOriginalAmount(beAmounts.get(index));
@@ -471,9 +453,8 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
     }
 
     public Assignment getWorkflowInitiator(final BudgetDetail budgetDetail) {
-        final Assignment wfInitiator = assignmentService
+        return assignmentService
                 .findByEmployeeAndGivenDate(budgetDetail.getCreatedBy().getId(), new Date()).get(0);
-        return wfInitiator;
     }
 
     @Override
@@ -481,20 +462,19 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
 
         List<String> validActions = Collections.emptyList();
 
-        if (budgetDetail.getId() == null || budgetDetail.getId() == 0 || budgetDetail.getCurrentState() == null) {
+        if (budgetDetail.getId() == null || budgetDetail.getId() == 0 || budgetDetail.getCurrentState() == null)
             validActions = Arrays.asList(FinancialConstants.BUTTONSAVE, FinancialConstants.BUTTONFORWARD);
-        } else if (budgetDetail.getCurrentState() != null) {
+        else if (budgetDetail.getCurrentState() != null)
             validActions = customizedWorkFlowService.getNextValidActions(budgetDetail.getStateType(),
                     getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
                     budgetDetail.getCurrentState().getValue(), getPendingActions(), budgetDetail.getCreatedDate());
-        } else if (budgetDetail.getId() == null || budgetDetail.getId() == 0
-                || budgetDetail.getCurrentState().getValue().endsWith("NEW")) {
+        else if (budgetDetail.getId() == null || budgetDetail.getId() == 0
+                || budgetDetail.getCurrentState().getValue().endsWith("NEW"))
             validActions = Arrays.asList(FinancialConstants.BUTTONFORWARD);
-        } else if (budgetDetail.getCurrentState() != null) {
+        else if (budgetDetail.getCurrentState() != null)
             validActions = customizedWorkFlowService.getNextValidActions(budgetDetail.getStateType(),
                     getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
                     budgetDetail.getCurrentState().getValue(), getPendingActions(), budgetDetail.getCreatedDate());
-        }
 
         return validActions;
     }
@@ -507,39 +487,34 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
 
         }
         Integer userId = null;
-        if (parameters.get(ACTIONNAME)[0] != null && parameters.get(ACTIONNAME)[0].contains("reject")) {
+        if (parameters.get(ACTIONNAME)[0] != null && parameters.get(ACTIONNAME)[0].contains("reject"))
             userId = Integer.valueOf(parameters.get("approverUserId")[0]);
-        } else if (null != parameters.get("approverUserId") && Integer.valueOf(parameters.get("approverUserId")[0]) != -1) {
+        else if (null != parameters.get("approverUserId") && Integer.valueOf(parameters.get("approverUserId")[0]) != -1)
             userId = Integer.valueOf(parameters.get("approverUserId")[0]);
-        } else {
+        else
             userId = ApplicationThreadLocals.getUserId().intValue();
-        }
 
         for (final BudgetDetail detail : savedbudgetDetailList) {
-            if (new String("forward").equals(parameters.get(ACTIONNAME)[0])) {
+            if (new String("forward").equals(parameters.get(ACTIONNAME)[0]))
                 detail.transition(true).withStateValue("Forwarded by " + getPosition().getName())
                         .withOwner(getPositionByUserId(userId)).withComments(detail.getComment());
-            }
             budgetDetailService.persist(detail);
         }
         // We Dont need to start budget workflow here, Its starts frm HOD level.
         // forwardBudget(budgetComment, userId); //for RE
-        if (topBudget != null) {
+        if (topBudget != null)
             setTopBudget(budgetService.getReferenceBudgetFor(topBudget));
-            // forwardBudget(budgetComment, userId); //for BE
-        }
+        // forwardBudget(budgetComment, userId); //for BE
 
         if (parameters.get(ACTIONNAME)[0].contains("approv")) {
-            if (topBudget.getState().getValue().equals("END")) {
+            if (topBudget.getState().getValue().equals("END"))
                 addActionMessage(getMessage("budgetdetail.approved.end"));
-            } else {
+            else
                 addActionMessage(getMessage("budgetdetail.approved")
                         + budgetService.getEmployeeNameAndDesignationForPosition(getPositionByUserId(userId)));
-            }
-        } else {
+        } else
             addActionMessage(getMessage("budgetdetail.approved")
                     + budgetService.getEmployeeNameAndDesignationForPosition(getPositionByUserId(userId)));
-        }
     }
 
     @Action(value = "/budget/budgetProposalDetail-newRe")

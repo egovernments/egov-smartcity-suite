@@ -40,26 +40,16 @@
 package org.egov.egf.web.controller.expensebill;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.egf.budget.model.BudgetControlType;
 import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.egf.expensebill.service.ExpenseBillService;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBillregister;
 import org.egov.utils.FinancialConstants;
@@ -83,6 +73,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping(value = "/expensebill")
 public class CreateExpenseBillController extends BaseBillController {
 
+    private static final String DESIGNATION = "designation";
+
+    private static final String NET_PAYABLE_ID = "netPayableId";
+
+    private static final String EXPENSEBILL_FORM = "expensebill-form";
+
+    private static final String STATE_TYPE = "stateType";
+
     private static final String APPROVAL_POSITION = "approvalPosition";
 
     private static final String APPROVAL_DESIGNATION = "approvalDesignation";
@@ -99,10 +97,6 @@ public class CreateExpenseBillController extends BaseBillController {
     private ExpenseBillService expenseBillService;
 
     @Autowired
-    @Qualifier("chartOfAccountsService")
-    private ChartOfAccountsService chartOfAccountsService;
-
-    @Autowired
     private BudgetControlTypeService budgetControlTypeService;
 
     @Autowired
@@ -117,11 +111,11 @@ public class CreateExpenseBillController extends BaseBillController {
     public String showNewForm(@ModelAttribute("egBillregister") final EgBillregister egBillregister, final Model model) {
 
         setDropDownValues(model);
-        model.addAttribute("stateType", egBillregister.getClass().getSimpleName());
+        model.addAttribute(STATE_TYPE, egBillregister.getClass().getSimpleName());
         prepareWorkflow(model, egBillregister, new WorkflowContainer());
         prepareValidActionListByCutOffDate(model);
         egBillregister.setBilldate(new Date());
-        return "expensebill-form";
+        return EXPENSEBILL_FORM;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
@@ -134,19 +128,17 @@ public class CreateExpenseBillController extends BaseBillController {
 
         if (resultBinder.hasErrors()) {
             setDropDownValues(model);
-            egBillregister.setBilldate(new Date());
-            model.addAttribute("stateType", egBillregister.getClass().getSimpleName());
-            model.addAttribute(APPROVAL_DESIGNATION, request.getParameter(APPROVAL_DESIGNATION));
-            model.addAttribute(APPROVAL_POSITION, request.getParameter(APPROVAL_POSITION));
+            model.addAttribute(STATE_TYPE, egBillregister.getClass().getSimpleName());
             prepareWorkflow(model, egBillregister, new WorkflowContainer());
+            model.addAttribute(NET_PAYABLE_ID, request.getParameter(NET_PAYABLE_ID));
             model.addAttribute(APPROVAL_DESIGNATION, request.getParameter(APPROVAL_DESIGNATION));
             model.addAttribute(APPROVAL_POSITION, request.getParameter(APPROVAL_POSITION));
-            model.addAttribute("designation", request.getParameter("designation"));
+            model.addAttribute(DESIGNATION, request.getParameter(DESIGNATION));
             egBillregister.getBillPayeedetails().clear();
             prepareBillDetailsForView(egBillregister);
             prepareValidActionListByCutOffDate(model);
-            
-            return "expensebill-form";
+
+            return EXPENSEBILL_FORM;
         } else {
             Long approvalPosition = 0l;
             String approvalComment = "";
@@ -161,11 +153,18 @@ public class CreateExpenseBillController extends BaseBillController {
                         null,
                         workFlowAction);
             } catch (final ValidationException e) {
-                // TODO: Used ApplicationRuntimeException for time being since
-                // there is issue in session after
-                // checkBudgetAndGenerateBANumber API call. Needs to replace
-                // with errors.reject
-                throw new ApplicationRuntimeException("error.expense.bill.budgetcheck.insufficient.amount");
+                setDropDownValues(model);
+                model.addAttribute(STATE_TYPE, egBillregister.getClass().getSimpleName());
+                prepareWorkflow(model, egBillregister, new WorkflowContainer());
+                model.addAttribute(NET_PAYABLE_ID, request.getParameter(NET_PAYABLE_ID));
+                model.addAttribute(APPROVAL_DESIGNATION, request.getParameter(APPROVAL_DESIGNATION));
+                model.addAttribute(APPROVAL_POSITION, request.getParameter(APPROVAL_POSITION));
+                model.addAttribute(DESIGNATION, request.getParameter(DESIGNATION));
+                egBillregister.getBillPayeedetails().clear();
+                prepareBillDetailsForView(egBillregister);
+                prepareValidActionListByCutOffDate(model);
+                resultBinder.reject("", e.getErrors().get(0).getMessage());
+                return EXPENSEBILL_FORM;
             }
 
             final String approverDetails = financialUtils.getApproverDetails(savedEgBillregister.getStatus(),

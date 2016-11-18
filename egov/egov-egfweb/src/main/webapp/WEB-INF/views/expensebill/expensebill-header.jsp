@@ -88,10 +88,10 @@
 			<spring:message code="lbl.function" />	<span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
-			<c:if test="${egBillregister.id != null}">
+			<c:if test="${egBillregister.egBillregistermis.function != null}">
 				<form:input path="" name ="function" id="function" class="form-control" placeholder="Type first 3 letters of Function name" required="required" value="${egBillregister.egBillregistermis.function.code} - ${egBillregister.egBillregistermis.function.name}"/>
 			</c:if>
-			<c:if test="${egBillregister.id == null}">
+			<c:if test="${egBillregister.egBillregistermis.function == null}">
 				<form:input path="" name ="function" id="function" class="form-control" placeholder="Type first 3 letters of Function name" required="required"/>
 			</c:if>
 			<form:hidden path="egBillregistermis.function" name="egBillregistermis.function" id="egBillregistermis.function" class="form-control table-input hidden-input cfunction"/>
@@ -128,11 +128,11 @@
 			<span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
-			<form:select path="egBillregistermis.egBillSubType.id" data-first-option="false" id="billSubType" class="form-control" required="required">
+			<form:select path="egBillregistermis.egBillSubType" data-first-option="false" id="billSubType" class="form-control" required="required">
 				<form:option value=""><spring:message code="lbl.select" /></form:option>
 				<form:options items="${billSubTypes}" itemValue="id" itemLabel="name" />
 			</form:select>
-			<form:errors path="egBillregistermis.egBillSubType.id" cssClass="add-margin error-msg" />
+			<form:errors path="egBillregistermis.egBillSubType" cssClass="add-margin error-msg" />
 		</div>
 	</div>
 </div>

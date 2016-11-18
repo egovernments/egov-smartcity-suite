@@ -57,6 +57,8 @@ public class BaseRegisterResultAdaptor implements JsonSerializer<BaseRegisterRes
         final JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("consumerNo",
                 null != baseRegisterResultObj.getConsumerNo() ? baseRegisterResultObj.getConsumerNo() : "");
+        jsonObject.addProperty("oldConsumerNo",
+                baseRegisterResultObj.getOldConsumerNo() != null ? baseRegisterResultObj.getOldConsumerNo() : "");
         jsonObject.addProperty("assessmentNo",
                 null != baseRegisterResultObj.getAssementNo() ? baseRegisterResultObj.getAssementNo() : "");
         jsonObject.addProperty("ownerName",

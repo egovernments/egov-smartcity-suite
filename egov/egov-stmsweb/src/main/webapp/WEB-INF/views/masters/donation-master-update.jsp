@@ -137,4 +137,4 @@
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/js/masters/donationMaster.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url  value='/resources/javascript/helper.js' context='/stms'/>"></script>
+<script src="<cdn:url  value='/resources/javascript/helper.js?rnd=${app_release_no}'/>"></script>

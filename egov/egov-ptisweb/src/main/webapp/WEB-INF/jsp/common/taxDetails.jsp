@@ -41,113 +41,126 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="nameTable" >
-				<tr>
-				<th class="bluebgheadtd"></th>
-				<th class="bluebgheadtd">Property Tax</th>
-			    <th class="bluebgheadtd">Education Cess</th>
-			    <th class="bluebgheadtd">Library Cess</th>
-			    <th class="bluebgheadtd">Unauthorized Penalty</th>
-				<th class="bluebgheadtd">Total Tax</th>
-				<th class="bluebgheadtd">Total Tax Due</th>
-				</tr>
-				<tr>
-					  <td class="blueborderfortd" align="center">
-						<span class="bold"><s:property value="viewMap.firstHalf" /></span>
-					  </td>
-					  <td class="blueborderfortd" align="center">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"
+	class="tablebottom" id="nameTable">
+	<tr>
+		<th class="bluebgheadtd"></th>
+		<th class="bluebgheadtd">Property Tax</th>
+		<th class="bluebgheadtd">Education Cess</th>
+		<th class="bluebgheadtd">Library Cess</th>
+		<th class="bluebgheadtd">Unauthorized Penalty</th>
+		<th class="bluebgheadtd">Total Tax</th>
+		<th class="bluebgheadtd">Total Tax Due</th>
+	</tr>
+	<tr>
+		<td class="blueborderfortd" align="center"><span class="bold"><s:property
+					value="viewMap.firstHalf" /></span></td>
+		<td class="blueborderfortd" align="center">
+		<s:if test="%{viewMap.firstHalfGT != null }">
+			 Rs.<s:text name="format.money"><s:param value="viewMap.firstHalfGT" /></s:text>
+			 </s:if>
+		<s:else>
+			Rs.<s:text name="format.money">
+				<s:param value="0" />
+			</s:text>
+		</s:else>
+		</td>
+		<td class="blueborderfortd" align="center">Rs.<s:text
+				name="format.money">
+				<s:param value="viewMap.firstHalfEC" />
+			</s:text>
+		</td>
+
+		<td class="blueborderfortd" align="center"><s:if
+				test="%{viewMap.firstHalfLC != null}">
 					  Rs.<s:text name="format.money">
-									<s:param value="viewMap.firstHalfGT" />
-								</s:text>
-					  </td>
-					  <td class="blueborderfortd" align="center">
+					<s:param value="viewMap.firstHalfLC" />
+				</s:text>
+			</s:if> <s:else> Rs.<s:text name="format.money">
+					<s:param value="0" />
+				</s:text>
+			</s:else></td>
+
+		<td class="blueborderfortd" align="center">Rs.<s:text
+				name="format.money">
+				<s:param value="viewMap.firstHalfUAP" />
+			</s:text>
+		</td>
+		<td class="blueborderfortd" align="center">Rs.<s:text
+				name="format.money">
+				<s:param value="viewMap.firstHalfTotal" />
+			</s:text>
+		</td>
+		<td class="blueborderfortd" align="center">Rs.<s:text
+				name="format.money">
+				<s:param value="viewMap.firstHalfTaxDue" />
+			</s:text>
+		</td>
+	</tr>
+	<tr>
+
+		<td class="blueborderfortd" align="center"><span class="bold"><s:property
+					value="viewMap.secondHalf" /></span></td>
+		<td class="blueborderfortd" align="center"><s:if
+				test="%{viewMap.secondHalfGT != null}">
 					  Rs.<s:text name="format.money">
-									<s:param value="viewMap.firstHalfEC" />
-								</s:text>
-					  </td>
-					  
-					  <td class="blueborderfortd" align="center">
+					<s:param value="viewMap.secondHalfGT" />
+				</s:text>
+			</s:if> <s:else>
 					  Rs.<s:text name="format.money">
-									<s:param value="viewMap.firstHalfLC" />
-								</s:text>
-					  </td>
-					  
-					  <td class="blueborderfortd" align="center">
+					<s:param value="0" />
+				</s:text>
+			</s:else></td>
+		<td class="blueborderfortd" align="center">Rs.<s:text
+				name="format.money">
+				<s:param value="viewMap.secondHalfEC" />
+			</s:text>
+		</td>
+
+		<td class="blueborderfortd" align="center"><s:if
+				test="%{viewMap.secondHalfLC != null}">
 					  Rs.<s:text name="format.money">
-									<s:param value="viewMap.firstHalfUAP" />
-								</s:text>
-					  </td>
-					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="viewMap.firstHalfTotal" /> 
-								</s:text>
-					  </td>
-					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="viewMap.firstHalfTaxDue" />  
-								</s:text>
-					  </td>
-				</tr>
-				<tr>
-					  
-					  <td class="blueborderfortd" align="center">
-						<span class="bold"><s:property value="viewMap.secondHalf" /></span>
-					  </td>
-					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="viewMap.secondHalfGT" />
-								</s:text>
-					  </td>
-					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="viewMap.secondHalfEC" />
-								</s:text>
-					  </td>
-					  
-					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="viewMap.secondHalfLC" />
-								</s:text>
-					  </td>
-					   <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="viewMap.secondHalfUAP" />
-								</s:text>
-					  </td>
-					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="viewMap.secondHalfTotal" />
-								</s:text>
-					  </td>
-					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="viewMap.secondHalfTaxDue" />
-								</s:text>
-					  </td>
-				 </tr>
-				 <tr>
-					 
-					  <td class="blueborderfortd" align="center">
-						<span class="bold"><s:property value="viewMap.arrears" /></span>
-					  </td>
-					  <td class="blueborderfortd" align="center">
-					  </td>
-					  <td class="blueborderfortd" align="center">
-					  </td>
-					  <td class="blueborderfortd" align="center">
-					  </td>
-					  <td class="blueborderfortd" align="center">
-					  </td>
-					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="viewMap.arrearTax" />
-								</s:text>
-					  </td>
-					  <td class="blueborderfortd" align="center">
-					  Rs.<s:text name="format.money">
-									<s:param value="viewMap.totalArrDue" />
-								</s:text>
-					  </td>
-					  
-				 </tr>
+					<s:param value="viewMap.secondHalfLC" />
+				</s:text>
+			</s:if> <s:else>
+					   Rs.<s:text name="format.money">
+					<s:param value="0" />
+				</s:text>
+			</s:else></td>
+		<td class="blueborderfortd" align="center">Rs.<s:text
+				name="format.money">
+				<s:param value="viewMap.secondHalfUAP" />
+			</s:text>
+		</td>
+		<td class="blueborderfortd" align="center">Rs.<s:text
+				name="format.money">
+				<s:param value="viewMap.secondHalfTotal" />
+			</s:text>
+		</td>
+		<td class="blueborderfortd" align="center">Rs.<s:text
+				name="format.money">
+				<s:param value="viewMap.secondHalfTaxDue" />
+			</s:text>
+		</td>
+	</tr>
+	<tr>
+
+		<td class="blueborderfortd" align="center"><span class="bold"><s:property
+					value="viewMap.arrears" /></span></td>
+		<td class="blueborderfortd" align="center"></td>
+		<td class="blueborderfortd" align="center"></td>
+		<td class="blueborderfortd" align="center"></td>
+		<td class="blueborderfortd" align="center"></td>
+		<td class="blueborderfortd" align="center">Rs.<s:text
+				name="format.money">
+				<s:param value="viewMap.arrearTax" />
+			</s:text>
+		</td>
+		<td class="blueborderfortd" align="center">Rs.<s:text
+				name="format.money">
+				<s:param value="viewMap.totalArrDue" />
+			</s:text>
+		</td>
+
+	</tr>
 </table>

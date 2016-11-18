@@ -1142,17 +1142,14 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                         final Area area = new Area();
                         area.setArea(new Float(areaOfPlot));
                         property.getPropertyDetail().setSitalArea(area);
-                        if (null != basicProperty && !basicProperty.isUnderWorkflow()) {
-                            if (null != basicProperty.getActiveProperty()) {
-                                property.getPropertyDetail().setPropertyTypeMaster(propTypeMstr);
-                                final String errorKey = propService.validationForBifurcation(property, basicProperty,
-                                        propertyMutationMaster.getCode());
-                                if (!isBlank(errorKey))
-                                    addActionError(getText(errorKey));
-                            } else
-                                addActionError(getText("error.parent"));
+                        if (basicProperty != null && basicProperty.getActiveProperty() != null) {
+                            property.getPropertyDetail().setPropertyTypeMaster(propTypeMstr);
+                            final String errorKey = propService.validationForBifurcation(property, basicProperty,
+                                    propertyMutationMaster.getCode());
+                            if (!isBlank(errorKey))
+                                addActionError(getText(errorKey));
                         } else
-                            addActionError(getText("error.parent.underworkflow"));
+                            addActionError(getText("error.parent"));
                     }
                 } else
                     addActionError(getText("error.parent.index"));

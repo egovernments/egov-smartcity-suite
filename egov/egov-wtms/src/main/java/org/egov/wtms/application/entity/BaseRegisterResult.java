@@ -42,6 +42,7 @@ package org.egov.wtms.application.entity;
 public class BaseRegisterResult {
 
     private String consumerNo;
+    private String oldConsumerNo;
     private String doorNo;
     private String assementNo;
     private String ownerName;
@@ -193,6 +194,14 @@ public class BaseRegisterResult {
 
     public void setWaterSource(final String waterSource) {
         this.waterSource = waterSource;
+    }
+
+    public String getOldConsumerNo() {
+        return oldConsumerNo;
+    }
+
+    public void setOldConsumerNo(final String oldConsumerNo) {
+        this.oldConsumerNo = oldConsumerNo;
     }
 
 }

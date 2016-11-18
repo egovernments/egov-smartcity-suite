@@ -26,9 +26,9 @@ function calculateBillAmount(){
 		debitamount = parseFloat(Number(debitamount) + Number($(this).find(".accountDetailsDebitAmount").html())).toFixed();
 		creditamount = parseFloat(Number(creditamount) + Number($(this).find(".accountDetailsCreditAmount").html())).toFixed();
 	});
-	$("#expenseBillAmount").html(billamount);
+	$("#expenseNetPayableAmount").html($("#netPayableAmount").val());
 	$("#expenseBillTotalDebitAmount").html(debitamount);
-	$("#expenseBillTotalCreditAmount").html(creditamount);
+	$("#expenseBillTotalCreditAmount").html(Number(Number(creditamount)-Number($("#netPayableAmount").val())));
 	$("#billamount").val(billamount);
 }
 

@@ -292,7 +292,7 @@ public class WaterTaxSearchController {
             customerObj.setAddress(waterChargeIndex.getLocality());
             customerObj.setApplicationcode(waterChargeIndex.getApplicationCode());
             customerObj.setUsage(waterChargeIndex.getUsage());
-            customerObj.setIslegacy(waterChargeIndex.isLegacy());
+            customerObj.setIslegacy(waterChargeIndex.getIsLegacy());
             customerObj.setPropertyTaxDue(waterChargeIndex.getTotalDue());
             customerObj.setStatus(waterChargeIndex.getStatus());
             customerObj.setConnectiontype(waterChargeIndex.getConnectionType());

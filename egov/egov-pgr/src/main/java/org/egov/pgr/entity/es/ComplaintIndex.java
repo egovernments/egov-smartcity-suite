@@ -546,7 +546,7 @@ public class ComplaintIndex {
         this.complaintDuration = complaintDuration;
     }
 
-    public boolean isClosed() {
+    public boolean getIsClosed() {
         return isClosed;
     }
 
