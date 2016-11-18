@@ -173,4 +173,24 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
         }
         return new ArrayList<CChartOfAccounts>(netPayList);
     }
+
+    public List<CChartOfAccounts> getNetPayableCodes() {
+        final List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey(
+                "EGF", "contingencyBillPurposeIds");
+        final Set<CChartOfAccounts> netPayList = new HashSet<>();
+        List<CChartOfAccounts> accountCodeByPurpose = new ArrayList<>();
+        for (int i = 0; i < configValuesByModuleAndKey.size(); i++) {
+            try {
+                accountCodeByPurpose = getAccountCodeByPurpose(Integer
+                        .valueOf(configValuesByModuleAndKey.get(i).getValue()));
+            } catch (final Exception e) {
+                // Ignore
+            }
+
+            for (final CChartOfAccounts coa : accountCodeByPurpose)
+                netPayList.add(coa);
+
+        }
+        return new ArrayList<>(netPayList);
+    }
 }

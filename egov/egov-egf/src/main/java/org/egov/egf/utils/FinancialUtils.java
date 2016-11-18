@@ -54,6 +54,9 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.AppConfig;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -85,6 +88,9 @@ public class FinancialUtils {
 
     @Autowired
     private PositionMasterService positionMasterService;
+
+    @Autowired
+    private AppConfigService appConfigService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -202,4 +208,18 @@ public class FinancialUtils {
         return approverPosition;
     }
 
+    public boolean isBillEditable(final State state) {
+        boolean isEditable = false;
+        if (state.getOwnerPosition() != null && state.getOwnerPosition().getDeptDesig() != null
+                && state.getOwnerPosition().getDeptDesig().getDesignation() != null) {
+            final String designationName = state.getOwnerPosition().getDeptDesig().getDesignation().getName();
+            final AppConfig appConfig = appConfigService.getAppConfigByKeyName(FinancialConstants.BILL_EDIT_DESIGNATIONS);
+            for (final AppConfigValues appConfigValues : appConfig.getConfValues()) {
+                if (designationName.equals(appConfigValues.getValue()))
+                    isEditable = true;
+            }
+
+        }
+        return isEditable;
+    }
 }

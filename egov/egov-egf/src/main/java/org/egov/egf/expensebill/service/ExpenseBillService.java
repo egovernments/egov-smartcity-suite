@@ -255,10 +255,9 @@ public class ExpenseBillService {
 
     @Transactional
     public EgBillregister update(final EgBillregister egBillregister, final Long approvalPosition, final String approvalComent,
-            final String additionalRule, final String workFlowAction) throws ValidationException, IOException {
+            final String additionalRule, final String workFlowAction, final String mode) throws ValidationException, IOException {
         EgBillregister updatedegBillregister = null;
-        if (egBillregister.getStatus() != null
-                && FinancialConstants.CONTINGENCYBILL_REJECTED_STATUS.equals(egBillregister.getStatus().getCode())) {
+        if ("edit".equals(mode)) {
             egBillregister.setPassedamount(egBillregister.getBillamount());
             egBillregister.getEgBillregistermis().setLastupdatedtime(new Date());
 

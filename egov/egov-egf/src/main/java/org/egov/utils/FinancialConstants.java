@@ -349,4 +349,5 @@ public interface FinancialConstants {
     public static final String JOURNAL = "Journal";
     public static final String GENERAL = "General";
     public static final String STANDARD_SUBTYPE_FIXED_ASSET = "Fixed Asset";
+    public static final String BILL_EDIT_DESIGNATIONS="BILL_EDIT_DESIGNATIONS";
 }
