@@ -117,7 +117,7 @@ public class UpdateExpenseBillController extends BaseBillController {
         if (egBillregister.getState() != null)
             model.addAttribute("currentState", egBillregister.getState().getValue());
         model.addAttribute("workflowHistory",
-                expenseBillService.getHistory(egBillregister.getState(), egBillregister.getStateHistory()));
+                financialUtils.getHistory(egBillregister.getState(), egBillregister.getStateHistory()));
 
         prepareWorkflow(model, egBillregister, new WorkflowContainer());
         egBillregister.getBillDetails().addAll(egBillregister.getEgBilldetailes());
@@ -227,7 +227,7 @@ public class UpdateExpenseBillController extends BaseBillController {
                 approvalPosition = expenseBillService.getApprovalPositionByMatrixDesignation(
                         egBillregister, null, mode, workFlowAction);
 
-            final String approverDetails = financialUtils.getApproverDetails(updatedEgBillregister.getStatus(),
+            final String approverDetails = financialUtils.getApproverDetails(workFlowAction,
                     updatedEgBillregister.getState(), updatedEgBillregister.getId(), approvalPosition);
 
             return "redirect:/expensebill/success?approverDetails= " + approverDetails + "&billNumber="

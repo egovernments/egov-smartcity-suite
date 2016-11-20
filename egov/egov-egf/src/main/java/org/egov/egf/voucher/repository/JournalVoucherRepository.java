@@ -37,48 +37,24 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.egf.voucher.repository;
 
-package org.egov.egf.autonumber.impl;
+import java.util.List;
 
-import java.io.Serializable;
-
-import org.egov.commons.CFiscalPeriod;
 import org.egov.commons.CVoucherHeader;
-import org.egov.commons.dao.FiscalPeriodHibernateDAO;
-import org.egov.egf.autonumber.VouchernumberGenerator;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-@Service
-public class VouchernumberGeneratorImpl implements VouchernumberGenerator {
+/**
+ * @author venki
+ *
+ */
 
-    @Autowired
-    private FiscalPeriodHibernateDAO fiscalPeriodHibernateDAO;
-    @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+@Repository
+public interface JournalVoucherRepository extends JpaRepository<CVoucherHeader, Long> {
 
-    /**
-     *
-     * Format fundcode/vouchertype/seqnumber/month/financialyear but sequence is running number for a year
-     *
-     */
-    @Override
-    public String getNextNumber(final CVoucherHeader vh) {
-        String voucherNumber;
+    CVoucherHeader findByVoucherNumber(final String voucherNumber);
 
-        String sequenceName;
+    List<CVoucherHeader> findByVoucherNumberContainingIgnoreCase(final String voucherNumber);
 
-        final CFiscalPeriod fiscalPeriod = fiscalPeriodHibernateDAO.getFiscalPeriodByDate(vh.getVoucherDate());
-        if (fiscalPeriod == null)
-            throw new ApplicationRuntimeException("Fiscal period is not defined for the voucher date");
-        sequenceName = "sq_" + vh.getFundId().getIdentifier() + "_" + vh.getVoucherNumberPrefix() + "_" + fiscalPeriod.getName();
-        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-
-        voucherNumber = String.format("%s/%s/%08d/%02d/%s", vh.getFundId().getIdentifier(), vh.getVoucherNumberPrefix(),
-                nextSequence, vh.getVoucherDate().getMonth() + 1, fiscalPeriod.getcFinancialYear().getFinYearRange());
-
-        return voucherNumber;
-    }
 }

@@ -340,14 +340,23 @@ public interface FinancialConstants {
     public static final String BUDGETDETAIL_CREATED_STATUS = "Created";
     public static final String BUDGETDETAIL_VERIFIED_STATUS = "VERIFIED";
     public static final String WORKFLOWTYPE_EXPENSE_BILL_DISPLAYNAME = "Expense Bill";
+    public static final String WORKFLOWTYPE_VOUCHER_DISPLAYNAME = "Voucher";
 
     public static final String WORKFLOW_STATUS_CODE_REJECTED = "REJECTED";
     public static final String KEY_DATAENTRYCUTOFFDATE = "DataEntryCutOffDate";
     public static final String NA = "na";
     public static final String MANUAL = "Manual";
     public static final String AUTO = "Auto";
-    public static final String JOURNAL = "Journal";
     public static final String GENERAL = "General";
     public static final String STANDARD_SUBTYPE_FIXED_ASSET = "Fixed Asset";
-    public static final String BILL_EDIT_DESIGNATIONS="BILL_EDIT_DESIGNATIONS";
+    public static final String BILL_EDIT_DESIGNATIONS = "BILL_EDIT_DESIGNATIONS";
+
+    public static final String VOUCHER_TYPE_JOURNAL = "Journal";
+    public static final String VOUCHER_TYPE_WORKS = "worksjv";
+    public static final String VOUCHER_TYPE_PURCHASE = "purchasejv";
+    public static final String VOUCHER_TYPE_SALARY = "salaryjv";
+    public static final String VOUCHER_TYPE_CONTINGENT = "contingentjv";
+    public static final String VOUCHER_TYPE_FIXEDASSET = "fixedassetjv";
+    public static final String VOUCHER_TYPE_PENSION = "pensionjv";
+
 }

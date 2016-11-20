@@ -40,10 +40,7 @@
 package org.egov.egf.expensebill.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -58,7 +55,6 @@ import org.egov.egf.expensebill.repository.ExpenseBillRepository;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
@@ -67,8 +63,6 @@ import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.workflow.entity.State;
-import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.models.EgChecklists;
@@ -135,9 +129,6 @@ public class ExpenseBillService {
     @Autowired
     @Qualifier(value = "voucherService")
     private VoucherService voucherService;
-
-    @Autowired
-    private EisCommonService eisCommonService;
 
     @Autowired
     private CheckListService checkListService;
@@ -430,56 +421,4 @@ public class ExpenseBillService {
 
         return approvalPosition;
     }
-
-    public List<HashMap<String, Object>> getHistory(final State state, final List<StateHistory> history) {
-        User user = null;
-        final List<HashMap<String, Object>> historyTable = new ArrayList<>();
-        final HashMap<String, Object> map = new HashMap<>(0);
-        if (null != state) {
-            if (!history.isEmpty() && history != null)
-                Collections.reverse(history);
-            for (final StateHistory stateHistory : history) {
-                final HashMap<String, Object> HistoryMap = new HashMap<>(0);
-                HistoryMap.put("date", stateHistory.getDateInfo());
-                HistoryMap.put("comments", stateHistory.getComments());
-                HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
-                        + stateHistory.getLastModifiedBy().getName());
-                HistoryMap.put("status", stateHistory.getValue());
-                final Position owner = stateHistory.getOwnerPosition();
-                user = stateHistory.getOwnerUser();
-                if (null != user) {
-                    HistoryMap.put("user", user.getUsername() + "::" + user.getName());
-                    HistoryMap.put("department",
-                            null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
-                                    .getDepartmentForUser(user.getId()).getName() : "");
-                } else if (null != owner && null != owner.getDeptDesig()) {
-                    user = eisCommonService.getUserForPosition(owner.getId(), new Date());
-                    HistoryMap
-                            .put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                    HistoryMap.put("department", null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
-                            .getDepartment().getName() : "");
-                }
-                historyTable.add(HistoryMap);
-            }
-            map.put("date", state.getDateInfo());
-            map.put("comments", state.getComments() != null ? state.getComments() : "");
-            map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
-            map.put("status", state.getValue());
-            final Position ownerPosition = state.getOwnerPosition();
-            user = state.getOwnerUser();
-            if (null != user) {
-                map.put("user", user.getUsername() + "::" + user.getName());
-                map.put("department", null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
-                        .getDepartmentForUser(user.getId()).getName() : "");
-            } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
-                user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
-                map.put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                map.put("department", null != ownerPosition.getDeptDesig().getDepartment() ? ownerPosition
-                        .getDeptDesig().getDepartment().getName() : "");
-            }
-            historyTable.add(map);
-        }
-        return historyTable;
-    }
-
 }

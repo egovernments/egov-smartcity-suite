@@ -45,9 +45,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
+import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CVoucherHeader;
+import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -55,6 +59,7 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
@@ -73,6 +78,10 @@ public abstract class BaseVoucherController extends GenericWorkFlowController {
 
     @Autowired
     protected AppConfigValueService appConfigValuesService;
+
+    @Autowired
+    @Qualifier("chartOfAccountsService")
+    private ChartOfAccountsService chartOfAccountsService;
 
     @SuppressWarnings("deprecation")
     @Autowired
@@ -149,7 +158,7 @@ public abstract class BaseVoucherController extends GenericWorkFlowController {
         String vNumGenMode;
         if (voucherHeader.getType() != null
                 && FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL.equalsIgnoreCase(voucherHeader.getType()))
-            vNumGenMode = voucherTypeForULB.readVoucherTypes(FinancialConstants.JOURNAL);
+            vNumGenMode = voucherTypeForULB.readVoucherTypes(FinancialConstants.VOUCHER_TYPE_JOURNAL);
         else
             vNumGenMode = voucherTypeForULB.readVoucherTypes(voucherHeader.getType());
         if (!FinancialConstants.AUTO.equalsIgnoreCase(vNumGenMode)) {
@@ -157,6 +166,72 @@ public abstract class BaseVoucherController extends GenericWorkFlowController {
             return true;
         } else
             return false;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void populateAccountDetails(final CVoucherHeader voucherHeader) {
+
+        if (voucherHeader.getGeneralLedger() != null)
+            voucherHeader.getGeneralLedger().clear();
+        else
+            voucherHeader.setGeneralLedger(new HashSet<>());
+        voucherHeader.getGeneralLedger().addAll(voucherHeader.getAccountDetails());
+        Integer voucherLineId = 1;
+        for (final CGeneralLedger details : voucherHeader.getGeneralLedger()) {
+            details.setVoucherlineId(voucherLineId++);
+            details.setEffectiveDate(new Date());
+            if (voucherHeader.getVouchermis().getFunction() != null)
+                details.setFunctionId(voucherHeader.getVouchermis().getFunction().getId().intValue());
+            details.setVoucherHeaderId(voucherHeader);
+            details.setGlcodeId(chartOfAccountsService.findById(details.getGlcodeId().getId(), false));
+            if (details.getDebitAmount() != null)
+                details.setCreditAmount((double) 0);
+            else
+                details.setDebitAmount((double) 0);
+        }
+    }
+
+    protected void populateVoucherName(final CVoucherHeader voucherHeader) {
+
+        switch (voucherHeader.getVoucherSubType()) {
+        case FinancialConstants.JOURNALVOUCHER_NAME_GENERAL:
+            voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_JOURNAL);
+            voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_GENERAL);
+            break;
+
+        case FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS:
+            voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_WORKS);
+            voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_CONTRACTORJOURNAL);
+            break;
+
+        case FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE:
+            voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_PURCHASE);
+            voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_SUPPLIERJOURNAL);
+            break;
+
+        case FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY:
+            voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_SALARY);
+            voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_SALARYJOURNAL);
+            break;
+
+        case FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT:
+            voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_CONTINGENT);
+            voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_EXPENSEJOURNAL);
+            break;
+
+        case FinancialConstants.STANDARD_SUBTYPE_FIXED_ASSET:
+            voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_FIXEDASSET);
+            voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_SUPPLIERJOURNAL);
+            break;
+
+        case FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION:
+            voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_PENSION);
+            voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_PENSIONJOURNAL);
+            break;
+        default:
+            break;
+        }
+
     }
 
 }

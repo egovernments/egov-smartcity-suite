@@ -42,7 +42,9 @@ package org.egov.commons;
 import static org.egov.commons.CVoucherHeader.SEQ_VOUCHERHEADER;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -100,6 +102,12 @@ public class CVoucherHeader extends StateAware {
     private Vouchermis vouchermis;
 
     @Transient
+    private List<CGeneralLedger> accountDetails = new ArrayList<>(0);
+
+    @Transient
+    private List<CGeneralLedgerDetail> subLedgerDetails = new ArrayList<>(0);
+
+    @Transient
     private String partyName;
 
     @Transient
@@ -119,6 +127,9 @@ public class CVoucherHeader extends StateAware {
 
     @Transient
     private String approvalComent;
+
+    @Transient
+    private String voucherNumType;
 
     @Override
     public Long getId() {
@@ -453,6 +464,30 @@ public class CVoucherHeader extends StateAware {
 
     public void setApprovalComent(final String approvalComent) {
         this.approvalComent = approvalComent;
+    }
+
+    public List<CGeneralLedger> getAccountDetails() {
+        return accountDetails;
+    }
+
+    public void setAccountDetails(final List<CGeneralLedger> accountDetails) {
+        this.accountDetails = accountDetails;
+    }
+
+    public List<CGeneralLedgerDetail> getSubLedgerDetails() {
+        return subLedgerDetails;
+    }
+
+    public void setSubLedgerDetails(final List<CGeneralLedgerDetail> subLedgerDetails) {
+        this.subLedgerDetails = subLedgerDetails;
+    }
+
+    public String getVoucherNumType() {
+        return voucherNumType;
+    }
+
+    public void setVoucherNumType(final String voucherNumType) {
+        this.voucherNumType = voucherNumType;
     }
 
 }

@@ -73,7 +73,7 @@ $(document).ready(function(){
 	});
 });
 
-$('.btn-primary').click(function(){
+$('.btn-wf-primary').click(function(){
 	var button = $(this).attr('id');
 	if (button != null && (button == 'Forward')) {
 		if(!validateWorkFlowApprover(button))

@@ -71,6 +71,17 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
 
     }
 
+    public List<CChartOfAccounts> getAllAccountCodes(String glcode) {
+
+        final Query entitysQuery = getSession()
+                .createQuery(
+                        " from CChartOfAccounts a where a.isActiveForPosting=true and a.classification=4 and (a.glcode like :glcode or lower(a.name) like :name) order by a.glcode");
+        entitysQuery.setString("glcode", glcode + "%");
+        entitysQuery.setString("name", glcode.toLowerCase() + "%");
+        return entitysQuery.list();
+
+    }
+
     @Transactional
     public void updateActiveForPostingByMaterializedPath(final String materializedPath) {
         getSession()
