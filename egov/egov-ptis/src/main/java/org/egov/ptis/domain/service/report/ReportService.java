@@ -39,6 +39,24 @@
  */
 package org.egov.ptis.domain.service.report;
 
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_COLLECTION_OPERATOR;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
@@ -59,6 +77,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BillCollectorDailyCollectionReportResult;
 import org.egov.ptis.domain.entity.property.CurrentInstDCBReportResult;
 import org.egov.ptis.domain.entity.property.DailyCollectionReportResult;
+import org.egov.ptis.domain.entity.property.DefaultersInfo;
 import org.egov.ptis.domain.entity.property.FloorDetailsView;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
@@ -69,22 +88,6 @@ import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_COLLECTION_OPERATOR;
 
 @Transactional(readOnly = true)
 public class ReportService {
@@ -1049,5 +1052,72 @@ public class ReportService {
             taxRate = new BigDecimal(taxRateProps.getProperty(taxHead));
         }
         return taxRate;
+    }
+    
+    /**
+     * This method gives the defaulters information
+     * @param propertyViewList
+     * @return list
+     */
+    public List<DefaultersInfo> getDefaultersInformation(List<PropertyMaterlizeView> propertyViewList) {
+        List<DefaultersInfo> defaultersList = new ArrayList<>();
+        DefaultersInfo defaultersInfo;
+        BigDecimal totalDue;
+        BigDecimal currPenalty;
+        BigDecimal currPenaltyColl;
+        int count = 0;
+        Installment curInstallment = propertyTaxCommonUtils.getCurrentInstallment();
+        Iterator itr;
+        InstDmdCollMaterializeView idc;
+        InstDmdCollMaterializeView lastElement;
+        for (final PropertyMaterlizeView propView : propertyViewList) {
+            defaultersInfo = new DefaultersInfo();
+            totalDue = BigDecimal.ZERO;
+            currPenalty = BigDecimal.ZERO;
+            currPenaltyColl = BigDecimal.ZERO;
+            count++;
+            defaultersInfo.setSlNo(count);
+            defaultersInfo.setAssessmentNo(propView.getPropertyId());
+            defaultersInfo.setOwnerName(propView.getOwnerName().contains(",") ? propView.getOwnerName().replace(",",
+                    " & ") : propView.getOwnerName());
+            defaultersInfo.setWardName(propView.getWard().getName());
+            defaultersInfo.setHouseNo(propView.getHouseNo());
+            defaultersInfo.setLocality((propView.getLocality()) != null ? propView.getLocality().getName()
+                    : "NA");
+            defaultersInfo.setMobileNumber((StringUtils.isNotBlank(propView.getMobileNumber()) ? propView
+                    .getMobileNumber() : "NA"));
+            defaultersInfo.setArrearsDue(propView.getAggrArrDmd().subtract(propView.getAggrArrColl()));
+            defaultersInfo.setCurrentDue((propView.getAggrCurrFirstHalfDmd().add(propView.getAggrCurrSecondHalfDmd()))
+                    .subtract((propView.getAggrCurrFirstHalfColl().add(propView.getAggrCurrSecondHalfColl()))));
+            defaultersInfo.setAggrArrearPenalyDue((propView.getAggrArrearPenaly() != null ? propView
+                    .getAggrArrearPenaly() : ZERO).subtract(propView.getAggrArrearPenalyColl() != null ? propView
+                            .getAggrArrearPenalyColl() : ZERO));
+            currPenalty = (propView.getAggrCurrFirstHalfPenaly() != null ? propView.getAggrCurrFirstHalfPenaly() : ZERO)
+                    .add(propView.getAggrCurrSecondHalfPenaly() != null ? propView.getAggrCurrSecondHalfPenaly() : ZERO);
+            currPenaltyColl = (propView.getAggrCurrFirstHalfPenalyColl() != null ? propView
+                    .getAggrCurrFirstHalfPenalyColl() : ZERO)
+                            .add(propView.getAggrCurrSecondHalfPenalyColl() != null ? propView
+                                    .getAggrCurrSecondHalfPenalyColl() : ZERO);
+            defaultersInfo.setAggrCurrPenalyDue(currPenalty.subtract(currPenaltyColl));
+            totalDue = defaultersInfo.getArrearsDue().add(defaultersInfo.getCurrentDue())
+                    .add(defaultersInfo.getAggrArrearPenalyDue()).add(defaultersInfo.getAggrCurrPenalyDue());
+            defaultersInfo.setTotalDue(totalDue);
+            if (!propView.getInstDmdColl().isEmpty()) {
+                defaultersInfo.setArrearsFrmInstallment(propView.getInstDmdColl().iterator().next().getInstallment()
+                        .getDescription());
+                itr = propView.getInstDmdColl().iterator();
+                lastElement = new InstDmdCollMaterializeView();
+                while (itr.hasNext()) {
+                    idc = (InstDmdCollMaterializeView) itr.next();
+                    if (!idc.getInstallment().equals(curInstallment))
+                        lastElement = idc;
+                }
+                if (lastElement != null && lastElement.getInstallment() != null)
+                    defaultersInfo.setArrearsToInstallment(lastElement.getInstallment().getDescription());
+            }
+            defaultersList.add(defaultersInfo);
+        }
+
+        return defaultersList;
     }
 }
