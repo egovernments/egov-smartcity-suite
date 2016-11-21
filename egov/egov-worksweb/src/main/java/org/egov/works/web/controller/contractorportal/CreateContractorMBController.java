@@ -110,7 +110,7 @@ public class CreateContractorMBController {
     }
 
     @RequestMapping(value = "/create-form", method = RequestMethod.GET)
-    public String redirectToSearchForm(@ModelAttribute("contractorMBHeader") final ContractorMBHeader contractorMBHeader,
+    public String redirectToSearchForm(final ContractorMBHeader contractorMBHeader,
             final Model model, final HttpServletRequest request) {
         return "redirect:/contractorportal/mb/search-loaform";
     }

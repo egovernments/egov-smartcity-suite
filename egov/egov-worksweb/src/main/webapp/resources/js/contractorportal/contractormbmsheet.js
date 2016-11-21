@@ -766,7 +766,7 @@ function calculateMBAmount() {
 		sorTotal = 0.0;
 	if(nonSorTotal == '')
 		nonSorTotal = 0.0;
-	var mbAmount = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal));
+	var mbAmount = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal)).toFixed(2);
 	$('#mbAmountTotal').html(mbAmount);
 	$('#mbAmount').val(mbAmount);
 }

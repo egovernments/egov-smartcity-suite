@@ -61,10 +61,10 @@
 	                		<tr>
 			                	<td id="msrowslNo_${item.index }_${index.index }">${index.index + 1}</td>
 			                    <c:if test="${sheet.identifier == 'A'}">
-									<c:set var="total" value="${total + sheet.quantity}" />
+									<c:set var="sheettotal" value="${sheettotal + sheet.quantity}" />
 								</c:if>
 								<c:if test="${sheet.identifier == 'D'}">
-									<c:set var="total" value="${total - sheet.quantity}" />
+									<c:set var="sheettotal" value="${sheettotal - sheet.quantity}" />
 								</c:if>
 			                    <td id="msrowidentifier_${item.index }_${index.index }">
 			                    	<c:choose>
@@ -95,7 +95,7 @@
 		                <tr>
 		                	<td colspan="6"></td>
 		                    <td class="text-right"><spring:message code="lbl.total" /></td>
-		                    <td class="text-right view-content">${total }</td>
+		                    <td class="text-right view-content">${sheettotal }</td>
 		                    </td>
 		                </tr>
 	                </tbody>
