@@ -40,7 +40,6 @@
 
 package org.egov.wtms.service.es;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_TAX_INDEX_NAME;
 
 import java.math.BigDecimal;
@@ -107,7 +106,7 @@ public class WaterChargeElasticSearchService {
         this.waterChargeIndexRepository = waterChargeIndexRepository;
     }
 
-    public Page<WaterChargeDocument> findByConsumercode(final String consumerCode, final PageRequest pageRequest) {
+    public Page<WaterChargeDocument> findByConsumercode(final String consumerCode) {
         return waterChargeIndexRepository.findByConsumerCodeAndUlbName(consumerCode,
                 ApplicationThreadLocals.getCityName(), new PageRequest(0, 10));
     }
@@ -138,7 +137,7 @@ public class WaterChargeElasticSearchService {
      */
     public List<WaterChargeDashBoardResponse> getConsolidatedDemandInfo(
             final WaterChargeDashBoardRequest waterChargedashBoardRequest) {
-        final List<WaterChargeDashBoardResponse> collectionIndexDetailsList = new ArrayList<WaterChargeDashBoardResponse>();
+        final List<WaterChargeDashBoardResponse> collectionIndexDetailsList = new ArrayList<>();
         final WaterChargeDashBoardResponse collectionIndexDetails = new WaterChargeDashBoardResponse();
 
         Date fromDate;
@@ -177,7 +176,7 @@ public class WaterChargeElasticSearchService {
                 .multiply(WaterTaxConstants.BIGDECIMAL_100).divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
         // variance = ((currentYearCollection -
         // lastYearCollection)*100)/lastYearCollection
-        BigDecimal variation = BigDecimal.ZERO;
+        BigDecimal variation ;
         if (collectionIndexDetails.getLastYearTillDateColl().compareTo(BigDecimal.ZERO) == 0)
             variation = WaterTaxConstants.BIGDECIMAL_100;
         else
@@ -233,7 +232,7 @@ public class WaterChargeElasticSearchService {
                 .equalsIgnoreCase(PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE)) {
             // Fetch the ward wise data for the filters
             final List<TaxPayerDetails> wardWiseTaxProducers = returnUlbWiseAggregationResults(
-                    waterChargedashBoardRequest, PROPERTY_TAX_INDEX_NAME, false, TOTAL_COLLECTION, 250, true);
+                    waterChargedashBoardRequest, WATER_TAX_INDEX_NAME, false, TOTAL_COLLECTION, 250, true);
             final Map<String, TaxPayerDetails> wardWiseTaxPayersDetails = new HashMap<>();
             final Map<String, List<TaxPayerDetails>> billCollectorWiseMap = new LinkedHashMap<>();
             final List<TaxPayerDetails> taxPayerDetailsList = new ArrayList<>();
@@ -377,7 +376,7 @@ public class WaterChargeElasticSearchService {
                 taxDetail.setUlbName(fieldName);
             // Proportional Demand = (totalDemand/12)*noOfmonths
             final int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
-            final Sum totalDemandAggregation = entry.getAggregations().get(WaterTaxConstants.WATERCHARGETOTALDEMAND);
+            final Sum totalDemandAggregation = entry.getAggregations().get(TOTALDEMAND);
             final Sum totalCollectionAggregation = entry.getAggregations().get(TOTAL_COLLECTION);
             final BigDecimal totalDemandValue = BigDecimal.valueOf(totalDemandAggregation.getValue()).setScale(0,
                     BigDecimal.ROUND_HALF_UP);
@@ -395,7 +394,7 @@ public class WaterChargeElasticSearchService {
                     waterChargedashBoardRequest, lastYearFromDate, lastYearToDate, fieldName);
             // variance = ((currentYearCollection -
             // lastYearCollection)*100)/lastYearCollection
-            BigDecimal variation = BigDecimal.ZERO;
+            BigDecimal variation;
             if (lastYearCollection.compareTo(BigDecimal.ZERO) == 0)
                 variation = WaterTaxConstants.BIGDECIMAL_100;
             else
@@ -518,10 +517,10 @@ public class WaterChargeElasticSearchService {
     private void prepareTaxersInfoForBillCollectors(final WaterChargeDashBoardRequest waterChargedashBoardRequest,
             final Map<String, List<TaxPayerDetails>> billCollectorWiseMap,
             final List<TaxPayerDetails> billCollectorWiseTaxPayerDetails) {
-        BigDecimal cytdColl = BigDecimal.ZERO;
-        BigDecimal lytdColl = BigDecimal.ZERO;
-        BigDecimal cytdDmd = BigDecimal.ZERO;
-        BigDecimal totalDmd = BigDecimal.ZERO;
+        BigDecimal cytdColl;
+        BigDecimal lytdColl ;
+        BigDecimal cytdDmd ;
+        BigDecimal totalDmd ;
         TaxPayerDetails taxPayerDetails;
         for (final Entry<String, List<TaxPayerDetails>> entry : billCollectorWiseMap.entrySet()) {
             taxPayerDetails = new TaxPayerDetails();
@@ -555,5 +554,78 @@ public class WaterChargeElasticSearchService {
             billCollectorWiseTaxPayerDetails.add(taxPayerDetails);
         }
     }
+   /* public List<TaxDefaulters> getTopDefaulters(PropertyTaxDefaultersRequest propertyTaxDefaultersRequest) {
+        Long startTime = System.currentTimeMillis();
+        BoolQueryBuilder boolQuery = filterBasedOnRequest(propertyTaxDefaultersRequest);
+        boolQuery = boolQuery.mustNot(QueryBuilders.matchQuery(CITY_NAME, "Guntur"))
+                .mustNot(QueryBuilders.matchQuery(CITY_NAME, "Vijayawada"))
+                .mustNot(QueryBuilders.matchQuery(CITY_NAME, "Visakhapatnam"))
+                .filter(QueryBuilders.matchQuery(IS_ACTIVE, true))
+                .filter(QueryBuilders.matchQuery(IS_EXEMPTED, false));
+
+        SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(PROPERTY_TAX_INDEX_NAME)
+                .withQuery(boolQuery).withSort(new FieldSortBuilder("totalBalance").order(SortOrder.DESC))
+                .withPageable(new PageRequest(0, 100)).build();
+
+        final Page<PropertyTaxIndex> propertyTaxRecords = elasticsearchTemplate.queryForPage(searchQuery,
+                PropertyTaxIndex.class);
+        Long timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug("Time taken by defaulters aggregation is : " + timeTaken + MILLISECS);
+
+        List<TaxDefaulters> taxDefaulters = new ArrayList<>();
+        TaxDefaulters taxDfaulter;
+        startTime = System.currentTimeMillis();
+        for (PropertyTaxIndex property : propertyTaxRecords) {
+            taxDfaulter = new TaxDefaulters();
+            taxDfaulter.setOwnerName(property.getConsumerName());
+            taxDfaulter.setPropertyType(property.getPropertyType());
+            taxDfaulter.setUlbName(property.getCityName());
+            taxDfaulter.setBalance(BigDecimal.valueOf(property.getTotalBalance()));
+            taxDfaulter.setPeriod(StringUtils.EMPTY);
+            taxDefaulters.add(taxDfaulter);
+        }
+        timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug("Time taken for setting values in getTopDefaulters() is : " + timeTaken + MILLISECS);
+        return taxDefaulters;
+    }
+    private BoolQueryBuilder filterBasedOnRequest(PropertyTaxDefaultersRequest propertyTaxDefaultersRequest) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+                .filter(QueryBuilders.rangeQuery(TOTAL_DEMAND).from(0).to(null));
+        if (StringUtils.isNotBlank(propertyTaxDefaultersRequest.getRegionName()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery(REGION_NAME, propertyTaxDefaultersRequest.getRegionName()));
+        if (StringUtils.isNotBlank(propertyTaxDefaultersRequest.getDistrictName()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery(DISTRICT_NAME, propertyTaxDefaultersRequest.getDistrictName()));
+        if (StringUtils.isNotBlank(propertyTaxDefaultersRequest.getUlbCode()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery(CITY_CODE, propertyTaxDefaultersRequest.getUlbCode()));
+        if (StringUtils.isNotBlank(propertyTaxDefaultersRequest.getUlbGrade()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery(CITY_GRADE, propertyTaxDefaultersRequest.getUlbGrade()));
+        if (StringUtils.isNotBlank(propertyTaxDefaultersRequest.getWardName()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery(REVENUE_WARD, propertyTaxDefaultersRequest.getWardName()));
+        if (StringUtils.isNotBlank(propertyTaxDefaultersRequest.getType())) {
+            if (propertyTaxDefaultersRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_REGIONWISE)
+                    && StringUtils.isNotBlank(propertyTaxDefaultersRequest.getRegionName()))
+                boolQuery = boolQuery
+                        .filter(QueryBuilders.matchQuery(REGION_NAME, propertyTaxDefaultersRequest.getRegionName()));
+            else if (propertyTaxDefaultersRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_DISTRICTWISE)
+                    && StringUtils.isNotBlank(propertyTaxDefaultersRequest.getDistrictName()))
+                boolQuery = boolQuery.filter(
+                        QueryBuilders.matchQuery(DISTRICT_NAME, propertyTaxDefaultersRequest.getDistrictName()));
+            else if (propertyTaxDefaultersRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_CITYWISE)
+                    && StringUtils.isNotBlank(propertyTaxDefaultersRequest.getUlbCode()))
+                boolQuery = boolQuery
+                        .filter(QueryBuilders.matchQuery(CITY_CODE, propertyTaxDefaultersRequest.getUlbCode()));
+            else if (propertyTaxDefaultersRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_GRADEWISE)
+                    && StringUtils.isNotBlank(propertyTaxDefaultersRequest.getUlbGrade()))
+                boolQuery = boolQuery
+                        .filter(QueryBuilders.matchQuery(CITY_GRADE, propertyTaxDefaultersRequest.getUlbGrade()));
+        }
+
+        return boolQuery;
+    }*/
 
 }

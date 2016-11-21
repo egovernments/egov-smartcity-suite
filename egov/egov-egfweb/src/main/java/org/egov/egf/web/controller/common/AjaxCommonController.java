@@ -212,6 +212,17 @@ public class AjaxCommonController {
         return checkList;
     }
 
+    @RequestMapping(value = "/getallaccountcodes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String findAllAccountCodes(@RequestParam final String glcode) {
+        final List<CChartOfAccounts> chartOfAccounts = chartOfAccountsService.getAllAccountCodes(glcode);
+        for (final CChartOfAccounts coa : chartOfAccounts)
+            if (coa.getChartOfAccountDetails().isEmpty())
+                coa.setIsSubLedger(false);
+            else
+                coa.setIsSubLedger(true);
+        return toJSON(chartOfAccounts, CChartOfAccounts.class, ChartOfAccountsAdaptor.class);
+    }
+
     public static <T> String toJSON(final Collection<T> objects, final Class<? extends T> objectClazz,
             final Class<? extends JsonSerializer<T>> adptorClazz) {
         try {

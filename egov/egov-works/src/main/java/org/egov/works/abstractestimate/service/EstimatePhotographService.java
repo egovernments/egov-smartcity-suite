@@ -117,6 +117,7 @@ public class EstimatePhotographService {
         estimatePhotographs.setFileStore(fileStoreService.store(compressedImageFile, files[0].getOriginalFilename(),
                 files[0].getContentType(), WorksConstants.FILESTORE_MODULECODE));
         estimatePhotographsList.add(estimatePhotographs);
+        compressedImageFile.delete();
 
         return estimatePhotographsList;
     }

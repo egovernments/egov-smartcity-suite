@@ -11,9 +11,25 @@ $('.btn-primary').click(function(){
 	if (button != null && button == 'Forward') {
 		if(!$("form").valid())
 			return false;
-		return validateWorkFlowApprover(button);
-	}
-	return validateWorkFlowApprover(button);
+		if(validateWorkFlowApprover(button))
+			return true;
+		else
+			return false;
+	} else if(validateWorkFlowApprover(button))
+		return true;
+	else
+		return false;
+});
+
+
+$('.btn-primary').click(function(){
+	var button = $(this).attr('id');
+	if(!validateWorkFlowApprover(button))
+		return false;
+	if($("form").valid()){
+		return true;
+	}else
+		return false;
 });
 
 

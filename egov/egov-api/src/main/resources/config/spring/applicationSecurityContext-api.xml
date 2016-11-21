@@ -1,54 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
+  ~ accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~  Copyright (C) 2016  eGovernments Foundation
   ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
+  ~  The updated version of eGov suite of products as by eGovernments Foundation
+  ~  is available at http://www.egovernments.org
   ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  any later version.
   ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
   ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~  http://www.gnu.org/licenses/gpl.html .
   ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
+  ~  In addition to the terms of the GPL license to be adhered to in using this
+  ~  program, the following additional terms are to be complied with:
   ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
+  ~      1) All versions of this program, verbatim or modified must carry this
+  ~         Legal Notice.
   ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
+  ~      2) Any misrepresentation of the origin of the material is prohibited. It
+  ~         is required that all modified versions of this material be marked in
+  ~         reasonable ways as different from the original version.
   ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
+  ~      3) This license does not grant any rights to any user of the program
+  ~         with regards to rights under trademark law for use of the trade names
+  ~         or trademarks of eGovernments Foundation.
   ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 
 
-<beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
-	   xmlns:security="http://www.springframework.org/schema/security"
-	   xsi:schemaLocation="http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd
 
 		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd 
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
-	   default-lazy-init="true">
+       default-lazy-init="true">
 
 	<!-- @author Nagesh.Chauhan(neel4soft@gmail.com) -->
 	<!-- This is default url to get a token from OAuth -->
@@ -69,9 +69,9 @@
 	<!-- This is where we tells spring security what URL should be protected 
 		and what roles have access to them -->
 	<http pattern="/v1.0/**" create-session="never" use-expressions="true"
-		entry-point-ref="oauthAuthenticationEntryPoint"
-		access-decision-manager-ref="accessDecisionManager"
-		xmlns="http://www.springframework.org/schema/security">
+          entry-point-ref="oauthAuthenticationEntryPoint" authentication-manager-ref="authenticationManager"
+          access-decision-manager-ref="accessDecisionManager"
+          xmlns="http://www.springframework.org/schema/security">
 
 		<!-- <anonymous enabled="false" /> -->
 		<!-- <intercept-url pattern="/api/test/**" access="isAuthenticated()" /> -->
@@ -125,8 +125,8 @@
 	</authentication-manager>
 
 
-	<authentication-manager alias="authenticationManager"
-		xmlns="http://www.springframework.org/schema/security">
+    <authentication-manager alias="authenticationManager" id="authenticationManager"
+                            xmlns="http://www.springframework.org/schema/security">
 		<authentication-provider ref="customAuthenticationProvider" />
 	</authentication-manager>
 
@@ -201,18 +201,5 @@
 
 	<oauth:expression-handler id="oauthExpressionHandler" />
 	<oauth:web-expression-handler id="oauthWebExpressionHandler" />
-
-	<bean id="securityFilterChain" name="securityFilterChain" class="org.springframework.security.web.FilterChainProxy">
-		<constructor-arg>
-			<list>
-				<security:filter-chain pattern="/resources/**" filters="none" />
-				<security:filter-chain pattern="/reg-success**" filters="none" />
-				<security:filter-chain pattern="/error/**" filters="none" />
-				<security:filter-chain pattern="/index.jsp" filters="none" />
- 			</list>
-		</constructor-arg>
-	</bean>	
-
-
 </beans>
  

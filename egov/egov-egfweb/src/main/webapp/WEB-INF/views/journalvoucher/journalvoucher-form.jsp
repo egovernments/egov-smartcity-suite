@@ -74,11 +74,12 @@
    </div>
     <form:hidden path="" id="cutOffDate" value="${cutOffDate}"/>
     <form:hidden path="" id="mode" value="${mode}"/>
-	<form:hidden path="" id="voucheramount" class ="voucheramount"/>
+	<form:hidden path="" id="voucheramount" class ="voucheramount" value="${voucheramount}"/>
 	<div class="panel-title text-center" style="color: green;">
 		<c:out value="${message}" /><br />
 	</div>
 	<jsp:include page="journalvoucher-header.jsp"/>
+	<jsp:include page="journalvoucher-accountdetails.jsp"/>
 	
 	<jsp:include page="../common/commonworkflowmatrix.jsp"/>
 	<div class="buttonbottom" align="center">

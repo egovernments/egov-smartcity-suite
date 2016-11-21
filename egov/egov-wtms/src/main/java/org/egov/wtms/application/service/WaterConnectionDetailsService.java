@@ -40,10 +40,13 @@
 package org.egov.wtms.application.service;
 
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -715,6 +718,17 @@ public class WaterConnectionDetailsService {
     }
 
     public void updateIndexes(final WaterConnectionDetails waterConnectionDetails, final String sourceChannel) {
+        try{
+            final SimpleDateFormat dateFormatter = new SimpleDateFormat(ES_DATE_FORMAT);
+            if(waterConnectionDetails.getCreatedDate()!=null){
+                final String createdDate = dateFormatter.format(waterConnectionDetails.getCreatedDate());
+                waterConnectionDetails.setCreatedDate(dateFormatter.parse(createdDate));
+            }
+        }
+        catch(ParseException e){
+            
+        }
+        
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);

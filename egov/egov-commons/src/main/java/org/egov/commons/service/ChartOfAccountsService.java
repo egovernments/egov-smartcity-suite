@@ -74,6 +74,17 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
 
     }
 
+    public List<CChartOfAccounts> getAllAccountCodes(String glcode) {
+
+        final Query entitysQuery = getSession()
+                .createQuery(
+                        " from CChartOfAccounts a where a.isActiveForPosting=true and a.classification=4 and (a.glcode like :glcode or lower(a.name) like :name) order by a.glcode");
+        entitysQuery.setString("glcode", glcode + "%");
+        entitysQuery.setString("name", glcode.toLowerCase() + "%");
+        return entitysQuery.list();
+
+    }
+
     @Transactional
     public void updateActiveForPostingByMaterializedPath(final String materializedPath) {
         getSession()
@@ -228,5 +239,25 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
 
         }
         return new ArrayList<CChartOfAccounts>(netPayList);
+    }
+
+    public List<CChartOfAccounts> getNetPayableCodes() {
+        final List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey(
+                "EGF", "contingencyBillPurposeIds");
+        final Set<CChartOfAccounts> netPayList = new HashSet<>();
+        List<CChartOfAccounts> accountCodeByPurpose = new ArrayList<>();
+        for (int i = 0; i < configValuesByModuleAndKey.size(); i++) {
+            try {
+                accountCodeByPurpose = getAccountCodeByPurpose(Integer
+                        .valueOf(configValuesByModuleAndKey.get(i).getValue()));
+            } catch (final Exception e) {
+                // Ignore
+            }
+
+            for (final CChartOfAccounts coa : accountCodeByPurpose)
+                netPayList.add(coa);
+
+        }
+        return new ArrayList<>(netPayList);
     }
 }

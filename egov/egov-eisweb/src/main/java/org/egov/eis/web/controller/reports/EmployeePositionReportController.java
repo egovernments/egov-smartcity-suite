@@ -40,6 +40,7 @@
 package org.egov.eis.web.controller.reports;
 
 import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,6 +60,7 @@ import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.adaptor.EmployeePositionReportAdaptor;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.pims.commons.Position;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -66,6 +68,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -104,7 +107,7 @@ public class EmployeePositionReportController {
     public @ResponseBody void search(final HttpServletRequest request, final HttpServletResponse response,
             final EmployeePositionSearch employeeSearch, final Model model)
             throws IOException {
-        final List<EmployeePositionResult> empPosResultList = new ArrayList<EmployeePositionResult>();
+        final List<EmployeePositionResult> empPosResultList = new ArrayList<>();
         final List<Assignment> assignList = assignmentService.getAssignmentList(employeeSearch);
         for (final Assignment assign : assignList) {
             final EmployeePositionResult empPosition = new EmployeePositionResult();
@@ -131,6 +134,19 @@ public class EmployeePositionReportController {
         model.addAttribute("department", departmentService.getAllDepartments());
         model.addAttribute("desigList", designationService.getAllDesignations());
         model.addAttribute("position", positionMasterService.getAllPositions());
+    }
+
+    @RequestMapping(value = "/positions", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Position> getPositionByDepartmentAndDesignation(@RequestParam final Long deptId,
+            @RequestParam final Long desigId) {
+        if (deptId != null && desigId != null)
+            return positionMasterService.getPositionsByDepartmentAndDesignation(deptId, desigId);
+        else if (deptId != null)
+            return positionMasterService.getPositionsByDepartment(deptId);
+        else if (desigId != null)
+            return positionMasterService.getPositionsByDesignation(desigId);
+        else
+            return positionMasterService.getAllPositions();
     }
 
 }

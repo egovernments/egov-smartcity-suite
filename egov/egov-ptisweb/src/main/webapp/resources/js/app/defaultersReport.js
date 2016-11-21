@@ -39,72 +39,54 @@
  */
 
 var reportdatatable;
-jQuery.noConflict();
-
 jQuery(document).ready(function() { 
 	jQuery(':input').inputmask();
 	drillDowntableContainer = jQuery("#tblDefaultersReport");
 	jQuery('#btnsearch').click(function(e) {
-		dom.get("defaultersReportError").style.display='none';
-        dom.get("defaultersReportError").innerHTML='';
-		var fromDemand = document.getElementById("fromDemand").value;
-		var toDemand = document.getElementById("toDemand").value;
-		var limit = document.getElementById("limit").value;
-		
-		if (((fromDemand == null || fromDemand == "") &&
-				(toDemand == null || toDemand == "")) && limit == -1 ) {
-			dom.get("defaultersReportError").style.display='';
-	        dom.get("defaultersReportError").innerHTML='Either From and To Amounts or Top Defaulters is mandatory';
+		$("#defaultersError").hide();
+		if(jQuery('#limit').val()=="" && (jQuery('#fromAmount').val()=="" && jQuery('#toAmount').val()=="")){
+			$("#defaultersError").html('Either From and To Amounts or Top Defaulters is mandatory');
+			$("#defaultersError").show();
 			return false;
 		}
-		
-		if ((fromDemand == null || fromDemand == "") &&
-				(toDemand != null && toDemand != "")) {
-			dom.get("defaultersReportError").style.display='';
-	        dom.get("defaultersReportError").innerHTML='Please Enter From Amount';
-	        dom.get("fromDemand").focus();
+		if(jQuery('#fromAmount').val()=="" && jQuery('#toAmount').val()!=""){
+			$("#defaultersError").html('Please enter the From Amount');
+			$("#defaultersError").show();
 			return false;
 		}
-		if ((fromDemand != null || fromDemand != "") &&
-				(toDemand == null && toDemand == "")) {
-			dom.get("defaultersReportError").style.display='';
-	        dom.get("defaultersReportError").innerHTML='Please Enter To Amount';
-	        dom.get("toDemand").focus();
-			return false;
-		}
-		if(fromDemand>toDemand){
-			dom.get("defaultersReportError").style.display='';
-	        dom.get("defaultersReportError").innerHTML='To Demand should be greather than From Demand';
-	        dom.get("fromDemand").focus();
+		if(jQuery('#fromAmount').val()!="" && jQuery('#toAmount').val()==""){
+			$("#defaultersError").html('Please enter the To Amount');
+			$("#defaultersError").show();
 			return false;
 		}
 		callAjaxForDefaultersReport();
 	});
-	
 });
 
 
 function callAjaxForDefaultersReport() {
+	var category;
 	var wardId = jQuery('#wardId').val();
-	var fromDemand=jQuery('#fromDemand').val();
-	var toDemand=jQuery('#toDemand').val();
+	var fromAmount=jQuery('#fromAmount').val();
+	var toAmount=jQuery('#toAmount').val();
 	var limit=jQuery('#limit').val();
-	var ownerShipType=jQuery('#ownerShipType').val();
-	var today = new Date();
-	var formattedDate = today.getDate()+"/"+(today.getMonth()+1)+"/"+today.getFullYear();
-	
 	jQuery('.report-section').removeClass('display-hide');
 	
+	if(jQuery('#mode').val() == 'VLT'){
+		categoryVal = "VAC_LAND";
+	} else {
+		categoryVal = jQuery('#ownershipCategory').val();
+	}
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/ptis/reports/defaultersReport-getDefaultersList.action",      
+					url : "/ptis/report/defaultersReport/result",      
 					data : {
 						wardId : wardId,
-						fromDemand : fromDemand,
-						toDemand : toDemand,
+						fromAmount : fromAmount,
+						toAmount : toAmount,
 						limit : limit,
-						ownerShipType : ownerShipType
+						category : categoryVal
 					}
 				},
 				"bDestroy" : true,
@@ -172,6 +154,6 @@ function callAjaxForDefaultersReport() {
 						}, {
 							"data" : "totalDue",
 							"sTitle" : "Total"
-						}]				
+						} ]				
 			});
 }

@@ -69,6 +69,7 @@ public class BaseRegisterResult {
     private BigDecimal arrearColl;
     private BigDecimal currentColl;
     private BigDecimal totalColl;
+    private boolean exemptedCase;
  
     public String getAssessmentNo() {
         return assessmentNo;
@@ -133,8 +134,6 @@ public class BaseRegisterResult {
     public void setCurrTotal(BigDecimal currTotal) {
         this.currTotal = currTotal;
     }
-
-   
 
     public BigDecimal getArrearLibraryTax() {
         return arrearLibraryTax;
@@ -241,27 +240,35 @@ public class BaseRegisterResult {
         this.propertyType = propertyType;
     }
 
-	public BigDecimal getArrearColl() {
-		return arrearColl;
-	}
+    public BigDecimal getArrearColl() {
+        return arrearColl;
+    }
 
-	public void setArrearColl(BigDecimal arrearColl) {
-		this.arrearColl = arrearColl;
-	}
+    public void setArrearColl(BigDecimal arrearColl) {
+        this.arrearColl = arrearColl;
+    }
 
-	public BigDecimal getCurrentColl() {
-		return currentColl;
-	}
+    public BigDecimal getCurrentColl() {
+        return currentColl;
+    }
 
-	public void setCurrentColl(BigDecimal currentColl) {
-		this.currentColl = currentColl;
-	}
+    public void setCurrentColl(BigDecimal currentColl) {
+        this.currentColl = currentColl;
+    }
 
-	public BigDecimal getTotalColl() {
-		return totalColl;
-	}
+    public BigDecimal getTotalColl() {
+        return totalColl;
+    }
 
-	public void setTotalColl(BigDecimal totalColl) {
-		this.totalColl = totalColl;
-	}
+    public void setTotalColl(BigDecimal totalColl) {
+        this.totalColl = totalColl;
+    }
+
+    public boolean isExemptedCase() {
+        return exemptedCase;
+    }
+
+    public void setExemptedCase(boolean exemptedCase) {
+        this.exemptedCase = exemptedCase;
+    }
 }

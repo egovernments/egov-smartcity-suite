@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2016>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -165,3 +165,17 @@ jQuery(document)
 									}).data('datepicker');
 
 				});
+function addFileInputField() {
+	var tempTrNo = $("#uploadertbl tbody tr").length;
+	var flag = false;
+	for (var i = 0; i < tempTrNo; i++) {
+		var checkboxValue = jQuery("#check" + i).is(':checked');
+		var curFieldValue = jQuery("#file" + i).val();
+		if (curFieldValue == "" && checkboxValue) {
+			bootbox.alert("Please attach the File");
+			flag = true;
+			return flag;
+		}
+	}
+	return flag;
+}

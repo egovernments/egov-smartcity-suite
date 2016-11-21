@@ -167,7 +167,7 @@ public class CreateExpenseBillController extends BaseBillController {
                 return EXPENSEBILL_FORM;
             }
 
-            final String approverDetails = financialUtils.getApproverDetails(savedEgBillregister.getStatus(),
+            final String approverDetails = financialUtils.getApproverDetails(workFlowAction,
                     savedEgBillregister.getState(), savedEgBillregister.getId(), approvalPosition);
 
             return "redirect:/expensebill/success?approverDetails= " + approverDetails + "&billNumber="
@@ -177,7 +177,7 @@ public class CreateExpenseBillController extends BaseBillController {
     }
 
     @RequestMapping(value = "/success", method = RequestMethod.GET)
-    public String showContractorBillSuccessPage(@RequestParam("billNumber") final String billNumber, final Model model,
+    public String showSuccessPage(@RequestParam("billNumber") final String billNumber, final Model model,
             final HttpServletRequest request) {
         final String[] keyNameArray = request.getParameter("approverDetails").split(",");
         Long id = 0L;

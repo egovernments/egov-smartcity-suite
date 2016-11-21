@@ -116,7 +116,7 @@ public class EscalationService {
     private PositionMasterService positionMasterService;
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private ComplaintIndexService complaintIndexService;
 
@@ -170,10 +170,16 @@ public class EscalationService {
                     final Set<User> users = userService.getUsersByRoleName(PGRConstants.GRO_ROLE_NAME);
                     if (!users.isEmpty())
                         superiorUser = users.iterator().next();
-                    if (superiorUser != null)
-                        superiorPosition = positionMasterService.getCurrentPositionForUser(superiorUser.getId());
-                    else {
-                        LOG.error("Could not do escalation, no user defined for Grievance Officer role");
+                    if (superiorUser != null) {
+                        List<Position> positionList = positionMasterService.getPositionsForEmployee(superiorUser.getId(), new Date());
+                        if (!positionList.isEmpty())
+                            superiorPosition = positionList.iterator().next();
+                        else {
+                            LOG.error("Could not escalate, no position defined for Grievance Officer role");
+                            continue;
+                        }
+                    } else {
+                        LOG.error("Could not escalate, no user defined for Grievance Officer role");
                         continue;
                     }
                 }
@@ -237,7 +243,7 @@ public class EscalationService {
         Date expiryDate = complaint.getEscalationDate();
         final Designation designation = complaint.getAssignee().getDeptDesig().getDesignation();
         final Integer noOfhrs = getHrsToResolve(designation.getId(), complaint.getComplaintType().getId());
-        
+
         expiryDate = DateUtils.addHours(expiryDate, noOfhrs);
         return expiryDate;
     }
@@ -292,7 +298,7 @@ public class EscalationService {
 
         return existingPosHierarchy != null ? existingPosHierarchy : null;
     }
-    
+
     public Escalation getEscalationBycomplaintTypeAndDesignation(final Long complaintTypeId, final Long designationId) {
         return escalationRepository.findByDesignationAndComplaintType(designationId, complaintTypeId);
     }

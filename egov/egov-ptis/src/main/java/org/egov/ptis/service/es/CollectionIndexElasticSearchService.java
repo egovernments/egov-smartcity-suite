@@ -1040,6 +1040,8 @@ public class CollectionIndexElasticSearchService {
         BigDecimal totalDmd = BigDecimal.ZERO;
         BigDecimal variance = BigDecimal.ZERO;
         CollTableData collTableData;
+        String billCollectorNameNumber;
+        String[] billCollectorNameNumberArr;
         /**
          * Fetch the Ward-wise data
          */
@@ -1053,17 +1055,21 @@ public class CollectionIndexElasticSearchService {
          */
         List<BillCollectorIndex> billCollectorsList = getBillCollectorDetails(collectionDetailsRequest);
         for (BillCollectorIndex billCollIndex : billCollectorsList) {
-            if (wardReceiptDetails.get(billCollIndex.getRevenueWard()) != null) {
+            if (wardReceiptDetails.get(billCollIndex.getRevenueWard()) != null
+                    && StringUtils.isNotBlank(billCollIndex.getRevenueWard())) {
+                billCollectorNameNumber = billCollIndex.getBillCollector().concat("~")
+                        .concat(StringUtils.isBlank(billCollIndex.getMobileNumber()) ? StringUtils.EMPTY
+                                : billCollIndex.getMobileNumber());
                 if (billCollectorWiseMap.isEmpty()) {
                     collDetails.add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
-                    billCollectorWiseMap.put(billCollIndex.getBillCollector(), collDetails);
+                    billCollectorWiseMap.put(billCollectorNameNumber, collDetails);
                 } else {
-                    if (!billCollectorWiseMap.containsKey(billCollIndex.getBillCollector())) {
+                    if (!billCollectorWiseMap.containsKey(billCollectorNameNumber)) {
                         collDetails = new ArrayList<>();
                         collDetails.add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
-                        billCollectorWiseMap.put(billCollIndex.getBillCollector(), collDetails);
+                        billCollectorWiseMap.put(billCollectorNameNumber, collDetails);
                     } else {
-                        billCollectorWiseMap.get(billCollIndex.getBillCollector())
+                        billCollectorWiseMap.get(billCollectorNameNumber)
                                 .add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
                     }
                 }
@@ -1079,6 +1085,7 @@ public class CollectionIndexElasticSearchService {
             performance = BigDecimal.ZERO;
             totalDmd = BigDecimal.ZERO;
             variance = BigDecimal.ZERO;
+            billCollectorNameNumberArr = entry.getKey().split("~");
             for (CollTableData tableData : entry.getValue()) {
                 currDayColl = currDayColl
                         .add(tableData.getTodayColl() == null ? BigDecimal.ZERO : tableData.getTodayColl());
@@ -1087,7 +1094,9 @@ public class CollectionIndexElasticSearchService {
                 totalDmd = totalDmd.add(tableData.getTotalDmd() == null ? BigDecimal.ZERO : tableData.getTotalDmd());
                 lytdColl = lytdColl.add(tableData.getLytdColl() == null ? BigDecimal.ZERO : tableData.getLytdColl());
             }
-            collTableData.setBillCollector(entry.getKey());
+            collTableData.setBillCollector(billCollectorNameNumberArr[0]);
+            collTableData
+                    .setMobileNumber(billCollectorNameNumberArr.length > 1 ? billCollectorNameNumberArr[1] : StringUtils.EMPTY);
             collTableData.setTodayColl(currDayColl);
             collTableData.setCytdColl(cytdColl);
             collTableData.setCytdDmd(cytdDmd);
@@ -1119,7 +1128,8 @@ public class CollectionIndexElasticSearchService {
      */
     public List<BillCollectorIndex> getBillCollectorDetails(CollectionDetailsRequest collectionDetailsRequest) {
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder()
-                .withIndices(PropertyTaxConstants.BILL_COLLECTOR_INDEX_NAME).withFields("billCollector", REVENUE_WARD)
+                .withIndices(PropertyTaxConstants.BILL_COLLECTOR_INDEX_NAME)
+                .withFields("billCollector", "mobileNumber", REVENUE_WARD)
                 .withQuery(QueryBuilders.boolQuery()
                         .filter(QueryBuilders.matchQuery(CITY_CODE, collectionDetailsRequest.getUlbCode())))
                 .withSort(new FieldSortBuilder("billCollector").order(SortOrder.ASC))

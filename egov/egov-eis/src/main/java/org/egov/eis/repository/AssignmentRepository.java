@@ -198,4 +198,10 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
             + " and A.employee.name like '%'||:empName||'%' order by A.employee.name desc")
     public List<Assignment> getAllAssignmentForEmployeeNameLike(@Param("givenDate") Date givenDate,
             @Param("empName") String empName);
+
+    public List<Assignment> findByDesignationId(Long desigId);
+
+    public List<Assignment> findByDepartmentId(Long deptId);
+
+    public List<Assignment> findByDepartmentIdAndDesignationId(Long deptId, Long desigId);
 }

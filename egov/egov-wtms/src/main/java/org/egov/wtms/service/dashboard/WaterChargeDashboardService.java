@@ -99,7 +99,7 @@ public class WaterChargeDashboardService {
     public Map<String, List<WaterChargeDashBoardResponse>> getCollectionIndexDetails(
             final WaterChargeDashBoardRequest waterChargeDashBoardRequest) {
 
-        final Map<String, List<WaterChargeDashBoardResponse>> responsemap = new HashMap<String, List<WaterChargeDashBoardResponse>>();
+        final Map<String, List<WaterChargeDashBoardResponse>> responsemap = new HashMap<>();
         final List<WaterChargeDashBoardResponse> collectionTotalResponseList = waterChargeCollDocService
                 .getFullCollectionIndexDtls(waterChargeDashBoardRequest);
 
@@ -126,7 +126,7 @@ public class WaterChargeDashboardService {
     public Map<String, List<WaterChargeDashBoardResponse>> getReceiptDetails(
             final WaterChargeDashBoardRequest collectionDetailsRequest) {
 
-        final Map<String, List<WaterChargeDashBoardResponse>> finalReceiptCountForwaterTaxMap = new HashMap<String, List<WaterChargeDashBoardResponse>>();
+        final Map<String, List<WaterChargeDashBoardResponse>> finalReceiptCountForwaterTaxMap = new HashMap<>();
         final List<WaterChargeDashBoardResponse> receiptDetailsList = waterChargeCollDocService
                 .getTotalReceiptsCount(collectionDetailsRequest);
         final List<WaterChargeDashBoardResponse> receiptTrends = waterChargeCollDocService
@@ -163,4 +163,8 @@ public class WaterChargeDashboardService {
         return waterChargeElasticSearchService.getBottomTenTaxPerformers(waterChargeDashBoardRequest);
 
     }
+    
+  /*  public List<TaxDefaulters> getTaxDefaulters(PropertyTaxDefaultersRequest propertyTaxDefaultersRequest) {
+        return waterChargeElasticSearchService.getTopDefaulters(propertyTaxDefaultersRequest);
+    }*/
 }

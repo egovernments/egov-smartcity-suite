@@ -117,13 +117,13 @@ public class UpdateExpenseBillController extends BaseBillController {
         if (egBillregister.getState() != null)
             model.addAttribute("currentState", egBillregister.getState().getValue());
         model.addAttribute("workflowHistory",
-                expenseBillService.getHistory(egBillregister.getState(), egBillregister.getStateHistory()));
+                financialUtils.getHistory(egBillregister.getState(), egBillregister.getStateHistory()));
 
         prepareWorkflow(model, egBillregister, new WorkflowContainer());
         egBillregister.getBillDetails().addAll(egBillregister.getEgBilldetailes());
         prepareBillDetailsForView(egBillregister);
         final List<CChartOfAccounts> expensePayableAccountList = chartOfAccountsService
-                .getNetPayableCodesByAccountDetailType(0);
+                .getNetPayableCodes();
         for (final EgBilldetails details : egBillregister.getBillDetails())
             if (expensePayableAccountList != null && !expensePayableAccountList.isEmpty()
                     && expensePayableAccountList.contains(details.getChartOfAccounts())) {
@@ -133,7 +133,8 @@ public class UpdateExpenseBillController extends BaseBillController {
         prepareCheckListForEdit(egBillregister, model);
         model.addAttribute(EG_BILLREGISTER, egBillregister);
         if (egBillregister.getState() != null
-                && FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())) {
+                && (FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())
+                        || financialUtils.isBillEditable(egBillregister.getState()))) {
             model.addAttribute("mode", "edit");
             return "expensebill-update";
         } else {
@@ -184,7 +185,8 @@ public class UpdateExpenseBillController extends BaseBillController {
             model.addAttribute(NET_PAYABLE_AMOUNT, request.getParameter(NET_PAYABLE_AMOUNT));
             model.addAttribute("designation", request.getParameter("designation"));
             if (egBillregister.getState() != null
-                    && FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())) {
+                    && (FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())
+                            || financialUtils.isBillEditable(egBillregister.getState()))) {
                 prepareValidActionListByCutOffDate(model);
                 model.addAttribute("mode", "edit");
                 return "expensebill-update";
@@ -196,7 +198,7 @@ public class UpdateExpenseBillController extends BaseBillController {
             try {
                 if (null != workFlowAction)
                     updatedEgBillregister = expenseBillService.update(egBillregister, approvalPosition, approvalComment, null,
-                            workFlowAction);
+                            workFlowAction, mode);
             } catch (final ValidationException e) {
                 setDropDownValues(model);
                 model.addAttribute("stateType", egBillregister.getClass().getSimpleName());
@@ -207,7 +209,8 @@ public class UpdateExpenseBillController extends BaseBillController {
                 model.addAttribute(NET_PAYABLE_AMOUNT, request.getParameter(NET_PAYABLE_AMOUNT));
                 model.addAttribute("designation", request.getParameter("designation"));
                 if (egBillregister.getState() != null
-                        && FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())) {
+                        && (FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())
+                                || financialUtils.isBillEditable(egBillregister.getState()))) {
                     prepareValidActionListByCutOffDate(model);
                     model.addAttribute("mode", "edit");
                     return "expensebill-update";
@@ -224,7 +227,7 @@ public class UpdateExpenseBillController extends BaseBillController {
                 approvalPosition = expenseBillService.getApprovalPositionByMatrixDesignation(
                         egBillregister, null, mode, workFlowAction);
 
-            final String approverDetails = financialUtils.getApproverDetails(updatedEgBillregister.getStatus(),
+            final String approverDetails = financialUtils.getApproverDetails(workFlowAction,
                     updatedEgBillregister.getState(), updatedEgBillregister.getId(), approvalPosition);
 
             return "redirect:/expensebill/success?approverDetails= " + approverDetails + "&billNumber="

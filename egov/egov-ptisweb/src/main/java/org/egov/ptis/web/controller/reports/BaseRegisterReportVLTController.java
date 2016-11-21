@@ -93,12 +93,13 @@ public class BaseRegisterReportVLTController {
         return "baseRegisterVLT-form";
     }
 
+    @ResponseBody
     @RequestMapping(value = "/result", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody void springPaginationDataTablesUpdate(@RequestParam final String ward,
-            @RequestParam final String block, final HttpServletRequest request, final HttpServletResponse response)
+    public  void springPaginationDataTablesUpdate(@RequestParam final String ward,
+            @RequestParam final String block, final HttpServletRequest request, final HttpServletResponse response, @RequestParam final boolean exemptedCase)
             throws IOException {
 
-        final List<BaseRegisterVLTResult> propertyList = reportService.getVLTPropertyByWardAndBlock(ward, block);
+        final List<BaseRegisterVLTResult> propertyList = reportService.getVLTPropertyByWardAndBlock(ward, block, exemptedCase);
         final String result = new StringBuilder("{ \"data\":")
                 .append(toJSON(propertyList, BaseRegisterVLTResult.class, BaseRegisterVLTResultAdaptor.class)).append("}")
                 .toString();

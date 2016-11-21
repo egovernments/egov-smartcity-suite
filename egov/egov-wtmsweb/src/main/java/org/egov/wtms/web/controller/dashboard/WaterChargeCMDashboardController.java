@@ -44,6 +44,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.ptis.bean.dashboard.PropertyTaxDefaultersRequest;
+import org.egov.wtms.bean.dashboard.TaxDefaulters;
 import org.egov.wtms.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.wtms.bean.dashboard.WaterChargeDashBoardRequest;
 import org.egov.wtms.bean.dashboard.WaterChargeDashBoardResponse;
@@ -128,7 +130,7 @@ public class WaterChargeCMDashboardController {
     public TaxPayerResponseDetails getBottomTenTaxProducers(
             @RequestBody final WaterChargeDashBoardRequest waterChargeDashBoardRequest) throws IOException {
         final Long startTime = System.currentTimeMillis();
-        LOGGER.debug("CollectionDetailsRequest input : regionName = " + waterChargeDashBoardRequest.getRegionName()
+        LOGGER.debug("waterChargeDashBoardRequest input : regionName = " + waterChargeDashBoardRequest.getRegionName()
                 + ", districtName = " + waterChargeDashBoardRequest.getDistrictName() + ", ulbGrade = "
                 + waterChargeDashBoardRequest.getUlbGrade() + ", ulbCode = " + waterChargeDashBoardRequest.getUlbCode()
                 + ", fromDate = " + waterChargeDashBoardRequest.getFromDate() + ", toDate = "
@@ -136,8 +138,23 @@ public class WaterChargeCMDashboardController {
         final TaxPayerResponseDetails taxPayerDetails = waterChargeDashboardService
                 .getBottomTenTaxProducers(waterChargeDashBoardRequest);
         final Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve bottomtentaxers is : " + timeTaken + " (millisecs)");
+        if (LOGGER.isDebugEnabled()){
+        LOGGER.debug("Time taken to serve bottomtentaxers is millisecs) : " + timeTaken );
+        }
         return taxPayerDetails;
     }
-
+    @RequestMapping(value = "/waterchargetopdefaulters", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<TaxDefaulters> getTopTaxDefaulters(
+            @RequestBody PropertyTaxDefaultersRequest propertyTaxDefaultersRequest) throws IOException {
+        Long startTime = System.currentTimeMillis();
+        LOGGER.debug("PropertyTaxDefaultersRequest input : regionName = " + propertyTaxDefaultersRequest.getRegionName()
+                + ", districtName = " + propertyTaxDefaultersRequest.getDistrictName() + ", type = "
+                + propertyTaxDefaultersRequest.getType() + ", ulbCode = " + propertyTaxDefaultersRequest.getUlbCode()
+                + ", wardName = " + propertyTaxDefaultersRequest.getWardName());
+        List<TaxDefaulters> taxDefaulters =null;
+       //waterChargeDashboardService.getTaxDefaulters(propertyTaxDefaultersRequest);
+        Long timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug("Time taken to serve topdefaulters is : " + timeTaken + " (millisecs)");
+        return taxDefaulters;
+    }
 }
