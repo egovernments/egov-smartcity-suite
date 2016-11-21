@@ -204,3 +204,45 @@ $('#uploadEstimatePhotograph').click(function(event) {
 	event.preventDefault();
 	window.open("/egworks/estimatephotograph/newform?lineEstimateDetailsId=" + $('#lineEstimateDetailsId').val() + "&mode=contractorPortal", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 });
+
+function validateWorkFlowApprover(name) {
+	var flag = false;
+
+	if($('#contractorMBHeader').valid()) {
+		var hiddenRowCount = $("#tblsor tbody tr[sorinvisible='true']").length;
+		if(hiddenRowCount != 1) {
+			$('.quantity').each(function() {
+				if (parseFloat($(this).val()) > 0)
+					flag = true;
+			});
+		}
+		hiddenRowCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
+		if(hiddenRowCount != 1) {
+			$('.nonSorQuantity').each(function() {
+				if (parseFloat($(this).val()) > 0)
+					flag = true;
+			});
+		}
+		
+		if (!flag) {
+			bootbox.alert($('#errorquantityzero').val());
+			return false;
+		}
+	} else
+		return false;
+
+	if(flag) {
+		deleteHiddenRows();
+		document.forms[0].submit;
+		return true;
+	} else
+		return false;
+}
+
+function deleteHiddenRows(){
+	hiddenRowCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
+	if(hiddenRowCount == 1) {
+		var tbl=document.getElementById('tblNonSor');
+		tbl.deleteRow(2);
+	}
+}

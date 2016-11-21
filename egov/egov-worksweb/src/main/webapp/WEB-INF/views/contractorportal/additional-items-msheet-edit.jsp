@@ -40,13 +40,13 @@
   --%>
 
 <c:choose>
-<c:when test="${activity.measurementSheetList.size() > 0 }">
+<c:when test="${detail.measurementSheets.size() > 0 }">
 <c:set var="net" value="0" />      
  <td hidden="true">
-                             <input class="classmspresent" type="hidden" disabled="disabled" name="nonSorActivities[${item.index }].mspresent" value="1" id="nonSorActivities[${item.index }].mspresent" data-idx="0"/>
-                             <input class="classmsopen" type="hidden" disabled="disabled" name="nonSorActivities[${item.index }].msopen" value="0" id="nonSorActivities[${item.index }].msopen" data-idx="0"/>
+                             <input class="classmspresent" type="hidden" disabled="disabled" name="additionalMBDetails[${item.index }].mspresent" value="1" id="additionalMBDetails[${item.index }].mspresent" data-idx="0"/>
+                             <input class="classmsopen" type="hidden" disabled="disabled" name="additionalMBDetails[${item.index }].msopen" value="0" id="additionalMBDetails[${item.index }].msopen" data-idx="0"/>
                        
-                             <span name="nonSorActivities[${item.index }].mstd" class="nonSorActivities[${item.index }].mstd" id="nonSorActivities[${item.index }].mstd" data-idx="0">
+                             <span name="additionalMBDetails[${item.index }].mstd" class="additionalMBDetails[${item.index }].mstd" id="additionalMBDetails[${item.index }].mstd" data-idx="0">
     <!--only for validity head start -->                         
     <table>
     <tr class='msheet-tr'>
@@ -54,7 +54,7 @@
             <div class="view-content" style="color:#f2851f"><spring:message code="lbl.measurementsheet" /><div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div>
             </div>
 
-            <table class=" table table-bordered  msheet-table" id="nonSorActivities[${item.index }].mstable">
+            <table class=" table table-bordered  msheet-table" id="additionalMBDetails[${item.index }].mstable">
                 <thead>
                 <th><spring:message code="lbl.slno" /></th>
                 <th><spring:message code="lbl.identifier" /></th>
@@ -67,45 +67,43 @@
                 <th><spring:message code="lbl.delete" /></th>
                 </thead>
                 <tbody id="msrow1">
-                <c:forEach items="${activity.measurementSheetList}" var="ms" varStatus="msindex" >
+                <c:forEach items="${detail.measurementSheets}" var="ms" varStatus="msindex" >
                 <tr id="msrow">
                     <td>
-                        <input  name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].slNo" value="${ms.slNo}" readonly="readonly" id="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].slNo" class="form-control text-right patternvalidation runtime-update spanslno" data-pattern="decimalvalue" />
-                   <input type="hidden"  name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].id" value="${ms.id}"/>
-                    <input type="hidden"  name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].activity" value="${ms.activity.id}"/> 
-                    
+                        <input  name="additionalMBDetails[${item.index }].measurementSheets[${msindex.index}].slNo" value="${msindex.index + 1 }" readonly="readonly" id="additionalMBDetails[${item.index }].measurementSheets[${msindex.index}].slNo" class="form-control text-right patternvalidation runtime-update spanslno" data-pattern="decimalvalue" />
+                   <input type="hidden"  name="additionalMBDetails[${item.index }].measurementSheets[${msindex.index}].id" value="${ms.id}"/>
                     </td>
                     <td>
-                        <select name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].identifier"    id="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].identifier"  onchange="findNet(this)" class="form-control runtime-update"   >
+                        <select name="additionalMBDetails[${item.index }].measurementSheets[${msindex.index}].identifier"    id="additionalMBDetails[${item.index }].measurementSheets[${msindex.index}].identifier"  onchange="findNet(this)" class="form-control runtime-update"   >
                             <option value="A" <c:if test="${ms.identifier=='A'}"> selected="selected" </c:if>    >No</option>
                             <option value="D" <c:if test="${ms.identifier=='D'}"> selected="selected" </c:if>    >Yes</option>
                             </select>
                     </td>
                     <td>
-                        <textarea name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].remarks"    id="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].remarks" class="form-control text-left patternvalidation runtime-update"
+                        <textarea name="additionalMBDetails[${item.index }].measurementSheets[${msindex.index}].remarks"    id="additionalMBDetails[${item.index }].measurementSheets[${msindex.index}].remarks" class="form-control text-left patternvalidation runtime-update"
                                data-pattern="alphanumeric" maxlength="1024" >${ms.remarks}</textarea>
 
                     </td>
                     <td>
-                        <input name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].no" value="${ms.no}" maxlength="6" onkeyup="limitCharatersBy3_2(this);" id="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].no" class="form-control text-right patternvalidation runtime-update"
+                        <input name="additionalMBDetails[${item.index }].measurementSheets[${msindex.index}].no" value="${ms.no}" maxlength="6" onkeyup="limitCharatersBy3_2(this);" id="additionalMBDetails[${item.index }].measurementSheets[${msindex.index}].no" class="form-control text-right patternvalidation runtime-update"
                                data-pattern="decimalvalue" data-idx="0" />
 
                     </td>
                     <td>                                                                     
-                        <input name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].length" maxlength="15" onkeyup="limitCharatersBy10_4(this);" value="${ms.length}"  id="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].length" class="form-control text-right patternvalidation runtime-update"
+                        <input name="additionalMBDetails[${item.index }].measurementSheets[${msindex.index}].length" maxlength="15" onkeyup="limitCharatersBy10_4(this);" value="${ms.length}"  id="additionalMBDetails[${item.index }].measurementSheets[${msindex.index}].length" class="form-control text-right patternvalidation runtime-update"
                                data-pattern="decimalvalue" data-idx="0" />
 
                     </td>
                     <td>
-                        <input name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].width" maxlength="15" onkeyup="limitCharatersBy10_4(this);"  value="${ms.width}"  id="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].width" class="form-control text-right patternvalidation runtime-update"
+                        <input name="additionalMBDetails[${item.index }].measurementSheets[${msindex.index}].width" maxlength="15" onkeyup="limitCharatersBy10_4(this);"  value="${ms.width}"  id="additionalMBDetails[${item.index }].measurementSheets[${msindex.index}].width" class="form-control text-right patternvalidation runtime-update"
                                data-pattern="decimalvalue"  data-idx="0" />
 
                     </td><td>
-                    <input name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].depthOrHeight"  maxlength="15" onkeyup="limitCharatersBy10_4(this);" id="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].depthOrHeight" class="form-control text-right patternvalidation runtime-update"
+                    <input name="additionalMBDetails[${item.index }].measurementSheets[${msindex.index}].depthOrHeight"  maxlength="15" onkeyup="limitCharatersBy10_4(this);" id="additionalMBDetails[${item.index }].measurementSheets[${msindex.index}].depthOrHeight" class="form-control text-right patternvalidation runtime-update"
                            data-pattern="decimalvalue"  value="${ms.depthOrHeight}" data-idx="0" />
 
                 </td><td>
-                    <input name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].quantity" id="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].quantity" class="form-control text-right patternvalidation runtime-update"
+                    <input name="additionalMBDetails[${item.index }].measurementSheets[${msindex.index}].quantity" id="additionalMBDetails[${item.index }].measurementSheets[${msindex.index}].quantity" class="form-control text-right patternvalidation runtime-update"
                            data-pattern="decimalvalue"  value="${ms.quantity}" required="required" onblur="findNet(this)" />
                    
 			<c:if test="${ms.identifier=='A'}">
@@ -122,10 +120,10 @@
                     <td colspan="6" class="text-right">
                         <input type="button" value ="<spring:message code="lbl.addrow" />" class="btn btn-xs btn-info add-msrow">
                         <button   class="btn btn-xs btn-danger reset-ms"><spring:message code="lbl.reset" /></button>
-                        <input type="button" value="<spring:message code="lbl.submit" />"  id="nonSorActivities[${item.index }].mssubmit" class="btn btn-xs btn-primary ms-submit"/> 
+                        <input type="button" value="<spring:message code="lbl.submit" />"  id="additionalMBDetails[${item.index }].mssubmit" class="btn btn-xs btn-primary ms-submit"/> 
                     </td>
                     <td class="text-right"><spring:message code="lbl.subtotal" /></td>
-                    <td id="nonSorActivities[${item.index }].msnet"  class="text-right">${net}</td>
+                    <td id="additionalMBDetails[${item.index }].msnet"  class="text-right">${net}</td>
                     <td></td>
                 </tr>
                 
@@ -141,9 +139,9 @@
 </c:when>
 <c:otherwise>
 <td hidden="true">
-<input class="classmspresent" type="hidden" disabled="disabled" name="nonSorActivities[${item.index }].mspresent" value="0" id="nonSorActivities[${item.index }].mspresent" data-idx="0"/>
-<input class="classmsopen" type="hidden" disabled="disabled" name="nonSorActivities[${item.index }].msopen" value="0" id="nonSorActivities[${item.index }].msopen" data-idx="0"/>
-<span  class="nonSorActivities[${item.index }].mstd" id="nonSorActivities[${item.index }].mstd" data-idx="0"></span>
+<input class="classmspresent" type="hidden" disabled="disabled" name="additionalMBDetails[${item.index }].mspresent" value="0" id="additionalMBDetails[${item.index }].mspresent" data-idx="0"/>
+<input class="classmsopen" type="hidden" disabled="disabled" name="additionalMBDetails[${item.index }].msopen" value="0" id="additionalMBDetails[${item.index }].msopen" data-idx="0"/>
+<span  class="additionalMBDetails[${item.index }].mstd" id="additionalMBDetails[${item.index }].mstd" data-idx="0"></span>
 </td>
 </c:otherwise>
 </c:choose>     

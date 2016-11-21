@@ -138,6 +138,7 @@ $('#addnonSorRow').click(function() {
 		var key = 0;
 		$('#nonSorDesc_' + key).attr('required', 'required');
 		$('#nonSorUom_' + key).attr('required', 'required');
+		$('#nonSorRate_' + key).attr('required', 'required');
 		$('#nonSorEstimateRate_' + key).attr('required', 'required');
 		$('#nonSorQuantity_' + key).attr('required', 'required');
 		$('#nonSorQuantity_' + key).removeAttr('readonly');
@@ -246,6 +247,9 @@ function deleteNonSor(obj) {
 		$('#nonSorRate_' + rowId).val('');
 		$('#nonSorQuantity_' + rowId).val('');
 		$('#nonSorQuantity_' + rowId).removeAttr('required');
+		$('#nonSorDesc_' + rowId).removeAttr('required');
+		$('#nonSorUom_' + rowId).removeAttr('required');
+		$('#nonSorRate_' + rowId).removeAttr('required');
 		$('.nonSorAmount_' + rowId).html('');
 		$('#nonSorServiceTaxPerc_' + rowId).val('');
 		$('.nonSorVatAmount_' + rowId).html('');

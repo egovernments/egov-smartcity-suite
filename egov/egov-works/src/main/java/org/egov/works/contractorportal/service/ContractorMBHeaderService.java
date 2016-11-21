@@ -183,11 +183,16 @@ public class ContractorMBHeaderService {
     public String validateContractorMBHeader(final ContractorMBHeader contractorMBHeader) {
         String message = "";
         boolean quantityExists = false;
+        boolean additionalQuantityExists = false;
         for (final ContractorMBDetails contractorMBDetails : contractorMBHeader.getContractorMBDetails())
             if (contractorMBDetails.getQuantity() > 0)
                 quantityExists = true;
 
-        if (!quantityExists)
+        for (final ContractorMBDetails contractorMBDetails : contractorMBHeader.getAdditionalMBDetails())
+            if (contractorMBDetails.getQuantity() > 0)
+                additionalQuantityExists = true;
+
+        if (!quantityExists && !additionalQuantityExists)
             message = messageSource.getMessage("error.mbdetails.quantity.zero", new String[] {}, null);
 
         return message;

@@ -86,13 +86,13 @@
 						<tr id="nonSorRow" class="nonSorRow" nonsorinvisible="true" hidden="true" align="center">
 							<td>
 								<span class="spannonsorslno">1</span>
-								<form:hidden path="additionalMBDetails[0].id" id="activityid_0" class="activityid" />
+								<form:hidden path="additionalMBDetails[0].id" id="detailid_0" class="detailid" />
 							</td>
 							<td>
 								<form:input path="additionalMBDetails[0].description" id="nonSorDesc_0" class="form-control table-input text-left nonSorDesc" maxlength="256"/>
 							</td>
 							<td>
-								<form:select path="additionalMBDetails[0].uom" id="nonSorUom_0" data-idx="0" data-first-option="false" class="form-control nonSorUom" onchange="updateUom(this);">
+								<form:select path="additionalMBDetails[0].uom" id="nonSorUom_0" data-idx="0" data-first-option="false" class="form-control nonSorUom">
 									<form:option value="">
 										<spring:message code="lbl.select" />
 									</form:option>
@@ -129,25 +129,25 @@
 						</tr>
 					</c:when>
 					<c:otherwise>
-						<c:forEach items="${contractorMB.additionalMBDetails}" var="activity" varStatus="item">
+						<c:forEach items="${contractorMB.additionalMBDetails}" var="detail" varStatus="item">
 							<tr id="nonSorRow" class="nonSorRow" align="center">
 								<td>
 									<span class="spannonsorslno">${item.index + 1 }</span>
-									<form:hidden path="additionalMBDetails[${item.index }].id" id="activityid_${item.index }" class="activityid" value="${activity.id }" />
+									<form:hidden path="additionalMBDetails[${item.index }].id" id="detailid_${item.index }" class="detailid" value="${detail.id }" />
 								</td>
 								<td>
-									<form:input path="additionalMBDetails[${item.index }].description" id="nonSorDesc_${item.index }" value="${activity.nonSor.description }" class="form-control table-input text-left nonSorDesc" maxlength="256"/>
+									<form:input path="additionalMBDetails[${item.index }].description" id="nonSorDesc_${item.index }" value="${detail.description }" class="form-control table-input text-left nonSorDesc" maxlength="256"/>
 								</td>
 								<td>
-									<form:select path="additionalMBDetails[${item.index }].uom" id="nonSorUom_${item.index }" data-idx="${item.index }" data-first-option="false" class="form-control nonSorUom" onchange="updateUom(this);">
+									<form:select path="additionalMBDetails[${item.index }].uom" id="nonSorUom_${item.index }" data-idx="${item.index }" data-first-option="false" class="form-control nonSorUom">
 										<form:option value="">
 											<spring:message code="lbl.select" />
 										</form:option>
 										<c:forEach items="${uoms }" var="uom">
-											<c:if test="${uom.id == activity.uom.id }">
+											<c:if test="${uom.id == detail.uom.id }">
 												<form:option value="${uom.id }" selected="selected" >${uom.uomCategory.category } -- ${uom.uom }</form:option>
 											</c:if>
-											<c:if test="${uom.id != activity.uom.id }">
+											<c:if test="${uom.id != detail.uom.id }">
 												<form:option value="${uom.id }">${uom.uomCategory.category } -- ${uom.uom }</form:option>
 											</c:if>
 										</c:forEach>
@@ -158,8 +158,8 @@
 								</td>
 								<td>
 									<div class="input-group" style="width:150px">
-									<form:input path="additionalMBDetails[${item.index }].quantity" id="nonSorQuantity_${item.index }" value="${activity.quantity }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0"  class="form-control table-input text-right nonSorQuantity" maxlength="64" onchange="calculateNonSorEstimateAmount(this);" onkeyup="validateQuantityInput(this);" />
-								     <span class="btn btn-default openmbsheet" name="additionalMBDetails[${item.index}].msadd" id="additionalMBDetails[${item.index}].msadd" data-idx="${item.index }" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"  ></i></button>
+									<form:input path="additionalMBDetails[${item.index }].quantity" id="nonSorQuantity_${item.index }" value="${detail.quantity }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0"  class="form-control table-input text-right nonSorQuantity" maxlength="64" onchange="calculateNonSorEstimateAmount(this);" onkeyup="validateQuantityInput(this);" />
+								     <span class="input-group-addon openmbsheet" name="additionalMBDetails[${item.index}].msadd" id="additionalMBDetails[${item.index}].msadd" data-idx="${item.index }" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"  ></i></button>
 							</div>
 								</td>       
 
@@ -167,7 +167,7 @@
 								
 								<td align="right">
 									<form:input type="hidden" path="additionalMBDetails[${item.index }].amount" value="${details.amount }" id="hiddenNonSorAmount_${item.index }" class="form-control table-input text-right"/>
-									<span class="nonSorAmount_${item.index } nonsoramount"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${activity.rate * activity.quantity }</fmt:formatNumber></span>
+									<span class="nonSorAmount_${item.index } nonsoramount"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${detail.rate * detail.quantity }</fmt:formatNumber></span>
 								</td>
 								<td>
 									<span class="add-padding delete_${item.index }" onclick="deleteNonSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>

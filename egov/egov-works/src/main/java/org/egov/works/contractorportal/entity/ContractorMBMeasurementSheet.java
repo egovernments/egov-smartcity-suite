@@ -81,7 +81,7 @@ public class ContractorMBMeasurementSheet extends AbstractAuditable {
     private BigDecimal length;
     private BigDecimal width;
     private BigDecimal depthOrHeight;
-    private char identifier;
+    private Character identifier;
     @Required
     private BigDecimal quantity;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -177,11 +177,11 @@ public class ContractorMBMeasurementSheet extends AbstractAuditable {
         this.contractorMBMSheetTotalQuantity = contractorMBMSheetTotalQuantity;
     }
 
-    public char getIdentifier() {
+    public Character getIdentifier() {
         return identifier;
     }
 
-    public void setIdentifier(final char identifier) {
+    public void setIdentifier(final Character identifier) {
         this.identifier = identifier;
     }
 
