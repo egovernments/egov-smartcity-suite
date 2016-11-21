@@ -92,83 +92,7 @@ $(document).ready( function () {
 	$('#table_search').keyup(function(){
     	$('#registration_table').fnFilter(this.value);
     });
-	
-	$('#select-marriagefees').change( function () {
-		showFee();
-	})
-	
-	$('input[id$="email"]').blur(function() {
-		var pattern = new RegExp("^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
-		var email = $(this).val();
-		if (!pattern.test(email) && $(this).val().length > 0) {
-			var span = $(this).siblings('span'); 
-	    	$(span).addClass('error-msg');
-	    	$(span).text('Please enter valid email..!');
-			$(this).show();
-			$(this).val("");
-		} else {
-			var span = $(this).siblings('span'); 
-			$(span).removeClass('error-msg');
-	    	$(span).text('');
-		}
-	});
-	
-	$('.month-field').blur( function () {
-		var month = parseInt( $(this).val() );
-		if (month != null && month != undefined && (month < 0 || month > 12)) {
-			bootbox.alert("Invalid month(s)..!!");
-			$(this).val('');
-		}
-	})
-	
-	$('input[id$="husband.ageInYearsAsOnMarriage"]').blur( function () {
-		var age = parseInt( $(this).val() );
-		if (age != null && age != undefined && (age < 21)) {
-			bootbox.alert("Husband's age should be atlest 21 years");
-			$(this).val('');
-		}
-	})
-	
-	$('input[id$="wife.ageInYearsAsOnMarriage"]').blur( function () {
-		var age = parseInt( $(this).val() );
-		if (age != null && age != undefined && (age < 18)) {
-			bootbox.alert("wife's age should be atlest 18 years");
-			$(this).val('');
-		}
-	})
-	
-	$('input[id$="husband.contactInfo.mobileNo"]').blur( function () {
-		 var mobileno =  $(this).val();
-			if (mobileno.length < 10) {
-				bootbox.alert("Please enter 10 digit mobile number");
-				$(this).val('');
-			}
-	})
-	
-	$('input[id$="wife.contactInfo.mobileNo"]').blur( function () {
-		var mobileno =  $(this).val();
-		if (mobileno.length < 10) {
-			bootbox.alert("Please enter 10 digit mobile number");
-			$(this).val('');
-		}
-	})
-	
-	$('.witnessage').blur( function () {
-		var age = parseInt( $(this).val() );
-		if (age != null && age != undefined && (age < 18)) {
-			bootbox.alert("witness age should be atleast 18 years");
-			$(this).val('');
-		}
-	})
-	
-	$('a[id^="signature"]').click( function () {
-		var content = $( $(this).siblings('input[type="hidden"]') ).val();
-		var value = "data:image/jpeg;base64," + content ;
-		var link = document.createElement('a');
-		link.href = toBinaryString(value);
-		link.download = 'signature.jpg';
-		link.click();		
-	})
+		
 	
 	$('.slide-history-menu').click(function(){
 		$(this).parent().find('.history-slide').slideToggle();
@@ -191,31 +115,7 @@ $(document).ready( function () {
 			//$('#see-more-link').show();
 		}
 	});
-	function showFee()
-	   {
-	    if ($('#select-marriagefees').val() === '') {
-	    	$('#txt-feepaid').val('');
-				return;
-			} else {
-			
-				$.ajax({
-					type: "GET",
-					url: "/mrs/registration/calculatemarriagefee",
-					cache: true,
-					dataType: "json",
-					data:{
-						'feeId' : $('#select-marriagefees').val()
-						}
-				}).done(function(value) {
-										if (value == 0)
-											$('#txt-feepaid').val('');
-										else
-											$('#txt-feepaid').val(value);
-				
-				});
-			}
-		
-	   }
+
 
 // Called from Data Entry Screen - Starts
 	
@@ -227,11 +127,7 @@ $(document).ready( function () {
 		validateRegistrationNumber();
 	});
 	
-	
-	$('#select-registrationunit').change( function () {
-		showRegistrationUnit();
-	});
-	
+
 	
 	function validateApplicationNumber(){
 		appNo=$('#applicationNum').val();
@@ -258,29 +154,6 @@ $(document).ready( function () {
 		}	
 	}
 	
-	function showRegistrationUnit()
-	{
-	 if ($('#select-registrationunit').val() === '') {
-	 	$('#txt-zone').val('');
-				return;
-			} else {
-			
-				$.ajax({
-					type: "GET",
-					url: "/mrs/registration/getmrregistrationunitzone",
-					cache: true,
-					dataType: "json",
-					data:{
-						'registrationUnitId' : $('#select-registrationunit').val()
-						}
-				}).done(function(value) {
-					$('#txt-zoneid').val(value.id);
-					$('#txt-zone').val(value.name);
-				
-				});
-			}
-		
-	}
 	
 	
 	function validateRegistrationNumber(){

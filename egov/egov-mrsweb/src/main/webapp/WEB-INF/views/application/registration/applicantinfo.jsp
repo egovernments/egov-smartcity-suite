@@ -91,7 +91,7 @@
 					<spring:message code="lbl.ageason.marriage"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-6">
-			<form:input path="${applicant}.ageInYearsAsOnMarriage" id="${applicant}.ageInYearsAsOnMarriage" type="text" class="form-control inline-elem patternvalidation" data-pattern="number" style="width: 40%;" maxlength="2" placeholder="Years" autocomplete="off" required="required"/>
+			<form:input path="${applicant}.ageInYearsAsOnMarriage" data-names="${applicant}" id="${applicant}.ageInYearsAsOnMarriage" type="text" class="form-control inline-elem patternvalidation age-field" data-pattern="number" style="width: 40%;" maxlength="2" placeholder="Years" autocomplete="off" required="required"/>
 			<form:input path="${applicant}.ageInMonthsAsOnMarriage" id="${applicant}.ageInMonthsAsOnMarriage" type="text" class="form-control inline-elem patternvalidation month-field" data-pattern="number" style="width: 40%;" maxlength="2" placeholder="Months" autocomplete="off" required="required" />
 	           <form:errors path="${applicant}.ageInYearsAsOnMarriage" cssClass="add-margin error-msg"/>
 	           <form:errors path="${applicant}.ageInMonthsAsOnMarriage" cssClass="add-margin error-msg"/>
@@ -207,7 +207,7 @@
 		<spring:message code="lbl.phoneno"/><span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3">
-		<form:input path="${applicant}.contactInfo.mobileNo" id="${applicant}.contactInfo.mobileNo" type="text" cssClass="form-control low-width patternvalidation" data-pattern="number" minlength="10" maxlength="10" placeholder="" autocomplete="off" required="required" />
+		<form:input path="${applicant}.contactInfo.mobileNo" id="${applicant}.contactInfo.mobileNo" type="text" cssClass="form-control low-width patternvalidation mobileno-field" data-pattern="number" minlength="10" maxlength="10" placeholder="" autocomplete="off" required="required" />
                  <form:errors path="${applicant}.contactInfo.mobileNo" cssClass="add-margin error-msg"/>
 	</div>
 	<label class="col-sm-2 control-label">
