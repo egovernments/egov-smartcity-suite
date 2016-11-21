@@ -1,54 +1,54 @@
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
+ * accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *  Copyright (C) 2016  eGovernments Foundation
  *
- *     The updated version of eGov suite of products as by eGovernments Foundation
- *     is available at http://www.egovernments.org
+ *  The updated version of eGov suite of products as by eGovernments Foundation
+ *  is available at http://www.egovernments.org
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or
- *     http://www.gnu.org/licenses/gpl.html .
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/ or
+ *  http://www.gnu.org/licenses/gpl.html .
  *
- *     In addition to the terms of the GPL license to be adhered to in using this
- *     program, the following additional terms are to be complied with:
+ *  In addition to the terms of the GPL license to be adhered to in using this
+ *  program, the following additional terms are to be complied with:
  *
- *         1) All versions of this program, verbatim or modified must carry this
- *            Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
  *
- *         2) Any misrepresentation of the origin of the material is prohibited. It
- *            is required that all modified versions of this material be marked in
- *            reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- *         3) This license does not grant any rights to any user of the program
- *            with regards to rights under trademark law for use of the trade names
- *            or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.egf.web.actions.masters;
 
 import com.google.gson.GsonBuilder;
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Bank;
 import org.egov.commons.Bankbranch;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -89,7 +89,7 @@ public class BankBranchAction extends JQueryGridActionSupport {
     }
 
     private void addBankBranch() {
-        final Bank bank = (Bank) bankBranchService.getSession().load(Bank.class, bankId);
+        final Bank bank = bankBranchService.getSession().load(Bank.class, bankId);
         final Date currentDate = new Date();
         final Bankbranch bankBranch = new Bankbranch();
         bankBranch.setBank(bank);
@@ -99,13 +99,13 @@ public class BankBranchAction extends JQueryGridActionSupport {
     }
 
     private void editBankBranch() {
-        final Bankbranch bankBranch = (Bankbranch) bankBranchService.getSession().get(Bankbranch.class, id);
+        final Bankbranch bankBranch = bankBranchService.getSession().get(Bankbranch.class, id);
         populateBankBranchDetail(bankBranch);
         bankBranchService.update(bankBranch);
     }
 
     private void deleteBankBranch() {
-        final Bankbranch bankBranch = (Bankbranch) bankBranchService.getSession().load(Bankbranch.class, id);
+        final Bankbranch bankBranch = bankBranchService.getSession().load(Bankbranch.class, id);
         bankBranchService.delete(bankBranch);
     }
 
@@ -116,8 +116,8 @@ public class BankBranchAction extends JQueryGridActionSupport {
         bankBranch.setBranchcode(request.getParameter("branchcode"));
         bankBranch.setBranchname(request.getParameter("branchname"));
         bankBranch.setBranchaddress1(request.getParameter("branchaddress1"));
-        bankBranch.setIsactive(request.getParameter("isActive").equals("Y") ? true : false);
-        isActive = bankBranch.getIsactive() ? true : false;
+        bankBranch.setIsactive(request.getParameter("isActive").equals("Y"));
+        isActive = bankBranch.getIsactive();
         bankBranch.setBranchaddress2(request.getParameter("branchaddress2"));
         bankBranch.setBranchcity(request.getParameter("branchcity"));
         bankBranch.setBranchstate(request.getParameter("branchstate"));
@@ -157,7 +157,7 @@ public class BankBranchAction extends JQueryGridActionSupport {
     private boolean checkBankAccountsExists() {
         Bankbranch branch = null;
         if (id != null)
-            branch = (Bankbranch) bankBranchService.find("from Bankbranch where id=?", id);
+            branch = bankBranchService.find("from Bankbranch where id=?", id);
         return branch != null && branch.isAccountsExist();
     }
 
