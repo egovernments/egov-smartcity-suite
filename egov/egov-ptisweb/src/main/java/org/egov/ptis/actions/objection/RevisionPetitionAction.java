@@ -423,6 +423,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
         if (isMeesevaUser && getMeesevaApplicationNumber() != null) {
             objection.setObjectionNumber(objection.getMeesevaApplicationNumber());
+            objection.getBasicProperty().setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
         }
         else
             objection.setObjectionNumber(applicationNumberGenerator.generate());
@@ -438,7 +439,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             HashMap<String, String> meesevaParams = new HashMap<String, String>();
             meesevaParams.put("ADMISSIONFEE", "0");
             meesevaParams.put("APPLICATIONNUMBER", objection.getMeesevaApplicationNumber());
-            objection.getBasicProperty().setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
             objection.setApplicationNo(objection.getMeesevaApplicationNumber());
             revisionPetitionService.createRevisionPetition(objection, meesevaParams);
         }
