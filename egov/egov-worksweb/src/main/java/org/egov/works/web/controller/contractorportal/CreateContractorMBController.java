@@ -109,9 +109,19 @@ public class CreateContractorMBController {
         return "contractormb-loasearch";
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String showContractorMBForm(@ModelAttribute("contractorMBHeader") final ContractorMBHeader contractorMBHeader,
-            @RequestParam final String loaNumber, final Model model) {
+    @RequestMapping(value = "/create-form", method = RequestMethod.GET)
+    public String redirectToSearchForm(@ModelAttribute("contractorMBHeader") final ContractorMBHeader contractorMBHeader,
+            final Model model, final HttpServletRequest request) {
+        return "redirect:/contractorportal/mb/search-loaform";
+    }
+
+    @RequestMapping(value = "/create-form", method = RequestMethod.POST)
+    public String showContractorMBCreateForm(@ModelAttribute("contractorMBHeader") final ContractorMBHeader contractorMBHeader,
+            final Model model, final HttpServletRequest request) {
+        final String loaNumber = request.getParameter("workOrderNumber");
+        final String isOtpValidated = request.getParameter("isotpvalidated");
+        if ("false".equals(isOtpValidated))
+            return "redirect:/contractorportal/mb/search-loaform";
         final WorkOrder workOrder = letterOfAcceptanceService.getApprovedWorkOrder(loaNumber);
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateByWorkOrderId(workOrder.getId());
         loadViewData(contractorMBHeader, workOrderEstimate, model);

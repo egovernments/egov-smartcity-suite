@@ -46,7 +46,7 @@
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <input id="errorLoaNumber" type="hidden" value="<spring:message code="error.contractorportal.valid.loanumber" />" />
 <input id="errorOTP" type="hidden" value="<spring:message code="error.contractorportal.valid.otp" />" />
-<form:form name="searchForm" role="form" method="post" id="searchForm">
+<form:form name="searchForm" role="form" method="post" action="create-form" id="searchForm">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
@@ -65,6 +65,7 @@
 					<div class="form-group" id="otp-section" hidden="true">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.otp" /><span class="mandatory"></label>
 						<div class="col-sm-3 add-margin">
+							<input type="hidden" name="isotpvalidated" id="isotpvalidated" value="false" />
 							<input name="otp" id="otp" class="form-control" placeholder="Enter OTP" minlength="5" maxlength="5" autocomplete="off" required="required"/>
 	                    </div>
 					</div>

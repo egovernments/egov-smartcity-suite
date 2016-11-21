@@ -129,8 +129,10 @@ $('#btncreatemb').click(function() {
 									});
 									if (!flag)
 										bootbox.alert($('#errorLoaNumber').val());
-									else
-										window.location.href = "/egworks/contractorportal/mb/create?loaNumber=" + loaNumber;
+									else {
+										$('#isotpvalidated').val('true');
+										$('#searchForm').submit();
+									}
 							});
 					}
 			});

@@ -49,7 +49,7 @@
         position:fixed;z-index:9999;top:85px;right:20px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
       }
 </style>
-<form:form modelAttribute="contractorMBHeader" name="contractorMBHeader" role="form" method="post" id="contractorMBHeader"
+<form:form modelAttribute="contractorMBHeader" name="contractorMBHeader" action="create" role="form" method="post" id="contractorMBHeader"
 	class="form-horizontal form-groups-bordered"
 	accept-charset="utf-8"
 	enctype="multipart/form-data">
