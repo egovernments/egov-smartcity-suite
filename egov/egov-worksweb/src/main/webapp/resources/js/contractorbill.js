@@ -731,6 +731,11 @@ function validateDeductionGrids(){
 			return false;
 		}
 		
+		if(accountCode == "" && amount != "") {
+			bootbox.alert($('#errorRetentionMoney').val() + " " +i );
+			return false;
+		}
+		
 	}
 	
 	return true;

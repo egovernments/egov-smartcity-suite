@@ -58,6 +58,7 @@
 			<input type="hidden" name="isSpillover" id="isSpillOver" value="${workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.spillOverFlag}"/>
 			<input type="hidden"  name="workOrderEstimateId" id="workOrderEstimateId" value="${workOrderEstimate.id}" /> 
 			<input type="hidden" name="mode" id="mode" value="${mode }" />
+			<input id="errorRetentionMoney" type="hidden" value="<spring:message code="error.accountcode.retention.money" />" />
 
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading">

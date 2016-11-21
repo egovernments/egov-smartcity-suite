@@ -1216,8 +1216,7 @@ public class LineEstimateService {
         final List<AppConfigValues> nominationLimit = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_NOMINATION_AMOUNT);
         final AppConfigValues value = nominationLimit.get(0);
-        final List<AppConfigValues> nominationName = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WorksConstants.WORKS_MODULE_NAME, WorksConstants.NOMINATION_NAME);
+        final List<AppConfigValues> nominationName = estimateService.getNominationName();
         if (value.getValue() != null && !value.getValue().isEmpty()
                 && Double.parseDouble(estimateAmount.toString()) > Double.parseDouble(value.getValue()))
             errors.reject("error.lineestimate.modeofentrustment",

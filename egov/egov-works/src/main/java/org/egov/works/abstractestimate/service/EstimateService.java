@@ -1448,7 +1448,7 @@ public class EstimateService {
 
     }
 
-    private List<AppConfigValues> getNominationName() {
+    public List<AppConfigValues> getNominationName() {
         final List<AppConfigValues> nominationName = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.NOMINATION_NAME);
         return nominationName;
