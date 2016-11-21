@@ -498,9 +498,9 @@ public class MBHeaderService {
                 .findByWorkOrderEstimate_IdAndEgwStatus_codeEquals(workOrderEstimateId, WorksConstants.NEW);
         String userName = "";
         if (mbHeader != null) {
+            userName = worksUtils.getApproverName(mbHeader.getState().getOwnerPosition().getId());
             final String message = messageSource.getMessage("error.mbheader.newstatus",
                     new String[] { mbHeader.getMbRefNo(), mbHeader.getEgwStatus().getDescription(), userName }, null);
-            userName = worksUtils.getApproverName(mbHeader.getState().getOwnerPosition().getId());
             jsonObject.addProperty("draftsError", message);
             if (errors != null)
                 errors.reject("draftsError", message);
@@ -513,9 +513,9 @@ public class MBHeaderService {
                 MBHeader.MeasurementBookStatus.NEW.toString());
         String userName = "";
         if (mBHeader != null) {
+            userName = worksUtils.getApproverName(mBHeader.getState().getOwnerPosition().getId());
             final String message = messageSource.getMessage("error.mbheader.workflow",
                     new String[] { mBHeader.getMbRefNo(), mBHeader.getEgwStatus().getDescription(), userName }, null);
-            userName = worksUtils.getApproverName(mBHeader.getState().getOwnerPosition().getId());
             jsonObject.addProperty("workFlowError", message);
             if (errors != null)
                 errors.reject("workFlowError", message);
