@@ -250,8 +250,6 @@ public class EstimateService {
         else
             newAbstractEstimate = updateAbstractEstimate(abstractEstimateFromDB, abstractEstimate);
 
-        createEstimateDeductionValues(abstractEstimate);
-
         if (newAbstractEstimate.getLineEstimateDetails() != null
                 && newAbstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated())
             newAbstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
@@ -279,6 +277,7 @@ public class EstimateService {
             financialDetail.setAbstractEstimate(abstractEstimate);
 
         createOverheadValues(abstractEstimate);
+        createEstimateDeductionValues(abstractEstimate);
         createAssetValues(abstractEstimate);
         for (final Activity act : abstractEstimate.getActivities())
             act.setAbstractEstimate(abstractEstimate);
@@ -457,6 +456,18 @@ public class EstimateService {
         for (final EstimateTechnicalSanction ets : newAbstractEstimate.getEstimateTechnicalSanctions()) {
             ets.setAbstractEstimate(abstractEstimateFromDB);
             abstractEstimateFromDB.getEstimateTechnicalSanctions().add(ets);
+        }
+
+        abstractEstimateFromDB.getAbsrtractEstimateDeductions().clear();
+        for (final AbstractEstimateDeduction value : newAbstractEstimate.getTempDeductionValues()) {
+            AbstractEstimateDeduction abstractEstimateDeductionValue = null;
+            abstractEstimateDeductionValue = new AbstractEstimateDeduction();
+            abstractEstimateDeductionValue.setAbstractEstimate(abstractEstimateFromDB);
+            abstractEstimateDeductionValue
+                    .setChartOfAccounts(chartOfAccountsService.findById(value.getChartOfAccounts().getId(), false));
+            abstractEstimateDeductionValue.setAmount(value.getAmount());
+            abstractEstimateDeductionValue.setPercentage(value.getPercentage());
+            abstractEstimateFromDB.getAbsrtractEstimateDeductions().add(abstractEstimateDeductionValue);
         }
 
         abstractEstimateRepository.save(abstractEstimateFromDB);
