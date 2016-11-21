@@ -718,16 +718,7 @@ public class WaterConnectionDetailsService {
     }
 
     public void updateIndexes(final WaterConnectionDetails waterConnectionDetails, final String sourceChannel) {
-        try{
-            final SimpleDateFormat dateFormatter = new SimpleDateFormat(ES_DATE_FORMAT);
-            if(waterConnectionDetails.getCreatedDate()!=null){
-                final String createdDate = dateFormatter.format(waterConnectionDetails.getCreatedDate());
-                waterConnectionDetails.setCreatedDate(dateFormatter.parse(createdDate));
-            }
-        }
-        catch(ParseException e){
-            
-        }
+       
         
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),

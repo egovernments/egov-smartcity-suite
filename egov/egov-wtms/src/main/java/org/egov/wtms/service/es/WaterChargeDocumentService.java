@@ -102,7 +102,18 @@ public class WaterChargeDocumentService {
         String consumername = "";
         String aadharNumber = "";
         String mobilNumber = "";
-
+        final SimpleDateFormat dateFormatter = new SimpleDateFormat(ES_DATE_FORMAT);
+        String createdDate =null;
+        
+        if(waterConnectionDetails.getLegacy() ){
+          if(waterConnectionDetails.getApplicationDate()!=null){
+            createdDate  = dateFormatter.format(waterConnectionDetails.getApplicationDate());
+        }
+        }
+        else
+        {
+            createdDate = dateFormatter.format(waterConnectionDetails.getExecutionDate());
+        }
         monthlyRate = monthlyRateFirld(waterConnectionDetails);
         if (ownerNameItr != null && ownerNameItr.hasNext())
             ownerNameItr.next().getMobileNumber();
@@ -120,6 +131,7 @@ public class WaterChargeDocumentService {
             }
         }
         final Map<String, Object> cityInfo = cityService.cityDataAsMap();
+        try {
         waterChargeDocument.setZone(assessmentDetails.getBoundaryDetails().getZoneName());
         waterChargeDocument.setRevenueWard(assessmentDetails.getBoundaryDetails().getWardName());
         waterChargeDocument.setAdminWard(assessmentDetails.getBoundaryDetails().getAdminWardName());
@@ -134,7 +146,7 @@ public class WaterChargeDocumentService {
                 ? assessmentDetails.getBoundaryDetails().getLocalityName() : "");
         waterChargeDocument.setPropertyId(waterConnectionDetails.getConnection().getPropertyIdentifier());
         waterChargeDocument.setApplicationCode(waterConnectionDetails.getApplicationType().getCode());
-        waterChargeDocument.setCreatedDate(waterConnectionDetails.getExecutionDate());
+        waterChargeDocument.setCreatedDate(dateFormatter.parse(createdDate));
         waterChargeDocument.setMobileNumber(mobilNumber);
         waterChargeDocument.setStatus(waterConnectionDetails.getConnectionStatus().name());
         waterChargeDocument.setDistrictName(defaultString((String) cityInfo.get(CITY_DIST_NAME_KEY)));
@@ -169,6 +181,9 @@ public class WaterChargeDocumentService {
         waterChargeDocument.setAadhaarNumber(aadharNumber);
         waterChargeDocument.setWardlocation(commonWardlocationField(assessmentDetails));
         waterChargeDocument.setPropertylocation(commonPropertylocationField(assessmentDetails));
+        } catch (ParseException exp) {
+            LOGGER.error("Exception parsing Date " + exp.getMessage());
+        }
         createWaterChargeDocument(waterChargeDocument);
         return waterChargeDocument;
 
@@ -196,8 +211,8 @@ public class WaterChargeDocumentService {
 
         if (waterConnectionDetails.getConnection() != null
                 && waterConnectionDetails.getConnection().getConsumerCode() != null)
-            waterChargeDocument = waterChargeIndexRepository.findByConsumerCodeAndUlbName(
-                    waterConnectionDetails.getConnection().getConsumerCode(),
+            waterChargeDocument = waterChargeIndexRepository.findByConsumerCodeAndCityNameOrUlbName(
+                    waterConnectionDetails.getConnection().getConsumerCode(),defaultString((String) cityInfo.get(CITY_NAME_KEY)),
                     defaultString((String) cityInfo.get(CITY_NAME_KEY)));
         if (waterChargeDocument == null) {
             Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
