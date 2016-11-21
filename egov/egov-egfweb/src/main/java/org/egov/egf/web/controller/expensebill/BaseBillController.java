@@ -108,14 +108,9 @@ public abstract class BaseBillController extends BaseVoucherController {
 
     protected void validateBillNumber(final EgBillregister egBillregister, final BindingResult resultBinder) {
         if (!expenseBillService.isBillNumberGenerationAuto() && egBillregister.getId() == null)
-            if (!isBillNumUnique(egBillregister.getBillnumber()))
+            if (!expenseBillService.isBillNumUnique(egBillregister.getBillnumber()))
                 resultBinder.reject("msg.expense.bill.duplicate.bill.number",
                         new String[] { egBillregister.getBillnumber() }, null);
-    }
-
-    protected boolean isBillNumUnique(final String billnumber) {
-        final EgBillregister bill = expenseBillService.getByBillnumber(billnumber);
-        return bill == null;
     }
 
     protected void validateLedgerAndSubledger(final EgBillregister egBillregister, final BindingResult resultBinder) {
@@ -212,7 +207,7 @@ public abstract class BaseBillController extends BaseVoucherController {
     }
 
     protected void populateBillPayeeDetails(final EgBillregister egBillregister) {
-        EgBillPayeedetails payeeDetail ;
+        EgBillPayeedetails payeeDetail;
         for (final EgBilldetails details : egBillregister.getEgBilldetailes())
             for (final EgBillPayeedetails payeeDetails : egBillregister.getBillPayeedetails())
                 if (details.getGlcodeid().equals(payeeDetails.getEgBilldetailsId().getGlcodeid())) {

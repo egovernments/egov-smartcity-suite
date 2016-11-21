@@ -61,6 +61,8 @@ public interface FinancialConstants {
     public static final String SUPPLIERBILL = "PURCHBILL";
     public static final String CONTRACTORBILL = "WORKSBILL";
     public static final String PENSIONBILL = "PENSIONBILL";
+    public static final String SBILL = "SBILL";
+    public static final String CONTRACTOR_BILL = "CONTRACTORBILL";
 
     // Standard Bill Types or Expernditure type
 
@@ -97,7 +99,7 @@ public interface FinancialConstants {
     // Status for Contrator Bills
     public static final String CONTRACTORBILL_CREATED_STATUS = "Pending";
     public static final String CONTRACTORBILL_CANCELLED_STATUS = "Cancelled";
-    // public static final String CONTRACTORBILL_APPROVED_STATUS="Approved";
+    public static final String CONTRACTORBILL_APPROVED_STATUS = "APPROVED";
     public static final String CONTRACTORBILL_PASSED_STATUS = "Passed";
     public static final String CONTRACTORBILL_PAID_STATUS = "Paid";
 

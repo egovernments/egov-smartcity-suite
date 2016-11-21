@@ -53,7 +53,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author venki
- *
  */
 
 @Service
@@ -80,6 +79,10 @@ public class EgBillSubTypeService {
 
     public List<EgBillSubType> getByExpenditureType(final String expenditureType) {
         return egBillSubTypeRepository.findByExpenditureType(expenditureType);
+    }
+
+    public EgBillSubType getByExpenditureTypeAndName(final String expenditureType, final String name) {
+        return egBillSubTypeRepository.findByExpenditureTypeAndName(expenditureType, name);
     }
 
     @Transactional

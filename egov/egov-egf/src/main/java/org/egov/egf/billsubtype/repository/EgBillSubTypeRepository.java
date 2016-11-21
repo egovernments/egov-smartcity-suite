@@ -47,10 +47,12 @@ import org.springframework.stereotype.Repository;
 
 /**
  * @author venki
- *
  */
 
 @Repository
 public interface EgBillSubTypeRepository extends JpaRepository<EgBillSubType, Long> {
+
     List<EgBillSubType> findByExpenditureType(String expenditureType);
+
+    EgBillSubType findByExpenditureTypeAndName(String expenditureType, String name);
 }
