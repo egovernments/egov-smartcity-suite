@@ -145,7 +145,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="counterAffidavits[0].eOfficeComputerNumber"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacters" maxlength="16"/>
+								data-pattern="alphanumericwithspecialcharacters"  id="eoffice" maxlength="16"/>
 							<form:errors path="counterAffidavits[0].eOfficeComputerNumber"
 								cssClass="error-msg" />
 						</div>

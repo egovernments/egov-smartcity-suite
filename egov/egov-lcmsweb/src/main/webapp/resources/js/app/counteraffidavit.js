@@ -37,10 +37,22 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-/*jQuery(document).ready(
+jQuery(document).ready(
 		function($) {
+			$('#buttonsubmitid').click(function() {
+				var txt = $('#eoffice').val();
+				var re = /^[ A-Za-z0-9/-]*$/
+				if (re.test(txt)) {
+				}
+				else {
+				alert('It Should accept two special charcters / and -');
+				return false;
+				}
+			});
+		
+		});
 			
-			var modeval=$("#mode").val();
+			/*var modeval=$("#mode").val();
 			var $tableBody = $('#caffidavitdetails').find("tbody"),
 		    $trLast = $tableBody.find("tr:last");
 			
