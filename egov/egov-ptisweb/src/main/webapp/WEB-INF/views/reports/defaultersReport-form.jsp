@@ -84,14 +84,16 @@
 								code="lbl.fromAmount" /> : </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="" name="fromAmount" id="fromAmount"
-								cssClass="form-control" value="${fromAmount}"
+								cssClass="form-control patternvalidation" data-pattern="number"
+								value="${fromAmount}"
 								cssErrorClass="form-control error" />
 						</div>
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
 								code="lbl.toAmount" /> : </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="" name="toAmount" id="toAmount"
-								cssClass="form-control" value="${toAmount}"
+								cssClass="form-control patternvalidation" data-pattern="number"
+								value="${toAmount}"
 								cssErrorClass="form-control error" />
 						</div>
 
@@ -155,4 +157,6 @@
 </div>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/js/app/defaultersReport.js?rnd=${app_release_no}'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
 
