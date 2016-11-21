@@ -1218,10 +1218,12 @@ public class LineEstimateService {
         final AppConfigValues value = nominationLimit.get(0);
         final List<AppConfigValues> nominationName = estimateService.getNominationName();
         if (value.getValue() != null && !value.getValue().isEmpty()
+                && lineEstimate.getModeOfAllotment().equalsIgnoreCase(!nominationName.isEmpty() ? nominationName.get(0).getValue() : "")
                 && Double.parseDouble(estimateAmount.toString()) > Double.parseDouble(value.getValue()))
             errors.reject("error.lineestimate.modeofentrustment",
                     new String[] { !nominationName.isEmpty() ? nominationName.get(0).getValue() : "", estimateAmount.toString() },
                     "error.lineestimate.modeofentrustment");
+
     }
 
     public void loadModelValues(final LineEstimate lineEstimate, final Model model) {

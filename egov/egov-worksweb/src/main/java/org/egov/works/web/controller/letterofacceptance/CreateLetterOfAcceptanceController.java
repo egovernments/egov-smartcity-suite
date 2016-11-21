@@ -274,6 +274,8 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
         model.addAttribute("validActionList", validActions);
         model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
         model.addAttribute("amountRule", workOrder.getWorkOrderAmount());
+        final List<AppConfigValues> nominationName = estimateService.getNominationName();
+        model.addAttribute("nominationName", !nominationName.isEmpty() ? nominationName.get(0).getValue() : "");
     }
 
     @RequestMapping(value = "/letterofacceptance-success", method = RequestMethod.GET)

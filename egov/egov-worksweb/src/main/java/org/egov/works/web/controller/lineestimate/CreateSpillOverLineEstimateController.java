@@ -66,6 +66,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.pims.commons.Designation;
+import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
@@ -140,6 +141,9 @@ public class CreateSpillOverLineEstimateController {
 
     @Autowired
     private WorksUtils worksUtils;
+
+    @Autowired
+    private EstimateService estimateService;
 
     @RequestMapping(value = "/newspilloverform", method = RequestMethod.GET)
     public String showNewSpillOverLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
@@ -244,9 +248,13 @@ public class CreateSpillOverLineEstimateController {
         final List<AppConfigValues> nominationLimit = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_NOMINATION_AMOUNT);
         final AppConfigValues value = nominationLimit.get(0);
-        if (Double.parseDouble(estimateAmount.toString()) > Double.parseDouble(value.getValue()))
+        final List<AppConfigValues> nominationName = estimateService.getNominationName();
+        if (value.getValue() != null && !value.getValue().isEmpty()
+                && lineEstimate.getModeOfAllotment()
+                        .equalsIgnoreCase(!nominationName.isEmpty() ? nominationName.get(0).getValue() : "")
+                && Double.parseDouble(estimateAmount.toString()) > Double.parseDouble(value.getValue()))
             errors.reject("error.lineestimate.modeofentrustment",
-                    new String[] { estimateAmount.toString() },
+                    new String[] { !nominationName.isEmpty() ? nominationName.get(0).getValue() : "", estimateAmount.toString() },
                     "error.lineestimate.modeofentrustment");
 
     }

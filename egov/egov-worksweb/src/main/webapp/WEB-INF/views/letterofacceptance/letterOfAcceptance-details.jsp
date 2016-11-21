@@ -48,6 +48,8 @@
 <input type="hidden" id="errorWorkOrderDate" value="<spring:message code='error.loa.workorderdate'/>">
 <input type="hidden" id="spillOverFlag" value="${abstractEstimate.lineEstimateDetails.lineEstimate.spillOverFlag }">
 <input type="hidden" id="workOrderCreated" value="${abstractEstimate.lineEstimateDetails.lineEstimate.workOrderCreated }">
+<input type="hidden" id="modeOfEntrustment" value="${abstractEstimate.lineEstimateDetails.lineEstimate.modeOfAllotment }">
+<input type="hidden" id="nominationName" value="${nominationName}">
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.file.no" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">

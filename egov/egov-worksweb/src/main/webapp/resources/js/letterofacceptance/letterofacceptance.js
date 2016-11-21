@@ -83,6 +83,10 @@ $(document).ready(function(){
 		});
 		
 		if($('#tenderFinalizedPercentage').val() == 0) 
+			$('#tenderFinalizedPercentage').val('');
+		var modeOfEntrustment = $('#modeOfEntrustment').val();
+		var nominationName = $('#nominationName').val();
+		if(modeOfEntrustment == nominationName && $('#tenderFinalizedPercentage').val() == '')
 			$('#tenderFinalizedPercentage').val(0);
 		if($('#tenderFinalizedPercentage').val() < 0) {
 			$('#tenderFinalizedPercentage').val(Math.abs($('#tenderFinalizedPercentage').val()));
