@@ -44,6 +44,11 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
+<style>
+	.position_alert{
+        position:fixed;z-index:9999;top:85px;right:20px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
+      }
+</style>
 <form:form modelAttribute="contractorMBHeader" name="contractorMBHeader" role="form" method="post" id="contractorMBHeader"
 	class="form-horizontal form-groups-bordered"
 	accept-charset="utf-8"
@@ -63,8 +68,13 @@
 			   </div>
           </spring:hasBindErrors>
 	</div>
+	<div class="position_alert">
+		<spring:message	code="lbl.mb.amount" /> : &#8377 <span id="mbAmountTotal"><c:out value="${mbAmount}" default="0.0"></c:out></span>
+		<form:input type="hidden" path="mbAmount" value="${contractorMB.mbAmount }" id="mbAmount" class="form-control table-input text-right"/>
+	</div>
 	<%@ include file="contractormb-header.jsp"%>
 	<%@ include file="contractormb-details.jsp"%>
+	<%@ include file="contractormb-additionalitems.jsp"%>
 	<jsp:include page="../common/uploadDocuments.jsp"/>
 	<div class="form-group" align="center">
 		<label class="col-sm-4 control-label text-right">
@@ -91,3 +101,6 @@
 	src="<cdn:url value='/resources/js/contractorportal/contractormb.js?rnd=${app_release_no}'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/js/contractorportal/contractormbmsheet.js?rnd=${app_release_no}'/>"></script>
+<div id="measurement" >
+<%@ include file="../measurementsheet/measurementsheet-formtable.jsp"%>
+</div>

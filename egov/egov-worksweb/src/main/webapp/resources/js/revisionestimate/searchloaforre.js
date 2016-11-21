@@ -43,6 +43,9 @@ $('#btncreatere').hide();
 jQuery('#btnsearch').click(function(e) {
 	var fromDate = '';
 	var toDate = '';
+
+	$('#btncreatere').hide();
+	
 	if($('#fromDate').val() != "") {
 		fromDate = $('#fromDate').data('datepicker').date;
 	}
@@ -92,12 +95,14 @@ function callAjaxSearch() {
 				},
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)',row).html('<input type="radio" name="selectCheckbox" value="'+ data.workOrderEstimateId +'"/>');
-					if(data.estimateNumber != null)
+					if(data.estimateNumber != null) {
 						$('td:eq(1)',row).html('<a href="javascript:void(0);" onclick="viewAbstractEstimate(\''+ data.estimateId +'\')">' + data.estimateNumber + '</a>');
+						$('#btncreatere').show();
+					}
 					if(data.workOrderNumber != null)
 						$('td:eq(2)',row).html('<a href="javascript:void(0);" onclick="viewWorkOrder(\''+ data.workOrderId +'\')">' + data.workOrderNumber + '</a>');
 					$('td:eq(5)',row).html(parseFloat(Math.round(data.agreementValue * 100) / 100).toFixed(2));
-					$('#btncreatere').show();
+					
 				},
 				aaSorting : [],
 				columns : [ { 

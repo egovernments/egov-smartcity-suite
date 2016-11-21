@@ -51,6 +51,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.service.UOMService;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.messaging.MessagingService;
@@ -100,6 +101,9 @@ public class CreateContractorMBController {
     @Autowired
     private EgovCommon egovCommon;
 
+    @Autowired
+    private UOMService uomService;
+
     @RequestMapping(value = "/search-loaform", method = RequestMethod.GET)
     public String showSearchLoaForm() {
         return "contractormb-loasearch";
@@ -120,6 +124,7 @@ public class CreateContractorMBController {
         contractorMBHeaderService.populateContractorMBDetails(contractorMBHeader);
         model.addAttribute("contractorMB", contractorMBHeader);
         model.addAttribute("documentDetails", contractorMBHeader.getDocumentDetails());
+        model.addAttribute("uoms", uomService.findAll());
 
         final List<Long> projectCodeIdList = new ArrayList<Long>();
         projectCodeIdList.add(workOrderEstimate.getEstimate().getLineEstimateDetails().getProjectCode().getId());

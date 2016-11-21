@@ -58,6 +58,7 @@
 	</div>
 	<%@ include file="contractormb-header.jsp"%>
 	<%@ include file="contractormb-viewdetails.jsp"%>
+	<%@ include file="additional-items-view.jsp"%>
 	<jsp:include page="../common/uploadDocuments.jsp"/>
 	<div class="form-group">
 		<label class="col-sm-2 control-label text-right">

@@ -41,6 +41,7 @@ package org.egov.works.contractorportal.entity;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -61,6 +62,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.Valid;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
@@ -109,6 +111,10 @@ public class ContractorMBHeader extends AbstractAuditable {
     private final List<ContractorMBDetails> contractorMBDetails = new ArrayList<ContractorMBDetails>(0);
 
     private transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
+
+    private transient List<ContractorMBDetails> workOrderBOQs = new ArrayList<ContractorMBDetails>(0);
+
+    private transient List<ContractorMBDetails> additionalMBDetails = new ArrayList<ContractorMBDetails>(0);
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
@@ -211,5 +217,31 @@ public class ContractorMBHeader extends AbstractAuditable {
 
     public void setMbRefNo(final String mbRefNo) {
         this.mbRefNo = mbRefNo;
+    }
+
+    public List<ContractorMBDetails> getAdditionalMBDetails() {
+        return additionalMBDetails;
+    }
+
+    public void setAdditionalMBDetails(final List<ContractorMBDetails> additionalMBDetails) {
+        this.additionalMBDetails = additionalMBDetails;
+    }
+
+    public List<ContractorMBDetails> getWorkOrderBOQs() {
+        return workOrderBOQs;
+    }
+
+    public void setWorkOrderBOQs(final List<ContractorMBDetails> workOrderBOQs) {
+        this.workOrderBOQs = workOrderBOQs;
+    }
+
+    public Collection<ContractorMBDetails> getWorkOrderBOQDetails() {
+        return CollectionUtils.select(contractorMBDetails,
+                detail -> ((ContractorMBDetails) detail).getWorkOrderActivity() != null);
+    }
+
+    public Collection<ContractorMBDetails> getAdditionalDetails() {
+        return CollectionUtils.select(contractorMBDetails,
+                detail -> ((ContractorMBDetails) detail).getWorkOrderActivity() == null);
     }
 }

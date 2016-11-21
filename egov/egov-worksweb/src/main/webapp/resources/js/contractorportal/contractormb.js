@@ -89,7 +89,7 @@ function mbTotal() {
 	
 	total = parseFloat(parseFloat(nonTenderedTotal) + parseFloat(tenderedTotal)).toFixed(2);
 	$('#mbTotal').html(total);
-	$('#mbAmount').val(total);
+	calculateMBAmount();
 }
 
 function getFormData($form) {

@@ -42,9 +42,8 @@
 	<input type="hidden" id="errorcumulativequantity" value="<spring:message code='error.approved.quantity.cumulative' />">
 	<input type="hidden" id="isMeasurementsExist" value="${isMeasurementsExist }">
 	<div class="panel-heading">
-		<div class="position_alert3"><spring:message code="lbl.pagetotal" /> : &#8377 <span id="pageTotal"></span></div>
 		<div class="panel-title">
-			<spring:message code="title.mb.details" />
+			<spring:message code="lbl.work.order.boq" />
 		</div>
 		<div align="right" class="openCloseAll">
 		<input type="button" value="Close All Measurements" class="btn btn-sm btn-secondary"
@@ -156,8 +155,7 @@
 			</tbody>
 			<tfoot>
 				<tr>
-					<form:input type="hidden" path="mbAmount" value="${contractorMB.mbAmount }" id="mbAmount" class="form-control table-input text-right"/>
-					<td colspan="8" class="text-right"><spring:message code="lbl.mbamount" /></td>
+					<td colspan="8" class="text-right"><spring:message code="lbl.total" /></td>
 					<td class="text-right"> <span id="mbTotal">0.00</span> </td>
 				</tr>
 			</tfoot>

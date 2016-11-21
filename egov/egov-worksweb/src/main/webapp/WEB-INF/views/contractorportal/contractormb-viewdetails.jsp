@@ -40,7 +40,7 @@
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
-			<spring:message code="title.mb.details" />
+			<spring:message code="lbl.work.order.boq" />
 		</div>
 		<div align="right" class="openCloseAll">
 		<input type="button" value="Close All Measurements" class="btn btn-sm btn-secondary"
@@ -64,7 +64,7 @@
 				</tr>
 			</thead>
 			<tbody id="sorTable">
-				<c:forEach items="${contractorMB.contractorMBDetails }" var="details" varStatus="item">
+				<c:forEach items="${contractorMB.workOrderBOQs }" var="details" varStatus="item">
 					<tr align="center">
 						<td>
 							<span class="spansorslno">${item.index + 1 }</span>
@@ -115,7 +115,6 @@
 							</c:choose>
 						</td>
 						<td hidden="true">
-							<c:set var="net" value="0" />
 							<c:set var="total" value="0" />
                             <input class="classmspresent" type="hidden" disabled="disabled" name="contractorMBDetails[${item.index }].mspresent" id="contractorMBDetails[${item.index }].mspresent" data-idx="0"/>
                             <input class="classmsopen" type="hidden" disabled="disabled" name="contractorMBDetails[${item.index }].msopen" id="contractorMBDetails[${item.index }].msopen" data-idx="0"/>
@@ -127,9 +126,11 @@
 							<c:choose>
 								<c:when test="${details.workOrderActivity.activity.revisionType == 'NON_TENDERED_ITEM' || details.workOrderActivity.activity.revisionType == 'LUMP_SUM_ITEM' }">
 									<span class="nontendered" id="amount_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.amount }</fmt:formatNumber></span>
+									<c:set var="total" value="${total + details.amount }" />
 								</c:when>
 								<c:otherwise>
 									<span class="tendered" id="amount_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.amount }</fmt:formatNumber></span>
+									<c:set var="total" value="${total + (details.amount + details.amount * contractorMB.workOrderEstimate.workOrder.tenderFinalizedPercentage / 100) }" />
 								</c:otherwise>
 							</c:choose>
 						</td>
@@ -138,9 +139,9 @@
 			</tbody>
 			<tfoot>
 				<tr>
-					<td colspan="8" class="text-right"><spring:message code="lbl.mbamount" /> (<spring:message code="lbl.mbamount.note" />)</td>
+					<td colspan="8" class="text-right"><spring:message code="lbl.total" /> (<spring:message code="lbl.mbamount.note" />)</td>
 					<td class="text-right"> <span id="mbTotal">
-						<fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${contractorMB.mbAmount }" />
+						<fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${total }" />
 					</span> </td>
 				</tr>
 			</tfoot>

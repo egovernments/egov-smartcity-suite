@@ -81,6 +81,7 @@ public class ContractorMBMeasurementSheet extends AbstractAuditable {
     private BigDecimal length;
     private BigDecimal width;
     private BigDecimal depthOrHeight;
+    private char identifier;
     @Required
     private BigDecimal quantity;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -88,7 +89,7 @@ public class ContractorMBMeasurementSheet extends AbstractAuditable {
     private ContractorMBDetails contractorMBDetails;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "womsheetid")
+    @JoinColumn(name = "womsheetid", nullable = true)
     private WorkOrderMeasurementSheet woMeasurementSheet;
 
     @Transient
@@ -174,6 +175,14 @@ public class ContractorMBMeasurementSheet extends AbstractAuditable {
 
     public void setContractorMBMSheetTotalQuantity(final double contractorMBMSheetTotalQuantity) {
         this.contractorMBMSheetTotalQuantity = contractorMBMSheetTotalQuantity;
+    }
+
+    public char getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(final char identifier) {
+        this.identifier = identifier;
     }
 
 }

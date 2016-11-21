@@ -46,6 +46,7 @@ import static org.egov.infra.messaging.MessagePriority.HIGH;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -135,6 +136,7 @@ public class ContractorMBHeaderService {
             }
         contractorMBHeader.setContractorMBDetails(filteredDetails);
         contractorMBHeader.setMbDate(new Date());
+        mergeAdditionalItemDetails(contractorMBHeader);
         final CFinancialYear financialYear = worksUtils.getFinancialYearByDate(contractorMBHeader.getMbDate());
         final ContractorMBNumberGenerator numberGenerator = beanResolver
                 .getAutoNumberServiceFor(ContractorMBNumberGenerator.class);
@@ -203,5 +205,26 @@ public class ContractorMBHeaderService {
     @Transactional
     public Boolean isValidOTP(final String otp, final String mobileNumber) {
         return tokenService.redeemToken(otp, mobileNumber, CONTRACTOR_MB_SERVICE);
+    }
+
+    private void mergeAdditionalItemDetails(final ContractorMBHeader contractorMBHeader) {
+        for (final ContractorMBDetails details : contractorMBHeader.getAdditionalMBDetails())
+            if (details.getId() == null) {
+                removeEmptyMS(details);
+                details.setContractorMBHeader(contractorMBHeader);
+                for (final ContractorMBMeasurementSheet ms : details.getMeasurementSheets())
+                    ms.setContractorMBDetails(details);
+                contractorMBHeader.getContractorMBDetails().add(details);
+            }
+    }
+
+    private void removeEmptyMS(final ContractorMBDetails details) {
+        final List<ContractorMBMeasurementSheet> toRemove = new LinkedList<ContractorMBMeasurementSheet>();
+        for (final ContractorMBMeasurementSheet ms : details.getMeasurementSheets())
+            if (ms.getQuantity() == null || ms.getQuantity() != null && ms.getQuantity().equals(""))
+                toRemove.add(ms);
+
+        for (final ContractorMBMeasurementSheet msremove : toRemove)
+            details.getMeasurementSheets().remove(msremove);
     }
 }

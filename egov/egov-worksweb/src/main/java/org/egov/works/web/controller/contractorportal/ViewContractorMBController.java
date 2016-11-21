@@ -50,7 +50,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.works.contractorbill.service.ContractorBillRegisterService;
+import org.egov.works.contractorportal.entity.ContractorMBDetails;
 import org.egov.works.contractorportal.entity.ContractorMBHeader;
 import org.egov.works.contractorportal.service.ContractorMBHeaderService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
@@ -77,9 +77,6 @@ public class ViewContractorMBController {
     private WorksUtils worksUtils;
 
     @Autowired
-    private ContractorBillRegisterService contractorBillRegisterService;
-
-    @Autowired
     private EgovCommon egovCommon;
 
     @Autowired
@@ -98,6 +95,7 @@ public class ViewContractorMBController {
         final ContractorMBHeader contractorMB = contractorMBHeaderService
                 .getContractorMBHeaderById(id);
         final ContractorMBHeader newcontractorMB = getContractorMBDocuments(contractorMB);
+        splitBOQAndAdditionalDetails(newcontractorMB);
         model.addAttribute("documentDetails", newcontractorMB.getDocumentDetails());
         model.addAttribute("mode", "view");
         final List<Long> projectCodeIdList = new ArrayList<Long>();
@@ -131,7 +129,7 @@ public class ViewContractorMBController {
         contractorMBHeader.setDocumentDetails(documentDetailsList);
         return contractorMBHeader;
     }
-    
+
     @RequestMapping(value = "/contractormbs/{id}", method = RequestMethod.GET)
     public String ContractorMBs(final Model model, @PathVariable final Long id,
             final HttpServletRequest request) {
@@ -139,5 +137,10 @@ public class ViewContractorMBController {
                 .getContractorMBHeaderByWorkOrderEstimateId(Long.valueOf(id));
         model.addAttribute("contractorMBHeaders", contractorMBHeaders);
         return "previous-contractormbs";
+    }
+
+    private void splitBOQAndAdditionalDetails(final ContractorMBHeader contractorMBHeader) {
+        contractorMBHeader.setWorkOrderBOQs((List<ContractorMBDetails>) contractorMBHeader.getWorkOrderBOQDetails());
+        contractorMBHeader.setAdditionalMBDetails((List<ContractorMBDetails>) contractorMBHeader.getAdditionalDetails());
     }
 }

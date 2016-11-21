@@ -55,6 +55,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.egov.common.entity.UOM;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.GreaterThan;
 import org.egov.infra.persistence.validator.annotation.Required;
@@ -81,7 +82,7 @@ public class ContractorMBDetails extends AbstractAuditable {
 
     @Required(message = "mbdetails.activity.null")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "WO_ACTIVITY_ID", nullable = false)
+    @JoinColumn(name = "WO_ACTIVITY_ID", nullable = true)
     private WorkOrderActivity workOrderActivity;
 
     @GreaterThan(value = 0, message = "mbdetails.quantity.non.negative")
@@ -90,6 +91,12 @@ public class ContractorMBDetails extends AbstractAuditable {
     private double rate;
 
     private double amount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "uom", nullable = true)
+    private UOM uom;
+
+    private String description;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "contractorMBDetails", targetEntity = ContractorMBMeasurementSheet.class)
     @OrderBy("id")
@@ -164,4 +171,19 @@ public class ContractorMBDetails extends AbstractAuditable {
         this.measurementSheets = measurementSheets;
     }
 
+    public UOM getUom() {
+        return uom;
+    }
+
+    public void setUom(final UOM uom) {
+        this.uom = uom;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 }
