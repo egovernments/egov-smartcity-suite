@@ -57,8 +57,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -111,20 +111,21 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/councilmeeting")
 public class CouncilMeetingController {
 	
-	 //private static final Logger LOGGER = Logger.getLogger(CouncilMeetingController.class);
 	 
-    private final static String COUNCILMEETING_NEW = "councilmeeting-new";
-    private final static String COMMONERRORPAGE = "common-error-page";
-    private final static String COUNCILMEETING_RESULT = "councilmeeting-result";
-    private final static String COUNCILMEETING_EDIT = "councilmeeting-edit";
-    private final static String COUNCILMEETING_VIEW = "councilmeeting-view";
-    private final static String COUNCILMEETING_SEARCH = "councilmeeting-search";
-    private final static String COUNCIL_MEETING_AGENDA_SEARCH = "councilmeetingAgenda-search";
-    private final static String COUNCILMEETING_ATTENDANCE_SEARCH = "councilmeeting-attendsearch";
-    private final static String COUNCILMEETING_ATTENDANCE_VIEW = "councilmeeting-attendsearch-view";
-    private final static String COUNCILMEETING_SEND_SMS_EMAIL = "councilmeetingsearch-tosendsms-email";
-    private final static String COUNCILMEETING_EDIT_ATTENDANCE = "councilmeeting-attend-form";
-    private final static String COUNCILMEETING_ATTENDANCE_RESULT = "councilmeeting-attend-result";
+    private static final String COUNCIL_MEETING = "councilMeeting";
+    private static final String MESSAGE = "message";
+    private static final String COUNCILMEETING_NEW = "councilmeeting-new";
+    private static final String COMMONERRORPAGE = "common-error-page";
+    private static final String COUNCILMEETING_RESULT = "councilmeeting-result";
+    private static final String COUNCILMEETING_EDIT = "councilmeeting-edit";
+    private static final String COUNCILMEETING_VIEW = "councilmeeting-view";
+    private static final String COUNCILMEETING_SEARCH = "councilmeeting-search";
+    private static final String COUNCIL_MEETING_AGENDA_SEARCH = "councilmeetingAgenda-search";
+    private static final String COUNCILMEETING_ATTENDANCE_SEARCH = "councilmeeting-attendsearch";
+    private static final String COUNCILMEETING_ATTENDANCE_VIEW = "councilmeeting-attendsearch-view";
+    private static final String COUNCILMEETING_SEND_SMS_EMAIL = "councilmeetingsearch-tosendsms-email";
+    private static final String COUNCILMEETING_EDIT_ATTENDANCE = "councilmeeting-attend-form";
+    private static final String COUNCILMEETING_ATTENDANCE_RESULT = "councilmeeting-attend-result";
 	
 	@Autowired
 	private CouncilMeetingService councilMeetingService;
@@ -142,23 +143,25 @@ public class CouncilMeetingController {
 	private DepartmentService departmentService;
 	@Autowired
 	private CouncilSmsAndEmailService councilSmsAndEmailService;
-	@Autowired  private CouncilReportService councilReportService;
-	protected @Autowired FileStoreUtils fileStoreUtils;  
+	@Autowired  
+	private CouncilReportService councilReportService;
+	@Autowired 
+	protected FileStoreUtils fileStoreUtils;  
 	@Qualifier("fileStoreService")
-	private @Autowired FileStoreService fileStoreService;
-	
+	@Autowired 
+	private FileStoreService fileStoreService;
 	@Autowired
 	private CouncilCommitteeMemberService committeeMemberService;
 
-	public @ModelAttribute("committeeType") List<CommitteeType> getCommitteTypeList() {
+	@ModelAttribute("committeeType") public List<CommitteeType> getCommitteTypeList() {
 		return committeeTypeService.getActiveCommiteeType();
 	}
 
-	public @ModelAttribute("meetingTimingMap") LinkedHashMap<String, String> getMeetingTimingList() {
+	@ModelAttribute("meetingTimingMap") public  Map<String, String> getMeetingTimingList() {
 		return MEETING_TIMINGS;
 	}
-
-	public @ModelAttribute("departments") List<Department> getDepartmentList() {
+	
+	@ModelAttribute("departments") public List<Department> getDepartmentList() {
 		return departmentService.getAllDepartments();
 	}
 	
@@ -167,9 +170,9 @@ public class CouncilMeetingController {
 			final Model model) {
 
 		CouncilAgenda councilAgenda = councilAgendaService.findOne(id);
-		model.addAttribute("councilMeeting", councilMeeting);
+		model.addAttribute(COUNCIL_MEETING, councilMeeting);
 		if(councilAgenda != null && AGENDAUSEDINMEETING.equals(councilAgenda.getStatus().getCode())){
-			model.addAttribute("message", "msg.agenda.exist");
+			model.addAttribute(MESSAGE, "msg.agenda.exist");
 			return COMMONERRORPAGE;
 		} else if (councilAgenda != null) {
 			councilMeeting.setCommitteeType(councilAgenda.getCommitteeType());
@@ -177,7 +180,7 @@ public class CouncilMeetingController {
 			return COUNCILMEETING_NEW;
 
 		} else {
-			model.addAttribute("message", "msg.invalid.agenda.details");
+			model.addAttribute(MESSAGE, "msg.invalid.agenda.details");
 			return COMMONERRORPAGE;
 		}
 
@@ -190,7 +193,8 @@ public class CouncilMeetingController {
             meetingMom.setMeeting(councilMeeting);
             meetingMom.setAgenda(councilAgendaDetail.getAgenda());
             meetingMom.setPreamble(councilAgendaDetail.getPreamble());
-            meetingMom.setItemNumber(itemNumber.toString());itemNumber++;
+            meetingMom.setItemNumber(itemNumber.toString());
+            itemNumber++;
             councilMeeting.addMeetingMoms(meetingMom);
         }
     }
@@ -215,7 +219,7 @@ public class CouncilMeetingController {
         }
 
         councilMeetingService.create(councilMeeting); 
-        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMeeting.success", null, null));
+        redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.councilMeeting.success", null, null));
         return "redirect:/councilmeeting/result/" + councilMeeting.getId();
     }
 
@@ -224,7 +228,7 @@ public class CouncilMeetingController {
             throws IOException {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
         sortMeetingMomByItemNumber(councilMeeting);
-        model.addAttribute("councilMeeting", councilMeeting);
+        model.addAttribute(COUNCIL_MEETING, councilMeeting);
         
         return COUNCILMEETING_EDIT;
     }
@@ -236,7 +240,7 @@ public class CouncilMeetingController {
             return COUNCILMEETING_EDIT;
         }
         councilMeetingService.update(councilMeeting);
-        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMeeting.success", null, null));
+        redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.councilMeeting.success", null, null));
         return "redirect:/councilmeeting/result/" + councilMeeting.getId();
     }
 
@@ -244,7 +248,7 @@ public class CouncilMeetingController {
     public String view(@PathVariable("id") final Long id, Model model) {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
         sortMeetingMomByItemNumber(councilMeeting);
-        model.addAttribute("councilMeeting", councilMeeting);
+        model.addAttribute(COUNCIL_MEETING, councilMeeting);
         return COUNCILMEETING_VIEW;
     }
 
@@ -260,7 +264,7 @@ public class CouncilMeetingController {
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
     public String result(@PathVariable("id") final Long id, Model model) {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
-        model.addAttribute("councilMeeting", councilMeeting);
+        model.addAttribute(COUNCIL_MEETING, councilMeeting);
         model.addAttribute("commiteemembelist", councilMeeting.getCommitteeType().getCommiteemembers());
         return COUNCILMEETING_RESULT;
     }
@@ -268,7 +272,7 @@ public class CouncilMeetingController {
     @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
     public String search(@PathVariable("mode") final String mode, Model model) {
         CouncilMeeting councilMeeting = new CouncilMeeting();
-        model.addAttribute("councilMeeting", councilMeeting);
+        model.addAttribute(COUNCIL_MEETING, councilMeeting);
         return COUNCILMEETING_SEARCH;
 
     }
@@ -281,12 +285,12 @@ public class CouncilMeetingController {
     }
 
     @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, Model model,
+    @ResponseBody public String ajaxsearch(@PathVariable("mode") final String mode, Model model,
             @ModelAttribute final CouncilMeeting councilMeeting) {
-        if (null != mode && !mode.equals("")) {
+        if (null != mode && !"".equals(mode)) {
             List<CouncilMeeting> searchResultList;
 
-            if (mode.equalsIgnoreCase("edit")) {
+            if ("edit".equalsIgnoreCase(mode)) {
                 searchResultList = councilMeetingService.searchMeetingForEdit(councilMeeting);
             } else {
                 searchResultList = councilMeetingService.searchMeeting(councilMeeting);
@@ -299,24 +303,23 @@ public class CouncilMeetingController {
     }
     
     @RequestMapping(value = "/searchmeeting-tocreatemom", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchMeetingAndToCreateMOM( Model model,
+    @ResponseBody public String searchMeetingAndToCreateMOM( Model model,
             @ModelAttribute final CouncilMeeting councilMeeting) {
         List<CouncilMeeting> searchResultList = councilMeetingService.searchMeetingToCreateMOM(councilMeeting);
-         String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,CouncilMeeting.class,  CouncilMeetingJsonAdaptor.class)).append("}")
+        return new StringBuilder("{ \"data\":").append(toJSON(searchResultList,CouncilMeeting.class,  CouncilMeetingJsonAdaptor.class)).append("}")
                 .toString();
-        return result;
     }
     
     @RequestMapping(value = "/viewsmsemail", method = RequestMethod.GET)
     public String retrieveSmsAndEmailDetailsForCouncilMeeting(final Model model) {
         CouncilMeeting councilMeeting = new CouncilMeeting();
-        model.addAttribute("councilMeeting", councilMeeting);
+        model.addAttribute(COUNCIL_MEETING, councilMeeting);
         model.addAttribute("mode", "view");
         return COUNCILMEETING_SEND_SMS_EMAIL;
     }
     
     @RequestMapping(value = "/sendsmsemail", method = RequestMethod.GET)
-    public @ResponseBody String sendSmsAndEmailDetailsForCouncilMeeting(@RequestParam("id") Long id,
+    @ResponseBody public String sendSmsAndEmailDetailsForCouncilMeeting(@RequestParam("id") Long id,
             @RequestParam("msg") String msg, final Model model, final HttpServletRequest request) {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
         councilSmsAndEmailService.sendSms(councilMeeting, msg);
@@ -325,16 +328,15 @@ public class CouncilMeetingController {
                 (String) request.getSession().getAttribute("citylogo"));
         councilSmsAndEmailService.sendEmail(councilMeeting, msg,
                 councilReportService.generatePDFForAgendaDetails(councilMeeting, logoPath));
-        String result = new StringBuilder("{ \"success\":true }").toString();
-        return result;
+        return new StringBuilder("{ \"success\":true }").toString();
     }
     
 
     @RequestMapping(value = "/generateresolution/{id}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> viewDemandNoticeReport(@PathVariable final Long id,
+    @ResponseBody public ResponseEntity<byte[]> viewDemandNoticeReport(@PathVariable final Long id,
             final HttpSession session,HttpServletRequest request) {
      
-        byte[] reportOutput = null;
+        byte[] reportOutput;
         CouncilMeeting councilMeeting =councilMeetingService.findOne(id);
         final String url = WebUtils.extractRequestDomainURL(request, false);
         
@@ -351,7 +353,7 @@ public class CouncilMeetingController {
     @RequestMapping(value = "/attendance/search", method = RequestMethod.GET)
     public String getSearchAttendance(final Model model) {
         CouncilMeeting councilMeeting = new CouncilMeeting();
-        model.addAttribute("councilMeeting", councilMeeting);
+        model.addAttribute(COUNCIL_MEETING, councilMeeting);
         model.addAttribute("mode", "view");
         return COUNCILMEETING_ATTENDANCE_SEARCH;
     }
@@ -359,7 +361,7 @@ public class CouncilMeetingController {
     @RequestMapping(value = "/attendance/report/search", method = RequestMethod.GET)
     public String getSearchReportForAttendance(final Model model) {
         CouncilMeeting councilMeeting = new CouncilMeeting();
-        model.addAttribute("councilMeeting", councilMeeting);
+        model.addAttribute(COUNCIL_MEETING, councilMeeting);
         model.addAttribute("mode", "view");
         return COUNCILMEETING_ATTENDANCE_SEARCH;
     }
@@ -383,19 +385,19 @@ public class CouncilMeetingController {
     public String editAttendance(@PathVariable("id") final CouncilMeeting councilMeeting1, Model model) {
     	 CouncilMeeting councilMeeting = councilMeetingService.findOne(councilMeeting1.getId());
     	 
-    	 if(councilMeeting != null && councilMeeting.getCommitteeType().getCommiteemembers().size() <= 0){
-    		 model.addAttribute("message", "msg.committee.members.not.added");
+    	 if(councilMeeting != null && councilMeeting.getCommitteeType().getCommiteemembers().isEmpty()){
+    		 model.addAttribute(MESSAGE, "msg.committee.members.not.added");
   			return COMMONERRORPAGE;
     	 }
     	 if ( councilMeeting != null && councilMeeting.getStatus() != null){
  			if( ATTENDANCEFINALIZED.equals(councilMeeting.getStatus().getCode())) {
- 			model.addAttribute("message", "msg.attendance.already.finalizd");
+ 			model.addAttribute(MESSAGE, "msg.attendance.already.finalizd");
  			return COMMONERRORPAGE;
  			}
     	 }
     	 
     	 if ( councilMeeting != null && councilMeeting.getCommitteeType() != null && councilMeeting.getMeetingAttendence().isEmpty()) {
-				List<MeetingAttendence> attendencesList = new ArrayList<MeetingAttendence>();
+				List<MeetingAttendence> attendencesList = new ArrayList<>();
 				for (CommitteeMembers committeeMembers : committeeMemberService
 						.findAllByCommitteType(councilMeeting.getCommitteeType())) {
 					MeetingAttendence attendence = new MeetingAttendence();
@@ -405,7 +407,7 @@ public class CouncilMeetingController {
 				councilMeeting1.setMeetingAttendence(attendencesList);
 			}
          sortMeetingMomByItemNumber(councilMeeting);
-         model.addAttribute("councilMeeting", councilMeeting);
+         model.addAttribute(COUNCIL_MEETING, councilMeeting);
         return COUNCILMEETING_EDIT_ATTENDANCE;
     }
     
@@ -417,7 +419,7 @@ public class CouncilMeetingController {
         }
     	buildAttendanceDetailsForMeeting(councilMeeting);
         councilMeetingService.update(councilMeeting);
-        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMeeting.attendance.success", null, null));
+        redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.councilMeeting.attendance.success", null, null));
         return "redirect:result/" + councilMeeting.getId();
     }
 
@@ -430,7 +432,7 @@ public class CouncilMeetingController {
         buildAttendanceDetailsForMeeting(councilMeeting);
         councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MEETING_MODULENAME, ATTENDANCEFINALIZED));
         councilMeetingService.update(councilMeeting);
-        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMeeting.attendance.success", null, null));
+        redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.councilMeeting.attendance.success", null, null));
         return "redirect:result/"+councilMeeting.getId();
     }
     
@@ -473,7 +475,7 @@ public class CouncilMeetingController {
 	}
 
 	private byte[] generatePdfByPassingMeetingObject(final HttpServletRequest request, CouncilMeeting councilMeeting) {
-		byte[] reportOutput = null;
+		byte[] reportOutput;
 		final String url = WebUtils.extractRequestDomainURL(request, false);
 		String logoPath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
 				.concat((String) request.getSession().getAttribute("citylogo"));
@@ -488,16 +490,15 @@ public class CouncilMeetingController {
 	}
     
     @RequestMapping(value = "/attendance/ajaxsearch/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String ajaxsearc(@PathVariable("id") final CouncilMeeting id, Model model) {
+    @ResponseBody public String ajaxsearc(@PathVariable("id") final CouncilMeeting id, Model model) {
         List<MeetingAttendence> searchResultList = councilMeetingService.findListOfAttendance(id);
-       String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,MeetingAttendence.class,  MeetingAttendanceJsonAdaptor.class)).append("}")
+        return new StringBuilder("{ \"data\":").append(toJSON(searchResultList,MeetingAttendence.class,  MeetingAttendanceJsonAdaptor.class)).append("}")
                 .toString();
-        return result;
     }
     
     @RequestMapping(value = "/generateagenda/{id}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> printAgendaDetails(@PathVariable("id") final Long id,final Model model, final HttpServletRequest request){
-    	byte[] reportOutput = null;
+    @ResponseBody public ResponseEntity<byte[]> printAgendaDetails(@PathVariable("id") final Long id,final Model model, final HttpServletRequest request){
+    	byte[] reportOutput;
     	CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
     	final String url = WebUtils.extractRequestDomainURL(request, false);
         String logoPath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH).concat(

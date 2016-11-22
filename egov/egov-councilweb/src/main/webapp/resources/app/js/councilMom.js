@@ -44,13 +44,6 @@ jQuery('#btnsearch').click(function(e) {
 	});
 
 
-$('form').keypress(function (e) {
-    if (e.which == 13) {
-    	e.preventDefault();
-    	callAjaxSearch();
-    }
-}); 
-
 function getFormData($form){
     var unindexed_array = $form.serializeArray();
     var indexed_array = {};
@@ -71,7 +64,15 @@ function callAjaxSearch() {
 				ajax : {
 					url : "/council/councilmeeting/searchmeeting-tocreatemom",      
 					type: "POST",
-					"data":  getFormData(jQuery('form'))
+					beforeSend : function() {
+						$('.loader-class').modal('show', {
+							backdrop : 'static'
+						});
+					},
+					"data" : getFormData(jQuery('form')),
+					complete : function() {
+						$('.loader-class').modal('hide');
+					}
 				},
 				"bDestroy" : true,
 				"autoWidth": false,
@@ -138,8 +139,6 @@ jQuery('#add-sumoto').click(function(){
 	var idx=$(tbody).data('existing-len')+$(tbody).find('tr').length;
 	var sno=idx+1;
 	
-	console.log('Row Idx', idx);
-	
 //Add row
 	var row={
 	       'sno': sno,
@@ -154,15 +153,12 @@ jQuery('#add-sumoto').click(function(){
 //ajax call 
 function loadDepartmentlist(selectBoxName){
 
-console.log('selectboxName', selectBoxName);
-
  $.ajax({
 		url: "/council/councilmom/departmentlist",     
 		type: "GET",
 		async: false,
 		dataType: "json",
 		success: function (response) {
-		    console.log("success", response);
 			$('select[name="'+selectBoxName+'"]').empty();
 			$('select[name="'+selectBoxName+'"]').append($("<option value=''>Select </option>"));
 			$.each(response.departmentLists, function(index, departmentLists) {
@@ -170,7 +166,6 @@ console.log('selectboxName', selectBoxName);
 			});
 		}, 
 		error: function (response) {
-			console.log("failed");
 		}
 	});
  
@@ -185,7 +180,6 @@ function loadResolutionlist(selectBoxNameResolution){
 			async: false,
 			dataType: "json",
 			success: function (response) {
-			    console.log("success", response);
 				$('select[name="'+selectBoxNameResolution+'"]').empty();
 				$('select[name="'+selectBoxNameResolution+'"]').append($("<option value=''>Select </option>"));
 				$.each(response.resolutionLists, function(index, resolutionLists) {
@@ -193,7 +187,6 @@ function loadResolutionlist(selectBoxNameResolution){
 				});
 			}, 
 			error: function (response) {
-				console.log("failed");
 			}
 		});
 	 
@@ -208,7 +201,6 @@ function loadWardnumberlist(selectBoxNameWard){
 			async: false,
 			dataType: "json",
 			success: function (response) {
-			    console.log("success", response);
 				$('select[name="'+selectBoxNameWard+'"]').empty();
 				$('select[name="'+selectBoxNameWard+'"]').append($("<option value=''>Select </option>"));
 				$.each(response.wardLists, function(index, wardLists) {
@@ -216,7 +208,6 @@ function loadWardnumberlist(selectBoxNameWard){
 				});
 			}, 
 			error: function (response) {
-				console.log("failed");
 			}
 		});
 	 
@@ -225,7 +216,6 @@ function loadWardnumberlist(selectBoxNameWard){
 
 function addRowFromObject(rowJsonObj)
 {
-	console.log("Row composed", row.compose(rowJsonObj));
 	table.append(row.compose(rowJsonObj));
 }
 

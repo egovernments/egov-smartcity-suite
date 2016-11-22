@@ -70,7 +70,15 @@ function callAjaxSearch() {
 				ajax : {
 					url : "/council/agenda/searchagenda-tocreatemeeting",      
 					type: "POST",
-					"data":  getFormData(jQuery('form'))
+					beforeSend : function() {
+						$('.loader-class').modal('show', {
+							backdrop : 'static'
+						});
+					},
+					"data" : getFormData(jQuery('form')),
+					complete : function() {
+						$('.loader-class').modal('hide');
+					}
 				},
 				"bDestroy" : true,
 				"autoWidth": false,
@@ -103,7 +111,6 @@ function callAjaxSearch() {
 
 $("#resultTable").on('click','tbody tr td  .view',function(event) {
 	var id = reportdatatable.fnGetData($(this).parent().parent(),4);
-	//window.open('/council/agenda/'+ $('#mode').val() +'/'+id,'','width=800, height=600,scrollbars=yes');
 	window.open('/council/councilmeeting/new' + '/'+id,'','width=800, height=600,scrollbars=yes');
 	
 });

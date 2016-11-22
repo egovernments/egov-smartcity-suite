@@ -48,12 +48,6 @@ jQuery('#preamblebtnsearch').click(function(e) {
 	callAjaxSearchForAgendaPreamble();
 });
 
-$('form').keypress(function(e) {
-	if (e.which == 13) {
-		e.preventDefault();
-		callAjaxSearch();
-	}
-});
 
 function getFormData($form) {
 	var unindexed_array = $form.serializeArray();
@@ -125,9 +119,16 @@ function callAjaxSearch() {
 							+ $('#mode').val(),
 					type : "POST",
 					traditional: true,
-					data : getFormData(jQuery('form'))
+					beforeSend : function() {
+						$('.loader-class').modal('show', {
+							backdrop : 'static'
+						});
+					},
+					"data" : getFormData(jQuery('form')),
+					complete : function() {
+						$('.loader-class').modal('hide');
+					}
 				},
-				
 				"autoWidth" : false,
 				"bDestroy" : true,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
@@ -204,8 +205,19 @@ function callAjaxSearch() {
 					     	                	   
 					     	                	  return type === 'display' && '<div><span>'+(data.length > 500 ? data.substr( 0, 500 )+'</span> <button class="details" data-text="'+escape(data)+'" class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></div>' : data+"</p>");
 					     	                   },
-					     	                   "targets": [1,3]
-						     	           }
+					     	                   "targets": [1]
+						     	           },
+						     	           {
+							     	        	  "render" : function(data, type, row) {
+							     	        		  var str = data.replace(/\\u[\dA-F]{4}/gi, 
+													          function (match) {
+											               return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
+											               
+											          });
+							     	        		  return type === 'display' && '<div><span>'+(str.length > 500 ? str.substr( 0, 500 )+'</span> <button class="details" data-text="'+escape(str)+'" class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></div>' : str+"</p>");;
+							     	        	  },
+						     	                   "targets": [3]
+							     	           }
 						     	          ] 
 			});
 }
@@ -271,11 +283,15 @@ function callAjaxSearchForAgendaPreamble() {
 							"visible" : false
 						} ],"columnDefs":[
 					     	              {
-					     	                   "render": function ( data, type, row ) {
-					     	                	  return type === 'display' && '<div><span>'+(data.length > 500 ? data.substr( 0, 500 )+'</span> <button class="details" data-text="'+escape(data)+'" class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></div>' : data+"</p>");
-					     	                   },
-					     	                   "targets": 2
-						     	           }
+							     	        	  "render" : function(data, type, row) {
+							     	        		  var str = data.replace(/\\u[\dA-F]{4}/gi, 
+													          function (match) {
+											               return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
+											          });
+							     	        		  return type === 'display' && '<div><span>'+(str.length > 500 ? str.substr( 0, 500 )+'</span> <button class="details" data-text="'+escape(str)+'" class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></div>' : str+"</p>");
+							     	        	  },
+						     	                   "targets": [2]
+							     	           }
 						     	          ] 
 			});
 }
