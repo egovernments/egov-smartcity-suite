@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+  <c:set var="net" value="0" />
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="position_alert3"><spring:message code="lbl.pagetotal" /> : &#8377 <span id="pageTotal"></span></div>
@@ -83,7 +84,6 @@
 							</c:choose>
 						</td>
 						<td hidden="true">
-							<c:set var="net" value="0" />
                             <input class="classmspresent" type="hidden" disabled="disabled" name="additionalMBDetails[${item.index }].mspresent" id="additionalMBDetails[${item.index }].mspresent" data-idx="0"/>
                             <input class="classmsopen" type="hidden" disabled="disabled" name="additionalMBDetails[${item.index }].msopen" id="additionalMBDetails[${item.index }].msopen" data-idx="0"/>
 							<span  class="additionalMBDetails[${item.index }].mstd" id="additionalMBDetails[${item.index }].mstd" data-idx="0">

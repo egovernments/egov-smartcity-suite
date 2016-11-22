@@ -38,7 +38,9 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 <c:if test="${!details.measurementSheets.isEmpty() }">
-	<!--only for validity head start -->                         
+	<!--only for validity head start -->   
+	<c:set var="sheettotal" value="0" /> 
+	<c:set var="sheetnet" value="0" />                     
     <table>
 	    <tr>
 	        <td colspan="16"><!--only for validity head end -->
@@ -78,10 +80,10 @@
 			                    <td id="msrowdepthOrHeight_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).depthOrHeight }</td>
 			                    <td id="msrowquantity_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).quantity }</td>
 			                    <c:if test="${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.identifier == 'A'}">
-									<c:set var="total" value="${total + details.workOrderActivity.workOrderMeasurementSheets.get(index.index).quantity}" />
+									<c:set var="sheettotal" value="${sheettotal + details.workOrderActivity.workOrderMeasurementSheets.get(index.index).quantity}" />
 								</c:if>
 								<c:if test="${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.identifier == 'D'}">
-									<c:set var="total" value="${total - details.workOrderActivity.workOrderMeasurementSheets.get(index.index).quantity}" />
+									<c:set var="sheettotal" value="${sheettotal - details.workOrderActivity.workOrderMeasurementSheets.get(index.index).quantity}" />
 								</c:if>
 			                    <td id="msrowidentifier_${item.index }_${index.index }">
 			                    	<c:choose>
@@ -118,10 +120,10 @@
 			                		<c:if test="${details.measurementSheets.size() > index.index }">
 			                    		<c:out default="" value="${details.measurementSheets.get(index.index).quantity }"></c:out>
 			                    		<c:if test="${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.identifier == 'A'}">
-											<c:set var="net" value="${net + details.measurementSheets.get(index.index).quantity}" />
+											<c:set var="sheetnet" value="${sheetnet + details.measurementSheets.get(index.index).quantity}" />
 										</c:if>
 										<c:if test="${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.identifier == 'D'}">
-											<c:set var="net" value="${net - details.measurementSheets.get(index.index).quantity}" />
+											<c:set var="sheetnet" value="${sheetnet - details.measurementSheets.get(index.index).quantity}" />
 										</c:if>
 			                    	</c:if>
 			                	</td>
@@ -130,11 +132,11 @@
 		                <tr>
 		                	<td colspan="5"></td>
 		                    <td class="text-right"><spring:message code="lbl.total" /></td>
-		                    <td class="text-right view-content">${total }</td>
+		                    <td class="text-right view-content">${sheettotal }</td>
 		                    <td colspan="5" class="text-right">
 		                    </td>
 		                    <td class="text-right"><spring:message code="lbl.total" /></td>
-		                    <td id="contractorMBDetails[${item.index }].msnet" class="text-right">${net}</td>
+		                    <td id="contractorMBDetails[${item.index }].msnet" class="text-right">${sheetnet}</td>
 		                </tr>
 	                </tbody>
 	            </table>

@@ -487,11 +487,6 @@ $(document).on('click','.ms-submit',function () {
 	var mscontent="<tr id=\""+sid.split(".")[0]+".mstr\">";
 
 	var net=eval(document.getElementById(sid.split(".")[0]+".msnet").innerHTML);
-	if(net==NaN ||net<=0)
-	{
-		alert("Net quantity should be greater than 0");
-		return false;
-	}
 	var qobj1=sid.split(".")[0];
 	if(!validateMsheet(qobj1))
 	{
@@ -548,16 +543,10 @@ function reindex(tableId)
 }
 
 $(document).on('click','.reset-ms',function () {
-
-	var len=$(this).closest('table').find('tr').length;
-	var msrowname= $(this).closest('table').attr('id');
-	var tbl=document.getElementById(msrowname);
-	var sid=msrowname.split(".")[0];
-	var newrow= document.getElementById("templatesorActivities[0].mstr").innerHTML;
-
-	newrow=  newrow.replace(/msrowtemplate/g,'msrow'+sid);
-	newrow=  newrow.replace(/templatesorActivities\[0\]/g,sid);
-	document.getElementById(sid+".mstr").innerHTML=newrow;
+	$(this).closest('table').find('.runtime-update:not(select):not(:read-only)').val("");
+	$(this).closest('table').find('.runtime-update:not(select):not(:read-only)').attr('value', '');
+	$(this).closest('table').find('textarea').html('');
+	$(this).closest('table').find('.runtime-update:last').trigger('change');
 });
 
 function findTotal(obj)

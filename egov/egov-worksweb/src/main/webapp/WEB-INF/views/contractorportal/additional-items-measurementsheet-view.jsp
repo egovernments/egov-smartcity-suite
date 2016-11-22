@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+  <c:set var="sheettotal" value="0" />
 <c:if test="${!details.measurementSheets.isEmpty() }">
 	<!--only for validity head start -->                         
     <table>
