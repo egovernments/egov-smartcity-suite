@@ -1,0 +1,6 @@
+# This playbook deploys the PHOENIX stacks
+
+- hosts: all
+
+  roles:
+    - common
