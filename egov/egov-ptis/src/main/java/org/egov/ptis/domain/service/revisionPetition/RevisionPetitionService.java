@@ -39,7 +39,11 @@
  */
 package org.egov.ptis.domain.service.revisionPetition;
 
-import java.io.File;
+import static java.lang.String.format;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.domain.service.property.PropertyService.APPLICATION_VIEW_URL;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -54,11 +58,9 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -69,8 +71,6 @@ import org.egov.pims.commons.Position;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
-import org.egov.ptis.domain.entity.property.Document;
-import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
@@ -80,12 +80,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import static java.lang.String.format;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.domain.service.property.PropertyService.APPLICATION_VIEW_URL;
 
 public class RevisionPetitionService extends PersistenceService<RevisionPetition, Long> {
     @Autowired
@@ -119,15 +113,6 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     @Autowired
     private PropertyService propertyService;
     
-    @Autowired
-    @Qualifier("documentTypePersistenceService")
-    private PersistenceService<DocumentType, Long> documentTypePersistenceService;
-    
-    @Autowired
-    @Qualifier("fileStoreService")
-    private FileStoreService fileStoreService;
-
-
     public RevisionPetitionService() {
         super(RevisionPetition.class);
     }
@@ -346,14 +331,20 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     
     public Assignment getWorkflowInitiator(RevisionPetition objection) {
         Assignment wfInitiator;
-        if (propertyService.isEmployee(objection.getCreatedBy())) {
-            if (objection.getState() != null && objection.getState().getInitiatorPosition() != null)
-                wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(objection.getCreatedBy(),
-                        objection.getState().getInitiatorPosition());
-            else
-                wfInitiator = assignmentService.getPrimaryAssignmentForUser(objection.getCreatedBy().getId());
-        } else
-            wfInitiator = propertyService.getUserPositionByZone(objection.getBasicProperty(), false);
+        if (propertyService.isEmployee(objection.getCreatedBy())){
+                if(objection.getState() != null  && objection.getState().getInitiatorPosition() != null)
+                    wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(objection
+                    .getCreatedBy(),objection.getState().getInitiatorPosition());
+                else 
+                    wfInitiator = assignmentService.getPrimaryAssignmentForUser(objection.getCreatedBy().getId());
+        }
+        else if (!objection.getStateHistory().isEmpty())
+            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(objection.getStateHistory().get(0)
+                    .getOwnerPosition().getId());
+        else{
+            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(objection.getState().getOwnerPosition()
+                    .getId());
+        }
         return wfInitiator;
     }
 }
