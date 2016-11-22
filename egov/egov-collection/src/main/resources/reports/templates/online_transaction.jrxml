@@ -40,7 +40,7 @@
   -->
 
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2015-12-11T14:55:25 -->
+<!-- 2016-11-22T17:41:36 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="online_transaction" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6c32d2bb-93b0-4b77-9de8-d1cb8d0afd9f">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Postgresql"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -139,7 +139,7 @@
 	<field name="transactionNumber" class="java.lang.String">
 		<fieldDescription><![CDATA[Transaction Number]]></fieldDescription>
 	</field>
-	<field name="transactionDate" class="java.lang.String">
+	<field name="transactionDate" class="java.util.Date">
 		<fieldDescription><![CDATA[Transaction Date]]></fieldDescription>
 	</field>
 	<background>
@@ -308,15 +308,15 @@
 				<text><![CDATA[Bill ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="eGov Caption" x="101" y="0" width="99" height="30" uuid="8c8316ac-9533-47d8-a268-67d9d3b0530b"/>
+				<reportElement style="eGov Caption" x="101" y="0" width="80" height="30" uuid="8c8316ac-9533-47d8-a268-67d9d3b0530b"/>
 				<text><![CDATA[Consumer Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="eGov Caption" x="200" y="0" width="82" height="30" uuid="e59ee0e3-f3da-48b6-87d5-2680a567ed58"/>
+				<reportElement style="eGov Caption" x="181" y="0" width="90" height="30" uuid="e59ee0e3-f3da-48b6-87d5-2680a567ed58"/>
 				<text><![CDATA[Receipt Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="eGov Caption" x="282" y="0" width="80" height="30" uuid="393abf7e-e704-4a45-a6c7-1460cd4945b4"/>
+				<reportElement style="eGov Caption" x="271" y="0" width="80" height="30" uuid="393abf7e-e704-4a45-a6c7-1460cd4945b4"/>
 				<text><![CDATA[Receipt Date]]></text>
 			</staticText>
 			<staticText>
@@ -334,19 +334,19 @@
 				<text><![CDATA[Sl. No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="eGov Caption" x="722" y="0" width="79" height="30" uuid="f75aa3fa-0dfb-49c6-a329-8e6bbaf97091"/>
+				<reportElement style="eGov Caption" x="711" y="0" width="79" height="30" uuid="f75aa3fa-0dfb-49c6-a329-8e6bbaf97091"/>
 				<box leftPadding="5" rightPadding="5">
 					<leftPen lineWidth="0.5"/>
 				</box>
 				<text><![CDATA[Payment Status]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="eGov Caption" x="362" y="0" width="80" height="30" uuid="f775d8b6-e9dd-4629-9cd8-4d10dce746cb"/>
+				<reportElement style="eGov Caption" x="351" y="0" width="80" height="30" uuid="f775d8b6-e9dd-4629-9cd8-4d10dce746cb"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<text><![CDATA[Receipt Amount]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="eGov Caption" x="622" y="0" width="100" height="30" uuid="f012d412-6c60-4139-84bf-387e88de72dc"/>
+				<reportElement style="eGov Caption" x="611" y="0" width="100" height="30" uuid="f012d412-6c60-4139-84bf-387e88de72dc"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineColor="#000000"/>
 					<topPen lineColor="#000000"/>
@@ -357,12 +357,12 @@
 				<text><![CDATA[Billing System]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="eGov Caption" x="442" y="0" width="90" height="30" uuid="458d97e8-1876-4227-8b65-d059ff8f6eb2"/>
+				<reportElement style="eGov Caption" x="431" y="0" width="90" height="30" uuid="458d97e8-1876-4227-8b65-d059ff8f6eb2"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<text><![CDATA[Transaction ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="eGov Caption" x="532" y="0" width="90" height="30" uuid="6021cfe9-579d-4190-8374-b12852aab5a0"/>
+				<reportElement style="eGov Caption" x="521" y="0" width="90" height="30" uuid="6021cfe9-579d-4190-8374-b12852aab5a0"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<text><![CDATA[Transaction Date]]></text>
 			</staticText>
@@ -383,7 +383,9 @@
 				<textFieldExpression><![CDATA[$F{referencenumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="101" y="0" width="99" height="20" uuid="f7f0ef5f-2b8d-4dbb-a69f-677cbf0eaecc"/>
+				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="101" y="0" width="80" height="20" uuid="f7f0ef5f-2b8d-4dbb-a69f-677cbf0eaecc">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -395,7 +397,9 @@
 				<textFieldExpression><![CDATA[$F{consumerCode}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="200" y="0" width="82" height="20" uuid="362b1a83-3fc4-431c-8876-2888dcb4b410"/>
+				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="181" y="0" width="90" height="20" uuid="362b1a83-3fc4-431c-8876-2888dcb4b410">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -406,7 +410,7 @@
 				<textFieldExpression><![CDATA[$F{receiptnumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy" isBlankWhenNull="true">
-				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="282" y="0" width="80" height="20" uuid="2391e63c-716f-4fe5-aa07-ec53b8f9c917"/>
+				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="271" y="0" width="80" height="20" uuid="2391e63c-716f-4fe5-aa07-ec53b8f9c917"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -432,7 +436,7 @@
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="722" y="0" width="79" height="20" uuid="ac3d2230-57f1-41b7-a4e4-591a6d8be74f"/>
+				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="711" y="0" width="79" height="20" uuid="ac3d2230-57f1-41b7-a4e4-591a6d8be74f"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -444,7 +448,7 @@
 				<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="362" y="0" width="80" height="20" uuid="d9fe0e2e-356b-49d8-b6d4-7d7ccf3250e6"/>
+				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="351" y="0" width="80" height="20" uuid="d9fe0e2e-356b-49d8-b6d4-7d7ccf3250e6"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -456,7 +460,7 @@
 				<textFieldExpression><![CDATA[$F{totalAmount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="622" y="0" width="100" height="20" uuid="272e5ef4-100e-409c-8d77-b1af170e7a8f"/>
+				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="611" y="0" width="100" height="20" uuid="272e5ef4-100e-409c-8d77-b1af170e7a8f"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -468,7 +472,7 @@
 				<textFieldExpression><![CDATA[$F{service}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="442" y="0" width="90" height="20" uuid="32853a3f-eac5-4454-a1bd-55214e824220"/>
+				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="431" y="0" width="90" height="20" uuid="32853a3f-eac5-4454-a1bd-55214e824220"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -480,7 +484,7 @@
 				<textFieldExpression><![CDATA[$F{transactionNumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy" isBlankWhenNull="true">
-				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="532" y="0" width="90" height="20" uuid="4550a090-77a0-4972-be39-bb0a78fba93b"/>
+				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="521" y="0" width="90" height="20" uuid="4550a090-77a0-4972-be39-bb0a78fba93b"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -496,14 +500,14 @@
 	<pageFooter>
 		<band height="20" splitType="Stretch">
 			<textField evaluationTime="Report">
-				<reportElement style="eGov Page Footer" x="762" y="0" width="40" height="20" uuid="6daee345-28d0-4e2b-8a3c-f06ca4325f4a"/>
+				<reportElement style="eGov Page Footer" x="751" y="0" width="40" height="20" uuid="6daee345-28d0-4e2b-8a3c-f06ca4325f4a"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="eGov Page Footer" x="682" y="0" width="80" height="20" uuid="667f9f69-dd64-4ca6-b519-4b63e1c1a8ff"/>
+				<reportElement style="eGov Page Footer" x="671" y="0" width="80" height="20" uuid="667f9f69-dd64-4ca6-b519-4b63e1c1a8ff"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
@@ -521,14 +525,14 @@
 	<lastPageFooter>
 		<band height="20">
 			<textField evaluationTime="Report">
-				<reportElement style="eGov Page Footer" x="762" y="0" width="40" height="20" uuid="9d04d2f1-1e46-475b-9c71-5e71d5fddb97"/>
+				<reportElement style="eGov Page Footer" x="751" y="0" width="40" height="20" uuid="9d04d2f1-1e46-475b-9c71-5e71d5fddb97"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="eGov Page Footer" x="682" y="0" width="80" height="20" uuid="a8b898af-8643-43a7-b492-feb026fce585"/>
+				<reportElement style="eGov Page Footer" x="671" y="0" width="80" height="20" uuid="a8b898af-8643-43a7-b492-feb026fce585"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
