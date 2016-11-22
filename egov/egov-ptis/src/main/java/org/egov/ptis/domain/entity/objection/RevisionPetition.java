@@ -44,12 +44,14 @@ import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.Valid;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -94,10 +96,10 @@ public class RevisionPetition extends StateAware implements Auditable {
     private PropertyImpl property;
 
     @Valid
-    private List<Hearing> hearings = new LinkedList<Hearing>();
+    private List<Hearing> hearings = new LinkedList<>();
 
     @Valid
-    private List<Inspection> inspections = new LinkedList<Inspection>();
+    private List<Inspection> inspections = new LinkedList<>();
 
     /*
      * @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "objection.outcomedate.futuredate")
@@ -111,10 +113,11 @@ public class RevisionPetition extends StateAware implements Auditable {
      private String meesevaApplicationNumber;
      private String applicationNo;
      public static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+     private List<Document> documents = new ArrayList<>();
 
      @Override
      public String getStateDetails() {
-         final StringBuffer stateDetails = new StringBuffer("");
+         final StringBuilder stateDetails = new StringBuilder("");
          stateDetails.append(getBasicProperty().getUpicNo()).append(", ")
          .append(getBasicProperty().getPrimaryOwner().getName()).append(", ")
          .append(PROPERTY_TYPE_CATEGORIES.get(getBasicProperty().getProperty().getPropertyDetail().getCategoryType()))
@@ -293,9 +296,11 @@ public class RevisionPetition extends StateAware implements Auditable {
         this.applicationNo = applicationNo;
     }
 
-     /*
-      * public PropertyImpl getReferenceProperty() { return referenceProperty; } public void setReferenceProperty(PropertyImpl
-      * referenceProperty) { this.referenceProperty = referenceProperty; }
-      */
+    public List<Document> getDocuments() {
+        return documents;
+    }
 
+    public void setDocuments(List<Document> documents) {
+        this.documents = documents;
+    }
 }
