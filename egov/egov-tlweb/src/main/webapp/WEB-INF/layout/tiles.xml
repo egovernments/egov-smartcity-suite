@@ -251,4 +251,8 @@
 	    <put-attribute name="page-title" value="title.document.new" cascade="true"/>
 	    <put-attribute name="body" value="/WEB-INF/views/search/searchtrade-license.jsp"/>
 	</definition>
+    <definition name="baseregister-report" extends="base_layout">
+        <put-attribute name="page-title" value="title.baseregister" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/baseregister/baseregister-report.jsp"/>
+    </definition>
 </tiles-definitions>

@@ -1,0 +1,56 @@
+package org.egov.tl.service;
+
+import org.egov.tl.entity.dto.BaseRegisterForm;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
+
+
+@Service
+@Transactional(readOnly = true)
+public class BaseRegisterService {
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public List<BaseRegisterForm> search(final BaseRegisterForm baseRegisterForm) {
+        final SQLQuery finalQuery = prepareQuery(baseRegisterForm);
+        finalQuery.setResultTransformer(new AliasToBeanResultTransformer(BaseRegisterForm.class));
+        if (baseRegisterForm.getCategoryId() != null)
+            finalQuery.setParameter("categoryId", baseRegisterForm.getCategoryId());
+        if (baseRegisterForm.getSubCategoryId() != null)
+            finalQuery.setParameter("subCategoryId", baseRegisterForm.getSubCategoryId());
+        if (baseRegisterForm.getStatusId() != null)
+            finalQuery.setParameter("statusId", baseRegisterForm.getStatusId());
+        if (baseRegisterForm.getWardId() != null)
+            finalQuery.setParameter("wardId", baseRegisterForm.getWardId());
+        List<BaseRegisterForm> resultList = finalQuery.list();
+        return resultList;
+    }
+
+    public SQLQuery prepareQuery(final BaseRegisterForm baseRegisterForm) {
+        final StringBuilder selectQry = new StringBuilder();
+        StringBuilder whereQry = new StringBuilder();
+        selectQry
+                .append("select \"licenseid\", \"licensenumber\", \"tradetitle\", \"owner\", \"mobile\", \"categoryname\", \"subcategoryname\", \"assessmentno\"," +
+                        " \"wardname\", \"localityname\", \"tradeaddress\", \"commencementdate\", \"statusname\", cast(arrearlicensefee as bigint) " +
+                        "AS \"arrearlicensefee\", cast(arrearpenaltyfee as bigint) AS \"arrearpenaltyfee\", cast(curlicensefee as bigint) " +
+                        "AS \"curlicensefee\", cast(curpenaltyfee as bigint) AS \"curpenaltyfee\" from egtl_mv_baseregister_view where 1=1 ");
+        if (baseRegisterForm.getCategoryId() != null)
+            whereQry = whereQry.append(" and category = :categoryId");
+        if (baseRegisterForm.getSubCategoryId() != null)
+            whereQry = whereQry.append(" and subcategory = :subCategoryId");
+        if (baseRegisterForm.getStatusId() != null)
+            whereQry = whereQry.append(" and status = :statusId");
+        if (baseRegisterForm.getWardId() != null)
+            whereQry = whereQry.append(" and ward = :wardId");
+        return entityManager.unwrap(Session.class).createSQLQuery(selectQry.append(whereQry).toString());
+    }
+
+
+}
