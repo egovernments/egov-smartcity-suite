@@ -189,7 +189,7 @@ public class JournalVoucherService {
 
     @Transactional
     public CVoucherHeader create(final CVoucherHeader voucherHeader, final Long approvalPosition, final String approvalComent,
-            final String additionalRule, final String workFlowAction) {
+                                 final String additionalRule, final String workFlowAction) {
 
         voucherHeader.setFiscalPeriodId(
                 fiscalPeriodHibernateDAO.getFiscalPeriodByDate(voucherHeader.getVoucherDate()).getId().intValue());
@@ -349,8 +349,8 @@ public class JournalVoucherService {
     }
 
     public void createVoucherHeaderRegisterWorkflowTransition(final CVoucherHeader voucherHeader,
-            final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction) {
+                                                              final Long approvalPosition, final String approvalComent, final String additionalRule,
+                                                              final String workFlowAction) {
         if (LOG.isDebugEnabled())
             LOG.debug(" Create WorkFlow Transition Started  ...");
         final User user = securityUtils.getCurrentUser();
@@ -415,7 +415,7 @@ public class JournalVoucherService {
     }
 
     public Long getApprovalPositionByMatrixDesignation(final CVoucherHeader voucherHeader,
-            final String additionalRule, final String mode, final String workFlowAction) {
+                                                       final String additionalRule, final String mode, final String workFlowAction) {
         Long approvalPosition = null;
         final WorkFlowMatrix wfmatrix = cvoucherHeaderRegisterWorkflowService.getWfMatrix(voucherHeader
                 .getStateType(), null, null, additionalRule, voucherHeader.getCurrentState().getValue(), null);
@@ -472,67 +472,67 @@ public class JournalVoucherService {
             typetoCheck = JOURNALVOUCHER;
 
         switch (voucherSubTypeEnum.valueOf(typetoCheck)) {
-        case JVGENERAL:
-            voucherNumberPrefix = FinancialConstants.JOURNAL_VOUCHERNO_TYPE;
-            break;
-        case JOURNALVOUCHER:
-            voucherNumberPrefix = FinancialConstants.JOURNAL_VOUCHERNO_TYPE;
-            break;
-        case CONTRA:
-            voucherNumberPrefix = FinancialConstants.CONTRA_VOUCHERNO_TYPE;
-            break;
-        case RECEIPT:
-            voucherNumberPrefix = FinancialConstants.RECEIPT_VOUCHERNO_TYPE;
-            break;
-        case PAYMENT:
-            voucherNumberPrefix = FinancialConstants.PAYMENT_VOUCHERNO_TYPE;
-            break;
-        case PURCHASEJOURNAL:
-            voucherNumberPrefix = FinancialConstants.PURCHBILL_VOUCHERNO_TYPE;
-            break;
-        case WORKS:
-            voucherNumberPrefix = FinancialConstants.WORKSBILL_VOUCHERNO_TYPE;
-            break;
-        case CONTRACTORJOURNAL:
-            voucherNumberPrefix = FinancialConstants.WORKSBILL_VOUCHERNO_TYPE;
-            break;
-        case WORKSJOURNAL:
-            voucherNumberPrefix = FinancialConstants.WORKSBILL_VOUCHERNO_TYPE;
-            break;
-        case FIXEDASSETJOURNAL:
-            voucherNumberPrefix = FinancialConstants.FIXEDASSET_VOUCHERNO_TYPE;
-            break;
-        case CONTINGENTJOURNAL:
-            voucherNumberPrefix = FinancialConstants.CBILL_VOUCHERNO_TYPE;
-            break;
-        case PURCHASE:
-            voucherNumberPrefix = FinancialConstants.PURCHBILL_VOUCHERNO_TYPE;
-            break;
-        case EXPENSEJOURNAL:
-            voucherNumberPrefix = FinancialConstants.CBILL_VOUCHERNO_TYPE;
-            break;
-        case EXPENSE:
-            voucherNumberPrefix = FinancialConstants.CBILL_VOUCHERNO_TYPE;
-            break;
-        case SALARYJOURNAL:
-            voucherNumberPrefix = FinancialConstants.SALBILL_VOUCHERNO_TYPE;
-            break;
-        case SALARY:
-            voucherNumberPrefix = FinancialConstants.SALBILL_VOUCHERNO_TYPE;
-            break;
-        case FIXEDASSET:
-            voucherNumberPrefix = FinancialConstants.FIXEDASSET_VOUCHERNO_TYPE;
-            break;
-        case PENSIONJOURNAL:
-            voucherNumberPrefix = FinancialConstants.PENBILL_VOUCHERNO_TYPE;
-            break;
-        case PENSION:
-            voucherNumberPrefix = FinancialConstants.PENBILL_VOUCHERNO_TYPE;
-            break;
-        default: // if subtype is invalid then use type
-            if (voucherNumberPrefix == null)
-                voucherNumberPrefix = checkWithVoucherType(type);
-            break;
+            case JVGENERAL:
+                voucherNumberPrefix = FinancialConstants.JOURNAL_VOUCHERNO_TYPE;
+                break;
+            case JOURNALVOUCHER:
+                voucherNumberPrefix = FinancialConstants.JOURNAL_VOUCHERNO_TYPE;
+                break;
+            case CONTRA:
+                voucherNumberPrefix = FinancialConstants.CONTRA_VOUCHERNO_TYPE;
+                break;
+            case RECEIPT:
+                voucherNumberPrefix = FinancialConstants.RECEIPT_VOUCHERNO_TYPE;
+                break;
+            case PAYMENT:
+                voucherNumberPrefix = FinancialConstants.PAYMENT_VOUCHERNO_TYPE;
+                break;
+            case PURCHASEJOURNAL:
+                voucherNumberPrefix = FinancialConstants.PURCHBILL_VOUCHERNO_TYPE;
+                break;
+            case WORKS:
+                voucherNumberPrefix = FinancialConstants.WORKSBILL_VOUCHERNO_TYPE;
+                break;
+            case CONTRACTORJOURNAL:
+                voucherNumberPrefix = FinancialConstants.WORKSBILL_VOUCHERNO_TYPE;
+                break;
+            case WORKSJOURNAL:
+                voucherNumberPrefix = FinancialConstants.WORKSBILL_VOUCHERNO_TYPE;
+                break;
+            case FIXEDASSETJOURNAL:
+                voucherNumberPrefix = FinancialConstants.FIXEDASSET_VOUCHERNO_TYPE;
+                break;
+            case CONTINGENTJOURNAL:
+                voucherNumberPrefix = FinancialConstants.CBILL_VOUCHERNO_TYPE;
+                break;
+            case PURCHASE:
+                voucherNumberPrefix = FinancialConstants.PURCHBILL_VOUCHERNO_TYPE;
+                break;
+            case EXPENSEJOURNAL:
+                voucherNumberPrefix = FinancialConstants.CBILL_VOUCHERNO_TYPE;
+                break;
+            case EXPENSE:
+                voucherNumberPrefix = FinancialConstants.CBILL_VOUCHERNO_TYPE;
+                break;
+            case SALARYJOURNAL:
+                voucherNumberPrefix = FinancialConstants.SALBILL_VOUCHERNO_TYPE;
+                break;
+            case SALARY:
+                voucherNumberPrefix = FinancialConstants.SALBILL_VOUCHERNO_TYPE;
+                break;
+            case FIXEDASSET:
+                voucherNumberPrefix = FinancialConstants.FIXEDASSET_VOUCHERNO_TYPE;
+                break;
+            case PENSIONJOURNAL:
+                voucherNumberPrefix = FinancialConstants.PENBILL_VOUCHERNO_TYPE;
+                break;
+            case PENSION:
+                voucherNumberPrefix = FinancialConstants.PENBILL_VOUCHERNO_TYPE;
+                break;
+            default: // if subtype is invalid then use type
+                if (voucherNumberPrefix == null)
+                    voucherNumberPrefix = checkWithVoucherType(type);
+                break;
         }
         return voucherNumberPrefix;
 
@@ -544,20 +544,20 @@ public class JournalVoucherService {
             typetoCheck = JOURNALVOUCHER;
         String voucherNumberPrefix = null;
         switch (voucherTypeEnum.valueOf(typetoCheck)) {
-        case JOURNALVOUCHER:
-            voucherNumberPrefix = FinancialConstants.JOURNAL_VOUCHERNO_TYPE;
-            break;
-        case CONTRA:
-            voucherNumberPrefix = FinancialConstants.CONTRA_VOUCHERNO_TYPE;
-            break;
-        case RECEIPT:
-            voucherNumberPrefix = FinancialConstants.RECEIPT_VOUCHERNO_TYPE;
-            break;
-        case PAYMENT:
-            voucherNumberPrefix = FinancialConstants.PAYMENT_VOUCHERNO_TYPE;
-            break;
-        default:// do nothing
-            break;
+            case JOURNALVOUCHER:
+                voucherNumberPrefix = FinancialConstants.JOURNAL_VOUCHERNO_TYPE;
+                break;
+            case CONTRA:
+                voucherNumberPrefix = FinancialConstants.CONTRA_VOUCHERNO_TYPE;
+                break;
+            case RECEIPT:
+                voucherNumberPrefix = FinancialConstants.RECEIPT_VOUCHERNO_TYPE;
+                break;
+            case PAYMENT:
+                voucherNumberPrefix = FinancialConstants.PAYMENT_VOUCHERNO_TYPE;
+                break;
+            default:// do nothing
+                break;
         }
         return voucherNumberPrefix;
 
@@ -569,8 +569,7 @@ public class JournalVoucherService {
         String sequenceName;
 
         final CFiscalPeriod fiscalPeriod = fiscalPeriodHibernateDAO.getFiscalPeriodByDate(voucherHeader.getVoucherDate());
-        if (fiscalPeriod == null)
-            throw new ApplicationRuntimeException("Fiscal period is not defined for the voucher date");
+        if (fiscalPeriod == null)     throw new ApplicationRuntimeException("Fiscal period is not defined for the voucher date");
         sequenceName = "sq_" + voucherHeader.getFundId().getIdentifier() + "_" + getCgnType(voucherHeader.getType()).toLowerCase()
                 + "_cgvn_"
                 + fiscalPeriod.getName();
@@ -591,20 +590,20 @@ public class JournalVoucherService {
             typetoCheck = JOURNALVOUCHER;
 
         switch (voucherTypeEnum.valueOf(typetoCheck.toUpperCase())) {
-        case JOURNALVOUCHER:
-            cgnType = "JVG";
-            break;
-        case CONTRA:
-            cgnType = "CSL";
-            break;
-        case RECEIPT:
-            cgnType = "MSR";
-            break;
-        case PAYMENT:
-            cgnType = "DBP";
-            break;
-        default:// do nothing
-            break;
+            case JOURNALVOUCHER:
+                cgnType = "JVG";
+                break;
+            case CONTRA:
+                cgnType = "CSL";
+                break;
+            case RECEIPT:
+                cgnType = "MSR";
+                break;
+            case PAYMENT:
+                cgnType = "DBP";
+                break;
+            default:// do nothing
+                break;
         }
         return cgnType;
     }

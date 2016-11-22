@@ -49,6 +49,7 @@ import org.egov.egf.utils.FinancialUtils;
 import org.egov.egf.voucher.service.JournalVoucherService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -132,9 +133,19 @@ public class CreateJournalVoucherController extends BaseVoucherController {
             if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
             CVoucherHeader savedVoucherHeader;
-
-            savedVoucherHeader = journalVoucherService.create(voucherHeader, approvalPosition, approvalComment, null,
-                    workFlowAction);
+            try {
+                savedVoucherHeader = journalVoucherService.create(voucherHeader, approvalPosition, approvalComment, null,
+                        workFlowAction);
+            } catch (final ValidationException e) {
+                setDropDownValues(model);
+                model.addAttribute("stateType", voucherHeader.getClass().getSimpleName());
+                prepareWorkflow(model, voucherHeader, new WorkflowContainer());
+                prepareValidActionListByCutOffDate(model);
+                voucherHeader.setVoucherDate(new Date());
+                model.addAttribute("voucherNumberGenerationAuto", isVoucherNumberGenerationAuto(voucherHeader));
+                resultBinder.reject("", e.getErrors().get(0).getMessage());
+                return "journalvoucher-form";
+            }
 
             final String approverDetails = financialUtils.getApproverDetails(workFlowAction,
                     savedVoucherHeader.getState(), savedVoucherHeader.getId(), approvalPosition);

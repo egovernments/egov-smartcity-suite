@@ -80,7 +80,8 @@
 	</div>
 	<jsp:include page="journalvoucher-header.jsp"/>
 	<jsp:include page="journalvoucher-accountdetails.jsp"/>
-	
+	<jsp:include page="journalvoucher-subledger.jsp"/>
+
 	<jsp:include page="../common/commonworkflowmatrix.jsp"/>
 	<div class="buttonbottom" align="center">
 		<jsp:include page="../common/commonworkflowmatrix-button.jsp" />

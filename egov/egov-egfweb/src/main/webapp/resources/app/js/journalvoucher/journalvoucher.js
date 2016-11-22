@@ -1,8 +1,12 @@
 var voucheramount = 0;
 var debitamount = 0;
 var creditamount = 0;
+
+var subLedgerAccountCodes ;
+
 $(document).ready(function(){
 	accountDetailGlcode_initialize();
+	entityName_initialize(0);
 });
 
 $('#voucherSubType').change(function () {
@@ -79,9 +83,52 @@ function accountDetailGlcode_initialize() {
 		   	$(this).parents("tr:first").find('.accountglcode').val(data.glcode);
 		   	$(this).parents("tr:first").find('.accountglcodeid').val(data.id);
 		   	$(this).parents("tr:first").find('.accountglcodeissubledger').val(data.issubledger);
+		   	loadSubLedgerAccountCodes();
   });
 }
 
+
+function entityName_initialize(rowindex) {
+	 var custom = new Bloodhound({
+	    datumTokenizer: function(d) { return d.tokens; },
+	    queryTokenizer: Bloodhound.tokenizers.whitespace,
+		   remote: {
+	            url: '/EGF/common/getentitesbyaccountdetailtype?name=',
+	            replace: function (url, query) {
+					var accountDetailType = $('#subLedgerDetails\\['+rowindex+'\\]\\.detailTypeId').val();
+					if(accountDetailType == null || accountDetailType == ""){
+						bootbox.alert("Please select Type");
+					}
+					return url + query + '&accountDetailType=' + accountDetailType ;
+				},
+	            dataType: "json",
+	            filter : function(data) {
+					return $.map(data, function(ct) {
+						return {
+							code:ct.split("~")[0].split("-")[0],
+							name : ct.split("~")[0].split("-")[1],
+							id : ct.split("~")[1],
+							codeAndName:ct
+						};
+					});
+				}
+	        }
+ });
+
+ custom.initialize();
+$('.subLedgerDetailKeyName').typeahead({
+ 	hint : true,
+		highlight : true,
+		minLength : 3
+		
+	}, {		    
+       displayKey: 'codeAndName',
+       source: custom.ttAdapter()
+ }).on('typeahead:selected typeahead:autocompleted', function (event, data) {
+		$(this).parents("tr:first").find('.subLedgerDetailDetailKeyId ').val(data.id);
+	   	$(this).parents("tr:first").find('.subLedgerName').val(data.name);
+ });
+}
 function addAccountDetailsRow() { 
 	
 	$('.accountDetailGlcode').typeahead('destroy');
@@ -111,6 +158,40 @@ function deleteAccountDetailsRow(obj) {
 		return false;
 	} else {
 		deleteRow(obj,'tblaccountdetails');
+		return true;
+	}
+}
+
+
+function addSubLedgerRow() { 
+	
+	$('.subLedgerDetailKeyName').typeahead('destroy');
+	$('.subLedgerDetailKeyName').unbind();
+	var rowcount = $("#tblsubledger tbody tr").length;
+	if (rowcount < 30) {
+		if (document.getElementById('subledgerrow') != null) {
+			addRow('tblsubledger','subledgerrow');
+			$('#tblsubledger tbody tr:eq('+rowcount+')').find('.subLedgerAccountCode').val('');
+			$('#tblsubledger tbody tr:eq('+rowcount+')').find('.subLedgerAccountDetailType').val('');
+			$('#tblsubledger tbody tr:eq('+rowcount+')').find('.subLedgerDetailDetailKeyId').val('');
+			$('#tblsubledger tbody tr:eq('+rowcount+')').find('.subLedgerDetailKeyName').val('');
+			$('#tblsubledger tbody tr:eq('+rowcount+')').find('.subLedgerAmount').val('');
+			$('#tblsubledger tbody tr:eq('+rowcount+')').find('.debitAmount').val('');
+			$('#tblsubledger tbody tr:eq('+rowcount+')').find('.creditAmount').val('');
+			entityName_initialize(rowcount);
+		}
+	} else {
+		  bootbox.alert('limit reached!');
+	}
+}
+
+function deleteSubLedgerRow(obj) {
+	var rowcount=$("#tblsubledger tbody tr").length;
+    if(rowcount<=1) {
+		bootbox.alert("This row can not be deleted");
+		return false;
+	} else {
+		deleteRow(obj,'tblsubledger');
 		return true;
 	}
 }
@@ -211,4 +292,71 @@ function validateCutOff()
 		return false;
 	}
 	return false;
+}
+
+function loadSubLedgerAccountCodes(){
+	
+	subLedgerAccountCodes = new Array();
+	$('#tblaccountdetails  > tbody > tr:visible[id="accountdetailsrow"]').each(function() {
+		var isSubledger = $(this).find(".accountglcodeissubledger").val();
+		var glcode = $(this).find(".accountglcode").val();
+		var glcodeId = $(this).find(".accountglcodeid").val();
+		if(isSubledger && isSubledger!="false"){
+			subLedgerAccountCodes.push(glcodeId + "-" + glcode);
+		}
+	});
+	
+	$('#tblsubledger  > tbody > tr:visible[id="subledgerrow"]').each(function(index) {
+		$('#subLedgerDetails\\['+index+'\\]\\.generalLedgerId\\.glcodeId').empty();
+		$('#subLedgerDetails\\['+index+'\\]\\.generalLedgerId\\.glcodeId').append($("<option value=''>Select from below</option>"));
+		
+		var subLedgerAccountCodesLength = subLedgerAccountCodes.length;
+		for (i = 0; i < subLedgerAccountCodesLength; i++) {
+			$('#subLedgerDetails\\['+index+'\\]\\.generalLedgerId\\.glcodeId').append($('<option>').text(subLedgerAccountCodes[i].split('-')[1]).attr('value', subLedgerAccountCodes[i].split('-')[0]));
+		}
+	});
+	
+}
+function getRow(obj) {
+	if(!obj)return null;
+	tag = obj.nodeName.toUpperCase();
+	while(tag != 'BODY'){
+		if (tag == 'TR') return obj;
+		obj=obj.parentNode ;
+		tag = obj.nodeName.toUpperCase();
+	}
+	return null;
+}
+
+$(document).on('change','.subLedgerAccountCode', function()
+{
+	var index = getRow(document.getElementById($(this).prop('name'))).rowIndex;
+	loadAccountDetailTypesByGlcodeId($(this).val(),index-1);
+});
+
+
+function loadAccountDetailTypesByGlcodeId(glcodeId,rowindex){
+	if (!glcodeId) {
+		$('#subLedgerDetails\\['+rowindex+'\\]\\.detailTypeId').empty();
+		$('#subLedgerDetails\\['+rowindex+'\\]\\.detailTypeId').append($('<option>').text('Select from below').attr('value', ''));
+		return;
+	} else {
+		
+		$.ajax({
+			method : "GET",
+			url : "/EGF/common/getaccountdetailtypesbyglcodeid",
+			data : {
+				glcodeId : glcodeId
+			},
+			async : true
+		}).done(
+				function(response) {
+					$('#subLedgerDetails\\['+rowindex+'\\]\\.detailTypeId').empty();
+					$('#subLedgerDetails\\['+rowindex+'\\]\\.detailTypeId').append($("<option value=''>Select from below</option>"));
+					$.each(response, function(index, value) {
+						$('#subLedgerDetails\\['+rowindex+'\\]\\.detailTypeId').append($('<option>').text(value.name).attr('value', value.id));
+					});
+				});
+
+	}
 }
