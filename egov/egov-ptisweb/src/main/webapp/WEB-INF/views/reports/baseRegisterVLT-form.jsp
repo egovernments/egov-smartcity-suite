@@ -125,4 +125,4 @@
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/baseRegisterVLTReport.js'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/baseRegisterVLTReport.js?rnd=${app_release_no}'/>"></script>
