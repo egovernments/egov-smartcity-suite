@@ -46,6 +46,7 @@
 <%@ page import="org.egov.deduction.client.RecoverySetupForm"%>
 <%@ page import="org.egov.infstr.utils.EgovMasterDataCaching"%>
 <%@ page import="java.util.ArrayList"%>
+<%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -68,7 +69,7 @@
 <link href="css/commonegov.css?rnd=${app_release_no}" rel="stylesheet" type="text/css" />
 <!-- script type="text/javascript" src="common/js/budget.js"></script> -->
 <script type="text/javascript"
-	src="<c:url value='/resources/javascript/recoveryMasterHelper.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/javascript/recoveryMasterHelper.js?rnd=${app_release_no}'/>"></script>
 <script language=javascript>
 // ---- Manual Script ---STARTS--
 var myrowId;

@@ -42,9 +42,10 @@
 <html>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
+<%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
 
 <head>
-<script type="text/javascript" src="<c:url value='/resources/app/js/reconciliationHelper.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/app/js/reconciliationHelper.js?rnd=${app_release_no}'/>"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 
