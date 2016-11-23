@@ -117,7 +117,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     Date dtAsOnDate = null;
     private BigDecimal addtionalAppropriationForBe = BigDecimal.ZERO;
     private BigDecimal addtionalAppropriationForRe = BigDecimal.ZERO;
-    private BigDecimal beAmount;
+    private BigDecimal beAmount = BigDecimal.ZERO;
     private BigDecimal reAmount = BigDecimal.ZERO;
     private String finYearRange;
     protected List<String> mandatoryFields = new ArrayList<String>();
