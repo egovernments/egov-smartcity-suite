@@ -40,12 +40,11 @@
 
 package org.egov.infra.elasticsearch.service.util;
 
+import ma.glasnost.orika.CustomMapper;
+import ma.glasnost.orika.MappingContext;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.entity.es.ApplicationDocument;
 import org.springframework.stereotype.Component;
-
-import ma.glasnost.orika.CustomMapper;
-import ma.glasnost.orika.MappingContext;
 
 @Component
 public class ApplicationDocumentMapper extends CustomMapper<ApplicationIndex, ApplicationDocument> {

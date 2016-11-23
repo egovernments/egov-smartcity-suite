@@ -40,14 +40,14 @@
 
 package org.egov.infra.admin.master.repository.es;
 
-import java.util.List;
-
 import org.egov.infra.admin.master.entity.es.CityIndex;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
+
+import java.util.List;
 
 public class CityIndexRepositoryImpl implements CityIndexCustomRepository {
 	

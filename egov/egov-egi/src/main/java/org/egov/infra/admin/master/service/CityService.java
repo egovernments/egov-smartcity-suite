@@ -42,8 +42,8 @@ package org.egov.infra.admin.master.service;
 
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.repository.CityRepository;
-import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.messaging.MessagingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;

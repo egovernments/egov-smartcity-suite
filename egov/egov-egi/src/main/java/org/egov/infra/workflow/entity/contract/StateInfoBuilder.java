@@ -41,7 +41,6 @@
 package org.egov.infra.workflow.entity.contract;
 
 import com.google.gson.GsonBuilder;
-
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;

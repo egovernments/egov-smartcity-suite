@@ -40,14 +40,12 @@
 
 package org.egov.commons;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.Transient;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.egov.infstr.models.BaseModel;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.Transient;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CChartOfAccounts extends BaseModel {
     private static final long serialVersionUID = 1L;

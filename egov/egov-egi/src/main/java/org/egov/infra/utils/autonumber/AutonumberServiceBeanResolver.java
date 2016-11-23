@@ -40,12 +40,12 @@
 
 package org.egov.infra.utils.autonumber;
 
-import java.util.Map;
-
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 public class AutonumberServiceBeanResolver {

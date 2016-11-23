@@ -40,7 +40,6 @@
 
 package org.egov.infra.reporting.viewer;
 
-import org.egov.infra.cache.impl.LRUCache;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
@@ -55,7 +54,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 

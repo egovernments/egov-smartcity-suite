@@ -46,7 +46,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 

@@ -40,14 +40,14 @@
 
 package org.egov.infra.persistence.utils;
 
-import java.io.Serializable;
-import java.sql.SQLException;
-
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
+import java.sql.SQLException;
 
 /**
  * Generic db sequence number generator class, this class first try to return the next val
