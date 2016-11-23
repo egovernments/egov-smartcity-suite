@@ -1,11 +1,8 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ include file="/includes/taglibs.jsp"%>
-
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2016>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -40,7 +37,11 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+  
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+
 <div class="row">
   <div class="col-sm-12">
   <br>
@@ -50,7 +51,7 @@
         <th><spring:message code="lbl.uomfrom" /></th>
         <th><spring:message code="lbl.uomto" /></th>
         <th><spring:message code="lbl.amount" /></th>
-        <th>action</th>
+        <th></th>
       </thead>
       <c:choose>
       <c:when test="${not empty feeMatrix.getFeeMatrixDetail()}">  
@@ -64,7 +65,7 @@
             data-pattern="number" maxlength="8" onchange="return checkValue(this);" /></td>
         <td><input type="text"  name="feeMatrixDetail[${vs.index}].amount" id="amount" value="${feeMatrixDetail.amount}"  class="form-control text-right patternvalidation"
             data-pattern="number"  maxlength="8"  /></td>
-        <td><button type="button" id="del-row" class="btn btn-primary" onclick="deleteThisRow(this)">Delete Row</button></td>
+        <td align='center'><span class="add-padding" id="del-row" class="btn btn-primary" onclick="deleteThisRow(this)"><i	class="fa fa-trash" aria-hidden="true"></i></span></td>
      </tr>   
       </c:forEach>
        </tbody>
@@ -79,9 +80,7 @@
             data-pattern="number" onchange="return checkValue(this);"/></td>
         <td><input type="text"  name="feeMatrixDetail[0].amount" id="amount"   class="form-control text-right patternvalidation"
             data-pattern="number"  /></td>
-         <td><span class="add-padding">
-         	<button type="button" id="del-row" class="btn btn-primary" onclick="deleteThisRow(this)">Delete Row</button></i></span></td>  
-         </tr> 
+         <td align='center'><span class="add-padding" id="del-row" class="btn btn-primary" onclick="deleteThisRow(this)"><i class="fa fa-trash" aria-hidden="true"></i></span></td>         </tr> 
          <tbody>
       </c:otherwise>
       </c:choose>

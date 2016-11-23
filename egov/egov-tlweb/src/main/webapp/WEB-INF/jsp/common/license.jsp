@@ -2,7 +2,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2016>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -47,7 +47,7 @@ jQuery(document).ready(function(){
 		getUom();
 	});
 	 <s:if test="%{hasErrors() || mode=='view' || mode=='edit'}">
-	 if(jQuery('#subCategory').val()!='-1'){
+	 if(jQuery('#subCategory').val()!='-1'){			 
 		 getUom();
 	 }
 	</s:if>  
@@ -55,7 +55,7 @@ jQuery(document).ready(function(){
 
 function getUom(){
 	jQuery.ajax({
-		url: "../domain/commonTradeLicenseAjax-ajaxLoadUomName.action", 
+		url: "/tl/feeType/uom-by-subcategory", 
 		type: "GET",
 		data: {
 			subCategoryId : jQuery('#subCategory').val(),
@@ -64,12 +64,12 @@ function getUom(){
 		cache: false,
 		dataType: "json",
 		success: function (response) {
-			jQuery('#uom').val(response.uom);
-		}, 
-		error: function (response) {
-			console.log("failed");
-			jQuery('#uom').val('');
-			bootbox.alert("No UOM mapped for SubCategory")
+			if(response.length > 0)
+				jQuery('#uom').val(response[0].uom.name);
+			else {
+				jQuery('#uom').val('');
+				bootbox.alert("No UOM mapped for the selected Sub Category");
+			}
 		}
 	});
 }

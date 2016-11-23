@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2016>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -49,7 +49,7 @@ import org.egov.tl.entity.dto.SearchForm;
 import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.masters.LicenseCategoryService;
-import org.egov.tl.web.actions.search.SearchTradeResultHelperAdaptor;
+import org.egov.tl.web.response.adaptor.SearchTradeResultHelperAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;

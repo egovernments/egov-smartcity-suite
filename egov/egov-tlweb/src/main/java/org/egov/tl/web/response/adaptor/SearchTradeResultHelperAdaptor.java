@@ -38,7 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.web.actions.search;
+package org.egov.tl.web.response.adaptor;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
