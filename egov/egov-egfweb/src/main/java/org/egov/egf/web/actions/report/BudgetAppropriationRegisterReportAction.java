@@ -189,10 +189,6 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             totalGrant = beAmount.add(addtionalAppropriationForBe);
         }
         generateReport();
-        if(budgetAppropriationRegisterList.isEmpty())
-        {
-            addActionMessage(getText("voucher.norecords"));
-        }
         return "result";
     }
 
