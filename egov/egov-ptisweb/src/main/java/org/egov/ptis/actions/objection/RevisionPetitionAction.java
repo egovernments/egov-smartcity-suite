@@ -325,7 +325,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         loggedUserIsEmployee = propService.isEmployee(securityUtils.getCurrentUser());
         super.prepare();
         setUserInfo();
-        documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.MODIFY);
+        documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.OBJECTION);
         final List<WallType> wallTypes = getPersistenceService().findAllBy("from WallType order by name");
         final List<WoodType> woodTypes = getPersistenceService().findAllBy("from WoodType order by name");
         final List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy(

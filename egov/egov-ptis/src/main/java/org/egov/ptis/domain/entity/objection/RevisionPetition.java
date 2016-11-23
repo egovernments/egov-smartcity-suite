@@ -44,12 +44,14 @@ import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.Valid;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,9 +61,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGOR
 
 /**
  * @author manoranjan
- *
  */
-// @CompareDates(fromDate = "dateOfOutcome", toDate = "recievedOn", dateFormat = "dd/MM/yyyy", message =
+// @CompareDates(fromDate = "dateOfOutcome", toDate = "recievedOn", dateFormat =
+// "dd/MM/yyyy", message =
 // "dateOfOutcome.greaterThan.recievedOn")
 public class RevisionPetition extends StateAware implements Auditable {
 
@@ -79,8 +81,14 @@ public class RevisionPetition extends StateAware implements Auditable {
     @Length(max = 50, message = "objection.objectionNumber.length")
     private String objectionNumber;
 
-    /* @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "objection.receivedOn.futuredate") */
-    /* @org.egov.infra.persistence.validator.annotation.DateFormat(message = "invalid.fieldvalue.receivedOn") */
+    /*
+     * @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message =
+     * "objection.receivedOn.futuredate")
+     */
+    /*
+     * @org.egov.infra.persistence.validator.annotation.DateFormat(message =
+     * "invalid.fieldvalue.receivedOn")
+     */
     private Date recievedOn;
 
     @Length(max = 256, message = "objection.objectionNumber.length")
@@ -94,188 +102,191 @@ public class RevisionPetition extends StateAware implements Auditable {
     private PropertyImpl property;
 
     @Valid
-    private List<Hearing> hearings = new LinkedList<Hearing>();
+    private List<Hearing> hearings = new LinkedList<>();
 
     @Valid
-    private List<Inspection> inspections = new LinkedList<Inspection>();
+    private List<Inspection> inspections = new LinkedList<>();
 
     /*
-     * @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "objection.outcomedate.futuredate")
-     * @org.egov.infra.persistence.validator.annotation.DateFormat(message = "invalid.fieldvalue.outcomedate")
+     * @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message =
+     * "objection.outcomedate.futuredate")
+     * @org.egov.infra.persistence.validator.annotation.DateFormat(message =
+     * "invalid.fieldvalue.outcomedate")
      */private Date dateOfOutcome;
 
-     private String remarks;// for dateOfOutcome
+    private String remarks;// for dateOfOutcome
 
-     private Boolean objectionRejected;
-     private Boolean generateSpecialNotice;
-     private String meesevaApplicationNumber;
-     private String applicationNo;
-     public static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+    private Boolean objectionRejected;
+    private Boolean generateSpecialNotice;
+    private String meesevaApplicationNumber;
+    private String applicationNo;
+    public static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+    private List<Document> documents = new ArrayList<>();
 
-     @Override
-     public String getStateDetails() {
-         final StringBuffer stateDetails = new StringBuffer("");
-         stateDetails.append(getBasicProperty().getUpicNo()).append(", ")
-         .append(getBasicProperty().getPrimaryOwner().getName()).append(", ")
-         .append(PROPERTY_TYPE_CATEGORIES.get(getBasicProperty().getProperty().getPropertyDetail().getCategoryType()))
-         .append(", ")
-         .append(getBasicProperty().getPropertyID().getLocality().getName());
-         return stateDetails.toString();
-     }
+    @Override
+    public String getStateDetails() {
+        final StringBuilder stateDetails = new StringBuilder("");
+        stateDetails.append(getBasicProperty().getUpicNo()).append(", ")
+                .append(getBasicProperty().getPrimaryOwner().getName()).append(", ")
+                .append(PROPERTY_TYPE_CATEGORIES
+                        .get(getBasicProperty().getProperty().getPropertyDetail().getCategoryType()))
+                .append(", ").append(getBasicProperty().getPropertyID().getLocality().getName());
+        return stateDetails.toString();
+    }
 
-     public EgwStatus getEgwStatus() {
-         return egwStatus;
-     }
+    public EgwStatus getEgwStatus() {
+        return egwStatus;
+    }
 
-     public String getObjectionNumber() {
-         return objectionNumber;
-     }
+    public String getObjectionNumber() {
+        return objectionNumber;
+    }
 
-     @Required(message = "objection.receiviedOn.null")
-     public Date getRecievedOn() {
-         return recievedOn;
-     }
+    @Required(message = "objection.receiviedOn.null")
+    public Date getRecievedOn() {
+        return recievedOn;
+    }
 
-     @Required(message = "objection.receiviedBy.null")
-     /* @Length(max = 256, message = "objection.receivedBy.length") */
-     public String getRecievedBy() {
-         return recievedBy;
-     }
+    @Required(message = "objection.receiviedBy.null")
+    /* @Length(max = 256, message = "objection.receivedBy.length") */
+    public String getRecievedBy() {
+        return recievedBy;
+    }
 
-     @Required(message = "objection.details.null")
-     @Length(max = 1024, message = "objection.details.length")
-     public String getDetails() {
-         return details;
-     }
+    @Required(message = "objection.details.null")
+    @Length(max = 1024, message = "objection.details.length")
+    public String getDetails() {
+        return details;
+    }
 
-     public void setEgwStatus(final EgwStatus egwStatus) {
-         this.egwStatus = egwStatus;
-     }
+    public void setEgwStatus(final EgwStatus egwStatus) {
+        this.egwStatus = egwStatus;
+    }
 
-     public void setObjectionNumber(final String objectionNumber) {
-         this.objectionNumber = objectionNumber;
-     }
+    public void setObjectionNumber(final String objectionNumber) {
+        this.objectionNumber = objectionNumber;
+    }
 
-     public void setRecievedOn(final Date recievedOn) {
-         this.recievedOn = recievedOn;
-     }
+    public void setRecievedOn(final Date recievedOn) {
+        this.recievedOn = recievedOn;
+    }
 
-     public void setRecievedBy(final String recievedBy) {
-         this.recievedBy = recievedBy;
-     }
+    public void setRecievedBy(final String recievedBy) {
+        this.recievedBy = recievedBy;
+    }
 
-     public void setDetails(final String details) {
-         this.details = details;
-     }
+    public void setDetails(final String details) {
+        this.details = details;
+    }
 
-     public List<Hearing> getHearings() {
-         return hearings;
-     }
+    public List<Hearing> getHearings() {
+        return hearings;
+    }
 
-     public void setHearings(final List<Hearing> hearings) {
-         this.hearings = hearings;
-     }
+    public void setHearings(final List<Hearing> hearings) {
+        this.hearings = hearings;
+    }
 
-     public List<Inspection> getInspections() {
-         return inspections;
-     }
+    public List<Inspection> getInspections() {
+        return inspections;
+    }
 
-     public Date getDateOfOutcome() {
-         return dateOfOutcome;
-     }
+    public Date getDateOfOutcome() {
+        return dateOfOutcome;
+    }
 
-     public String getRemarks() {
-         return remarks;
-     }
+    public String getRemarks() {
+        return remarks;
+    }
 
-     public Boolean getObjectionRejected() {
-         return objectionRejected;
-     }
+    public Boolean getObjectionRejected() {
+        return objectionRejected;
+    }
 
-     public void setInspections(final List<Inspection> inspections) {
-         this.inspections = inspections;
-     }
+    public void setInspections(final List<Inspection> inspections) {
+        this.inspections = inspections;
+    }
 
-     public void setDateOfOutcome(final Date dateOfOutcome) {
-         this.dateOfOutcome = dateOfOutcome;
-     }
+    public void setDateOfOutcome(final Date dateOfOutcome) {
+        this.dateOfOutcome = dateOfOutcome;
+    }
 
-     public void setRemarks(final String remarks) {
-         this.remarks = remarks;
-     }
+    public void setRemarks(final String remarks) {
+        this.remarks = remarks;
+    }
 
-     public void setObjectionRejected(final Boolean objectionRejected) {
-         this.objectionRejected = objectionRejected;
-     }
+    public void setObjectionRejected(final Boolean objectionRejected) {
+        this.objectionRejected = objectionRejected;
+    }
 
-     public BasicProperty getBasicProperty() {
-         return basicProperty;
-     }
+    public BasicProperty getBasicProperty() {
+        return basicProperty;
+    }
 
-     public void setBasicProperty(final BasicProperty basicProperty) {
-         this.basicProperty = basicProperty;
-     }
+    public void setBasicProperty(final BasicProperty basicProperty) {
+        this.basicProperty = basicProperty;
+    }
 
-     public String getDocNumberObjection() {
-         return docNumberObjection;
-     }
+    public String getDocNumberObjection() {
+        return docNumberObjection;
+    }
 
-     public String getDocNumberOutcome() {
-         return docNumberOutcome;
-     }
+    public String getDocNumberOutcome() {
+        return docNumberOutcome;
+    }
 
-     public void setDocNumberObjection(final String docNumberObjection) {
-         this.docNumberObjection = docNumberObjection;
-     }
+    public void setDocNumberObjection(final String docNumberObjection) {
+        this.docNumberObjection = docNumberObjection;
+    }
 
-     public void setDocNumberOutcome(final String docNumberOutcome) {
-         this.docNumberOutcome = docNumberOutcome;
-     }
+    public void setDocNumberOutcome(final String docNumberOutcome) {
+        this.docNumberOutcome = docNumberOutcome;
+    }
 
-     public String getFmtdReceivedOn() {
-         if (recievedOn != null)
-             return dateFormat.format(recievedOn);
-         else
-             return "";
-     }
+    public String getFmtdReceivedOn() {
+        if (recievedOn != null)
+            return dateFormat.format(recievedOn);
+        else
+            return "";
+    }
 
-     @Override
-     public String toString() {
+    @Override
+    public String toString() {
 
-         final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
 
-         sb.append("UcipNo :").append(null != basicProperty ? basicProperty.getUpicNo() : " ");
-         sb.append("status :").append(null != egwStatus ? egwStatus.getDescription() : " ");
-         sb.append("objectionNumber :").append(null != objectionNumber ? objectionNumber : " ");
+        sb.append("UcipNo :").append(null != basicProperty ? basicProperty.getUpicNo() : " ");
+        sb.append("status :").append(null != egwStatus ? egwStatus.getDescription() : " ");
+        sb.append("objectionNumber :").append(null != objectionNumber ? objectionNumber : " ");
 
-         return sb.toString();
-     }
+        return sb.toString();
+    }
 
-     @Override
-     public Long getId() {
-         return id;
-     }
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-     @Override
-     public void setId(final Long id) {
-         this.id = id;
-     }
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-     public PropertyImpl getProperty() {
-         return property;
-     }
+    public PropertyImpl getProperty() {
+        return property;
+    }
 
-     public void setProperty(final PropertyImpl property) {
-         this.property = property;
-     }
+    public void setProperty(final PropertyImpl property) {
+        this.property = property;
+    }
 
-     public Boolean getGenerateSpecialNotice() {
-         return generateSpecialNotice;
-     }
+    public Boolean getGenerateSpecialNotice() {
+        return generateSpecialNotice;
+    }
 
-     public void setGenerateSpecialNotice(final Boolean generateSpecialNotice) {
-         this.generateSpecialNotice = generateSpecialNotice;
-     }
+    public void setGenerateSpecialNotice(final Boolean generateSpecialNotice) {
+        this.generateSpecialNotice = generateSpecialNotice;
+    }
 
     public String getMeesevaApplicationNumber() {
         return meesevaApplicationNumber;
@@ -293,9 +304,11 @@ public class RevisionPetition extends StateAware implements Auditable {
         this.applicationNo = applicationNo;
     }
 
-     /*
-      * public PropertyImpl getReferenceProperty() { return referenceProperty; } public void setReferenceProperty(PropertyImpl
-      * referenceProperty) { this.referenceProperty = referenceProperty; }
-      */
+    public List<Document> getDocuments() {
+        return documents;
+    }
 
+    public void setDocuments(List<Document> documents) {
+        this.documents = documents;
+    }
 }

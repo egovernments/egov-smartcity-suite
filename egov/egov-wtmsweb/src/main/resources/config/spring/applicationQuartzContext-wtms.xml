@@ -176,7 +176,7 @@
         </property>   	
 	</bean>
 	<bean id="wcmsBulkBillGenerationDelegate3" class="org.egov.wtms.scheduler.BulkWaterConnBillGenerationJob" lazy-init="true" scope="prototype">
-		<property name="modulo" value="0" />
+		<property name="modulo" value="3" />
 		<property name="billsCount" value="50" />
     </bean>
     
@@ -204,7 +204,7 @@
         </property>   	
 	</bean>
 	<bean id="wcmsBulkBillGenerationDelegate4" class="org.egov.wtms.scheduler.BulkWaterConnBillGenerationJob" lazy-init="true" scope="prototype">
-		<property name="modulo" value="0" />
+		<property name="modulo" value="4" />
 		<property name="billsCount" value="50" />
     </bean>
     
@@ -233,7 +233,7 @@
         </property>   	
 	</bean>
 	<bean id="wcmsBulkBillGenerationDelegate5" class="org.egov.wtms.scheduler.BulkWaterConnBillGenerationJob" lazy-init="true" scope="prototype">
-		<property name="modulo" value="0" />
+		<property name="modulo" value="5" />
 		<property name="billsCount" value="50" />
     </bean>
     
@@ -262,7 +262,7 @@
         </property>   	
 	</bean>
 	<bean id="wcmsBulkBillGenerationDelegate6" class="org.egov.wtms.scheduler.BulkWaterConnBillGenerationJob" lazy-init="true" scope="prototype">
-		<property name="modulo" value="0" />
+		<property name="modulo" value="6" />
 		<property name="billsCount" value="50" />
     </bean>
     
@@ -290,7 +290,7 @@
         </property>   	
 	</bean>
 	<bean id="wcmsBulkBillGenerationDelegate7" class="org.egov.wtms.scheduler.BulkWaterConnBillGenerationJob" lazy-init="true" scope="prototype">
-		<property name="modulo" value="0" />
+		<property name="modulo" value="7" />
 		<property name="billsCount" value="50" />
     </bean>
          <bean id="wcmsBulkBillGenerationTrigger8" name="wcmsBulkBillGenerationTrigger8" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" >
@@ -317,7 +317,7 @@
         </property>   	
 	</bean>
 	<bean id="wcmsBulkBillGenerationDelegate8" class="org.egov.wtms.scheduler.BulkWaterConnBillGenerationJob" lazy-init="true" scope="prototype">
-		<property name="modulo" value="0" />
+		<property name="modulo" value="8" />
 		<property name="billsCount" value="50" />
     </bean>
     
@@ -345,7 +345,7 @@
         </property>   	
 	</bean>
 	<bean id="wcmsBulkBillGenerationDelegate9" class="org.egov.wtms.scheduler.BulkWaterConnBillGenerationJob" lazy-init="true" scope="prototype">
-		<property name="modulo" value="0" />
+		<property name="modulo" value="9" />
 		<property name="billsCount" value="50" />
     </bean>
 	

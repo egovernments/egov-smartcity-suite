@@ -163,7 +163,7 @@ public class ComplaintIndexService {
                 && complaint.getCreatedBy().getType().equals(UserType.EMPLOYEE))
             complaintIndex.setSource(environment.getProperty("complaint.source.website.emp.manual"));
 
-        complaintIndex.setIsClosed(false);
+        complaintIndex.setClosed(false);
         complaintIndex.setComplaintIsClosed("N");
         complaintIndex.setIfClosed(0);
         complaintIndex.setComplaintDuration(0);
@@ -237,7 +237,7 @@ public class ComplaintIndexService {
         if (complaintIndex.getComplaintStatusName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
                 || complaintIndex.getComplaintStatusName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())
                 || complaintIndex.getComplaintStatusName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString())) {
-            complaintIndex.setIsClosed(true);
+            complaintIndex.setClosed(true);
             complaintIndex.setComplaintIsClosed("Y");
             complaintIndex.setIfClosed(1);
             complaintIndex.setClosedByFunctionaryName(
@@ -257,7 +257,7 @@ public class ComplaintIndexService {
             else
                 complaintIndex.setDurationRange("(>30 days)");
         } else {
-            complaintIndex.setIsClosed(false);
+            complaintIndex.setClosed(false);
             complaintIndex.setComplaintIsClosed("N");
             complaintIndex.setIfClosed(0);
             complaintIndex.setComplaintDuration(0);
@@ -269,7 +269,7 @@ public class ComplaintIndexService {
         if (complaintIndex.getComplaintStatusName().equalsIgnoreCase(ComplaintStatus.REOPENED.toString()) &&
                 !status.contains("REOPENED")) {
             complaintIndex.setComplaintReOpenedDate(new Date());
-            complaintIndex.setIsClosed(false);
+            complaintIndex.setClosed(false);
             complaintIndex.setComplaintIsClosed("N");
             complaintIndex.setIfClosed(0);
         }

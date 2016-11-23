@@ -156,7 +156,7 @@ public class EditCollectionController {
         model.addAttribute("legacyReceipts", waterConnectionDetails.getLegacyReceipts().size());
         model.addAttribute("demandDetailBeanList", demandDetailBeanList);
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
-        model.addAttribute("current1HalfInstallment", !demandDetailBeanList.isEmpty()
+        model.addAttribute("current1HalfInstallment", !demandDetailBeanList.isEmpty() && demandDetailBeanList.size()>1 
                 ? demandDetailBeanList.get(demandDetailBeanList.size() - 2).getInstallment() : null);
         model.addAttribute("current2HalfInstallment", !demandDetailBeanList.isEmpty()
                 ? demandDetailBeanList.get(demandDetailBeanList.size() - 1).getInstallment() : null);

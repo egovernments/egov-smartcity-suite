@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2016>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -40,6 +40,12 @@
 
 package org.egov.tl.web.actions.domain;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -53,28 +59,14 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.commons.Designation;
 import org.egov.tl.entity.FeeMatrixDetail;
-import org.egov.tl.entity.FeeType;
-import org.egov.tl.entity.LicenseSubCategory;
-import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.service.FeeMatrixDetailService;
 import org.egov.tl.service.PenaltyRatesService;
-import org.egov.tl.service.masters.LicenseSubCategoryService;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
 @Results({
         @Result(name = "ward", location = "commonAjax-ward.jsp"),
-        @Result(name = "subcategory", location = "commonAjax-subcategory.jsp"),
-        @Result(name = "feeType", location = "commonAjax-feeType.jsp"),
-        @Result(name = "unitOfMeasurement", location = "commonAjax-unitOfMeasurement.jsp"),
         @Result(name = "designation", location = "commonAjax-designation.jsp"),
         @Result(name = "users", location = "commonAjax-users.jsp"),
         @Result(name = "deleteRow", location = "commonAjax-deleteRow.jsp"),
@@ -96,15 +88,12 @@ public class CommonAjaxAction extends BaseFormAction {
     private int areaId;
     private int locationId;
     private int zoneId;
-    private Long categoryId;
-    private Long subCategoryId;
-    private Long feeTypeId;
     private Long feeMatrixDetailId;
     private Long penaltyRateId;
-    private List<Boundary> locationList = new LinkedList<Boundary>();
-    private List<Boundary> areaList = new LinkedList<Boundary>();
-    private List<Boundary> streetList = new LinkedList<Boundary>();
-    private List<Boundary> divisionList = new LinkedList<Boundary>();
+    private List<Boundary> locationList = new LinkedList<>();
+    private List<Boundary> areaList = new LinkedList<>();
+    private List<Boundary> streetList = new LinkedList<>();
+    private List<Boundary> divisionList = new LinkedList<>();
     private String returnStream = "";
     private List<Designation> designationList;
     private Integer departmentId;
@@ -121,17 +110,10 @@ public class CommonAjaxAction extends BaseFormAction {
     private FeeMatrixDetailService feeMatrixDetailService;
     @Autowired
     private PenaltyRatesService penaltyRatesService;
-    private String rateType;
-    private Long uomId;
-    private String uomName;
-    @Autowired
-    private LicenseSubCategoryService licenseSubCategoryService;
-    private List<LicenseSubCategory> subCategoryList;
-    private List<FeeType> feeTypeList = new ArrayList<FeeType>();
 
     public InputStream getReturnStream() {
-        final ByteArrayInputStream is = new ByteArrayInputStream(returnStream.getBytes());
-        return is;
+
+        return new ByteArrayInputStream(returnStream.getBytes());
     }
 
     @Override
@@ -204,7 +186,6 @@ public class CommonAjaxAction extends BaseFormAction {
         return "designation";
     }
 
-    @SuppressWarnings("unchecked")
     @Action(value = "/domain/commonAjax-ajaxPopulateUsersByDesignation")
     public String ajaxPopulateUsersByDesignation() {
         try {
@@ -215,36 +196,6 @@ public class CommonAjaxAction extends BaseFormAction {
             throw new ApplicationRuntimeException("Unable to load User information", e);
         }
         return "users";
-    }
-
-    @Action(value = "/domain/commonAjax-ajaxPopulateSubCategory")
-    public String ajaxPopulateSubCategory() {
-        subCategoryList = licenseSubCategoryService.findAllSubCategoryByCategory(categoryId);
-        return "subcategory";
-    }
-
-    @Action(value = "/domain/commonAjax-ajaxPopulateFeeType")
-    public String ajaxPopulateFeeType() {
-        final LicenseSubCategory subCategory = licenseSubCategoryService.findById(subCategoryId);
-        if (subCategory != null)
-            if (!subCategory.getLicenseSubCategoryDetails().isEmpty())
-                for (final LicenseSubCategoryDetails scd : subCategory.getLicenseSubCategoryDetails())
-                    feeTypeList.add(scd.getFeeType());
-        return "feeType";
-    }
-
-    @Action(value = "/domain/commonAjax-ajaxPopulateUom")
-    public String ajaxPopulateUom() {
-        final LicenseSubCategory subCategory = licenseSubCategoryService.findById(subCategoryId);
-        if (subCategory != null)
-            if (!subCategory.getLicenseSubCategoryDetails().isEmpty())
-                for (final LicenseSubCategoryDetails scd : subCategory.getLicenseSubCategoryDetails())
-                    if (scd.getFeeType().getId() == feeTypeId) {
-                        uomId = scd.getUom().getId();
-                        uomName = scd.getUom().getName();
-                        rateType = scd.getRateType().toString();
-                    }
-        return "unitOfMeasurement";
     }
 
     /**
@@ -395,85 +346,12 @@ public class CommonAjaxAction extends BaseFormAction {
         this.eisCommonService = eisCommonService;
     }
 
-    public LicenseSubCategoryService getLicenseSubCategoryService() {
-        return licenseSubCategoryService;
-    }
-
-    public void setLicenseSubCategoryService(
-            final LicenseSubCategoryService licenseSubCategoryService) {
-        this.licenseSubCategoryService = licenseSubCategoryService;
-    }
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(final Long categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public List<LicenseSubCategory> getSubCategoryList() {
-        return subCategoryList;
-    }
-
-    public void setSubCategoryList(final List<LicenseSubCategory> subCategoryList) {
-        this.subCategoryList = subCategoryList;
-    }
-
     public Long getFeeMatrixDetailId() {
         return feeMatrixDetailId;
     }
 
     public void setFeeMatrixDetailId(final Long feeMatrixDetailId) {
         this.feeMatrixDetailId = feeMatrixDetailId;
-    }
-
-    public Long getSubCategoryId() {
-        return subCategoryId;
-    }
-
-    public void setSubCategoryId(final Long subCategoryId) {
-        this.subCategoryId = subCategoryId;
-    }
-
-    public Long getFeeTypeId() {
-        return feeTypeId;
-    }
-
-    public void setFeeTypeId(final Long feeTypeId) {
-        this.feeTypeId = feeTypeId;
-    }
-
-    public List<FeeType> getFeeTypeList() {
-        return feeTypeList;
-    }
-
-    public void setFeeTypeList(final List<FeeType> feeTypeList) {
-        this.feeTypeList = feeTypeList;
-    }
-
-    public String getRateType() {
-        return rateType;
-    }
-
-    public void setRateType(final String rateType) {
-        this.rateType = rateType;
-    }
-
-    public Long getUomId() {
-        return uomId;
-    }
-
-    public void setUomId(final Long uomId) {
-        this.uomId = uomId;
-    }
-
-    public String getUomName() {
-        return uomName;
-    }
-
-    public void setUomName(final String uomName) {
-        this.uomName = uomName;
     }
 
     public Long getPenaltyRateId() {

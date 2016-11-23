@@ -420,14 +420,18 @@
 							">
 
 							</s:elseif>
+							<s:if test="%{!documentTypes.isEmpty()}">
 
+								<%@ include file="../common/DocumentUploadView.jsp"%>
+
+							</s:if>
 						</div>
 					</td>
 				</tr>
 				<s:if test="%{state != null}">
 					<tr>
 						<%@ include file="../common/workflowHistoryView.jsp"%>
-					<tr>
+					</tr>
 				</s:if>
 				<tr>
 					<td>

@@ -44,116 +44,90 @@ $(document).ready(function()
 
 $('#unitOfMeasurement').attr("disabled", true); 
 	
-$('#feeType').click(function(event){
+$('#feeType').click(function(){
 	if($('#subCategory').val()==""){
 		bootbox.alert("Please Choose Sub Category");
 		return false;
 	}
 });
 
-$('#unitOfMeasurement').click(function(event){
+$('#unitOfMeasurement').click(function(){
 	if($('#feeType').val()==""){
 		bootbox.alert("Please Choose Fee Type");
 		return false;
 	}
 });
-
-
-$('#subCategory').change(function(){ 
-	console.log("came onchange of "+$('#subCategory').val());
+$('#feeType').change(function(){
+	$.ajax({
+		url: "/tl/feeType/uom-by-subcategory?feeTypeId="+$('#feeType').val()+"&subCategoryId="+$('#subCategory').val()+"",    
+		type: "GET",
+		dataType: "json",
+		success: function (response) {
+			$('#unitOfMeasurement').empty();
+			$('#unitOfMeasurement').append($("<option value=''>Select</option>"));
+			$.each(response, function(index, value) {
+			     $('#unitOfMeasurement').append("<option value="+value.uom.id+">"+value.uom.name+"</option>");
+			     $('#rateType').val(value.rateType);
+			});
+			$("#unitOfMeasurement").prop("selectedIndex",1);
+		}, 
+		error: function () {
+		} 
+	});
+});
+$('#subCategory').change(function(){
 	$('#unitOfMeasurement').empty();
 	$('#unitOfMeasurement').append($("<option value=''>Select</option>"));
 	$('#rateType').val("");
 	$.ajax({
-		url: "/tl/domain/commonAjax-ajaxPopulateFeeType.action?subCategoryId="+$('#subCategory').val()+"",
+		url: "/tl/feeType/feetype-by-subcategory",    
 		type: "GET",
+		data: {
+			subCategoryId : $('#subCategory').val()   
+		},
 		dataType: "json",
 		success: function (response) {
-			console.log("success"+JSON.stringify(response) );
-			$('#feeType').empty();
-			
-			$('#feeType').append($("<option value=''>Select</option>"));
-			$.each(response.Result, function(index, value) {
-				
-			     $('#feeType').append("<option value="+value.Value+">"+value.Text+"</option>");
+			var feeType = $('#feeType')
+			feeType.find("option:gt(0)").remove();
+			$.each(response, function(index, value) {
+				feeType.append($('<option>').text(value.feeType.name).attr('value', value.feeType.id));
 			});
-			console.log("completed"+response);
 			
 		}, 
-		error: function (response) {
-			console.log("failed");
-		}
-	});
+		
+	})
 });
-
-$('#feeType').change(function(){
-	console.log("came onchange of "+$('#feeType').val());
-	var subCategoryValue=$('#subCategory').val();
-	$.ajax({
-		url: "/tl/domain/commonAjax-ajaxPopulateUom.action?feeTypeId="+$('#feeType').val()+"&subCategoryId="+$('#subCategory').val()+"",
-		type: "GET",
-		dataType: "json",
-		success: function (response) {
-			console.log("success"+JSON.stringify(response) );
-			$('#unitOfMeasurement').empty();
-			$('#unitOfMeasurement').append($("<option value=''>Select</option>"));
-			$.each(response.Result, function(index, value) {
-			     $('#unitOfMeasurement').append("<option value="+value.uomId+">"+value.uomName+"</option>");
-			     $('#rateType').val(value.rateType);
-			});
-			console.log("completed"+response);
-			$("#unitOfMeasurement").prop("selectedIndex",1);
-		}, 
-		error: function (response) {
-			console.log("failed"+response);
-		} 
-	});
-});
-	
 $('#licenseCategory').change(function(){
-		console.log("came onchange of "+$('#licenseCategory').val());
-		$('#feeType').empty();
-		$('#feeType').append($("<option value=''>Select</option>"));
-		$('#unitOfMeasurement').empty();
-		$('#unitOfMeasurement').append($("<option value=''>Select</option>"));
-		$('#rateType').val("");
-		$.ajax({
-			url: "/tl/domain/commonAjax-ajaxPopulateSubCategory.action?categoryId="+$('#licenseCategory').val()+"",
-			type: "GET",
-			dataType: "json",
-			success: function (response) {
-				console.log("success"+JSON.stringify(response) );
-				$('#subCategory').empty();
-				
-				$('#subCategory').append($("<option value=''>Select</option>"));
-				$.each(response.Result, function(index, value) {
-					
-				     $('#subCategory').append("<option value="+value.Value+">"+value.Text+"</option>");
-				});
-				console.log("completed"+response);
-				
-			}, 
-			error: function (response) {
-				console.log("failed");
-			}
-		});
-	});
-
+	$('#feeType').empty();
+	$('#feeType').append($("<option value=''>Select</option>"));
+	$('#unitOfMeasurement').empty();
+	$('#unitOfMeasurement').append($("<option value=''>Select</option>"));
+	$('#rateType').val("");
+	$.ajax({
+		url: "/tl/licensesubcategory/subcategories-by-category",    
+		type: "GET",
+		data: {
+			categoryId : $('#licenseCategory').val()   
+		},
+		dataType: "json",
+		success: function (response) {
+			var subCategory = $('#subCategory')
+			subCategory.find("option:gt(0)").remove();
+			$.each(response, function(index, value) {
+				subCategory.append($('<option>').text(value.name).attr('value', value.id));
+			});
+			
+		}, 
+	
+	})
 });
-
-/*$( "#add-row" ).click(function( event ) {
-	bootbox.alert( "add-row event called." );
-	  $(this).closest("tr").remove(); // remove row
-	    return false;
-});*/
-
-$( "#add-row" ).click(function( event ) {
+$( "#add-row" ).click(function() {
 	var rowCount = $('#result tr').length;
 	if(!checkforNonEmptyPrevRow())      
 		return false;
 	var prevUOMFromVal=getPrevUOMFromData();
 	var content= $('#resultrow0').html();
-	resultContent=   content.replace(/0/g,rowCount-1);   
+	var resultContent=   content.replace(/0/g,rowCount-1);   
 	$(resultContent).find("input").val("");
 	$('#result > tbody:last').append("<tr>"+resultContent+"</tr>"); 
 	$('#result tr:last').find("input").val("");   
@@ -161,7 +135,7 @@ $( "#add-row" ).click(function( event ) {
 	patternvalidation(); 
 });    
 
-$( "#save" ).click(function( event ) {
+$( "#save" ).click(function() {
 if(!validateDetailsBeforeSubmit()){
 	return false;
 } 
@@ -183,7 +157,6 @@ if(!validateDetailsBeforeSubmit()){
 		    },
 			//dataType: "text",
 			success: function (response) {
-				console.log("success"+response );
 				 $('#resultdiv').html(response);
 				 if(natureOfBusinessDisabled)
 					 $('#natureOfBusiness').attr("disabled", true); 
@@ -193,8 +166,7 @@ if(!validateDetailsBeforeSubmit()){
 					 $('#unitOfMeasurement').attr("disabled", true); 
 				 bootbox.alert("Details saved Successfully");
 			}, 
-			error: function (response) {
-				console.log("failed");
+			error: function () {
 				if(natureOfBusinessDisabled)
 					$('#natureOfBusiness').attr("disabled", true); 
 				if(licenseAppTypeDisabled)
@@ -208,4 +180,134 @@ if(!validateDetailsBeforeSubmit()){
 		    }
 		});
 
+   });
+$( "#search" ).click(function() {
+	$('#resultdiv').empty();
+	var valid = $('#feematrix-new').validate().form();
+	if(!valid)
+		{
+		bootbox.alert("Please fill mandatory fields");
+		return false;
+		}
+	  var param="uniqueNo=";
+	  param=param+$('#natureOfBusiness').val()+"-";
+	  param=param+$('#licenseAppType').val()+"-";
+	  param=param+$('#licenseCategory').val()+"-";
+	  param=param+$('#subCategory').val()+"-";
+	  param=param+$('#feeType').val()+"-";
+	  param=param+$('#unitOfMeasurement').val()+"-";
+	  param=param+$('#financialYear').val(); 
+	   $.ajax({
+			url: "/tl/feematrix/search?"+param,
+			type: "GET",
+			//dataType: "json",
+			success: function (response) {
+				 $('#resultdiv').html(response);
+			}, 
+			error: function () {
+			}
+		});
+   });
 });
+function checkValue(obj){
+	var rowobj=getRow(obj);
+	var tbl = document.getElementById('result');
+	var uomToval=getControlInBranch(tbl.rows[rowobj.rowIndex],'uomTo').value;
+	var uomFromval=getControlInBranch(tbl.rows[rowobj.rowIndex],'uomFrom').value;
+	if(uomFromval!='' && uomToval!='' && (JSON.parse(uomFromval)>=JSON.parse(uomToval))){
+		bootbox.alert("\"UOM To\" should be greater than \"UOM From\".");
+		getControlInBranch(tbl.rows[rowobj.rowIndex],'uomTo').value="";
+		return false;
+	  }
+  	var lastRow = (tbl.rows.length)-1;
+    var curRow=rowobj.rowIndex; 
+    if(curRow!=lastRow){
+		var uomFromVal1=getControlInBranch(tbl.rows[rowobj.rowIndex+1],'uomFrom').value;
+		if(uomToval!=uomFromVal1)
+			getControlInBranch(tbl.rows[rowobj.rowIndex+1],'uomFrom').value=uomToval; 
+    }
+}
+
+function checkforNonEmptyPrevRow(){
+	var tbl=document.getElementById("result");
+    var lastRow = (tbl.rows.length)-1;
+    var uomFromval=getControlInBranch(tbl.rows[lastRow],'uomFrom').value;
+    var uomToval=getControlInBranch(tbl.rows[lastRow],'uomTo').value;
+    var amountVal=getControlInBranch(tbl.rows[lastRow],'amount').value;
+    if(uomFromval=='' || uomToval=='' || amountVal==''){
+    	bootbox.alert("Enter all values for existing rows before adding.");
+		return false;       
+    } 
+    return true;
+}  
+
+function getPrevUOMFromData(){
+	var tbl=document.getElementById("result");
+    var lastRow = (tbl.rows.length)-1;
+    return getControlInBranch(tbl.rows[lastRow],'uomTo').value;
+}
+
+function intiUOMFromData(obj){
+	var tbl=document.getElementById("result");
+    var lastRow = (tbl.rows.length)-1;
+    getControlInBranch(tbl.rows[lastRow],'uomFrom').value=obj;
+} 
+
+function deleteThisRow(obj){
+	var tbl=document.getElementById("result");
+    var lastRow = (tbl.rows.length)-1;
+    var curRow=getRow(obj).rowIndex; 
+    if(curRow == 1)	{
+    	bootbox.alert('Cannot delete first row');
+  	     return false;
+    } else if(curRow != lastRow){
+    	bootbox.alert('Cannot delete in between. Delete from last.');
+ 	    return false;
+    } else	{
+        if(getControlInBranch(tbl.rows[lastRow],'detailId').value==''){
+	  	  	tbl.deleteRow(curRow);
+			return true;
+	    } 
+        else if(getControlInBranch(tbl.rows[lastRow],'detailId').value!='')
+        {
+	    bootbox.confirm("This will delete the row permanently. Press OK to Continue. ",
+			function(r) {
+				if (r) {
+					$.ajax({
+						url: "/tl/domain/commonAjax-deleteFee.action?feeMatrixDetailId="+getControlInBranch(tbl.rows[lastRow],'detailId').value+"",
+						type: "GET",
+						dataType: "json",
+						success: function () {
+							tbl.deleteRow(curRow);
+						}, 
+						error: function () {
+							bootbox.alert("Unable to delete this row.");
+							}
+					});
+			   }
+		   });
+  	   }
+    }
+}
+
+function validateDetailsBeforeSubmit(){
+	var tbl=document.getElementById("result");
+    var tabLength = (tbl.rows.length)-1;
+    var uomFromval,uomToval,amt;
+    for(var i=1;i<=tabLength;i++){
+    	uomFromval=getControlInBranch(tbl.rows[i],'uomFrom').value;
+    	uomToval=getControlInBranch(tbl.rows[i],'uomTo').value;
+    	amt=getControlInBranch(tbl.rows[i],'amount').value;
+    	if(uomFromval=="" || uomToval=="" ||  amt == "" && i!=tabLength){
+    		bootbox.alert("\"UOM To\" or \"UOM From\" or \"Amount\" cannot be null for the row "+(i)+".");
+    		return false;
+    	}
+    	if(uomFromval!='' && uomToval!='' && (JSON.parse(uomFromval)>=JSON.parse(uomToval))){
+    		bootbox.alert("\"UOM To\" should be greater than \"UOM From\" for row "+(i)+".");
+    		getControlInBranch(tbl.rows[i],'uomTo').value="";
+    		getControlInBranch(tbl.rows[i],'uomTo').focus();
+    		return false;
+    	}  
+    }
+    return true;
+}

@@ -129,9 +129,8 @@ function onBodyLoad(){
 	{
 		onChangeDesignation('<s:property value="designationId"/>');
 	}
-	loadDropDownCodesFunction();
 	loadDropDownCodes();
-	
+	loadDropDownCodesFunction();
 	loadFinancialYearList();
 	
 	check();
@@ -505,9 +504,9 @@ var makeBillDetailTable = function() {
 	</s:iterator>
 	var makeSubLedgerTable = function() {
 		var subledgerColumns = [ 
-			
+		            			
 			{key:"glcode.id",label:'Account Code <span class="mandatory"/>', formatter:createDropdownFormatterCode(SUBLEDGERLIST,"loaddropdown(this)"),  dropdownOptions:glcodeOptions},
-			{key:"detailType.id",label:'Type <span class="mandatory"/>', formatter:createDropdownFormatterDetail(SUBLEDGERLIST),dropdownOptions:detailtypeOptions},
+            {key:"detailType.id",label:'Type <span class="mandatory"></span>', formatter:createDropdownFormatterDetail(SUBLEDGERLIST),dropdownOptions:detailtypeOptions},
 			{key:"detailCode",label:'Code <span class="mandatory"/>',formatter:createSLDetailCodeTextFieldFormatter(SUBLEDGERLIST,".detailCode","splitEntitiesDetailCode(this)")},
 			{key:"detailKey",label:'Name', formatter:createSLLongTextFieldFormatter(SUBLEDGERLIST,".detailKey","")},
 			{key:"amount",label:'Amount (Rs.)', formatter:createSLAmountFieldFormatter(SUBLEDGERLIST,".amount")},
@@ -553,7 +552,9 @@ var makeBillDetailTable = function() {
 				});
 				var index = '<s:property value="#stat.index"/>';
 				updateGridSLDropdown('glcode.id',index,'<s:property value="glcode.id"/>','<s:property value="subledgerCode"/>');
-				updateGridSLDropdown('detailType.id',index,'<s:property value="detailType.id"/>','<s:property value="detailTypeName"/>');
+				 setTimeout(function(){
+					updateGridSLDropdown('detailType.id',index,'<s:property value="detailType.id"/>','<s:property value="detailTypeName"/>');
+				 }, 1000);
 				updateSLGrid('detailCode',index,'<s:property value="detailCode"/>');
 				updateSLGrid('detailKeyId',index,'<s:property value="detailKeyId"/>');
 				updateSLGrid('detailKey',index,'<s:property value="detailKey"/>');

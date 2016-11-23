@@ -40,16 +40,25 @@
 package org.egov.egf.voucher.service;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CFiscalPeriod;
+import org.egov.commons.CGeneralLedger;
+import org.egov.commons.CGeneralLedgerDetail;
 import org.egov.commons.CVoucherHeader;
+import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.FiscalPeriodHibernateDAO;
 import org.egov.commons.service.FundService;
+import org.egov.egf.autonumber.JVBillNumberGenerator;
 import org.egov.egf.autonumber.VouchernumberGenerator;
+import org.egov.egf.billsubtype.service.EgBillSubTypeService;
+import org.egov.egf.expensebill.service.ExpenseBillService;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.egf.voucher.repository.JournalVoucherRepository;
 import org.egov.eis.entity.Assignment;
@@ -61,8 +70,15 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.model.bills.EgBillPayeedetails;
+import org.egov.model.bills.EgBillSubType;
+import org.egov.model.bills.EgBilldetails;
+import org.egov.model.bills.EgBillregister;
+import org.egov.model.bills.EgBillregistermis;
 import org.egov.pims.commons.Position;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
@@ -81,7 +97,6 @@ import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
 /**
  * @author venki
- *
  */
 
 @Service
@@ -149,6 +164,12 @@ public class JournalVoucherService {
     @Autowired
     private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 
+    @Autowired
+    private EgBillSubTypeService egBillSubTypeService;
+
+    @Autowired
+    private ExpenseBillService expenseBillService;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -168,7 +189,7 @@ public class JournalVoucherService {
 
     @Transactional
     public CVoucherHeader create(final CVoucherHeader voucherHeader, final Long approvalPosition, final String approvalComent,
-            final String additionalRule, final String workFlowAction) {
+                                 final String additionalRule, final String workFlowAction) {
 
         voucherHeader.setFiscalPeriodId(
                 fiscalPeriodHibernateDAO.getFiscalPeriodByDate(voucherHeader.getVoucherDate()).getId().intValue());
@@ -191,7 +212,15 @@ public class JournalVoucherService {
         populateVoucherNumber(voucherHeader, null);
         populateCGVNNumber(voucherHeader);
 
+        if (!FinancialConstants.JOURNALVOUCHER_NAME_GENERAL.equalsIgnoreCase(voucherHeader.getName()))
+            createBillForVoucherHeader(voucherHeader);
+
         final CVoucherHeader savedVoucherHeader = journalVoucherRepository.save(voucherHeader);
+
+        voucherHeader.getVouchermis().setSourcePath(
+                "/EGF/voucher/journalVoucherModify-beforeModify.action?voucherHeader.id="
+                        + voucherHeader.getId());
+        update(voucherHeader);
 
         if (workFlowAction.equals(FinancialConstants.CREATEANDAPPROVE))
             voucherHeader.setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
@@ -204,9 +233,124 @@ public class JournalVoucherService {
         return journalVoucherRepository.save(savedVoucherHeader);
     }
 
+    @Transactional
+    public CVoucherHeader update(final CVoucherHeader voucherHeader) {
+
+        return journalVoucherRepository.save(voucherHeader);
+    }
+
+    @Transactional
+    public void createBillForVoucherHeader(final CVoucherHeader voucherHeader) {
+        final EgBillregister egBillregister = new EgBillregister();
+        EgwStatus egwstatus = null;
+        if (FinancialConstants.JOURNALVOUCHER_NAME_CONTRACTORJOURNAL.equalsIgnoreCase(voucherHeader.getName())) {
+            egwstatus = financialUtils.getStatusByModuleAndCode(FinancialConstants.CONTRACTOR_BILL,
+                    FinancialConstants.CONTRACTORBILL_APPROVED_STATUS);
+            egBillregister.setExpendituretype(FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS);
+        } else if (FinancialConstants.JOURNALVOUCHER_NAME_SUPPLIERJOURNAL.equalsIgnoreCase(voucherHeader.getName())) {
+            egwstatus = financialUtils.getStatusByModuleAndCode(FinancialConstants.SBILL,
+                    FinancialConstants.SALARYBILL_APPROVED_STATUS);
+            egBillregister.setExpendituretype(FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE);
+        } else if (FinancialConstants.JOURNALVOUCHER_NAME_SALARYJOURNAL.equalsIgnoreCase(voucherHeader.getName())) {
+            egwstatus = financialUtils.getStatusByModuleAndCode(FinancialConstants.SALARYBILL,
+                    FinancialConstants.SALARYBILL_APPROVED_STATUS);
+            egBillregister.setExpendituretype(FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY);
+        } else if (FinancialConstants.JOURNALVOUCHER_NAME_EXPENSEJOURNAL.equalsIgnoreCase(voucherHeader.getName())) {
+            egwstatus = financialUtils.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,
+                    FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS);
+            egBillregister.setExpendituretype(FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
+        } else if (FinancialConstants.JOURNALVOUCHER_NAME_PENSIONJOURNAL.equalsIgnoreCase(voucherHeader.getName())) {
+            egwstatus = financialUtils.getStatusByModuleAndCode(FinancialConstants.PENSIONBILL,
+                    FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
+            egBillregister.setExpendituretype(FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION);
+        }
+        egBillregister.setStatus(egwstatus);
+        if (null != voucherHeader.getBillDate())
+            egBillregister.setBilldate(voucherHeader.getBillDate());
+        else
+            egBillregister.setBilldate(voucherHeader.getVoucherDate());
+        if (null != voucherHeader.getVouchermis().getDivisionid())
+            egBillregister.setFieldid(new BigDecimal(voucherHeader
+                    .getVouchermis().getDivisionid().getId().toString()));
+        egBillregister.setNarration(voucherHeader.getDescription());
+        egBillregister.setIsactive(true);
+        egBillregister.setBilltype(FinancialConstants.BILLTYPE_FINAL_BILL);
+        egBillregister.setPassedamount(voucherHeader.getTotalAmount());
+        egBillregister.setBillamount(voucherHeader.getTotalAmount());
+
+        final EgBillregistermis egBillregistermis = new EgBillregistermis();
+        egBillregistermis.setFund(voucherHeader.getFundId());
+        egBillregistermis.setEgDepartment(voucherHeader.getVouchermis().getDepartmentid());
+        egBillregistermis.setFunctionaryid(voucherHeader.getVouchermis().getFunctionary());
+        egBillregistermis.setFunction(voucherHeader.getVouchermis().getFunction());
+        egBillregistermis.setFundsource(voucherHeader.getVouchermis().getFundsource());
+        egBillregistermis.setScheme(voucherHeader.getVouchermis().getSchemeid());
+        egBillregistermis.setSubScheme(voucherHeader.getVouchermis().getSubschemeid());
+        egBillregistermis.setNarration(voucherHeader.getDescription());
+        egBillregistermis.setPartyBillDate(voucherHeader.getPartyBillDate());
+        egBillregistermis.setPayto(voucherHeader.getPartyName());
+        egBillregistermis.setPartyBillNumber(voucherHeader.getPartyBillNumber());
+        egBillregistermis.setFieldid(voucherHeader.getVouchermis().getDivisionid());
+        if (FinancialConstants.VOUCHER_TYPE_FIXEDASSET.equalsIgnoreCase(voucherHeader.getVoucherNumType())) {
+            final EgBillSubType egBillSubType = egBillSubTypeService.getByExpenditureTypeAndName(
+                    FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE, FinancialConstants.STANDARD_SUBTYPE_FIXED_ASSET);
+            egBillregistermis.setEgBillSubType(egBillSubType);
+        }
+        egBillregistermis.setLastupdatedtime(new Date());
+        egBillregistermis.setVoucherHeader(voucherHeader);
+        egBillregister.setEgBillregistermis(egBillregistermis);
+        if (null != voucherHeader.getBillNumber() && StringUtils.isNotEmpty(voucherHeader.getBillNumber()))
+            egBillregister.setBillnumber(voucherHeader.getBillNumber());
+        else {
+            final JVBillNumberGenerator b = beanResolver.getAutoNumberServiceFor(JVBillNumberGenerator.class);
+            final String billNumber = b.getNextNumber(egBillregister);
+
+            egBillregister.setBillnumber(billNumber);
+        }
+        if (!expenseBillService.isBillNumUnique(egBillregister.getBillnumber()))
+            throw new ValidationException(Arrays.asList(new ValidationError("bill number",
+                    "Duplicate Bill Number : " + egBillregister.getBillnumber())));
+
+        egBillregistermis.setEgBillregister(egBillregister);
+
+        populateBillDetails(egBillregister, voucherHeader);
+        expenseBillService.create(egBillregister);
+    }
+
+    private void populateBillDetails(final EgBillregister egBillregister, final CVoucherHeader voucherHeader) {
+        egBillregister.getEgBilldetailes().clear();
+        EgBilldetails details;
+        for (final CGeneralLedger gl : voucherHeader.getGeneralLedger()) {
+            details = new EgBilldetails();
+            details.setEgBillregister(egBillregister);
+            details.setLastupdatedtime(new Date());
+            details.setDebitamount(BigDecimal.valueOf(gl.getDebitAmount()));
+            details.setCreditamount(BigDecimal.valueOf(gl.getCreditAmount()));
+            if (gl.getFunctionId() != null)
+                details.setFunctionid(BigDecimal.valueOf(gl.getFunctionId()));
+            details.setGlcodeid(BigDecimal.valueOf(gl.getGlcodeId().getId()));
+            EgBillPayeedetails payeeDetails;
+            for (final CGeneralLedgerDetail gld : gl.getGeneralLedgerDetails()) {
+                payeeDetails = new EgBillPayeedetails();
+                payeeDetails.setAccountDetailTypeId(gld.getDetailTypeId().getId());
+                payeeDetails.setAccountDetailKeyId(gld.getDetailKeyId());
+                if (details.getDebitamount() != null && details.getDebitamount().compareTo(BigDecimal.ZERO) == 1) {
+                    payeeDetails.setDebitAmount(gld.getAmount());
+                    payeeDetails.setCreditAmount(BigDecimal.ZERO);
+                } else {
+                    payeeDetails.setDebitAmount(BigDecimal.ZERO);
+                    payeeDetails.setCreditAmount(gld.getAmount());
+                }
+                details.getEgBillPaydetailes().add(payeeDetails);
+            }
+            egBillregister.getEgBilldetailes().add(details);
+
+        }
+    }
+
     public void createVoucherHeaderRegisterWorkflowTransition(final CVoucherHeader voucherHeader,
-            final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction) {
+                                                              final Long approvalPosition, final String approvalComent, final String additionalRule,
+                                                              final String workFlowAction) {
         if (LOG.isDebugEnabled())
             LOG.debug(" Create WorkFlow Transition Started  ...");
         final User user = securityUtils.getCurrentUser();
@@ -271,7 +415,7 @@ public class JournalVoucherService {
     }
 
     public Long getApprovalPositionByMatrixDesignation(final CVoucherHeader voucherHeader,
-            final String additionalRule, final String mode, final String workFlowAction) {
+                                                       final String additionalRule, final String mode, final String workFlowAction) {
         Long approvalPosition = null;
         final WorkFlowMatrix wfmatrix = cvoucherHeaderRegisterWorkflowService.getWfMatrix(voucherHeader
                 .getStateType(), null, null, additionalRule, voucherHeader.getCurrentState().getValue(), null);
@@ -328,67 +472,67 @@ public class JournalVoucherService {
             typetoCheck = JOURNALVOUCHER;
 
         switch (voucherSubTypeEnum.valueOf(typetoCheck)) {
-        case JVGENERAL:
-            voucherNumberPrefix = FinancialConstants.JOURNAL_VOUCHERNO_TYPE;
-            break;
-        case JOURNALVOUCHER:
-            voucherNumberPrefix = FinancialConstants.JOURNAL_VOUCHERNO_TYPE;
-            break;
-        case CONTRA:
-            voucherNumberPrefix = FinancialConstants.CONTRA_VOUCHERNO_TYPE;
-            break;
-        case RECEIPT:
-            voucherNumberPrefix = FinancialConstants.RECEIPT_VOUCHERNO_TYPE;
-            break;
-        case PAYMENT:
-            voucherNumberPrefix = FinancialConstants.PAYMENT_VOUCHERNO_TYPE;
-            break;
-        case PURCHASEJOURNAL:
-            voucherNumberPrefix = FinancialConstants.PURCHBILL_VOUCHERNO_TYPE;
-            break;
-        case WORKS:
-            voucherNumberPrefix = FinancialConstants.WORKSBILL_VOUCHERNO_TYPE;
-            break;
-        case CONTRACTORJOURNAL:
-            voucherNumberPrefix = FinancialConstants.WORKSBILL_VOUCHERNO_TYPE;
-            break;
-        case WORKSJOURNAL:
-            voucherNumberPrefix = FinancialConstants.WORKSBILL_VOUCHERNO_TYPE;
-            break;
-        case FIXEDASSETJOURNAL:
-            voucherNumberPrefix = FinancialConstants.FIXEDASSET_VOUCHERNO_TYPE;
-            break;
-        case CONTINGENTJOURNAL:
-            voucherNumberPrefix = FinancialConstants.CBILL_VOUCHERNO_TYPE;
-            break;
-        case PURCHASE:
-            voucherNumberPrefix = FinancialConstants.PURCHBILL_VOUCHERNO_TYPE;
-            break;
-        case EXPENSEJOURNAL:
-            voucherNumberPrefix = FinancialConstants.CBILL_VOUCHERNO_TYPE;
-            break;
-        case EXPENSE:
-            voucherNumberPrefix = FinancialConstants.CBILL_VOUCHERNO_TYPE;
-            break;
-        case SALARYJOURNAL:
-            voucherNumberPrefix = FinancialConstants.SALBILL_VOUCHERNO_TYPE;
-            break;
-        case SALARY:
-            voucherNumberPrefix = FinancialConstants.SALBILL_VOUCHERNO_TYPE;
-            break;
-        case FIXEDASSET:
-            voucherNumberPrefix = FinancialConstants.FIXEDASSET_VOUCHERNO_TYPE;
-            break;
-        case PENSIONJOURNAL:
-            voucherNumberPrefix = FinancialConstants.PENBILL_VOUCHERNO_TYPE;
-            break;
-        case PENSION:
-            voucherNumberPrefix = FinancialConstants.PENBILL_VOUCHERNO_TYPE;
-            break;
-        default: // if subtype is invalid then use type
-            if (voucherNumberPrefix == null)
-                voucherNumberPrefix = checkWithVoucherType(type);
-            break;
+            case JVGENERAL:
+                voucherNumberPrefix = FinancialConstants.JOURNAL_VOUCHERNO_TYPE;
+                break;
+            case JOURNALVOUCHER:
+                voucherNumberPrefix = FinancialConstants.JOURNAL_VOUCHERNO_TYPE;
+                break;
+            case CONTRA:
+                voucherNumberPrefix = FinancialConstants.CONTRA_VOUCHERNO_TYPE;
+                break;
+            case RECEIPT:
+                voucherNumberPrefix = FinancialConstants.RECEIPT_VOUCHERNO_TYPE;
+                break;
+            case PAYMENT:
+                voucherNumberPrefix = FinancialConstants.PAYMENT_VOUCHERNO_TYPE;
+                break;
+            case PURCHASEJOURNAL:
+                voucherNumberPrefix = FinancialConstants.PURCHBILL_VOUCHERNO_TYPE;
+                break;
+            case WORKS:
+                voucherNumberPrefix = FinancialConstants.WORKSBILL_VOUCHERNO_TYPE;
+                break;
+            case CONTRACTORJOURNAL:
+                voucherNumberPrefix = FinancialConstants.WORKSBILL_VOUCHERNO_TYPE;
+                break;
+            case WORKSJOURNAL:
+                voucherNumberPrefix = FinancialConstants.WORKSBILL_VOUCHERNO_TYPE;
+                break;
+            case FIXEDASSETJOURNAL:
+                voucherNumberPrefix = FinancialConstants.FIXEDASSET_VOUCHERNO_TYPE;
+                break;
+            case CONTINGENTJOURNAL:
+                voucherNumberPrefix = FinancialConstants.CBILL_VOUCHERNO_TYPE;
+                break;
+            case PURCHASE:
+                voucherNumberPrefix = FinancialConstants.PURCHBILL_VOUCHERNO_TYPE;
+                break;
+            case EXPENSEJOURNAL:
+                voucherNumberPrefix = FinancialConstants.CBILL_VOUCHERNO_TYPE;
+                break;
+            case EXPENSE:
+                voucherNumberPrefix = FinancialConstants.CBILL_VOUCHERNO_TYPE;
+                break;
+            case SALARYJOURNAL:
+                voucherNumberPrefix = FinancialConstants.SALBILL_VOUCHERNO_TYPE;
+                break;
+            case SALARY:
+                voucherNumberPrefix = FinancialConstants.SALBILL_VOUCHERNO_TYPE;
+                break;
+            case FIXEDASSET:
+                voucherNumberPrefix = FinancialConstants.FIXEDASSET_VOUCHERNO_TYPE;
+                break;
+            case PENSIONJOURNAL:
+                voucherNumberPrefix = FinancialConstants.PENBILL_VOUCHERNO_TYPE;
+                break;
+            case PENSION:
+                voucherNumberPrefix = FinancialConstants.PENBILL_VOUCHERNO_TYPE;
+                break;
+            default: // if subtype is invalid then use type
+                if (voucherNumberPrefix == null)
+                    voucherNumberPrefix = checkWithVoucherType(type);
+                break;
         }
         return voucherNumberPrefix;
 
@@ -400,20 +544,20 @@ public class JournalVoucherService {
             typetoCheck = JOURNALVOUCHER;
         String voucherNumberPrefix = null;
         switch (voucherTypeEnum.valueOf(typetoCheck)) {
-        case JOURNALVOUCHER:
-            voucherNumberPrefix = FinancialConstants.JOURNAL_VOUCHERNO_TYPE;
-            break;
-        case CONTRA:
-            voucherNumberPrefix = FinancialConstants.CONTRA_VOUCHERNO_TYPE;
-            break;
-        case RECEIPT:
-            voucherNumberPrefix = FinancialConstants.RECEIPT_VOUCHERNO_TYPE;
-            break;
-        case PAYMENT:
-            voucherNumberPrefix = FinancialConstants.PAYMENT_VOUCHERNO_TYPE;
-            break;
-        default:// do nothing
-            break;
+            case JOURNALVOUCHER:
+                voucherNumberPrefix = FinancialConstants.JOURNAL_VOUCHERNO_TYPE;
+                break;
+            case CONTRA:
+                voucherNumberPrefix = FinancialConstants.CONTRA_VOUCHERNO_TYPE;
+                break;
+            case RECEIPT:
+                voucherNumberPrefix = FinancialConstants.RECEIPT_VOUCHERNO_TYPE;
+                break;
+            case PAYMENT:
+                voucherNumberPrefix = FinancialConstants.PAYMENT_VOUCHERNO_TYPE;
+                break;
+            default:// do nothing
+                break;
         }
         return voucherNumberPrefix;
 
@@ -425,8 +569,7 @@ public class JournalVoucherService {
         String sequenceName;
 
         final CFiscalPeriod fiscalPeriod = fiscalPeriodHibernateDAO.getFiscalPeriodByDate(voucherHeader.getVoucherDate());
-        if (fiscalPeriod == null)
-            throw new ApplicationRuntimeException("Fiscal period is not defined for the voucher date");
+        if (fiscalPeriod == null)     throw new ApplicationRuntimeException("Fiscal period is not defined for the voucher date");
         sequenceName = "sq_" + voucherHeader.getFundId().getIdentifier() + "_" + getCgnType(voucherHeader.getType()).toLowerCase()
                 + "_cgvn_"
                 + fiscalPeriod.getName();
@@ -447,20 +590,20 @@ public class JournalVoucherService {
             typetoCheck = JOURNALVOUCHER;
 
         switch (voucherTypeEnum.valueOf(typetoCheck.toUpperCase())) {
-        case JOURNALVOUCHER:
-            cgnType = "JVG";
-            break;
-        case CONTRA:
-            cgnType = "CSL";
-            break;
-        case RECEIPT:
-            cgnType = "MSR";
-            break;
-        case PAYMENT:
-            cgnType = "DBP";
-            break;
-        default:// do nothing
-            break;
+            case JOURNALVOUCHER:
+                cgnType = "JVG";
+                break;
+            case CONTRA:
+                cgnType = "CSL";
+                break;
+            case RECEIPT:
+                cgnType = "MSR";
+                break;
+            case PAYMENT:
+                cgnType = "DBP";
+                break;
+            default:// do nothing
+                break;
         }
         return cgnType;
     }

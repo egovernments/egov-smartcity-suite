@@ -102,7 +102,18 @@ public class WaterChargeDocumentService {
         String consumername = "";
         String aadharNumber = "";
         String mobilNumber = "";
-
+        final SimpleDateFormat dateFormatter = new SimpleDateFormat(ES_DATE_FORMAT);
+        String createdDate =null;
+        
+        if(waterConnectionDetails.getLegacy() ){
+          if(waterConnectionDetails.getApplicationDate()!=null){
+            createdDate  = dateFormatter.format(waterConnectionDetails.getApplicationDate());
+        }
+        }
+        else
+        {
+            createdDate = dateFormatter.format(waterConnectionDetails.getExecutionDate());
+        }
         monthlyRate = monthlyRateFirld(waterConnectionDetails);
         if (ownerNameItr != null && ownerNameItr.hasNext())
             ownerNameItr.next().getMobileNumber();
@@ -120,12 +131,13 @@ public class WaterChargeDocumentService {
             }
         }
         final Map<String, Object> cityInfo = cityService.cityDataAsMap();
+        try {
         waterChargeDocument.setZone(assessmentDetails.getBoundaryDetails().getZoneName());
         waterChargeDocument.setRevenueWard(assessmentDetails.getBoundaryDetails().getWardName());
         waterChargeDocument.setAdminWard(assessmentDetails.getBoundaryDetails().getAdminWardName());
         waterChargeDocument.setDoorNo(assessmentDetails.getHouseNo());
         waterChargeDocument.setTotalDue(assessmentDetails.getPropertyDetails().getTaxDue().longValue());
-        waterChargeDocument.setIsLegacy(waterConnectionDetails.getLegacy());
+        waterChargeDocument.setLegacy(waterConnectionDetails.getLegacy());
         waterChargeDocument.setCityGrade(defaultString((String) cityInfo.get(CITY_CORP_GRADE_KEY)));
         waterChargeDocument.setRegionName(defaultString((String) cityInfo.get(CITY_REGION_NAME_KEY)));
         waterChargeDocument.setClosureType(waterConnectionDetails.getCloseConnectionType() != null
@@ -134,7 +146,7 @@ public class WaterChargeDocumentService {
                 ? assessmentDetails.getBoundaryDetails().getLocalityName() : "");
         waterChargeDocument.setPropertyId(waterConnectionDetails.getConnection().getPropertyIdentifier());
         waterChargeDocument.setApplicationCode(waterConnectionDetails.getApplicationType().getCode());
-        waterChargeDocument.setCreatedDate(waterConnectionDetails.getExecutionDate());
+        waterChargeDocument.setCreatedDate(dateFormatter.parse(createdDate));
         waterChargeDocument.setMobileNumber(mobilNumber);
         waterChargeDocument.setStatus(waterConnectionDetails.getConnectionStatus().name());
         waterChargeDocument.setDistrictName(defaultString((String) cityInfo.get(CITY_DIST_NAME_KEY)));
@@ -169,6 +181,9 @@ public class WaterChargeDocumentService {
         waterChargeDocument.setAadhaarNumber(aadharNumber);
         waterChargeDocument.setWardlocation(commonWardlocationField(assessmentDetails));
         waterChargeDocument.setPropertylocation(commonPropertylocationField(assessmentDetails));
+        } catch (ParseException exp) {
+            LOGGER.error("Exception parsing Date " + exp.getMessage());
+        }
         createWaterChargeDocument(waterChargeDocument);
         return waterChargeDocument;
 
@@ -196,9 +211,8 @@ public class WaterChargeDocumentService {
 
         if (waterConnectionDetails.getConnection() != null
                 && waterConnectionDetails.getConnection().getConsumerCode() != null)
-            waterChargeDocument = waterChargeIndexRepository.findByConsumerCodeAndUlbName(
-                    waterConnectionDetails.getConnection().getConsumerCode(),
-                    defaultString((String) cityInfo.get(CITY_NAME_KEY)));
+            waterChargeDocument = waterChargeIndexRepository.findByConsumerCodeAndCityName(
+                    waterConnectionDetails.getConnection().getConsumerCode(),defaultString((String) cityInfo.get(CITY_NAME_KEY)));
         if (waterChargeDocument == null) {
             Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
             Long monthlyRate = null;
@@ -231,7 +245,7 @@ public class WaterChargeDocumentService {
                         .withAdminward(assessmentDetails.getBoundaryDetails().getAdminWardName())
                         .withDoorNo(assessmentDetails.getHouseNo())
                         .withTotaldue(assessmentDetails.getPropertyDetails().getTaxDue().longValue())
-                        .withIslegacy(waterConnectionDetails.getLegacy())
+                        .withLegacy(waterConnectionDetails.getLegacy())
                         .withCityGrade(defaultString((String) cityInfo.get(CITY_CORP_GRADE_KEY)))
                         .withRegionname(defaultString((String) cityInfo.get(CITY_REGION_NAME_KEY)))
                         .withClosureType(waterConnectionDetails.getCloseConnectionType() != null

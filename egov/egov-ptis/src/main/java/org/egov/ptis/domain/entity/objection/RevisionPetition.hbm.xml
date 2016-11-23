@@ -120,5 +120,9 @@
 			<list-index column="objection_idx" />
 			<one-to-many class="org.egov.ptis.domain.entity.objection.Inspection" />
 		</list>
+		<bag name="documents" table="EGPT_OBJECTION_DOCS" cascade="all">
+			<key column="OBJECTION" not-null="true" />
+			<many-to-many class="org.egov.ptis.domain.entity.property.Document" column="DOCUMENT"/>
+		</bag>
     </class>
 </hibernate-mapping>

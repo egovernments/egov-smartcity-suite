@@ -82,24 +82,21 @@
 						</div>
 					</div>
 					<div class="form-group">
-					<label class="col-sm-3 control-label text-right"><spring:message
+						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.parentType" /></label>
 						<div class="col-sm-3 add-margin">
 							<form:select path="parentId" id="parentId"
-								
-								cssErrorClass="form-control error">
+								cssClass="form-control" cssErrorClass="form-control error">
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
 								<form:options items="${functions}" itemValue="id"
 									itemLabel="name" />
-									<lable></lable>
-									<div></div>
 							</form:select>
 							<form:errors path="parentId" cssClass="error-msg" />
 						</div>
-						</div>
-						<div class="form-group">
+					</div>
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.isnotleaf" /> </label>
 						<div class="col-sm-3 add-margin">

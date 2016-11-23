@@ -1,5 +1,7 @@
 package org.egov.council.web.controller;
 
+import static org.egov.infra.web.utils.WebUtils.toJSON;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -14,6 +16,7 @@ import org.egov.council.service.CouncilDesignationService;
 import org.egov.council.service.CouncilMemberService;
 import org.egov.council.service.CouncilPartyService;
 import org.egov.council.service.CouncilQualificationService;
+import org.egov.council.service.es.CouncilMemberIndexService;
 import org.egov.council.web.adaptor.CouncilMemberJsonAdaptor;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -34,18 +37,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 @Controller
 @RequestMapping("/councilmember")
 public class CouncilMemberController {
-    private final static String COUNCILMEMBER_NEW = "councilmember-new";
-    private final static String COUNCILMEMBER_RESULT = "councilmember-result";
-    private final static String COUNCILMEMBER_EDIT = "councilmember-edit";
-    private final static String COUNCILMEMBER_VIEW = "councilmember-view";
-    private final static String COUNCILMEMBER_SEARCH = "councilmember-search";
-    private final static String MODULE_NAME = "COUNCIL";
+    private static final String COUNCIL_MEMBER = "councilMember";
+    private static final String COUNCILMEMBER_NEW = "councilmember-new";
+    private static final String COUNCILMEMBER_RESULT = "councilmember-result";
+    private static final String COUNCILMEMBER_EDIT = "councilmember-edit";
+    private static final String COUNCILMEMBER_VIEW = "councilmember-view";
+    private static final String COUNCILMEMBER_SEARCH = "councilmember-search";
+    private static final String MODULE_NAME = "COUNCIL";
     @Autowired
     private CouncilMemberService councilMemberService;
     @Autowired
@@ -61,8 +62,11 @@ public class CouncilMemberController {
     @Autowired
     private CouncilPartyService councilPartyService;
     @Qualifier("fileStoreService")
-    protected @Autowired FileStoreService fileStoreService;
-    protected @Autowired FileStoreUtils fileStoreUtils;
+    @Autowired 
+    protected FileStoreService fileStoreService;
+    @Autowired 
+    protected FileStoreUtils fileStoreUtils;
+    @Autowired private CouncilMemberIndexService councilMemberIndexService;
     private static final Logger LOGGER = Logger.getLogger(CouncilMemberController.class);
 
     private void prepareNewForm(final Model model) {
@@ -73,14 +77,12 @@ public class CouncilMemberController {
         model.addAttribute("councilQualifications", councilQualificationService.getActiveQualifications());
         model.addAttribute("councilCastes", councilCasteService.getActiveCastes());
         model.addAttribute("councilPartys", councilPartyService.getActiveParties());
-        // model.addAttribute("genders", genderService.findAll());
-        // model.addAttribute("addresss", addressService.findAll());
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
         prepareNewForm(model);
-        model.addAttribute("councilMember", new CouncilMember());
+        model.addAttribute(COUNCIL_MEMBER, new CouncilMember());
         return COUNCILMEMBER_NEW;
     }
 
@@ -104,6 +106,7 @@ public class CouncilMemberController {
             }
         }
         councilMemberService.create(councilMember);
+        councilMemberIndexService.createCouncilMemberIndex(councilMember);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMember.success", null, null));
         return "redirect:/councilmember/result/" + councilMember.getId();
     }
@@ -112,7 +115,7 @@ public class CouncilMemberController {
             throws IOException {
         CouncilMember councilMember = councilMemberService.findOne(id);
         prepareNewForm(model);
-        model.addAttribute("councilMember", councilMember);
+        model.addAttribute(COUNCIL_MEMBER, councilMember);
 
         return COUNCILMEMBER_EDIT;
     }
@@ -133,6 +136,7 @@ public class CouncilMemberController {
             }
         }
         councilMemberService.update(councilMember);
+        councilMemberIndexService.createCouncilMemberIndex(councilMember);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMember.success", null, null));
         return "redirect:/councilmember/result/" + councilMember.getId();
     }
@@ -141,7 +145,7 @@ public class CouncilMemberController {
     public String view(@PathVariable("id") final Long id, Model model) {
         CouncilMember councilMember = councilMemberService.findOne(id);
         prepareNewForm(model);
-        model.addAttribute("councilMember", councilMember);
+        model.addAttribute(COUNCIL_MEMBER, councilMember);
 
         return COUNCILMEMBER_VIEW;
     }
@@ -149,7 +153,7 @@ public class CouncilMemberController {
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
     public String result(@PathVariable("id") final Long id, Model model) {
         CouncilMember councilMember = councilMemberService.findOne(id);
-        model.addAttribute("councilMember", councilMember);
+        model.addAttribute(COUNCIL_MEMBER, councilMember);
         return COUNCILMEMBER_RESULT;
     }
 
@@ -157,30 +161,22 @@ public class CouncilMemberController {
     public String search(@PathVariable("mode") final String mode, Model model) {
         CouncilMember councilMember = new CouncilMember();
         prepareNewForm(model);
-        model.addAttribute("councilMember", councilMember);
+        model.addAttribute(COUNCIL_MEMBER, councilMember);
         return COUNCILMEMBER_SEARCH;
 
     }
 
     @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, Model model,
+    @ResponseBody public String ajaxsearch(@PathVariable("mode") final String mode, Model model,
             @ModelAttribute final CouncilMember councilMember) {
         List<CouncilMember> searchResultList = councilMemberService.search(councilMember);
-        String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
+        return new StringBuilder("{ \"data\":").append(toJSON(searchResultList,CouncilMember.class,  CouncilMemberJsonAdaptor.class)).append("}")
                 .toString();
-        return result;
     }
 
     @RequestMapping(value = "/downloadfile/{fileStoreId}")
     public void download(@PathVariable final String fileStoreId, final HttpServletResponse response) throws IOException {
         fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, MODULE_NAME, false, response);
-    }
-
-    public Object toSearchResultJson(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(CouncilMember.class, new CouncilMemberJsonAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
     }
 
 }

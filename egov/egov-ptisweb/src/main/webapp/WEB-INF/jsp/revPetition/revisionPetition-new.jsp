@@ -84,7 +84,7 @@
 	
 	</head>
 	<body  class="yui-skin-sam" onload="loadOnStartup(); ">
-	<s:form action="revPetition" method="post" name="objectionViewForm" theme="simple">
+	<s:form action="revPetition" method="post" name="objectionViewForm" theme="simple" enctype="multipart/form-data">
 	<s:push value="model">
 	<s:token />
 		<s:if test="%{hasActionMessages()}">

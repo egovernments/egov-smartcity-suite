@@ -230,7 +230,7 @@ $P!{Q_DEPT_ID} ) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 					<text><![CDATA[Receipt Number]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="261" y="20" width="92" height="30" uuid="015f77e3-3e7b-4461-9f7c-13812c7203e1"/>
+					<reportElement x="261" y="20" width="70" height="30" uuid="015f77e3-3e7b-4461-9f7c-13812c7203e1"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -244,7 +244,7 @@ $P!{Q_DEPT_ID} ) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 					<text><![CDATA[Cheque No.]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="506" y="20" width="149" height="30" uuid="93c132f4-d89e-4a75-97cc-222d1527e450"/>
+					<reportElement x="484" y="20" width="149" height="30" uuid="93c132f4-d89e-4a75-97cc-222d1527e450"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -258,7 +258,7 @@ $P!{Q_DEPT_ID} ) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 					<text><![CDATA[Branch Name]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="655" y="20" width="85" height="30" uuid="0b1b3dc8-fcf8-4e94-a304-4242e9aab964"/>
+					<reportElement x="633" y="20" width="85" height="30" uuid="0b1b3dc8-fcf8-4e94-a304-4242e9aab964"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -272,7 +272,7 @@ $P!{Q_DEPT_ID} ) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 					<text><![CDATA[Cheque Date]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="740" y="20" width="82" height="30" uuid="d15d4a99-3952-4e0b-971f-d8d68c65242a"/>
+					<reportElement x="718" y="20" width="82" height="30" uuid="d15d4a99-3952-4e0b-971f-d8d68c65242a"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -286,7 +286,7 @@ $P!{Q_DEPT_ID} ) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 					<text><![CDATA[Amount]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="353" y="20" width="153" height="30" uuid="9877963d-f6df-4888-bde4-6233d812c446"/>
+					<reportElement x="331" y="20" width="153" height="30" uuid="9877963d-f6df-4888-bde4-6233d812c446"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -332,7 +332,7 @@ $P!{Q_DEPT_ID} ) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 		<groupFooter>
 			<band height="50">
 				<staticText>
-					<reportElement x="0" y="0" width="720" height="20" uuid="ba8dcdc4-89b4-40a3-8461-7fa49e26cc2f"/>
+					<reportElement x="0" y="0" width="718" height="20" uuid="ba8dcdc4-89b4-40a3-8461-7fa49e26cc2f"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -346,7 +346,7 @@ $P!{Q_DEPT_ID} ) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 					<text><![CDATA[Total:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00">
-					<reportElement stretchType="RelativeToTallestObject" x="720" y="0" width="102" height="20" isPrintWhenDetailOverflows="true" uuid="bbd0804f-76d9-429e-841c-f0a8a047dd16"/>
+					<reportElement stretchType="RelativeToTallestObject" x="718" y="0" width="82" height="20" isPrintWhenDetailOverflows="true" uuid="bbd0804f-76d9-429e-841c-f0a8a047dd16"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -635,7 +635,7 @@ $P!{Q_DEPT_ID} ) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 				<textFieldExpression><![CDATA[$F{RECEIPT_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="353" y="0" width="153" height="20" isPrintWhenDetailOverflows="true" uuid="09f68c09-4b43-4626-9e5b-274f4b7ed332"/>
+				<reportElement stretchType="RelativeToTallestObject" x="331" y="0" width="153" height="20" isPrintWhenDetailOverflows="true" uuid="09f68c09-4b43-4626-9e5b-274f4b7ed332"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -649,7 +649,7 @@ $P!{Q_DEPT_ID} ) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 				<textFieldExpression><![CDATA[$F{BANK_NAME}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="506" y="0" width="149" height="20" isPrintWhenDetailOverflows="true" uuid="ab4d1993-5ae0-47de-bb49-1b97791c5a9f"/>
+				<reportElement stretchType="RelativeToTallestObject" x="484" y="0" width="149" height="20" isPrintWhenDetailOverflows="true" uuid="ab4d1993-5ae0-47de-bb49-1b97791c5a9f"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -663,7 +663,7 @@ $P!{Q_DEPT_ID} ) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 				<textFieldExpression><![CDATA[$F{BRANCH_NAME}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="655" y="0" width="85" height="20" isPrintWhenDetailOverflows="true" uuid="cff1f444-2d99-45ae-be92-bdb29d8050b7"/>
+				<reportElement stretchType="RelativeToTallestObject" x="633" y="0" width="85" height="20" isPrintWhenDetailOverflows="true" uuid="cff1f444-2d99-45ae-be92-bdb29d8050b7"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -677,7 +677,7 @@ $P!{Q_DEPT_ID} ) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 				<textFieldExpression><![CDATA[$F{CHEQUE_DATE}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="740" y="0" width="82" height="20" isPrintWhenDetailOverflows="true" uuid="23c1fbd0-2fbe-4e73-bc9b-2b721a33ff8f"/>
+				<reportElement stretchType="RelativeToTallestObject" x="718" y="0" width="82" height="20" isPrintWhenDetailOverflows="true" uuid="23c1fbd0-2fbe-4e73-bc9b-2b721a33ff8f"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -705,7 +705,9 @@ $P!{Q_DEPT_ID} ) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 				<textFieldExpression><![CDATA[$F{PAY_MODE}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="261" y="0" width="92" height="20" isPrintWhenDetailOverflows="true" uuid="115d7656-bb9c-4f13-b1c7-e14f671a3ca7"/>
+				<reportElement stretchType="RelativeToTallestObject" x="261" y="0" width="70" height="20" isPrintWhenDetailOverflows="true" uuid="115d7656-bb9c-4f13-b1c7-e14f671a3ca7">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>

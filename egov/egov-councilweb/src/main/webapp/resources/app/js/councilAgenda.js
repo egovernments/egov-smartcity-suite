@@ -131,7 +131,6 @@ function addReadOnlyRow(btn)
 			isDuplicate=true;
 			return;
 		}
-		
 	});
 	
 	if(isDuplicate)
@@ -152,7 +151,12 @@ function addReadOnlyRow(btn)
 		   'idx':idx,
 	       'pnoTextBoxValue': data.preambleNumber,
 	       'deptTextBoxValue': data.department,
-	       'gistTextBoxValue': data.gistOfPreamble,
+	       'gistTextBoxValue': 
+				 data.gistOfPreamble.replace(/\\u[\dA-F]{4}/gi, 
+				          function (match) {
+				               return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
+				          })
+			,
 	       'amountTextBoxValue': data.sanctionAmount,
 	      // 'departmentId' :data.id,
 	       'preamableId':data.id,
@@ -185,7 +189,6 @@ function getFormData($form) {
 			if(Array.isArray(indexed_array[n['name']]))
 			{
 				arry=indexed_array[n['name']];
-				console.log(arry);
 				arry.push(n['value']);
 			}
 			else
@@ -213,7 +216,15 @@ function callAjaxSearch() {
 					url : "/council/agenda/ajaxsearch",      
 					type: "POST",
 					traditional: true,
-					"data":  getFormData(jQuery('form'))
+					beforeSend : function() {
+						$('.loader-class').modal('show', {
+							backdrop : 'static'
+						});
+					},
+					"data" : getFormData(jQuery('form')),
+					complete : function() {
+						$('.loader-class').modal('hide');
+					}
 				},
 				"bDestroy" : true,
 				"autoWidth": false,
@@ -233,7 +244,7 @@ function callAjaxSearch() {
 						},
 						{
 							"data" : "gistOfPreamble",
-							'sTitle' : "Gist of Preamble", "width": "58%" 
+							'sTitle' : "Gist of Preamble", "width": "58%",
 						},
 						{
 							"data" : "sanctionAmount",
@@ -261,13 +272,17 @@ function callAjaxSearch() {
 							"searchable" : false
 						}
 					],columnDefs:[
-			     	              {
-			     	                   "render": function ( data, type, row ) {
-			     	                	   
-			     	                	  return type === 'display' && '<div><span>'+(data.length > 500 ? data.substr( 0, 500 )+'</span> <button class="details" data-text="'+escape(data)+'" class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></div>' : data+"</p>");
-			     	                   },
-			     	                   "targets": 2
-				     	           }
+									{
+										  "render" : function(data, type, row) {
+											  var str = data.replace(/\\u[\dA-F]{4}/gi, 
+											          function (match) {
+									             return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
+									             
+									        });
+											  return type === 'display' && '<div><span>'+(str.length > 500 ? str.substr( 0, 500 )+'</span> <button class="details" data-text="'+escape(str)+'" class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></div>' : str+"</p>");;
+										  },
+									      "targets": [2]
+									  }
 				     	          ]			
 			});
 			}
@@ -317,7 +332,7 @@ $(document).ready(function() {
 	$( "#buttonSubmit" ).click(function(e){
 		
 		if ($('#committeeType').val()=="") {
-			alert("Please select committe type");
+			bootbox.alert("Please select committe type");
 			e.preventDefault();
 			} 
 		if($('#emptyRow').length){

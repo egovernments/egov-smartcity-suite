@@ -43,7 +43,7 @@
 <body>
 	<s:form action="budgetAppropriationRegisterReport" theme="simple"
 		name="budgetAppropriationRegister-Result">
-		<s:if test="%{updatedBdgtAppropriationRegisterList.size()>0}">
+		
 			</br>
 			</br>
 			<div class="formmainbox">
@@ -80,7 +80,7 @@
 					</tr>
 				</table>
 
-
+			<s:if test="%{updatedBdgtAppropriationRegisterList.size()>0}">
 				<table width="99%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td class="bluebox">

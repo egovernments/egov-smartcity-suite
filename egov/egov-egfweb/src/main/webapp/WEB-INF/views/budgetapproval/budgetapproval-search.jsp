@@ -39,6 +39,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
 <form:form role="form" action="search" modelAttribute="budgetDetail"
 	id="budgetapprovalsearchform"
 	cssClass="form-horizontal form-groups-bordered"
@@ -150,23 +151,23 @@
 	});
 </script>
 <link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
-	src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/app/js/budgetApprovalHelper.js'/>"></script>
+	src="<cdn:url value='/resources/app/js/budgetApprovalHelper.js'/>"></script>

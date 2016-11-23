@@ -39,6 +39,11 @@
  */
 package org.egov.ptis.domain.service.revisionPetition;
 
+import static java.lang.String.format;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.domain.service.property.PropertyService.APPLICATION_VIEW_URL;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -53,9 +58,9 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
+import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -75,11 +80,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import static java.lang.String.format;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.domain.service.property.PropertyService.APPLICATION_VIEW_URL;
 
 public class RevisionPetitionService extends PersistenceService<RevisionPetition, Long> {
     @Autowired
@@ -112,8 +112,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     
     @Autowired
     private PropertyService propertyService;
-
-
+    
     public RevisionPetitionService() {
         super(RevisionPetition.class);
     }
@@ -130,12 +129,14 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      */
     @Transactional
     public RevisionPetition createRevisionPetition(RevisionPetition objection) {
+        RevisionPetition revisionPetition;
+        propertyService.processAndStoreDocument(objection.getDocuments());
         if (objection.getId() == null)
-            objection = persist(objection);
+            revisionPetition = persist(objection);
         else
-            objection = merge(objection);
+            revisionPetition = merge(objection);
 
-        return objection;
+        return revisionPetition;
 
     }
 
@@ -249,12 +250,13 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
 
     @Transactional
     public RevisionPetition updateRevisionPetition(RevisionPetition objection) {
+        RevisionPetition revisionPetition;
         if (objection.getId() == null)
-            objection = persist(objection);
+            revisionPetition = persist(objection);
         else
-            objection = update(objection);
+            revisionPetition = update(objection);
 
-        return objection;
+        return revisionPetition;
 
     }
 
@@ -265,7 +267,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      * @return
      */
     public RevisionPetition getRevisionPetitionByApplicationNumber(final String applicationNumber) {
-        RevisionPetition revPetitionObject = null;
+        RevisionPetition revPetitionObject;
         final Criteria appCriteria = getSession().createCriteria(RevisionPetition.class, "revPetiton");
         appCriteria.add(Restrictions.eq("revPetiton.objectionNumber", applicationNumber));
         revPetitionObject = (RevisionPetition) appCriteria.uniqueResult();
@@ -291,7 +293,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         final String mobileNumber = user.getMobileNumber();
         final String emailid = user.getEmailId();
         final String applicantName = user.getName();
-        final List<String> args = new ArrayList<String>();
+        final List<String> args = new ArrayList<>();
         args.add(applicantName);
         String smsMsg = "";
         String emailSubject = "";
@@ -328,7 +330,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     }
     
     public Assignment getWorkflowInitiator(RevisionPetition objection) {
-        Assignment wfInitiator=null;
+        Assignment wfInitiator;
         if (propertyService.isEmployee(objection.getCreatedBy())){
                 if(objection.getState() != null  && objection.getState().getInitiatorPosition() != null)
                     wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(objection
@@ -345,5 +347,4 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         }
         return wfInitiator;
     }
-
 }

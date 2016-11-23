@@ -40,19 +40,27 @@
 
 package org.egov.commons.repository;
 
+import java.util.List;
 
 import org.egov.commons.Accountdetailtype;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+@Repository
+public interface AccountdetailtypeRepository extends JpaRepository<Accountdetailtype, Integer> {
+    public Accountdetailtype findByName(String name);
 
+    public List<Accountdetailtype> findByNameContainingIgnoreCaseAndDescriptionContainingIgnoreCase(String name,
+            String description);
 
-@Repository 
-public interface AccountdetailtypeRepository extends JpaRepository<Accountdetailtype,Integer> {
-public	Accountdetailtype findByName(String name);
-public List<Accountdetailtype> findByNameContainingIgnoreCaseAndDescriptionContainingIgnoreCase(String name,String description);
-public List<Accountdetailtype> findByNameContainingIgnoreCase(String name);
-public List<Accountdetailtype> findByDescriptionContainingIgnoreCase(String description);
-public List<Accountdetailtype>  findByFullQualifiedName(String fullQualifiedName);
+    public List<Accountdetailtype> findByNameContainingIgnoreCase(String name);
+
+    public List<Accountdetailtype> findByDescriptionContainingIgnoreCase(String description);
+
+    public List<Accountdetailtype> findByFullQualifiedName(String fullQualifiedName);
+
+    @Query("select distinct(adt) from Accountdetailtype adt where adt.id in (select coad.detailTypeId from CChartOfAccountDetail coad where coad.glCodeId in (select coa.id from CChartOfAccounts coa where  coa.id =:glcodeId))")
+    public List<Accountdetailtype> findByGlcodeId(@Param("glcodeId") Long glcodeId);
 }

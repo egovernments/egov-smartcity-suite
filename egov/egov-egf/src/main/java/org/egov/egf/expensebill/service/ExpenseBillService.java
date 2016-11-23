@@ -83,7 +83,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author venki
- *
  */
 
 @Service
@@ -156,6 +155,11 @@ public class ExpenseBillService {
 
     public EgBillregister getByBillnumber(final String billNumber) {
         return expenseBillRepository.findByBillnumber(billNumber);
+    }
+
+    @Transactional
+    public EgBillregister create(final EgBillregister egBillregister) {
+        return expenseBillRepository.save(egBillregister);
     }
 
     @Transactional
@@ -420,5 +424,10 @@ public class ExpenseBillService {
             approvalPosition = null;
 
         return approvalPosition;
+    }
+
+    public boolean isBillNumUnique(final String billnumber) {
+        final EgBillregister bill = getByBillnumber(billnumber);
+        return bill == null;
     }
 }

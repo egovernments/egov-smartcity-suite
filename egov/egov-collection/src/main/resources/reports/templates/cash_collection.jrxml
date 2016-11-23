@@ -185,7 +185,9 @@ WHERE
 		<groupFooter>
 			<band height="20">
 				<staticText>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="276" y="0" width="150" height="20" uuid="573ef3b3-503a-4470-b476-8050f26341cc"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="276" y="0" width="140" height="20" uuid="573ef3b3-503a-4470-b476-8050f26341cc">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
 					<box>
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -199,7 +201,7 @@ WHERE
 					<text><![CDATA[Total:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" evaluationTime="Auto" pattern="###0.00;-###0.00">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="426" y="0" width="150" height="20" uuid="cac5692d-3aba-416f-be2e-f08f3622ce73"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="416" y="0" width="140" height="20" uuid="cac5692d-3aba-416f-be2e-f08f3622ce73"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -221,7 +223,7 @@ WHERE
 	<title>
 		<band height="183" splitType="Stretch">
 			<staticText>
-				<reportElement x="323" y="111" width="120" height="20" uuid="6e33a779-c1d0-487a-abf5-9548b36db65c"/>
+				<reportElement x="304" y="111" width="120" height="20" uuid="6e33a779-c1d0-487a-abf5-9548b36db65c"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -235,7 +237,7 @@ WHERE
 				<text><![CDATA[Counter:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="323" y="131" width="120" height="20" uuid="349598d9-ae71-4e1d-9ec7-0589ce2a230c"/>
+				<reportElement x="304" y="131" width="120" height="20" uuid="349598d9-ae71-4e1d-9ec7-0589ce2a230c"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -249,7 +251,7 @@ WHERE
 				<text><![CDATA[Name of Assistant/Shroff:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="443" y="131" width="131" height="20" uuid="37df1cff-1951-436f-aec9-e4078d0e5565"/>
+				<reportElement x="424" y="131" width="131" height="20" uuid="37df1cff-1951-436f-aec9-e4078d0e5565"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -263,7 +265,7 @@ WHERE
 				<textFieldExpression><![CDATA[($P{EGOV_COUNTER_OPERATOR_ID} == null || $P{EGOV_COUNTER_OPERATOR_ID} == -1) ? "All Users" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_USER WHERE ID = " + $P{EGOV_COUNTER_OPERATOR_ID})]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="443" y="111" width="131" height="20" uuid="a4262618-1711-42fd-b9f4-b8daae71bf5c"/>
+				<reportElement x="424" y="111" width="131" height="20" uuid="a4262618-1711-42fd-b9f4-b8daae71bf5c"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -364,7 +366,7 @@ WHERE
 	<columnHeader>
 		<band height="30" splitType="Stretch">
 			<staticText>
-				<reportElement x="426" y="0" width="150" height="30" uuid="0e6340c1-b615-413a-aa48-458f19c906f5"/>
+				<reportElement x="416" y="0" width="140" height="30" uuid="0e6340c1-b615-413a-aa48-458f19c906f5"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -378,7 +380,7 @@ WHERE
 				<text><![CDATA[Amount Received]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="276" y="0" width="150" height="30" uuid="828de435-af3d-4ee5-a530-b8796af4f2d9"/>
+				<reportElement x="276" y="0" width="140" height="30" uuid="828de435-af3d-4ee5-a530-b8796af4f2d9"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -420,7 +422,9 @@ WHERE
 				<text><![CDATA[Receipt No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="50" y="0" width="110" height="30" uuid="fef30391-5be7-456c-b4bf-2475fbfc8931"/>
+				<reportElement x="50" y="0" width="110" height="30" uuid="fef30391-5be7-456c-b4bf-2475fbfc8931">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -438,7 +442,7 @@ WHERE
 	<detail>
 		<band height="20" splitType="Prevent">
 			<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00">
-				<reportElement stretchType="RelativeToTallestObject" x="426" y="0" width="150" height="20" isPrintWhenDetailOverflows="true" uuid="97000580-882c-4f7b-953c-91074a4570d0"/>
+				<reportElement stretchType="RelativeToTallestObject" x="416" y="0" width="140" height="20" isPrintWhenDetailOverflows="true" uuid="97000580-882c-4f7b-953c-91074a4570d0"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -452,7 +456,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{INSTRUMENT_AMOUNT}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="276" y="0" width="150" height="20" isPrintWhenDetailOverflows="true" uuid="f8183e5a-a5b0-4086-9d61-193a7ca94bd8"/>
+				<reportElement stretchType="RelativeToTallestObject" x="276" y="0" width="140" height="20" isPrintWhenDetailOverflows="true" uuid="f8183e5a-a5b0-4086-9d61-193a7ca94bd8"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -512,14 +516,14 @@ WHERE
 	<pageFooter>
 		<band height="20" splitType="Stretch">
 			<textField>
-				<reportElement style="Column header" x="456" y="0" width="80" height="20" uuid="91c334a5-faed-409b-85ab-caf17298e795"/>
+				<reportElement style="Column header" x="437" y="0" width="80" height="20" uuid="91c334a5-faed-409b-85ab-caf17298e795"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement style="Column header" x="536" y="0" width="40" height="20" uuid="53998669-047a-468f-9944-4794817a3c81"/>
+				<reportElement style="Column header" x="517" y="0" width="40" height="20" uuid="53998669-047a-468f-9944-4794817a3c81"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
@@ -537,7 +541,7 @@ WHERE
 	<lastPageFooter>
 		<band height="20">
 			<textField evaluationTime="Report">
-				<reportElement style="Column header" x="536" y="0" width="40" height="20" uuid="268bb9ef-f661-49cb-aba0-50a704ce5f49"/>
+				<reportElement style="Column header" x="517" y="0" width="40" height="20" uuid="268bb9ef-f661-49cb-aba0-50a704ce5f49"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
@@ -551,7 +555,7 @@ WHERE
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Column header" x="456" y="0" width="80" height="20" uuid="2d90b442-839f-4556-a025-d7a53debe857"/>
+				<reportElement style="Column header" x="437" y="0" width="80" height="20" uuid="2d90b442-839f-4556-a025-d7a53debe857"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
@@ -611,14 +615,14 @@ WHERE
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement style="Column header" x="535" y="782" width="40" height="20" uuid="7cbe9acd-1683-4a93-abc9-f32b22b1518d"/>
+				<reportElement style="Column header" x="519" y="782" width="40" height="20" uuid="7cbe9acd-1683-4a93-abc9-f32b22b1518d"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Column header" x="455" y="782" width="80" height="20" uuid="214ded20-06bf-4c93-b79e-523ed699d12c"/>
+				<reportElement style="Column header" x="439" y="782" width="80" height="20" uuid="214ded20-06bf-4c93-b79e-523ed699d12c"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
@@ -1210,7 +1214,7 @@ WHERE
 				<textFieldExpression><![CDATA[$P{EGOV_FROM_DATE}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="443" y="50" width="131" height="20" uuid="9520b984-5be4-45ea-b0e4-5a04e40d8a10"/>
+				<reportElement x="428" y="50" width="131" height="20" uuid="9520b984-5be4-45ea-b0e4-5a04e40d8a10"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -1224,7 +1228,7 @@ WHERE
 				<textFieldExpression><![CDATA[($P{EGOV_COUNTER_ID} == null || $P{EGOV_COUNTER_ID} == -1) ? "All Counters" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_LOCATION WHERE ID = " + $P{EGOV_COUNTER_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="323" y="50" width="120" height="20" uuid="c1f95bc0-d14a-4772-9d40-ff356552ca01"/>
+				<reportElement x="308" y="50" width="120" height="20" uuid="c1f95bc0-d14a-4772-9d40-ff356552ca01"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -1238,7 +1242,7 @@ WHERE
 				<text><![CDATA[Counter:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="323" y="70" width="120" height="20" uuid="7546ceae-7fd2-40a8-a10f-e8e5f5250d1f"/>
+				<reportElement x="308" y="70" width="120" height="20" uuid="7546ceae-7fd2-40a8-a10f-e8e5f5250d1f"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>

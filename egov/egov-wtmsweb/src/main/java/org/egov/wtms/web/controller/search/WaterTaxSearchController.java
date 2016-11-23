@@ -293,7 +293,7 @@ public class WaterTaxSearchController {
             customerObj.setAddress(waterChargeIndex.getLocality());
             customerObj.setApplicationcode(waterChargeIndex.getApplicationCode());
             customerObj.setUsage(waterChargeIndex.getUsage());
-            customerObj.setIslegacy(waterChargeIndex.getIsLegacy());
+            customerObj.setIslegacy(waterChargeIndex.getLegacy());
             customerObj.setPropertyTaxDue(waterChargeIndex.getTotalDue());
             customerObj.setStatus(waterChargeIndex.getStatus());
             customerObj.setConnectiontype(waterChargeIndex.getConnectionType());
@@ -307,7 +307,7 @@ public class WaterTaxSearchController {
     private BoolQueryBuilder getFilterQuery(final ConnectionSearchRequest searchRequest) {
         final City cityWebsite = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
-                .filter(QueryBuilders.termQuery("ulbName", cityWebsite.getName()));
+                .filter(QueryBuilders.termQuery("cityName", cityWebsite.getName()));
         if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerName", searchRequest.getApplicantName()));
         if (StringUtils.isNotBlank(searchRequest.getConsumerCode()))
