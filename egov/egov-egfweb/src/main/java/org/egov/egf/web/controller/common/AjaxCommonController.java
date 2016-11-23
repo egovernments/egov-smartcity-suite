@@ -144,7 +144,8 @@ public class AjaxCommonController {
         final List<String> functionNames = new ArrayList<>();
         final List<CFunction> functions = functionService.findByNameLikeOrCodeLike(name);
         for (final CFunction function : functions)
-            functionNames.add(function.getCode() + " - " + function.getName() + " ~ " + function.getId());
+            if (!function.getIsNotLeaf())
+                functionNames.add(function.getCode() + " - " + function.getName() + " ~ " + function.getId());
 
         return functionNames;
     }
