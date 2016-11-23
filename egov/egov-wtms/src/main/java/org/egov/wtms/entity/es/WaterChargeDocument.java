@@ -59,8 +59,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Document(indexName = "waterchargeconsumer", type = "waterchargeconsumer")
 public class WaterChargeDocument {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
-    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd")
     private Date createdDate;
 
     @Field(index = FieldIndex.not_analyzed)
@@ -100,9 +100,6 @@ public class WaterChargeDocument {
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String propertyType;
-
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String ulbName;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String consumerCode;
@@ -404,14 +401,6 @@ public class WaterChargeDocument {
 
     public void setPropertyType(final String propertyType) {
         this.propertyType = propertyType;
-    }
-
-    public String getUlbName() {
-        return ulbName;
-    }
-
-    public void setUlbName(final String ulbName) {
-        this.ulbName = ulbName;
     }
 
     public String getConsumerCode() {

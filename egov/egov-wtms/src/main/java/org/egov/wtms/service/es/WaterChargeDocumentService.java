@@ -211,9 +211,8 @@ public class WaterChargeDocumentService {
 
         if (waterConnectionDetails.getConnection() != null
                 && waterConnectionDetails.getConnection().getConsumerCode() != null)
-            waterChargeDocument = waterChargeIndexRepository.findByConsumerCodeAndCityNameOrUlbName(
-                    waterConnectionDetails.getConnection().getConsumerCode(),defaultString((String) cityInfo.get(CITY_NAME_KEY)),
-                    defaultString((String) cityInfo.get(CITY_NAME_KEY)));
+            waterChargeDocument = waterChargeIndexRepository.findByConsumerCodeAndCityName(
+                    waterConnectionDetails.getConnection().getConsumerCode(),defaultString((String) cityInfo.get(CITY_NAME_KEY)));
         if (waterChargeDocument == null) {
             Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
             Long monthlyRate = null;

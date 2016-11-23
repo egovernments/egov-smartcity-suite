@@ -307,7 +307,7 @@ public class WaterTaxSearchController {
     private BoolQueryBuilder getFilterQuery(final ConnectionSearchRequest searchRequest) {
         final City cityWebsite = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
-                .filter(QueryBuilders.termQuery("ulbName", cityWebsite.getName()));
+                .filter(QueryBuilders.termQuery("cityName", cityWebsite.getName()));
         if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerName", searchRequest.getApplicantName()));
         if (StringUtils.isNotBlank(searchRequest.getConsumerCode()))

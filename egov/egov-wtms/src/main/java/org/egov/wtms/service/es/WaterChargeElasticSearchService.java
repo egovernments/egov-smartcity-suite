@@ -107,7 +107,7 @@ public class WaterChargeElasticSearchService {
     }
 
     public Page<WaterChargeDocument> findByConsumercode(final String consumerCode) {
-        return waterChargeIndexRepository.findByConsumerCodeAndUlbName(consumerCode,
+        return waterChargeIndexRepository.findByConsumerCodeAndCityName(consumerCode,
                 ApplicationThreadLocals.getCityName(), new PageRequest(0, 10));
     }
 
