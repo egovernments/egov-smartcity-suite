@@ -119,7 +119,30 @@
     <div class="col-md-12 table-header text-left"><spring:message code="lbl.baseregister.result"/></div>
     <div class="col-md-12 form-group report-table-container">
         <table class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
-               id="baseregistertbl"></table>
+               id="baseregistertbl">
+            <tbody>
+            <tfoot id="report-footer">
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>Total</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            </tfoot>
+            </tbody>
+        </table>
     </div>
 </div>
 <link rel="stylesheet"
@@ -136,6 +159,8 @@
         type="text/javascript"></script>
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"
         type="text/javascript"></script>
+<script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
         type="text/javascript"></script>
 <script type="text/javascript"

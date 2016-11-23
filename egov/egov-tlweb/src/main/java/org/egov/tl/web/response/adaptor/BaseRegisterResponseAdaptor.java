@@ -53,25 +53,23 @@ public class BaseRegisterResponseAdaptor implements JsonSerializer<BaseRegisterF
     @Override
     public JsonElement serialize(BaseRegisterForm baseRegisterForm, Type type, JsonSerializationContext jsc) {
         JsonObject baseRegisterResponse = new JsonObject();
-        if (baseRegisterForm != null) {
-            baseRegisterResponse.addProperty("tinno", baseRegisterForm.getLicensenumber());
-            baseRegisterResponse.addProperty("licenseId", baseRegisterForm.getLicenseid());
-            baseRegisterResponse.addProperty("tradetitle", baseRegisterForm.getTradetitle() != null ? baseRegisterForm.getTradetitle() : "NA");
-            baseRegisterResponse.addProperty("category", baseRegisterForm.getCategoryname() != null ? baseRegisterForm.getCategoryname() : "NA");
-            baseRegisterResponse.addProperty("subcategory", baseRegisterForm.getSubcategoryname() != null ? baseRegisterForm.getSubcategoryname() : "NA");
-            baseRegisterResponse.addProperty("owner", baseRegisterForm.getOwner() != null ? baseRegisterForm.getOwner() : "NA");
-            baseRegisterResponse.addProperty("mobile", baseRegisterForm.getMobile() != null ? baseRegisterForm.getMobile() : "NA");
-            baseRegisterResponse.addProperty("assessmentno", baseRegisterForm.getAssessmentno() != null && !baseRegisterForm.getAssessmentno().isEmpty() ? baseRegisterForm.getAssessmentno() : "NA");
-            baseRegisterResponse.addProperty("wardname", baseRegisterForm.getWardname() != null ? baseRegisterForm.getWardname() : "NA");
-            baseRegisterResponse.addProperty("localityname", baseRegisterForm.getLocalityname() != null ? baseRegisterForm.getLocalityname() : "NA");
-            baseRegisterResponse.addProperty("tradeaddress", baseRegisterForm.getTradeaddress() != null ? baseRegisterForm.getTradeaddress() : "NA");
-            baseRegisterResponse.addProperty("commencementdate", baseRegisterForm.getCommencementdate() != null ? baseRegisterForm.getCommencementdate() : "NA");
-            baseRegisterResponse.addProperty("statusname", baseRegisterForm.getStatusname() != null ? baseRegisterForm.getStatusname() : "NA");
-            baseRegisterResponse.addProperty("arrearlicfee", baseRegisterForm.getArrearlicensefee());
-            baseRegisterResponse.addProperty("arrearpenaltyfee", baseRegisterForm.getArrearpenaltyfee());
-            baseRegisterResponse.addProperty("curlicfee", baseRegisterForm.getCurlicensefee());
-            baseRegisterResponse.addProperty("curpenaltyfee", baseRegisterForm.getCurpenaltyfee());
-        }
+        baseRegisterResponse.addProperty("tinno", baseRegisterForm.getLicensenumber() != null ? baseRegisterForm.getLicensenumber() : "NA");
+        baseRegisterResponse.addProperty("licenseId", baseRegisterForm.getLicenseid());
+        baseRegisterResponse.addProperty("tradetitle", baseRegisterForm.getTradetitle());
+        baseRegisterResponse.addProperty("category", baseRegisterForm.getCategoryname());
+        baseRegisterResponse.addProperty("subcategory", baseRegisterForm.getSubcategoryname());
+        baseRegisterResponse.addProperty("owner", baseRegisterForm.getOwner());
+        baseRegisterResponse.addProperty("mobile", baseRegisterForm.getMobile());
+        baseRegisterResponse.addProperty("assessmentno", baseRegisterForm.getAssessmentno() != null && !baseRegisterForm.getAssessmentno().isEmpty() ? baseRegisterForm.getAssessmentno() : "NA");
+        baseRegisterResponse.addProperty("wardname", baseRegisterForm.getWardname());
+        baseRegisterResponse.addProperty("localityname", baseRegisterForm.getLocalityname());
+        baseRegisterResponse.addProperty("tradeaddress", baseRegisterForm.getTradeaddress());
+        baseRegisterResponse.addProperty("commencementdate", baseRegisterForm.getCommencementdate());
+        baseRegisterResponse.addProperty("status", baseRegisterForm.getStatusname());
+        baseRegisterResponse.addProperty("arrearlicfee", baseRegisterForm.getArrearlicensefee());
+        baseRegisterResponse.addProperty("arrearpenaltyfee", baseRegisterForm.getArrearpenaltyfee());
+        baseRegisterResponse.addProperty("curlicfee", baseRegisterForm.getCurlicensefee());
+        baseRegisterResponse.addProperty("curpenaltyfee", baseRegisterForm.getCurpenaltyfee());
         return baseRegisterResponse;
     }
 }

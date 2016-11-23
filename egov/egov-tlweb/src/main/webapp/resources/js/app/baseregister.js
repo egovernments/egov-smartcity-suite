@@ -129,7 +129,7 @@ function onSubmitEvent(event) {
                     "data": "commencementdate",
                     "sTitle": "Commencement Date"
                 }, {
-                    "data": "statusname",
+                    "data": "status",
                     "sTitle": "Status"
                 }, {
                     "data": "arrearlicfee",
@@ -143,7 +143,73 @@ function onSubmitEvent(event) {
                 }, {
                     "data": "curpenaltyfee",
                     "sTitle": "Penalty(Current)"
-                }]
+                }],
+            "aaSorting": [[2, 'asc']],
+            "footerCallback": function (row, data, start, end, display) {
+                var api = this.api(), data;
+                if (data.length == 0) {
+                    jQuery('#report-footer').hide();
+                } else {
+                    jQuery('#report-footer').show();
+                }
+                if (data.length > 0) {
+                    updateTotalFooter(12, api);
+                    updateTotalFooter(13, api);
+                    updateTotalFooter(14, api);
+                    updateTotalFooter(15, api);
+                }
+            },
+            "aoColumnDefs": [{
+                "aTargets": [12, 13, 14, 15],
+                "mRender": function (data, type, full) {
+                    return formatNumberInr(data);
+                }
+            }]
         });
     jQuery('.loader-class').modal('hide');
+}
+
+function updateTotalFooter(colidx, api) {
+    // Remove the formatting to get integer data for summation
+    var intVal = function (i) {
+        return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1
+            : typeof i === 'number' ? i : 0;
+    };
+
+    // Total over all pages
+    total = api.column(colidx).data().reduce(function (a, b) {
+        return intVal(a) + intVal(b);
+    });
+
+    // Total over this page
+    pageTotal = api.column(colidx, {
+        page: 'current'
+    }).data().reduce(function (a, b) {
+        return intVal(a) + intVal(b);
+    }, 0);
+
+    // Update footer
+    jQuery(api.column(colidx).footer()).html(
+        formatNumberInr(pageTotal) + ' (' + formatNumberInr(total)
+        + ')');
+}
+
+//inr formatting number
+function formatNumberInr(x) {
+    if (x) {
+        x = x.toString();
+        var afterPoint = '';
+        if (x.indexOf('.') > 0)
+            afterPoint = x.substring(x.indexOf('.'), x.length);
+        x = Math.floor(x);
+        x = x.toString();
+        var lastThree = x.substring(x.length - 3);
+        var otherNumbers = x.substring(0, x.length - 3);
+        if (otherNumbers != '')
+            lastThree = ',' + lastThree;
+        var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",")
+            + lastThree + afterPoint;
+        return res;
+    }
+    return x;
 }
