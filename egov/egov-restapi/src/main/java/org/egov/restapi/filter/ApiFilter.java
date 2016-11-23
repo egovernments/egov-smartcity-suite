@@ -39,7 +39,6 @@
  */
 package org.egov.restapi.filter;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.City;
@@ -63,11 +62,14 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 //This is an unnecessary class, the existence of this filter is due to customer is not ready to
 //change their existing system to call appropriate url from their apps.
 public class ApiFilter implements Filter {
 
-    private final static Logger LOG = Logger.getLogger(ApiFilter.class);
+    private static final Logger LOG = Logger.getLogger(ApiFilter.class);
     private static final String SOURCE = "source";
 
     @Autowired
@@ -78,44 +80,30 @@ public class ApiFilter implements Filter {
 
     @Override
     public void destroy() {
-
+        //Do nothing
     }
 
     @Override
-    public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
-            final FilterChain filterChain)
-                    throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+            throws IOException, ServletException {
         final MultiReadHttpServletRequest multiReadRequest = new MultiReadHttpServletRequest((HttpServletRequest) servletRequest);
         if (!validateRequest(multiReadRequest))
             throw new ApplicationRuntimeException("RESTAPI.001");
-        String ulbCode = null;
         final byte[] b = new byte[5000];
-        ulbCode = servletRequest.getParameter("ulbCode");
-        if (ulbCode == null) {
-            JSONObject jsonObject = null;
-            String jb = new String();
+        String ulbCode = servletRequest.getParameter("ulbCode");
+        if (isBlank(ulbCode)) {
             try {
                 final ServletInputStream inputStream = multiReadRequest.getInputStream();
                 inputStream.read(b);
-                jb = new String(b);
-            } catch (final Exception e) {
-                // Throw error
-            }
-
-            try {
-                jsonObject = new JSONObject().getJSONObject(jb.toString());
-            } catch (final Exception e) {
-                throw new RuntimeException("Invalid Json");
-            }
-
-            if (jsonObject != null)
+                String jb = new String(b);
+                JSONObject jsonObject = new JSONObject(jb);
                 ulbCode = jsonObject.getString("ulbCode");
-            else
-                throw new RuntimeException("Invalid Json ULB Code is not Passed");
-
+            } catch (final Exception e) {
+                throw new ApplicationRuntimeException("ULB code could not obtained from JSON", e);
+            }
         }
 
-        if (StringUtils.isNotBlank(ulbCode)) {
+        if (isNotBlank(ulbCode)) {
             if (!ulbCode.equals(ApplicationThreadLocals.getCityCode())) {
                 LOG.info("Request Reached Different city. Need to change domain details");
                 final String cityName = RestRedirectConstants.getCode_ulbNames().get(ulbCode).toLowerCase();
@@ -135,7 +123,7 @@ public class ApiFilter implements Filter {
 
     @Override
     public void init(final FilterConfig arg0) throws ServletException {
-
+        //Do nothing
     }
 
     private boolean validateRequest(final MultiReadHttpServletRequest httpServletRequest) {
@@ -153,29 +141,28 @@ public class ApiFilter implements Filter {
         final List<String> cardIpAddress = restAPIApplicationProperties.cardIPAddress();
         if (apOnlineIpAddress != null && referer != null)
             for (final String aponlineIp : apOnlineIpAddress)
-                if (!aponlineIp.equals("") && referer.contains(aponlineIp)) {
+                if (isNotBlank(aponlineIp) && referer.contains(aponlineIp)) {
                     httpServletRequest.getSession().setAttribute(SOURCE, Source.APONLINE);
                     return true;
                 }
         if (esevaIpAddress != null && referer != null)
             for (final String esevaIp : esevaIpAddress)
-                if (!esevaIp.equals("") && referer.contains(esevaIp)) {
+                if (isNotBlank(esevaIp) && referer.contains(esevaIp)) {
                     httpServletRequest.getSession().setAttribute(SOURCE, Source.ESEVA);
                     return true;
                 }
         if (softtechIpAddress != null && referer != null)
             for (final String Ip : softtechIpAddress)
-                if (!Ip.equals("") && referer.contains(Ip)) {
+                if (isNotBlank(Ip) && referer.contains(Ip)) {
                     httpServletRequest.getSession().setAttribute(SOURCE, Source.SOFTTECH);
                     return true;
                 }
         if (cardIpAddress != null && referer != null)
             for (final String cardIp : cardIpAddress)
-                if (!cardIp.equals("") && referer.contains(cardIp)) {
+                if (isNotBlank(cardIp) && referer.contains(cardIp)) {
                     httpServletRequest.getSession().setAttribute(SOURCE, Source.CARD);
                     return true;
                 }
         return false;
     }
-
 }
