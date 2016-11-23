@@ -203,7 +203,6 @@
         <httpclient-version>4.5.2</httpclient-version>
         <sitemesh-version>2.4.2</sitemesh-version>
         <ehcache-web-version>2.0.4</ehcache-web-version>
-        <cglib-version>3.2.4</cglib-version>
         <joda-time-version>2.9.6</joda-time-version>
         <joda-time-jsptag-version>1.1.1</joda-time-jsptag-version>
         <jsoup-version>1.10.1</jsoup-version>
@@ -779,11 +778,6 @@
                 <groupId>net.sf.ehcache</groupId>
                 <artifactId>ehcache-web</artifactId>
                 <version>${ehcache-web-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cglib</groupId>
-                <artifactId>cglib</artifactId>
-                <version>${cglib-version}</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>

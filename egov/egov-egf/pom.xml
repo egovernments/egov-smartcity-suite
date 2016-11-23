@@ -271,11 +271,6 @@
 			<artifactId>commons-dbcp</artifactId>
 		</dependency>
 		<!-- COMMONS END -->
-
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib</artifactId>
-		</dependency>
 	</dependencies>
 
 	<build>
