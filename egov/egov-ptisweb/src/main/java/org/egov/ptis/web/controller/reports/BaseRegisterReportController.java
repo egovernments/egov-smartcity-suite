@@ -92,11 +92,12 @@ public class BaseRegisterReportController {
     }
 
     @RequestMapping(value = "/result", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody void springPaginationDataTablesUpdate(@RequestParam final String ward,
-            @RequestParam final String block, final HttpServletRequest request, final HttpServletResponse response)
+    @ResponseBody
+    public void springPaginationDataTablesUpdate(@RequestParam final String ward,
+            @RequestParam final String block, final HttpServletRequest request, final HttpServletResponse response, @RequestParam final boolean exemptedCase )
             throws IOException {
 
-        final List<BaseRegisterResult> propertyList = reportService.getPropertyByWardAndBlock(ward, block);
+        final List<BaseRegisterResult> propertyList = reportService.getPropertyByWardAndBlock(ward, block, exemptedCase);
         final String result = new StringBuilder("{ \"data\":").append(toJSON(propertyList, BaseRegisterResult.class, BaseRegisterResultAdaptor.class)).append("}").toString();
         IOUtils.write(result, response.getWriter());
     }

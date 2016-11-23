@@ -361,4 +361,9 @@
 	<put-attribute name="page-title" value="title.meeting.attend.result" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/councilmom/councilmeeting-attend-result.jsp"/>
 </definition>
+
+<definition name="meetingdetails-report" extends="base_layout">
+	<put-attribute name="page-title" value="lbl.title.meeting.details.report" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/reports/meetingdetails-report.jsp"/>
+</definition>
 </tiles-definitions>

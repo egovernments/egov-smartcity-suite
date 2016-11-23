@@ -40,10 +40,13 @@
 package org.egov.wtms.application.service;
 
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -715,6 +718,8 @@ public class WaterConnectionDetailsService {
     }
 
     public void updateIndexes(final WaterConnectionDetails waterConnectionDetails, final String sourceChannel) {
+       
+        
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
@@ -973,6 +978,7 @@ public class WaterConnectionDetailsService {
         return balance;
     }
 
+   
     public BigDecimal getTotalAmountTillCurrentFinYear(final WaterConnectionDetails waterConnectionDetails) {
         final EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         BigDecimal balance = BigDecimal.ZERO;

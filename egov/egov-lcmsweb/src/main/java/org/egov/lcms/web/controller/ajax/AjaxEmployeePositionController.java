@@ -63,15 +63,30 @@ public class AjaxEmployeePositionController {
 
     @RequestMapping(value = "/ajax/getpositionEmployee", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Map<Long, String> getPositionForDeptAndDesig(
-			@ModelAttribute("employeeBean") @RequestParam final String positionName) {
-		final Map<Long, String> positionEmployeeMap = new HashMap<Long, String>();
-		String posEmpName;
-		final List<Assignment> assignmentList = assignmentService
-				.getAllAssignmentsByPositionNameForGivenRange(positionName);
-		for (final Assignment assign : assignmentList) {
-			posEmpName = assign.getPosition().getName().concat("@").concat(assign.getEmployee().getUsername());
-			positionEmployeeMap.put(assign.getEmployee().getId(), posEmpName);
-		}
-		return positionEmployeeMap;
-	}
+            @ModelAttribute("employeeBean") @RequestParam final String positionName) {
+        final Map<Long, String> positionEmployeeMap = new HashMap<Long, String>();
+        String posEmpName;
+        final List<Assignment> assignmentList = assignmentService
+                .getAllAssignmentsByPositionNameForGivenRange(positionName);
+        for (final Assignment assign : assignmentList) {
+            posEmpName = assign.getPosition().getName().concat("@").concat(assign.getEmployee().getUsername());
+            positionEmployeeMap.put(assign.getEmployee().getId(), posEmpName);
+        }
+        return positionEmployeeMap;
+    }
+
+    @RequestMapping(value = "ajax/getemployeeNames", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Map<Long, String> getEmployeeForDeptAndDesig(
+            @ModelAttribute("employeeBean") @RequestParam final String employeeName) {
+        final Map<Long, String> employeeMap = new HashMap<Long, String>();
+        String empName;
+        final List<Assignment> assignmentList = assignmentService.getAllAssignmentForEmployeeNameLike(employeeName);
+        for (final Assignment assign : assignmentList)
+            if (assign != null) {
+                empName = assign.getEmployee().getName().concat("@")
+                        .concat(assign.getDepartment().getName().concat("@").concat(assign.getDesignation().getName()));
+                employeeMap.put(assign.getEmployee().getId(), empName);
+            }
+        return employeeMap;
+    }
 }

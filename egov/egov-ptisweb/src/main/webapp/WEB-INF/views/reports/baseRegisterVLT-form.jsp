@@ -87,6 +87,12 @@
 						</div>
 					</div>
 				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.only.exempted" /></label>
+					<div class="col-sm-3 add-margin" style="margin-bottom: 15px;">
+						<form:checkbox path="exemptedCase" id="exemptedCase"/>
+					</div>
+				</div>
 				</div>
 				<div class="row">
 	       			<div class="text-center">
@@ -119,4 +125,4 @@
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/baseRegisterVLTReport.js'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/baseRegisterVLTReport.js?rnd=${app_release_no}'/>"></script>

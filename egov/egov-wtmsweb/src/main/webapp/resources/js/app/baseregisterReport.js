@@ -73,11 +73,13 @@ $('#baseRegisterReportSearch').click(function(e){
 				}
 			},
 			"columns" : [
-                          { "data" : "consumerNo", "title": "Consumer Number"},
+                          { "data" : "consumerNo", "title": "New Consumer Number"},
+                          { "data" : "oldConsumerNo", "title": "Old Consumer Number"},
 						  { "data" : "assessmentNo" , "title": "Assessment Number"},  
 						  { "data" : "ownerName", "title": "Owner Name"},
 						  { "data" : "doorNo", "title": "Door No"},
 						  { "data" : "categoryType", "title": "Category Type"},
+						  { "data" : "waterSource", "title": "Water Source"},
 						  { "data" : "usageType", "title": "Usage"},
 						  { "data" : "pipeSize", "title": "Pipe Size"},
 						  { "data" : "monthlyRate", "title": "Monthly Rate"},

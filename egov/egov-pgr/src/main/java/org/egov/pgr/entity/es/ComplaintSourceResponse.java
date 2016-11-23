@@ -9,6 +9,7 @@ import java.util.List;
 @JsonInclude(value = Include.NON_NULL)
 public class ComplaintSourceResponse {
 
+    private String regionName;
     private String districtName;
     private String ulbCode;
     private String ulbName;
@@ -16,10 +17,19 @@ public class ComplaintSourceResponse {
     private String wardName;
     private String domainURL;
     private String functionaryName;
+    private String functionaryMobileNumber;
+    private String localityName;
     private String departmentName;
-    private String ComplaintTypeName;
+    private String complaintTypeName;
     private List<HashMap<String, Long>> sourceList;
 
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
+    }
     public String getDistrictName() {
         return districtName;
     }
@@ -76,6 +86,22 @@ public class ComplaintSourceResponse {
         this.functionaryName = functionaryName;
     }
 
+    public String getFunctionaryMobileNumber() {
+        return functionaryMobileNumber;
+    }
+
+    public void setFunctionaryMobileNumber(String functionaryMobileNumber) {
+        this.functionaryMobileNumber = functionaryMobileNumber;
+    }
+    
+    public String getLocalityName() {
+        return localityName;
+    }
+
+    public void setLocalityName(String localityName) {
+        this.localityName = localityName;
+    }
+
     public String getDepartmentName() {
         return departmentName;
     }
@@ -85,11 +111,11 @@ public class ComplaintSourceResponse {
     }
 
     public String getComplaintTypeName() {
-        return ComplaintTypeName;
+        return complaintTypeName;
     }
 
     public void setComplaintTypeName(String complaintTypeName) {
-        ComplaintTypeName = complaintTypeName;
+        this.complaintTypeName = complaintTypeName;
     }
 
     public List<HashMap<String, Long>> getSourceList() {

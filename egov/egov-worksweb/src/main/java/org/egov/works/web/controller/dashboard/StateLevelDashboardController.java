@@ -57,6 +57,7 @@ import org.egov.works.elasticsearch.model.WorksMilestoneIndexResponse;
 import org.egov.works.elasticsearch.service.WorksMilestoneIndexService;
 import org.egov.works.elasticsearch.service.WorksTransactionIndexService;
 import org.egov.works.web.adaptor.WorksMilestoneIndexJsonAdaptor;
+import org.egov.works.web.adaptor.WorksSectorReportJsonAdaptor;
 import org.egov.works.web.adaptor.WorksTransactionIndexJsonAdaptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +80,8 @@ import com.google.gson.GsonBuilder;
 @RequestMapping(value = "/public/worksdashboard")
 public class StateLevelDashboardController {
 
+    private static final String DATA = "{ \"data\":";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(StateLevelDashboardController.class);
 
     @Autowired
@@ -93,10 +96,14 @@ public class StateLevelDashboardController {
     @Autowired
     private WorksTransactionIndexJsonAdaptor worksTransactionIndexJsonAdaptor;
 
+    @Autowired
+    private WorksSectorReportJsonAdaptor worksSectorReportJsonAdaptor;
+
     @RequestMapping(value = "/statewisetypeofwork", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getStateWiseTypeOfWorkDetails() throws IOException {
 
-        final Long startTime, timeTaken;
+        final Long startTime;
+        final Long timeTaken;
         final List<WorksMilestoneIndexResponse> resultList;
         final String result;
         final WorksIndexsRequest worksIndexsRequest = new WorksIndexsRequest();
@@ -105,7 +112,7 @@ public class StateLevelDashboardController {
         worksIndexsRequest.setReportType(SECTOR_COLUMN_HEADER_NAME);
         resultList = worksMilestoneIndexService.getAggregationResults(worksIndexsRequest,
                 WORKSMILESTONE_TYPEOFWORKNAME_COLUMN_NAME);
-        result = new StringBuilder("{ \"data\":").append(toMilestoneJson(resultList)).append("}").toString();
+        result = new StringBuilder(DATA).append(toMilestoneJson(resultList)).append("}").toString();
         timeTaken = System.currentTimeMillis() - startTime;
 
         if (LOGGER.isDebugEnabled())
@@ -119,7 +126,8 @@ public class StateLevelDashboardController {
     public @ResponseBody String getDistrictWiseByTypeOfWork(@RequestParam("typeofwork") final String typeofwork)
             throws IOException {
 
-        final Long startTime, timeTaken;
+        final Long startTime;
+        final Long timeTaken;
         final List<WorksMilestoneIndexResponse> resultList;
         final String result;
         final WorksIndexsRequest worksIndexsRequest = new WorksIndexsRequest();
@@ -129,7 +137,7 @@ public class StateLevelDashboardController {
         startTime = System.currentTimeMillis();
         resultList = worksMilestoneIndexService.getAggregationResults(worksIndexsRequest,
                 WORKSMILESTONE_DISTNAME_COLUMN_NAME);
-        result = new StringBuilder("{ \"data\":").append(toMilestoneJson(resultList)).append("}").toString();
+        result = new StringBuilder(DATA).append(toMilestoneJson(resultList)).append("}").toString();
         timeTaken = System.currentTimeMillis() - startTime;
 
         if (LOGGER.isDebugEnabled())
@@ -142,7 +150,8 @@ public class StateLevelDashboardController {
     public @ResponseBody String getUlbWiseByTypeOfWork(@RequestParam("typeofwork") final String typeofwork)
             throws IOException {
 
-        final Long startTime, timeTaken;
+        final Long startTime;
+        final Long timeTaken;
         final List<WorksMilestoneIndexResponse> resultList;
         final String result;
         final WorksIndexsRequest worksIndexsRequest = new WorksIndexsRequest();
@@ -152,7 +161,7 @@ public class StateLevelDashboardController {
         startTime = System.currentTimeMillis();
         resultList = worksMilestoneIndexService.getAggregationResults(worksIndexsRequest,
                 WORKSMILESTONE_ULBNAME_COLUMN_NAME);
-        result = new StringBuilder("{ \"data\":").append(toMilestoneJson(resultList)).append("}").toString();
+        result = new StringBuilder(DATA).append(toMilestoneJson(resultList)).append("}").toString();
         timeTaken = System.currentTimeMillis() - startTime;
 
         if (LOGGER.isDebugEnabled())
@@ -165,7 +174,8 @@ public class StateLevelDashboardController {
     public @ResponseBody String getUlbWiseByDistrictAndTypeOfWork(@RequestParam("typeofwork") final String typeofwork,
             @RequestParam("districtname") final String districtname) throws IOException {
 
-        final Long startTime, timeTaken;
+        final Long startTime;
+        final Long timeTaken;
         final List<WorksMilestoneIndexResponse> resultList;
         final String result;
         final WorksIndexsRequest worksIndexsRequest = new WorksIndexsRequest();
@@ -176,7 +186,7 @@ public class StateLevelDashboardController {
         startTime = System.currentTimeMillis();
         resultList = worksMilestoneIndexService.getAggregationResults(worksIndexsRequest,
                 WORKSMILESTONE_ULBNAME_COLUMN_NAME);
-        result = new StringBuilder("{ \"data\":").append(toMilestoneJson(resultList)).append("}").toString();
+        result = new StringBuilder(DATA).append(toMilestoneJson(resultList)).append("}").toString();
         timeTaken = System.currentTimeMillis() - startTime;
 
         if (LOGGER.isDebugEnabled())
@@ -189,7 +199,8 @@ public class StateLevelDashboardController {
     public @ResponseBody String getUlbWiseByTypeOfWorkAndUlbs(@RequestParam("typeofwork") final String typeofwork,
             @RequestParam("ulbcodes") final String ulbcodes) throws IOException {
 
-        final Long startTime, timeTaken;
+        final Long startTime;
+        final Long timeTaken;
         final List<WorksMilestoneIndexResponse> resultList;
         final String result;
         final WorksIndexsRequest worksIndexsRequest = new WorksIndexsRequest();
@@ -200,7 +211,7 @@ public class StateLevelDashboardController {
         startTime = System.currentTimeMillis();
         resultList = worksMilestoneIndexService.getAggregationResults(worksIndexsRequest,
                 WORKSMILESTONE_ULBNAME_COLUMN_NAME);
-        result = new StringBuilder("{ \"data\":").append(toMilestoneJson(resultList)).append("}").toString();
+        result = new StringBuilder(DATA).append(toMilestoneJson(resultList)).append("}").toString();
         timeTaken = System.currentTimeMillis() - startTime;
 
         if (LOGGER.isDebugEnabled())
@@ -213,7 +224,8 @@ public class StateLevelDashboardController {
     public @ResponseBody String getStateWiseULBDetails(@RequestParam("typeofwork") final String typeofwork,
             @RequestParam("ulbname") final String ulbname) throws IOException {
 
-        final Long startTime, timeTaken;
+        final Long startTime;
+        final Long timeTaken;
         final List<WorksMilestoneIndexResponse> resultList;
         final String result;
         WorksIndexsRequest worksIndexsRequest = new WorksIndexsRequest();
@@ -233,7 +245,7 @@ public class StateLevelDashboardController {
                     WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME);
         }
 
-        result = new StringBuilder("{ \"data\":").append(toTransactionJson(resultList)).append("}").toString();
+        result = new StringBuilder(DATA).append(toTransactionJson(resultList)).append("}").toString();
         timeTaken = System.currentTimeMillis() - startTime;
 
         if (LOGGER.isDebugEnabled())
@@ -242,20 +254,56 @@ public class StateLevelDashboardController {
         return result;
     }
 
+    @RequestMapping(value = "/sectorwisereport", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String getSectorWiseULBDetails() throws IOException {
+
+        final Long startTime;
+        final Long timeTaken;
+        final List<WorksMilestoneIndexResponse> resultList;
+        final String result;
+        WorksIndexsRequest worksIndexsRequest = new WorksIndexsRequest();
+
+        startTime = System.currentTimeMillis();
+        resultList = worksTransactionIndexService.getWorksTransactionDetails(worksIndexsRequest);
+
+        for (final WorksMilestoneIndexResponse response : resultList) {
+            worksIndexsRequest = new WorksIndexsRequest();
+            worksIndexsRequest.setLineestimatedetailid(response.getLineestimatedetailid());
+            worksTransactionIndexService.getAggregationResults(worksIndexsRequest, response,
+                    WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME);
+            response.setIsmilestonecreated("No");
+            worksMilestoneIndexService.getAggregationResultsForUlb(worksIndexsRequest, response,
+                    WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME);
+        }
+
+        result = new StringBuilder(DATA).append(toSectorReportJson(resultList)).append("}").toString();
+        timeTaken = System.currentTimeMillis() - startTime;
+
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken to serve getSectorWiseULBDetails is : " + timeTaken + " (millisecs)");
+
+        return result;
+    }
+
     public Object toMilestoneJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(WorksMilestoneIndexResponse.class, worksMilestoneIndexJsonAdaptor)
                 .create();
-        final String json = gson.toJson(object);
-        return json;
+        return gson.toJson(object);
     }
 
     public Object toTransactionJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(WorksMilestoneIndexResponse.class, worksTransactionIndexJsonAdaptor)
                 .create();
-        final String json = gson.toJson(object);
-        return json;
+        return gson.toJson(object);
+    }
+
+    public Object toSectorReportJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(WorksMilestoneIndexResponse.class, worksSectorReportJsonAdaptor)
+                .create();
+        return gson.toJson(object);
     }
 
 }

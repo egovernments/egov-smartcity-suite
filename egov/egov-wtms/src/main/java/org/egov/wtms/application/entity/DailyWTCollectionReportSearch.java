@@ -39,16 +39,13 @@
  */
 package org.egov.wtms.application.entity;
 
-import org.jboss.logging.Logger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import javax.validation.ValidationException;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import org.jboss.logging.Logger;
 
 public class DailyWTCollectionReportSearch {
     private static final Logger logger = Logger.getLogger(DailyWTCollectionReportSearch.class);
@@ -56,34 +53,15 @@ public class DailyWTCollectionReportSearch {
     private String toDate;
     private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
-    private List<String> consumerCode = new ArrayList<String>();
     private String collectionMode;
     private String collectionOperator;
     private String revenueWard;
     private String searchText;
+    private String status;
     private String ulbName;
     private String receiptnumber;
-    private String consumercode;
-    private String consumername;
-    private String channel;
-    private String paymentmode;
-    private String status;
-    private String installmentfrom;
-    private String installmentto;
-    private Double arrearamount;
-    private Double currentamount;
-    private Double advanceamount;
-    private Double totalamount;
-
-
-    public List<String> getConsumerCode() {
-        return consumerCode;
-    }
-
-    public void setConsumerCode(final List<String> consumerCode) {
-        this.consumerCode = consumerCode;
-    }
-
+   
+    
     public String getFromDate() {
         return fromDate;
     }
@@ -168,31 +146,6 @@ public class DailyWTCollectionReportSearch {
         this.ulbName = ulbName;
     }
 
-    /*public Filters searchCollectionFilters() {
-        final List<Filter> andFilters = new ArrayList<>(0);
-        andFilters.add(termsStringFilter("clauses.cityname", ulbName));
-        andFilters.add(termsStringFilter("clauses.channel", collectionMode));
-        andFilters.add(termsStringFilter("clauses.receiptcreator", collectionOperator));
-        andFilters.add(termsStringFilter("clauses.billingservice", "Water Tax"));
-        andFilters.add(termsStringFilter("clauses.status", status));
-        if (!consumerCode.isEmpty()) {
-            final String[] consumerCodes = consumerCode.toArray(new String[consumerCode.size()]);
-            andFilters.add(termsStringFilter("common.consumercode", consumerCodes));
-        }
-        andFilters.add(rangeFilter("searchable.receiptdate", fromDate, toDate));
-        if (logger.isDebugEnabled())
-            logger.debug("finished filters");
-        logger.info("$$$$$$$$$$$$$$$$ Filters : " + andFilters);
-        return Filters.withAndFilters(andFilters);
-    }
-
-    public Filters searchConnectionForWardFilters() {
-        final List<Filter> andFilters = new ArrayList<>(0);
-        andFilters.add(termsStringFilter("clauses.ulbname", ulbName));
-        andFilters.add(termsStringFilter("clauses.ward", revenueWard));
-        return Filters.withAndFilters(andFilters);
-    }*/
-
     public String searchQuery() {
         return searchText;
     }
@@ -204,86 +157,7 @@ public class DailyWTCollectionReportSearch {
     public void setReceiptnumber(String receiptnumber) {
         this.receiptnumber = receiptnumber;
     }
-
-    public String getConsumercode() {
-        return consumercode;
-    }
-
-    public void setConsumercode(String consumercode) {
-        this.consumercode = consumercode;
-    }
-
-    public String getConsumername() {
-        return consumername;
-    }
-
-    public void setConsumername(String consumername) {
-        this.consumername = consumername;
-    }
-
-    public String getChannel() {
-        return channel;
-    }
-
-    public void setChannel(String channel) {
-        this.channel = channel;
-    }
-
-    public String getPaymentmode() {
-        return paymentmode;
-    }
-
-    public void setPaymentmode(String paymentmode) {
-        this.paymentmode = paymentmode;
-    }
-
-    public String getInstallmentfrom() {
-        return installmentfrom;
-    }
-
-    public void setInstallmentfrom(String installmentfrom) {
-        this.installmentfrom = installmentfrom;
-    }
-
-    public String getInstallmentto() {
-        return installmentto;
-    }
-
-    public void setInstallmentto(String installmentto) {
-        this.installmentto = installmentto;
-    }
-
-    public Double getArrearamount() {
-        return arrearamount;
-    }
-
-    public void setArrearamount(Double arrearamount) {
-        this.arrearamount = arrearamount;
-    }
-
-    public Double getCurrentamount() {
-        return currentamount;
-    }
-
-    public void setCurrentamount(Double currentamount) {
-        this.currentamount = currentamount;
-    }
-
-    public Double getAdvanceamount() {
-        return advanceamount;
-    }
-
-    public void setAdvanceamount(Double advanceamount) {
-        this.advanceamount = advanceamount;
-    }
-
-    public Double getTotalamount() {
-        return totalamount;
-    }
-
-    public void setTotalamount(Double totalamount) {
-        this.totalamount = totalamount;
-    }
+   
 
   
 }

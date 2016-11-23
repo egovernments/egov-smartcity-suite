@@ -325,7 +325,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         loggedUserIsEmployee = propService.isEmployee(securityUtils.getCurrentUser());
         super.prepare();
         setUserInfo();
-        documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.MODIFY);
+        documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.OBJECTION);
         final List<WallType> wallTypes = getPersistenceService().findAllBy("from WallType order by name");
         final List<WoodType> woodTypes = getPersistenceService().findAllBy("from WoodType order by name");
         final List<PropertyTypeMaster> propTypeList = getPersistenceService().findAllBy(
@@ -423,6 +423,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
         if (isMeesevaUser && getMeesevaApplicationNumber() != null) {
             objection.setObjectionNumber(objection.getMeesevaApplicationNumber());
+            objection.getBasicProperty().setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
         }
         else
             objection.setObjectionNumber(applicationNumberGenerator.generate());
@@ -438,7 +439,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             HashMap<String, String> meesevaParams = new HashMap<String, String>();
             meesevaParams.put("ADMISSIONFEE", "0");
             meesevaParams.put("APPLICATIONNUMBER", objection.getMeesevaApplicationNumber());
-            objection.getBasicProperty().setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
             objection.setApplicationNo(objection.getMeesevaApplicationNumber());
             revisionPetitionService.createRevisionPetition(objection, meesevaParams);
         }

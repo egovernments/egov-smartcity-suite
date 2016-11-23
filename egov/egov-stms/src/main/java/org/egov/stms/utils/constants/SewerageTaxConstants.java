@@ -292,4 +292,10 @@ public class SewerageTaxConstants {
     //DCB Report wardwise
     public static final String BOUNDARYTYPE_WARD="Ward";
     public static final String HIERARCHYTYPE_REVENUE="REVENUE";
+    
+    //property types
+    public static final String RESIDENTIAL ="RESIDENTIAL";
+    public static final String NONRESIDENTIAL = "NON_RESIDENTIAL";
+    public static final String MIXED ="MIXED";
+    public static final String ALL="ALL";
 }

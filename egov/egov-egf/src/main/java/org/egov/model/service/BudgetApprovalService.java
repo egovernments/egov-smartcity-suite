@@ -46,7 +46,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.model.budget.BudgetDetail;
+import org.egov.model.budget.Budget;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,8 +73,7 @@ public class BudgetApprovalService {
     }
 
     public List<CFinancialYear> financialYearList() {
-        final List<CFinancialYear> financialYears = cFinancialYearService.getFinancialYears(financialYear());
-        return financialYears;
+        return cFinancialYearService.getFinancialYears(financialYear());
     }
 
     public List<Long> financialYear() {
@@ -85,8 +84,8 @@ public class BudgetApprovalService {
         return budgetDetailsList;
     }
 
-    public List<BudgetDetail> search(final Long financialYearId) {
-        return budgetDetailService.getBudgetDetailByStatusAndFinancialYearId(
+    public List<Budget> search(final Long financialYearId) {
+        return budgetDetailService.getBudgetByStatusAndFinancialYearId(
                 getBudgetStatus(FinancialConstants.BUDGETDETAIL, "VERIFIED").getId(), financialYearId);
     }
 

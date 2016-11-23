@@ -68,17 +68,24 @@ public class BaseRegisterReportService {
 
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
-                "select dcbinfo.hscno as \"consumerNo\",dcbinfo.propertyid as \"assementNo\", dcbinfo.username as \"ownerName\",dcbinfo.categorytype as \"categoryType\",dcbinfo.username as \"period\",");
+                "select dcbinfo.hscno as \"consumerNo\", dcbinfo.oldhscno as \"oldConsumerNo\", dcbinfo.propertyid as \"assementNo\", ");
         queryStr.append(
-                "dcbinfo.houseno as \"doorNo\", dcbinfo.connectiontype as \"connectionType\" , dcbinfo.arr_demand as \"arrears\" ,  dcbinfo.curr_demand as \"current\" ,  ");
+                "dcbinfo.username as \"ownerName\",dcbinfo.categorytype as \"categoryType\",dcbinfo.username as \"period\",dcbinfo.houseno as \"doorNo\",");
         queryStr.append(
-                "dcbinfo.arr_coll as \"arrearsCollection\" ,  dcbinfo.curr_coll as \"currentCollection\" , dcbinfo.arr_demand+dcbinfo.curr_demand as \"totalDemand\" ,  ");
+                " dcbinfo.connectiontype as \"connectionType\" , dcbinfo.arr_demand as \"arrears\" ,  dcbinfo.curr_demand as \"current\" , ");
+        queryStr.append(" dcbinfo.arr_coll as \"arrearsCollection\" ,  dcbinfo.curr_coll as \"currentCollection\" , ");
         queryStr.append(
-                "dcbinfo.usagetype as \"usageType\" ,  dcbinfo.pipesize as \"pipeSize\" , dcbinfo.arr_coll+dcbinfo.curr_coll as \"totalCollection\"  , ");
-        queryStr.append(" (dcbinfo.curr_demand /12) as \"monthlyRate\"  from egwtr_mv_dcb_view dcbinfo");
+                " dcbinfo.arr_demand+dcbinfo.curr_demand as \"totalDemand\" , dcbinfo.usagetype as \"usageType\" ,  ");
         queryStr.append(
-                " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
-        queryStr.append(" where dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "'");
+                " dcbinfo.pipesize as \"pipeSize\" , dcbinfo.arr_coll+dcbinfo.curr_coll as \"totalCollection\" , wrd.monthlyrate as \"monthlyRate\" ");
+        queryStr.append(
+                " from  egwtr_usage_type ut, egwtr_water_source wt, egwtr_pipesize ps, egwtr_water_rates_header wrh,egwtr_water_rates_details wrd ,");
+        queryStr.append(
+                " egwtr_mv_dcb_view dcbinfo INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id ");
+        queryStr.append(" INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
+        queryStr.append(
+                " where ut.id=wrh.usagetype and wt.id=wrh.watersource and ps.id=wrh.pipesize and dcbinfo.usagetype =ut.name and  dcbinfo.watersource = wt.watersourcetype and dcbinfo.pipesize = ps.code and wrd.waterratesheader=wrh.id and wrd.fromdate <= now() and  wrd.todate >= now() and dcbinfo.connectionstatus = '"
+                        + ConnectionStatus.ACTIVE.toString() + "'");
         if (StringUtils.isNotBlank(ward))
             queryStr.append(" and wardboundary.id = :ward");
         final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());

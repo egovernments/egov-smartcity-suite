@@ -48,6 +48,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -58,6 +59,8 @@ import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.admin.master.entity.es.CityIndex;
+import org.egov.infra.admin.master.service.es.CityIndexService;
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.utils.WebUtils;
@@ -76,12 +79,8 @@ import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.bean.dashboard.TotalCollectionStats;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
-import org.egov.ptis.service.elasticsearch.CollectionIndexElasticSearchService;
-import org.egov.ptis.service.elasticsearch.PropertyTaxElasticSearchIndexService;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.hibernate.type.StandardBasicTypes;
+import org.egov.ptis.service.es.CollectionIndexElasticSearchService;
+import org.egov.ptis.service.es.PropertyTaxElasticSearchIndexService;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,27 +108,32 @@ public class PropTaxDashboardService {
     @Autowired
     private SimpleRestClient simpleRestClient;
 
+    @Autowired
+    private CityIndexService cityIndexService;
+
     /**
      * Gives the State-City information across all ULBs
      * 
      * @return List
      */
     public List<StateCityInfo> getStateCityDetails() {
-        String query = "select regionname as region, districtname as district, city as city, grade as grade, citycode as ulbcode from public.statecityinfo order by city ";
-        SQLQuery sqlQuery = entityManager.unwrap(Session.class).createSQLQuery(query);
-        sqlQuery.addScalar("region", StandardBasicTypes.STRING);
-        sqlQuery.addScalar("district", StandardBasicTypes.STRING);
-        sqlQuery.addScalar("city", StandardBasicTypes.STRING);
-        sqlQuery.addScalar("grade", StandardBasicTypes.STRING);
-        sqlQuery.addScalar("ulbCode", StandardBasicTypes.STRING);
-        sqlQuery.setResultTransformer(new AliasToBeanResultTransformer(StateCityInfo.class));
-        List<StateCityInfo> stateCityDetails = sqlQuery.list();
+        List<StateCityInfo> stateCityDetails = new ArrayList<>();
+        StateCityInfo cityInfo;
+        Iterable<CityIndex> cities = cityIndexService.findAll();
+        for (CityIndex city : cities) {
+            cityInfo = new StateCityInfo();
+            cityInfo.setRegion(city.getRegionname());
+            cityInfo.setDistrict(city.getDistrictname());
+            cityInfo.setCity(city.getName());
+            cityInfo.setGrade(city.getCitygrade());
+            cityInfo.setUlbCode(city.getCitycode());
+            stateCityDetails.add(cityInfo);
+        }
         return stateCityDetails;
     }
 
     /**
-     * Provides State-wise Collection Statistics for Property Tax, Water Charges
-     * and Others
+     * Provides State-wise Collection Statistics for Property Tax, Water Charges and Others
      * 
      * @return CollectionStats
      */
@@ -158,7 +162,7 @@ public class PropTaxDashboardService {
                 .divide(consolidatedData.getTotalDmd(), 1, BigDecimal.ROUND_HALF_UP));
         consolidatedData.setLyVar(
                 (consolidatedData.getCytdColl().subtract(consolidatedData.getLytdColl()).multiply(BIGDECIMAL_100))
-                        .divide(consolidatedData.getCytdColl(), 1, BigDecimal.ROUND_HALF_UP));
+                        .divide(consolidatedData.getLytdColl(), 1, BigDecimal.ROUND_HALF_UP));
         consolidatedCollectionDetails.setPropertyTax(consolidatedData);
 
         // For Water Tax collections

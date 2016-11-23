@@ -57,6 +57,8 @@ public class BaseRegisterResultAdaptor implements JsonSerializer<BaseRegisterRes
         final JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("consumerNo",
                 null != baseRegisterResultObj.getConsumerNo() ? baseRegisterResultObj.getConsumerNo() : "");
+        jsonObject.addProperty("oldConsumerNo",
+                baseRegisterResultObj.getOldConsumerNo() != null ? baseRegisterResultObj.getOldConsumerNo() : "");
         jsonObject.addProperty("assessmentNo",
                 null != baseRegisterResultObj.getAssementNo() ? baseRegisterResultObj.getAssementNo() : "");
         jsonObject.addProperty("ownerName",
@@ -65,10 +67,11 @@ public class BaseRegisterResultAdaptor implements JsonSerializer<BaseRegisterRes
                 null != baseRegisterResultObj.getDoorNo() ? baseRegisterResultObj.getDoorNo().toString() : "");
         jsonObject.addProperty("categoryType",
                 null != baseRegisterResultObj.getCategoryType() ? baseRegisterResultObj.getCategoryType() : "");
+        jsonObject.addProperty("waterSource", baseRegisterResultObj.getWaterSource());
         jsonObject.addProperty("usageType",
-                null != baseRegisterResultObj.getCategoryType() ? baseRegisterResultObj.getUsageType() : "");
+                null != baseRegisterResultObj.getUsageType() ? baseRegisterResultObj.getUsageType() : "");
         jsonObject.addProperty("pipeSize",
-                null != baseRegisterResultObj.getCategoryType() ? baseRegisterResultObj.getPipeSize() : "");
+                null != baseRegisterResultObj.getPipeSize() ? baseRegisterResultObj.getPipeSize() : "");
         jsonObject.addProperty("period",
                 null != baseRegisterResultObj.getPeriod() ? baseRegisterResultObj.getPeriod() : "");
         jsonObject.addProperty("arrears", baseRegisterResultObj.getArrears());

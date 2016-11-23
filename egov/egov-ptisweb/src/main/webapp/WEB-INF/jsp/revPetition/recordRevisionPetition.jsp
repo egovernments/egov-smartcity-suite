@@ -67,24 +67,25 @@
 				<td class="greybox">&nbsp;</td>
 				<td class="greybox" width="25%"><s:text name="objection.details"/><span class="mandatory1">*</span></td>
 				<td class="greybox" width="25%"><s:textarea name="details" id="details" cols="40" rows="2"  onblur="checkLength(this)" ></s:textarea></td>
-			<%-- 
-				<td class="greybox" width="25%"><s:text name="objection.upload.document"/></td>
+			 
+				<%-- <td class="greybox" width="25%"><s:text name="objection.upload.document"/></td>
 				<td class="greybox" width="25%"><input type="button" class="button" value="Upload Document" id="docUploadButton" onclick="showDocumentManager();" /></td>
-				<s:hidden name="docNumberObjection" id="docNumber" />
- --%>
+				<s:hidden name="docNumberObjection" id="docNumber" /> --%>
+ 
 			</tr>
 		</table>
 		</td>
 	</tr>
-
 </table>
+<s:if test="%{!documentTypes.isEmpty()}">
+		<%@ include file="../common/DocumentUploadForm.jsp"%>
+</s:if>
 <script>
-function chkReceivedByLen(obj){
-	if(obj.value.length>256)
-	{
-		bootbox.alert('Max 256 characters are allowed for received by text. Remaining characters are truncated.')
-		obj.value = obj.value.substring(1,256);
+	function chkReceivedByLen(obj) {
+		if (obj.value.length > 256) {
+			bootbox
+					.alert('Max 256 characters are allowed for received by text. Remaining characters are truncated.')
+			obj.value = obj.value.substring(1, 256);
+		}
 	}
-}
-
 </script>

@@ -63,7 +63,6 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.DailyCollectionReportSearch;
 import org.egov.ptis.domain.service.report.ReportService;
-import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
@@ -72,7 +71,6 @@ import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.ResultsExtractor;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Controller;
@@ -99,10 +97,10 @@ public class DailyCollectionReportController {
 
     @Autowired
     private BoundaryService boundaryService;
-    
+
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
-    
+
     @ModelAttribute
     public void getReportModel(final Model model) {
         final DailyCollectionReportSearch dailyCollectionReportResut = new DailyCollectionReportSearch();
@@ -131,50 +129,50 @@ public class DailyCollectionReportController {
         model.addAttribute("collectionMode", Source.values());
         return DAILY_COLLECTION_FORM;
     }
-    
+
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public  List<CollectionDocument> searchCollection(@ModelAttribute final DailyCollectionReportSearch searchRequest) {
-        City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
+    public List<CollectionDocument> searchCollection(@ModelAttribute final DailyCollectionReportSearch searchRequest) {
+        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         searchRequest.setUlbName(cityWebsite.getName());
-        BoolQueryBuilder boolQuery = getQueryBasedOnInput(searchRequest);
-        
-		SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME).withQuery(boolQuery)
-				.addAggregation(AggregationBuilders.count("receipt_count").field("consumerCode"))
-				.build();
-		Aggregations collCountAggr = elasticsearchTemplate.query(searchQuery, new ResultsExtractor<Aggregations>() {
-            @Override
-            public Aggregations extract(SearchResponse response) {
-                return response.getAggregations();
-            }
-        });
+        final BoolQueryBuilder boolQuery = getQueryBasedOnInput(searchRequest);
 
-        ValueCount aggr = collCountAggr.get("receipt_count");
+        SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME).withQuery(boolQuery)
+                .addAggregation(AggregationBuilders.count("receipt_count").field("consumerCode"))
+                .build();
+        final Aggregations collCountAggr = elasticsearchTemplate.query(searchQuery, response -> response.getAggregations());
+
+        final ValueCount aggr = collCountAggr.get("receipt_count");
         searchQuery = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME).withQuery(boolQuery)
-				.addAggregation(AggregationBuilders.count("receipt_count").field("consumerCode"))
-				.withPageable(new PageRequest(0, Long.valueOf(aggr.getValue()).intValue()))
-				.build();
-        List<CollectionDocument> collIndexList = elasticsearchTemplate.queryForList(searchQuery,CollectionDocument.class);
-        
+                .addAggregation(AggregationBuilders.count("receipt_count").field("consumerCode"))
+                .withPageable(new PageRequest(0,
+                        Long.valueOf(aggr.getValue()).intValue() == 0 ? 1 : Long.valueOf(aggr.getValue()).intValue()))
+                .build();
+        final List<CollectionDocument> collIndexList = elasticsearchTemplate.queryForList(searchQuery, CollectionDocument.class);
+
         return collIndexList;
 
     }
-    
-    private BoolQueryBuilder getQueryBasedOnInput(DailyCollectionReportSearch searchRequest) {
-        Date fromDate = DateUtils.getDate(searchRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
-        Date toDate = DateUtils.addDays(DateUtils.getDate(searchRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
+
+    private BoolQueryBuilder getQueryBasedOnInput(final DailyCollectionReportSearch searchRequest) {
+        final Date fromDate = DateUtils.getDate(searchRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
+        final Date toDate = org.apache.commons.lang3.time.DateUtils.addDays(
+                DateUtils.getDate(searchRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
                 1);
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("billingService", COLLECION_BILLING_SERVICE_PT))
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+                .filter(QueryBuilders.matchQuery("billingService", COLLECION_BILLING_SERVICE_PT))
                 .filter(QueryBuilders.rangeQuery("receiptDate").gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
-                            .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false));
+                        .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false));
         if (StringUtils.isNotBlank(searchRequest.getCollectionMode()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("paymentMode", searchRequest.getCollectionMode()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("channel", searchRequest.getCollectionMode()));
         if (StringUtils.isNotBlank(searchRequest.getCollectionOperator()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("receiptCreator", searchRequest.getCollectionOperator()));
         if (StringUtils.isNotBlank(searchRequest.getStatus()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("status", searchRequest.getStatus()));
         if (StringUtils.isNotBlank(searchRequest.getUlbName()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityName", searchRequest.getUlbName()));
+        if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("revenueWard", searchRequest.getRevenueWard()));
 
         return boolQuery;
     }

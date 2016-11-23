@@ -84,6 +84,104 @@ import org.springframework.stereotype.Service;
 @Service
 public class WorksMilestoneIndexService {
 
+    private static final String JAN01TO15ACTUAL = "jan01to15actual";
+
+    private static final String JAN01TO15TARGET = "jan01to15target";
+
+    private static final String JAN16TO31ACTUAL = "jan16to31actual";
+
+    private static final String JAN16TO31TARGET = "jan16to31target";
+
+    private static final String FEB01TO15ACTUAL = "feb01to15actual";
+
+    private static final String FEB01TO15TARGET = "feb01to15target";
+
+    private static final String FEB16TO28OR29ACTUAL = "feb16to28or29actual";
+
+    private static final String FEB16TO28OR29TARGET = "feb16to28or29target";
+
+    private static final String MAR01TO15ACTUAL = "mar01to15actual";
+
+    private static final String MAR01TO15TARGET = "mar01to15target";
+
+    private static final String MAR16TO31ACTUAL = "mar16to31actual";
+
+    private static final String MAR16TO31TARGET = "mar16to31target";
+
+    private static final String APR01TO15ACTUAL = "apr01to15actual";
+
+    private static final String APR01TO15TARGET = "apr01to15target";
+
+    private static final String APR16TO30ACTUAL = "apr16to30actual";
+
+    private static final String APR16TO30TARGET = "apr16to30target";
+
+    private static final String MAY01TO15ACTUAL = "may01to15actual";
+
+    private static final String MAY01TO15TARGET = "may01to15target";
+
+    private static final String MAY16TO31ACTUAL = "may16to31actual";
+
+    private static final String MAY16TO31TARGET = "may16to31target";
+
+    private static final String JUN01TO15ACTUAL = "jun01to15actual";
+
+    private static final String JUN01TO15TARGET = "jun01to15target";
+
+    private static final String JUN16TO30ACTUAL = "jun16to30actual";
+
+    private static final String JUN16TO30TARGET = "jun16to30target";
+
+    private static final String JUL01TO15ACTUAL = "jul01to15actual";
+
+    private static final String JUL01TO15TARGET = "jul01to15target";
+
+    private static final String JUL16TO31ACTUAL = "jul16to31actual";
+
+    private static final String JUL16TO31TARGET = "jul16to31target";
+
+    private static final String AUG01TO15ACTUAL = "aug01to15actual";
+
+    private static final String AUG01TO15TARGET = "aug01to15target";
+
+    private static final String AUG16TO31ACTUAL = "aug16to31actual";
+
+    private static final String AUG16TO31TARGET = "aug16to31target";
+
+    private static final String SEP01TO15ACTUAL = "sep01to15actual";
+
+    private static final String SEP01TO15TARGET = "sep01to15target";
+
+    private static final String SEP16TO30ACTUAL = "sep16to30actual";
+
+    private static final String SEP16TO30TARGET = "sep16to30target";
+
+    private static final String OCT01TO15ACTUAL = "oct01to15actual";
+
+    private static final String OCT01TO15TARGET = "oct01to15target";
+
+    private static final String OCT16TO31ACTUAL = "oct16to31actual";
+
+    private static final String OCT16TO31TARGET = "oct16to31target";
+
+    private static final String NOV01TO15ACTUAL = "nov01to15actual";
+
+    private static final String NOV01TO15TARGET = "nov01to15target";
+
+    private static final String NOV16TO30ACTUAL = "nov16to30actual";
+
+    private static final String NOV16TO30TARGET = "nov16to30target";
+
+    private static final String DEC01TO15ACTUAL = "dec01to15actual";
+
+    private static final String DEC01TO15TARGET = "dec01to15target";
+
+    private static final String DEC16TO31ACTUAL = "dec16to31actual";
+
+    private static final String DEC16TO31TARGET = "dec16to31target";
+
+    private static final String BY_AGGREGATION_FIELD = "by_aggregationField";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(WorksMilestoneIndexService.class);
 
     public static final String WORKSMILESTONE_INDEX_NAME = "worksmilestone";
@@ -95,7 +193,8 @@ public class WorksMilestoneIndexService {
     public List<WorksMilestoneIndexResponse> getAggregationResults(final WorksIndexsRequest worksIndexsRequest,
             final String orderingAggregationName) {
 
-        Long startTime, timeTaken;
+        Long startTime;
+        Long timeTaken;
         AggregationBuilder aggregation;
         BoolQueryBuilder boolQuery;
         SearchQuery searchQuery;
@@ -103,7 +202,7 @@ public class WorksMilestoneIndexService {
         final List<WorksMilestoneIndexResponse> finalResponses = new ArrayList<>();
         final List<WorksMilestoneIndexResponse> worksTransactionResponses = new ArrayList<>();
         final List<WorksMilestoneIndexResponse> worksMilestoneResponses = new ArrayList<>();
-        final Map<String, WorksMilestoneIndexResponse> worksMilestoneResponseMap = new HashMap<String, WorksMilestoneIndexResponse>();
+        final Map<String, WorksMilestoneIndexResponse> worksMilestoneResponseMap = new HashMap<>();
         WorksMilestoneIndexResponse wmIndexResponse;
         List<Terms.Bucket> resultBuckets;
         StringTerms saggr;
@@ -113,7 +212,7 @@ public class WorksMilestoneIndexService {
 
         startTime = System.currentTimeMillis();
         boolQuery = prepareWhereClauseForTransaction(worksIndexsRequest);
-        aggregation = AggregationBuilders.terms("by_aggregationField").field(orderingAggregationName).size(1000)
+        aggregation = AggregationBuilders.terms(BY_AGGREGATION_FIELD).field(orderingAggregationName).size(1000)
                 .subAggregation(AggregationBuilders.sum("totalestimatedcostinlakhs").field("estimatevalue"))
                 .subAggregation(AggregationBuilders.sum("totalworkordervalueinlakhs").field("loaamount"))
                 .subAggregation(AggregationBuilders.sum("totalbillamountinlakhs").field("loatotalbillamt"))
@@ -127,10 +226,10 @@ public class WorksMilestoneIndexService {
         worksAggr = elasticsearchTemplate.query(searchQuery, response -> response.getAggregations());
 
         if (!orderingAggregationName.equals(WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME)) {
-            saggr = worksAggr.get("by_aggregationField");
+            saggr = worksAggr.get(BY_AGGREGATION_FIELD);
             resultBuckets = saggr.getBuckets();
         } else {
-            laggr = worksAggr.get("by_aggregationField");
+            laggr = worksAggr.get(BY_AGGREGATION_FIELD);
             resultBuckets = laggr.getBuckets();
         }
 
@@ -153,55 +252,55 @@ public class WorksMilestoneIndexService {
 
         boolQuery = prepareWhereClauseForMilestone(worksIndexsRequest);
 
-        aggregation = AggregationBuilders.terms("by_aggregationField").field(orderingAggregationName).size(1000)
-                .subAggregation(AggregationBuilders.avg("jan01to15actual").field("jan01to15actual"))
-                .subAggregation(AggregationBuilders.avg("jan01to15target").field("jan01to15target"))
-                .subAggregation(AggregationBuilders.avg("jan16to31actual").field("jan16to31actual"))
-                .subAggregation(AggregationBuilders.avg("jan16to31target").field("jan16to31target"))
-                .subAggregation(AggregationBuilders.avg("feb01to15actual").field("feb01to15actual"))
-                .subAggregation(AggregationBuilders.avg("feb01to15target").field("feb01to15target"))
-                .subAggregation(AggregationBuilders.avg("feb16to28or29actual").field("feb16to28or29actual"))
-                .subAggregation(AggregationBuilders.avg("feb16to28or29target").field("feb16to28or29target"))
-                .subAggregation(AggregationBuilders.avg("mar01to15actual").field("mar01to15actual"))
-                .subAggregation(AggregationBuilders.avg("mar01to15target").field("mar01to15target"))
-                .subAggregation(AggregationBuilders.avg("mar16to31actual").field("mar16to31actual"))
-                .subAggregation(AggregationBuilders.avg("mar16to31target").field("mar16to31target"))
-                .subAggregation(AggregationBuilders.avg("apr01to15actual").field("apr01to15actual"))
-                .subAggregation(AggregationBuilders.avg("apr01to15target").field("apr01to15target"))
-                .subAggregation(AggregationBuilders.avg("apr16to30actual").field("apr16to30actual"))
-                .subAggregation(AggregationBuilders.avg("apr16to30target").field("apr16to30target"))
-                .subAggregation(AggregationBuilders.avg("may01to15actual").field("may01to15actual"))
-                .subAggregation(AggregationBuilders.avg("may01to15target").field("may01to15target"))
-                .subAggregation(AggregationBuilders.avg("may16to31actual").field("may16to31actual"))
-                .subAggregation(AggregationBuilders.avg("may16to31target").field("may16to31target"))
-                .subAggregation(AggregationBuilders.avg("jun01to15actual").field("jun01to15actual"))
-                .subAggregation(AggregationBuilders.avg("jun01to15target").field("jun01to15target"))
-                .subAggregation(AggregationBuilders.avg("jun16to30actual").field("jun16to30actual"))
-                .subAggregation(AggregationBuilders.avg("jun16to30target").field("jun16to30target"))
-                .subAggregation(AggregationBuilders.avg("jul01to15actual").field("jul01to15actual"))
-                .subAggregation(AggregationBuilders.avg("jul01to15target").field("jul01to15target"))
-                .subAggregation(AggregationBuilders.avg("jul16to31actual").field("jul16to31actual"))
-                .subAggregation(AggregationBuilders.avg("jul16to31target").field("jul16to31target"))
-                .subAggregation(AggregationBuilders.avg("aug01to15actual").field("aug01to15actual"))
-                .subAggregation(AggregationBuilders.avg("aug01to15target").field("aug01to15target"))
-                .subAggregation(AggregationBuilders.avg("aug16to31actual").field("aug16to31actual"))
-                .subAggregation(AggregationBuilders.avg("aug16to31target").field("aug16to31target"))
-                .subAggregation(AggregationBuilders.avg("sep01to15actual").field("sep01to15actual"))
-                .subAggregation(AggregationBuilders.avg("sep01to15target").field("sep01to15target"))
-                .subAggregation(AggregationBuilders.avg("sep16to30actual").field("sep16to30actual"))
-                .subAggregation(AggregationBuilders.avg("sep16to30target").field("sep16to30target"))
-                .subAggregation(AggregationBuilders.avg("oct01to15actual").field("oct01to15actual"))
-                .subAggregation(AggregationBuilders.avg("oct01to15target").field("oct01to15target"))
-                .subAggregation(AggregationBuilders.avg("oct16to31actual").field("oct16to31actual"))
-                .subAggregation(AggregationBuilders.avg("oct16to31target").field("oct16to31target"))
-                .subAggregation(AggregationBuilders.avg("nov01to15actual").field("nov01to15actual"))
-                .subAggregation(AggregationBuilders.avg("nov01to15target").field("nov01to15target"))
-                .subAggregation(AggregationBuilders.avg("nov16to30actual").field("nov16to30actual"))
-                .subAggregation(AggregationBuilders.avg("nov16to30target").field("nov16to30target"))
-                .subAggregation(AggregationBuilders.avg("dec01to15actual").field("dec01to15actual"))
-                .subAggregation(AggregationBuilders.avg("dec01to15target").field("dec01to15target"))
-                .subAggregation(AggregationBuilders.avg("dec16to31actual").field("dec16to31actual"))
-                .subAggregation(AggregationBuilders.avg("dec16to31target").field("dec16to31target"));
+        aggregation = AggregationBuilders.terms(BY_AGGREGATION_FIELD).field(orderingAggregationName).size(1000)
+                .subAggregation(AggregationBuilders.avg(JAN01TO15ACTUAL).field(JAN01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(JAN01TO15TARGET).field(JAN01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(JAN16TO31ACTUAL).field(JAN16TO31ACTUAL))
+                .subAggregation(AggregationBuilders.avg(JAN16TO31TARGET).field(JAN16TO31TARGET))
+                .subAggregation(AggregationBuilders.avg(FEB01TO15ACTUAL).field(FEB01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(FEB01TO15TARGET).field(FEB01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(FEB16TO28OR29ACTUAL).field(FEB16TO28OR29ACTUAL))
+                .subAggregation(AggregationBuilders.avg(FEB16TO28OR29TARGET).field(FEB16TO28OR29TARGET))
+                .subAggregation(AggregationBuilders.avg(MAR01TO15ACTUAL).field(MAR01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(MAR01TO15TARGET).field(MAR01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(MAR16TO31ACTUAL).field(MAR16TO31ACTUAL))
+                .subAggregation(AggregationBuilders.avg(MAR16TO31TARGET).field(MAR16TO31TARGET))
+                .subAggregation(AggregationBuilders.avg(APR01TO15ACTUAL).field(APR01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(APR01TO15TARGET).field(APR01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(APR16TO30ACTUAL).field(APR16TO30ACTUAL))
+                .subAggregation(AggregationBuilders.avg(APR16TO30TARGET).field(APR16TO30TARGET))
+                .subAggregation(AggregationBuilders.avg(MAY01TO15ACTUAL).field(MAY01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(MAY01TO15TARGET).field(MAY01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(MAY16TO31ACTUAL).field(MAY16TO31ACTUAL))
+                .subAggregation(AggregationBuilders.avg(MAY16TO31TARGET).field(MAY16TO31TARGET))
+                .subAggregation(AggregationBuilders.avg(JUN01TO15ACTUAL).field(JUN01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(JUN01TO15TARGET).field(JUN01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(JUN16TO30ACTUAL).field(JUN16TO30ACTUAL))
+                .subAggregation(AggregationBuilders.avg(JUN16TO30TARGET).field(JUN16TO30TARGET))
+                .subAggregation(AggregationBuilders.avg(JUL01TO15ACTUAL).field(JUL01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(JUL01TO15TARGET).field(JUL01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(JUL16TO31ACTUAL).field(JUL16TO31ACTUAL))
+                .subAggregation(AggregationBuilders.avg(JUL16TO31TARGET).field(JUL16TO31TARGET))
+                .subAggregation(AggregationBuilders.avg(AUG01TO15ACTUAL).field(AUG01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(AUG01TO15TARGET).field(AUG01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(AUG16TO31ACTUAL).field(AUG16TO31ACTUAL))
+                .subAggregation(AggregationBuilders.avg(AUG16TO31TARGET).field(AUG16TO31TARGET))
+                .subAggregation(AggregationBuilders.avg(SEP01TO15ACTUAL).field(SEP01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(SEP01TO15TARGET).field(SEP01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(SEP16TO30ACTUAL).field(SEP16TO30ACTUAL))
+                .subAggregation(AggregationBuilders.avg(SEP16TO30TARGET).field(SEP16TO30TARGET))
+                .subAggregation(AggregationBuilders.avg(OCT01TO15ACTUAL).field(OCT01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(OCT01TO15TARGET).field(OCT01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(OCT16TO31ACTUAL).field(OCT16TO31ACTUAL))
+                .subAggregation(AggregationBuilders.avg(OCT16TO31TARGET).field(OCT16TO31TARGET))
+                .subAggregation(AggregationBuilders.avg(NOV01TO15ACTUAL).field(NOV01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(NOV01TO15TARGET).field(NOV01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(NOV16TO30ACTUAL).field(NOV16TO30ACTUAL))
+                .subAggregation(AggregationBuilders.avg(NOV16TO30TARGET).field(NOV16TO30TARGET))
+                .subAggregation(AggregationBuilders.avg(DEC01TO15ACTUAL).field(DEC01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(DEC01TO15TARGET).field(DEC01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(DEC16TO31ACTUAL).field(DEC16TO31ACTUAL))
+                .subAggregation(AggregationBuilders.avg(DEC16TO31TARGET).field(DEC16TO31TARGET));
 
         searchQuery = new NativeSearchQueryBuilder().withIndices(WORKSMILESTONE_INDEX_NAME)
                 .withQuery(boolQuery)
@@ -211,10 +310,10 @@ public class WorksMilestoneIndexService {
         worksAggr = elasticsearchTemplate.query(searchQuery, response -> response.getAggregations());
 
         if (!orderingAggregationName.equals(WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME)) {
-            saggr = worksAggr.get("by_aggregationField");
+            saggr = worksAggr.get(BY_AGGREGATION_FIELD);
             resultBuckets = saggr.getBuckets();
         } else {
-            laggr = worksAggr.get("by_aggregationField");
+            laggr = worksAggr.get(BY_AGGREGATION_FIELD);
             resultBuckets = laggr.getBuckets();
         }
 
@@ -223,54 +322,54 @@ public class WorksMilestoneIndexService {
             wmIndexResponse.setReporttype(worksIndexsRequest.getReportType());
             final String fieldName = String.valueOf(entry.getKey());
             wmIndexResponse.setName(fieldName);
-            final Avg jan01to15actual = entry.getAggregations().get("jan01to15actual");
-            final Avg jan01to15target = entry.getAggregations().get("jan01to15target");
-            final Avg jan16to31actual = entry.getAggregations().get("jan16to31actual");
-            final Avg jan16to31target = entry.getAggregations().get("jan16to31target");
-            final Avg feb01to15actual = entry.getAggregations().get("feb01to15actual");
-            final Avg feb01to15target = entry.getAggregations().get("feb01to15target");
-            final Avg feb16to28or29actual = entry.getAggregations().get("feb16to28or29actual");
-            final Avg feb16to28or29target = entry.getAggregations().get("feb16to28or29target");
-            final Avg mar01to15actual = entry.getAggregations().get("mar01to15actual");
-            final Avg mar01to15target = entry.getAggregations().get("mar01to15target");
-            final Avg mar16to31actual = entry.getAggregations().get("mar16to31actual");
-            final Avg mar16to31target = entry.getAggregations().get("mar16to31target");
-            final Avg apr01to15actual = entry.getAggregations().get("apr01to15actual");
-            final Avg apr01to15target = entry.getAggregations().get("apr01to15target");
-            final Avg apr16to30actual = entry.getAggregations().get("apr16to30actual");
-            final Avg apr16to30target = entry.getAggregations().get("apr16to30target");
-            final Avg may01to15actual = entry.getAggregations().get("may01to15actual");
-            final Avg may01to15target = entry.getAggregations().get("may01to15target");
-            final Avg may16to31actual = entry.getAggregations().get("may16to31actual");
-            final Avg may16to31target = entry.getAggregations().get("may16to31target");
-            final Avg jun01to15actual = entry.getAggregations().get("jun01to15actual");
-            final Avg jun01to15target = entry.getAggregations().get("jun01to15target");
-            final Avg jun16to30actual = entry.getAggregations().get("jun16to30actual");
-            final Avg jun16to30target = entry.getAggregations().get("jun16to30target");
-            final Avg jul01to15actual = entry.getAggregations().get("jul01to15actual");
-            final Avg jul01to15target = entry.getAggregations().get("jul01to15target");
-            final Avg jul16to31actual = entry.getAggregations().get("jul16to31actual");
-            final Avg jul16to31target = entry.getAggregations().get("jul16to31target");
-            final Avg aug01to15actual = entry.getAggregations().get("aug01to15actual");
-            final Avg aug01to15target = entry.getAggregations().get("aug01to15target");
-            final Avg aug16to31actual = entry.getAggregations().get("aug16to31actual");
-            final Avg aug16to31target = entry.getAggregations().get("aug16to31target");
-            final Avg sep01to15actual = entry.getAggregations().get("sep01to15actual");
-            final Avg sep01to15target = entry.getAggregations().get("sep01to15target");
-            final Avg sep16to30actual = entry.getAggregations().get("sep16to30actual");
-            final Avg sep16to30target = entry.getAggregations().get("sep16to30target");
-            final Avg oct01to15actual = entry.getAggregations().get("oct01to15actual");
-            final Avg oct01to15target = entry.getAggregations().get("oct01to15target");
-            final Avg oct16to31actual = entry.getAggregations().get("oct16to31actual");
-            final Avg oct16to31target = entry.getAggregations().get("oct16to31target");
-            final Avg nov01to15actual = entry.getAggregations().get("nov01to15actual");
-            final Avg nov01to15target = entry.getAggregations().get("nov01to15target");
-            final Avg nov16to30actual = entry.getAggregations().get("nov16to30actual");
-            final Avg nov16to30target = entry.getAggregations().get("nov16to30target");
-            final Avg dec01to15actual = entry.getAggregations().get("dec01to15actual");
-            final Avg dec01to15target = entry.getAggregations().get("dec01to15target");
-            final Avg dec16to31actual = entry.getAggregations().get("dec16to31actual");
-            final Avg dec16to31target = entry.getAggregations().get("dec16to31target");
+            final Avg jan01to15actual = entry.getAggregations().get(JAN01TO15ACTUAL);
+            final Avg jan01to15target = entry.getAggregations().get(JAN01TO15TARGET);
+            final Avg jan16to31actual = entry.getAggregations().get(JAN16TO31ACTUAL);
+            final Avg jan16to31target = entry.getAggregations().get(JAN16TO31TARGET);
+            final Avg feb01to15actual = entry.getAggregations().get(FEB01TO15ACTUAL);
+            final Avg feb01to15target = entry.getAggregations().get(FEB01TO15TARGET);
+            final Avg feb16to28or29actual = entry.getAggregations().get(FEB16TO28OR29ACTUAL);
+            final Avg feb16to28or29target = entry.getAggregations().get(FEB16TO28OR29TARGET);
+            final Avg mar01to15actual = entry.getAggregations().get(MAR01TO15ACTUAL);
+            final Avg mar01to15target = entry.getAggregations().get(MAR01TO15TARGET);
+            final Avg mar16to31actual = entry.getAggregations().get(MAR16TO31ACTUAL);
+            final Avg mar16to31target = entry.getAggregations().get(MAR16TO31TARGET);
+            final Avg apr01to15actual = entry.getAggregations().get(APR01TO15ACTUAL);
+            final Avg apr01to15target = entry.getAggregations().get(APR01TO15TARGET);
+            final Avg apr16to30actual = entry.getAggregations().get(APR16TO30ACTUAL);
+            final Avg apr16to30target = entry.getAggregations().get(APR16TO30TARGET);
+            final Avg may01to15actual = entry.getAggregations().get(MAY01TO15ACTUAL);
+            final Avg may01to15target = entry.getAggregations().get(MAY01TO15TARGET);
+            final Avg may16to31actual = entry.getAggregations().get(MAY16TO31ACTUAL);
+            final Avg may16to31target = entry.getAggregations().get(MAY16TO31TARGET);
+            final Avg jun01to15actual = entry.getAggregations().get(JUN01TO15ACTUAL);
+            final Avg jun01to15target = entry.getAggregations().get(JUN01TO15TARGET);
+            final Avg jun16to30actual = entry.getAggregations().get(JUN16TO30ACTUAL);
+            final Avg jun16to30target = entry.getAggregations().get(JUN16TO30TARGET);
+            final Avg jul01to15actual = entry.getAggregations().get(JUL01TO15ACTUAL);
+            final Avg jul01to15target = entry.getAggregations().get(JUL01TO15TARGET);
+            final Avg jul16to31actual = entry.getAggregations().get(JUL16TO31ACTUAL);
+            final Avg jul16to31target = entry.getAggregations().get(JUL16TO31TARGET);
+            final Avg aug01to15actual = entry.getAggregations().get(AUG01TO15ACTUAL);
+            final Avg aug01to15target = entry.getAggregations().get(AUG01TO15TARGET);
+            final Avg aug16to31actual = entry.getAggregations().get(AUG16TO31ACTUAL);
+            final Avg aug16to31target = entry.getAggregations().get(AUG16TO31TARGET);
+            final Avg sep01to15actual = entry.getAggregations().get(SEP01TO15ACTUAL);
+            final Avg sep01to15target = entry.getAggregations().get(SEP01TO15TARGET);
+            final Avg sep16to30actual = entry.getAggregations().get(SEP16TO30ACTUAL);
+            final Avg sep16to30target = entry.getAggregations().get(SEP16TO30TARGET);
+            final Avg oct01to15actual = entry.getAggregations().get(OCT01TO15ACTUAL);
+            final Avg oct01to15target = entry.getAggregations().get(OCT01TO15TARGET);
+            final Avg oct16to31actual = entry.getAggregations().get(OCT16TO31ACTUAL);
+            final Avg oct16to31target = entry.getAggregations().get(OCT16TO31TARGET);
+            final Avg nov01to15actual = entry.getAggregations().get(NOV01TO15ACTUAL);
+            final Avg nov01to15target = entry.getAggregations().get(NOV01TO15TARGET);
+            final Avg nov16to30actual = entry.getAggregations().get(NOV16TO30ACTUAL);
+            final Avg nov16to30target = entry.getAggregations().get(NOV16TO30TARGET);
+            final Avg dec01to15actual = entry.getAggregations().get(DEC01TO15ACTUAL);
+            final Avg dec01to15target = entry.getAggregations().get(DEC01TO15TARGET);
+            final Avg dec16to31actual = entry.getAggregations().get(DEC16TO31ACTUAL);
+            final Avg dec16to31target = entry.getAggregations().get(DEC16TO31TARGET);
             wmIndexResponse.setTotalnoofworks(entry.getDocCount());
             wmIndexResponse.setJan01to15actual(jan01to15actual.getValue());
             wmIndexResponse.setJan01to15target(jan01to15target.getValue());
@@ -354,55 +453,55 @@ public class WorksMilestoneIndexService {
 
         boolQuery = prepareWhereClauseForMilestone(worksIndexsRequest);
 
-        aggregation = AggregationBuilders.terms("by_aggregationField").field(orderingAggregationName).size(1000)
-                .subAggregation(AggregationBuilders.avg("jan01to15actual").field("jan01to15actual"))
-                .subAggregation(AggregationBuilders.avg("jan01to15target").field("jan01to15target"))
-                .subAggregation(AggregationBuilders.avg("jan16to31actual").field("jan16to31actual"))
-                .subAggregation(AggregationBuilders.avg("jan16to31target").field("jan16to31target"))
-                .subAggregation(AggregationBuilders.avg("feb01to15actual").field("feb01to15actual"))
-                .subAggregation(AggregationBuilders.avg("feb01to15target").field("feb01to15target"))
-                .subAggregation(AggregationBuilders.avg("feb16to28or29actual").field("feb16to28or29actual"))
-                .subAggregation(AggregationBuilders.avg("feb16to28or29target").field("feb16to28or29target"))
-                .subAggregation(AggregationBuilders.avg("mar01to15actual").field("mar01to15actual"))
-                .subAggregation(AggregationBuilders.avg("mar01to15target").field("mar01to15target"))
-                .subAggregation(AggregationBuilders.avg("mar16to31actual").field("mar16to31actual"))
-                .subAggregation(AggregationBuilders.avg("mar16to31target").field("mar16to31target"))
-                .subAggregation(AggregationBuilders.avg("apr01to15actual").field("apr01to15actual"))
-                .subAggregation(AggregationBuilders.avg("apr01to15target").field("apr01to15target"))
-                .subAggregation(AggregationBuilders.avg("apr16to30actual").field("apr16to30actual"))
-                .subAggregation(AggregationBuilders.avg("apr16to30target").field("apr16to30target"))
-                .subAggregation(AggregationBuilders.avg("may01to15actual").field("may01to15actual"))
-                .subAggregation(AggregationBuilders.avg("may01to15target").field("may01to15target"))
-                .subAggregation(AggregationBuilders.avg("may16to31actual").field("may16to31actual"))
-                .subAggregation(AggregationBuilders.avg("may16to31target").field("may16to31target"))
-                .subAggregation(AggregationBuilders.avg("jun01to15actual").field("jun01to15actual"))
-                .subAggregation(AggregationBuilders.avg("jun01to15target").field("jun01to15target"))
-                .subAggregation(AggregationBuilders.avg("jun16to30actual").field("jun16to30actual"))
-                .subAggregation(AggregationBuilders.avg("jun16to30target").field("jun16to30target"))
-                .subAggregation(AggregationBuilders.avg("jul01to15actual").field("jul01to15actual"))
-                .subAggregation(AggregationBuilders.avg("jul01to15target").field("jul01to15target"))
-                .subAggregation(AggregationBuilders.avg("jul16to31actual").field("jul16to31actual"))
-                .subAggregation(AggregationBuilders.avg("jul16to31target").field("jul16to31target"))
-                .subAggregation(AggregationBuilders.avg("aug01to15actual").field("aug01to15actual"))
-                .subAggregation(AggregationBuilders.avg("aug01to15target").field("aug01to15target"))
-                .subAggregation(AggregationBuilders.avg("aug16to31actual").field("aug16to31actual"))
-                .subAggregation(AggregationBuilders.avg("aug16to31target").field("aug16to31target"))
-                .subAggregation(AggregationBuilders.avg("sep01to15actual").field("sep01to15actual"))
-                .subAggregation(AggregationBuilders.avg("sep01to15target").field("sep01to15target"))
-                .subAggregation(AggregationBuilders.avg("sep16to30actual").field("sep16to30actual"))
-                .subAggregation(AggregationBuilders.avg("sep16to30target").field("sep16to30target"))
-                .subAggregation(AggregationBuilders.avg("oct01to15actual").field("oct01to15actual"))
-                .subAggregation(AggregationBuilders.avg("oct01to15target").field("oct01to15target"))
-                .subAggregation(AggregationBuilders.avg("oct16to31actual").field("oct16to31actual"))
-                .subAggregation(AggregationBuilders.avg("oct16to31target").field("oct16to31target"))
-                .subAggregation(AggregationBuilders.avg("nov01to15actual").field("nov01to15actual"))
-                .subAggregation(AggregationBuilders.avg("nov01to15target").field("nov01to15target"))
-                .subAggregation(AggregationBuilders.avg("nov16to30actual").field("nov16to30actual"))
-                .subAggregation(AggregationBuilders.avg("nov16to30target").field("nov16to30target"))
-                .subAggregation(AggregationBuilders.avg("dec01to15actual").field("dec01to15actual"))
-                .subAggregation(AggregationBuilders.avg("dec01to15target").field("dec01to15target"))
-                .subAggregation(AggregationBuilders.avg("dec16to31actual").field("dec16to31actual"))
-                .subAggregation(AggregationBuilders.avg("dec16to31target").field("dec16to31target"));
+        aggregation = AggregationBuilders.terms(BY_AGGREGATION_FIELD).field(orderingAggregationName).size(1000)
+                .subAggregation(AggregationBuilders.avg(JAN01TO15ACTUAL).field(JAN01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(JAN01TO15TARGET).field(JAN01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(JAN16TO31ACTUAL).field(JAN16TO31ACTUAL))
+                .subAggregation(AggregationBuilders.avg(JAN16TO31TARGET).field(JAN16TO31TARGET))
+                .subAggregation(AggregationBuilders.avg(FEB01TO15ACTUAL).field(FEB01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(FEB01TO15TARGET).field(FEB01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(FEB16TO28OR29ACTUAL).field(FEB16TO28OR29ACTUAL))
+                .subAggregation(AggregationBuilders.avg(FEB16TO28OR29TARGET).field(FEB16TO28OR29TARGET))
+                .subAggregation(AggregationBuilders.avg(MAR01TO15ACTUAL).field(MAR01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(MAR01TO15TARGET).field(MAR01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(MAR16TO31ACTUAL).field(MAR16TO31ACTUAL))
+                .subAggregation(AggregationBuilders.avg(MAR16TO31TARGET).field(MAR16TO31TARGET))
+                .subAggregation(AggregationBuilders.avg(APR01TO15ACTUAL).field(APR01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(APR01TO15TARGET).field(APR01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(APR16TO30ACTUAL).field(APR16TO30ACTUAL))
+                .subAggregation(AggregationBuilders.avg(APR16TO30TARGET).field(APR16TO30TARGET))
+                .subAggregation(AggregationBuilders.avg(MAY01TO15ACTUAL).field(MAY01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(MAY01TO15TARGET).field(MAY01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(MAY16TO31ACTUAL).field(MAY16TO31ACTUAL))
+                .subAggregation(AggregationBuilders.avg(MAY16TO31TARGET).field(MAY16TO31TARGET))
+                .subAggregation(AggregationBuilders.avg(JUN01TO15ACTUAL).field(JUN01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(JUN01TO15TARGET).field(JUN01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(JUN16TO30ACTUAL).field(JUN16TO30ACTUAL))
+                .subAggregation(AggregationBuilders.avg(JUN16TO30TARGET).field(JUN16TO30TARGET))
+                .subAggregation(AggregationBuilders.avg(JUL01TO15ACTUAL).field(JUL01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(JUL01TO15TARGET).field(JUL01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(JUL16TO31ACTUAL).field(JUL16TO31ACTUAL))
+                .subAggregation(AggregationBuilders.avg(JUL16TO31TARGET).field(JUL16TO31TARGET))
+                .subAggregation(AggregationBuilders.avg(AUG01TO15ACTUAL).field(AUG01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(AUG01TO15TARGET).field(AUG01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(AUG16TO31ACTUAL).field(AUG16TO31ACTUAL))
+                .subAggregation(AggregationBuilders.avg(AUG16TO31TARGET).field(AUG16TO31TARGET))
+                .subAggregation(AggregationBuilders.avg(SEP01TO15ACTUAL).field(SEP01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(SEP01TO15TARGET).field(SEP01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(SEP16TO30ACTUAL).field(SEP16TO30ACTUAL))
+                .subAggregation(AggregationBuilders.avg(SEP16TO30TARGET).field(SEP16TO30TARGET))
+                .subAggregation(AggregationBuilders.avg(OCT01TO15ACTUAL).field(OCT01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(OCT01TO15TARGET).field(OCT01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(OCT16TO31ACTUAL).field(OCT16TO31ACTUAL))
+                .subAggregation(AggregationBuilders.avg(OCT16TO31TARGET).field(OCT16TO31TARGET))
+                .subAggregation(AggregationBuilders.avg(NOV01TO15ACTUAL).field(NOV01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(NOV01TO15TARGET).field(NOV01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(NOV16TO30ACTUAL).field(NOV16TO30ACTUAL))
+                .subAggregation(AggregationBuilders.avg(NOV16TO30TARGET).field(NOV16TO30TARGET))
+                .subAggregation(AggregationBuilders.avg(DEC01TO15ACTUAL).field(DEC01TO15ACTUAL))
+                .subAggregation(AggregationBuilders.avg(DEC01TO15TARGET).field(DEC01TO15TARGET))
+                .subAggregation(AggregationBuilders.avg(DEC16TO31ACTUAL).field(DEC16TO31ACTUAL))
+                .subAggregation(AggregationBuilders.avg(DEC16TO31TARGET).field(DEC16TO31TARGET));
 
         searchQuery = new NativeSearchQueryBuilder().withIndices(WORKSMILESTONE_INDEX_NAME)
                 .withQuery(boolQuery)
@@ -412,62 +511,62 @@ public class WorksMilestoneIndexService {
         worksAggr = elasticsearchTemplate.query(searchQuery, response -> response.getAggregations());
 
         if (!orderingAggregationName.equals(WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME)) {
-            saggr = worksAggr.get("by_aggregationField");
+            saggr = worksAggr.get(BY_AGGREGATION_FIELD);
             resultBuckets = saggr.getBuckets();
         } else {
-            laggr = worksAggr.get("by_aggregationField");
+            laggr = worksAggr.get(BY_AGGREGATION_FIELD);
             resultBuckets = laggr.getBuckets();
         }
 
         for (final Terms.Bucket entry : resultBuckets) {
-            final Avg jan01to15actual = entry.getAggregations().get("jan01to15actual");
-            final Avg jan01to15target = entry.getAggregations().get("jan01to15target");
-            final Avg jan16to31actual = entry.getAggregations().get("jan16to31actual");
-            final Avg jan16to31target = entry.getAggregations().get("jan16to31target");
-            final Avg feb01to15actual = entry.getAggregations().get("feb01to15actual");
-            final Avg feb01to15target = entry.getAggregations().get("feb01to15target");
-            final Avg feb16to28or29actual = entry.getAggregations().get("feb16to28or29actual");
-            final Avg feb16to28or29target = entry.getAggregations().get("feb16to28or29target");
-            final Avg mar01to15actual = entry.getAggregations().get("mar01to15actual");
-            final Avg mar01to15target = entry.getAggregations().get("mar01to15target");
-            final Avg mar16to31actual = entry.getAggregations().get("mar16to31actual");
-            final Avg mar16to31target = entry.getAggregations().get("mar16to31target");
-            final Avg apr01to15actual = entry.getAggregations().get("apr01to15actual");
-            final Avg apr01to15target = entry.getAggregations().get("apr01to15target");
-            final Avg apr16to30actual = entry.getAggregations().get("apr16to30actual");
-            final Avg apr16to30target = entry.getAggregations().get("apr16to30target");
-            final Avg may01to15actual = entry.getAggregations().get("may01to15actual");
-            final Avg may01to15target = entry.getAggregations().get("may01to15target");
-            final Avg may16to31actual = entry.getAggregations().get("may16to31actual");
-            final Avg may16to31target = entry.getAggregations().get("may16to31target");
-            final Avg jun01to15actual = entry.getAggregations().get("jun01to15actual");
-            final Avg jun01to15target = entry.getAggregations().get("jun01to15target");
-            final Avg jun16to30actual = entry.getAggregations().get("jun16to30actual");
-            final Avg jun16to30target = entry.getAggregations().get("jun16to30target");
-            final Avg jul01to15actual = entry.getAggregations().get("jul01to15actual");
-            final Avg jul01to15target = entry.getAggregations().get("jul01to15target");
-            final Avg jul16to31actual = entry.getAggregations().get("jul16to31actual");
-            final Avg jul16to31target = entry.getAggregations().get("jul16to31target");
-            final Avg aug01to15actual = entry.getAggregations().get("aug01to15actual");
-            final Avg aug01to15target = entry.getAggregations().get("aug01to15target");
-            final Avg aug16to31actual = entry.getAggregations().get("aug16to31actual");
-            final Avg aug16to31target = entry.getAggregations().get("aug16to31target");
-            final Avg sep01to15actual = entry.getAggregations().get("sep01to15actual");
-            final Avg sep01to15target = entry.getAggregations().get("sep01to15target");
-            final Avg sep16to30actual = entry.getAggregations().get("sep16to30actual");
-            final Avg sep16to30target = entry.getAggregations().get("sep16to30target");
-            final Avg oct01to15actual = entry.getAggregations().get("oct01to15actual");
-            final Avg oct01to15target = entry.getAggregations().get("oct01to15target");
-            final Avg oct16to31actual = entry.getAggregations().get("oct16to31actual");
-            final Avg oct16to31target = entry.getAggregations().get("oct16to31target");
-            final Avg nov01to15actual = entry.getAggregations().get("nov01to15actual");
-            final Avg nov01to15target = entry.getAggregations().get("nov01to15target");
-            final Avg nov16to30actual = entry.getAggregations().get("nov16to30actual");
-            final Avg nov16to30target = entry.getAggregations().get("nov16to30target");
-            final Avg dec01to15actual = entry.getAggregations().get("dec01to15actual");
-            final Avg dec01to15target = entry.getAggregations().get("dec01to15target");
-            final Avg dec16to31actual = entry.getAggregations().get("dec16to31actual");
-            final Avg dec16to31target = entry.getAggregations().get("dec16to31target");
+            final Avg jan01to15actual = entry.getAggregations().get(JAN01TO15ACTUAL);
+            final Avg jan01to15target = entry.getAggregations().get(JAN01TO15TARGET);
+            final Avg jan16to31actual = entry.getAggregations().get(JAN16TO31ACTUAL);
+            final Avg jan16to31target = entry.getAggregations().get(JAN16TO31TARGET);
+            final Avg feb01to15actual = entry.getAggregations().get(FEB01TO15ACTUAL);
+            final Avg feb01to15target = entry.getAggregations().get(FEB01TO15TARGET);
+            final Avg feb16to28or29actual = entry.getAggregations().get(FEB16TO28OR29ACTUAL);
+            final Avg feb16to28or29target = entry.getAggregations().get(FEB16TO28OR29TARGET);
+            final Avg mar01to15actual = entry.getAggregations().get(MAR01TO15ACTUAL);
+            final Avg mar01to15target = entry.getAggregations().get(MAR01TO15TARGET);
+            final Avg mar16to31actual = entry.getAggregations().get(MAR16TO31ACTUAL);
+            final Avg mar16to31target = entry.getAggregations().get(MAR16TO31TARGET);
+            final Avg apr01to15actual = entry.getAggregations().get(APR01TO15ACTUAL);
+            final Avg apr01to15target = entry.getAggregations().get(APR01TO15TARGET);
+            final Avg apr16to30actual = entry.getAggregations().get(APR16TO30ACTUAL);
+            final Avg apr16to30target = entry.getAggregations().get(APR16TO30TARGET);
+            final Avg may01to15actual = entry.getAggregations().get(MAY01TO15ACTUAL);
+            final Avg may01to15target = entry.getAggregations().get(MAY01TO15TARGET);
+            final Avg may16to31actual = entry.getAggregations().get(MAY16TO31ACTUAL);
+            final Avg may16to31target = entry.getAggregations().get(MAY16TO31TARGET);
+            final Avg jun01to15actual = entry.getAggregations().get(JUN01TO15ACTUAL);
+            final Avg jun01to15target = entry.getAggregations().get(JUN01TO15TARGET);
+            final Avg jun16to30actual = entry.getAggregations().get(JUN16TO30ACTUAL);
+            final Avg jun16to30target = entry.getAggregations().get(JUN16TO30TARGET);
+            final Avg jul01to15actual = entry.getAggregations().get(JUL01TO15ACTUAL);
+            final Avg jul01to15target = entry.getAggregations().get(JUL01TO15TARGET);
+            final Avg jul16to31actual = entry.getAggregations().get(JUL16TO31ACTUAL);
+            final Avg jul16to31target = entry.getAggregations().get(JUL16TO31TARGET);
+            final Avg aug01to15actual = entry.getAggregations().get(AUG01TO15ACTUAL);
+            final Avg aug01to15target = entry.getAggregations().get(AUG01TO15TARGET);
+            final Avg aug16to31actual = entry.getAggregations().get(AUG16TO31ACTUAL);
+            final Avg aug16to31target = entry.getAggregations().get(AUG16TO31TARGET);
+            final Avg sep01to15actual = entry.getAggregations().get(SEP01TO15ACTUAL);
+            final Avg sep01to15target = entry.getAggregations().get(SEP01TO15TARGET);
+            final Avg sep16to30actual = entry.getAggregations().get(SEP16TO30ACTUAL);
+            final Avg sep16to30target = entry.getAggregations().get(SEP16TO30TARGET);
+            final Avg oct01to15actual = entry.getAggregations().get(OCT01TO15ACTUAL);
+            final Avg oct01to15target = entry.getAggregations().get(OCT01TO15TARGET);
+            final Avg oct16to31actual = entry.getAggregations().get(OCT16TO31ACTUAL);
+            final Avg oct16to31target = entry.getAggregations().get(OCT16TO31TARGET);
+            final Avg nov01to15actual = entry.getAggregations().get(NOV01TO15ACTUAL);
+            final Avg nov01to15target = entry.getAggregations().get(NOV01TO15TARGET);
+            final Avg nov16to30actual = entry.getAggregations().get(NOV16TO30ACTUAL);
+            final Avg nov16to30target = entry.getAggregations().get(NOV16TO30TARGET);
+            final Avg dec01to15actual = entry.getAggregations().get(DEC01TO15ACTUAL);
+            final Avg dec01to15target = entry.getAggregations().get(DEC01TO15TARGET);
+            final Avg dec16to31actual = entry.getAggregations().get(DEC16TO31ACTUAL);
+            final Avg dec16to31target = entry.getAggregations().get(DEC16TO31TARGET);
             wmIndexResponse.setTotalnoofworks(entry.getDocCount());
             wmIndexResponse.setJan01to15actual(jan01to15actual.getValue());
             wmIndexResponse.setJan01to15target(jan01to15target.getValue());
@@ -517,6 +616,7 @@ public class WorksMilestoneIndexService {
             wmIndexResponse.setDec01to15target(dec01to15target.getValue());
             wmIndexResponse.setDec16to31actual(dec16to31actual.getValue());
             wmIndexResponse.setDec16to31target(dec16to31target.getValue());
+            wmIndexResponse.setIsmilestonecreated("Yes");
         }
 
         timeTaken = System.currentTimeMillis() - startTime;
@@ -536,7 +636,6 @@ public class WorksMilestoneIndexService {
             if (worksMilestoneResponseMap.get(prepareGroupingKey(worksIndexsRequest, transactionResponse)) != null) {
                 final WorksMilestoneIndexResponse milestoneResponse = worksMilestoneResponseMap
                         .get(prepareGroupingKey(worksIndexsRequest, transactionResponse));
-                finalResponse = new WorksMilestoneIndexResponse();
                 finalResponse = milestoneResponse;
                 finalResponse.setTotalbillamountinlakhs(transactionResponse.getTotalbillamountinlakhs());
                 finalResponse.setTotalestimatedcostinlakhs(transactionResponse.getTotalestimatedcostinlakhs());
@@ -546,7 +645,6 @@ public class WorksMilestoneIndexService {
                         transactionResponse.getTotalnoofworks() - milestoneResponse.getTotalnoofworks());
                 finalResponse.setTotalnoofworks(transactionResponse.getTotalnoofworks());
             } else {
-                finalResponse = new WorksMilestoneIndexResponse();
                 finalResponse = transactionResponse;
                 finalResponse.setMilestonenotcreatedcount(transactionResponse.getTotalnoofworks());
             }
@@ -568,23 +666,24 @@ public class WorksMilestoneIndexService {
     private String prepareGroupingKey(final WorksIndexsRequest worksMilestoneIndexRequest,
             final WorksMilestoneIndexResponse response) {
 
-        String groupingKey = "";
+        final StringBuilder groupingKey = new StringBuilder();
 
         if (StringUtils.isNotBlank(worksMilestoneIndexRequest.getTypeofwork()))
-            groupingKey = groupingKey + worksMilestoneIndexRequest.getTypeofwork();
+            groupingKey.append(worksMilestoneIndexRequest.getTypeofwork());
 
         if (StringUtils.isNotBlank(worksMilestoneIndexRequest.getDistname()))
-            groupingKey = groupingKey + worksMilestoneIndexRequest.getDistname();
+            groupingKey.append(worksMilestoneIndexRequest.getDistname());
 
         if (StringUtils.isNotBlank(worksMilestoneIndexRequest.getUlbname()))
-            groupingKey = groupingKey + worksMilestoneIndexRequest.getUlbname();
+            groupingKey.append(worksMilestoneIndexRequest.getUlbname());
 
         if (worksMilestoneIndexRequest.getUlbcodes() != null && !worksMilestoneIndexRequest.getUlbcodes().isEmpty())
             for (final String ulbcode : worksMilestoneIndexRequest.getUlbcodes())
-                groupingKey = groupingKey + ulbcode;
-        groupingKey = groupingKey + response.getName();
+                groupingKey.append(ulbcode);
 
-        return groupingKey;
+        groupingKey.append(response.getName());
+
+        return groupingKey.toString();
     }
 
     private BoolQueryBuilder prepareWhereClauseForMilestone(final WorksIndexsRequest worksIndexsRequest) {

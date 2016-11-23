@@ -1,41 +1,41 @@
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
+ *      accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *       Copyright (C) 2016  eGovernments Foundation
  *
- *     The updated version of eGov suite of products as by eGovernments Foundation
- *     is available at http://www.egovernments.org
+ *       The updated version of eGov suite of products as by eGovernments Foundation
+ *       is available at http://www.egovernments.org
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
+ *       This program is free software: you can redistribute it and/or modify
+ *       it under the terms of the GNU General Public License as published by
+ *       the Free Software Foundation, either version 3 of the License, or
+ *       any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ *       This program is distributed in the hope that it will be useful,
+ *       but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *       GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or
- *     http://www.gnu.org/licenses/gpl.html .
+ *       You should have received a copy of the GNU General Public License
+ *       along with this program. If not, see http://www.gnu.org/licenses/ or
+ *       http://www.gnu.org/licenses/gpl.html .
  *
- *     In addition to the terms of the GPL license to be adhered to in using this
- *     program, the following additional terms are to be complied with:
+ *       In addition to the terms of the GPL license to be adhered to in using this
+ *       program, the following additional terms are to be complied with:
  *
- *         1) All versions of this program, verbatim or modified must carry this
- *            Legal Notice.
+ *           1) All versions of this program, verbatim or modified must carry this
+ *              Legal Notice.
  *
- *         2) Any misrepresentation of the origin of the material is prohibited. It
- *            is required that all modified versions of this material be marked in
- *            reasonable ways as different from the original version.
+ *           2) Any misrepresentation of the origin of the material is prohibited. It
+ *              is required that all modified versions of this material be marked in
+ *              reasonable ways as different from the original version.
  *
- *         3) This license does not grant any rights to any user of the program
- *            with regards to rights under trademark law for use of the trade names
- *            or trademarks of eGovernments Foundation.
+ *           3) This license does not grant any rights to any user of the program
+ *              with regards to rights under trademark law for use of the trade names
+ *              or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 package org.egov.infra.web.controller;
@@ -79,12 +79,26 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.SPACE;
+import static org.egov.infra.web.support.ui.Menu.APP_MENU_ICON;
+import static org.egov.infra.web.support.ui.Menu.APP_MENU_MAIN_ICON;
+import static org.egov.infra.web.support.ui.Menu.APP_MENU_TITLE;
+import static org.egov.infra.web.support.ui.Menu.FAV_MENU_ICON;
+import static org.egov.infra.web.support.ui.Menu.FAV_MENU_TITLE;
+import static org.egov.infra.web.support.ui.Menu.NAVIGATION_NONE;
+import static org.egov.infra.web.support.ui.Menu.SELFSERVICE_MENU_ICON;
+import static org.egov.infra.web.support.ui.Menu.SELFSERVICE_MENU_TITLE;
+import static org.egov.infra.web.support.ui.Menu.SELFSERVICE_MODULE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping(value = "/home")
 public class HomeController {
+
+    private static final String FEEDBACK_FORMAT = "%s\n\n%s\n%s";
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -111,13 +125,13 @@ public class HomeController {
     private ValidatorUtils validatorUtils;
 
     @RequestMapping
-    public String showHome(HttpSession session, HttpServletRequest request, HttpServletResponse response, ModelMap modelData) {
+    public String showHome(HttpServletRequest request, HttpServletResponse response, ModelMap modelData) {
         User user = securityUtils.getCurrentUser();
         setUserLocale(user, request, response);
         if (securityUtils.currentUserType().equals(UserType.CITIZEN))
             return "redirect:/../portal/home";
         else
-            return prepareOfficialHomePage(user, session, modelData);
+            return prepareOfficialHomePage(user, modelData);
     }
 
     @ResponseBody
@@ -154,7 +168,7 @@ public class HomeController {
     @RequestMapping(value = "feedback/sent")
     public boolean sendFeedback(@RequestParam String subject, @RequestParam String message, HttpSession session) {
         cityService.sentFeedBackMail((String) session.getAttribute("corpContactEmail"), subject,
-                message + " \n Regards \n " + user().getName());
+                format(FEEDBACK_FORMAT, message, "Regards", user().getName()));
         return true;
     }
 
@@ -189,7 +203,7 @@ public class HomeController {
         localeResolver.setLocale(request, response, user.locale());
     }
 
-    private String prepareOfficialHomePage(User user, HttpSession session, ModelMap modelData) {
+    private String prepareOfficialHomePage(User user, ModelMap modelData) {
         modelData.addAttribute("menu", prepareApplicationMenu(moduleService.getMenuLinksForRoles(user.getRoles()), user));
         modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
         modelData.addAttribute("app_version", applicationProperties.appVersion());
@@ -202,12 +216,12 @@ public class HomeController {
             modelData.addAttribute("warn_pwd_expire", daysToExpirePwd <= 5);
         }
         modelData.addAttribute("issue_report_url", applicationProperties.issueReportingUrl());
-        session.setAttribute("app_release_no", applicationProperties.appVersion() + "_" + applicationProperties.appBuildNo());
+
         return "home";
     }
 
     private List<MenuLink> getEmployeeSelfService(List<MenuLink> menuLinks, User user) {
-        return menuLinks.parallelStream().filter(menuLink -> menuLink.getName().equals("EmployeeSelfService")).findFirst()
+        return menuLinks.parallelStream().filter(menuLink -> SELFSERVICE_MODULE.equals(menuLink.getName())).findFirst()
                 .map(menuLink -> moduleService.getMenuLinksByParentModuleId(menuLink.getId(), user.getId()))
                 .orElse(Collections.emptyList());
 
@@ -216,8 +230,8 @@ public class HomeController {
     private String prepareApplicationMenu(List<MenuLink> menuLinks, User user) {
         Menu menu = new Menu();
         menu.setId("menuID");
-        menu.setTitle(" ");
-        menu.setIcon("fa fa-reply-all");
+        menu.setTitle(SPACE);
+        menu.setIcon(APP_MENU_MAIN_ICON);
         menu.setItems(new LinkedList<>());
         List<MenuLink> favourites = moduleService.getUserFavouritesMenuLinks(user.getId());
         createApplicationMenu(menuLinks, favourites, user, menu);
@@ -230,16 +244,16 @@ public class HomeController {
     }
 
     private void createApplicationMenu(List<MenuLink> menuLinks, List<MenuLink> favourites, User user, Menu menu) {
-        Menu applicationMenu = createSubmenu("apps", "Applications", "Applications", "javascript:void(0);",
-                "fa fa-th floatLeft", menu);
-        menuLinks.stream().filter(menuLink -> !menuLink.getName().equals("EmployeeSelfService")).forEach(menuLink -> {
-            createSubmenuRoot(menuLink.getId(), menuLink.getDisplayName(), favourites, user, applicationMenu);
-        });
+        Menu applicationMenu = createSubmenu("apps", APP_MENU_TITLE, APP_MENU_TITLE, NAVIGATION_NONE,
+                APP_MENU_ICON, menu);
+        menuLinks.stream().filter(menuLink -> !SELFSERVICE_MODULE.equals(menuLink.getName())).forEach(menuLink ->
+                createSubmenuRoot(menuLink.getId(), menuLink.getDisplayName(), favourites, user, applicationMenu)
+        );
     }
 
     private void createFavouritesMenu(List<MenuLink> favourites, Menu menu) {
-        Menu favouritesMenu = createSubmenu("favMenu", "Favourites", "Favourites", "javascript:void(0);",
-                "fa fa-star floatLeft", menu);
+        Menu favouritesMenu = createSubmenu("favMenu", FAV_MENU_TITLE, FAV_MENU_TITLE, NAVIGATION_NONE,
+                FAV_MENU_ICON, menu);
         favourites.stream().forEach(favourite -> {
             Menu appLinks = new Menu();
             appLinks.setId("fav-" + favourite.getId());
@@ -251,8 +265,8 @@ public class HomeController {
     }
 
     private void createSelfServiceMenu(List<MenuLink> selfServices, Menu menu) {
-        Menu selfServiceMenu = createSubmenu("ssMenu", "Self Service", "Self Service", "javascript:void(0);",
-                "fa fa-ellipsis-h floatLeft", menu);
+        Menu selfServiceMenu = createSubmenu("ssMenu", SELFSERVICE_MENU_TITLE, SELFSERVICE_MENU_TITLE, NAVIGATION_NONE,
+                SELFSERVICE_MENU_ICON, menu);
         selfServices.stream().forEach(selfService -> {
             Menu appLinks = new Menu();
             appLinks.setName(selfService.getName());
@@ -267,7 +281,7 @@ public class HomeController {
             Menu appLink = new Menu();
             appLink.setId(childMenuLink.getId().toString());
             appLink.setIcon(
-                    "fa fa-star floatLeft " + (favourites.contains(childMenuLink) ? "added-as-fav" : "add-to-favourites"));
+                    FAV_MENU_ICON + (favourites.contains(childMenuLink) ? " added-as-fav" : " add-to-favourites"));
             appLink.setName(childMenuLink.getName());
             appLink.setLink("/" + childMenuLink.getContextRoot() + childMenuLink.getUrl());
             parentMenu.getItems().add(appLink);
@@ -280,7 +294,7 @@ public class HomeController {
         List<MenuLink> submodules = moduleService.getMenuLinksByParentModuleId(menuId, user.getId());
         if (!submodules.isEmpty()) {
             Menu submenu = createSubmenu(String.valueOf(menuId), menuName,
-                    menuName, "javascript:void(0);", "", parentMenu);
+                    menuName, NAVIGATION_NONE, EMPTY, parentMenu);
             submodules.stream().forEach(submodule -> createApplicationLink(submodule, favourites, user, submenu));
         }
     }

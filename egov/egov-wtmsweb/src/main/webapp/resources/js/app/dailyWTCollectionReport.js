@@ -100,19 +100,27 @@ jQuery(document).ready(function() {
 				searchable : true,
 				data : searchResult,
 				columns : [
-						{title: 'Receipt Number', data: 'receiptnumber'},
-						{title: 'Receipt Date',data :''	},
-						{title: 'Consumer Number', data: 'consumercode'},
-						{title: 'Consumer Name', data: 'consumername'},
+						{title: 'Receipt Number', data: 'receiptNumber'},
+						{title: 'Receipt Date', data: 'receiptDate',
+							render: function (data, type, full) {
+								if(data!=null && data!=undefined &&  data!= undefined) {
+									var regDateSplit = data.split("T")[0].split("-");		
+									return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
+								}
+								else return "";
+					    	}
+						},
+						{title: 'Consumer Number', data: 'consumerCode'},
+						{title: 'Consumer Name', data: 'consumerName'},
 						{title: 'Paid At', data: 'channel'},
-						{title: 'Payment mode', data: 'paymentmode'},
+						{title: 'Payment mode', data: 'paymentMode'},
 						{title: 'Status', data: 'status'},
-						{title: 'Paid From', data: 'installmentfrom'},
-						{title: 'Paid To', data: 'installmentto'},
-						{title: 'Arrear Total', data: 'arrearamount',"className": "text-right"},
-						{title: 'Current Total', data: 'currentamount',"className": "text-right"},
-						{title: 'Advance Total', data: 'advanceamount',"className": "text-right"},
-						{title: 'Total Collection', data: 'totalamount',"className": "text-right"}
+						{title: 'Paid From', data: 'installmentFrom'},
+						{title: 'Paid To', data: 'installmentTo'},
+						{title: 'Arrear Total', data: 'arrearAmount',"className": "text-right"},
+						{title: 'Current Total', data: 'currentAmount',"className": "text-right"},
+						{title: 'Advance Total', data: 'advanceAmount',"className": "text-right"},
+						{title: 'Total Collection', data: 'totalAmount',"className": "text-right"}
 						],
 							  "aaSorting": [[4, 'desc']] ,
 							  "footerCallback" : function(row, data, start, end, display) {

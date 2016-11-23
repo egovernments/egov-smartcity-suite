@@ -58,12 +58,13 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.wtms.entity.es.ConnectionSearchRequest;
 import org.egov.wtms.entity.es.WaterChargeDocument;
+import org.egov.wtms.repository.es.WaterChargeDocumentRepository;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Controller;
@@ -86,13 +87,13 @@ public class WaterTaxSearchController {
     private SecurityUtils securityUtils;
 
     @Autowired
-    private ElasticsearchTemplate elasticsearchTemplate;
-
-    @Autowired
     private UserService userService;
 
     @Autowired
     private BoundaryService boundaryService;
+
+    @Autowired
+    private WaterChargeDocumentRepository waterChargeDocumentRepository;
 
     @Autowired
     public WaterTaxSearchController(final CityService cityService) {
@@ -292,7 +293,7 @@ public class WaterTaxSearchController {
             customerObj.setAddress(waterChargeIndex.getLocality());
             customerObj.setApplicationcode(waterChargeIndex.getApplicationCode());
             customerObj.setUsage(waterChargeIndex.getUsage());
-            customerObj.setIslegacy(waterChargeIndex.isLegacy());
+            customerObj.setIslegacy(waterChargeIndex.getIsLegacy());
             customerObj.setPropertyTaxDue(waterChargeIndex.getTotalDue());
             customerObj.setStatus(waterChargeIndex.getStatus());
             customerObj.setConnectiontype(waterChargeIndex.getConnectionType());
@@ -306,17 +307,17 @@ public class WaterTaxSearchController {
     private BoolQueryBuilder getFilterQuery(final ConnectionSearchRequest searchRequest) {
         final City cityWebsite = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
-                .filter(QueryBuilders.termQuery("ulbname", cityWebsite.getName()));
+                .filter(QueryBuilders.termQuery("ulbName", cityWebsite.getName()));
         if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumername", searchRequest.getApplicantName()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerName", searchRequest.getApplicantName()));
         if (StringUtils.isNotBlank(searchRequest.getConsumerCode()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumercode", searchRequest.getConsumerCode()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerCode", searchRequest.getConsumerCode()));
         if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ward", searchRequest.getRevenueWard()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("revenueWard", searchRequest.getRevenueWard()));
         if (StringUtils.isNotBlank(searchRequest.getMobileNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("mobilenumber", searchRequest.getMobileNumber()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("mobileNumber", searchRequest.getMobileNumber()));
         if (StringUtils.isNotBlank(searchRequest.getDoorNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("doorno", searchRequest.getDoorNumber()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("doorNo", searchRequest.getDoorNumber()));
         if (StringUtils.isNotBlank(searchRequest.getLocality()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("locality", searchRequest.getLocality()));
 
@@ -327,11 +328,19 @@ public class WaterTaxSearchController {
 
         final BoolQueryBuilder query = getFilterQuery(searchRequest);
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(WATER_TAX_INDEX_NAME)
-                .withQuery(query).build();
+                .withQuery(query).withPageable(new PageRequest(0, 250)).build();
 
-        final List<WaterChargeDocument> sampleEntities = elasticsearchTemplate.queryForList(searchQuery,
-                WaterChargeDocument.class);
-        return sampleEntities;
+        /*
+         * final List<WaterChargeDocument> sampleEntities =
+         * elasticsearchTemplate.queryForList(searchQuery,
+         * WaterChargeDocument.class);
+         */
+        final Iterable<WaterChargeDocument> sampleEntities = waterChargeDocumentRepository.search(searchQuery);
+        final List<WaterChargeDocument> sampleEntitiesTemp = new ArrayList<>();
+        for (final WaterChargeDocument document : sampleEntities)
+            sampleEntitiesTemp.add(document);
+
+        return sampleEntitiesTemp;
     }
 
 }

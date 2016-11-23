@@ -43,6 +43,7 @@ import static org.egov.council.utils.constants.CouncilConstants.PREAMBLEUSEDINAG
 
 import java.lang.reflect.Type;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.egov.council.entity.CouncilPreamble;
 import org.egov.council.entity.MeetingMOM;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -81,11 +82,13 @@ public class CouncilPreambleJsonAdaptor implements JsonSerializer<CouncilPreambl
 			if (councilPreamble.getPreambleNumber() != null)
 				jsonObject.addProperty("preambleNumber", councilPreamble.getPreambleNumber());
 			else
-				jsonObject.addProperty("department", StringUtils.EMPTY);
-			if (councilPreamble.getGistOfPreamble() != null)
-				jsonObject.addProperty("gistOfPreamble", councilPreamble.getGistOfPreamble());
+				jsonObject.addProperty("preambleNumber", StringUtils.EMPTY);
+			if (councilPreamble.getGistOfPreamble() != null){
+                                jsonObject.addProperty("gistOfPreamble",
+                                        StringEscapeUtils.escapeJava(councilPreamble.getGistOfPreamble().replaceAll("[\n\r]", "")));
+			}
 			else
-				jsonObject.addProperty("gistOfPreamble", StringUtils.EMPTY);
+			        jsonObject.addProperty("gistOfPreamble", StringUtils.EMPTY);
 			if (councilPreamble.getSanctionAmount() != null)
 				jsonObject.addProperty("sanctionAmount", councilPreamble.getSanctionAmount());
 			else

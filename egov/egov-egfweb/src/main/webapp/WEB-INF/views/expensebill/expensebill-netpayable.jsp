@@ -60,7 +60,7 @@
 			<tr id="netpayablerow">
 				<td>
 					<form:hidden path="" name="netPayableAccountId" id="netPayableAccountId" value="${netPayableAccountId}"/>
-					<form:hidden path="" name="netPayableAccountCodeId" id="netPayableAccountCodeId" value="${netPayableAccountCode}"/>
+					<form:hidden path="" name="netPayableAccountCodeId" id="netPayableAccountCodeId" value="${netPayableAccountCodeId}"/>
 					<form:hidden path="" name="netPayableGlcode" id="netPayableGlcode" />
 					<form:hidden path="" name="netPayableAccountHead" id="netPayableAccountHead" />
 					<form:hidden path="" name="netPayableIsSubLedger" id="netPayableIsSubLedger" />
@@ -68,7 +68,7 @@
 					<form:hidden path="" name="netPayableDetailKeyId" id="netPayableDetailKeyId" />
 					<form:hidden path="" name="netPayableDetailTypeName" id="netPayableDetailTypeName" />
 					<form:hidden path="" name="netPayableDetailKeyName" id="netPayableDetailKeyName" />
-					<form:select path="" data-first-option="false" name="netPayableAccountCode" id="netPayableAccountCode" class="form-control">
+					<form:select path="" data-first-option="false" name="netPayableAccountCode" id="netPayableAccountCode" class="form-control" >
 						<form:option value=""> <spring:message code="lbl.select" /> </form:option>
 					</form:select>
 				</td>

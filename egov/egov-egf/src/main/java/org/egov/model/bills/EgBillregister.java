@@ -401,7 +401,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
 
     @Override
     public String getStateDetails() {
-        return getBillnumber();
+        return getState().getComments().isEmpty() ? billnumber : billnumber + "-" + getState().getComments();
     }
 
     public User getApprover() {

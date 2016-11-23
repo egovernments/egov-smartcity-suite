@@ -24,17 +24,19 @@ $(document).ready(function(){
 		date = $('#date').val();
 		event.preventDefault();
 		var reportdatatable =  empAssigntableContainer
-		.dataTable({
+		.DataTable({
 			type : 'GET',
 			responsive : true,
 			destroy : true,
 			"autoWidth" : false,
 			"bDestroy" : true,
-			"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+			 "sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row add-margin'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
 			"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 			"oTableTools" : {
 				"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-				"aButtons" : [ "xls", "pdf", "print" ]
+				"aButtons" : [  { "sExtends": "pdf","sTitle": jQuery('#pdfTitle').val() },
+					               { "sExtends": "xls", "sTitle": jQuery('#pdfTitle').val()  },
+					               { "sExtends": "print", "sTitle": jQuery('#pdfTitle').val() } ]
 			},
 			ajax : {
 				url : "/eis/report/empPositionList",
@@ -50,7 +52,15 @@ $(document).ready(function(){
 			        	   "sTitle" : "S.no",
 			           },
 			           {
-			        	   "data" : "code",
+			        
+	                            "data" : function(row, type, set, meta){
+		                     	return { name:row.employeeCode, id:row.id };
+	                         },
+	                            "render" : function(data, type, row) {
+		                         return '<a href="javascript:void(0);" onclick="goToView(this);" data-hiddenele="employeeCode" data-eleval="'
+				                + data.name + '">' + data.name + '</a>';
+	                           },
+	                   
 			        	   "sTitle" : "Employee Code"
 			           },
 			           {
@@ -70,23 +80,13 @@ $(document).ready(function(){
 			        	   "sTitle" : "Position"
 			           },
 			           {
-			        	   "data" : "fromDate",
-			        	   "sTitle" : "FromDate"
-			           },
-			           {
-			        	   "data" : "toDate",
-			        	   "sTitle" : "ToDate"
+			        	   "data" : "date",
+			        	   "sTitle" : "DateRange"
 			           },
 			           {
 			        	   "data" : "isPrimary",
-			        	   "sTitle" : "Primary/Temp"
+			        	   "sTitle" : "Primary/Temporary"
 			           }],
-			           "aoColumnDefs" : [ {
-			        	   "aTargets" : [ 2, 3, 4, 5, 6],
-			        	   "mRender" : function(data, type, full) {
-			        		   return data;
-			        	   }
-			           } ],
 			           "fnRowCallback" : function(nRow, aData, iDisplayIndex){
 			        	   $("td:first", nRow).html(iDisplayIndex +1);
 			        	   return nRow;
@@ -94,9 +94,44 @@ $(document).ready(function(){
 		});
 		jQuery('.loader-class').modal('hide');
 		$('#empAssignment-header').show();
-		reportdatatable.fnSetColumnVis(1, true);
+		reportdatatable.on( 'order.dt search.dt', function () {
+			reportdatatable.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+		            cell.innerHTML = i+1;
+		            console.log(i+1)
+		            reportdatatable.cell(cell).invalidate('dom'); 
+		        } );
+		    } ).draw();
 	});
 
 
 });
 
+function goToView(obj) {
+	jQuery('input[name=' + jQuery(obj).data('hiddenele') + ']')
+	.val(jQuery(obj).data('eleval'));   
+	window.open("/eis/employee/view/"+jQuery(obj).data('eleval'), '', 'scrollbars=yes,width=1000,height=700,status=yes');
+} 
+
+function getPosition() {
+	var department = $('#department').val();
+	var designation = $('#designation').val();
+	
+		$.ajax({
+			url: "/eis/report/positions?deptId="
+				+ department + "&desigId=" + designation,
+			type: "GET",
+			dataType: "json",
+			success: function (response) {
+				console.log("success"+response);
+				$('#position').empty();
+				$('#position').append(
+						$("<option value=''>Select from below</option>"));
+				$.each(response, function(index, value) {
+					$('#position').append($('<option>').text(value.name).attr('value', value.id));
+				});
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});	
+}

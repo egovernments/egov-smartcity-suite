@@ -43,6 +43,8 @@ package org.egov.tl.web.actions.search;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
+import org.egov.tl.entity.dto.SearchForm;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -62,7 +64,7 @@ public class SearchTradeResultHelperAdaptor implements JsonSerializer<SearchForm
             jsonObject.addProperty("oldTLNumber", searchFormObj.getOldLicenseNumber());
             jsonObject.addProperty("category", searchFormObj.getCategoryName());
             jsonObject.addProperty("subCategory", searchFormObj.getSubCategoryName());
-            jsonObject.addProperty("tradeTittle", searchFormObj.getTradeTitle());
+            jsonObject.addProperty("tradeTitle", searchFormObj.getTradeTitle());
             jsonObject.addProperty("tradeOwner", searchFormObj.getTradeOwnerName());
             jsonObject.addProperty("mobileNumber", searchFormObj.getMobileNo());
             jsonObject.addProperty("propertyAssmntNo", searchFormObj.getPropertyAssessmentNo());
@@ -72,9 +74,8 @@ public class SearchTradeResultHelperAdaptor implements JsonSerializer<SearchForm
             // To add set of actions for search results
             final Gson gson = new Gson();
             final ArrayList<JsonObject> list = new ArrayList<>();
-            JsonObject objectInList = new JsonObject();
             for (int i = 0; i < searchFormObj.getActions().size(); i++) {
-                objectInList = new JsonObject();
+                final JsonObject objectInList = new JsonObject();
                 objectInList.addProperty("key", searchFormObj.getActions().get(i));
                 list.add(objectInList);
             }

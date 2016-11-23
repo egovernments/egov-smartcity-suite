@@ -1484,10 +1484,12 @@ public interface PropertyTaxConstants {
     public static final String CATEGORY_TYPE_VACANTLAND_TAX = "VLT";
     public static final String INDEX_COLLECTION_CLAUSES_BILLINGSERVICE_NON_VACANT_LAND ="Property Tax";
     public static final String INDEX_COLLECTION_CLAUSES_BILLINGSERVICE_VACANT_LAND ="Property Tax (On Land)";
-    
+    public static final String PROP_DEACT_RSN = "DEACTIVATE";
     //urls	
     public String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
     public String WTMS_TOTALDEMAND_RESTURL = "%s/wtms/rest/watertax/totaldemandamount/";
+    public String WTMS_CONNECT_DTLS_RESTURL = "%s/wtms/rest/watertax/connectiondetails/byptno/%s";
+
 
 	public static final String TRANSACTION_TYPE_CREATE = "Create";
 	public static final String TRANSACTION_TYPE_DEMOLITION = "Demolition";

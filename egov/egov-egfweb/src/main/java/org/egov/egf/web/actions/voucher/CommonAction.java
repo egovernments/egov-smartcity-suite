@@ -1451,7 +1451,7 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("..............................................................................ajaxLoadCheckList");
         final EgBillSubType egBillSubType = (EgBillSubType) persistenceService.find("from EgBillSubType where id=?",
-                billSubtypeId);
+                billSubtypeId.longValue());
         checkList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF", egBillSubType.getName());
         if (checkList.size() == 0)
             checkList = appConfigValuesService

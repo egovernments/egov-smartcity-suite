@@ -44,6 +44,7 @@ jQuery(document).ready(function() {
 $('#baseRegisterReportSearch').click(function(e){
 		var ward = $("#ward").val();
 		var block = $("#block").val();
+		var exemptedCase = $("#exemptedCase").is(':checked');
 		oTable= $('#baseRegisterReport-table');
 		$('#baseRegister-header').show();
 		oTable.dataTable({
@@ -75,7 +76,8 @@ $('#baseRegisterReportSearch').click(function(e){
 				url : "/ptis/report/baseRegisterVlt/result",
 				data : {
 					'ward' : ward,
-					'block' : block
+					'block' : block,
+					'exemptedCase' : exemptedCase
 				}
 			},
 			"columns" : [

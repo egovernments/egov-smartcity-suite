@@ -838,7 +838,7 @@ public class ContingentBillAction extends BaseBillAction {
         commonBean.setBillDate(cbill.getBilldate());
         commonBean.setBillNumber(cbill.getBillnumber());
         if (null != cbill.getEgBillregistermis().getEgBillSubType())
-            commonBean.setBillSubType(cbill.getEgBillregistermis().getEgBillSubType().getId());
+            commonBean.setBillSubType(cbill.getEgBillregistermis().getEgBillSubType().getId().intValue());
         commonBean.setInwardSerialNumber(cbill.getEgBillregistermis().getInwardSerialNumber());
         commonBean.setPartyBillNumber(cbill.getEgBillregistermis().getPartyBillNumber());
         commonBean.setPartyBillDate(cbill.getEgBillregistermis().getPartyBillDate());
@@ -1167,7 +1167,7 @@ public class ContingentBillAction extends BaseBillAction {
         bill.setNarration(voucherHeader.getDescription());
         // mis.setSourcePath("/EGF/bill/contingentBill!beforeView.action?billRegisterId=");
         final EgBillSubType egBillSubType = (EgBillSubType) persistenceService.find("from EgBillSubType where id=?",
-                commonBean.getBillSubType());
+                commonBean.getBillSubType().longValue());
         mis.setEgBillSubType(egBillSubType);
         mis.setInwardSerialNumber(commonBean.getInwardSerialNumber());
         mis.setPartyBillNumber(commonBean.getPartyBillNumber());

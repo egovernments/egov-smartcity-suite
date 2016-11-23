@@ -52,6 +52,7 @@ public class CollTableData {
     private String ulbName = StringUtils.EMPTY;
     private String wardName = StringUtils.EMPTY;
     private String billCollector = StringUtils.EMPTY;
+    private String mobileNumber = StringUtils.EMPTY;
     private BigDecimal todayColl = BigDecimal.ZERO;
     private BigDecimal totalDmd = BigDecimal.ZERO;
     private BigDecimal cytdDmd = BigDecimal.ZERO;
@@ -171,5 +172,13 @@ public class CollTableData {
 
     public void setTodayColl(BigDecimal todayColl) {
         this.todayColl = todayColl;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
     }
 }

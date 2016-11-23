@@ -535,5 +535,25 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/budgetapproval/budgetapproval-search.jsp" />
 	</definition>
+	
+	<definition name="journalvoucher-form" extends="base_layout">
+		<put-attribute name="page-title" value="title.journalvoucher.create" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/journalvoucher/journalvoucher-form.jsp"/>
+	</definition>
+
+	<definition name="journalvoucher-success" extends="base_layout">
+	        <put-attribute name="page-title" value="lbl.journalvoucher" cascade="true"/>
+	        <put-attribute name="body" value="/WEB-INF/views/journalvoucher/journalvoucher-success.jsp"/>
+	</definition>
+
+	<definition name="journalvoucher-view" extends="base_layout">
+	        <put-attribute name="page-title" value="lbl.journalvoucher" cascade="true"/>
+	        <put-attribute name="body" value="/WEB-INF/views/journalvoucher/journalvoucher-view.jsp"/>
+	</definition>
+	
+	<definition name="journalvoucher-update" extends="base_layout">
+		<put-attribute name="page-title" value="title.journalvoucher.create" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/journalvoucher/journalvoucher-update.jsp"/>
+	</definition>
 
 </tiles-definitions>

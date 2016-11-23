@@ -260,13 +260,6 @@
 			</div>
 		</td>
 	</tr>
-	<s:if test="%{!documentTypes.isEmpty()}">
-		<tr>
-			<td colspan="5">
-				<%@ include file="../common/DocumentUploadView.jsp"%>
-			</td>
-		</tr>
-	</s:if>
 	<!-- Displaying existing and revised tax details -->
 	<tr>
 		<td colspan="5">

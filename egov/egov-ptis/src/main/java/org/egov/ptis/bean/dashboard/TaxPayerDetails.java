@@ -51,6 +51,7 @@ public class TaxPayerDetails implements Comparable<TaxPayerDetails> {
     private String ulbName = StringUtils.EMPTY;
     private String wardName = StringUtils.EMPTY;
     private String billCollector = StringUtils.EMPTY;
+    private String mobileNumber = StringUtils.EMPTY;
     private BigDecimal totalDmd = BigDecimal.ZERO;
     private BigDecimal cytdDmd = BigDecimal.ZERO;
     private BigDecimal cytdColl = BigDecimal.ZERO;
@@ -258,6 +259,14 @@ public class TaxPayerDetails implements Comparable<TaxPayerDetails> {
         } else if (!wardName.equals(other.wardName))
             return false;
         return true;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
     }
 
 }

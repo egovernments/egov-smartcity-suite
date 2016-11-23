@@ -40,8 +40,11 @@
 package org.egov.egf.utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -51,7 +54,12 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.AppConfig;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -84,12 +92,30 @@ public class FinancialUtils {
     @Autowired
     private PositionMasterService positionMasterService;
 
+    @Autowired
+    private AppConfigService appConfigService;
+
+    @Autowired
+    private EisCommonService eisCommonService;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
+    public static final Map<String, String> VOUCHER_SUBTYPES = new HashMap<String, String>() {
+        private static final long serialVersionUID = -2168753508482839041L;
+
+        {
+            put(FinancialConstants.JOURNALVOUCHER_NAME_GENERAL, FinancialConstants.GENERAL);
+            put(FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS, FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS);
+            put(FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE, FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE);
+            put(FinancialConstants.STANDARD_SUBTYPE_FIXED_ASSET, FinancialConstants.STANDARD_SUBTYPE_FIXED_ASSET);
+            put(FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
+        }
+    };
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public EgwStatus getStatusByModuleAndCode(final String moduleType, final String code) {
@@ -106,7 +132,7 @@ public class FinancialUtils {
         return egwStatusHibernateDAO.findById(id, true);
     }
 
-    public String getApproverDetails(final EgwStatus status, final State state, final Long id, final Long approvalPosition) {
+    public String getApproverDetails(final String workFlowAction, final State state, final Long id, final Long approvalPosition) {
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
 
@@ -116,7 +142,7 @@ public class FinancialUtils {
             assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
 
         if (assignObj != null) {
-            asignList = new ArrayList<Assignment>();
+            asignList = new ArrayList<>();
             asignList.add(assignObj);
         } else if (assignObj == null && approvalPosition != null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
@@ -125,8 +151,8 @@ public class FinancialUtils {
         if (asignList != null)
             nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
 
-        String approverDetails = "";
-        if (!status.getCode().equals(FinancialConstants.WORKFLOW_STATUS_CODE_REJECTED.toString()))
+        String approverDetails;
+        if (!FinancialConstants.BUTTONREJECT.toString().equalsIgnoreCase(workFlowAction))
             approverDetails = id + ","
                     + getApproverName(approvalPosition) + ","
                     + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
@@ -145,7 +171,7 @@ public class FinancialUtils {
         if (approvalPosition != null)
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
         if (assignment != null) {
-            asignList = new ArrayList<Assignment>();
+            asignList = new ArrayList<>();
             asignList.add(assignment);
         } else if (assignment == null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
@@ -188,4 +214,68 @@ public class FinancialUtils {
         return approverPosition;
     }
 
+    public boolean isBillEditable(final State state) {
+        boolean isEditable = false;
+        if (state.getOwnerPosition() != null && state.getOwnerPosition().getDeptDesig() != null
+                && state.getOwnerPosition().getDeptDesig().getDesignation() != null) {
+            final String designationName = state.getOwnerPosition().getDeptDesig().getDesignation().getName();
+            final AppConfig appConfig = appConfigService.getAppConfigByKeyName(FinancialConstants.BILL_EDIT_DESIGNATIONS);
+            for (final AppConfigValues appConfigValues : appConfig.getConfValues())
+                if (designationName.equals(appConfigValues.getValue()))
+                    isEditable = true;
+
+        }
+        return isEditable;
+    }
+
+    public List<HashMap<String, Object>> getHistory(final State state, final List<StateHistory> history) {
+        User user = null;
+        final List<HashMap<String, Object>> historyTable = new ArrayList<>();
+        final HashMap<String, Object> map = new HashMap<>(0);
+        if (null != state) {
+            if (!history.isEmpty() && history != null)
+                Collections.reverse(history);
+            for (final StateHistory stateHistory : history) {
+                final HashMap<String, Object> HistoryMap = new HashMap<>(0);
+                HistoryMap.put("date", stateHistory.getDateInfo());
+                HistoryMap.put("comments", stateHistory.getComments());
+                HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
+                        + stateHistory.getLastModifiedBy().getName());
+                HistoryMap.put("status", stateHistory.getValue());
+                final Position owner = stateHistory.getOwnerPosition();
+                user = stateHistory.getOwnerUser();
+                if (null != user) {
+                    HistoryMap.put("user", user.getUsername() + "::" + user.getName());
+                    HistoryMap.put("department",
+                            null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
+                                    .getDepartmentForUser(user.getId()).getName() : "");
+                } else if (null != owner && null != owner.getDeptDesig()) {
+                    user = eisCommonService.getUserForPosition(owner.getId(), new Date());
+                    HistoryMap
+                            .put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+                    HistoryMap.put("department", null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
+                            .getDepartment().getName() : "");
+                }
+                historyTable.add(HistoryMap);
+            }
+            map.put("date", state.getDateInfo());
+            map.put("comments", state.getComments() != null ? state.getComments() : "");
+            map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
+            map.put("status", state.getValue());
+            final Position ownerPosition = state.getOwnerPosition();
+            user = state.getOwnerUser();
+            if (null != user) {
+                map.put("user", user.getUsername() + "::" + user.getName());
+                map.put("department", null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
+                        .getDepartmentForUser(user.getId()).getName() : "");
+            } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
+                user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                map.put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+                map.put("department", null != ownerPosition.getDeptDesig().getDepartment() ? ownerPosition
+                        .getDeptDesig().getDepartment().getName() : "");
+            }
+            historyTable.add(map);
+        }
+        return historyTable;
+    }
 }

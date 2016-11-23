@@ -37,8 +37,6 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
-var openedWindows = [];
 $(document).ready(function () {
 	var addfav_li;
 	var menuheight = ($( window ).height() - 63);
@@ -90,7 +88,13 @@ $(document).ready(function () {
 				$('#fav-name').val(favouriteName);
 			} else{
 				var itemHref = $item.find( 'a:first' ).attr( 'href' );
-				var windowObjectReference = window.open(itemHref, ''+$item.attr('id')+'', 'width=900, height=700, top=300, left=260,scrollbars=yes'); 
+			    var width = 900;
+			    var height = 700;
+			    var left = parseInt((screen.availWidth/2) - (width/2));
+			    var top = parseInt((screen.availHeight/2) - (height/2));
+			    var windowFeatures = "width=" + width + ",height=" + height + ",status,resizable,left=" + left + ",top=" + top + ",scrollbars=yes";
+
+				var windowObjectReference = window.open(itemHref, ''+$item.attr('id')+'', windowFeatures);
 				openedWindows.push(windowObjectReference);
 				windowObjectReference.focus();
 			}
@@ -103,12 +107,9 @@ $(document).ready(function () {
 			$('#menu_multilevelpushmenu').height(''+menuheight+'px');
 			$('#menu, #menu_multilevelpushmenu').css('min-height', ''+menuheight+'px');
 			var e = arguments[2];
-			if(e.children('div').children('ul').height() > ulheight){
+			if(e.children('div').children('ul').height() > ulheight)
 				$('#menu_multilevelpushmenu ul').height(''+ulheight+'px');
-				$('#menu_multilevelpushmenu ul').css('overflow-y','scroll');
-				}else{
-				$('#menu_multilevelpushmenu ul').css('overflow-y','auto');
-			}
+			$('#menu_multilevelpushmenu ul').css('overflow-y','auto');
 		},
 		onBackItemClick : function () {
 			$('#menu_multilevelpushmenu ul').css('overflow-y','auto');
@@ -229,13 +230,6 @@ $(document).ready(function () {
 		openedWindows.push(windowObjectReference);
 		windowObjectReference.focus();
 		return false;
-	});
-	
-	$('.signout').click(function(){
-		$.each( openedWindows, function( i, val ) {
-			var window = val;
-			window.close();
-		});
 	});
 	
 });	

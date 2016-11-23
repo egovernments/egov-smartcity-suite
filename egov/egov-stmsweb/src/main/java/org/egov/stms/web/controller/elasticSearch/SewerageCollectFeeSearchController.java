@@ -41,6 +41,8 @@
 package org.egov.stms.web.controller.elasticSearch;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.COLLECTDONATIONCHARHGES;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.REVENUE_WARD;
 
@@ -145,7 +147,7 @@ public class SewerageCollectFeeSearchController {
         final List<String> roleList = new ArrayList<>();
         final Map<String, String> actionMap = new HashMap<>();
         SewerageApplicationDetails sewerageApplicationDetails = null;
-        SewerageSearchResult searchActions = null;
+        SewerageSearchResult searchActions;
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         if (cityWebsite != null)
             searchRequest.setUlbName(cityWebsite.getName());
@@ -164,20 +166,23 @@ public class SewerageCollectFeeSearchController {
             searchResult.setAddress(sewerageIndex.getAddress());
             searchResult.setApplicationStatus(sewerageIndex.getApplicationStatus());
 
-            if (searchRequest.getConsumerNumber() != null)
+            if (sewerageIndex.getApplicationNumber() != null)
                 sewerageApplicationDetails = sewerageApplicationDetailsService
-                        .findByApplicationNumber(searchRequest.getConsumerNumber());
+                        .findByApplicationNumber(sewerageIndex.getApplicationNumber());
 
             for (final Role role : sewerageTaxUtils.getLoginUserRoles())
                 roleList.add(role.getName());
-            if (sewerageApplicationDetails != null)
+            if (sewerageApplicationDetails != null
+                    && (APPLICATION_STATUS_COLLECTINSPECTIONFEE.equals(sewerageApplicationDetails.getStatus().getCode()) ||
+                            APPLICATION_STATUS_ESTIMATENOTICEGEN.equals(sewerageApplicationDetails.getStatus().getCode()))) {
                 searchActions = SewerageActionDropDownUtil.getSearchResultWithActions(roleList,
                         sewerageIndex.getApplicationStatus(), sewerageApplicationDetails);
-            if (searchActions != null && searchActions.getActions() != null)
-                for (final Map.Entry<String, String> entry : searchActions.getActions().entrySet())
-                    if (entry.getValue() == COLLECTDONATIONCHARHGES)
-                        actionMap.put(entry.getKey(), entry.getValue());
-            searchResult.setActions(actionMap);
+                if (searchActions != null && searchActions.getActions() != null)
+                    for (final Map.Entry<String, String> entry : searchActions.getActions().entrySet())
+                        if (COLLECTDONATIONCHARHGES.equals(entry.getValue()))
+                            actionMap.put(entry.getKey(), entry.getValue());
+                searchResult.setActions(actionMap);
+            }
             searchResultList.add(searchResult);
         }
         return searchResultList;

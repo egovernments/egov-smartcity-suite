@@ -240,12 +240,12 @@ public class AssignmentService {
     public List<Assignment> getPositionsByDepartmentAndDesignationForGivenRange(final Long departmentId,
             final Long designationId, final Date givenDate) {
 
-        if ((departmentId != null) && (designationId != null))
+        if (departmentId != null && designationId != null)
             return assignmentRepository.getPrimaryAssignmentForDepartmentAndDesignation(departmentId, designationId,
                     givenDate);
-        else if ((designationId != null) && (departmentId == null))
+        else if (designationId != null && departmentId == null)
             return assignmentRepository.getPrimaryAssignmentForDesignation(designationId, givenDate);
-        else if ((designationId == null) && (departmentId != null))
+        else if (designationId == null && departmentId != null)
             return assignmentRepository.getPrimaryAssignmentForDepartment(departmentId, givenDate);
         return new ArrayList<Assignment>();
 
@@ -262,12 +262,12 @@ public class AssignmentService {
     public List<Assignment> getAllPositionsByDepartmentAndDesignationForGivenRange(final Long departmentId,
             final Long designationId, final Date givenDate) {
 
-        if ((departmentId != null) && (designationId != null))
+        if (departmentId != null && designationId != null)
             return assignmentRepository.getAllAssignmentForDepartmentAndDesignation(departmentId, designationId,
                     givenDate);
-        else if ((designationId != null) && (departmentId == null))
+        else if (designationId != null && departmentId == null)
             return assignmentRepository.getAllAssignmentForDesignation(designationId, givenDate);
-        else if ((designationId == null) && (departmentId != null))
+        else if (designationId == null && departmentId != null)
             return assignmentRepository.getAllAssignmentForDepartment(departmentId, givenDate);
         return new ArrayList<Assignment>();
 
@@ -438,10 +438,6 @@ public class AssignmentService {
     public List<Assignment> getAssignmentList(final EmployeePositionSearch employeePositionSearch) {
         final StringBuilder queryString = new StringBuilder();
         queryString.append("select distinct(assignment) from Assignment assignment where assignment.id is not null ");
-        if (employeePositionSearch.getDepartment() != null)
-            queryString.append(" AND assignment.department.id =:dept ");
-        if (employeePositionSearch.getDesignation() != null)
-            queryString.append(" AND assignment.designation.id =:desig ");
         if (employeePositionSearch.getPosition() != null)
             queryString.append(" AND assignment.position.id =:pos ");
         if (employeePositionSearch.getIsPrimary() != null)
@@ -458,15 +454,27 @@ public class AssignmentService {
     }
 
     private Query setParametersToQuery(final EmployeePositionSearch employeePositionSearch, final Query queryResult) {
-        if (employeePositionSearch.getDepartment() != null)
-            queryResult.setParameter("dept", Long.valueOf(employeePositionSearch.getDepartment()));
-        if (employeePositionSearch.getDesignation() != null)
-            queryResult.setParameter("desig", Long.valueOf(employeePositionSearch.getDesignation()));
         if (employeePositionSearch.getPosition() != null)
             queryResult.setParameter("pos", Long.valueOf(employeePositionSearch.getPosition()));
         if (employeePositionSearch.getIsPrimary() != null)
             queryResult.setParameter("primary", Boolean.valueOf(employeePositionSearch.getIsPrimary()));
         return queryResult;
+    }
+
+    public List<Assignment> getAllAssignmentForEmployeeNameLike(final String empName) {
+        return assignmentRepository.getAllAssignmentForEmployeeNameLike(new Date(), empName);
+    }
+
+    public List<Assignment> findAssignmentForDepartmentId(final Long deptId) {
+        return assignmentRepository.findByDepartmentId(deptId);
+    }
+
+    public List<Assignment> findAssignmentForDesignationId(final Long desigId) {
+        return assignmentRepository.findByDesignationId(desigId);
+    }
+
+    public List<Assignment> findByDepartmentAndDesignation(final Long deptId, final Long desigId) {
+        return assignmentRepository.findByDepartmentIdAndDesignationId(deptId, desigId);
     }
 
 }

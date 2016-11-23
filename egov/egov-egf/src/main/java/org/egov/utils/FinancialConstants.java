@@ -61,6 +61,8 @@ public interface FinancialConstants {
     public static final String SUPPLIERBILL = "PURCHBILL";
     public static final String CONTRACTORBILL = "WORKSBILL";
     public static final String PENSIONBILL = "PENSIONBILL";
+    public static final String SBILL = "SBILL";
+    public static final String CONTRACTOR_BILL = "CONTRACTORBILL";
 
     // Standard Bill Types or Expernditure type
 
@@ -97,7 +99,7 @@ public interface FinancialConstants {
     // Status for Contrator Bills
     public static final String CONTRACTORBILL_CREATED_STATUS = "Pending";
     public static final String CONTRACTORBILL_CANCELLED_STATUS = "Cancelled";
-    // public static final String CONTRACTORBILL_APPROVED_STATUS="Approved";
+    public static final String CONTRACTORBILL_APPROVED_STATUS = "APPROVED";
     public static final String CONTRACTORBILL_PASSED_STATUS = "Passed";
     public static final String CONTRACTORBILL_PAID_STATUS = "Paid";
 
@@ -238,7 +240,7 @@ public interface FinancialConstants {
     public static final String KEY_DEFAULTTXNMISATTRRIBUTES = "DEFAULTTXNMISATTRRIBUTES";
     public static final String KEY_CONTINGENCYBILLPURPOSEIDS = "contingencyBillPurposeIds";
     public static final String KEY_CONTINGENCYBILLDEFAULTPURPOSEID = "contingencyBillDefaultPurposeId";
-    
+
     public static final String TYPEOFACCOUNT_PAYMENTS = "PAYMENTS";
     public static final String TYPEOFACCOUNT_RECEIPTS = "RECEIPTS";
     public static final String TYPEOFACCOUNT_RECEIPTS_PAYMENTS = "RECEIPTS_PAYMENTS";
@@ -337,11 +339,26 @@ public interface FinancialConstants {
 
     public static final String BUDGET = "BUDGET";
     public static final String BUDGETDETAIL = "BUDGETDETAIL";
-    public static final String BUDGETDETAIL_CREATED_STATUS = "CREATED";
+    public static final String BUDGETDETAIL_CREATED_STATUS = "Created";
     public static final String BUDGETDETAIL_VERIFIED_STATUS = "VERIFIED";
     public static final String WORKFLOWTYPE_EXPENSE_BILL_DISPLAYNAME = "Expense Bill";
+    public static final String WORKFLOWTYPE_VOUCHER_DISPLAYNAME = "Voucher";
 
     public static final String WORKFLOW_STATUS_CODE_REJECTED = "REJECTED";
     public static final String KEY_DATAENTRYCUTOFFDATE = "DataEntryCutOffDate";
     public static final String NA = "na";
+    public static final String MANUAL = "Manual";
+    public static final String AUTO = "Auto";
+    public static final String GENERAL = "General";
+    public static final String STANDARD_SUBTYPE_FIXED_ASSET = "Fixed Asset";
+    public static final String BILL_EDIT_DESIGNATIONS = "BILL_EDIT_DESIGNATIONS";
+
+    public static final String VOUCHER_TYPE_JOURNAL = "Journal";
+    public static final String VOUCHER_TYPE_WORKS = "worksjv";
+    public static final String VOUCHER_TYPE_PURCHASE = "purchasejv";
+    public static final String VOUCHER_TYPE_SALARY = "salaryjv";
+    public static final String VOUCHER_TYPE_CONTINGENT = "contingentjv";
+    public static final String VOUCHER_TYPE_FIXEDASSET = "fixedassetjv";
+    public static final String VOUCHER_TYPE_PENSION = "pensionjv";
+
 }

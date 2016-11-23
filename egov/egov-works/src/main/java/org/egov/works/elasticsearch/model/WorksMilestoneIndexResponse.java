@@ -49,6 +49,16 @@ public class WorksMilestoneIndexResponse {
 
     private String name;
 
+    private String typeofwork;
+
+    private String ulbname;
+
+    private String districtname;
+
+    private String ismilestonecreated;
+
+    private String latestupdatedtimestamp;
+
     private Long totalnoofworks;
 
     private Double totalestimatedcostinlakhs;
@@ -905,6 +915,46 @@ public class WorksMilestoneIndexResponse {
 
     public void setLineestimatedetailid(final Integer lineestimatedetailid) {
         this.lineestimatedetailid = lineestimatedetailid;
+    }
+
+    public String getUlbname() {
+        return ulbname;
+    }
+
+    public void setUlbname(final String ulbname) {
+        this.ulbname = ulbname;
+    }
+
+    public String getDistrictname() {
+        return districtname;
+    }
+
+    public void setDistrictname(final String districtname) {
+        this.districtname = districtname;
+    }
+
+    public String getIsmilestonecreated() {
+        return ismilestonecreated;
+    }
+
+    public void setIsmilestonecreated(final String ismilestonecreated) {
+        this.ismilestonecreated = ismilestonecreated;
+    }
+
+    public String getLatestupdatedtimestamp() {
+        return latestupdatedtimestamp;
+    }
+
+    public void setLatestupdatedtimestamp(final String latestupdatedtimestamp) {
+        this.latestupdatedtimestamp = latestupdatedtimestamp;
+    }
+
+    public String getTypeofwork() {
+        return typeofwork;
+    }
+
+    public void setTypeofwork(final String typeofwork) {
+        this.typeofwork = typeofwork;
     }
 
     public Double getFinancialprogress() {

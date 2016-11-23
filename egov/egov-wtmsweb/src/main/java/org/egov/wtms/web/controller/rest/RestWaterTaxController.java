@@ -43,9 +43,11 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WATER_TAX_INDEX_NAME;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.egov.wtms.application.rest.WaterChargesDetails;
 import org.egov.wtms.application.rest.WaterTaxDue;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
@@ -87,7 +89,7 @@ public class RestWaterTaxController {
     @RequestMapping(value = "rest/watertax/totaldemandamount/", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public WaterTaxDue getTotalDemand() throws JsonGenerationException, JsonMappingException, IOException {
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(WATER_TAX_INDEX_NAME)
-                .addAggregation(AggregationBuilders.sum("totaldemand").field("currentDemand")).build();
+                .addAggregation(AggregationBuilders.sum("totaldemand").field("totalDemand")).build();
         final Aggregations aggregations = elasticsearchTemplate.query(searchQuery,
                 response -> response.getAggregations());
         final Sum aggr = aggregations.get("totaldemand");
@@ -105,6 +107,14 @@ public class RestWaterTaxController {
     public WaterTaxDue getWaterTaxDueByPropertyId(@PathVariable final String assessmentNumber)
             throws JsonGenerationException, JsonMappingException, IOException {
         return connectionDemandService.getDueDetailsByPropertyId(assessmentNumber);
+
+    }
+    
+    @RequestMapping(value = {
+            "rest/watertax/connectiondetails/byptno/{assessmentNumber}" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<WaterChargesDetails> getWaterConnectionDetailsByPropertyId(@PathVariable final String assessmentNumber)
+            throws JsonGenerationException, JsonMappingException, IOException {
+        return connectionDemandService.getWaterTaxDetailsByPropertyId(assessmentNumber);
 
     }
 

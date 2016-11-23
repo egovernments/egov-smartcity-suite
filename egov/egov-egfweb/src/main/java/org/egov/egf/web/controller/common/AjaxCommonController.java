@@ -118,26 +118,30 @@ public class AjaxCommonController {
     private AppConfigValueService appConfigValueService;
 
     @RequestMapping(value = "/getschemesbyfundid", method = RequestMethod.GET)
-    public @ResponseBody List<Scheme> getAllSchemesByFundId(@RequestParam("fundId") final String fundId)
+    @ResponseBody
+    public List<Scheme> getAllSchemesByFundId(@RequestParam("fundId") final String fundId)
             throws ApplicationException {
         return schemeService.getByFundId(Integer.parseInt(fundId));
     }
 
     @RequestMapping(value = "/getsubschemesbyschemeid", method = RequestMethod.GET)
-    public @ResponseBody List<SubScheme> getAllSubSchemesBySchemeId(@RequestParam("schemeId") final String schemeId)
+    @ResponseBody
+    public List<SubScheme> getAllSubSchemesBySchemeId(@RequestParam("schemeId") final String schemeId)
             throws ApplicationException {
         return subSchemeService.getBySchemeId(Integer.parseInt(schemeId));
     }
 
     @RequestMapping(value = "/getfundsourcesbysubschemeid", method = RequestMethod.GET)
-    public @ResponseBody List<Fundsource> getAllFundSourcesBySubSchemeId(
+    @ResponseBody
+    public List<Fundsource> getAllFundSourcesBySubSchemeId(
             @RequestParam("subSchemeId") final String subSchemeId) throws ApplicationException {
         return fundsourceService.getBySubSchemeId(Integer.parseInt(subSchemeId));
     }
 
     @RequestMapping(value = "/ajaxfunctionnames", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<String> findFunctionNames(@RequestParam final String name) {
-        final List<String> functionNames = new ArrayList<String>();
+    @ResponseBody
+    public List<String> findFunctionNames(@RequestParam final String name) {
+        final List<String> functionNames = new ArrayList<>();
         final List<CFunction> functions = functionService.findByNameLikeOrCodeLike(name);
         for (final CFunction function : functions)
             functionNames.add(function.getCode() + " - " + function.getName() + " ~ " + function.getId());
@@ -146,10 +150,11 @@ public class AjaxCommonController {
     }
 
     @RequestMapping(value = "/getentitesbyaccountdetailtype", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<String> findEntitesByAccountDetailType(@RequestParam final String name,
+    @ResponseBody
+    public List<String> findEntitesByAccountDetailType(@RequestParam final String name,
             @RequestParam final String accountDetailType) {
-        final List<String> entityNames = new ArrayList<String>();
-        List<EntityType> entitiesList = new ArrayList<EntityType>();
+        final List<String> entityNames = new ArrayList<>();
+        List<EntityType> entitiesList = new ArrayList<>();
         final Accountdetailtype detailType = accountdetailtypeService.findOne(Integer.parseInt(accountDetailType));
         try {
             final String table = detailType.getFullQualifiedName();
@@ -162,7 +167,8 @@ public class AjaxCommonController {
             final EntityTypeService entityService = (EntityTypeService) wac.getBean(simpleName);
             entitiesList = (List<EntityType>) entityService.filterActiveEntities(name, 20, detailType.getId());
         } catch (final Exception e) {
-            entitiesList = new ArrayList<EntityType>();
+            e.printStackTrace();
+            entitiesList = new ArrayList<>();
         }
         for (final EntityType entity : entitiesList)
             entityNames.add(entity.getCode() + " - " + entity.getName() + "~" + entity.getEntityId());
@@ -171,7 +177,8 @@ public class AjaxCommonController {
     }
 
     @RequestMapping(value = "/getaccountcodesforaccountdetailtype", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String findAccountCodesForAccountDetailType(@RequestParam final String glcode,
+    @ResponseBody
+    public String findAccountCodesForAccountDetailType(@RequestParam final String glcode,
             @RequestParam final String accountDetailType) {
         final List<CChartOfAccounts> chartOfAccounts = chartOfAccountsService
                 .getSubledgerAccountCodesForAccountDetailTypeAndNonSubledgers(Integer.parseInt(accountDetailType),
@@ -181,12 +188,12 @@ public class AjaxCommonController {
                 coa.setIsSubLedger(false);
             else
                 coa.setIsSubLedger(true);
-        final String jsonResponse = toJSON(chartOfAccounts, CChartOfAccounts.class, ChartOfAccountsAdaptor.class);
-        return jsonResponse;
+        return toJSON(chartOfAccounts, CChartOfAccounts.class, ChartOfAccountsAdaptor.class);
     }
 
     @RequestMapping(value = "/getnetpayablecodesbyaccountdetailtype", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String getNetPayableCodesByAccountDetailType(
+    @ResponseBody
+    public String getNetPayableCodesByAccountDetailType(
             @RequestParam("accountDetailType") final String accountDetailType) throws ApplicationException {
         final List<CChartOfAccounts> chartOfAccounts = chartOfAccountsService
                 .getNetPayableCodesByAccountDetailType(Integer.parseInt(accountDetailType));
@@ -195,23 +202,42 @@ public class AjaxCommonController {
                 coa.setIsSubLedger(false);
             else
                 coa.setIsSubLedger(true);
-        final String jsonResponse = toJSON(chartOfAccounts, CChartOfAccounts.class, ChartOfAccountsAdaptor.class);
-        return jsonResponse;
+        return toJSON(chartOfAccounts, CChartOfAccounts.class, ChartOfAccountsAdaptor.class);
     }
 
     @RequestMapping(value = "/getchecklistbybillsubtype", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<AppConfigValues> getCheckListByBillSubType(
+    @ResponseBody
+    public List<AppConfigValues> getCheckListByBillSubType(
             @RequestParam("billSubType") final String billSubType) {
-        final EgBillSubType egBillSubType = egBillSubTypeService.getById(Integer.parseInt(billSubType));
+        final EgBillSubType egBillSubType = egBillSubTypeService.getById(Long.parseLong(billSubType));
 
-        List<AppConfigValues> checkList = new ArrayList<AppConfigValues>();
+        List<AppConfigValues> checkList;
         checkList = appConfigValueService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
                 egBillSubType.getName());
-        if (checkList.size() == 0)
+        if (checkList == null || checkList.isEmpty())
             checkList = appConfigValueService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
                     FinancialConstants.CBILL_DEFAULTCHECKLISTNAME);
 
         return checkList;
+    }
+
+    @RequestMapping(value = "/getallaccountcodes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String findAllAccountCodes(@RequestParam final String glcode) {
+        final List<CChartOfAccounts> chartOfAccounts = chartOfAccountsService.getAllAccountCodes(glcode);
+        for (final CChartOfAccounts coa : chartOfAccounts)
+            if (coa.getChartOfAccountDetails().isEmpty())
+                coa.setIsSubLedger(false);
+            else
+                coa.setIsSubLedger(true);
+        return toJSON(chartOfAccounts, CChartOfAccounts.class, ChartOfAccountsAdaptor.class);
+    }
+
+    @RequestMapping(value = "/getaccountdetailtypesbyglcodeid", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Accountdetailtype> getAccountDetailTypesByGlcodeId(@RequestParam("glcodeId") final String glcodeId)
+            throws ApplicationException {
+        return accountdetailtypeService.findByGlcodeId(Long.parseLong(glcodeId));
     }
 
     public static <T> String toJSON(final Collection<T> objects, final Class<? extends T> objectClazz,

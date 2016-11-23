@@ -40,10 +40,7 @@
 package org.egov.egf.expensebill.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -58,7 +55,6 @@ import org.egov.egf.expensebill.repository.ExpenseBillRepository;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
@@ -67,8 +63,6 @@ import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.workflow.entity.State;
-import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.models.EgChecklists;
@@ -89,7 +83,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author venki
- *
  */
 
 @Service
@@ -137,9 +130,6 @@ public class ExpenseBillService {
     private VoucherService voucherService;
 
     @Autowired
-    private EisCommonService eisCommonService;
-
-    @Autowired
     private CheckListService checkListService;
 
     @Autowired
@@ -165,6 +155,11 @@ public class ExpenseBillService {
 
     public EgBillregister getByBillnumber(final String billNumber) {
         return expenseBillRepository.findByBillnumber(billNumber);
+    }
+
+    @Transactional
+    public EgBillregister create(final EgBillregister egBillregister) {
+        return expenseBillRepository.save(egBillregister);
     }
 
     @Transactional
@@ -255,10 +250,9 @@ public class ExpenseBillService {
 
     @Transactional
     public EgBillregister update(final EgBillregister egBillregister, final Long approvalPosition, final String approvalComent,
-            final String additionalRule, final String workFlowAction) throws ValidationException, IOException {
+            final String additionalRule, final String workFlowAction, final String mode) throws ValidationException, IOException {
         EgBillregister updatedegBillregister = null;
-        if (egBillregister.getStatus() != null
-                && FinancialConstants.CONTINGENCYBILL_REJECTED_STATUS.equals(egBillregister.getStatus().getCode())) {
+        if ("edit".equals(mode)) {
             egBillregister.setPassedamount(egBillregister.getBillamount());
             egBillregister.getEgBillregistermis().setLastupdatedtime(new Date());
 
@@ -266,10 +260,6 @@ public class ExpenseBillService {
                     && egBillregister.getEgBillregistermis().getFund().getId() != null)
                 egBillregister.getEgBillregistermis().setFund(
                         fundService.findOne(egBillregister.getEgBillregistermis().getFund().getId()));
-            if (egBillregister.getEgBillregistermis().getEgBillSubType() != null
-                    && egBillregister.getEgBillregistermis().getEgBillSubType().getId() != null)
-                egBillregister.getEgBillregistermis().setEgBillSubType(
-                        egBillSubTypeService.getById(egBillregister.getEgBillregistermis().getEgBillSubType().getId()));
             if (egBillregister.getEgBillregistermis().getScheme() != null
                     && egBillregister.getEgBillregistermis().getScheme().getId() != null)
                 egBillregister.getEgBillregistermis().setScheme(
@@ -292,6 +282,13 @@ public class ExpenseBillService {
 
             deleteCheckList(updatedegBillregister);
             createCheckList(updatedegBillregister, checkLists);
+            egBillregister.getEgBillregistermis().setBudgetaryAppnumber(null);
+            try {
+                checkBudgetAndGenerateBANumber(egBillregister);
+            } catch (final ValidationException e) {
+                throw new ValidationException(e.getErrors());
+            }
+
         }
         if (updatedegBillregister != null) {
             if (workFlowAction.equals(FinancialConstants.CREATEANDAPPROVE))
@@ -342,21 +339,19 @@ public class ExpenseBillService {
 
     }
 
+    @Transactional(readOnly = true)
     public boolean isBillNumberGenerationAuto() {
         final List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey(
                 FinancialConstants.MODULE_NAME_APPCONFIG, FinancialConstants.KEY_BILLNUMBER_APPCONFIG);
-        if (configValuesByModuleAndKey.size() > 0)
+        if (!configValuesByModuleAndKey.isEmpty())
             return "Y".equals(configValuesByModuleAndKey.get(0).getValue());
         else
             return false;
     }
 
     private String getNextBillNumber(final EgBillregister bill) {
-
         final ExpenseBillNumberGenerator b = beanResolver.getAutoNumberServiceFor(ExpenseBillNumberGenerator.class);
-        final String billNumber = b.getNextNumber(bill);
-
-        return billNumber;
+        return b.getNextNumber(bill);
     }
 
     public void createExpenseBillRegisterWorkflowTransition(final EgBillregister egBillregister,
@@ -382,7 +377,7 @@ public class ExpenseBillService {
         } else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
                 pos = positionMasterService.getPositionById(approvalPosition);
-            WorkFlowMatrix wfmatrix = null;
+            WorkFlowMatrix wfmatrix;
             if (null == egBillregister.getState()) {
                 wfmatrix = egBillregisterRegisterWorkflowService.getWfMatrix(egBillregister.getStateType(), null,
                         null, additionalRule, currState, null);
@@ -425,62 +420,14 @@ public class ExpenseBillService {
         else if (wfmatrix != null)
             approvalPosition = financialUtils.getApproverPosition(wfmatrix.getNextDesignation(),
                     egBillregister.getState(), egBillregister.getCreatedBy().getId());
-        if (workFlowAction.equals(FinancialConstants.BUTTONCANCEL)
-                && wfmatrix.getNextState().equals(FinancialConstants.WORKFLOW_STATE_CREATED))
+        if (workFlowAction.equals(FinancialConstants.BUTTONCANCEL))
             approvalPosition = null;
 
         return approvalPosition;
     }
 
-    public List<HashMap<String, Object>> getHistory(final State state, final List<StateHistory> history) {
-        User user = null;
-        final List<HashMap<String, Object>> historyTable = new ArrayList<HashMap<String, Object>>();
-        final HashMap<String, Object> map = new HashMap<String, Object>(0);
-        if (null != state) {
-            if (!history.isEmpty() && history != null)
-                Collections.reverse(history);
-            for (final StateHistory stateHistory : history) {
-                final HashMap<String, Object> HistoryMap = new HashMap<String, Object>(0);
-                HistoryMap.put("date", stateHistory.getDateInfo());
-                HistoryMap.put("comments", stateHistory.getComments());
-                HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
-                        + stateHistory.getLastModifiedBy().getName());
-                HistoryMap.put("status", stateHistory.getValue());
-                final Position owner = stateHistory.getOwnerPosition();
-                user = stateHistory.getOwnerUser();
-                if (null != user) {
-                    HistoryMap.put("user", user.getUsername() + "::" + user.getName());
-                    HistoryMap.put("department",
-                            null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
-                                    .getDepartmentForUser(user.getId()).getName() : "");
-                } else if (null != owner && null != owner.getDeptDesig()) {
-                    user = eisCommonService.getUserForPosition(owner.getId(), new Date());
-                    HistoryMap
-                            .put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                    HistoryMap.put("department", null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
-                            .getDepartment().getName() : "");
-                }
-                historyTable.add(HistoryMap);
-            }
-            map.put("date", state.getDateInfo());
-            map.put("comments", state.getComments() != null ? state.getComments() : "");
-            map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
-            map.put("status", state.getValue());
-            final Position ownerPosition = state.getOwnerPosition();
-            user = state.getOwnerUser();
-            if (null != user) {
-                map.put("user", user.getUsername() + "::" + user.getName());
-                map.put("department", null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
-                        .getDepartmentForUser(user.getId()).getName() : "");
-            } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
-                user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
-                map.put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                map.put("department", null != ownerPosition.getDeptDesig().getDepartment() ? ownerPosition
-                        .getDeptDesig().getDepartment().getName() : "");
-            }
-            historyTable.add(map);
-        }
-        return historyTable;
+    public boolean isBillNumUnique(final String billnumber) {
+        final EgBillregister bill = getByBillnumber(billnumber);
+        return bill == null;
     }
-
 }

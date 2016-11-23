@@ -42,6 +42,7 @@ package org.egov.wtms.application.entity;
 public class BaseRegisterResult {
 
     private String consumerNo;
+    private String oldConsumerNo;
     private String doorNo;
     private String assementNo;
     private String ownerName;
@@ -56,6 +57,7 @@ public class BaseRegisterResult {
     private Double totalCollection;
     private String usageType;
     private String pipeSize;
+    private String waterSource;
     private Double monthlyRate;
 
     public String getConsumerNo() {
@@ -184,6 +186,22 @@ public class BaseRegisterResult {
 
     public void setMonthlyRate(final Double monthlyRate) {
         this.monthlyRate = monthlyRate;
+    }
+
+    public String getWaterSource() {
+        return waterSource;
+    }
+
+    public void setWaterSource(final String waterSource) {
+        this.waterSource = waterSource;
+    }
+
+    public String getOldConsumerNo() {
+        return oldConsumerNo;
+    }
+
+    public void setOldConsumerNo(final String oldConsumerNo) {
+        this.oldConsumerNo = oldConsumerNo;
     }
 
 }

@@ -313,7 +313,7 @@ public class WaterTaxConstants {
     public static final String PDFEXTENTION = ".pdf";
     public static final String APPLICATIONPDFNAME = "application/pdf";
     public static final String DOCUMENTNAMEFORBILL = "DemandBill";
-    public static final Integer QUARTZ_BULKBILL_JOBS = 3;
+    public static final Integer QUARTZ_BULKBILL_JOBS = 10;
     public static final String WATERCHARGES_CONSUMERCODE = "consumerCode";
     public static final String APPLICATION_TAX_INDEX_NAME = "applications";
     public static final String COLLECTION_INDEX_NAME = "receipts";
@@ -329,6 +329,15 @@ public class WaterTaxConstants {
     public static final String DASHBOARD_GROUPING_CITYWISE = "city";
     public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
     public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
+    public static final String WATERCHARGETOTALDEMAND = "totalDemand";
+    public static final String REGIONNAMEAGGREGATIONFIELD = "regionName";
+    public static final String DISTRICTNAMEAGGREGATIONFIELD = "districtName";
+    public static final String CITYNAMEAGGREGATIONFIELD = "cityName";
+    public static final String CITYGRADEAGGREGATIONFIELD =  "cityGrade";
+    public static final String REVENUEWARDAGGREGATIONFIELD = "revenueWard";
+    
+    
+
 
 
 }

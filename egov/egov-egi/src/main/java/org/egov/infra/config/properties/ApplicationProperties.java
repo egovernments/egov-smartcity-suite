@@ -1,41 +1,41 @@
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
+ *      accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *       Copyright (C) 2016  eGovernments Foundation
  *
- *     The updated version of eGov suite of products as by eGovernments Foundation
- *     is available at http://www.egovernments.org
+ *       The updated version of eGov suite of products as by eGovernments Foundation
+ *       is available at http://www.egovernments.org
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
+ *       This program is free software: you can redistribute it and/or modify
+ *       it under the terms of the GNU General Public License as published by
+ *       the Free Software Foundation, either version 3 of the License, or
+ *       any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ *       This program is distributed in the hope that it will be useful,
+ *       but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *       GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or
- *     http://www.gnu.org/licenses/gpl.html .
+ *       You should have received a copy of the GNU General Public License
+ *       along with this program. If not, see http://www.gnu.org/licenses/ or
+ *       http://www.gnu.org/licenses/gpl.html .
  *
- *     In addition to the terms of the GPL license to be adhered to in using this
- *     program, the following additional terms are to be complied with:
+ *       In addition to the terms of the GPL license to be adhered to in using this
+ *       program, the following additional terms are to be complied with:
  *
- *         1) All versions of this program, verbatim or modified must carry this
- *            Legal Notice.
+ *           1) All versions of this program, verbatim or modified must carry this
+ *              Legal Notice.
  *
- *         2) Any misrepresentation of the origin of the material is prohibited. It
- *            is required that all modified versions of this material be marked in
- *            reasonable ways as different from the original version.
+ *           2) Any misrepresentation of the origin of the material is prohibited. It
+ *              is required that all modified versions of this material be marked in
+ *              reasonable ways as different from the original version.
  *
- *         3) This license does not grant any rights to any user of the program
- *            with regards to rights under trademark law for use of the trade names
- *            or trademarks of eGovernments Foundation.
+ *           3) This license does not grant any rights to any user of the program
+ *              with regards to rights under trademark law for use of the trade names
+ *              or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 package org.egov.infra.config.properties;
@@ -49,6 +49,7 @@ import org.springframework.core.env.Environment;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @Configuration
@@ -84,6 +85,7 @@ public class ApplicationProperties {
     public static final String MULTITENANCY_ENABLED = "multitenancy.enabled";
     public static final String APP_VERSION = "app.version";
     public static final String APP_BUILD_NO = "app.build.no";
+    public static final String APP_RELEASE_NO = "%s_%s";
     public static final String APP_CORE_BUILD_NO = "app.core.build.no";
     public static final String ISSUE_REPORT_URL = "issue.report.url";
     public static final String PORTAL_FEATURE_ENABLED = "portal.feature.enabled";
@@ -101,6 +103,7 @@ public class ApplicationProperties {
     private static final String SEARCH_HOSTS = "elasticsearch.hosts";
     private static final String SEARCH_PORT = "elasticsearch.port";
     private static final String SEARCH_CLUSTER_NAME = "elasticsearch.cluster.name";
+    private static final String CDN_URL = "cdn.domain.url";
 
     @Autowired
     private Environment environment;
@@ -281,4 +284,11 @@ public class ApplicationProperties {
         return environment.getProperty(SEARCH_CLUSTER_NAME);
     }
 
+    public String applicationReleaseNo() {
+        return format(APP_RELEASE_NO, appVersion(), appBuildNo());
+    }
+
+    public String cdnURL() {
+        return environment.getProperty(CDN_URL, EMPTY);
+    }
 }

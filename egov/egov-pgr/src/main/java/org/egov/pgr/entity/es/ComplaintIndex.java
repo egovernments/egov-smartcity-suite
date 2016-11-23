@@ -127,7 +127,7 @@ public class ComplaintIndex {
     private double complaintDuration;
 
     @Field(type = FieldType.Boolean)
-    private boolean isClosed;
+    private boolean closed;
 
     @Field(type = FieldType.String, index = not_analyzed)
     private String complaintIsClosed;
@@ -546,12 +546,12 @@ public class ComplaintIndex {
         this.complaintDuration = complaintDuration;
     }
 
-    public boolean isClosed() {
-        return isClosed;
+    public boolean getClosed() {
+        return closed;
     }
 
-    public void setIsClosed(boolean isClosed) {
-        this.isClosed = isClosed;
+    public void setClosed(boolean closed) {
+        this.closed = closed;
     }
 
     public String getComplaintIsClosed() {

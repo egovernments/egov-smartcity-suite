@@ -39,7 +39,13 @@
  */
 package org.egov.commons;
 
-import org.egov.infra.workflow.entity.StateAware;
+import static org.egov.commons.CVoucherHeader.SEQ_VOUCHERHEADER;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -54,11 +60,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Set;
 
-import static org.egov.commons.CVoucherHeader.SEQ_VOUCHERHEADER;
+import org.egov.infra.workflow.entity.StateAware;
 
 @Entity
 @Table(name = "VOUCHERHEADER")
@@ -98,14 +101,45 @@ public class CVoucherHeader extends StateAware {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "voucherheaderid", targetEntity = Vouchermis.class)
     private Vouchermis vouchermis;
 
+    @Transient
+    private List<CGeneralLedger> accountDetails = new ArrayList<>(0);
+
+    @Transient
+    private List<CGeneralLedgerDetail> subLedgerDetails = new ArrayList<>(0);
+
+    @Transient
+    private String partyName;
+
+    @Transient
+    private String partyBillNumber;
+
+    @Transient
+    private Date partyBillDate;
+
+    @Transient
+    private String billNumber;
+
+    @Transient
+    private Date billDate;
+
+    @Transient
+    private Long approvalDepartment;
+
+    @Transient
+    private String approvalComent;
+
+    @Transient
+    private String voucherNumType;
+
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }
-
 
     /**
      * @return Returns the name.
@@ -268,12 +302,11 @@ public class CVoucherHeader extends StateAware {
         this.isConfirmed = isConfirmed;
     }
 
-
     public Long getRefvhId() {
         return refvhId;
     }
 
-    public void setRefvhId(Long refvhId) {
+    public void setRefvhId(final Long refvhId) {
         this.refvhId = refvhId;
     }
 
@@ -302,7 +335,8 @@ public class CVoucherHeader extends StateAware {
 
     @Override
     public String getStateDetails() {
-        return voucherNumber + "-" + getState().getComments();
+
+        return getState().getComments().isEmpty() ? voucherNumber : voucherNumber + "-" + getState().getComments();
     }
 
     public Set<CGeneralLedger> getGeneralledger() {
@@ -364,7 +398,7 @@ public class CVoucherHeader extends StateAware {
         return generalLedger;
     }
 
-    public void setGeneralLedger(Set<CGeneralLedger> generalLedger) {
+    public void setGeneralLedger(final Set<CGeneralLedger> generalLedger) {
         this.generalLedger = generalLedger;
     }
 
@@ -372,9 +406,88 @@ public class CVoucherHeader extends StateAware {
         return voucherNumberPrefix;
     }
 
-    public void setVoucherNumberPrefix(String voucherNumberPrefix) {
+    public void setVoucherNumberPrefix(final String voucherNumberPrefix) {
         this.voucherNumberPrefix = voucherNumberPrefix;
     }
 
+    public String getPartyName() {
+        return partyName;
+    }
+
+    public void setPartyName(final String partyName) {
+        this.partyName = partyName;
+    }
+
+    public String getPartyBillNumber() {
+        return partyBillNumber;
+    }
+
+    public void setPartyBillNumber(final String partyBillNumber) {
+        this.partyBillNumber = partyBillNumber;
+    }
+
+    public Date getPartyBillDate() {
+        return partyBillDate;
+    }
+
+    public void setPartyBillDate(final Date partyBillDate) {
+        this.partyBillDate = partyBillDate;
+    }
+
+    public String getBillNumber() {
+        return billNumber;
+    }
+
+    public void setBillNumber(final String billNumber) {
+        this.billNumber = billNumber;
+    }
+
+    public Date getBillDate() {
+        return billDate;
+    }
+
+    public void setBillDate(final Date billDate) {
+        this.billDate = billDate;
+    }
+
+    public Long getApprovalDepartment() {
+        return approvalDepartment;
+    }
+
+    public void setApprovalDepartment(final Long approvalDepartment) {
+        this.approvalDepartment = approvalDepartment;
+    }
+
+    public String getApprovalComent() {
+        return approvalComent;
+    }
+
+    public void setApprovalComent(final String approvalComent) {
+        this.approvalComent = approvalComent;
+    }
+
+    public List<CGeneralLedger> getAccountDetails() {
+        return accountDetails;
+    }
+
+    public void setAccountDetails(final List<CGeneralLedger> accountDetails) {
+        this.accountDetails = accountDetails;
+    }
+
+    public List<CGeneralLedgerDetail> getSubLedgerDetails() {
+        return subLedgerDetails;
+    }
+
+    public void setSubLedgerDetails(final List<CGeneralLedgerDetail> subLedgerDetails) {
+        this.subLedgerDetails = subLedgerDetails;
+    }
+
+    public String getVoucherNumType() {
+        return voucherNumType;
+    }
+
+    public void setVoucherNumType(final String voucherNumType) {
+        this.voucherNumType = voucherNumType;
+    }
 
 }

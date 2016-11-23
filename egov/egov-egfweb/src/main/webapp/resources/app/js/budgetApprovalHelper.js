@@ -62,6 +62,14 @@ function search() {
 					$('td:eq(0)', row).html(
 							'<input type="checkbox" name="selectCheckbox" id="checkBoxList"value="'
 									+ data.id + '"/>');
+					if(index == 0) {
+						var approvedBudgetCount = "Number of budgets already approved - " + data.approvedBudget;
+						var verifiedBudgetCount = "Number of budgets in progress/verified - " + data.verifiedBudget;
+				        var notInitiatedCount = "Number of budgets not yet initiated - " + data.notInitiated;
+						$('#approvedBudget').html(approvedBudgetCount);
+						$('#verifiedBudget').html(verifiedBudgetCount);
+						$('#notInitiated').html(notInitiatedCount);
+					}
 					return row;
 				},
 				aaSorting : [],
@@ -82,7 +90,11 @@ function search() {
 				}, {
 					"data" : "beAmount",
 					"sClass" : "text-left"
-				} ]
+				},
+				{
+					"data" : "count",
+					"sClass" : "text-left"
+				}]
 			});
 }
 

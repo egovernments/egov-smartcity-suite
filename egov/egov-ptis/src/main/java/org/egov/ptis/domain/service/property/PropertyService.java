@@ -159,6 +159,8 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 /**
  * Service class to perform services related to an Assessment
@@ -1992,14 +1994,14 @@ public class PropertyService {
             String source = getApplicationSource(property.getBasicProperty());
             if (applicationIndex==null) {
                 applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
-                        .withApplicationNumber(property.getApplicationNo()).withApplicationDate(new Date())
+                        .withApplicationNumber(property.getApplicationNo()).withApplicationDate(property.getCreatedDate()!=null?property.getCreatedDate():new Date())
                         .withApplicationType(applictionType).withApplicantName(owner.getName())
                         .withStatus(property.getState().getValue()).withUrl(format(APPLICATION_VIEW_URL, property.getApplicationNo(), applictionType))
                         .withApplicantAddress(property.getBasicProperty().getAddress().toString()).withOwnername(user.getUsername() + "::" + user.getName())
                         .withChannel(source).withMobileNumber(owner.getMobileNumber())
                         .withAadharNumber(owner.getAadhaarNumber()).withConsumerCode(property.getBasicProperty().getUpicNo())
-                        .withClosed(property.getState().getValue().equals(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO)
-                        .withApproved(property.getState().getValue().equals(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().equals(WF_STATE_REJECTED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
+                        .withClosed(property.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO)
+                        .withApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().contains(WF_STATE_REJECTED)||property.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
                         .build();
 
                 applicationIndexService.createApplicationIndex(applicationIndex);
@@ -2013,6 +2015,8 @@ public class PropertyService {
                     applicationIndex.setOwnerName(user.getUsername()+"::"+user.getName());
                     applicationIndex.setMobileNumber(owner.getMobileNumber());
                     applicationIndex.setAadharNumber(owner.getAadhaarNumber());
+                    applicationIndex.setClosed(property.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO);
+                    applicationIndex.setApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().contains(WF_STATE_REJECTED)||property.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS);
                 }
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
@@ -2025,19 +2029,21 @@ public class PropertyService {
             if (applicationIndex == null) {
                 User owner = property.getBasicProperty().getPrimaryOwner();
                 applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
-                        .withApplicationNumber(property.getObjectionNumber()).withApplicationDate(new Date())
+                        .withApplicationNumber(property.getObjectionNumber()).withApplicationDate(property.getCreatedDate()!=null?property.getCreatedDate():new Date())
                         .withApplicationType(applictionType).withApplicantName(owner.getName())
                         .withStatus(property.getState().getValue()).withUrl(format(APPLICATION_VIEW_URL, property.getObjectionNumber(), applictionType))
                         .withApplicantAddress(property.getBasicProperty().getAddress().toString()).withOwnername(user.getUsername() + "::" + user.getName())
                         .withChannel(source).withMobileNumber(owner.getMobileNumber())
                         .withAadharNumber(owner.getAadhaarNumber()).withConsumerCode(property.getBasicProperty().getUpicNo())
-                        .withClosed(property.getState().getValue().equals(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO)
-                        .withApproved(property.getState().getValue().equals(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().equals(WF_STATE_REJECTED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
+                        .withClosed(property.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO)
+                        .withApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().contains(WF_STATE_REJECTED)||property.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
                         .build();
                 applicationIndexService.createApplicationIndex(applicationIndex);
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
                 applicationIndex.setOwnerName(user.getUsername()+"::"+user.getName());
+                applicationIndex.setClosed(property.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO);
+                applicationIndex.setApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().contains(WF_STATE_REJECTED)||property.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS);
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
@@ -2049,14 +2055,14 @@ public class PropertyService {
             String source = getApplicationSource(property.getBasicProperty());
             if (applicationIndex == null) {
                 applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
-                        .withApplicationNumber(property.getApplicationNo()).withApplicationDate(new Date())
+                        .withApplicationNumber(property.getApplicationNo()).withApplicationDate(property.getCreatedDate()!=null?property.getCreatedDate():new Date())
                         .withApplicationType(applictionType).withApplicantName(owner.getName())
                         .withStatus(property.getState().getValue()).withUrl(format(APPLICATION_VIEW_URL, property.getApplicationNo(), applictionType))
                         .withApplicantAddress(property.getBasicProperty().getAddress().toString()).withOwnername(user.getUsername() + "::" + user.getName())
                         .withChannel(source).withMobileNumber(owner.getMobileNumber())
                         .withAadharNumber(owner.getAadhaarNumber()).withConsumerCode(property.getBasicProperty().getUpicNo())
-                        .withClosed(property.getState().getValue().equals(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO)
-                        .withApproved(property.getState().getValue().equals(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().equals(WF_STATE_REJECTED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
+                        .withClosed(property.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO)
+                        .withApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().contains(WF_STATE_REJECTED)||property.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
                         .build();
                 applicationIndexService.createApplicationIndex(applicationIndex);
             } else {
@@ -2065,6 +2071,8 @@ public class PropertyService {
                 applicationIndex.setOwnerName(user.getUsername()+"::"+user.getName());
                 applicationIndex.setMobileNumber(owner.getMobileNumber());
                 applicationIndex.setAadharNumber(owner.getAadhaarNumber());
+                applicationIndex.setClosed(property.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO);
+                applicationIndex.setApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().contains(WF_STATE_REJECTED)||property.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS);
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
@@ -2142,7 +2150,7 @@ public class PropertyService {
      */
     public String validationForBifurcation(final PropertyImpl propertyModel, final BasicProperty basicProperty,
             final String reason) {
-        final List<PropertyStatusValues> children = propertyStatusValuesDAO
+        final List<PropertyStatusValues> children = propertyStatusValuesDAO    
                 .getPropertyStatusValuesByReferenceBasicProperty(basicProperty);
         final Boolean parentBifurcated = isPropertyBifurcated(basicProperty);
         final Boolean childrenCreated = !children.isEmpty();
@@ -3088,7 +3096,62 @@ public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final 
         	propStatVal.setReferenceBasicProperty(referenceBasicProperty);
 
     }
-
+    /**
+     * Returns Water connection details of an assessment
+     *
+     * @param assessmentNo
+     * @param request
+     * @return
+     */
+    public List<Map<String,Object>> getWCDetails(final String assessmentNo, final HttpServletRequest request) {
+        final List<Map<String,Object>> waterConnDtls = new ArrayList<>();
+        String url= request.getRequestURL().toString();
+        String uri = request.getRequestURI();
+        String host = url.substring(0, url.indexOf(uri));
+        final String wtmsRestURL = String.format(PropertyTaxConstants.WTMS_CONNECT_DTLS_RESTURL,host,assessmentNo);
+        final String dtls = simpleRestClient.getRESTResponse(wtmsRestURL);
+        JSONArray jsonArr = null;
+        ArrayList<String> nameList = new ArrayList<>(); 
+        try {
+            jsonArr = new JSONArray(dtls);
+        } catch (JSONException e1) {
+            LOGGER.error("Error in converting string into json array " +e1);
+        }
+        
+        for (int i = 0; i < jsonArr.length(); i++)
+        {
+            
+            try {
+                Map<String,Object> newMap = new HashMap<>();
+                org.json.JSONObject jsonObj = jsonArr.getJSONObject(i);
+                JSONArray names=jsonObj.names();
+                if (names != null) { 
+                    for (int n=0;n<names.length();n++){ 
+                        nameList.add(names.get(n).toString());
+                    } 
+                 } 
+                for(String str : nameList){
+                 if(!("propertyID").equals(str)){
+                 newMap.put(str,jsonObj.get(str).toString().toLowerCase());
+                 }
+                }
+                waterConnDtls.add(newMap);
+            } catch (JSONException e) {
+                LOGGER.error("Error in converting json array into json object " +e);
+            }
+        }
+        return waterConnDtls;
+    }
+    
+    /**
+     * Method to get children created for property
+     * @param basicProperty
+     * @return List<PropertyStatusValues>
+     */
+    public List<PropertyStatusValues> findChildrenForProperty(final BasicProperty basicProperty) {
+        return propertyStatusValuesDAO.getPropertyStatusValuesByReferenceBasicProperty(basicProperty);
+    }
+    
     public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
         return excessCollAmtMap;
     }

@@ -41,15 +41,15 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
-					<c:if test="${mode == 'create'}">
-				<div class="panel-heading">
-					<div class="panel-title">Interim Order</div>
-				</div>
+				<c:if test="${mode == 'create'}">
+					<div class="panel-heading">
+						<div class="panel-title">Interim Order</div>
+					</div>
 				</c:if>
 				<c:if test="${mode == 'edit'}">
-				<div class="panel-heading">
-					<div class="panel-title">Edit Interim Order</div>
-				</div>
+					<div class="panel-heading">
+						<div class="panel-title">Edit Interim Order</div>
+					</div>
 				</c:if>
 				<div class="panel-body">
 					<div class="form-group">
@@ -67,7 +67,7 @@
 							</form:select>
 							<form:errors path="interimOrder" cssClass="error-msg" />
 						</div>
-						
+
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.iodate" /> :<span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
@@ -85,7 +85,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="mpNumber"
 								class="form-control text-left patternvalidation"
-								data-pattern="number" maxlength="50" required="required"/>
+								data-pattern="number" maxlength="50" required="required" />
 							<form:errors path="mpNumber" cssClass="error-msg" />
 						</div>
 
@@ -95,39 +95,94 @@
 						<div class="col-sm-3 add-margin">
 							<form:textarea path="notes"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="1024" required="required"/>
+								data-pattern="alphanumericwithspecialcharacterswithspace"
+								maxlength="1024" required="required" />
 							<form:errors path="notes" cssClass="error-msg" />
 						</div>
 					</div>
+
 					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><font
-							size="2"><spring:message code="lbl.mesg.document" />:</font></label>
+
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.actionitem" />:</span></label>
 						<div class="col-sm-3 add-margin">
-							<input type="file" id="file" name="lcInterimOrderDocuments[0].files"
-								class="file-ellipsis upload-file">
-							<form:errors path="lcInterimOrderDocuments[0].files"
-								cssClass="add-margin error-msg" />
+							<form:textarea path="actionItem"
+								class="form-control text-left patternvalidation"
+								data-pattern="alphanumericwithspecialcharacterswithspace"
+								maxlength="500" />
+							<form:errors path="actionItem" cssClass="error-msg" />
+						</div>
+
+
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.actiontaken" />:</label>
+						<div class="col-sm-3 add-margin">
+							<form:textarea path="actionTaken"
+								class="form-control text-left patternvalidation"
+								data-pattern="alphanumericwithspecialcharacterswithspace"
+								maxlength="500" />
+							<form:errors path="actionTaken" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group" id="staydetails"  style="display:none">
-					<label class="col-sm-3 control-label text-right"><spring:message
-							code="lbl.sendtostandingcounsel" /> :</label>
-					<div class="col-sm-3 add-margin">
-						<form:input path="sendtoStandingCounsel"
-							class="form-control datepicker" data-date-end-date="0d"
-							data-inputmask="'mask': 'd/m/y'" />
-						<form:errors path="sendtoStandingCounsel" cssClass="error-msg" />
+					<div class="form-group">
+
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.duedate" />:</span></label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="dueDate" class="form-control datepicker"
+								data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'" />
+							<form:errors path="dueDate" cssClass="error-msg" />
+						</div>
 					</div>
-				
-					<label class="col-sm-3 control-label text-right"><spring:message
-							code="lbl.petitionfiledon" />: </label>
-					<div class="col-sm-3 add-margin">
-						<form:input path="petitionFiledOn" class="form-control datepicker"
-							data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'" />
-						<form:errors path="petitionFiledOn" cssClass="error-msg" />
-					</div>
-					</div>
-					<div class="form-group" id="reportdetails1"  style="display:none">
+					<div class="form-group">
+						<label for="field-1" class="col-sm-3 control-label"><spring:message
+								code="lbl.officerresponsible" />:</label>
+
+						<div class="col-sm-3 add-margin">
+							<form:hidden path="employee" id="employee" value=""
+								cssClass="selectwk" />
+							<form:input id="employeeInput" path=""
+								class="form-control" type="text" placeholder="Employee Name" />
+							<input type="hidden" name="employeeName" id="employeeName"
+								value="${legalCaseInterimOrder.employee.name}" /> <input
+								type="hidden" name="department" id="department"
+								value="${legalCaseInterimOrder.employee.assignments[0].department.name}" />
+							<input type="hidden" name="designation" id="designation"
+								value="${legalCaseInterimOrder.employee.assignments[0].designation.name}" />
+							<form:errors path="employee" cssClass="add-margin error-msg" />
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label text-right"><font
+								size="2"><spring:message code="lbl.complianceorder" />:</font></label>
+							<div class="col-sm-3 add-margin">
+								<input type="file" id="file"
+									name="lcInterimOrderDocuments[0].files"
+									class="file-ellipsis upload-file">
+								<form:errors path="lcInterimOrderDocuments[0].files"
+									cssClass="add-margin error-msg" />
+							</div>
+						</div>
+						<div class="form-group" id="staydetails" style="display: none">
+							<label class="col-sm-3 control-label text-right"><spring:message
+									code="lbl.sendtostandingcounsel" /> :</label>
+							<div class="col-sm-3 add-margin">
+								<form:input path="sendtoStandingCounsel"
+									class="form-control datepicker" data-date-end-date="0d"
+									data-inputmask="'mask': 'd/m/y'" />
+								<form:errors path="sendtoStandingCounsel" cssClass="error-msg" />
+							</div>
+
+							<label class="col-sm-3 control-label text-right"><spring:message
+									code="lbl.petitionfiledon" />: </label>
+							<div class="col-sm-3 add-margin">
+								<form:input path="petitionFiledOn"
+									class="form-control datepicker" data-date-end-date="0d"
+									data-inputmask="'mask': 'd/m/y'" />
+								<form:errors path="petitionFiledOn" cssClass="error-msg" />
+							</div>
+						</div>
+						<!--  <div class="form-group" id="reportdetails1"  style="display:none">
 						<label class="col-sm-3 control-label text-right"><spring:message
 							code="lbl.reportfilingdue" /> :</label>
 					<div class="col-sm-3 add-margin">
@@ -143,8 +198,8 @@
 							data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'" />
 						<form:errors path="reportFromHod" cssClass="error-msg" />
 					</div>
-				</div>
-					<div class="form-group" id="reportdetails2"  style="display:none">
+				</div> 
+					 <div class="form-group" id="reportdetails2"  style="display:none">
 					<label class="col-sm-3 control-label text-right"><spring:message
 							code="lbl.reportsendtostandingcounsel" /> :</label>
 					<div class="col-sm-3 add-margin">
@@ -162,6 +217,8 @@
 							data-inputmask="'mask': 'd/m/y'" />
 						<form:errors path="reportFilingDate" cssClass="error-msg" />
 					</div>
-				</div>
-			
-				<input type="hidden" name="legalCaseInterimOrder" value="${legalCaseInterimOrder.id}" />
+				</div> 
+			 -->
+						<input type="hidden" name="legalCaseInterimOrder"
+							value="${legalCaseInterimOrder.id}" /> <input type="hidden"
+							name="mode" value="${mode}" />

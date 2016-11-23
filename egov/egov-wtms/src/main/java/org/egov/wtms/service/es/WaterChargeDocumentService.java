@@ -45,8 +45,11 @@ import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_NAME_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_REGION_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -60,6 +63,8 @@ import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.entity.es.WaterChargeDocument;
 import org.egov.wtms.repository.es.WaterChargeDocumentRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.stereotype.Service;
@@ -68,7 +73,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class WaterChargeDocumentService {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(WaterChargeDocumentService.class);
     private final WaterChargeDocumentRepository waterChargeIndexRepository;
 
     @Autowired
@@ -97,7 +102,18 @@ public class WaterChargeDocumentService {
         String consumername = "";
         String aadharNumber = "";
         String mobilNumber = "";
-
+        final SimpleDateFormat dateFormatter = new SimpleDateFormat(ES_DATE_FORMAT);
+        String createdDate =null;
+        
+        if(waterConnectionDetails.getLegacy() ){
+          if(waterConnectionDetails.getApplicationDate()!=null){
+            createdDate  = dateFormatter.format(waterConnectionDetails.getApplicationDate());
+        }
+        }
+        else
+        {
+            createdDate = dateFormatter.format(waterConnectionDetails.getExecutionDate());
+        }
         monthlyRate = monthlyRateFirld(waterConnectionDetails);
         if (ownerNameItr != null && ownerNameItr.hasNext())
             ownerNameItr.next().getMobileNumber();
@@ -115,13 +131,14 @@ public class WaterChargeDocumentService {
             }
         }
         final Map<String, Object> cityInfo = cityService.cityDataAsMap();
+        try {
         waterChargeDocument.setZone(assessmentDetails.getBoundaryDetails().getZoneName());
-        waterChargeDocument.setWard(assessmentDetails.getBoundaryDetails().getWardName());
+        waterChargeDocument.setRevenueWard(assessmentDetails.getBoundaryDetails().getWardName());
         waterChargeDocument.setAdminWard(assessmentDetails.getBoundaryDetails().getAdminWardName());
         waterChargeDocument.setDoorNo(assessmentDetails.getHouseNo());
         waterChargeDocument.setTotalDue(assessmentDetails.getPropertyDetails().getTaxDue().longValue());
         waterChargeDocument.setIsLegacy(waterConnectionDetails.getLegacy());
-        waterChargeDocument.setGrade(defaultString((String) cityInfo.get(CITY_CORP_GRADE_KEY)));
+        waterChargeDocument.setCityGrade(defaultString((String) cityInfo.get(CITY_CORP_GRADE_KEY)));
         waterChargeDocument.setRegionName(defaultString((String) cityInfo.get(CITY_REGION_NAME_KEY)));
         waterChargeDocument.setClosureType(waterConnectionDetails.getCloseConnectionType() != null
                 ? waterConnectionDetails.getCloseConnectionType() : "");
@@ -129,7 +146,7 @@ public class WaterChargeDocumentService {
                 ? assessmentDetails.getBoundaryDetails().getLocalityName() : "");
         waterChargeDocument.setPropertyId(waterConnectionDetails.getConnection().getPropertyIdentifier());
         waterChargeDocument.setApplicationCode(waterConnectionDetails.getApplicationType().getCode());
-        waterChargeDocument.setCreatedDate(waterConnectionDetails.getExecutionDate());
+        waterChargeDocument.setCreatedDate(dateFormatter.parse(createdDate));
         waterChargeDocument.setMobileNumber(mobilNumber);
         waterChargeDocument.setStatus(waterConnectionDetails.getConnectionStatus().name());
         waterChargeDocument.setDistrictName(defaultString((String) cityInfo.get(CITY_DIST_NAME_KEY)));
@@ -140,7 +157,9 @@ public class WaterChargeDocumentService {
         waterChargeDocument.setWaterSource(waterConnectionDetails.getWaterSource().getWaterSourceType());
         waterChargeDocument.setPropertyType(waterConnectionDetails.getPropertyType().getName());
         waterChargeDocument.setCategory(waterConnectionDetails.getCategory().getName());
-        waterChargeDocument.setUlbName(defaultString((String) cityInfo.get(CITY_NAME_KEY)));
+        waterChargeDocument.setCityName(defaultString((String) cityInfo.get(CITY_NAME_KEY)));
+        waterChargeDocument.setCityCode(defaultString((String) cityInfo.get(cityService.getCityCode())));
+
         waterChargeDocument.setSumpCapacity(waterConnectionDetails.getSumpCapacity());
         waterChargeDocument.setPipeSize(waterConnectionDetails.getPipeSize().getCode());
         waterChargeDocument.setNumberOfPerson(waterConnectionDetails.getNumberOfPerson() != null
@@ -162,6 +181,9 @@ public class WaterChargeDocumentService {
         waterChargeDocument.setAadhaarNumber(aadharNumber);
         waterChargeDocument.setWardlocation(commonWardlocationField(assessmentDetails));
         waterChargeDocument.setPropertylocation(commonPropertylocationField(assessmentDetails));
+        } catch (ParseException exp) {
+            LOGGER.error("Exception parsing Date " + exp.getMessage());
+        }
         createWaterChargeDocument(waterChargeDocument);
         return waterChargeDocument;
 
@@ -179,13 +201,19 @@ public class WaterChargeDocumentService {
         return monthlyRate;
     }
 
+    // need to add TotalDemand and TotalCollection for both update and create
+    // watertax Index
     public WaterChargeDocument createWaterChargeIndex(final WaterConnectionDetails waterConnectionDetails,
             final AssessmentDetails assessmentDetails, final BigDecimal amountTodisplayInIndex) {
-        WaterChargeDocument waterChargeDocument=null;
-        if(waterConnectionDetails.getConnection()!=null && waterConnectionDetails.getConnection().getConsumerCode()!=null){
-         waterChargeDocument = waterChargeIndexRepository
-                .findByConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());
-        }
+        WaterChargeDocument waterChargeDocument = null;
+        final Map<String, Object> cityInfo = cityService.cityDataAsMap();
+        final SimpleDateFormat dateFormatter = new SimpleDateFormat(ES_DATE_FORMAT);
+
+        if (waterConnectionDetails.getConnection() != null
+                && waterConnectionDetails.getConnection().getConsumerCode() != null)
+            waterChargeDocument = waterChargeIndexRepository.findByConsumerCodeAndCityNameOrUlbName(
+                    waterConnectionDetails.getConnection().getConsumerCode(),defaultString((String) cityInfo.get(CITY_NAME_KEY)),
+                    defaultString((String) cityInfo.get(CITY_NAME_KEY)));
         if (waterChargeDocument == null) {
             Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
             Long monthlyRate = null;
@@ -209,53 +237,60 @@ public class WaterChargeDocumentService {
                 }
             }
 
-            final Map<String, Object> cityInfo = cityService.cityDataAsMap();
-            waterChargeDocument = WaterChargeDocument.builder()
-                    .withZone(assessmentDetails.getBoundaryDetails().getZoneName())
-                    .withWard(assessmentDetails.getBoundaryDetails().getWardName())
-                    .withAdminward(assessmentDetails.getBoundaryDetails().getAdminWardName())
-                    .withDoorNo(assessmentDetails.getHouseNo())
-                    .withTotaldue(assessmentDetails.getPropertyDetails().getTaxDue().longValue())
-                    .withIslegacy(waterConnectionDetails.getLegacy())
-                    .withGrade(defaultString((String) cityInfo.get(CITY_CORP_GRADE_KEY)))
-                    .withRegionname(defaultString((String) cityInfo.get(CITY_REGION_NAME_KEY)))
-                    .withClosureType(waterConnectionDetails.getCloseConnectionType() != null
-                            ? waterConnectionDetails.getCloseConnectionType() : "")
-                    .withLocality(assessmentDetails.getBoundaryDetails().getLocalityName() != null
-                            ? assessmentDetails.getBoundaryDetails().getLocalityName() : "")
-                    .withPropertyid(waterConnectionDetails.getConnection().getPropertyIdentifier())
-                    .withApplicationcode(waterConnectionDetails.getApplicationType().getCode())
-                    .withCreatedDate(waterConnectionDetails.getExecutionDate()).withMobileNumber(mobilNumber)
-                    .withStatus(waterConnectionDetails.getConnectionStatus().name())
-                    .withDistrictName(defaultString((String) cityInfo.get(CITY_DIST_NAME_KEY)))
-                    .withConnectiontype(waterConnectionDetails.getConnectionType().name())
-                    .withWaterTaxDue(amountTodisplayInIndex.longValue())
-                    .withUsage(waterConnectionDetails.getUsageType().getCode())
-                    .withConsumerCode(waterConnectionDetails.getConnection().getConsumerCode())
-                    .withWatersource(waterConnectionDetails.getWaterSource().getWaterSourceType())
-                    .withPropertytype(waterConnectionDetails.getPropertyType().getName())
-                    .withCategory(waterConnectionDetails.getCategory().getName())
-                    .withUlbname(defaultString((String) cityInfo.get(CITY_NAME_KEY)))
-                    .withSumpcapacity(waterConnectionDetails.getSumpCapacity())
-                    .withPipesize(waterConnectionDetails.getPipeSize().getCode())
-                    .withNumberOfPerson(waterConnectionDetails.getNumberOfPerson() != null
-                            ? Long.valueOf(waterConnectionDetails.getNumberOfPerson()) : 0l)
-                    .withCurrentDue(
-                            waterConnectionDetailsService.getTotalAmountTillCurrentFinYear(waterConnectionDetails)
-                                    .subtract(waterConnectionDetailsService
-                                            .getTotalAmountTillPreviousFinYear(waterConnectionDetails))
-                                    .longValue())
-                    .withArrearsDue(waterConnectionDetailsService
-                            .getTotalAmountTillPreviousFinYear(waterConnectionDetails).longValue())
-                    .withCurrentDemand(
-                            waterConnectionDetailsService.getTotalDemandTillCurrentFinYear(waterConnectionDetails)
-                                    .subtract(waterConnectionDetailsService.getArrearsDemand(waterConnectionDetails))
-                                    .longValue())
-                    .withArrearsDemand(
-                            waterConnectionDetailsService.getArrearsDemand(waterConnectionDetails).longValue())
-                    .withMonthlyRate(monthlyRate).withConsumername(consumername).withAadhaarnumber(aadharNumber)
-                    .withWardlocation(commonWardlocationField(assessmentDetails))
-                    .withPropertylocation(commonPropertylocationField(assessmentDetails)).build();
+            final String createdDateStr = dateFormatter.format(waterConnectionDetails.getExecutionDate());
+
+            try {
+                waterChargeDocument = WaterChargeDocument.builder()
+                        .withZone(assessmentDetails.getBoundaryDetails().getZoneName())
+                        .withRevenueWard(assessmentDetails.getBoundaryDetails().getWardName())
+                        .withAdminward(assessmentDetails.getBoundaryDetails().getAdminWardName())
+                        .withDoorNo(assessmentDetails.getHouseNo())
+                        .withTotaldue(assessmentDetails.getPropertyDetails().getTaxDue().longValue())
+                        .withIslegacy(waterConnectionDetails.getLegacy())
+                        .withCityGrade(defaultString((String) cityInfo.get(CITY_CORP_GRADE_KEY)))
+                        .withRegionname(defaultString((String) cityInfo.get(CITY_REGION_NAME_KEY)))
+                        .withClosureType(waterConnectionDetails.getCloseConnectionType() != null
+                                ? waterConnectionDetails.getCloseConnectionType() : "")
+                        .withLocality(assessmentDetails.getBoundaryDetails().getLocalityName() != null
+                                ? assessmentDetails.getBoundaryDetails().getLocalityName() : "")
+                        .withPropertyid(waterConnectionDetails.getConnection().getPropertyIdentifier())
+                        .withApplicationcode(waterConnectionDetails.getApplicationType().getCode())
+                        .withCreatedDate(dateFormatter.parse(createdDateStr)).withMobileNumber(mobilNumber)
+                        .withStatus(waterConnectionDetails.getConnectionStatus().name())
+                        .withDistrictName(defaultString((String) cityInfo.get(CITY_DIST_NAME_KEY)))
+                        .withConnectiontype(waterConnectionDetails.getConnectionType().name())
+                        .withWaterTaxDue(amountTodisplayInIndex.longValue())
+                        .withUsage(waterConnectionDetails.getUsageType().getCode())
+                        .withConsumerCode(waterConnectionDetails.getConnection().getConsumerCode())
+                        .withWatersource(waterConnectionDetails.getWaterSource().getWaterSourceType())
+                        .withPropertytype(waterConnectionDetails.getPropertyType().getName())
+                        .withCategory(waterConnectionDetails.getCategory().getName())
+                        .withCityName(defaultString((String) cityInfo.get(CITY_NAME_KEY)))
+                        .withCityCode(defaultString((String) cityInfo.get(cityService.getCityCode())))
+                        .withSumpcapacity(waterConnectionDetails.getSumpCapacity())
+                        .withPipesize(waterConnectionDetails.getPipeSize().getCode())
+                        .withNumberOfPerson(waterConnectionDetails.getNumberOfPerson() != null
+                                ? Long.valueOf(waterConnectionDetails.getNumberOfPerson()) : 0l)
+                        .withCurrentDue(
+                                waterConnectionDetailsService.getTotalAmountTillCurrentFinYear(waterConnectionDetails)
+                                        .subtract(waterConnectionDetailsService
+                                                .getTotalAmountTillPreviousFinYear(waterConnectionDetails))
+                                        .longValue())
+                        .withArrearsDue(waterConnectionDetailsService
+                                .getTotalAmountTillPreviousFinYear(waterConnectionDetails).longValue())
+                        .withCurrentDemand(
+                                waterConnectionDetailsService.getTotalDemandTillCurrentFinYear(waterConnectionDetails)
+                                        .subtract(
+                                                waterConnectionDetailsService.getArrearsDemand(waterConnectionDetails))
+                                        .longValue())
+                        .withArrearsDemand(
+                                waterConnectionDetailsService.getArrearsDemand(waterConnectionDetails).longValue())
+                        .withMonthlyRate(monthlyRate).withConsumername(consumername).withAadhaarnumber(aadharNumber)
+                        .withWardlocation(commonWardlocationField(assessmentDetails))
+                        .withPropertylocation(commonPropertylocationField(assessmentDetails)).build();
+            } catch (final ParseException exp) {
+                LOGGER.error("Exception parsing Date " + exp.getMessage());
+            }
             createWaterChargeDocument(waterChargeDocument);
         } else
             updateWaterChargeIndex(waterChargeDocument, waterConnectionDetails, assessmentDetails,

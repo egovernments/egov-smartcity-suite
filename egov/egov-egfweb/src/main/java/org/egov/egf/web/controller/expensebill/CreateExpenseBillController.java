@@ -40,26 +40,16 @@
 package org.egov.egf.web.controller.expensebill;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.egf.budget.model.BudgetControlType;
 import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.egf.expensebill.service.ExpenseBillService;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBillregister;
 import org.egov.utils.FinancialConstants;
@@ -83,6 +73,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping(value = "/expensebill")
 public class CreateExpenseBillController extends BaseBillController {
 
+    private static final String DESIGNATION = "designation";
+
+    private static final String NET_PAYABLE_ID = "netPayableId";
+
+    private static final String EXPENSEBILL_FORM = "expensebill-form";
+
+    private static final String STATE_TYPE = "stateType";
+
+    private static final String APPROVAL_POSITION = "approvalPosition";
+
+    private static final String APPROVAL_DESIGNATION = "approvalDesignation";
+
     public CreateExpenseBillController(final AppConfigValueService appConfigValuesService) {
         super(appConfigValuesService);
     }
@@ -93,10 +95,6 @@ public class CreateExpenseBillController extends BaseBillController {
 
     @Autowired
     private ExpenseBillService expenseBillService;
-
-    @Autowired
-    @Qualifier("chartOfAccountsService")
-    private ChartOfAccountsService chartOfAccountsService;
 
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
@@ -113,26 +111,11 @@ public class CreateExpenseBillController extends BaseBillController {
     public String showNewForm(@ModelAttribute("egBillregister") final EgBillregister egBillregister, final Model model) {
 
         setDropDownValues(model);
-        model.addAttribute("stateType", egBillregister.getClass().getSimpleName());
+        model.addAttribute(STATE_TYPE, egBillregister.getClass().getSimpleName());
         prepareWorkflow(model, egBillregister, new WorkflowContainer());
-        final List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService
-                .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
-                        FinancialConstants.KEY_DATAENTRYCUTOFFDATE);
-
-        if (!cutOffDateconfigValue.isEmpty()) {
-            final DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-            List<String> validActions = Collections.emptyList();
-            validActions = Arrays.asList(FinancialConstants.BUTTONFORWARD, FinancialConstants.CREATEANDAPPROVE);
-            model.addAttribute("validActionList", validActions);
-            try {
-                model.addAttribute("cutOffDate",
-                        DateUtils.getDefaultFormattedDate(df.parse(cutOffDateconfigValue.get(0).getValue())));
-            } catch (final ParseException e) {
-
-            }
-        }
+        prepareValidActionListByCutOffDate(model);
         egBillregister.setBilldate(new Date());
-        return "expensebill-form";
+        return EXPENSEBILL_FORM;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
@@ -145,24 +128,24 @@ public class CreateExpenseBillController extends BaseBillController {
 
         if (resultBinder.hasErrors()) {
             setDropDownValues(model);
-            egBillregister.setBilldate(new Date());
-            model.addAttribute("stateType", egBillregister.getClass().getSimpleName());
-            model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
-            model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
+            model.addAttribute(STATE_TYPE, egBillregister.getClass().getSimpleName());
             prepareWorkflow(model, egBillregister, new WorkflowContainer());
-            model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
-            model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
-            model.addAttribute("designation", request.getParameter("designation"));
+            model.addAttribute(NET_PAYABLE_ID, request.getParameter(NET_PAYABLE_ID));
+            model.addAttribute(APPROVAL_DESIGNATION, request.getParameter(APPROVAL_DESIGNATION));
+            model.addAttribute(APPROVAL_POSITION, request.getParameter(APPROVAL_POSITION));
+            model.addAttribute(DESIGNATION, request.getParameter(DESIGNATION));
             egBillregister.getBillPayeedetails().clear();
             prepareBillDetailsForView(egBillregister);
-            return "expensebill-form";
+            prepareValidActionListByCutOffDate(model);
+
+            return EXPENSEBILL_FORM;
         } else {
             Long approvalPosition = 0l;
             String approvalComment = "";
             if (request.getParameter("approvalComment") != null)
                 approvalComment = request.getParameter("approvalComent");
-            if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-                approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+            if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
+                approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
             EgBillregister savedEgBillregister;
 
             try {
@@ -170,14 +153,21 @@ public class CreateExpenseBillController extends BaseBillController {
                         null,
                         workFlowAction);
             } catch (final ValidationException e) {
-                // TODO: Used ApplicationRuntimeException for time being since
-                // there is issue in session after
-                // checkBudgetAndGenerateBANumber API call. Needs to replace
-                // with errors.reject
-                throw new ApplicationRuntimeException("error.expense.bill.budgetcheck.insufficient.amount");
+                setDropDownValues(model);
+                model.addAttribute(STATE_TYPE, egBillregister.getClass().getSimpleName());
+                prepareWorkflow(model, egBillregister, new WorkflowContainer());
+                model.addAttribute(NET_PAYABLE_ID, request.getParameter(NET_PAYABLE_ID));
+                model.addAttribute(APPROVAL_DESIGNATION, request.getParameter(APPROVAL_DESIGNATION));
+                model.addAttribute(APPROVAL_POSITION, request.getParameter(APPROVAL_POSITION));
+                model.addAttribute(DESIGNATION, request.getParameter(DESIGNATION));
+                egBillregister.getBillPayeedetails().clear();
+                prepareBillDetailsForView(egBillregister);
+                prepareValidActionListByCutOffDate(model);
+                resultBinder.reject("", e.getErrors().get(0).getMessage());
+                return EXPENSEBILL_FORM;
             }
 
-            final String approverDetails = financialUtils.getApproverDetails(savedEgBillregister.getStatus(),
+            final String approverDetails = financialUtils.getApproverDetails(workFlowAction,
                     savedEgBillregister.getState(), savedEgBillregister.getId(), approvalPosition);
 
             return "redirect:/expensebill/success?approverDetails= " + approverDetails + "&billNumber="
@@ -187,7 +177,7 @@ public class CreateExpenseBillController extends BaseBillController {
     }
 
     @RequestMapping(value = "/success", method = RequestMethod.GET)
-    public String showContractorBillSuccessPage(@RequestParam("billNumber") final String billNumber, final Model model,
+    public String showSuccessPage(@RequestParam("billNumber") final String billNumber, final Model model,
             final HttpServletRequest request) {
         final String[] keyNameArray = request.getParameter("approverDetails").split(",");
         Long id = 0L;

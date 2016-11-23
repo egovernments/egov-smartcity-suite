@@ -47,11 +47,15 @@ import java.math.BigDecimal;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.service.CFinancialYearService;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
@@ -65,6 +69,7 @@ import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
+import org.egov.tl.entity.dto.SearchForm;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.hibernate.Criteria;
@@ -87,6 +92,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Autowired
     private ModuleService moduleService;
+
+    @Autowired
+    private CFinancialYearService cFinancialYearService;
 
     @Override
     protected NatureOfBusiness getNatureOfBusiness() {
@@ -192,14 +200,14 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     public ReportOutput prepareReportInputDataForDig(final License license, final String districtName,
-                                                     final String cityMunicipalityName) {
+            final String cityMunicipalityName) {
         return reportService.createReport(
                 new ReportRequest("licenseCertificate", license, getReportParamsForCertificate(license, districtName,
                         cityMunicipalityName)));
     }
 
     private Map<String, Object> getReportParamsForCertificate(final License license, final String districtName,
-                                                              final String cityMunicipalityName) {
+            final String cityMunicipalityName) {
         final Map<String, Object> reportParams = new HashMap<>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final Format formatterYear = new SimpleDateFormat("YYYY");
@@ -216,7 +224,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams
                 .put("appType", license.getLicenseAppType() != null
                         ? "New".equals(license.getLicenseAppType().getName())
-                        ? "New Trade" : "Renewal"
+                                ? "New Trade" : "Renewal"
                         : "New");
         if (ApplicationThreadLocals.getMunicipalityName().contains("Corporation"))
             reportParams.put("carporationulbType", Boolean.TRUE);
@@ -258,41 +266,54 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return licenseList;
     }
 
-    public List<TradeLicense> searchTradeLicense(final String applicationNumber, final String licenseNumber,
-            final String oldLicenseNumber, final Long categoryId, final Long subCategoryId, final String tradeTitle,
-            final String tradeOwnerName, final String propertyAssessmentNo, final String mobileNo, final Boolean isCancelled,
-            final Long statusId) {
+    public List<SearchForm> searchTradeLicense(final SearchForm searchForm) {
         final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")
                 .createAlias("tradeName", "subcat").createAlias("status", "licstatus");
 
-        if (StringUtils.isNotBlank(applicationNumber))
-            searchCriteria.add(Restrictions.eq("applicationNumber", applicationNumber).ignoreCase());
-        if (StringUtils.isNotBlank(licenseNumber))
-            searchCriteria.add(Restrictions.eq("licenseNumber", licenseNumber).ignoreCase());
-        if (StringUtils.isNotBlank(oldLicenseNumber))
-            searchCriteria.add(Restrictions.eq("oldLicenseNumber", oldLicenseNumber).ignoreCase());
-        if (categoryId != null && categoryId != -1)
-            searchCriteria.add(Restrictions.eq("cat.id", categoryId));
-        if (subCategoryId != null && subCategoryId != -1)
-            searchCriteria.add(Restrictions.eq("subcat.id", subCategoryId));
-        if (tradeTitle != null && !tradeTitle.isEmpty())
-            searchCriteria.add(Restrictions.eq("nameOfEstablishment", tradeTitle).ignoreCase());
-        if (StringUtils.isNotBlank(tradeOwnerName))
-            searchCriteria.add(Restrictions.eq("licc.applicantName", tradeOwnerName).ignoreCase());
-        if (StringUtils.isNotBlank(propertyAssessmentNo))
-            searchCriteria.add(Restrictions.eq("assessmentNo", propertyAssessmentNo).ignoreCase());
-        if (StringUtils.isNotBlank(mobileNo))
-            searchCriteria.add(Restrictions.eq("licc.mobilePhoneNumber", mobileNo));
-        if (statusId != null && statusId != -1)
-            searchCriteria.add(Restrictions.eq("status.id", statusId));
-        if (isCancelled != null && isCancelled.equals(Boolean.TRUE))
+        if (StringUtils.isNotBlank(searchForm.getApplicationNumber()))
+            searchCriteria.add(Restrictions.eq("applicationNumber", searchForm.getApplicationNumber()).ignoreCase());
+        if (StringUtils.isNotBlank(searchForm.getLicenseNumber()))
+            searchCriteria.add(Restrictions.eq("licenseNumber", searchForm.getLicenseNumber()).ignoreCase());
+        if (StringUtils.isNotBlank(searchForm.getOldLicenseNumber()))
+            searchCriteria.add(Restrictions.eq("oldLicenseNumber", searchForm.getOldLicenseNumber()).ignoreCase());
+        if (searchForm.getCategoryId() != null)
+            searchCriteria.add(Restrictions.eq("cat.id", searchForm.getCategoryId()));
+        if (searchForm.getSubCategoryId() != null)
+            searchCriteria.add(Restrictions.eq("subcat.id", searchForm.getSubCategoryId()));
+        if (searchForm.getTradeTitle() != null && !searchForm.getTradeTitle().isEmpty())
+            searchCriteria.add(Restrictions.eq("nameOfEstablishment", searchForm.getTradeTitle()).ignoreCase());
+        if (StringUtils.isNotBlank(searchForm.getTradeOwnerName()))
+            searchCriteria.add(Restrictions.eq("licc.applicantName", searchForm.getTradeOwnerName()).ignoreCase());
+        if (StringUtils.isNotBlank(searchForm.getPropertyAssessmentNo()))
+            searchCriteria.add(Restrictions.eq("assessmentNo", searchForm.getPropertyAssessmentNo()).ignoreCase());
+        if (StringUtils.isNotBlank(searchForm.getMobileNo()))
+            searchCriteria.add(Restrictions.eq("licc.mobilePhoneNumber", searchForm.getMobileNo()));
+        if (searchForm.getStatusId() != null)
+            searchCriteria.add(Restrictions.eq("status.id", searchForm.getStatusId()));
+        if (searchForm.getIsCancelled() != null && searchForm.getIsCancelled().equals(Boolean.TRUE))
             searchCriteria.add(Restrictions.eq("licstatus.statusCode", StringUtils.upperCase("CAN")));
         else
             searchCriteria.add(Restrictions.ne("licstatus.statusCode", StringUtils.upperCase("CAN")));
         searchCriteria.add(Restrictions.isNotNull("applicationNumber"));
         searchCriteria.addOrder(Order.asc("id"));
-        return searchCriteria.list();
-    }
+        final String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
+        final List<SearchForm> finalList = new LinkedList<>();
 
+        for (final License license : (List<License>) searchCriteria.list()) {
+            String ownerName;
+            if (license.getState() != null) {
+                final List<Assignment> assignmentList = assignmentService
+                        .getAssignmentsForPosition(license.getState().getOwnerPosition().getId(), new Date());
+                ownerName = !assignmentList.isEmpty() ? assignmentList.get(0).getEmployee().getName()
+                        : license.getLastModifiedBy().getName();
+            } else
+                ownerName = license.getLastModifiedBy().getName();
+
+            final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(license.getDateOfExpiry());
+            final String expiryYear = financialYear != null ? financialYear.getFinYearRange() : "";
+            finalList.add(new SearchForm(license, currentUserRoles, ownerName, expiryYear));
+        }
+        return finalList;
+    }
 }

@@ -143,6 +143,17 @@
 		<div class="col-xs-3 add-margin"><spring:message code="lbl.connectiondate"/></div>
 		
 		<div class="col-xs-3 add-margin view-content"><fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.executionDate}" /></div>
+		
+		<div class="col-xs-3 add-margin"><spring:message code="lbl.oldconsumerno"/></div>
+		
+		<div class="col-xs-3 add-margin view-content">
+			<c:choose>
+				<c:when test="${not empty waterConnectionDetails.connection.oldConsumerNumber}">
+					<c:out value="${waterConnectionDetails.connection.oldConsumerNumber}" />
+				</c:when>
+				<c:otherwise><spring:message code="lb.NA.code"/></c:otherwise>
+			</c:choose>
+		</div>
 		</div>
 	</div>
 

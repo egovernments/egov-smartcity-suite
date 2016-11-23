@@ -60,21 +60,21 @@ public class VouchernumberGeneratorImpl implements VouchernumberGenerator {
     private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 
     /**
-     * 
+     *
      * Format fundcode/vouchertype/seqnumber/month/financialyear but sequence is running number for a year
      *
      */
-    public String getNextNumber(CVoucherHeader vh)
-    {
-        String voucherNumber = "";
+    @Override
+    public String getNextNumber(final CVoucherHeader vh) {
+        String voucherNumber;
 
-        String sequenceName = "";
+        String sequenceName;
 
         final CFiscalPeriod fiscalPeriod = fiscalPeriodHibernateDAO.getFiscalPeriodByDate(vh.getVoucherDate());
         if (fiscalPeriod == null)
             throw new ApplicationRuntimeException("Fiscal period is not defined for the voucher date");
         sequenceName = "sq_" + vh.getFundId().getIdentifier() + "_" + vh.getVoucherNumberPrefix() + "_" + fiscalPeriod.getName();
-        Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
 
         voucherNumber = String.format("%s/%s/%08d/%02d/%s", vh.getFundId().getIdentifier(), vh.getVoucherNumberPrefix(),
                 nextSequence, vh.getVoucherDate().getMonth() + 1, fiscalPeriod.getcFinancialYear().getFinYearRange());
