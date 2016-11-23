@@ -53,6 +53,8 @@ public class WorksMilestoneIndexResponse {
 
     private String ulbname;
 
+    private String ulbcode;
+
     private String districtname;
 
     private String ismilestonecreated;
@@ -955,6 +957,14 @@ public class WorksMilestoneIndexResponse {
 
     public void setTypeofwork(final String typeofwork) {
         this.typeofwork = typeofwork;
+    }
+
+    public String getUlbcode() {
+        return ulbcode;
+    }
+
+    public void setUlbcode(final String ulbcode) {
+        this.ulbcode = ulbcode;
     }
 
     public Double getFinancialprogress() {

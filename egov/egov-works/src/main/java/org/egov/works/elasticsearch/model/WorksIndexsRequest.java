@@ -62,6 +62,8 @@ public class WorksIndexsRequest {
 
     private Integer lineestimatedetailid;
 
+    private List<Integer> lineestimatedetailids;
+
     public String getTypeofwork() {
         return typeofwork;
     }
@@ -116,6 +118,14 @@ public class WorksIndexsRequest {
 
     public void setLineestimatedetailid(final Integer lineestimatedetailid) {
         this.lineestimatedetailid = lineestimatedetailid;
+    }
+
+    public List<Integer> getLineestimatedetailids() {
+        return lineestimatedetailids;
+    }
+
+    public void setLineestimatedetailids(final List<Integer> lineestimatedetailids) {
+        this.lineestimatedetailids = lineestimatedetailids;
     }
 
 }

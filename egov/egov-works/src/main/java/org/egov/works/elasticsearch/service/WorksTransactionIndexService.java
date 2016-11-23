@@ -49,8 +49,10 @@ import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_ULBNAME_COLUMN_
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.works.elasticsearch.model.WorksIndexsRequest;
@@ -122,6 +124,7 @@ public class WorksTransactionIndexService {
             wmIndexResponse.setLineestimatedetailid(response.getLineestimatedetailid());
             wmIndexResponse.setTypeofwork(response.getLineestimatetypeofworkname());
             wmIndexResponse.setUlbname(response.getUlbname());
+            wmIndexResponse.setUlbcode(response.getUlbcode());
             wmIndexResponse.setDistrictname(response.getDistname());
             wmIndexResponse.setFund(response.getLineestimatefund());
             wmIndexResponse.setScheme(response.getLineestimatescheme());
@@ -137,7 +140,10 @@ public class WorksTransactionIndexService {
             wmIndexResponse.setContractperiod(response.getLoacontractperiod());
             wmIndexResponse.setLatestupdatedtimestamp(
                     new SimpleDateFormat(DFT_DATE_FORMAT, Locale.getDefault()).format(response.getCreateddate()));
-
+            wmIndexResponse.setTotalestimatedcostinlakhs(response.getEstimatevalue());
+            wmIndexResponse.setTotalworkordervalueinlakhs(response.getLoaamount());
+            wmIndexResponse.setTotalbillamountinlakhs(response.getLoatotalbillamt());
+            wmIndexResponse.setTotalpaidamountinlakhs(response.getLoatotalpaidamt());
             resultList.add(wmIndexResponse);
         }
 
@@ -149,9 +155,8 @@ public class WorksTransactionIndexService {
         return resultList;
     }
 
-    public void getAggregationResults(final WorksIndexsRequest worksIndexsRequest,
-            final WorksMilestoneIndexResponse wfmileresponse,
-            final String orderingAggregationName) {
+    public List<WorksMilestoneIndexResponse> getAggregationResults(final WorksIndexsRequest worksIndexsRequest,
+            List<WorksMilestoneIndexResponse> resultList, final String orderingAggregationName) {
 
         Long startTime;
         Long timeTaken;
@@ -162,8 +167,9 @@ public class WorksTransactionIndexService {
         List<Terms.Bucket> resultBuckets;
         StringTerms saggr;
         LongTerms laggr;
-
-        /* orderingAggregationName is the aggregation name by which we have to order the results */
+        final Map<Integer, WorksMilestoneIndexResponse> resultMap = new HashMap<>();
+        for (final WorksMilestoneIndexResponse response : resultList)
+            resultMap.put(response.getLineestimatedetailid(), response);
 
         startTime = System.currentTimeMillis();
         boolQuery = prepareWhereClause(worksIndexsRequest);
@@ -189,26 +195,30 @@ public class WorksTransactionIndexService {
         }
 
         for (final Terms.Bucket entry : resultBuckets) {
-            wfmileresponse.setReporttype(worksIndexsRequest.getReportType());
             final String fieldName = String.valueOf(entry.getKey());
-            wfmileresponse.setName(fieldName);
+            resultMap.get(Integer.valueOf(fieldName)).setReporttype(worksIndexsRequest.getReportType());
+            resultMap.get(Integer.valueOf(fieldName)).setName(fieldName);
             final Sum totalEstimatedCostInLakhsAggregation = entry.getAggregations().get("totalestimatedcostinlakhs");
             final Sum totalWorkorderValueInLakhsAggregation = entry.getAggregations().get("totalworkordervalueinlakhs");
             final Sum totalBillAmountInLakhsAggregation = entry.getAggregations().get("totalbillamountinlakhs");
             final Sum totalPaidAmountInLakhsAggregation = entry.getAggregations().get("totalpaidamountinlakhs");
-            wfmileresponse.setTotalnoofworks(entry.getDocCount());
-            wfmileresponse.setTotalestimatedcostinlakhs(totalEstimatedCostInLakhsAggregation.getValue());
-            wfmileresponse.setTotalworkordervalueinlakhs(totalWorkorderValueInLakhsAggregation.getValue());
-            wfmileresponse.setTotalbillamountinlakhs(totalBillAmountInLakhsAggregation.getValue());
-            wfmileresponse.setTotalpaidamountinlakhs(totalPaidAmountInLakhsAggregation.getValue());
+            resultMap.get(Integer.valueOf(fieldName)).setTotalnoofworks(entry.getDocCount());
+            resultMap.get(Integer.valueOf(fieldName))
+                    .setTotalestimatedcostinlakhs(totalEstimatedCostInLakhsAggregation.getValue());
+            resultMap.get(Integer.valueOf(fieldName))
+                    .setTotalworkordervalueinlakhs(totalWorkorderValueInLakhsAggregation.getValue());
+            resultMap.get(Integer.valueOf(fieldName)).setTotalbillamountinlakhs(totalBillAmountInLakhsAggregation.getValue());
+            resultMap.get(Integer.valueOf(fieldName)).setTotalpaidamountinlakhs(totalPaidAmountInLakhsAggregation.getValue());
         }
-
+        resultList = new ArrayList<>();
+        for (final Integer key : resultMap.keySet())
+            resultList.add(resultMap.get(key));
         timeTaken = System.currentTimeMillis() - startTime;
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken for setting values in getAggregationResults() is : " + timeTaken
                     + " (millisecs) ");
-
+        return resultList;
     }
 
     private BoolQueryBuilder prepareWhereClause(final WorksIndexsRequest worksIndexsRequest) {
@@ -231,6 +241,11 @@ public class WorksTransactionIndexService {
             boolQuery.filter(
                     QueryBuilders.matchQuery(WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME,
                             worksIndexsRequest.getLineestimatedetailid()));
+
+        if (worksIndexsRequest.getLineestimatedetailids() != null && !worksIndexsRequest.getLineestimatedetailids().isEmpty())
+            boolQuery.filter(
+                    QueryBuilders.termsQuery(WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME,
+                            worksIndexsRequest.getLineestimatedetailids()));
 
         boolQuery.filter(QueryBuilders.matchQuery(WORKSMILESTONE_LOASTATUS_COLUMN_NAME, APPROVED));
 
