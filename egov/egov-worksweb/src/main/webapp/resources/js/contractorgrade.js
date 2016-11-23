@@ -72,15 +72,35 @@ function validateContractorGradeFormAndSubmit(){
         showMessage('contractorgrade_error', message);
 		return false;
 	}
-	if(maxAmount <= 0){
+	if(parseFloat(maxAmount) <= 0){
 		var message = document.getElementById('gradeValidError').value;
         showMessage('contractorgrade_error', message);
 		return false;
 	}
-    if (maxAmount <= minAmount ) {
+    if (parseFloat(maxAmount) <= parseFloat(minAmount) ) {
     	var message = document.getElementById('gradeError').value;
         showMessage('contractorgrade_error', message);
         return false;
     }
     return true;
+}
+
+function validateMinimumAmount(elem) {
+	var valid = /^[0-9](\d{0,9})(\.\d{0,2})?$/.test(jQuery(elem).val()),
+    val = jQuery(elem).val();
+
+	if(!valid){
+	    console.log("Invalid input!");
+	    jQuery(elem).val(val.substring(0, val.length - 1));
+	}
+}
+
+function validateMaximumAmount(elem) {
+	var valid = /^[0-9](\d{0,9})(\.\d{0,2})?$/.test(jQuery(elem).val()),
+    val = jQuery(elem).val();
+
+	if(!valid){
+	    console.log("Invalid input!");
+	    jQuery(elem).val(val.substring(0, val.length - 1));
+	}
 }

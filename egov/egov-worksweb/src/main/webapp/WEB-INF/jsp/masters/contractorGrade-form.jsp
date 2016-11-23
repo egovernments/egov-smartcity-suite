@@ -71,13 +71,13 @@
 					   <s:text name="contractor.grade.master.minamount" /> <span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
-					  <s:textfield name="minAmount" id="minAmount"  cssClass="form-control text-right" value="%{minAmount}" maxlength="16" placeholder="0" />
+					  <s:textfield name="minAmount" id="minAmount"  cssClass="form-control text-right" value="%{minAmount}" maxlength="16" placeholder="0"  onkeyup="validateMinimumAmount(this);" />
 					</div>
 					<label class="col-sm-2 control-label text-right"> 
 						<s:text name="contractor.grade.master.maxamount" /> <span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
-						<s:textfield name="maxAmount" id="maxAmount"  cssClass="form-control text-right" value="%{maxAmount}" maxlength="16" placeholder="0" />
+						<s:textfield name="maxAmount" id="maxAmount"  cssClass="form-control text-right" value="%{maxAmount}" maxlength="16" placeholder="0" onkeyup="validateMaximumAmount(this);" />
 					</div>
 				</div>
 			</div>
