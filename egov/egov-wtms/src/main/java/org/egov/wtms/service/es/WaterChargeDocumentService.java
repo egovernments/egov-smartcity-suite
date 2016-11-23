@@ -137,7 +137,7 @@ public class WaterChargeDocumentService {
         waterChargeDocument.setAdminWard(assessmentDetails.getBoundaryDetails().getAdminWardName());
         waterChargeDocument.setDoorNo(assessmentDetails.getHouseNo());
         waterChargeDocument.setTotalDue(assessmentDetails.getPropertyDetails().getTaxDue().longValue());
-        waterChargeDocument.setIsLegacy(waterConnectionDetails.getLegacy());
+        waterChargeDocument.setLegacy(waterConnectionDetails.getLegacy());
         waterChargeDocument.setCityGrade(defaultString((String) cityInfo.get(CITY_CORP_GRADE_KEY)));
         waterChargeDocument.setRegionName(defaultString((String) cityInfo.get(CITY_REGION_NAME_KEY)));
         waterChargeDocument.setClosureType(waterConnectionDetails.getCloseConnectionType() != null
@@ -245,7 +245,7 @@ public class WaterChargeDocumentService {
                         .withAdminward(assessmentDetails.getBoundaryDetails().getAdminWardName())
                         .withDoorNo(assessmentDetails.getHouseNo())
                         .withTotaldue(assessmentDetails.getPropertyDetails().getTaxDue().longValue())
-                        .withIslegacy(waterConnectionDetails.getLegacy())
+                        .withLegacy(waterConnectionDetails.getLegacy())
                         .withCityGrade(defaultString((String) cityInfo.get(CITY_CORP_GRADE_KEY)))
                         .withRegionname(defaultString((String) cityInfo.get(CITY_REGION_NAME_KEY)))
                         .withClosureType(waterConnectionDetails.getCloseConnectionType() != null

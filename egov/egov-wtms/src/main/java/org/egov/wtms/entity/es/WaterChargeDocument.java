@@ -81,7 +81,7 @@ public class WaterChargeDocument {
     private String waterSource;
 
     @Field(type = FieldType.Boolean)
-    private boolean isLegacy;
+    private boolean legacy;
 
     @Field(type = FieldType.Long)
     private Long sumpCapacity;
@@ -324,7 +324,7 @@ public class WaterChargeDocument {
     }
 
     public String getId() {
-        return id=ApplicationThreadLocals.getCityCode().concat("-").concat(consumerCode);
+        return id;
     }
 
     public void setId() {
@@ -347,13 +347,7 @@ public class WaterChargeDocument {
         this.waterSource = waterSource;
     }
 
-    public boolean getIsLegacy() {
-        return isLegacy;
-    }
-
-    public void setIsLegacy(final boolean isLegacy) {
-        this.isLegacy = isLegacy;
-    }
+  
 
     public Long getSumpCapacity() {
         return sumpCapacity;
@@ -527,7 +521,13 @@ public class WaterChargeDocument {
         this.cityCode = cityCode;
     }
 
+    public Boolean getLegacy() {
+        return legacy;
+    }
 
+    public void setLegacy(Boolean legacy) {
+        this.legacy = legacy;
+    }
 
     public static final class Builder {
         private String aadhaarNumber;
@@ -552,7 +552,7 @@ public class WaterChargeDocument {
         private String districtName;
         private String cityName;
         private String cityGrade;
-        private Boolean isLegacy;
+        private Boolean legacy;
         private Long sumpCapacity;
         private Long numberOfPerson;
         private String zone;
@@ -716,8 +716,8 @@ public class WaterChargeDocument {
             return this;
         }
 
-        public Builder withIslegacy(final Boolean islegacy) {
-            isLegacy = islegacy;
+        public Builder withLegacy(final Boolean legacy) {
+            this.legacy = legacy;
             return this;
         }
 
@@ -773,6 +773,8 @@ public class WaterChargeDocument {
         public WaterChargeDocument build() {
             final WaterChargeDocument waterChargeIndex = new WaterChargeDocument();
             waterChargeIndex.setWardlocation(wardLocation);
+            waterChargeIndex.setConsumerCode(consumerCode);
+            waterChargeIndex.setId();
             waterChargeIndex.setPropertylocation(propertyLocation);
             waterChargeIndex.setAadhaarNumber(aadhaarNumber);
             waterChargeIndex.setAdminWard(adminWard);
@@ -787,7 +789,6 @@ public class WaterChargeDocument {
             waterChargeIndex.setCategory(category);
             waterChargeIndex.setClosureType(closureType);
             waterChargeIndex.setConnectionType(connectionType);
-            waterChargeIndex.setConsumerCode(consumerCode);
             waterChargeIndex.setConsumerName(consumerName);
             waterChargeIndex.setCreatedDate(createdDate);
             waterChargeIndex.setCurrentDemand(currentDemand);
@@ -801,7 +802,7 @@ public class WaterChargeDocument {
             waterChargeIndex.setCityGrade(cityGrade);
             waterChargeIndex.setCityCode(cityCode);
             waterChargeIndex.setUsage(usage);
-            waterChargeIndex.setIsLegacy(isLegacy);
+            waterChargeIndex.setLegacy(legacy);
             waterChargeIndex.setLocality(locality);
             waterChargeIndex.setPropertyId(propertyId);
             waterChargeIndex.setPropertyType(propertyType);
@@ -814,6 +815,8 @@ public class WaterChargeDocument {
             waterChargeIndex.setZone(zone);
             return waterChargeIndex;
         }
+
+        
     }
 
 }
