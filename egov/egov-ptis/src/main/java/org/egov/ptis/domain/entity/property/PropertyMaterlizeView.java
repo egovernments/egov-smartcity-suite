@@ -100,6 +100,8 @@ public class PropertyMaterlizeView implements Serializable {
     private Date assessmentDate;
     private Date lastUpdated;
     private String surveyNo;
+    private String duePeriod;
+    private BigDecimal advance;
 
 
     public Integer getBasicPropertyID() {
@@ -499,6 +501,22 @@ public class PropertyMaterlizeView implements Serializable {
 	public void setSurveyNo(String surveyNo) {
 		this.surveyNo = surveyNo;
 	}
+
+    public String getDuePeriod() {
+        return duePeriod;
+    }
+
+    public void setDuePeriod(String duePeriod) {
+        this.duePeriod = duePeriod;
+    }
+
+    public BigDecimal getAdvance() {
+        return advance;
+    }
+
+    public void setAdvance(BigDecimal advance) {
+        this.advance = advance;
+    }
     
     
 }

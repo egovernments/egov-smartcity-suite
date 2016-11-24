@@ -93,6 +93,8 @@
 		<property name="assessmentDate" column="assessmentdate"/>
 		<property name="lastUpdated" column="lastupdated"/>
 		<property name="surveyNo" column="surveyNo"/>
+		<property name="duePeriod" column="DUEPERIOD" />
+		<property name="advance" column="ADVANCE"/>
 		
 		<set name="instDmdColl" table="EGPT_MV_INST_DEM_COLL" order-by="id_installment" >
             <key>
