@@ -160,7 +160,7 @@ public class ReIssueService {
         final Map<Long, MarriageDocument> applicantDocumentAndId = new HashMap<Long, MarriageDocument>();
         marriageDocumentService.getIndividualDocuments().forEach(document -> applicantDocumentAndId.put(document.getId(), document));
 
-        marriageApplicantService.addDocumentsToFileStore(null, reIssue.getApplicant(), applicantDocumentAndId);
+        marriageApplicantService.addDocumentsToFileStore(reIssue.getApplicant(), applicantDocumentAndId);
 
         workflowService.transition(reIssue, workflowContainer, reIssue.getApprovalComent());
 
@@ -243,7 +243,7 @@ public class ReIssueService {
         final Map<Long, MarriageDocument> individualDocumentAndId = new HashMap<Long, MarriageDocument>();
         marriageDocumentService.getIndividualDocuments().forEach(document -> individualDocumentAndId.put(document.getId(), document));
 
-        marriageApplicantService.addDocumentsToFileStore(reissueModel.getApplicant(), reissue.getApplicant(), individualDocumentAndId);
+        marriageApplicantService.addDocumentsToFileStore(reissue.getApplicant(), individualDocumentAndId);
     }
 
     private void updateApplicantInfo(final MrApplicant modelApplicant, final MrApplicant dbApplicant) {

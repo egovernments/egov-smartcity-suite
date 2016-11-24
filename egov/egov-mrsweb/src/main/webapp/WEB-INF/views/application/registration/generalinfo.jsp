@@ -57,12 +57,12 @@
 			<spring:message code="lbl.registrationunit"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
-			<form:select path="marriageRegistrationUnit.id" id="select-registrationunit" cssClass="form-control" 
+			<form:select path="marriageRegistrationUnit" id="select-registrationunit" cssClass="form-control" 
 						cssErrorClass="form-control error" required="required">
                  <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
                  <form:options items="${marriageRegistrationUnit}" itemValue="id" itemLabel="name"/>
              </form:select>
-            <form:errors path="marriageRegistrationUnit.id" cssClass="add-margin error-msg"/>
+            <form:errors path="marriageRegistrationUnit" cssClass="add-margin error-msg"/>
 		</div>
 		<label class="col-sm-2 control-label">
 			<spring:message code="lbl.zone"/><span class="mandatory"></span>
@@ -97,13 +97,13 @@
 			<spring:message code="lbl.fee.criteria"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
-			<form:select path="feeCriteria.id" id="select-marriagefees" cssClass="form-control" 
+			<form:select path="feeCriteria" id="select-marriagefees" cssClass="form-control" 
 						cssErrorClass="form-control error" required="required">
                  <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
                  <form:options items="${feesList}" itemValue="id" itemLabel="criteria"/>
              </form:select>
             <%--  <form:hidden path="feeCriteria.criteria" name="feeCriteria" id="txt_feecriteria"/> --%>
-               <form:errors path="feeCriteria.id" cssClass="add-margin error-msg"/>
+               <form:errors path="feeCriteria" cssClass="add-margin error-msg"/>
 		</div>
 		<label class="col-sm-2 control-label">
 			<spring:message code="lbl.marriage.fee"/><span class="mandatory"></span>
@@ -118,12 +118,12 @@
 			<spring:message code="lbl.law"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
-			<form:select path="marriageAct.id" id="select-marriageAct" cssClass="form-control" 
+			<form:select path="marriageAct" id="select-marriageAct" cssClass="form-control" 
 						cssErrorClass="form-control error" required="required">
                  <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
                  <form:options items="${acts}" itemValue="id" itemLabel="name"/>
              </form:select>
-            <form:errors path="marriageAct.id" cssClass="add-margin error-msg"/>
+            <form:errors path="marriageAct" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
 

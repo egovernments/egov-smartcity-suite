@@ -52,8 +52,8 @@
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 
-			<input type="hidden" id="registrationId" value="${registration.id}" />
-			<input type="hidden" id="registrationStatus" value="${registration.status}" /> 
+			<input type="hidden" name="marriageRegistration" value="${registration.id}" />
+			<input type="hidden" id="registrationStatus" value="${registration.status.code}" /> 
 			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -90,6 +90,8 @@
 							<jsp:include page="witnessinfo.jsp">
 								<jsp:param value="subheading.witness3.info" name="header" />
 							</jsp:include>	
+							<c:set value="priest" var="priest" scope="request"></c:set>
+							<form:hidden path="priest.id"/>
 							<jsp:include page="priestinfo.jsp"></jsp:include>
 					    </div>
 					     <div id="checklist-info" class="tab-pane fade">
@@ -118,4 +120,5 @@
 
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/js/app/registration.js?rnd=${app_release_no}'/> "></script>
+<script src="<cdn:url value='/resources/js/app/registrationformvalidation.js?rnd=${app_release_no}'/> "></script>
 <script src="<cdn:url value='/resources/js/app/viewregistration.js?rnd=${app_release_no}'/> "></script>

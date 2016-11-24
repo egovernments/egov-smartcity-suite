@@ -74,12 +74,12 @@
 				<spring:message code="lbl.religion"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-6">
-			<form:select path="${applicant}.religion.id" id="${applicant}.religion" cssClass="form-control" 
+			<form:select path="${applicant}.religion" id="${applicant}.religion" cssClass="form-control" 
 						cssErrorClass="form-control error" required="required" data-toggle="popover" data-trigger="focus" data-content="${helptext}">
 	                <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
 	                <form:options items="${religions}" itemValue="id" itemLabel="name"/>
 	           </form:select>
-	           <form:errors path="${applicant}.religion.id" cssClass="add-margin error-msg"/>
+	           <form:errors path="${applicant}.religion" cssClass="add-margin error-msg"/>
 		</div>
 		<label class="col-sm-6 text-right">
 			<spring:message code="lbl.religiontype"/>

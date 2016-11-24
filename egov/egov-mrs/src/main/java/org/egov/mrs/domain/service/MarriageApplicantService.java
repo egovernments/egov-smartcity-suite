@@ -53,9 +53,9 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.mrs.application.MarriageConstants;
+import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.entity.MrApplicant;
 import org.egov.mrs.domain.entity.MrApplicantDocument;
-import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.repository.MarriageApplicantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,7 +73,7 @@ public class MarriageApplicantService {
 
     @Autowired
     private FileStoreService fileStoreService;
-    
+
     @Autowired
     private ApplicantDocumentService applicantDocumentService;
 
@@ -97,83 +97,87 @@ public class MarriageApplicantService {
     }
 
     public void prepareDocumentsForView(final MrApplicant applicant) {
-        
-        if (applicant.getPhotoFileStore() != null ){
-        	 final File file = fileStoreService.fetch(applicant.getPhotoFileStore().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE);
-            try {
-				applicant.setEncodedPhoto(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-        }
-        
-        if (applicant.getSignatureFileStore() != null ){
-       	 final File file = fileStoreService.fetch(applicant.getSignatureFileStore().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE);
-           try {
-				applicant.setEncodedSignature(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-       }
-    
 
-        
-        applicant.getApplicantDocuments().forEach(appDoc -> {
-            
+        if (applicant.getPhotoFileStore() != null) {
+            final File file = fileStoreService.fetch(applicant.getPhotoFileStore().getFileStoreId(),
+                    MarriageConstants.FILESTORE_MODULECODE);
             try {
-            	if (appDoc.getFileStoreMapper() != null ){
-            		final File file = fileStoreService.fetch(appDoc.getFileStoreMapper().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE);
-            		appDoc.setBase64EncodedFile(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
-            	}
-                
-            } catch (final Exception e) {
-                LOG.error("Error while preparing the document for view", e);
+                applicant.setEncodedPhoto(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
+            } catch (final IOException e) {
+                e.printStackTrace();
             }
-        });
+        }
+
+        if (applicant.getSignatureFileStore() != null) {
+            final File file = fileStoreService.fetch(applicant.getSignatureFileStore().getFileStoreId(),
+                    MarriageConstants.FILESTORE_MODULECODE);
+            try {
+                applicant.setEncodedSignature(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
+            } catch (final IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        applicant.getApplicantDocuments().forEach(
+                appDoc -> {
+
+                    try {
+                        if (appDoc.getFileStoreMapper() != null) {
+                            final File file = fileStoreService.fetch(appDoc.getFileStoreMapper().getFileStoreId(),
+                                    MarriageConstants.FILESTORE_MODULECODE);
+                            appDoc.setBase64EncodedFile(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
+                        }
+
+                    } catch (final Exception e) {
+                        LOG.error("Error while preparing the document for view", e);
+                    }
+                });
     }
-    
+
     public void deleteDocuments(final MrApplicant applicantModel, final MrApplicant applicant) {
-        
-        List<MrApplicantDocument> toDelete = new ArrayList<MrApplicantDocument>();
-        Map<Long, MrApplicantDocument> documentIdAndApplicantDoc = new HashMap<Long, MrApplicantDocument>();
+
+        final List<MrApplicantDocument> toDelete = new ArrayList<MrApplicantDocument>();
+        final Map<Long, MrApplicantDocument> documentIdAndApplicantDoc = new HashMap<Long, MrApplicantDocument>();
         applicant.getApplicantDocuments().forEach(appDoc -> documentIdAndApplicantDoc.put(appDoc.getDocument().getId(), appDoc));
 
-        if(applicantModel.getDocuments()!=null){
-        applicantModel.getDocuments().stream()
-            .filter(doc -> doc.getFile().getSize() > 0)
-            .map(doc -> {
-                MrApplicantDocument appDoc = documentIdAndApplicantDoc.get(doc.getId());
-                if(appDoc!=null){
-                    fileStoreService.delete(appDoc.getFileStoreMapper().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE);
-                }
-                    return appDoc;
-            }).collect(Collectors.toList())
-            .forEach(appDoc -> toDelete.add((MrApplicantDocument) appDoc)); // seems like redundent, check
-        
-        applicantDocumentService.delete(toDelete);
+        if (applicantModel.getDocuments() != null) {
+            applicantModel
+                    .getDocuments()
+                    .stream()
+                    .filter(doc -> doc.getFile().getSize() > 0)
+                    .map(doc -> {
+                        final MrApplicantDocument appDoc = documentIdAndApplicantDoc.get(doc.getId());
+                        if (appDoc != null)
+                            fileStoreService.delete(appDoc.getFileStoreMapper().getFileStoreId(),
+                                    MarriageConstants.FILESTORE_MODULECODE);
+                        return appDoc;
+                    }).collect(Collectors.toList())
+                    .forEach(appDoc -> toDelete.add(appDoc)); // seems like redundent, check
+
+            applicantDocumentService.delete(toDelete);
         }
     }
-    
+
     /**
      * Adds the uploaded applicant document to file store and associates with the applicant
      *
      * @param applicant
      */
-    public void addDocumentsToFileStore(final MrApplicant applicantModel, final MrApplicant applicant, final Map<Long, MarriageDocument> documentAndId) {
-        List<MarriageDocument> documents = applicantModel == null ? applicant.getDocuments() : applicantModel.getDocuments();
-      if(documents!=null){  documents.stream()
-                .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
-                .map(document -> {
-                    final MrApplicantDocument applicantDocument = new MrApplicantDocument();
-                    applicantDocument.setApplicant(applicant);
-                    applicantDocument.setDocument(documentAndId.get(document.getId()));
-                    applicantDocument.setFileStoreMapper(addToFileStore(document.getFile()));
-                    return applicantDocument;
-                }).collect(Collectors.toList())
-        .forEach(doc -> applicant.addApplicantDocument(doc));
-      }
+    public void addDocumentsToFileStore(final MrApplicant applicant, final Map<Long, MarriageDocument> documentAndId) {
+        final List<MarriageDocument> documents = applicant.getDocuments();
+        if (documents != null)
+            documents.stream()
+                    .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
+                    .map(document -> {
+                        final MrApplicantDocument applicantDocument = new MrApplicantDocument();
+                        applicantDocument.setApplicant(applicant);
+                        applicantDocument.setDocument(documentAndId.get(document.getId()));
+                        applicantDocument.setFileStoreMapper(addToFileStore(document.getFile()));
+                        return applicantDocument;
+                    }).collect(Collectors.toList())
+                    .forEach(doc -> applicant.addApplicantDocument(doc));
     }
-    
+
     private FileStoreMapper addToFileStore(final MultipartFile file) {
         FileStoreMapper fileStoreMapper = null;
         try {

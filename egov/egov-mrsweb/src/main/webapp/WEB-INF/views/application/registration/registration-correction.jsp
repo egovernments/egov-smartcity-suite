@@ -51,7 +51,7 @@
 			modelAttribute="registration" id="form-updateregistration"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<input type="hidden" id="registrationId" value="${registration.id}" />
+			<input type="hidden" name="marriageRegistration" value="${registration.id}" />
 			<input type="hidden" id="registrationStatus" value="${registration.status.code}" /> 
 			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 			<input type="hidden" id="feeCollected" value="${registration.feeCollected}" />
@@ -117,4 +117,5 @@
 
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/js/app/registration.js?rnd=${app_release_no}'/> "></script>
+<script src="<cdn:url value='/resources/js/app/registrationformvalidation.js?rnd=${app_release_no}'/> "></script>
 <script src="<cdn:url value='/resources/js/app/viewregistration.js?rnd=${app_release_no}'/> "></script>

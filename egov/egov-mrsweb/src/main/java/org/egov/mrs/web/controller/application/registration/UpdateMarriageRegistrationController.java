@@ -48,6 +48,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.utils.StringUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,7 +125,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String updateRegistration(@RequestParam final Long id, @ModelAttribute MarriageRegistration registration,
+    public String updateRegistration(@ModelAttribute MarriageRegistration marriageRegistration,
             @ModelAttribute final WorkflowContainer workflowContainer,
             final Model model,
             final HttpServletRequest request,
@@ -136,26 +137,26 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
 
         if (errors.hasErrors())
             return MRG_REGISTRATION_EDIT;
-        String message = org.apache.commons.lang.StringUtils.EMPTY;
+        String message = StringUtils.EMPTY;
         if (workFlowAction != null && !workFlowAction.isEmpty()) {
             workflowContainer.setWorkFlowAction(workFlowAction);
             workflowContainer.setApproverComments(request.getParameter("approvalComent"));
             if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT) ||
                     workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL)) {
-                marriageRegistrationService.rejectRegistration(id,registration, workflowContainer);
+                marriageRegistrationService.rejectRegistration(marriageRegistration, workflowContainer);
                 message = messageSource.getMessage("msg.rejected.registration", null, null);
             }
             else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_APPROVE)) {
-                marriageRegistrationService.approveRegistration(id,registration, workflowContainer);
+                marriageRegistrationService.approveRegistration(marriageRegistration, workflowContainer);
                 message = messageSource.getMessage("msg.approved.registration", null, null);
             }
             else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE)) {
-                marriageRegistrationService.printCertificate(id,registration, workflowContainer, request);
+                marriageRegistrationService.printCertificate(marriageRegistration, workflowContainer, request);
                 message = messageSource.getMessage("msg.printcertificate.registration", null, null);
             }
             else {
                 workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter("approvalPosition")));
-                marriageRegistrationService.forwardRegistration(id, registration, workflowContainer);
+                marriageRegistrationService.forwardRegistration(marriageRegistration, workflowContainer);
                 message = messageSource.getMessage("msg.forward.registration", null, null);
             }
         }
@@ -163,7 +164,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         if (workFlowAction != null && !workFlowAction.isEmpty()
                 && workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE))
             return "redirect:/certificate/registration?id="
-            + id;
+            + marriageRegistration.getId();
         // + registration.getMarriageCertificate().get(0).getFileStore().getId();
 
         model.addAttribute("message", message);
@@ -177,7 +178,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         if (errors.hasErrors())
             return MRG_REGISTRATION_EDIT_APPROVED;
 
-        marriageRegistrationService.updateRegistration(id, registration);
+        marriageRegistrationService.updateRegistration(registration);
         model.addAttribute("message", messageSource.getMessage("msg.update.registration", null, null));
         return MRG_REGISTRATION_SUCCESS;
     }

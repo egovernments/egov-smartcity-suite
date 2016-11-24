@@ -123,16 +123,16 @@ public class NewRegistrationController extends MarriageRegistrationController {
 
         switch (workflowContainer.getWorkFlowAction()) {
         case "Forward":
-            result = marriageRegistrationService.forwardRegistration(id, registration, workflowContainer);
+            result = marriageRegistrationService.forwardRegistration(registration, workflowContainer);
             break;
         case "Approve":
-            result = marriageRegistrationService.approveRegistration(id,registration, workflowContainer);
+            result = marriageRegistrationService.approveRegistration(registration, workflowContainer);
             break;
         case "Reject":
-            result = marriageRegistrationService.rejectRegistration(id,registration, workflowContainer); 
+            result = marriageRegistrationService.rejectRegistration(registration, workflowContainer); 
             break;
         case "Cancel Registration":
-            result = marriageRegistrationService.rejectRegistration(id,registration, workflowContainer);
+            result = marriageRegistrationService.rejectRegistration(registration, workflowContainer);
             break;
         }
 

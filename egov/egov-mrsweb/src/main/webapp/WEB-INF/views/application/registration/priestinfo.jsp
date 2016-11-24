@@ -63,12 +63,12 @@
 				<spring:message code="lbl.religion"/>
 			</label>
 			<div class="col-sm-3" >
-				<form:select path="priest.religion.id" id="select-marriageAct" cssClass="form-control" 
+				<form:select path="priest.religion" id="select-marriageAct" cssClass="form-control" 
 							cssErrorClass="form-control error" >
 	                 <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
 	                 <form:options items="${religions}" itemValue="id" itemLabel="name"/>
 	            </form:select>
-	            <form:errors path="priest.religion.id" cssClass="add-margin error-msg"/>
+	            <form:errors path="priest.religion" cssClass="add-margin error-msg"/>
 			</div>
 	</div>
 	
