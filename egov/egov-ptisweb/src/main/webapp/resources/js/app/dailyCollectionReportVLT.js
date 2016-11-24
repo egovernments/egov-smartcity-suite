@@ -123,7 +123,7 @@ $('#dailyCollectionReportSearchVLT').click(function(e){
 					return !data?"0":data;
 				}
 			},
-			{title: 'Total Library Cess', data: 'totalAmount',
+			{title: 'Total Library Cess', data: 'totalLibCess',
 				render: function (data, type, full) {
 					return !data?"0":data;
 				}
