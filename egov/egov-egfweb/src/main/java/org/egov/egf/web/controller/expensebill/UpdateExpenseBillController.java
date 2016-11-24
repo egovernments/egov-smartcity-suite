@@ -144,7 +144,7 @@ public class UpdateExpenseBillController extends BaseBillController {
     }
 
     @RequestMapping(value = "/update/{billId}", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute(EG_BILLREGISTER) final EgBillregister egBillregister,
+    public String update(@ModelAttribute(EG_BILLREGISTER) final EgBillregister egBillregister,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model,
             final HttpServletRequest request, @RequestParam final String workFlowAction)
             throws ApplicationException, IOException {
