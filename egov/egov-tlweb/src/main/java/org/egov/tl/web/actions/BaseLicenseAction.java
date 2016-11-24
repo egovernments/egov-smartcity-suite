@@ -40,6 +40,9 @@
 
 package org.egov.tl.web.actions;
 
+import static org.egov.tl.utils.Constants.APPROVE_PAGE;
+import static org.egov.tl.utils.Constants.GENERATE_CERTIFICATE;
+
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -85,39 +88,37 @@ import org.egov.tl.service.masters.LicenseCategoryService;
 import org.egov.tl.service.masters.LicenseSubCategoryService;
 import org.egov.tl.service.masters.UnitOfMeasurementService;
 import org.egov.tl.utils.Constants;
-import org.egov.tl.utils.LicenseChecklistHelper;
 import org.egov.tl.utils.LicenseUtils;
 import org.egov.tl.web.actions.domain.CommonAjaxAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 
 @ParentPackage("egov")
 @Results({
-        @Result(name = "collection", type = "redirectAction", location = "licenseBillCollect", params = { "namespace",
-                "/integration", "method", "renew" }),
+        @Result(name = "collection", type = "redirectAction", location = "licenseBillCollect", params = {"namespace",
+                "/integration", "method", "renew"}),
         @Result(name = "tl_editlicense", type = "redirectAction", location = "editTradeLicense-beforeEdit", params = {
-                "namespace", "/newtradelicense" }),
-        @Result(name = "tl_approve", type = "redirectAction", location = "viewTradeLicense", params = { "namespace",
-                "/viewtradelicense", "method", "showForApproval" }),
+                "namespace", "/newtradelicense"}),
+        @Result(name = "tl_approve", type = "redirectAction", location = "viewTradeLicense", params = {"namespace",
+                "/viewtradelicense", "method", "showForApproval"}),
         @Result(name = "tl_generateRejCertificate", type = "redirectAction", location = "viewTradeLicense", params = {
-                "namespace", "/viewtradelicense", "method", "generateRejCertificate" }),
+                "namespace", "/viewtradelicense", "method", "generateRejCertificate"}),
         @Result(name = "tl_generateCertificate", type = "redirectAction", location = "viewTradeLicense", params = {
-                "namespace", "/viewtradelicense", "method", "generateCertificate" }),
+                "namespace", "/viewtradelicense", "method", "generateCertificate"}),
         @Result(name = "approve", location = "newTradeLicense-new.jsp"),
         @Result(name = "report", location = "newTradeLicense-report.jsp"),
-        @Result(name = "digitalSignatureRedirection", location = "newTradeLicense-digitalSignatureRedirection.jsp") })
+        @Result(name = "digitalSignatureRedirection", location = "newTradeLicense-digitalSignatureRedirection.jsp")})
 public abstract class BaseLicenseAction<T extends License> extends GenericWorkFlowAction {
     private static final long serialVersionUID = 1L;
 
@@ -125,13 +126,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     protected List<String> buildingTypeList;
     protected String roleName;
     protected String reportId;
-    private Long feeTypeId;
     protected boolean showAgreementDtl;
-    private String fileStoreIds;
-    private String ulbCode;
-    private String signedFileStoreId;
-
-    private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
     @Autowired
     protected LicenseUtils licenseUtils;
     @Autowired
@@ -151,10 +146,6 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @Autowired
     @Qualifier("licenseCategoryService")
     protected LicenseCategoryService licenseCategoryService;
-
-    @Autowired
-    private TradeLicenseService tradeLicenseService;
-
     @Autowired
     @Qualifier("licenseSubCategoryService")
     protected LicenseSubCategoryService licenseSubCategoryService;
@@ -162,15 +153,20 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @Qualifier("unitOfMeasurementService")
     protected UnitOfMeasurementService unitOfMeasurementService;
     @Autowired
+    @Qualifier("fileStoreService")
+    protected FileStoreService fileStoreService;
+    private Long feeTypeId;
+    private String fileStoreIds;
+    private String ulbCode;
+    private String signedFileStoreId;
+    private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
+    @Autowired
+    private TradeLicenseService tradeLicenseService;
+    @Autowired
     private ReportService reportService;
     @Autowired
     @Qualifier("feeTypeService")
     private FeeTypeService feeTypeService;
-
-    @Autowired
-    @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
-
     @Autowired
     private ReportViewerUtil reportViewerUtil;
 
@@ -197,7 +193,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     @ValidationErrorPage(Constants.NEW)
     public String enterExisting(final T license, final Map<Integer, Integer> legacyInstallmentwiseFees,
-            final Map<Integer, Boolean> legacyFeePayStatus) {
+                                final Map<Integer, Boolean> legacyFeePayStatus) {
         licenseService().createLegacyLicense(license, legacyInstallmentwiseFees, legacyFeePayStatus);
         addActionMessage(this.getText("license.entry.succesful") + "  " + license().getLicenseNumber());
 
@@ -205,7 +201,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     }
 
     // sub class should get the object of the model and set to license()
-    public String approve(){
+    public String approve() {
 
         if (workFlowAction.equals(Constants.WF_PREVIEW_BUTTON))
             return redirectToPrintCertificate();
@@ -233,7 +229,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         ReportOutput reportOutput = tradeLicenseService.prepareReportInputDataForDig(license(), districtName, cityMunicipalityName);
 
         if (reportOutput != null) {
-            String fileName = Constants.SIGNED_DOCUMENT_PREFIX+ license().getApplicationNumber() + ".pdf";
+            String fileName = Constants.SIGNED_DOCUMENT_PREFIX + license().getApplicationNumber() + ".pdf";
             final InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
             final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf", Constants.FILESTORE_MODULECODE);
             license().setDigiSignedCertFileStoreId(fileStore.getFileStoreId());
@@ -282,7 +278,6 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     // create workflow and pushes to drafts
     public void initiateWorkFlowForLicense() {
-        // licenseService().initiateWorkFlowForLicense(license(), workflowBean);
         final Position position = positionMasterService.getCurrentPositionForUser(ApplicationThreadLocals.getUserId());
         if (position != null)
             addActionMessage(this.getText("license.saved.in.inbox"));
@@ -312,7 +307,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     public void prepareNewForm() {
         prepare();
-        buildingTypeList = new ArrayList<String>();
+        buildingTypeList = new ArrayList<>();
         buildingTypeList.add(Constants.BUILDINGTYPE_OWN_BUILDING);
         buildingTypeList.add(Constants.BUILDINGTYPE_RENTAL_AGREEMANT);
         addDropdownData(Constants.DROPDOWN_AREA_LIST_LICENSE, Collections.emptyList());
@@ -339,44 +334,40 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     public void processWorkflow(final String processType) {
         populateWorkflowBean();
         // Both New And Renew Workflow handling in same API(transitionWorkFlow)
-        if (processType.equalsIgnoreCase(NEW))
-            if (!Constants.BUTTONSUBMIT.equals(workFlowAction))
-                licenseService().transitionWorkFlow(license(), workflowBean);
-        User user = null;
-        Long createrPosition = null;
-        for (final StateHistory state : license().getState().getHistory())
-            if (state != null && state.getCreatedBy() != null)
-                if (state.getValue().contains(Constants.WORKFLOW_STATE_NEW)) {
-                    user = state.getCreatedBy();
-                    createrPosition = state.getOwnerPosition().getId();
-                    break;
-                }
-        if (user == null)
-            user = license().getCreatedBy();
-        if (createrPosition == null)
-            createrPosition = license().getState().getOwnerPosition().getId();
-        String nextDesgn = "";
-        final Assignment assignObj = assignmentService.getPrimaryAssignmentForPositon(workflowBean.getApproverPositionId());
-        if (assignObj != null)
-            nextDesgn = assignObj.getDesignation().getName();
+        if (processType.equalsIgnoreCase(NEW) && !Constants.BUTTONSUBMIT.equals(workFlowAction))
+            licenseService().transitionWorkFlow(license(), workflowBean);
         if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONAPPROVE)) {
             addActionMessage(this.getText("license.approved.success"));
         } else if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONFORWARD)) {
-            final String userName = assignmentService
-                    .getPrimaryAssignmentForPositon(workflowBean.getApproverPositionId()).getEmployee().getName();
+            List<Assignment> assignments = assignmentService.getAssignmentsForPosition(workflowBean.getApproverPositionId());
+            String nextDesgn = !assignments.isEmpty() ? assignments.get(0).getDesignation().getName() : "";
+            final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
             addActionMessage(this.getText("license.sent") + " " + nextDesgn + " - " + userName);
         } else if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONREJECT)) {
-            final String creatorDesgn = assignmentService
-                    .getPrimaryAssignmentForPositon(createrPosition).getDesignation().getName();
-            if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                addActionMessage(this.getText("license.rejectedfirst") + (creatorDesgn != null ? creatorDesgn + " - " : "") + " "
-                        + user.getName());
-            else
-                addActionMessage(this.getText("license.rejected") + license().getApplicationNumber());
+            rejectActionMessage();
         } else if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONGENERATEDCERTIFICATE))
             addActionMessage(this.getText("license.certifiacte.print.complete.recorded"));
-        else if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONPRINTCOMPLETED))
-            addActionMessage(this.getText("license.rejection.certifiacte.print.complete.recorded"));
+    }
+
+    private void rejectActionMessage() {
+        User user = getInitiatorUserObj();
+        if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED)) {
+            Position creatorPosition = license().getState().getInitiatorPosition();
+            addActionMessage(this.getText("license.rejectedfirst") + (creatorPosition.getDeptDesig().getDesignation().getName() + " - ") + " "
+                    + user != null ? user.getName() : "");
+
+        } else
+            addActionMessage(this.getText("license.rejected") + license().getApplicationNumber());
+    }
+
+    private User getInitiatorUserObj() {
+        User user = null;
+        for (final StateHistory state : license().getState().getHistory())
+            if (state.getValue().contains(Constants.WF_LICENSE_CREATED)) {
+                user = state.getCreatedBy();
+                break;
+            }
+        return user;
     }
 
     public String getRoleName() {
@@ -394,37 +385,18 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @SkipValidation
     public String showForApproval() throws IOException {
         getSession().put("model.id", license().getId());
-        String result = "approve";
+        String result = APPROVE_PAGE;
         setRoleName(securityUtils.getCurrentUser().getRoles().toString());
         if (license().getLicenseAppType().getName().equals(Constants.NEW_LIC_APPTYPE)) {
             if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                result = "tl_generateCertificate";
-            else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                result = "approve";
-            else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATEREJCERTIFICATE))
-                result = "tl_generateRejCertificate";
-            else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATENOC))
-                result = "tl_generateNoc";
-            else
-                result = "approve";
+                result = GENERATE_CERTIFICATE;
+            else result = APPROVE_PAGE;
 
         } else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_RENEWLICENSE)) {
             if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                result = "tl_generateCertificate";
-            else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                result = "approveRenew";
-            else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATEREJCERTIFICATE))
-                result = "tl_generateRejCertificate";
-            else
-                result = "approveRenew";
-
-        } else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_TRANSFERLICENSE))
-            if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                result = "tl_generateCertificate";
-            else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                result = "transfertl_editlicense";
-            else
-                result = "transfertl_approve";
+                result = GENERATE_CERTIFICATE;
+            else result = "approveRenew";
+        }
         return result;
     }
 
