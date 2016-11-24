@@ -75,7 +75,7 @@ public class BaseRegisterReportService {
                 " dcbinfo.connectiontype as \"connectionType\" , dcbinfo.arr_demand as \"arrears\" ,  dcbinfo.curr_demand as \"current\" , ");
         queryStr.append(" dcbinfo.arr_coll as \"arrearsCollection\" ,  dcbinfo.curr_coll as \"currentCollection\" , ");
         queryStr.append(
-                " dcbinfo.arr_demand+dcbinfo.curr_demand as \"totalDemand\" , dcbinfo.usagetype as \"usageType\" ,  ");
+                " dcbinfo.arr_demand+dcbinfo.curr_demand as \"totalDemand\" , dcbinfo.usagetype as \"usageType\" , dcbinfo.waterSource as \"waterSource\" ,");
         queryStr.append(
                 " dcbinfo.pipesize as \"pipeSize\" , dcbinfo.arr_coll+dcbinfo.curr_coll as \"totalCollection\" , wrd.monthlyrate as \"monthlyRate\" ");
         queryStr.append(
