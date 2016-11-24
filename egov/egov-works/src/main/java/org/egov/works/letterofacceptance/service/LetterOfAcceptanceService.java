@@ -1157,4 +1157,25 @@ public class LetterOfAcceptanceService {
                 .findContractorsToSearchLOAToCreateRE("%" + code + "%", WorksConstants.APPROVED.toString());
         return contractors;
     }
+
+    public List<String> findContractorsToCreateCR(final String code) {
+        final List<String> contractors = letterOfAcceptanceRepository
+                .findContractorsToCreateCR("%" + code + "%", WorksConstants.APPROVED);
+        return contractors;
+    }
+
+    public List<String> findEstimateNumbersToCreateCR(final String estimateNumber) {
+        final List<String> estimateNumbers = letterOfAcceptanceRepository
+                .findEstimateNumbersToCreateCR("%" + estimateNumber + "%", WorksConstants.APPROVED,
+                        WorksConstants.CANCELLED_STATUS);
+        return estimateNumbers;
+    }
+
+    public List<String> findWorkOrderNumbersToCreateCR(final String workOrderNumber) {
+        final List<String> workOrderNumbers = letterOfAcceptanceRepository
+                .findWorkOrderNumbersToCreateCR("%" + workOrderNumber + "%", WorksConstants.APPROVED,
+                        WorksConstants.CANCELLED_STATUS);
+        return workOrderNumbers;
+    }
+
 }

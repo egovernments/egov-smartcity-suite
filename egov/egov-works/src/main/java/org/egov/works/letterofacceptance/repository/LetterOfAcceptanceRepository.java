@@ -176,4 +176,15 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
     List<String> findContractorsToViewEstimatePhotograph(@Param("contractorName") final String contractorName,
             @Param("workOrderStatus") String workOrderStatus);
 
+    @Query("select distinct(woe.workOrder.contractor.name) from WorkOrderEstimate as woe where (upper(woe.workOrder.contractor.name) like upper(:code) or upper(woe.workOrder.contractor.code) like upper(:code)) and woe.workOrder.egwStatus.code = :workOrderStatus and woe.workOrder.parent is null")
+    List<String> findContractorsToCreateCR(@Param("code") String code, @Param("workOrderStatus") String workOrderStatus);
+
+    @Query("select distinct(woe.estimate.estimateNumber) from WorkOrderEstimate as woe where upper(woe.estimate.estimateNumber) like upper(:estimateNumber) and woe.workOrder.egwStatus.code = :workOrderStatus and woe.workOrder.parent is null and not exists (select distinct(mb.workOrder) from MBHeader as mb where woe.workOrder.id = mb.workOrder.id and mb.egwStatus.code !=:mbStatus )")
+    List<String> findEstimateNumbersToCreateCR(@Param("estimateNumber") String estimateNumber,
+            @Param("workOrderStatus") String workOrderStatus, @Param("mbStatus") String mbStatus);
+
+    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and woe.workOrder.egwStatus.code = :workOrderStatus and woe.workOrder.parent is null and not exists (select distinct(mb.workOrder) from MBHeader as mb where woe.workOrder.id = mb.workOrder.id and mb.egwStatus.code !=:mbStatus ) ")
+    List<String> findWorkOrderNumbersToCreateCR(@Param("workOrderNumber") String workOrderNumber,
+            @Param("workOrderStatus") String workOrderStatus, @Param("mbStatus") String mbStatus);
+
 }

@@ -60,6 +60,7 @@ public class SearchRequestLetterOfAcceptance {
     private Long subTypeOfWork;
     private String contractor;
     private String contractorName;
+    private Long workAssignedTo;
 
     public SearchRequestLetterOfAcceptance() {
     }
@@ -190,5 +191,13 @@ public class SearchRequestLetterOfAcceptance {
 
     public void setContractorName(final String contractorName) {
         this.contractorName = contractorName;
+    }
+
+    public Long getWorkAssignedTo() {
+        return workAssignedTo;
+    }
+
+    public void setWorkAssignedTo(final Long workAssignedTo) {
+        this.workAssignedTo = workAssignedTo;
     }
 }

@@ -59,6 +59,7 @@ import org.egov.works.web.adaptor.SearchLetterOfAcceptanceJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceToCancelJson;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceToCreateContractorBillJson;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceToMofifyJsonAdaptor;
+import org.egov.works.web.adaptor.SearchWorkOrderForCRJsonAdaptor;
 import org.egov.works.web.adaptor.SearchWorkOrderForMBHeaderJsonAdaptor;
 import org.egov.works.web.adaptor.SearchWorkOrderForREJsonAdaptor;
 import org.egov.works.workorder.entity.WorkOrder;
@@ -129,6 +130,9 @@ public class AjaxLetterOfAcceptanceController {
 
     @Autowired
     private RevisionWorkOrderService revisionWorkOrderService;
+
+    @Autowired
+    private SearchWorkOrderForCRJsonAdaptor searchWorkOrderForCRJsonAdaptor;
 
     @RequestMapping(value = "/ajaxcontractors-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Contractor> findContractorsByCodeOrName(@RequestParam final String name) {
@@ -457,6 +461,39 @@ public class AjaxLetterOfAcceptanceController {
     @RequestMapping(value = "/getcontractorname-viewestimatephotograph", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findContractorsNamesForViewEstimatePhotograph(@RequestParam final String contractorName) {
         return letterOfAcceptanceService.getContractorsNamesForViewEstimatePhotograph(contractorName);
+    }
+
+    @RequestMapping(value = "/ajaxsearch-loatocreatecm", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchWorkOrdersToCreateCR(
+            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
+        final List<WorkOrderEstimate> workOrderEstimateList = workOrderEstimateService
+                .searchWorkOrderToCreateCR(searchRequestLetterOfAcceptance);
+        final String result = new StringBuilder("{ \"data\":").append(searchWorkOrderToCreateCR(workOrderEstimateList))
+                .append("}").toString();
+        return result;
+    }
+
+    public Object searchWorkOrderToCreateCR(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder
+                .registerTypeAdapter(WorkOrderEstimate.class, searchWorkOrderForCRJsonAdaptor).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+
+    @RequestMapping(value = "/ajaxcontractors-createcr", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findContractorsToCreateCR(@RequestParam final String code) {
+        return letterOfAcceptanceService.findContractorsToCreateCR(code);
+    }
+
+    @RequestMapping(value = "/ajaxestimatenumbers-createcr", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> getEstimateNumbersToCreateCR(@RequestParam final String estimateNumber) {
+        return letterOfAcceptanceService.findEstimateNumbersToCreateCR(estimateNumber);
+    }
+
+    @RequestMapping(value = "/ajaxworkordernumbers-createcr", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> getWorkOrderNumbersToCreateCR(@RequestParam final String workOrderNumber) {
+        return letterOfAcceptanceService.findWorkOrderNumbersToCreateCR(workOrderNumber);
     }
 
 }

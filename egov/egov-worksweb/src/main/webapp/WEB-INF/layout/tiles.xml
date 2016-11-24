@@ -480,5 +480,11 @@
 		<put-attribute name="page-title" value="lbl.old.contractormbs" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/contractorportal/contractormbs.jsp"/>
 	</definition>
+	
+	<definition name="loatocreatecr-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.search.letterofacceptance" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/contractoradvance/searchworkorderforcr-search.jsp"/>
+    </definition>
+	
 
 </tiles-definitions>

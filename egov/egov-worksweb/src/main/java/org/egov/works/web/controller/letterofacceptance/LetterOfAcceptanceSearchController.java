@@ -170,4 +170,14 @@ public class LetterOfAcceptanceSearchController {
         model.addAttribute("workAssignedUsers", letterOfAcceptanceService.getWorkAssignedUsers());
         return "loatocreatere-search";
     }
+
+    @RequestMapping(value = "/searchloacr-form", method = RequestMethod.GET)
+    public String searchLOAForContractorRequisition(
+            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
+            final Model model) throws ApplicationException {
+        model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
+        model.addAttribute("workAssignedUsers", letterOfAcceptanceService.getWorkAssignedUsers());
+        return "loatocreatecr-search";
+    }
+
 }
