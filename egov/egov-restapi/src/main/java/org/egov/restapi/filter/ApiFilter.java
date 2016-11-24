@@ -71,6 +71,8 @@ public class ApiFilter implements Filter {
 
     private static final Logger LOG = Logger.getLogger(ApiFilter.class);
     private static final String SOURCE = "source";
+    private static final String ULB_CODE = "ulbCode";
+    private static final String RESTAPI_ERROR_CODE = "RESTAPI.001";
 
     @Autowired
     private CityService cityService;
@@ -88,16 +90,16 @@ public class ApiFilter implements Filter {
             throws IOException, ServletException {
         final MultiReadHttpServletRequest multiReadRequest = new MultiReadHttpServletRequest((HttpServletRequest) servletRequest);
         if (!validateRequest(multiReadRequest))
-            throw new ApplicationRuntimeException("RESTAPI.001");
+            throw new ApplicationRuntimeException(RESTAPI_ERROR_CODE);
         final byte[] b = new byte[5000];
-        String ulbCode = servletRequest.getParameter("ulbCode");
+        String ulbCode = servletRequest.getParameter(ULB_CODE);
         if (isBlank(ulbCode)) {
             try {
                 final ServletInputStream inputStream = multiReadRequest.getInputStream();
                 inputStream.read(b);
                 String jb = new String(b);
                 JSONObject jsonObject = new JSONObject(jb);
-                ulbCode = jsonObject.getString("ulbCode");
+                ulbCode = jsonObject.get(ULB_CODE).toString();
             } catch (final Exception e) {
                 throw new ApplicationRuntimeException("ULB code could not obtained from JSON", e);
             }
