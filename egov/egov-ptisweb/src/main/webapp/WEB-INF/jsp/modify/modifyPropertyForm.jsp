@@ -150,7 +150,7 @@
 	<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="Door No"></s:text> :</td>
 		<s:if test="%{houseNo!=null && !houseNo.isEmpty()}">
-		<td class="greybox"><s:textfield name="houseNo" id="houseNo" value="%{houseNo}" readonly="true" />
+		<td class="greybox"><s:textfield name="houseNo" id="houseNo" value="%{houseNo}" />
 		</td>
 		</s:if>
 		<s:else>
@@ -296,5 +296,29 @@
 	jQuery('td.siteowner').hide();
 	jQuery('tr.bpddetails').hide();
 	jQuery('tr.vacantlanddetaills').hide();
+	jQuery(document).ready(function() {
+		var propType = jQuery('#propTypeId :selected').text();
+		var doorno = jQuery("#houseNo").val() != '';
+		console.log("doorno"+doorno);
+		if(doorno && propType=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND_STR}"/>'){
+			jQuery("#houseNo").prop("readonly", true);
+		}
+		else{
+			jQuery("#houseNo").prop("readonly", false);
+		}
+	});
+	jQuery(function() {
+		jQuery("#propTypeId").change(function(){
+			var propType = jQuery('#propTypeId :selected').text();
+			var doorno = jQuery("#houseNo").val() != '';
+			if(doorno && propType=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND_STR}"/>'){
+				jQuery("#houseNo").prop("readonly", true);
+			}
+			else{
+				jQuery("#houseNo").prop("readonly", false);
+			}
+        });
+    });
+	
 	
 </script>
