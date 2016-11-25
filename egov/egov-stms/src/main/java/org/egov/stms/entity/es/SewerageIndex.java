@@ -116,10 +116,10 @@ public class SewerageIndex {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String propertyType;
 
-    @Field(type = FieldType.Integer)
+    @Field(type = FieldType.Long)
     private Integer noOfClosets_residential;
 
-    @Field(type = FieldType.Integer)
+    @Field(type = FieldType.Long)
     private Integer noOfClosets_nonResidential;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
