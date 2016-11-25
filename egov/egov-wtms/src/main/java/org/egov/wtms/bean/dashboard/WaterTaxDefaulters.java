@@ -43,9 +43,12 @@ import java.math.BigDecimal;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class TaxDefaulters {
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+@JsonInclude(value = Include.NON_EMPTY)
+public class WaterTaxDefaulters {
     private String ulbName = StringUtils.EMPTY;
-    private String propertyType = StringUtils.EMPTY;
+    private String connectionType = StringUtils.EMPTY;
     private String ownerName = StringUtils.EMPTY;
     private String period = StringUtils.EMPTY;
     private BigDecimal balance = BigDecimal.ZERO;
@@ -58,12 +61,13 @@ public class TaxDefaulters {
         this.ulbName = ulbName;
     }
 
-    public String getPropertyType() {
-        return propertyType;
+
+    public String getConnectionType() {
+        return connectionType;
     }
 
-    public void setPropertyType(String propertyType) {
-        this.propertyType = propertyType;
+    public void setConnectionType(String connectionType) {
+        this.connectionType = connectionType;
     }
 
     public String getOwnerName() {

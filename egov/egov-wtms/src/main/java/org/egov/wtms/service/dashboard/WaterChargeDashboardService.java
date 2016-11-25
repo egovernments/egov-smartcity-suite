@@ -55,6 +55,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.wtms.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.wtms.bean.dashboard.WaterChargeDashBoardRequest;
 import org.egov.wtms.bean.dashboard.WaterChargeDashBoardResponse;
+import org.egov.wtms.bean.dashboard.WaterTaxDefaulters;
 import org.egov.wtms.service.es.WaterChargeCollectionDocService;
 import org.egov.wtms.service.es.WaterChargeElasticSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -164,7 +165,7 @@ public class WaterChargeDashboardService {
 
     }
     
-  /*  public List<TaxDefaulters> getTaxDefaulters(PropertyTaxDefaultersRequest propertyTaxDefaultersRequest) {
-        return waterChargeElasticSearchService.getTopDefaulters(propertyTaxDefaultersRequest);
-    }*/
+    public List<WaterTaxDefaulters> getTaxDefaulters(WaterChargeDashBoardRequest waterChargeDashBoardRequest) {
+        return waterChargeElasticSearchService.getTopDefaulters(waterChargeDashBoardRequest);
+    }
 }
