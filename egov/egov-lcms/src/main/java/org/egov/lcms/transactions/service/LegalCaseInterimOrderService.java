@@ -143,7 +143,6 @@ public class LegalCaseInterimOrderService {
                 if (!files[i].isEmpty()) {
                     final LcInterimOrderDocuments applicationDocument = new LcInterimOrderDocuments();
                     applicationDocument.setLegalCaseInterimOrder(legalCaseInterimOrder);
-                    ;
                     applicationDocument.setDocumentName(LcmsConstants.LCINTERIOMORDER_DOCUMENTNAME);
                     applicationDocument.setSupportDocs(
                             fileStoreService.store(files[i].getInputStream(), files[i].getOriginalFilename(),
