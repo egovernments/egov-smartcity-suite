@@ -133,6 +133,8 @@ public class ApiFilter implements Filter {
                 session.setAttribute(SOURCE, resolvedIP.get().getKey());
             else
                 throw new ApplicationRuntimeException(RESTAPI_ERROR_CODE);
+        } else {
+            throw new ApplicationRuntimeException(RESTAPI_ERROR_CODE);
         }
 
         String ulbCode = request.getParameter(ULB_CODE);
