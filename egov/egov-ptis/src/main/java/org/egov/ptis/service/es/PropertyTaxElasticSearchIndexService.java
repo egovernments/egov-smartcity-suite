@@ -478,16 +478,16 @@ public class PropertyTaxElasticSearchIndexService {
         LOGGER.debug("Time taken by defaulters aggregation is : " + timeTaken + MILLISECS);
 
         List<TaxDefaulters> taxDefaulters = new ArrayList<>();
-        TaxDefaulters taxDfaulter;
+        TaxDefaulters taxDefaulter;
         startTime = System.currentTimeMillis();
         for (PropertyTaxIndex property : propertyTaxRecords) {
-            taxDfaulter = new TaxDefaulters();
-            taxDfaulter.setOwnerName(property.getConsumerName());
-            taxDfaulter.setPropertyType(property.getPropertyType());
-            taxDfaulter.setUlbName(property.getCityName());
-            taxDfaulter.setBalance(BigDecimal.valueOf(property.getTotalBalance()));
-            taxDfaulter.setPeriod(StringUtils.EMPTY);
-            taxDefaulters.add(taxDfaulter);
+            taxDefaulter = new TaxDefaulters();
+            taxDefaulter.setOwnerName(property.getConsumerName());
+            taxDefaulter.setPropertyType(property.getPropertyType());
+            taxDefaulter.setUlbName(property.getCityName());
+            taxDefaulter.setBalance(BigDecimal.valueOf(property.getTotalBalance()));
+            taxDefaulter.setPeriod(property.getDuePeriod());
+            taxDefaulters.add(taxDefaulter);
         }
         timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken for setting values in getTopDefaulters() is : " + timeTaken + MILLISECS);
