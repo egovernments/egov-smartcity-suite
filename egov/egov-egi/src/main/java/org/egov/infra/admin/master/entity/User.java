@@ -87,7 +87,7 @@ public class User extends AbstractAuditable {
     private String username;
 
     @NotNull
-    @Length(min = 8, max = 64)
+    @Length(min = 4, max = 64)
     private String password;
 
     private String salutation;
