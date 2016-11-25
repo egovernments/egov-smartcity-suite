@@ -123,7 +123,10 @@ public abstract class BaseFormAction extends ActionSupport
             final String id = ids[0];
             if (isNotBlank(id) && Long.valueOf(id) > 0) {
                 final PropertyDescriptor propDiscriptor = new PropertyDescriptor("id", class1);
-                if (propDiscriptor.getPropertyType().isAssignableFrom(Long.class))
+                if(class1!=null && "Fund".equals(class1.getSimpleName()))
+                {
+                    setValue(relationshipName, getPersistenceService().load(Integer.valueOf(id), class1));
+                }else  if (propDiscriptor.getPropertyType().isAssignableFrom(Long.class))
                     setValue(relationshipName, getPersistenceService().load(Long.valueOf(id), class1));
                 else
                     setValue(relationshipName, getPersistenceService().load(Integer.valueOf(id), class1));
