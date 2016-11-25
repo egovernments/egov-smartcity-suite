@@ -44,7 +44,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <form:form role="form" action="search" modelAttribute="penaltyForm"
-	commandName="penaltyForm" id="penaltyform"
+	commandName="penaltyForm" id="penaltysearchform"
 	cssClass="form-horizontal form-groups-bordered">
 	<div class="row">
 		<div class="col-md-12">
@@ -82,8 +82,7 @@
 			<a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>
 	</div>
-	<div id="resultdiv"></div>
 </form:form>
-<script src="<cdn:url  value='/resources/js/app/helper.js'/>"></script>
+<div id="resultdiv"></div>
 <script src="<cdn:url  value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/app/js/penaltyRates.js?rnd=${app_release_no}'/>"></script>

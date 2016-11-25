@@ -43,7 +43,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<form:form role="form" action="create" modelAttribute="penaltyForm"
+<form:form role="form" action="create" modelAttribute="penaltyResultForm"
 	commandName="penaltyForm" id="penaltyform"
 	cssClass="form-horizontal form-groups-bordered">
 	<div class="row">
@@ -61,7 +61,7 @@
 		<div class="col-sm-12">
 			<input type="hidden" name="licenseAppTypeId"
 				value="${penaltyForm.licenseAppType.id}" />
-			<table class="table table-bordered" id="result">
+			<table class="table table-bordered fromto" id="result">
 				<thead>
 					<th><spring:message code="lbl.from" /></th>
 					<th><spring:message code="lbl.to" /></th>
@@ -73,52 +73,50 @@
 						<tbody>
 							<c:forEach items="${penaltyForm.penaltyRatesList}"
 								var="penaltyRatesList" varStatus="vs">
-								<tr id="resultrow${vs.index}">
+								<tr>
 									<td><input type="hidden"
-										name="penaltyRatesList[${vs.index}]" id="penaltyId"
-										value="${penaltyRatesList.id}" /> <input type="text"
-										name="penaltyRatesList[${vs.index}].fromRange" id="fromRange"
+										name="penaltyRatesList[${vs.index}]" class="penaltyId"
+										value="${penaltyRatesList.id}" /> 
+										<input type="text"
+										name="penaltyRatesList[${vs.index}].fromRange"
 										value="${penaltyRatesList.fromRange}"
-										class="form-control fromRange text-right patternvalidation"
-										pattern="-?\d*" data-pattern="numerichyphen" maxlength="8"
-										readonly="readonly" required="required" /></td>
+										class="form-control fromRange text-right patternvalidation fromvalue"
+										pattern="-?\d*" data-pattern="numerichyphen" data-fromto="from" maxlength="8"
+									    readonly="readonly" required="required" /></td>
 									<td><input type="text"
-										name="penaltyRatesList[${vs.index}].toRange" id="toRange"
+										name="penaltyRatesList[${vs.index}].toRange"
 										value="${penaltyRatesList.toRange}"
-										class="form-control text-right patternvalidation"
-										pattern="-?\d*" data-pattern="numerichyphen" maxlength="8"
-										onchange="return checkValue(this);" required="required" /></td>
+										class="form-control text-right patternvalidation tovalue"
+										pattern="-?\d*" data-pattern="numerichyphen" data-fromto="to" maxlength="8"
+										 required="required" /></td>
 									<td><input type="text"
-										name="penaltyRatesList[${vs.index}].rate" id="rate"
+										name="penaltyRatesList[${vs.index}].rate"
 										value="${penaltyRatesList.rate}"
 										class="form-control text-right patternvalidation"
 										data-pattern="number" maxlength="8" required="required" /></td>
-									<td><span class="add-padding" id="del-row"
-										class="btn btn-primary" onclick="deleteThisRow(this)"><i
-											class="fa fa-trash" aria-hidden="true"></i></span></td>
+									<td><span class="add-padding"><i class="fa fa-trash delete-row" aria-hidden="true"></i></span></td>
 								</tr>
 							</c:forEach>
 						</tbody>
 					</c:when>
 					<c:otherwise>
 						<tbody>
-							<tr id="resultrow0">
+							<tr>
 								<td><input type="hidden" name="penaltyRatesList[0].id"
-									id="penaltyId" /> <input type="text"
-									name="penaltyRatesList[0].fromRange" id="fromRange" value="0"
-									class="form-control text-right patternvalidation"
-									pattern="-?\d*" data-pattern="numerichyphen"
+									class="penaltyId" /> 
+									<input type="text"
+									name="penaltyRatesList[0].fromRange" value="0"
+									class="form-control text-right patternvalidation fromvalue"
+									pattern="-?\d*" data-pattern="numerichyphen" data-fromto="from"
 									required="required" /></td>
 								<td><input type="text" name="penaltyRatesList[0].toRange"
-									id="toRange" class="form-control text-right patternvalidation"
-									pattern="-?\d*" data-pattern="numerichyphen"
-									onchange="return checkValue(this);" required="required" /></td>
+								    class="form-control text-right patternvalidation tovalue"
+									pattern="-?\d*" data-pattern="numerichyphen" data-fromto="to"
+									 required="required" /></td>
 								<td><input type="text" name="penaltyRatesList[0].rate"
-									id="rate" class="form-control text-right patternvalidation"
+									class="form-control text-right patternvalidation"
 									data-pattern="number" required="required" /></td>
-								<td><span class="add-padding" id="del-row"
-									class="btn btn-primary" onclick="deleteThisRow(this)"><i
-										class="fa fa-trash" aria-hidden="true"></i></span></td>
+								<td><span class="add-padding"><i class="fa fa-trash delete-row" aria-hidden="true"></i></span></td>
 							</tr>
 						<tbody>
 					</c:otherwise>
