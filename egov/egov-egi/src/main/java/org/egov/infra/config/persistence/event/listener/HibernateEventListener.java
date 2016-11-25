@@ -45,7 +45,6 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infstr.models.BaseModel;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.event.spi.EventSource;
@@ -91,13 +90,13 @@ public class HibernateEventListener implements SaveOrUpdateEventListener, PreUpd
      * pre-insert event because Hibernate checks for not-null constraints before the pre-update and pre-insert are fired.
      */
     @Override
-    public void onSaveOrUpdate(final SaveOrUpdateEvent event) throws HibernateException {
+    public void onSaveOrUpdate(final SaveOrUpdateEvent event) {
         final EventSource session = event.getSession();
         final Object object = event.getObject();
         if (object instanceof BaseModel && !session.getPersistenceContext().reassociateIfUninitializedProxy(object)) {
             // only update the entity if it has been changed
             final Date currentDate = new Date();
-            final User usr = (User) session.load(User.class, ApplicationThreadLocals.getUserId());
+            final User usr = session.load(User.class, ApplicationThreadLocals.getUserId());
 
             final BaseModel entity = (BaseModel) session.getPersistenceContext().unproxyAndReassociate(object);
             if (entity.getCreatedBy() == null) {
@@ -108,7 +107,7 @@ public class HibernateEventListener implements SaveOrUpdateEventListener, PreUpd
             }
 
         } else if (object instanceof Auditable && !session.getPersistenceContext().reassociateIfUninitializedProxy(object)) {
-            final User usr = (User) session.load(User.class, ApplicationThreadLocals.getUserId());
+            final User usr = session.load(User.class, ApplicationThreadLocals.getUserId());
             final AbstractAuditable entity = (AbstractAuditable) session.getPersistenceContext().unproxyAndReassociate(object);
             if (entity.getCreatedBy() == null) {
                 final Date currentDate = new Date();
@@ -134,7 +133,7 @@ public class HibernateEventListener implements SaveOrUpdateEventListener, PreUpd
         // get the user object from a different session
         final SessionFactory factory = session.getFactory();
         final Session session2 = factory.openSession();
-        final User usr = (User) session2.load(User.class, ApplicationThreadLocals.getUserId());
+        final User usr = session2.load(User.class, ApplicationThreadLocals.getUserId());
         session2.flush();
         session2.close();
         return usr;

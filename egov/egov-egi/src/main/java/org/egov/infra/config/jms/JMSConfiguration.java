@@ -61,7 +61,7 @@ public class JMSConfiguration {
         return jndiDestinationResolver;
     }
 
-    @Bean(name="jmsConnectionFactory")
+    @Bean(name = "jmsConnectionFactory")
     public JndiObjectFactoryBean jmsConnectionFactory() {
         JndiObjectFactoryBean jmsConnectionFactory = new JndiObjectFactoryBean();
         jmsConnectionFactory.setExpectedType(ConnectionFactory.class);

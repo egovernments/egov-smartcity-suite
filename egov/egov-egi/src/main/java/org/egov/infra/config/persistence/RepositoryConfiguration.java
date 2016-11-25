@@ -68,6 +68,6 @@ public class RepositoryConfiguration {
     @Bean
     @Profile("production")
     public AuditorAware<User> springSecurityAwareAuditor() {
-        return () -> securityUtils.getCurrentUser();
+        return securityUtils::getCurrentUser;
     }
 }

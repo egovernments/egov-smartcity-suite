@@ -54,13 +54,13 @@ import org.slf4j.LoggerFactory;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Map;
 
-@SuppressWarnings("all")
 public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectionProvider, ServiceRegistryAwareService {
     private static final long serialVersionUID = -6022082859572861041L;
     private static final Logger LOG = LoggerFactory.getLogger(MultiTenantSchemaConnectionProvider.class);
-    private DataSource dataSource;
+    private transient DataSource dataSource;
     private String databaseType;
 
     @Override
@@ -76,11 +76,11 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
     @Override
     public Connection getConnection(final String tenantId) throws SQLException {
         final Connection connection = getAnyConnection();
-        try {
-            if (databaseType.equals("POSTGRESQL"))
-                connection.createStatement().execute("SET SCHEMA '" + tenantId + "'");
+        try (Statement statement = connection.createStatement()) {
+            if ("POSTGRESQL".equals(databaseType))
+                statement.execute(new StringBuilder().append("SET SCHEMA '").append(tenantId).append("'").toString());
             else
-                connection.createStatement().execute("USE " + tenantId);
+                statement.execute("USE " + tenantId);
         } catch (final SQLException e) {
             LOG.error("Error occurred while switching tenant schema upon getting connection", e);
             throw new HibernateException("Could not alter JDBC connection to specified schema [" + tenantId + "]", e);
@@ -90,11 +90,11 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
 
     @Override
     public void releaseConnection(final String tenantId, final Connection connection) throws SQLException {
-        try {
-            if (databaseType.equals("POSTGRESQL"))
-                connection.createStatement().execute("SET SCHEMA '" + tenantId + "'");
+        try (Statement statement = connection.createStatement()) {
+            if ("POSTGRESQL".equals(databaseType))
+                statement.execute(new StringBuilder().append("SET SCHEMA '").append(tenantId).append("'").toString());
             else
-                connection.createStatement().execute("USE " + tenantId);
+                statement.execute("USE " + tenantId);
         } catch (final SQLException e) {
             LOG.warn("Error occurred while switching schema upon release connection", e);
         }

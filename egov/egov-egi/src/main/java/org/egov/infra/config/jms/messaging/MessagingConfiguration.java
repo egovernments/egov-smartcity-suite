@@ -101,7 +101,7 @@ public class MessagingConfiguration {
 
     @Bean
     public SMSQueueListener smsQueueListener() {
-        return  new SMSQueueListener();
+        return new SMSQueueListener();
     }
 
 }

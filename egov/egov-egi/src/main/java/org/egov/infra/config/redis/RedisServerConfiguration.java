@@ -68,8 +68,8 @@ public class RedisServerConfiguration {
             RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration();
             sentinelConfig.master(applicationProperties.sentinelMasterName());
             for (String host : applicationProperties.sentinelHosts()) {
-                String [] hostConfig = host.split(":");
-                sentinelConfig.sentinel(hostConfig[0].trim(),Integer.valueOf(hostConfig[1].trim()));
+                String[] hostConfig = host.split(":");
+                sentinelConfig.sentinel(hostConfig[0].trim(), Integer.valueOf(hostConfig[1].trim()));
             }
             return new JedisConnectionFactory(sentinelConfig, redisPoolConfig());
         } else {

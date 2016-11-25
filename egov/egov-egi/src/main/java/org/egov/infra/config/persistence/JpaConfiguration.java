@@ -90,7 +90,7 @@ public class JpaConfiguration {
         final LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactory.setJtaDataSource(dataSource);
         entityManagerFactory.setPersistenceUnitName("EgovPersistenceUnit");
-        entityManagerFactory.setPackagesToScan(new String[] { "org.egov.**.entity" });
+        entityManagerFactory.setPackagesToScan(new String[]{"org.egov.**.entity"});
         entityManagerFactory.setJpaVendorAdapter(jpaVendorAdaper());
         entityManagerFactory.setJpaPropertyMap(additionalProperties());
         entityManagerFactory.setValidationMode(ValidationMode.NONE);
@@ -130,22 +130,19 @@ public class JpaConfiguration {
         properties.put(ORDER_INSERTS, true);
         properties.put(ORDER_UPDATES, true);
         properties.put(AUTOCOMMIT, false);
-        /*
-         * since jadira doesn't support multitenant settings properties.put("jadira.usertype.autoRegisterUserTypes", true);
-         * properties.put("jadira.usertype.databaseZone", "jvm");
-         */
-        // properties.put("hibernate.enable_lazy_load_no_trans", true);
+        properties.put("jadira.usertype.autoRegisterUserTypes", true);
+        properties.put("jadira.usertype.databaseZone", "jvm");
 
         // Multitenancy Configuration
         if (applicationProperties.multiTenancyEnabled()) {
             properties.put(MULTI_TENANT, env.getProperty(MULTI_TENANT));
             properties.put("hibernate.database.type", env.getProperty("jpa.database"));
-            if (env.getProperty(MULTI_TENANT).equals("SCHEMA")) {
+            if ("SCHEMA".equals(env.getProperty(MULTI_TENANT))) {
                 properties.put(MULTI_TENANT_CONNECTION_PROVIDER,
                         "org.egov.infra.config.persistence.multitenancy.MultiTenantSchemaConnectionProvider");
                 properties.put(MULTI_TENANT_IDENTIFIER_RESOLVER,
                         "org.egov.infra.config.persistence.multitenancy.DomainBasedSchemaTenantIdentifierResolver");
-            } else if (env.getProperty(MULTI_TENANT).equals("DATABASE")) {
+            } else if ("DATABASE".equals(env.getProperty(MULTI_TENANT))) {
                 properties.put(MULTI_TENANT_CONNECTION_PROVIDER,
                         "org.egov.infra.config.persistence.multitenancy.MultiTenantDatabaseConnectionProvider");
                 properties.put(MULTI_TENANT_IDENTIFIER_RESOLVER,

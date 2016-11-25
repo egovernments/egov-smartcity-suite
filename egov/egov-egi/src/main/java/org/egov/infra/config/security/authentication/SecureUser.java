@@ -61,36 +61,43 @@ public class SecureUser implements UserDetails {
             throw new UsernameNotFoundException("User not found");
         } else {
             this.user = user;
-            user.getRoles().forEach((role) -> {
-                this.authorities.add(new SimpleGrantedAuthority(role.getName()));
-            });
+            user.getRoles().forEach(role ->
+                    this.authorities.add(new SimpleGrantedAuthority(role.getName()))
+            );
         }
     }
 
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.authorities;
     }
 
+    @Override
     public boolean isAccountNonExpired() {
         return this.user.getPwdExpiryDate().isAfterNow();
     }
 
+    @Override
     public boolean isAccountNonLocked() {
         return !this.user.isAccountLocked();
     }
 
+    @Override
     public boolean isCredentialsNonExpired() {
         return this.user.getPwdExpiryDate().isAfterNow();
     }
 
+    @Override
     public boolean isEnabled() {
         return this.user.isActive();
     }
 
+    @Override
     public String getPassword() {
         return this.user.getPassword();
     }
 
+    @Override
     public String getUsername() {
         return this.user.getUsername();
     }

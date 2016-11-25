@@ -65,14 +65,12 @@ import java.util.Properties;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ApplicationConfiguration {
 
-    @Autowired
-    private ApplicationContext context;
-
-    @Autowired
-    private ApplicationProperties applicationProperties;
-
     @Resource(name = "tenants")
     protected List<String> tenants;
+    @Autowired
+    private ApplicationContext context;
+    @Autowired
+    private ApplicationProperties applicationProperties;
 
     @Bean
     public FileStoreService fileStoreService() {
@@ -116,7 +114,7 @@ public class ApplicationConfiguration {
 
     @Bean
     public ReportService reportService() {
-        return new JasperReportService(10,30);
+        return new JasperReportService(10, 30);
     }
 
 }

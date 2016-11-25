@@ -40,7 +40,6 @@
 
 package org.egov.infra.config.redis;
 
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -66,10 +65,12 @@ public class EmbeddedRedisServer implements InitializingBean, DisposableBean, Be
     }
 
     @Override
-    public void postProcessBeanDefinitionRegistry(final BeanDefinitionRegistry registry) throws BeansException {
+    public void postProcessBeanDefinitionRegistry(final BeanDefinitionRegistry registry) {
+        //Do nothing
     }
 
     @Override
-    public void postProcessBeanFactory(final ConfigurableListableBeanFactory beanFactory) throws BeansException {
+    public void postProcessBeanFactory(final ConfigurableListableBeanFactory beanFactory) {
+        //Do nothing
     }
 }

@@ -66,11 +66,13 @@ public class CacheConfiguration extends CachingConfigurerSupport {
     private List<String> cities;
 
     @Bean
+    @Override
     public CacheResolver cacheResolver() {
         return new MultiTenantCacheResolver(cacheManager());
     }
 
     @Bean
+    @Override
     public KeyGenerator keyGenerator() {
         return (object, method, args) -> {
             StringBuilder sb = new StringBuilder();
@@ -84,12 +86,13 @@ public class CacheConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
+    @Override
     public CacheManager cacheManager() {
         RedisCacheManager redisCacheManager = new RedisCacheManager(redisTemplate);
         redisCacheManager.setTransactionAware(true);
         redisCacheManager.setCacheNames(cities);
         redisCacheManager.setUsePrefix(true);
-        redisCacheManager.setDefaultExpiration(60*60);
+        redisCacheManager.setDefaultExpiration(60 * 60L);
         return redisCacheManager;
     }
 

@@ -53,7 +53,7 @@ public class HibernateEventListenerIntegrator implements Integrator {
 
     @Override
     public void disintegrate(final SessionFactoryImplementor sessionFactory,
-            final SessionFactoryServiceRegistry serviceRegistry) {
+                             final SessionFactoryServiceRegistry serviceRegistry) {
         // Disintegration code have to be added.
     }
 
@@ -69,7 +69,7 @@ public class HibernateEventListenerIntegrator implements Integrator {
 
     @Override
     public void integrate(final Metadata metadata, final SessionFactoryImplementor sessionFactory,
-            final SessionFactoryServiceRegistry serviceRegistry) {
+                          final SessionFactoryServiceRegistry serviceRegistry) {
         registerCustomFilters(serviceRegistry);
 
     }

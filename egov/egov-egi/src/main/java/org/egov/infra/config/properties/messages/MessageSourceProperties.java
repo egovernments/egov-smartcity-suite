@@ -54,6 +54,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
@@ -64,39 +65,38 @@ public class MessageSourceProperties {
 
     private static final Logger LOG = LoggerFactory.getLogger(MessageSourceProperties.class);
 
-	@Autowired
-	private ApplicationProperties applicationConfigProperties;
+    @Autowired
+    private ApplicationProperties applicationConfigProperties;
 
-	private ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+    private ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 
-	@Bean
-	public ReloadableResourceBundleMessageSource parentMessageSource() {
-		final ReloadableResourceBundleMessageSource resource = new ReloadableResourceBundleMessageSource();
-		resource.setBasenames(processResourceWithPattern(applicationConfigProperties.commonMessageFiles()));
+    @Bean
+    public ReloadableResourceBundleMessageSource parentMessageSource() {
+        final ReloadableResourceBundleMessageSource resource = new ReloadableResourceBundleMessageSource();
+        resource.setBasenames(processResourceWithPattern(applicationConfigProperties.commonMessageFiles()));
         resource.setDefaultEncoding(Charset.defaultCharset().name());
-		if (applicationConfigProperties.devMode()) {
-			resource.setCacheSeconds(0);
-			resource.setUseCodeAsDefaultMessage(true);
-		}
-		return resource;
-	}
+        if (applicationConfigProperties.devMode()) {
+            resource.setCacheSeconds(0);
+            resource.setUseCodeAsDefaultMessage(true);
+        }
+        return resource;
+    }
 
-	private String [] processResourceWithPattern(String ... baseNames) {
-		List<String> resources = new ArrayList<>();
-		for (String baseName : baseNames) {
-			if (baseName.contains("*")) {
+    private String[] processResourceWithPattern(String... baseNames) {
+        List<String> resources = new ArrayList<>();
+        for (String baseName : baseNames) {
+            if (baseName.contains("*")) {
                 try {
-                    Resource[] relResources = resourcePatternResolver.getResources("classpath*:"+baseName);
-                    for (Resource relResource : relResources) {
-                        resources.add("messages/"+relResource.getFilename().replace(".properties", EMPTY));
-                    }
+                    Resource[] relResources = resourcePatternResolver.getResources("classpath*:" + baseName);
+                    Arrays.stream(relResources).forEach(relResource ->
+                            resources.add("messages/" + relResource.getFilename().replace(".properties", EMPTY)));
                 } catch (IOException e) {
-                    LOG.warn("Could not load property file : {}", baseName);
+                    LOG.warn("Could not load property file : {}", baseName, e);
                 }
             } else {
-				resources.add(baseName);
-			}
-		}
-		return listToStringArray(resources);
-	}
+                resources.add(baseName);
+            }
+        }
+        return listToStringArray(resources);
+    }
 }

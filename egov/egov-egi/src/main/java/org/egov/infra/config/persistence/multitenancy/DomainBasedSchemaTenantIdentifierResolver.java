@@ -45,14 +45,14 @@ import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
 
 public class DomainBasedSchemaTenantIdentifierResolver implements CurrentTenantIdentifierResolver {
 
-	@Override
-	public String resolveCurrentTenantIdentifier() {
-		return ApplicationThreadLocals.getTenantID() == null ? "public" : ApplicationThreadLocals.getTenantID();
-	}
+    @Override
+    public String resolveCurrentTenantIdentifier() {
+        return ApplicationThreadLocals.getTenantID() == null ? "public" : ApplicationThreadLocals.getTenantID();
+    }
 
-	@Override
-	public boolean validateExistingCurrentSessions() {
-		return true;
-	}
+    @Override
+    public boolean validateExistingCurrentSessions() {
+        return true;
+    }
 
 }

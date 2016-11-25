@@ -51,29 +51,29 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class TenantDatasourceProvider implements Stoppable {
 
-	private Map<String, DataSource> tenantDatasourceStore = new ConcurrentHashMap<String, DataSource>();
-	private static String ANY_DS_JNDI_NAME = "ezgovDatabasePool";
+    private static final String ANY_DS_JNDI_NAME = "ezgovDatabasePool";
+    private Map<String, DataSource> tenantDatasourceStore = new ConcurrentHashMap<>();
 
-	protected DataSource getAnyDataSource() {
-		return getTenantDataSource(ANY_DS_JNDI_NAME);
-	}
+    protected DataSource getAnyDataSource() {
+        return getTenantDataSource(ANY_DS_JNDI_NAME);
+    }
 
-	protected DataSource getTenantDataSource(final String tenantID) {
-		DataSource datasource = tenantDatasourceStore.get(tenantID);
-		if (datasource == null) {
-			try {
-				datasource = (DataSource) InitialContext.doLookup("java:/" + tenantID);
-			} catch (final NamingException e) {
-				new ApplicationRuntimeException("Error occurred at JNDI lookup for tenant datatsource", e);
-			}
-			tenantDatasourceStore.put(tenantID, datasource);
-		}
-		return datasource;
-	}
+    protected DataSource getTenantDataSource(final String tenantID) {
+        DataSource datasource = tenantDatasourceStore.get(tenantID);
+        if (datasource == null) {
+            try {
+                datasource = InitialContext.doLookup("java:/" + tenantID);
+            } catch (final NamingException e) {
+                new ApplicationRuntimeException("Error occurred at JNDI lookup for tenant datatsource", e);
+            }
+            tenantDatasourceStore.put(tenantID, datasource);
+        }
+        return datasource;
+    }
 
-	@Override
-	public void stop() {
-		tenantDatasourceStore.clear();
-		tenantDatasourceStore = null;
-	}
+    @Override
+    public void stop() {
+        tenantDatasourceStore.clear();
+        tenantDatasourceStore = null;
+    }
 }
