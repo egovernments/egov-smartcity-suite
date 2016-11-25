@@ -41,15 +41,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ include file="/includes/taglibs.jsp"%>
 <form:form method="post" action=""
 	class="form-horizontal form-groups-bordered" modelAttribute="judgment"
 	id="judgmentform">
-	<div class="row">
-		<div class="col-md-12">
-			<c:if test="${not empty message}">
+	<c:if test="${not empty message}">
 				<div role="alert">${message}</div>
 			</c:if>
+	<div class="row">
+		<div class="col-md-12">
+			<input type="hidden" name="mode" value="${mode}" />
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">Judgment Details</div>
@@ -164,14 +164,14 @@
 					</c:choose>
 				</div>
 			</div>
-			<div></div>
 		</div>
-		<jsp:include page="judgmentdocuments-view.jsp"></jsp:include>
-		<input type="hidden" name="judgmentDocList" value="${judgmentDocList}" />
+		</div>
+		 <jsp:include page="judgmentdocuments-view.jsp"/> 
 		<div class="row text-center">
 			<div class="add-margin">
 				<a href="javascript:void(0)" class="btn btn-default"
 					onclick="self.close()">Close</a>
 			</div>
 		</div>
+		
 </form:form>

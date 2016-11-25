@@ -41,21 +41,21 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<form:form  method="post" action="" modelAttribute="judgment"
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<form:form method="post" action="" modelAttribute="judgment"
 	id="judgmentform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	
-	 <jsp:include page="../transactions/viewSummarizedCase.jsp"/>  
+
+	<jsp:include page="../transactions/viewSummarizedCase.jsp" />
 	<%@ include file="judgment-form.jsp"%>
 	<input type="hidden" name="judgment" value="${judgment.id}" />
-			<input type="hidden" name="legalCase" value="${legalCase.id}" />
-			<jsp:include page="judgmentdocuments-view.jsp"></jsp:include>
-
+	<input type="hidden" name="legalCase" value="${legalCase.id}" />
 	</div>
 	</div>
 	</div>
 	</div>
+	<jsp:include page="judgmentdocuments-view.jsp"></jsp:include>
+	<input type="hidden" name="mode" value="${mode}" />
 	<div class="form-group">
 		<div class="text-center">
 			<button type="submit" class='btn btn-primary' id="buttonSubmit">

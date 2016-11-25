@@ -211,5 +211,6 @@ public class LcmsConstants {
 	public static final String DUEJUDGEMENTIMPLPREPORT = "Judgement Implementation";
 	public static final String DUEEMPLOYEEHEARINGREPORT = "Employee Hearings";
 	public static final String LEGALCASE_DOCUMENTNAME = "LegalCase";
+	public static final String JUDGMENT_DOCUMENTNAME = "Judgment";
 
 }

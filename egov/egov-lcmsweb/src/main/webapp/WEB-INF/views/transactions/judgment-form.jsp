@@ -37,31 +37,31 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-  
- <%@ include file="/includes/taglibs.jsp"%>
+
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-  
+
 <div class="main-content">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
-			
-			 <c:if test="${mode =='create'}"> 
-				<div class="panel-heading">
-					<div class="panel-title">Judgment</div>
-				</div>
-				 </c:if> 
-				
-			 <c:if test="${mode =='edit'}"> 
-				<div class="panel-heading">
-					<div class="panel-title">Edit Judgment</div>
-				</div>
-				
-			 </c:if> 
+
+				<c:if test="${mode =='create'}">
+					<div class="panel-heading">
+						<div class="panel-title">Judgment</div>
+					</div>
+				</c:if>
+
+				<c:if test="${mode =='edit'}">
+					<div class="panel-heading">
+						<div class="panel-title">Edit Judgment</div>
+					</div>
+
+				</c:if>
 				<div class="panel-body">
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -137,7 +137,7 @@
 							<form:errors path="judgmentDetails" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group">
+					<%-- <div class="form-group">
 						<label class="col-sm-3 control-label text-right"><font
 							size="2"><spring:message code="lbl.mesg.document" />:</font></label>
 						<div class="col-sm-3 add-margin">
@@ -146,9 +146,9 @@
 							<form:errors path="judgmentDocuments[0].files"
 								cssClass="add-margin error-msg" />
 						</div>
-					</div>
-					
-					<div class="form-group" id="enquirydetails"  style="display:none">
+					</div> --%>
+
+					<div class="form-group" id="enquirydetails" style="display: none">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.enquirydetails" /> :</label>
 						<div class="col-sm-3 add-margin">
@@ -166,8 +166,8 @@
 							<form:errors path="enquiryDate" cssClass="error-msg" />
 						</div>
 					</div>
-					
-					<div class="form-group" id="exparteorder1"  style="display:none">
+
+					<div class="form-group" id="exparteorder1" style="display: none">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.setasidepetitiondate" /> :</label>
 						<div class="col-sm-3 add-margin">
@@ -184,7 +184,7 @@
 							<form:errors path="sapHearingDate" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group" id="exparteorder2"  style="display:none">
+					<div class="form-group" id="exparteorder2" style="display: none">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.sapaccepted" /> :</label>
 						<div class="col-sm-3 add-margin">
@@ -192,7 +192,7 @@
 							<form:errors path="sapAccepted" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group" id="exparteorder3"  style="display:none">
+					<div class="form-group" id="exparteorder3" style="display: none">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.setasidepetitiondetails" />: </label>
 						<div class="col-sm-3 add-margin">
@@ -203,8 +203,8 @@
 							<form:errors path="setasidePetitionDetails" cssClass="error-msg" />
 						</div>
 					</div>
-					<div>
 
-					<input type="hidden" name="judgment" value="${judgment.id}" />
-					<input type="hidden" name="mode" value="${mode}" />
-			
+					<div id="judgmentDocuments"></div>
+
+					<input type="hidden" name="judgment" value="${judgment.id}" /> <input
+						type="hidden" name="mode" value="${mode}" />

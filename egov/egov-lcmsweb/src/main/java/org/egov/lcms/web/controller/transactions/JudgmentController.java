@@ -39,6 +39,8 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -55,6 +57,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -76,7 +79,7 @@ public class JudgmentController {
 
     @RequestMapping(value = "/new/", method = RequestMethod.GET)
     public String viewForm(@ModelAttribute("judgment") final Judgment judgment,
-            @RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
+            @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request, final Model model) {
         prepareNewForm(model);
         final LegalCase legalCase = getLegalCase(lcNumber, request);
         model.addAttribute("legalCase", legalCase);
@@ -94,7 +97,8 @@ public class JudgmentController {
     @RequestMapping(value = "/new/", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute("judgment") final Judgment judgment, final BindingResult errors,
             final RedirectAttributes redirectAttrs, @RequestParam("lcNumber") final String lcNumber,
-            final HttpServletRequest request, final Model model) {
+            @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request, final Model model)
+            throws IOException {
         final LegalCase legalcase = getLegalCase(lcNumber, request);
         if (errors.hasErrors()) {
             prepareNewForm(model);
@@ -102,12 +106,9 @@ public class JudgmentController {
             return "judgment-new";
         } else
             judgment.setLegalCase(legalcase);
-        judgmentService.persist(judgment);
-        model.addAttribute("mode", "create");
+        judgmentService.persist(judgment, files);
+        model.addAttribute("mode", "view");
         redirectAttrs.addFlashAttribute("judgment", judgment);
-        model.addAttribute("supportDocs",
-                !judgment.getJudgmentDocuments().isEmpty() && judgment.getJudgmentDocuments().get(0) != null
-                        ? judgment.getJudgmentDocuments().get(0).getSupportDocs() : null);
         model.addAttribute("message", "Judgment Created successfully.");
         return "judgment-success";
 
