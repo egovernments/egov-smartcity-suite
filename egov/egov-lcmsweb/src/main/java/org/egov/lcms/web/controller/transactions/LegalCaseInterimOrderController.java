@@ -39,6 +39,7 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -57,6 +58,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -94,7 +96,8 @@ public class LegalCaseInterimOrderController {
     public String create(
             @Valid @ModelAttribute("legalCaseInterimOrder") final LegalCaseInterimOrder legalCaseInterimOrder,
             final BindingResult errors, final RedirectAttributes redirectAttrs,
-            @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request, final Model model) {
+            @RequestParam("lcNumber") final String lcNumber, @RequestParam("file") final MultipartFile[] files,
+            final HttpServletRequest request, final Model model) throws IOException {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
         if (errors.hasErrors()) {
             model.addAttribute("interimOrders", interimOrderService.getActiveInterimOrder());
@@ -102,12 +105,8 @@ public class LegalCaseInterimOrderController {
             return "lcinterimorder-new";
         } else
             legalCaseInterimOrder.setLegalCase(legalCase);
-        legalCaseInterimOrderService.persist(legalCaseInterimOrder);
-        model.addAttribute("mode", "create");
-        model.addAttribute("supportDocs",
-                !legalCaseInterimOrder.getLcInterimOrderDocuments().isEmpty()
-                        && legalCaseInterimOrder.getLcInterimOrderDocuments().get(0) != null
-                                ? legalCaseInterimOrder.getLcInterimOrderDocuments().get(0).getSupportDocs() : null);
+        legalCaseInterimOrderService.persist(legalCaseInterimOrder, files);
+        model.addAttribute("mode", "view");
         model.addAttribute("lcNumber", legalCase.getLcNumber());
         redirectAttrs.addFlashAttribute("legalCaseInterimOrder", legalCaseInterimOrder);
         model.addAttribute("message", "Interim Order Created successfully.");

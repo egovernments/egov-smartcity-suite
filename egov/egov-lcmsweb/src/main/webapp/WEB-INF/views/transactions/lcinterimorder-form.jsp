@@ -152,7 +152,7 @@
 							<form:errors path="employee" cssClass="add-margin error-msg" />
 						</div>
 
-						<div class="form-group">
+						<!-- <div class="form-group">
 							<label class="col-sm-3 control-label text-right"><font
 								size="2"><spring:message code="lbl.complianceorder" />:</font></label>
 							<div class="col-sm-3 add-margin">
@@ -162,7 +162,7 @@
 								<form:errors path="lcInterimOrderDocuments[0].files"
 									cssClass="add-margin error-msg" />
 							</div>
-						</div>
+						</div> -->
 						<div class="form-group" id="staydetails" style="display: none">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.sendtostandingcounsel" /> :</label>
@@ -219,6 +219,8 @@
 					</div>
 				</div> 
 			 -->
+			 </div>
+			 <div id="lcInterimOrderDocuments"></div>
 						<input type="hidden" name="legalCaseInterimOrder"
 							value="${legalCaseInterimOrder.id}" /> <input type="hidden"
 							name="mode" value="${mode}" />
