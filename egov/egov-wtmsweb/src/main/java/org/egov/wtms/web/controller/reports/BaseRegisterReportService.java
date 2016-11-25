@@ -84,7 +84,7 @@ public class BaseRegisterReportService {
                 " egwtr_mv_dcb_view dcbinfo INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id ");
         queryStr.append(" INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
         queryStr.append(
-                " where ut.id=wrh.usagetype and wt.id=wrh.watersource and ps.id=wrh.pipesize and dcbinfo.usagetype =ut.name and  dcbinfo.watersource = wt.watersourcetype and dcbinfo.pipesize = ps.code and wrd.waterratesheader=wrh.id and wrd.fromdate <= now() and  wrd.todate >= now() and dcbinfo.connectionstatus = '"
+                " where ut.id=wrh.usagetype and wt.id=wrh.watersource and ps.id=wrh.pipesize and dcbinfo.usagetype =ut.name and  dcbinfo.watersource = wt.watersourcetype and dcbinfo.pipesize = ps.code and wrd.waterratesheader=wrh.id and wrh.active=true and wrd.fromdate <= now() and  wrd.todate >= now() and dcbinfo.connectionstatus = '"
                         + ConnectionStatus.ACTIVE.toString() + "'");
         if (StringUtils.isNotBlank(ward))
             queryStr.append(" and wardboundary.id = :ward");
