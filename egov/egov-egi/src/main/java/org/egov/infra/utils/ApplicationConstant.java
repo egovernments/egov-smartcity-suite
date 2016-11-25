@@ -79,6 +79,8 @@ public final class ApplicationConstant {
     public static final String DEFAULT_TIMEZONE = "IST";
     public static final String CITIZEN_ROLE_NAME = "Citizen";
 
+    public static final String DEFAULT_CHARACTER_ENCODING = "UTF-8";
+
     private ApplicationConstant() {
     }
 }

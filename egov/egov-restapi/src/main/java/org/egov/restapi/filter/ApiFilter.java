@@ -39,8 +39,6 @@
  */
 package org.egov.restapi.filter;
 
-import com.google.common.base.Charsets;
-import org.apache.commons.io.IOUtils;
 import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
@@ -102,7 +100,8 @@ public class ApiFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException,
             ServletException {
-        String ulbCode = validateAndExtractULBCode((HttpServletRequest) request);
+        MultiReadRequestWrapper multiReadRequestWrapper = new MultiReadRequestWrapper((HttpServletRequest) request);
+        String ulbCode = validateAndExtractULBCode(multiReadRequestWrapper);
         if (isNotBlank(ulbCode)) {
             boolean diffDestination = !ulbCode.equals(getCityCode());
             LOG.info("Requested ULB Code :- reached : {}, destination : {}. Altering tenant info : {}",
@@ -118,10 +117,10 @@ public class ApiFilter implements Filter {
             throw new ApplicationRuntimeException("Could not obtain ULB Code from the request");
         }
 
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(multiReadRequestWrapper, response);
     }
 
-    private String validateAndExtractULBCode(HttpServletRequest request) throws IOException {
+    private String validateAndExtractULBCode(MultiReadRequestWrapper request) throws IOException {
         String referrer = request.getHeader(REFERER);
         if (isNotBlank(referrer)) {
             HttpSession session = request.getSession();
@@ -138,7 +137,7 @@ public class ApiFilter implements Filter {
         }
 
         String ulbCode = request.getParameter(ULB_CODE);
-        return isBlank(ulbCode) ? new JSONObject(IOUtils.toString(request.getInputStream(), Charsets.UTF_8))
+        return isBlank(ulbCode) ? new JSONObject(new String(request.getContentAsByteArray()))
                 .get(ULB_CODE).toString() : ulbCode;
 
     }
