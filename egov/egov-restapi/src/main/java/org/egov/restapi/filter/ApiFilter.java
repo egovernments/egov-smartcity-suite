@@ -39,6 +39,8 @@
  */
 package org.egov.restapi.filter;
 
+import com.google.common.base.Charsets;
+import org.apache.commons.io.IOUtils;
 import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
@@ -137,7 +139,7 @@ public class ApiFilter implements Filter {
         }
 
         String ulbCode = request.getParameter(ULB_CODE);
-        return isBlank(ulbCode) ? new JSONObject(new String(request.getContentAsByteArray()))
+        return isBlank(ulbCode) ? new JSONObject(IOUtils.toString(request.getInputStream(), Charsets.UTF_8))
                 .get(ULB_CODE).toString() : ulbCode;
 
     }

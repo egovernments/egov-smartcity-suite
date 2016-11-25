@@ -40,86 +40,70 @@
 
 package org.egov.restapi.filter;
 
+import org.apache.commons.io.IOUtils;
+
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import static org.egov.infra.utils.ApplicationConstant.DEFAULT_CHARACTER_ENCODING;
-
 public class MultiReadRequestWrapper extends HttpServletRequestWrapper {
 
-    private final ByteArrayOutputStream cachedContent;
-    private ServletInputStream inputStream;
-    private BufferedReader reader;
+    private ByteArrayOutputStream cachedBytes;
 
-
-    public MultiReadRequestWrapper(final HttpServletRequest request) {
+    public MultiReadRequestWrapper(HttpServletRequest request) {
         super(request);
-        int contentLength = request.getContentLength();
-        this.cachedContent = new ByteArrayOutputStream(contentLength >= 0 ? contentLength : 1024);
     }
 
     @Override
     public ServletInputStream getInputStream() throws IOException {
-        if (this.inputStream == null) {
-            this.inputStream = new ContentCachingInputStream(getRequest().getInputStream());
-        }
-        return this.inputStream;
+        if (cachedBytes == null)
+            cacheInputStream();
+
+        return new CachedServletInputStream();
     }
 
     @Override
     public BufferedReader getReader() throws IOException {
-        if (this.reader == null) {
-            this.reader = new BufferedReader(new InputStreamReader(getInputStream(), getCharacterEncoding()));
-        }
-        return this.reader;
+        return new BufferedReader(new InputStreamReader(getInputStream()));
     }
 
-    @Override
-    public String getCharacterEncoding() {
-        String enc = super.getCharacterEncoding();
-        return enc == null ? DEFAULT_CHARACTER_ENCODING : enc;
+    private void cacheInputStream() throws IOException {
+        cachedBytes = new ByteArrayOutputStream();
+        IOUtils.copy(super.getInputStream(), cachedBytes);
     }
 
-    public byte[] getContentAsByteArray() {
-        return this.cachedContent.toByteArray();
-    }
 
-    private class ContentCachingInputStream extends ServletInputStream {
+    public class CachedServletInputStream extends ServletInputStream {
+        private ByteArrayInputStream input;
 
-        private final ServletInputStream servletInputStream;
-
-        public ContentCachingInputStream(ServletInputStream servletInputStream) {
-            this.servletInputStream = servletInputStream;
+        public CachedServletInputStream() {
+            input = new ByteArrayInputStream(cachedBytes.toByteArray());
         }
 
         @Override
         public int read() throws IOException {
-            int ch = this.servletInputStream.read();
-            if (ch != -1) {
-                cachedContent.write(ch);
-            }
-            return ch;
+            return input.read();
         }
 
         @Override
         public boolean isFinished() {
-            return this.servletInputStream.isFinished();
+            return false;
         }
 
         @Override
         public boolean isReady() {
-            return this.servletInputStream.isReady();
+            return true;
         }
 
         @Override
         public void setReadListener(ReadListener readListener) {
-            this.servletInputStream.setReadListener(readListener);
+            //Nothing
         }
     }
 }
