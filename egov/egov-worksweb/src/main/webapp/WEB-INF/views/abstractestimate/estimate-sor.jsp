@@ -102,6 +102,7 @@
 	<div class="add-margin error-msg text-right"><spring:message code="estimate.template.rate.disclaimer" />&nbsp;&nbsp;&nbsp;</div>
 </div>
 </div>
+<%@ include file="copyestimate.jsp"%>
 <div id="baseSORTable" class="panel panel-primary" data-collapsed="0">
 	<input type="hidden" id="isServiceVATRequired" value="${isServiceVATRequired }">
 	<div class="panel-heading">

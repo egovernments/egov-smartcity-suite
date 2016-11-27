@@ -143,6 +143,8 @@ public class Activity extends AbstractAuditable {
     @Transient
     private boolean quantityChanged;
 
+    private transient Date estimateDate;
+
     @Valid
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "activity", targetEntity = MeasurementSheet.class)
     @OrderBy("slNo ASC")
@@ -367,6 +369,14 @@ public class Activity extends AbstractAuditable {
 
     public void setQuantityChanged(final boolean quantityChanged) {
         this.quantityChanged = quantityChanged;
+    }
+
+    public Date getEstimateDate() {
+        return estimateDate;
+    }
+
+    public void setEstimateDate(final Date estimateDate) {
+        this.estimateDate = estimateDate;
     }
 
 }

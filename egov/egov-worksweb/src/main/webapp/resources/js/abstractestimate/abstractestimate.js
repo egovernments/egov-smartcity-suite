@@ -374,6 +374,18 @@ $(document).ready(function(){
 		getDeductionAmountByPercentage();
 	}
 	
+	$('.slide-copy-estimate-menu').click(function(){
+		$(this).parent().find('.copy-estimate-slide').slideToggle();
+		if($(this).parent().find('#toggle-his-icon').hasClass('fa fa-angle-down'))
+		{
+			$(this).parent().find('#toggle-his-icon').removeClass('fa fa-angle-down').addClass('fa fa-angle-up');
+			//$('#see-more-link').hide();
+			}else{
+			$(this).parent().find('#toggle-his-icon').removeClass('fa fa-angle-up').addClass('fa fa-angle-down');
+			//$('#see-more-link').show();
+		}
+	});
+	
 });
 
 $overheadRowCount = 0;
@@ -1272,110 +1284,7 @@ function getActivitiesForTemplate(id){
 		type: "GET",
 		dataType: "json",
 		success: function (data) {
-			var responseObj = JSON.parse(data);
-			var sorCount = 0;
-			var nonSorCount = 0;
-			$.each(responseObj, function(index,value) {
-				if(index==0){
-					$('#message').prop("hidden",true);
-					$('#sorRow').removeAttr("hidden");
-					$('#sorRow').removeAttr('sorinvisible');
-				}else{
-					if(responseObj[index].scheduleId != null){
-						var key = $("#tblsor tbody tr:visible[id='sorRow']").length - 1;
-						addRow('tblsor', 'sorRow');
-						resetIndexes();
-						$('#soractivityid_' + key).val('');
-						$('#quantity_' + key).val('');
-						$('#categoryCode_' + key).val('');
-						$('#quantity_' + key).removeAttr('readonly');
-						$('#quantity_' + key).attr('required', 'required');
-						$('.amount_' + key).html('');
-						$('#vat_' + key).val('');
-						$('.vatAmount_' + key).html('');
-						$('.total_' + key).html('');
-						if(document.getElementById('sorActivities['+key+'].mstd'))
-							document.getElementById('sorActivities['+key+'].mstd').innerHTML=""; 
-						if(document.getElementById('sorActivities['+key+'].mspresent'))
-							document.getElementById('sorActivities['+key+'].mspresent').value="0"; 
-						if(document.getElementById('sorActivities['+key+'].msopen'))
-							document.getElementById('sorActivities['+key+'].msopen').value="0";
-						generateSorSno();	
-					}else{
-						if(!nonSorCheck){
-							$('#nonSorMessage').prop("hidden",true);
-							$('#nonSorRow').removeAttr("hidden");
-							$('#nonSorRow').removeAttr('nonsorinvisible');
-						}
-						if(nonSorCheck) {
-							var key = $("#tblNonSor tbody tr:visible[id='nonSorRow']").length;
-							addRow('tblNonSor', 'nonSorRow');
-							resetIndexes();
-							$('#activityid_' + key).val('');
-							$('#nonSorId_' + key).val('');
-							$('#nonSorDesc_' + key).val('');
-							$('#nonSorUom_' + key).val('');
-							$('#nonSorRate_' + key).val('');
-							$('#nonSorEstimateRate_' + key).val('');
-							$('#nonSorQuantity_' + key).val('');
-							$('#nonSorQuantity_' + key).removeAttr('readonly');
-							$('#nonSorQuantity_' + key).attr('required', 'required');
-							$('.nonSorAmount_' + key).html('');
-							$('#nonSorServiceTaxPerc_' + key).val('');
-							$('.nonSorVatAmt_' + key).html('');
-							$('.nonSorTotal_' + key).html('');
-							if(document.getElementById('nonSorActivities['+key+'].mstd'))
-								document.getElementById('nonSorActivities['+key+'].mstd').innerHTML=""; 
-							if(document.getElementById('nonSorActivities['+key+'].mspresent'))
-								document.getElementById('nonSorActivities['+key+'].mspresent').value="0"; 
-							if(document.getElementById('nonSorActivities['+key+'].msopen'))
-								document.getElementById('nonSorActivities['+key+'].msopen').value="0";
-							generateSlno();
-						}
-						nonSorCheck = true;
-					}
-				}
-				if(responseObj[index].scheduleId != null){
-					$('#id_'+sorCount).val(responseObj[index].scheduleId);
-					$('.categoryCode_'+sorCount).html(responseObj[index].scheduleCategoryCode);
-					$('.code_'+sorCount).html(responseObj[index].scheduleCode);
-					$('.summary_'+sorCount).html(responseObj[index].scheduleSummary);
-					$('.description_'+sorCount).html(hint.replace(/@fulldescription@/g, responseObj[index].scheduleDescription));
-					$('.uom_'+sorCount).html(responseObj[index].scheduleUom);
-					$('#sorUomid_'+sorCount).val(responseObj[index].scheduleUomId);
-					if(document.getElementById('sorActivities['+sorCount+'].mstd'))
-						document.getElementById('sorActivities['+sorCount+'].mstd').innerHTML=""; 
-					if(document.getElementById('sorActivities['+sorCount+'].mspresent'))
-						document.getElementById('sorActivities['+sorCount+'].mspresent').value="0";
-					if(document.getElementById('sorActivities['+sorCount+'].msopen'))
-						document.getElementById('sorActivities['+sorCount+'].msopen').value="0";
-					if(responseObj[index].scheduleRate!=null) {
-						$('.estimateRate_'+sorCount).html(responseObj[index].scheduleRate);
-						$('#rate_'+sorCount).val(getUnitRate(responseObj[index].scheduleUom, responseObj[index].scheduleRate));
-						$('#estimateRate_'+sorCount).val(responseObj[index].scheduleRate);
-					}
-					else {
-						$('.estimateRate_'+sorCount).html(0);
-						$('#rate_'+sorCount).val(0);
-						$('#estimateRate_'+sorCount).val(0);
-					}
-					sorCount++;
-				}else{
-					$('#nonSorDesc_'+nonSorCount).val(responseObj[index].nonSorDescription);
-					$('#nonSorUom_'+nonSorCount).val(responseObj[index].nonSorUomId);
-					$('#nonSorUomid_'+nonSorCount).val(responseObj[index].nonSorUomId);
-					$('#nonSorEstimateRate_'+nonSorCount).val(responseObj[index].nonSorRate); 
-					$('#nonSorRate_'+nonSorCount).val(getUnitRate(responseObj[index].nonSorUom,responseObj[index].nonSorRate));
-					if(document.getElementById('nonSorActivities['+nonSorCount+'].mstd'))
-						document.getElementById('nonSorActivities['+nonSorCount+'].mstd').innerHTML=""; 
-					if(document.getElementById('nonSorActivities['+nonSorCount+'].mspresent'))
-						document.getElementById('nonSorActivities['+nonSorCount+'].mspresent').value="0";
-					if(document.getElementById('nonSorActivities['+nonSorCount+'].msopen'))
-						document.getElementById('nonSorActivities['+nonSorCount+'].msopen').value="0";
-					nonSorCount++;
-				}
-				resetIndexes();
-			});
+			populateActivities(data, nonSorCheck);
 		}, 
 		error: function (response) {
 			//console.log("failed");
@@ -1389,6 +1298,349 @@ function getActivitiesForTemplate(id){
 	calculateNonSorEstimateAmountTotal();
 	calculateNonSorVatAmountTotal();
 	nonSorTotal();
+}
+
+function populateActivities(data, nonSorCheck){
+	var responseObj = JSON.parse(data);
+	var sorCount = 0;
+	var nonSorCount = 0;
+	$.each(responseObj, function(index,value) {
+		if(index==0){
+			$('#message').prop("hidden",true);
+			$('#sorRow').removeAttr("hidden");
+			$('#sorRow').removeAttr('sorinvisible');
+			if (responseObj[index].ms != "") {
+				var newrow= $('#msheaderrowtemplate').html();
+				
+				newrow=  newrow.replace(/msrowtemplate/g, 'msrowsorActivities[0]');
+				newrow=  newrow.replace(/templatesorActivities\[0\]/g, 'sorActivities[0]');
+				newrow = newrow.replace(/templatesorActivities_0/g, 'sorActivities_0');
+				newrow = newrow.replace(/templatemssubmit_0/g, 'mssubmit_0');
+				document.getElementById('sorActivities[0].mstd').innerHTML=newrow;
+				$(responseObj[index].ms).each(function(index, measurementSheet){
+					if (index > 0) {
+						var msrowname= "sorActivities[0].mstable";
+						var msrownameid=msrowname.split(".")[0];
+						var rep='measurementSheetList\['+ index +'\]';
+
+						var $newrow = "<tr>"+$('#msrowtemplate').html()+"</tr>";
+						$newrow = $newrow.replace(/templatesorActivities\[0\]/g,msrownameid);
+						$newrow = $newrow.replace(/measurementSheetList\[0\]/g,rep);
+						$newrow = $newrow.replace(/templatesorActivities_0/g, 'sorActivities_0');
+						$newrow = $newrow.replace(/measurementSheetList_0_id/g, 'measurementSheetList_' + index + '_id');
+						$newrow = $newrow.replace(/measurementSheetList_0_parent/g, 'measurementSheetList_' + index + '_parent');
+						$newrow = $newrow.replace('value="1"','value="'+(index+1)+'"');
+						$('#sorActivities\\[0\\]\\.mssubmit').closest('tr').before($newrow);
+						patternvalidation();
+					}
+					
+					$.each(measurementSheet, function(obj, value){
+						if(obj == "identifier") {
+							if(value == 'A')
+								document.getElementById('sorActivities[0].measurementSheetList[' + index + '].' + obj).options[0].setAttribute('selected', 'selected');
+							else
+								document.getElementById('sorActivities[0].measurementSheetList[' + index + '].' + obj).options[1].setAttribute('selected', 'selected');
+						} else if(obj == 'remarks') {
+							$('#sorActivities\\[0\\]\\.measurementSheetList\\[' + index + '\\]\\.' + obj).html(value);
+						} else {
+							$('#sorActivities\\[0\\]\\.measurementSheetList\\[' + index + '\\]\\.' + obj).attr('value', value);
+							if(obj != "slNo" && obj != "remarks"){
+								document.getElementById('sorActivities[0].measurementSheetList[' + index + '].' + obj).setAttribute('data-' + obj, value);
+							}
+						}
+					});
+					
+				});
+				var total = 0;
+				var identifier;
+				$(responseObj[index].ms).each(function(index, measurementSheet){
+					if(document.getElementById('sorActivities[0].measurementSheetList[' + index + '].identifier').value=='A')
+						identifier = "A";
+					else
+						identifier = "D";
+					var quantity = document.getElementById('sorActivities[0].measurementSheetList[' + index + '].quantity').value;
+					if(identifier == "A")
+						total = total + Number(quantity);
+					else
+						total = total - Number(quantity);
+				});
+				$('#sorActivities\\[0\\]\\.msnet').html(total);
+			}
+		}else{
+			if(responseObj[index].scheduleId != null){
+				var key = $("#tblsor tbody tr:visible[id='sorRow']").length;
+				addRow('tblsor', 'sorRow');
+				resetIndexes();
+				$('#soractivityid_' + key).val('');
+				$('#quantity_' + key).val('');
+				$('#categoryCode_' + key).val('');
+				$('#quantity_' + key).removeAttr('readonly');
+				$('#quantity_' + key).attr('required', 'required');
+				$('.amount_' + key).html('');
+				$('#vat_' + key).val('');
+				$('.vatAmount_' + key).html('');
+				$('.total_' + key).html('');
+				if(document.getElementById('sorActivities['+key+'].mstd') && responseObj[index].ms == "")
+					document.getElementById('sorActivities['+key+'].mstd').innerHTML=""; 
+				if(document.getElementById('sorActivities['+key+'].mspresent'))
+					document.getElementById('sorActivities['+key+'].mspresent').value="0"; 
+				if(document.getElementById('sorActivities['+key+'].msopen'))
+					document.getElementById('sorActivities['+key+'].msopen').value="0";
+				generateSorSno();	
+				if (responseObj[index].ms != "") {
+					var newrow= $('#msheaderrowtemplate').html();
+					
+					newrow=  newrow.replace(/msrowtemplate/g, 'msrowsorActivities[' + key + ']');
+					newrow=  newrow.replace(/templatesorActivities\[0\]/g, 'sorActivities[' + key + ']');
+					newrow = newrow.replace(/templatesorActivities_0/g, 'sorActivities_' + key );
+					newrow = newrow.replace(/templatemssubmit_0/g, 'mssubmit_' + key );
+					document.getElementById('sorActivities[' + key + '].mstd').innerHTML=newrow;
+					$(responseObj[index].ms).each(function(index, measurementSheet){
+						if (index > 0) {
+							var msrowname= "sorActivities[" + key + "].mstable";
+							var msrownameid=msrowname.split(".")[0];
+							var rep='measurementSheetList\['+ index +'\]';
+
+							var $newrow = "<tr>"+$('#msrowtemplate').html()+"</tr>";
+							$newrow = $newrow.replace(/templatesorActivities\[0\]/g,msrownameid);
+							$newrow = $newrow.replace(/measurementSheetList\[0\]/g,rep);
+							$newrow = $newrow.replace(/templatesorActivities_0/g, 'sorActivities_' + key);
+							$newrow = $newrow.replace(/measurementSheetList_0_id/g, 'measurementSheetList_' + index + '_id');
+							$newrow = $newrow.replace(/measurementSheetList_0_parent/g, 'measurementSheetList_' + index + '_parent');
+							$newrow = $newrow.replace('value="1"','value="'+(index+1)+'"');
+							$('#sorActivities\\[' + key + '\\]\\.mssubmit').closest('tr').before($newrow);
+							patternvalidation();
+						}
+						
+						$.each(measurementSheet, function(obj, value){
+							if(obj == "identifier") {
+								if(value == 'A')
+									document.getElementById('sorActivities[' + key + '].measurementSheetList[' + index + '].' + obj).options[0].setAttribute('selected', 'selected');
+								else
+									document.getElementById('sorActivities[' + key + '].measurementSheetList[' + index + '].' + obj).options[1].setAttribute('selected', 'selected');
+							} else if(obj == 'remarks') {
+								$('#sorActivities\\[' + key + '\\]\\.measurementSheetList\\[' + index + '\\]\\.' + obj).html(value);
+							} else {
+								$('#sorActivities\\[' + key + '\\]\\.measurementSheetList\\[' + index + '\\]\\.' + obj).attr('value', value);
+								if(obj != "slNo" && obj != "remarks"){
+									document.getElementById('sorActivities[' + key + '].measurementSheetList[' + index + '].' + obj).setAttribute('data-' + obj, value);
+								}
+							}
+						});
+						
+					});
+					var total = 0;
+					var identifier;
+					$(responseObj[index].ms).each(function(index, measurementSheet){
+						if(document.getElementById('sorActivities[' + key + '].measurementSheetList[' + index + '].identifier').value=='A')
+							identifier = "A";
+						else
+							identifier = "D";
+						var quantity = document.getElementById('sorActivities[' + key + '].measurementSheetList[' + index + '].quantity').value;
+						if(identifier == "A")
+							total = total + Number(quantity);
+						else
+							total = total - Number(quantity);
+					});
+					$('#sorActivities\\[' + key + '\\]\\.msnet').html(total);
+				}
+			}else{
+				if(!nonSorCheck){
+					$('#nonSorMessage').prop("hidden",true);
+					$('#nonSorRow').removeAttr("hidden");
+					$('#nonSorRow').removeAttr('nonsorinvisible');
+					if (responseObj[index].ms != "") {
+						var newrow= $('#msheaderrowtemplate').html();
+						
+						newrow=  newrow.replace(/msrowtemplate/g, 'msrownonSorActivities[0]');
+						newrow=  newrow.replace(/templatesorActivities\[0\]/g, 'nonSorActivities[0]');
+						newrow = newrow.replace(/templatesorActivities_0/g, 'nonSorActivities_0');
+						newrow = newrow.replace(/templatemssubmit_0/g, 'mssubmit_0');
+						document.getElementById('nonSorActivities[0].mstd').innerHTML=newrow;
+						$(responseObj[index].ms).each(function(index, measurementSheet){
+							if (index > 0) {
+								var msrowname= "nonSorActivities[0].mstable";
+								var msrownameid=msrowname.split(".")[0];
+								var rep='measurementSheetList\['+ index +'\]';
+
+								var $newrow = "<tr>"+$('#msrowtemplate').html()+"</tr>";
+								$newrow = $newrow.replace(/templatesorActivities\[0\]/g,msrownameid);
+								$newrow = $newrow.replace(/measurementSheetList\[0\]/g,rep);
+								$newrow = $newrow.replace(/templatesorActivities_0/g, 'nonSorActivities_0');
+								$newrow = $newrow.replace(/measurementSheetList_0_id/g, 'measurementSheetList_' + index + '_id');
+								$newrow = $newrow.replace(/measurementSheetList_0_parent/g, 'measurementSheetList_' + index + '_parent');
+								$newrow = $newrow.replace('value="1"','value="'+(index+1)+'"');
+								$('#nonSorActivities\\[0\\]\\.mssubmit').closest('tr').before($newrow);
+								patternvalidation();
+							}
+							
+							$.each(measurementSheet, function(obj, value){
+								if(obj == "identifier") {
+									if(value == 'A')
+										document.getElementById('nonSorActivities[0].measurementSheetList[' + index + '].' + obj).options[0].setAttribute('selected', 'selected');
+									else
+										document.getElementById('nonSorActivities[0].measurementSheetList[' + index + '].' + obj).options[1].setAttribute('selected', 'selected');
+								} else if(obj == 'remarks') {
+									$('#nonSorActivities\\[0\\]\\.measurementSheetList\\[' + index + '\\]\\.' + obj).html(value);
+								} else {
+									$('#nonSorActivities\\[0\\]\\.measurementSheetList\\[' + index + '\\]\\.' + obj).attr('value', value);
+									if(obj != "slNo" && obj != "remarks"){
+										document.getElementById('nonSorActivities[0].measurementSheetList[' + index + '].' + obj).setAttribute('data-' + obj, value);
+									}
+								}
+							});
+							
+						});
+						var total = 0;
+						var identifier;
+						$(responseObj[index].ms).each(function(index, measurementSheet){
+							if(document.getElementById('nonSorActivities[0].measurementSheetList[' + index + '].identifier').value=='A')
+								identifier = "A";
+							else
+								identifier = "D";
+							var quantity = document.getElementById('nonSorActivities[0].measurementSheetList[' + index + '].quantity').value;
+							if(identifier == "A")
+								total = total + Number(quantity);
+							else
+								total = total - Number(quantity);
+						});
+						$('#nonSorActivities\\[0\\]\\.msnet').html(total);
+					}
+				}
+				if(nonSorCheck) {
+					var key = $("#tblNonSor tbody tr:visible[id='nonSorRow']").length;
+					addRow('tblNonSor', 'nonSorRow');
+					resetIndexes();
+					$('#activityid_' + key).val('');
+					$('#nonSorId_' + key).val('');
+					$('#nonSorDesc_' + key).val('');
+					$('#nonSorUom_' + key).val('');
+					$('#nonSorRate_' + key).val('');
+					$('#nonSorEstimateRate_' + key).val('');
+					$('#nonSorQuantity_' + key).val('');
+					$('#nonSorQuantity_' + key).removeAttr('readonly');
+					$('#nonSorQuantity_' + key).attr('required', 'required');
+					$('.nonSorAmount_' + key).html('');
+					$('#nonSorServiceTaxPerc_' + key).val('');
+					$('.nonSorVatAmt_' + key).html('');
+					$('.nonSorTotal_' + key).html('');
+					if(document.getElementById('nonSorActivities['+key+'].mstd') && responseObj[index].ms == "")
+						document.getElementById('nonSorActivities['+key+'].mstd').innerHTML=""; 
+					if(document.getElementById('nonSorActivities['+key+'].mspresent'))
+						document.getElementById('nonSorActivities['+key+'].mspresent').value="0"; 
+					if(document.getElementById('nonSorActivities['+key+'].msopen'))
+						document.getElementById('nonSorActivities['+key+'].msopen').value="0";
+					generateSlno();
+					if (responseObj[index].ms != "") {
+						var newrow= $('#msheaderrowtemplate').html();
+						
+						newrow=  newrow.replace(/msrowtemplate/g, 'msrownonSorActivities[' + key + ']');
+						newrow=  newrow.replace(/templatesorActivities\[0\]/g, 'nonSorActivities[' + key + ']');
+						newrow = newrow.replace(/templatesorActivities_0/g, 'nonSorActivities_' + key );
+						newrow = newrow.replace(/templatemssubmit_0/g, 'mssubmit_' + key );
+						document.getElementById('nonSorActivities[' + key + '].mstd').innerHTML=newrow;
+						$(responseObj[index].ms).each(function(index, measurementSheet){
+							if (index > 0) {
+								var msrowname= "nonSorActivities[" + key + "].mstable";
+								var msrownameid=msrowname.split(".")[0];
+								var rep='measurementSheetList\['+ index +'\]';
+
+								var $newrow = "<tr>"+$('#msrowtemplate').html()+"</tr>";
+								$newrow = $newrow.replace(/templatesorActivities\[0\]/g,msrownameid);
+								$newrow = $newrow.replace(/measurementSheetList\[0\]/g,rep);
+								$newrow = $newrow.replace(/templatesorActivities_0/g, 'nonSorActivities_' + key);
+								$newrow = $newrow.replace(/measurementSheetList_0_id/g, 'measurementSheetList_' + index + '_id');
+								$newrow = $newrow.replace(/measurementSheetList_0_parent/g, 'measurementSheetList_' + index + '_parent');
+								$newrow = $newrow.replace('value="1"','value="'+(index+1)+'"');
+								$('#nonSorActivities\\[' + key + '\\]\\.mssubmit').closest('tr').before($newrow);
+								patternvalidation();
+							}
+							
+							$.each(measurementSheet, function(obj, value){
+								if(obj == "identifier") {
+									if(value == 'A')
+										document.getElementById('nonSorActivities[' + key + '].measurementSheetList[' + index + '].' + obj).options[0].setAttribute('selected', 'selected');
+									else
+										document.getElementById('nonSorActivities[' + key + '].measurementSheetList[' + index + '].' + obj).options[1].setAttribute('selected', 'selected');
+								} else if(obj == 'remarks') {
+									$('#nonSorActivities\\[' + key + '\\]\\.measurementSheetList\\[' + index + '\\]\\.' + obj).html(value);
+								} else {
+									$('#nonSorActivities\\[' + key + '\\]\\.measurementSheetList\\[' + index + '\\]\\.' + obj).attr('value', value);
+									if(obj != "slNo" && obj != "remarks"){
+										document.getElementById('nonSorActivities[' + key + '].measurementSheetList[' + index + '].' + obj).setAttribute('data-' + obj, value);
+									}
+								}
+							});
+							
+						});
+						var total = 0;
+						var identifier;
+						$(responseObj[index].ms).each(function(index, measurementSheet){
+							if(document.getElementById('nonSorActivities[' + key + '].measurementSheetList[' + index + '].identifier').value=='A')
+								identifier = "A";
+							else
+								identifier = "D";
+							var quantity = document.getElementById('nonSorActivities[' + key + '].measurementSheetList[' + index + '].quantity').value;
+							if(identifier == "A")
+								total = total + Number(quantity);
+							else
+								total = total - Number(quantity);
+						});
+						$('#nonSorActivities\\[' + key + '\\]\\.msnet').html(total);
+					}
+				}
+				nonSorCheck = true;
+			}
+		}
+		if(responseObj[index].scheduleId != null){
+			$('#id_'+sorCount).val(responseObj[index].scheduleId);
+			$('.categoryCode_'+sorCount).html(responseObj[index].scheduleCategoryCode);
+			$('.code_'+sorCount).html(responseObj[index].scheduleCode);
+			$('.summary_'+sorCount).html(responseObj[index].scheduleSummary);
+			$('.description_'+sorCount).html(hint.replace(/@fulldescription@/g, responseObj[index].scheduleDescription));
+			$('.uom_'+sorCount).html(responseObj[index].scheduleUom);
+			$('#sorUomid_'+sorCount).val(responseObj[index].scheduleUomId);
+			if(responseObj[index].scheduleRate!=null) {
+				$('.estimateRate_'+sorCount).html(responseObj[index].scheduleRate);
+				$('#rate_'+sorCount).val(getUnitRate(responseObj[index].scheduleUom, responseObj[index].scheduleRate));
+				$('#estimateRate_'+sorCount).val(responseObj[index].scheduleRate);
+			}
+			else {
+				$('.estimateRate_'+sorCount).html(0);
+				$('#rate_'+sorCount).val(0);
+				$('#estimateRate_'+sorCount).val(0);
+			}
+			if (responseObj[index].scheduleQuantity != null) {
+				$('#quantity_'+sorCount).val(responseObj[index].scheduleQuantity);
+				$('#quantity_'+sorCount).trigger('blur');
+			}
+			if(document.getElementById('sorActivities['+sorCount+'].mstd') && responseObj[index].ms == "")
+				document.getElementById('sorActivities['+sorCount+'].mstd').innerHTML=""; 
+			if(document.getElementById('sorActivities['+sorCount+'].mspresent'))
+				document.getElementById('sorActivities['+sorCount+'].mspresent').value="0";
+			if(document.getElementById('sorActivities['+sorCount+'].msopen'))
+				document.getElementById('sorActivities['+sorCount+'].msopen').value="0";
+			sorCount++;
+		}else{
+			$('#nonSorDesc_'+nonSorCount).val(responseObj[index].nonSorDescription);
+			$('#nonSorUom_'+nonSorCount).val(responseObj[index].nonSorUomId);
+			$('#nonSorUomid_'+nonSorCount).val(responseObj[index].nonSorUomId);
+			$('#nonSorEstimateRate_'+nonSorCount).val(responseObj[index].nonSorRate); 
+			$('#nonSorRate_'+nonSorCount).val(getUnitRate(responseObj[index].nonSorUom,responseObj[index].nonSorRate));
+			if (responseObj[index].nonSorQuantity != null) {
+				$('#nonSorQuantity_'+nonSorCount).val(responseObj[index].nonSorQuantity);
+				$('#nonSorQuantity_'+nonSorCount).trigger('change');
+			}
+			if(document.getElementById('nonSorActivities['+nonSorCount+'].mstd') && responseObj[index].ms == "")
+				document.getElementById('nonSorActivities['+nonSorCount+'].mstd').innerHTML=""; 
+			if(document.getElementById('nonSorActivities['+nonSorCount+'].mspresent'))
+				document.getElementById('nonSorActivities['+nonSorCount+'].mspresent').value="0";
+			if(document.getElementById('nonSorActivities['+nonSorCount+'].msopen'))
+				document.getElementById('nonSorActivities['+nonSorCount+'].msopen').value="0";
+			nonSorCount++;
+		}
+		resetIndexes();
+	});
 }
 
 function getSchemsByFundId(fundId) {
@@ -3089,3 +3341,89 @@ function getDeductionAmountByPercentage(){
 	calculateEstimateValue();
 		
 }
+
+var copiedEstimateNumber = new Bloodhound({
+	datumTokenizer: function (datum) {
+		return Bloodhound.tokenizers.whitespace(datum.value);
+	},
+	queryTokenizer: Bloodhound.tokenizers.whitespace,
+	remote: {
+		url: '/egworks/abstractestimate/ajaxestimatenumbers-estimatetocopy?code=%QUERY', 
+		filter: function (data) {
+			var estimateDate = $('#estimateDate').val();
+			if(estimateDate == "" || estimateDate == null){
+				bootbox.alert($('#msgestimatedate').val());
+				return false;
+			}
+			return $.map(data, function (ct) {
+				for (var key in ct) {
+					  if (ct.hasOwnProperty(key)) {
+					    return {
+					    	code: ct[key],
+					    	id: key
+					    	};
+					  }
+					}
+			});
+		}
+	}
+});
+
+copiedEstimateNumber.initialize();
+var copiedEstimateNumber_typeahead = $('#copiedEstimateNumber').typeahead({
+	hint : true,
+	highlight : true,
+	minLength : 3
+}, {
+	displayKey : 'code',
+	source : copiedEstimateNumber.ttAdapter()
+}).on('typeahead:selected typeahead:autocompleted', function(event, data){            
+	confirmOverWriteActivities(data.id);
+	$('#copiedEstimateNumber').typeahead('val','');
+});
+
+function confirmOverWriteActivities(id) {
+	$("#copiedEstimateId").val(id);
+	var copiedEstimateId = id;
+	var sorHiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
+	var nonSorHiddenRowCount = $("#tblNonSor tbody tr:hidden[id='nonSorRow']").length;
+	if(copiedEstimateId!="" && (sorHiddenRowCount !=1 || nonSorHiddenRowCount!=1)){ 
+		var ans=confirm($("#copyEstimateConfirmMsg").val());	
+		if(ans) {
+			clearActivities();
+			getActivitiesForEstimate(copiedEstimateId);
+		}
+		else {
+			return false;		
+		}
+	}else{
+		getActivitiesForEstimate(copiedEstimateId);
+	}
+}
+function getActivitiesForEstimate(id){
+	var estimateDate = $('#estimateDate').val();
+	var nonSorCheck  = false;
+	$.ajax({
+		url: "/egworks/abstractestimate/ajaxactivities-estimatetocopy?id="+ id + "&estimateDate="+estimateDate, 
+		type: "GET",
+		dataType: "json",
+		success: function (data) {
+			populateActivities(data, nonSorCheck);
+		}, 
+		error: function (response) {
+		}
+	});
+
+	resetIndexes();
+	calculateEstimateAmountTotal();
+	calculateVatAmountTotal();
+	total();
+	calculateNonSorEstimateAmountTotal();
+	calculateNonSorVatAmountTotal();
+	nonSorTotal();
+}
+
+$('#searchEstimates').click(function() {
+	var typeOfWork =$('#parentCategory').val();
+	window.open("/egworks/abstractestimate/searchestimateform?typeOfWork="+typeOfWork,'', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+});

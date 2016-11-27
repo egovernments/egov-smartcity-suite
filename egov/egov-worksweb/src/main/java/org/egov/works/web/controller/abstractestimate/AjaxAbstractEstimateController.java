@@ -44,6 +44,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -56,8 +59,10 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.web.support.json.adapter.UserAdaptor;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimateForCopyEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchRequest;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchResult;
+import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.SearchRequestCancelEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.master.service.EstimateTemplateService;
@@ -71,6 +76,8 @@ import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.adaptor.AbstractEstimateForLOAJsonAdaptor;
 import org.egov.works.web.adaptor.AbstractEstimateForOfflineStatusJsonAdaptor;
+import org.egov.works.web.adaptor.CopyEstimateJsonAdaptor;
+import org.egov.works.web.adaptor.EstimateActivityJsonAdaptor;
 import org.egov.works.web.adaptor.EstimateTemplateJsonAdaptor;
 import org.egov.works.web.adaptor.SearchEstimatesToCancelJson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,8 +127,14 @@ public class AjaxAbstractEstimateController {
     private EstimateTemplateJsonAdaptor estimateTemplateJsonAdaptor;
 
     @Autowired
+    private EstimateActivityJsonAdaptor estimateActivityJsonAdaptor;
+
+    @Autowired
     @Qualifier("chartOfAccountsService")
     private ChartOfAccountsService chartOfAccountsService;
+
+    @Autowired
+    private CopyEstimateJsonAdaptor copyEstimateJsonAdaptor;
 
     public Object toSearchAbstractEstimateForLOAResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
@@ -301,4 +314,44 @@ public class AjaxAbstractEstimateController {
         return chartOfAccountsService.findOtherDeductionAccountCodesByGlcodeOrNameLike(searchQuery, purposeNames);
     }
 
+    @RequestMapping(value = "/ajaxestimatenumbers-estimatetocopy", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Map<Long, String>> findEstimateNumbersToCopyEstimate(@RequestParam final String code) {
+        return estimateService.findEstimateNumbersToCopyEstimate(code);
+    }
+
+    @RequestMapping(value = "/ajaxactivities-estimatetocopy", method = RequestMethod.GET)
+    public @ResponseBody String populateEstimateActivity(@RequestParam final String id,
+            final Model model, @RequestParam final Date estimateDate)
+            throws ApplicationException {
+        final List<Activity> activities = estimateService.getActivitiesByEstimate(Long.valueOf(id));
+        for (final Activity activity : activities)
+            activity.setEstimateDate(estimateDate);
+        final String result = estimateActivitiesToJson(activities);
+        return result;
+    }
+
+    public String estimateActivitiesToJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(Activity.class, estimateActivityJsonAdaptor)
+                .create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+
+    @RequestMapping(value = "/ajaxestimates-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchActivities(
+            @ModelAttribute final AbstractEstimateForCopyEstimate abstractEstimateForCopyEstimate,
+            final HttpServletRequest request) {
+        final List<AbstractEstimate> abstractEstimates = estimateService.searchEstimatesToCopy(abstractEstimateForCopyEstimate);
+        final String result = new StringBuilder("{ \"data\":").append(toSearchEstimateResultJson(abstractEstimates))
+                .append("}").toString();
+        return result;
+    }
+
+    public Object toSearchEstimateResultJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class, copyEstimateJsonAdaptor).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
 }

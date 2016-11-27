@@ -44,6 +44,7 @@ import java.util.List;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
@@ -69,6 +70,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/abstractestimate")
@@ -100,6 +102,9 @@ public class SearchAbstractEstimateController {
 
     @Autowired
     private MeasurementSheetService measurementSheetService;
+
+    @Autowired
+    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
 
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String searchForm(@ModelAttribute final SearchAbstractEstimate searchAbstractEstimate, final Model model)
@@ -232,5 +237,20 @@ public class SearchAbstractEstimateController {
         model.addAttribute("abstractEstimateForLoaSearchRequest", abstractEstimateForLoaSearchRequest);
         model.addAttribute("abstractEstimateCreatedByUsers", abstractEstimateCreatedByUsers);
         return "searchAbstractEstimateForOfflineStatus-search";
+    }
+
+    @RequestMapping(value = "/searchestimateform", method = RequestMethod.GET)
+    public String showSearchEstimateForm(@RequestParam("typeOfWork") final Long typeOfWorkId,
+            final Model model) {
+        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Long> departmentIds = new ArrayList<Long>();
+        if (departments != null)
+            for (final Department department : departments)
+                departmentIds.add(department.getId());
+        final List<User> abstractEstimateCreatedByUsers = estimateService.getAbstractEstimateCreatedByUsers(departmentIds);
+        model.addAttribute("typeOfWorkId", typeOfWorkId);
+        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
+        model.addAttribute("abstractEstimateCreatedByUsers", abstractEstimateCreatedByUsers);
+        return "estimate-searchform";
     }
 }

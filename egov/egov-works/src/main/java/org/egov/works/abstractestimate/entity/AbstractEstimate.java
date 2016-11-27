@@ -310,6 +310,10 @@ public class AbstractEstimate extends StateAware implements Auditable {
     @Transient
     private List<AbstractEstimateDeduction> tempDeductionValues = new ArrayList<AbstractEstimateDeduction>(0);
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "COPIED_FROM", nullable = true)
+    private AbstractEstimate copiedFrom;
+
     @Override
     public Long getId() {
         return id;
@@ -870,6 +874,14 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     public void setTempDeductionValues(final List<AbstractEstimateDeduction> tempDeductionValues) {
         this.tempDeductionValues = tempDeductionValues;
+    }
+
+    public AbstractEstimate getCopiedFrom() {
+        return copiedFrom;
+    }
+
+    public void setCopiedFrom(final AbstractEstimate copiedFrom) {
+        this.copiedFrom = copiedFrom;
     }
 
 }

@@ -43,10 +43,12 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -83,6 +85,7 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.OfflineStatusesForAbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimateDeduction;
+import org.egov.works.abstractestimate.entity.AbstractEstimateForCopyEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchRequest;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchResult;
 import org.egov.works.abstractestimate.entity.Activity;
@@ -1465,4 +1468,59 @@ public class EstimateService {
         return nominationName;
     }
 
+    public List<Map<Long, String>> findEstimateNumbersToCopyEstimate(final String code) {
+        final List<AbstractEstimate> estimates = abstractEstimateRepository
+                .findAbstractEstimateNumbersToCopyEstimate("%" + code + "%",
+                        AbstractEstimate.EstimateStatus.APPROVED.toString());
+        final List<Map<Long, String>> estimatesMap = new ArrayList<>();
+        for (final AbstractEstimate ae : estimates) {
+            final Map<Long, String> estimateMap = new HashMap<>();
+            estimateMap.put(ae.getId(), ae.getEstimateNumber());
+            estimatesMap.add(estimateMap);
+        }
+        return estimatesMap;
+    }
+
+    public List<Activity> getActivitiesByEstimate(final Long estimateId) {
+        return abstractEstimateRepository.findActivitiesByEstimate(estimateId);
+    }
+
+    public List<AbstractEstimate> searchEstimatesToCopy(final AbstractEstimateForCopyEstimate abstractEstimateForCopyEstimate) {
+        final StringBuilder queryStr = new StringBuilder(500);
+        queryStr.append(
+                "select distinct(ae) from AbstractEstimate ae where exists (select distinct(activity.id) from Activity activity where activity.abstractEstimate.id = ae.id)");
+
+        queryStr.append(" and ae.parent.id is null ");
+
+        if (abstractEstimateForCopyEstimate != null) {
+            if (abstractEstimateForCopyEstimate.getEstimateNumber() != null)
+                queryStr.append(" and upper(ae.estimateNumber) = upper(:estimateNumber)");
+            if (abstractEstimateForCopyEstimate.getStatus() != null)
+                queryStr.append(" and upper(ae.egwStatus.code) = upper(:status)");
+            if (abstractEstimateForCopyEstimate.getAbstractEstimateCreatedBy() != null)
+                queryStr.append(" and ae.createdBy.id = :createdBy");
+            if (abstractEstimateForCopyEstimate.getTypeOfWork() != null)
+                queryStr.append(" and ae.parentCategory.id = :typeOfWork");
+        }
+
+        final Query query = setQueryParametersForAbstractEstimateToCopy(abstractEstimateForCopyEstimate, queryStr);
+        return query.getResultList();
+    }
+
+    private Query setQueryParametersForAbstractEstimateToCopy(
+            final AbstractEstimateForCopyEstimate abstractEstimateForCopyEstimate,
+            final StringBuilder queryStr) {
+        final Query qry = entityManager.createQuery(queryStr.toString());
+        if (abstractEstimateForCopyEstimate != null) {
+            if (abstractEstimateForCopyEstimate.getEstimateNumber() != null)
+                qry.setParameter("estimateNumber", abstractEstimateForCopyEstimate.getEstimateNumber());
+            if (abstractEstimateForCopyEstimate.getStatus() != null)
+                qry.setParameter("status", AbstractEstimate.EstimateStatus.APPROVED.toString());
+            if (abstractEstimateForCopyEstimate.getAbstractEstimateCreatedBy() != null)
+                qry.setParameter("createdBy", abstractEstimateForCopyEstimate.getAbstractEstimateCreatedBy());
+            if (abstractEstimateForCopyEstimate.getTypeOfWork() != null)
+                qry.setParameter("typeOfWork", abstractEstimateForCopyEstimate.getTypeOfWork());
+        }
+        return qry;
+    }
 }

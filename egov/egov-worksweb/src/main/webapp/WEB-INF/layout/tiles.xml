@@ -486,5 +486,9 @@
         <put-attribute name="body" value="/WEB-INF/views/contractoradvance/searchworkorderforcr-search.jsp"/>
     </definition>
 	
+	<definition name="estimate-searchform" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.search.estimates" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/abstractestimate/searchestimates-form.jsp"/>
+     </definition>
 
 </tiles-definitions>
