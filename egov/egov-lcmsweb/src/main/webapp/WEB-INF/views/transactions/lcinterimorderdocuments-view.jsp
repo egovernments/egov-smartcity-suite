@@ -8,17 +8,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <script
 	src="<cdn:url value='/resources/js/app/documentsupload.js?rnd=${app_release_no}'/>"></script>
-<style>
-	.file-ellipsis {
-		width : auto !Important;
-	}
-	
-	.padding-10
-	{
-	  padding:10px;
-	}
-</style>
-<div class="panel panel-primary" data-collapsed="0" style=" scrollable:true;">
+<div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
 		<c:choose>
@@ -40,16 +30,16 @@
 	<c:if test="${mode == 'view' && legalCaseInterimOrder.lcInterimOrderDocuments.isEmpty()}">
 		<spring:message code="lbl.no.documents" />
 	</c:if>
-	<c:if test="${ mode != 'view'}">
+	<c:if test="${mode != 'view'}">
 		<div>
 			<table width="100%">
 				<tbody>
 					<tr>
 						<td valign="top">
-						 	<table id="uploadertbl" width="100%"><tbody>
+						 	<table id="uploadertbl"><tbody>
 						 		<tr id="row1">			 				
 									<td>
-										<input type="file" name="file" id="file1" onchange="isValidFile(this.id)" class="padding-10">
+										<input type="file" name="file" id="file1" onchange="isValidFile(this.id)">
 									</td>
 								</tr>									 										
 						 	</tbody></table>
