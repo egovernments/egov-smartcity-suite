@@ -486,7 +486,7 @@ public class PropertyTaxElasticSearchIndexService {
             taxDefaulter.setPropertyType(property.getPropertyType());
             taxDefaulter.setUlbName(property.getCityName());
             taxDefaulter.setBalance(BigDecimal.valueOf(property.getTotalBalance()));
-            taxDefaulter.setPeriod(property.getDuePeriod());
+            taxDefaulter.setPeriod(StringUtils.isBlank(property.getDuePeriod()) ? StringUtils.EMPTY : property.getDuePeriod());
             taxDefaulters.add(taxDefaulter);
         }
         timeTaken = System.currentTimeMillis() - startTime;
