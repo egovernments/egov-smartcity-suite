@@ -125,8 +125,8 @@ public interface AbstractEstimateRepository extends JpaRepository<AbstractEstima
     @Query("select distinct(ae.createdBy) from AbstractEstimate as ae where ae.egwStatus.code = :abstractEstimateStatus ")
     List<User> findCreatedByForEstimatePhotograph(@Param("abstractEstimateStatus") String abstractEstimateStatus);
 
-    @Query("select ae from AbstractEstimate as ae where upper(ae.estimateNumber) like upper(:code) and ae.egwStatus.code = :aeStatus and exists (select distinct(activity.id) from Activity activity where activity.abstractEstimate.id = ae.id) and ae.parent.id is null")
-    List<AbstractEstimate> findAbstractEstimateNumbersToCopyEstimate(@Param("code") final String code,
+    @Query("select ae.id, ae.estimateNumber from AbstractEstimate as ae where upper(ae.estimateNumber) like upper(:code) and ae.egwStatus.code = :aeStatus and exists (select distinct(activity.id) from Activity activity where activity.abstractEstimate.id = ae.id) and ae.parent.id is null")
+    List<Object[]> findAbstractEstimateNumbersToCopyEstimate(@Param("code") final String code,
             @Param("aeStatus") final String aeStatus);
 
     @Query("select act from Activity act where act.abstractEstimate.id =:estimateId")

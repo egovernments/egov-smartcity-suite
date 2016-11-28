@@ -170,9 +170,6 @@ $('#Cancel').click(function() {
 
 
 function submitForm(workFlowAction) {
-	$('.loader-class').modal('show', {
-		backdrop : 'static'
-	});
 	var id = $('#id').val();
 	var url = "";
 	if (id != "")
@@ -189,6 +186,11 @@ function submitForm(workFlowAction) {
 	    contentType: false,
 	    processData: false,
 		data: oData,
+		beforeSend : function(){
+			$('.loader-class').modal('show', {
+				backdrop : 'static'
+			});
+		},
 		success: function (message) {
 			var json = $.parseJSON(message);
 			if(workFlowAction == "Save") {
@@ -272,7 +274,9 @@ function submitForm(workFlowAction) {
 			$.each(json, function(key, value){
 				$('#errorMessage').append(value + '</br>');
 			});
+		},
+		complete : function(){
+			$('.loader-class').modal('hide');
 		}
 	});
-	$('.loader-class').modal('hide');
 }

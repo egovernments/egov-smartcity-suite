@@ -63,7 +63,9 @@ import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
@@ -163,6 +165,9 @@ public class ContractorBillRegisterService {
     @Autowired
     private WorkOrderActivityService workOrderActivityService;
 
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -250,12 +255,14 @@ public class ContractorBillRegisterService {
             throws ValidationException, IOException {
         ContractorBillRegister updatedContractorBillRegister = null;
         Boolean isEditable = false;
-        
+
         if (contractorBillRegister.getState() != null) {
             final Position position = contractorBillRegister.getState().getOwnerPosition();
-            if (position != null && (WorksConstants.BILL_MODIFIER_EXAMINER_OF_ACCOUNTS
+            final List<AppConfigValues> billEditDesignations = appConfigValuesService.getConfigValuesByModuleAndKey(
+                    WorksConstants.EGF_MODULE_NAME, WorksConstants.BILL_EDIT_DESIGNATIONS);
+            if (position != null && !billEditDesignations.isEmpty() && (billEditDesignations.get(0).getValue()
                     .equalsIgnoreCase(position.getDeptDesig().getDesignation().getName())
-                    || WorksConstants.BILL_MODIFIER_ASSISTANT_EXAMINER_OF_ACCOUNTS
+                    || billEditDesignations.get(1).getValue()
                             .equalsIgnoreCase(position.getDeptDesig().getDesignation().getCode())))
                 isEditable = true;
         }

@@ -408,9 +408,7 @@ public class WorksConstants {
 
     public final static String WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME = "lineestimatedetailid";
 
-    public static final String BILL_MODIFIER_EXAMINER_OF_ACCOUNTS = "Examiner of Accounts";
-
-    public static final String BILL_MODIFIER_ASSISTANT_EXAMINER_OF_ACCOUNTS = "Assistant Examiner of accounts";
+    public static final String BILL_EDIT_DESIGNATIONS = "BILL_EDIT_DESIGNATIONS";
 
     public static final String MODE = "mode";
 }

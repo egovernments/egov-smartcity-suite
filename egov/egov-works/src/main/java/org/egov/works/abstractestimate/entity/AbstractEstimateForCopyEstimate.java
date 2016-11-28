@@ -45,9 +45,6 @@ public class AbstractEstimateForCopyEstimate {
     private String status;
     private Long typeOfWork;
 
-    public AbstractEstimateForCopyEstimate() {
-    }
-
     public String getEstimateNumber() {
         return estimateNumber;
     }

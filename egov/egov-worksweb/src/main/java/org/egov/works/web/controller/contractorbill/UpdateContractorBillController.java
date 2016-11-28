@@ -179,12 +179,14 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                 && request.getParameter("approvalPosition") != null
                 && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-        
+
         if (contractorBillRegister.getState() != null) {
             final Position position = contractorBillRegister.getState().getOwnerPosition();
-            if (position != null && (WorksConstants.BILL_MODIFIER_EXAMINER_OF_ACCOUNTS
+            final List<AppConfigValues> billEditDesignations = appConfigValuesService.getConfigValuesByModuleAndKey(
+                    WorksConstants.EGF_MODULE_NAME, WorksConstants.BILL_EDIT_DESIGNATIONS);
+            if (position != null && !billEditDesignations.isEmpty() && (billEditDesignations.get(0).getValue()
                     .equalsIgnoreCase(position.getDeptDesig().getDesignation().getName())
-                    || WorksConstants.BILL_MODIFIER_ASSISTANT_EXAMINER_OF_ACCOUNTS
+                    || billEditDesignations.get(1).getValue()
                             .equalsIgnoreCase(position.getDeptDesig().getDesignation().getCode())))
                 isEditable = true;
         }
@@ -370,7 +372,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
     private String loadViewData(final Model model, final HttpServletRequest request,
             final ContractorBillRegister contractorBillRegister) {
         Boolean isEditable = false;
-        
+
         model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         if (contractorBillRegister.getState() != null) {
@@ -379,12 +381,14 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             model.addAttribute("pendingActions", contractorBillRegister.getState().getNextAction());
             model.addAttribute("amountRule", contractorBillRegister.getBillamount());
         }
-        
+
         if (contractorBillRegister.getState() != null) {
             final Position position = contractorBillRegister.getState().getOwnerPosition();
-            if (position != null && (WorksConstants.BILL_MODIFIER_EXAMINER_OF_ACCOUNTS
+            final List<AppConfigValues> billEditDesignations = appConfigValuesService.getConfigValuesByModuleAndKey(
+                    WorksConstants.EGF_MODULE_NAME, WorksConstants.BILL_EDIT_DESIGNATIONS);
+            if (position != null && !billEditDesignations.isEmpty() && (billEditDesignations.get(0).getValue()
                     .equalsIgnoreCase(position.getDeptDesig().getDesignation().getName())
-                    || WorksConstants.BILL_MODIFIER_ASSISTANT_EXAMINER_OF_ACCOUNTS
+                    || billEditDesignations.get(1).getValue()
                             .equalsIgnoreCase(position.getDeptDesig().getDesignation().getCode())))
                 isEditable = true;
         }
@@ -396,7 +400,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             model.addAttribute("mode", "edit");
         else
             model.addAttribute("mode", "view");
-        
+
         model.addAttribute("isBillEditable", isEditable);
 
         model.addAttribute("billDetailsMap", contractorBillRegisterService.getBillDetailsMap(contractorBillRegister, model));

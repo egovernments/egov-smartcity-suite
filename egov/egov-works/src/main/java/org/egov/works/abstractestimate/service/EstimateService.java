@@ -1469,13 +1469,13 @@ public class EstimateService {
     }
 
     public List<Map<Long, String>> findEstimateNumbersToCopyEstimate(final String code) {
-        final List<AbstractEstimate> estimates = abstractEstimateRepository
+        final List<Object[]> estimates = abstractEstimateRepository
                 .findAbstractEstimateNumbersToCopyEstimate("%" + code + "%",
                         AbstractEstimate.EstimateStatus.APPROVED.toString());
         final List<Map<Long, String>> estimatesMap = new ArrayList<>();
-        for (final AbstractEstimate ae : estimates) {
+        for (final Object[] ae : estimates) {
             final Map<Long, String> estimateMap = new HashMap<>();
-            estimateMap.put(ae.getId(), ae.getEstimateNumber());
+            estimateMap.put(Long.valueOf(ae[0].toString()), ae[1].toString());
             estimatesMap.add(estimateMap);
         }
         return estimatesMap;
