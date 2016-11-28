@@ -362,7 +362,9 @@
 				<textFieldExpression><![CDATA["Date : "+$P{approvedDate}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="158" y="78" width="110" height="15" uuid="d330d487-a49c-4d46-af88-57bd1b1388d6"/>
+				<reportElement x="158" y="78" width="160" height="15" uuid="d330d487-a49c-4d46-af88-57bd1b1388d6">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.0"/>
