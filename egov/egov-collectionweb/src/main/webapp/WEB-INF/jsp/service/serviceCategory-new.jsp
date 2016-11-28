@@ -49,6 +49,12 @@ function onSubmit(obj){
 	document.forms[0].submit;
    return true;
 }
+
+function resetValues()
+{
+	jQuery(":text").val("");
+}
+
 </script>
 </head>  
 	<body>  
@@ -71,7 +77,8 @@ function onSubmit(obj){
 	 		<div class="buttonbottom">
 	 			<s:submit name="button1" cssClass="buttonsubmit" id="button32" onclick="return onSubmit('serviceCategory-create.action');"  value="Save"/>
 	 			<s:submit name="button2" cssClass="buttonsubmit" id="button32" onclick="return onSubmit('serviceCategory-list.action');"  value="List"/>
-				<s:reset name="button3" cssClass="button" id="button" value="Reset"/>
+				<input type="button3" class="button" value="Reset"
+						id="resetbutton" name="reset" onclick="resetValues();">
 				<input name="button4" type="button" class="button" id="button" onclick="window.close()" value="Close"/>
 			</div>
 
