@@ -56,7 +56,6 @@
 				</div>
 				
 				<div class="panel-body custom-form">
-					<div class="row">
 						<div class="form-group">
 						<label for="registrationNo" class="col-sm-2 control-label"><spring:message
 								code="lbl.registration.no" /></label>
@@ -79,8 +78,6 @@
 				            <form:errors path="registration.zone" cssClass="add-margin error-msg"/>
 						</div>
 						</div>
-						</div>
-						<div class="row">
 						<div class="form-group">
 						<label for="certificateNo" class="col-sm-2 control-label"><spring:message
 								code="lbl.certificate.type" /></label>
@@ -98,17 +95,18 @@
 								</form:select>
 								<form:errors path="certificateType" cssClass="error-msg" />
 						</div>
-												<label class="col-sm-2 control-label">
+						</div>
+						<div class="form-group">
+						<label class="col-sm-2 control-label">
 							<spring:message code="lbl.fromDate"/>
 						</label>
 						<div class="col-sm-3">
-							<form:input path="fromDate" id="txt-fromdate" type="text" class="form-control low-width datepicker" data-date-end-date="0d" data-date-today-highlight="true" placeholder="" autocomplete="off"/>
-            				<form:errors path="fromDate" cssClass="add-margin error-msg"/>
+							<form:input path="fromDate" id="txt-fromdate" type="text"
+								class="form-control low-width datepicker"
+								data-date-end-date="0d" data-date-today-highlight="true"
+								placeholder="" autocomplete="off" />
+							<form:errors path="fromDate" cssClass="add-margin error-msg"/>
 						</div>
-						</div>
-						</div>
-						<div class="row">
-						<div class="form-group">
 						<label class="col-sm-2 control-label">
 							<spring:message code="lbl.toDate"/>
 						</label>
@@ -116,7 +114,6 @@
 							<form:input path="toDate" id="txt-todate" type="text" class="form-control low-width datepicker" data-date-end-date="0d" data-date-today-highlight="true" placeholder="" autocomplete="off" />
             				<form:errors path="toDate" cssClass="add-margin error-msg"/>
 						</div>
-					</div>
 					</div>
 				</div>
 			</div>

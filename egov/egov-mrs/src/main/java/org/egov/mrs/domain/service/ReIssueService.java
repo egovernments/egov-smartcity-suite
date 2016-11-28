@@ -1,7 +1,7 @@
 /* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
-    Copyright (C) <2015>  eGovernments Foundation
+    Copyright (C) <2016>  eGovernments Foundation
 
     The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
@@ -68,7 +68,6 @@ import org.egov.mrs.autonumber.MarriageRegistrationApplicationNumberGenerator;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.entity.MarriageRegistration;
-import org.egov.mrs.domain.entity.MrApplicant;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.enums.MarriageCertificateType;
 import org.egov.mrs.domain.repository.ReIssueRepository;
@@ -172,16 +171,11 @@ public class ReIssueService {
     }
 
     @Transactional
-    public ReIssue forwardReIssue(final Long id, final ReIssue reissueModel,
+    public ReIssue forwardReIssue(final Long id, final ReIssue reissue,
             final WorkflowContainer workflowContainer) {
-
-        final ReIssue reissue = get(id);
-
-        updateReIssueData(reissueModel, reissue);
-        
+        updateReIssueData(reissue);
         reissue.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.CREATED.toString(), MarriageConstants.MODULE_NAME));
-        
         update(reissue);
         workflowService.transition(reissue, workflowContainer, reissue.getApprovalComent());
         return reissue;
@@ -218,12 +212,12 @@ public class ReIssueService {
     }
 
     
-    private void updateReIssueData(final ReIssue reissueModel, final ReIssue reissue) {
-        if(reissueModel.getFeeCriteria()!=null)
-            reissue.setFeeCriteria(marriageFeeService.getFee(reissueModel.getFeeCriteria().getId()));
-        reissue.setFeePaid(reissueModel.getFeePaid());
-        if (reissueModel.getFeePaid() != null){
-        	if(reissueModel.getDemand() == null){
+    private void updateReIssueData( final ReIssue reissue) {
+        if(reissue.getFeeCriteria()!=null)
+            reissue.setFeeCriteria(marriageFeeService.getFee(reissue.getFeeCriteria().getId()));
+        reissue.setFeePaid(reissue.getFeePaid());
+        if (reissue.getFeePaid() != null){
+        	if(reissue.getDemand() == null){
         		reissue.setDemand(reIssueDemandService.createDemand(new BigDecimal(reissue.getFeePaid())));
         	}
         	else{
@@ -232,13 +226,10 @@ public class ReIssueService {
         }
         reissue.setStatus(marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.CREATED.toString(), MarriageConstants.MODULE_NAME));
 
-        updateApplicantInfo(reissueModel.getApplicant(), reissue.getApplicant());
-        updateDocuments(reissueModel, reissue);
+        updateDocuments(reissue);
     }
 
-    private void updateDocuments(final ReIssue reissueModel, final ReIssue reissue) {
-
-    	marriageApplicantService.deleteDocuments(reissueModel.getApplicant(), reissue.getApplicant());
+    private void updateDocuments(final ReIssue reissue) {
 
         final Map<Long, MarriageDocument> individualDocumentAndId = new HashMap<Long, MarriageDocument>();
         marriageDocumentService.getIndividualDocuments().forEach(document -> individualDocumentAndId.put(document.getId(), document));
@@ -246,16 +237,7 @@ public class ReIssueService {
         marriageApplicantService.addDocumentsToFileStore(reissue.getApplicant(), individualDocumentAndId);
     }
 
-    private void updateApplicantInfo(final MrApplicant modelApplicant, final MrApplicant dbApplicant) {
-        dbApplicant.getName().setFirstName(modelApplicant.getName().getFirstName());
-        dbApplicant.getName().setMiddleName(modelApplicant.getName().getMiddleName());
-        dbApplicant.getName().setLastName(modelApplicant.getName().getLastName());
-        dbApplicant.setOtherName(modelApplicant.getOtherName());
-        dbApplicant.getContactInfo().setResidenceAddress(modelApplicant.getContactInfo().getResidenceAddress());
-        dbApplicant.getContactInfo().setOfficeAddress(modelApplicant.getContactInfo().getOfficeAddress());
-        dbApplicant.getContactInfo().setMobileNo(modelApplicant.getContactInfo().getMobileNo());
-        dbApplicant.getContactInfo().setEmail(modelApplicant.getContactInfo().getEmail());
-    }
+   
     
     @Transactional
     public ReIssue printCertificate(ReIssue reIssue, final WorkflowContainer workflowContainer,final HttpServletRequest request) throws IOException {

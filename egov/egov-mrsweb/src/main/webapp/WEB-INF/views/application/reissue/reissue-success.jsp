@@ -58,7 +58,7 @@
 			<c:set value="/mrs/reissue/certificate?reIssueId=${reissue.id}" var="actionUrl"></c:set> 
 		</c:if>
 		
-		<form:form role="form" action="/mrs/reissue/update"
+		<form:form role="form" 
 			modelAttribute="reIssue" id="form-reissue"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
@@ -102,19 +102,7 @@
 					    	</div>
 					    </div>
 					  </div>
-					
-			<jsp:include page="../../common/reg-reissue-wfhistory.jsp"></jsp:include>
-			<c:choose>
-				<c:when test="${mode != 'view'}">			
-					<jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
-					<div class="buttonbottom" align="center">
-						<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
-					</div>
-				</c:when> 
-				<c:otherwise>
-					<div class="buttonbottom" align="center"><a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a></div>
-				</c:otherwise>
-			</c:choose>
+			<div class="buttonbottom" align="center"><a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a></div>
 		</form:form>
 	</div>
 </div>

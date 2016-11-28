@@ -45,7 +45,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
@@ -78,13 +77,9 @@ public class ViewReIssueController extends GenericWorkFlowController {
     @Autowired
     private MarriageUtils utils;
     
-    
-   	@Autowired
-   	private MarriageRegistrationUnitService marriageRegistrationUnitService;
+   @Autowired
+   private MarriageRegistrationUnitService marriageRegistrationUnitService;
 
-   	@Autowired
-   	private BoundaryService boundaryService;
-   	
     
     public void prepareNewForm(final Model model) {
 		model.addAttribute("marriageRegistrationUnit",
@@ -136,6 +131,7 @@ public class ViewReIssueController extends GenericWorkFlowController {
      * @param workflowContainer
      * @param request
      */
+    @SuppressWarnings("unused")
     private void obtainWorkflowParameters(final WorkflowContainer workflowContainer, final HttpServletRequest request) {
         if (request.getParameter("approvalComent") != null)
             workflowContainer.setApproverComments(request.getParameter("approvalComent"));
@@ -143,5 +139,25 @@ public class ViewReIssueController extends GenericWorkFlowController {
             workflowContainer.setWorkFlowAction(request.getParameter("workFlowAction"));
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter("approvalPosition")));
+    }
+    
+    @RequestMapping(value = "/view/{reIssueId}", method = RequestMethod.GET)
+    public String showReIssueApplication(@PathVariable final Long reIssueId,
+            final Model model) throws IOException {
+        
+        final ReIssue reIssue = reIssueService.get(reIssueId);
+        final MarriageRegistration registration = reIssue.getRegistration();
+        model.addAttribute("reissue", reIssue);
+        model.addAttribute("reIssue", reIssue);
+        model.addAttribute("documents", marriageDocumentService.getIndividualDocuments());
+        
+        marriageRegistrationService.prepareDocumentsForView(registration);
+        marriageApplicantService.prepareDocumentsForView(registration.getHusband());
+        marriageApplicantService.prepareDocumentsForView(registration.getWife());
+        marriageApplicantService.prepareDocumentsForView(reIssue.getApplicant());
+        prepareNewForm(model);
+        prepareWorkflow(model, reIssue, new WorkflowContainer());
+       
+        return "reissue-success";
     }
 }

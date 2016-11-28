@@ -57,7 +57,8 @@
 				modelAttribute="reIssue" id="form-reissue"
 				cssClass="form-horizontal form-groups-bordered"
 				enctype="multipart/form-data">
-
+				
+				<input type="hidden" name="reIssue" id="reIssue" value="${reissue.id}" />
 				<input type="hidden" id="reIssueId" value="${reIssue.id}" />
 				<input type="hidden" id="reIssueStatus" value="${reIssue.status.code}" />
 				<form:hidden path="" name="registration.id" id="reIssueRegistrationId" value="${reIssue.registration.id}"/>	

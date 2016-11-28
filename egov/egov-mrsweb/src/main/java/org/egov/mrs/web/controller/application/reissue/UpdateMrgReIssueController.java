@@ -44,10 +44,9 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.utils.StringUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.service.MarriageApplicantService;
@@ -76,7 +75,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping(value = "/reissue")
 public class UpdateMrgReIssueController extends GenericWorkFlowController {
 
-    private static final Logger LOG = Logger.getLogger(UpdateMrgReIssueController.class);
 
     @Autowired
     private ReIssueService reIssueService;
@@ -90,14 +88,11 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
     @Autowired
     protected ResourceBundleMessageSource messageSource;
 
-    @Autowired
-    private ReIssueService reissueService;
 
     @Autowired
     private MarriageRegistrationUnitService marriageRegistrationUnitService;
 
-    @Autowired
-    private BoundaryService boundaryService;
+   
 
     public void prepareNewForm(final Model model) {
         model.addAttribute("marriageRegistrationUnit",
@@ -110,16 +105,14 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
         model.addAttribute("documents", marriageDocumentService.getIndividualDocuments());
         model.addAttribute("reissue", reIssue);
 
-        // marriageRegistrationService.prepareDocumentsForView(reIssue.getRegistration());
         marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getHusband());
         marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getWife());
         marriageApplicantService.prepareDocumentsForView(reIssue.getApplicant());
         model.addAttribute("applicationHistory",
-                reissueService.getHistory(reIssue));
+                reIssueService.getHistory(reIssue));
         prepareNewForm(model);
         prepareWorkFlowForReIssue(reIssue, model);
         model.addAttribute("reIssue", reIssue);
-        // model.addAttribute("documents", marriageDocumentService.getGeneralDocuments());
         if (reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.REJECTED.toString()))
             return "reissue-form";
         return "reissue-view";
@@ -147,8 +140,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
         if (errors.hasErrors())
             return "reissue-view";
 
-        reIssue = reIssueService.get(id);
-        String message = org.apache.commons.lang.StringUtils.EMPTY;
+        String message = StringUtils.EMPTY;
         if (workFlowAction != null && !workFlowAction.isEmpty()) {
             workflowContainer.setWorkFlowAction(workFlowAction);
             workflowContainer.setApproverComments(request.getParameter("approvalComent"));

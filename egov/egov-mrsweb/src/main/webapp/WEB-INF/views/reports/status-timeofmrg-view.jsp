@@ -57,10 +57,12 @@
 					<thead>
 						<tr>
 							<th>S.No</th>
-							<th><spring:message code="lbl.application.no" /></th>
 							<th><spring:message code="lbl.registration.no" /></th>
-							<th><spring:message code="lbl.applicant.name" /></th>
-							<th>Marital Status</th>
+							<th><spring:message code="lbl.husband.name" /></th>
+							<th><spring:message code="lbl.marital.status" /></th>
+							<th><spring:message code="lbl.age" /></th>
+							<th><spring:message code="lbl.wife.name" /></th>
+							<th><spring:message code="lbl.marital.status" /></th>
 							<th><spring:message code="lbl.age" /></th>
 							<th><spring:message code="lbl.date.of.marriage" /></th>
 							<th><spring:message code="lbl.act" /></th>
@@ -74,32 +76,13 @@
 							<tr>
 								<td>${counter.index+1}<input type="hidden" name="applicant"
 									id="applicant" value="" /></td>
-								<td><c:out value="${reg.applicationNo}" /></td>
 								<td><c:out value="${reg.registrationNo!=null?reg.registrationNo:'N/A'}"></c:out></td>
-								<td><c:choose>
-										<c:when test="${applicantType == 'husband'}">
-											<c:out value="${reg.husband.name.firstName}" />
-										</c:when>
-										<c:otherwise>
-											<c:out value="${reg.wife.name.firstName}" />
-										</c:otherwise>
-									</c:choose></td>
-								<td><c:choose>
-										<c:when test="${applicantType == 'husband'}">
-											<c:out value="${reg.husband.maritalStatus}" />
-										</c:when>
-										<c:otherwise>
-											<c:out value="${reg.wife.maritalStatus}" />
-										</c:otherwise>
-									</c:choose></td>
-								<td><c:choose>
-										<c:when test="${applicantType == 'husband'}">
-											<c:out value="${reg.husband.ageInYearsAsOnMarriage}" />
-										</c:when>
-										<c:otherwise>
-											<c:out value="${reg.wife.ageInYearsAsOnMarriage}" />
-										</c:otherwise>
-									</c:choose></td>
+								<td><c:out value="${reg.husband.name.firstName}" /></td>
+								<td><c:out value="${reg.husband.maritalStatus}" /></td>
+								<td><c:out value="${reg.husband.ageInYearsAsOnMarriage}" /></td>
+								<td><c:out value="${reg.wife.name.firstName}" /></td>
+								<td><c:out value="${reg.wife.maritalStatus}" /></td>
+								<td><c:out value="${reg.wife.ageInYearsAsOnMarriage}" /></td>
 								<td><c:out value="${reg.dateOfMarriage}" /></td>
 								<td><c:out value="${reg.marriageAct.name}" /></td>
 								<td><c:out value="${reg.placeOfMarriage}" /></td>

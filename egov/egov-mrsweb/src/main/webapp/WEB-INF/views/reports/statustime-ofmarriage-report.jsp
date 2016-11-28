@@ -55,18 +55,44 @@
 								<strong><spring:message code="lbl.search" /></strong>
 							</div>
 						</div>
-
+  
 						<div class="panel-body custom-form">
 							<div class="form-group">
 								<div class="col-sm-3 control-label">
-							<label>Year</label><span class="mandatory"></span>
-						</div>
-						<div class="col-sm-3">
-								<form:select path="year" cssClass="form-control">
-   
-   								<form:options items="${yearlist}" />
-								</form:select>
-						</div>
+								<label>Applicant Type</label>
+								</div>
+								<div class="col-sm-2">
+										<select name="applicantType" class="form-control">
+		   									<option>Both</option>
+		   									<option>Husband</option>
+		   									<option>Wife</option>
+										</select>
+								</div>
+								<label class="col-sm-3 control-label">
+									<spring:message code="lbl.applicant.status"/>
+								</label>
+								<div class="col-sm-2 control-label">
+									<select name="maritalStatus" id="maritalStatus" class="form-control">
+							                <option value=""> Select</option>
+							                <c:forEach items="${maritalStatusList}" var="marital">
+							                <option value="${marital}">${marital}</option>
+							                </c:forEach>
+							           </select>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-3 control-label">
+								<label>From Date</label>
+								</div>
+								<div class="col-sm-2">
+									<input name="fromDate" class="form-control datepicker" id="fromDate">
+								</div>
+								<div class="col-sm-3 control-label">
+								<label>To Date</label>
+								</div>
+								<div class="col-sm-2">
+									<input name="toDate" class="form-control datepicker" id="toDate">
+								</div>
 							</div>
 						</div>
 					</div>

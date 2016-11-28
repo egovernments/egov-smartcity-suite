@@ -60,7 +60,8 @@ function callAjaxSearch() {
 	var year = currentDate.getFullYear();
 	var currentDate = day + "-" + month + "-" + year;
 
-	var year = $('#year').val();
+	var from = $('#fromDate').val();
+	var to = $('#toDate').val();
 
 	$('.report-section').removeClass('display-hide');
 
@@ -103,84 +104,85 @@ function callAjaxSearch() {
 								{
 									"data" : "month",
 									"title" : 'Month',
-									"sClass" : "text-left"
+									"sClass" : "text-center"
 								},
 								{
 									"data" : "applicantType",
 									"title" : 'Applicant Type',
-									"sClass" : "text-left"
+									"sClass" : "text-center"
 								},
 								{
-									"data" : "",
+									"data" : 'married',
 									"title" : 'Married',
 									render : function(data, type, row, meta) {
-										return '<a onclick="openPopup(\'/mrs/report/status-at-time-marriage/view/'
-												+ year
-												+ '/'
-												+ row.month
-												+ '/'
-												+ row.applicantType
-												+ '/'
-												+ 'Married'
+										return parseInt(row.married)!==0?'<a onclick="openPopup(\'/mrs/report/status-at-time-marriage/view?'
+												+ 'applicantType='+row.applicantType
+												+ '&'
+												+ 'maritalStatus=Married'
+												+ '&'
+												+ 'fromDate='+from
+												+ '&'
+												+ 'toDate='+to
 												+ '\')" href="javascript:void(0);">'
-												+ row.married + '</a>';
+												+ row.married + '</a>':row.married;
 									},
-									"sClass" : "text-left"
+									"sClass" : "text-center"
 								},
 								{
-									"data" : "",
+									"data" : 'unmarried',
 									"title" : 'Unmarried',
 									render : function(data, type, row, meta) {
-										return '<a onclick="openPopup(\'/mrs/report/status-at-time-marriage/view/'
-												+ year
-												+ '/'
-												+ row.month
-												+ '/'
-												+ row.applicantType
-												+ '/'
-												+ 'Unmarried'
+										return parseInt(row.unmarried)!==0?'<a onclick="openPopup(\'/mrs/report/status-at-time-marriage/view?'
+												+ 'applicantType='+row.applicantType
+												+ '&'
+												+ 'maritalStatus=Unmarried'
+												+ '&'
+												+ 'fromDate='+from
+												+ '&'
+												+ 'toDate='+to
 												+ '\')" href="javascript:void(0);">'
-												+ row.unmarried + '</a>';
+												+ row.unmarried + '</a>':row.unmarried;
 									},
-									"sClass" : "text-left"
+									"sClass" : "text-center"
 								},
 								{
-									"data" : "",
+									"data" : 'divorced',
 									"title" : 'Divorced',
 									render : function(data, type, row, meta) {
-										return '<a onclick="openPopup(\'/mrs/report/status-at-time-marriage/view/'
-												+ year
-												+ '/'
-												+ row.month
-												+ '/'
-												+ row.applicantType
-												+ '/'
-												+ 'Divorced'
+										return parseInt(row.divorced)!==0?'<a onclick="openPopup(\'/mrs/report/status-at-time-marriage/view?'
+												+ 'applicantType='+row.applicantType
+												+ '&'
+												+ 'maritalStatus=Divorced'
+												+ '&'
+												+ 'fromDate='+from
+												+ '&'
+												+ 'toDate='+to
 												+ '\')" href="javascript:void(0);">'
-												+ row.divorced + '</a>';
+												+ row.divorced + '</a>':row.divorced;
 									},
-									"sClass" : "text-left"
+									"sClass" : "text-center"
 								},
 								{
-									"data" : "",
+									"data" : 'widower',
 									"title" : 'Widower',
 									render : function(data, type, row, meta) {
-										return '<a onclick="openPopup(\'/mrs/report/status-at-time-marriage/view/'
-												+ year
-												+ '/'
-												+ row.month
-												+ '/'
-												+ row.applicantType
-												+ '/'
-												+ 'Widower'
+										return parseInt(row.widower)!==0?'<a onclick="openPopup(\'/mrs/report/status-at-time-marriage/view?'
+												+ 'applicantType='+row.applicantType
+												+ '&'
+												+ 'maritalStatus=Widower'
+												+ '&'
+												+ 'fromDate='+from
+												+ '&'
+												+ 'toDate='+to
 												+ '\')" href="javascript:void(0);">'
-												+ row.widower + '</a>';
+												+ row.widower + '</a>':row.widower;
 									},
-									"sClass" : "text-left"
+									"sClass" : "text-center"
 								} ]
 					});
 
 }
+
 
 function openPopup(url) {
 	window.open(url, 'window',

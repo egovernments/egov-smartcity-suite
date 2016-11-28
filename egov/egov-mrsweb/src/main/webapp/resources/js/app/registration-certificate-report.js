@@ -90,16 +90,18 @@ $(document)
 											columns : [{
 												"data" : "registrationNo",
 												render: function(data, type, row, meta){
-													 if(row.registrationNo == 'undefined' || row.registrationNo == '')
+													 var url;
+													 if(!row.registrationNo)
 													 {
-													 return "N/A";
-													 } else{
-														 return '<a onclick="openPopup(\'/mrs/registration/view/'
-															+ row.id+ '\')" href="javascript:void(0);">'
-															+ row.registrationNo
-															+ '</a>';
-														 
+														 return "N/A";
+													 } else if(row.certificateType == 'REGISTRATION'){
+														 url="/mrs/registration/view/"+row.id;
+													 }else{
+														 url="/mrs/reissue/view/"+row.id;
 													 }
+													 
+													 return '<a onclick="openPopup(\''+ url + '\')" href="javascript:void(0);">'
+																+ row.registrationNo + '</a>';
 											},
 												"sClass" : "text-left"
 											}, {

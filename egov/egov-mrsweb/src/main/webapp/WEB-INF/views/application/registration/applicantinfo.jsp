@@ -103,7 +103,7 @@
 		</label>
 		<div class="col-sm-8">
 			<c:choose>
-					<c:when test="${currentState != 'NEW'}">
+					<c:when test="${currentState != 'NEW' && currentState != 'DATAENTRY'}">
 						<form:hidden  path="${applicant}.signatureFileStore"/>
 						<%-- <img class="add-border" id="${applicant}-signature" height="150" width="130" name="${applicant}.signature"> --%>
 						<script>
@@ -135,7 +135,7 @@
 		
 		<div class="col-sm-8 setimage">
 			<c:choose>
-				<c:when test="${currentState != 'NEW'}">
+				<c:when test="${currentState != 'NEW' && currentState != 'DATAENTRY'}">
 					<form:hidden  path="${applicant}.photoFileStore"/>
 						<img class="add-border" id="${applicant}-photo" height="150" width="130" name="${applicant}.photo">
 						<script>

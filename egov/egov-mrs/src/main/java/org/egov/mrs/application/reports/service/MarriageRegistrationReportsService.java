@@ -66,7 +66,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class MarriageRegistrationReportsService {
-
+    
+    final SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -82,7 +84,6 @@ public class MarriageRegistrationReportsService {
             throws ParseException {
 
         final Map<String, String> params = new HashMap<String, String>();
-        final SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         final StringBuilder queryStrForRegistration = new StringBuilder(500);
         queryStrForRegistration
@@ -108,9 +109,9 @@ public class MarriageRegistrationReportsService {
             queryStrForRegistration
                     .append(
                     " and cert.certificatedate between to_timestamp(:fromDate,'yyyy-MM-dd HH24:mi:ss') and to_timestamp(:toDate,'YYYY-MM-DD HH24:MI:SS')");
-            params.put("fromDate", sf.format(certificate.getFromDate()).toString());
-            params.put("toDate", certificate.getToDate() != null ? sf.format(certificate.getToDate()).toString()
-                    : sf.format(new Date()).toString());
+            params.put("fromDate", sf.format(certificate.getFromDate()));
+            params.put("toDate", certificate.getToDate() != null ? sf.format(certificate.getToDate())
+                    : sf.format(new Date()));
         }
 
         if (certificate.getRegistration().getRegistrationNo() != null) {
@@ -220,35 +221,78 @@ public class MarriageRegistrationReportsService {
         return criteria.list();
     }
 
-    public List<String[]> getHusbandCountByMaritalStatus(final int year) {
-        return registrationReportsRepository.getHusbandCountByMaritalStatus(year);
-    }
-
-    public List<String[]> getWifeCountByMaritalStatus(final int year) {
-        return registrationReportsRepository.getWifeCountByMaritalStatus(year);
+    @SuppressWarnings("unchecked")
+    public List<String[]> getHusbandCountByMaritalStatus(final Date fromDate,final Date toDate,String maritalStatus,String applicanType) throws ParseException {
+        final Map<String, String> params = new HashMap<String, String>();
+        final StringBuilder queryStrForHusbandCount = new StringBuilder(500);
+        queryStrForHusbandCount
+                .append(
+                "select app.relationstatus,to_char(app.createddate,'Mon'),count(*) from egmrs_applicant as app ,egmrs_registration as reg where reg.husband = app.id  ");
+       if(maritalStatus != null){
+           queryStrForHusbandCount.append(" and app.relationstatus=:maritalStatus");
+           params.put("maritalStatus", maritalStatus);
+       }else if(fromDate != null && toDate != null){
+           queryStrForHusbandCount
+           .append(
+           " and app.createddate between to_timestamp(:fromDate,'yyyy-MM-dd HH24:mi:ss') and to_timestamp(:toDate,'YYYY-MM-DD HH24:MI:SS')");
+           params.put("fromDate", sf.format(fromDate));
+           params.put("toDate", sf.format(toDate));
+       }
+       
+       queryStrForHusbandCount.append(" group by app.relationstatus, to_char(app.createddate,'Mon') order by to_char(app.createddate,'Mon') desc");
+       final org.hibernate.Query query = getCurrentSession().createSQLQuery(queryStrForHusbandCount.toString());
+       for (final String param : params.keySet())
+           query.setParameter(param, params.get(param)); 
+       return query.list();
     }
 
     @SuppressWarnings("unchecked")
-    public List<MarriageRegistration> getByMaritalStatusDetails(final int year, final String month, final String applicant,
-            final String maritalStatus) throws ParseException {
-        final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class,
+    public List<String[]> getWifeCountByMaritalStatus(final Date fromDate,final Date toDate,String maritalStatus,String applicanType) throws ParseException {
+
+        final Map<String, String> params = new HashMap<String, String>();
+        final StringBuilder queryStrForWifeCount = new StringBuilder(500);
+        queryStrForWifeCount
+                .append(
+                "select app.relationstatus,to_char(app.createddate,'Mon'),count(*) from egmrs_applicant as app ,egmrs_registration as reg where reg.wife = app.id  ");
+       if(maritalStatus != null){
+           queryStrForWifeCount.append(" and app.relationstatus=:maritalStatus");
+           params.put("maritalStatus", maritalStatus);
+       }else if(fromDate != null && toDate != null){
+           queryStrForWifeCount
+           .append(
+           " and app.createddate between to_timestamp(:fromDate,'yyyy-MM-dd HH24:mi:ss') and to_timestamp(:toDate,'YYYY-MM-DD HH24:MI:SS')");
+           params.put("fromDate", sf.format(fromDate));
+           params.put("toDate", sf.format(toDate));
+       }
+       
+       queryStrForWifeCount.append(" group by app.relationstatus, to_char(app.createddate,'Mon') order by to_char(app.createddate,'Mon') desc");
+       final org.hibernate.Query query = getCurrentSession().createSQLQuery(queryStrForWifeCount.toString());
+       for (final String param : params.keySet())
+           query.setParameter(param, params.get(param)); 
+       return query.list();
+    
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<MarriageRegistration> getByMaritalStatusDetails(final String applicant,
+            final String maritalStatus,final Date fromDate,final Date toDate) throws ParseException {
+         Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class,
                 "marriageRegistration");
 
-        final Date date = new SimpleDateFormat("MMM").parse(month);
-        final Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-
-        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
-        final Date fromDate = formatter.parse(year + "/" + (cal.get(Calendar.MONTH) + 1) + "/" + 1);
-        final Date toDate = formatter.parse(year + "/" + (cal.get(Calendar.MONTH) + 1) + "/" + 31);
         if (maritalStatus != null && applicant.equals("husband")) {
-            criteria.createAlias("marriageRegistration.husband", "husband")
-                    .add(Restrictions.between("husband.createdDate", fromDate, toDate));
+            criteria = criteria.createAlias("marriageRegistration.husband", "husband");
+            if(fromDate != null && toDate != null){
+            criteria.add(Restrictions.between("husband.createdDate", fromDate, toDate));
+            }
             criteria.add(Restrictions.eq("husband.maritalStatus", MaritalStatus.valueOf(maritalStatus)));
         } else {
-            criteria.createAlias("marriageRegistration.wife", "wife")
-                    .add(Restrictions.between("wife.createdDate", fromDate, toDate));
+            criteria =  criteria.createAlias("marriageRegistration.wife", "wife");
+            if(fromDate != null && toDate != null) {
+            criteria.add(Restrictions.between("wife.createdDate", fromDate, toDate));
+            }
+            if(maritalStatus != null) {
             criteria.add(Restrictions.eq("wife.maritalStatus", MaritalStatus.valueOf(maritalStatus)));
+            }
         }
 
         return criteria.list();

@@ -49,6 +49,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -300,16 +301,26 @@ public class MarriageRegistrationReportsController {
     @RequestMapping(value = "/status-at-time-marriage", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchStatusAtTimeOfMarriage(
-            @RequestParam("year") final int year, final Model model,
+            @RequestParam("fromDate") final Date fromDate, @RequestParam("toDate") final Date toDate,@RequestParam("maritalStatus") final String maritalStatus,@RequestParam("applicantType") final String applicantType, final Model model,
             @ModelAttribute final MarriageRegistration registration)
             throws ParseException {
         final List<MaritalStatusReport> maritalStatusReports = new ArrayList<>();
+        if("Husband".equals(applicantType)){
         maritalStatusReports.addAll(putRecordsIntoHashMapByMonth(
                 marriageRegistrationReportsService
-                        .getHusbandCountByMaritalStatus(year), "husband"));
+                        .getHusbandCountByMaritalStatus(fromDate,toDate,maritalStatus,applicantType), "husband"));
+        }else if("Wife".equals(applicantType)){
         maritalStatusReports.addAll(putRecordsIntoHashMapByMonth(
                 marriageRegistrationReportsService
-                        .getWifeCountByMaritalStatus(year), "wife"));
+                        .getWifeCountByMaritalStatus(fromDate,toDate,maritalStatus,applicantType), "wife"));
+        }else {
+            maritalStatusReports.addAll(putRecordsIntoHashMapByMonth(
+                    marriageRegistrationReportsService
+                            .getHusbandCountByMaritalStatus(fromDate,toDate,maritalStatus,applicantType), "husband"));
+            maritalStatusReports.addAll(putRecordsIntoHashMapByMonth(
+                    marriageRegistrationReportsService
+                            .getWifeCountByMaritalStatus(fromDate,toDate,maritalStatus,applicantType), "wife"));
+        }
         return new StringBuilder("{ \"data\":")
                 .append(toJSON(maritalStatusReports, MaritalStatusReport.class,
                         MaritalStatusReportJsonAdaptor.class)).append("}")
@@ -373,15 +384,14 @@ public class MarriageRegistrationReportsController {
         return maritalStatusReports;
     }
 
-    @RequestMapping(value = "/status-at-time-marriage/view/{year}/{month}/{applicantType}/{maritalStatus}", method = RequestMethod.GET)
-    public String viewByMaritalStatus(@PathVariable final int year,
-            @PathVariable final String month,
-            @PathVariable final String applicantType,
-            @PathVariable final String maritalStatus, final Model model)
+    @RequestMapping(value = "/status-at-time-marriage/view", method = RequestMethod.GET)
+    public String viewByMaritalStatus(@RequestParam("applicantType") final String applicantType,
+            @RequestParam("maritalStatus") final String maritalStatus,@RequestParam("fromDate") final Date fromDate,
+            @RequestParam("toDate") final Date toDate, final Model model)
             throws IOException, ParseException {
         final List<MarriageRegistration> marriageRegistrations = marriageRegistrationReportsService
-                .getByMaritalStatusDetails(year, month, applicantType,
-                        maritalStatus);
+                .getByMaritalStatusDetails(applicantType,
+                        maritalStatus,fromDate,toDate);
         model.addAttribute("marriageRegistrations", marriageRegistrations);
         model.addAttribute("applicantType", applicantType);
         return "status-timeofmrg-view";
@@ -573,6 +583,7 @@ public class MarriageRegistrationReportsController {
             previousyears.add(startyear + 1);
             startyear++;
         }
+        Collections.sort(previousyears, Collections.reverseOrder());
         return previousyears;
     }
 

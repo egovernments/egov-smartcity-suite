@@ -45,7 +45,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
@@ -91,14 +90,10 @@ public class NewReIssueController extends GenericWorkFlowController {
     @Autowired
     private MarriageDocumentService marriageDocumentService;
   
-    @Autowired
-    private ReIssueService reissueService;
     
     @Autowired
     private MarriageRegistrationUnitService marriageRegistrationUnitService;
     
-    @Autowired
-    private BoundaryService boundaryService;
     
 	public void prepareNewForm(final Model model) {
 		model.addAttribute("marriageRegistrationUnit",
@@ -185,11 +180,10 @@ public class NewReIssueController extends GenericWorkFlowController {
         obtainWorkflowParameters(workflowContainer, request);
         switch (workflowContainer.getWorkFlowAction()) {
         case "Forward":
-            reIssue = reissueService.forwardReIssue(id, reIssue, workflowContainer);
+            reIssue = reIssueService.forwardReIssue(id, reIssue, workflowContainer);
             break;
         case "Cancel ReIssue":
-            reIssue = reIssueService.get(id);
-            reIssue = reissueService.rejectReIssue(reIssue, workflowContainer,request);
+            reIssue = reIssueService.rejectReIssue(reIssue, workflowContainer,request);
             break;
         }
         // On Cancel, output rejection certificate 

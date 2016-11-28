@@ -37,90 +37,108 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div>
-		<div class="panel" data-collapsed="0">
-			<div class="panel-body">
-			<form:form  method="post" action="" class="form-horizontal form-groups-bordered" id="form-registrationstatus" modelAttribute="registration">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-							<strong><spring:message code="lbl.hdr.act.search"/></strong>
-					</div>
-				</div> 
-				
-				<div class="panel-body custom-form">
-				<div class="row">			
-					<div class="form-group">
-	<label class="col-sm-3 control-label">
-			<spring:message code="lbl.law"/>
-		</label>
-		<div class="col-sm-3">
-			<form:select path="marriageAct.id" id="select-marriageAct" cssClass="form-control" 
-						cssErrorClass="form-control error" >
-                 <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
-                 <form:options items="${acts}" itemValue="id" itemLabel="name"/>
-             </form:select>
-            <form:errors path="marriageAct.id" cssClass="add-margin error-msg"/>
-		</div>
-		</div>
-		
-		<div class="form-group">
-						<div class="col-sm-3 control-label">
-							<label>Year</label><span class="mandatory"></span>
+	<div class="panel" data-collapsed="0">
+		<div class="panel-body">
+			<form:form method="post" action=""
+				class="form-horizontal form-groups-bordered"
+				id="form-registrationstatus" modelAttribute="registration">
+				<div class="panel panel-primary" data-collapsed="0">
+					<div class="panel-heading">
+						<div class="panel-title">
+							<strong><spring:message code="lbl.hdr.act.search" /></strong>
 						</div>
-						<div class="col-sm-3">
-								<form:select path="year" cssClass="form-control">
-   
-   								<form:options items="${yearlist}" />
+					</div>
+
+					<div class="panel-body custom-form">
+						<div class="form-group">
+							<label class="col-sm-2 control-label"> <spring:message
+									code="lbl.law" />
+							</label>
+							<div class="col-sm-3">
+								<form:select path="marriageAct.id" id="select-marriageAct"
+									cssClass="form-control" cssErrorClass="form-control error">
+									<form:option value="">
+										<spring:message code="lbl.default.option" />
+									</form:option>
+									<form:options items="${acts}" itemValue="id" itemLabel="name" />
 								</form:select>
+								<form:errors path="marriageAct.id"
+									cssClass="add-margin error-msg" />
+							</div>
+							<div class="col-sm-2 control-label">
+								<label>Year</label><span class="mandatory"></span>
+							</div>
+							<div class="col-sm-3">
+								<form:select path="year" cssClass="form-control">
+
+									<form:options items="${yearlist}" />
+								</form:select>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			</div>
-			<div class="row">
-				<div class="text-center">					
-					<button type="button" class="btn btn-primary" id="btn_registrationact_search"><spring:message code="lbl.search"/></button>
-					<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
-			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+				<div class="row">
+					<div class="text-center">
+						<button type="button" class="btn btn-primary"
+							id="btn_registrationact_search">
+							<spring:message code="lbl.search" />
+						</button>
+						<button type="reset" class="btn btn-default">
+							<spring:message code="lbl.reset" />
+						</button>
+						<a href="javascript:void(0)" class="btn btn-default"
+							onclick="self.close()"><spring:message code="lbl.close" /></a>
+					</div>
 				</div>
-			</div>
-			
-		</form:form>
-		
+
+			</form:form>
+
 		</div>
-        
-    </div>
+
+	</div>
 </div>
-<br /><br />
-<div class="row display-hide report-section" id="regstatustable_container">   
-	<div class="col-md-12 table-header text-left">The Registration Search result is</div>          
+<br />
+<br />
+<div class="row display-hide report-section"
+	id="regstatustable_container">
+	<div class="col-md-12 table-header text-left">The Registration
+		Search result is</div>
 	<div class="col-md-12 form-group report-table-container">
-	    <table class="table table-bordered table-hover multiheadertbl" id="registrationact_table">
-	    	<thead>
-	    		<th>Serial No.</th>
-	    			<th>Month</th>	
-	    			<th>Marriage Act</th>
-	    			<th>Registration count</th>
-	    	</thead>
-	    	<tbody>
-	    	</tbody>
+		<table class="table table-bordered table-hover multiheadertbl"
+			id="registrationact_table">
+			<thead>
+				<th>Serial No.</th>
+				<th>Month</th>
+				<th>Marriage Act</th>
+				<th>Registration count</th>
+			</thead>
+			<tbody>
+			</tbody>
 		</table>
 	</div>
 </div>
 
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
-<script	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
-<script	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
-<script	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 
-<script src="<cdn:url value='/resources/js/app/registrationact.js?rnd=${app_release_no}'/> "></script>
+<script
+	src="<cdn:url value='/resources/js/app/registrationact.js?rnd=${app_release_no}'/> "></script>

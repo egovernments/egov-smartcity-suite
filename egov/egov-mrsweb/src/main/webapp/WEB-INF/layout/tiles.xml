@@ -371,5 +371,12 @@
 		cascade="true" />
 	<put-attribute name="body"
 		value="/WEB-INF/views/reports/status-timeofmrg-view.jsp" />
-</definition>
+	</definition>
+	
+	<definition name="reissue-success" extends="base_layout">
+		<put-attribute name="page-title" value="title.reissue"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/reissue/reissue-success.jsp" />
+	</definition>
 </tiles-definitions>
