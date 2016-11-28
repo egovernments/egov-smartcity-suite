@@ -37,22 +37,75 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.egf.commons.bank.repository;
 
-import java.util.List;
+jQuery('#btnsearch').click(function(e) {
 
-import org.egov.commons.Bank;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+	callAjaxSearch();
+});
 
-/**
- * @author venki
- *
- */
+function getFormData($form) {
+	var unindexed_array = $form.serializeArray();
+	var indexed_array = {};
 
-@Repository
-public interface BankRepository extends JpaRepository<Bank, Integer> {
+	$.map(unindexed_array, function(n, i) {
+		indexed_array[n['name']] = n['value'];
+	});
 
-    List<Bank> findByIsactive(Boolean isActive);
+	return indexed_array;
+}
 
+function callAjaxSearch() {
+	drillDowntableContainer = jQuery("#resultTable");
+	jQuery('.report-section').removeClass('display-hide');
+	reportdatatable = drillDowntableContainer
+			.dataTable({
+				ajax : {
+					url : "/EGF/bankbranch/ajaxsearch/" + $('#mode').val(),
+					type : "POST",
+					"data" : getFormData(jQuery('form'))
+				},
+				"fnRowCallback" : function(row, data, index) {
+					$(row).on(
+							'click',
+							function() {
+								window.open('/EGF/bankbranch/' + $('#mode').val()+ '/' + data.id, '','width=800, height=600');
+							});
+				},
+				"bDestroy" : true,
+				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
+				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
+				"oTableTools" : {
+					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+					"aButtons" : [ "xls", "pdf", "print" ]
+				},
+				aaSorting : [],
+				columns : [ {
+					"data" : "bank",
+					"sClass" : "text-left"
+				},{
+					"data" : "branchname",
+					"sClass" : "text-left"
+				}, {
+					"data" : "branchcode",
+					"sClass" : "text-left"
+				}, {
+					"data" : "branchMICR",
+					"sClass" : "text-left"
+				}, {
+					"data" : "branchaddress1",
+					"sClass" : "text-left"
+				}, {
+					"data" : "contactperson",
+					"sClass" : "text-left"
+				}, {
+					"data" : "branchphone",
+					"sClass" : "text-left"
+				},{
+					"data" : "narration",
+					"sClass" : "text-left"
+				}, {
+					"data" : "isactive",
+					"sClass" : "text-left"
+				} ]
+			});
 }

@@ -37,11 +37,9 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.egf.commons.bank.repository;
+package org.egov.egf.commons.bankbranch.repository;
 
-import java.util.List;
-
-import org.egov.commons.Bank;
+import org.egov.commons.Bankbranch;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -51,8 +49,6 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface BankRepository extends JpaRepository<Bank, Integer> {
-
-    List<Bank> findByIsactive(Boolean isActive);
+public interface BankBranchRepository extends JpaRepository<Bankbranch, Integer> {
 
 }

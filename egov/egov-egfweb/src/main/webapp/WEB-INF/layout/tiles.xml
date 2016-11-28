@@ -580,5 +580,30 @@
 		<put-attribute name="page-title" value="lbl.search.bank" cascade="true" />
 		<put-attribute name="body" value="/WEB-INF/views/bank/bank-search.jsp" />
 	</definition>
+	
+	<definition name="bankbranch-new" extends="base_layout">
+		<put-attribute name="page-title" value="title.bankbranch.new" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankbranch/bankbranch-new.jsp" />
+	</definition>
+
+	<definition name="bankbranch-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.bankbranch.view" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankbranch/bankbranch-view.jsp" />
+	</definition>
+
+	<definition name="bankbranch-update" extends="base_layout">
+		<put-attribute name="page-title" value="title.bankbranch.edit" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankbranch/bankbranch-update.jsp" />
+	</definition>
+
+	<definition name="bankbranch-success" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.search.bankbranch.result" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankbranch/bankbranch-success.jsp" />
+	</definition>
+	
+	<definition name="bankbranch-search" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.search.bankbranch" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankbranch/bankbranch-search.jsp" />
+	</definition>
 
 </tiles-definitions>

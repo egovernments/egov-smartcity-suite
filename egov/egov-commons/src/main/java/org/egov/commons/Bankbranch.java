@@ -60,11 +60,13 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "BANKBRANCH")
 @SequenceGenerator(name = Bankbranch.SEQ_BANKBRANCH, sequenceName = Bankbranch.SEQ_BANKBRANCH, allocationSize = 1)
+@Unique(fields = { "branchMICR" }, enableDfltMsg = true)
 public class Bankbranch extends AbstractPersistable<Integer> {
 
     private static final long serialVersionUID = -1445070413847273114L;
