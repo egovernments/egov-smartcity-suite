@@ -133,7 +133,7 @@ public class MilestoneService {
 
         return criteria.list();
     }
-    
+
     public List<Milestone> searchMilestoneForView(final SearchRequestMilestone searchRequestMilestone) {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Milestone.class)
                 .createAlias("workOrderEstimate", "woe")
@@ -169,7 +169,6 @@ public class MilestoneService {
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
-
 
     public Milestone getMilestoneById(final Long id) {
         return milestoneRepository.findOne(id);
@@ -266,13 +265,13 @@ public class MilestoneService {
                         WorksConstants.APPROVED.toString());
         return loaNumbers;
     }
-    
-    public boolean checkMilestoneCreated(final Long workOrderId){
-        Long milestoneId = milestoneRepository.findWorkOrderToCreateMilestone(workOrderId, WorksConstants.CANCELLED_STATUS);
+
+    public boolean checkMilestoneCreated(final Long workOrderId) {
+        final Long milestoneId = milestoneRepository.findWorkOrderToCreateMilestone(workOrderId, WorksConstants.CANCELLED_STATUS,
+                WorksConstants.CANCELLED_STATUS);
         boolean flag = false;
-        if(milestoneId != null){
+        if (milestoneId != null)
             flag = true;
-        }
         return flag;
     }
 }
