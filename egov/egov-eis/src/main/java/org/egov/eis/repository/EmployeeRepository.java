@@ -62,8 +62,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     @Query(" select distinct EMP from Employee EMP inner join EMP.assignments ASSIGN inner join fetch EMP.jurisdictions as JRDN "
             + " where ASSIGN.department.id=:deptId and ASSIGN.designation.id=:desigId and ASSIGN.fromDate<=current_date and ASSIGN.toDate>=current_date "
-            + " and JRDN.boundary.id in :boundaryIds")
-    public List<Employee> findByDepartmentDesignationAndBoundary(@Param("deptId") final Long deptId,
+            + " and JRDN.boundary.id in :boundaryIds and EMP.active=true order by EMP.code")
+    List<Employee> findByDepartmentDesignationAndBoundary(@Param("deptId") final Long deptId,
             @Param("desigId") final Long desigId, @Param("boundaryIds") final Set<Long> boundaryIds);
 
     public List<Employee> findByNameLikeOrCodeLike(String name, String code);
