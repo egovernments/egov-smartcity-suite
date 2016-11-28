@@ -44,6 +44,8 @@ public class BaseRegisterService {
             whereQry = whereQry.append(" and subcategory = :subCategoryId");
         if (baseRegisterForm.getStatusId() != null)
             whereQry = whereQry.append(" and status = :statusId");
+        else
+            whereQry = whereQry.append(" and statusname not in ('Cancelled','Suspended')");
         if (baseRegisterForm.getWardId() != null)
             whereQry = whereQry.append(" and ward = :wardId");
         return entityManager.unwrap(Session.class).createSQLQuery(selectQry.append(whereQry).toString());
