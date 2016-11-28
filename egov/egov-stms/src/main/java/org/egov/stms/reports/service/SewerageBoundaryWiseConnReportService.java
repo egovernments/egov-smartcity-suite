@@ -57,13 +57,18 @@ public class SewerageBoundaryWiseConnReportService {
     private PersistenceService entityQueryService;
 
     public SQLQuery getNoOfConnectionReport(final String ward, final String block, final String localityName) {
-        final StringBuilder query = new StringBuilder();
-        query.append("Select bndry.name as name, ");
-        query.append("  COUNT(CASE WHEN at.code IN ('NEWSEWERAGECONNECTION') THEN 1 END) newconnection , "
-                + " COUNT(CASE WHEN at.code IN ('CHANGEINCLOSETS') THEN 1 END) changeinclosets, "
-                + " COUNT(CASE WHEN at.code IN ('CLOSESEWERAGECONNECTION') THEN 1 END) closeconnection ");
+        final StringBuilder query = new StringBuilder(600);
         query.append(
-                " From egswtax_connection con INNER JOIN egswtax_applicationdetails ad ON con.id = ad.connection INNER JOIN egswtax_connectiondetail cd ON ad.connectiondetail = cd.id INNER JOIN egswtax_application_type at ON at.id = ad.applicationtype INNER JOIN egpt_basic_property bp ON cd.propertyidentifier = bp.propertyid INNER JOIN egpt_propertyid ptid ON bp.ID_PROPERTYID = ptid.id INNER JOIN eg_boundary bndry ");
+                "Select bndry.name as name, COUNT(CASE WHEN at.code IN ('NEWSEWERAGECONNECTION') THEN 1 END) newconnection , "
+                        + " COUNT(CASE WHEN at.code IN ('CHANGEINCLOSETS') THEN 1 END) changeinclosets, "
+                        + " COUNT(CASE WHEN at.code IN ('CLOSESEWERAGECONNECTION') THEN 1 END) closeconnection "
+                        + " From egswtax_connection con "
+                        + " INNER JOIN egswtax_applicationdetails ad ON con.id = ad.connection "
+                        + " INNER JOIN egswtax_connectiondetail cd ON ad.connectiondetail = cd.id "
+                        + " INNER JOIN egswtax_application_type at ON at.id = ad.applicationtype "
+                        + " INNER JOIN egpt_basic_property bp ON cd.propertyidentifier = bp.propertyid "
+                        + " INNER JOIN egpt_propertyid ptid ON bp.ID_PROPERTYID = ptid.id "
+                        + " INNER JOIN eg_boundary bndry ");
         buildWhereClause(ward, block, localityName, query);
         buildGroupByClause(ward, block, localityName, query);
         return setParameterForNoOfConnReportQuery(query.toString(), ward, block, localityName);

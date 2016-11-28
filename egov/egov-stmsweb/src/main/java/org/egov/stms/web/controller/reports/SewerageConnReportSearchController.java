@@ -129,7 +129,8 @@ public class SewerageConnReportSearchController {
         try {
             IOUtils.write(result, response.getWriter());
         } catch (final IOException e) {
-            LOG.error("IO Exception " + e);
+            if (LOG.isDebugEnabled())
+                LOG.error("IO Exception " + e);
         }
     }
 

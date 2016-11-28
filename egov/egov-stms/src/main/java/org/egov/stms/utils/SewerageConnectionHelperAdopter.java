@@ -57,7 +57,7 @@ public class SewerageConnectionHelperAdopter implements JsonSerializer<SewerageN
         if (drillDownReportObject != null) {
 
             jsonObject.addProperty("name", null != drillDownReportObject.getName() ? drillDownReportObject.getName()
-                    .toString() : "Not Available");
+                    : "Not Available");
             jsonObject.addProperty("newconnection", drillDownReportObject.getNewconnection() != null ? drillDownReportObject
                     .getNewconnection().toString() : "0");
             jsonObject.addProperty("changeinclosets", drillDownReportObject.getChangeinclosets() != null ? drillDownReportObject

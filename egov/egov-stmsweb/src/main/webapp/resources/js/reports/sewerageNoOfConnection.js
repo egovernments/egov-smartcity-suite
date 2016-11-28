@@ -42,22 +42,23 @@ var drillDowntableContainer;
 jQuery(document).ready(function($){
     drillDowntableContainer = $("#drilldownReport-table");
 	
-	$("#drilldownReportSearch").click(function(e){
-		
-		callAjaxDataTableForReport();
+	$("#drilldownReportSearch").click(function(){
+		var ward = $("#ward").val();
+		var block = $("#block").val();
+		var locality ="";
+		callAjaxDataTableForReport(ward,block,locality);
 	});
-	$("#searchByLocality").click(function(e){
-		callAjaxDataTableForReport();
+	$("#searchByLocality").click(function(){
+		var ward = "";
+		var block = "";
+		var locality = $("#locality").val();
+		callAjaxDataTableForReport(ward,block,locality);
 	});
 	
 });
 
 var reportdatatable;
-function callAjaxDataTableForReport(){
-	
-	var ward = $("#ward").val();
-	var block = $("#block").val();
-	var locality = $("#locality").val();
+function callAjaxDataTableForReport(ward,block,locality){
 
 	$('.report-section').removeClass('display-hide');
 	$('#report-footer').show();
