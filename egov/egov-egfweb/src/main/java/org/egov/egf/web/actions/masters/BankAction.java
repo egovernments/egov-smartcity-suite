@@ -39,6 +39,14 @@
  */
 package org.egov.egf.web.actions.masters;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -51,6 +59,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Bank;
 import org.egov.commons.utils.BankAccountType;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
@@ -63,20 +72,12 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.Writer;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 @ParentPackage("egov")
 @Results({
-    @Result(name = BankAction.MODIFY, location = "bank-modify.jsp"),
-    @Result(name = BankAction.SUCCESS, location = "bank.jsp"),
-    @Result(name = BankAction.VIEW, location = "bank-view.jsp"),
-    @Result(name = BankAction.SEARCH, location = "bank-search.jsp") })
+        @Result(name = BankAction.MODIFY, location = "bank-modify.jsp"),
+        @Result(name = BankAction.SUCCESS, location = "bank.jsp"),
+        @Result(name = BankAction.VIEW, location = "bank-view.jsp"),
+        @Result(name = BankAction.SEARCH, location = "bank-search.jsp") })
 public class BankAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     private Bank bank = new Bank();
@@ -84,46 +85,43 @@ public class BankAction extends BaseFormAction {
     public static final String MODIFY = "modify";
     public static final String SEARCH = "search";
     private String mode;
-   
+
     // For jquery BankName auto complete
     private String term;
 
     private BankService bankService;
-    
+
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
     @Override
     @SkipValidation
     @Actions({
-        @Action(value = "/masters/bank"),
-        @Action(value = "/masters/bank-execute")
+            @Action(value = "/masters/bank"),
+            @Action(value = "/masters/bank-execute")
     })
     public String execute() {
-    	
+
         if ("MODIFY".equals(mode) || "VIEW".equals(mode)) {
-            if (StringUtils.isBlank(bank.getName()))
-            {
-            	addDropdownData("bankList",bankService.findAll("name"));
+            if (StringUtils.isBlank(bank.getName())) {
+                addDropdownData("bankList", bankService.findAll("name"));
                 return SEARCH;
-            }
-            else {
+            } else {
                 bank = bankService.find("FROM Bank WHERE name = ?", bank.getName());
                 if (bank == null)
                     return SEARCH;
                 else {
-                    if (bank.getIsactive() != false)
+                    if (bank.getIsactive())
                         isActive = true;
                     else
                         isActive = false;
-                    if("MODIFY".equals(mode))
-                    return MODIFY;
+                    if ("MODIFY".equals(mode))
+                        return MODIFY;
                     else
-                    return VIEW;  
+                        return VIEW;
                 }
             }
-        } 
-        else if ("UNQ_NAME".equals(mode))
+        } else if ("UNQ_NAME".equals(mode))
             checkUniqueBankName();
         else if ("UNQ_CODE".equals(mode))
             checkUniqueBankCode();
@@ -149,15 +147,17 @@ public class BankAction extends BaseFormAction {
             if (bank.getId() == null) {
                 // TODO Dirty Code can be avoided by extending BaseModel for Bank
                 final Date currentDate = new Date();
-                bank.setCreated(currentDate);
-                bank.setLastmodified(currentDate);
-                bank.setModifiedby(BigDecimal.valueOf(Double.valueOf(ApplicationThreadLocals.getUserId())));
+                bank.setCreatedDate(currentDate);
+                bank.setCreatedBy(bankService.getSession().load(User.class, ApplicationThreadLocals.getUserId()));
+                bank.setLastModifiedDate(currentDate);
+                bank.setLastModifiedBy(bankService.getSession().load(User.class, ApplicationThreadLocals.getUserId()));
                 bankService.persist(bank);
             } else {
                 final Date currentDate = new Date();
-                bank.setCreated(currentDate);
-                bank.setLastmodified(currentDate);
-                bank.setModifiedby(BigDecimal.valueOf(Double.valueOf(ApplicationThreadLocals.getUserId())));
+                bank.setCreatedDate(currentDate);
+                bank.setCreatedBy(bankService.getSession().load(User.class, ApplicationThreadLocals.getUserId()));
+                bank.setLastModifiedDate(currentDate);
+                bank.setLastModifiedBy(bankService.getSession().load(User.class, ApplicationThreadLocals.getUserId()));
                 bankService.update(bank);
             }
             addActionMessage(getText("Bank Saved Successfully"));
@@ -194,10 +194,10 @@ public class BankAction extends BaseFormAction {
         bankAcTypesJson.deleteCharAt(bankAcTypesJson.lastIndexOf(";"));
         return bankAcTypesJson.toString();
     }
-    
-    public Boolean isAutoBankAccountGLCodeEnabled(){
+
+    public Boolean isAutoBankAccountGLCodeEnabled() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-               Constants.EGF, "auto_bankaccount_glcode").get(0);   
+                Constants.EGF, "auto_bankaccount_glcode").get(0);
         return "YES".equalsIgnoreCase(appConfigValue.getValue());
     }
 
@@ -217,7 +217,7 @@ public class BankAction extends BaseFormAction {
         for (final Object[] accType : accounttypes) {
             accType[0] = org.egov.infra.utils.StringUtils.escapeJavaScript((String) accType[0]);
             accountdetailtypeJson.append("\"").append(accType[1] + "#" + accType[0]).append("\"").append(":").append("\"")
-            .append(accType[0]).append("\"").append(",");
+                    .append(accType[0]).append("\"").append(",");
         }
         accountdetailtypeJson.deleteCharAt(accountdetailtypeJson.lastIndexOf(","));
         return accountdetailtypeJson.append("}").toString();

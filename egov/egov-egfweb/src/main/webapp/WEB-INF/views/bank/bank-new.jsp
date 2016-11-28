@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -37,47 +36,27 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
 
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
-    <class name="org.egov.commons.Bank" table="BANK">
-        <id name="id" type="integer">
-            <column name="ID" precision="22" scale="0" />
-            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-            <param name="sequence_name">seq_bank</param>
-            </generator>
-        </id>
-        <property name="code" type="string">
-            <column name="CODE" length="50" not-null="true" unique="true" />
-        </property>
-        <property name="name" type="string">
-            <column name="NAME" length="100" not-null="true" unique="true" />
-        </property>
-        <property name="narration" type="string">
-            <column name="NARRATION" length="250" />
-        </property>
-        <property name="isactive" type="boolean">
-            <column name="ISACTIVE" precision="1" scale="0" not-null="true" />
-        </property>
-        <property name="lastmodified" type="date">
-            <column name="LASTMODIFIED" length="7" not-null="true" />
-        </property>
-        <property name="created" type="date">
-            <column name="CREATED" length="7" not-null="true" />
-        </property>
-        <property name="modifiedby" type="big_decimal">
-            <column name="MODIFIEDBY" precision="22" scale="0" not-null="true" />
-        </property>
-        <property name="type" type="string">
-            <column name="TYPE" length="50" />
-        </property>
-        <set name="bankbranchs" inverse="true">
-            <key>
-                <column name="BANKID" precision="22" scale="0" />
-            </key>
-            <one-to-many class="org.egov.commons.Bankbranch" />
-        </set>
-    </class>
-</hibernate-mapping>
+
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ include file="/includes/taglibs.jsp"%>
+<form:form role="form" action="create" modelAttribute="bank" id="bankform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+	<%@ include file="bank-form.jsp"%>
+	<div class="form-group">
+		<div class="text-center">
+			<button type='submit' class='btn btn-primary' id="buttonSubmit">
+				<spring:message code='lbl.create' />
+			</button>
+			<a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message code='lbl.close' /></a>
+		</div>
+	</div>
+</form:form>
+<script>
+	$('#buttonSubmit').click(function(e) {
+		if ($('form').valid()) {
+		} else {
+			e.preventDefault();
+		}
+	});
+</script>

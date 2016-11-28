@@ -39,241 +39,272 @@
  */
 package org.egov.commons;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Bankbranch implements java.io.Serializable {
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-        private static final long serialVersionUID = 1L;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Required;
+import org.hibernate.validator.constraints.Length;
 
-        private Integer id;
+@Entity
+@Table(name = "BANKBRANCH")
+@SequenceGenerator(name = Bankbranch.SEQ_BANKBRANCH, sequenceName = Bankbranch.SEQ_BANKBRANCH, allocationSize = 1)
+public class Bankbranch extends AbstractPersistable<Integer> {
 
-        private Bank bank;
+    private static final long serialVersionUID = -1445070413847273114L;
 
-        private String branchcode;
+    public static final String SEQ_BANKBRANCH = "SEQ_BANKBRANCH";
 
-        private String branchname;
+    @Id
+    @GeneratedValue(generator = SEQ_BANKBRANCH, strategy = GenerationType.SEQUENCE)
+    private Integer id;
 
-        private String branchaddress1;
+    @ManyToOne
+    @JoinColumn(name = "bankid")
+    private Bank bank;
 
-        private String branchaddress2;
+    @Required
+    @Length(max = 50)
+    private String branchcode;
 
-        private String branchcity;
+    @Required
+    @Length(max = 50)
+    private String branchname;
 
-        private String branchstate;
+    @Required
+    @Length(max = 50)
+    private String branchaddress1;
 
-        private String branchpin;
+    @Length(max = 50)
+    private String branchaddress2;
 
-        private String branchphone;
+    @Length(max = 50)
+    private String branchcity;
 
-        private String branchfax;
+    @Length(max = 50)
+    private String branchstate;
 
-        private String contactperson;
+    @Length(max = 50)
+    private String branchpin;
 
-        private Boolean isactive;
+    @Length(max = 15)
+    private String branchphone;
 
-        private Date created;
+    @Length(max = 15)
+    private String branchfax;
 
-        private Date lastmodified;
+    @Length(max = 50)
+    private String contactperson;
 
-        private BigDecimal modifiedby;
+    @Required
+    private Boolean isactive;
 
-        private String narration;
+    @Length(max = 250)
+    private String narration;
 
-        private String branchMICR;
+    @Length(max = 50)
+    @Column(name = "micr")
+    private String branchMICR;
 
-        private Set<Bankaccount> bankaccounts = new HashSet<Bankaccount>(0);
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "bankbranch", targetEntity = Bankaccount.class)
+    private Set<Bankaccount> bankaccounts = new HashSet<>(0);
 
-        public Bankbranch() {
-                //For hibernate to work
-        }
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "createdby")
+    private User createdBy;
 
-        public Bankbranch(String branchcode, String branchname, String branchaddress1, Boolean isactive, Date created, Date lastmodified, BigDecimal modifiedby) {
-                this.branchcode = branchcode;
-                this.branchname = branchname;
-                this.branchaddress1 = branchaddress1;
-                this.isactive = isactive;
-                this.created = created;
-                this.lastmodified = lastmodified;
-                this.modifiedby = modifiedby;
-        }
+    @JsonIgnore
+    private Date createdDate;
 
-        public Bankbranch(Bank bank, String branchcode, String branchname, String branchaddress1, String branchaddress2, String branchcity, String branchstate, String branchpin, String branchphone, String branchfax, String contactperson, Boolean isactive,
-                        Date created, Date lastmodified, BigDecimal modifiedby, String narration, String branchMICR, Set<Bankaccount> bankaccounts) {
-                this.bank = bank;
-                this.branchcode = branchcode;
-                this.branchname = branchname;
-                this.branchaddress1 = branchaddress1;
-                this.branchaddress2 = branchaddress2;
-                this.branchcity = branchcity;
-                this.branchstate = branchstate;
-                this.branchpin = branchpin;
-                this.branchphone = branchphone;
-                this.branchfax = branchfax;
-                this.contactperson = contactperson;
-                this.isactive = isactive;
-                this.created = created;
-                this.lastmodified = lastmodified;
-                this.modifiedby = modifiedby;
-                this.narration = narration;
-                this.branchMICR = branchMICR;
-                this.bankaccounts = bankaccounts;
-        }
-        public boolean isAccountsExist(){
-            return (this.bankaccounts!=null && !this.bankaccounts.isEmpty()) ;
-        }
-        public Integer getId() {
-                return this.id;
-        }
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lastModifiedBy")
+    private User lastModifiedBy;
 
-        public void setId(Integer id) {
-                this.id = id;
-        }
+    @JsonIgnore
+    private Date lastModifiedDate;
 
-        public Bank getBank() {
-                return this.bank;
-        }
+    public boolean isAccountsExist() {
+        return bankaccounts != null && !bankaccounts.isEmpty();
+    }
 
-        public void setBank(Bank bank) {
-                this.bank = bank;
-        }
+    @Override
+    public Integer getId() {
+        return id;
+    }
 
-        public String getBranchcode() {
-                return this.branchcode;
-        }
+    @Override
+    public void setId(final Integer id) {
+        this.id = id;
+    }
 
-        public void setBranchcode(String branchcode) {
-                this.branchcode = branchcode;
-        }
+    public Bank getBank() {
+        return bank;
+    }
 
-        public String getBranchname() {
-                return this.branchname;
-        }
+    public void setBank(final Bank bank) {
+        this.bank = bank;
+    }
 
-        public void setBranchname(String branchname) {
-                this.branchname = branchname;
-        }
+    public String getBranchcode() {
+        return branchcode;
+    }
 
-        public String getBranchaddress1() {
-                return this.branchaddress1;
-        }
+    public void setBranchcode(final String branchcode) {
+        this.branchcode = branchcode;
+    }
 
-        public void setBranchaddress1(String branchaddress1) {
-                this.branchaddress1 = branchaddress1;
-        }
+    public String getBranchname() {
+        return branchname;
+    }
 
-        public String getBranchaddress2() {
-                return this.branchaddress2;
-        }
+    public void setBranchname(final String branchname) {
+        this.branchname = branchname;
+    }
 
-        public void setBranchaddress2(String branchaddress2) {
-                this.branchaddress2 = branchaddress2;
-        }
+    public String getBranchaddress1() {
+        return branchaddress1;
+    }
 
-        public String getBranchcity() {
-                return this.branchcity;
-        }
+    public void setBranchaddress1(final String branchaddress1) {
+        this.branchaddress1 = branchaddress1;
+    }
 
-        public void setBranchcity(String branchcity) {
-                this.branchcity = branchcity;
-        }
+    public String getBranchaddress2() {
+        return branchaddress2;
+    }
 
-        public String getBranchstate() {
-                return this.branchstate;
-        }
+    public void setBranchaddress2(final String branchaddress2) {
+        this.branchaddress2 = branchaddress2;
+    }
 
-        public void setBranchstate(String branchstate) {
-                this.branchstate = branchstate;
-        }
+    public String getBranchcity() {
+        return branchcity;
+    }
 
-        public String getBranchpin() {
-                return this.branchpin;
-        }
+    public void setBranchcity(final String branchcity) {
+        this.branchcity = branchcity;
+    }
 
-        public void setBranchpin(String branchpin) {
-                this.branchpin = branchpin;
-        }
+    public String getBranchstate() {
+        return branchstate;
+    }
 
-        public String getBranchphone() {
-                return this.branchphone;
-        }
+    public void setBranchstate(final String branchstate) {
+        this.branchstate = branchstate;
+    }
 
-        public void setBranchphone(String branchphone) {
-                this.branchphone = branchphone;
-        }
+    public String getBranchpin() {
+        return branchpin;
+    }
 
-        public String getBranchfax() {
-                return this.branchfax;
-        }
+    public void setBranchpin(final String branchpin) {
+        this.branchpin = branchpin;
+    }
 
-        public void setBranchfax(String branchfax) {
-                this.branchfax = branchfax;
-        }
+    public String getBranchphone() {
+        return branchphone;
+    }
 
-        public String getContactperson() {
-                return this.contactperson;
-        }
+    public void setBranchphone(final String branchphone) {
+        this.branchphone = branchphone;
+    }
 
-        public void setContactperson(String contactperson) {
-                this.contactperson = contactperson;
-        }
+    public String getBranchfax() {
+        return branchfax;
+    }
 
-       public Date getCreated() {
-                return this.created;
-        }
+    public void setBranchfax(final String branchfax) {
+        this.branchfax = branchfax;
+    }
 
-        public void setCreated(Date created) {
-                this.created = created;
-        }
+    public String getContactperson() {
+        return contactperson;
+    }
 
-        public Date getLastmodified() {
-                return this.lastmodified;
-        }
+    public void setContactperson(final String contactperson) {
+        this.contactperson = contactperson;
+    }
 
-        public void setLastmodified(Date lastmodified) {
-                this.lastmodified = lastmodified;
-        }
+    public String getNarration() {
+        return narration;
+    }
 
-        public BigDecimal getModifiedby() {
-                return this.modifiedby;
-        }
+    public void setNarration(final String narration) {
+        this.narration = narration;
+    }
 
-        public void setModifiedby(BigDecimal modifiedby) {
-                this.modifiedby = modifiedby;
-        }
+    public String getBranchMICR() {
+        return branchMICR;
+    }
 
-        public String getNarration() {
-                return this.narration;
-        }
+    public void setBranchMICR(final String branchMICR) {
+        this.branchMICR = branchMICR;
+    }
 
-        public void setNarration(String narration) {
-                this.narration = narration;
-        }
+    public Set<Bankaccount> getBankaccounts() {
+        return bankaccounts;
+    }
 
-        public String getBranchMICR() {
-                return branchMICR;
-        }
+    public void setBankaccounts(final Set<Bankaccount> bankaccounts) {
+        this.bankaccounts = bankaccounts;
+    }
 
-        public void setBranchMICR(String branchMICR) {
-                this.branchMICR = branchMICR;
-        }
+    public Boolean getIsactive() {
+        return isactive;
+    }
 
-        public Set<Bankaccount> getBankaccounts() {
-                return this.bankaccounts;
-        }
+    public void setIsactive(final Boolean isactive) {
+        this.isactive = isactive;
+    }
 
-        public void setBankaccounts(Set<Bankaccount> bankaccounts) {
-                this.bankaccounts = bankaccounts;
-        }
+    public User getCreatedBy() {
+        return createdBy;
+    }
 
-        public Boolean getIsactive() {
-            return isactive;
-        }
+    public void setCreatedBy(final User createdBy) {
+        this.createdBy = createdBy;
+    }
 
-        public void setIsactive(Boolean isactive) {
-            this.isactive = isactive;
-        }
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(final Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public User getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(final User lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(final Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
 
 }

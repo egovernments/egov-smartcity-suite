@@ -555,5 +555,30 @@
 		<put-attribute name="page-title" value="title.journalvoucher.create" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/journalvoucher/journalvoucher-update.jsp"/>
 	</definition>
+	
+	<definition name="bank-new" extends="base_layout">
+		<put-attribute name="page-title" value="title.bank.new" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bank/bank-new.jsp" />
+	</definition>
+
+	<definition name="bank-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.bank.view" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bank/bank-view.jsp" />
+	</definition>
+
+	<definition name="bank-update" extends="base_layout">
+		<put-attribute name="page-title" value="title.bank.edit" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bank/bank-update.jsp" />
+	</definition>
+
+	<definition name="bank-success" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.search.bank.result" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bank/bank-success.jsp" />
+	</definition>
+	
+	<definition name="bank-search" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.search.bank" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bank/bank-search.jsp" />
+	</definition>
 
 </tiles-definitions>

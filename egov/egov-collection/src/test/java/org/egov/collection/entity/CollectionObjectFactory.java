@@ -166,10 +166,10 @@ public class CollectionObjectFactory {
 		bankbranch.setBranchcity("branch city");
 		bankbranch.setIsactive(true);
 		bankbranch.setBank(createBank());
-		bankbranch.setCreated(new Date());
-		bankbranch.setModifiedby(BigDecimal.valueOf(createUser("egovernments")
-				.getId()));
-		bankbranch.setLastmodified(new Date());
+		bankbranch.setCreatedDate(new Date());
+		bankbranch.setCreatedBy(createUser("egovernments"));
+		bankbranch.setLastModifiedDate(new Date());
+		bankbranch.setLastModifiedBy(createUser("egovernments"));
 		session.saveOrUpdate(bankbranch);
 		return bankbranch;
 	}
@@ -179,10 +179,10 @@ public class CollectionObjectFactory {
 		bank.setCode("TEST" + getRandomNumber());
 		bank.setName("Test Bank" + getRandomNumber());
 		bank.setIsactive(true);
-		bank.setCreated(new Date());
-		bank.setLastmodified(new Date());
-		bank.setModifiedby(BigDecimal.valueOf(createUser("egovernments")
-				.getId()));
+		bank.setCreatedDate(new Date());
+		bank.setCreatedBy(createUser("egovernments"));
+		bank.setLastModifiedDate(new Date());
+		bank.setLastModifiedBy(createUser("egovernments"));
 		session.saveOrUpdate(bank);
 		return bank;
 	}
