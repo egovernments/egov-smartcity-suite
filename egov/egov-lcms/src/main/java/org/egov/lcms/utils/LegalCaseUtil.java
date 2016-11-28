@@ -58,6 +58,7 @@ import org.egov.lcms.transactions.entity.LcInterimOrderDocuments;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseDocuments;
 import org.egov.lcms.transactions.entity.LegalCaseInterimOrder;
+import org.egov.lcms.transactions.entity.PwrDocuments;
 import org.egov.lcms.transactions.repository.JudgmentRepository;
 import org.egov.lcms.transactions.repository.LegalCaseInterimOrderRepository;
 import org.egov.lcms.transactions.repository.LegalCaseRepository;
@@ -153,5 +154,11 @@ public class LegalCaseUtil {
     @Transactional
     public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
         return fileStoreUtils.addToFileStore(files, LcmsConstants.FILESTORE_MODULECODE);
+    }
+
+    public List<PwrDocuments> getPwrDocumentList(final LegalCase legalcase) {
+        final List<PwrDocuments> pwrDoc = legalCaseRepository.getPwrDocumentList(legalcase.getPwrList().get(0).getId());
+        return pwrDoc;
+
     }
 }

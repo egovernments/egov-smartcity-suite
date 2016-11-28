@@ -57,6 +57,8 @@
 	</div>
 	</div>
 	</div>
+	<jsp:include page="pwrDocumentdetails-view.jsp"></jsp:include>
+	
 	<div class="form-group">
 		<div class="text-center">
 			<button type="submit" name="submit" class="btn btn-default"
