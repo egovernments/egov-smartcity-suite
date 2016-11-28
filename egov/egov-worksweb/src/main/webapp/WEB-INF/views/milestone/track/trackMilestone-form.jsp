@@ -44,6 +44,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <form name="trackMilestoneForm" id="trackMilestoneForm" role="form" action="" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+	<input type="hidden" name="mode" id="mode" value='' />
 	<div class="row">
 		<div class="col-md-12">
 			<jsp:include page="milestoneHeader-view.jsp" />

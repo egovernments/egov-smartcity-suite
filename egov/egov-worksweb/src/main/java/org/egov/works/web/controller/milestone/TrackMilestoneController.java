@@ -39,9 +39,12 @@
  */
 package org.egov.works.web.controller.milestone;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import java.io.IOException;
+import java.io.Writer;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.milestone.entity.Milestone;
@@ -49,6 +52,7 @@ import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.milestone.entity.TrackMilestoneActivity;
 import org.egov.works.milestone.entity.enums.MilestoneActivityStatus;
 import org.egov.works.milestone.service.MilestoneService;
+import org.egov.works.milestone.service.TrackMilestoneService;
 import org.egov.works.web.adaptor.TrackMilestoneJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -63,10 +67,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.Writer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 @RestController
 @RequestMapping(value = "/milestone")
@@ -81,6 +84,9 @@ public class TrackMilestoneController {
 
     @Autowired
     private TrackMilestoneJsonAdaptor trackMilestoneJsonAdaptor;
+
+    @Autowired
+    private TrackMilestoneService trackMilestoneService;
 
     @ModelAttribute
     public Milestone getMilestone(@PathVariable final Long id) {
@@ -106,10 +112,11 @@ public class TrackMilestoneController {
     public @ResponseBody String create(@ModelAttribute("milestone") final Milestone milestone,
             final Model model, final BindingResult errors, final HttpServletRequest request, final BindingResult resultBinder,
             final HttpServletResponse response)
-                    throws ApplicationException, IOException {
+            throws ApplicationException, IOException {
 
+        final String mode = request.getParameter("mode");
         final JsonObject jsonObject = new JsonObject();
-        validateTrackMilestone(milestone, jsonObject);
+        validateTrackMilestone(milestone, jsonObject, mode);
 
         if (jsonObject.toString().length() > 2) {
             sendAJAXResponse(jsonObject.toString(), response);
@@ -123,10 +130,19 @@ public class TrackMilestoneController {
                 null);
     }
 
-    private void validateTrackMilestone(final Milestone milestone, final JsonObject jsonObject) {
+    private void validateTrackMilestone(final Milestone milestone, final JsonObject jsonObject, final String mode) {
         for (final TrackMilestone tm : milestone.getTrackMilestone()) {
             Integer count = 0;
             boolean flag = false;
+            if ("create".equals(mode)) {
+                final TrackMilestone fromDB = trackMilestoneService.getTrackMilestoneByMilestoneId(milestone.getId());
+                if (fromDB != null) {
+                    jsonObject.addProperty("alreadyCreated",
+                            messageSource.getMessage("error.trackmilestone.already.created",
+                                    new String[] {}, null));
+                    flag = true;
+                }
+            }
             for (final TrackMilestoneActivity tma : tm.getActivities()) {
                 if (tma.getStatus().equals(MilestoneActivityStatus.NOT_YET_STARTED.name()) && tma.getCompletedPercentage() != 0) {
                     jsonObject.addProperty("completedPercentage_" + count,
@@ -146,7 +162,7 @@ public class TrackMilestoneController {
                                     new String[] {}, null));
                     flag = true;
                 }
-                if(tma.getCompletionDate() != null)
+                if (tma.getCompletionDate() != null)
                     if (tma.getCompletionDate().after(milestone.getActivities().get(count).getScheduleEndDate())
                             && tma.getRemarks() == null) {
                         jsonObject.addProperty("reasonForDelay_" + count,

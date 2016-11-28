@@ -45,13 +45,11 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.MilestoneActivity;
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.milestone.entity.TrackMilestoneActivity;
 import org.egov.works.models.workorder.WorkOrder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonArray;
@@ -62,9 +60,6 @@ import com.google.gson.JsonSerializer;
 
 @Component
 public class TrackMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
-    @Autowired
-    private LineEstimateService lineEstimateService;
-
     @Override
     public JsonElement serialize(final Milestone milestone, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
@@ -79,13 +74,11 @@ public class TrackMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
                 jsonObject.addProperty("nameOfWork", led.getNameOfWork());
                 jsonObject.addProperty("projectCode", led.getProjectCode().getCode());
                 jsonObject.addProperty("typeOfWork", led.getLineEstimate().getTypeOfWork().getDescription().toString());
-                if(led.getLineEstimate().getSubTypeOfWork() != null){
+                if (led.getLineEstimate().getSubTypeOfWork() != null)
                     jsonObject.addProperty("subTypeOfWork", led.getLineEstimate().getSubTypeOfWork().getDescription().toString());
-                }       
                 jsonObject.addProperty("lineEstimateCreatedBy", led.getLineEstimate().getCreatedBy().getName());
                 jsonObject.addProperty("department", led.getLineEstimate().getExecutingDepartment().getName());
-            }
-            else {
+            } else {
                 jsonObject.addProperty("estimateNumber", "");
                 jsonObject.addProperty("lineEstimateDate", "");
                 jsonObject.addProperty("nameOfWork", "");
@@ -102,8 +95,7 @@ public class TrackMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
                 jsonObject.addProperty("workOrderAmount", df.format(workOrder.getWorkOrderAmount()));
                 jsonObject.addProperty("workOrderDate", sdf.format(workOrder.getWorkOrderDate()));
                 jsonObject.addProperty("contractorName", workOrder.getContractor().getName());
-            }
-            else {
+            } else {
                 jsonObject.addProperty("workOrderNumber", "");
                 jsonObject.addProperty("workOrderId", "");
                 jsonObject.addProperty("workOrderAmount", "");
@@ -127,20 +119,23 @@ public class TrackMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
             } else
                 jsonObject.add("activities", new JsonArray());
             if (!milestone.getTrackMilestone().isEmpty()) {
+                jsonObject.addProperty("mode", "update");
                 final JsonArray jsonArray = new JsonArray();
                 for (final TrackMilestone ma : milestone.getTrackMilestone())
                     for (final TrackMilestoneActivity tma : ma.getActivities()) {
                         final JsonObject child = new JsonObject();
                         child.addProperty("currentStatus", tma.getStatus());
                         child.addProperty("completedPercentage", tma.getCompletedPercentage());
-                        if(tma.getCompletionDate() != null)
+                        if (tma.getCompletionDate() != null)
                             child.addProperty("completionDate", sdf.format(tma.getCompletionDate()));
                         child.addProperty("reasonForDelay", tma.getRemarks());
                         jsonArray.add(child);
                     }
                 jsonObject.add("trackMilestoneActivities", jsonArray);
-            } else
+            } else {
+                jsonObject.addProperty("mode", "create");
                 jsonObject.add("trackMilestoneActivities", new JsonArray());
+            }
 
             jsonObject.addProperty("id", milestone.getId());
         }
