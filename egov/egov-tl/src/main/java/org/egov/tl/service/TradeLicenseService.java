@@ -63,7 +63,6 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.validation.exception.ValidationException;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
@@ -198,14 +197,14 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     public ReportOutput prepareReportInputDataForDig(final License license, final String districtName,
-            final String cityMunicipalityName) {
+                                                     final String cityMunicipalityName) {
         return reportService.createReport(
                 new ReportRequest("licenseCertificate", license, getReportParamsForCertificate(license, districtName,
                         cityMunicipalityName)));
     }
 
     private Map<String, Object> getReportParamsForCertificate(final License license, final String districtName,
-            final String cityMunicipalityName) {
+                                                              final String cityMunicipalityName) {
         final Map<String, Object> reportParams = new HashMap<>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final Format formatterYear = new SimpleDateFormat("YYYY");
@@ -222,7 +221,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams
                 .put("appType", license.getLicenseAppType() != null
                         ? "New".equals(license.getLicenseAppType().getName())
-                                ? "New Trade" : "Renewal"
+                        ? "New Trade" : "Renewal"
                         : "New");
         if (ApplicationThreadLocals.getMunicipalityName().contains("Corporation"))
             reportParams.put("carporationulbType", Boolean.TRUE);
