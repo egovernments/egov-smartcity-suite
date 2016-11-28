@@ -114,9 +114,13 @@ public class AbstractEstimateJsonAdaptor implements JsonSerializer<AbstractEstim
             else
                 jsonObject.addProperty("departmentName", "");
 
-            if (abstractEstimate.getWard() != null)
-                jsonObject.addProperty("ward", abstractEstimate.getWard().getBoundaryNum());
-            else
+            if (abstractEstimate.getWard() != null) {
+                if (abstractEstimate.getWard().getBoundaryType().getName()
+                        .equalsIgnoreCase(WorksConstants.BOUNDARY_TYPE_CITY))
+                    jsonObject.addProperty("ward", abstractEstimate.getWard().getName());
+                else
+                    jsonObject.addProperty("ward", abstractEstimate.getWard().getBoundaryNum());
+            } else
                 jsonObject.addProperty("ward", "");
 
             if (abstractEstimate.getEgwStatus() != null)
