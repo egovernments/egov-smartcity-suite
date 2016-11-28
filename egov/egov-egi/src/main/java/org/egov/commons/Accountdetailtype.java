@@ -40,9 +40,8 @@
 
 package org.egov.commons;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.validator.constraints.Length;
+import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -52,179 +51,193 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.Date;
+
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
-@Table(name="ACCOUNTDETAILTYPE")
+@Table(name = "ACCOUNTDETAILTYPE")
 @SequenceGenerator(name = Accountdetailtype.SEQ_ACCOUNTDETAILTYPE, sequenceName = Accountdetailtype.SEQ_ACCOUNTDETAILTYPE, allocationSize = 1)
 @Unique(id = "id", tableName = "accountdetailtype", fields = { "name" }, columnName = { "name" }, enableDfltMsg = true)
+@Audited
 public class Accountdetailtype extends AbstractPersistable<Integer> implements java.io.Serializable {
 
-	private static final long serialVersionUID = 1L;
-	public static final String SEQ_ACCOUNTDETAILTYPE = "SEQ_ACCOUNTDETAILTYPE";
+    private static final long serialVersionUID = 3499589983886551123L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_ACCOUNTDETAILTYPE, strategy = GenerationType.SEQUENCE)
-	private Integer id;
-	
-	
-	@Column(nullable=false, unique=true)
-	@Length(max=50)
-	private String name;
-	
-	@NotNull
-	@Length(max=50)
-	private String description;
+    public static final String SEQ_ACCOUNTDETAILTYPE = "SEQ_ACCOUNTDETAILTYPE";
 
+    @Id
+    @GeneratedValue(generator = SEQ_ACCOUNTDETAILTYPE, strategy = GenerationType.SEQUENCE)
+    @NotAudited
+    private Integer id;
 
-	@Length(max=25)
-	private String tablename;
+    @Column(nullable = false, unique = true)
+    @Length(max = 50)
+    @NotAudited
+    private String name;
 
-	@Length(max=25)
-	private String columnname;
+    @NotNull
+    @Length(max = 50)
+    @NotAudited
+    private String description;
 
-	@Column(nullable=false, unique=true)
-	@Length(max=50)
-	private String attributename;
+    @Length(max = 25)
+    @NotAudited
+    private String tablename;
 
-	@NotNull
-	private BigDecimal nbroflevels=BigDecimal.ZERO;
-	
-	private Boolean isactive;
+    @Length(max = 25)
+    @NotAudited
+    private String columnname;
 
-	
-	@Column(name="FULL_QUALIFIED_NAME")
-	@Length(max=250)
-	private String fullQualifiedName;
-	
-	private Date created;
+    @Column(nullable = false, unique = true)
+    @Length(max = 50)
+    @NotAudited
+    private String attributename;
 
-	private Date lastmodified;
+    @NotNull
+    @NotAudited
+    private BigDecimal nbroflevels = BigDecimal.ZERO;
 
-	private Long modifiedby;
+    @NotAudited
+    private Boolean isactive;
 
+    @Column(name = "FULL_QUALIFIED_NAME")
+    @Length(max = 250)
+    @NotAudited
+    private String fullQualifiedName;
 
-	//private Accountdetailtype accountdetailtype;
+    @NotAudited
+    private Date created;
 
-	public Accountdetailtype() {
-		//For hibernate to work
-	}
+    @NotAudited
+    private Date lastmodified;
 
-	public Accountdetailtype(String name, String description, String attributename, BigDecimal nbroflevels) {
-		this.name = name;
-		this.description = description;
-		this.attributename = attributename;
-		this.nbroflevels = nbroflevels;
-	}
+    @NotAudited
+    private Long modifiedby;
 
-	public Accountdetailtype(String name, String description, String tablename, String columnname, String attributename, BigDecimal nbroflevels, Boolean isactive) {
-		this.name = name;
-		this.description = description;
-		this.tablename = tablename;
-		this.columnname = columnname;
-		this.attributename = attributename;
-		this.nbroflevels = nbroflevels;
-		this.isactive = isactive;
-	}
+    public Accountdetailtype() {
+        // For hibernate to work
+    }
 
-	public Integer getId() {
-		return this.id;
-	}
+    public Accountdetailtype(final String name, final String description, final String attributename,
+            final BigDecimal nbroflevels) {
+        this.name = name;
+        this.description = description;
+        this.attributename = attributename;
+        this.nbroflevels = nbroflevels;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public Accountdetailtype(final String name, final String description, final String tablename, final String columnname,
+            final String attributename,
+            final BigDecimal nbroflevels, final Boolean isactive) {
+        this.name = name;
+        this.description = description;
+        this.tablename = tablename;
+        this.columnname = columnname;
+        this.attributename = attributename;
+        this.nbroflevels = nbroflevels;
+        this.isactive = isactive;
+    }
 
-	public String getName() {
-		return this.name;
-	}
+    @Override
+    public Integer getId() {
+        return id;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @Override
+    public void setId(final Integer id) {
+        this.id = id;
+    }
 
-	public String getDescription() {
-		return this.description;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public String getTablename() {
-		return this.tablename;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setTablename(String tablename) {
-		this.tablename = tablename;
-	}
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-	public String getColumnname() {
-		return this.columnname;
-	}
+    public String getTablename() {
+        return tablename;
+    }
 
-	public void setColumnname(String columnname) {
-		this.columnname = columnname;
-	}
+    public void setTablename(final String tablename) {
+        this.tablename = tablename;
+    }
 
-	public String getAttributename() {
-		return this.attributename;
-	}
+    public String getColumnname() {
+        return columnname;
+    }
 
-	public void setAttributename(String attributename) {
-		this.attributename = attributename;
-	}
+    public void setColumnname(final String columnname) {
+        this.columnname = columnname;
+    }
 
-	public BigDecimal getNbroflevels() {
-		return this.nbroflevels;
-	}
+    public String getAttributename() {
+        return attributename;
+    }
 
-	public void setNbroflevels(BigDecimal nbroflevels) {
-		this.nbroflevels = nbroflevels;
-	}
+    public void setAttributename(final String attributename) {
+        this.attributename = attributename;
+    }
 
-	public Boolean getIsactive() {
-		return this.isactive;
-	}
+    public BigDecimal getNbroflevels() {
+        return nbroflevels;
+    }
 
-	public void setIsactive(Boolean isactive) {
-		this.isactive = isactive;
-	}
+    public void setNbroflevels(final BigDecimal nbroflevels) {
+        this.nbroflevels = nbroflevels;
+    }
 
-	
-	public String getFullQualifiedName() {
-		return fullQualifiedName;
-	}
+    public Boolean getIsactive() {
+        return isactive;
+    }
 
-	public void setFullQualifiedName(String fullQualifiedName) {
-		this.fullQualifiedName = fullQualifiedName;
-	}
+    public void setIsactive(final Boolean isactive) {
+        this.isactive = isactive;
+    }
 
-	public Date getCreated() {
-		return created;
-	}
+    public String getFullQualifiedName() {
+        return fullQualifiedName;
+    }
 
-	public void setCreated(Date created) {
-		this.created = created;
-	}
+    public void setFullQualifiedName(final String fullQualifiedName) {
+        this.fullQualifiedName = fullQualifiedName;
+    }
 
-	public Date getLastmodified() {
-		return lastmodified;
-	}
+    public Date getCreated() {
+        return created;
+    }
 
-	public void setLastmodified(Date lastmodified) {
-		this.lastmodified = lastmodified;
-	}
+    public void setCreated(final Date created) {
+        this.created = created;
+    }
 
-	public Long getModifiedby() {
-		return modifiedby;
-	}
+    public Date getLastmodified() {
+        return lastmodified;
+    }
 
-	public void setModifiedby(Long modifiedby) {
-		this.modifiedby = modifiedby;
-	}
+    public void setLastmodified(final Date lastmodified) {
+        this.lastmodified = lastmodified;
+    }
 
-	
+    public Long getModifiedby() {
+        return modifiedby;
+    }
+
+    public void setModifiedby(final Long modifiedby) {
+        this.modifiedby = modifiedby;
+    }
 
 }

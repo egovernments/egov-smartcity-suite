@@ -532,9 +532,9 @@ public class CollectionObjectFactory {
 		account.setName("testAccountName" + glCode);
 		account.setIsActiveForPosting(true);
 		account.setCreatedBy(user);
-		account.setModifiedBy(user);
+		account.setLastModifiedBy(user);
 		account.setCreatedDate(date);
-		account.setModifiedDate(date);
+		account.setLastModifiedDate(date);
 		account.setType('I');
 		session.saveOrUpdate(account);
 		return account;
@@ -1504,9 +1504,9 @@ public class CollectionObjectFactory {
 		coa.setName("testcoa");
 		coa.setIsActiveForPosting(true);
 		coa.setCreatedBy(user);
-		coa.setModifiedBy(user);
+		coa.setLastModifiedBy(user);
 		coa.setCreatedDate(date);
-		coa.setModifiedDate(date);
+		coa.setLastModifiedDate(date);
 		coa.setPurposeId((long) 4);
 		coa.setType('I');
 		session.saveOrUpdate(coa);

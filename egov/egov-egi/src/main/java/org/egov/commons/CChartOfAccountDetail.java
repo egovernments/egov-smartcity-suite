@@ -40,36 +40,73 @@
 
 package org.egov.commons;
 
-import org.egov.infstr.models.BaseModel;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-public class CChartOfAccountDetail extends BaseModel {
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.envers.AuditJoinTable;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 
-	private static final long serialVersionUID = 1L;
-	//private Long id;
-	private CChartOfAccounts glCodeId;
-	private Accountdetailtype detailTypeId;
+@Entity
+@Table(name = "CHARTOFACCOUNTDETAIL")
+@SequenceGenerator(name = CChartOfAccountDetail.SEQ_CHARTOFACCOUNTDETAIL, sequenceName = CChartOfAccountDetail.SEQ_CHARTOFACCOUNTDETAIL, allocationSize = 1)
+@AuditOverrides({
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate")
+})
+@Audited
+public class CChartOfAccountDetail extends AbstractAuditable {
 
-/*	public Long getId() {
-		return id;
-	}
+    private static final long serialVersionUID = -8517026729631829413L;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-*/
-	public CChartOfAccounts getGlCodeId() {
-		return glCodeId;
-	}
+    public static final String SEQ_CHARTOFACCOUNTDETAIL = "SEQ_CHARTOFACCOUNTDETAIL";
 
-	public void setGlCodeId(CChartOfAccounts glCodeId) {
-		this.glCodeId = glCodeId;
-	}
+    @Id
+    @GeneratedValue(generator = CChartOfAccountDetail.SEQ_CHARTOFACCOUNTDETAIL, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	public Accountdetailtype getDetailTypeId() {
-		return detailTypeId;
-	}
+    @AuditJoinTable
+    @ManyToOne
+    @JoinColumn(name = "glcodeid")
+    private CChartOfAccounts glCodeId;
 
-	public void setDetailTypeId(Accountdetailtype detailTypeId) {
-		this.detailTypeId = detailTypeId;
-	}
+    @ManyToOne
+    @JoinColumn(name = "detailtypeid")
+    @AuditJoinTable
+    private Accountdetailtype detailTypeId;
+
+    public CChartOfAccounts getGlCodeId() {
+        return glCodeId;
+    }
+
+    public void setGlCodeId(final CChartOfAccounts glCodeId) {
+        this.glCodeId = glCodeId;
+    }
+
+    public Accountdetailtype getDetailTypeId() {
+        return detailTypeId;
+    }
+
+    public void setDetailTypeId(final Accountdetailtype detailTypeId) {
+        this.detailTypeId = detailTypeId;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
 }

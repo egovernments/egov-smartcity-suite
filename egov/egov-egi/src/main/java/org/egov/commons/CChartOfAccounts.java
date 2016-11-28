@@ -40,35 +40,85 @@
 
 package org.egov.commons;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.egov.infstr.models.BaseModel;
-
-import javax.persistence.Transient;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CChartOfAccounts extends BaseModel {
-    private static final long serialVersionUID = 1L;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
-    // private Long id = null;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.envers.AuditJoinTable;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
+@Table(name = "CHARTOFACCOUNTS")
+@SequenceGenerator(name = CChartOfAccounts.SEQ_CHARTOFACCOUNTS, sequenceName = CChartOfAccounts.SEQ_CHARTOFACCOUNTS, allocationSize = 1)
+@AuditOverrides({
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate")
+})
+@Audited
+public class CChartOfAccounts extends AbstractAuditable {
+
+    private static final long serialVersionUID = 61219209022946300L;
+
+    public static final String SEQ_CHARTOFACCOUNTS = "SEQ_CHARTOFACCOUNTS";
+
+    @Id
+    @GeneratedValue(generator = CChartOfAccounts.SEQ_CHARTOFACCOUNTS, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
     private String glcode;
+
     private String name;
+
     private Long purposeId;
+
+    @Column(name = "DESCRIPTION")
     private String desc;
+
     private Boolean isActiveForPosting;
+
     private Long parentId;
+
+    @Column(name = "SCHEDULEID")
     private Long schedule;
+
     private Character operation;
+
     private Character type;
+
     private Long classification;
+
     private Boolean functionReqd;
+
     private Boolean budgetCheckReq;
+
     private String majorCode;
+
+    @Column(name = "CLASS")
     private Long myClass;
+
     @Transient
     private Boolean isSubLedger;
+
+    @AuditJoinTable
     @JsonIgnore
-    private Set<CChartOfAccountDetail> chartOfAccountDetails = new HashSet<CChartOfAccountDetail>();
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "glCodeId", targetEntity = CChartOfAccountDetail.class)
+    private Set<CChartOfAccountDetail> chartOfAccountDetails = new HashSet<>();
 
     public Set<CChartOfAccountDetail> getChartOfAccountDetails() {
         return chartOfAccountDetails;
@@ -86,203 +136,107 @@ public class CChartOfAccounts extends BaseModel {
         this.majorCode = majorCode;
     }
 
-    /**
-     * @return Returns the myClass.
-     */
     public Long getMyClass() {
         return myClass;
     }
 
-    /**
-     * @param myClass The myClass to set.
-     */
     public void setMyClass(final Long myClass) {
         this.myClass = myClass;
     }
 
-    /**
-     * @return Returns the glcode.
-     */
     public String getGlcode() {
         return glcode;
     }
 
-    /**
-     * @param glcode The glcode to set.
-     */
     public void setGlcode(final String glcode) {
         this.glcode = glcode;
     }
 
-    /**
-     * @return Returns the id.
-     * 
-     * public Long getId() { return id; }
-     */
-    /**
-     * @param id The id to set.
-     * 
-     * public void setId(Long id) { this.id = id; }
-     */
-
-    /**
-     * @return Returns the name.
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * @param name The name to set.
-     */
     public void setName(final String name) {
         this.name = name;
     }
 
-    /**
-     * @return Returns the purposeId.
-     */
     public Long getPurposeId() {
         return purposeId;
     }
 
-    /**
-     * @param purposeId The purposeId to set.
-     */
     public void setPurposeId(final Long purposeId) {
         this.purposeId = purposeId;
     }
 
-    /**
-     * @return Returns the classification.
-     */
     public Long getClassification() {
         return classification;
     }
 
-    /**
-     * @param classification The classification to set.
-     */
     public void setClassification(final Long classification) {
         this.classification = classification;
     }
 
-    /**
-     * @return Returns the desc.
-     */
     public String getDesc() {
         return desc;
     }
 
-    /**
-     * @param desc The desc to set.
-     */
     public void setDesc(final String desc) {
         this.desc = desc;
     }
 
-    /**
-     * @return Returns the functionReqd.
-     */
     public Boolean getFunctionReqd() {
 
         return functionReqd;
 
     }
 
-    /**
-     * @param functionReqd The functionReqd to set.
-     */
     public void setFunctionReqd(final Boolean functionReqd) {
         this.functionReqd = functionReqd;
     }
 
-    /**
-     * public void setFunctionReqd(boolean functionReqd) { if (functionReqd == true) this.functionReqd = Long.valueOf("1"); else
-     * this.functionReqd = Long.valueOf("0"); }
-     */
-
-    /**
-     * @return Returns the isActiveForPosting.
-     */
     public Boolean getIsActiveForPosting() {
         return isActiveForPosting;
     }
 
-    /**
-     * @param isActiveForPosting The isActiveForPosting to set.
-     */
     public void setIsActiveForPosting(final Boolean isActiveForPosting) {
         this.isActiveForPosting = isActiveForPosting;
     }
 
-    /*
-     * public void setIsActiveForPosting(boolean isActiveForPosting) { if (isActiveForPosting == true) this.isActiveForPosting =
-     * Long.valueOf("1"); else this.isActiveForPosting = Long.valueOf("0"); }
-     */
-
-    /**
-     * @return Returns the operation.
-     */
     public Character getOperation() {
         return operation;
     }
 
-    /**
-     * @param operation The operation to set.
-     */
     public void setOperation(final Character operation) {
         this.operation = operation;
     }
 
-    /**
-     * @return Returns the parentId.
-     */
     public Long getParentId() {
         return parentId;
     }
 
-    /**
-     * @param parentId The parentId to set.
-     */
     public void setParentId(final Long parentId) {
         this.parentId = parentId;
     }
 
-    /**
-     * @return Returns the schedule.
-     */
     public Long getSchedule() {
         return schedule;
     }
 
-    /**
-     * @param schedule The schedule to set.
-     */
     public void setSchedule(final Long schedule) {
         this.schedule = schedule;
     }
 
-    /**
-     * @return Returns the type.
-     */
     public Character getType() {
         return type;
     }
 
-    /**
-     * @param type The type to set.
-     */
     public void setType(final Character type) {
         this.type = type;
     }
 
     @Override
     public boolean equals(final Object o) {
-        if (o instanceof CChartOfAccounts && ((CChartOfAccounts) o).getId().equals(getId()))
-            return true;
-        else
-            return false;
+        return o instanceof CChartOfAccounts && ((CChartOfAccounts) o).getId().equals(getId());
     }
 
     @Override
@@ -304,6 +258,16 @@ public class CChartOfAccounts extends BaseModel {
 
     public void setIsSubLedger(final Boolean isSubLedger) {
         this.isSubLedger = isSubLedger;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
     }
 
 }
