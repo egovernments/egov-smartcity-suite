@@ -41,6 +41,7 @@ package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
 
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.abstractestimate.entity.NonSor;
@@ -72,7 +73,7 @@ public class EstimateActivityJsonAdaptor implements JsonSerializer<Activity> {
                 jsonObject.addProperty("scheduleUomId", schedule.getUom().getId());
                 try {
                     schedule.setSorRateValue(schedule.getRateOn(activity.getEstimateDate()).getRate().getValue());
-                } catch (Exception e) {
+                } catch (ApplicationRuntimeException e) {
                     schedule.setSorRateValue(0D);
                 }
                 jsonObject.addProperty("scheduleRate", schedule.getSorRate());
