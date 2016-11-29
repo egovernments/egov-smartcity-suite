@@ -49,7 +49,7 @@
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.abstractestimatenumber" /></label>
 			<div class="col-sm-3 add-margin">
-				<input name="estimateNumber" id="estimateNumber" class="form-control" placeholder="Type first 3 letters of Estimate Number" />
+				<input name="estimateNumber" id="estimateNumber" class="form-control" placeholder="Type first 3 letters of Abstract/Detailed Estimate Number" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.status" /></label>
 			<div class="col-sm-3 add-margin">

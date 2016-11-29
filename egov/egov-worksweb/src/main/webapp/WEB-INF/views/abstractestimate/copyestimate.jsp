@@ -56,7 +56,7 @@
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.abstractestimatenumber" /></label>
 			<div class="col-sm-3 add-margin">
-				<input name="copiedEstimateNumber" id="copiedEstimateNumber" class="form-control" placeholder="Type first 3 letters of Estimate Number" />
+				<input name="copiedEstimateNumber" id="copiedEstimateNumber" class="form-control" placeholder="Type first 3 letters of Abstract/Detailed Estimate Number" />
 				<form:input path="copiedFrom" type="hidden" value="" id="copiedEstimateId" />	
 				<input type="hidden" id="copyEstimateConfirmMsg"  value="<spring:message code='msg.copy.estimate.confirm.reset' />"/>
 			</div>

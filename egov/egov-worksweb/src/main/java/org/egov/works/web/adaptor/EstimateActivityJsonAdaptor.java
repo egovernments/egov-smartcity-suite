@@ -70,7 +70,11 @@ public class EstimateActivityJsonAdaptor implements JsonSerializer<Activity> {
                 jsonObject.addProperty("scheduleDescription", schedule.getSummary());
                 jsonObject.addProperty("scheduleUom", schedule.getUom().getUom());
                 jsonObject.addProperty("scheduleUomId", schedule.getUom().getId());
-                schedule.setSorRateValue(schedule.getRateOn(activity.getEstimateDate()).getRate().getValue());
+                try {
+                    schedule.setSorRateValue(schedule.getRateOn(activity.getEstimateDate()).getRate().getValue());
+                } catch (Exception e) {
+                    schedule.setSorRateValue(0D);
+                }
                 jsonObject.addProperty("scheduleRate", schedule.getSorRate());
                 jsonObject.addProperty("scheduleQuantity", activity.getQuantity());
             } else {

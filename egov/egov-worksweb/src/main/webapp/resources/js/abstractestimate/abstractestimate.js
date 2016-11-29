@@ -3377,9 +3377,15 @@ var copiedEstimateNumber_typeahead = $('#copiedEstimateNumber').typeahead({
 }, {
 	displayKey : 'code',
 	source : copiedEstimateNumber.ttAdapter()
-}).on('typeahead:selected typeahead:autocompleted', function(event, data){            
-	confirmOverWriteActivities(data.id);
-	$('#copiedEstimateNumber').typeahead('val','');
+}).on('typeahead:selected typeahead:autocompleted', function(event, data){   
+	var ans=confirm($("#copyEstimateConfirmMsg").val());	
+	if(ans) {
+		confirmOverWriteActivities(data.id);
+		$('#copiedEstimateNumber').typeahead('val','');
+	}
+	else {
+		return false;		
+	}
 });
 
 function confirmOverWriteActivities(id) {
@@ -3388,14 +3394,8 @@ function confirmOverWriteActivities(id) {
 	var sorHiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
 	var nonSorHiddenRowCount = $("#tblNonSor tbody tr:hidden[id='nonSorRow']").length;
 	if(copiedEstimateId!="" && (sorHiddenRowCount !=1 || nonSorHiddenRowCount!=1)){ 
-		var ans=confirm($("#copyEstimateConfirmMsg").val());	
-		if(ans) {
-			clearActivities();
-			getActivitiesForEstimate(copiedEstimateId);
-		}
-		else {
-			return false;		
-		}
+		clearActivities();
+		getActivitiesForEstimate(copiedEstimateId);
 	}else{
 		getActivitiesForEstimate(copiedEstimateId);
 	}

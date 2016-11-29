@@ -72,6 +72,14 @@ function callAjaxSearch() {
 					"aButtons" : []
 				},
 				"fnRowCallback" : function(row, data, index) {
+					$(row).on(
+							'click',
+							function() {
+								console.log(data.id);
+								window.open('/egworks/abstractestimate/view/'
+										+ data.id, '',
+										'width=800, height=600');
+							});
 					if(data.id != null)
 						$('td:eq(0)',row).html('<input type="radio" name="selectEstimate" class="selectEstimate" data="'+ data.id +'">');
 					$('td:eq(1)',row).html(index+1);
@@ -102,8 +110,14 @@ $(document).ready(function() {
 			bootbox.alert($('#errorSelect').val());
 			return;
 		} else {
-			window.opener.confirmOverWriteActivities(selectedEstimate);
-			window.close();
+			var ans=confirm($("#copyEstimateConfirmMsg").val());	
+			if(ans) {
+				window.opener.confirmOverWriteActivities(selectedEstimate);
+				window.close();
+			}
+			else {
+				return false;		
+			}
 		}
 	});
 	

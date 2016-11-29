@@ -45,6 +45,7 @@
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 		<form name="SearchRequest" role="form" action="" id="SearchRequest" class="form-horizontal form-groups-bordered">
 			<input type="hidden" id="errorSelect" value="<spring:message code='msg.select.estimate' />">
+			<input type="hidden" id="copyEstimateConfirmMsg" value="<spring:message code='msg.copy.estimate.confirm.reset' />"/>
 			<div class="row">
 				<div class="col-md-12">
 					<jsp:include page="searchestimates-header.jsp"/>
