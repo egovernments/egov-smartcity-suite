@@ -214,5 +214,6 @@ public class LcmsConstants {
 	public static final String JUDGMENT_DOCUMENTNAME = "Judgment";
 	public static final String LCINTERIOMORDER_DOCUMENTNAME ="LcInterimOrder";
 	public static final String PWR_DOCUMENTNAME ="Pwr";
+	public static final String APPEAL_DOCUMENTNAME ="Appeal";
 
 }

@@ -51,14 +51,17 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.utils.FileStoreUtils;
+import org.egov.lcms.transactions.entity.AppealDocuments;
 import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.Judgment;
 import org.egov.lcms.transactions.entity.JudgmentDocuments;
+import org.egov.lcms.transactions.entity.JudgmentImpl;
 import org.egov.lcms.transactions.entity.LcInterimOrderDocuments;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseDocuments;
 import org.egov.lcms.transactions.entity.LegalCaseInterimOrder;
 import org.egov.lcms.transactions.entity.PwrDocuments;
+import org.egov.lcms.transactions.repository.JudgmentImplRepository;
 import org.egov.lcms.transactions.repository.JudgmentRepository;
 import org.egov.lcms.transactions.repository.LegalCaseInterimOrderRepository;
 import org.egov.lcms.transactions.repository.LegalCaseRepository;
@@ -93,6 +96,9 @@ public class LegalCaseUtil {
 
     @Autowired
     private JudgmentRepository judgmentRepository;
+    
+    @Autowired
+    private  JudgmentImplRepository judgmentImplRepository;
 
     @Autowired
     private LegalCaseInterimOrderRepository legalCaseInterimOrderRepository;
@@ -159,6 +165,12 @@ public class LegalCaseUtil {
     public List<PwrDocuments> getPwrDocumentList(final LegalCase legalcase) {
         final List<PwrDocuments> pwrDoc = legalCaseRepository.getPwrDocumentList(legalcase.getPwrList().get(0).getId());
         return pwrDoc;
+
+    }
+    
+    public List<AppealDocuments> getAppealDocumentList(final JudgmentImpl judgmentImpl) {
+        final List<AppealDocuments> appealDoc = judgmentImplRepository.getAppealDocumentList(judgmentImpl.getAppeal().get(0).getId());
+        return appealDoc;
 
     }
 }

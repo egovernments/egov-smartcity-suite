@@ -14,7 +14,6 @@
 		<c:choose>
 			<c:when test="${mode != 'view'}">
 			<spring:message code="lbl.documents" />
-				
 			</c:when>
 			<c:otherwise>
 				<spring:message code="lbl.upload.document" />
