@@ -401,7 +401,6 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     private String updateReceiptWorkflowStatusForAll(final String wfAction, final String remarks) {
         final Position position = collectionsUtil.getPositionOfUser(securityUtils.getCurrentUser());
         receiptHeaders = receiptHeaderService.findAllByPositionAndInboxItemDetails(position.getId(), inboxItemDetails);
-        final Position operatorPosition = receiptHeaderService.getOperatorPosition(receiptHeaders.get(0));
         final Position approverPosition = receiptHeaderService.getApproverPosition(receiptHeaders.get(0));
         receiptIds = new Long[receiptHeaders.size()];
         int i = 0;
@@ -410,8 +409,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
                 receiptIds[i] = receiptHeader.getId();
             i++;
         }
-        receiptHeaderService.performWorkflowForAllReceipts(wfAction, receiptHeaders, remarks, operatorPosition,
-                approverPosition);
+        receiptHeaderService.performWorkflowForAllReceipts(wfAction, receiptHeaders, remarks);
         approverName = collectionsUtil.getApproverName(approverPosition);
         // Add the selected receipt ids to sereceiptHeader
         // Need to find a better mechanism to achieve this.
