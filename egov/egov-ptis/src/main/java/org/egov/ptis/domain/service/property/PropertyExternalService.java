@@ -827,6 +827,7 @@ public class PropertyExternalService {
             else
             	receiptDetails.setPaymentType(PAYMENT_TYPE_FULLY);
             
+            basicPropertyService.update(basicProperty);
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_SUCCESS);
             errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_SUCCESS);
