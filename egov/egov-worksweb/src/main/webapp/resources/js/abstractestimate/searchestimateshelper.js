@@ -72,21 +72,18 @@ function callAjaxSearch() {
 					"aButtons" : []
 				},
 				"fnRowCallback" : function(row, data, index) {
-					$(row).on(
+					$('td:not(:eq(0))',row).on(
 							'click',
 							function() {
 								console.log(data.id);
 								window.open('/egworks/abstractestimate/view/'
 										+ data.id, '',
-										'width=800, height=600');
+										'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 							});
 					if(data.id != null)
 						$('td:eq(0)',row).html('<input type="radio" name="selectEstimate" class="selectEstimate" data="'+ data.id +'">');
 					$('td:eq(1)',row).html(index+1);
-					if(data.summary != null)
-						$('td:eq(4)',row).html('<span>'+ data.summary +'</span><span/><a href="#" class="hintanchor" title="'+ data.description +'"><i class="fa fa-question-circle" aria-hidden="true"></i></a></span>');
-					$('td:eq(7)',row).html(parseFloat(data.estimateRate).toFixed(2));
-					$('td:eq(8)',row).html(parseFloat(data.approvedQuantity).toFixed(2));
+					$('td:eq(5)',row).html(parseFloat(data.estimateAmount).toFixed(2));
 				},
 				aaSorting : [],
 				columns : [ { 
@@ -95,7 +92,7 @@ function callAjaxSearch() {
 						"data" : "estimateNumber"},{
 						"data" : "nameofwork"},{
 						"data" : "createdBy"},{
-						"data" : "estimateAmount"}]
+						"data" : "estimateAmount", "sClass" : "text-right"}]
 			});
 }
 
@@ -110,13 +107,19 @@ $(document).ready(function() {
 			bootbox.alert($('#errorSelect').val());
 			return;
 		} else {
-			var ans=confirm($("#copyEstimateConfirmMsg").val());	
-			if(ans) {
+			var reset = window.opener.isResetRequired();
+			if (reset) {
+				var ans=confirm($("#copyEstimateConfirmMsg").val());	
+				if(ans) {
+					window.opener.confirmOverWriteActivities(selectedEstimate);
+					window.close();
+				}
+				else {
+					return false;		
+				}
+			} else {
 				window.opener.confirmOverWriteActivities(selectedEstimate);
 				window.close();
-			}
-			else {
-				return false;		
 			}
 		}
 	});

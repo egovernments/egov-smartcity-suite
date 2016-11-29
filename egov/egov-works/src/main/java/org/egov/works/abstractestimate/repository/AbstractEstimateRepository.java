@@ -129,6 +129,6 @@ public interface AbstractEstimateRepository extends JpaRepository<AbstractEstima
     List<Object[]> findAbstractEstimateNumbersToCopyEstimate(@Param("code") final String code,
             @Param("aeStatus") final String aeStatus);
 
-    @Query("select act from Activity act where act.abstractEstimate.id =:estimateId")
+    @Query("select act from Activity act where act.abstractEstimate.id =:estimateId order by act.id")
     List<Activity> findActivitiesByEstimate(@Param("estimateId") final Long estimateId);
 }

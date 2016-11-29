@@ -3377,16 +3377,33 @@ var copiedEstimateNumber_typeahead = $('#copiedEstimateNumber').typeahead({
 }, {
 	displayKey : 'code',
 	source : copiedEstimateNumber.ttAdapter()
-}).on('typeahead:selected typeahead:autocompleted', function(event, data){   
-	var ans=confirm($("#copyEstimateConfirmMsg").val());	
-	if(ans) {
+}).on('typeahead:selected typeahead:autocompleted', function(event, data){  
+	var sorHiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
+	var nonSorHiddenRowCount = $("#tblNonSor tbody tr:hidden[id='nonSorRow']").length;
+	if(sorHiddenRowCount !=1 || nonSorHiddenRowCount!=1){
+		var ans=confirm($("#copyEstimateConfirmMsg").val());	
+		if(ans) {
+			confirmOverWriteActivities(data.id);
+			$('#copiedEstimateNumber').typeahead('val','');
+		}
+		else {
+			return false;		
+		}
+	} else {
 		confirmOverWriteActivities(data.id);
 		$('#copiedEstimateNumber').typeahead('val','');
 	}
-	else {
-		return false;		
-	}
 });
+
+function isResetRequired() {
+	var sorHiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
+	var nonSorHiddenRowCount = $("#tblNonSor tbody tr:hidden[id='nonSorRow']").length;
+	if(sorHiddenRowCount !=1 || nonSorHiddenRowCount!=1)
+		return true;
+	else
+		return false;
+}
+
 
 function confirmOverWriteActivities(id) {
 	$("#copiedEstimateId").val(id);

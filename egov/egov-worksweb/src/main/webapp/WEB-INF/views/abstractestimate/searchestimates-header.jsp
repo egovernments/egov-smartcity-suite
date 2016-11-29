@@ -66,7 +66,7 @@
 					</c:forEach>
 				</select>
 			</div>
-			<label class="col-sm-2 control-label text-right"> <spring:message code="lbl.subtypeofwork" /></label>
+			<label class="col-sm-2 control-label text-right"> <spring:message code="lbl.typeofwork" /></label>
 			<div class="col-sm-3 add-margin">
 				<select name="typeOfWork" data-first-option="false" id="typeOfWork" class="form-control disablefield">
 					<option value="">
