@@ -37,69 +37,19 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.egf.commons.bankaccount.repository;
 
-jQuery('#btnsearch').click(function(e) {
+import org.egov.commons.Bankaccount;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-	callAjaxSearch();
-});
+/**
+ * @author venki
+ *
+ */
 
-function getFormData($form) {
-	var unindexed_array = $form.serializeArray();
-	var indexed_array = {};
+@Repository
+public interface BankAccountRepository extends JpaRepository<Bankaccount, Long> {
 
-	$.map(unindexed_array, function(n, i) {
-		indexed_array[n['name']] = n['value'];
-	});
-
-	return indexed_array;
-}
-
-function callAjaxSearch() {
-	drillDowntableContainer = jQuery("#resultTable");
-	jQuery('.report-section').removeClass('display-hide');
-	reportdatatable = drillDowntableContainer
-			.dataTable({
-				ajax : {
-					url : "/EGF/bank/ajaxsearch/" + $('#mode').val(),
-					type : "POST",
-					"data" : getFormData(jQuery('form'))
-				},
-				"fnRowCallback" : function(row, data, index) {
-					$(row).on(
-							'click',
-							function() {
-								window.open('/EGF/bank/' + $('#mode').val()+ '/' + data.id, '','width=800, height=600');
-							});
-				},
-				"bDestroy" : true,
-				dom: "<'row'r>t<'row add-margin'<'col-md-3 col-xs-12'i><'col-md-2 col-xs-6'l><'col-md-3'B><'col-md-4 col-xs-6 text-right'p>>",
-				buttons: [
-						  {
-						    extend: 'print',
-						    title: 'Banks',
-						    filename: 'Banks'
-						},{
-						    extend: 'pdf',
-						    title: 'Banks',
-						    filename: 'Banks'
-						},{
-						    extend: 'excel',
-						    filename: 'Banks'
-						}
-						],
-				aaSorting : [],
-				columns : [ {
-					"data" : "name",
-					"sClass" : "text-left"
-				}, {
-					"data" : "code",
-					"sClass" : "text-left"
-				}, {
-					"data" : "isactive",
-					"sClass" : "text-left"
-				}, {
-					"data" : "narration",
-					"sClass" : "text-left"
-				} ]
-			});
+    Bankaccount findByChartofaccounts_Glcode(final String glcode);
 }

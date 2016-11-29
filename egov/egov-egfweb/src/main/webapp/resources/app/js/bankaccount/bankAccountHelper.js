@@ -60,7 +60,7 @@ function callAjaxSearch() {
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/EGF/bankbranch/ajaxsearch/" + $('#mode').val(),
+					url : "/EGF/bankaccount/ajaxsearch/" + $('#mode').val(),
 					type : "POST",
 					"data" : getFormData(jQuery('form'))
 				},
@@ -68,7 +68,7 @@ function callAjaxSearch() {
 					$(row).on(
 							'click',
 							function() {
-								window.open('/EGF/bankbranch/' + $('#mode').val()+ '/' + data.id, '','width=800, height=600');
+								window.open('/EGF/bankaccount/' + $('#mode').val()+ '/' + data.id, '','width=800, height=600');
 							});
 				},
 				"bDestroy" : true,
@@ -76,38 +76,38 @@ function callAjaxSearch() {
 				buttons: [
 						  {
 						    extend: 'print',
-						    title: 'Bank Branches',
-						    filename: 'Bank Branches'
+						    title: 'Bank Accounts',
+						    filename: 'Bank Accounts'
 						},{
 						    extend: 'pdf',
-						    title: 'Bank Branches',
-						    filename: 'Bank Branches'
+						    title: 'Bank Accounts',
+						    filename: 'Bank Accounts'
 						},{
 						    extend: 'excel',
-						    filename: 'Bank Branches'
+						    filename: 'Bank Accounts'
 						}
 						],
 				aaSorting : [],
 				columns : [ {
-					"data" : "bank",
+					"data" : "accountnumber",
 					"sClass" : "text-left"
 				},{
-					"data" : "branchname",
+					"data" : "fund",
+					"sClass" : "text-left"
+				},{
+					"data" : "bankbranch",
 					"sClass" : "text-left"
 				}, {
-					"data" : "branchcode",
+					"data" : "glcode",
 					"sClass" : "text-left"
 				}, {
-					"data" : "branchMICR",
+					"data" : "accounttype",
 					"sClass" : "text-left"
 				}, {
-					"data" : "branchaddress1",
+					"data" : "usagetype",
 					"sClass" : "text-left"
 				}, {
-					"data" : "contactperson",
-					"sClass" : "text-left"
-				}, {
-					"data" : "branchphone",
+					"data" : "payto",
 					"sClass" : "text-left"
 				},{
 					"data" : "narration",

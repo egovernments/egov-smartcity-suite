@@ -43,55 +43,50 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn"%>
 <form:form role="form" action="search" modelAttribute="bank" id="banksearchform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
-	<div class="main-content">
-		<div class="row">
-			<div class="col-md-12">
-				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading">
-						<div class="panel-title">
-							<spring:message code="lbl.search.bank" />
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">
+						<spring:message code="lbl.search.bank" />
+					</div>
+				</div>
+				<div class="panel-body">
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.name" /> </label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="name" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50" />
+							<form:errors path="name" cssClass="error-msg" />
+						</div>
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.code" /> </label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="code" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50" />
+							<form:errors path="code" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="panel-body">
-						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message code="lbl.name" /> </label>
-							<div class="col-sm-3 add-margin">
-								<form:input path="name" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50" />
-								<form:errors path="name" cssClass="error-msg" />
-							</div>
-							<label class="col-sm-3 control-label text-right"><spring:message code="lbl.code" /> </label>
-							<div class="col-sm-3 add-margin">
-								<form:input path="code" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50" />
-								<form:errors path="code" cssClass="error-msg" />
-							</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.narration" /> </label>
+						<div class="col-sm-3 add-margin">
+							<form:textarea path="narration" id="narration" class="form-control" maxlength="250"></form:textarea>
+							<form:errors path="narration" cssClass="error-msg" />
 						</div>
-						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message code="lbl.narration" /> </label>
-							<div class="col-sm-3 add-margin">
-								<form:textarea path="narration" id="narration" class="form-control" maxlength="250"></form:textarea>
-								<form:errors path="narration" cssClass="error-msg" />
-							</div>
-							<label class="col-sm-3 control-label text-right"><spring:message code="lbl.isactive" /> </label>
-							<div class="col-sm-3 add-margin">
-								<form:checkbox path="isactive" />
-								<form:errors path="isactive" cssClass="error-msg" />
-							</div>
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.isactive" /> </label>
+						<div class="col-sm-3 add-margin">
+							<form:checkbox path="isactive" />
+							<form:errors path="isactive" cssClass="error-msg" />
+						</div>
 
-						</div>
-						<input type="hidden" id="mode" name="mode" value="${mode}" />
-						<div class="form-group">
-							<div class="text-center">
-								<button type='button' class='btn btn-primary' id="btnsearch">
-									<spring:message code='lbl.search' />
-								</button>
-								<a href='javascript:void(0)' class='btn btn-default'
-									onclick='self.close()'><spring:message code='lbl.close' /></a>
-							</div>
-						</div>
 					</div>
+					<input type="hidden" id="mode" name="mode" value="${mode}" />
 				</div>
 			</div>
 		</div>
+	</div>
+	<div class="text-center">
+		<button type='button' class='btn btn-primary' id="btnsearch">
+			<spring:message code='lbl.search' />
+		</button>
+		<a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message code='lbl.close' /></a>
 	</div>
 </form:form>
 <div class="row display-hide report-section">
@@ -118,30 +113,18 @@
 		}
 	});
 </script>
-<link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
-<link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
-<link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-<script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
-	type="text/javascript"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/app/js/bank/bankHelper.js?rnd=${app_release_no}'/>"></script>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/buttons.bootstrap.min.css' context='/egi'/>">
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.bootstrap.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.flash.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/jszip.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/pdfmake.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/vfs_fonts.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.html5.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/app/js/bank/bankHelper.js?rnd=${app_release_no}'/>"></script>

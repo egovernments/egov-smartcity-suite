@@ -42,76 +42,83 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn"%>
-<form:form role="form" action="search" modelAttribute="bankbranch" id="bankbranchsearchform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+<form:form role="form" action="search" modelAttribute="bankaccount" id="bankaccountsearchform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<spring:message code="lbl.search.bankbranch" />
+						<spring:message code="lbl.search.bankaccount" />
 					</div>
 				</div>
 				<div class="panel-body">
 					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.bank" /></label>
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.accountnumber" />  </label>
 						<div class="col-sm-3 add-margin">
-							<form:select path="bank" data-first-option="false" id="bank" class="form-control">
+							<form:input path="accountnumber" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50"/>
+							<form:errors path="accountnumber" cssClass="error-msg" />
+						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.fund" /> </label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="fund" data-first-option="false" id="fund" class="form-control" >
 								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								<form:options items="${banks}" itemValue="id" itemLabel="name" />
+								<form:options items="${funds}" itemValue="id" itemLabel="name" />
 							</form:select>
-							<form:errors path="bank" cssClass="error-msg" />
-						</div>
-						<label class="col-sm-2 control-label text-right"></label>
-						<div class="col-sm-3 add-margin">
+							<form:errors path="fund" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.name" />  </label>
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.accounttype" />  </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="branchname" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50"  />
-							<form:errors path="branchname" cssClass="error-msg" />
+							<form:select path="accounttype" data-first-option="false" id="accounttype" class="form-control" >
+								<form:option value=""><spring:message code="lbl.select" /></form:option>
+								<c:forEach items="${accounttypes}" var="accounttype" >
+								   <form:option value="${accounttype.glcode} - ${accounttype.name}">${accounttype.glcode} - ${accounttype.name}</form:option>
+								</c:forEach>
+							</form:select>
+							<form:errors path="accounttype" cssClass="error-msg" />
 						</div>
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.code" />  </label>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.description" /></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="branchcode" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50"  />
-							<form:errors path="branchcode" cssClass="error-msg" />
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.branchmicr" /></label>
-						<div class="col-sm-3 add-margin">
-							<form:input path="branchMICR" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50" />
-							<form:errors path="branchMICR" cssClass="error-msg" />
-						</div>
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.address" /> </label>
-						<div class="col-sm-3 add-margin">
-							<form:textarea path="branchaddress1" id="branchaddress1" class="form-control" maxlength="250"   ></form:textarea>
-							<form:errors path="branchaddress1" cssClass="error-msg" />
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.contactperson" /> </label>
-						<div class="col-sm-3 add-margin">
-							<form:input path="contactperson" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50"  />
-							<form:errors path="contactperson" cssClass="error-msg" />
-						</div>
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.branchphone" />  </label>
-						<div class="col-sm-3 add-margin">
-							<form:input path="branchphone" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50"/>
-							<form:errors path="branchphone" cssClass="error-msg" />
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.narration" /> </label>
-						<div class="col-sm-3 add-margin">
-							<form:textarea path="narration" id="narration" class="form-control" maxlength="250"  ></form:textarea>
+							<form:textarea path="narration" id="narration" class="form-control" maxlength="250"></form:textarea>
 							<form:errors path="narration" cssClass="error-msg" />
 						</div>
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.isactive" /> </label>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.payto" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="payTo" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50" />
+							<form:errors path="payTo" cssClass="error-msg" />
+						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.usagetype" /> </label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="type" data-first-option="false" id="type" class="form-control" >
+								<form:option value=""><spring:message code="lbl.select" /></form:option>
+								<c:forEach items="${usagetypes}" var="usagetype" >
+								   <form:option value="${usagetype}">${usagetype}</form:option>
+								</c:forEach>
+							</form:select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.isactive" /> </label>
 						<div class="col-sm-3 add-margin">
 							<form:checkbox path="isactive" />
 							<form:errors path="isactive" cssClass="error-msg" />
 						</div>
+						<c:if test="${autoglcode}">
+							<label class="col-sm-2 control-label text-right"></label>
+							<div class="col-sm-3 add-margin">
+							</div>
+						</c:if>
+						<c:if test="${!autoglcode}">
+							<label class="col-sm-2 control-label text-right"><spring:message code="lbl.gl.code" /></label>
+							<div class="col-sm-3 add-margin">
+							<form:input path="chartofaccounts.glcode" class="form-control text-left patternvalidation" data-pattern="numeric" maxlength="50" />
+							<form:errors path="chartofaccounts.glcode" cssClass="error-msg" />
+							</div>
+						</c:if>
+						
 					</div>
 					<input type="hidden" id="mode" name="mode" value="${mode}" />
 				</div>
@@ -126,19 +133,19 @@
 	</div>
 </form:form>
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left"><spring:message code="lbl.search.bankbranch.result" /></div>
+	<div class="col-md-12 table-header text-left"><spring:message code="lbl.search.bankaccount.result" /></div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="resultTable">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.bank" /></th>
-					<th><spring:message code="lbl.name" /></th>
-					<th><spring:message code="lbl.code" /></th>
-					<th><spring:message code="lbl.branchmicr" /></th>
-					<th><spring:message code="lbl.address" /></th>
-					<th><spring:message code="lbl.contactperson" /></th>
-					<th><spring:message code="lbl.branchphone" /></th>
+					<th><spring:message code="lbl.accountnumber" /></th>
+					<th><spring:message code="lbl.fund" /></th>
+					<th><spring:message code="lbl.bankbranch" /></th>
+					<th><spring:message code="lbl.gl.code" /></th>
+					<th><spring:message code="lbl.accounttype" /></th>
+					<th><spring:message code="lbl.usagetype" /></th>
+					<th><spring:message code="lbl.payto" /></th>
 					<th><spring:message code="lbl.narration" /></th>
 					<th><spring:message code="lbl.isactive" /></th>
 				</tr>
@@ -168,4 +175,4 @@
 <script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.html5.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/app/js/bankbranch/bankBranchHelper.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/app/js/bankaccount/bankAccountHelper.js?rnd=${app_release_no}'/>"></script>

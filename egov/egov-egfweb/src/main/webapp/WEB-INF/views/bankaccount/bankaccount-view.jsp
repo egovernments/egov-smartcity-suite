@@ -46,29 +46,58 @@
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">
-					<spring:message code="lbl.view.bank" />
+					<spring:message code="lbl.view.bankaccount" />
 				</div>
 			</div>
 			<div class="panel-body custom">
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.name" />
+						<spring:message code="lbl.accountnumber" />
 					</div>
-					<div class="col-sm-3 add-margin view-content">${bank.name}</div>
+					<div class="col-sm-3 add-margin view-content">${bankaccount.accountnumber}</div>
 					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.code" />
+						<spring:message code="lbl.bankbranch" />
 					</div>
-					<div class="col-sm-3 add-margin view-content">${bank.code}</div>
+					<div class="col-sm-3 add-margin view-content">${bankaccount.bankbranch.branchname}</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.fund" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">${bankaccount.fund.name}</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.accounttype" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">${bankaccount.accounttype}</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.usagetype" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">${bankaccount.type}</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.gl.code" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">${bankaccount.chartofaccounts.glcode}</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.payto" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">${bankaccount.payTo}</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.narration" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">${bankaccount.narration}</div>
 				</div>
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.isactive" />
 					</div>
-					<div class="col-sm-3 add-margin view-content">${bank.isactive}</div>
+					<div class="col-sm-3 add-margin view-content">${bankaccount.isactive}</div>
 					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.narration" />
 					</div>
-					<div class="col-sm-3 add-margin view-content">${bank.narration}</div>
+					<div class="col-sm-3 add-margin view-content"></div>
 				</div>
 			</div>
 		</div>

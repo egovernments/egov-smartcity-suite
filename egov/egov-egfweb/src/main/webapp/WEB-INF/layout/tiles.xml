@@ -605,5 +605,30 @@
 		<put-attribute name="page-title" value="lbl.search.bankbranch" cascade="true" />
 		<put-attribute name="body" value="/WEB-INF/views/bankbranch/bankbranch-search.jsp" />
 	</definition>
+	
+	<definition name="bankaccount-new" extends="base_layout">
+		<put-attribute name="page-title" value="title.bankaccount.new" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankaccount/bankaccount-new.jsp" />
+	</definition>
+
+	<definition name="bankaccount-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.bankaccount.view" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankaccount/bankaccount-view.jsp" />
+	</definition>
+
+	<definition name="bankaccount-update" extends="base_layout">
+		<put-attribute name="page-title" value="title.bankaccount.edit" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankaccount/bankaccount-update.jsp" />
+	</definition>
+
+	<definition name="bankaccount-success" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.search.bankaccount.result" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankaccount/bankaccount-success.jsp" />
+	</definition>
+	
+	<definition name="bankaccount-search" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.search.bankaccount" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankaccount/bankaccount-search.jsp" />
+	</definition>
 
 </tiles-definitions>
