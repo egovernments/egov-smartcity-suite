@@ -53,11 +53,13 @@ import org.egov.commons.utils.BankAccountType;
 import org.egov.egf.commons.bankaccount.service.CreateBankAccountService;
 import org.egov.egf.commons.bankbranch.service.CreateBankBranchService;
 import org.egov.egf.utils.FinancialUtils;
+import org.egov.egf.web.controller.bankaccount.adaptor.BankAccountJsonAdaptor;
 import org.egov.model.masters.AccountCodePurpose;
 import org.egov.services.voucher.GeneralLedgerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -65,7 +67,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * @author venki
@@ -74,7 +80,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/bankaccount")
-public class CreateBankAccountController {
+public class BankAccountController {
 
     private static final String BANKACCOUNT = "bankaccount";
 
@@ -101,15 +107,51 @@ public class CreateBankAccountController {
     @Autowired
     private MessageSource messageSource;
 
-    @RequestMapping(value = "/new", method = RequestMethod.GET)
-    public String newForm(final Model model) {
+    private void setDropDownValues(final Model model) {
         model.addAttribute("bankbranches", createBankBranchService.getByIsActive(true));
         model.addAttribute("funds", fundService.getByIsActive(true));
         model.addAttribute("usagetypes", BankAccountType.values());
         model.addAttribute("accounttypes", chartOfAccountsService.getAccountTypes());
         model.addAttribute("autoglcode", createBankAccountService.autoBankAccountGLCodeEnabled());
+    }
+
+    @RequestMapping(value = "/new", method = RequestMethod.GET)
+    public String newForm(final Model model) {
+        setDropDownValues(model);
         model.addAttribute(BANKACCOUNT, new Bankaccount());
         return "bankaccount-new";
+    }
+
+    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
+    public String edit(@PathVariable("id") final Long id, final Model model) {
+        final Bankaccount bankaccount = createBankAccountService.getById(id);
+        setDropDownValues(model);
+        model.addAttribute("autoglcode", true);
+        model.addAttribute(BANKACCOUNT, bankaccount);
+        return "bankaccount-update";
+    }
+
+    @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
+    public String view(@PathVariable("id") final Long id, final Model model) {
+        final Bankaccount bankaccount = createBankAccountService.getById(id);
+        model.addAttribute(BANKACCOUNT, bankaccount);
+        return "bankaccount-view";
+    }
+
+    @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
+    public String search(@PathVariable("mode") final String mode, final Model model) {
+        final Bankaccount bankaccount = new Bankaccount();
+        setDropDownValues(model);
+        model.addAttribute(BANKACCOUNT, bankaccount);
+        return "bankaccount-search";
+
+    }
+
+    @RequestMapping(value = "/success/{id}", method = RequestMethod.GET)
+    public String success(@PathVariable("id") final Long id, final Model model) {
+        final Bankaccount bankaccount = createBankAccountService.getById(id);
+        model.addAttribute(BANKACCOUNT, bankaccount);
+        return "bankaccount-success";
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
@@ -118,11 +160,7 @@ public class CreateBankAccountController {
         if (!createBankAccountService.autoBankAccountGLCodeEnabled())
             validateGlCode(bankaccount.getChartofaccounts().getGlcode(), errors);
         if (errors.hasErrors()) {
-            model.addAttribute("bankbranches", createBankBranchService.getByIsActive(true));
-            model.addAttribute("funds", fundService.getByIsActive(true));
-            model.addAttribute("usagetypes", BankAccountType.values());
-            model.addAttribute("accounttypes", chartOfAccountsService.getAccountTypes());
-            model.addAttribute("autoglcode", createBankAccountService.autoBankAccountGLCodeEnabled());
+            setDropDownValues(model);
             model.addAttribute(BANKACCOUNT, bankaccount);
             return "bankaccount-new";
         }
@@ -131,11 +169,34 @@ public class CreateBankAccountController {
         return "redirect:/bankaccount/success/" + bankaccount.getId();
     }
 
-    @RequestMapping(value = "/success/{id}", method = RequestMethod.GET)
-    public String success(@PathVariable("id") final Long id, final Model model) {
-        final Bankaccount bankaccount = createBankAccountService.getById(id);
-        model.addAttribute(BANKACCOUNT, bankaccount);
-        return "bankaccount-success";
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public String update(@Valid @ModelAttribute final Bankaccount bankaccount, final BindingResult errors, final Model model,
+            final RedirectAttributes redirectAttrs) {
+        if (errors.hasErrors()) {
+            setDropDownValues(model);
+            model.addAttribute("autoglcode", true);
+            model.addAttribute(BANKACCOUNT, bankaccount);
+            return "bankaccount-update";
+        }
+        createBankAccountService.update(bankaccount);
+        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.bankaccount.success", null, null));
+        return "redirect:/bankaccount/success/" + bankaccount.getId();
+    }
+
+    @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String ajaxsearch(@PathVariable("mode") final String mode, final Model model,
+            @ModelAttribute final Bankaccount bankaccount) {
+        final List<Bankaccount> searchResultList = createBankAccountService.search(bankaccount);
+        return new StringBuilder("{ \"data\":")
+                .append(toSearchResultJson(searchResultList)).append("}")
+                .toString();
+    }
+
+    public Object toSearchResultJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(Bankaccount.class, new BankAccountJsonAdaptor()).create();
+        return gson.toJson(object);
     }
 
     private void validateGlCode(final String glCode, final BindingResult errors) {

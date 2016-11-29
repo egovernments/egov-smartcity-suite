@@ -40,12 +40,16 @@
 
 package org.egov.egf.web.controller.bank;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.egov.commons.Bank;
 import org.egov.egf.commons.bank.service.CreateBankService;
+import org.egov.egf.web.controller.bank.adaptor.BankJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -53,7 +57,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * @author venki
@@ -62,7 +70,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/bank")
-public class CreateBankController {
+public class BankController {
 
     @Autowired
     private CreateBankService createBankService;
@@ -76,6 +84,35 @@ public class CreateBankController {
         return "bank-new";
     }
 
+    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
+    public String edit(@PathVariable("id") final Integer id, final Model model) {
+        final Bank bank = createBankService.getById(id);
+        model.addAttribute("bank", bank);
+        return "bank-update";
+    }
+
+    @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
+    public String view(@PathVariable("id") final Integer id, final Model model) {
+        final Bank bank = createBankService.getById(id);
+        model.addAttribute("bank", bank);
+        return "bank-view";
+    }
+
+    @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
+    public String search(@PathVariable("mode") final String mode, final Model model) {
+        final Bank bank = new Bank();
+        model.addAttribute("bank", bank);
+        return "bank-search";
+
+    }
+
+    @RequestMapping(value = "/success/{id}", method = RequestMethod.GET)
+    public String success(@PathVariable("id") final Integer id, final Model model) {
+        final Bank bank = createBankService.getById(id);
+        model.addAttribute("bank", bank);
+        return "bank-success";
+    }
+
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final Bank bank, final BindingResult errors, final Model model,
             final RedirectAttributes redirectAttrs) {
@@ -86,11 +123,29 @@ public class CreateBankController {
         return "redirect:/bank/success/" + bank.getId();
     }
 
-    @RequestMapping(value = "/success/{id}", method = RequestMethod.GET)
-    public String success(@PathVariable("id") final Integer id, final Model model) {
-        final Bank bank = createBankService.getById(id);
-        model.addAttribute("bank", bank);
-        return "bank-success";
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public String update(@Valid @ModelAttribute final Bank bank, final BindingResult errors, final Model model,
+            final RedirectAttributes redirectAttrs) {
+        if (errors.hasErrors())
+            return "bank-update";
+        createBankService.update(bank);
+        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.bank.success", null, null));
+        return "redirect:/bank/success/" + bank.getId();
+    }
+
+    @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String ajaxsearch(@PathVariable("mode") final String mode, final Model model, @ModelAttribute final Bank bank) {
+        final List<Bank> searchResultList = createBankService.search(bank);
+        return new StringBuilder("{ \"data\":")
+                .append(toSearchResultJson(searchResultList)).append("}")
+                .toString();
+    }
+
+    public Object toSearchResultJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(Bank.class, new BankJsonAdaptor()).create();
+        return gson.toJson(object);
     }
 
 }
