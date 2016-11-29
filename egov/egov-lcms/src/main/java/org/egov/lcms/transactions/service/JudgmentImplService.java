@@ -153,7 +153,6 @@ public class JudgmentImplService {
                 if (!files[i].isEmpty()) {
                     final AppealDocuments applicationDocument = new AppealDocuments();
                     applicationDocument.setAppeal(judgmentImpl.getAppeal().get(0));
-                    ;
                     applicationDocument.setDocumentName(LcmsConstants.APPEAL_DOCUMENTNAME);
                     applicationDocument.setSupportDocs(
                             fileStoreService.store(files[i].getInputStream(), files[i].getOriginalFilename(),
