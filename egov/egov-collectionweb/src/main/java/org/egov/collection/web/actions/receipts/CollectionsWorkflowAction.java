@@ -40,6 +40,7 @@
 package org.egov.collection.web.actions.receipts;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +64,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Action class for "Approve Collections"
  */
 @ParentPackage("egov")
-@Results({ @Result(name = CollectionsWorkflowAction.SUCCESS, location = "collectionsWorkflow-success.jsp"),
+@Results({
+        @Result(name = CollectionsWorkflowAction.SUCCESS, location = "collectionsWorkflow-success.jsp"),
         @Result(name = CollectionsWorkflowAction.INDEX, location = "collectionsWorkflow-index.jsp"),
         @Result(name = CollectionsWorkflowAction.ERROR, location = "collectionsWorkflow-error.jsp"),
         @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CASH, type = "redirectAction", location = "cashCollectionReport-submissionReport.action", params = {
@@ -385,8 +387,8 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     private String updateReceiptWorkflowStatus(final String wfAction, final String remarks) {
         for (final Long receiptId : receiptIds) {
             // Get the next receipt that is to be updated
-            final ReceiptHeader receiptHeader = receiptHeaderService
-                    .findByNamedQuery(CollectionConstants.QUERY_RECEIPT_BY_ID_AND_STATUSNOTCANCELLED, receiptId);
+            final ReceiptHeader receiptHeader = receiptHeaderService.findByNamedQuery(
+                    CollectionConstants.QUERY_RECEIPT_BY_ID_AND_STATUSNOTCANCELLED, receiptId);
             if (receiptHeader != null) {
                 receiptHeaderService.performWorkflow(wfAction, receiptHeader, remarks);
                 approverName = collectionsUtil.getApproverName(receiptHeader.getState().getOwnerPosition());
@@ -399,8 +401,11 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     private String updateReceiptWorkflowStatusForAll(final String wfAction, final String remarks) {
-        final Position position = collectionsUtil.getPositionOfUser(securityUtils.getCurrentUser());
-        receiptHeaders = receiptHeaderService.findAllByPositionAndInboxItemDetails(position.getId(), inboxItemDetails);
+        List<Long> positionIds = new ArrayList<Long>();
+        final List<Position> positions = collectionsUtil.getPositionsForEmployee(securityUtils.getCurrentUser());
+        for (Position pos : positions)
+            positionIds.add(pos.getId());
+        receiptHeaders = receiptHeaderService.findAllByPositionAndInboxItemDetails(positionIds, inboxItemDetails);
         final Position approverPosition = receiptHeaderService.getApproverPosition(receiptHeaders.get(0));
         receiptIds = new Long[receiptHeaders.size()];
         int i = 0;
@@ -434,8 +439,11 @@ public class CollectionsWorkflowAction extends BaseFormAction {
         // are created by
         // currently logged in user from
         // his/her current counter and are in SUBMITTED status
-        final Position position = collectionsUtil.getPositionOfUser(securityUtils.getCurrentUser());
-        receiptHeaders = receiptHeaderService.findAllByPositionAndInboxItemDetails(position.getId(), inboxItemDetails);
+        final List<Position> positions = collectionsUtil.getPositionsForEmployee(securityUtils.getCurrentUser());
+        List<Long> positionIds = new ArrayList<Long>();
+        for (Position pos : positions)
+            positionIds.add(pos.getId());
+        receiptHeaders = receiptHeaderService.findAllByPositionAndInboxItemDetails(positionIds, inboxItemDetails);
 
         // Populate the selected receipt IDs with all receipt ids
         final int receiptCount = receiptHeaders.size();
