@@ -658,14 +658,15 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public void transitionWorkFlow(final PropertyMutation propertyMutation) {
         final DateTime currentDate = new DateTime();
         final User user = transferOwnerService.getLoggedInUser();
-        Position pos = null;
-        Assignment wfInitiator = null;
+        Position pos;
+        Assignment wfInitiator;
 
         if (!propertyByEmployee) {
             currentState = "Created";
             final Assignment assignment = propertyService.getUserPositionByZone(basicproperty, false);
             approverPositionId = assignment.getPosition().getId();
             approverName = assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
+            propertyMutation.getState().setInitiatorPosition(assignment.getPosition());
         } else
             currentState = null;
 

@@ -226,12 +226,12 @@ public class DigitalSignatureWorkflowController {
         } else {
             final User user = securityUtils.getCurrentUser();
             final DateTime currentDate = new DateTime();
-            final Position pos = getWorkflowInitiator(property,property.getBasicProperty()).getPosition();
+            final Assignment wfInitiator = getWorkflowInitiator(property,property.getBasicProperty());
             final WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null,
                     applicationType, property.getCurrentState().getValue(), null);
             property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
-                    .withOwner(property.getCurrentState().getInitiatorPosition()!=null?property.getCurrentState().getInitiatorPosition():pos)
+                    .withOwner(property.getCurrentState().getInitiatorPosition()!=null?property.getCurrentState().getInitiatorPosition():wfInitiator.getPosition())
                     .withNextAction(wfmatrix.getNextAction());
         }
         return applicationType;
@@ -247,11 +247,11 @@ public class DigitalSignatureWorkflowController {
             revPetition.transition().end();
         } else {
             final User user = securityUtils.getCurrentUser();
-            final Position pos = getWorkflowInitiator(revPetition,revPetition.getBasicProperty()).getPosition();
+            final Assignment wfInitiator = getWorkflowInitiator(revPetition,revPetition.getBasicProperty());
             final WorkFlowMatrix wfmatrix = revisionPetitionWorkFlowService.getWfMatrix(revPetition.getStateType(),
                     null, null, null, revPetition.getCurrentState().getValue(), null);
             revPetition.transition(true).withStateValue(wfmatrix.getNextState())
-            .withOwner(revPetition.getCurrentState().getInitiatorPosition()!=null?revPetition.getCurrentState().getInitiatorPosition():pos)
+            .withOwner(revPetition.getCurrentState().getInitiatorPosition()!=null?revPetition.getCurrentState().getInitiatorPosition():wfInitiator.getPosition())
                     .withSenderName(user.getUsername() + "::" + user.getName()).withDateInfo(new DateTime().toDate())
                     .withNextAction(wfmatrix.getNextAction());
         }
@@ -265,12 +265,11 @@ public class DigitalSignatureWorkflowController {
             final DateTime currentDate = new DateTime();
             final User user = securityUtils.getCurrentUser();
             final Assignment wfInitiator = getWorkflowInitiator(propertyMutation,propertyMutation.getBasicProperty());
-            final Position pos = wfInitiator.getPosition();
             final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(), null,
                     null, propertyMutation.getType(), propertyMutation.getCurrentState().getValue(), null);
             propertyMutation.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
-                    .withOwner(propertyMutation.getCurrentState().getInitiatorPosition()!=null?propertyMutation.getCurrentState().getInitiatorPosition():pos)
+                    .withOwner(propertyMutation.getCurrentState().getInitiatorPosition()!=null?propertyMutation.getCurrentState().getInitiatorPosition():wfInitiator.getPosition())
                     .withNextAction(wfmatrix.getNextAction());
         }
     }
