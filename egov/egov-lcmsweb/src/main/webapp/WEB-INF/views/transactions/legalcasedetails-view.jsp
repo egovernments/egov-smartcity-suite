@@ -180,7 +180,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
 		<div class="panel-heading">
 			<div class="panel-title" align="center" style="font-weight: bold">
 				<spring:message code="lbl.bipartisanDetails.details" />
@@ -350,28 +349,32 @@
 			</tbody>
 		</table>
 		<div class="row">
-			<div class="col-md-12">
-				<div class="row add-border">
-					<div class="col-md-2 col-xs-6 add-margin">
-						<spring:message code="lbl.representedby" />
+		<div class="col-md-12">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-body">
+					<div class="row add-border">
+						<div class="col-md-2 col-xs-6 add-margin">
+							<spring:message code="lbl.representedby" />
+						</div>
+						<div class="col-md-3 col-xs-6 add-margin view-content">
+							<c:out value="${legalCase.representedby}" />
+						</div>
+						<div class="col-md-2 col-xs-6 add-margin">Standing Council
+							Name</div>
+						<div class="col-md-3 col-xs-6 add-margin view-content">
+							<c:out value="${legalCase.oppPartyAdvocate}" />
+						</div>
 					</div>
-					<div class="col-md-3 col-xs-6 add-margin view-content">
-						<c:out value="${legalCase.representedby}" />
-					</div>
-					<div class="col-md-2 col-xs-6 add-margin">Standing Council
-						Name:</div>
-					<div class="col-md-3 col-xs-6 add-margin view-content">
-						<c:out value="${legalCase.oppPartyAdvocate}" />
-					</div>
-				</div>
-				<div class="row add-border">
-					<div class="col-md-2 col-xs-6 add-margin">Remarks:</div>
-					<div class="col-md-3 col-xs-6 add-margin view-content">
-						<c:out value="${legalCase.remarks}" />
+					<div class="row add-border">
+						<div class="col-md-2 col-xs-6 add-margin">Remarks</div>
+						<div class="col-md-3 col-xs-6 add-margin view-content">
+							<c:out value="${legalCase.remarks}" />
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+	</div>
 		<div class="row form-group">
 			<c:if test="${not empty legalCase.legalCaseAdvocates }">
 				<div class="panel-heading">
@@ -475,14 +478,12 @@
 			</c:if>
 		</div>
 		<jsp:include page="documentdetails-view.jsp"></jsp:include>
-		<c:if test="${not empty pwrDocList}">
-			<jsp:include page="pwrDocumentdetails-view.jsp"></jsp:include>
-		</c:if>
-		<div class="form-group">
+	<div class="form-group">
 			<div class="text-center">
 				<a href="javascript:void(0)" class="btn btn-default"
 					onclick="self.close()"><spring:message code="lbl.close" /></a>
 			</div>
 		</div>
+	</div>
 	</div>
 </form:form>

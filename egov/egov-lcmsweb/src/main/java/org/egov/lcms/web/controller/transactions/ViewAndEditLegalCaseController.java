@@ -39,10 +39,16 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.lcms.masters.service.CourtMasterService;
 import org.egov.lcms.masters.service.PetitionTypeMasterService;
 import org.egov.lcms.transactions.entity.LegalCase;
+import org.egov.lcms.transactions.entity.LegalCaseDocuments;
 import org.egov.lcms.transactions.service.LegalCaseService;
+import org.egov.lcms.utils.LegalCaseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -51,6 +57,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -66,6 +73,9 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
     @Autowired
     private CourtMasterService courtMasterService;
 
+    @Autowired
+    private LegalCaseUtil legalCaseUtil;
+
     @ModelAttribute
     private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber) {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
@@ -75,19 +85,17 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
     @RequestMapping(value = "/view/", method = RequestMethod.GET)
     public String view(@RequestParam("lcNumber") final String lcNumber, final Model model) {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
-        model.addAttribute("legalCase", legalCase);
+        final LegalCase newlegalCase = getLegalCaseDocuments(legalCase);
+        model.addAttribute("legalCase", newlegalCase);
         model.addAttribute("mode", "view");
-        model.addAttribute("supportDocs",
-                !legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0) != null
-                        ? legalCase.getLegalCaseDocuments().get(0).getSupportDocs() : null);
-        model.addAttribute("pwrDocList", legalCaseService.getPwrDocList(legalCase));
         return "legalcasedetails-view";
     }
 
     @RequestMapping(value = "/edit/", method = RequestMethod.GET)
     public String edit(@RequestParam("lcNumber") final String lcNumber, final Model model) {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
-        model.addAttribute("legalCase", legalCase);
+        final LegalCase newlegalCase = getLegalCaseDocuments(legalCase);
+        model.addAttribute("legalCase", newlegalCase);
         setDropDownValues(model);
         final String[] casenumberyear = legalCase.getCaseNumber().split("/");
         legalCase.setCaseNumber(casenumberyear[0]);
@@ -95,33 +103,37 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
             legalCase.setWpYear(casenumberyear[1]);
         legalCase.getBipartisanPetitionerDetailsList().addAll(legalCase.getPetitioners());
         legalCase.getBipartisanRespondentDetailsList().addAll(legalCase.getRespondents());
-        model.addAttribute("supportDocs",
-                !legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0) != null
-                        ? legalCase.getLegalCaseDocuments().get(0).getSupportDocs() : null);
         model.addAttribute("mode", "edit");
         return "legalcase-edit";
     }
 
     @RequestMapping(value = "/edit/", method = RequestMethod.POST)
     public String update(@ModelAttribute final LegalCase legalCase, @RequestParam("lcNumber") final String lcNumber,
-            final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs) {
+            final BindingResult errors, @RequestParam("file") final MultipartFile[] files, final Model model,
+            final RedirectAttributes redirectAttrs) throws IOException {
         if (errors.hasErrors())
             return "legalcase-edit";
 
-        legalCaseService.persist(legalCase);
+        legalCaseService.persist(legalCase, files);
         setDropDownValues(model);
-        redirectAttrs.addFlashAttribute("legalCase", legalCase);
-        model.addAttribute("mode", "edit");
+        final LegalCase newlegalCase = getLegalCaseDocuments(legalCase);
+        model.addAttribute("legalCase", newlegalCase);
+        redirectAttrs.addFlashAttribute("legalCase", newlegalCase);
+        model.addAttribute("mode", "view");
         model.addAttribute("message", "LegalCase updated successfully.");
-        model.addAttribute("supportDocs",
-                !legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0) != null
-                        ? legalCase.getLegalCaseDocuments().get(0).getSupportDocs() : null);
         return "legalcase-success";
     }
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("courtsList", courtMasterService.findAll());
         model.addAttribute("petitiontypeList", petitiontypeMasterService.getPetitiontypeList());
+    }
+
+    private LegalCase getLegalCaseDocuments(final LegalCase legalCase) {
+        List<LegalCaseDocuments> documentDetailsList = new ArrayList<LegalCaseDocuments>();
+        documentDetailsList = legalCaseUtil.getLegalCaseDocumentList(legalCase);
+        legalCase.setLegalCaseDocuments(documentDetailsList);
+        return legalCase;
     }
 
 }
