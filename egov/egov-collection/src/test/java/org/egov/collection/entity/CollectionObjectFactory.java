@@ -166,10 +166,10 @@ public class CollectionObjectFactory {
 		bankbranch.setBranchcity("branch city");
 		bankbranch.setIsactive(true);
 		bankbranch.setBank(createBank());
-		bankbranch.setCreated(new Date());
-		bankbranch.setModifiedby(BigDecimal.valueOf(createUser("egovernments")
-				.getId()));
-		bankbranch.setLastmodified(new Date());
+		bankbranch.setCreatedDate(new Date());
+		bankbranch.setCreatedBy(createUser("egovernments"));
+		bankbranch.setLastModifiedDate(new Date());
+		bankbranch.setLastModifiedBy(createUser("egovernments"));
 		session.saveOrUpdate(bankbranch);
 		return bankbranch;
 	}
@@ -179,10 +179,10 @@ public class CollectionObjectFactory {
 		bank.setCode("TEST" + getRandomNumber());
 		bank.setName("Test Bank" + getRandomNumber());
 		bank.setIsactive(true);
-		bank.setCreated(new Date());
-		bank.setLastmodified(new Date());
-		bank.setModifiedby(BigDecimal.valueOf(createUser("egovernments")
-				.getId()));
+		bank.setCreatedDate(new Date());
+		bank.setCreatedBy(createUser("egovernments"));
+		bank.setLastModifiedDate(new Date());
+		bank.setLastModifiedBy(createUser("egovernments"));
 		session.saveOrUpdate(bank);
 		return bank;
 	}
@@ -532,9 +532,9 @@ public class CollectionObjectFactory {
 		account.setName("testAccountName" + glCode);
 		account.setIsActiveForPosting(true);
 		account.setCreatedBy(user);
-		account.setModifiedBy(user);
+		account.setLastModifiedBy(user);
 		account.setCreatedDate(date);
-		account.setModifiedDate(date);
+		account.setLastModifiedDate(date);
 		account.setType('I');
 		session.saveOrUpdate(account);
 		return account;
@@ -1504,9 +1504,9 @@ public class CollectionObjectFactory {
 		coa.setName("testcoa");
 		coa.setIsActiveForPosting(true);
 		coa.setCreatedBy(user);
-		coa.setModifiedBy(user);
+		coa.setLastModifiedBy(user);
 		coa.setCreatedDate(date);
-		coa.setModifiedDate(date);
+		coa.setLastModifiedDate(date);
 		coa.setPurposeId((long) 4);
 		coa.setType('I');
 		session.saveOrUpdate(coa);

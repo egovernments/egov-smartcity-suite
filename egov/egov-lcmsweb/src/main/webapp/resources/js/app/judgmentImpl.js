@@ -60,6 +60,7 @@ function refreshViewFromRadionOptionValue(optionValue, isFromPageLoad)
 		$('#judgmentdetails').hide();
 		$("#apealFields1").hide();
 		$("#apealFields2").hide();
+		$("#apealFields3").hide();
 		$("#contempFields1").hide();
     	$("#contempFields2").hide();
     	
@@ -77,6 +78,7 @@ function refreshViewFromRadionOptionValue(optionValue, isFromPageLoad)
 		$('#judgmentdetails').hide();
 		$("#apealFields1").hide();
 		$("#apealFields2").hide();
+		$("#apealFields3").hide();
 		$("#contempFields1").hide();
     	$("#contempFields2").hide();
     	
@@ -98,6 +100,7 @@ function refreshViewFromRadionOptionValue(optionValue, isFromPageLoad)
 		$('#reason').hide();
 		$("#apealFields1").hide();
 		$("#apealFields2").hide();
+		$("#apealFields3").hide();
 		$("#contempFields1").hide();
     	$("#contempFields2").hide();
     	
@@ -125,6 +128,7 @@ function loadAppealAndContemptFields(){
 	if ($('#implementationFailure :selected').text().localeCompare("Appeal") == 0 ) { 
 		$("#apealFields1").show();
 		$("#apealFields2").show();
+		$("#apealFields3").show();
 		$("*[name='appeal[0].srNumber']").attr('required', 'required');
 		$("*[name='appeal[0].appealFiledOn']").attr('required', 'required');
 		$("*[name='appeal[0].appealFiledBy']").attr('required', 'required');
@@ -132,6 +136,7 @@ function loadAppealAndContemptFields(){
 	else{
 		$("#apealFields1").hide();
 		$("#apealFields2").hide();
+		$("#apealFields3").hide();
 		$("*[name='appeal[0].srNumber']").removeAttr('required');
 		$("*[name='appeal[0].appealFiledOn']").removeAttr('required');
 		$("*[name='appeal[0].appealFiledBy']").removeAttr('required');

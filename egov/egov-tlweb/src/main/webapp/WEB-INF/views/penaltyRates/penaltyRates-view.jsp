@@ -77,9 +77,9 @@
 								<th><spring:message code="lbl.penaltyrate" /></th>
 								<th></th>
 							</thead>
-							<c:choose>
-								<c:when test="${not empty penaltyForm.getPenaltyRatesList()}">
-									<tbody>
+							<tbody>
+								<c:choose>
+									<c:when test="${not empty penaltyForm.getPenaltyRatesList()}">
 										<c:forEach items="${penaltyForm.penaltyRatesList}"
 											var="penaltyRatesList" varStatus="vs">
 											<tr id="resultrow${vs.index}">
@@ -107,10 +107,8 @@
 														class="fa fa-trash" aria-hidden="true"></i></span></td>
 											</tr>
 										</c:forEach>
-									</tbody>
-								</c:when>
-								<c:otherwise>
-									<tbody>
+									</c:when>
+									<c:otherwise>
 										<tr id="resultrow0">
 											<td><input type="hidden" name="penaltyRatesList[0].id"
 												id="penaltyId" /> <input type="text"
@@ -130,9 +128,9 @@
 												class="btn btn-primary" onclick="deleteThisRow(this)"><i
 													class="fa fa-trash" aria-hidden="true"></i></span></td>
 										</tr>
-									<tbody>
-								</c:otherwise>
-							</c:choose>
+									</c:otherwise>
+								</c:choose>
+							</tbody>
 						</table>
 					</div>
 				</div>
@@ -141,7 +139,8 @@
 	</div>
 	<div class="form-group">
 		<div class="text-center">
-			<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
+			<button type="button" class="btn btn-default" data-dismiss="modal"
+				onclick="self.close()">
 				<spring:message code="lbl.close" />
 		</div>
 	</div>

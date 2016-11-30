@@ -39,9 +39,6 @@
  */
 package org.egov.lcms.transactions.entity;
 
-import java.util.Collections;
-import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -51,7 +48,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -74,7 +70,7 @@ public class JudgmentDocuments extends AbstractPersistable<Long> {
     private Long id;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "judgment", nullable = false)
     private Judgment judgment;
 
@@ -82,9 +78,9 @@ public class JudgmentDocuments extends AbstractPersistable<Long> {
     @Length(min = 3, max = 100)
     private String documentName;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "eglc_judgment_filestore", joinColumns = @JoinColumn(name = "judgmentDocId"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
-    private Set<FileStoreMapper> supportDocs = Collections.emptySet();
+    private FileStoreMapper supportDocs;
 
     private transient MultipartFile[] files;
 
@@ -114,11 +110,11 @@ public class JudgmentDocuments extends AbstractPersistable<Long> {
         this.documentName = documentName;
     }
 
-    public Set<FileStoreMapper> getSupportDocs() {
+    public FileStoreMapper getSupportDocs() {
         return supportDocs;
     }
 
-    public void setSupportDocs(final Set<FileStoreMapper> supportDocs) {
+    public void setSupportDocs(final FileStoreMapper supportDocs) {
         this.supportDocs = supportDocs;
     }
 

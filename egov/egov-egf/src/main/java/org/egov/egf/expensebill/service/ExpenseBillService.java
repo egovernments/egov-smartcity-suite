@@ -180,16 +180,14 @@ public class ExpenseBillService {
                 && egBillregister.getEgBillregistermis().getEgBillSubType().getId() != null)
             egBillregister.getEgBillregistermis().setEgBillSubType(
                     egBillSubTypeService.getById(egBillregister.getEgBillregistermis().getEgBillSubType().getId()));
-        if (egBillregister.getEgBillregistermis().getScheme() != null
-                && egBillregister.getEgBillregistermis().getScheme().getId() != null)
+        if (egBillregister.getEgBillregistermis().getSchemeId() != null)
             egBillregister.getEgBillregistermis().setScheme(
-                    schemeService.findById(egBillregister.getEgBillregistermis().getScheme().getId(), false));
+                    schemeService.findById(egBillregister.getEgBillregistermis().getSchemeId().intValue(), false));
         else
             egBillregister.getEgBillregistermis().setScheme(null);
-        if (egBillregister.getEgBillregistermis().getSubScheme() != null
-                && egBillregister.getEgBillregistermis().getSubScheme().getId() != null)
+        if (egBillregister.getEgBillregistermis().getSubSchemeId() != null)
             egBillregister.getEgBillregistermis().setSubScheme(
-                    subSchemeService.findById(egBillregister.getEgBillregistermis().getSubScheme().getId(), false));
+                    subSchemeService.findById(egBillregister.getEgBillregistermis().getSubSchemeId().intValue(), false));
         else
             egBillregister.getEgBillregistermis().setSubScheme(null);
 
@@ -260,16 +258,14 @@ public class ExpenseBillService {
                     && egBillregister.getEgBillregistermis().getFund().getId() != null)
                 egBillregister.getEgBillregistermis().setFund(
                         fundService.findOne(egBillregister.getEgBillregistermis().getFund().getId()));
-            if (egBillregister.getEgBillregistermis().getScheme() != null
-                    && egBillregister.getEgBillregistermis().getScheme().getId() != null)
+            if (egBillregister.getEgBillregistermis().getSchemeId() != null)
                 egBillregister.getEgBillregistermis().setScheme(
-                        schemeService.findById(egBillregister.getEgBillregistermis().getScheme().getId(), false));
+                        schemeService.findById(egBillregister.getEgBillregistermis().getSchemeId().intValue(), false));
             else
                 egBillregister.getEgBillregistermis().setScheme(null);
-            if (egBillregister.getEgBillregistermis().getSubScheme() != null
-                    && egBillregister.getEgBillregistermis().getSubScheme().getId() != null)
+            if (egBillregister.getEgBillregistermis().getSubSchemeId() != null)
                 egBillregister.getEgBillregistermis().setSubScheme(
-                        subSchemeService.findById(egBillregister.getEgBillregistermis().getSubScheme().getId(), false));
+                        subSchemeService.findById(egBillregister.getEgBillregistermis().getSubSchemeId().intValue(), false));
             else
                 egBillregister.getEgBillregistermis().setSubScheme(null);
 

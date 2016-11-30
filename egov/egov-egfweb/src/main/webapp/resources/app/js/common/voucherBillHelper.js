@@ -1,9 +1,16 @@
-$schemeId = 0;
-$subSchemeId = 0;
-
+var $schemeId = 0;
+var $subSchemeId = 0;
+var $fundSourceId = 0;
+var $fundId = 0;
 $(document).ready(function(){
 	$schemeId = $('#schemeId').val();
 	$subSchemeId = $('#subSchemeId').val();
+	$fundSourceId = $('#fundSourceId').val();
+	$fundId = $('#fundId').val();
+	if($fundId)
+		$("#fund").val($fundId).prop('selected','selected');
+	if($fundSourceId)
+		$("#fundSource").val($fundSourceId).prop('selected','selected');
 	loadScheme($('#fund').val());
 	loadSubScheme($schemeId);
 	var functionName = new Bloodhound({
@@ -27,7 +34,7 @@ $(document).ready(function(){
 	});
 
 	functionName.initialize();
-	var functionName_typeahead = $('#function').typeahead({
+$('#function').typeahead({
 		hint : true,
 		highlight : true,
 		minLength : 3
@@ -68,15 +75,11 @@ function loadScheme(fundId){
 				function(response) {
 					$('#scheme').empty();
 					$('#scheme').append($("<option value=''>Select from below</option>"));
-					var output = '<option value="">Select from below</option>';
 					$.each(response, function(index, value) {
 						var selected="";
-						if($schemeId)
+						if($schemeId && $schemeId==value.id)
 						{
-							if($schemeId==value.id)
-							{
 								selected="selected";
-							}
 						}
 						$('#scheme').append($('<option '+ selected +'>').text(value.name).attr('value', value.id));
 					});
@@ -103,15 +106,11 @@ function loadSubScheme(schemeId){
 				function(response) {
 					$('#subScheme').empty();
 					$('#subScheme').append($("<option value=''>Select from below</option>"));
-					var output = '<option value="">Select from below</option>';
 					$.each(response, function(index, value) {
 						var selected="";
-						if($subSchemeId)
+						if($subSchemeId && $subSchemeId==value.id)
 						{
-							if($subSchemeId==value.id)
-							{
 								selected="selected";
-							}
 						}
 						$('#subScheme').append($('<option '+ selected +'>').text(value.name).attr('value', value.id));
 					});
@@ -123,10 +122,16 @@ function loadSubScheme(schemeId){
 $('#fund').change(function () {
 	$schemeId = "";
 	$subSchemeId = "";
+	$('#scheme').empty();
+	$('#scheme').append($('<option>').text('Select from below').attr('value', ''));
+	$('#subScheme').empty();
+	$('#subScheme').append($('<option>').text('Select from below').attr('value', ''));
 	loadScheme($('#fund').val());
 });
 
 
 $('#scheme').change(function () {
+	$('#subScheme').empty();
+	$('#subScheme').append($('<option>').text('Select from below').attr('value', ''));
 	loadSubScheme($('#scheme').val());
 });

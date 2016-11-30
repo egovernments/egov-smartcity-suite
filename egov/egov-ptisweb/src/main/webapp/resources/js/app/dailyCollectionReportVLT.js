@@ -77,6 +77,10 @@ $('#dailyCollectionReportSearchVLT').click(function(e){
 					              }],
 				
 			},
+			"fnRowCallback" : function(row, data, index) {
+				if(data.currentCess != null && data.arrearCess != null) 
+				   $('td:eq(15)',row).html(parseFloat(data.arrearCess) + parseFloat(data.currentCess));
+			},
 			searchable:true,
 			data: searchResult,
 			columns: [
@@ -123,10 +127,8 @@ $('#dailyCollectionReportSearchVLT').click(function(e){
 					return !data?"0":data;
 				}
 			},
-			{title: 'Total Library Cess', data: 'totalAmount',
-				render: function (data, type, full) {
-					return !data?"0":data;
-				}
+			{title: 'Total Library Cess', data: 'totalLibCess',
+				
 			},
 			{title: 'Rebate Amount', data: 'reductionAmount',
 				render: function (data, type, full) {

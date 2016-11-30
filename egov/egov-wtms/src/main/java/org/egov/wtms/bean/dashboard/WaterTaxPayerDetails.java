@@ -43,7 +43,10 @@ import java.math.BigDecimal;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class TaxPayerDetails implements Comparable<TaxPayerDetails> {
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+@JsonInclude(value = Include.NON_EMPTY)
+public class WaterTaxPayerDetails implements Comparable<WaterTaxPayerDetails> {
 
     private String regionName = StringUtils.EMPTY;
     private String districtName = StringUtils.EMPTY;
@@ -160,7 +163,7 @@ public class TaxPayerDetails implements Comparable<TaxPayerDetails> {
     }
 
     @Override
-    public int compareTo(TaxPayerDetails object) {
+    public int compareTo(WaterTaxPayerDetails object) {
         // TODO Auto-generated method stub
         return achievement.compareTo(object.getAchievement());
     }
@@ -201,7 +204,7 @@ public class TaxPayerDetails implements Comparable<TaxPayerDetails> {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        TaxPayerDetails other = (TaxPayerDetails) obj;
+        WaterTaxPayerDetails other = (WaterTaxPayerDetails) obj;
         if (achievement == null) {
             if (other.achievement != null)
                 return false;

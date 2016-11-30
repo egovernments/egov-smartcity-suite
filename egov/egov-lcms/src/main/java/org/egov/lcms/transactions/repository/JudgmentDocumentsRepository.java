@@ -37,57 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.bean.dashboard;
+package org.egov.lcms.transactions.repository;
 
-import java.math.BigDecimal;
+import org.egov.lcms.transactions.entity.JudgmentDocuments;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import org.apache.commons.lang3.StringUtils;
-
-public class TaxDefaulters {
-    private String ulbName = StringUtils.EMPTY;
-    private String propertyType = StringUtils.EMPTY;
-    private String ownerName = StringUtils.EMPTY;
-    private String period = StringUtils.EMPTY;
-    private BigDecimal balance = BigDecimal.ZERO;
-
-    public String getUlbName() {
-        return ulbName;
-    }
-
-    public void setUlbName(String ulbName) {
-        this.ulbName = ulbName;
-    }
-
-    public String getPropertyType() {
-        return propertyType;
-    }
-
-    public void setPropertyType(String propertyType) {
-        this.propertyType = propertyType;
-    }
-
-    public String getOwnerName() {
-        return ownerName;
-    }
-
-    public void setOwnerName(String ownerName) {
-        this.ownerName = ownerName;
-    }
-
-    public String getPeriod() {
-        return period;
-    }
-
-    public void setPeriod(String period) {
-        this.period = period;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
+@Repository
+public interface JudgmentDocumentsRepository extends JpaRepository<JudgmentDocuments, Long> {
 
 }

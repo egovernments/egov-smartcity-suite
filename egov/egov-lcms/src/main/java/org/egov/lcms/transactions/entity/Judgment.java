@@ -81,7 +81,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "EGLC_JUDGMENT")
 @SequenceGenerator(name = Judgment.SEQ_EGLC_JUDGMENT, sequenceName = Judgment.SEQ_EGLC_JUDGMENT, allocationSize = 1)
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
-    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class Judgment extends AbstractAuditable {
 
     private static final long serialVersionUID = 1517694643078084884L;
@@ -177,7 +177,7 @@ public class Judgment extends AbstractAuditable {
     @Fetch(value = FetchMode.SELECT)
     private Judgment parent;
 
-    @OneToMany(mappedBy = "judgment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "judgment", fetch = FetchType.LAZY)
     @NotAudited
     private List<JudgmentDocuments> judgmentDocuments = new ArrayList<JudgmentDocuments>(0);
 

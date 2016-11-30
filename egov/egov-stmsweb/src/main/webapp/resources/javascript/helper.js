@@ -105,7 +105,7 @@ function compareDate(dt1, dt2) {
 
 jQuery('.patternvalidationclass').on("input", function(){
 	//This will allow you to enter alphabet with space, dot(.), and comma(,).  (eg. datapattern="alphabetwithspaceanddotandcomma")
-	var regexp_alphabetdotcomma = /[^a-zA-Z .,]/g;
+	var regexp_alphabetdotcomma = /[^a-zA-Z1-9 .,]/g;
 	if(jQuery($(this)).val().match(regexp_alphabetdotcomma)){
 		jQuery($(this)).val( jQuery($(this)).val().replace(regexp_alphabetdotcomma,'') );
 	}

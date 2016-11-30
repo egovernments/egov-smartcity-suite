@@ -555,5 +555,80 @@
 		<put-attribute name="page-title" value="title.journalvoucher.create" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/journalvoucher/journalvoucher-update.jsp"/>
 	</definition>
+	
+	<definition name="bank-new" extends="base_layout">
+		<put-attribute name="page-title" value="title.bank.new" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bank/bank-new.jsp" />
+	</definition>
+
+	<definition name="bank-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.bank.view" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bank/bank-view.jsp" />
+	</definition>
+
+	<definition name="bank-update" extends="base_layout">
+		<put-attribute name="page-title" value="title.bank.edit" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bank/bank-update.jsp" />
+	</definition>
+
+	<definition name="bank-success" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.search.bank.result" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bank/bank-success.jsp" />
+	</definition>
+	
+	<definition name="bank-search" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.search.bank" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bank/bank-search.jsp" />
+	</definition>
+	
+	<definition name="bankbranch-new" extends="base_layout">
+		<put-attribute name="page-title" value="title.bankbranch.new" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankbranch/bankbranch-new.jsp" />
+	</definition>
+
+	<definition name="bankbranch-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.bankbranch.view" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankbranch/bankbranch-view.jsp" />
+	</definition>
+
+	<definition name="bankbranch-update" extends="base_layout">
+		<put-attribute name="page-title" value="title.bankbranch.edit" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankbranch/bankbranch-update.jsp" />
+	</definition>
+
+	<definition name="bankbranch-success" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.search.bankbranch.result" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankbranch/bankbranch-success.jsp" />
+	</definition>
+	
+	<definition name="bankbranch-search" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.search.bankbranch" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankbranch/bankbranch-search.jsp" />
+	</definition>
+	
+	<definition name="bankaccount-new" extends="base_layout">
+		<put-attribute name="page-title" value="title.bankaccount.new" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankaccount/bankaccount-new.jsp" />
+	</definition>
+
+	<definition name="bankaccount-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.bankaccount.view" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankaccount/bankaccount-view.jsp" />
+	</definition>
+
+	<definition name="bankaccount-update" extends="base_layout">
+		<put-attribute name="page-title" value="title.bankaccount.edit" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankaccount/bankaccount-update.jsp" />
+	</definition>
+
+	<definition name="bankaccount-success" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.search.bankaccount.result" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankaccount/bankaccount-success.jsp" />
+	</definition>
+	
+	<definition name="bankaccount-search" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.search.bankaccount" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankaccount/bankaccount-search.jsp" />
+	</definition>
 
 </tiles-definitions>

@@ -250,6 +250,7 @@ public interface FinancialConstants {
     public static final String APPCONFIG_COA_MAJORCODE_CAPITAL_EXP_FIE_REPORT = "coa_major_capital_exp_fie_report";
     public static final String APPCONFIG_BUDGETGROUP_RANGE = "budgetgroup_range_minor_or_detailed";
     public static final String APPCONFIG_EXCLUDE_STATUS = "exclude_status_forbudget_actual";
+    public static final String APPCONFIG_AUTO_BANKACCOUNT_GLCODE = "auto_bankaccount_glcode";
     public static final String DELIMITER_FOR_VOUCHER_STATUS_TO_CHECK_BANK_BALANCE = ",";
 
     public static final String BANKACCOUNT_WALKIN_PAYMENT_DESCRIPTION = "Walkin payment account";

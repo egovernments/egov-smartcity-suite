@@ -39,22 +39,25 @@
  */
 package org.egov.egf.web.actions.masters;
 
-import com.google.gson.GsonBuilder;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Bank;
 import org.egov.commons.Bankbranch;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.google.gson.GsonBuilder;
 
 @ParentPackage("egov")
 public class BankBranchAction extends JQueryGridActionSupport {
@@ -93,7 +96,8 @@ public class BankBranchAction extends JQueryGridActionSupport {
         final Date currentDate = new Date();
         final Bankbranch bankBranch = new Bankbranch();
         bankBranch.setBank(bank);
-        bankBranch.setCreated(currentDate);
+        bankBranch.setCreatedDate(currentDate);
+        bankBranch.setCreatedBy(bankBranchService.getSession().load(User.class, ApplicationThreadLocals.getUserId()));
         populateBankBranchDetail(bankBranch);
         bankBranchService.persist(bankBranch);
     }
@@ -111,12 +115,12 @@ public class BankBranchAction extends JQueryGridActionSupport {
 
     private void populateBankBranchDetail(final Bankbranch bankBranch) {
         final HttpServletRequest request = ServletActionContext.getRequest();
-        bankBranch.setModifiedby(BigDecimal.valueOf(Long.valueOf(ApplicationThreadLocals.getUserId())));
-        bankBranch.setLastmodified(new Date());
+        bankBranch.setLastModifiedDate(new Date());
+        bankBranch.setLastModifiedBy(bankBranchService.getSession().load(User.class, ApplicationThreadLocals.getUserId()));
         bankBranch.setBranchcode(request.getParameter("branchcode"));
         bankBranch.setBranchname(request.getParameter("branchname"));
         bankBranch.setBranchaddress1(request.getParameter("branchaddress1"));
-        bankBranch.setIsactive(request.getParameter("isActive").equals("Y"));
+        bankBranch.setIsactive("Y".equals(request.getParameter("isActive")));
         isActive = bankBranch.getIsactive();
         bankBranch.setBranchaddress2(request.getParameter("branchaddress2"));
         bankBranch.setBranchcity(request.getParameter("branchcity"));
@@ -171,12 +175,11 @@ public class BankBranchAction extends JQueryGridActionSupport {
         return isUnique;
     }
 
-
     public PersistenceService<Bankbranch, Integer> getBankBranchService() {
         return bankBranchService;
     }
 
-    public void setBankBranchService(PersistenceService<Bankbranch, Integer> bankBranchService) {
+    public void setBankBranchService(final PersistenceService<Bankbranch, Integer> bankBranchService) {
         this.bankBranchService = bankBranchService;
     }
 
@@ -195,5 +198,5 @@ public class BankBranchAction extends JQueryGridActionSupport {
     public void setIsActive(final boolean isActive) {
         this.isActive = isActive;
     }
-    
+
 }

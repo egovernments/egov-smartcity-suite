@@ -52,6 +52,7 @@ import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.milestone.entity.TrackMilestoneActivity;
 import org.egov.works.milestone.entity.enums.MilestoneActivityStatus;
 import org.egov.works.milestone.service.MilestoneService;
+import org.egov.works.milestone.service.TrackMilestoneService;
 import org.egov.works.web.adaptor.TrackMilestoneJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -84,6 +85,9 @@ public class TrackMilestoneController {
     @Autowired
     private TrackMilestoneJsonAdaptor trackMilestoneJsonAdaptor;
 
+    @Autowired
+    private TrackMilestoneService trackMilestoneService;
+
     @ModelAttribute
     public Milestone getMilestone(@PathVariable final Long id) {
         final Milestone milestone = milestoneService.getMilestoneById(id);
@@ -110,8 +114,9 @@ public class TrackMilestoneController {
             final HttpServletResponse response)
             throws ApplicationException, IOException {
 
+        final String mode = request.getParameter("mode");
         final JsonObject jsonObject = new JsonObject();
-        validateTrackMilestone(milestone, jsonObject);
+        validateTrackMilestone(milestone, jsonObject, mode);
 
         if (jsonObject.toString().length() > 2) {
             sendAJAXResponse(jsonObject.toString(), response);
@@ -125,10 +130,19 @@ public class TrackMilestoneController {
                 null);
     }
 
-    private void validateTrackMilestone(final Milestone milestone, final JsonObject jsonObject) {
+    private void validateTrackMilestone(final Milestone milestone, final JsonObject jsonObject, final String mode) {
         for (final TrackMilestone tm : milestone.getTrackMilestone()) {
             Integer count = 0;
             boolean flag = false;
+            if ("create".equals(mode)) {
+                final TrackMilestone fromDB = trackMilestoneService.getTrackMilestoneByMilestoneId(milestone.getId());
+                if (fromDB != null) {
+                    jsonObject.addProperty("alreadyCreated",
+                            messageSource.getMessage("error.trackmilestone.already.created",
+                                    new String[] {}, null));
+                    flag = true;
+                }
+            }
             for (final TrackMilestoneActivity tma : tm.getActivities()) {
                 if (tma.getStatus().equals(MilestoneActivityStatus.NOT_YET_STARTED.name()) && tma.getCompletedPercentage() != 0) {
                     jsonObject.addProperty("completedPercentage_" + count,

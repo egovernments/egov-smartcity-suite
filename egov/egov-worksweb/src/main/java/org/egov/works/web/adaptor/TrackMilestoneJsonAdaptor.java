@@ -119,6 +119,7 @@ public class TrackMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
             } else
                 jsonObject.add("activities", new JsonArray());
             if (!milestone.getTrackMilestone().isEmpty()) {
+                jsonObject.addProperty("mode", "update");
                 final JsonArray jsonArray = new JsonArray();
                 for (final TrackMilestone ma : milestone.getTrackMilestone())
                     for (final TrackMilestoneActivity tma : ma.getActivities()) {
@@ -131,8 +132,10 @@ public class TrackMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
                         jsonArray.add(child);
                     }
                 jsonObject.add("trackMilestoneActivities", jsonArray);
-            } else
+            } else {
+                jsonObject.addProperty("mode", "create");
                 jsonObject.add("trackMilestoneActivities", new JsonArray());
+            }
 
             jsonObject.addProperty("id", milestone.getId());
         }

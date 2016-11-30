@@ -267,7 +267,8 @@ public class MilestoneService {
     }
 
     public boolean checkMilestoneCreated(final Long workOrderId) {
-        final Long milestoneId = milestoneRepository.findWorkOrderToCreateMilestone(workOrderId, WorksConstants.CANCELLED_STATUS);
+        final Long milestoneId = milestoneRepository.findWorkOrderToCreateMilestone(workOrderId, WorksConstants.CANCELLED_STATUS,
+                WorksConstants.CANCELLED_STATUS);
         boolean flag = false;
         if (milestoneId != null)
             flag = true;

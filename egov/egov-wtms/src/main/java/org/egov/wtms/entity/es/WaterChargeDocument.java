@@ -39,9 +39,6 @@
  */
 package org.egov.wtms.entity.es;
 
-import static org.egov.infra.utils.ApplicationConstant.DEFAULT_TIMEZONE;
-import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
-
 import java.util.Date;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -187,6 +184,12 @@ public class WaterChargeDocument {
     
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String revenueWard;
+    
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String duePeriod;
+    
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String billCollector;
     
 
     public static Builder builder() {
@@ -529,6 +532,24 @@ public class WaterChargeDocument {
         this.legacy = legacy;
     }
 
+    
+    public String getDuePeriod() {
+        return duePeriod;
+    }
+
+    public void setDuePeriod(String duePeriod) {
+        this.duePeriod = duePeriod;
+    }
+
+    public String getBillCollector() {
+        return billCollector;
+    }
+
+    public void setBillCollector(String billCollector) {
+        this.billCollector = billCollector;
+    }
+
+
     public static final class Builder {
         private String aadhaarNumber;
         private String adminWard;
@@ -569,10 +590,21 @@ public class WaterChargeDocument {
         private String cityCode;
         private GeoPoint wardLocation;
         private GeoPoint propertyLocation;
+        private String duePeriod;
+        private String billCollector;
 
         private Builder() {
         }
 
+        public Builder withDuePeriod( String duePeriod) {
+            this.duePeriod = duePeriod;
+            return this;
+        }
+        
+        public Builder withBillCollector( String billCollector) {
+            this.billCollector = billCollector;
+            return this;
+        } 
         public Builder withWardlocation(final GeoPoint wardlocation) {
             wardLocation = wardlocation;
             return this;
@@ -780,6 +812,8 @@ public class WaterChargeDocument {
             waterChargeIndex.setAdminWard(adminWard);
             waterChargeIndex.setApplicationCode(applicationCode);
             waterChargeIndex.setArrearsDemand(arrearsDemand);
+            waterChargeIndex.setDuePeriod(duePeriod);
+            waterChargeIndex.setBillCollector(billCollector);
             waterChargeIndex.setArrearsDue(arrearsDue);
             waterChargeIndex.setWaterTaxDue(waterTaxDue);
             waterChargeIndex.setTotalDemand(totalDemand);

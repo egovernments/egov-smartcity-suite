@@ -39,6 +39,20 @@
  */
 package org.egov.model.bills;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
@@ -51,18 +65,6 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.validator.constraints.Length;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import java.math.BigDecimal;
-import java.util.Date;
 
 @Entity
 @Table(name = "EG_BILLREGISTERMIS")
@@ -179,6 +181,12 @@ public class EgBillregistermis extends AbstractPersistable<Integer> implements j
     @Column(name = "budgetary_appnumber")
     private String budgetaryAppnumber;
 
+    @Transient
+    private Long schemeId;
+
+    @Transient
+    private Long subSchemeId;
+
     private Boolean budgetCheckReq = true;
 
     public Boolean isBudgetCheckReq() {
@@ -263,10 +271,12 @@ public class EgBillregistermis extends AbstractPersistable<Integer> implements j
         inwardSerialNumber = inwrdSlNumber;
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(final Integer id) {
         this.id = id;
     }
@@ -447,13 +457,11 @@ public class EgBillregistermis extends AbstractPersistable<Integer> implements j
         this.paybydate = paybydate;
     }
 
-    public String getPayto()
-    {
+    public String getPayto() {
         return payto;
     }
 
-    public void setPayto(final String payto)
-    {
+    public void setPayto(final String payto) {
         this.payto = payto;
     }
 
@@ -527,6 +535,22 @@ public class EgBillregistermis extends AbstractPersistable<Integer> implements j
 
     public void setFunction(final CFunction function) {
         this.function = function;
+    }
+
+    public Long getSchemeId() {
+        return schemeId;
+    }
+
+    public void setSchemeId(final Long schemeId) {
+        this.schemeId = schemeId;
+    }
+
+    public Long getSubSchemeId() {
+        return subSchemeId;
+    }
+
+    public void setSubSchemeId(final Long subSchemeId) {
+        this.subSchemeId = subSchemeId;
     }
 
 }

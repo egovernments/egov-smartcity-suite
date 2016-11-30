@@ -47,16 +47,16 @@
 
 <form:form id="judgmentform" class="form-horizontal form-groups-bordered" 
 		modelAttribute="judgment" role="form"  method="post" enctype="multipart/form-data">
-	<%-- <form:hidden name="lcNumber" id="lcNumber" value="${judgment.legalcase.lcNumber}"/>  --%>
 	 <input type="hidden" name="legalCase" value="${legalCase.id}" />  
 	 <jsp:include page="../transactions/viewSummarizedCase.jsp"/>  
 	 <%@ include file="judgment-form.jsp"%>
-	  
-	 <input id="confirm" type="hidden" value='<spring:message code="msg.cancel.judgment.confirm" />' />
+	 <input type="hidden" name="mode" value="${mode}" />
+	 </div>
 	</div>
 	</div>
 	</div>
-	</div>
+	<jsp:include page="judgmentdocuments-view.jsp"></jsp:include>
+	
 	<div class="form-group">
 		<div class="text-center">
 			<button type="submit" name="submit" id="save" class="btn btn-primary" value="Save" ><spring:message code="lbl.submit"/></button>
@@ -70,4 +70,3 @@
 	src="<cdn:url value='/resources/js/app/judgmentHelper.js?rnd=${app_release_no}'/>"></script>
 	<script type="text/javascript"
 	src="<cdn:url value='/resources/js/app/legalcaseSearch.js?rnd=${app_release_no}'/>"></script>
-	

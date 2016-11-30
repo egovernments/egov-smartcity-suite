@@ -119,7 +119,6 @@ $('#save').click(function() {
 				return false;
 			}
 			var milestoneId = $('#id').val();
-			$('.loader-class').modal('show', {backdrop: 'static'});
 			$('.completionDate').each(function() {
 				$(this).removeAttr('disabled');
 			});
@@ -129,6 +128,9 @@ $('#save').click(function() {
 				cache: true,
 				dataType: "json",
 				"data": getFormData(jQuery('form')),
+				beforeSend : function(){
+					$('.loader-class').modal('show', {backdrop: 'static'});
+				},
 				success: function (message) {
 					$('#trackMilestoneDiv').remove();
 					$('#successMessage').html(message);
@@ -146,9 +148,11 @@ $('#save').click(function() {
 						$('#errorMessage').append(value + '</br>');
 					});
 					$('#errorMessage').show();
+				},
+				complete : function(){
+					$('.loader-class').modal('hide');
 				}
 			});
-			$('.loader-class').modal('hide');
 		}
 		else
 			return false;

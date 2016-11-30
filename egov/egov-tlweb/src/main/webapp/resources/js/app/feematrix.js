@@ -121,66 +121,51 @@ $('#licenseCategory').change(function(){
 	
 	})
 });
-$( "#add-row" ).click(function() {
-	var rowCount = $('#result tr').length;
-	if(!checkforNonEmptyPrevRow())      
-		return false;
-	var prevUOMFromVal=getPrevUOMFromData();
-	var content= $('#resultrow0').html();
-	var resultContent=   content.replace(/0/g,rowCount-1);   
-	$(resultContent).find("input").val("");
-	$('#result > tbody:last').append("<tr>"+resultContent+"</tr>"); 
-	$('#result tr:last').find("input").val("");   
-	intiUOMFromData(prevUOMFromVal);  
-	patternvalidation(); 
-});    
 
 $( "#save" ).click(function() {
-if(!validateDetailsBeforeSubmit()){
-	return false;
-} 
 	
-	var natureOfBusinessDisabled=$('#natureOfBusiness').is(':disabled');
-	var licenseAppTypeDisabled=$('#licenseAppType').is(':disabled');
-	var unitOfMeasurementDisabled=$('#unitOfMeasurement').is(':disabled');
-	$('#natureOfBusiness').removeAttr("disabled");
-	$('#licenseAppType').removeAttr("disabled");
-	$('#unitOfMeasurement').removeAttr("disabled");
-	var fd=$('#feematrix-new').serialize();
-	
-	  $.ajax({
-			url: "/tl/feematrix/create",
-			type: "POST",
-			data: fd,
-		    beforeSend: function() {
-		    	$("#save").attr('disabled',true);
-		    },
-			//dataType: "text",
-			success: function (response) {
-				 $('#resultdiv').html(response);
-				 if(natureOfBusinessDisabled)
-					 $('#natureOfBusiness').attr("disabled", true); 
-				 if(licenseAppTypeDisabled)
-					 $('#licenseAppType').attr("disabled", true); 
-				 if(unitOfMeasurementDisabled)
-					 $('#unitOfMeasurement').attr("disabled", true); 
-				 bootbox.alert("Details saved Successfully");
-			}, 
-			error: function () {
-				if(natureOfBusinessDisabled)
-					$('#natureOfBusiness').attr("disabled", true); 
-				if(licenseAppTypeDisabled)
-					$('#licenseAppType').attr("disabled", true);
-				if(unitOfMeasurementDisabled)
-					 $('#unitOfMeasurement').attr("disabled", true); 
-				bootbox.alert("Failed to Save Details");
-			},
-		    complete: function() {
-		  	  $("#save").removeAttr('disabled');
-		    }
-		});
-
-   });
+	if($('#feematrix-new').valid()){
+		var natureOfBusinessDisabled=$('#natureOfBusiness').is(':disabled');
+		var licenseAppTypeDisabled=$('#licenseAppType').is(':disabled');
+		var unitOfMeasurementDisabled=$('#unitOfMeasurement').is(':disabled');
+		$('#natureOfBusiness').removeAttr("disabled");
+		$('#licenseAppType').removeAttr("disabled");
+		$('#unitOfMeasurement').removeAttr("disabled");
+		var fd=$('#feematrix-new').serialize();
+		
+		  $.ajax({
+				url: "/tl/feematrix/create",
+				type: "POST",
+				data: fd,
+			    beforeSend: function() {
+			    	$("#save").attr('disabled',true);
+			    },
+				//dataType: "text",
+				success: function (response) {
+					 $('#resultdiv').html(response);
+					 if(natureOfBusinessDisabled)
+						 $('#natureOfBusiness').attr("disabled", true); 
+					 if(licenseAppTypeDisabled)
+						 $('#licenseAppType').attr("disabled", true); 
+					 if(unitOfMeasurementDisabled)
+						 $('#unitOfMeasurement').attr("disabled", true); 
+					 bootbox.alert("Details saved Successfully");
+				}, 
+				error: function () {
+					if(natureOfBusinessDisabled)
+						$('#natureOfBusiness').attr("disabled", true); 
+					if(licenseAppTypeDisabled)
+						$('#licenseAppType').attr("disabled", true);
+					if(unitOfMeasurementDisabled)
+						 $('#unitOfMeasurement').attr("disabled", true); 
+					bootbox.alert("Failed to Save Details");
+				},
+			    complete: function() {
+			  	  $("#save").removeAttr('disabled');
+			    }
+			});
+		}
+ });
 $( "#search" ).click(function() {
 	$('#resultdiv').empty();
 	var valid = $('#feematrix-new').validate().form();
@@ -208,106 +193,67 @@ $( "#search" ).click(function() {
 			}
 		});
    });
-});
-function checkValue(obj){
-	var rowobj=getRow(obj);
-	var tbl = document.getElementById('result');
-	var uomToval=getControlInBranch(tbl.rows[rowobj.rowIndex],'uomTo').value;
-	var uomFromval=getControlInBranch(tbl.rows[rowobj.rowIndex],'uomFrom').value;
-	if(uomFromval!='' && uomToval!='' && (JSON.parse(uomFromval)>=JSON.parse(uomToval))){
-		bootbox.alert("\"UOM To\" should be greater than \"UOM From\".");
-		getControlInBranch(tbl.rows[rowobj.rowIndex],'uomTo').value="";
-		return false;
-	  }
-  	var lastRow = (tbl.rows.length)-1;
-    var curRow=rowobj.rowIndex; 
-    if(curRow!=lastRow){
-		var uomFromVal1=getControlInBranch(tbl.rows[rowobj.rowIndex+1],'uomFrom').value;
-		if(uomToval!=uomFromVal1)
-			getControlInBranch(tbl.rows[rowobj.rowIndex+1],'uomFrom').value=uomToval; 
-    }
-}
+$("#add-row").click(
+		function(event) {
+			var rowCount = $('#result tbody tr').length;
+			var valid = true;
+			//validate all rows before adding new row
+			$('#result tbody tr').each(function(index,value){
+				$('#result tbody tr:eq('+index+') td input[type="text"]').each(function(i,v){
+					if(!$.trim($(v).val())){
+						valid = false;
+						bootbox.alert("Enter all values for existing rows!",function(){
+							$(v).focus();
+						});
+						return false;
+					}
+				});
+			});
+			if(valid){
+				//Create new row
+				var newRow = $('#result tbody tr:first').clone();
+				newRow.find("input").each(function(){
+	    	        $(this).attr({
+	    	        	'name': function(_, name) { return name.replace(/\[.\]/g, '['+ rowCount +']'); }
+	    	        });
+	    	    });
+				$('#result tbody').append(newRow);
+				var prev_tovalue = $('#result tbody tr:eq('+(rowCount-1)+')').find('input.tovalue').val();
+				$('#result tbody tr:last').find('input').val('');
+				$('#result tbody tr:last').find('input.fromvalue').val(prev_tovalue);
+				patternvalidation();
+			}
+		});
 
-function checkforNonEmptyPrevRow(){
-	var tbl=document.getElementById("result");
-    var lastRow = (tbl.rows.length)-1;
-    var uomFromval=getControlInBranch(tbl.rows[lastRow],'uomFrom').value;
-    var uomToval=getControlInBranch(tbl.rows[lastRow],'uomTo').value;
-    var amountVal=getControlInBranch(tbl.rows[lastRow],'amount').value;
-    if(uomFromval=='' || uomToval=='' || amountVal==''){
-    	bootbox.alert("Enter all values for existing rows before adding.");
-		return false;       
-    } 
-    return true;
-}  
 
-function getPrevUOMFromData(){
-	var tbl=document.getElementById("result");
-    var lastRow = (tbl.rows.length)-1;
-    return getControlInBranch(tbl.rows[lastRow],'uomTo').value;
-}
-
-function intiUOMFromData(obj){
-	var tbl=document.getElementById("result");
-    var lastRow = (tbl.rows.length)-1;
-    getControlInBranch(tbl.rows[lastRow],'uomFrom').value=obj;
-} 
-
-function deleteThisRow(obj){
-	var tbl=document.getElementById("result");
-    var lastRow = (tbl.rows.length)-1;
-    var curRow=getRow(obj).rowIndex; 
-    if(curRow == 1)	{
-    	bootbox.alert('Cannot delete first row');
-  	     return false;
-    } else if(curRow != lastRow){
-    	bootbox.alert('Cannot delete in between. Delete from last.');
- 	    return false;
-    } else	{
-        if(getControlInBranch(tbl.rows[lastRow],'detailId').value==''){
-	  	  	tbl.deleteRow(curRow);
-			return true;
-	    } 
-        else if(getControlInBranch(tbl.rows[lastRow],'detailId').value!='')
-        {
-	    bootbox.confirm("This will delete the row permanently. Press OK to Continue. ",
-			function(r) {
-				if (r) {
+$('#result tbody').on('click','tr td .delete-row',function(e){
+	var id = $(this).closest('tr').find('td:eq(0) .detailId').val();
+	//console.log(id)
+	var idx = $(this).closest('tr').index();
+	if(idx == 0){
+		bootbox.alert('Cannot delete first row!');
+	}else if((idx < ($('#result tbody tr').length - 1))){
+		bootbox.alert('Try to delete from last row!');
+	}else{
+		bootbox.confirm("This will delete the row permanently. Press OK to Continue. ",function(result) {
+			if(result){
+				if(!id){
+					$('#result tbody tr:last').remove();
+				}else{
 					$.ajax({
-						url: "/tl/domain/commonAjax-deleteFee.action?feeMatrixDetailId="+getControlInBranch(tbl.rows[lastRow],'detailId').value+"",
-						type: "GET",
-						dataType: "json",
-						success: function () {
-							tbl.deleteRow(curRow);
-						}, 
-						error: function () {
+						url: "/tl/domain/commonAjax-deleteFee.action?feeMatrixDetailId="+id,
+						type : "GET",
+						dataType : "json",
+						success : function(response) {
+							$('#result tbody tr:last').remove();
+						},
+						error : function(response) {
 							bootbox.alert("Unable to delete this row.");
-							}
+						}
 					});
-			   }
-		   });
-  	   }
-    }
-}
-
-function validateDetailsBeforeSubmit(){
-	var tbl=document.getElementById("result");
-    var tabLength = (tbl.rows.length)-1;
-    var uomFromval,uomToval,amt;
-    for(var i=1;i<=tabLength;i++){
-    	uomFromval=getControlInBranch(tbl.rows[i],'uomFrom').value;
-    	uomToval=getControlInBranch(tbl.rows[i],'uomTo').value;
-    	amt=getControlInBranch(tbl.rows[i],'amount').value;
-    	if(uomFromval=="" || uomToval=="" ||  amt == "" && i!=tabLength){
-    		bootbox.alert("\"UOM To\" or \"UOM From\" or \"Amount\" cannot be null for the row "+(i)+".");
-    		return false;
-    	}
-    	if(uomFromval!='' && uomToval!='' && (JSON.parse(uomFromval)>=JSON.parse(uomToval))){
-    		bootbox.alert("\"UOM To\" should be greater than \"UOM From\" for row "+(i)+".");
-    		getControlInBranch(tbl.rows[i],'uomTo').value="";
-    		getControlInBranch(tbl.rows[i],'uomTo').focus();
-    		return false;
-    	}  
-    }
-    return true;
-}
+				}
+			}
+		});
+	}
+ });
+});

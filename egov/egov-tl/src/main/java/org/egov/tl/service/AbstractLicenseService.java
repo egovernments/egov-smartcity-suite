@@ -418,16 +418,18 @@ public abstract class AbstractLicenseService<T extends License> {
     public void transitionWorkFlow(final T license, final WorkflowBean workflowBean) {
         final DateTime currentDate = new DateTime();
         final User user = this.securityUtils.getCurrentUser();
+        List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId());
+
         final Assignment userAssignment = this.assignmentService.getPrimaryAssignmentForUser(user.getId());
         Position pos = null;
-        Assignment wfInitiator = null;
+        Position wfInitiator = null;
         final String natureOfWork = license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)
                 ? Constants.RENEWAL_NATUREOFWORK : Constants.NEW_NATUREOFWORK;
         if (null != license.getId())
             wfInitiator = this.getWorkflowInitiator(license);
 
         if (wfInitiator != null && BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            if (wfInitiator.equals(userAssignment)) {
+            if (wfInitiator.equals(userAssignment.getPosition())) {
                 license.transition(true).end().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
@@ -440,7 +442,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 license.transition(true).withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
                         .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING);
+                        .withOwner(wfInitiator).withNextAction(WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING);
             }
 
         } else if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
@@ -449,7 +451,7 @@ public abstract class AbstractLicenseService<T extends License> {
             license.transition(false).end().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
                     .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
-                    .withOwner(wfInitiator.getPosition())
+                    .withOwner(wfInitiator)
                     .withNextAction(wfmatrix.getNextAction());
         } else {
             if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
@@ -459,13 +461,16 @@ public abstract class AbstractLicenseService<T extends License> {
                 pos = commissionerUsr.getPosition();
             }
             if (null == license.getState()) {
-                wfInitiator = this.assignmentService.getPrimaryAssignmentForUser(this.securityUtils.getCurrentUser().getId());
+                if (!assignments.isEmpty())
+                    wfInitiator = assignments.get(0).getPosition();
+                else
+                    throw new ValidationException("wf.initiator.not.found", "No employee exist for creator's position");
                 final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                         null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
                 license.transition().start().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
                         .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
-                        .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator.getPosition());
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(wfInitiator)
+                        .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator);
                 license.setEgwStatus(
                         egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
             } else if ("END".equalsIgnoreCase(license.getCurrentState().getNextAction()))
@@ -486,7 +491,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 license.transition(true).withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
                         .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
                         .withStateValue(Constants.WF_COMMISSIONER_APPRVD_WITHOUT_COLLECTION).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition())
+                        .withOwner(wfInitiator)
                         .withNextAction(Constants.WF_CERTIFICATE_GEN_PENDING);
             else if (BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())
                     && license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_APPROVED_CODE)
@@ -508,8 +513,13 @@ public abstract class AbstractLicenseService<T extends License> {
         }
     }
 
-    protected Assignment getWorkflowInitiator(final T license) {
-        return this.assignmentService.getPrimaryAssignmentForUser(license.getCreatedBy().getId());
+    protected Position getWorkflowInitiator(final T license) {
+        List<Assignment> assignments = null;
+        if (license.getState().getInitiatorPosition() != null)
+            assignments = assignmentService.getAssignmentsForPosition(license.getState().getInitiatorPosition().getId());
+        if (assignments.isEmpty())
+            throw new ValidationException("wf.initiator.not.found", "No employee exist for creator's position");
+        else return license.getState().getInitiatorPosition();
     }
 
     @Transactional

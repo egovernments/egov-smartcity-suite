@@ -39,29 +39,33 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form  method="post" modelAttribute="judgmentImpl"
+<form:form method="post" modelAttribute="judgmentImpl"
 	id="judgmentImplform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<input type="hidden" name="legalCase" value="${legalCase.id}" />  
+	<input type="hidden" name="mode" value="${mode}" />
+	<input type="hidden" name="legalCase" value="${legalCase.id}" />
 	<input type="hidden" name="judgment" value="${judgment.id}" />
 	<%--  <input type="hidden" name="appeal" value="${judgmentImpl.appeal.id}" />  --%>
-	 <jsp:include page="../transactions/viewSummarizedCase.jsp"/>  
+	<jsp:include page="../transactions/viewSummarizedCase.jsp" />
 	<%@ include file="judgmentimpl-form.jsp"%>
 	</div>
 	</div>
 	</div>
 	</div>
-	<%--  <c:choose>
-			<c:when
-				test="${judgmentImpl.judgmentImplIsComplied == 'NO' && judgmentImpl.implementationFailure == 'Appeal'}">
-				<jsp:include page="appealdocuments-view.jsp"></jsp:include>
-				<input type="hidden" name="supportDocs" value="${supportDocs}" />
-			</c:when>
-		</c:choose>  --%>
+	<%-- <c:choose>
+		<c:when
+			test="${judgmentImpl.judgmentImplIsComplied == 'NO' && judgmentImpl.implementationFailure == 'Appeal'}"> --%>
+			
+	<%-- 	</c:when>
+	</c:choose> --%>
 	<div class="form-group">
 		<div class="text-center">
-			<form:button type="button" id="buttonid" class="btn btn-primary"><spring:message code="lbl.submit"/></form:button>
-			<form:button type='button' class='btn btn-default' id="btnclose"><spring:message code='lbl.close' /></form:button>
+			<form:button type="button" id="buttonid" class="btn btn-primary">
+				<spring:message code="lbl.submit" />
+			</form:button>
+			<form:button type='button' class='btn btn-default' id="btnclose">
+				<spring:message code='lbl.close' />
+			</form:button>
 		</div>
 	</div>
 </form:form>

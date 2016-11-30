@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -37,23 +36,27 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
 
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
-	<class name="org.egov.commons.CChartOfAccountDetail" table="CHARTOFACCOUNTDETAIL"> 
-		<id name="id" type="long" unsaved-value="null" >
-			<column name="ID" not-null="true"/>
-			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-				<param name="sequence_name">seq_chartofaccountdetail</param>
-			</generator>
-		</id>	
-		<many-to-one name="glCodeId" class="org.egov.commons.CChartOfAccounts" column="GLCODEID" unique="true" />
-		<many-to-one name="detailTypeId" class="org.egov.commons.Accountdetailtype" column="DETAILTYPEID" unique="true" />
-		<property column="MODIFIEDDATE" name="modifiedDate" type="timestamp"/>
-		<property column="CREATEDDATE" name="createdDate"/>
-		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY"/>
-	</class>
-</hibernate-mapping>
+
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ include file="/includes/taglibs.jsp"%>
+<form:form role="form" action="create" modelAttribute="bank" id="bankform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+	<%@ include file="bank-form.jsp"%>
+	<div class="form-group">
+		<div class="text-center">
+			<button type='submit' class='btn btn-primary' id="buttonSubmit">
+				<spring:message code='lbl.create' />
+			</button>
+			<a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message code='lbl.close' /></a>
+		</div>
+	</div>
+</form:form>
+<script>
+	$('#buttonSubmit').click(function(e) {
+		if ($('form').valid()) {
+		} else {
+			e.preventDefault();
+		}
+	});
+</script>

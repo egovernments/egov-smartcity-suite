@@ -220,5 +220,7 @@ public class Constants {
         public static final String WF_DIGI_SIGNED ="Digital signed";
         public static final String DELIMITER_HYPEN ="-";
         public static final String REVENUE_WARD = "Ward";
+        public static final String APPROVE_PAGE = "approve";
+        public static final String GENERATE_CERTIFICATE = "tl_generateCertificate";
 }
 

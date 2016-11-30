@@ -154,45 +154,10 @@
 								data-pattern="alphanumeric" maxlength="36" required="required" />
 							<form:errors path="appeal[0].appealFiledBy" cssClass="error-msg" />
 						</div>
-						<!--  <label class="col-sm-3 control-label text-right"><font
-							size="2"><spring:message code="lbl.mesg.document" />:</font></label>
-						<div class="col-sm-3 add-margin">
-							<input type="file" id="file"
-								path="appeal[0].appealDocuments[0].files"
-								class="file-ellipsis upload-file">
-							<form:errors path="appeal[0].appealDocuments[0].files"
-								cssClass="add-margin error-msg" />
-						</div>  -->
-						<c:choose>
-							<c:when test="${not empty supportDocs}">
-
-								<jsp:include page="appealdocuments-view.jsp"></jsp:include>
-
-							</c:when>
-							<c:otherwise>
-								<div class="form-group">
-									<label class="col-sm-3 control-label text-right"><font
-										size="2"><spring:message code="lbl.mesg.document" />:</font></label>
-									<div class="col-sm-3 add-margin">
-
-										<input type="file" id="file"
-											name="appeal[0].appealDocuments[0].files"
-											class="file-ellipsis upload-file">
-
-										<form:errors path="appeal[0].appealDocuments[0].files"
-											cssClass="add-margin error-msg" />
-
-									</div>
-									<input type="hidden" name="supportDocs" value="${supportDocs}" />
-								</div>
-
-							</c:otherwise>
-						</c:choose>
-						<input type="hidden" name="judgmentImpl.appeal"
-							value="${appeal[0].id}" /> <input type="hidden"
-							name="judgmentImpl.appeal[0].appealDocuments"
-							value="${appealDocuments[0].id}" />
-					</div>
+						</div>
+					<div class="form-group" id="apealFields3" style="display: none">
+					 <jsp:include page="appealdocuments-view.jsp"></jsp:include> 
+						</div>
 
 					<div class="form-group" id="contempFields1" style="display: none">
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -232,4 +197,7 @@
 						<input type="hidden" name="judgmentImpl.contempt"
 							value="${contempt[0].id}" />
 					</div>
+					<div id="judgmentImplDocuments"></div>
 					<input type="hidden" name="judgmentImpl" value="${judgmentImpl.id}" />
+					<input
+						type="hidden" name="mode" value="${mode}" />

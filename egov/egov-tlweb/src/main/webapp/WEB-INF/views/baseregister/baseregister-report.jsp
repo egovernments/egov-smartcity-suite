@@ -100,6 +100,9 @@
                         </form:select>
                     </div>
                 </div>
+                <br/>
+                <spring:message code="baseregister.report.note.text"/>
+                <br/>
             </div>
             <div class="row">
                 <div class="text-center">

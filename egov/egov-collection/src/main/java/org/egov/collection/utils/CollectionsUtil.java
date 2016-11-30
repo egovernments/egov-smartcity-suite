@@ -400,6 +400,11 @@ public class CollectionsUtil {
     public Position getPositionOfUser(final User user) {
         return posService.getCurrentPositionForUser(user.getId());
     }
+    
+ 
+    public List<Position> getPositionsForEmployee(final User user) {
+        return posService.getPositionsForEmployee(user.getId(),null);
+    }
 
     /**
      * Gets position by given position name

@@ -952,7 +952,7 @@ public class InstrumentService {
         final InstrumentType instrumentType = getInstrumentTypeByType("advice");
         final List<InstrumentHeader> list = instrumentHeaderService
                 .findAllBy(
-                        "from InstrumentHeader where transactionNumber=? and instrumentType.id=? and bankAccountId.id=? and isPayCheque=1 ",
+                        "from InstrumentHeader where transactionNumber=? and instrumentType.id=? and bankAccountId.id=? and isPayCheque='1' ",
                         chequeNumber, instrumentType.getId(), bankAccountId);
         if (list != null && list.size() > 0)
             return false;

@@ -304,7 +304,6 @@ $('#subLedgerType').change(function () {
 				function(response) {
 					$('#netPayableAccountCode').empty();
 					$('#netPayableAccountCode').append($("<option value=''>Select from below</option>"));
-					var output = '<option value="">Select from below</option>';
 					var responseObj = JSON.parse(response);
 					$.each(responseObj, function(index, value) {
 						var selected="";

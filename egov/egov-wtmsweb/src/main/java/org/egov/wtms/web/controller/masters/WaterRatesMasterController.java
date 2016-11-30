@@ -139,8 +139,7 @@ public class WaterRatesMasterController {
 
     @RequestMapping(value = "/waterRatesMaster/list", method = RequestMethod.GET)
     public String getWaterRatesMasterList(final Model model) {
-
-        final List<WaterRatesHeader> waterRatesHeaderList = waterRatesHeaderService.findAll();
+        final List<WaterRatesHeader> waterRatesHeaderList = waterRatesHeaderService.findAllByConnectionType(ConnectionType.NON_METERED);
         model.addAttribute("waterRatesHeaderList", waterRatesHeaderList);
         return "waterRates-master-list";
 

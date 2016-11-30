@@ -41,20 +41,24 @@ package org.egov.wtms.bean.dashboard;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+@JsonInclude(value = Include.NON_EMPTY)
 public class TaxPayerResponseDetails {
 	
-	private List<TaxPayerDetails> producers;
-	private List<TaxPayerDetails> achievers;
-	public List<TaxPayerDetails> getProducers() {
+	private List<WaterTaxPayerDetails> producers;
+	private List<WaterTaxPayerDetails> achievers;
+	public List<WaterTaxPayerDetails> getProducers() {
 		return producers;
 	}
-	public void setProducers(List<TaxPayerDetails> producers) {
-		this.producers = producers;
-	}
-	public List<TaxPayerDetails> getAchievers() {
-		return achievers;
-	}
-	public void setAchievers(List<TaxPayerDetails> achievers) {
-		this.achievers = achievers;
-	}
+    public List<WaterTaxPayerDetails> getAchievers() {
+        return achievers;
+    }
+    public void setAchievers(List<WaterTaxPayerDetails> achievers) {
+        this.achievers = achievers;
+    }
+    public void setProducers(List<WaterTaxPayerDetails> producers) {
+        this.producers = producers;
+    }
+	
 }
