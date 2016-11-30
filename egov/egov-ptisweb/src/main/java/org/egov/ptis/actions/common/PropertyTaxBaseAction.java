@@ -582,7 +582,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 approverPositionId = assignment.getPosition().getId();
                 approverName = (assignment.getEmployee().getName()).concat("~").concat(
                         assignment.getPosition().getName());
-                property.getState().setInitiatorPosition(assignment.getPosition());
+                wfInitiator = assignment;
             }
         } else {
             currentState = null;
@@ -595,7 +595,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         }
         if (property.getId() != null)
             wfInitiator = propertyService.getWorkflowInitiator(property);
-        else
+        else if(wfInitiator==null)
             wfInitiator = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(user.getId());
 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
