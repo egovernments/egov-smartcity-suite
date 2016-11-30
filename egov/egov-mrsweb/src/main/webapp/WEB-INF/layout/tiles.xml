@@ -379,4 +379,18 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/reissue/reissue-success.jsp" />
 	</definition>
+	
+	<definition name="ageing-report" extends="base_layout">
+		<put-attribute name="page-title" value="title.registration.ageing.report"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/reports/ageing-report.jsp" />
+	</definition>
+	
+	<definition name="ageingreport-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.registration.ageing.report"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/reports/ageingreport-view.jsp" />
+	</definition>
 </tiles-definitions>

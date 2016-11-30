@@ -54,68 +54,68 @@
 <div class="row">
 	<div class="form-group">
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.date.of.marriage"/></div>
-		<div class="col-sm-3 add-margin view-content"><c:out value="${reissue.registration.dateOfMarriage}" /></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.dateOfMarriage}" /></div>
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.zone"/></div>
-		<div class="col-sm-3 add-margin view-content"><c:out value="${reissue.registration.zone.name}" /></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.zone.name}" /></div>
 	</div>
 </div>
 <div class="row">
 	<div class="form-group">
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.law"/></div>
-		<div class="col-sm-3 add-margin view-content"><c:out value="${reissue.registration.marriageAct.name}"/></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.marriageAct.name}"/></div>
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.place.of.marriage"/></div>
-		<div class="col-sm-3 add-margin view-content"><c:out value="${reissue.registration.placeOfMarriage}" /></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.placeOfMarriage}" /></div>
 	</div>
 </div>
 
 <c:set value="registration.husband" var="applicant" scope="request"></c:set>
 <jsp:include page="../registration/viewapplicantinfo.jsp">
 	<jsp:param value="subheading.husband.info" name="header" />
-	<jsp:param value="${reissue.registration.husband.name.firstName}" name="appFirstName"/>
-	<jsp:param value="${reissue.registration.husband.name.middleName}" name="appMiddleName"/>
-	<jsp:param value="${reissue.registration.husband.name.lastName}" name="appLastName"/>
-	<jsp:param value="${reissue.registration.husband.encodedSignature}" name="signature"/>
-	<jsp:param value="${reissue.registration.husband.encodedPhoto}" name="photo"/>
-	<jsp:param value="${reissue.registration.husband.otherName}" name="appOtherName"/>
-	<jsp:param value="${reissue.registration.husband.religion.name}" name="appReligion"/>
-	<jsp:param value="${reissue.registration.husband.religionPractice}" name="appReligionPractice"/>
-	<jsp:param value="${reissue.registration.husband.ageInYearsAsOnMarriage}" name="appAgeInYears"/>
-	<jsp:param value="${reissue.registration.husband.ageInMonthsAsOnMarriage}" name="appAgeInMonths"/>
-	<jsp:param value="${reissue.registration.husband.maritalStatus}" name="appPresentRelation"/>
-	<jsp:param value="${reissue.registration.husband.occupation}" name="appOccupation"/>
-	<jsp:param value="${reissue.registration.husband.contactInfo.residenceAddress}" name="appResidenceAddress"/>
-	<jsp:param value="${reissue.registration.husband.contactInfo.officeAddress}" name="appOfficeAddress"/>
-	<jsp:param value="${reissue.registration.husband.contactInfo.mobileNo}" name="appMobileNo"/>
-	<jsp:param value="${reissue.registration.husband.contactInfo.email}" name="appEmail"/>
+	<jsp:param value="${reIssue.registration.husband.name.firstName}" name="appFirstName"/>
+	<jsp:param value="${reIssue.registration.husband.name.middleName}" name="appMiddleName"/>
+	<jsp:param value="${reIssue.registration.husband.name.lastName}" name="appLastName"/>
+	<jsp:param value="${reIssue.registration.husband.encodedSignature}" name="signature"/>
+	<jsp:param value="${reIssue.registration.husband.encodedPhoto}" name="photo"/>
+	<jsp:param value="${reIssue.registration.husband.otherName}" name="appOtherName"/>
+	<jsp:param value="${reIssue.registration.husband.religion.name}" name="appReligion"/>
+	<jsp:param value="${reIssue.registration.husband.religionPractice}" name="appReligionPractice"/>
+	<jsp:param value="${reIssue.registration.husband.ageInYearsAsOnMarriage}" name="appAgeInYears"/>
+	<jsp:param value="${reIssue.registration.husband.ageInMonthsAsOnMarriage}" name="appAgeInMonths"/>
+	<jsp:param value="${reIssue.registration.husband.maritalStatus}" name="appPresentRelation"/>
+	<jsp:param value="${reIssue.registration.husband.occupation}" name="appOccupation"/>
+	<jsp:param value="${reIssue.registration.husband.contactInfo.residenceAddress}" name="appResidenceAddress"/>
+	<jsp:param value="${reIssue.registration.husband.contactInfo.officeAddress}" name="appOfficeAddress"/>
+	<jsp:param value="${reIssue.registration.husband.contactInfo.mobileNo}" name="appMobileNo"/>
+	<jsp:param value="${reIssue.registration.husband.contactInfo.email}" name="appEmail"/>
 </jsp:include>
 
 <c:set value="registration.wife" var="applicant" scope="request"></c:set>
 <jsp:include page="../registration/viewapplicantinfo.jsp">
 	<jsp:param value="subheading.wife.info" name="header" />
-	<jsp:param value="${reissue.registration.wife.name.firstName}" name="appFirstName"/>
-	<jsp:param value="${reissue.registration.wife.name.middleName}" name="appMiddleName"/>
-	<jsp:param value="${reissue.registration.wife.name.lastName}" name="appLastName"/>
-	<jsp:param value="${reissue.registration.wife.encodedSignature}" name="signature"/>
-	<jsp:param value="${reissue.registration.wife.encodedPhoto}" name="photo"/>
-	<jsp:param value="${reissue.registration.wife.otherName}" name="appOtherName"/>
-	<jsp:param value="${reissue.registration.wife.religion.name}" name="appReligion"/>
-	<jsp:param value="${reissue.registration.wife.religionPractice}" name="appReligionPractice"/>
-	<jsp:param value="${reissue.registration.wife.ageInYearsAsOnMarriage}" name="appAgeInYears"/>
-	<jsp:param value="${reissue.registration.wife.ageInMonthsAsOnMarriage}" name="appAgeInMonths"/>
-	<jsp:param value="${reissue.registration.wife.maritalStatus}" name="appPresentRelation"/>
-	<jsp:param value="${reissue.registration.wife.occupation}" name="appOccupation"/>
-	<jsp:param value="${reissue.registration.wife.contactInfo.residenceAddress}" name="appResidenceAddress"/>
-	<jsp:param value="${reissue.registration.wife.contactInfo.officeAddress}" name="appOfficeAddress"/>
-	<jsp:param value="${reissue.registration.wife.contactInfo.mobileNo}" name="appMobileNo"/>
-	<jsp:param value="${reissue.registration.wife.contactInfo.email}" name="appEmail"/>
+	<jsp:param value="${reIssue.registration.wife.name.firstName}" name="appFirstName"/>
+	<jsp:param value="${reIssue.registration.wife.name.middleName}" name="appMiddleName"/>
+	<jsp:param value="${reIssue.registration.wife.name.lastName}" name="appLastName"/>
+	<jsp:param value="${reIssue.registration.wife.encodedSignature}" name="signature"/>
+	<jsp:param value="${reIssue.registration.wife.encodedPhoto}" name="photo"/>
+	<jsp:param value="${reIssue.registration.wife.otherName}" name="appOtherName"/>
+	<jsp:param value="${reIssue.registration.wife.religion.name}" name="appReligion"/>
+	<jsp:param value="${reIssue.registration.wife.religionPractice}" name="appReligionPractice"/>
+	<jsp:param value="${reIssue.registration.wife.ageInYearsAsOnMarriage}" name="appAgeInYears"/>
+	<jsp:param value="${reIssue.registration.wife.ageInMonthsAsOnMarriage}" name="appAgeInMonths"/>
+	<jsp:param value="${reIssue.registration.wife.maritalStatus}" name="appPresentRelation"/>
+	<jsp:param value="${reIssue.registration.wife.occupation}" name="appOccupation"/>
+	<jsp:param value="${reIssue.registration.wife.contactInfo.residenceAddress}" name="appResidenceAddress"/>
+	<jsp:param value="${reIssue.registration.wife.contactInfo.officeAddress}" name="appOfficeAddress"/>
+	<jsp:param value="${reIssue.registration.wife.contactInfo.mobileNo}" name="appMobileNo"/>
+	<jsp:param value="${reIssue.registration.wife.contactInfo.email}" name="appEmail"/>
 </jsp:include>
 
 <div class="row">
 	<div class="form-group">
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.fee.criteria"/></div>
-		<div class="col-sm-3 add-margin view-content"><c:out value="${reissue.feeCriteria.criteria}" /></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.feeCriteria.criteria}" /></div>
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.fee"/></div>
-		<div class="col-sm-3 add-margin view-content"><c:out value="${reissue.feePaid}" /></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.feePaid}" /></div>
 	</div>
 </div>
 

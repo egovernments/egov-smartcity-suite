@@ -103,7 +103,6 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
     public String showReIssueForm(@PathVariable final Long id, final Model model) {
         final ReIssue reIssue = reIssueService.get(id);
         model.addAttribute("documents", marriageDocumentService.getIndividualDocuments());
-        model.addAttribute("reissue", reIssue);
 
         marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getHusband());
         marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getWife());

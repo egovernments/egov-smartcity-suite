@@ -57,7 +57,7 @@
 		</div>
 		<div class="col-sm-2 add-margin text-center">
 			<c:set value="false" var="isDocFound"></c:set>
-			<c:forEach items="${reissue.applicant.applicantDocuments}" var="appdoc" varStatus="loopStatus">
+			<c:forEach items="${reIssue.applicant.applicantDocuments}" var="appdoc" varStatus="loopStatus">
 				<c:if test="${appdoc.document.id == doc.id}">
 					<c:set value="true" var="isDocFound"></c:set>
 					<%-- <img src="data:image/jpeg;base64,${appdoc.base64EncodedFile}" width="250px" height="250px"> --%>

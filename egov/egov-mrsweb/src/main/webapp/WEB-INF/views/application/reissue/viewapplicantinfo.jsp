@@ -57,15 +57,15 @@
 			<spring:message code="lbl.fullname"/>
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${reissue.applicant.name.firstName}"></c:out>&nbsp; &nbsp;
-			<c:out value="${reissue.applicant.name.middleName}"></c:out>&nbsp; &nbsp;
-			<c:out value="${reissue.applicant.name.lastName}"></c:out>
+			<c:out value="${reIssue.applicant.name.firstName}"></c:out>&nbsp; &nbsp;
+			<c:out value="${reIssue.applicant.name.middleName}"></c:out>&nbsp; &nbsp;
+			<c:out value="${reIssue.applicant.name.lastName}"></c:out>
 		</div>
 		<div class="col-sm-3 ">
 			<spring:message code="lbl.othername"/>
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${reissue.applicant.otherName}" default="NA"/>
+			<c:out value="${reIssue.applicant.otherName}" default="NA"/>
 		</div>
 	</div>
 
@@ -74,13 +74,13 @@
 			<spring:message code="lbl.residence.address"/>
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${reissue.applicant.contactInfo.residenceAddress}" />
+			<c:out value="${reIssue.applicant.contactInfo.residenceAddress}" />
 		</div>
 		<div class="col-sm-3 ">
 			<spring:message code="lbl.office.address"/>
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${reissue.applicant.contactInfo.officeAddress}" />
+			<c:out value="${reIssue.applicant.contactInfo.officeAddress}" />
 		</div>
 	</div>
 
@@ -89,21 +89,21 @@
 			<spring:message code="lbl.phoneno"/>
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${reissue.applicant.contactInfo.mobileNo}" />
+			<c:out value="${reIssue.applicant.contactInfo.mobileNo}" />
 		</div>
 		<div class="col-sm-3 ">
 			<spring:message code="lbl.email"/>
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${reissue.applicant.contactInfo.email}" default="NA"/>
+			<c:out value="${reIssue.applicant.contactInfo.email}" default="NA"/>
 		</div>
 </div>
 
 <div class="row add-border">
 	<div class="col-sm-3 "><spring:message code="lbl.fee.criteria"/></div>
-	<div class="col-sm-3 add-margin view-content"><c:out value="${reissue.feeCriteria.criteria}" /></div>
+	<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.feeCriteria.criteria}" /></div>
 	<div class="col-sm-3 "><spring:message code="lbl.fee"/></div>
-	<div class="col-sm-3 add-margin view-content"><c:out value="${reissue.feePaid}" /></div>
+	<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.feePaid}" /></div>
 </div>
 								
 </div>
