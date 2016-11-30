@@ -106,7 +106,6 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -708,49 +707,78 @@ public class LetterOfAcceptanceService {
 
     public List<WorkOrderEstimate> getLoaForCreateMilestone(
             final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
-        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrderEstimate.class, "woe")
-                .createAlias("woe.workOrder", "wo").createAlias("woe.estimate", "woeestimate")
-                .createAlias("woeestimate.lineEstimateDetails", "woeled")
-                .createAlias("woeled.lineEstimate", "lineestimate")
-                .createAlias("woeestimate.projectCode", "projectcode")
-                .createAlias("woeestimate.executingDepartment", "executingDepartment")
-                .createAlias("wo.contractor", "woc").createAlias("wo.egwStatus", "status")
-                .createAlias("woe.milestone", "ms", JoinType.LEFT_OUTER_JOIN).addOrder(Order.asc("wo.workOrderDate"));
-        criteria.add(Restrictions.isNull("wo.parent.id"));
+        final StringBuilder queryStr = new StringBuilder(500);
+
+        buildWhereClause(searchRequestLetterOfAcceptance, queryStr);
+        final Query query = setParameterForMilestone(searchRequestLetterOfAcceptance, queryStr);
+        final List<WorkOrderEstimate> workOrderEstimateList = query.getResultList();
+        return workOrderEstimateList;
+    }
+
+    private void buildWhereClause(final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
+            final StringBuilder queryStr) {
+
+        queryStr.append(
+                "select distinct(woe) from WorkOrderEstimate woe where woe.workOrder.egwStatus.moduletype = :moduleType and woe.workOrder.egwStatus.code = :status and woe.workOrder.parent.id is null and not exists (select ms.workOrderEstimate.workOrder.id from Milestone ms where ms.workOrderEstimate.workOrder.id = woe.workOrder.id and upper(woe.workOrder.egwStatus.code)  != upper(:workorderstatus) and upper(ms.status.code)  != upper(:milestonestatus))");
+        queryStr.append(
+                " and woe.estimate.executingDepartment.id = :departmentName");
+
+        if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getWorkIdentificationNumber()))
+            queryStr.append(
+                    " and upper(woe.estimate.projectCode.code) = :workIdentificationNumber");
+
+        if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getEstimateNumber()))
+            queryStr.append(" and upper(woe.estimate.estimateNumber) = :estimateNumber");
+
+        if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getWorkOrderNumber()))
+            queryStr.append(" and upper(woe.workOrder.workOrderNumber) = :workOrderNumber");
+
+        if (searchRequestLetterOfAcceptance.getTypeOfWork() != null)
+            queryStr.append(
+                    " and woe.estimate.parentCategory.id = :typeOfWork");
+
+        if (searchRequestLetterOfAcceptance.getSubTypeOfWork() != null)
+            queryStr.append(
+                    " and woe.estimate.category.id = :subTypeOfWork");
+
+        if (searchRequestLetterOfAcceptance.getAdminSanctionFromDate() != null)
+            queryStr.append(
+                    " and woe.estimate.lineEstimateDetails.lineEstimate.adminSanctionDate >= :adminSanctionFromDate)");
+
+        if (searchRequestLetterOfAcceptance.getAdminSanctionToDate() != null)
+            queryStr.append(
+                    " and woe.estimate.lineEstimateDetails.lineEstimate.adminSanctionDate <= :adminSanctionToDate)");
+
+    }
+
+    private Query setParameterForMilestone(final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
+            final StringBuilder queryStr) {
+        final Query qry = entityManager.createQuery(queryStr.toString());
+
+        qry.setParameter("status", WorksConstants.APPROVED);
+        qry.setParameter("moduleType", WorksConstants.WORKORDER);
+        qry.setParameter("workorderstatus", WorksConstants.CANCELLED_STATUS);
+        qry.setParameter("milestonestatus", WorksConstants.CANCELLED_STATUS);
         if (searchRequestLetterOfAcceptance != null) {
-            if (searchRequestLetterOfAcceptance.getWorkIdentificationNumber() != null)
-                criteria.add(Restrictions
-                        .eq("projectcode.code", searchRequestLetterOfAcceptance.getWorkIdentificationNumber())
-                        .ignoreCase());
-            if (searchRequestLetterOfAcceptance.getDepartmentName() != null)
-                criteria.add(
-                        Restrictions.eq("executingDepartment.id", searchRequestLetterOfAcceptance.getDepartmentName()));
-            if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
-                criteria.add(Restrictions
-                        .eq("woeestimate.estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber())
-                        .ignoreCase());
-            if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
-                criteria.add(Restrictions.eq("wo.workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber())
-                        .ignoreCase());
-            if (searchRequestLetterOfAcceptance.getAdminSanctionFromDate() != null)
-                criteria.add(Restrictions.ge("lineestimate.adminSanctionDate",
-                        searchRequestLetterOfAcceptance.getAdminSanctionFromDate()));
-            if (searchRequestLetterOfAcceptance.getAdminSanctionToDate() != null)
-                criteria.add(Restrictions.le("lineestimate.adminSanctionDate",
-                        searchRequestLetterOfAcceptance.getAdminSanctionToDate()));
+            qry.setParameter("departmentName", searchRequestLetterOfAcceptance.getDepartmentName());
+            if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getWorkIdentificationNumber()))
+                qry.setParameter("workIdentificationNumber",
+                        searchRequestLetterOfAcceptance.getWorkIdentificationNumber().toUpperCase());
+            if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getEstimateNumber()))
+                qry.setParameter("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber().toUpperCase());
+            if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getWorkOrderNumber()))
+                qry.setParameter("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber().toUpperCase());
             if (searchRequestLetterOfAcceptance.getTypeOfWork() != null)
-                criteria.add(Restrictions.eq("woeestimate.parentCategory.id",
-                        searchRequestLetterOfAcceptance.getTypeOfWork()));
+                qry.setParameter("typeOfWork", searchRequestLetterOfAcceptance.getTypeOfWork());
             if (searchRequestLetterOfAcceptance.getSubTypeOfWork() != null)
-                criteria.add(
-                        Restrictions.eq("woeestimate.category.id", searchRequestLetterOfAcceptance.getSubTypeOfWork()));
+                qry.setParameter("subTypeOfWork", searchRequestLetterOfAcceptance.getSubTypeOfWork());
+            if (searchRequestLetterOfAcceptance.getAdminSanctionFromDate() != null)
+                qry.setParameter("adminSanctionFromDate", searchRequestLetterOfAcceptance.getAdminSanctionFromDate());
+            if (searchRequestLetterOfAcceptance.getAdminSanctionToDate() != null)
+                qry.setParameter("adminSanctionToDate", searchRequestLetterOfAcceptance.getAdminSanctionToDate());
+
         }
-        criteria.add(Restrictions.eq("status.code", WorksConstants.APPROVED));
-        criteria.add(Restrictions.isNull("ms.id"));
-
-        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-        return criteria.list();
-
+        return qry;
     }
 
     public Double getGrossBillAmountOfBillsCreated(final String workOrderNumber, final String status,
