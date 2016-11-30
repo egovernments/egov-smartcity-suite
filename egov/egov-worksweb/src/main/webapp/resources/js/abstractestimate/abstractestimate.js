@@ -1305,7 +1305,7 @@ function populateActivities(data, nonSorCheck){
 	var sorCount = 0;
 	var nonSorCount = 0;
 	$.each(responseObj, function(index,value) {
-		if(index==0){
+		if(sorCount==0 && responseObj[index].scheduleId != null){
 			$('#message').prop("hidden",true);
 			$('#sorRow').removeAttr("hidden");
 			$('#sorRow').removeAttr('sorinvisible');
@@ -1366,7 +1366,69 @@ function populateActivities(data, nonSorCheck){
 				});
 				$('#sorActivities\\[0\\]\\.msnet').html(total);
 			}
-		}else{
+		} else if(nonSorCount==0 && responseObj[index].scheduleId == null){
+			$('#nonSorMessage').prop("hidden",true);
+			$('#nonSorRow').removeAttr("hidden");
+			$('#nonSorRow').removeAttr('nonsorinvisible');
+			if (responseObj[index].ms != "") {
+				var newrow= $('#msheaderrowtemplate').html();
+				
+				newrow=  newrow.replace(/msrowtemplate/g, 'msrownonSorActivities[0]');
+				newrow=  newrow.replace(/templatesorActivities\[0\]/g, 'nonSorActivities[0]');
+				newrow = newrow.replace(/templatesorActivities_0/g, 'nonSorActivities_0');
+				newrow = newrow.replace(/templatemssubmit_0/g, 'mssubmit_0');
+				document.getElementById('nonSorActivities[0].mstd').innerHTML=newrow;
+				$(responseObj[index].ms).each(function(index, measurementSheet){
+					if (index > 0) {
+						var msrowname= "nonSorActivities[0].mstable";
+						var msrownameid=msrowname.split(".")[0];
+						var rep='measurementSheetList\['+ index +'\]';
+
+						var $newrow = "<tr>"+$('#msrowtemplate').html()+"</tr>";
+						$newrow = $newrow.replace(/templatesorActivities\[0\]/g,msrownameid);
+						$newrow = $newrow.replace(/measurementSheetList\[0\]/g,rep);
+						$newrow = $newrow.replace(/templatesorActivities_0/g, 'nonSorActivities_0');
+						$newrow = $newrow.replace(/measurementSheetList_0_id/g, 'measurementSheetList_' + index + '_id');
+						$newrow = $newrow.replace(/measurementSheetList_0_parent/g, 'measurementSheetList_' + index + '_parent');
+						$newrow = $newrow.replace('value="1"','value="'+(index+1)+'"');
+						$('#nonSorActivities\\[0\\]\\.mssubmit').closest('tr').before($newrow);
+						patternvalidation();
+					}
+					
+					$.each(measurementSheet, function(obj, value){
+						if(obj == "identifier") {
+							if(value == 'A')
+								document.getElementById('nonSorActivities[0].measurementSheetList[' + index + '].' + obj).options[0].setAttribute('selected', 'selected');
+							else
+								document.getElementById('nonSorActivities[0].measurementSheetList[' + index + '].' + obj).options[1].setAttribute('selected', 'selected');
+						} else if(obj == 'remarks') {
+							$('#nonSorActivities\\[0\\]\\.measurementSheetList\\[' + index + '\\]\\.' + obj).html(value);
+						} else {
+							$('#nonSorActivities\\[0\\]\\.measurementSheetList\\[' + index + '\\]\\.' + obj).attr('value', value);
+							if(obj != "slNo" && obj != "remarks"){
+								document.getElementById('nonSorActivities[0].measurementSheetList[' + index + '].' + obj).setAttribute('data-' + obj, value);
+							}
+						}
+					});
+					
+				});
+				var total = 0;
+				var identifier;
+				$(responseObj[index].ms).each(function(index, measurementSheet){
+					if(document.getElementById('nonSorActivities[0].measurementSheetList[' + index + '].identifier').value=='A')
+						identifier = "A";
+					else
+						identifier = "D";
+					var quantity = document.getElementById('nonSorActivities[0].measurementSheetList[' + index + '].quantity').value;
+					if(identifier == "A")
+						total = total + Number(quantity);
+					else
+						total = total - Number(quantity);
+				});
+				$('#nonSorActivities\\[0\\]\\.msnet').html(total);
+			}
+			nonSorCheck = true;
+		} else{
 			if(responseObj[index].scheduleId != null){
 				var key = $("#tblsor tbody tr:visible[id='sorRow']").length;
 				addRow('tblsor', 'sorRow');
@@ -1625,7 +1687,7 @@ function populateActivities(data, nonSorCheck){
 			$('#nonSorDesc_'+nonSorCount).val(responseObj[index].nonSorDescription);
 			$('#nonSorUom_'+nonSorCount).val(responseObj[index].nonSorUomId);
 			$('#nonSorUomid_'+nonSorCount).val(responseObj[index].nonSorUomId);
-			$('#nonSorEstimateRate_'+nonSorCount).val(responseObj[index].nonSorRate); 
+			$('#nonSorEstimateRate_'+nonSorCount).val(parseFloat(responseObj[index].nonSorRate).toFixed(2)); 
 			$('#nonSorRate_'+nonSorCount).val(getUnitRate(responseObj[index].nonSorUom,responseObj[index].nonSorRate));
 			if (responseObj[index].nonSorQuantity != null) {
 				$('#nonSorQuantity_'+nonSorCount).val(responseObj[index].nonSorQuantity);
