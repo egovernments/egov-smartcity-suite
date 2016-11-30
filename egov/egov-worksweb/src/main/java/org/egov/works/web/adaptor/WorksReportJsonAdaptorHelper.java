@@ -135,27 +135,39 @@ public class WorksReportJsonAdaptorHelper {
         if (response.getDec01to15target() != null && !response.getDec01to15target().isNaN())
             jsonObject.addProperty(DEC_01_TO_15_TARGET,
                     BigDecimal.valueOf(response.getDec01to15target()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(DEC_01_TO_15_TARGET, "0.00");
         if (response.getDec01to15actual() != null && !response.getDec01to15actual().isNaN())
             jsonObject.addProperty(DEC_01_TO_15_ACTUAL,
                     BigDecimal.valueOf(response.getDec01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(DEC_01_TO_15_ACTUAL, "0.00");
         if (response.getDec01to15variance() != null)
             jsonObject.addProperty(DEC_01_TO_15_VARIANCE,
                     BigDecimal.valueOf(response.getDec01to15variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
+        else
+            jsonObject.addProperty(DEC_01_TO_15_VARIANCE, "0.00");
 
         if (currentDate.getDayOfMonth() > 15) {
             if (response.getDec16to31target() != null && !response.getDec16to31target().isNaN())
                 jsonObject.addProperty(DEC_16_TO_31_TARGET,
                         BigDecimal.valueOf(response.getDec16to31target()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(DEC_16_TO_31_TARGET, "0.00");
             if (response.getDec16to31actual() != null && !response.getDec16to31actual().isNaN())
                 jsonObject.addProperty(DEC_16_TO_31_ACTUAL,
                         BigDecimal.valueOf(response.getDec16to31actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(DEC_16_TO_31_ACTUAL, "0.00");
             if (response.getDec16to31variance() != null)
                 jsonObject.addProperty(DEC_16_TO_31_VARIANCE,
                         BigDecimal.valueOf(response.getDec16to31variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(DEC_16_TO_31_VARIANCE, "0.00");
 
             if (response.getDec16to31actual() != null && !response.getDec16to31actual().isNaN()) {
                 if (response.getDec16to31target() != null && !response.getDec16to31target().isNaN()
@@ -1054,25 +1066,37 @@ public class WorksReportJsonAdaptorHelper {
         if (response.getNov01to15target() != null && !response.getNov01to15target().isNaN())
             jsonObject.addProperty(NOV_01_TO_15_TARGET,
                     BigDecimal.valueOf(response.getNov01to15target()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(NOV_01_TO_15_TARGET, "0.00");
         if (response.getNov01to15actual() != null && !response.getNov01to15actual().isNaN())
             jsonObject.addProperty(NOV_01_TO_15_ACTUAL,
                     BigDecimal.valueOf(response.getNov01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(NOV_01_TO_15_ACTUAL, "0.00");
         if (response.getNov01to15variance() != null)
             jsonObject.addProperty(NOV_01_TO_15_VARIANCE,
                     BigDecimal.valueOf(response.getNov01to15variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
+        else
+            jsonObject.addProperty(NOV_01_TO_15_VARIANCE, "0.00");
         if (response.getNov16to30target() != null && !response.getNov16to30target().isNaN())
             jsonObject.addProperty(NOV_16_TO_30_TARGET,
                     BigDecimal.valueOf(response.getNov16to30target()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
+        else
+            jsonObject.addProperty(NOV_16_TO_30_TARGET, "0.00");
         if (response.getNov16to30actual() != null && !response.getNov16to30actual().isNaN())
             jsonObject.addProperty(NOV_16_TO_30_ACTUAL,
                     BigDecimal.valueOf(response.getNov16to30actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
+        else
+            jsonObject.addProperty(NOV_16_TO_30_ACTUAL, "0.00");
         if (response.getNov16to30variance() != null)
             jsonObject.addProperty(NOV_16_TO_30_VARIANCE,
                     BigDecimal.valueOf(response.getNov16to30variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
+        else
+            jsonObject.addProperty(NOV_16_TO_30_VARIANCE, "0.00");
     }
 
     private void prepareDecemberData(final JsonObject jsonObject, final WorksMilestoneIndexResponse response) {

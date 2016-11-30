@@ -150,6 +150,9 @@ public class ComplaintIndexService {
         else if (complaint.getReceivingMode().equals(ReceivingMode.WEBSITE)
                 && complaint.getCreatedBy().getType().equals(UserType.SYSTEM))
             complaintIndex.setSource(environment.getProperty("complaint.source.portal.anonymous"));
+        else if (complaint.getReceivingMode().equals(ReceivingMode.CDMA)
+                && complaint.getCreatedBy().getType().equals(UserType.SYSTEM))
+            complaintIndex.setSource(environment.getProperty("complaint.source.cdma.anonymous"));
         else if (complaint.getReceivingMode().equals(ReceivingMode.WEBSITE)
                 && complaint.getCreatedBy().getType().equals(UserType.EMPLOYEE))
             complaintIndex.setSource(environment.getProperty("complaint.source.emp.website"));

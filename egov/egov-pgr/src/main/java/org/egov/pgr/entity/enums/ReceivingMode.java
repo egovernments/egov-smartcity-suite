@@ -46,7 +46,7 @@ import org.apache.commons.lang3.StringUtils;
 // enum
 // since we are asking hibernate use its ordinal to be persisted
 public enum ReceivingMode {
-    WEBSITE, SMS, CALL, EMAIL, MANUAL, MOBILE;
+    WEBSITE, SMS, CALL, EMAIL, MANUAL, MOBILE, CDMA;
     @Override
     public String toString() {
         return StringUtils.capitalize(name());

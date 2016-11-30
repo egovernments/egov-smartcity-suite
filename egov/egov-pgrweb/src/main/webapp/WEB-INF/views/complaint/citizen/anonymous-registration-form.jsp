@@ -197,6 +197,7 @@
 								<input id="location" type="text" value="${crossHierarchyLocation}" class="form-control low-width" placeholder='<spring:message code="lbl.placeholder.grievance.loc"/>' autocomplete="off" required="required"/>
 								<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="fa fa-map-marker specific"></i></span>
 								<form:hidden path="location" id="locationid"/>
+                                <form:hidden path="receivingMode" id="receivingMode"/>
 								<form:hidden path="crossHierarchyId" id="crosshierarchyId"/>
 				   				<form:hidden path="lat" id="lat"/>
                    				<form:hidden path="lng" id="lng"/>
