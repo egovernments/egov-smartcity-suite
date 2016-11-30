@@ -72,6 +72,8 @@ import com.google.gson.GsonBuilder;
 @RequestMapping("/bank")
 public class BankController {
 
+    private static final String BANK = "bank";
+
     @Autowired
     private CreateBankService createBankService;
 
@@ -80,28 +82,28 @@ public class BankController {
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
-        model.addAttribute("bank", new Bank());
+        model.addAttribute(BANK, new Bank());
         return "bank-new";
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Integer id, final Model model) {
         final Bank bank = createBankService.getById(id);
-        model.addAttribute("bank", bank);
+        model.addAttribute(BANK, bank);
         return "bank-update";
     }
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String view(@PathVariable("id") final Integer id, final Model model) {
         final Bank bank = createBankService.getById(id);
-        model.addAttribute("bank", bank);
+        model.addAttribute(BANK, bank);
         return "bank-view";
     }
 
     @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
     public String search(@PathVariable("mode") final String mode, final Model model) {
         final Bank bank = new Bank();
-        model.addAttribute("bank", bank);
+        model.addAttribute(BANK, bank);
         return "bank-search";
 
     }
@@ -109,7 +111,7 @@ public class BankController {
     @RequestMapping(value = "/success/{id}", method = RequestMethod.GET)
     public String success(@PathVariable("id") final Integer id, final Model model) {
         final Bank bank = createBankService.getById(id);
-        model.addAttribute("bank", bank);
+        model.addAttribute(BANK, bank);
         return "bank-success";
     }
 
