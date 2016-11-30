@@ -65,8 +65,7 @@ public class SewerageConnectionHelperAdopter implements JsonSerializer<SewerageN
             jsonObject.addProperty("closeconnection", drillDownReportObject.getCloseconnection() != null ? drillDownReportObject
                     .getCloseconnection().toString() : "0");
             jsonObject.addProperty("total",
-                    drillDownReportObject.getTotal() != null ? drillDownReportObject.getNewconnection()
-                            .add(drillDownReportObject.getChangeinclosets().add(drillDownReportObject.getCloseconnection()))
+                    drillDownReportObject.getTotal() != null ? drillDownReportObject.getTotal()
                             .toString() : "0");
         }
         return jsonObject;

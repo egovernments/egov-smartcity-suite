@@ -45,16 +45,9 @@ jQuery(document).ready(function($){
 	$("#drilldownReportSearch").click(function(){
 		var ward = $("#ward").val();
 		var block = $("#block").val();
-		var locality ="";
+		var locality =$("#locality").val();
 		callAjaxDataTableForReport(ward,block,locality);
 	});
-	$("#searchByLocality").click(function(){
-		var ward = "";
-		var block = "";
-		var locality = $("#locality").val();
-		callAjaxDataTableForReport(ward,block,locality);
-	});
-	
 });
 
 var reportdatatable;
@@ -72,37 +65,20 @@ function callAjaxDataTableForReport(ward,block,locality){
 						'locality' : locality
 					}
 				},
-				"autoWidth" : false,
 				"bDestroy" : true,
-				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+				"autoWidth" : false,
+				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
 					"aButtons" : [ "xls", "pdf", "print" ]
 				},
 				columns : [
-						{
-							"data" : "name",
-							"sTitle" : "Boundary Name",
-							"className": "text-right"
-						}, {
-							"data" : "newconnection",
-							"sTitle" : "New Connection",
-							"className": "text-right"
-						}, {
-							"data" : "changeinclosets",
-							"sTitle" : "Change In Closets",
-							"className": "text-right"
-						}, {
-							"data" : "closeconnection",
-							"sTitle" : "Close Connection",
-							"className": "text-right"
-
-						}, {
-							"data" : "total",
-							"sTitle" : "Total",
-							"className": "text-right"
-
+					    { "data" : "name", "title":"Boundary Name"},
+					    { "data" : "newconnection", "title":"New Connection"},
+					    { "data" : "changeinclosets", "title":"Change In Closets"},
+					    { "data" : "closeconnection", "title":"Close Connection"},
+					    { "data" : "total", "title":"Total"
 						}],
 				"footerCallback" : function(row, data, start, end, display) {
 					var api = this.api(), data;
@@ -142,10 +118,10 @@ $('#ward').change(function(){
 			jQuery('#block').html("");
 			jQuery('#block').append("<option value=''>Select</option>");
 			jQuery.each(response, function(index, value) {
-				jQuery('#block').append($('<option>').text(value.blockName).attr('value', value.blockId));
+				jQuery('#block').append($('<option>').text(value.blockName).attr('value', value.blockName));
 			});
 		}, 
-		error: function (response) {
+		error: function () {
 			jQuery('#block').html("");
 			jQuery('#block').append("<option value=''>Select</option>");
 		}

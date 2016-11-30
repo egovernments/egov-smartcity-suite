@@ -298,4 +298,9 @@ public class SewerageTaxConstants {
     public static final String NONRESIDENTIAL = "NON_RESIDENTIAL";
     public static final String MIXED = "MIXED";
     public static final String ALL = "ALL";
+
+    public static final String APPLICATION_TYPE_NAME_NEWCONNECTION = "New Sewerage Connection";
+    public static final String APPLICATION_TYPE_NAME_CHANGEINCLOSETS = "Change In Closets";
+    public static final String APPLICATION_TYPE_NAME_CLOSECONNECTION = "Close Sewerage Connection";
+    public static final String GROUPBYFIELD = "groupByField";
 }

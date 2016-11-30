@@ -66,7 +66,7 @@
 								<label for="field-1" class="col-sm-5 control-label"><spring:message
 										code="lbl.ward" /></label>
 								<div class="col-sm-3 add-margin">
-									<form:select name="ward" id="ward" path=""
+									<form:select name="ward" id="ward" path="ward"
 										cssClass="form-control" cssErrorClass="form-control error">
 										<form:option value="">
 									Select
@@ -91,17 +91,6 @@
 								</div>
 							</div>
 						</div>
-						<div class="row">
-
-							<div class="text-center">
-								<button type="button" id="drilldownReportSearch"
-									class="btn btn-primary">Search</button>
-								<%-- <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
-								<a href="javascript:void(0)" class="btn btn-default"
-									onclick="self.close()"> <spring:message code="lbl.close" /></a> --%>
-							</div>
-						</div>
-						<br/>
 						<div class="panel-body custom-form">
 							<div class="form-group">
 								<label for="field-1" class="col-sm-5 control-label"><spring:message
@@ -112,7 +101,7 @@
 										<form:option value="">
 											Select
 										</form:option>
-										<form:options items="${localities}" itemValue="id"
+										<form:options items="${localities}" itemValue="name"
 											itemLabel="name" />
 									</form:select>
 								</div>
@@ -121,7 +110,7 @@
 						<div class="row">
 
 						<div class="text-center">
-							<button type="button" id="searchByLocality"
+							<button type="button" id="drilldownReportSearch"
 								class=" btn btn-primary">Search</button>
 							<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"></spring:message></button>
 							<a href="javascript:void(0)" class="btn btn-default"

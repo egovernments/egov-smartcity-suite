@@ -58,10 +58,8 @@ import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.stms.reports.entity.SewerageNoOfConnReportResult;
-import org.egov.stms.reports.service.SewerageBoundaryWiseConnReportService;
+import org.egov.stms.service.es.SewerageIndexService;
 import org.egov.stms.utils.SewerageConnectionHelperAdopter;
-import org.hibernate.SQLQuery;
-import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -81,7 +79,7 @@ public class SewerageConnReportSearchController {
     private BoundaryService boundaryService;
 
     @Autowired
-    private SewerageBoundaryWiseConnReportService sewerageBoundaryWiseService;
+    private SewerageIndexService sewerageIndexService;
 
     @ModelAttribute("ward")
     public List<Boundary> getBoundary() {
@@ -106,24 +104,22 @@ public class SewerageConnReportSearchController {
         return "sewerage-connection-report-search";
     }
 
-    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/view-no-of-application", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public void viewSewerageConnections(@RequestParam("ward") final String ward, @RequestParam("block") final String block,
             @RequestParam("locality") final String locality, final HttpServletRequest request,
             final HttpServletResponse response) {
-        Boundary localityBoundary = null;
-        String localityName = null;
-        SQLQuery connectionSearchQuery;
+        String wardName = null;
         String result;
-        if (locality != null)
-            localityBoundary = boundaryService.getBoundaryById(Long.valueOf(locality));
-        if (localityBoundary != null)
-            localityName = localityBoundary.getLocalName();
-        connectionSearchQuery = sewerageBoundaryWiseService.getNoOfConnectionReport(ward, block, localityName);
-        connectionSearchQuery.setResultTransformer(Transformers.aliasToBean(SewerageNoOfConnReportResult.class));
-        final List<SewerageNoOfConnReportResult> resultList = connectionSearchQuery.list();
-        result = new StringBuilder("{ \"data\":").append(toJSON(resultList, SewerageNoOfConnReportResult.class,
+        if (ward != null) {
+            final Boundary boundary = boundaryService.getBoundaryById(Long.valueOf(ward));
+            wardName = boundary.getName();
+        }
+
+        final List<SewerageNoOfConnReportResult> reportList = sewerageIndexService.searchNoOfApplnQuery(wardName, block,
+                locality);
+
+        result = new StringBuilder("{ \"data\":").append(toJSON(reportList, SewerageNoOfConnReportResult.class,
                 SewerageConnectionHelperAdopter.class)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         try {
@@ -133,5 +129,4 @@ public class SewerageConnReportSearchController {
                 LOG.error("IO Exception " + e);
         }
     }
-
 }

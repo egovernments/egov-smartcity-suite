@@ -40,7 +40,11 @@
 
 package org.egov.stms.service.es;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYPE_NAME_CHANGEINCLOSETS;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYPE_NAME_CLOSECONNECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYPE_NAME_NEWCONNECTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.GROUPBYFIELD;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -64,12 +68,19 @@ import org.egov.stms.elasticSearch.entity.SewerageCollectFeeSearchRequest;
 import org.egov.stms.elasticSearch.entity.SewerageConnSearchRequest;
 import org.egov.stms.elasticSearch.entity.SewerageNoticeSearchRequest;
 import org.egov.stms.entity.es.SewerageIndex;
+import org.egov.stms.reports.entity.SewerageNoOfConnReportResult;
 import org.egov.stms.repository.es.SewerageIndexRepository;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.DateTime;
@@ -168,6 +179,10 @@ public class SewerageIndexService {
         sewarageIndex.setDoorNo(assessmentDetails.getHouseNo() != null ? assessmentDetails.getHouseNo() : "");
         sewarageIndex.setWard(
                 assessmentDetails.getBoundaryDetails() != null ? assessmentDetails.getBoundaryDetails().getWardName() : "");
+        sewarageIndex.setRevenueBlock(
+                assessmentDetails.getBoundaryDetails() != null ? assessmentDetails.getBoundaryDetails().getBlockName() : "");
+        sewarageIndex.setLocationName(
+                assessmentDetails.getBoundaryDetails() != null ? assessmentDetails.getBoundaryDetails().getLocalityName() : "");
         sewarageIndex
                 .setAddress(assessmentDetails.getPropertyAddress() != null ? assessmentDetails.getPropertyAddress() : "");
         // Setting application status is active or in-active
@@ -418,5 +433,58 @@ public class SewerageIndexService {
             }
         }
         return resultMap;
+    }
+
+    public List<SewerageNoOfConnReportResult> searchNoOfApplnQuery(final String ward, final String block, final String locality) {
+        final List<SewerageNoOfConnReportResult> resultList = new ArrayList<>();
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+                .filter(QueryBuilders.matchQuery("ulbName", ApplicationThreadLocals.getCityName()));
+        boolQuery = boolQuery.filter(QueryBuilders.matchQuery("active", true));
+        if (StringUtils.isNotBlank(ward))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ward", ward));
+        if (StringUtils.isNotBlank(block))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("revenueBlock", block));
+        if (StringUtils.isNotBlank(locality))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("locationName", locality));
+
+        final SearchResponse consolidatedResponse = elasticsearchTemplate.getClient().prepareSearch("sewerage")
+                .setQuery(boolQuery).addAggregation(getCountWithGroupingWardAndOrder(GROUPBYFIELD, "ward", "ward", "desc")
+                        .subAggregation(getCountWithGroupingWardAndOrder(GROUPBYFIELD, "applicationType", "ward", "desc")))
+                .execute().actionGet();
+
+        final Terms terms = consolidatedResponse.getAggregations().get(GROUPBYFIELD);
+
+        for (final Bucket bucket : terms.getBuckets()) {
+            final SewerageNoOfConnReportResult resultObject = new SewerageNoOfConnReportResult();
+            resultObject.setName(bucket.getKey().toString());
+
+            final Terms subTerms = bucket.getAggregations().get(GROUPBYFIELD);
+            for (final Bucket bucket1 : subTerms.getBuckets()) {
+                if (APPLICATION_TYPE_NAME_NEWCONNECTION.equals(bucket1.getKey()))
+                    resultObject.setNewconnection(bucket1.getDocCount());
+                if (APPLICATION_TYPE_NAME_CHANGEINCLOSETS.equals(bucket1.getKey()))
+                    resultObject.setChangeinclosets(bucket1.getDocCount());
+                if (APPLICATION_TYPE_NAME_CLOSECONNECTION.equals(bucket1.getKey()))
+                    resultObject.setCloseconnection(bucket1.getDocCount());
+                resultObject.setTotal(
+                        resultObject.getNewconnection() + resultObject.getChangeinclosets() + resultObject.getCloseconnection());
+            }
+            resultList.add(resultObject);
+        }
+        return resultList;
+    }
+
+    public static AggregationBuilder getCountWithGroupingWardAndOrder(final String aggregationName, final String fieldName,
+            final String sortField, final String sortOrder) {
+
+        final TermsBuilder aggregation = AggregationBuilders.terms(aggregationName).field(fieldName);
+        if (StringUtils.isNotBlank(sortField) && StringUtils.isNotEmpty(sortField) && "ward".equalsIgnoreCase(sortField)) {
+            Boolean order = true;
+            if (StringUtils.isNotEmpty(sortOrder) && StringUtils.isNotBlank(sortOrder)
+                    && StringUtils.equalsIgnoreCase(sortOrder, "desc"))
+                order = false;
+            aggregation.order(Terms.Order.aggregation("_count", order));
+        }
+        return aggregation;
     }
 }
