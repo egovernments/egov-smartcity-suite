@@ -53,6 +53,7 @@ import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.wtms.bean.dashboard.TaxPayerResponseDetails;
+import org.egov.wtms.bean.dashboard.WaterChargeConnectionTypeResponse;
 import org.egov.wtms.bean.dashboard.WaterChargeDashBoardRequest;
 import org.egov.wtms.bean.dashboard.WaterChargeDashBoardResponse;
 import org.egov.wtms.bean.dashboard.WaterTaxDefaulters;
@@ -109,6 +110,26 @@ public class WaterChargeDashboardService {
 
         final List<WaterChargeDashBoardResponse> collIndexData = waterChargeCollDocService
                 .getResponseTableData(waterChargeDashBoardRequest);
+
+        responsemap.put("collectionWtTotal", collectionTotalResponseList);
+        responsemap.put("collTrends", collectionTrends);
+        responsemap.put("responseDetails", collIndexData);
+
+        return responsemap;
+    }
+    
+    public Map<String, List<WaterChargeConnectionTypeResponse>> getCollectionTypeIndexDetails(
+            final WaterChargeDashBoardRequest waterChargeDashBoardRequest) {
+
+        final Map<String, List<WaterChargeConnectionTypeResponse>> responsemap = new HashMap<>();
+       final List<WaterChargeConnectionTypeResponse> collectionTotalResponseList = waterChargeCollDocService
+                .getFullCollectionIndexDtlsForCOnnectionType(waterChargeDashBoardRequest);
+
+        final List<WaterChargeConnectionTypeResponse> collectionTrends = waterChargeCollDocService
+                .getMonthwiseCollectionDetailsForConnectionType(waterChargeDashBoardRequest);
+
+        final List<WaterChargeConnectionTypeResponse> collIndexData = waterChargeCollDocService
+                .gettempMethod(waterChargeDashBoardRequest);
 
         responsemap.put("collectionWtTotal", collectionTotalResponseList);
         responsemap.put("collTrends", collectionTrends);

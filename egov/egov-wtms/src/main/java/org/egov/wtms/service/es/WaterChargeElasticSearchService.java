@@ -243,7 +243,8 @@ public class WaterChargeElasticSearchService {
             // Get ward wise tax payers details
             prepareWardWiseWaterTaxPayerDetails(wardWiseTaxProducers, wardWiseTaxPayersDetails);
             // Group the revenue ward details by bill collector
-            prepareBillCollectorWiseMapData(waterChargedashBoardRequest, wardWiseTaxPayersDetails, billCollectorWiseMap);
+            prepareBillCollectorWiseMapData(waterChargedashBoardRequest, wardWiseTaxPayersDetails,
+                    billCollectorWiseMap);
             // Prepare Bill Collector wise tax payers details
             prepareTaxersInfoForBillCollectors(waterChargedashBoardRequest, billCollectorWiseMap,
                     billCollectorWiseWaterTaxPayerDetails);
@@ -283,7 +284,8 @@ public class WaterChargeElasticSearchService {
             // Get ward wise tax payers details
             prepareWardWiseWaterTaxPayerDetails(wardWiseTaxProducers, wardWiseTaxPayersDetails);
             // Group the revenue ward details by bill collector
-            prepareBillCollectorWiseMapData(waterChargedashBoardRequest, wardWiseTaxPayersDetails, billCollectorWiseMap);
+            prepareBillCollectorWiseMapData(waterChargedashBoardRequest, wardWiseTaxPayersDetails,
+                    billCollectorWiseMap);
             // Prepare Bill Collector wise tax payers details
             prepareTaxersInfoForBillCollectors(waterChargedashBoardRequest, billCollectorWiseMap,
                     billCollectorWiseWaterTaxPayerDetails);
@@ -447,8 +449,9 @@ public class WaterChargeElasticSearchService {
      */
     private void prepareBillCollectorWiseMapData(final WaterChargeDashBoardRequest waterChargedashBoardRequest,
             final Map<String, WaterTaxPayerDetails> wardWiseTaxPayersDetails,
-            final Map<String, List<WaterTaxPayerDetails>> billCollectorWiseMap ) {
-         List<WaterTaxPayerDetails> WaterTaxPayerDetailsList =new ArrayList<>();;
+            final Map<String, List<WaterTaxPayerDetails>> billCollectorWiseMap) {
+        final List<WaterTaxPayerDetails> WaterTaxPayerDetailsList = new ArrayList<>();
+        ;
         List<WaterTaxPayerDetails> WaterTaxPayerDetailsListTemp;
 
         final List<BillCollectorIndex> billCollectorsList = waterChargeCollDocService
@@ -573,8 +576,8 @@ public class WaterChargeElasticSearchService {
         final Page<WaterChargeDocument> waterChargeRecords = elasticsearchTemplate.queryForPage(searchQuery,
                 WaterChargeDocument.class);
         Long timeTaken = System.currentTimeMillis() - startTime;
-        if(LOGGER.isDebugEnabled())
-        LOGGER.debug("Time taken by defaulters aggregation is   (millisecs) " + timeTaken );
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken by defaulters aggregation is   (millisecs) " + timeTaken);
 
         final List<WaterTaxDefaulters> taxDefaulters = new ArrayList<>();
         WaterTaxDefaulters taxDfaulter;
@@ -605,20 +608,20 @@ public class WaterChargeElasticSearchService {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.rangeQuery(TOTAL_DEMAND).from(0).to(null));
         if (StringUtils.isNotBlank(waterChargeDefaultersRequest.getRegionName()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery(WaterTaxConstants.REGIONNAMEAGGREGATIONFIELD, waterChargeDefaultersRequest.getRegionName()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WaterTaxConstants.REGIONNAMEAGGREGATIONFIELD,
+                    waterChargeDefaultersRequest.getRegionName()));
         if (StringUtils.isNotBlank(waterChargeDefaultersRequest.getDistrictName()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery(WaterTaxConstants.DISTRICTNAMEAGGREGATIONFIELD, waterChargeDefaultersRequest.getDistrictName()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WaterTaxConstants.DISTRICTNAMEAGGREGATIONFIELD,
+                    waterChargeDefaultersRequest.getDistrictName()));
         if (StringUtils.isNotBlank(waterChargeDefaultersRequest.getUlbCode()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery(WaterTaxConstants.CITYCODEAGGREGATIONFIELD, waterChargeDefaultersRequest.getUlbCode()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WaterTaxConstants.CITYCODEAGGREGATIONFIELD,
+                    waterChargeDefaultersRequest.getUlbCode()));
         if (StringUtils.isNotBlank(waterChargeDefaultersRequest.getUlbGrade()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery(WaterTaxConstants.CITYGRADEAGGREGATIONFIELD, waterChargeDefaultersRequest.getUlbGrade()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WaterTaxConstants.CITYGRADEAGGREGATIONFIELD,
+                    waterChargeDefaultersRequest.getUlbGrade()));
         if (StringUtils.isNotBlank(waterChargeDefaultersRequest.getWardName()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery(WaterTaxConstants.REVENUEWARDAGGREGATIONFIELD, waterChargeDefaultersRequest.getWardName()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WaterTaxConstants.REVENUEWARDAGGREGATIONFIELD,
+                    waterChargeDefaultersRequest.getWardName()));
         boolQuery = filterBoolQueryByTypeForDefaulters(waterChargeDefaultersRequest, boolQuery);
 
         return boolQuery;
@@ -629,26 +632,24 @@ public class WaterChargeElasticSearchService {
         if (StringUtils.isNotBlank(waterChargeDefaultersRequest.getType()))
             if (waterChargeDefaultersRequest.getType().equalsIgnoreCase(WaterTaxConstants.DASHBOARD_GROUPING_REGIONWISE)
                     && StringUtils.isNotBlank(waterChargeDefaultersRequest.getRegionName()))
-                boolQuery = boolQuery
-                        .filter(QueryBuilders.matchQuery(WaterTaxConstants.REGIONNAMEAGGREGATIONFIELD, waterChargeDefaultersRequest.getRegionName()));
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WaterTaxConstants.REGIONNAMEAGGREGATIONFIELD,
+                        waterChargeDefaultersRequest.getRegionName()));
             else if (waterChargeDefaultersRequest.getType()
                     .equalsIgnoreCase(WaterTaxConstants.DASHBOARD_GROUPING_DISTRICTWISE)
                     && StringUtils.isNotBlank(waterChargeDefaultersRequest.getDistrictName()))
-                boolQuery = boolQuery.filter(
-                        QueryBuilders.matchQuery(WaterTaxConstants.DISTRICTNAMEAGGREGATIONFIELD, waterChargeDefaultersRequest.getDistrictName()));
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WaterTaxConstants.DISTRICTNAMEAGGREGATIONFIELD,
+                        waterChargeDefaultersRequest.getDistrictName()));
             else if (waterChargeDefaultersRequest.getType()
                     .equalsIgnoreCase(WaterTaxConstants.DASHBOARD_GROUPING_CITYWISE)
                     && StringUtils.isNotBlank(waterChargeDefaultersRequest.getUlbCode()))
-                boolQuery = boolQuery
-                        .filter(QueryBuilders.matchQuery(WaterTaxConstants.CITYCODEAGGREGATIONFIELD, waterChargeDefaultersRequest.getUlbCode()));
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WaterTaxConstants.CITYCODEAGGREGATIONFIELD,
+                        waterChargeDefaultersRequest.getUlbCode()));
             else if (waterChargeDefaultersRequest.getType()
                     .equalsIgnoreCase(WaterTaxConstants.DASHBOARD_GROUPING_GRADEWISE)
                     && StringUtils.isNotBlank(waterChargeDefaultersRequest.getUlbGrade()))
-                boolQuery = boolQuery
-                        .filter(QueryBuilders.matchQuery(WaterTaxConstants.CITYGRADEAGGREGATIONFIELD, waterChargeDefaultersRequest.getUlbGrade()));
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WaterTaxConstants.CITYGRADEAGGREGATIONFIELD,
+                        waterChargeDefaultersRequest.getUlbGrade()));
         return boolQuery;
     }
-
-    
 
 }
