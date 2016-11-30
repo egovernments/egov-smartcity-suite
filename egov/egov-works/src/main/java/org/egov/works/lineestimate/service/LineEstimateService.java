@@ -195,6 +195,7 @@ public class LineEstimateService {
         lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                 LineEstimateStatus.CREATED.toString()));
         final CFinancialYear financialYear = getCurrentFinancialYear(lineEstimate.getLineEstimateDate());
+        mergeLineEstimateDetails(lineEstimate);
         for (final LineEstimateDetails lineEstimateDetail : lineEstimate.getLineEstimateDetails()) {
             final EstimateNumberGenerator e = beanResolver.getAutoNumberServiceFor(EstimateNumberGenerator.class);
             final String estimateNumber = e.getNextNumber(lineEstimate, financialYear);
@@ -227,6 +228,7 @@ public class LineEstimateService {
 
     private LineEstimate update(final LineEstimate lineEstimate, final String removedLineEstimateDetailsIds,
             final MultipartFile[] files, final CFinancialYear financialYear) throws IOException {
+        mergeLineEstimateDetails(lineEstimate);
         for (final LineEstimateDetails lineEstimateDetails : lineEstimate.getLineEstimateDetails())
             if (lineEstimateDetails != null && lineEstimateDetails.getId() == null) {
                 final EstimateNumberGenerator e = beanResolver.getAutoNumberServiceFor(EstimateNumberGenerator.class);
@@ -977,6 +979,25 @@ public class LineEstimateService {
 
         }
         return qry;
+    }
+
+    private void mergeLineEstimateDetails(final LineEstimate lineEstimate) {
+        for (final LineEstimateDetails details : lineEstimate.getTempLineEstimateDetails())
+            if (details.getId() == null) {
+                details.setLineEstimate(lineEstimate);
+                lineEstimate.getLineEstimateDetails().add(details);
+            } else
+                for (final LineEstimateDetails oldDetails : lineEstimate.getLineEstimateDetails())
+                    if (oldDetails.getId().equals(details.getId()))
+                        updateLineEstimateDetailsValues(oldDetails, details);
+    }
+
+    public void updateLineEstimateDetailsValues(final LineEstimateDetails oldDetails, final LineEstimateDetails details) {
+        oldDetails.setNameOfWork(details.getNameOfWork());
+        oldDetails.setUom(details.getUom());
+        oldDetails.setEstimateAmount(details.getEstimateAmount());
+        oldDetails.setBeneficiary(details.getBeneficiary());
+        oldDetails.setQuantity(details.getQuantity());
     }
 
 }

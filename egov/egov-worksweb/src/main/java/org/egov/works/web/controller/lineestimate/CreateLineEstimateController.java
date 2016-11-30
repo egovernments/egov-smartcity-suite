@@ -156,7 +156,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             lineEstimate.setExecutingDepartment(departments.get(0));
 
         model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
-
+        lineEstimate.setTempLineEstimateDetails(lineEstimate.getLineEstimateDetails());
         prepareWorkflow(model, lineEstimate, new WorkflowContainer());
 
         model.addAttribute("mode", null);

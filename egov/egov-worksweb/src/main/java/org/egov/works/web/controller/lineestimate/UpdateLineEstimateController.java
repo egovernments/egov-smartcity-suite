@@ -60,7 +60,6 @@ import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
@@ -158,6 +157,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             final HttpServletRequest request)
             throws ApplicationException {
         final LineEstimate lineEstimate = getLineEstimate(lineEstimateId);
+        lineEstimate.setTempLineEstimateDetails(lineEstimate.getLineEstimateDetails());
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString()))
             setDropDownValues(model);
         model.addAttribute("adminsanctionbydesignation", worksUtils.getUserDesignation(lineEstimate.getAdminSanctionBy()));
@@ -225,13 +225,13 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             validateAdminSanctionDetail(lineEstimate, errors);
 
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CHECKED.toString())
-                && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString())) {
+                && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString()))
             if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                     .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
                 validateBudgetAmount(lineEstimate, errors);
-        }
         if (errors.hasErrors()) {
             setDropDownValues(model);
+            model.addAttribute("removedLineEstimateDetailsIds", removedLineEstimateDetailsIds);
             return loadViewData(model, request, lineEstimate);
         } else {
             if (null != workFlowAction)
