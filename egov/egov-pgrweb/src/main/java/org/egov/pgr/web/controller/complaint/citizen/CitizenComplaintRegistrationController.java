@@ -137,9 +137,6 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
         if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
             resultBinder.rejectValue("location", "location.required");
 
-        /*if(request.getParameter("source") != null && !request.getParameter("source").trim().isEmpty())
-            complaint.setReceivingMode(ReceivingMode.CDMA);*/
-
         if (resultBinder.hasErrors()) {
             if (null != complaint.getCrossHierarchyId())
                 model.addAttribute("crossHierarchyLocation",
