@@ -254,6 +254,9 @@ public class LineEstimate extends StateAware {
     @Temporal(TemporalType.DATE)
     private Date governmentApprovalDate;
 
+    @Transient
+    private List<LineEstimateDetails> tempLineEstimateDetails = new ArrayList<LineEstimateDetails>(0);
+
     @Override
     public Long getId() {
         return id;
@@ -630,6 +633,14 @@ public class LineEstimate extends StateAware {
 
     public void setGovernmentApprovalDate(final Date governmentApprovalDate) {
         this.governmentApprovalDate = governmentApprovalDate;
+    }
+
+    public List<LineEstimateDetails> getTempLineEstimateDetails() {
+        return tempLineEstimateDetails;
+    }
+
+    public void setTempLineEstimateDetails(final List<LineEstimateDetails> tempLineEstimateDetails) {
+        this.tempLineEstimateDetails = tempLineEstimateDetails;
     }
 
 }

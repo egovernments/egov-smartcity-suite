@@ -173,13 +173,7 @@ function addLineEstimate() {
 	if (rowcount < 30) {
 		if (document.getElementById('estimateRow') != null) {
 			// get Next Row Index to Generate
-			var nextIdx = 0;
-			if($detailsRowCount == 0)
-				nextIdx = $("#tblestimate tbody tr").length;
-			else
-				nextIdx = $detailsRowCount++;
-			
-			
+			var nextIdx = $("#tblestimate tbody tr").length;
 			
             var estimateNo = (new Date()).valueOf();
 			// validate status variable for exiting function

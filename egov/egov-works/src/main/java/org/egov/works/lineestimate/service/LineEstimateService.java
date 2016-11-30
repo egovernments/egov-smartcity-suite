@@ -209,6 +209,7 @@ public class LineEstimateService {
         lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                 LineEstimateStatus.CREATED.toString()));
         final CFinancialYear financialYear = worksUtils.getFinancialYearByDate(lineEstimate.getLineEstimateDate());
+        mergeLineEstimateDetails(lineEstimate);
         for (final LineEstimateDetails lineEstimateDetail : lineEstimate.getLineEstimateDetails()) {
             final EstimateNumberGenerator e = beanResolver.getAutoNumberServiceFor(EstimateNumberGenerator.class);
             final String estimateNumber = e.getNextNumber(lineEstimate, financialYear);
@@ -242,6 +243,7 @@ public class LineEstimateService {
 
     private LineEstimate update(final LineEstimate lineEstimate, final String removedLineEstimateDetailsIds,
             final MultipartFile[] files, final CFinancialYear financialYear) throws IOException {
+        mergeLineEstimateDetails(lineEstimate);
         for (final LineEstimateDetails lineEstimateDetails : lineEstimate.getLineEstimateDetails())
             if (lineEstimateDetails != null && lineEstimateDetails.getId() == null) {
                 final EstimateNumberGenerator e = beanResolver.getAutoNumberServiceFor(EstimateNumberGenerator.class);
@@ -249,10 +251,12 @@ public class LineEstimateService {
                 lineEstimateDetails.setEstimateNumber(estimateNumber);
                 lineEstimateDetails.setLineEstimate(lineEstimate);
             }
+
         List<LineEstimateDetails> list = new ArrayList<LineEstimateDetails>(lineEstimate.getLineEstimateDetails());
         list = removeDeletedLineEstimateDetails(list, removedLineEstimateDetailsIds);
 
         lineEstimate.setLineEstimateDetails(list);
+
         final LineEstimate persistedLineEstimate = lineEstimateRepository.save(lineEstimate);
 
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, persistedLineEstimate,
@@ -1207,7 +1211,7 @@ public class LineEstimateService {
     public void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {
         Integer index = 0;
         BigDecimal estimateAmount = BigDecimal.ZERO;
-        for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
+        for (final LineEstimateDetails led : lineEstimate.getTempLineEstimateDetails()) {
             if (led.getQuantity() <= 0)
                 errors.rejectValue("lineEstimateDetails[" + index + "].quantity", "error.quantity.required");
             estimateAmount = estimateAmount.add(led.getEstimateAmount());
@@ -1218,7 +1222,8 @@ public class LineEstimateService {
         final AppConfigValues value = nominationLimit.get(0);
         final List<AppConfigValues> nominationName = estimateService.getNominationName();
         if (value.getValue() != null && !value.getValue().isEmpty()
-                && lineEstimate.getModeOfAllotment().equalsIgnoreCase(!nominationName.isEmpty() ? nominationName.get(0).getValue() : "")
+                && lineEstimate.getModeOfAllotment()
+                        .equalsIgnoreCase(!nominationName.isEmpty() ? nominationName.get(0).getValue() : "")
                 && Double.parseDouble(estimateAmount.toString()) > Double.parseDouble(value.getValue()))
             errors.reject("error.lineestimate.modeofentrustment",
                     new String[] { !nominationName.isEmpty() ? nominationName.get(0).getValue() : "", estimateAmount.toString() },
@@ -1235,6 +1240,25 @@ public class LineEstimateService {
         final List<AppConfigValues> nominationName = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.NOMINATION_NAME);
         model.addAttribute("nominationName", !nominationName.isEmpty() ? nominationName.get(0).getValue() : "");
+    }
+
+    private void mergeLineEstimateDetails(final LineEstimate lineEstimate) {
+        for (final LineEstimateDetails details : lineEstimate.getTempLineEstimateDetails())
+            if (details.getId() == null) {
+                details.setLineEstimate(lineEstimate);
+                lineEstimate.getLineEstimateDetails().add(details);
+            } else
+                for (final LineEstimateDetails oldDetails : lineEstimate.getLineEstimateDetails())
+                    if (oldDetails.getId().equals(details.getId()))
+                        updateLineEstimateDetailsValues(oldDetails, details);
+    }
+
+    public void updateLineEstimateDetailsValues(final LineEstimateDetails oldDetails, final LineEstimateDetails details) {
+        oldDetails.setNameOfWork(details.getNameOfWork());
+        oldDetails.setUom(details.getUom());
+        oldDetails.setEstimateAmount(details.getEstimateAmount());
+        oldDetails.setBeneficiary(details.getBeneficiary());
+        oldDetails.setQuantity(details.getQuantity());
     }
 
 }
