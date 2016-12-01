@@ -1265,7 +1265,7 @@ public class WaterChargeCollectionDocService {
         return aggregationField;
     }
 
-    public List<WaterChargeConnectionTypeResponse> gettempMethod(
+    public List<WaterChargeConnectionTypeResponse> getResponseDataForConnectionType(
             final WaterChargeDashBoardRequest collectionDetailsRequest) {
         final List<WaterChargeConnectionTypeResponse> waterchargeConndemandList = new ArrayList<>();
 
@@ -1286,7 +1286,7 @@ public class WaterChargeCollectionDocService {
                 WaterTaxConstants.COMMERCIALCONNECTIONTYPEFORDASHBOARD);
 
         for (final Map.Entry<String, Long> entry : connectionResidentialcountMap.entrySet())
-            prepareReceiptDetailListFromMaptemp(collectionDetailsRequest, waterchargeConndemandList, aggregationField,
+            prepareResponseDataForConnectionType(collectionDetailsRequest, waterchargeConndemandList, aggregationField,
                     connectionResidentialTotalDemandMap, connectionCommercialcountMap,
                     connectionCOmmercialTotalDemandMap, entry);
 
@@ -1294,7 +1294,7 @@ public class WaterChargeCollectionDocService {
 
     }
 
-    private void prepareReceiptDetailListFromMaptemp(final WaterChargeDashBoardRequest collectionDetailsRequest,
+    private void prepareResponseDataForConnectionType(final WaterChargeDashBoardRequest collectionDetailsRequest,
             final List<WaterChargeConnectionTypeResponse> waterchargeConndemandList, final String aggregationField,
             final Map<String, BigDecimal> connectionResidentialTotalDemandMap,
             final Map<String, Long> connectionCommercialcountMap,

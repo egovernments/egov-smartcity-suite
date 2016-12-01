@@ -129,7 +129,7 @@ public class WaterChargeDashboardService {
                 .getMonthwiseCollectionDetailsForConnectionType(waterChargeDashBoardRequest);
 
         final List<WaterChargeConnectionTypeResponse> collIndexData = waterChargeCollDocService
-                .gettempMethod(waterChargeDashBoardRequest);
+                .getResponseDataForConnectionType(waterChargeDashBoardRequest);
 
         responsemap.put("collectionWtTotal", collectionTotalResponseList);
         responsemap.put("collTrends", collectionTrends);
