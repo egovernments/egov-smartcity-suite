@@ -264,7 +264,10 @@ public class ArrearRegisterReportAction extends ReportFormAction {
                 propertyInfo.getArrearLibraryCess()));
         propertyWiseInfoTotal.setArrearPropertyTax(propertyWiseInfoTotal.getArrearPropertyTax().add(
                 propertyInfo.getArrearPropertyTax()));
+        propertyWiseInfoTotal.setArrearVacantLandTax(propertyWiseInfoTotal.getArrearVacantLandTax().add(
+                propertyInfo.getArrearVacantLandTax()));
         propertyWiseInfoTotal.setArrearPenalty(propertyWiseInfoTotal.getArrearPenalty().add(propertyInfo.getArrearPenalty()));
+        propertyWiseInfoTotal.setArrearEducationCess(propertyWiseInfoTotal.getArrearEducationCess().add(propertyInfo.getArrearEducationCess()));
         propertyWiseInfoTotal.setTotalArrearTax(propertyWiseInfoTotal.getTotalArrearTax().add(propertyInfo.getTotalArrearTax()));
         return propertyWiseInfoTotal;
     }
@@ -275,15 +278,18 @@ public class ArrearRegisterReportAction extends ReportFormAction {
      * @return
      */
     private PropertyWiseArrearInfo preparePropertyWiseInfo(final InstDmdCollMaterializeView currInstDmdColMatView) {
-        PropertyWiseArrearInfo propertyWiseInfo = null;
+        PropertyWiseArrearInfo propertyWiseInfo;
         propertyWiseInfo = preparePropInfo(currInstDmdColMatView.getPropMatView());
-        final BigDecimal totalTax = currInstDmdColMatView.getLibCessTax().add(currInstDmdColMatView.getGeneralTax())
-                .add(currInstDmdColMatView.getPenaltyFinesTax());
+        final BigDecimal totalTax = currInstDmdColMatView.getLibCessTax()
+                .add(currInstDmdColMatView.getGeneralTax().equals(BigDecimal.ZERO)?currInstDmdColMatView.getVacantLandTax():currInstDmdColMatView.getGeneralTax())
+                .add(currInstDmdColMatView.getPenaltyFinesTax()).add(currInstDmdColMatView.getEduCessTax());
 
         propertyWiseInfo.setArrearInstallmentDesc(currInstDmdColMatView.getInstallment().getDescription());
         propertyWiseInfo.setArrearLibraryCess(currInstDmdColMatView.getLibCessTax());
         propertyWiseInfo.setArrearPropertyTax(currInstDmdColMatView.getGeneralTax());
         propertyWiseInfo.setArrearPenalty(currInstDmdColMatView.getPenaltyFinesTax());
+        propertyWiseInfo.setArrearEducationCess(currInstDmdColMatView.getEduCessTax());
+        propertyWiseInfo.setArrearVacantLandTax(currInstDmdColMatView.getVacantLandTax());
         /*
          * Total of Arrear Librarycess tax,general tax and penalty tax
          */
