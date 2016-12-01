@@ -200,6 +200,7 @@
 											<th class="col-sm-2 table-div-column">Department</th>
 											<th class="col-sm-2 table-div-column">Designation</th>
 											<th class="col-sm-2 table-div-column">Position</th>
+											<th class="col-sm-2 table-div-column">HOD Department</th>
 										</thead>
 											<tbody>
 											<c:forEach var="assignment" items="${employee.assignments}" varStatus="status">
@@ -281,6 +282,14 @@
 															path="assignments[${status.index}].employee"
 															/>
 													</td>
+													<td><c:if test="${assignment.deptSet!=null}">  								
+															<c:forEach var="hodDept" items="${assignment.deptSet}" varStatus="hodeptStatus">
+																<input type="text" id="assignments[${status.index}].hodDept[${hodeptStatus.index}].hod"
+																	name="assignments[${status.index}].hodDept[${hodeptStatus.index}].hod.id"
+																	value="${hodDept.hod.name}"/>						
+															</c:forEach>  		
+																
+													  </c:if>  </td>
 												</tr>
 											</c:forEach>
 											</tbody>
