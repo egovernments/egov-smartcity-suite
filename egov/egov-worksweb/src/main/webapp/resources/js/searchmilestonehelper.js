@@ -285,7 +285,8 @@ $('#btntrackmilestone').click(function() {
 					if (id == 'completionDate') {
 						if (val != '' || val != null) {
 							var array = val.split('/');
-							$('#' + id + "_" + key).datepicker("setDate", new Date("'" + array[2] + "-" + array[1] + "-" + array[0] + "'"));
+							var myDate = new Date(array[2] + "," + array[1] + "," + array[0]) 
+							$('#' + id + "_" + key).datepicker("setDate", myDate).datepicker('update');
 						}
 					}
 					else
