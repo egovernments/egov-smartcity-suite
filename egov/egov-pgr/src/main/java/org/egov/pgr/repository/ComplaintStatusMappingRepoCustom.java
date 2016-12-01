@@ -46,6 +46,7 @@ import org.egov.pgr.entity.ComplaintStatus;
 import java.util.List;
 import java.util.Set;
 
+@FunctionalInterface
 public interface ComplaintStatusMappingRepoCustom {
 
     List<ComplaintStatus> getStatusByRoleAndCurrentStatus(Set<Role> role, ComplaintStatus status);

@@ -58,7 +58,8 @@ public class ComplaintStatusMappingRepositoryImpl implements ComplaintStatusMapp
 
     @PersistenceContext
     private EntityManager entityManager;
-    
+
+    @Override
     public List<ComplaintStatus> getStatusByRoleAndCurrentStatus(Set<Role> role, ComplaintStatus status) {
         Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ComplaintStatusMapping.class,"complaintMapping");
         criteria.add(Restrictions.eq("complaintMapping.currentStatus", status)).

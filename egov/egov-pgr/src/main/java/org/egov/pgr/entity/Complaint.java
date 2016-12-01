@@ -51,9 +51,6 @@ import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import javax.persistence.*;
 import javax.validation.Valid;

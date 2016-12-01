@@ -59,9 +59,8 @@ import javax.validation.constraints.NotNull;
 @SequenceGenerator(name = ComplaintRouter.SEQ_COMPLAINTROUTER, sequenceName = ComplaintRouter.SEQ_COMPLAINTROUTER, allocationSize = 1)
 public class ComplaintRouter extends AbstractAuditable {
 
-    private static final long serialVersionUID = 5691022600220045218L;
     public static final String SEQ_COMPLAINTROUTER = "SEQ_EGPGR_ROUTER";
-
+    private static final long serialVersionUID = 5691022600220045218L;
     @Id
     @GeneratedValue(generator = SEQ_COMPLAINTROUTER, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -79,10 +78,12 @@ public class ComplaintRouter extends AbstractAuditable {
     @JoinColumn(name = "position")
     private Position position;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }

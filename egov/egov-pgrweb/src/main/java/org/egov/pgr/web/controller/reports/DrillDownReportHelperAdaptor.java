@@ -55,8 +55,7 @@ public class DrillDownReportHelperAdaptor implements JsonSerializer<DrillDownRep
         final JsonObject jsonObject = new JsonObject();
         if (drillDownReportObject != null) {
 
-            jsonObject.addProperty("name", null != drillDownReportObject.getName() ? drillDownReportObject.getName()
-                    .toString() : "Not Available");
+            jsonObject.addProperty("name", null != drillDownReportObject.getName() ? drillDownReportObject.getName() : "Not Available");
             jsonObject.addProperty("completed", null != drillDownReportObject.getCompleted() ? drillDownReportObject
                     .getCompleted().toString() : "0");
             jsonObject.addProperty("inprocess", null != drillDownReportObject.getInprocess() ? drillDownReportObject
