@@ -294,6 +294,13 @@ public class MarriageRegistrationIndex {
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String ulbCode;
+    
+    @Field(type = FieldType.Boolean)
+    private boolean husbandHandicapped;
+    
+    @Field(type = FieldType.Boolean)
+    private boolean wifeHandicapped;
+
 
     public MarriageRegistrationIndex(final String applicationNo, final String ulbName, final String ulbCode,
             final Date createdDate, final String districtName, final String regionName, final String ulbGrade) {
@@ -906,4 +913,19 @@ public class MarriageRegistrationIndex {
         this.ulbCode = ulbCode;
     }
 
+    public boolean isHusbandHandicapped() {
+        return husbandHandicapped;
+    }
+
+    public void setHusbandHandicapped(boolean husbandHandicapped) {
+        this.husbandHandicapped = husbandHandicapped;
+    }
+
+    public boolean isWifeHandicapped() {
+        return wifeHandicapped;
+    }
+
+    public void setWifeHandicapped(boolean wifeHandicapped) {
+        this.wifeHandicapped = wifeHandicapped;
+    }
 }

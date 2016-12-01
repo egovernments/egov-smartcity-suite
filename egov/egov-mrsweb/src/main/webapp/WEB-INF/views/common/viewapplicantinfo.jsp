@@ -107,6 +107,8 @@
 		<div class="col-sm-3 add-margin view-content"><c:out value="${param.appEmail}" ></c:out></div>
 </div>
 <div class="row add-border">
+	<div class="col-sm-3"><spring:message code="lbl.handicapped"/></div>
+	<div class="col-sm-3 add-margin view-content"><c:choose><c:when test="${param.appHandicapped}">Yes</c:when><c:otherwise>No</c:otherwise></c:choose></div>
 	<div  class="col-sm-3 "><spring:message code="lbl.photo"/></div>
 	<div class="col-sm-3 add-margin">
 		<img class="add-border" id="${applicant}-photo" height="150" width="130" src="data:image/jpeg;base64,${param.photo}">

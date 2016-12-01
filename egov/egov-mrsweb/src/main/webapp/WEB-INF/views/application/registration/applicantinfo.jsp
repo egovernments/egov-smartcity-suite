@@ -227,4 +227,13 @@
 		<span class=""></span>
                  <form:errors path="${applicant}.contactInfo.email" cssClass="add-margin error-msg"/>
 	</div>
+	
+	<label class="col-sm-2 control-label">
+		<spring:message code="lbl.handicapped"/>
+	</label>
+	<div class="col-sm-3 text-left">
+		<form:checkbox path="${applicant}.handicapped"   />
+		<span class=""></span>
+                 <form:errors path="${applicant}.handicapped" cssClass="add-margin error-msg"/>
+	</div>
 </div>

@@ -162,6 +162,8 @@ public class MrApplicant extends AbstractAuditable {
 
     private transient String encodedPhoto;
     private transient String encodedSignature;
+    
+    private boolean handicapped=false;
 
     public String getFullName() {
         String fullName = getName().getFirstName();
@@ -375,6 +377,15 @@ public class MrApplicant extends AbstractAuditable {
 	public void setSignatureFileStore(FileStoreMapper signatureFileStore) {
 		this.signatureFileStore = signatureFileStore;
 	}
+
+    public boolean isHandicapped() {
+        return handicapped;
+    }
+
+    public void setHandicapped(boolean handicapped) {
+        this.handicapped = handicapped;
+    }
+
     
     
 }

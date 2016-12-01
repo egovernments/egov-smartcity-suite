@@ -126,6 +126,7 @@ public class MarriageRegistrationIndexService {
                                 ? registration.getHusband().getContactInfo().getOfficeAddress() : "");
                 registrationSearch.setHusbandEmail(registration.getHusband().getContactInfo().getEmail() != null
                         ? registration.getHusband().getContactInfo().getEmail() : "");
+                registrationSearch.setHusbandHandicapped(registration.getHusband().isHandicapped());
             }
 
             if (registration.getWife() != null) {
@@ -157,6 +158,7 @@ public class MarriageRegistrationIndexService {
                                 ? registration.getWife().getContactInfo().getOfficeAddress() : "");
                 registrationSearch.setWifeEmail(registration.getWife().getContactInfo().getEmail() != null
                         ? registration.getWife().getContactInfo().getEmail() : "");
+                registrationSearch.setWifeHandicapped(registration.getWife().isHandicapped());
             }
 
             if (!registration.getWitnesses().isEmpty()) {

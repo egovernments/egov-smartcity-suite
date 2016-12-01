@@ -87,6 +87,7 @@
 	<jsp:param value="${reIssue.registration.husband.contactInfo.officeAddress}" name="appOfficeAddress"/>
 	<jsp:param value="${reIssue.registration.husband.contactInfo.mobileNo}" name="appMobileNo"/>
 	<jsp:param value="${reIssue.registration.husband.contactInfo.email}" name="appEmail"/>
+	<jsp:param value="${reissue.registration.husband.handicapped}" name="appHandicapped"/>
 </jsp:include>
 
 <c:set value="registration.wife" var="applicant" scope="request"></c:set>
@@ -108,6 +109,7 @@
 	<jsp:param value="${reIssue.registration.wife.contactInfo.officeAddress}" name="appOfficeAddress"/>
 	<jsp:param value="${reIssue.registration.wife.contactInfo.mobileNo}" name="appMobileNo"/>
 	<jsp:param value="${reIssue.registration.wife.contactInfo.email}" name="appEmail"/>
+	<jsp:param value="${reissue.registration.wife.handicapped}" name="appHandicapped"/> 
 </jsp:include>
 
 <div class="row">

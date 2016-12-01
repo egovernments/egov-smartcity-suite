@@ -113,6 +113,7 @@
 		<jsp:param value="${registration.husband.contactInfo.officeAddress}" name="appOfficeAddress"/>
 		<jsp:param value="${registration.husband.contactInfo.mobileNo}" name="appMobileNo"/>
 		<jsp:param value="${registration.husband.contactInfo.email}" name="appEmail"/>
+		<jsp:param value="${registration.husband.handicapped}" name="appHandicapped"/>
 		</jsp:include>
 
 <div class="panel-heading">
@@ -140,4 +141,5 @@
 	<jsp:param value="${registration.wife.contactInfo.officeAddress}" name="appOfficeAddress"/>
 	<jsp:param value="${registration.wife.contactInfo.mobileNo}" name="appMobileNo"/>
 	<jsp:param value="${registration.wife.contactInfo.email}" name="appEmail"/>
+	<jsp:param value="${registration.wife.handicapped}" name="appHandicapped"/>
 	</jsp:include>

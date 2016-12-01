@@ -124,6 +124,11 @@
 	<div class="col-sm-3 control-div add-margin"><spring:message code="lbl.email"/></div>
 	<div class="col-sm-3 add-margin view-content"><c:out value="${param.appEmail}" default="NA"></c:out></div>
 </div>
+
+<div class="row add-border">
+	<div class="col-sm-3 add-margin"><spring:message code="lbl.handicapped"/></div>
+	<div class="col-sm-3 add-margin view-content"><c:choose><c:when test="${param.appHandicapped}">Yes</c:when><c:otherwise>No</c:otherwise></c:choose></div>
+</div>
 	
 </div>
 		
