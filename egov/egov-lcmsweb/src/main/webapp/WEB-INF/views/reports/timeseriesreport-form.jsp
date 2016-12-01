@@ -44,59 +44,54 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<div class="row">
-	<div class="col-md-12">
+<div class="col-md-12">
+	<div class="row">
 		<form:form method="get" modelAttribute="timeSeriesReportResult"
 			id="timeseriesreportForm"
 			class="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<div class="row">
 				<div class="panel panel-primary" data-collapsed="0">
-
 					<div class="panel-heading">
-						<div class="panel-title">Time Series Report</div>
-
-					</div>
-
+						<div class="panel-title">Time Series Report</div></div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label"><spring:message
 								code="lbl.aggregatedby" />:<span class="mandatory"></span></label>
-					<div class="col-sm-3 add-margin">
-						<form:select id="aggregatedBy" name="aggregatedBy"
-							path="aggregatedBy" cssClass="form-control"
-							cssErrorClass="form-control error" required="required">
-							<form:option value="">
-								<spring:message code="lbl.select" />
-							</form:option>
-							<c:forEach items="${aggregatedByList}" var="aggregatedbyvalue">
-								<form:option value="${aggregatedbyvalue}">${aggregatedbyvalue}</form:option>
-								
-							</c:forEach>
-						</form:select>
-					</div>
+						<div class="col-sm-3 add-margin">
+							<form:select id="aggregatedBy" name="aggregatedBy"
+								path="aggregatedBy" cssClass="form-control"
+								cssErrorClass="form-control error" required="required">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<c:forEach items="${aggregatedByList}" var="aggregatedbyvalue">
+									<form:option value="${aggregatedbyvalue}">${aggregatedbyvalue}</form:option>
+
+								</c:forEach>
+							</form:select>
+						</div>
 						<label class="col-sm-2 control-label"><spring:message
 								code="lbl.period" />:<span class="mandatory"></span></label>
-					<div class="col-sm-3 add-margin">
-						<form:select id="period" name="period"
-							path="period" cssClass="form-control"
-							cssErrorClass="form-control error" required="required">
-							<form:option value="">
-								<spring:message code="lbl.select" />
-							</form:option>
-							<c:forEach items="${period}" var="pd">
-								<form:option value="${pd}">${pd}</form:option>
-							</c:forEach>
-						</form:select>
+						<div class="col-sm-3 add-margin">
+							<form:select id="period" name="period" path="period"
+								cssClass="form-control" cssErrorClass="form-control error"
+								required="required">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<c:forEach items="${period}" var="pd">
+									<form:option value="${pd}">${pd}</form:option>
+								</c:forEach>
+							</form:select>
+						</div>
 					</div>
-				</div>
-					
-				<div class="form-group">
+					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"> <spring:message
 								code="lbl.fromDate" />:</label>
 						<div class="col-sm-3 add-margin">
 							<input type="text" name="fromDate" path="fromDate"
 								class="form-control datepicker" data-date-end-date="0d"
-								id="fromDate" data-inputmask="'mask': 'd/m/y' onblur="onchnageofDate()"/>
+								id="fromDate" data-inputmask="'mask': 'd/m/y' onblur=" onchnageofDate()"/>
 						</div>
 						<label class="col-sm-2 control-label text-right"> <spring:message
 								code="lbl.toDate" />:</label>
@@ -105,22 +100,20 @@
 								class="form-control datepicker today" data-date-end-date="0d"
 								id="toDate" data-inputmask="'mask': 'd/m/y'" />
 						</div>
-
 					</div>
-
-
 					<div class="row">
-
 						<div class="text-center">
 							<button type="button" id="timeSeriesReportSearch"
-								class="btn btn-primary">Search</button>
+								class="btn btn-primary"><spring:message code="lbl.search" /></button>
 							<a href="javascript:void(0)" class="btn btn-default"
-								onclick="self.close()"> Close</a>
+								onclick="self.close()"><spring:message code="lbl.close" /></a>
 						</div>
 					</div>
 				</div>
+			</div>
+
 		</form:form>
-	<div id="reportgeneration-header"
+		<div id="reportgeneration-header"
 			class="col-md-12 table-header text-left">
 			<fmt:formatDate value="${currentDate}" var="currDate"
 				pattern="dd-MM-yyyy" />
@@ -132,37 +125,22 @@
 		</table>
 	</div>
 </div>
-
-
-<link rel="stylesheet"
-	href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
-<script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script>
-
 <script
 	src="<cdn:url value='/resources/js/app/timeSeriesReport.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>
-

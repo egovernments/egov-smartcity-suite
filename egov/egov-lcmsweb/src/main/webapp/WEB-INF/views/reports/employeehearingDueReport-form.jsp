@@ -58,8 +58,6 @@
 				</div>
 				<jsp:include page="dueReportdetails.jsp"></jsp:include>
 			</div>
-
-
 			<div class="row">
 				<div class="text-center">
 					<button type="button" id="emmplyeehearingDueReportSearch" value="emmplyeehearingDueReportSearch"
@@ -74,15 +72,12 @@
 		class="col-md-12 table-header text-left">
 		<fmt:formatDate value="${currentDate}" var="currDate"
 			pattern="dd-MM-yyyy" />
-		<spring:message code="lbl.reportgeneration" />
-		:
+		<spring:message code="lbl.reportgeneration" />:
 		<c:out value="${currDate}"></c:out>
 	</div>
 	<table class="table table-bordered table-hover multiheadertbl"
 		id="employeehearingDueReport-table">
 	</table>
-
-
 </div>
 </div>
 
@@ -99,7 +94,6 @@
 
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-
 <script
 	src="<cdn:url value='/resources/js/app/commonDueReport.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>

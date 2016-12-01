@@ -420,7 +420,6 @@
 	<put-attribute name="body" value="/WEB-INF/views/reports/dueReport-form.jsp"/>
 </definition>
 
-
 <definition name="counterAffidavitDueReport-form" extends="base_layout">
 	<put-attribute name="page-title" value="title.duereport" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/reports/counterAffidavitDueReport-form.jsp"/>
@@ -435,5 +434,9 @@
 	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-ca-success.jsp"/>
 </definition>
 
+<definition name="employeehearingDueReport-form" extends="base_layout">
+	<put-attribute name="page-title" value="title.employeehearingduereport" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/reports/employeehearingDueReport-form.jsp"/>
+</definition>
 
 </tiles-definitions>

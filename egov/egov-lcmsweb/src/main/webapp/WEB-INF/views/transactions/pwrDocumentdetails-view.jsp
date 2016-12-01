@@ -32,7 +32,7 @@
 	</c:if>
 	<c:if test="${mode != 'view'}">
 		<div>
-			<table width="100%">
+			<table>
 				<tbody>
 					<tr>
 						<td valign="top">
@@ -45,13 +45,13 @@
 						 	</tbody></table>
 						</td>
 					</tr>
-					<tr>
-						<td align="center">
-							<button id="attachNewFileBtn" type="button" class="btn btn-primary" onclick="addFileInputField()"><spring:message code="lbl.addfile" /></button>
-						</td>
-					</tr>
 				</tbody>
 			</table>
+			<div class="buttonbottom" align="center">
+				<div class="form-group text-center">
+				<button id="attachNewFileBtn" type="button" class="btn btn-primary" onclick="addFileInputField()"><spring:message code="lbl.addfile" /></button>
+				</div>
+			</div>
 		</div>
 	</c:if>
 </div>

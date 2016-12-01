@@ -576,14 +576,6 @@ public class LegalCase extends AbstractAuditable {
         this.caseReceivingDate = caseReceivingDate;
     }
 
-    public String getLcnumber() {
-        return lcNumber;
-    }
-
-    public void setLcnumber(final String lcnumber) {
-        lcNumber = lcnumber;
-    }
-
     public String getPrayer() {
         return prayer;
     }
