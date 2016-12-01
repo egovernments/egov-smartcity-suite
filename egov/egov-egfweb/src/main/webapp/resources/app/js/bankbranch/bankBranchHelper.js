@@ -72,7 +72,7 @@ function callAjaxSearch() {
 							});
 				},
 				"bDestroy" : true,
-				dom: "<'row'r>t<'row add-margin'<'col-md-3 col-xs-12'i><'col-md-2 col-xs-6'l><'col-md-3'B><'col-md-4 col-xs-6 text-right'p>>",
+				dom: "<'row'<'col-xs-12 pull-right'f>r>t<'row buttons-margin'<'col-md-3 col-xs-6'i><'col-md-3  col-xs-6'l><'col-md-3 col-xs-6'B><'col-md-3 col-xs-6 text-right'p>>",
 				buttons: [
 						  {
 						    extend: 'print',
