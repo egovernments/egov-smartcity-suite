@@ -183,6 +183,8 @@ public class WaterConnectionDetails extends StateAware {
     private Date workOrderDate;
 
     private String workOrderNumber;
+    
+    private String estimationNumber;
 
     private double donationCharges;
     private Boolean legacy = false;
@@ -513,6 +515,15 @@ public class WaterConnectionDetails extends StateAware {
     public void setWorkOrderNumber(final String workOrderNumber) {
         this.workOrderNumber = workOrderNumber;
     }
+    
+    public String getEstimationNumber() {
+        return estimationNumber;
+    }
+
+    public void setEstimationNumber(String estimationNumber) {
+        this.estimationNumber = estimationNumber;
+    }
+
 
     public void setBplCardHolderName(final String bplCardHolderName) {
         this.bplCardHolderName = bplCardHolderName;
