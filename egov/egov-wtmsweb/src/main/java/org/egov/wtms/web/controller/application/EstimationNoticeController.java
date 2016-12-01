@@ -142,7 +142,7 @@ public class EstimationNoticeController {
             reportParams.put("houseNo", doorNo[0]);
             reportParams.put("propertyID", waterConnectionDetails.getConnection().getPropertyIdentifier());
             reportParams.put("amountInWords", getTotalAmntInWords(totalCharges));
-            reportInput = new ReportRequest(ESTIMATION_NOTICE, waterConnectionDetails.getEstimationDetails(), reportParams);
+            reportInput = new ReportRequest(ESTIMATION_NOTICE, waterConnectionDetails, reportParams);
         }
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
