@@ -896,7 +896,7 @@ public class ReportService {
 
         // Conditions to Retrieve data based on selected boundary types
         if (!mode.equalsIgnoreCase(PROPERTY)) {
-            finalSelectQry = "select count(pi.upicno) as \"assessmentCount\",cast(id as integer) as \"boundaryId\",boundary.name as \"boundaryName\", ";
+            finalSelectQry = "select count(distinct pi.upicno) as \"assessmentCount\",cast(id as integer) as \"boundaryId\",boundary.name as \"boundaryName\", ";
             finalGrpQry = " group by boundary.id,boundary.name order by boundary.name";
         }
         if (propertyTypes == null)
@@ -911,13 +911,13 @@ public class ReportService {
             whereQry = whereQry + " and pi.wardid = " + param;
             if (propertyTypes != null && !propertyTypes.isEmpty())
                 whereQry = whereQry + " and pi.proptymaster in (" + propertyTypeIds + ") ";
-            boundaryQry = " and pi.blockid=boundary.id ";
+            boundaryQry = " and pi.blockid=boundary.id and pi.wardid = boundary.parent ";
         } else if (mode.equalsIgnoreCase(PROPERTY)) {
             finalSelectQry = "select distinct pi.upicno as \"assessmentNo\", pi.houseno as \"houseNo\", pi.ownersname as \"ownerName\", ";
             whereQry = whereQry + " and pi.blockid = " + param;
             if (propertyTypes != null && !propertyTypes.isEmpty())
                 whereQry = whereQry + " and pi.proptymaster in (" + propertyTypeIds + ") ";
-            boundaryQry = "";
+            boundaryQry = " and pi.wardid = ( select parent from eg_boundary where id = "+param+" ) ";
             finalGrpQry = " group by pi.upicno, pi.houseno, pi.ownersname order by pi.upicno ";
         }
 
