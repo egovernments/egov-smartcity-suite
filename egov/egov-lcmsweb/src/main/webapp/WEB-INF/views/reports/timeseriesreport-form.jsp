@@ -140,7 +140,5 @@
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script
 	src="<cdn:url value='/resources/js/app/timeSeriesReport.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>
