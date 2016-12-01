@@ -461,7 +461,8 @@
 										</div>
 
 									</div>
-
+									     <div class="error-msg hoderror all-errors display-hide"></div>
+								
 									<div class="form-group">
 										<div class="text-center">
 											<button type="button" id="btn-add" 
@@ -475,10 +476,11 @@
 										<thead>
 										<div class="col-sm-12 table-div-border view-content header-color hidden-xs">
 											<th class="col-sm-2 table-div-column">Date Range</th>
-											<th class="col-sm-2 table-div-column">Is Primary</th>
+											<th class="col-sm-1 table-div-column">Is Primary</th>
 											<th class="col-sm-2 table-div-column">Department</th>
 											<th class="col-sm-2 table-div-column">Designation</th>
 											<th class="col-sm-2 table-div-column">Position</th>
+											<th class="col-sm-2 table-div-column">HOD Department</th>
 											<th class="col-sm-2 table-div-column">Actions</th>
 										</div>
 										</thead>
@@ -556,14 +558,24 @@
 														<input type="hidden" id="assignments[${status.index}].grade"
 															name="assignments[${status.index}].grade"
 															value="${assign.grade.id}"/>	
-														<c:if test="${assign.deptSet!=null}">
-															<c:forEach var="hodDept" items="${assignments.deptSet}" varStatus="hodeptStatus">
-																<input type="hidden" id="assignments[${status.index}].hodDept[${hodeptStatus.index}].hod"
-																	name="assignments[${status.index}].hodDept[${hodeptStatus.index}].hod.id"
+						</td>
+											
+													<td> <c:if test="${assign.deptSet!=null}">  
+												       
+															<c:forEach var="hodDept" items="${assign.deptSet}" varStatus="hodeptStatus">
+															<input type="hidden" id="hodDeptIds${status.index}" name="hodDeptIds${status.index}" value="${assign.deptSet.size()}"/>
+															<input type="hidden" id="assignments[${status.index}].deptSet[${hodeptStatus.index}].hod"
+																	name="assignments[${status.index}].deptSet[${hodeptStatus.index}].hod.id"
 																	value="${hodDept.hod.id}"/>	
-															</c:forEach>
-														</c:if>
-													</td>
+																<input type="text" id="assignments[${status.index}].hodDept[${hodeptStatus.index}].hod"
+																	name="assignments[${status.index}].hodDept[${hodeptStatus.index}].hod.id"
+																	value="${hodDept.hod.name}"/>	
+																	<input type="hidden" id="assignments[${status.index}].hodList[${hodeptStatus.index}].hod"
+																	name="assignments[${status.index}].hodList[${hodeptStatus.index}].hod.id"
+																	value="${hodDept.hod.id}"/>
+															</c:forEach>  		
+																
+													  </c:if>  </td>
 													<td>
 														<span class="add-padding" data-toggle="tooltip" title="Edit"><i id="edit_row" class="fa fa-edit" value="${status.index}"></i></span>
 													   <span class="add-padding" data-toggle="tooltip" title="Delete"><i

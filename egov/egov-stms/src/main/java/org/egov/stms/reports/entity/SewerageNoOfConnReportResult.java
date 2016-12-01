@@ -40,8 +40,6 @@
 
 package org.egov.stms.reports.entity;
 
-import java.math.BigInteger;
-
 public class SewerageNoOfConnReportResult {
 
     private String zoneName;
@@ -51,10 +49,10 @@ public class SewerageNoOfConnReportResult {
     private String name;
     private String boundaryName;
 
-    private BigInteger newconnection = BigInteger.ZERO;
-    private BigInteger changeinclosets = BigInteger.ZERO;
-    private BigInteger closeconnection = BigInteger.ZERO;
-    private BigInteger total = BigInteger.ZERO;
+    private Long newconnection = 0l;
+    private Long changeinclosets = 0l;
+    private Long closeconnection = 0l;
+    private Long total = 0l;
 
     public String getZoneName() {
         return zoneName;
@@ -104,35 +102,35 @@ public class SewerageNoOfConnReportResult {
         this.boundaryName = boundaryName;
     }
 
-    public BigInteger getNewconnection() {
+    public Long getNewconnection() {
         return newconnection;
     }
 
-    public void setNewconnection(final BigInteger newconnection) {
+    public void setNewconnection(final Long newconnection) {
         this.newconnection = newconnection;
     }
 
-    public BigInteger getChangeinclosets() {
+    public Long getChangeinclosets() {
         return changeinclosets;
     }
 
-    public void setChangeinclosets(final BigInteger changeinclosets) {
+    public void setChangeinclosets(final Long changeinclosets) {
         this.changeinclosets = changeinclosets;
     }
 
-    public BigInteger getCloseconnection() {
+    public Long getCloseconnection() {
         return closeconnection;
     }
 
-    public void setCloseconnection(final BigInteger closeconnection) {
+    public void setCloseconnection(final Long closeconnection) {
         this.closeconnection = closeconnection;
     }
 
-    public BigInteger getTotal() {
+    public Long getTotal() {
         return total;
     }
 
-    public void setTotal(final BigInteger total) {
+    public void setTotal(final Long total) {
         this.total = total;
     }
 

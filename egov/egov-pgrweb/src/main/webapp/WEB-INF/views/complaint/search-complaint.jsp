@@ -117,20 +117,20 @@
 							<input type="text" name="complainantEmail" class="form-control" id="ct-email"
 								placeholder="<spring:message code='lbl.email'/>" />
 						</div>
+							<%--<div class="col-md-3 add-margin">
+                                <form:select name="complaintDepartment" path="" data-first-option="false" cssClass="form-control" >
+                                    <form:option value=""><spring:message code="lbl.complaintDepartment" /></form:option>
+                                    <form:options items="${complaintTypeDepartments}" itemValue="name" itemLabel="name" />
+                                </form:select>
+                            </div>--%>
 						<div class="col-md-3 add-margin">
-							<form:select name="complaintDepartment" path="" data-first-option="false" cssClass="form-control" >
-								<form:option value=""><spring:message code="lbl.complaintDepartment" /></form:option>
-								<form:options items="${complaintTypeDepartments}" itemValue="name" itemLabel="name" />  
+							<form:select name="complaintType" path="" data-first-option="false" cssClass="form-control">
+								<form:option value=""><spring:message code="lbl.complaintType"/></form:option>
+								<form:options items="${complaintTypedropdown}" itemValue="name" itemLabel="name"/>
 							</form:select>
 						</div>
 					</div>
 					<div class="form-group show-searchcomp-more display-hide">
-						<div class="col-md-3 add-margin">
-							<form:select name="complaintType" path="" data-first-option="false" cssClass="form-control" >
-								<form:option value=""><spring:message code="lbl.complaintType" /></form:option>
-								<form:options items="${complaintTypedropdown}" itemValue="name" itemLabel="name" />  
-							</form:select>
-						</div>
 						<div class="col-md-3 add-margin">
 							<form:select name="complaintStatus" path="" data-first-option="false" cssClass="form-control" >
 								<form:option value=""><spring:message code="lbl.status" /></form:option>

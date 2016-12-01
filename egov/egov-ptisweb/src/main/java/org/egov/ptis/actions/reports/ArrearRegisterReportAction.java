@@ -39,14 +39,22 @@
  */
 package org.egov.ptis.actions.reports;
 
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_ARREARREGISTER;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
@@ -59,15 +67,7 @@ import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
-import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_ARREARREGISTER;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
@@ -88,13 +88,10 @@ public class ArrearRegisterReportAction extends ReportFormAction {
     @Autowired
     private BoundaryService boundaryService;
     @Autowired
-    private FinancialYearDAO financialYearDAO;
-    @Autowired
     private PropertyTaxUtil propertyTaxUtil;
     private List<PropertyWiseArrearInfo> propertyWiseInfoList;
 
     @Override
-    @SuppressWarnings("unchecked")
     public void prepare() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into prepare method");
@@ -113,7 +110,7 @@ public class ArrearRegisterReportAction extends ReportFormAction {
             LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
         //prepareWardDropDownData(zoneId != null, wardId != null);
         if (wardId == null || wardId.equals(-1))
-            addDropdownData("blockList", Collections.EMPTY_LIST);
+            addDropdownData("blockList", Collections.emptyList());
         prepareBlockDropDownData(wardId != null, areaId != null);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exit from prepare method");
@@ -124,18 +121,18 @@ public class ArrearRegisterReportAction extends ReportFormAction {
      * @param zoneExists
      * @param wardExists
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unused")
     private void prepareWardDropDownData(final boolean zoneExists, final boolean wardExists) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Entered into prepareWardDropDownData method");
             LOGGER.debug("Zone Exists ? : " + zoneExists + ", " + "Ward Exists ? : " + wardExists);
         }
         if (zoneExists && wardExists) {
-            List<Boundary> wardList = new ArrayList<Boundary>();
+            List<Boundary> wardList;
             wardList = boundaryService.getActiveChildBoundariesByBoundaryId(getZoneId());
             addDropdownData("wardList", wardList);
         } else
-            addDropdownData("wardList", Collections.EMPTY_LIST);
+            addDropdownData("wardList", Collections.emptyList());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exit from prepareWardDropDownData method");
     }
@@ -145,18 +142,17 @@ public class ArrearRegisterReportAction extends ReportFormAction {
      * @param wardExists
      * @param blockExists
      */
-    @SuppressWarnings("unchecked")
     private void prepareBlockDropDownData(final boolean wardExists, final boolean blockExists) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Entered into prepareBlockDropDownData method");
             LOGGER.debug("Ward Exists ? : " + wardExists + ", " + "Block Exists ? : " + blockExists);
         }
         if (wardExists && blockExists) {
-            List<Boundary> blockList = new ArrayList<Boundary>();
+            List<Boundary> blockList;
             blockList = boundaryService.getActiveChildBoundariesByBoundaryId(getWardId());
             addDropdownData("blockList", blockList);
         } else
-            addDropdownData("blockList", Collections.EMPTY_LIST);
+            addDropdownData("blockList", Collections.emptyList());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exit from prepareWardDropDownData method");
     }
@@ -180,8 +176,13 @@ public class ArrearRegisterReportAction extends ReportFormAction {
     @Action(value = "/reports/arrearRegisterReport-generateArrearReport")
     public String generateArrearReport() {
         final ReportInfo reportInfo = new ReportInfo();
-        propertyWiseInfoList = new ArrayList<PropertyWiseArrearInfo>();
-        String strZoneNum = null, strWardNum = null, strBlockNum = null, strLocalityNum = null, strMunicipal=null, strDistrict=null;
+        propertyWiseInfoList = new ArrayList<>();
+        String strZoneNum = null;
+        String strWardNum = null;
+        String strBlockNum = null;
+        String strLocalityNum = null;
+        String strMunicipal;
+        String strDistrict;
         if ((localityId == null || localityId == -1) && zoneId != null && zoneId != -1)
             strZoneNum = boundaryService.getBoundaryById(zoneId).getName();
         else if (localityId != null && localityId != -1) {
@@ -211,7 +212,7 @@ public class ArrearRegisterReportAction extends ReportFormAction {
                     propertyWiseInfoList.add(propertyWiseInfo);
             } else {
                 // if there are more than one arrear Installments
-                final List<InstDmdCollMaterializeView> idcList = new ArrayList<InstDmdCollMaterializeView>(
+                final List<InstDmdCollMaterializeView> idcList = new ArrayList<>(
                         propMatView.getInstDmdColl());
                 final List unitList = new ArrayList();
                 PropertyWiseArrearInfo propertyWiseInfoTotal = null;
@@ -220,7 +221,7 @@ public class ArrearRegisterReportAction extends ReportFormAction {
                     final PropertyWiseArrearInfo propertyWiseInfo = preparePropertyWiseInfo(instlDmdColMatView);
                     if (propertyWiseInfo != null) {
                         // initially the block is executed
-                        if (unitList.size() == 0) {
+                        if (unitList.isEmpty()) {
                             unitList.add(propertyWiseInfo.getArrearInstallmentDesc());
                             propertyWiseInfoTotal = propertyWiseInfo;
                         }
@@ -264,7 +265,10 @@ public class ArrearRegisterReportAction extends ReportFormAction {
                 propertyInfo.getArrearLibraryCess()));
         propertyWiseInfoTotal.setArrearPropertyTax(propertyWiseInfoTotal.getArrearPropertyTax().add(
                 propertyInfo.getArrearPropertyTax()));
+        propertyWiseInfoTotal.setArrearVacantLandTax(propertyWiseInfoTotal.getArrearVacantLandTax().add(
+                propertyInfo.getArrearVacantLandTax()));
         propertyWiseInfoTotal.setArrearPenalty(propertyWiseInfoTotal.getArrearPenalty().add(propertyInfo.getArrearPenalty()));
+        propertyWiseInfoTotal.setArrearEducationCess(propertyWiseInfoTotal.getArrearEducationCess().add(propertyInfo.getArrearEducationCess()));
         propertyWiseInfoTotal.setTotalArrearTax(propertyWiseInfoTotal.getTotalArrearTax().add(propertyInfo.getTotalArrearTax()));
         return propertyWiseInfoTotal;
     }
@@ -275,15 +279,18 @@ public class ArrearRegisterReportAction extends ReportFormAction {
      * @return
      */
     private PropertyWiseArrearInfo preparePropertyWiseInfo(final InstDmdCollMaterializeView currInstDmdColMatView) {
-        PropertyWiseArrearInfo propertyWiseInfo = null;
+        PropertyWiseArrearInfo propertyWiseInfo;
         propertyWiseInfo = preparePropInfo(currInstDmdColMatView.getPropMatView());
-        final BigDecimal totalTax = currInstDmdColMatView.getLibCessTax().add(currInstDmdColMatView.getGeneralTax())
-                .add(currInstDmdColMatView.getPenaltyFinesTax());
+        final BigDecimal totalTax = currInstDmdColMatView.getLibCessTax()
+                .add(currInstDmdColMatView.getGeneralTax().equals(BigDecimal.ZERO)?currInstDmdColMatView.getVacantLandTax():currInstDmdColMatView.getGeneralTax())
+                .add(currInstDmdColMatView.getPenaltyFinesTax()).add(currInstDmdColMatView.getEduCessTax());
 
         propertyWiseInfo.setArrearInstallmentDesc(currInstDmdColMatView.getInstallment().getDescription());
         propertyWiseInfo.setArrearLibraryCess(currInstDmdColMatView.getLibCessTax());
         propertyWiseInfo.setArrearPropertyTax(currInstDmdColMatView.getGeneralTax());
         propertyWiseInfo.setArrearPenalty(currInstDmdColMatView.getPenaltyFinesTax());
+        propertyWiseInfo.setArrearEducationCess(currInstDmdColMatView.getEduCessTax());
+        propertyWiseInfo.setArrearVacantLandTax(currInstDmdColMatView.getVacantLandTax());
         /*
          * Total of Arrear Librarycess tax,general tax and penalty tax
          */

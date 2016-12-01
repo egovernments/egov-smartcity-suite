@@ -51,6 +51,8 @@ public class PropertyWiseArrearInfo {
     private BigDecimal arrearPropertyTax;
     private BigDecimal arrearPenalty;
     private BigDecimal totalArrearTax;
+    private BigDecimal arrearEducationCess;
+    private BigDecimal arrearVacantLandTax;
 
     public String getIndexNumber() {
         return indexNumber;
@@ -116,12 +118,28 @@ public class PropertyWiseArrearInfo {
         this.basicPropId = basicPropId;
     }
 
-	public String getArrearInstallmentDesc() {
-		return arrearInstallmentDesc;
-	}
+    public String getArrearInstallmentDesc() {
+        return arrearInstallmentDesc;
+    }
 
-	public void setArrearInstallmentDesc(String arrearInstallmentDesc) {
-		this.arrearInstallmentDesc = arrearInstallmentDesc;
-	}
+    public void setArrearInstallmentDesc(String arrearInstallmentDesc) {
+        this.arrearInstallmentDesc = arrearInstallmentDesc;
+    }
+
+    public BigDecimal getArrearEducationCess() {
+        return arrearEducationCess;
+    }
+
+    public void setArrearEducationCess(BigDecimal arrearEducationCess) {
+        this.arrearEducationCess = arrearEducationCess;
+    }
+
+    public BigDecimal getArrearVacantLandTax() {
+        return arrearVacantLandTax;
+    }
+
+    public void setArrearVacantLandTax(BigDecimal arrearVacantLandTax) {
+        this.arrearVacantLandTax = arrearVacantLandTax;
+    }
 
 }

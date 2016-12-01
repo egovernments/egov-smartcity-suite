@@ -46,9 +46,11 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeTypeRepository;
+import org.egov.eis.repository.HeadOfDepartmentsRepository;
 import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.JurisdictionService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
@@ -71,6 +73,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/employee")
 public class ViewAndUpdateEmployeController {
     private static final Logger LOGGER = Logger.getLogger(ViewAndUpdateEmployeController.class);
+    private static final String IMAGE = "image";
+    private static final String EMPLOYEEFORM = "employee-form";
+
     @Autowired
     private DepartmentService departmentService;
 
@@ -89,6 +94,9 @@ public class ViewAndUpdateEmployeController {
     @Autowired
     private MessageSource messageSource;
 
+    @Autowired
+    private HeadOfDepartmentsRepository headOfDepartmentsRepository;
+
     @ModelAttribute
     public Employee employeeModel(@PathVariable final String code) {
         return employeeService.getEmployeeByCode(code);
@@ -100,11 +108,13 @@ public class ViewAndUpdateEmployeController {
         setDropDownValues(model);
         model.addAttribute("mode", "update");
         final Employee employee = employeeService.getEmployeeByCode(code);
+        for (final Assignment assign : employee.getAssignments())
+            assign.setDeptSet(headOfDepartmentsRepository.getAllHodDepartments(assign.getId()));
         String image = null;
         if (null != employee.getSignature())
             image = Base64.encodeBytes(employee.getSignature());
-        model.addAttribute("image", image);
-        return "employee-form";
+        model.addAttribute(IMAGE, image);
+        return EMPLOYEEFORM;
     }
 
     @RequestMapping(value = "/update/{code}", method = RequestMethod.POST)
@@ -119,7 +129,7 @@ public class ViewAndUpdateEmployeController {
         if (errors.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("mode", "update");
-            return "employee-form";
+            return EMPLOYEEFORM;
         }
         try {
             if (!file.isEmpty())
@@ -134,12 +144,12 @@ public class ViewAndUpdateEmployeController {
             final String fieldError = messageSource.getMessage("position.exists.workflow",
                     new String[] { positionName }, null);
             model.addAttribute("error", fieldError);
-            return "employee-form";
+            return EMPLOYEEFORM;
         }
         String image = null;
         if (null != employee.getSignature())
             image = Base64.encodeBytes(employee.getSignature());
-        model.addAttribute("image", image);
+        model.addAttribute(IMAGE, image);
 
         employeeService.update(employee);
         redirectAttrs.addFlashAttribute("employee", employee);
@@ -151,9 +161,11 @@ public class ViewAndUpdateEmployeController {
     public String view(@PathVariable final String code, final Model model) {
         final Employee employee = employeeService.getEmployeeByCode(code);
         String image = null;
+        for (final Assignment assign : employee.getAssignments())
+            assign.setDeptSet(headOfDepartmentsRepository.getAllHodDepartments(assign.getId()));
         if (null != employee.getSignature())
             image = Base64.encodeBytes(employee.getSignature());
-        model.addAttribute("image", image);
+        model.addAttribute(IMAGE, image);
         return "employee-success";
     }
 

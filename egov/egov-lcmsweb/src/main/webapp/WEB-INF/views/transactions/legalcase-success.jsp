@@ -185,7 +185,6 @@
 
 				</div>
 			</div>
-		</div>
 		<div class="panel-heading">
 			<div class="panel-title">
 				<spring:message code="lbl.bipartisanDetails.details" />
@@ -353,7 +352,6 @@
 				</c:forEach>
 			</tbody>
 		</table>
-	</div>
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
@@ -382,22 +380,12 @@
 		</div>
 	</div>
 	<jsp:include page="documentdetails-view.jsp"></jsp:include>
-	<%-- <div class="form-group">
-		<label class="col-sm-3 control-label text-right"><font
-			size="2"><spring:message code="lbl.mesg.document" /></font> </label>
-		<div class="col-sm-3 add-margin">
-
-			<input type="file" id="file" name="legalCaseDocuments[0].files"
-				class="file-ellipsis upload-file">
-
-			<form:errors path="legalCaseDocuments[0].files"
-				cssClass="add-margin error-msg" />
-		</div>
-	</div> --%>
 	<div class="form-group">
 		<div class="text-center">
 			<a href="javascript:void(0)" class="btn btn-default"
 				onclick="self.close()"><spring:message code="lbl.close" /></a>
 		</div>
+	</div>
+	</div>
 	</div>
 </form:form>

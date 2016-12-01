@@ -2482,28 +2482,27 @@ public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final 
     }
 
     public Assignment getWorkflowInitiator(final PropertyImpl property) {
-        Assignment wfInitiator = null;
-        if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE) ||
-                property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE)){
-                if(!property.getStateHistory().isEmpty())
-                        wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
-                    .getOwnerPosition().getId());
-        } else{
-                if (isEmployee(property.getCreatedBy())){
-                        if(property.getState() != null  && property.getState().getInitiatorPosition() != null)
-                            wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(property
-                                    .getCreatedBy(),property.getState().getInitiatorPosition());
-                        else
-                            wfInitiator = assignmentService.getPrimaryAssignmentForUser(property
-                           .getCreatedBy().getId());
-                }
-                else if (!property.getStateHistory().isEmpty())
-                    wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
-                            .getOwnerPosition().getId());
-                else{
-                    wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getState().getOwnerPosition()
-                            .getId());
-                }
+        Assignment wfInitiator;
+        if (isEmployee(property.getCreatedBy())){
+            if(property.getState() != null  && property.getState().getInitiatorPosition() != null){
+                wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(property
+                        .getCreatedBy(),property.getState().getInitiatorPosition());
+                if(wfInitiator==null)
+                    wfInitiator = assignmentService.getAssignmentsForPosition(property.getState().getInitiatorPosition().getId(), new Date()).get(0);
+            }
+            else
+                wfInitiator = assignmentService.getPrimaryAssignmentForUser(property
+                        .getCreatedBy().getId());
+        }
+        else if (property.getState().getInitiatorPosition() != null){
+            wfInitiator = assignmentService.getAssignmentsForPosition(property.getState().getInitiatorPosition().getId(), new Date()).get(0);
+            if(wfInitiator==null && !property.getStateHistory().isEmpty())
+                wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
+                        .getOwnerPosition().getId());
+        }
+        else{
+            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getState().getOwnerPosition()
+                    .getId());
         }
         return wfInitiator;
     }
@@ -3141,6 +3140,21 @@ public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final 
             }
         }
         return waterConnDtls;
+    }
+    
+    /**
+     * Method to get total property tax due
+     * @param basicProperty
+     * @return Total property tax due
+     */
+    public BigDecimal getTotalPropertyTaxDue(final BasicProperty basicProperty) {
+        final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO.getDemandCollMap(basicProperty.getProperty());
+        Map<String, BigDecimal> currentTaxAndDue = getCurrentTaxAndBalance(propertyTaxDetails,
+                new Date());
+        BigDecimal currentPropertyTaxDue = currentTaxAndDue.get(CURR_BAL_STR);
+        BigDecimal arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
+                propertyTaxDetails.get(ARR_COLL_STR));
+        return currentPropertyTaxDue.add(arrearPropertyTaxDue);
     }
     
     /**

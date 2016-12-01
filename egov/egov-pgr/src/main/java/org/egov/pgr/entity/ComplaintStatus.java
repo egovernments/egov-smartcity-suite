@@ -65,10 +65,12 @@ public class ComplaintStatus extends AbstractPersistable<Long> {
     @NotNull
     private String name;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     protected void setId(final Long id) {
         this.id = id;
     }

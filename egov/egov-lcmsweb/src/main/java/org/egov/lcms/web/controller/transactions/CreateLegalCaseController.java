@@ -40,6 +40,8 @@
 
 package org.egov.lcms.web.controller.transactions;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -53,6 +55,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -75,7 +79,8 @@ public class CreateLegalCaseController extends GenericLegalCaseController {
 
     @RequestMapping(value = "create/", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final LegalCase legalCase, final BindingResult errors,
-            final Model model, final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
+            @RequestParam("file") final MultipartFile[] files, final Model model,
+            final RedirectAttributes redirectAttrs, final HttpServletRequest request) throws IOException {
         final String caseNumber = legalCase.getCaseNumber() + "/" + legalCase.getWpYear();
         final LegalCase validateCasenumber = legalCaseService.getLegalCaseByCaseNumber(caseNumber);
         if (validateCasenumber != null)
@@ -86,15 +91,11 @@ public class CreateLegalCaseController extends GenericLegalCaseController {
             model.addAttribute("bipartisanPetitionerDetailsList", legalCase.getBipartisanPetitionerDetailsList());
             return "legalCase-newForm";
         }
-
         legalCase.setLcNumber(legalCaseNumberGenerator.generateLegalCaseNumber());
-        legalCaseService.persist(legalCase);
+        legalCaseService.persist(legalCase, files);
         redirectAttrs.addFlashAttribute("legalCase", legalCase);
         model.addAttribute("message", "Legal Case created successfully.");
-        model.addAttribute("mode", "create");
-        model.addAttribute("supportDocs",
-                !legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0) != null
-                        ? legalCase.getLegalCaseDocuments().get(0).getSupportDocs() : null);
+        model.addAttribute("mode", "view");
         return "legalcase-success";
     }
 

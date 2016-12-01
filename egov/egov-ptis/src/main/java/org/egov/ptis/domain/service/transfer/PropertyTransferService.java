@@ -733,17 +733,24 @@ public class PropertyTransferService {
     }
     
     public Assignment getWorkflowInitiator(PropertyMutation propertyMutation) {
-        Assignment wfInitiator = null;
+        Assignment wfInitiator;
         if (propertyService.isEmployee(propertyMutation.getCreatedBy())) {
-            if (propertyMutation.getState() != null && propertyMutation.getState().getInitiatorPosition() != null)
+            if (propertyMutation.getState() != null && propertyMutation.getState().getInitiatorPosition() != null) {
                 wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(
                         propertyMutation.getCreatedBy(), propertyMutation.getState().getInitiatorPosition());
-            else
+                if (wfInitiator == null)
+                    wfInitiator = assignmentService.getAssignmentsForPosition(
+                            propertyMutation.getState().getInitiatorPosition().getId(), new Date()).get(0);
+            } else
                 wfInitiator = assignmentService.getPrimaryAssignmentForUser(propertyMutation.getCreatedBy().getId());
-        } else if (!propertyMutation.getStateHistory().isEmpty())
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(
-                    propertyMutation.getStateHistory().get(0).getOwnerPosition().getId());
-        else {
+        } else if (propertyMutation.getState().getInitiatorPosition() != null) {
+            wfInitiator = assignmentService
+                    .getAssignmentsForPosition(propertyMutation.getState().getInitiatorPosition().getId(), new Date())
+                    .get(0);
+            if (wfInitiator == null && !propertyMutation.getStateHistory().isEmpty())
+                wfInitiator = assignmentService.getPrimaryAssignmentForPositon(
+                        propertyMutation.getStateHistory().get(0).getOwnerPosition().getId());
+        } else {
             wfInitiator = assignmentService
                     .getPrimaryAssignmentForPositon(propertyMutation.getState().getOwnerPosition().getId());
         }

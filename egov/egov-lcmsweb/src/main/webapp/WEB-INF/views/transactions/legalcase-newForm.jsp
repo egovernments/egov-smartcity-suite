@@ -66,6 +66,7 @@
 
 				</div>
 			</div>
+			<jsp:include page="documentdetails-view.jsp"></jsp:include>
 
 			<div class="buttonbottom" align="center">
 				<div class="form-group text-center">

@@ -166,6 +166,28 @@ public class SewerageIndex {
     @Field(type = FieldType.Boolean)
     private boolean isActive;
 
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String revenueBlock;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String locationName;
+
+    public String getRevenueBlock() {
+        return revenueBlock;
+    }
+
+    public void setRevenueBlock(final String revenueBlock) {
+        this.revenueBlock = revenueBlock;
+    }
+
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(final String locationName) {
+        this.locationName = locationName;
+    }
+
     public String getConsumerNumber() {
         return consumerNumber;
     }

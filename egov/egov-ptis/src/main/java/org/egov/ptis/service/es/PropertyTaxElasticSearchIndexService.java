@@ -47,6 +47,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_DI
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_GRADEWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REGIONWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_WARDWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
 
 import java.math.BigDecimal;
@@ -219,6 +221,12 @@ public class PropertyTaxElasticSearchIndexService {
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest)
                 .filter(QueryBuilders.matchQuery(IS_ACTIVE, true))
                 .filter(QueryBuilders.matchQuery(IS_EXEMPTED, false));
+        if (collectionDetailsRequest.getPropertyType().equalsIgnoreCase(DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.termsQuery("propertyType", DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST));
+        else
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery("propertyType", collectionDetailsRequest.getPropertyType()));
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(PROPERTY_TAX_INDEX_NAME)
                 .withQuery(boolQuery).addAggregation(AggregationBuilders.sum(TOTALDEMAND).field(TOTAL_DEMAND))
                 .build();

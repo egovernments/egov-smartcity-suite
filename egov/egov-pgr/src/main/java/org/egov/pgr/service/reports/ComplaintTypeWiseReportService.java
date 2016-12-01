@@ -40,6 +40,8 @@
 
 package org.egov.pgr.service.reports;
 
+import static org.egov.pgr.utils.constants.PGRConstants.FROMDATE;
+
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
@@ -59,7 +61,7 @@ public class ComplaintTypeWiseReportService {
     private EntityManager entityManager;
 
     public SQLQuery getComplaintTypeWiseReportQuery(final DateTime fromDate, final DateTime toDate,
-            final String complaintType, final String complaintDateType) {
+                                                    final String complaintType, final String complaintDateType) {
 
         final StringBuilder query = new StringBuilder();
 
@@ -78,23 +80,16 @@ public class ComplaintTypeWiseReportService {
     }
 
     private void buildWhereClause(final DateTime fromDate, final DateTime toDate, final String complaintType,
-            final String complaintDateType, final StringBuilder query) {
+                                  final String complaintDateType, final StringBuilder query) {
 
         query.append(" WHERE cd.status = cs.id and cd.complainttype= ctype.id  and cd.state_id = state.id");
 
-        if (complaintDateType != null && complaintDateType.equals("lastsevendays"))
-            query.append(" and cd.createddate >=   :fromDates ");
-        else if (complaintDateType != null && complaintDateType.equals("lastthirtydays"))
-            query.append(" and cd.createddate >=   :fromDates ");
-        else if (complaintDateType != null && complaintDateType.equals("lastninetydays"))
+        if (fromDate != null || "lastsevendays".equals(complaintDateType) || "lastthirtydays".equals(complaintDateType) || "lastninetydays".equals(complaintDateType))
             query.append(" and cd.createddate >=   :fromDates ");
         else if (fromDate != null && toDate != null)
             query.append(" and ( cd.createddate BETWEEN :fromDates and :toDates) ");
-        else if (fromDate != null)
-            query.append(" and cd.createddate >=   :fromDates ");
         else if (toDate != null)
             query.append(" and cd.createddate <=  :toDates ");
-
         if (complaintType != null && !"".equals(complaintType)) {
             query.append(" and (ctype.id)= '");
             query.append(complaintType.toUpperCase()).append("' ");
@@ -103,21 +98,21 @@ public class ComplaintTypeWiseReportService {
     }
 
     private SQLQuery setParameterForComplaintTypeReportQuery(final String querykey, final DateTime fromDate,
-            final DateTime toDate, final String complaintDateType) {
+                                                             final DateTime toDate, final String complaintDateType) {
         final SQLQuery qry = entityManager.unwrap(Session.class).createSQLQuery(querykey);
 
-        if (complaintDateType != null && complaintDateType.equals("lastsevendays"))
-            qry.setParameter("fromDates", getCurrentDateWithOutTime().minusDays(7).toDate());
-        else if (complaintDateType != null && complaintDateType.equals("lastthirtydays"))
-            qry.setParameter("fromDates", getCurrentDateWithOutTime().minusDays(30).toDate());
-        else if (complaintDateType != null && complaintDateType.equals("lastninetydays"))
-            qry.setParameter("fromDates", getCurrentDateWithOutTime().minusDays(90).toDate());
+        if ("lastsevendays".equals(complaintDateType))
+            qry.setParameter(FROMDATE, getCurrentDateWithOutTime().minusDays(7).toDate());
+        else if ("lastthirtydays".equals(complaintDateType))
+            qry.setParameter(FROMDATE, getCurrentDateWithOutTime().minusDays(30).toDate());
+        else if ("lastninetydays".equals(complaintDateType))
+            qry.setParameter(FROMDATE, getCurrentDateWithOutTime().minusDays(90).toDate());
         else if (fromDate != null && toDate != null) {
-            qry.setParameter("fromDates", resetTimeByPassingDate(fromDate));
+            qry.setParameter(FROMDATE, resetTimeByPassingDate(fromDate));
             qry.setParameter("toDates", getEndOfDayByDate(toDate));
 
         } else if (fromDate != null)
-            qry.setParameter("fromDates", resetTimeByPassingDate(fromDate));
+            qry.setParameter(FROMDATE, resetTimeByPassingDate(fromDate));
         else if (toDate != null)
             qry.setParameter("toDates", getEndOfDayByDate(toDate));
         return qry;
@@ -137,7 +132,7 @@ public class ComplaintTypeWiseReportService {
     }
 
     public SQLQuery getComplaintTypeWiseReportQuery(final DateTime fromDate, final DateTime toDate,
-            final String complaintDateType, final String complaintTypeWithStatus, final String status) {
+                                                    final String complaintDateType, final String complaintTypeWithStatus, final String status) {
 
         final StringBuilder query = new StringBuilder();
 
@@ -157,15 +152,15 @@ public class ComplaintTypeWiseReportService {
         buildWhereClause(fromDate, toDate, complaintTypeWithStatus, complaintDateType, query);
         query.append(" and complainant.id=cd.complainant   ");
         if (status != null && !"".equals(status))
-            if (status.equalsIgnoreCase("registered"))
+            if ("registered".equals(status))
                 query.append(" and cs.name in ('REGISTERED')");
-            else if (status.equalsIgnoreCase("inprocess"))
+            else if ("inprocess".equals(status))
                 query.append(" and cs.name in ('FORWARDED','PROCESSING','NOTCOMPLETED')");
-            else if (status.equalsIgnoreCase("rejected"))
+            else if ("rejected".equals(status))
                 query.append(" and cs.name in ('WITHDRAWN','REJECTED')");
-            else if (status.equalsIgnoreCase("completed"))
+            else if ("completed".equals(status))
                 query.append(" and cs.name in ('COMPLETED','CLOSED')");
-            else if (status.equalsIgnoreCase("reopened"))
+            else if ("reopened".equals(status))
                 query.append(" and cs.name in ('REOPENED')");
 
         return setParameterForComplaintTypeReportQuery(query.toString(), fromDate, toDate, complaintDateType);

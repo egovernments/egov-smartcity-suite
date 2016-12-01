@@ -40,6 +40,10 @@
 
 package org.egov.pgr.service.reports;
 
+import static org.egov.pgr.utils.constants.PGRConstants.FROMDATE;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINTTYPE_SELECT_QRY;
+import static org.egov.pgr.utils.constants.PGRConstants.USER_SELECT_QRY;
+import static org.egov.pgr.utils.constants.PGRConstants.DEPT_SELECT_QRY;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
@@ -57,39 +61,39 @@ public class DrillDownReportService {
 
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     public SQLQuery getDrillDownReportQuery(final DateTime fromDate, final DateTime toDate,
-            final String complaintDateType, final String groupBy, final String department, final String boundary,
-            final String complainttype, final String selecteduser) {
+                                            final String complaintDateType, final String groupBy, final String department, final String boundary,
+                                            final String complainttype, final String selecteduser) {
 
         final StringBuilder query = new StringBuilder();
 
         if (boundary != null && !"".equals(boundary)) {
             if (department != null && !"".equals(department)) {
-
                 if (complainttype != null && !"".equals(complainttype))
-                    query.append("  SELECT   emp.name||'~'|| pos.name    as name, ");
+                    query.append(USER_SELECT_QRY);
                 /* Next is userwise. */
                 else
-                    query.append(" SELECT ctype.name as name, ");
+                    query.append(COMPLAINTTYPE_SELECT_QRY);
                 /*
                  * means user selected boundary and department. Next is complaint type.
-                 */ } else
-                query.append(" SELECT dept.name as name, "); /* Means get department list */
+                 */
+            } else
+                query.append(DEPT_SELECT_QRY); /* Means get department list */
 
         } else if (department != null && !"".equals(department)) {
             if (complainttype != null && !"".equals(complainttype))
-                query.append("  SELECT   emp.name||'~'|| pos.name    as name, ");
+                query.append(USER_SELECT_QRY);
             else
-                query.append(" SELECT ctype.name as name, ");
+                query.append(COMPLAINTTYPE_SELECT_QRY);
         } else if (complainttype != null && !"".equals(complainttype))
-            query.append(" SELECT ctype.name as name, ");
+            query.append(COMPLAINTTYPE_SELECT_QRY);
         else if (selecteduser != null && !"".equals(selecteduser))
-            query.append("  SELECT   emp.name||'~'|| pos.name    as name, ");
-        else if (groupBy != null && !"".equals(groupBy) && groupBy.equalsIgnoreCase("ByBoundary"))
+            query.append(USER_SELECT_QRY);
+        else if ("ByBoundary".equals(groupBy))
             query.append("SELECT bndry.name as name, ");
         else
-            query.append("SELECT dept.name as name, ");
+            query.append(DEPT_SELECT_QRY);
 
         query.append("   COUNT(CASE WHEN cs.name IN ('REGISTERED') THEN 1 END) registered , "
                 + " COUNT(CASE WHEN cs.name IN ('FORWARDED','PROCESSING','REOPENED','NOTCOMPLETED') THEN 1 END) inprocess, "
@@ -106,15 +110,15 @@ public class DrillDownReportService {
         query.append(
                 " FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype , eg_wf_states state, egpgr_complaint cd  left JOIN eg_boundary bndry on cd.location =bndry.id  left JOIN eg_department dept on cd.department =dept.id left join eg_position pos on cd.assignee=pos.id  left join view_egeis_employee emp on pos.id=emp.position ");
 
-        buildWhereClause(fromDate, toDate, complaintDateType, query, department, boundary, complainttype, selecteduser);
+        buildWhereClause(fromDate, toDate, complaintDateType, query, department, boundary, complainttype);
 
-        buildGroupByClause(groupBy, department, boundary, complainttype, selecteduser, query);
+        buildGroupByClause(groupBy, department, boundary, complainttype, query);
 
         return setParameterForDrillDownReportQuery(query.toString(), fromDate, toDate, complaintDateType);
     }
 
     private void buildGroupByClause(final String groupBy, final String department, final String boundary,
-            final String complainttype, final String selecteduser, final StringBuilder query) {
+                                    final String complainttype, final StringBuilder query) {
         if (boundary != null && !"".equals(boundary)) {
             if (department != null && !"".equals(department)) {
                 if (complainttype != null && !"".equals(complainttype))
@@ -133,40 +137,33 @@ public class DrillDownReportService {
                 query.append("  group by ctype.name ");
         } else if (complainttype != null && !"".equals(complainttype))
             query.append(" group by ctype.name  ");
-        else if (groupBy != null && !"".equals(groupBy) && groupBy.equalsIgnoreCase("ByBoundary"))
+        else if ("ByBoundary".equals(groupBy))
             query.append("  group by bndry.name ");
         else
             query.append("  group by dept.name ");
     }
 
     private void buildWhereClause(final DateTime fromDate, final DateTime toDate, final String complaintDateType,
-            final StringBuilder query, final String department, final String boundary, final String complainttype,
-            final String selecteduser) {
+                                  final StringBuilder query, final String department, final String boundary, final String complainttype) {
 
         query.append(" WHERE cd.status  = cs.id and cd.complainttype= ctype.id  and cd.state_id = state.id ");
 
-        if (complaintDateType != null && complaintDateType.equals("lastsevendays"))
-            query.append(" and cd.createddate >=   :fromDates ");
-        else if (complaintDateType != null && complaintDateType.equals("lastthirtydays"))
-            query.append(" and cd.createddate >=   :fromDates ");
-        else if (complaintDateType != null && complaintDateType.equals("lastninetydays"))
+        if (fromDate != null || "lastsevendays".equals(complaintDateType) || "lastthirtydays".equals(complaintDateType) || "lastninetydays".equals(complaintDateType))
             query.append(" and cd.createddate >=   :fromDates ");
         else if (fromDate != null && toDate != null)
             query.append(" and ( cd.createddate BETWEEN :fromDates and :toDates) ");
-        else if (fromDate != null)
-            query.append(" and cd.createddate >=   :fromDates ");
         else if (toDate != null)
             query.append(" and cd.createddate <=  :toDates ");
 
         if (boundary != null && !"".equals(boundary))
-            if (boundary.equalsIgnoreCase("NOT AVAILABLE"))
+            if ("NOT AVAILABLE".equals(boundary))
                 query.append(" and  bndry.name is null ");
             else {
                 query.append(" and upper(trim(bndry.name))= '");
                 query.append(boundary.toUpperCase()).append("' ");
             }
         if (department != null && !"".equals(department))
-            if (department.equalsIgnoreCase("NOT AVAILABLE"))
+            if ("NOT AVAILABLE".equals(department))
                 query.append(" and  dept.name is null ");
             else {
                 query.append(" and upper(trim(dept.name))=  '");
@@ -180,21 +177,21 @@ public class DrillDownReportService {
     }
 
     private SQLQuery setParameterForDrillDownReportQuery(final String querykey, final DateTime fromDate,
-            final DateTime toDate, final String complaintDateType) {
+                                                         final DateTime toDate, final String complaintDateType) {
         final SQLQuery qry = entityManager.unwrap(Session.class).createSQLQuery(querykey);
 
-        if (complaintDateType != null && complaintDateType.equals("lastsevendays"))
-            qry.setParameter("fromDates", getCurrentDateWithOutTime().minusDays(7).toDate());
-        else if (complaintDateType != null && complaintDateType.equals("lastthirtydays"))
-            qry.setParameter("fromDates", getCurrentDateWithOutTime().minusDays(30).toDate());
-        else if (complaintDateType != null && complaintDateType.equals("lastninetydays"))
-            qry.setParameter("fromDates", getCurrentDateWithOutTime().minusDays(90).toDate());
+        if ("lastsevendays".equals(complaintDateType))
+            qry.setParameter(FROMDATE, getCurrentDateWithOutTime().minusDays(7).toDate());
+        else if ("lastthirtydays".equals(complaintDateType))
+            qry.setParameter(FROMDATE, getCurrentDateWithOutTime().minusDays(30).toDate());
+        else if ("lastninetydays".equals(complaintDateType))
+            qry.setParameter(FROMDATE, getCurrentDateWithOutTime().minusDays(90).toDate());
         else if (fromDate != null && toDate != null) {
-            qry.setParameter("fromDates", resetTimeByPassingDate(fromDate));
+            qry.setParameter(FROMDATE, resetTimeByPassingDate(fromDate));
             qry.setParameter("toDates", getEndOfDayByDate(toDate));
 
         } else if (fromDate != null)
-            qry.setParameter("fromDates", resetTimeByPassingDate(fromDate));
+            qry.setParameter(FROMDATE, resetTimeByPassingDate(fromDate));
         else if (toDate != null)
             qry.setParameter("toDates", getEndOfDayByDate(toDate));
         return qry;
@@ -214,8 +211,8 @@ public class DrillDownReportService {
     }
 
     public SQLQuery getDrillDownReportQuery(final DateTime fromDate, final DateTime toDate,
-            final String complaintDateType, final String department, final String boundary, final String complainttype,
-            final String selecteduser) {
+                                            final String complaintDateType, final String department, final String boundary, final String complainttype,
+                                            final String selecteduser) {
         final StringBuilder query = new StringBuilder();
 
         query.append(
@@ -230,7 +227,7 @@ public class DrillDownReportService {
                         + "on cd.department =dept.id  left join eg_position pos on cd.assignee=pos.id left join view_egeis_employee emp "
                         + "on pos.id=emp.position , egpgr_complainant complainant ");
 
-        buildWhereClause(fromDate, toDate, complaintDateType, query, department, boundary, complainttype, selecteduser);
+        buildWhereClause(fromDate, toDate, complaintDateType, query, department, boundary, complainttype);
         query.append(" and complainant.id=cd.complainant   ");
         if (selecteduser != null && !"".equals(selecteduser)) {
             query.append(" and upper(emp.name)= '");

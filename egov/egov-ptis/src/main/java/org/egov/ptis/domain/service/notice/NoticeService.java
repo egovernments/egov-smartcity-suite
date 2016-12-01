@@ -80,23 +80,17 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         super(PtNotice.class);
     }
 
-    public NoticeService(Class<PtNotice> type) {
+    public NoticeService(final Class<PtNotice> type) {
         super(type);
     }
 
     /**
-     * This method populates the <code>PtNotice</code> object along with notice
-     * input stream
+     * This method populates the <code>PtNotice</code> object along with notice input stream
      *
-     * @param basicProperty
-     *            the <code>BasicProperty</code> object for which the notice is
-     *            generated
-     * @param noticeNo
-     *            - notice no
-     * @param noticeType
-     *            - type of notice
-     * @param fileStream
-     *            - input stream of generated notice.
+     * @param basicProperty the <code>BasicProperty</code> object for which the notice is generated
+     * @param noticeNo - notice no
+     * @param noticeType - type of notice
+     * @param fileStream - input stream of generated notice.
      */
     public PtNotice saveNotice(final String applicationNumber, final String noticeNo, final String noticeType,
             final BasicProperty basicProperty, final InputStream fileStream) {
@@ -120,14 +114,13 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
     }
 
     /**
-     * Using this method to attach different file store if document is already
-     * signed and been sent for sign again
-     * 
+     * Using this method to attach different file store if document is already signed and been sent for sign again
+     *
      * @param notice
      * @param fileStream
      * @return
      */
-    public PtNotice updateNotice(PtNotice notice, InputStream fileStream) {
+    public PtNotice updateNotice(final PtNotice notice, final InputStream fileStream) {
         final String fileName = notice.getNoticeNo() + ".pdf";
         final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
                 FILESTORE_MODULE_NAME);
@@ -156,6 +149,11 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
                 noticeType, applicationNo);
     }
 
+    public PtNotice getNoticeByNoticeTypeAndAssessmentNumner(final String noticeType, final String assessementNumber) {
+        return (PtNotice) basicPropertyService.find("from PtNotice where noticeType = ? and basicProperty.upicNo = ?",
+                noticeType, assessementNumber);
+    }
+
     public PersistenceService<BasicProperty, Long> getBasicPropertyService() {
         return basicPropertyService;
     }
@@ -164,7 +162,7 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         this.basicPropertyService = basicPropertyService;
     }
 
-    public String getNoticeByApplicationNo(String applicationNo) {
+    public String getNoticeByApplicationNo(final String applicationNo) {
         final StringBuilder queryStr = new StringBuilder(500);
         String noticeNum = "";
         queryStr.append(
@@ -175,16 +173,15 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         final Query query = getSession().createQuery(queryStr.toString());
         if (StringUtils.isNotBlank(applicationNo))
             query.setString("applicationNo", applicationNo);
-        List<String> notices = query.list();
-        if (notices.size() != 0) {
+        final List<String> notices = query.list();
+        if (notices.size() != 0)
             noticeNum = (String) query.list().get(0);
-
-        } else
+        else
             noticeNum = "";
         return noticeNum;
     }
 
-    public List<PropertyMutation> getListofMutations(String indexNumber) {
+    public List<PropertyMutation> getListofMutations(final String indexNumber) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select mt from PropertyMutation mt left join mt.basicProperty bp ");
         if (StringUtils.isNotBlank(indexNumber))
@@ -193,7 +190,7 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         final Query query = getSession().createQuery(queryStr.toString());
         if (StringUtils.isNotBlank(indexNumber))
             query.setString("assessmentNo", indexNumber);
-        List<PropertyMutation> mutations = query.list();
+        final List<PropertyMutation> mutations = query.list();
         return mutations;
     }
 }

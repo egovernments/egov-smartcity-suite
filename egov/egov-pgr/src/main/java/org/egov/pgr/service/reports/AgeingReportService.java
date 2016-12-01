@@ -40,6 +40,10 @@
 
 package org.egov.pgr.service.reports;
 
+import static org.egov.pgr.utils.constants.PGRConstants.BYBOUNDARY;
+import static org.egov.pgr.utils.constants.PGRConstants.FROMDATE;
+import static org.egov.pgr.utils.constants.PGRConstants.TODATE;
+
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
@@ -61,19 +65,16 @@ public class AgeingReportService {
     private EntityManager entityManager;
 
     public SQLQuery getageingReportQuery(final DateTime fromDate, final DateTime toDate, final String typeofReport,
-            final String complaintDateType, final String groupBy) {
+                                         final String complaintDateType, final String groupBy) {
 
         final StringBuilder query = new StringBuilder();
 
-        if (groupBy != null && !"".equals(groupBy) && groupBy.equalsIgnoreCase("ByBoundary"))
-            query.append("SELECT bndry.name as name, ");// TODO CHECK
-        // DEPARTMENTWISE
-        // OR ZONE WISE
+        if (groupBy != null && !"".equals(groupBy) && groupBy.equalsIgnoreCase(BYBOUNDARY))
+            query.append("SELECT bndry.name as name, ");
         else
             query.append("SELECT dept.name as name, ");
 
-        if (typeofReport != null && !"".equals(typeofReport)
-                && (typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_COMPLETED) || typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_REJECTED))) {
+        if (COMPLAINTSTATUS_COMPLETED.equals(typeofReport) || COMPLAINTSTATUS_REJECTED.equals(typeofReport)) {
             query.append(
                     " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) > :grtthn90 THEN 1 END) grtthn90, ");
             query.append(
@@ -91,14 +92,14 @@ public class AgeingReportService {
             query.append(" FROM egpgr_complaintstatus cs  ,egpgr_complainttype ctype ,egpgr_complaint cd  ");
         }
 
-        if (groupBy != null && !"".equals(groupBy) && groupBy.equalsIgnoreCase("ByBoundary"))
+        if (BYBOUNDARY.equals(groupBy))
             query.append("  left JOIN eg_boundary bndry on cd.location =bndry.id ");
         else
             query.append("  left JOIN eg_department dept on cd.department =dept.id ");
 
         buildWhereClause(fromDate, toDate, typeofReport, complaintDateType, query);
 
-        if (groupBy != null && !"".equals(groupBy) && groupBy.equalsIgnoreCase("ByBoundary"))
+        if (BYBOUNDARY.equals(groupBy))
             query.append("  group by bndry.name ");
         else
             query.append("  group by dept.name ");
@@ -107,40 +108,32 @@ public class AgeingReportService {
     }
 
     private void buildWhereClause(final DateTime fromDate, final DateTime toDate, final String typeofReport,
-            final String complaintDateType, final StringBuilder query) {
+                                  final String complaintDateType, final StringBuilder query) {
 
-        if (typeofReport != null && !"".equals(typeofReport)
-                && typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_COMPLETED)) {
+        if (COMPLAINTSTATUS_COMPLETED.equals(typeofReport)) {
             query.append(" WHERE  cd.state_id=state.id and  cd.status  = cs.id and cd.complainttype= ctype.id  ");
             query.append(" AND cs.name IN ('COMPLETED', 'WITHDRAWN','CLOSED') ");
-        }  else if(typeofReport != null && !"".equals(typeofReport) && typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_REJECTED)){
+        } else if (COMPLAINTSTATUS_REJECTED.equals(typeofReport)) {
             query.append(" WHERE  cd.state_id=state.id and  cd.status  = cs.id and cd.complainttype= ctype.id  ");
             query.append(" AND cs.name IN ('REJECTED') ");
-        }else {
+        } else {
             query.append(" WHERE cd.status  = cs.id and cd.complainttype= ctype.id  ");
             query.append(" AND cs.name IN ('REGISTERED','FORWARDED', 'PROCESSING','REOPENED') ");
         }
 
-        if (complaintDateType != null && complaintDateType.equals("lastsevendays"))
-            query.append(" and cd.createddate >=   :fromDates ");
-        else if (complaintDateType != null && complaintDateType.equals("lastthirtydays"))
-            query.append(" and cd.createddate >=   :fromDates ");
-        else if (complaintDateType != null && complaintDateType.equals("lastninetydays"))
+        if ("lastsevendays".equals(complaintDateType) || "lastthirtydays".equals(complaintDateType) || "lastninetydays".equals(complaintDateType) || fromDate != null)
             query.append(" and cd.createddate >=   :fromDates ");
         else if (fromDate != null && toDate != null)
             query.append(" and ( cd.createddate BETWEEN :fromDates and :toDates) ");
-        else if (fromDate != null)
-            query.append(" and cd.createddate >=   :fromDates ");
         else if (toDate != null)
             query.append(" and cd.createddate <=  :toDates ");
     }
 
     private SQLQuery setParameterForAgeingReport(final String querykey, final String typeofReport, final DateTime fromDate,
-            final DateTime toDate, final String complaintDateType) {
+                                                 final DateTime toDate, final String complaintDateType) {
         final SQLQuery qry = entityManager.unwrap(Session.class).createSQLQuery(querykey);
 
-        if (typeofReport != null && !"".equals(typeofReport)
-                && (typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_COMPLETED) || typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_REJECTED))) {
+        if (COMPLAINTSTATUS_COMPLETED.equals(typeofReport) || COMPLAINTSTATUS_REJECTED.equals(typeofReport)) {
             qry.setParameter("grtthn90", 90);
             qry.setParameter("lsthn90", 90);
             qry.setParameter("grtthn45", 45.0001);
@@ -160,20 +153,19 @@ public class AgeingReportService {
             qry.setParameter("currdate", getCurrentDateWithEndOfDayTime().toDate());
         }
 
-        if (complaintDateType != null && complaintDateType.equals("lastsevendays"))
-            qry.setParameter("fromDates", getCurrentDateWithOutTime().minusDays(7).toDate());
-        else if (complaintDateType != null && complaintDateType.equals("lastthirtydays"))
-            qry.setParameter("fromDates", getCurrentDateWithOutTime().minusDays(30).toDate());
-        else if (complaintDateType != null && complaintDateType.equals("lastninetydays"))
-            qry.setParameter("fromDates", getCurrentDateWithOutTime().minusDays(90).toDate());
+        if ("lastsevendays".equals(complaintDateType))
+            qry.setParameter(FROMDATE, getCurrentDateWithOutTime().minusDays(7).toDate());
+        else if ("lastthirtydays".equals(complaintDateType))
+            qry.setParameter(FROMDATE, getCurrentDateWithOutTime().minusDays(30).toDate());
+        else if ("lastninetydays".equals(complaintDateType))
+            qry.setParameter(FROMDATE, getCurrentDateWithOutTime().minusDays(90).toDate());
         else if (fromDate != null && toDate != null) {
-            qry.setParameter("fromDates", resetTimeByPassingDate(fromDate));
-            qry.setParameter("toDates", getEndOfDayByDate(toDate));
-
+            qry.setParameter(FROMDATE, resetTimeByPassingDate(fromDate));
+            qry.setParameter(TODATE, getEndOfDayByDate(toDate));
         } else if (fromDate != null)
-            qry.setParameter("fromDates", resetTimeByPassingDate(fromDate));
+            qry.setParameter(FROMDATE, resetTimeByPassingDate(fromDate));
         else if (toDate != null)
-            qry.setParameter("toDates", getEndOfDayByDate(toDate));
+            qry.setParameter(TODATE, getEndOfDayByDate(toDate));
         return qry;
     }
 

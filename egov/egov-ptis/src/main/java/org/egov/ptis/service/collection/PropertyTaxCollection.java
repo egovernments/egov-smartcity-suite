@@ -80,6 +80,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
+import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
@@ -801,20 +802,22 @@ public class PropertyTaxCollection extends TaxCollection {
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0];
-                if (rcptAccInfo.getGlCode().equals(GLCODE_FOR_PENALTY) && reason.equals(DEMANDRSN_STR_PENALTY_FINES))
+                if ((rcptAccInfo.getPurpose().equals(PURPOSE.ARREAR_LATEPAYMENT_CHARGES.toString()) 
+                        || rcptAccInfo.getPurpose().equals(PURPOSE.CURRENT_LATEPAYMENT_CHARGES.toString())) 
+                        && reason.equals(DEMANDRSN_STR_PENALTY_FINES))
                     latePaymentCharges = latePaymentCharges.add(rcptAccInfo.getCrAmount());
-                else if (rcptAccInfo.getGlCode().equals(GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_LIBRARY_CESS))
+                else if (rcptAccInfo.getPurpose().equals(PURPOSE.CURRENT_AMOUNT.toString())
                         && reason.equals(DEMANDRSN_STR_LIBRARY_CESS))
                     currLibCess = currLibCess.add(rcptAccInfo.getCrAmount());
-                else if (rcptAccInfo.getGlCode().equals(GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_LIBRARY_CESS))
+                else if (rcptAccInfo.getPurpose().equals(PURPOSE.ARREAR_AMOUNT.toString())
                         && reason.equals(DEMANDRSN_STR_LIBRARY_CESS))
                     arrearLibCess = arrearLibCess.add(rcptAccInfo.getCrAmount());
-                else if (rcptAccInfo.getGlCode().equals(ARREAR_DEMANDRSN_GLCODE))
+                else if (rcptAccInfo.getPurpose().equals(PURPOSE.ARREAR_AMOUNT.toString()))
                     arrearAmount = arrearAmount.add(rcptAccInfo.getCrAmount());
                 else
                     currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
             } else if (rcptAccInfo.getDrAmount() != null && rcptAccInfo.getDrAmount().compareTo(BigDecimal.ZERO) == 1)
-                if (rcptAccInfo.getGlCode().equals(GLCODE_FOR_TAXREBATE))
+                if (rcptAccInfo.getPurpose().equals(PURPOSE.REBATE.toString()))
                     rebateAmount = rebateAmount.add(rcptAccInfo.getDrAmount());
 
         for (final EgBillDetails billDet : egBill.getEgBillDetails()) {

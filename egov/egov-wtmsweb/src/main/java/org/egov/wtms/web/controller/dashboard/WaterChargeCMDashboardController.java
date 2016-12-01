@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.wtms.bean.dashboard.TaxPayerResponseDetails;
+import org.egov.wtms.bean.dashboard.WaterChargeConnectionTypeResponse;
 import org.egov.wtms.bean.dashboard.WaterChargeDashBoardRequest;
 import org.egov.wtms.bean.dashboard.WaterChargeDashBoardResponse;
 import org.egov.wtms.bean.dashboard.WaterTaxDefaulters;
@@ -98,6 +99,20 @@ public class WaterChargeCMDashboardController {
         final Long startTime = System.currentTimeMillis();
         final Map<String, List<WaterChargeDashBoardResponse>> collReceiptDetails = waterChargeDashboardService
                 .getReceiptDetails(collectionDetailsRequest);
+        final Long timeTaken = System.currentTimeMillis() -
+                startTime;
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken to serve receipttransactions is  (millisecs): " + timeTaken);
+        return collReceiptDetails;
+
+    }
+    
+    @RequestMapping(value = "/waterchargeconnectionType", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, List<WaterChargeConnectionTypeResponse>> getConnectionTypeDashBoard(
+            @RequestBody final WaterChargeDashBoardRequest collectionDetailsRequest) throws IOException {
+        final Long startTime = System.currentTimeMillis();
+        final Map<String, List<WaterChargeConnectionTypeResponse>> collReceiptDetails = waterChargeDashboardService
+                .getCollectionTypeIndexDetails(collectionDetailsRequest);
         final Long timeTaken = System.currentTimeMillis() -
                 startTime;
         if (LOGGER.isDebugEnabled())

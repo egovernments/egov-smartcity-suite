@@ -992,6 +992,7 @@ public interface PropertyTaxConstants {
     public static final String NOTICE_TYPE_MUTATION_CERTIFICATE = "Mutation Certificate";
     public static final String NOTICE_TYPE_DEMAND_BILL = "Demand Bill";
     public static final String NOTICE_TYPE_PROCEEDINGS = "Proceedings";
+    public static final String NOTICE_TYPE_ESD = "ESD Notice";
 
     public static final String CREATE_AUDIT_ACTION = "Create Property";
     public static final String MODIFY_AUDIT_ACTION = "Modify Property";
@@ -1102,6 +1103,8 @@ public interface PropertyTaxConstants {
     public static final String NOTICE_TYPE_REVISIONPETITION_PROCEEDINGS_PREFIX = "PROCEEDINGS";
     public static final String REPORT_TEMPLATENAME_TRANSFER_CERTIFICATE = "mainMutationCertificate";
     public static final String REPORT_TEMPLATENAME_RP_SPECIAL_NOTICE = "mainRPSpecialNotice";
+    public static final String REPORT_ESD_NOTICE_CORPORATION = "ESDNotice_Corporation";
+    public static final String REPORT_ESD_NOTICE_MUNICIPALITY = "ESDNotice_Municipality";
 
     // Property Transfer related constants
     public static final String TRANSFER_FEE_COLLECTED = "Transfer Fee Collected";
@@ -1533,4 +1536,8 @@ public interface PropertyTaxConstants {
             add("Central Government 75%");
         }
     };
+    
+    public static final String CORPORATION_ESD_NOTICE_SECTION_ACT = "(Issued under Section 269(2) of Municipal Corporations Act,1955 (formerly GHMC Act, 1955)";
+    
+    public static final String MUNICIPALITY_ESD_NOTICE_SECTION_ACT = "(Issued under Section 91 of A.P. Municipalities Act 1965)";
 }

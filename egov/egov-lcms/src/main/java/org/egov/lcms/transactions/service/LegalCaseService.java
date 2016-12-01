@@ -54,6 +54,7 @@ import org.egov.lcms.transactions.entity.LegalCaseAdvocate;
 import org.egov.lcms.transactions.entity.LegalCaseDocuments;
 import org.egov.lcms.transactions.entity.Pwr;
 import org.egov.lcms.transactions.entity.PwrDocuments;
+import org.egov.lcms.transactions.repository.LegalCaseDocumentsRepository;
 import org.egov.lcms.transactions.repository.LegalCaseRepository;
 import org.egov.lcms.transactions.repository.PwrDocumentsRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
@@ -82,6 +83,9 @@ public class LegalCaseService {
     private FileStoreService fileStoreService;
 
     @Autowired
+    private LegalCaseDocumentsRepository legalCaseDocumentsRepository;
+
+    @Autowired
     public LegalCaseService(final LegalCaseRepository legalCaseRepository) {
         this.legalCaseRepository = legalCaseRepository;
 
@@ -100,26 +104,30 @@ public class LegalCaseService {
     }
 
     @Transactional
-    public LegalCase persist(LegalCase legalcase) {
+    public LegalCase persist(LegalCase legalcase, final MultipartFile[] files) throws IOException {
         legalcase.setCaseNumber(
                 legalcase.getCaseNumber() + (legalcase.getWpYear() != null ? "/" + legalcase.getWpYear() : ""));
         legalcase.setStatus(legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_CREATED));
-        final List<LegalCaseDocuments> legalDoc = legalCaseUtil.getLegalCaseDocumentList(legalcase);
         legalcase = prepareChildEntities(legalcase);
-        processAndStoreApplicationDocuments(legalcase, legalDoc);
         updateNextDate(legalcase, legalcase.getPwrList());
-        return legalCaseRepository.save(legalcase);
+        final LegalCase savedlegalcase = legalCaseRepository.save(legalcase);
+        final List<LegalCaseDocuments> documentDetails = getLegalcaseDocumentDetails(savedlegalcase, files);
+        if (!documentDetails.isEmpty()) {
+            savedlegalcase.setLegalCaseDocuments(documentDetails);
+            persistLegalcaseDocuments(documentDetails);
+        }
+        return savedlegalcase;
     }
 
     @Transactional
     public LegalCase update(final LegalCase legalcase, final MultipartFile[] files) throws IOException {
         updateCounterAffidavitAndPwr(legalcase, legalcase.getPwrList());
         final LegalCase savedCaAndPwr = legalCaseRepository.save(legalcase);
-        final List<PwrDocuments> documentDetails = getDocumentDetails(savedCaAndPwr, files);
+        final List<PwrDocuments> documentDetails = getPwrDocumentDetails(savedCaAndPwr, files);
         if (!documentDetails.isEmpty()) {
             savedCaAndPwr.getPwrList().get(0).setPwrDocuments(documentDetails);
-            persistDocuments(documentDetails);
+            persistPwrDocuments(documentDetails);
         }
         return savedCaAndPwr;
 
@@ -260,32 +268,6 @@ public class LegalCaseService {
 
     }
 
-    public void processAndStoreApplicationDocuments(final LegalCase legalcase,
-            final List<LegalCaseDocuments> legalDoc) {
-        if (legalcase.getId() == null) {
-            if (!legalcase.getLegalCaseDocuments().isEmpty())
-                for (final LegalCaseDocuments applicationDocument : legalcase.getLegalCaseDocuments()) {
-                    applicationDocument.setLegalCase(legalcase);
-                    applicationDocument.setDocumentName(LcmsConstants.LEGALCASE_DOCUMENTNAME);
-                    applicationDocument.setSupportDocs(legalCaseUtil.addToFileStore(applicationDocument.getFiles()));
-                }
-        } else {
-            final List<LegalCaseDocuments> tempLegalCaseDoc = new ArrayList<LegalCaseDocuments>(
-                    legalcase.getLegalCaseDocuments());
-
-            for (final LegalCaseDocuments applicationDocument : tempLegalCaseDoc)
-                if (applicationDocument.getFiles() != null) {
-                    applicationDocument.setLegalCase(legalcase);
-                    applicationDocument.setDocumentName(LcmsConstants.LEGALCASE_DOCUMENTNAME);
-                    applicationDocument.getSupportDocs()
-                            .addAll(legalCaseUtil.addToFileStore(applicationDocument.getFiles()));
-                    legalcase.getLegalCaseDocuments().add(applicationDocument);
-                }
-            legalcase.getLegalCaseDocuments().addAll(legalDoc);
-
-        }
-    }
-
     @Transactional
     public LegalCase save(final LegalCase legalcase) {
         return legalCaseRepository.save(legalcase);
@@ -304,7 +286,7 @@ public class LegalCaseService {
 
     }
 
-    public List<PwrDocuments> getDocumentDetails(final LegalCase legalCase, final MultipartFile[] files)
+    public List<PwrDocuments> getPwrDocumentDetails(final LegalCase legalCase, final MultipartFile[] files)
             throws IOException {
         final List<PwrDocuments> documentDetailsList = new ArrayList<PwrDocuments>();
 
@@ -313,7 +295,6 @@ public class LegalCaseService {
                 if (!files[i].isEmpty()) {
                     final PwrDocuments applicationDocument = new PwrDocuments();
                     applicationDocument.setPwr(legalCase.getPwrList().get(0));
-                    ;
                     applicationDocument.setDocumentName(LcmsConstants.PWR_DOCUMENTNAME);
                     applicationDocument.setSupportDocs(
                             fileStoreService.store(files[i].getInputStream(), files[i].getOriginalFilename(),
@@ -324,10 +305,35 @@ public class LegalCaseService {
         return documentDetailsList;
     }
 
-    public void persistDocuments(final List<PwrDocuments> documentDetailsList) {
+    public void persistPwrDocuments(final List<PwrDocuments> documentDetailsList) {
         if (documentDetailsList != null && !documentDetailsList.isEmpty())
             for (final PwrDocuments doc : documentDetailsList)
                 pwrDocumentsRepository.save(doc);
+    }
+
+    public List<LegalCaseDocuments> getLegalcaseDocumentDetails(final LegalCase legalCase, final MultipartFile[] files)
+            throws IOException {
+        final List<LegalCaseDocuments> documentDetailsList = new ArrayList<LegalCaseDocuments>();
+
+        if (files != null)
+            for (int i = 0; i < files.length; i++)
+                if (!files[i].isEmpty()) {
+                    final LegalCaseDocuments applicationDocument = new LegalCaseDocuments();
+                    applicationDocument.setLegalCase(legalCase);
+                    applicationDocument.setDocumentName(LcmsConstants.LEGALCASE_DOCUMENTNAME);
+                    applicationDocument.setSupportDocs(
+                            fileStoreService.store(files[i].getInputStream(), files[i].getOriginalFilename(),
+                                    files[i].getContentType(), LcmsConstants.FILESTORE_MODULECODE));
+                    documentDetailsList.add(applicationDocument);
+
+                }
+        return documentDetailsList;
+    }
+
+    public void persistLegalcaseDocuments(final List<LegalCaseDocuments> documentDetailsList) {
+        if (documentDetailsList != null && !documentDetailsList.isEmpty())
+            for (final LegalCaseDocuments doc : documentDetailsList)
+                legalCaseDocumentsRepository.save(doc);
     }
 
 }
