@@ -118,13 +118,13 @@ public class PropertyWiseArrearInfo {
         this.basicPropId = basicPropId;
     }
 
-	public String getArrearInstallmentDesc() {
-		return arrearInstallmentDesc;
-	}
+    public String getArrearInstallmentDesc() {
+        return arrearInstallmentDesc;
+    }
 
-	public void setArrearInstallmentDesc(String arrearInstallmentDesc) {
-		this.arrearInstallmentDesc = arrearInstallmentDesc;
-	}
+    public void setArrearInstallmentDesc(String arrearInstallmentDesc) {
+        this.arrearInstallmentDesc = arrearInstallmentDesc;
+    }
 
     public BigDecimal getArrearEducationCess() {
         return arrearEducationCess;
