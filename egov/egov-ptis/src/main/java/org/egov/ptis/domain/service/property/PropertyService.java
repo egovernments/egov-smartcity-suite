@@ -3143,6 +3143,21 @@ public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final 
     }
     
     /**
+     * Method to get total property tax due
+     * @param basicProperty
+     * @return Total property tax due
+     */
+    public BigDecimal getTotalPropertyTaxDue(final BasicProperty basicProperty) {
+        final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO.getDemandCollMap(basicProperty.getProperty());
+        Map<String, BigDecimal> currentTaxAndDue = getCurrentTaxAndBalance(propertyTaxDetails,
+                new Date());
+        BigDecimal currentPropertyTaxDue = currentTaxAndDue.get(CURR_BAL_STR);
+        BigDecimal arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
+                propertyTaxDetails.get(ARR_COLL_STR));
+        return currentPropertyTaxDue.add(arrearPropertyTaxDue);
+    }
+    
+    /**
      * Method to get children created for property
      * @param basicProperty
      * @return List<PropertyStatusValues>

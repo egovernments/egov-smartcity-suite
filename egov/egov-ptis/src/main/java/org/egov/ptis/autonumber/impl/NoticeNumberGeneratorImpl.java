@@ -50,27 +50,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class NoticeNumberGeneratorImpl implements NoticeNumberGenerator{
-	
-	private static final String SEQ_EGPT_NOTICE_NUMBER = "SEQ_EGPT_NOTICE_NUMBER";
-	
-	@Autowired
+public class NoticeNumberGeneratorImpl implements NoticeNumberGenerator {
+
+    private static final String SEQ_EGPT_NOTICE_NUMBER = "SEQ_EGPT_NOTICE_NUMBER";
+
+    @Autowired
     private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 
-	@Override
-	public String generateNoticeNumber(String noticeType) {
-		String noticeNumber = "";
-		if(StringUtils.isNotBlank(noticeType)){
-			String noticeTypeCode = "";
-			if (noticeType.equalsIgnoreCase(PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE)) 
-				noticeTypeCode = "SN";
-        	else if(noticeType.equalsIgnoreCase(PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE))
-        		noticeTypeCode = "MC";
-        	
-			final String sequenceName = SEQ_EGPT_NOTICE_NUMBER;
-	        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-	        noticeNumber = String.format("%s/%s%06d",noticeTypeCode,ApplicationThreadLocals.getCityCode(), nextSequence);
-		}
-		return noticeNumber;
-	}
+    @Override
+    public String generateNoticeNumber(final String noticeType) {
+        String noticeNumber = "";
+        if (StringUtils.isNotBlank(noticeType)) {
+            String noticeTypeCode = "";
+            if (noticeType.equalsIgnoreCase(PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE))
+                noticeTypeCode = "SN";
+            else if (noticeType.equalsIgnoreCase(PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE))
+                noticeTypeCode = "MC";
+            else if (noticeType.equalsIgnoreCase(PropertyTaxConstants.NOTICE_TYPE_ESD))
+                noticeTypeCode = "ESD";
+
+            final String sequenceName = SEQ_EGPT_NOTICE_NUMBER;
+            final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+            noticeNumber = String.format("%s/%s%06d", noticeTypeCode, ApplicationThreadLocals.getCityCode(), nextSequence);
+        }
+        return noticeNumber;
+    }
 }

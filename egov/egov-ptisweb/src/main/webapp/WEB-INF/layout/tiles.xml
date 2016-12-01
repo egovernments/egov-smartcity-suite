@@ -355,5 +355,11 @@
     <definition name="defaultersVLT-form" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.title.defaultersReportVLT.report" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/reports/defaultersReport-form.jsp"/>
+    </definition>  
+    
+    <definition name="esdnotice-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.title.esd.notice" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/esdnotice-form.jsp"/>
     </definition> 
+    
 </tiles-definitions> 

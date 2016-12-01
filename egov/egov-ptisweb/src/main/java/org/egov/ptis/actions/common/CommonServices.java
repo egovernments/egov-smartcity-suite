@@ -59,6 +59,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_DEMAND_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_ESD;
 
 public class CommonServices {
 
@@ -96,6 +97,7 @@ public class CommonServices {
 		noticeTypeMap.put(NOTICE_TYPE_BILL, NOTICE_TYPE_DEMAND_BILL);
 		noticeTypeMap.put(NOTICE_TYPE_SPECIAL_NOTICE, NOTICE_TYPE_SPECIAL_NOTICE);
 		noticeTypeMap.put(NOTICE_TYPE_MUTATION_CERTIFICATE, NOTICE_TYPE_MUTATION_CERTIFICATE);
+		noticeTypeMap.put(NOTICE_TYPE_ESD, NOTICE_TYPE_ESD);
 		return noticeTypeMap;
 	}
 
