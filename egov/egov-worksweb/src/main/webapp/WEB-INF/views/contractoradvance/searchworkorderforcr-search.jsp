@@ -136,7 +136,7 @@
 	<div class="row">
 		<div class="col-sm-12 text-center">
 			<button type='button' class='btn btn-primary' id="btncreatecr">
-				<spring:message code='lbl.createre' />
+				<spring:message code='lbl.createcr' />
 			</button>
 		</div>
 	</div>
