@@ -233,6 +233,13 @@ function initializeDatePicker(){
 }
 
 $('#saveSpillAbstractEstimate').click(function() {
+	if ($('#location').val() == '' || $('#description').val() == ''
+			|| $('#technicalSanctionNumber').val() == '' || $('#technicalSanctionDate').val()
+			|| $('#designation').val() == '') {
+		bootbox.alert($('#mandatoryError').val());
+		return false;
+	}
+	
 	if($('#abstractEstimate').valid()) {
 		var flag = validateSORDetails();
 		if(!flag)

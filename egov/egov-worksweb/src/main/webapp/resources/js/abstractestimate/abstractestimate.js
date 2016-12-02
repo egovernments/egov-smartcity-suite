@@ -1215,7 +1215,6 @@ function clearActivities(){
 				$('#quantity_0').val('');
 				$('#categoryCode_0').val('');
 				$('#quantity_0').removeAttr('readonly');
-				$('#quantity_0').attr('required', 'required');
 				$('.amount_0').html('');
 				$('#vat_0').val('');
 				$('.vatAmount_0').html('');
@@ -1254,7 +1253,6 @@ function clearActivities(){
 				$('.nonSorRate').val('');
 				$('.nonSorQuantity').val('');
 				$('.nonSorQuantity').removeAttr('readonly');
-				$('.nonSorQuantity').attr('required', 'required');
 				$('.nonsoramount').html('');
 				$('.nonSorServiceTaxPerc').val('');
 				$('.nonSorVatAmt').html('');
