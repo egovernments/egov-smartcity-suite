@@ -477,4 +477,9 @@ public class AssignmentService {
         return assignmentRepository.findByDepartmentIdAndDesignationId(deptId, desigId);
     }
 
+    public List<Assignment> getPrimaryAssignmentForPositionAndDateRange(final Long posId, final Date fromDate,
+            final Date toDate) {
+        return assignmentRepository.getPrimaryAssignmentForPositionAndDateRange(posId, fromDate, toDate);
+    }
+
 }
