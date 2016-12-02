@@ -1,0 +1,55 @@
+---
+
+- name: Create the necessary directories
+  become: yes
+  file:
+    dest: "{{item}}"
+    state: directory
+    owner: "{{postgresql_admin_user}}"
+    group: "{{postgresql_admin_group}}"
+  with_items:
+    - "{{postgresql_conf_directory}}"
+    - "{{postgresql_data_directory}}"
+    - "{{postgresql_runtime_directory}}"
+    - "{{postgresql_log_directory}}"
+  tags:
+    - postgresql
+    - db
+    - conf
+
+- name: Configure PostgreSQL
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "{{postgresql_conf_directory}}/{{item}}"
+  with_items:
+    - postgresql.conf
+    - pg_ctl.conf
+    - environment
+  notify: restart postgresql
+  tags:
+    - postgresql
+    - db
+    - conf
+
+- name: Configure PostgreSQL (authentication)
+  become: yes
+  template:
+    src: pg_hba.conf
+    dest: "{{postgresql_hba_file}}"
+  notify: restart postgresql
+  tags:
+    - postgresql
+    - db
+    - conf
+
+- name: Configure PostgreSQL (ident)
+  become: yes
+  template:
+    src: pg_ident.conf
+    dest: "{{postgresql_ident_file}}"
+  notify: restart postgresql
+  tags:
+    - postgresql
+    - db
+    - conf

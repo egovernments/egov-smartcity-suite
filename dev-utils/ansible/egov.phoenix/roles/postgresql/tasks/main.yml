@@ -1,0 +1,16 @@
+---
+
+- include: install_apt.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - db
+    - postgresql
+
+- include: install_yum.yml
+  when: ansible_os_family == 'RedHat'
+  tags:
+    - db
+    - postgresql
+
+- include: extensions.yml
+- include: configure.yml

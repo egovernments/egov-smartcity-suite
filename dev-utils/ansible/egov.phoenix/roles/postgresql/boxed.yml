@@ -1,0 +1,26 @@
+---
+
+# Boxed installation playbook
+# ---------------------------
+
+# A Simple, straight playbook for producing
+# a boxed installation in a vagrant VM.
+
+
+- name: 'PostgreSQL boxed installation'
+
+  hosts: vagrant
+
+  vars:
+    postgresql_listen_addresses:
+      - '*'
+    postgresql_authentication:
+      - type: host
+        user: all
+        database: all
+        address: '0.0.0.0/0'
+        method: trust
+
+  roles:
+    - '.'    # This role itself
+

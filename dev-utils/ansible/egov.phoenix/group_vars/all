@@ -1,0 +1,20 @@
+USERNAME: "{{ lookup('env','USER') }}"
+HOME: "{{ lookup('env','HOME') }}"
+ANSIBLE_WORKSPACE: "{{HOME}}/EGOV-PHOENIX"
+
+# TECH STACK VERSIONS
+java_version: 8
+java_subversion: 92
+
+postgresql_version: 9.4
+
+maven_version: 3.3.9
+
+elastic_version: 2.4.1
+
+wildfly_version: 10.0.0
+
+redis_version: 
+
+kibana_version:
+
