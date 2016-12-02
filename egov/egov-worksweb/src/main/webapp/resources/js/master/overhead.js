@@ -38,6 +38,17 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 $detailsRowCount = $('#detailsSize').val();
+$accountCode=0;
+$(document).ready(function(){
+var accountCode = $('#accountCode').val();
+if (accountCode != "") {
+	$('#accountCode option').each(function() {
+		if ($(this).val() == accountCode)
+			$(this).attr('selected', 'selected');
+	});
+}
+});
+
 function addOverhead() {
 	var rowcount = $("#tbloverhead tbody tr").length;
 	if (rowcount < 30) {

@@ -53,6 +53,7 @@
 	</c:choose>
 	</div>
 	<input type="hidden" value="${overhead.id }" id="overheadid" name="overhead" />
+	<input type="hidden" value="${overhead.accountCode.id }" id="accountCode" />
 	
 	<div class="panel-body">
 		<div class="form-group">
@@ -73,7 +74,7 @@
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.account" /><span
 						class="mandatory"></span></label>	
 			<div class="col-sm-3 add-margin">
-				<form:select id="accountCode" path="accountCode.id" data-first-option="false" class="form-control" required="required">
+				<form:select id="accountCode" path="accountCode" data-first-option="false" class="form-control" required="required">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
@@ -81,7 +82,7 @@
 						<form:option value="${account.id}"><c:out value="${account.glcode} - ${account.name}"/></form:option>  
 					</c:forEach>   
 				</form:select>
-				<form:errors path="accountCode.id" cssClass="add-margin error-msg" />
+				<form:errors path="accountCode" cssClass="add-margin error-msg" />
 			</div>
 		</div>
 	</div>
