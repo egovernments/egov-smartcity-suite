@@ -1309,7 +1309,7 @@ function populateActivities(data, nonSorCheck){
 			$('#message').prop("hidden",true);
 			$('#sorRow').removeAttr("hidden");
 			$('#sorRow').removeAttr('sorinvisible');
-			if (responseObj[index].ms != "") {
+			if (responseObj[index].ms != "" && responseObj[index].ms != undefined) {
 				var newrow= $('#msheaderrowtemplate').html();
 				
 				newrow=  newrow.replace(/msrowtemplate/g, 'msrowsorActivities[0]');
@@ -1370,7 +1370,7 @@ function populateActivities(data, nonSorCheck){
 			$('#nonSorMessage').prop("hidden",true);
 			$('#nonSorRow').removeAttr("hidden");
 			$('#nonSorRow').removeAttr('nonsorinvisible');
-			if (responseObj[index].ms != "") {
+			if (responseObj[index].ms != "" && responseObj[index].ms != undefined) {
 				var newrow= $('#msheaderrowtemplate').html();
 				
 				newrow=  newrow.replace(/msrowtemplate/g, 'msrownonSorActivities[0]');
@@ -1442,14 +1442,14 @@ function populateActivities(data, nonSorCheck){
 				$('#vat_' + key).val('');
 				$('.vatAmount_' + key).html('');
 				$('.total_' + key).html('');
-				if(document.getElementById('sorActivities['+key+'].mstd') && responseObj[index].ms == "")
+				if(document.getElementById('sorActivities['+key+'].mstd') && (responseObj[index].ms == "" || responseObj[index].ms == undefined))
 					document.getElementById('sorActivities['+key+'].mstd').innerHTML=""; 
 				if(document.getElementById('sorActivities['+key+'].mspresent'))
 					document.getElementById('sorActivities['+key+'].mspresent').value="0"; 
 				if(document.getElementById('sorActivities['+key+'].msopen'))
 					document.getElementById('sorActivities['+key+'].msopen').value="0";
 				generateSorSno();	
-				if (responseObj[index].ms != "") {
+				if (responseObj[index].ms != "" && responseObj[index].ms != undefined) {
 					var newrow= $('#msheaderrowtemplate').html();
 					
 					newrow=  newrow.replace(/msrowtemplate/g, 'msrowsorActivities[' + key + ']');
@@ -1511,7 +1511,7 @@ function populateActivities(data, nonSorCheck){
 					$('#nonSorMessage').prop("hidden",true);
 					$('#nonSorRow').removeAttr("hidden");
 					$('#nonSorRow').removeAttr('nonsorinvisible');
-					if (responseObj[index].ms != "") {
+					if (responseObj[index].ms != "" && responseObj[index].ms != undefined) {
 						var newrow= $('#msheaderrowtemplate').html();
 						
 						newrow=  newrow.replace(/msrowtemplate/g, 'msrownonSorActivities[0]');
@@ -1586,14 +1586,14 @@ function populateActivities(data, nonSorCheck){
 					$('#nonSorServiceTaxPerc_' + key).val('');
 					$('.nonSorVatAmt_' + key).html('');
 					$('.nonSorTotal_' + key).html('');
-					if(document.getElementById('nonSorActivities['+key+'].mstd') && responseObj[index].ms == "")
+					if(document.getElementById('nonSorActivities['+key+'].mstd') && (responseObj[index].ms == "" || responseObj[index].ms == undefined))
 						document.getElementById('nonSorActivities['+key+'].mstd').innerHTML=""; 
 					if(document.getElementById('nonSorActivities['+key+'].mspresent'))
 						document.getElementById('nonSorActivities['+key+'].mspresent').value="0"; 
 					if(document.getElementById('nonSorActivities['+key+'].msopen'))
 						document.getElementById('nonSorActivities['+key+'].msopen').value="0";
 					generateSlno();
-					if (responseObj[index].ms != "") {
+					if (responseObj[index].ms != "" && responseObj[index].ms != undefined) {
 						var newrow= $('#msheaderrowtemplate').html();
 						
 						newrow=  newrow.replace(/msrowtemplate/g, 'msrownonSorActivities[' + key + ']');
@@ -1676,7 +1676,7 @@ function populateActivities(data, nonSorCheck){
 				$('#quantity_'+sorCount).val(responseObj[index].scheduleQuantity);
 				$('#quantity_'+sorCount).trigger('blur');
 			}
-			if(document.getElementById('sorActivities['+sorCount+'].mstd') && responseObj[index].ms == "")
+			if(document.getElementById('sorActivities['+sorCount+'].mstd') && (responseObj[index].ms == "" || responseObj[index].ms == undefined))
 				document.getElementById('sorActivities['+sorCount+'].mstd').innerHTML=""; 
 			if(document.getElementById('sorActivities['+sorCount+'].mspresent'))
 				document.getElementById('sorActivities['+sorCount+'].mspresent').value="0";
@@ -1693,7 +1693,7 @@ function populateActivities(data, nonSorCheck){
 				$('#nonSorQuantity_'+nonSorCount).val(responseObj[index].nonSorQuantity);
 				$('#nonSorQuantity_'+nonSorCount).trigger('change');
 			}
-			if(document.getElementById('nonSorActivities['+nonSorCount+'].mstd') && responseObj[index].ms == "")
+			if(document.getElementById('nonSorActivities['+nonSorCount+'].mstd') && (responseObj[index].ms == "" || responseObj[index].ms == undefined))
 				document.getElementById('nonSorActivities['+nonSorCount+'].mstd').innerHTML=""; 
 			if(document.getElementById('nonSorActivities['+nonSorCount+'].mspresent'))
 				document.getElementById('nonSorActivities['+nonSorCount+'].mspresent').value="0";
