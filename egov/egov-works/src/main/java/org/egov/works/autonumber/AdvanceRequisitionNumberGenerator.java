@@ -45,6 +45,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface AdvanceRequisitionNumberGenerator {
-    public String getNextNumber(ContractorAdvanceRequisition advanceRequisition);
+    String getNextNumber(ContractorAdvanceRequisition advanceRequisition);
 
 }
