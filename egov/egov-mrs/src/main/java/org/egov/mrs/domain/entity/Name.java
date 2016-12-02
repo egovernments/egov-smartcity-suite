@@ -42,6 +42,7 @@ package org.egov.mrs.domain.entity;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Formula;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -62,6 +63,9 @@ public class Name {
     @SafeHtml
     @Length(max = 20)
     private String lastName;
+    
+    @Formula("concat(firstName,' ',middleName,' ',lastName)")
+    private String fullname;
 
     public String getFirstName() {
         return firstName;
