@@ -51,10 +51,10 @@
 		<div class="text-right error-msg" style="font-size:14px;"></div>
 		
 		<c:set value="/mrs/reissue/create" var="actionUrl" />
-		<c:if test="${reissue.status.code == 'REJECTED'}">
+		<c:if test="${reIssue.status.code == 'REJECTED'}">
 			 <c:set value="/mrs/reissue/workflow?id=${reissue.id}" var="actionUrl" />
 		</c:if>
-		<c:if test="${reissue.status.code == 'APPROVED'}">
+		<c:if test="${reIssue.status.code == 'APPROVED'}">
 			<c:set value="/mrs/reissue/certificate?reIssueId=${reissue.id}" var="actionUrl"></c:set> 
 		</c:if>
 		
@@ -63,14 +63,14 @@
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			
-			<input type="hidden" name="reIssue" id="reIssue" value="${reissue.id}" />
-			<input type="hidden" id="reIssueId" value="${reissue.id}" />
-			<input type="hidden" id="reIssueStatus" value="${reissue.status.code}" />
-			<input type="hidden" id="feeCollected" value="${reissue.feeCollected}" />
-			<form:hidden path="" name="registration.id" id="reIssueRegistrationId" value="${reissue.registration.id}"/>	
+			<input type="hidden" name="reIssue" id="reIssue" value="${reIssue.id}" />
+			<input type="hidden" id="reIssueId" value="${reIssue.id}" />
+			<input type="hidden" id="reIssueStatus" value="${reIssue.status.code}" />
+			<input type="hidden" id="feeCollected" value="${reIssue.feeCollected}" />
+			<form:hidden path="" name="registration.id" id="reIssueRegistrationId" value="${reIssue.registration.id}"/>	
 			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 			
-			<c:if test="${reissue.status.code =='APPROVED' && !reissue.feeCollected}"> 
+			<c:if test="${reIssue.status.code =='APPROVED' && !reIssue.feeCollected}"> 
 			 <div  data-collapsed="0">
 				<div class="panel-heading">
 					<div  style="color: red; font-size: 16px;" align="center">
