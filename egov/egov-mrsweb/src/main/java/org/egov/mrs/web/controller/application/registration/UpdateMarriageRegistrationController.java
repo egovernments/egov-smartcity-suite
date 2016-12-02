@@ -172,8 +172,17 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         return MRG_REGISTRATION_SUCCESS;
     }
 
+    /**
+     * @description Modify registered marriage applications
+     * @param id
+     * @param registration
+     * @param model
+     * @param request
+     * @param errors
+     * @return
+     */
     @RequestMapping(value = "/update-approved", method = RequestMethod.POST)
-    public String updateApprovedRegistration(@RequestParam final Long id,
+    public String modifyRegisteredApplication(@RequestParam final Long id,
             @ModelAttribute final MarriageRegistration registration,
             final Model model, final HttpServletRequest request, final BindingResult errors) {
         if (errors.hasErrors())

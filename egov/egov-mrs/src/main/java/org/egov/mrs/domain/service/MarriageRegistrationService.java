@@ -317,11 +317,6 @@ public class MarriageRegistrationService {
     public MarriageRegistration updateRegistration(final MarriageRegistration marriageRegistration) {
         updateRegistrationdata(marriageRegistration);
         updateDocuments(marriageRegistration);
-        if (!marriageRegistration.getStatus().getCode()
-                .equalsIgnoreCase(MarriageRegistration.RegistrationStatus.APPROVED.toString()))
-            marriageRegistration.setStatus(
-                    marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(),
-                            MarriageConstants.MODULE_NAME));
         return update(marriageRegistration);
     }
 
