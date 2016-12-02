@@ -55,8 +55,8 @@
 					<div class="panel-heading">
 						<div class="panel-title">Report on CA Due</div>
 					</div>
-				</div>
 				<jsp:include page="dueReportdetails.jsp"></jsp:include>
+				</div>
 			</div>
 			<div class="row">
 				<div class="text-center">
@@ -95,7 +95,6 @@
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script

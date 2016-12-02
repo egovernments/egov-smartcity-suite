@@ -55,16 +55,18 @@
 					<div class="panel-heading">
 						<div class="panel-title">Report on PWR Due</div>
 					</div>
+					<jsp:include page="dueReportdetails.jsp"></jsp:include>
 				</div>
-				<jsp:include page="dueReportdetails.jsp"></jsp:include>
-			</div>
 
 			<div class="row">
-				<div class="text-center">
-					<button type="button" id="pwrDueReportSearch" value="pwrDueReportSearch"
-						class="btn btn-primary"><spring:message code="lbl.search" /></button>
-					<a href="javascript:void(0)" class="btn btn-default"
-						onclick="self.close()"><spring:message code="lbl.close" /></a>
+					<div class="text-center">
+						<button type="button" id="pwrDueReportSearch"
+							value="pwrDueReportSearch" class="btn btn-primary">
+							<spring:message code="lbl.search" />
+						</button>
+						<a href="javascript:void(0)" class="btn btn-default"
+							onclick="self.close()"><spring:message code="lbl.close" /></a>
+					</div>
 				</div>
 			</div>
 	</div>
@@ -77,12 +79,14 @@
 		<c:out value="${currDate}"></c:out>
 	</div>
 	<table class="table table-bordered table-hover multiheadertbl"
-		id="pwrDueReport-table" >
+		id="pwrDueReport-table">
 	</table>
 </div>
 
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
