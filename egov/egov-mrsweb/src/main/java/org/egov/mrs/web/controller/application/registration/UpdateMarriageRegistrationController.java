@@ -148,11 +148,12 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
             }
             else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_APPROVE)) {
                 marriageRegistrationService.approveRegistration(marriageRegistration, workflowContainer);
-                message = messageSource.getMessage("msg.approved.registration", null, null);
+                message = messageSource.getMessage("msg.approved.registration",
+                        new String[] { marriageRegistration.getRegistrationNo() }, null);
             }
             else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE)) {
                 marriageRegistrationService.printCertificate(marriageRegistration, workflowContainer, request);
-                message = messageSource.getMessage("msg.printcertificate.registration", null, null);
+                message = messageSource.getMessage("msg.printcertificate.registration", null, null); 
             }
             else {
                 workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter("approvalPosition")));

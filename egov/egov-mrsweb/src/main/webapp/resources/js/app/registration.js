@@ -39,9 +39,19 @@
  */
 
 $(document).ready( function () {
-	if($('#registrationStatus').val()=='APPROVED' && $("#feeCollected").val()=='false'){
+	
+	if($('#registrationStatus').val()=='APPROVED'){
+		$(':input').attr('readonly','readonly');
+		$('#form-updateregistration select').attr('disabled', 'true'); 
+		$(':checkbox[readonly="readonly"]').click(function() {
+			return false;
+			});
+		$(".file-ellipsis.upload-file").attr('disabled', 'disabled'); 
+	}
+	
+	if($('#registrationStatus').val()=='APPROVED' && $("#feeCollected").val()=='false'){ 
 		 $("[id='Print Certificate']").hide();
-	 }  
+	 }   
 	
 	$('body').on('click', 'img.attach-photo', function () {
 	    
