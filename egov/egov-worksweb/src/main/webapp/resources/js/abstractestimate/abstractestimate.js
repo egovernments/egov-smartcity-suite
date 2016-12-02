@@ -2048,6 +2048,11 @@ function validateWorkFlowApprover(name) {
 	var approverPosId = document.getElementById("approvalPosition");
 	var button = document.getElementById("workFlowAction").value;
 	var flag = true;
+	
+	if ($('#location').val() == '' || $('#description').val() == '') {
+		bootbox.alert($('#mandatoryError').val());
+		return false;
+	}
 
 	if (button != null && button == 'Save') {
 		$('#approvalDepartment').removeAttr('required');
