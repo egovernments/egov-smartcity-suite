@@ -64,6 +64,7 @@ import org.egov.mrs.domain.entity.MaritalStatusReport;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.MarriageRegistration.RegistrationStatus;
+import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.entity.RegistrationCertificatesResultForReport;
 import org.egov.mrs.domain.enums.MaritalStatus;
 import org.egov.mrs.domain.service.MarriageRegistrationService;
@@ -72,6 +73,7 @@ import org.egov.mrs.masters.service.MarriageActService;
 import org.egov.mrs.masters.service.MarriageRegistrationUnitService;
 import org.egov.mrs.masters.service.ReligionService;
 import org.egov.mrs.web.adaptor.MaritalStatusReportJsonAdaptor;
+import org.egov.mrs.web.adaptor.MarriageReIssueJsonAdaptor;
 import org.egov.mrs.web.adaptor.MarriageRegistrationCertificateReportJsonAdaptor;
 import org.egov.mrs.web.adaptor.MarriageRegistrationJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,6 +102,7 @@ import com.google.gson.JsonObject;
 @RequestMapping(value = "/report")
 public class MarriageRegistrationReportsController {
 
+    private static final String REISSUE = "reissue";
     private static final String MARRIAGE_REGISTRATIONS = "marriageRegistrations";
     private static final String APPLICANT_TYPE = "applicantType";
     private static final String YEARLIST = "yearlist";
@@ -337,7 +340,7 @@ public class MarriageRegistrationReportsController {
             final List<String[]> recordList, final String applicantType) {
         final Map<String, Map<String, String>> map = new HashMap<String, Map<String, String>>();
         for (final Object[] category : recordList)
-            if (map.containsKey(category[1])) {
+            if (map.containsKey(category[1])) { //category[0] - Marital status,category[1]- Month,category[2]- Count
                 if (map.get(category[1]).containsKey(category[0]))
                     map.get(category[1]).put(String.valueOf(category[0]),
                             String.valueOf(category[2]));
@@ -434,19 +437,121 @@ public class MarriageRegistrationReportsController {
         return "report-monthwiseregistration";
     }
 
-    @RequestMapping(value = "/monthwiseregistration", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/monthly-applications-count", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String showMonthwiseReportresult(final Model model,
+    public String getMonthlyApplicationsCount(final Model model,
             @ModelAttribute final MarriageRegistration registration)
             throws ParseException {
-        final List<MarriageRegistration> searchResultList = marriageRegistrationReportsService
-                .searchRegistrationBymonth(registration);
-        return new StringBuilder("{ \"data\":")
-                .append(toJSON(searchResultList, MarriageRegistration.class,
-                        MarriageRegistrationJsonAdaptor.class)).append("}")
-                .toString();
-    }
+        final ArrayList<HashMap<String, Object>> result = new ArrayList<>();
+        
+        final List<String[]> applnsCount = marriageRegistrationReportsService
+                .getCountOfApplications(registration);
+       
+        final Map<String, Map<String, String>> map = new HashMap<String, Map<String, String>>();
+        for (final Object[] input : applnsCount) {
+            
+            final String[] values =   Arrays.toString(input).replaceFirst("^\\[", "").replaceFirst("\\]$", "").split(","); // [0] -> applicationtype  - [1] -> count 
+            // count
+            final Integer count = Integer.valueOf(values[1].trim());
+            if(map.containsKey(values[0])){
+                map.get(values[0]).put(String.valueOf(values[3].trim()),
+                        String.valueOf(count));
+                        }
+            else{
+                final Map<String, String> subMap = new HashMap<>();
+                subMap.put("registrationunit", values[0].trim());
+                subMap.put(values[3].trim(),  String.valueOf(count));
+                subMap.put("month", values[2].trim());
+                map.put(String.valueOf(values[0].trim()), subMap);
+            }
+            
+        }
+        
+        for (final Entry<String, Map<String, String>> resMap : map.entrySet()) {
+            final HashMap<String, Object> resultMap = new HashMap<>();
+            
+            boolean regExist = true;
+            boolean reissueExist = true;
+            if(!resMap.getValue().containsKey(REGISTRATION)){
+                regExist = false;
+            }
+            
+            if(!resMap.getValue().containsKey(REISSUE)){
+                reissueExist = false;
+            }
+            
+            resultMap.put("registrationunit", resMap.getKey());
+            for (final Entry<String, String> valuesMap : resMap.getValue().entrySet()) {
+                if(regExist) {
+                    if(REGISTRATION.equalsIgnoreCase(valuesMap.getKey().trim())){
+                        resultMap.put(REGISTRATION, valuesMap.getValue());
+                    }
+                } else {
+                    resultMap.put(REGISTRATION, 0);
+                }
+                if(reissueExist) {
+                if(REISSUE.equalsIgnoreCase(valuesMap.getKey().trim())){
+                    resultMap.put(REISSUE, valuesMap.getValue());
+                }
+                }else {
+                    resultMap.put(REISSUE, 0);
+                }
+                if("month".equalsIgnoreCase(valuesMap.getKey().trim())){
+                    resultMap.put("month", valuesMap.getValue());
+                }
+            }
+            result.add(resultMap);
+        }
+        final JsonArray jsonArray = (JsonArray) new Gson().toJsonTree(result,
+                new TypeToken<List<HashMap<String, Integer>>>() {
 
+                    /**
+             *
+             */
+                    private static final long serialVersionUID = -3045535969083515053L;
+                }.getType());
+
+        final JsonObject response = new JsonObject();
+        response.add("data", jsonArray);
+        return response.toString();
+    }
+    
+    @RequestMapping(value = "/show-applications-details", method = RequestMethod.GET)
+    public String showMonthlyApplicationDetails(final Model model,
+            @RequestParam("month") String month,@RequestParam("regunit") String  registrationUnit,
+            @RequestParam("applicationType") String applicationType)
+            throws ParseException {
+        model.addAttribute(REGISTRATION, new MarriageRegistration());
+        model.addAttribute("month", month);
+        model.addAttribute("registrationUnit", registrationUnit.replaceAll("[^a-zA-Z0-9]", " "));
+        model.addAttribute("applicationType", applicationType);
+        
+        return "show-monthlyapplns-details";
+    }
+    
+    @RequestMapping(value = "/monthwiseregistration", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String getMonthlyApplicationDetailsResult(final Model model,
+            @RequestParam("month") String month,@RequestParam("regunit") String  registrationUnit,
+           @RequestParam("applicationType") String applicationType)
+            throws ParseException {
+        if("registration".equalsIgnoreCase(applicationType)){
+            final List<MarriageRegistration> searchResultList = marriageRegistrationReportsService
+                    .searchRegistrationBymonth(month,registrationUnit);
+            return new StringBuilder("{ \"data\":")
+                    .append(toJSON(searchResultList, MarriageRegistration.class,
+                            MarriageRegistrationJsonAdaptor.class)).append("}")
+                    .toString();
+        }else {
+            final List<ReIssue> searchResultList = marriageRegistrationReportsService
+                    .searchReissueBymonth(month, registrationUnit);
+            return new StringBuilder("{ \"data\":")
+                    .append(toJSON(searchResultList, ReIssue.class,
+                            MarriageReIssueJsonAdaptor.class)).append("}")
+                    .toString();
+        }
+        
+    }
     @RequestMapping(value = "/actwiseregistration", method = RequestMethod.GET)
     public String showActwiseReportForm(final Model model) {
         model.addAttribute(REGISTRATION, new MarriageRegistration());

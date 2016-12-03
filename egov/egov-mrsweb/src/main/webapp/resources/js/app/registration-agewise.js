@@ -102,47 +102,65 @@ $(document)
 														"sClass" : "text-center"
 													},
 													{
-														"data" : null,
+														"data" : "husbandcount",
 														render : function(data,
 																type, row, meta) {
-															if(data.husbandcount!=0){
+															if(row.husbandcount!=0){
 															var applicant = 'husband';
 															return '<a onclick="openPopup(\'/mrs/report/age-wise/view/'
 																	+ year
 																	+ '/'
 																	+ applicant
 																	+ '/'
-																	+ data.age
+																	+ row.age
 																	+ '\')" href="javascript:void(0);">'
-																	+ data.husbandcount
+																	+ row.husbandcount
 																	+ '</a>';
 															}
 															else
-																return data.husbandcount
+																return row.husbandcount
 														},
 														"sClass" : "text-center"
 													},
 													{
-														"data" : null,
+														"data" : "wifecount",
 														render : function(data,
 																type, row, meta) {
-															if(data.wifecount!=0){
+															if(row.wifecount!=0){
 															var applicant = 'wife';
 															return '<a onclick="openPopup(\'/mrs/report/age-wise/view/'
 																	+ year
 																	+ '/'
 																	+ applicant
 																	+ '/'
-																	+ data.age
+																	+ row.age
 																	+ '\')" href="javascript:void(0);">'
-																	+ data.wifecount
+																	+ row.wifecount
 																	+ '</a>';
 															}
 															else
-																return data.wifecount;
+																return row.wifecount;
 														},
 														"sClass" : "text-center"
-													} ]
+													} ],
+													"footerCallback" : function(row, data, start, end, display) {
+														var api = this.api(), data;
+														if (data.length == 0) {
+															jQuery('#report-footer').hide();
+														} else {
+															jQuery('#report-footer').show(); 
+														}
+														if (data.length > 0) {
+															updateTotalFooter(2, api);
+															updateTotalFooter(3, api);
+														}
+													},
+													"aoColumnDefs" : [ {
+														"aTargets" : [2,3],
+														"mRender" : function(data, type, full) {
+															return formatNumberInr(data);    
+														}
+													} ]	
 										});
 
 					}
@@ -164,3 +182,51 @@ function getFormData($form) {
 
 	return indexed_array;
 }
+
+
+function updateTotalFooter(colidx, api) {
+	// Remove the formatting to get integer data for summation
+	var intVal = function(i) {
+		return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1
+				: typeof i === 'number' ? i : 0;
+	};
+
+	// Total over all pages
+	total = api.column(colidx).data().reduce(function(a, b) {
+		return intVal(a) + intVal(b);
+	});
+
+	// Total over this page
+	pageTotal = api.column(colidx, {
+		page : 'current'
+	}).data().reduce(function(a, b) {
+		return intVal(a) + intVal(b);
+	}, 0);
+
+	// Update footer
+	jQuery(api.column(colidx).footer()).html(
+			formatNumberInr(pageTotal) + ' (' + formatNumberInr(total)
+					+ ')');
+}
+
+
+//inr formatting number
+function formatNumberInr(x) {
+	if (x) {
+		x = x.toString();
+		var afterPoint = '';
+		if (x.indexOf('.') > 0)
+			afterPoint = x.substring(x.indexOf('.'), x.length);
+		x = Math.floor(x);
+		x = x.toString();
+		var lastThree = x.substring(x.length - 3);
+		var otherNumbers = x.substring(0, x.length - 3);
+		if (otherNumbers != '')
+			lastThree = ',' + lastThree;
+		var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",")
+				+ lastThree + afterPoint;
+		return res;
+	}
+	return x;
+}
+

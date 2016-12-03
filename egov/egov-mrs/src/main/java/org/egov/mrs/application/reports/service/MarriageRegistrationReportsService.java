@@ -54,6 +54,7 @@ import javax.persistence.PersistenceContext;
 import org.egov.mrs.application.reports.repository.MarriageRegistrationReportsRepository;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
+import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.enums.MaritalStatus;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -363,6 +364,9 @@ public class MarriageRegistrationReportsService {
             final Calendar calnew = Calendar.getInstance();
             calnew.set(Calendar.MONTH, Integer.parseInt(month_year[0]) - 1);
             calnew.set(Calendar.YEAR, Integer.parseInt(month_year[1]));
+            calnew.set(Calendar.HOUR_OF_DAY, 0);
+            calnew.set(Calendar.MINUTE, 0);
+            calnew.set(Calendar.SECOND, 0);
             calnew.set(Calendar.DAY_OF_MONTH,
                     calnew.getActualMinimum(Calendar.DAY_OF_MONTH));
             monthStartDate = calnew.getTime();
@@ -378,6 +382,10 @@ public class MarriageRegistrationReportsService {
             final Calendar calnew = Calendar.getInstance();
             calnew.set(Calendar.MONTH, Integer.parseInt(month_year[0]) - 1);
             calnew.set(Calendar.YEAR, Integer.parseInt(month_year[1]));
+            calnew.set(Calendar.HOUR_OF_DAY, 23);
+            calnew.set(Calendar.MINUTE, 59);
+            calnew.set(Calendar.SECOND, 59);
+            calnew.set(Calendar.MILLISECOND, 999);
             calnew.set(Calendar.DAY_OF_MONTH,
                     calnew.getActualMaximum(Calendar.DAY_OF_MONTH));
             monthEndDate = calnew.getTime();
@@ -385,30 +393,92 @@ public class MarriageRegistrationReportsService {
         }
         return monthEndDate;
     }
+    
+@SuppressWarnings("unchecked")
+public List<String[]> getCountOfApplications(final MarriageRegistration registration){
+        
+    final Map<String, String> params = new HashMap<>();
+    final StringBuilder queryStrForRegCount = new StringBuilder(500);
+    queryStrForRegCount
+            .append("(select regunit.name,count(*),to_char(applicationdate,'Mon'),'registration' from egmrs_registration reg,egmrs_registrationunit regunit,egw_status st ");
+    queryStrForRegCount.append("where reg.registrationunit=regunit.id and reg.status = st.id and st.code='REGISTERED' ");
+   if(registration.getMonth_year() != null){
+       queryStrForRegCount.append(" and applicationdate between to_timestamp(:fromdate,'yyyy-MM-dd HH24:mi:ss') and to_timestamp(:todate,'YYYY-MM-DD HH24:MI:SS') ");
+       params.put("fromdate",  sf.format(getMonthStartday(registration.getMonth_year())));
+       params.put("todate", sf.format(getMonthEndday(registration.getMonth_year())));
+   }
+   if(registration.getMarriageRegistrationUnit().getId() != null){
+       queryStrForRegCount
+       .append(" and registrationunit=to_number(:registrationunit,'999999')");
+       params.put("registrationunit", registration.getMarriageRegistrationUnit().getId().toString());
+   }
+   
+   queryStrForRegCount.append("group by regunit.name,to_char(applicationdate,'Mon') order by regunit.name)");
+   final StringBuilder queryStrForReissueCount = new StringBuilder(500);
+   queryStrForReissueCount
+           .append("(select regunit.name,count(*),to_char(applicationdate,'Mon'),'reissue' from egmrs_reissue rei,egmrs_registrationunit regunit,egw_status st");
+   queryStrForReissueCount.append(" where rei.registrationunit=regunit.id and rei.status = st.id and st.code='CERTIFICATEREISSUED' ");
+  if(registration.getMonth_year() != null){
+      queryStrForReissueCount.append(" and applicationdate between to_timestamp(:fromdate,'yyyy-MM-dd HH24:mi:ss') and to_timestamp(:todate,'YYYY-MM-DD HH24:MI:SS') ");
+      params.put("fromdate",  sf.format(getMonthStartday(registration.getMonth_year())));
+      params.put("todate", sf.format(getMonthEndday(registration.getMonth_year())));
+  }
+  if(registration.getMarriageRegistrationUnit().getId() != null){
+      queryStrForReissueCount
+      .append(" and registrationunit=to_number(:registrationunit,'999999')");
+      params.put("registrationunit", registration.getMarriageRegistrationUnit().getId().toString());
+  }
+ 
+ queryStrForReissueCount.append("group by regunit.name,to_char(applicationdate,'Mon') order by regunit.name)");
+  
+  final StringBuilder aggregateQueryStr = new StringBuilder();
+  aggregateQueryStr.append(queryStrForRegCount.toString());
+
+  aggregateQueryStr.append(UNION);
+  aggregateQueryStr.append(queryStrForReissueCount.toString());
+  
+   final org.hibernate.Query query = getCurrentSession().createSQLQuery(aggregateQueryStr.toString());
+   for (final String param : params.keySet())
+       query.setParameter(param, params.get(param)); 
+   return query.list();
+    }
+
 
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> searchRegistrationBymonth(
-            final MarriageRegistration registration) throws ParseException {
+            final String month,final String registrationUnit) throws ParseException {
         final Criteria criteria = getCurrentSession().createCriteria(
-                MarriageRegistration.class, MARRIAGE_REGISTRATION).createAlias("marriageRegistration.status", "status");
-        if (registration.getMonth_year() != null)
+                MarriageRegistration.class, MARRIAGE_REGISTRATION).createAlias("marriageRegistration.status", "status");;
+        if (month != null)
             criteria.add(Restrictions.between(
                     "marriageRegistration.applicationDate",
-                    getMonthStartday(registration.getMonth_year()),
-                    getMonthEndday(registration.getMonth_year())));
+                    getMonthStartday(month),
+                    getMonthEndday(month)));
 
-        if (null != registration.getMarriageRegistrationUnit()
-                && registration.getMarriageRegistrationUnit().getId() != null)
-            criteria.add(Restrictions.eq("marriageRegistrationUnit.id",
-                    registration.getMarriageRegistrationUnit().getId()));
-        if (null != registration.getZone()
-                && registration.getZone().getId() != null)
-            criteria.add(Restrictions.eq("zone.id", registration.getZone()
-                    .getId()));
-        criteria.add(Restrictions
-                .in("status.code",
-                        new String[] { MarriageRegistration.RegistrationStatus.APPROVED
-                                .toString() }));
+        if (registrationUnit != null)
+            criteria.createAlias(MARRIAGE_REGISTRATION+".marriageRegistrationUnit", "regunit").add(Restrictions.eq("regunit.name",
+                    registrationUnit));
+        criteria.add(Restrictions.in("status.code",
+                new String[] { MarriageRegistration.RegistrationStatus.REGISTERED.toString() }));
+        return criteria.list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<ReIssue> searchReissueBymonth(
+            final String month,final String registrationUnit) throws ParseException {
+        final Criteria criteria = getCurrentSession().createCriteria(
+                ReIssue.class, "reissue").createAlias("reissue.status", "status");;
+        if (month != null)
+            criteria.add(Restrictions.between(
+                    "reissue.applicationDate",
+                    getMonthStartday(month),
+                    getMonthEndday(month)));
+
+        if (registrationUnit != null)
+            criteria.createAlias("reissue.marriageRegistrationUnit", "regunit").add(Restrictions.eq("regunit.name",
+                    registrationUnit));
+        criteria.add(Restrictions.in("status.code",
+                new String[] {"CERTIFICATEREISSUED"}));
         return criteria.list();
     }
 
@@ -468,7 +538,8 @@ public class MarriageRegistrationReportsService {
         return criteria.list();
 
     }
-
+    
+    
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> getmonthWiseActDetails(final int year,
             final int month, final Long actid) throws ParseException {

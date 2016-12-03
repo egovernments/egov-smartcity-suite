@@ -42,97 +42,45 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-
-<div class="row" id="page-content">
-	<form:form method="post" action=""
-					class="form-horizontal form-groups-bordered"
-					id="form-statustimeogmrg" modelAttribute="registration">
-					
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-heading">
-							<div class="panel-title">
-								<strong><spring:message code="lbl.search" /></strong>
-							</div>
-						</div>
-  
-						<div class="panel-body custom-form">
-							<div class="form-group">
-								<div class="col-sm-3 control-label">
-								<label>Applicant Type</label>
-								</div>
-								<div class="col-sm-2">
-										<select name="applicantType" class="form-control">
-		   									<option>Both</option>
-		   									<option>Husband</option>
-		   									<option>Wife</option>
-										</select>
-								</div>
-								<label class="col-sm-3 control-label">
-									<spring:message code="lbl.applicant.status"/>
-								</label>
-								<div class="col-sm-2 control-label">
-									<select name="maritalStatus" id="maritalStatus" class="form-control">
-							                <option value=""> Select</option>
-							                <c:forEach items="${maritalStatusList}" var="marital">
-							                <option value="${marital}">${marital}</option>
-							                </c:forEach>
-							           </select>
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-3 control-label">
-								<label>From Date</label>
-								</div>
-								<div class="col-sm-2">
-									<input name="fromDate" class="form-control datepicker" id="fromDate">
-								</div>
-								<div class="col-sm-3 control-label">
-								<label>To Date</label>
-								</div>
-								<div class="col-sm-2">
-									<input name="toDate" class="form-control datepicker" id="toDate">
-								</div>
-							</div>
-						</div>
-					</div>
-				<div class="form-group">
-					<div class="text-center">
-						<button type="button" class="btn btn-primary"
-							id="btn_registrationmrgstatus_search">
-							<spring:message code="lbl.search" />
-						</button>
-						<button type="reset" class="btn btn-default">
-							<spring:message code="lbl.reset" />
-						</button>
-						<a href="javascript:void(0)" class="btn btn-default"
-							onclick="self.close()"><spring:message code="lbl.close" /></a>
-					</div>
-				</div>
-	</form:form>
-</div>
-	<div class="row display-hide report-section">
-		<div class="col-md-12 table-header text-left">The applicant
-			Status at the time of marriage result is</div>
-		<div class="col-md-12 form-group">
-			<table class="table table-bordered table-hover multiheadertbl"
-				id="marriage_table">
 				
-				<tfoot>
-				<tr>
-						<td></td>
-						<td></td>
-						<td>Total</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-				</tfoot>
-			</table>
-		</div>
+	<input type="hidden" name="month" id="hdnMonth" value="${month}">
+	<input type="hidden" name="registrationUnit" id="hdnRegistrationUnit" value="${registrationUnit}">
+	<input type="hidden" name="applicationType" id="hdnApplicationType" value="${applicationType}">
+<br />
+<br />
+<div class="row display-hide report-section" id="regs_container">
+	<div class="col-md-12 table-header text-left">The Monthly Applications Details</div>
+	<br />
+	<div class="panel-heading">
+		<div class="displayCount panel-title"></div>
 	</div>
+	<div class="col-md-12 form-group report-table-container">
+		<table class="table table-bordered table-hover multiheadertbl"
+			id="monthlyapplns_table">
+			<div class="col-md-12 table-header text-left">
+				<thead>
+					<tr>
+						<th>S.No.</th>
+						<th>Application No.</th>
+						<th>Registration No.</th>
+						<th>Husband Name</th>
+						<th>Wife Name</th>
+						<th>Registration Date</th>
+						<th>Marriage Date</th>
+						<th>Marriage Fee</th>
+						<th>Status</th>
+						<th>Registration Unit</th>
+						<th>zone</th>
+						<th>Remarks</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+		</table>
+	</div>
+</div>
 
 
 <link rel="stylesheet"
@@ -149,6 +97,5 @@
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-
 <script
-	src="<cdn:url value='/resources/js/app/statusattime-ofmarriage.js?rnd=${app_release_no}'/> "></script>
+	src="<cdn:url value='/resources/js/app/showmonthlyapplnsdetails-report.js?rnd=${app_release_no}'/> "></script>

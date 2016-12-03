@@ -393,4 +393,10 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/ageingreport-view.jsp" />
 	</definition>
+	<definition name="show-monthlyapplns-details" extends="base_layout">
+		<put-attribute name="page-title" value="title.monthly.report"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/reports/show-monthlyapplns-details.jsp" />
+	</definition>
 </tiles-definitions>

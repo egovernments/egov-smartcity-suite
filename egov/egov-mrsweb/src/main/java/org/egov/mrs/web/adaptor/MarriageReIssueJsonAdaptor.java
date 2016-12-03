@@ -54,8 +54,12 @@ public class MarriageReIssueJsonAdaptor implements JsonSerializer<ReIssue> {
         @Override
         public JsonElement serialize(final ReIssue reIssue, final Type type,
                         final JsonSerializationContext jsc) {
-                JsonObject jsonObject =  new JsonObject();;
+                JsonObject jsonObject =  new JsonObject();
                 if (reIssue != null) {
+                        if (reIssue.getApplicationNo() != null)
+                            jsonObject.addProperty("applicationNo", reIssue.getApplicationNo());
+                        else
+                            jsonObject.addProperty("applicationNo", org.apache.commons.lang.StringUtils.EMPTY);
                         if (reIssue.getRegistration().getRegistrationNo() != null)
                                 jsonObject.addProperty("registrationNo", reIssue.getRegistration().getRegistrationNo());
                         else
@@ -101,6 +105,18 @@ public class MarriageReIssueJsonAdaptor implements JsonSerializer<ReIssue> {
                         }
                         else
                             jsonObject.addProperty("feeCollected", "Yes");
+                        if (reIssue.getZone() != null)
+                            jsonObject.addProperty("zone", reIssue.getZone().getName());
+                        else
+                            jsonObject.addProperty("zone", org.apache.commons.lang.StringUtils.EMPTY);
+                        if (reIssue.getStateType() != null)
+                            jsonObject.addProperty("remarks", reIssue.getRejectionReason());
+                        else
+                            jsonObject.addProperty("remarks", org.apache.commons.lang.StringUtils.EMPTY);
+                        if (reIssue.getMarriageRegistrationUnit() != null)
+                            jsonObject.addProperty("marriageRegistrationUnit", reIssue.getMarriageRegistrationUnit().getName());
+                        else
+                            jsonObject.addProperty("marriageRegistrationUnit", org.apache.commons.lang.StringUtils.EMPTY);
                         jsonObject.addProperty("id", reIssue.getId());
                 }
         return jsonObject;

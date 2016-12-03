@@ -39,19 +39,18 @@
  */
 
 $(document)
-.ready(
-		function() {
+		.ready(
+				function() {
 
-			
-			$('#btn_monthyregistration_search').click(function() {
-				if ($('form').valid()) {
-					callAjaxSearch();
-				} else {
-					return false;
-				}
-				
-			});
+					$('#btn_monthyregistration_search').click(function() {
+						if ($('form').valid()) {
+							callAjaxSearch();
+						} else {
+							return false;
+						}
 
+					});
+       
 					function callAjaxSearch() {
 						// To get current date
 						var currentDate = new Date();
@@ -59,15 +58,15 @@ $(document)
 						var month = currentDate.getMonth() + 1;
 						var year = currentDate.getFullYear();
 						var currentDate = day + "-" + month + "-" + year;
+						var month = $('#datepicker').val();
+						var regunit = $('#registrationunit').val();
+						var zone = $('#zones').val();
 						$('.report-section').removeClass('display-hide');
-						var reportdatatable = $("#registration_table")
+						$("#registration_table")
 								.dataTable(
 										{
-											"initComplete": function(settings, json){ 
-								            var  info = this.api().page.info();
-								            $("div.displayCount").html('Total No.of Records Available In Entered Search Criteria are : '+ info.recordsTotal);
-										},ajax : {
-												url : "/mrs/report/monthwiseregistration",
+											ajax : {
+												url : "/mrs/report/monthly-applications-count",
 												type : "POST",
 												beforeSend : function() {
 													$('.loader-class')
@@ -112,93 +111,167 @@ $(document)
 											aaSorting : [],
 											columns : [
 													{
-														"data" : "applicationNo",
-														"sClass" : "text-left"
+														"data" : null,
+										   				render : function(data,
+																type, row, meta) {
+															return meta.row
+																	+ meta.settings._iDisplayStart
+																	+ 1;
+														},
+														"sClass" : "text-center"
 													},
 													{
-														"data" : "registrationNo",
+														"data" : "registrationunit",
+														"sClass" : "text-center"
+													},
+													{
+														"data" : "month",
+														"sClass" : "text-center"
+													},
+													{
+														"data" : "registration",
 														render : function(data,
 																type, row, meta) {
-															if (row.registrationNo == 'undefined'
-																	|| row.registrationNo == '') {
-																return "N/A";
-															} else {
-																return row.registrationNo;
-															}
+															return parseInt(row.registration) !== 0 ? '<a onclick="openPopup(\'/mrs/report/show-applications-details?'
+																	+ 'month='
+																	+ month
+																	+ '&'
+																	+ 'regunit='
+																	+ row.registrationunit
+																	+ '&'
+																	+ 'applicationType=registration'
+																	+ '\')" href="javascript:void(0);">'
+																	+ row.registration
+																	+ '</a>'
+																	: row.registration;
 														},
-														"sClass" : "text-left"
+														"sClass" : "text-center"
 													},
+													{
+														"data" : "reissue",
+														render : function(data,
+																type, row, meta) {
+															return parseInt(data.reissue) !== 0 ? '<a onclick="openPopup(\'/mrs/report/show-applications-details?'
+																	+ 'month='
+																	+ month
+																	+ '&'
+																	+ 'regunit='
+																	+ row.registrationunit
+																	+ '&'
+																	+ 'applicationType=reissue'
+																	+ '\')" href="javascript:void(0);">'
+																	+ row.reissue
+																	+ '</a>'
+																	: row.reissue;
 
-													{
-														"data" : "husbandName",
-														"sClass" : "text-left"
+														},
+														"sClass" : "text-center"
 													},
 													{
-														"data" : "wifeName",
-														"sClass" : "text-left"
-													},
-													{
-														"data" : "registrationDate",
-														"sClass" : "text-left"
-													},
-													{
-														"data" : "dateOfMarriage",
-														"sClass" : "text-left"
-													},
-													{
-														"data" : "feePaid",
-														"sClass" : "text-left"
-													},
-													{
-														"data" : "status",
-														"sClass" : "text-left"
-													},
-													{
-														"data" : "marriageRegistrationUnit",
-														"sClass" : "text-left"
-													},
-													{
-														"data" : "zone",
-														"sClass" : "text-left"
-													},
-													{
-														"data" : "remarks",
+														"data" : null,
 														render : function(data,
 																type, row, meta) {
-															if (row.remarks == 'undefined'
-																	|| row.remarks == '') {
-																return "N/A";
-															} else {
-																return row.remarks;
-															}
+															return parseInt(data.reissue)+parseInt(data.registration);
+
 														},
-														"sClass" : "text-left"
-													} ], 
-							
-													
-											
+														"sClass" : "text-center"
+													}
+
+											],
+											"footerCallback" : function(row, data, start, end, display) {
+												var api = this.api(), data;
+												if (data.length == 0) {
+													jQuery('#report-footer').hide();
+												} else {
+													jQuery('#report-footer').show(); 
+												}
+												if (data.length > 0) {
+													updateTotalFooter(3, api);
+													updateTotalFooter(4, api);
+												}
+											},
+											"aoColumnDefs" : [ {
+												"aTargets" : [3,4],
+												"mRender" : function(data, type, full) {
+													return formatNumberInr(data);    
+												}
+											} ]		
 										});
-						
-						   
-						
+
 					}
-					
 
-		});
+				});
 
-function getFormData($form) {
-var unindexed_array = $form.serializeArray();
-var indexed_array = {};
+function openPopup(url) {
+	window.open(url, 'window',
+			'scrollbars=1,resizable=yes,height=600,width=800,status=yes');
 
-$.map(unindexed_array, function(n, i) {
-indexed_array[n['name']] = n['value'];
-});
-
-return indexed_array;
 }
 
-$("#datepicker").datepicker( {
-    format: "mm/yyyy",
-    startView: "months", 
-    minViewMode: "months"
+function updateTotalFooter(colidx, api) {
+	// Remove the formatting to get integer data for summation
+	var intVal = function(i) {
+		return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1
+				: typeof i === 'number' ? i : 0;
+	};
+
+	// Total over all pages
+	total = api.column(colidx).data().reduce(function(a, b) {
+		return intVal(a) + intVal(b);
+	});
+
+	// Total over this page
+	pageTotal = api.column(colidx, {
+		page : 'current'
+	}).data().reduce(function(a, b) {
+		return intVal(a) + intVal(b);
+	}, 0);
+
+	// Update footer
+	jQuery(api.column(colidx).footer()).html(
+			formatNumberInr(pageTotal) + ' (' + formatNumberInr(total)
+					+ ')');
+}
+
+
+//inr formatting number
+function formatNumberInr(x) {
+	if (x) {
+		x = x.toString();
+		var afterPoint = '';
+		if (x.indexOf('.') > 0)
+			afterPoint = x.substring(x.indexOf('.'), x.length);
+		x = Math.floor(x);
+		x = x.toString();
+		var lastThree = x.substring(x.length - 3);
+		var otherNumbers = x.substring(0, x.length - 3);
+		if (otherNumbers != '')
+			lastThree = ',' + lastThree;
+		var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",")
+				+ lastThree + afterPoint;
+		return res;
+	}
+	return x;
+}
+
+function getFormData($form) {
+	var unindexed_array = $form.serializeArray();
+	var indexed_array = {};
+
+	$.map(unindexed_array, function(n, i) {
+		indexed_array[n['name']] = n['value'];
+	});
+
+	return indexed_array;
+}
+
+
+$("#datepicker").datepicker({
+	format : "mm/yyyy",
+	startView : "months",
+	minViewMode : "months",
+	autoclose : true
 });
+
+
+

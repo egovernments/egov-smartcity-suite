@@ -76,7 +76,7 @@
 										code="lbl.registrationunit" /> </label>
 								<div class="col-sm-3 add-margin">
 									<form:select path="marriageRegistrationUnit.id"
-										id="select-registrationunit" cssClass="form-control"
+										id="registrationunit" cssClass="form-control"
 										cssErrorClass="form-control error">
 										<form:option value="">
 											<spring:message code="lbl.default.option" />
@@ -88,13 +88,13 @@
 										cssClass="add-margin error-msg" />
 								</div>
 							</div>
-							<div class="form-group">
+							<%-- <div class="form-group">
 
 								<label class="col-sm-2 control-label"> <spring:message
 										code="lbl.zone" />
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:select path="zone.id" id="select-zones"
+									<form:select path="zone.id" id="zones"
 										cssClass="form-control" cssErrorClass="form-control error">
 										<form:option value="">
 											<spring:message code="lbl.default.option" />
@@ -104,7 +104,7 @@
 									<form:errors path="zone.id" cssClass="add-margin error-msg" />
 
 								</div>
-							</div>
+							</div> --%>
 							<div class="row">
 								<div class="text-center">
 									<button type="button" class="btn btn-primary"
@@ -125,12 +125,10 @@
 		</div>
 	</div>
 </div>
-
 <br />
 <br />
 <div class="row display-hide report-section" id="regs_container">
-	<div class="col-md-12 table-header text-left">The number of
-		Registration is</div>
+	<div class="col-md-12 table-header text-left">The Applications Count Result is</div>
 	<br />
 	<div class="panel-heading">
 		<div class="displayCount panel-title"></div>
@@ -141,21 +139,26 @@
 			<div class="col-md-12 table-header text-left">
 				<thead>
 					<tr>
-						<th>Application No.</th>
-						<th>Registration No.</th>
-						<th>Husband Name</th>
-						<th>Wife Name</th>
-						<th>Registration Date</th>
-						<th>Marriage Date</th>
-						<th>Marriage Fee</th>
-						<th>Status</th>
+						<th>S.No</th>
 						<th>Registration Unit</th>
-						<th>zone</th>
-						<th>Remarks</th>
+						<th>Month</th>
+						<th>Marriage Registration</th>
+						<th>Reissue</th>
+						<th>Total</th>
 					</tr>
 				</thead>
 				<tbody>
 				</tbody>
+				<tfoot>
+				<tr>
+						<td></td>
+						<td></td>
+						<td>Total</td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</tfoot>
 		</table>
 	</div>
 </div>

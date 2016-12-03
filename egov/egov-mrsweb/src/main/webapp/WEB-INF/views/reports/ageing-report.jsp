@@ -91,6 +91,13 @@
 	    	</thead>
 	    	<tbody>
 	    	</tbody>
+	    	<tfoot>
+				<tr>
+						<td></td>
+						<td>Total</td>
+						<td></td>
+					</tr>
+				</tfoot>
 		</table>
 	</div>
 </div>
