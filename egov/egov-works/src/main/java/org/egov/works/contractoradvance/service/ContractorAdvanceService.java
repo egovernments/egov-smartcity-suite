@@ -37,49 +37,21 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.autonumber.impl;
+package org.egov.works.contractoradvance.service;
 
-import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
-
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
-import org.egov.works.autonumber.AdvanceRequisitionNumberGenerator;
 import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
+import org.egov.works.contractoradvance.repository.ContractorAdvanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class AdvanceRequisitionNumberGeneratorImpl implements AdvanceRequisitionNumberGenerator {
-
-    private static final String ADVANCEREQUISITION_NUMBER_SEQ_PREFIX = "SEQ_ADVANCEREQUISITION_NUMBER";
-
+@Transactional(readOnly = true)
+public class ContractorAdvanceService {
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private ContractorAdvanceRepository contractorAdvanceRepository;
 
-    @Autowired
-    private FinancialYearHibernateDAO financialYearHibernateDAO;
-
-    @Override
-    @Transactional
-    public String getNextNumber(final ContractorAdvanceRequisition advanceRequisition) {
-        final CFinancialYear financialYear = financialYearHibernateDAO
-                .getFinYearByDate(advanceRequisition.getAdvanceRequisitionDate());
-        final String finYearRange[] = financialYear.getFinYearRange().split("-");
-        final String sequenceName = ADVANCEREQUISITION_NUMBER_SEQ_PREFIX + "_" + finYearRange[0] + "_" + finYearRange[1];
-        Serializable sequenceNumber;
-        sequenceNumber = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-        return String.format("ARF/%06d/%02d/%s", sequenceNumber,
-                getMonthOfTransaction(advanceRequisition.getAdvanceRequisitionDate()), financialYear.getFinYearRange());
+    public ContractorAdvanceRequisition getContractorAdvanceRequisitionById(final Long id) {
+        return contractorAdvanceRepository.findOne(id);
     }
-
-    private int getMonthOfTransaction(final Date advanceRequisitionDate) {
-        final Calendar cal = Calendar.getInstance();
-        cal.setTime(advanceRequisitionDate);
-        return cal.get(Calendar.MONTH) + 1;
-    }
-
 }

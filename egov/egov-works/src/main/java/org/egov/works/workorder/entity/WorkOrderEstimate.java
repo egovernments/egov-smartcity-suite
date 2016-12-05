@@ -68,9 +68,9 @@ import javax.validation.constraints.NotNull;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.component.Money;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.milestone.entity.Milestone;
-import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

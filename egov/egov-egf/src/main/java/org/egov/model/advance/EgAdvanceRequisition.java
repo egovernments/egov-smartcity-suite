@@ -39,31 +39,62 @@
  */
 package org.egov.model.advance;
 
-import org.egov.commons.EgwStatus;
-import org.egov.infra.workflow.entity.StateAware;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class EgAdvanceRequisition extends StateAware implements java.io.Serializable {
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-    /**
-     *
-     */
+import org.egov.commons.EgwStatus;
+import org.egov.infra.workflow.entity.StateAware;
+
+@Entity
+@Table(name = "EG_ADVANCEREQUISITION")
+@SequenceGenerator(name = EgAdvanceRequisition.SEQ_EG_ADVANCEREQUISITION, sequenceName = EgAdvanceRequisition.SEQ_EG_ADVANCEREQUISITION, allocationSize = 1)
+public class EgAdvanceRequisition extends StateAware {
+
     private static final long serialVersionUID = 5350085164408760402L;
+
+    public static final String SEQ_EG_ADVANCEREQUISITION = "SEQ_EG_ADVANCEREQUISITION";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EG_ADVANCEREQUISITION, strategy = GenerationType.SEQUENCE)
     private Long id;
+
     private String advanceRequisitionNumber;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "statusid", nullable = false)
     private EgwStatus status;
+
     private Date advanceRequisitionDate;
+
     private BigDecimal advanceRequisitionAmount;
+
     private String narration;
+
     private String arftype;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "egAdvanceRequisition", targetEntity = EgAdvanceRequisitionMis.class)
     private EgAdvanceRequisitionMis egAdvanceReqMises;
-    private Set<EgAdvanceRequisitionDetails> egAdvanceReqDetailses = new HashSet<EgAdvanceRequisitionDetails>(0);
 
+    @OrderBy("id")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egAdvanceRequisition", targetEntity = EgAdvanceRequisitionDetails.class)
+    private Set<EgAdvanceRequisitionDetails> egAdvanceReqDetailses = new HashSet<EgAdvanceRequisitionDetails>(0);
+    
     public EgAdvanceRequisition() {
     }
 

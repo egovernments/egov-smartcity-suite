@@ -37,18 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.services.contractoradvance;
+package org.egov.works.web.controller.contractoradvance;
 
-import org.egov.infstr.services.PersistenceService;
-import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-public class ContractorAdvanceWFService extends PersistenceService<ContractorAdvanceRequisition, Long> {
-    public ContractorAdvanceWFService() {
-        super(ContractorAdvanceRequisition.class);
-    }
-
-    public ContractorAdvanceWFService(final Class<ContractorAdvanceRequisition> type) {
-        super(type);
-    }
+@Controller
+@RequestMapping(value = "/contractoradvance")
+public class CreateContractorAdvanceController {
 
 }

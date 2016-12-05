@@ -172,7 +172,6 @@
         <property name="genericService" ref="persistenceService" />
         <property name="worksService" ref="worksService" />
         <property name="tenderResponseService" ref="tenderResponseService" />
-        <property name="contractorAdvanceService" ref="contractorAdvanceService" />
     </bean>
 
     <bean class="org.egov.works.services.WorkOrderWFService" id="workOrderWFService"
@@ -243,21 +242,6 @@
         <property name="persistenceService" ref="persistenceService" />
         <property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
         <property name="worksStatusService" ref="worksStatusService" />
-    </bean>
-
-    <bean
-            class="org.egov.works.models.contractoradvance.ContractorAdvanceRequisitionNumberGenerator"
-            id="contractorAdvanceRequisitionNumberGenerator">
-    </bean>
-
-    <bean id="contractorAdvanceService" class="org.egov.works.services.contractoradvance.ContractorAdvanceServiceImpl" scope="prototype">
-        <property name="persistenceService" ref="persistenceService" />
-        <property name="eisService" ref="eisService" />
-        <property name="worksService" ref="worksService" />
-        <property name="contractorAdvanceRequisitionNumberGenerator"
-                  ref="contractorAdvanceRequisitionNumberGenerator" />
-        <property name="revisionAbstractEstimateService" ref="revisionAbstractEstimateService" />
-        <!-- <property name="contractorAdvanceWorkflowService" ref="contractorAdvanceWorkflowService" /> -->
     </bean>
 
     <bean id="schemeService" class="org.egov.services.masters.SchemeService"/>

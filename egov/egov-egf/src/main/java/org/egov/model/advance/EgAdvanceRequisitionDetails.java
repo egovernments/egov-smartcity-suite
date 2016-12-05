@@ -39,28 +39,63 @@
  */
 package org.egov.model.advance;
 
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFunction;
-
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class EgAdvanceRequisitionDetails implements Serializable {
-    /**
-     *
-     */
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFunction;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+
+@Entity
+@Table(name = "EG_ADVANCEREQUISITIONDETAILS")
+@SequenceGenerator(name = EgAdvanceRequisitionDetails.SEQ_EG_ADVANCEREQDETAILS, sequenceName = EgAdvanceRequisitionDetails.SEQ_EG_ADVANCEREQDETAILS, allocationSize = 1)
+public class EgAdvanceRequisitionDetails extends AbstractAuditable {
+
     private static final long serialVersionUID = 9104415562626900594L;
+    
+    public static final String SEQ_EG_ADVANCEREQDETAILS = "SEQ_EG_ADVANCEREQDETAILS";
+    
+    @Id
+    @GeneratedValue(generator = SEQ_EG_ADVANCEREQDETAILS, strategy = GenerationType.SEQUENCE)
     private Long id;
-    private Date lastupdatedtime;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "GLCODEID")
     private CChartOfAccounts chartofaccounts;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ADVANCEREQUISITIONID")
     private EgAdvanceRequisition egAdvanceRequisition;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FUNCTIONID")
     private CFunction function;
+    
     private BigDecimal creditamount = BigDecimal.ZERO;
+    
     private BigDecimal debitamount = BigDecimal.ZERO;
+    
+    @Length(max = 256)
     private String narration;
+    
+    @OrderBy("id")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egAdvanceRequisitionDetails", targetEntity = EgAdvanceReqPayeeDetails.class)
     private Set<EgAdvanceReqPayeeDetails> egAdvanceReqpayeeDetailses = new HashSet<EgAdvanceReqPayeeDetails>(0);
 
     public EgAdvanceRequisitionDetails(final Long id, final Date lastupdatedtime,
@@ -70,7 +105,6 @@ public class EgAdvanceRequisitionDetails implements Serializable {
             final Set<EgAdvanceReqPayeeDetails> egAdvanceReqpayeeDetailses) {
         super();
         this.id = id;
-        this.lastupdatedtime = lastupdatedtime;
         this.chartofaccounts = chartofaccounts;
         this.egAdvanceRequisition = egAdvanceRequisition;
         this.function = function;
@@ -91,14 +125,6 @@ public class EgAdvanceRequisitionDetails implements Serializable {
 
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public Date getLastupdatedtime() {
-        return lastupdatedtime;
-    }
-
-    public void setLastupdatedtime(final Date lastupdatedtime) {
-        this.lastupdatedtime = lastupdatedtime;
     }
 
     public CChartOfAccounts getChartofaccounts() {

@@ -37,14 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.works.web.controller.contractoradvance;
 
-package org.egov.works.autonumber;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
-import org.springframework.stereotype.Service;
-
-@Service
-public interface AdvanceRequisitionNumberGenerator {
-    String getNextNumber(ContractorAdvanceRequisition advanceRequisition);
+@Controller
+@RequestMapping(value = "/contractoradvance")
+public class AjaxContractorAdvanceController {
 
 }

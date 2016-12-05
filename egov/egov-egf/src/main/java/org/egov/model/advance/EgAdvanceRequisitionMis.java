@@ -39,6 +39,18 @@
  */
 package org.egov.model.advance;
 
+import java.util.Date;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
 import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Functionary;
@@ -48,33 +60,73 @@ import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
-import java.util.Date;
+@Entity
+@Table(name = "EG_ADVANCEREQUISITIONMIS")
+@SequenceGenerator(name = EgAdvanceRequisitionMis.SEQ_EG_ADVANCEREQUISITIONMIS, sequenceName = EgAdvanceRequisitionMis.SEQ_EG_ADVANCEREQUISITIONMIS, allocationSize = 1)
+public class EgAdvanceRequisitionMis extends AbstractAuditable {
 
-public class EgAdvanceRequisitionMis implements java.io.Serializable {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 699827158343906305L;
+    
+    public static final String SEQ_EG_ADVANCEREQUISITIONMIS = "SEQ_EG_ADVANCEREQUISITIONMIS";
+    
+    @Id
+    @GeneratedValue(generator = SEQ_EG_ADVANCEREQUISITIONMIS, strategy = GenerationType.SEQUENCE)
     private Long id;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
     private Boundary fieldId;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
     private Boundary subFieldId;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DEPARTMENTID")
     private Department egDepartment;
-    private Date lastupdatedtime;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SCHEMEID")
     private Scheme scheme;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SUBSCHEMEID")
     private SubScheme subScheme;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "VOUCHERHEADERID")
     private CVoucherHeader voucherheader;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ADVANCEREQUISITIONID")
     private EgAdvanceRequisition egAdvanceRequisition;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FUNDSOURCEID")
     private Fundsource fundsource;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FUNDID")
     private Fund fund;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FUNCTIONARYID")
     private Functionary functionaryId;
+    
     private String payto;
+    
     private Date paybydate;
+    
     private String referencenumber;
+
     private String sourcePath;
+    
     private String partyBillNumber;
+    
     private Date partyBillDate;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_FUNCTION")
     private CFunction function;
 
     public EgAdvanceRequisitionMis() {
@@ -111,14 +163,6 @@ public class EgAdvanceRequisitionMis implements java.io.Serializable {
 
     public void setEgDepartment(final Department egDepartment) {
         this.egDepartment = egDepartment;
-    }
-
-    public Date getLastupdatedtime() {
-        return lastupdatedtime;
-    }
-
-    public void setLastupdatedtime(final Date lastupdatedtime) {
-        this.lastupdatedtime = lastupdatedtime;
     }
 
     public Scheme getScheme() {
@@ -238,7 +282,6 @@ public class EgAdvanceRequisitionMis implements java.io.Serializable {
         this.fieldId = fieldId;
         this.subFieldId = subFieldId;
         this.egDepartment = egDepartment;
-        this.lastupdatedtime = lastupdatedtime;
         this.scheme = scheme;
         this.subScheme = subScheme;
         this.voucherheader = voucherheader;

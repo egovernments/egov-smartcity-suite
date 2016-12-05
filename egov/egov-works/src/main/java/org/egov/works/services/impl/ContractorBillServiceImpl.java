@@ -87,7 +87,6 @@ import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.services.ContractorBillService;
 import org.egov.works.services.TenderResponseService;
 import org.egov.works.services.WorksService;
-import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.egov.works.utils.DateConversionUtil;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrder;
@@ -125,7 +124,6 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     public static final String BILL_DEPT_ID = "BILL_DEPT_ID";
     public static final String EXEC_DEPT_ID = "EXEC_DEPT_ID";
     public static final String EST_NO = "EST_NO";
-    private ContractorAdvanceService contractorAdvanceService;
 
     @Autowired
     private EgBilldetailsHibernateDAO egBilldetailsHibernateDAO;
@@ -231,8 +229,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     @Override
     public BigDecimal calculateTotalPendingAdvance(final BigDecimal totalAdvancePaid, final Date billDate,
             final WorkOrderEstimate workOrderEstimate, final Long billId) {
-        final CChartOfAccounts advanceCOA = contractorAdvanceService
-                .getContractorAdvanceAccountcodeForWOE(workOrderEstimate.getId());
+        final CChartOfAccounts advanceCOA = new CChartOfAccounts();
 
         BigDecimal totalPendingBalance = BigDecimal.ZERO;
         BigDecimal totalAdvanceAdjusted = BigDecimal.ZERO;
@@ -670,8 +667,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     public BigDecimal getAdvanceAdjustmentAmountForBill(final Long billId, final Long workOrderEstimateId) {
 
         BigDecimal advanceAdjustment = BigDecimal.ZERO;
-        final CChartOfAccounts advanceCOA = contractorAdvanceService
-                .getContractorAdvanceAccountcodeForWOE(workOrderEstimateId);
+        final CChartOfAccounts advanceCOA = new CChartOfAccounts();
         if (advanceCOA != null) {
             final EgBilldetails egBilldetails = (EgBilldetails) genericService.find(
                     "from EgBilldetails ebd where ebd.glcodeid=? and " + "ebd.egBillregister.id=?", new BigDecimal(
@@ -734,8 +730,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     public BigDecimal getTotAmtForAdvanceAdjustment(final Date billDate, final Long workOrderId,
             final Long workOrderEstimateId) {
         BigDecimal totDeductionAmt = BigDecimal.ZERO;
-        final CChartOfAccounts advanceCOA = contractorAdvanceService
-                .getContractorAdvanceAccountcodeForWOE(workOrderEstimateId);
+        final CChartOfAccounts advanceCOA = new CChartOfAccounts();
         if (advanceCOA != null)
             totDeductionAmt = getAdvanceAdjustmentDeductionTotAmount(billDate, workOrderId, advanceCOA.getId(),
                     workOrderEstimateId);
@@ -961,8 +956,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
         addStatutoryDeductionGlcode(glcodeIdList, statutoryList);
         addStandardDeductionGlcode(glcodeIdList, standardDeductionList);
         String advanceAdjstglCodeId = "";
-        final CChartOfAccounts advanceCOA = contractorAdvanceService
-                .getContractorAdvanceAccountcodeForWOE(workOrderEstimateId);
+        final CChartOfAccounts advanceCOA = new CChartOfAccounts();
         if (advanceCOA != null)
             advanceAdjstglCodeId = advanceCOA.getId().toString();
         addRetentionMoneyDeductionGlcode(glcodeIdList, retentionMoneyDeductionList);
@@ -990,8 +984,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
         addStatutoryDeductionGlcode(glcodeIdList, statutoryList);
         addStandardDeductionGlcode(glcodeIdList, standardDeductionList);
         String advanceAdjstglCodeId = "";
-        final CChartOfAccounts advanceCOA = contractorAdvanceService
-                .getContractorAdvanceAccountcodeForWOE(workOrderEstimateId);
+        final CChartOfAccounts advanceCOA = new CChartOfAccounts();
         if (advanceCOA != null)
             advanceAdjstglCodeId = advanceCOA.getId().toString();
         addRetentionMoneyDeductionGlcode(glcodeIdList, retentionMoneyDeductionList);
@@ -1595,10 +1588,6 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
                 " from WorkOrderActivity woa where woa.id in (:woActivityIds) ");
         createQuery.setParameterList("woActivityIds", woaIds);
         return createQuery.list();
-    }
-
-    public void setContractorAdvanceService(final ContractorAdvanceService contractorAdvanceService) {
-        this.contractorAdvanceService = contractorAdvanceService;
     }
 
     public String getBudgetHeadFromMappingObject(final String depositCOA) {

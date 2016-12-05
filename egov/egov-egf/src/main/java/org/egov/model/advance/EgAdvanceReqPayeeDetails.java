@@ -39,26 +39,56 @@
  */
 package org.egov.model.advance;
 
-import org.egov.commons.Accountdetailtype;
-import org.egov.model.recoveries.Recovery;
-
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class EgAdvanceReqPayeeDetails implements Serializable {
-    /**
-     *
-     */
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import org.egov.commons.Accountdetailtype;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.model.recoveries.Recovery;
+import org.hibernate.validator.constraints.Length;
+
+@Entity
+@Table(name = "EG_ADVANCEREQPAYEEDETAILS")
+@SequenceGenerator(name = EgAdvanceReqPayeeDetails.SEQ_EG_ADVANCEREQPAYEEDETAILS, sequenceName = EgAdvanceReqPayeeDetails.SEQ_EG_ADVANCEREQPAYEEDETAILS, allocationSize = 1)
+public class EgAdvanceReqPayeeDetails extends AbstractAuditable {
+
     private static final long serialVersionUID = -1960388164957978702L;
+    
+    public static final String SEQ_EG_ADVANCEREQPAYEEDETAILS = "SEQ_EG_ADVANCEREQPAYEEDETAILS";
+    
+    @Id
+    @GeneratedValue(generator = SEQ_EG_ADVANCEREQPAYEEDETAILS, strategy = GenerationType.SEQUENCE)
     private Long id;
-    private Date lastUpdatedTime;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ADVANCEREQUISITIONDETAILID")
     private EgAdvanceRequisitionDetails egAdvanceRequisitionDetails;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TDSID")
     private Recovery recovery;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACCOUNTDETAILTYPEID")
     private Accountdetailtype accountDetailType;
+    
     private Integer accountdetailKeyId;
+    
     private BigDecimal debitAmount;
+    
     private BigDecimal creditAmount;
+    
+    @Length(max = 256)
     private String narration;
 
     public Long getId() {
@@ -67,14 +97,6 @@ public class EgAdvanceReqPayeeDetails implements Serializable {
 
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public Date getLastUpdatedTime() {
-        return lastUpdatedTime;
-    }
-
-    public void setLastUpdatedTime(final Date lastUpdatedTime) {
-        this.lastUpdatedTime = lastUpdatedTime;
     }
 
     public EgAdvanceRequisitionDetails getEgAdvanceRequisitionDetails() {
@@ -140,7 +162,6 @@ public class EgAdvanceReqPayeeDetails implements Serializable {
             final BigDecimal debitAmount, final BigDecimal creditAmount, final String narration) {
         super();
         this.id = id;
-        this.lastUpdatedTime = lastUpdatedTime;
         this.egAdvanceRequisitionDetails = egAdvanceRequisitionDetails;
         this.recovery = recovery;
         this.accountDetailType = accountDetailType;
