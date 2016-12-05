@@ -196,6 +196,7 @@ $(document).ready(function(){
 			data: {
 				positionId : $("#positionId").val(),
 				assignmentId : $("#editassignIds").val(), 
+				code : $("#code").val(),
 				fromDate : $("#fromDate").val(),
 				toDate : $("#toDate").val()
 			},
