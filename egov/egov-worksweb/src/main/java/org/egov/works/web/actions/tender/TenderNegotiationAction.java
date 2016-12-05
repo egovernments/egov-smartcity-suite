@@ -43,7 +43,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -82,6 +81,7 @@ import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.Activity;
+import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.masters.entity.Contractor;
 import org.egov.works.masters.service.ContractorService;
 import org.egov.works.models.tender.NegotiationNumberGenerator;
@@ -93,13 +93,11 @@ import org.egov.works.models.tender.TenderResponseActivity;
 import org.egov.works.models.tender.TenderResponseContractors;
 import org.egov.works.models.tender.TenderResponseQuotes;
 import org.egov.works.models.tender.WorksPackage;
-import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.TenderResponseService;
 import org.egov.works.services.WorksPackageService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.DateConversionUtil;
 import org.egov.works.utils.WorksConstants;
-import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -112,7 +110,6 @@ public class TenderNegotiationAction extends SearchFormAction {
     private static final Logger logger = Logger.getLogger(TenderNegotiationAction.class);
     private TenderResponseService tenderResponseService;
     private PersistenceService<TenderHeader, Long> tenderHeaderService;
-    private AbstractEstimateService abstractEstimateService;
     private NegotiationNumberGenerator negotiationNumberGenerator;
     private TenderResponse tenderResponse = new TenderResponse();
     private AbstractEstimate abstractEstimate;
@@ -129,8 +126,9 @@ public class TenderNegotiationAction extends SearchFormAction {
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
     @Autowired
+    private EstimateService estimateService;
+    @Autowired
     private UserService userService;
-    private static final String PREPARED_BY_LIST = "preparedByList";
     private static final String DEPARTMENT_LIST = "departmentList";
     private List<TenderResponseActivity> actionTenderResponseActivities = new LinkedList<TenderResponseActivity>();
     private List<TenderResponseContractors> actionTenderResponseContractors = new LinkedList<TenderResponseContractors>();
@@ -212,7 +210,6 @@ public class TenderNegotiationAction extends SearchFormAction {
     private String cancellationReason;
     private String cancelRemarks;
     private String loggedInUserEmployeeCode;
-    private EisUtilService eisService;
     private Map<String, String> tenderInvitationTypeMap = new LinkedHashMap<String, String>();
 
     public TenderResponse getTenderResponse() {
@@ -291,8 +288,8 @@ public class TenderNegotiationAction extends SearchFormAction {
 
         if (SOURCE_INBOX.equals(getSourcepage())) {
             if (tenderResponse.getTenderEstimate().getAbstractEstimate() != null)
-                abstractEstimate = abstractEstimateService.findById(tenderResponse.getTenderEstimate()
-                        .getAbstractEstimate().getId(), false);
+                abstractEstimate = estimateService.getAbstractEstimateById(tenderResponse.getTenderEstimate()
+                        .getAbstractEstimate().getId());
             if (tenderResponse.getTenderEstimate().getWorksPackage() != null)
                 worksPackage = workspackageService.findById(tenderResponse.getTenderEstimate().getWorksPackage()
                         .getId(), false);
@@ -332,11 +329,6 @@ public class TenderNegotiationAction extends SearchFormAction {
         ajaxTenderNegotiationAction.setPersistenceService(getPersistenceService());
         ajaxTenderNegotiationAction.setAssignmentService(assignmentService);
         ajaxTenderNegotiationAction.setPersonalInformationService(personalInformationService);
-        final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
-        ajaxEstimateAction.setPersistenceService(getPersistenceService());
-        ajaxEstimateAction.setAssignmentService(assignmentService);
-        ajaxEstimateAction.setAbstractEstimateService(abstractEstimateService);
-        ajaxEstimateAction.setEisService(eisService);
         tenderResponseService.setPersonalInformationService(personalInformationService);
         if (StringUtils.isNotBlank(getPastDate()))
             setEditableDate(getPastDate());
@@ -350,7 +342,7 @@ public class TenderNegotiationAction extends SearchFormAction {
             worksPackageId = tenderResponse.getTenderEstimate().getWorksPackage().getId();
         }
         if (estimateId != null)
-            abstractEstimate = abstractEstimateService.findById(estimateId, false);
+            abstractEstimate = estimateService.getAbstractEstimateById(estimateId);
         if (worksPackageId != null) {
             worksPackage = workspackageService.findById(worksPackageId, false);
             final String status = worksService.getWorksConfigValue("WORKSPACKAGE_STATUS");
@@ -377,10 +369,9 @@ public class TenderNegotiationAction extends SearchFormAction {
             if (tenderResponse.getTenderEstimate().getWorksPackage() != null)
                 setTenderSource("package");
         }
-        final Assignment latestAssignment = abstractEstimateService.getLatestAssignmentForCurrentLoginUser();
+        final Assignment latestAssignment = worksService.getLatestAssignmentForCurrentLoginUser();
         if (latestAssignment != null) {
-            tenderResponse.setWorkflowDepartmentId(abstractEstimateService.getLatestAssignmentForCurrentLoginUser()
-                    .getDepartment().getId());
+            tenderResponse.setWorkflowDepartmentId(latestAssignment.getDepartment().getId());
             if (tenderResponse.getNegotiationPreparedBy() == null) {
                 setDesignationNegotiation(latestAssignment.getDesignation().getName());
                 loggedInUserEmployeeCode = latestAssignment.getEmployee().getCode();
@@ -390,13 +381,11 @@ public class TenderNegotiationAction extends SearchFormAction {
         if (StringUtils.isNotBlank(getCreatedBy()) && "yes".equalsIgnoreCase(getCreatedBy())) {
             setCreatedBySelection(getCreatedBy());
             addDropdownData(DEPARTMENT_LIST, departmentService.getAllDepartments());
-            populatePreparedByList(ajaxEstimateAction, deptId != null);
         } else {
             if (id != null)
                 worksPackage = tenderResponse.getTenderEstimate().getWorksPackage();
             if (worksPackage != null) {
                 addDropdownData(DEPARTMENT_LIST, Arrays.asList(worksPackage.getDepartment()));
-                populatePreparedByList(ajaxEstimateAction, worksPackage.getDepartment().getId() != null);
                 tenderResponse.setNegotiationPreparedBy(getEmployee());
             }
         }
@@ -420,17 +409,6 @@ public class TenderNegotiationAction extends SearchFormAction {
                 .getActionTenderResponseContractorsList(actionTenderResponseContractors))
             contractorList.add(tenderResponseContractors.getContractor());
         addDropdownData(CONTRACTOR_LIST, contractorList);
-    }
-
-    protected void populatePreparedByList(final AjaxEstimateAction ajaxEstimateAction, final boolean departID) {
-        if (departID) {
-            ajaxEstimateAction.setExecutingDepartment(worksPackage.getDepartment().getId());
-            if (StringUtils.isNotBlank(loggedInUserEmployeeCode))
-                ajaxEstimateAction.setEmployeeCode(loggedInUserEmployeeCode);
-            ajaxEstimateAction.usersInExecutingDepartment();
-            addDropdownData(PREPARED_BY_LIST, ajaxEstimateAction.getUsersInExecutingDepartment());
-        } else
-            addDropdownData(PREPARED_BY_LIST, Collections.EMPTY_LIST);
     }
 
     @Override
@@ -542,7 +520,7 @@ public class TenderNegotiationAction extends SearchFormAction {
         }
         CFinancialYear financialYear = null;
         if (tenderResponse != null) {
-            financialYear = abstractEstimateService.getCurrentFinancialYear(tenderResponse.getNegotiationDate());
+            financialYear = worksService.getFinancialYearByDate(tenderResponse.getNegotiationDate());
             if (tenderResponse.getEgwStatus() == null
                     || REJECTED.equalsIgnoreCase(tenderResponse.getEgwStatus().getCode())
                     || NEW.equalsIgnoreCase(tenderResponse.getEgwStatus().getCode()))
@@ -583,7 +561,7 @@ public class TenderNegotiationAction extends SearchFormAction {
                             .getActionTenderResponseContractorsList(actionTenderResponseContractors);
                     if (tenderResponse != null) {
                         tenderResponse.getTenderResponseActivities().clear();
-                        financialYear = abstractEstimateService.getCurrentFinancialYear(tenderResponse
+                        financialYear = worksService.getFinancialYearByDate(tenderResponse
                                 .getNegotiationDate());
                     }
                     populateTenderResponseContractors();
@@ -837,10 +815,6 @@ public class TenderNegotiationAction extends SearchFormAction {
                 && estNum[2].equals(financialYear.getFinYearRange()))
             return false;
         return true;
-    }
-
-    public void setAbstractEstimateService(final AbstractEstimateService abstractEstimateService) {
-        this.abstractEstimateService = abstractEstimateService;
     }
 
     public void setTenderResponse(final TenderResponse tenderResponse) {
@@ -1280,7 +1254,7 @@ public class TenderNegotiationAction extends SearchFormAction {
 
     public String getWpYear() {
         if (worksPackage != null)
-            return abstractEstimateService.getCurrentFinancialYear(worksPackage.getWpDate()).getFinYearRange();
+            return worksService.getFinancialYearByDate(worksPackage.getWpDate()).getFinYearRange();
         return wpYear;
     }
 
@@ -1727,7 +1701,6 @@ public class TenderNegotiationAction extends SearchFormAction {
     }
 
     public void setEisService(final EisUtilService eisService) {
-        this.eisService = eisService;
     }
 
     public Map<String, String> getTenderInvitationTypeMap() {

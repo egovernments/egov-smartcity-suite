@@ -51,6 +51,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -63,6 +64,7 @@ import org.egov.commons.Fund;
 import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
 import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.AssignmentService;
@@ -73,6 +75,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.DeptDesig;
@@ -80,6 +83,7 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,6 +104,8 @@ public class WorksService {
     private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
     @Autowired
     private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
+    @Autowired
+    private FinancialYearHibernateDAO financialYearHibernateDAO;
 
     /**
      * This method will return the value in AppConfigValue table for the given module and key.
@@ -1244,5 +1250,17 @@ public class WorksService {
     public Collection<Date> getStatusDateDetails(final Date[] statusDates) {
         return CollectionUtils.select(Arrays.asList(statusDates), statusDate -> (Date) statusDate != null);
     }
-
+    
+    public Assignment getLatestAssignmentForCurrentLoginUser() {
+        final Long currentLoginUserId = getCurrentLoggedInUserId();
+        Assignment assignment = null;
+        if (currentLoginUserId != null)
+            assignment = assignmentService.getPrimaryAssignmentForEmployee(currentLoginUserId);
+        return assignment;
+    }
+    
+    public CFinancialYear getFinancialYearByDate(final Date asOnDate) {
+        return financialYearHibernateDAO.getFinYearByDate(asOnDate);
+    }
+    
 }

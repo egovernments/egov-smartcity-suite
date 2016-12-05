@@ -51,8 +51,8 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwTypeOfWork;
+import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.service.UOMService;
-import org.egov.eis.service.AssignmentService;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
@@ -76,8 +76,6 @@ public class EstimateTemplateAction extends SearchFormAction {
     private EstimateTemplate estimateTemplate = new EstimateTemplate();
     private List<EstimateTemplateActivity> sorActivities = new LinkedList<EstimateTemplateActivity>();
     private List<EstimateTemplateActivity> nonSorActivities = new LinkedList<EstimateTemplateActivity>();
-    @Autowired
-    private AssignmentService assignmentService;
     private WorksService worksService;
     @Autowired
     private EstimateTemplateService estimateTemplateService;
@@ -90,6 +88,9 @@ public class EstimateTemplateAction extends SearchFormAction {
     public static final String SEARCH = "search";
     public static final String EDIT = "edit";
     public static final String SUCCESS = "success";
+
+    @Autowired
+    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
 
     @Autowired
     private UOMService uomService;
@@ -124,11 +125,6 @@ public class EstimateTemplateAction extends SearchFormAction {
     public void prepare() {
         if (id != null)
             estimateTemplate = estimateTemplateService.getEstimateTemplateById(id);
-        final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
-        ajaxEstimateAction.setPersistenceService(getPersistenceService());
-        ajaxEstimateAction.setAssignmentService(assignmentService);
-        // TODO: Need to uncomment
-        // ajaxEstimateAction.setPersonalInformationService(personalInformationService);
         super.prepare();
         setupDropdownDataExcluding("workType", "subType");
         addDropdownData("parentCategoryList",
@@ -136,7 +132,7 @@ public class EstimateTemplateAction extends SearchFormAction {
         addDropdownData("uomList", uomService.findAll());
         addDropdownData("scheduleCategoryList",
                 getPersistenceService().findAllBy("from ScheduleCategory order by upper(code)"));
-        populateCategoryList(ajaxEstimateAction, estimateTemplate.getWorkType() != null);
+        populateCategoryList(estimateTemplate.getWorkType() != null);
 
     }
 
@@ -225,12 +221,11 @@ public class EstimateTemplateAction extends SearchFormAction {
         persistenceService.applyAuditing(estimateTemplate);
     }
 
-    protected void populateCategoryList(final AjaxEstimateAction ajaxEstimateAction, final boolean categoryPopulated) {
-        if (categoryPopulated) {
-            ajaxEstimateAction.setCategory(estimateTemplate.getWorkType().getId());
-            ajaxEstimateAction.subcategories();
-            addDropdownData("categoryList", ajaxEstimateAction.getSubCategories());
-        } else
+    protected void populateCategoryList(final boolean categoryPopulated) {
+        if (categoryPopulated)
+            addDropdownData("categoryList",
+                    egwTypeOfWorkHibernateDAO.getSubTypeOfWorkByParentId(estimateTemplate.getWorkType().getId()));
+        else
             addDropdownData("categoryList", Collections.emptyList());
     }
 

@@ -56,18 +56,13 @@ import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.repository.CFinancialYearRepository;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.eis.service.AssignmentService;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
-import org.egov.works.abstractestimate.service.ProjectCodeGenerator;
 import org.egov.works.masters.entity.DepositCode;
 import org.egov.works.masters.service.DepositCodeGenerator;
 import org.egov.works.masters.service.DepositCodeService;
-import org.egov.works.services.ContractorBillService;
 import org.egov.works.services.WorksService;
-import org.egov.works.web.actions.estimate.AjaxEstimateAction;
-import org.egov.works.web.actions.estimate.AjaxFinancialDetailAction;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -83,8 +78,6 @@ public class DepositCodeAction extends BaseFormAction {
     private static final long serialVersionUID = 3780456881338376293L;
     @Required(message = "sor.category.not.null")
     private DepositCode depositCode = new DepositCode();
-    @Autowired
-    private AssignmentService assignmentService;
     @Autowired
     private WorksService worksService;
     @Autowired
@@ -124,11 +117,6 @@ public class DepositCodeAction extends BaseFormAction {
 
     @Override
     public void prepare() {
-        final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
-        ajaxEstimateAction.setPersistenceService(getPersistenceService());
-        ajaxEstimateAction.setAssignmentService(assignmentService);
-        final AjaxFinancialDetailAction ajaxFinancialDetailAction = new AjaxFinancialDetailAction();
-        ajaxFinancialDetailAction.setPersistenceService(getPersistenceService());
         super.prepare();
         setupDropdownDataExcluding("typeOfWork", "subTypeOfWork", "fundSource", "function", "ward", "zone", "fund", "scheme",
                 "subScheme");
@@ -175,6 +163,7 @@ public class DepositCodeAction extends BaseFormAction {
     }
 
     public DepositCodeAction() {
+
         addRelatedEntity("fundSource", Fundsource.class);
         addRelatedEntity("fund", Fund.class);
         addRelatedEntity("financialYear", CFinancialYear.class);
@@ -238,9 +227,6 @@ public class DepositCodeAction extends BaseFormAction {
         this.depCode = depCode;
     }
 
-    public void setProjectcodeGenerator(final ProjectCodeGenerator projectcodeGenerator) {
-    }
-
     public void setEgovCommon(final EgovCommon egovCommon) {
         this.egovCommon = egovCommon;
     }
@@ -279,9 +265,6 @@ public class DepositCodeAction extends BaseFormAction {
 
     public void setCompletionDate(final Date completionDate) {
         this.completionDate = completionDate;
-    }
-
-    public void setContractorBillService(final ContractorBillService contractorBillService) {
     }
 
     public String getLastVoucherDate() {

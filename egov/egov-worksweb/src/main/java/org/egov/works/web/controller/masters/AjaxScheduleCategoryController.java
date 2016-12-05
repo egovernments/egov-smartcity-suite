@@ -69,7 +69,7 @@ public class AjaxScheduleCategoryController {
     private SearchScheduleCategoryJsonAdaptor searchScheduleCategoryJsonAdaptor;
 
     @RequestMapping(value = "/ajaxsearch-schedulecategory", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String ajaxSearchOverheadToModify(final Model model,
+    public @ResponseBody String ajaxSearchScheduleCategoryToModify(final Model model,
             @ModelAttribute final SearchRequestScheduleCategory searchRequestScheduleCategory) {
         final List<ScheduleCategory> searchResultList = scheduleCategoryService
                 .searchScheduleCategory(searchRequestScheduleCategory);

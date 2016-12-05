@@ -65,7 +65,6 @@ import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.models.tender.WorksPackage;
-import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksPackageService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
@@ -91,7 +90,6 @@ public class SearchWorksPackageAction extends SearchFormAction {
     private String setStatus;
     private Boolean checkRetenderedWP;
 
-    private AbstractEstimateService abstractEstimateService;
     private WorksService worksService;
     private String negoCreatedBy;
     private String statusReq;
@@ -150,9 +148,11 @@ public class SearchWorksPackageAction extends SearchFormAction {
 
     @SuppressWarnings("unchecked")
     public void perform() {
+        
+        Assignment latestAssignment = worksService.getLatestAssignmentForCurrentLoginUser();
 
-        if (abstractEstimateService.getLatestAssignmentForCurrentLoginUser() != null)
-            execDept = abstractEstimateService.getLatestAssignmentForCurrentLoginUser().getDepartment().getId();
+        if (latestAssignment != null)
+            execDept = latestAssignment.getDepartment().getId();
         negoCreatedBy = worksService.getWorksConfigValue("TENDER_NEGOTIATION_CREATED_BY_SELECTION");
         statusReq = worksService.getWorksConfigValue(WorksConstants.WP_LAST_STATUS);
         estimateOrWpSearchReq = worksService.getWorksConfigValue("ESTIMATE_OR_WP_SEARCH_REQ");
@@ -306,10 +306,6 @@ public class SearchWorksPackageAction extends SearchFormAction {
 
     public void setModel(final WorksPackage worksPackage) {
         this.worksPackage = worksPackage;
-    }
-
-    public void setAbstractEstimateService(final AbstractEstimateService abstractEstimateService) {
-        this.abstractEstimateService = abstractEstimateService;
     }
 
     public String getNegoCreatedBy() {

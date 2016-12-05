@@ -44,7 +44,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.egov.commons.exception.NoSuchObjectException;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -52,7 +51,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AssetsForEstimate;
 import org.egov.works.abstractestimate.entity.ProjectCode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,9 +65,9 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long> im
     public ProjectCodeService(final Class<ProjectCode> type) {
         super(type);
     }
-
-    @Autowired
-    private PersistenceService<AssetsForEstimate, Long> assetsForEstimateService;
+    /*
+     * @Autowired private PersistenceService<AssetsForEstimate, Long> assetsForEstimateService;
+     */
 
     @Override
     public List<ProjectCode> getAllActiveEntities(final Integer accountDetailTypeId) {
@@ -159,21 +157,15 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long> im
             return findAllBy(projectCodeQry, params);
         }
     }
-
-    public List getAssetListByProjectCode(final Long projectCodeId) throws NoSuchObjectException {
-        final List<String> assetCodeList = new ArrayList<String>();
-        final ProjectCode pc = find("from ProjectCode where id=?", projectCodeId);
-        if (pc == null)
-            throw new NoSuchObjectException("projectcode.notfound");
-        final List<AssetsForEstimate> assetsForEstimateList = assetsForEstimateService.findAllByNamedQuery(
-                "ASSETS_FOR_PROJECTCODE", projectCodeId);
-        if (assetsForEstimateList.isEmpty())
-            throw new NoSuchObjectException("assetsforestimate.projectcode.asset.notfound");
-        else
-            for (final AssetsForEstimate assetsForEstimate : assetsForEstimateList)
-                assetCodeList.add(assetsForEstimate.getAsset().getCode());
-        return assetCodeList;
-    }
+    /*
+     * public List getAssetListByProjectCode(final Long projectCodeId) throws NoSuchObjectException { final List<String>
+     * assetCodeList = new ArrayList<String>(); final ProjectCode pc = find("from ProjectCode where id=?", projectCodeId); if (pc
+     * == null) throw new NoSuchObjectException("projectcode.notfound"); final List<AssetsForEstimate> assetsForEstimateList =
+     * assetsForEstimateService.findAllByNamedQuery( "ASSETS_FOR_PROJECTCODE", projectCodeId); if
+     * (assetsForEstimateList.isEmpty()) throw new NoSuchObjectException("assetsforestimate.projectcode.asset.notfound"); else for
+     * (final AssetsForEstimate assetsForEstimate : assetsForEstimateList)
+     * assetCodeList.add(assetsForEstimate.getAsset().getCode()); return assetCodeList; }
+     */
 
     @Override
     public List<ProjectCode> validateEntityForRTGS(final List<Long> idsList) throws ValidationException {

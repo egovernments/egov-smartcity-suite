@@ -52,6 +52,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwTypeOfWork;
+import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
@@ -60,7 +61,6 @@ import org.egov.works.masters.entity.MilestoneTemplateActivity;
 import org.egov.works.masters.service.MilestoneTemplateService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
-import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
@@ -83,6 +83,9 @@ public class MilestoneTemplateAction extends SearchFormAction {
     @Autowired
     private WorksService worksService;
 
+    @Autowired
+    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
+
     Long id;
     private String mode;
     private String messageKey;
@@ -103,13 +106,11 @@ public class MilestoneTemplateAction extends SearchFormAction {
     public void prepare() {
         if (id != null)
             template = milestoneTemplateService.getMilestoneTemplateById(id);
-        final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
-        ajaxEstimateAction.setPersistenceService(getPersistenceService());
         super.prepare();
         setupDropdownDataExcluding("typeOfWork", "subTypeOfWork");
         addDropdownData("parentCategoryList",
                 getPersistenceService().findAllBy("from EgwTypeOfWork etw where etw.parentid is null"));
-        populateCategoryList(ajaxEstimateAction, template.getTypeOfWork() != null);
+        populateCategoryList(template.getTypeOfWork() != null);
     }
 
     @Override
@@ -212,13 +213,11 @@ public class MilestoneTemplateAction extends SearchFormAction {
             addFieldError("milestone.activity.total.percentage", getText("milestone.activity.total.percentage"));
     }
 
-    protected void populateCategoryList(
-            final AjaxEstimateAction ajaxEstimateAction, final boolean categoryPopulated) {
-        if (categoryPopulated) {
-            ajaxEstimateAction.setCategory(template.getTypeOfWork().getId());
-            ajaxEstimateAction.subcategories();
-            addDropdownData("categoryList", ajaxEstimateAction.getSubCategories());
-        } else
+    protected void populateCategoryList(final boolean categoryPopulated) {
+        if (categoryPopulated)
+            addDropdownData("categoryList",
+                    egwTypeOfWorkHibernateDAO.getSubTypeOfWorkByParentId(template.getTypeOfWork().getId()));
+        else
             addDropdownData("categoryList", Collections.emptyList());
     }
 

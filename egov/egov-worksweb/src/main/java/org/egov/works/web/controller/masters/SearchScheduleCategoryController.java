@@ -54,7 +54,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class SearchScheduleCategoryController {
 
     @RequestMapping(value = "/searchform-schedulecategory", method = RequestMethod.GET)
-    public String searchOverhead(
+    public String searchScheduleCategory(
             @ModelAttribute final SearchRequestScheduleCategory searchRequestScheduleCategory,
             final Model model, final HttpServletRequest request) throws ApplicationException {
         model.addAttribute("searchRequestScheduleCategory", searchRequestScheduleCategory);

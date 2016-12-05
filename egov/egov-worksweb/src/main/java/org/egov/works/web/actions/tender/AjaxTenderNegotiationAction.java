@@ -57,13 +57,12 @@ import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.ProjectCode;
+import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.masters.entity.MarketRate;
 import org.egov.works.masters.entity.ScheduleOfRate;
 import org.egov.works.models.tender.EstimateLineItemsForWP;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.tender.WorksPackage;
-import org.egov.works.services.AbstractEstimateService;
-import org.egov.works.services.WorkOrderService;
 import org.egov.works.services.WorksPackageService;
 import org.egov.works.services.WorksService;
 import org.egov.works.workorder.entity.WorkOrder;
@@ -73,7 +72,8 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
 
     private static final long serialVersionUID = -9058467908860158263L;
     private static final String MARKETVALUE = "marketValue";
-    private AbstractEstimateService abstractEstimateService;
+    @Autowired
+    private EstimateService estimateService;
     private WorksService worksService;
     private Long estimateId;
     private Long packageId;
@@ -97,7 +97,6 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
     private PersonalInformationService personalInformationService;
     private static final String GET_WORKORDERS_TN = "getWorkOrdersForTN";
     private List<WorkOrder> workOrderList = new ArrayList<WorkOrder>();
-    private WorkOrderService workOrderService;
     private String tenderNegotiationNo;
     private String query = "";
     private List<AbstractEstimate> estimateList = new LinkedList<AbstractEstimate>();
@@ -115,7 +114,7 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
     }
 
     public double getMarketValueForEstimate(final Long estimateId) {
-        final AbstractEstimate abstractEstimate = abstractEstimateService.findById(estimateId, false);
+        final AbstractEstimate abstractEstimate = estimateService.getAbstractEstimateById(estimateId);
         final Collection<Activity> sorActivities = abstractEstimate.getSORActivities();
         final Map<String, Integer> exceptionaSorMap = worksService.getExceptionSOR();
         for (final Activity activity : sorActivities) {
@@ -224,7 +223,7 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
 
     public String getWODetailsForTN() throws Exception {
         List<WorkOrder> woList = new ArrayList<WorkOrder>();
-        woList = workOrderService
+        woList = getPersistenceService()
                 .findAllBy(
                         "select distinct wo from WorkOrder wo where wo.egwStatus.code<>'CANCELLED' and wo.negotiationNumber=? ",
                         tenderNegotiationNo);
@@ -310,10 +309,6 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
 
     public void setAssignmentService(final AssignmentService assignmentService) {
         this.assignmentService = assignmentService;
-    }
-
-    public void setAbstractEstimateService(final AbstractEstimateService abstractEstimateService) {
-        this.abstractEstimateService = abstractEstimateService;
     }
 
     public void setEstimateId(final Long estimateId) {
@@ -414,10 +409,6 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
 
     public void setTenderNegotiationNo(final String tenderNegotiationNo) {
         this.tenderNegotiationNo = tenderNegotiationNo;
-    }
-
-    public void setWorkOrderService(final WorkOrderService workOrderService) {
-        this.workOrderService = workOrderService;
     }
 
     public List<AbstractEstimate> getEstimateList() {

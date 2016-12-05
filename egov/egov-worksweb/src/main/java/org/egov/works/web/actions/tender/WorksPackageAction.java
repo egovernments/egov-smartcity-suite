@@ -45,8 +45,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
@@ -75,7 +77,6 @@ import org.egov.pims.commons.Position;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.models.tender.WorksPackageDetails;
-import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksPackageService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.DateConversionUtil;
@@ -105,7 +106,6 @@ public class WorksPackageAction extends GenericWorkFlowAction {
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
     private WorksPackageService workspackageService;
-    private AbstractEstimateService abstractEstimateService;
     private List<AbstractEstimate> abstractEstimateList = new ArrayList<AbstractEstimate>();
     private Long id;
     private String messageKey;
@@ -150,10 +150,9 @@ public class WorksPackageAction extends GenericWorkFlowAction {
         else
             addDropdownData(DEPARTMENT_LIST, Arrays.asList(worksPackage.getDepartment()));
 
-        final Assignment latestAssignment = abstractEstimateService.getLatestAssignmentForCurrentLoginUser();
+        final Assignment latestAssignment = worksService.getLatestAssignmentForCurrentLoginUser();
         if (latestAssignment != null) {
-            approverDepartment = abstractEstimateService.getLatestAssignmentForCurrentLoginUser()
-                    .getDepartment().getId().toString();
+            approverDepartment = latestAssignment.getDepartment().getId().toString();
             if (worksPackage.getDepartment() == null)
                 worksPackage.setDepartment(latestAssignment.getDepartment());
         }
@@ -176,7 +175,7 @@ public class WorksPackageAction extends GenericWorkFlowAction {
             sourcepage = "search";
 
         abstractEstimateList = workspackageService.getAbStractEstimateListByWorksPackage(worksPackage);
-        setWorktotalValue(abstractEstimateService.getWorkValueIncludingTaxesForEstList(abstractEstimateList));
+        setWorktotalValue(getWorkValueIncludingTaxesForEstList(abstractEstimateList));
         return EDIT;
     }
 
@@ -202,9 +201,9 @@ public class WorksPackageAction extends GenericWorkFlowAction {
         }
         validateWorksPackageDate();
         transitionWorkFlow(worksPackage);
-        abstractEstimateService.applyAuditing(worksPackage.getState());
+        getPersistenceService().applyAuditing(worksPackage.getState());
         workspackageService.setWorksPackageNumber(worksPackage,
-                abstractEstimateService.getCurrentFinancialYear(worksPackage.getWpDate()));
+                worksService.getFinancialYearByDate(worksPackage.getWpDate()));
         if (worksPackage.getEgwStatus() != null
                 && worksPackage.getEgwStatus().getCode()
                         .equals(WorksPackage.WorkPacakgeStatus.APPROVED.toString()))
@@ -355,8 +354,8 @@ public class WorksPackageAction extends GenericWorkFlowAction {
 
     protected void populateEstimatesList(final Long[] estimateID) {
         if (estimateID != null && estimateID.length > 0) {
-            abstractEstimateList = abstractEstimateService.getAbEstimateListById(StringUtils.join(estId, "`~`"));
-            setWorktotalValue(abstractEstimateService.getWorkValueIncludingTaxesForEstList(abstractEstimateList));
+            abstractEstimateList = getAbEstimateListById(StringUtils.join(estId, "`~`"));
+            setWorktotalValue(getWorkValueIncludingTaxesForEstList(abstractEstimateList));
         } else
             throw new ValidationException(Arrays.asList(new ValidationError("estimates.null",
                     "estimates.null")));
@@ -393,6 +392,29 @@ public class WorksPackageAction extends GenericWorkFlowAction {
         }
         return status;
     }
+    
+    public List<AbstractEstimate> getAbEstimateListById(final String estId) {
+        final String[] estValues = estId.split("`~`");
+        final Long[] estIdLong = new Long[estValues.length];
+        final Set<Long> abIdentifierSet = new HashSet<Long>();
+        int j = 0;
+        for (final String estValue : estValues)
+            if (StringUtils.isNotBlank(estValue)) {
+                estIdLong[j] = Long.valueOf(estValue);
+                j++;
+            }
+        abIdentifierSet.addAll(Arrays.asList(estIdLong));
+        return getPersistenceService().findAllByNamedQuery("ABSTRACTESTIMATELIST_BY_ID", abIdentifierSet);
+    }
+
+
+    public Money getWorkValueIncludingTaxesForEstList(final List<AbstractEstimate> abList) {
+        double amt = 0;
+        if (!abList.isEmpty())
+            for (final AbstractEstimate ab : abList)
+                amt += ab.getWorkValueIncludingTaxes().getValue();
+        return new Money(amt);
+    }
 
     /**
      * print pdf *
@@ -415,7 +437,7 @@ public class WorksPackageAction extends GenericWorkFlowAction {
         final AbstractEstimate estimate = worksPackageDetails.get(0).getEstimate();
         final Boundary b = getTopLevelBoundary(estimate.getWard());
         reportParams
-                .put("financialYear", abstractEstimateService.getCurrentFinancialYear(new Date()).getFinYearRange());
+                .put("financialYear", worksService.getFinancialYearByDate(new Date()).getFinYearRange());
         reportParams.put("total", worksPackage.getTotalAmount());
         reportParams.put("cityName", b == null ? "" : b.getName());
         reportParams.put("workPackageName", worksPackage.getName());
@@ -491,10 +513,6 @@ public class WorksPackageAction extends GenericWorkFlowAction {
 
     public void setEstId(final Long[] estId) {
         this.estId = estId;
-    }
-
-    public void setAbstractEstimateService(final AbstractEstimateService abstractEstimateService) {
-        this.abstractEstimateService = abstractEstimateService;
     }
 
     public List<AbstractEstimate> getAbstractEstimateList() {

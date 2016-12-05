@@ -40,8 +40,11 @@
 package org.egov.works.web.actions.tender;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
@@ -53,7 +56,6 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.tender.WorksPackage;
-import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksPackageService;
 
 @ParentPackage("egov")
@@ -70,7 +72,6 @@ public class AjaxWorksPackageAction extends BaseFormAction {
     private static final long serialVersionUID = -5753205367102548473L;
     public static final String ESTIMATE_LIST = "estList";
     private List<AbstractEstimate> abstractEstimateList = new ArrayList<AbstractEstimate>();
-    private AbstractEstimateService abstractEstimateService;
     private Money worktotalValue;
     private String estId;
     private String wpId;
@@ -95,8 +96,8 @@ public class AjaxWorksPackageAction extends BaseFormAction {
     @Action(value = "/tender/ajaxWorksPackage-estimateList")
     public String estimateList() {
         if (StringUtils.isNotBlank(estId)) {
-            abstractEstimateList = abstractEstimateService.getAbEstimateListById(estId);
-            setWorktotalValue(abstractEstimateService.getWorkValueIncludingTaxesForEstList(abstractEstimateList));
+            abstractEstimateList = getAbEstimateListById(estId);
+            setWorktotalValue(getWorkValueIncludingTaxesForEstList(abstractEstimateList));
         }
         return ESTIMATE_LIST;
     }
@@ -187,6 +188,29 @@ public class AjaxWorksPackageAction extends BaseFormAction {
         }
         return ESTIMATE_NUMBER_SEARCH_RESULTS;
     }
+    
+    public List<AbstractEstimate> getAbEstimateListById(final String estId) {
+        final String[] estValues = estId.split("`~`");
+        final Long[] estIdLong = new Long[estValues.length];
+        final Set<Long> abIdentifierSet = new HashSet<Long>();
+        int j = 0;
+        for (final String estValue : estValues)
+            if (StringUtils.isNotBlank(estValue)) {
+                estIdLong[j] = Long.valueOf(estValue);
+                j++;
+            }
+        abIdentifierSet.addAll(Arrays.asList(estIdLong));
+        return getPersistenceService().findAllByNamedQuery("ABSTRACTESTIMATELIST_BY_ID", abIdentifierSet);
+    }
+
+
+    public Money getWorkValueIncludingTaxesForEstList(final List<AbstractEstimate> abList) {
+        double amt = 0;
+        if (!abList.isEmpty())
+            for (final AbstractEstimate ab : abList)
+                amt += ab.getWorkValueIncludingTaxes().getValue();
+        return new Money(amt);
+    }
 
     public Money getWorktotalValue() {
         return worktotalValue;
@@ -207,10 +231,6 @@ public class AjaxWorksPackageAction extends BaseFormAction {
     @Override
     public Object getModel() {
         return null;
-    }
-
-    public void setAbstractEstimateService(final AbstractEstimateService abstractEstimateService) {
-        this.abstractEstimateService = abstractEstimateService;
     }
 
     public List<AbstractEstimate> getAbstractEstimateList() {
