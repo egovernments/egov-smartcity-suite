@@ -118,7 +118,7 @@
 			<table class="table table-bordered table-hover multiheadertbl"
 				id="marriage_table">
 				
-				<tfoot>
+				<tfoot id="report-footer">
 				<tr>
 						<td></td>
 						<td></td>

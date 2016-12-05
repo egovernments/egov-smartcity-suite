@@ -81,6 +81,11 @@ public class MaritalStatusReportJsonAdaptor implements JsonSerializer<MaritalSta
 				jsonObject.addProperty("divorced", marital.getDivorced());
 			else
 				jsonObject.addProperty("divorced", "0");
+			
+			if (marital.getTotal() != null)
+                            jsonObject.addProperty("total", marital.getTotal());
+                    else
+                            jsonObject.addProperty("total", "0");
 
 		}
 		return jsonObject;

@@ -48,6 +48,7 @@ public class MaritalStatusReport {
     private String unmarried;
     private String divorced;
     private String widower;
+    private Integer total;
 
     public String getMonth() {
         return month;
@@ -97,4 +98,13 @@ public class MaritalStatusReport {
         this.widower = widower;
     }
 
+    public Integer getTotal() {
+        return total;
+    }
+
+    public void setTotal(Integer total) {
+        this.total = total;
+    }
+    
+   
 }

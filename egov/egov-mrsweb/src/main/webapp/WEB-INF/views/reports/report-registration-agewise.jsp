@@ -92,7 +92,7 @@
 	    	</thead>
 	    	<tbody>
 	    	</tbody>
-	    	<tfoot>
+	    	<tfoot id="report-footer">
 				<tr>
 						<td></td>
 						<td>Total</td>

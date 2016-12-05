@@ -180,13 +180,8 @@ function callAjaxSearch() {
 									"sClass" : "text-center"
 								},
 								{
-									"data" : null,
+									"data" : 'total',
 									"title" : 'Total',
-									render : function(data,
-											type, row, meta) {
-										return parseInt(data.married)+parseInt(data.unmarried)+parseInt(data.divorced)+parseInt(data.widower);
-
-									},
 									"sClass" : "text-center"
 								} ],
 								"footerCallback" : function(row, data, start, end, display) {
@@ -201,10 +196,11 @@ function callAjaxSearch() {
 										updateTotalFooter(4, api);
 										updateTotalFooter(5, api);
 										updateTotalFooter(6, api);
+										updateTotalFooter(7, api);
 										}
 								},
 								"aoColumnDefs" : [ {
-									"aTargets" : [3,4,5,6],
+									"aTargets" : [3,4,5,6,7],
 									"mRender" : function(data, type, full) {
 										return formatNumberInr(data);    
 									}
@@ -239,16 +235,26 @@ function updateTotalFooter(colidx, api) {
 	};
 
 	// Total over all pages
-	total = api.column(colidx).data().reduce(function(a, b) {
-		return intVal(a) + intVal(b);
-	});
+	
+	if (api.column(colidx).data().length){
+        var total = api
+        .column(colidx )
+        .data()
+        .reduce( function (a, b) {
+        return intVal(a) + intVal(b);
+        } ) }
+        else{ total = 0};
 
 	// Total over this page
-	pageTotal = api.column(colidx, {
-		page : 'current'
-	}).data().reduce(function(a, b) {
-		return intVal(a) + intVal(b);
-	}, 0);
+	
+	if (api.column(colidx).data().length){
+        var pageTotal = api
+            .column( colidx, { page: 'current'} )
+            .data()
+            .reduce( function (a, b) {
+                return intVal(a) + intVal(b);
+            } ) }
+            else{ pageTotal = 0};
 
 	// Update footer
 	jQuery(api.column(colidx).footer()).html(

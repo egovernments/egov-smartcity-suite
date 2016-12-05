@@ -168,12 +168,7 @@ $(document)
 														"sClass" : "text-center"
 													},
 													{
-														"data" : null,
-														render : function(data,
-																type, row, meta) {
-															return parseInt(data.reissue)+parseInt(data.registration);
-
-														},
+														"data" : 'total',
 														"sClass" : "text-center"
 													}
 
@@ -188,10 +183,11 @@ $(document)
 												if (data.length > 0) {
 													updateTotalFooter(3, api);
 													updateTotalFooter(4, api);
+													updateTotalFooter(5, api);
 												}
 											},
 											"aoColumnDefs" : [ {
-												"aTargets" : [3,4],
+												"aTargets" : [3,4,5],
 												"mRender" : function(data, type, full) {
 													return formatNumberInr(data);    
 												}

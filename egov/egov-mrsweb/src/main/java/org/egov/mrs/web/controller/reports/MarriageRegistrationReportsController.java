@@ -362,6 +362,7 @@ public class MarriageRegistrationReportsController {
             }
         final List<MaritalStatusReport> maritalStatusReports = new ArrayList<>();
         for (final Entry<String, Map<String, String>> resMap : map.entrySet()) {
+            Integer count=0;
             final MaritalStatusReport report = new MaritalStatusReport();
             report.setMonth(resMap.getKey());
             for (final Entry<String, String> valuesMap : resMap.getValue().entrySet()) {
@@ -370,22 +371,28 @@ public class MarriageRegistrationReportsController {
                     report.setApplicantType(applicantType);
 
                 if (valuesMap.getKey().equalsIgnoreCase(
-                        MaritalStatus.Married.toString()))
+                        MaritalStatus.Married.toString())) {
+                    count = count+Integer.parseInt(valuesMap.getValue());
                     report.setMarried(valuesMap.getValue() != null ? valuesMap
                             .getValue() : "0");
-                else if (valuesMap.getKey().equalsIgnoreCase(
-                        MaritalStatus.Unmarried.toString()))
+                }else if (valuesMap.getKey().equalsIgnoreCase(
+                        MaritalStatus.Unmarried.toString())) {
+                    count = count+Integer.parseInt(valuesMap.getValue());
+                
                     report.setUnmarried(valuesMap.getValue() != null ? valuesMap
                             .getValue() : "0");
-                else if (valuesMap.getKey().equalsIgnoreCase(
-                        MaritalStatus.Widower.toString()))
+                } else if (valuesMap.getKey().equalsIgnoreCase(
+                        MaritalStatus.Widower.toString())) {
+                    count = count+Integer.parseInt(valuesMap.getValue());
                     report.setWidower(valuesMap.getValue() != null ? valuesMap
                             .getValue() : "0");
-                else if (valuesMap.getKey().equalsIgnoreCase(
-                        MaritalStatus.Divorced.toString()))
+                } else if (valuesMap.getKey().equalsIgnoreCase(
+                        MaritalStatus.Divorced.toString())) {
+                    count = count+Integer.parseInt(valuesMap.getValue());
                     report.setDivorced(valuesMap.getValue() != null ? valuesMap
                             .getValue() : "0");
-
+                }
+                report.setTotal(count);
             }
             maritalStatusReports.add(report);
         }
@@ -469,7 +476,7 @@ public class MarriageRegistrationReportsController {
         
         for (final Entry<String, Map<String, String>> resMap : map.entrySet()) {
             final HashMap<String, Object> resultMap = new HashMap<>();
-            
+            Integer count = 0;
             boolean regExist = true;
             boolean reissueExist = true;
             if(!resMap.getValue().containsKey(REGISTRATION)){
@@ -484,6 +491,7 @@ public class MarriageRegistrationReportsController {
             for (final Entry<String, String> valuesMap : resMap.getValue().entrySet()) {
                 if(regExist) {
                     if(REGISTRATION.equalsIgnoreCase(valuesMap.getKey().trim())){
+                        count = count+Integer.parseInt(valuesMap.getValue());
                         resultMap.put(REGISTRATION, valuesMap.getValue());
                     }
                 } else {
@@ -491,6 +499,7 @@ public class MarriageRegistrationReportsController {
                 }
                 if(reissueExist) {
                 if(REISSUE.equalsIgnoreCase(valuesMap.getKey().trim())){
+                    count = count+Integer.parseInt(valuesMap.getValue());
                     resultMap.put(REISSUE, valuesMap.getValue());
                 }
                 }else {
@@ -499,6 +508,7 @@ public class MarriageRegistrationReportsController {
                 if("month".equalsIgnoreCase(valuesMap.getKey().trim())){
                     resultMap.put("month", valuesMap.getValue());
                 }
+                resultMap.put("total", count);
             }
             result.add(resultMap);
         }
