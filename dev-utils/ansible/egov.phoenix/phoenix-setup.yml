@@ -1,0 +1,9 @@
+# This playbook deploys the PHOENIX stacks
+
+- hosts: phoenix
+#  connection: local
+  roles:
+    - oracle-java
+    - postgresql
+ #   - elasticsearch
+ #   - wildfly

@@ -56,7 +56,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -68,37 +67,31 @@ public class DailyBoardReportsController extends GenericLegalCaseController {
 
     @Autowired
     private DailyBoardReportService dailyBoardReportService;
-    
-    
-    @ModelAttribute
-    private void getDailyBoardReport(final Model model) {
-        final DailyBoardReportResults dailyBoardReportResult = new DailyBoardReportResults();
-        model.addAttribute("dailyBoardReportResult", dailyBoardReportResult);
-    }
 
     @RequestMapping(method = RequestMethod.GET, value = "/dailyBoardReport")
     public String searchForm(final Model model) {
+        model.addAttribute("dailyBoardReportResult", new DailyBoardReportResults());
         model.addAttribute("currentDate", new Date());
         return "dailyboardreport-form";
     }
+
     @ExceptionHandler(Exception.class)
     @RequestMapping(value = "/dailyBoardReportresults", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String getDailyBoardReportResult(
-           @RequestParam final Integer caseType,@RequestParam final Date fromDate,
-            @RequestParam final Date toDate,
+    public @ResponseBody String getDailyBoardReportResult(@RequestParam final Integer caseType,
+            @RequestParam final Date fromDate, @RequestParam final Date toDate,
             @RequestParam final String officerIncharge, final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
-    
-      final  DailyBoardReportResults dailyBoardReportObj=new DailyBoardReportResults();
-      dailyBoardReportObj.setCasecategory(caseType);
-      dailyBoardReportObj.setOfficerIncharge(officerIncharge);
-      dailyBoardReportObj.setFromDate(fromDate);
-      dailyBoardReportObj.setToDate(toDate);
-      final  List<DailyBoardReportResults>  dailyBoardReportList = dailyBoardReportService.getDailyBoardReports( dailyBoardReportObj);
-       final String result = new StringBuilder("{ \"data\":")
-                .append(WebUtils.toJSON(dailyBoardReportList, DailyBoardReportResults.class, 
-                        DailyBoardReportJsonAdapter.class)).append("}")
-                .toString();
+
+        final DailyBoardReportResults dailyBoardReportObj = new DailyBoardReportResults();
+        dailyBoardReportObj.setCasecategory(caseType);
+        dailyBoardReportObj.setOfficerIncharge(officerIncharge);
+        dailyBoardReportObj.setFromDate(fromDate);
+        dailyBoardReportObj.setToDate(toDate);
+        final List<DailyBoardReportResults> dailyBoardReportList = dailyBoardReportService
+                .getDailyBoardReports(dailyBoardReportObj);
+        final String result = new StringBuilder("{ \"data\":").append(
+                WebUtils.toJSON(dailyBoardReportList, DailyBoardReportResults.class, DailyBoardReportJsonAdapter.class))
+                .append("}").toString();
         return result;
     }
 }

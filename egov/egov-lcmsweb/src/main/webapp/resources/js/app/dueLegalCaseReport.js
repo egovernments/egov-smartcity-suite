@@ -106,16 +106,16 @@ function submitForm(redirectUrl,oTable) {
 					
 					url : redirectUrl+$('#dueReportResultForm').serialize(),
 				},
-				columns :[{"title" : "S.no"},
-				          { "data" : "caseNumber", "title": "Case Number"},
-				          { "data" : "legalcaseno", "title": "LC Number"},
-					       { "data" : "caseTitle" , "title": "Case Title"},  
-						  { "data" : "courtName", "title": "Court Name"},
-						  { "data" : "petitionerName", "title": "Petitioners"},
-						  { "data" : "respondantName", "title": "Respondants"},
-						  { "data" : "standingCouncil", "title": "Standing Council"},
-						  { "data" : "officerIncharge", "title": "In Charge Officer"},
-						  { "data" : "nextDate", "title": "Important Date"}
+				columns :[{"title" : "S.no","sClass" : "text-center"},
+				          { "data" : "caseNumber", "title": "Case Number","sClass" : "text-center"},
+				          { "data" : "legalcaseno", "title": "LC Number","sClass" : "text-center"},
+					       { "data" : "caseTitle" , "title": "Case Title","sClass" : "text-center"},  
+						  { "data" : "courtName", "title": "Court Name","sClass" : "text-center"},
+						  { "data" : "petitionerName", "title": "Petitioners","sClass" : "text-center"},
+						  { "data" : "respondantName", "title": "Respondants","sClass" : "text-center"},
+						  { "data" : "standingCouncil", "title": "Standing Council","sClass" : "text-center"},
+						  { "data" : "officerIncharge", "title": "In Charge Officer","sClass" : "text-center"},
+						  { "data" : "nextDate", "title": "Important Date","sClass" : "text-center"}
 						  ],
 				           "fnDrawCallback": function ( oSettings ) {
 				                if ( oSettings.bSorted || oSettings.bFiltered )

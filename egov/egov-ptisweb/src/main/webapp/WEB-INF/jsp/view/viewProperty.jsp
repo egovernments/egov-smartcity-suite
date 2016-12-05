@@ -62,7 +62,12 @@
 					<s:text name="Old.assessmentno" />
 				</div>
 				<div class="col-xs-3 add-margin view-content">
-					<s:property default="N/A" value="%{basicProperty.oldMuncipalNum}" />
+					<s:if test="%{(basicProperty.oldMuncipalNum != null && basicProperty.oldMuncipalNum !='')}">
+						<s:property value="%{basicProperty.oldMuncipalNum}"/>
+					</s:if>
+					<s:else>
+				     	N/A
+					</s:else>
 				</div>
 			</div>
 		<div class="row add-border">
@@ -176,8 +181,13 @@
 				<s:text name="reg.docno"></s:text>
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				<s:property default="N/A" value="%{basicProperty.regdDocNo}" />
-			</div>
+				<s:if test="%{(basicProperty.regdDocNo != null && basicProperty.regdDocNo != '')}" >
+					<s:property value="%{basicProperty.regdDocNo}" />
+				</s:if >
+				<s:else>
+					N/A
+				</s:else>
+			</div> 
 			<div class="col-xs-3 add-margin">
 				<s:text name="reg.docdate"></s:text>
 			</div>
@@ -223,7 +233,12 @@
 				<s:text name="doorNo" />
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				<s:property default="N/A" value="%{viewMap.doorNo}" />
+				<s:if test="%{(viewMap.doorNo != null && viewMap.doorNo != '')}">
+					<s:property value="%{viewMap.doorNo}" />
+				</s:if>
+				<s:else>
+				  	N/A
+				</s:else>
 			</div>
 		</div>
 		<div class="row add-border">

@@ -189,27 +189,26 @@ $(document).ready(function(){
 	}
 	
 	function validatePrimaryPosition(index)
-	{
-
-		positionId = $("#positionId").val();
-		assignmentId = $("#editassignIds").val();
+	{		
 		$.ajax({
 			url: '/eis/employee/ajax/primaryPosition',
 			type: "GET",
 			data: {
 				positionId : $("#positionId").val(),
-				assignmentId : $("#editassignIds").val()   
+				assignmentId : $("#editassignIds").val(), 
+				fromDate : $("#fromDate").val(),
+				toDate : $("#toDate").val()
 			},
 			dataType : 'json',
 			success: function (response) {
-				if(response == true){
-					$("#primary_yes").prop("checked",false);
-					$("#primary_no").prop("checked",true);
-					addRow(index);		
+				if(response != ""){
+					response = response.substring(0,response.length-1);
+					bootbox.alert("Assignment overlaps with existing primary assignment of employee "+response);
 					edit=false;
 				}
 				else{
-					addRow(index);		
+					deleteRow.remove();
+					addRow(editedRowIndex);		
 					edit=false;
 				}
 				resetAssignmentValues();
@@ -281,16 +280,15 @@ $(document).ready(function(){
 				addRow(rowCount);
 				rowCount++;
 			}
-			else{
-				deleteRow.remove();
-				if(primary==true ){
-					validatePrimaryPosition(editedRowIndex);
+			else{		
+				if(primary==true ){	
+					 validatePrimaryPosition(editedRowIndex);
 				}
 				else{
+					deleteRow.remove();
 					addRow(editedRowIndex);		
 					edit=false;
 				}
-
 			}
 			resetAssignmentValues();
 		}	

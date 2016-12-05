@@ -93,11 +93,16 @@ public class EmployeeAjaxController {
     }
 
     @RequestMapping(value = "/ajax/primaryPosition", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody boolean getPrimaryAssignmentsForPosition(
+    public @ResponseBody String getPrimaryAssignmentsForPosition(
             @ModelAttribute("employeeBean") @RequestParam final Long positionId,
-            @RequestParam final Long assignmentId) {
-        final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(positionId);
-        return assignment == null ? false : assignment.getId() != assignmentId ? true : false;
+            @RequestParam final Long assignmentId, @RequestParam final Date fromDate, @RequestParam final Date toDate) {
+        final List<Assignment> assignment = assignmentService.getPrimaryAssignmentForPositionAndDateRange(positionId, fromDate,
+                toDate);
+        String code = "";
+        for (final Assignment assign : assignment)
+            if (assign.getId() != assignmentId)
+                code = code.concat(assign.getEmployee().getCode()).concat(",");
+        return code;
     }
 
 }

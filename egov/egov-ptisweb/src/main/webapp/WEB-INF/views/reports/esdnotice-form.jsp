@@ -79,8 +79,7 @@
 
 	<div class="row">
 		<div class="text-center">
-			<input type="submit" id="btnsearch" class="btn btn-primary">
-				</input>
+			<input type="submit" id="btnsearch" value="Submit" class="btn btn-primary"></input>
 			<button type="button" id="btnclose" class="btn btn-default"
 				onclick="window.close();">Close</button>
 		</div>

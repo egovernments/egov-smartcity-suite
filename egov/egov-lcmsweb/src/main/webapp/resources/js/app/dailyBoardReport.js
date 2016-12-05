@@ -97,18 +97,18 @@ function submitForm() {
 						'officerIncharge' : $("#officerIncharge").val()
 					}
 				},
-				columns :[{"title" : "S.no"},
+				columns :[{"title" : "S.no","sClass" : "text-center"},
 				             
-					       { "data" : "caseTitle" , "title": "Case Title"},  
-						  { "data" : "courtName", "title": "Court Name"},
-						  { "data" : "caseNumber", "title": "Case Number"},
-						  { "data" : "petitionerName", "title": "Petitioners"},
-						  { "data" : "respondantName", "title": "Respondants"},
-						  { "data" : "petitionType", "title": "Petition Type"},
-						  { "data" : "standingCouncil", "title": "Standing Council"},
-						  { "data" : "officerIncharge", "title": "In Charge Officer"},
-						  { "data" : "caseStatus", "title": "Status"},
-						  { "data" : "nextDate", "title": "Next Imp Date"}
+					       { "data" : "caseTitle" , "title": "Case Title" ,"sClass" : "text-center"},  
+						  { "data" : "courtName", "title": "Court Name","sClass" : "text-center"},
+						  { "data" : "caseNumber", "title": "Case Number","sClass" : "text-center"},
+						  { "data" : "petitionerName", "title": "Petitioners","sClass" : "text-center"},
+						  { "data" : "respondantName", "title": "Respondants","sClass" : "text-center"},
+						  { "data" : "petitionType", "title": "Petition Type","sClass" : "text-center"},
+						  { "data" : "standingCouncil", "title": "Standing Council","sClass" : "text-center"},
+						  { "data" : "officerIncharge", "title": "In Charge Officer","sClass" : "text-center"},
+						  { "data" : "caseStatus", "title": "Status","sClass" : "text-center"},
+						  { "data" : "nextDate", "title": "Next Imp Date","sClass" : "text-center"}
 						  ],
 				           "fnDrawCallback": function ( oSettings ) {
 				                if ( oSettings.bSorted || oSettings.bFiltered )

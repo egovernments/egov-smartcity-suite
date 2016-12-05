@@ -37,7 +37,6 @@
  *
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
 /*Default settings - Font*/
 @font-face {
   font-family: regular;
@@ -1936,6 +1935,9 @@ table.dataTable tbody.no-pointer tr:hover {
 .pagination .active > span:focus {
   background-color: #6b4f2c;
   border-color: #6b4f2c;
+}
+.buttons-margin {
+  margin-top: 10px;
 }
 /*Footer*/
 footer.main {
