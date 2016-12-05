@@ -50,7 +50,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class EstimationNumberGeneratorImpl implements EstimationNumberGenerator {
     private static final String ESTIMATION_NUMBER_SEQ_PREFIX = "SEQ_ESTIMATION_NUMBER";
-    private static final String ESTIMATION_NUMBER = "EN/";
+    private static final String ESTIMATION_NUMBER = "EN-";
     @Autowired
     private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 

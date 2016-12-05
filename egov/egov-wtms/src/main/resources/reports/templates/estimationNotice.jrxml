@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-12-01T15:52:14 -->
+<!-- 2016-12-05T15:27:47 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.6105100000000165"/>
 	<property name="ireport.x" value="0"/>
@@ -74,7 +74,7 @@
 				<text><![CDATA[Name & Address]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="128" y="90" width="137" height="73" uuid="5590d729-2ff1-4d2d-b5ab-a9e39568635b"/>
+				<reportElement x="128" y="110" width="148" height="53" uuid="5590d729-2ff1-4d2d-b5ab-a9e39568635b"/>
 				<textFieldExpression><![CDATA[$P{address}]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -95,6 +95,10 @@
 			<rectangle>
 				<reportElement mode="Transparent" x="277" y="90" width="267" height="73" uuid="0469d97c-a2f8-4080-ac7c-d319b6797cda"/>
 			</rectangle>
+			<textField>
+				<reportElement x="127" y="91" width="148" height="18" uuid="267568db-9ddc-4d10-a6c3-3a67fef2ef16"/>
+				<textFieldExpression><![CDATA[$P{applicantName}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<detail>
