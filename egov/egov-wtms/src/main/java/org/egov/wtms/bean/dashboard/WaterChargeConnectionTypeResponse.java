@@ -50,12 +50,12 @@ public class WaterChargeConnectionTypeResponse {
 
   
     private String ulbName = StringUtils.EMPTY;
-    private BigDecimal residentialtotalDmd = BigDecimal.ZERO;
-    private BigDecimal comercialtotalDmd = BigDecimal.ZERO;
-    private Long residentialCOnnectionCount =0L;
-    private Long commercialCOnnectionCount =0L;
-    private Long WaterChargeResidentialaverage =0L;
-    private Long WaterChargeCommercialaverage =0L;
+    private BigDecimal residentialtotalCollection = BigDecimal.ZERO;
+    private BigDecimal comercialtotalCollection = BigDecimal.ZERO;
+    private Long residentialConnectionCount =0L;
+    private Long commercialConnectionCount =0L;
+    private BigDecimal waterChargeResidentialaverage;
+    private BigDecimal waterChargeCommercialaverage ;
     private String regionName = StringUtils.EMPTY;
     private String districtName = StringUtils.EMPTY;
     private String ulbGrade = StringUtils.EMPTY;
@@ -74,7 +74,8 @@ public class WaterChargeConnectionTypeResponse {
     private BigDecimal previousYearColl = BigDecimal.ZERO;
     private BigDecimal lastYearColl = BigDecimal.ZERO;
     private BigDecimal currentYearColl = BigDecimal.ZERO;
-    
+    private BigDecimal residentialAchievement = BigDecimal.ZERO;
+    private BigDecimal commercialAchievement = BigDecimal.ZERO;
     
     public BigDecimal getCurrentYearTillDateDmd() {
         return currentYearTillDateDmd;
@@ -100,29 +101,56 @@ public class WaterChargeConnectionTypeResponse {
     public void setUlbName(String ulbName) {
         this.ulbName = ulbName;
     }
-    public BigDecimal getResidentialtotalDmd() {
-        return residentialtotalDmd;
+   
+    
+    public BigDecimal getWaterChargeResidentialaverage() {
+        return waterChargeResidentialaverage;
     }
-    public void setResidentialtotalDmd(BigDecimal residentialtotalDmd) {
-        this.residentialtotalDmd = residentialtotalDmd;
+    public void setWaterChargeResidentialaverage(BigDecimal waterChargeResidentialaverage) {
+        this.waterChargeResidentialaverage = waterChargeResidentialaverage;
     }
-    public BigDecimal getComercialtotalDmd() {
-        return comercialtotalDmd;
+    public BigDecimal getWaterChargeCommercialaverage() {
+        return waterChargeCommercialaverage;
     }
-    public void setComercialtotalDmd(BigDecimal comercialtotalDmd) {
-        this.comercialtotalDmd = comercialtotalDmd;
+    public void setWaterChargeCommercialaverage(BigDecimal waterChargeCommercialaverage) {
+        this.waterChargeCommercialaverage = waterChargeCommercialaverage;
     }
-    public Long getResidentialCOnnectionCount() {
-        return residentialCOnnectionCount;
+    public BigDecimal getResidentialAchievement() {
+        return residentialAchievement;
     }
-    public void setResidentialCOnnectionCount(Long residentialCOnnectionCount) {
-        this.residentialCOnnectionCount = residentialCOnnectionCount;
+    public void setResidentialAchievement(BigDecimal residentialAchievement) {
+        this.residentialAchievement = residentialAchievement;
     }
-    public Long getCommercialCOnnectionCount() {
-        return commercialCOnnectionCount;
+    public BigDecimal getCommercialAchievement() {
+        return commercialAchievement;
     }
-    public void setCommercialCOnnectionCount(Long commercialCOnnectionCount) {
-        this.commercialCOnnectionCount = commercialCOnnectionCount;
+    public void setCommercialAchievement(BigDecimal commercialAchievement) {
+        this.commercialAchievement = commercialAchievement;
+    }
+    public BigDecimal getResidentialtotalCollection() {
+        return residentialtotalCollection;
+    }
+    public void setResidentialtotalCollection(BigDecimal residentialtotalCollection) {
+        this.residentialtotalCollection = residentialtotalCollection;
+    }
+    public BigDecimal getComercialtotalCollection() {
+        return comercialtotalCollection;
+    }
+    public void setComercialtotalCollection(BigDecimal comercialtotalCollection) {
+        this.comercialtotalCollection = comercialtotalCollection;
+    }
+   
+    public Long getResidentialConnectionCount() {
+        return residentialConnectionCount;
+    }
+    public void setResidentialConnectionCount(Long residentialConnectionCount) {
+        this.residentialConnectionCount = residentialConnectionCount;
+    }
+    public Long getCommercialConnectionCount() {
+        return commercialConnectionCount;
+    }
+    public void setCommercialConnectionCount(Long commercialConnectionCount) {
+        this.commercialConnectionCount = commercialConnectionCount;
     }
     public String getRegionName() {
         return regionName;
@@ -148,18 +176,7 @@ public class WaterChargeConnectionTypeResponse {
     public void setWardName(String wardName) {
         this.wardName = wardName;
     }
-    public Long getWaterChargeResidentialaverage() {
-        return WaterChargeResidentialaverage;
-    }
-    public void setWaterChargeResidentialaverage(Long waterChargeResidentialaverage) {
-        WaterChargeResidentialaverage = waterChargeResidentialaverage;
-    }
-    public Long getWaterChargeCommercialaverage() {
-        return WaterChargeCommercialaverage;
-    }
-    public void setWaterChargeCommercialaverage(Long waterChargeCommercialaverage) {
-        WaterChargeCommercialaverage = waterChargeCommercialaverage;
-    }
+    
     public String getMonth() {
         return month;
     }
