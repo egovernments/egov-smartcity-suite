@@ -63,11 +63,8 @@ public class EditHearingsController {
     private HearingsService hearingsService;
 
     @RequestMapping(value = "/edit/{hearingsId}", method = RequestMethod.GET)
-    public String edit(@PathVariable("hearingsId") final String hearingsId,
-            final Model model) {
-
+    public String edit(@PathVariable("hearingsId") final String hearingsId, final Model model) {
         final Hearings hearings = hearingsService.findById(Long.parseLong(hearingsId));
-
         model.addAttribute("legalCase", hearings.getLegalCase());
         model.addAttribute("hearings", hearings);
         model.addAttribute("mode", "edit");
@@ -75,8 +72,8 @@ public class EditHearingsController {
     }
 
     @RequestMapping(value = "/edit/{hearingsId}", method = RequestMethod.POST)
-    public String update(@PathVariable("hearingsId") final String hearingsId, @Valid @ModelAttribute final Hearings hearings,
-            final BindingResult errors, final Model model,
+    public String update(@PathVariable("hearingsId") final String hearingsId,
+            @Valid @ModelAttribute final Hearings hearings, final BindingResult errors, final Model model,
             final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
         final LegalCase legalcase = hearings.getLegalCase();
 

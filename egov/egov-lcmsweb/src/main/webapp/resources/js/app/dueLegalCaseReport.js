@@ -88,18 +88,18 @@ function submitForm(redirectUrl,oTable) {
 					               {
 							             "sExtends": "pdf",
 		                                 "sPdfMessage": "Report generated on "+today+"",
-		                                 "sTitle": "Due Report",
+		                                 "sTitle": "LegalCase Due Report",
 		                                 "sPdfOrientation": "landscape"
 						                },
 						                {
 								             "sExtends": "xls",
 			                                 "sPdfMessage": "Due Report",
-			                                 "sTitle": "Due Report"
+			                                 "sTitle": "LegalCase Due Report"
 							             },
 							             {
 								             "sExtends": "print",
 			                                 "sPdfMessage": "Due Report",
-			                                 "sTitle": "Due Report"
+			                                 "sTitle": "LegalCase Due Report"
 							             }],
 				},
 				ajax : {
@@ -109,7 +109,7 @@ function submitForm(redirectUrl,oTable) {
 				columns :[{"title" : "S.no","sClass" : "text-center"},
 				          { "data" : "caseNumber", "title": "Case Number","sClass" : "text-center"},
 				          { "data" : "legalcaseno", "title": "LC Number","sClass" : "text-center"},
-					       { "data" : "caseTitle" , "title": "Case Title","sClass" : "text-center"},  
+					      { "data" : "caseTitle" , "title": "Case Title","sClass" : "text-center"},  
 						  { "data" : "courtName", "title": "Court Name","sClass" : "text-center"},
 						  { "data" : "petitionerName", "title": "Petitioners","sClass" : "text-center"},
 						  { "data" : "respondantName", "title": "Respondants","sClass" : "text-center"},
@@ -117,7 +117,11 @@ function submitForm(redirectUrl,oTable) {
 						  { "data" : "officerIncharge", "title": "In Charge Officer","sClass" : "text-center"},
 						  { "data" : "nextDate", "title": "Important Date","sClass" : "text-center"}
 						  ],
-				           "fnDrawCallback": function ( oSettings ) {
+							"fnRowCallback" : function(row, data, index) {
+								$('td:eq(1)',row).html('<a href="javascript:void(0);" onclick="openLegalCase(\''+ data.legalcaseno +'\')">' + data.caseNumber + '</a>');
+							},
+
+				           "fnDrawCallback": function ( oSettings) {
 				                if ( oSettings.bSorted || oSettings.bFiltered )
 				                {
 				                    for ( var i=0, iLen=oSettings.aiDisplay.length ; i<iLen ; i++ )
@@ -130,6 +134,6 @@ function submitForm(redirectUrl,oTable) {
 	}
 	
 }
-
-
-
+function openLegalCase(lcNumber) {
+	window.open("/lcms/application/view/?lcNumber="+ lcNumber , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+}
