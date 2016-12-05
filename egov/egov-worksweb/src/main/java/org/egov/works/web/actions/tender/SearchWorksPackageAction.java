@@ -148,8 +148,8 @@ public class SearchWorksPackageAction extends SearchFormAction {
 
     @SuppressWarnings("unchecked")
     public void perform() {
-        
-        Assignment latestAssignment = worksService.getLatestAssignmentForCurrentLoginUser();
+
+        final Assignment latestAssignment = worksService.getLatestAssignmentForCurrentLoginUser();
 
         if (latestAssignment != null)
             execDept = latestAssignment.getDepartment().getId();

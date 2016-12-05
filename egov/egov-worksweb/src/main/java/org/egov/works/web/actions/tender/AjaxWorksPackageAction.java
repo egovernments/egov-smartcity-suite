@@ -188,7 +188,7 @@ public class AjaxWorksPackageAction extends BaseFormAction {
         }
         return ESTIMATE_NUMBER_SEARCH_RESULTS;
     }
-    
+
     public List<AbstractEstimate> getAbEstimateListById(final String estId) {
         final String[] estValues = estId.split("`~`");
         final Long[] estIdLong = new Long[estValues.length];
@@ -202,7 +202,6 @@ public class AjaxWorksPackageAction extends BaseFormAction {
         abIdentifierSet.addAll(Arrays.asList(estIdLong));
         return getPersistenceService().findAllByNamedQuery("ABSTRACTESTIMATELIST_BY_ID", abIdentifierSet);
     }
-
 
     public Money getWorkValueIncludingTaxesForEstList(final List<AbstractEstimate> abList) {
         double amt = 0;

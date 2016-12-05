@@ -392,7 +392,7 @@ public class WorksPackageAction extends GenericWorkFlowAction {
         }
         return status;
     }
-    
+
     public List<AbstractEstimate> getAbEstimateListById(final String estId) {
         final String[] estValues = estId.split("`~`");
         final Long[] estIdLong = new Long[estValues.length];
@@ -406,7 +406,6 @@ public class WorksPackageAction extends GenericWorkFlowAction {
         abIdentifierSet.addAll(Arrays.asList(estIdLong));
         return getPersistenceService().findAllByNamedQuery("ABSTRACTESTIMATELIST_BY_ID", abIdentifierSet);
     }
-
 
     public Money getWorkValueIncludingTaxesForEstList(final List<AbstractEstimate> abList) {
         double amt = 0;
