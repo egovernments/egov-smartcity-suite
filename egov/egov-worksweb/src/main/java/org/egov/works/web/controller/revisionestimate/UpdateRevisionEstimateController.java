@@ -58,7 +58,7 @@ import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.master.service.ScheduleOfRateService;
+import org.egov.works.masters.service.ScheduleOfRateService;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;

@@ -42,7 +42,7 @@ package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
 
-import org.egov.works.models.masters.MilestoneTemplate;
+import org.egov.works.masters.entity.MilestoneTemplate;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;

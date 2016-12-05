@@ -41,7 +41,7 @@ package org.egov.works.web.controller.reports;
 
 import org.egov.commons.service.FinancialYearService;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.works.master.service.NatureOfWorkService;
+import org.egov.works.masters.service.NatureOfWorkService;
 import org.egov.works.reports.entity.ContractorWiseAbstractReport;
 import org.egov.works.reports.entity.enums.WorkStatus;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -75,7 +75,7 @@ import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.NonSor;
-import org.egov.works.models.masters.ScheduleOfRate;
+import org.egov.works.masters.entity.ScheduleOfRate;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.RevisionWorkOrder;

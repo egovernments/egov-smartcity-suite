@@ -41,8 +41,8 @@ package org.egov.works.web.controller.masters;
 
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.works.master.service.OverheadService;
-import org.egov.works.models.masters.Overhead;
+import org.egov.works.masters.entity.Overhead;
+import org.egov.works.masters.service.OverheadService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

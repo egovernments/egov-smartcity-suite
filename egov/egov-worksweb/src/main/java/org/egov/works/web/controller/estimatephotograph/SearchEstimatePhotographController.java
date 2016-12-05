@@ -49,7 +49,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.abstractestimate.entity.EstimatePhotographSearchRequest;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.master.service.NatureOfWorkService;
+import org.egov.works.masters.service.NatureOfWorkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

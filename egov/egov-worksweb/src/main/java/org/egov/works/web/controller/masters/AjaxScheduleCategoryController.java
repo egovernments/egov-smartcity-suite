@@ -41,9 +41,9 @@ package org.egov.works.web.controller.masters;
 
 import java.util.List;
 
-import org.egov.works.master.service.ScheduleCategoryService;
-import org.egov.works.models.masters.ScheduleCategory;
-import org.egov.works.models.masters.SearchRequestScheduleCategory;
+import org.egov.works.masters.entity.ScheduleCategory;
+import org.egov.works.masters.entity.SearchRequestScheduleCategory;
+import org.egov.works.masters.service.ScheduleCategoryService;
 import org.egov.works.web.adaptor.SearchScheduleCategoryJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

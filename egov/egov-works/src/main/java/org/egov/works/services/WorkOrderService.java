@@ -45,8 +45,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.masters.entity.Contractor;
 import org.egov.works.mb.entity.MBHeader;
-import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.tender.EstimateLineItemsForWP;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.tender.WorksPackage;

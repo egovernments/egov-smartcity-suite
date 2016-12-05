@@ -61,7 +61,7 @@ import org.egov.infra.gis.service.GeoLocationConstants;
 import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.works.models.masters.Contractor;
+import org.egov.works.masters.entity.Contractor;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.models.tender.TenderEstimate;
 import org.egov.works.models.tender.TenderResponse;

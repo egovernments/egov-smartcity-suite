@@ -46,7 +46,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.SubScheme;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.works.models.masters.Contractor;
+import org.egov.works.masters.entity.Contractor;
 
 public class AjaxWorkProgressAction extends BaseFormAction {
 

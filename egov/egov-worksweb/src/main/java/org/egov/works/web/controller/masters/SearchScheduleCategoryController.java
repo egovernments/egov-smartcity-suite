@@ -42,7 +42,7 @@ package org.egov.works.web.controller.masters;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.exception.ApplicationException;
-import org.egov.works.models.masters.SearchRequestScheduleCategory;
+import org.egov.works.masters.entity.SearchRequestScheduleCategory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;

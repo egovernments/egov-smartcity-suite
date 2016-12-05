@@ -79,7 +79,7 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
-import org.egov.works.models.masters.NatureOfWork;
+import org.egov.works.masters.entity.NatureOfWork;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;

@@ -57,8 +57,8 @@ import javax.validation.constraints.NotNull;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.validation.exception.ValidationError;
-import org.egov.works.models.masters.Overhead;
-import org.egov.works.models.masters.OverheadRate;
+import org.egov.works.masters.entity.Overhead;
+import org.egov.works.masters.entity.OverheadRate;
 import org.joda.time.LocalDate;
 
 @Entity

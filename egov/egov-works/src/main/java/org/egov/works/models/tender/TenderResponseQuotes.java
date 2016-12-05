@@ -44,7 +44,7 @@ import javax.validation.Valid;
 import org.egov.infra.persistence.validator.annotation.GreaterThan;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
-import org.egov.works.models.masters.Contractor;
+import org.egov.works.masters.entity.Contractor;
 
 public class TenderResponseQuotes extends BaseModel {
 

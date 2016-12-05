@@ -41,7 +41,7 @@ package org.egov.works.web.controller.reports;
 
 import java.util.List;
 
-import org.egov.works.models.masters.Contractor;
+import org.egov.works.masters.entity.Contractor;
 import org.egov.works.reports.entity.ContractorWiseAbstractReport;
 import org.egov.works.reports.entity.ContractorWiseAbstractSearchResult;
 import org.egov.works.reports.service.WorkProgressRegisterService;

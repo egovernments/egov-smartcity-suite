@@ -45,7 +45,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.abstractestimate.entity.NonSor;
-import org.egov.works.models.masters.ScheduleOfRate;
+import org.egov.works.masters.entity.ScheduleOfRate;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonArray;
@@ -73,7 +73,7 @@ public class EstimateActivityJsonAdaptor implements JsonSerializer<Activity> {
                 jsonObject.addProperty("scheduleUomId", schedule.getUom().getId());
                 try {
                     schedule.setSorRateValue(schedule.getRateOn(activity.getEstimateDate()).getRate().getValue());
-                } catch (ApplicationRuntimeException e) {
+                } catch (final ApplicationRuntimeException e) {
                     schedule.setSorRateValue(0D);
                 }
                 jsonObject.addProperty("scheduleRate", schedule.getSorRate());

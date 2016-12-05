@@ -41,7 +41,7 @@ package org.egov.works.workorder.repository;
 
 import java.util.List;
 
-import org.egov.works.models.masters.Contractor;
+import org.egov.works.masters.entity.Contractor;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

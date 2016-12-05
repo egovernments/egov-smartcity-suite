@@ -47,9 +47,9 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.works.master.service.ScheduleOfRateService;
-import org.egov.works.models.masters.SORRate;
-import org.egov.works.models.masters.ScheduleOfRate;
+import org.egov.works.masters.entity.SORRate;
+import org.egov.works.masters.entity.ScheduleOfRate;
+import org.egov.works.masters.service.ScheduleOfRateService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")

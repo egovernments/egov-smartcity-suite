@@ -49,7 +49,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
-import org.egov.works.master.service.NatureOfWorkService;
+import org.egov.works.masters.service.NatureOfWorkService;
 import org.egov.works.reports.entity.EstimateAbstractReport;
 import org.egov.works.reports.entity.enums.WorkStatus;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -46,7 +46,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.works.models.masters.DepositCode;
+import org.egov.works.masters.entity.DepositCode;
 
 @Result(name = DepositCodeSearchAction.SEARCH_RESULTS, location = "depositCodeSearch-searchResults")
 @ParentPackage("egov")

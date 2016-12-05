@@ -98,7 +98,7 @@ import org.egov.works.abstractestimate.entity.BudgetFolioDetail;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.entity.FinancingSource;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
-import org.egov.works.models.masters.DepositCode;
+import org.egov.works.masters.entity.DepositCode;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.DepositWorksUsageService;
 import org.egov.works.services.WorksService;

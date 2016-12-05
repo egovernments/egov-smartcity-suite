@@ -51,7 +51,7 @@
 			</generator>
 		</id>				
 		<many-to-one name="tenderResponse" column="TENDER_RESPONSE_ID" not-null="true" insert="false" update="false" fetch="select"/>
-		<many-to-one name="contractor" class="org.egov.works.models.masters.Contractor" column="CONTRACTOR_ID" not-null="true" fetch="select"/>
+		<many-to-one name="contractor" class="org.egov.works.masters.entity.Contractor" column="CONTRACTOR_ID" not-null="true" fetch="select"/>
 		
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" not-null="true" fetch="select" />
 		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>

@@ -62,7 +62,7 @@ import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
-import org.egov.works.master.service.NatureOfWorkService;
+import org.egov.works.masters.service.NatureOfWorkService;
 import org.egov.works.reports.entity.EstimateAbstractReport;
 import org.egov.works.reports.entity.enums.WorkStatus;
 import org.egov.works.reports.service.WorkProgressRegisterService;

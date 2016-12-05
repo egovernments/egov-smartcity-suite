@@ -55,7 +55,7 @@ import org.egov.works.abstractestimate.entity.EstimatePhotographSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimatesForAbstractEstimate;
 import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.master.service.NatureOfWorkService;
+import org.egov.works.masters.service.NatureOfWorkService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

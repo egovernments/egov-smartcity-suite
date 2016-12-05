@@ -45,9 +45,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.works.master.service.OverheadService;
-import org.egov.works.models.masters.Overhead;
-import org.egov.works.models.masters.OverheadRate;
+import org.egov.works.masters.entity.Overhead;
+import org.egov.works.masters.entity.OverheadRate;
+import org.egov.works.masters.service.OverheadService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;

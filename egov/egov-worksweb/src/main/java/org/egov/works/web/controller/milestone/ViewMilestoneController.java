@@ -44,14 +44,14 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.exception.ApplicationException;
-import org.egov.works.master.service.MilestoneTemplateActivityService;
-import org.egov.works.master.service.MilestoneTemplateService;
+import org.egov.works.masters.entity.MilestoneTemplate;
+import org.egov.works.masters.entity.MilestoneTemplateActivity;
+import org.egov.works.masters.service.MilestoneTemplateActivityService;
+import org.egov.works.masters.service.MilestoneTemplateService;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.milestone.service.MilestoneService;
 import org.egov.works.milestone.service.TrackMilestoneService;
-import org.egov.works.models.masters.MilestoneTemplate;
-import org.egov.works.models.masters.MilestoneTemplateActivity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

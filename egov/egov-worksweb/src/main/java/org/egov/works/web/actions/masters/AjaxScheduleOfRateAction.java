@@ -53,8 +53,8 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.works.models.masters.MarketRate;
-import org.egov.works.models.masters.ScheduleOfRate;
+import org.egov.works.masters.entity.MarketRate;
+import org.egov.works.masters.entity.ScheduleOfRate;
 import org.egov.works.utils.WorksConstants;
 
 public class AjaxScheduleOfRateAction extends BaseFormAction implements ServletResponseAware {

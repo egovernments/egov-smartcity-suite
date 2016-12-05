@@ -60,9 +60,6 @@ import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.mb.entity.MBHeader;
-import org.egov.works.models.contractorBill.AssetForBill;
-import org.egov.works.models.contractorBill.DeductionTypeForBill;
-import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
@@ -236,18 +233,22 @@ public class ContractorBillRegister extends EgBillregister {
         this.billDetailes = billDetailes;
     }
 
+    @Override
     public Long getApprovalDepartment() {
         return approvalDepartment;
     }
 
+    @Override
     public void setApprovalDepartment(final Long approvalDepartment) {
         this.approvalDepartment = approvalDepartment;
     }
 
+    @Override
     public String getApprovalComent() {
         return approvalComent;
     }
 
+    @Override
     public void setApprovalComent(final String approvalComent) {
         this.approvalComent = approvalComent;
     }

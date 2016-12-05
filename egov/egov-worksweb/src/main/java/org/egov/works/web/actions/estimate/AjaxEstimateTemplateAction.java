@@ -46,8 +46,8 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.works.models.masters.EstimateTemplate;
-import org.egov.works.models.masters.SORRate;
+import org.egov.works.masters.entity.EstimateTemplate;
+import org.egov.works.masters.entity.SORRate;
 
 @Results({
         @Result(name = AjaxEstimateTemplateAction.SEARCH_RESULTS, location = "ajaxEstimateTemplate-searchResults.jsp"),

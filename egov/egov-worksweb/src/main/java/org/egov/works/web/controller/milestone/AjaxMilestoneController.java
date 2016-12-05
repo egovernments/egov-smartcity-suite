@@ -42,14 +42,14 @@ package org.egov.works.web.controller.milestone;
 import java.util.List;
 
 import org.egov.works.contractorbill.entity.enums.BillTypes;
-import org.egov.works.master.service.MilestoneTemplateService;
+import org.egov.works.masters.entity.MilestoneTemplate;
+import org.egov.works.masters.service.MilestoneTemplateService;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.SearchRequestMilestone;
 import org.egov.works.milestone.entity.SearchRequestMilestoneTemplate;
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.milestone.service.MilestoneService;
 import org.egov.works.milestone.service.TrackMilestoneService;
-import org.egov.works.models.masters.MilestoneTemplate;
 import org.egov.works.web.adaptor.SearchCancelMilestoneJsonAdaptor;
 import org.egov.works.web.adaptor.SearchMilestoneJsonAdaptor;
 import org.egov.works.web.adaptor.SearchMilestoneTemplateJsonAdaptor;

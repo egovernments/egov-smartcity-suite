@@ -41,9 +41,9 @@ package org.egov.works.web.controller.masters;
 
 import java.util.List;
 
-import org.egov.works.master.service.OverheadService;
-import org.egov.works.models.masters.Overhead;
-import org.egov.works.models.masters.SearchRequestOverhead;
+import org.egov.works.masters.entity.Overhead;
+import org.egov.works.masters.entity.SearchRequestOverhead;
+import org.egov.works.masters.service.OverheadService;
 import org.egov.works.web.adaptor.SearchOverheadJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

@@ -99,7 +99,7 @@
     </bean>
 
     <bean id="contractorDetailService" parent="abstractPersistenceService" scope="prototype">
-        <constructor-arg name="type" value="org.egov.works.models.masters.ContractorDetail" />
+        <constructor-arg name="type" value="org.egov.works.masters.entity.ContractorDetail" />
     </bean>
 
     <bean class="org.egov.works.services.TenderResponseService" id="tenderResponseService" scope="prototype">
@@ -186,7 +186,7 @@
         <property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
     </bean>
 
-    <bean class="org.egov.works.models.masters.DepositCodeGenerator"
+    <bean class="org.egov.works.masters.service.DepositCodeGenerator"
           id="depositCodeGenerator">
     </bean>
    
@@ -285,7 +285,7 @@
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
     
-    <bean id="contractorService" class="org.egov.works.master.service.ContractorService" />	
+    <bean id="contractorService" class="org.egov.works.masters.service.ContractorService" />	
     
 	<bean id="assetsForEstimateService" parent="persistenceService"
 		scope="prototype">
@@ -293,7 +293,7 @@
 			value="org.egov.works.abstractestimate.entity.AssetsForEstimate" />
 	</bean>
 	
-	<bean id="projectCodeService" class="org.egov.works.services.ProjectCodeService">
+	<bean id="projectCodeService" class="org.egov.works.abstractestimate.service.ProjectCodeService">
 		<constructor-arg name="type" value="org.egov.works.abstractestimate.entity.ProjectCode"/>
 	</bean>
 	

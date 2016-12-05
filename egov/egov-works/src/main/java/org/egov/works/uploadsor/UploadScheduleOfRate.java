@@ -43,8 +43,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.egov.common.entity.UOM;
-import org.egov.works.models.masters.ScheduleCategory;
-import org.egov.works.models.masters.ScheduleOfRate;
+import org.egov.works.masters.entity.ScheduleCategory;
+import org.egov.works.masters.entity.ScheduleOfRate;
 
 public class UploadScheduleOfRate {
 

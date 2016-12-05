@@ -60,7 +60,7 @@ import javax.validation.constraints.NotNull;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.works.models.masters.DepositCode;
+import org.egov.works.masters.entity.DepositCode;
 
 @Entity
 @Table(name = "EGW_DEPOSITWORKS_USAGE")

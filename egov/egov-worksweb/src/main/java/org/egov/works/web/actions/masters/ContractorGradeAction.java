@@ -55,7 +55,7 @@ import org.egov.commons.ContractorGrade;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
-import org.egov.works.master.service.ContractorGradeService;
+import org.egov.works.masters.service.ContractorGradeService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

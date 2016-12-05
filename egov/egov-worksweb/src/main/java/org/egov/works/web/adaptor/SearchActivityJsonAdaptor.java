@@ -175,16 +175,16 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
                 Double depthOrHeight = woms.getDepthOrHeight() == null ? 0 : woms.getDepthOrHeight().doubleValue();
                 Double quantity = woms.getQuantity() == null ? 0 : woms.getQuantity().doubleValue();
                 for (final WorkOrderMeasurementSheet rems : rewomsList) {
-                        if (rems.getNo() != null)
-                            no = no + rems.getNo().doubleValue();
-                        if (rems.getLength() != null)
-                            length = length + rems.getLength().doubleValue();
-                        if (rems.getWidth() != null)
-                            width = width + rems.getWidth().doubleValue();
-                        if (rems.getDepthOrHeight() != null)
-                            depthOrHeight = depthOrHeight + rems.getDepthOrHeight().doubleValue();
-                        
-                        quantity = quantity + rems.getQuantity().doubleValue();
+                    if (rems.getNo() != null)
+                        no = no + rems.getNo().doubleValue();
+                    if (rems.getLength() != null)
+                        length = length + rems.getLength().doubleValue();
+                    if (rems.getWidth() != null)
+                        width = width + rems.getWidth().doubleValue();
+                    if (rems.getDepthOrHeight() != null)
+                        depthOrHeight = depthOrHeight + rems.getDepthOrHeight().doubleValue();
+
+                    quantity = quantity + rems.getQuantity().doubleValue();
                 }
                 if (no != null && no != 0)
                     woms.setNo(new BigDecimal(no));
@@ -228,7 +228,7 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
 
             quantity = quantity + rems.getQuantity().doubleValue();
         }
-        
+
         if (no != null && no != 0)
             measurementSheet.setNo(new BigDecimal(no));
         if (length != null && length != 0)

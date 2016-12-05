@@ -74,7 +74,7 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.dao.DesignationMasterDAO;
 import org.egov.pims.service.EisUtilService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
-import org.egov.works.models.masters.Overhead;
+import org.egov.works.masters.entity.Overhead;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksService;

@@ -70,7 +70,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.persistence.validator.annotation.GreaterThan;
 import org.egov.infra.validation.exception.ValidationError;
-import org.egov.works.models.masters.ScheduleOfRate;
+import org.egov.works.masters.entity.ScheduleOfRate;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;
 
 @Entity

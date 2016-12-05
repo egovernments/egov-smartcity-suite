@@ -43,8 +43,8 @@ import java.lang.reflect.Type;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.works.abstractestimate.entity.NonSor;
-import org.egov.works.models.masters.EstimateTemplateActivity;
-import org.egov.works.models.masters.ScheduleOfRate;
+import org.egov.works.masters.entity.EstimateTemplateActivity;
+import org.egov.works.masters.entity.ScheduleOfRate;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;

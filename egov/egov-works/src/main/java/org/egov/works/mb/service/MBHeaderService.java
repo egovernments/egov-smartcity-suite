@@ -250,11 +250,11 @@ public class MBHeaderService {
         if ((mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString())
                 || mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.REJECTED.toString()) || isMBEditable)
                 && !workFlowAction.equals(WorksConstants.REJECT_ACTION) && !workFlowAction.equals(WorksConstants.CANCEL_ACTION)) {
-            
+
             List<MBDetails> mbDetails = new ArrayList<MBDetails>(mbHeader.getMbDetails());
             mbDetails = removeDeletedMBDetails(mbDetails, removedDetailIds);
             mbHeader.setMbDetails(mbDetails);
-            
+
             mergeSorAndNonSorMBDetails(mbHeader);
 
             for (final DocumentDetails docs : mbHeader.getDocumentDetails())

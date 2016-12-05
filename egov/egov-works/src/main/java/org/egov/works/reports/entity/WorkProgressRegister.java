@@ -70,8 +70,8 @@ import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
-import org.egov.works.models.masters.Contractor;
-import org.egov.works.models.masters.NatureOfWork;
+import org.egov.works.masters.entity.Contractor;
+import org.egov.works.masters.entity.NatureOfWork;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 

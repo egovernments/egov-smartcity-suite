@@ -43,7 +43,7 @@ package org.egov.works.web.adaptor;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 
-import org.egov.works.models.masters.Overhead;
+import org.egov.works.masters.entity.Overhead;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
