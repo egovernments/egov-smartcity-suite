@@ -51,6 +51,7 @@ import org.egov.works.masters.entity.SORRate;
 
 @Results({
         @Result(name = AjaxEstimateTemplateAction.SEARCH_RESULTS, location = "ajaxEstimateTemplate-searchResults.jsp"),
+        @Result(name = AjaxEstimateTemplateAction.SUBCATEGORIES, location = "ajaxEstimate-subcategories.jsp"),
         @Result(name = AjaxEstimateTemplateAction.ACTIVITIES, location = "ajaxEstimateTemplate-activities.jsp")
 })
 public class AjaxEstimateTemplateAction extends BaseFormAction {
@@ -68,6 +69,21 @@ public class AjaxEstimateTemplateAction extends BaseFormAction {
     private Date estimateDate;
     private String query;
     private List<EstimateTemplate> estimateTemplateList;
+    private Long category;
+    public List getSubCategories() {
+        return subCategories;
+    }
+
+    public void setSubCategories(List subCategories) {
+        this.subCategories = subCategories;
+    }
+
+    public void setCategory(Long category) {
+        this.category = category;
+    }
+
+    private List subCategories;
+    public static final String SUBCATEGORIES = "subcategories";
 
     @Override
     public Object getModel() {
@@ -193,4 +209,9 @@ public class AjaxEstimateTemplateAction extends BaseFormAction {
         return estimateTemplateList;
     }
 
+    @Action(value = "/estimate/ajaxEstimate-subcategories")
+    public String subcategories() {
+        subCategories = getPersistenceService().findAllBy("from EgwTypeOfWork where parentid.id=?", category);
+        return SUBCATEGORIES;
+    }
 }
