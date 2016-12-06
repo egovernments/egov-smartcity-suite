@@ -64,7 +64,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/demandnotice")
@@ -79,7 +82,6 @@ public class DemandNoticeController {
     @Autowired
     private ReportService reportService;
 
-
     @RequestMapping(value = "/report", method = RequestMethod.GET)
     public
     @ResponseBody
@@ -92,10 +94,11 @@ public class DemandNoticeController {
 
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final Format formatterYear = new SimpleDateFormat("YYYY");
-        Installment currentInstallment = licenseUtils.getCurrInstallment(licenseUtils.getModule("Trade License"));
-        Calendar prevYear = Calendar.getInstance();
+        final Installment currentInstallment = licenseUtils.getCurrInstallment(licenseUtils.getModule("Trade License"));
+        final Calendar prevYear = Calendar.getInstance();
         prevYear.add(Calendar.YEAR, -1);
-        Installment previousYear = installmentDao.getInsatllmentByModuleForGivenDate(licenseUtils.getModule("Trade License"), prevYear.getTime());
+        final Installment previousYear = installmentDao
+                .getInsatllmentByModuleForGivenDate(licenseUtils.getModule("Trade License"), prevYear.getTime());
         final String curstartYear = formatterYear.format(currentInstallment.getFromDate());
         final String curendYear = formatterYear.format(currentInstallment.getToDate());
         final String curinstallmentYear = curstartYear + "-" + curendYear;
@@ -114,8 +117,8 @@ public class DemandNoticeController {
             reportParams.put("lastyear", lastYear);
             BigDecimal currLicenseFee;
             BigDecimal arrLicenseFee;
-            Map<String, Map<String, BigDecimal>> map = tradeLicenseService.getOutstandingFee(license);
-            Map<String, BigDecimal> licenseFees = map.get("License Fee");
+            final Map<String, Map<String, BigDecimal>> map = tradeLicenseService.getOutstandingFee(license);
+            final Map<String, BigDecimal> licenseFees = map.get("License Fee");
             if (licenseFees != null) {
                 currLicenseFee = licenseFees.get("current") == null ? BigDecimal.ZERO : licenseFees.get("current");
                 arrLicenseFee = licenseFees.get("arrear") == null ? BigDecimal.ZERO : licenseFees.get("arrear");
@@ -124,9 +127,11 @@ public class DemandNoticeController {
                 arrLicenseFee = BigDecimal.ZERO;
             }
 
-            BigDecimal totalAmount = currLicenseFee.add(arrLicenseFee);
-            BigDecimal licensewithIniPenalty = totalAmount.add(AbstractLicenseService.percentage(totalAmount, BigDecimal.valueOf(25)));
-            BigDecimal licenseFeeWithSecLvlPenalty = totalAmount.add(AbstractLicenseService.percentage(totalAmount, BigDecimal.valueOf(50)));
+            final BigDecimal totalAmount = currLicenseFee.add(arrLicenseFee);
+            final BigDecimal licensewithIniPenalty = totalAmount
+                    .add(AbstractLicenseService.percentage(totalAmount, BigDecimal.valueOf(25)));
+            final BigDecimal licenseFeeWithSecLvlPenalty = totalAmount
+                    .add(AbstractLicenseService.percentage(totalAmount, BigDecimal.valueOf(50)));
             reportParams.put("licenseFee", currLicenseFee);
             reportParams.put("arrearLicenseFee", arrLicenseFee);
             reportParams.put("totalLicenseFee", totalAmount);
@@ -135,13 +140,12 @@ public class DemandNoticeController {
             reportParams.put("licenseFeeWithSecLvlPenalty", licenseFeeWithSecLvlPenalty);
         }
 
-        ReportRequest reportInput = new ReportRequest("tldemandnotice", license, reportParams);
+        final ReportRequest reportInput = new ReportRequest("tldemandnotice", license, reportParams);
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=License Demand Notice.pdf");
-        ReportOutput reportOutput = reportService.createReport(reportInput);
+        final ReportOutput reportOutput = reportService.createReport(reportInput);
         return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 }
-
