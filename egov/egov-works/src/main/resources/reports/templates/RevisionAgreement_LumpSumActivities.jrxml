@@ -38,8 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-11-08T15:41:33 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2016-12-06T13:24:04 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="letterOfAcceptance-BOQ" pageWidth="920" pageHeight="600" orientation="Landscape" columnWidth="900" leftMargin="0" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3f4f70f4-bba4-426b-9ecf-74b618ffa71f">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -51,7 +51,7 @@
 		<![CDATA[]]>
 	</queryString>
 	<field name="abstractEstimate" class="org.egov.works.abstractestimate.entity.AbstractEstimate"/>
-	<field name="schedule" class="org.egov.works.models.masters.ScheduleOfRate"/>
+	<field name="schedule" class="org.egov.works.masters.entity.ScheduleOfRate"/>
 	<field name="nonSor" class="org.egov.works.abstractestimate.entity.NonSor"/>
 	<field name="quantity" class="java.lang.Double"/>
 	<field name="uom" class="org.egov.common.entity.UOM"/>

@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-10-20T12:41:15 -->
+<!-- 2016-12-06T13:24:17 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BillOfQunatities" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="0" uuid="c4f28d66-9453-4365-9c94-520990d7d3ae">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.math.BigDecimal"/>
@@ -67,7 +67,7 @@
 	<field name="uom" class="org.egov.common.entity.UOM">
 		<fieldDescription><![CDATA[uom]]></fieldDescription>
 	</field>
-	<field name="schedule" class="org.egov.works.models.masters.ScheduleOfRate">
+	<field name="schedule" class="org.egov.works.masters.entity.ScheduleOfRate">
 		<fieldDescription><![CDATA[schedule]]></fieldDescription>
 	</field>
 	<field name="quantity" class="java.lang.Double">
