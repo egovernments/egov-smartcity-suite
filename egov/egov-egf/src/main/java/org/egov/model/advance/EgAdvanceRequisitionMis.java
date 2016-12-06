@@ -76,9 +76,11 @@ public class EgAdvanceRequisitionMis extends AbstractAuditable {
     private Long id;
     
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fieldid")
     private Boundary fieldId;
     
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subfieldid")
     private Boundary subFieldId;
     
     @ManyToOne(fetch = FetchType.LAZY)

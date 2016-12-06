@@ -491,4 +491,14 @@
         <put-attribute name="body" value="/WEB-INF/views/abstractestimate/searchestimates-form.jsp"/>
      </definition>
 
+    <definition name="searchcontractoradvance" extends="base_layout">
+        <put-attribute name="page-title" value="title.search.contractoradvance" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/contractoradvance/searchcontractoradvance.jsp"/>
+    </definition>
+
+    <definition name="contractorAdvance-view" extends="base_layout">
+        <put-attribute name="page-title" value="hdr.viewcontractoradvance" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/contractoradvance/contractorAdvance-view.jsp"/>
+    </definition>
+
 </tiles-definitions>

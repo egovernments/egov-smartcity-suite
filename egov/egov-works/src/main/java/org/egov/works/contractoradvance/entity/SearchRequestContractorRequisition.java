@@ -37,26 +37,65 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.contractoradvance.repository;
+package org.egov.works.contractoradvance.entity;
 
-import java.util.List;
+import java.util.Date;
 
-import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+public class SearchRequestContractorRequisition {
 
-@Repository
-public interface ContractorAdvanceRepository extends JpaRepository<ContractorAdvanceRequisition, Long> {
+    private String workOrderNumber;
+    private String advanceRequisitionNumber;
+    private Date fromDate;
+    private Date toDate;
+    private String contractorName;
+    private String egwStatus;
 
-    @Query("select distinct(car.advanceRequisitionNumber) from ContractorAdvanceRequisition as car where upper(car.advanceRequisitionNumber) like upper(:advanceRequisitionNumber)")
-    List<String> findAdvanceRequisitionNumberToSearchCR(@Param("advanceRequisitionNumber") String advanceRequisitionNumber);
+    public String getWorkOrderNumber() {
+        return workOrderNumber;
+    }
 
-    @Query("select distinct(car.workOrderEstimate.workOrder.workOrderNumber) from ContractorAdvanceRequisition as car where upper(car.workOrderEstimate.workOrder.workOrderNumber) like upper(:workOrderNumber)")
-    List<String> findWorkOrderNumberToSearchCR(@Param("workOrderNumber") String workOrderNumber);
+    public void setWorkOrderNumber(final String workOrderNumber) {
+        this.workOrderNumber = workOrderNumber;
+    }
 
-    @Query("select distinct(car.workOrderEstimate.workOrder.contractor.name) from ContractorAdvanceRequisition as car where upper(car.workOrderEstimate.workOrder.contractor.name) like upper(:contractorName) or upper(car.workOrderEstimate.workOrder.contractor.code) like upper(:contractorName)")
-    List<String> findContractorsToSearchCR(@Param("contractorName") String contractorName);
+    public String getAdvanceRequisitionNumber() {
+        return advanceRequisitionNumber;
+    }
+
+    public void setAdvanceRequisitionNumber(final String advanceRequisitionNumber) {
+        this.advanceRequisitionNumber = advanceRequisitionNumber;
+    }
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(final Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public String getContractorName() {
+        return contractorName;
+    }
+
+    public void setContractorName(final String contractorName) {
+        this.contractorName = contractorName;
+    }
+
+    public String getEgwStatus() {
+        return egwStatus;
+    }
+
+    public void setEgwStatus(final String egwStatus) {
+        this.egwStatus = egwStatus;
+    }
 
 }

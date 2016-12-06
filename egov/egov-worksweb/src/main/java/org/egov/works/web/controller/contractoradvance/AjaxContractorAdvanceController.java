@@ -39,11 +39,66 @@
  */
 package org.egov.works.web.controller.contractoradvance;
 
+import java.util.List;
+
+import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
+import org.egov.works.contractoradvance.entity.SearchRequestContractorRequisition;
+import org.egov.works.contractoradvance.service.ContractorAdvanceService;
+import org.egov.works.web.adaptor.SearchContractorAdvanceJsonAdaptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/contractoradvance")
 public class AjaxContractorAdvanceController {
+
+    @Autowired
+    private SearchContractorAdvanceJsonAdaptor searchContractorAdvanceJsonAdaptor;
+
+    @Autowired
+    private ContractorAdvanceService contractorAdvanceService;
+
+    @RequestMapping(value = "/ajaxarfnumbers-searchcr", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> getAdvanceRequisitionNumberToSearchCR(@RequestParam final String advanceRequisitionNumber) {
+        return contractorAdvanceService.getAdvanceRequisitionNumberToSearchCR(advanceRequisitionNumber);
+    }
+
+    @RequestMapping(value = "/ajaxworkordernumbers-searchcr", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> getWorkOrderNumberToSearchCR(@RequestParam final String workOrderNumber) {
+        return contractorAdvanceService.getWorkOrderNumberToSearchCR(workOrderNumber);
+    }
+
+    @RequestMapping(value = "/ajaxcontractors-searchcr", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> getContractorToSearchCR(@RequestParam final String contractorName) {
+        return contractorAdvanceService.getContractorsToSearchCR(contractorName);
+    }
+
+    @RequestMapping(value = "/ajaxsearch-contractorrequisition", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchWorkOrdersToCreateCR(
+            @ModelAttribute final SearchRequestContractorRequisition searchRequestContractorRequisition) {
+        final List<ContractorAdvanceRequisition> contractorAdvanceRequisitionList = contractorAdvanceService
+                .searchContractorAdvance(searchRequestContractorRequisition);
+        final String result = new StringBuilder("{ \"data\":")
+                .append(searchContractorAdvanceRequisition(contractorAdvanceRequisitionList))
+                .append("}").toString();
+        return result;
+    }
+
+    public Object searchContractorAdvanceRequisition(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder
+                .registerTypeAdapter(ContractorAdvanceRequisition.class, searchContractorAdvanceJsonAdaptor).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
 
 }

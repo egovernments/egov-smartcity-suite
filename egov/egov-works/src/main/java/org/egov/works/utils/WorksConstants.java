@@ -411,4 +411,6 @@ public class WorksConstants {
     public static final String BILL_EDIT_DESIGNATIONS = "BILL_EDIT_DESIGNATIONS";
 
     public static final String MODE = "mode";
+    
+    public static final String CONTRACTOR_ADVANCE = "CONTRACTORADVANCE";
 }

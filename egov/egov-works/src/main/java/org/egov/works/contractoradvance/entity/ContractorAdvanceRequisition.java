@@ -68,7 +68,7 @@ public class ContractorAdvanceRequisition extends EgAdvanceRequisition {
     public static final String GETALLDRAWINGOFFICERFROMARF = "getAllDrawingOfficerFromARF";
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "workOrderEstimate", nullable = false)
+    @JoinColumn(name = "workorder_estimate_id", nullable = false)
     private WorkOrderEstimate workOrderEstimate;
 
     @Transient

@@ -37,26 +37,37 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.contractoradvance.repository;
+package org.egov.works.web.controller.contractoradvance;
 
 import java.util.List;
 
-import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.works.contractoradvance.entity.SearchRequestContractorRequisition;
+import org.egov.works.utils.WorksConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-@Repository
-public interface ContractorAdvanceRepository extends JpaRepository<ContractorAdvanceRequisition, Long> {
+@Controller
+@RequestMapping(value = "/contractoradvance")
+public class SearchContractorAdvanceController {
 
-    @Query("select distinct(car.advanceRequisitionNumber) from ContractorAdvanceRequisition as car where upper(car.advanceRequisitionNumber) like upper(:advanceRequisitionNumber)")
-    List<String> findAdvanceRequisitionNumberToSearchCR(@Param("advanceRequisitionNumber") String advanceRequisitionNumber);
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
-    @Query("select distinct(car.workOrderEstimate.workOrder.workOrderNumber) from ContractorAdvanceRequisition as car where upper(car.workOrderEstimate.workOrder.workOrderNumber) like upper(:workOrderNumber)")
-    List<String> findWorkOrderNumberToSearchCR(@Param("workOrderNumber") String workOrderNumber);
-
-    @Query("select distinct(car.workOrderEstimate.workOrder.contractor.name) from ContractorAdvanceRequisition as car where upper(car.workOrderEstimate.workOrder.contractor.name) like upper(:contractorName) or upper(car.workOrderEstimate.workOrder.contractor.code) like upper(:contractorName)")
-    List<String> findContractorsToSearchCR(@Param("contractorName") String contractorName);
+    @RequestMapping(value = "/searchform", method = RequestMethod.GET)
+    public String showSearchContractorAdvanceForm(
+            @ModelAttribute final SearchRequestContractorRequisition searchRequestContractorRequisition,
+            final Model model) throws ApplicationException {
+        model.addAttribute("searchRequestContractorRequisition", searchRequestContractorRequisition);
+        final List<EgwStatus> egwStatus = egwStatusHibernateDAO.getStatusByModule(WorksConstants.CONTRACTOR_ADVANCE);
+        model.addAttribute("egwStatus", egwStatus);
+        return "searchcontractoradvance";
+    }
 
 }

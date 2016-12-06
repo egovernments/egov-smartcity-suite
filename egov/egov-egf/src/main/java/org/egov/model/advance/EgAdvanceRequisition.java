@@ -50,6 +50,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -63,6 +65,7 @@ import org.egov.infra.workflow.entity.StateAware;
 
 @Entity
 @Table(name = "EG_ADVANCEREQUISITION")
+@Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(name = EgAdvanceRequisition.SEQ_EG_ADVANCEREQUISITION, sequenceName = EgAdvanceRequisition.SEQ_EG_ADVANCEREQUISITION, allocationSize = 1)
 public class EgAdvanceRequisition extends StateAware {
 
@@ -94,7 +97,7 @@ public class EgAdvanceRequisition extends StateAware {
     @OrderBy("id")
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egAdvanceRequisition", targetEntity = EgAdvanceRequisitionDetails.class)
     private Set<EgAdvanceRequisitionDetails> egAdvanceReqDetailses = new HashSet<EgAdvanceRequisitionDetails>(0);
-    
+
     public EgAdvanceRequisition() {
     }
 
