@@ -54,7 +54,7 @@ function loadDateFields(){
 		$("#enquirydetails").hide();
 	}
 		
-	if($('#judgmentType :selected').text().localeCompare("Ex-parte Order") == 0) {  
+	if($('#judgmentType :selected').text().localeCompare("Ex-Parte Order") == 0) {  
 		$("#exparteorder1").show();
     	$("#exparteorder2").show();
     	$("#exparteorder3").show();
