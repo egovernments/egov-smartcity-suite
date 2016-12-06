@@ -44,7 +44,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-<script src="<cdn:url value='/resources/js/app/viewregistration.js'/> "></script>
+<script src="<cdn:url value='/resources/js/app/viewregistration.js?rnd=${app_release_no}'/> "></script>
 
  <div class="row" id="page-content">
 	<div class="col-md-12"> 
