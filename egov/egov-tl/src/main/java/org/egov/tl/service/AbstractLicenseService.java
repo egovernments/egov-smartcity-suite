@@ -110,6 +110,7 @@ import org.springframework.transaction.annotation.Transactional;
 public abstract class AbstractLicenseService<T extends License> {
 
     public static final String ARREAR = "arrear";
+    public static final BigDecimal ONE_HUNDRED = new BigDecimal(100);
     @Autowired
     @Qualifier("entityQueryService")
     protected PersistenceService entityQueryService;
@@ -397,11 +398,8 @@ public abstract class AbstractLicenseService<T extends License> {
         recalculateDemand(this.feeMatrixService.findFeeList(license), license);
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         license.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
-        Position pos = null;
         license.setLicenseAppType(this.getLicenseApplicationTypeForRenew());
         final User currentUser = this.securityUtils.getCurrentUser();
-        if (workflowBean.getApproverPositionId() != null && workflowBean.getApproverPositionId() != -1)
-            pos = positionMasterService.getPositionById(workflowBean.getApproverPositionId());
         final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                 null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
         license.reinitiateTransition().start()
@@ -514,7 +512,7 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     protected Position getWorkflowInitiator(final T license) {
-        List<Assignment> assignments = null;
+        List<Assignment> assignments = Collections.emptyList();
         if (license.getState().getInitiatorPosition() != null)
             assignments = assignmentService.getAssignmentsForPosition(license.getState().getInitiatorPosition().getId());
         if (assignments.isEmpty())
@@ -619,5 +617,9 @@ public abstract class AbstractLicenseService<T extends License> {
             if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(Constants.LICENSE_FEE_TYPE))
                 licenseFee = licenseFee.add(demandDetail.getAmount());
         return licenseFee;
+    }
+
+    public static BigDecimal percentage(BigDecimal base, BigDecimal pct) {
+        return base.multiply(pct).divide(ONE_HUNDRED);
     }
 }

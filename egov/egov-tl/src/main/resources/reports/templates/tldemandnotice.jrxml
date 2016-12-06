@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2016-12-06T16:58:34 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="tldemandnoticereport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20"
+              rightMargin="20" topMargin="20" bottomMargin="20" uuid="28d1468c-93d7-467e-ba37-8e4c557005e0">
+    <property name="ireport.zoom" value="0.9090909090909091"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="48"/>
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+    <parameter name="cityName" class="java.lang.String"/>
+    <parameter name="currentDate" class="java.lang.String"/>
+    <parameter name="tradeNature" class="java.lang.String"/>
+    <parameter name="ownerName" class="java.lang.String"/>
+    <parameter name="licenseNumber" class="java.lang.String"/>
+    <parameter name="tradeName" class="java.lang.String"/>
+    <parameter name="tradeAddress" class="java.lang.String"/>
+    <parameter name="cityUrl" class="java.lang.String"/>
+    <parameter name="installmentYear" class="java.lang.String"/>
+    <parameter name="lastyear" class="java.lang.String"/>
+    <parameter name="currentYear" class="java.lang.String"/>
+    <parameter name="arrearLicenseFee" class="java.math.BigDecimal"/>
+    <parameter name="totalLicenseFee" class="java.math.BigDecimal"/>
+    <parameter name="licenseFee" class="java.math.BigDecimal"/>
+    <parameter name="licensewithIniPenalty" class="java.math.BigDecimal"/>
+    <parameter name="licenseFeeWithSecLvlPenalty" class="java.math.BigDecimal"/>
+    <background>
+        <band height="770" splitType="Stretch">
+            <rectangle>
+                <reportElement x="0" y="0" width="545" height="697" uuid="0e6d2994-c285-439a-bbb6-836a2e4ff230"/>
+                <graphicElement>
+                    <pen lineWidth="0.75"/>
+                </graphicElement>
+            </rectangle>
+        </band>
+    </background>
+    <columnHeader>
+        <band height="116">
+            <textField>
+                <reportElement x="0" y="0" width="554" height="20" uuid="f49639ce-012d-4752-b5e4-f71b8cb4db7d"/>
+                <textElement textAlignment="Center">
+                    <font size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{cityName}!=null?$P{cityName}:""]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="129" y="20" width="294" height="20" uuid="9974dfcb-0668-4b4b-a78c-574ccd9198d8"/>
+                <box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+                    <pen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["TRADE LICENSE - NOTICE"]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement x="6" y="50" width="544" height="40" uuid="f50ffd3d-703e-40d3-b65f-c7fd2feb0721"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="10" isBold="false" pdfFontName="Helvetica-Bold"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["Notice issued under section \n 516/521/528/529/530/534/538/539/571/623 of \n Hyderabad Municipal Corporation Act 1955."]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement x="6" y="96" width="544" height="20" uuid="ac92e242-0c96-414f-a46b-3713336491b1"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="10" isBold="false" pdfFontName="Helvetica-Bold"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["Remittance into the Account of Commissioner, \n"+$P{cityName}]]></textFieldExpression>
+            </textField>
+            <line>
+                <reportElement x="1" y="44" width="544" height="1" uuid="9336578b-5f10-4978-ba81-67a7c60db0b4">
+                    <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+                    <property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+                </reportElement>
+            </line>
+            <line>
+                <reportElement x="1" y="92" width="544" height="1" uuid="9e9a8072-4ae9-43d5-a4ea-48308f029c0e">
+                    <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+                    <property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+                </reportElement>
+            </line>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="306" splitType="Stretch">
+            <staticText>
+                <reportElement x="14" y="37" width="116" height="20" uuid="2fa4be73-f45f-445d-8ed3-681e7112d149"/>
+                <textElement textAlignment="Left" verticalAlignment="Bottom">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Name:]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="280" y="37" width="110" height="20" uuid="2e975c58-9b9d-4a15-b1a5-e607962ad775"/>
+                <textElement textAlignment="Left" verticalAlignment="Bottom">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Trade Name]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="280" y="57" width="110" height="20" uuid="f4d04c80-dd87-4a85-af1a-2098e30a4710"/>
+                <textElement textAlignment="Left" verticalAlignment="Bottom">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Nature of Trade]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="14" y="17" width="116" height="20" uuid="5233e133-4fa9-43b2-a5a8-d68fb4a312ea">
+                    <property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+                    <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+                </reportElement>
+                <textElement textAlignment="Left" verticalAlignment="Bottom">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Trade License No.]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="14" y="57" width="116" height="20" uuid="d71e7c81-0ee1-4cb0-8691-c21f675e911c"/>
+                <textElement textAlignment="Left" verticalAlignment="Bottom">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Address:]]></text>
+            </staticText>
+            <line>
+                <reportElement x="1" y="302" width="544" height="1" uuid="8e750617-af19-4500-b776-a05e4bb643be">
+                    <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+                    <property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+                </reportElement>
+            </line>
+            <textField>
+                <reportElement x="390" y="37" width="116" height="20" uuid="e5e6dc81-6685-4695-bca9-5f3513b12a4f">
+                    <property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+                </reportElement>
+                <textElement textAlignment="Left" verticalAlignment="Bottom"/>
+                <textFieldExpression><![CDATA[$P{tradeName}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="130" y="17" width="116" height="20" uuid="f6d4df61-4a49-4a13-b43d-d785c0801f84">
+                    <property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+                </reportElement>
+                <textElement textAlignment="Left" verticalAlignment="Bottom"/>
+                <textFieldExpression><![CDATA[$P{licenseNumber}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="130" y="37" width="116" height="20" uuid="9a54e128-1d43-42fe-a22c-a1490bc98323">
+                    <property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+                </reportElement>
+                <textElement textAlignment="Left" verticalAlignment="Bottom"/>
+                <textFieldExpression><![CDATA[$P{ownerName}]]></textFieldExpression>
+            </textField>
+            <rectangle>
+                <reportElement x="180" y="150" width="127" height="20" uuid="578678e6-65ae-4f1c-9172-7bcb3ccac061"/>
+                <graphicElement>
+                    <pen lineWidth="0.25"/>
+                </graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="307" y="110" width="116" height="20" uuid="9a7dbd89-9522-4d7c-9a35-b9fcc92e4bf2">
+                    <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+                </reportElement>
+                <box>
+                    <pen lineWidth="0.25"/>
+                    <topPen lineWidth="0.25"/>
+                    <leftPen lineWidth="0.25"/>
+                    <bottomPen lineWidth="0.25"/>
+                    <rightPen lineWidth="0.25"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[LICENSE FEE]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="180" y="110" width="127" height="20" uuid="879cc5c4-f03d-4d05-afc6-f1156f877021">
+                    <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+                </reportElement>
+                <box>
+                    <pen lineWidth="0.25"/>
+                    <topPen lineWidth="0.25"/>
+                    <leftPen lineWidth="0.25"/>
+                    <bottomPen lineWidth="0.25"/>
+                    <rightPen lineWidth="0.25"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[YEAR]]></text>
+            </staticText>
+            <rectangle>
+                <reportElement x="180" y="130" width="127" height="20" uuid="039ba2bf-2e69-403c-ad1b-edac224bda38"/>
+                <graphicElement>
+                    <pen lineWidth="0.25"/>
+                </graphicElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="307" y="130" width="116" height="20" uuid="2ee0887e-3838-4edd-8106-64f67d161373"/>
+                <graphicElement>
+                    <pen lineWidth="0.25"/>
+                </graphicElement>
+            </rectangle>
+            <textField>
+                <reportElement x="130" y="57" width="116" height="20" uuid="291ed9e9-9f28-4d2b-8118-f287b78597ac">
+                    <property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+                </reportElement>
+                <textElement textAlignment="Left" verticalAlignment="Bottom"/>
+                <textFieldExpression><![CDATA[$P{tradeAddress}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="390" y="57" width="116" height="20" uuid="51c43f9e-e719-4e29-8e20-7a2b2e40b744">
+                    <property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+                </reportElement>
+                <textElement textAlignment="Left" verticalAlignment="Bottom"/>
+                <textFieldExpression><![CDATA[$P{tradeNature}]]></textFieldExpression>
+            </textField>
+            <line>
+                <reportElement x="1" y="86" width="544" height="1" uuid="d5fc58a3-0991-42f2-9956-cb31e6c847ae">
+                    <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+                    <property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+                </reportElement>
+            </line>
+            <textField>
+                <reportElement x="141" y="92" width="294" height="18" uuid="39cbc3cf-d5fb-41c8-942f-202f5e58d112"/>
+                <box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+                    <pen lineWidth="0.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["PAYMENT DETAILS"]]></textFieldExpression>
+            </textField>
+            <rectangle>
+                <reportElement x="307" y="150" width="116" height="20" uuid="35079415-d5bf-46f8-b08b-95fe6fae6bd7"/>
+                <graphicElement>
+                    <pen lineWidth="0.25"/>
+                </graphicElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="180" y="170" width="127" height="20" uuid="0d0cda32-424a-4ef0-b01e-958f9bfd2164"/>
+                <graphicElement>
+                    <pen lineWidth="0.25"/>
+                </graphicElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="307" y="170" width="116" height="20" uuid="a90b9236-0953-4392-a66b-672f811c31d9"/>
+                <graphicElement>
+                    <pen lineWidth="0.25"/>
+                </graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="180" y="170" width="127" height="20" uuid="b3c3cc89-26f0-481c-8e0c-d08c25daed84"/>
+                <textElement textAlignment="Center" verticalAlignment="Bottom">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[TOTAL]]></text>
+            </staticText>
+            <line>
+                <reportElement x="1" y="198" width="544" height="1" uuid="e4bbd45f-daab-4d5c-a78d-06493bf6fee6">
+                    <property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+                    <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+                </reportElement>
+            </line>
+            <textField>
+                <reportElement x="30" y="202" width="499" height="18" uuid="9c417634-322e-4312-ba0e-0c60fd51f2f9"/>
+                <box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+                    <pen lineWidth="0.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["NET AMOUNT PAYABLE FOR THE YEAR "+$P{installmentYear}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement positionType="FixRelativeToBottom" x="180" y="130" width="127" height="20"
+                               uuid="a55c224d-c109-4773-897e-84bcd15a0454"/>
+                <textElement textAlignment="Center" verticalAlignment="Bottom">
+                    <font isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Up to 31-03-"+$P{lastyear}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="180" y="150" width="127" height="20" uuid="a7128288-e1df-4556-a2a1-09dd146d2c46"/>
+                <textElement textAlignment="Center" verticalAlignment="Bottom">
+                    <font isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{installmentYear}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="307" y="130" width="116" height="20" uuid="12bd5b01-9fd2-4f7f-bab8-009083d55ef4"/>
+                <textElement textAlignment="Center" verticalAlignment="Bottom"/>
+                <textFieldExpression><![CDATA[$P{arrearLicenseFee}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="307" y="150" width="116" height="20" uuid="7fe56273-1b6f-4783-98e7-f6ac1c1d30a6"/>
+                <textElement textAlignment="Center" verticalAlignment="Bottom"/>
+                <textFieldExpression><![CDATA[$P{licenseFee}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="307" y="170" width="115" height="20" uuid="25502086-c458-4da0-b07e-3b27b0588a34"/>
+                <textElement textAlignment="Center" verticalAlignment="Bottom"/>
+                <textFieldExpression><![CDATA[$P{totalLicenseFee}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="11" y="227" width="412" height="20" uuid="2625b373-9b45-44a4-a16a-1788105c8c47"/>
+                <textElement textAlignment="Left" verticalAlignment="Bottom"/>
+                <textFieldExpression>
+                    <![CDATA["Before 01-03-"+$P{currentYear}+" without Belated Fee: \t\t"+$P{licenseFee}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="11" y="247" width="539" height="20" uuid="5f9fe9cb-7ab2-4c56-9af4-af50aeb6eef9"/>
+                <textElement textAlignment="Left" verticalAlignment="Bottom"/>
+                <textFieldExpression>
+                    <![CDATA["From 02-03-"+$P{currentYear}+" to 31-05-"+$P{currentYear}+" with 25% Belated Fee: \t"+$P{licensewithIniPenalty}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="11" y="267" width="485" height="20" uuid="d4367df2-db99-43d1-b61a-2f5da6160867"/>
+                <textElement textAlignment="Left" verticalAlignment="Bottom"/>
+                <textFieldExpression>
+                    <![CDATA["After 01-06-"+$P{currentYear}+" with 50% Belated Fee: \t\t"+$P{licenseFeeWithSecLvlPenalty}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="450" y="-137" width="103" height="20" uuid="fd141395-05a0-4c3c-a052-b163e3178a85">
+                    <property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+                </reportElement>
+                <textElement textAlignment="Left" verticalAlignment="Bottom">
+                    <font isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{currentDate}]]></textFieldExpression>
+            </textField>
+            <line>
+                <reportElement x="1" y="7" width="544" height="1" uuid="a3ab9267-2dcf-4d01-9e2b-9fa08277b64a">
+                    <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+                    <property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+                </reportElement>
+            </line>
+            <staticText>
+                <reportElement x="410" y="-137" width="40" height="20" uuid="92f0c8f3-6b02-4b36-897d-90f44f59a46c">
+                    <property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+                    <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+                </reportElement>
+                <textElement textAlignment="Left" verticalAlignment="Bottom">
+                    <font size="11" isBold="false"/>
+                </textElement>
+                <text><![CDATA[Dated]]></text>
+            </staticText>
+        </band>
+    </detail>
+    <summary>
+        <band height="303">
+            <staticText>
+                <reportElement x="0" y="3" width="554" height="27" uuid="024fc454-5207-49d4-9ecd-07e6150c8bff"/>
+                <textElement textAlignment="Center">
+                    <font isBold="false"/>
+                </textElement>
+                <text>
+                    <![CDATA[If proper license is not obtained within 7 days from the date of receipt of this notice after the payment of the said license fee, action will be initiated under section 622 of HMC 1955]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="353" y="90" width="176" height="18" uuid="fed93516-9d05-43c3-976f-1ec06a57c7d6"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="11" isBold="false"/>
+                </textElement>
+                <text><![CDATA[Commissioner]]></text>
+            </staticText>
+            <line>
+                <reportElement x="0" y="109" width="545" height="1" uuid="8979889d-e528-42cf-966f-f882c6de90aa"/>
+            </line>
+            <line>
+                <reportElement x="0" y="132" width="545" height="1" uuid="582a288c-c635-4478-85b2-51e6236e5dbc"/>
+            </line>
+            <textField>
+                <reportElement x="8" y="113" width="286" height="14" uuid="5ac588fb-1faa-4b37-a27b-75b10f05edcb">
+                    <property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+                    <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+                </reportElement>
+                <textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["Powered by <style isBold=\"true\">www.egovernments.org</style>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="172" y="113" width="372" height="14" uuid="ac42057b-0248-459f-a337-22c93078768d">
+                    <property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+                    <property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+                </reportElement>
+                <textElement textAlignment="Right" verticalAlignment="Middle" markup="styled">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["Visit your city portal at <style isBold=\"true\">"+$P{cityUrl}+"</style>"]]></textFieldExpression>
+            </textField>
+            <line>
+                <reportElement x="1" y="40" width="544" height="1" uuid="2b780b93-db33-4997-ba13-7a080c292859">
+                    <property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+                </reportElement>
+            </line>
+            <staticText>
+                <reportElement x="0" y="40" width="140" height="18" uuid="dbe40e3b-ac48-4aa0-9bce-af82298577b5"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="11" isBold="false"/>
+                </textElement>
+                <text><![CDATA[Received]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="164" y="90" width="168" height="18" uuid="ca44a5f3-7d07-4540-8880-0b23a438b150"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="11" isBold="false"/>
+                </textElement>
+                <text><![CDATA[Sanitary Inspector]]></text>
+            </staticText>
+        </band>
+    </summary>
+</jasperReport>
