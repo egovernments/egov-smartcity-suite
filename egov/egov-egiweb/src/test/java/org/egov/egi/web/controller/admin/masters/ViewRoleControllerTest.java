@@ -39,11 +39,6 @@
  ******************************************************************************/
 package org.egov.egi.web.controller.admin.masters;
 
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-
 import org.egov.egi.web.controller.AbstractContextControllerTest;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.web.controller.admin.masters.role.ViewRoleController;
@@ -51,6 +46,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.MockitoAnnotations.initMocks;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 public class ViewRoleControllerTest extends AbstractContextControllerTest<ViewRoleController> {
 

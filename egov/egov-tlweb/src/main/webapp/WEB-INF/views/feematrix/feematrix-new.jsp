@@ -1,10 +1,8 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ include file="/includes/taglibs.jsp"%>
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2016>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -39,10 +37,12 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+  
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <script src="<cdn:url  value='/resources/js/app/feematrix.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url  value='/resources/js/app/helper.js'/>"></script>
 
 <div class="row">
     <div class="col-md-12">
@@ -171,138 +171,3 @@
       </div>
     </div>
 </div>
-
-<script>
-
-function checkValue(obj){
-	var rowobj=getRow(obj);
-	var tbl = document.getElementById('result');
-	var uomToval=getControlInBranch(tbl.rows[rowobj.rowIndex],'uomTo').value;
-	var uomFromval=getControlInBranch(tbl.rows[rowobj.rowIndex],'uomFrom').value;
-	if(uomFromval!='' && uomToval!='' && (eval(uomFromval)>=eval(uomToval))){
-		bootbox.alert("\"UOM To\" should be greater than \"UOM From\".");
-		getControlInBranch(tbl.rows[rowobj.rowIndex],'uomTo').value="";
-		return false;
-	} 
-  	var lastRow = (tbl.rows.length)-1;
-    var curRow=rowobj.rowIndex; 
-    if(curRow!=lastRow){
-		var uomFromVal1=getControlInBranch(tbl.rows[rowobj.rowIndex+1],'uomFrom').value;
-		if(uomToval!=uomFromVal1)
-			getControlInBranch(tbl.rows[rowobj.rowIndex+1],'uomFrom').value=uomToval; 
-    }
-}
-
-function checkforNonEmptyPrevRow(){
-	var tbl=document.getElementById("result");
-    var lastRow = (tbl.rows.length)-1;
-    var uomFromval=getControlInBranch(tbl.rows[lastRow],'uomFrom').value;
-    var uomToval=getControlInBranch(tbl.rows[lastRow],'uomTo').value;
-    var amountVal=getControlInBranch(tbl.rows[lastRow],'amount').value;
-    if(uomFromval=='' || uomToval=='' || amountVal==''){
-    	bootbox.alert("Enter all values for existing rows before adding.");
-		return false;       
-    } 
-    return true;
-}  
-
-function getPrevUOMFromData(){
-	var tbl=document.getElementById("result");
-    var lastRow = (tbl.rows.length)-1;
-    return getControlInBranch(tbl.rows[lastRow],'uomTo').value;
-}
-
-function intiUOMFromData(obj){
-	var tbl=document.getElementById("result");
-    var lastRow = (tbl.rows.length)-1;
-    getControlInBranch(tbl.rows[lastRow],'uomFrom').value=obj;
-} 
-
-function deleteThisRow(obj){
-	var tbl=document.getElementById("result");
-    var lastRow = (tbl.rows.length)-1;
-    var curRow=getRow(obj).rowIndex; 
-    var counts = lastRow - 1;
-    if(curRow == 1)	{
-    	bootbox.alert('Cannot delete first row');
-  	     return false;
-    } else if(curRow != lastRow){
-    	bootbox.alert('Cannot delete in between. Delete from last.');
- 	    return false;
-    } else	{
-        if(getControlInBranch(tbl.rows[lastRow],'detailId').value==''){
-	  	  	tbl.deleteRow(curRow);
-			return true;
-	    } else if(getControlInBranch(tbl.rows[lastRow],'detailId').value!=''){
-	    	var r = confirm("This will delete the row permanently. Press OK to Continue. ");
-			if (r != true) {
-				return false;
-			} else{
-					$.ajax({
-						url: "/tl/domain/commonAjax-deleteFee.action?feeMatrixDetailId="+getControlInBranch(tbl.rows[lastRow],'detailId').value+"",
-						type: "GET",
-						dataType: "json",
-						success: function (response) {
-							tbl.deleteRow(curRow);
-						}, 
-						error: function (response) {
-							bootbox.alert("Unable to delete this row.");
-							console.log("failed");
-						}
-					});
-			}
-		}
-  	}
-}
-
-function validateDetailsBeforeSubmit(){
-	var tbl=document.getElementById("result");
-    var tabLength = (tbl.rows.length)-1;
-    var uomFromval,uomToval,amt;
-    for(var i=1;i<=tabLength;i++){
-    	uomFromval=getControlInBranch(tbl.rows[i],'uomFrom').value;
-    	uomToval=getControlInBranch(tbl.rows[i],'uomTo').value;
-    	amt=getControlInBranch(tbl.rows[i],'amount').value;
-    	if(uomFromval=="" || uomToval=="" ||  amt == "" && i!=tabLength){
-    		bootbox.alert("\"UOM To\" or \"UOM From\" or \"Amount\" cannot be null for the row "+(i)+".");
-    		return false;
-    	}
-    	if(uomFromval!='' && uomToval!='' && (eval(uomFromval)>=eval(uomToval))){
-    		bootbox.alert("\"UOM To\" should be greater than \"UOM From\" for row "+(i)+".");
-    		getControlInBranch(tbl.rows[i],'uomTo').value="";
-    		getControlInBranch(tbl.rows[i],'uomTo').focus();
-    		return false;
-    	}  
-    }
-    return true;
-}
-
-$( "#search" ).click(function( e ) {
-	$('#resultdiv').empty();
-	var valid = $('#feematrix-new').validate().form();
-	if(!valid)
-		{
-		bootbox.alert("Please fill mandatory fields");
-		return false;
-		}
-	  var param="uniqueNo=";
-	  param=param+$('#natureOfBusiness').val()+"-";
-	  param=param+$('#licenseAppType').val()+"-";
-	  param=param+$('#licenseCategory').val()+"-";
-	  param=param+$('#subCategory').val()+"-";
-	  param=param+$('#feeType').val()+"-";
-	  param=param+$('#unitOfMeasurement').val()+"-";
-	  param=param+$('#financialYear').val(); 
-	   $.ajax({
-			url: "/tl/feematrix/search?"+param,
-			type: "GET",
-			//dataType: "json",
-			success: function (response) {
-				 $('#resultdiv').html(response);
-			}, 
-			error: function (response) {
-				console.log("failed");
-			}
-		});
-});
-</script>

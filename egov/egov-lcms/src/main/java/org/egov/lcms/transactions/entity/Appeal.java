@@ -107,7 +107,7 @@ public class Appeal extends AbstractAuditable {
     @Audited
     private String appealFiledBy;
 
-    @OneToMany(mappedBy = "appeal", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "appeal", fetch = FetchType.LAZY)
     @NotAudited
     private List<AppealDocuments> appealDocuments = new ArrayList<AppealDocuments>(0);
 

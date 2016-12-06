@@ -78,8 +78,8 @@ public class CollectionDocument {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String paymentGateway;
 
-    @Field(type = FieldType.Long)
-    private Long billNumber;
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String billNumber;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String cityName;
@@ -205,11 +205,11 @@ public class CollectionDocument {
         this.paymentGateway = paymentGateway;
     }
 
-    public Long getBillNumber() {
+    public String getBillNumber() {
         return billNumber;
     }
 
-    public void setBillNumber(final Long billNumber) {
+    public void setBillNumber(final String billNumber) {
         this.billNumber = billNumber;
     }
 

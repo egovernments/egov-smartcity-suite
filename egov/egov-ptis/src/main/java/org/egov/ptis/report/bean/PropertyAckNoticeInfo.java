@@ -112,6 +112,13 @@ public class PropertyAckNoticeInfo {
     private String noticeNumber;
     private String hearingDate;
     private String hearingTime;
+    private BigDecimal extentOfSite = BigDecimal.ZERO;
+    private String surveyNumber;
+    private String northBoundary;
+    private String southBoundary;
+    private String eastBoundary;
+    private String westBoundary;
+    private String ownershipType;
 
     public String getCreationReason() {
         return creationReason;
@@ -655,6 +662,62 @@ public class PropertyAckNoticeInfo {
 
     public void setHearingTime(String hearingTime) {
         this.hearingTime = hearingTime;
+    }
+
+    public BigDecimal getExtentOfSite() {
+        return extentOfSite;
+    }
+
+    public void setExtentOfSite(BigDecimal extentOfSite) {
+        this.extentOfSite = extentOfSite;
+    }
+
+    public String getSurveyNumber() {
+        return surveyNumber;
+    }
+
+    public void setSurveyNumber(String surveyNumber) {
+        this.surveyNumber = surveyNumber;
+    }
+
+    public String getNorthBoundary() {
+        return northBoundary;
+    }
+
+    public void setNorthBoundary(String northBoundary) {
+        this.northBoundary = northBoundary;
+    }
+
+    public String getSouthBoundary() {
+        return southBoundary;
+    }
+
+    public void setSouthBoundary(String southBoundary) {
+        this.southBoundary = southBoundary;
+    }
+
+    public String getEastBoundary() {
+        return eastBoundary;
+    }
+
+    public void setEastBoundary(String eastBoundary) {
+        this.eastBoundary = eastBoundary;
+    }
+
+    public String getWestBoundary() {
+        return westBoundary;
+    }
+
+    public void setWestBoundary(String westBoundary) {
+        this.westBoundary = westBoundary;
+    }
+
+    public String getOwnershipType() {
+        return ownershipType;
+    }
+
+    public void setOwnershipType(String ownershipType) {
+        this.ownershipType = ownershipType;
     }
 
 }

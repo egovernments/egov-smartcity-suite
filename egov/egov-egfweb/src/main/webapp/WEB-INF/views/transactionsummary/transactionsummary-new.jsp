@@ -50,6 +50,7 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
 
 <head>
 <meta charset="utf-8">
@@ -61,35 +62,35 @@
 
 <title></title>
 <link rel="icon"
-	href="<c:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
+	href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
 <link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
 <link rel="stylesheet"
-	href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 <link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/typeahead.css'  context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css'  context='/egi'/>">
 <link rel="stylesheet"
-      href="<c:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
+      href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
 <link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css'  context='/egi'/>" />
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css'  context='/egi'/>" />
 <script
-        src="<c:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
 
 <script
-	src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
 <%-- <script type="text/javascript" src="/EGF/resources/javascript/jquery-1.7.2.min.js"></script> --%>
 <script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 <script
-	src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script
-        src="<c:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
-        src="<c:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
-	src="<c:url value='/resources/global/js/jquery-ui/jquery-ui.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery-ui/jquery-ui.js' context='/egi'/>"></script>
 <link
-	src="<c:url value='/resources/global/js/jquery-ui/jquery-ui.css' context='/egi'/>"></link>
+	src="<cdn:url value='/resources/global/js/jquery-ui/jquery-ui.css' context='/egi'/>"></link>
 
 
 <link rel="stylesheet" type="text/css"

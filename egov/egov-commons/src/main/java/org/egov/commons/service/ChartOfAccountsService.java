@@ -58,6 +58,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts, Long> {
 
+    private static final String PURPOSE_ID = "purposeId";
+    private static final String CONTINGENCY_BILL_PURPOSE_IDS = "contingencyBillPurposeIds";
+    private static final String GLCODE = "glcode";
     @Autowired
     protected AppConfigValueService appConfigValuesService;
 
@@ -71,12 +74,12 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
 
     }
 
-    public List<CChartOfAccounts> getAllAccountCodes(String glcode) {
+    public List<CChartOfAccounts> getAllAccountCodes(final String glcode) {
 
         final Query entitysQuery = getSession()
                 .createQuery(
                         " from CChartOfAccounts a where a.isActiveForPosting=true and a.classification=4 and (a.glcode like :glcode or lower(a.name) like :name) order by a.glcode");
-        entitysQuery.setString("glcode", glcode + "%");
+        entitysQuery.setString(GLCODE, glcode + "%");
         entitysQuery.setString("name", glcode.toLowerCase() + "%");
         return entitysQuery.list();
 
@@ -94,7 +97,7 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
     public List<CChartOfAccounts> getSubledgerAccountCodesForAccountDetailTypeAndNonSubledgers(
             final Integer accountDetailTypeId, final String glcode) {
         final List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey(
-                "EGF", "contingencyBillPurposeIds");
+                "EGF", CONTINGENCY_BILL_PURPOSE_IDS);
         final List<Long> contingencyBillPurposeIds = new ArrayList<>();
         for (final AppConfigValues av : configValuesByModuleAndKey)
             contingencyBillPurposeIds.add(Long.valueOf(av.getValue()));
@@ -103,7 +106,7 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
             final Query entitysQuery = getSession()
                     .createQuery(
                             " from CChartOfAccounts a where a.isActiveForPosting=true and a.classification=4 and size(a.chartOfAccountDetails) = 0 and (glcode like :glcode or lower(name) like :name) and (purposeId is null or purposeId not in (:ids)) order by a.id");
-            entitysQuery.setString("glcode", glcode + "%");
+            entitysQuery.setString(GLCODE, glcode + "%");
             entitysQuery.setString("name", glcode.toLowerCase() + "%");
             entitysQuery.setParameterList("ids", contingencyBillPurposeIds);
             return entitysQuery.list();
@@ -112,7 +115,7 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
                     .createQuery(
                             " from CChartOfAccounts  a LEFT OUTER JOIN  fetch a.chartOfAccountDetails  b where (size(a.chartOfAccountDetails) = 0 or b.detailTypeId.id=:accountDetailTypeId)and a.isActiveForPosting=true and a.classification=4 and (a.glcode like :glcode or lower(a.name) like :name) and (purposeId is null or purposeId not in (:ids)) order by a.id");
             entitysQuery.setInteger("accountDetailTypeId", accountDetailTypeId);
-            entitysQuery.setString("glcode", glcode + "%");
+            entitysQuery.setString(GLCODE, glcode + "%");
             entitysQuery.setString("name", glcode.toLowerCase() + "%");
             entitysQuery.setParameterList("ids", contingencyBillPurposeIds);
             return entitysQuery.list();
@@ -126,27 +129,27 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
                 throw new ApplicationException("Purpose Id is null or zero");
             Query query = getSession().createQuery(
                     " from EgfAccountcodePurpose purpose where purpose.id=" + purposeId + "");
-            if (query.list().size() == 0)
+            if (query.list().isEmpty())
                 throw new ApplicationException("Purpose ID provided is not defined in the system");
             query = getSession()
                     .createQuery(
                             " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId))) AND classification=4 AND isActiveForPosting=true ");
-            query.setLong("purposeId", purposeId);
+            query.setLong(PURPOSE_ID, purposeId);
             accountCodeList.addAll(query.list());
             query = getSession()
                     .createQuery(
                             " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId)) AND classification=4 AND isActiveForPosting=true ");
-            query.setLong("purposeId", purposeId);
+            query.setLong(PURPOSE_ID, purposeId);
             accountCodeList.addAll(query.list());
             query = getSession()
                     .createQuery(
                             " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId) AND classification=4 AND isActiveForPosting=true ");
-            query.setLong("purposeId", purposeId);
+            query.setLong(PURPOSE_ID, purposeId);
             accountCodeList.addAll(query.list());
             query = getSession()
                     .createQuery(
                             " FROM CChartOfAccounts WHERE purposeid=:purposeId AND classification=4 AND isActiveForPosting=true ");
-            query.setLong("purposeId", purposeId);
+            query.setLong(PURPOSE_ID, purposeId);
             accountCodeList.addAll(query.list());
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("Error occurred while getting Account Code by purpose", e);
@@ -156,9 +159,9 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
 
     public List<CChartOfAccounts> getNetPayableCodesByAccountDetailType(final Integer accountDetailType) {
         final List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey(
-                "EGF", "contingencyBillPurposeIds");
-        final Set<CChartOfAccounts> netPayList = new HashSet<CChartOfAccounts>();
-        List<CChartOfAccounts> accountCodeByPurpose = new ArrayList<CChartOfAccounts>();
+                "EGF", CONTINGENCY_BILL_PURPOSE_IDS);
+        final Set<CChartOfAccounts> netPayList = new HashSet<>();
+        List<CChartOfAccounts> accountCodeByPurpose = new ArrayList<>();
         for (int i = 0; i < configValuesByModuleAndKey.size(); i++) {
             try {
                 accountCodeByPurpose = getAccountCodeByPurpose(Integer
@@ -182,12 +185,12 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
                 }
 
         }
-        return new ArrayList<CChartOfAccounts>(netPayList);
+        return new ArrayList<>(netPayList);
     }
 
     public List<CChartOfAccounts> getNetPayableCodes() {
         final List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey(
-                "EGF", "contingencyBillPurposeIds");
+                "EGF", CONTINGENCY_BILL_PURPOSE_IDS);
         final Set<CChartOfAccounts> netPayList = new HashSet<>();
         List<CChartOfAccounts> accountCodeByPurpose = new ArrayList<>();
         for (int i = 0; i < configValuesByModuleAndKey.size(); i++) {
@@ -204,4 +207,39 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
         }
         return new ArrayList<>(netPayList);
     }
+
+    public List<CChartOfAccounts> getAccountTypes() {
+
+        final Query accountTypesQuery = getSession()
+                .createQuery(" from CChartOfAccounts WHERE glcode LIKE '4502%' AND classification=2 ORDER BY glcode");
+        return accountTypesQuery.list();
+    }
+
+    public CChartOfAccounts getByGlCodeDesc(final String glcode) {
+
+        final Query query = getSession()
+                .createQuery(" from CChartOfAccounts a where  a.glcode like :glcode  order by a.glcode desc");
+        query.setString(GLCODE, glcode + "%");
+        final List<CChartOfAccounts> resultList = query.list();
+
+        return resultList.isEmpty() ? null : resultList.get(0);
+
+    }
+
+    public CChartOfAccounts getByGlCode(final String glcode) {
+
+        final Query query = getSession().createQuery(" from CChartOfAccounts a where  a.glcode =:glcode ");
+        query.setString("glcode", glcode);
+        final List<CChartOfAccounts> resultList = query.list();
+
+        return resultList.isEmpty() ? null : resultList.get(0);
+
+    }
+
+    public CChartOfAccounts getById(final Long id) {
+
+        return getSession().load(CChartOfAccounts.class, id);
+
+    }
+
 }

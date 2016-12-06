@@ -1,0 +1,11 @@
+# environment variables for postmaster process
+# This file has the same syntax as postgresql.conf:
+#  VARIABLE = simple_value
+#  VARIABLE2 = 'any value!'
+# I. e. you need to enclose any value which does not only consist of letters,
+# numbers, and '-', '_', '.' in single quotes. Shell commands are not
+# evaluated.
+
+{% if postgresql_env %}{% for k,v in postgresql_env.items() %}
+{{k}} = {{v}}
+{% endfor %}{% endif %}

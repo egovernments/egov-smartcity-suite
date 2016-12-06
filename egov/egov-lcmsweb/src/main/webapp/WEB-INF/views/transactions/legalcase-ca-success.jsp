@@ -45,13 +45,13 @@
 <form:form method="post" action="create"
 	class="form-horizontal form-groups-bordered" modelAttribute="legalCase"
 	id="legalCasecaForm">
+	<c:if test="${not empty message}">
+						<div class=role="alert">${message}</div>
+					</c:if>
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-body">
-					<c:if test="${not empty message}">
-						<div class=role="alert">${message}</div>
-					</c:if>
 					<div class="panel-heading">
 						<div class="panel-title" align="left">Pwr Details</div>
 					</div>
@@ -108,13 +108,9 @@
 			</div>
 		</div>
 	</div>
+<jsp:include page="pwrDocumentdetails-view.jsp"></jsp:include>
 
-	<c:if test="${not empty pwrDocList}">
-
-		<jsp:include page="pwrDocumentdetails-view.jsp"></jsp:include>
-
-	</c:if>
-	<div class="form-group">
+<div class="form-group">
 		<div class="text-center">
 			<a href="javascript:void(0)" class="btn btn-default"
 				onclick="self.close()"><spring:message code="lbl.close" /></a>

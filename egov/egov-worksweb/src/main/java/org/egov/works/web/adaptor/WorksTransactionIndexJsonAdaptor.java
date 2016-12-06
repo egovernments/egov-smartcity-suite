@@ -78,21 +78,34 @@ public class WorksTransactionIndexJsonAdaptor implements JsonSerializer<WorksMil
             jsonObject.addProperty("Estimate Number", response.getEstimatenumber());
             jsonObject.addProperty("Work Identification Number", response.getWin());
             jsonObject.addProperty("Name of the work", response.getNameofthework());
-            jsonObject.addProperty("Estimated cost in lakhs", BigDecimal.valueOf(response.getTotalestimatedcostinlakhs() / 100000)
-                    .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+            if (response.getTotalestimatedcostinlakhs() != null)
+                jsonObject.addProperty("Estimated cost in lakhs",
+                        BigDecimal.valueOf(response.getTotalestimatedcostinlakhs() / 100000)
+                                .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+            else
+                jsonObject.addProperty("Estimated cost in lakhs", "0.00");
             jsonObject.addProperty("Agreement Number", response.getAgreementnumber());
             jsonObject.addProperty("Agreement Date",
                     response.getAgreementdate() != null ? DateUtils.getDefaultFormattedDate(response.getAgreementdate()) : "");
             jsonObject.addProperty("Contract Period(in days)", response.getContractperiod());
-            jsonObject.addProperty("Work order value in lakhs",
-                    BigDecimal.valueOf(response.getTotalworkordervalueinlakhs() / 100000)
-                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
-            jsonObject.addProperty("Total bill amount in lakhs",
-                    BigDecimal.valueOf(response.getTotalbillamountinlakhs() / 100000).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                            .toString());
-            jsonObject.addProperty("Total paid amount in lakhs",
-                    BigDecimal.valueOf(response.getTotalpaidamountinlakhs() / 100000).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                            .toString());
+            if (response.getTotalworkordervalueinlakhs() != null)
+                jsonObject.addProperty("Work order value in lakhs",
+                        BigDecimal.valueOf(response.getTotalworkordervalueinlakhs() / 100000)
+                                .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+            else
+                jsonObject.addProperty("Work order value in lakhs", "0.00");
+            if (response.getTotalbillamountinlakhs() != null)
+                jsonObject.addProperty("Total bill amount in lakhs",
+                        BigDecimal.valueOf(response.getTotalbillamountinlakhs() / 100000).setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                .toString());
+            else
+                jsonObject.addProperty("Total bill amount in lakhs", "0.00");
+            if (response.getTotalpaidamountinlakhs() != null)
+                jsonObject.addProperty("Total paid amount in lakhs",
+                        BigDecimal.valueOf(response.getTotalpaidamountinlakhs() / 100000).setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                .toString());
+            else
+                jsonObject.addProperty("Total paid amount in lakhs", "0.00");
 
             final DateTime currentDate = new DateTime();
             switch (currentDate.getMonthOfYear()) {

@@ -185,7 +185,13 @@ public class PropertyTaxIndex {
     
     @Field(type = FieldType.Boolean)
     private Boolean isExempted;
+    
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String duePeriod;
 
+    @Field(type = FieldType.Double)
+    private Double advance;
+    
     public String getConsumerCode() {
         return consumerCode;
     }
@@ -536,5 +542,21 @@ public class PropertyTaxIndex {
 
     public void setIsExempted(Boolean isExempted) {
         this.isExempted = isExempted;
+    }
+
+    public String getDuePeriod() {
+        return duePeriod;
+    }
+
+    public void setDuePeriod(String duePeriod) {
+        this.duePeriod = duePeriod;
+    }
+
+    public Double getAdvance() {
+        return advance;
+    }
+
+    public void setAdvance(Double advance) {
+        this.advance = advance;
     }
 }

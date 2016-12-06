@@ -63,6 +63,7 @@ import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.model.masters.AccountCodePurpose;
 import org.egov.pims.commons.Position;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.Session;
@@ -278,4 +279,11 @@ public class FinancialUtils {
         }
         return historyTable;
     }
+
+    public AccountCodePurpose getAccountCodePurposeById(final Long id) {
+
+        return getCurrentSession().load(AccountCodePurpose.class, id);
+
+    }
+
 }

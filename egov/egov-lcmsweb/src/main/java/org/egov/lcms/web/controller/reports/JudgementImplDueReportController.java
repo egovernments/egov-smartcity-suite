@@ -61,24 +61,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/reports")
 public class JudgementImplDueReportController extends GenericLegalCaseController {
 
-	@Autowired
-	private DueLegalCaseReportService dueLegalCaseReportService;
+    @Autowired
+    private DueLegalCaseReportService dueLegalCaseReportService;
 
-	@ModelAttribute
-	private DueReportResult getDueReportResult() {
-		return new DueReportResult();
-	}
+    @RequestMapping(value = "/judgementImplDueReportResult", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String getDailyBoardReportResult(
+            final @ModelAttribute("dueReportResult") DueReportResult dueReportResult,
+            final HttpServletRequest request) {
 
-	@RequestMapping(value = "/judgementImplDueReportResult", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-	public @ResponseBody String getDailyBoardReportResult(
-			final @ModelAttribute("dueReportResult") DueReportResult dueReportResult,
-			final HttpServletRequest request) {
-
-		final List<DueReportResult> pwrDueSearchList = dueLegalCaseReportService.getLegalCaseReport(dueReportResult,
-				LcmsConstants.DUEJUDGEMENTIMPLPREPORT);
-		final String result = new StringBuilder("{ \"data\":")
-				.append(WebUtils.toJSON(pwrDueSearchList, DueReportResult.class, DueReportResultJsonAdaptor.class))
-				.append("}").toString();
-		return result;
-	}
+        final List<DueReportResult> pwrDueSearchList = dueLegalCaseReportService.getLegalCaseReport(dueReportResult,
+                LcmsConstants.DUEJUDGEMENTIMPLPREPORT);
+        final String result = new StringBuilder("{ \"data\":")
+                .append(WebUtils.toJSON(pwrDueSearchList, DueReportResult.class, DueReportResultJsonAdaptor.class))
+                .append("}").toString();
+        return result;
+    }
 }

@@ -39,15 +39,20 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.lcms.masters.service.JudgmentTypeService;
 import org.egov.lcms.transactions.entity.Judgment;
+import org.egov.lcms.transactions.entity.JudgmentDocuments;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.JudgmentService;
 import org.egov.lcms.transactions.service.LegalCaseService;
+import org.egov.lcms.utils.LegalCaseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,6 +61,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -70,6 +76,9 @@ public class EditJudgmentController {
 
     @Autowired
     private JudgmentService judgmentService;
+
+    @Autowired
+    private LegalCaseUtil legalCaseUtil;
 
     @ModelAttribute
     private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber) {
@@ -87,29 +96,33 @@ public class EditJudgmentController {
         final Judgment judgmentObj = judgementList.get(0);
         prepareNewForm(model);
         model.addAttribute("judgment", judgmentObj);
-        model.addAttribute("supportDocs",
-                !judgmentObj.getJudgmentDocuments().isEmpty() && judgmentObj.getJudgmentDocuments().get(0) != null
-                        ? judgmentObj.getJudgmentDocuments().get(0).getSupportDocs() : null);
+        getJudgmentDocuments(judgmentObj);
         model.addAttribute("mode", "edit");
         return "judgment-edit";
     }
 
     @RequestMapping(value = "/edit/", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final Judgment judgment,
-            @RequestParam("lcNumber") final String lcNumber, final BindingResult errors, final Model model,
-            final RedirectAttributes redirectAttrs) {
+            @RequestParam("lcNumber") final String lcNumber, final BindingResult errors,
+            @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request, final Model model,
+            final RedirectAttributes redirectAttrs) throws IOException {
         if (errors.hasErrors()) {
             prepareNewForm(model);
             return "judgment-edit";
         }
-        judgmentService.persist(judgment);
-        model.addAttribute("supportDocs",
-                !judgment.getJudgmentDocuments().isEmpty() && judgment.getJudgmentDocuments().get(0) != null
-                        ? judgment.getJudgmentDocuments().get(0).getSupportDocs() : null);
+        judgmentService.persist(judgment, files);
+        getJudgmentDocuments(judgment);
         redirectAttrs.addFlashAttribute("judgment", judgment);
         model.addAttribute("message", "Judgment updated successfully.");
-        model.addAttribute("mode", "edit");
+        model.addAttribute("mode", "view");
         return "judgment-success";
+    }
+
+    private Judgment getJudgmentDocuments(final Judgment judgment) {
+        List<JudgmentDocuments> documentDetailsList = new ArrayList<JudgmentDocuments>();
+        documentDetailsList = legalCaseUtil.getJudgmentDocumentList(judgment);
+        judgment.setJudgmentDocuments(documentDetailsList);
+        return judgment;
     }
 
 }

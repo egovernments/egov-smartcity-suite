@@ -44,168 +44,216 @@ $(document).ready(function()
 
 $('#unitOfMeasurement').attr("disabled", true); 
 	
-$('#feeType').click(function(event){
+$('#feeType').click(function(){
 	if($('#subCategory').val()==""){
 		bootbox.alert("Please Choose Sub Category");
 		return false;
 	}
 });
 
-$('#unitOfMeasurement').click(function(event){
+$('#unitOfMeasurement').click(function(){
 	if($('#feeType').val()==""){
 		bootbox.alert("Please Choose Fee Type");
 		return false;
 	}
 });
-
-
-$('#subCategory').change(function(){ 
-	console.log("came onchange of "+$('#subCategory').val());
+$('#feeType').change(function(){
+	$.ajax({
+		url: "/tl/feeType/uom-by-subcategory?feeTypeId="+$('#feeType').val()+"&subCategoryId="+$('#subCategory').val()+"",    
+		type: "GET",
+		dataType: "json",
+		success: function (response) {
+			$('#unitOfMeasurement').empty();
+			$('#unitOfMeasurement').append($("<option value=''>Select</option>"));
+			$.each(response, function(index, value) {
+			     $('#unitOfMeasurement').append("<option value="+value.uom.id+">"+value.uom.name+"</option>");
+			     $('#rateType').val(value.rateType);
+			});
+			$("#unitOfMeasurement").prop("selectedIndex",1);
+		}, 
+		error: function () {
+		} 
+	});
+});
+$('#subCategory').change(function(){
 	$('#unitOfMeasurement').empty();
 	$('#unitOfMeasurement').append($("<option value=''>Select</option>"));
 	$('#rateType').val("");
 	$.ajax({
-		url: "/tl/domain/commonAjax-ajaxPopulateFeeType.action?subCategoryId="+$('#subCategory').val()+"",
+		url: "/tl/feeType/feetype-by-subcategory",    
 		type: "GET",
+		data: {
+			subCategoryId : $('#subCategory').val()   
+		},
 		dataType: "json",
 		success: function (response) {
-			console.log("success"+JSON.stringify(response) );
-			$('#feeType').empty();
-			
-			$('#feeType').append($("<option value=''>Select</option>"));
-			$.each(response.Result, function(index, value) {
-				
-			     $('#feeType').append("<option value="+value.Value+">"+value.Text+"</option>");
+			var feeType = $('#feeType')
+			feeType.find("option:gt(0)").remove();
+			$.each(response, function(index, value) {
+				feeType.append($('<option>').text(value.feeType.name).attr('value', value.feeType.id));
 			});
-			console.log("completed"+response);
 			
 		}, 
-		error: function (response) {
-			console.log("failed");
-		}
-	});
+		
+	})
+});
+$('#licenseCategory').change(function(){
+	$('#feeType').empty();
+	$('#feeType').append($("<option value=''>Select</option>"));
+	$('#unitOfMeasurement').empty();
+	$('#unitOfMeasurement').append($("<option value=''>Select</option>"));
+	$('#rateType').val("");
+	$.ajax({
+		url: "/tl/licensesubcategory/subcategories-by-category",    
+		type: "GET",
+		data: {
+			categoryId : $('#licenseCategory').val()   
+		},
+		dataType: "json",
+		success: function (response) {
+			var subCategory = $('#subCategory')
+			subCategory.find("option:gt(0)").remove();
+			$.each(response, function(index, value) {
+				subCategory.append($('<option>').text(value.name).attr('value', value.id));
+			});
+			
+		}, 
+	
+	})
 });
 
-$('#feeType').change(function(){
-	console.log("came onchange of "+$('#feeType').val());
-	var subCategoryValue=$('#subCategory').val();
-	$.ajax({
-		url: "/tl/domain/commonAjax-ajaxPopulateUom.action?feeTypeId="+$('#feeType').val()+"&subCategoryId="+$('#subCategory').val()+"",
-		type: "GET",
-		dataType: "json",
-		success: function (response) {
-			console.log("success"+JSON.stringify(response) );
-			$('#unitOfMeasurement').empty();
-			$('#unitOfMeasurement').append($("<option value=''>Select</option>"));
-			$.each(response.Result, function(index, value) {
-			     $('#unitOfMeasurement').append("<option value="+value.uomId+">"+value.uomName+"</option>");
-			     $('#rateType').val(value.rateType);
-			});
-			console.log("completed"+response);
-			$("#unitOfMeasurement").prop("selectedIndex",1);
-		}, 
-		error: function (response) {
-			console.log("failed"+response);
-		} 
-	});
-});
+$( "#save" ).click(function() {
 	
-$('#licenseCategory').change(function(){
-		console.log("came onchange of "+$('#licenseCategory').val());
-		$('#feeType').empty();
-		$('#feeType').append($("<option value=''>Select</option>"));
-		$('#unitOfMeasurement').empty();
-		$('#unitOfMeasurement').append($("<option value=''>Select</option>"));
-		$('#rateType').val("");
-		$.ajax({
-			url: "/tl/domain/commonAjax-ajaxPopulateSubCategory.action?categoryId="+$('#licenseCategory').val()+"",
+	if($('#feematrix-new').valid()){
+		var natureOfBusinessDisabled=$('#natureOfBusiness').is(':disabled');
+		var licenseAppTypeDisabled=$('#licenseAppType').is(':disabled');
+		var unitOfMeasurementDisabled=$('#unitOfMeasurement').is(':disabled');
+		$('#natureOfBusiness').removeAttr("disabled");
+		$('#licenseAppType').removeAttr("disabled");
+		$('#unitOfMeasurement').removeAttr("disabled");
+		var fd=$('#feematrix-new').serialize();
+		
+		  $.ajax({
+				url: "/tl/feematrix/create",
+				type: "POST",
+				data: fd,
+			    beforeSend: function() {
+			    	$("#save").attr('disabled',true);
+			    },
+				//dataType: "text",
+				success: function (response) {
+					 $('#resultdiv').html(response);
+					 if(natureOfBusinessDisabled)
+						 $('#natureOfBusiness').attr("disabled", true); 
+					 if(licenseAppTypeDisabled)
+						 $('#licenseAppType').attr("disabled", true); 
+					 if(unitOfMeasurementDisabled)
+						 $('#unitOfMeasurement').attr("disabled", true); 
+					 bootbox.alert("Details saved Successfully");
+				}, 
+				error: function () {
+					if(natureOfBusinessDisabled)
+						$('#natureOfBusiness').attr("disabled", true); 
+					if(licenseAppTypeDisabled)
+						$('#licenseAppType').attr("disabled", true);
+					if(unitOfMeasurementDisabled)
+						 $('#unitOfMeasurement').attr("disabled", true); 
+					bootbox.alert("Failed to Save Details");
+				},
+			    complete: function() {
+			  	  $("#save").removeAttr('disabled');
+			    }
+			});
+		}
+ });
+$( "#search" ).click(function() {
+	$('#resultdiv').empty();
+	var valid = $('#feematrix-new').validate().form();
+	if(!valid)
+		{
+		bootbox.alert("Please fill mandatory fields");
+		return false;
+		}
+	  var param="uniqueNo=";
+	  param=param+$('#natureOfBusiness').val()+"-";
+	  param=param+$('#licenseAppType').val()+"-";
+	  param=param+$('#licenseCategory').val()+"-";
+	  param=param+$('#subCategory').val()+"-";
+	  param=param+$('#feeType').val()+"-";
+	  param=param+$('#unitOfMeasurement').val()+"-";
+	  param=param+$('#financialYear').val(); 
+	   $.ajax({
+			url: "/tl/feematrix/search?"+param,
 			type: "GET",
-			dataType: "json",
+			//dataType: "json",
 			success: function (response) {
-				console.log("success"+JSON.stringify(response) );
-				$('#subCategory').empty();
-				
-				$('#subCategory').append($("<option value=''>Select</option>"));
-				$.each(response.Result, function(index, value) {
-					
-				     $('#subCategory').append("<option value="+value.Value+">"+value.Text+"</option>");
-				});
-				console.log("completed"+response);
-				
+				 $('#resultdiv').html(response);
 			}, 
-			error: function (response) {
-				console.log("failed");
+			error: function () {
 			}
 		});
-	});
-
-});
-
-/*$( "#add-row" ).click(function( event ) {
-	bootbox.alert( "add-row event called." );
-	  $(this).closest("tr").remove(); // remove row
-	    return false;
-});*/
-
-$( "#add-row" ).click(function( event ) {
-	var rowCount = $('#result tr').length;
-	if(!checkforNonEmptyPrevRow())      
-		return false;
-	var prevUOMFromVal=getPrevUOMFromData();
-	var content= $('#resultrow0').html();
-	resultContent=   content.replace(/0/g,rowCount-1);   
-	$(resultContent).find("input").val("");
-	$('#result > tbody:last').append("<tr>"+resultContent+"</tr>"); 
-	$('#result tr:last').find("input").val("");   
-	intiUOMFromData(prevUOMFromVal);  
-	patternvalidation(); 
-});    
-
-$( "#save" ).click(function( event ) {
-if(!validateDetailsBeforeSubmit()){
-	return false;
-} 
-	
-	var natureOfBusinessDisabled=$('#natureOfBusiness').is(':disabled');
-	var licenseAppTypeDisabled=$('#licenseAppType').is(':disabled');
-	var unitOfMeasurementDisabled=$('#unitOfMeasurement').is(':disabled');
-	$('#natureOfBusiness').removeAttr("disabled");
-	$('#licenseAppType').removeAttr("disabled");
-	$('#unitOfMeasurement').removeAttr("disabled");
-	var fd=$('#feematrix-new').serialize();
-	
-	  $.ajax({
-			url: "/tl/feematrix/create",
-			type: "POST",
-			data: fd,
-		    beforeSend: function() {
-		    	$("#save").attr('disabled',true);
-		    },
-			//dataType: "text",
-			success: function (response) {
-				console.log("success"+response );
-				 $('#resultdiv').html(response);
-				 if(natureOfBusinessDisabled)
-					 $('#natureOfBusiness').attr("disabled", true); 
-				 if(licenseAppTypeDisabled)
-					 $('#licenseAppType').attr("disabled", true); 
-				 if(unitOfMeasurementDisabled)
-					 $('#unitOfMeasurement').attr("disabled", true); 
-				 bootbox.alert("Details saved Successfully");
-			}, 
-			error: function (response) {
-				console.log("failed");
-				if(natureOfBusinessDisabled)
-					$('#natureOfBusiness').attr("disabled", true); 
-				if(licenseAppTypeDisabled)
-					$('#licenseAppType').attr("disabled", true);
-				if(unitOfMeasurementDisabled)
-					 $('#unitOfMeasurement').attr("disabled", true); 
-				bootbox.alert("Failed to Save Details");
-			},
-		    complete: function() {
-		  	  $("#save").removeAttr('disabled');
-		    }
+   });
+$("#add-row").click(
+		function(event) {
+			var rowCount = $('#result tbody tr').length;
+			var valid = true;
+			//validate all rows before adding new row
+			$('#result tbody tr').each(function(index,value){
+				$('#result tbody tr:eq('+index+') td input[type="text"]').each(function(i,v){
+					if(!$.trim($(v).val())){
+						valid = false;
+						bootbox.alert("Enter all values for existing rows!",function(){
+							$(v).focus();
+						});
+						return false;
+					}
+				});
+			});
+			if(valid){
+				//Create new row
+				var newRow = $('#result tbody tr:first').clone();
+				newRow.find("input").each(function(){
+	    	        $(this).attr({
+	    	        	'name': function(_, name) { return name.replace(/\[.\]/g, '['+ rowCount +']'); }
+	    	        });
+	    	    });
+				$('#result tbody').append(newRow);
+				var prev_tovalue = $('#result tbody tr:eq('+(rowCount-1)+')').find('input.tovalue').val();
+				$('#result tbody tr:last').find('input').val('');
+				$('#result tbody tr:last').find('input.fromvalue').val(prev_tovalue);
+				patternvalidation();
+			}
 		});
 
+
+$('#result tbody').on('click','tr td .delete-row',function(e){
+	var id = $(this).closest('tr').find('td:eq(0) .detailId').val();
+	//console.log(id)
+	var idx = $(this).closest('tr').index();
+	if(idx == 0){
+		bootbox.alert('Cannot delete first row!');
+	}else if((idx < ($('#result tbody tr').length - 1))){
+		bootbox.alert('Try to delete from last row!');
+	}else{
+		bootbox.confirm("This will delete the row permanently. Press OK to Continue. ",function(result) {
+			if(result){
+				if(!id){
+					$('#result tbody tr:last').remove();
+				}else{
+					$.ajax({
+						url: "/tl/domain/commonAjax-deleteFee.action?feeMatrixDetailId="+id,
+						type : "GET",
+						dataType : "json",
+						success : function(response) {
+							$('#result tbody tr:last').remove();
+						},
+						error : function(response) {
+							bootbox.alert("Unable to delete this row.");
+						}
+					});
+				}
+			}
+		});
+	}
+ });
 });

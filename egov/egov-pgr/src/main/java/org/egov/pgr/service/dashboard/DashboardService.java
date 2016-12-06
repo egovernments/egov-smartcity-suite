@@ -42,6 +42,11 @@ package org.egov.pgr.service.dashboard;
 
 import static org.egov.infra.utils.DateUtils.endOfGivenDate;
 import static org.egov.infra.utils.DateUtils.startOfGivenDate;
+import static org.egov.pgr.utils.constants.PGRConstants.DISPOSALPERC;
+import static org.egov.pgr.utils.constants.PGRConstants.WARDNAME;
+import static org.egov.pgr.utils.constants.PGRConstants.WARDID;
+import static org.egov.pgr.utils.constants.PGRConstants.COUNT;
+import static org.egov.pgr.utils.constants.PGRConstants.COLOR;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -72,22 +77,61 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class DashboardService {
 
+    public static final Map<String, String[]> COLOR_GRADIENTS = new HashMap<>();
     private static final DateTimeFormatter DFLT_DATE_FRMTR = DateTimeFormat.forPattern("dd/MM/yyyy");
 
-    public static final Map<String, String[]> COLOR_GRADIENTS = new HashMap<String, String[]>();
-
     static {
-        COLOR_GRADIENTS.put("#5B94CB", new String[] { "#00285F", "#1D568D", "#4B84BB", "#79B2E9", "#A7E0FF" });
-        COLOR_GRADIENTS.put("#938250", new String[] { "#584e30", "#665b38", "#756840", "#847548", "#9d8e61" });
-        COLOR_GRADIENTS.put("#f9f107", new String[] { "#BBB300", "#E9E100", "#FFFF25", "#FFFF53", "#FFFF79" });
-        COLOR_GRADIENTS.put("#6AC657", new String[] { "#005A00", "#0E6A00", "#2C8819", "#5AB647", "#88E475" });
-        COLOR_GRADIENTS.put("#4F54B8", new String[] { "#00004C", "#11167A", "#3F44A8", "#6D72D6", "#9BA0FF" });
-        COLOR_GRADIENTS.put("#B15D16", new String[] { "#450000", "#731F00", "#A14D06", "#CF7B34", "#FDA962" });
-        COLOR_GRADIENTS.put("#C00000", new String[] { "#540000", "#B00000", "#DE1E1E", "#FF4C4C", "#FF5454" });
+        COLOR_GRADIENTS.put("#5B94CB", new String[]{"#00285F", "#1D568D", "#4B84BB", "#79B2E9", "#A7E0FF"});
+        COLOR_GRADIENTS.put("#938250", new String[]{"#584e30", "#665b38", "#756840", "#847548", "#9d8e61"});
+        COLOR_GRADIENTS.put("#f9f107", new String[]{"#BBB300", "#E9E100", "#FFFF25", "#FFFF53", "#FFFF79"});
+        COLOR_GRADIENTS.put("#6AC657", new String[]{"#005A00", "#0E6A00", "#2C8819", "#5AB647", "#88E475"});
+        COLOR_GRADIENTS.put("#4F54B8", new String[]{"#00004C", "#11167A", "#3F44A8", "#6D72D6", "#9BA0FF"});
+        COLOR_GRADIENTS.put("#B15D16", new String[]{"#450000", "#731F00", "#A14D06", "#CF7B34", "#FDA962"});
+        COLOR_GRADIENTS.put("#C00000", new String[]{"#540000", "#B00000", "#DE1E1E", "#FF4C4C", "#FF5454"});
     }
 
     @Autowired
     private DashboardRepository dashboardRepository;
+
+    private static Map<String, Integer> constructDatePlaceHolder(final DateTime startDate, final DateTime endDate,
+                                                                 final String pattern) {
+        final Map<String, Integer> currentYearTillDays = new LinkedHashMap<>();
+        for (DateTime date = startDate; date.isBefore(endDate); date = date.plusDays(1))
+            currentYearTillDays.put(date.toString(pattern), Integer.valueOf(0));
+        currentYearTillDays.put(endDate.toString(pattern), Integer.valueOf(0));
+        return currentYearTillDays;
+    }
+
+    private static List<Map<String, Object>> constructMonthPlaceHolder(final DateTime startDate, final DateTime endDate,
+                                                                       final String pattern) {
+        final List<Map<String, Object>> dataHolder = new LinkedList<>();
+        for (DateTime date = startDate; date.isBefore(endDate) || date.isEqual(endDate); date = date.plusMonths(1)) {
+            final Map<String, Object> currentYearTillDays = new LinkedHashMap<>();
+            currentYearTillDays.put("name", date.toString(pattern));
+            currentYearTillDays.put("y", Double.valueOf(0));
+            dataHolder.add(currentYearTillDays);
+        }
+        return dataHolder;
+    }
+
+    public static List<Object> constructListOfMonthPlaceHolder(final DateTime startDate, final DateTime endDate,
+                                                               final String pattern) {
+        final List<Object> dataHolder = new LinkedList<>();
+        for (DateTime date = startDate; date.isBefore(endDate); date = date.plusMonths(1))
+            dataHolder.add(date.toString(pattern));
+        return dataHolder;
+    }
+
+    private static void sortData(final List<Map<String, Object>> dataList, final String key) {
+        Collections.sort(dataList, (map1, map2) -> Double.valueOf(map1.get(key).toString()).compareTo(Double.valueOf(map2.get(key).toString()))
+        );
+    }
+
+    private static void assignRank(final List<Map<String, Object>> dataList, final String key) {
+        int counter = 1;
+        for (final Map<String, Object> map : dataList)
+            map.put(key, counter++);
+    }
 
     public Collection<Integer> getComplaintRegistrationTrend() {
         final DateTime currentDate = new DateTime();
@@ -123,12 +167,12 @@ public class DashboardService {
 
     public List<Map<String, Object>> getCompTypewiseAggregate() {
         final DateTime currentDate = new DateTime();
-        final List<Map<String, Object>> compTypeWiseData = new LinkedList<Map<String, Object>>();
+        final List<Map<String, Object>> compTypeWiseData = new LinkedList<>();
         long totalOthersCount = 0;
         int topCount = 1;
         for (final Object[] complaint : dashboardRepository.fetchComplaintTypeWiseBetween(
                 startOfGivenDate(currentDate.minusMonths(6).withDayOfMonth(1)).toDate(), endOfGivenDate(currentDate).toDate())) {
-            final Map<String, Object> compTypewiseCnt = new HashMap<String, Object>();
+            final Map<String, Object> compTypewiseCnt = new HashMap<>();
             final Integer complaintCount = Integer.valueOf(String.valueOf(complaint[2]));
             if (topCount < 9) {
                 compTypewiseCnt.put("name", String.valueOf(complaint[0]));
@@ -141,7 +185,7 @@ public class DashboardService {
         }
 
         if (totalOthersCount > 0) {
-            final Map<String, Object> othersData = new HashMap<String, Object>();
+            final Map<String, Object> othersData = new HashMap<>();
             othersData.put("name", "Others");
             othersData.put("ctId", "");
             othersData.put("y", totalOthersCount);
@@ -155,7 +199,7 @@ public class DashboardService {
         final List<Object[]> wardwisePerformanceData = dashboardRepository.fetchWardwisePerformanceTill(currentDate);
         final List<List<Map<String, Object>>> datas = new LinkedList<>();
         datas.add(performanceAnalysis(wardwisePerformanceData, currentDate));
-        datas.add(performanceProjection(wardwisePerformanceData, currentDate));
+        datas.add(performanceProjection(wardwisePerformanceData));
         return datas;
     }
 
@@ -163,12 +207,11 @@ public class DashboardService {
         return getAgeingData("pgr.wardwise.ageing", wardName);
     }
 
-    private List<Map<String, Object>> performanceProjection(final List<Object[]> wardwisePerformanceData,
-            final DateTime currentDate) {
+    private List<Map<String, Object>> performanceProjection(final List<Object[]> wardwisePerformanceData) {
         final DecimalFormat df = new DecimalFormat("####0.00");
-        final List<Map<String, Object>> compAggrData = new ArrayList<Map<String, Object>>();
+        final List<Map<String, Object>> compAggrData = new ArrayList<>();
         for (final Object[] compData : wardwisePerformanceData) {
-            final Map<String, Object> complaintData = new HashMap<String, Object>();
+            final Map<String, Object> complaintData = new HashMap<>();
             complaintData.put("name", compData[0]);
             final BigInteger compData1 = (BigInteger) compData[1];
             final BigInteger compData3 = (BigInteger) compData[3];
@@ -203,27 +246,27 @@ public class DashboardService {
                 startOfGivenDate(currentDate.minusMonths(5).withDayOfMonth(1)).toDate(), endOfGivenDate(currentDate).toDate());
         final List<Object[]> topFiveCompTypeCurrentMonth = dashboardRepository.fetchTopComplaintsForCurrentMonthBetween(
                 startOfGivenDate(currentDate.minusMonths(5).withDayOfMonth(1)).toDate(), endOfGivenDate(currentDate).toDate());
-        final Map<Object, Object> constructResultPlaceholder = new LinkedHashMap<Object, Object>();
-        final Map<Object, Object> actualdata = new LinkedHashMap<Object, Object>();
+        final Map<Object, Object> constructResultPlaceholder = new LinkedHashMap<>();
+        final Map<Object, Object> actualdata = new LinkedHashMap<>();
         for (final Object complaintType : topFiveCompTypeCurrentMonth)
             for (final Object month : dataHolderNumber)
                 constructResultPlaceholder.put(month + "-" + complaintType, BigInteger.ZERO);
         for (final Object[] top5CompType : topFiveCompTypeData)
             actualdata.put(top5CompType[0] + "-" + top5CompType[2], top5CompType[1]);
-        final Map<Object, Object> newdata = new LinkedHashMap<Object, Object>();
+        final Map<Object, Object> newdata = new LinkedHashMap<>();
         for (final Object placeholderMapKey : constructResultPlaceholder.keySet())
             if (actualdata.get(placeholderMapKey) == null)
                 newdata.put(placeholderMapKey, BigInteger.ZERO);
             else
                 newdata.put(placeholderMapKey, actualdata.get(placeholderMapKey));
-        final Map<String, Object> topFiveCompDataHolder = new LinkedHashMap<String, Object>();
+        final Map<String, Object> topFiveCompDataHolder = new LinkedHashMap<>();
 
-        final List<Object> dataHolder = new LinkedList<Object>();
-        final List<Object> compCount = new ArrayList<Object>();
+        final List<Object> dataHolder = new LinkedList<>();
+        final List<Object> compCount = new ArrayList<>();
         final Iterator<Entry<Object, Object>> entries = newdata.entrySet().iterator();
         int index = 0;
         while (entries.hasNext()) {
-            final Map<String, Object> tmpdata = new LinkedHashMap<String, Object>();
+            final Map<String, Object> tmpdata = new LinkedHashMap<>();
             final Entry<Object, Object> entry = entries.next();
             if (index < 5) {
                 compCount.add(entry.getValue());
@@ -233,7 +276,7 @@ public class DashboardService {
                 final String[] parts = entry.getKey().toString().split("-");
                 tmpdata.put("name", parts[1]);
                 tmpdata.put("data", new LinkedList<Object>(compCount));
-                final HashMap<String, Object> ctypeCountMap = new LinkedHashMap<String, Object>();
+                final HashMap<String, Object> ctypeCountMap = new LinkedHashMap<>();
                 ctypeCountMap.putAll(tmpdata);
                 dataHolder.add(ctypeCountMap);
                 index = 0;
@@ -249,19 +292,19 @@ public class DashboardService {
 
     private List<List<Object>> getAgeingData(final String querykey, final String wardName) {
         final Object[] compData = dashboardRepository.fetchComplaintAgeing(querykey, wardName);
-        final List<Object> cntabv90 = new LinkedList<Object>();
+        final List<Object> cntabv90 = new LinkedList<>();
         cntabv90.add("&gt; 90 Days");
         cntabv90.add(((BigInteger) compData[0]).intValue());
-        final List<Object> cntbtw45to90 = new LinkedList<Object>();
+        final List<Object> cntbtw45to90 = new LinkedList<>();
         cntbtw45to90.add("90-45 Days");
         cntbtw45to90.add(((BigInteger) compData[1]).intValue());
-        final List<Object> cntbtw15to45 = new LinkedList<Object>();
+        final List<Object> cntbtw15to45 = new LinkedList<>();
         cntbtw15to45.add("44-15 Days");
         cntbtw15to45.add(((BigInteger) compData[2]).intValue());
-        final List<Object> cntlsthn15 = new LinkedList<Object>();
+        final List<Object> cntlsthn15 = new LinkedList<>();
         cntlsthn15.add("&lt; 15 Days");
         cntlsthn15.add(((BigInteger) compData[3]).intValue());
-        final List<List<Object>> dataHolder = new LinkedList<List<Object>>();
+        final List<List<Object>> dataHolder = new LinkedList<>();
         dataHolder.add(cntabv90);
         dataHolder.add(cntbtw45to90);
         dataHolder.add(cntbtw15to45);
@@ -271,14 +314,14 @@ public class DashboardService {
     }
 
     private List<Map<String, Object>> performanceAnalysis(final List<Object[]> wardwisePerformanceData,
-            final DateTime currentDate) {
-        final List<Map<String, Object>> compAggrData = new ArrayList<Map<String, Object>>();
+                                                          final DateTime currentDate) {
+        final List<Map<String, Object>> compAggrData = new ArrayList<>();
         final String formattedFrm = endOfGivenDate(currentDate.minusDays(14)).toString(DFLT_DATE_FRMTR);
         final String formattedDayAfterFrm = startOfGivenDate(currentDate.minusDays(13)).toString(DFLT_DATE_FRMTR);
         final String formattedTo = currentDate.toString(DFLT_DATE_FRMTR);
         final DecimalFormat df = new DecimalFormat("####0.00");
         for (final Object[] compData : wardwisePerformanceData) {
-            final Map<String, Object> complaintData = new HashMap<String, Object>();
+            final Map<String, Object> complaintData = new HashMap<>();
             complaintData.put("zone", compData[0]);
             final BigInteger compData1 = (BigInteger) compData[1];
             final BigInteger compData3 = (BigInteger) compData[3];
@@ -295,9 +338,9 @@ public class DashboardService {
             final Double disposalPerc = 100 * (noOfCompAsOnDate + noOfCompReceivedBtw - noOfCompPenAsonDate)
                     / (noOfCompAsOnDate + noOfCompReceivedBtw);
             if (disposalPerc.isNaN() || disposalPerc.isInfinite())
-                complaintData.put("disposalPerc", "0.00");
+                complaintData.put(DISPOSALPERC, "0.00");
             else
-                complaintData.put("disposalPerc", df.format(disposalPerc));
+                complaintData.put(DISPOSALPERC, df.format(disposalPerc));
             complaintData.put("lat", compData[6]);
             complaintData.put("lng", compData[7]);
             complaintData.put("zoneId", compData[8]);
@@ -305,7 +348,7 @@ public class DashboardService {
         }
 
         // SORT ZONEWISE PERFORMANCE BY REDRESSAL %
-        sortData(compAggrData, "disposalPerc");
+        sortData(compAggrData, DISPOSALPERC);
         Collections.reverse(compAggrData);
         // ASSIGN A RANK BASED ON ORDER
         assignRank(compAggrData, "rank");
@@ -321,8 +364,8 @@ public class DashboardService {
         final DateTime tillDate = new LocalDate().toDateTimeAtCurrentTime();
         final List<Object[]> openComplaints = dashboardRepository.fetchOpenComplaintAggregateBetween(startOfTheYear, tillDate);
 
-        final List<Map<String, Object>> compAggrData = new ArrayList<Map<String, Object>>();
-        final Map<String, Object> complaintData = new HashMap<String, Object>();
+        final List<Map<String, Object>> compAggrData = new ArrayList<>();
+        final Map<String, Object> complaintData = new HashMap<>();
         String lastZone = null;
         double regComplaint = 0;
         double openFrm90Days = 0;
@@ -334,7 +377,7 @@ public class DashboardService {
         final String formattedTo = tillDate.toString(dtf);
         for (final Object[] compData : openComplaints) {
             final String statusName = String.valueOf(compData[4]);
-            final long count = Long.valueOf(String.valueOf(compData[5]));
+            final long count = Long.parseLong(String.valueOf(compData[5]));
             if ("REGISTERED FORWARDED PROCESSING REOPENED".contains(statusName)) {
                 if (((Date) compData[6]).before(dateBefore90Days))
                     openFrm90Days += count;
@@ -370,32 +413,32 @@ public class DashboardService {
     }
 
     public List<Map<String, Object>> getWardwiseComplaintByComplaintType(final Long complaintTypeId,
-            final String currentChartColor) {
+                                                                         final String currentChartColor) {
         final DateTime currentDate = new DateTime();
-        final List<Map<String, Object>> wardWiseData = new LinkedList<Map<String, Object>>();
+        final List<Map<String, Object>> wardWiseData = new LinkedList<>();
         double topCount = -1;
         for (final Object[] complaint : dashboardRepository.fetchComplaintsByComplaintTypeGroupByWard(complaintTypeId,
                 startOfGivenDate(currentDate.minusMonths(6).withDayOfMonth(1).withTimeAtStartOfDay()),
                 endOfGivenDate(currentDate))) {
-            final Map<String, Object> wardwiseCnt = new HashMap<String, Object>();
-            wardwiseCnt.put("wardName", String.valueOf(complaint[0]));
-            wardwiseCnt.put("wardId", ((BigInteger) complaint[1]).intValue());
+            final Map<String, Object> wardwiseCnt = new HashMap<>();
+            wardwiseCnt.put(WARDNAME, String.valueOf(complaint[0]));
+            wardwiseCnt.put(WARDID, ((BigInteger) complaint[1]).intValue());
             final double count = ((BigInteger) complaint[2]).doubleValue();
-            wardwiseCnt.put("count", count);
+            wardwiseCnt.put(COUNT, count);
             if (topCount == -1)
                 topCount = count;
             final double perc = count * 100 / topCount;
             final String[] colors = COLOR_GRADIENTS.get(currentChartColor);
             if (perc <= 20)
-                wardwiseCnt.put("color", colors[4]);
+                wardwiseCnt.put(COLOR, colors[4]);
             else if (perc > 20.0 && perc <= 40.0)
-                wardwiseCnt.put("color", colors[3]);
+                wardwiseCnt.put(COLOR, colors[3]);
             else if (perc > 40.0 && perc <= 60.0)
-                wardwiseCnt.put("color", colors[2]);
+                wardwiseCnt.put(COLOR, colors[2]);
             else if (perc > 60.0 && perc <= 80.0)
-                wardwiseCnt.put("color", colors[1]);
+                wardwiseCnt.put(COLOR, colors[1]);
             else
-                wardwiseCnt.put("color", colors[0]);
+                wardwiseCnt.put(COLOR, colors[0]);
 
             wardWiseData.add(wardwiseCnt);
         }
@@ -405,7 +448,7 @@ public class DashboardService {
     public Map<String, List<Map<String, Object>>> getGISWardWiseAnalysis() {
 
         // final List<Object[]> top3CompTypes = getQuery("pgr.top3.comptype").list();
-        final Map<String, List<Map<String, Object>>> gisAnalysisData = new HashMap<String, List<Map<String, Object>>>();
+        final Map<String, List<Map<String, Object>>> gisAnalysisData = new HashMap<>();
         /*
          * final String [] top3Colors = {"#5B94CB","#938250","#6AC657"}; int colorCount = 0; for (final Object[] top3CompType :
          * top3CompTypes) { final SQLQuery qry = getQuery("pgr.bndry.wise.perc"); qry.setParameter("fromDate", new
@@ -432,28 +475,28 @@ public class DashboardService {
 
     public List<Map<String, Object>> getGISCompPerPropertyWardWise() {
         final List<Object[]> compCount = dashboardRepository.fetchGISCompPerPropertyWardWise();
-        final List<Map<String, Object>> wardWiseData = new LinkedList<Map<String, Object>>();
+        final List<Map<String, Object>> wardWiseData = new LinkedList<>();
         double topCount = -1;
         for (final Object[] wardData : compCount) {
-            final Map<String, Object> wardwiseCompPerProp = new HashMap<String, Object>();
-            wardwiseCompPerProp.put("wardName", String.valueOf(wardData[0]));
-            wardwiseCompPerProp.put("wardId", ((BigDecimal) wardData[1]).intValue());
+            final Map<String, Object> wardwiseCompPerProp = new HashMap<>();
+            wardwiseCompPerProp.put(WARDNAME, String.valueOf(wardData[0]));
+            wardwiseCompPerProp.put(WARDID, ((BigDecimal) wardData[1]).intValue());
             final double count = ((BigDecimal) wardData[2]).doubleValue();
-            wardwiseCompPerProp.put("count", count);
+            wardwiseCompPerProp.put(COUNT, count);
             if (topCount == -1)
                 topCount = count;
             final double perc = count * 100 / topCount;
             final String[] colors = COLOR_GRADIENTS.get("#B15D16");
             if (perc <= 20)
-                wardwiseCompPerProp.put("color", colors[4]);
+                wardwiseCompPerProp.put(COLOR, colors[4]);
             else if (perc > 20.0 && perc <= 40.0)
-                wardwiseCompPerProp.put("color", colors[3]);
+                wardwiseCompPerProp.put(COLOR, colors[3]);
             else if (perc > 40.0 && perc <= 60.0)
-                wardwiseCompPerProp.put("color", colors[2]);
+                wardwiseCompPerProp.put(COLOR, colors[2]);
             else if (perc > 60.0 && perc <= 80.0)
-                wardwiseCompPerProp.put("color", colors[1]);
+                wardwiseCompPerProp.put(COLOR, colors[1]);
             else
-                wardwiseCompPerProp.put("color", colors[0]);
+                wardwiseCompPerProp.put(COLOR, colors[0]);
             wardWiseData.add(wardwiseCompPerProp);
         }
         return wardWiseData;
@@ -461,28 +504,28 @@ public class DashboardService {
 
     public List<Map<String, Object>> getGISCompRedressedWardWise() {
         final List<Object[]> compRedrsdCount = dashboardRepository.fetchGISCompRedressedWardWise();
-        final List<Map<String, Object>> wardWiseData = new LinkedList<Map<String, Object>>();
+        final List<Map<String, Object>> wardWiseData = new LinkedList<>();
         double topCount = -1;
         for (final Object[] wardData : compRedrsdCount) {
-            final Map<String, Object> wardwiseCompRedressed = new HashMap<String, Object>();
-            wardwiseCompRedressed.put("wardName", String.valueOf(wardData[0]));
-            wardwiseCompRedressed.put("wardId", ((BigDecimal) wardData[1]).intValue());
+            final Map<String, Object> wardwiseCompRedressed = new HashMap<>();
+            wardwiseCompRedressed.put(WARDNAME, String.valueOf(wardData[0]));
+            wardwiseCompRedressed.put(WARDID, ((BigDecimal) wardData[1]).intValue());
             final double count = ((BigDecimal) wardData[2]).doubleValue();
-            wardwiseCompRedressed.put("count", count);
+            wardwiseCompRedressed.put(COUNT, count);
             if (topCount == -1)
                 topCount = count;
             final double perc = count * 100 / topCount;
             final String[] colors = COLOR_GRADIENTS.get("#4F54B8");
             if (perc <= 20)
-                wardwiseCompRedressed.put("color", colors[4]);
+                wardwiseCompRedressed.put(COLOR, colors[4]);
             else if (perc > 20.0 && perc <= 40.0)
-                wardwiseCompRedressed.put("color", colors[3]);
+                wardwiseCompRedressed.put(COLOR, colors[3]);
             else if (perc > 40.0 && perc <= 60.0)
-                wardwiseCompRedressed.put("color", colors[2]);
+                wardwiseCompRedressed.put(COLOR, colors[2]);
             else if (perc > 60.0 && perc <= 80.0)
-                wardwiseCompRedressed.put("color", colors[1]);
+                wardwiseCompRedressed.put(COLOR, colors[1]);
             else
-                wardwiseCompRedressed.put("color", colors[0]);
+                wardwiseCompRedressed.put(COLOR, colors[0]);
             wardWiseData.add(wardwiseCompRedressed);
         }
         return wardWiseData;
@@ -491,71 +534,30 @@ public class DashboardService {
     public List<Map<String, Object>> getGISRegCompWardWise() {
 
         final List<Object[]> compCount = dashboardRepository.fetchGISRegCompWardWise();
-        final List<Map<String, Object>> wardWiseData = new LinkedList<Map<String, Object>>();
+        final List<Map<String, Object>> wardWiseData = new LinkedList<>();
         double topCount = -1;
         for (final Object[] wardData : compCount) {
-            final Map<String, Object> wardwiseCnt = new HashMap<String, Object>();
-            wardwiseCnt.put("wardName", String.valueOf(wardData[0]));
-            wardwiseCnt.put("wardId", ((BigInteger) wardData[1]).intValue());
+            final Map<String, Object> wardwiseCnt = new HashMap<>();
+            wardwiseCnt.put(WARDNAME, String.valueOf(wardData[0]));
+            wardwiseCnt.put(WARDID, ((BigInteger) wardData[1]).intValue());
             final double count = ((BigInteger) wardData[2]).doubleValue();
-            wardwiseCnt.put("count", count);
+            wardwiseCnt.put(COUNT, count);
             if (topCount == -1)
                 topCount = count;
             final double perc = count * 100 / topCount;
             final String[] colors = COLOR_GRADIENTS.get("#C00000");
             if (perc <= 20)
-                wardwiseCnt.put("color", colors[4]);
+                wardwiseCnt.put(COLOR, colors[4]);
             else if (perc > 20.0 && perc <= 40.0)
-                wardwiseCnt.put("color", colors[3]);
+                wardwiseCnt.put(COLOR, colors[3]);
             else if (perc > 40.0 && perc <= 60.0)
-                wardwiseCnt.put("color", colors[2]);
+                wardwiseCnt.put(COLOR, colors[2]);
             else if (perc > 60.0 && perc <= 80.0)
-                wardwiseCnt.put("color", colors[1]);
+                wardwiseCnt.put(COLOR, colors[1]);
             else
-                wardwiseCnt.put("color", colors[0]);
+                wardwiseCnt.put(COLOR, colors[0]);
             wardWiseData.add(wardwiseCnt);
         }
         return wardWiseData;
-    }
-
-    private static Map<String, Integer> constructDatePlaceHolder(final DateTime startDate, final DateTime endDate,
-            final String pattern) {
-        final Map<String, Integer> currentYearTillDays = new LinkedHashMap<String, Integer>();
-        for (DateTime date = startDate; date.isBefore(endDate); date = date.plusDays(1))
-            currentYearTillDays.put(date.toString(pattern), Integer.valueOf(0));
-        currentYearTillDays.put(endDate.toString(pattern), Integer.valueOf(0));
-        return currentYearTillDays;
-    }
-
-    private static List<Map<String, Object>> constructMonthPlaceHolder(final DateTime startDate, final DateTime endDate,
-            final String pattern) {
-        final List<Map<String, Object>> dataHolder = new LinkedList<Map<String, Object>>();
-        for (DateTime date = startDate; date.isBefore(endDate) || date.isEqual(endDate); date = date.plusMonths(1)) {
-            final Map<String, Object> currentYearTillDays = new LinkedHashMap<String, Object>();
-            currentYearTillDays.put("name", date.toString(pattern));
-            currentYearTillDays.put("y", Double.valueOf(0));
-            dataHolder.add(currentYearTillDays);
-        }
-        return dataHolder;
-    }
-
-    public static List<Object> constructListOfMonthPlaceHolder(final DateTime startDate, final DateTime endDate,
-            final String pattern) {
-        final List<Object> dataHolder = new LinkedList<Object>();
-        for (DateTime date = startDate; date.isBefore(endDate); date = date.plusMonths(1))
-            dataHolder.add(date.toString(pattern));
-        return dataHolder;
-    }
-
-    private static void sortData(final List<Map<String, Object>> dataList, final String key) {
-        Collections.sort(dataList, (map1, map2) -> {
-            return Double.valueOf(map1.get(key).toString()).compareTo(Double.valueOf(map2.get(key).toString()));
-        });
-    }
-
-    private static void assignRank(final List<Map<String, Object>> dataList, final String key) {
-        int counter = 1;
-        for (final Map<String, Object> map : dataList)
-            map.put(key, counter++);
     }
 }

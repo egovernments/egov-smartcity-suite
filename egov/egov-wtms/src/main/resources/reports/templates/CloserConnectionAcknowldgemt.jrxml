@@ -38,6 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
+<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
+<!-- 2016-12-05T16:48:03 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -73,77 +75,77 @@
 	<background>
 		<band height="780" splitType="Stretch">
 			<rectangle>
-				<reportElement uuid="0e6d2994-c285-439a-bbb6-836a2e4ff230" x="0" y="35" width="555" height="740"/>
+				<reportElement x="0" y="35" width="555" height="740" uuid="0e6d2994-c285-439a-bbb6-836a2e4ff230"/>
 			</rectangle>
 		</band>
 	</background>
 	<title>
 		<band height="423" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="1a5f6044-d55c-4489-9f00-f9fff6e6874a" x="1" y="39" width="552" height="20"/>
+				<reportElement x="1" y="39" width="552" height="20" uuid="1a5f6044-d55c-4489-9f00-f9fff6e6874a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="7d3c2b93-9606-4076-9521-e1f3a1221f18" x="10" y="96" width="99" height="23"/>
+				<reportElement x="10" y="96" width="99" height="23" uuid="7d3c2b93-9606-4076-9521-e1f3a1221f18"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<text><![CDATA[H.S.C Number :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="15da5d52-1a96-4730-bd2c-f0474440b4ae" x="1" y="59" width="552" height="22" isPrintInFirstWholeBand="true"/>
+				<reportElement x="1" y="59" width="552" height="22" isPrintInFirstWholeBand="true" uuid="15da5d52-1a96-4730-bd2c-f0474440b4ae"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[    Water tap Dis-Connection Acknowledgement  ]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement uuid="6954f1f5-9643-4abc-a103-1ace1a7cf3ae" x="25" y="146" width="489" height="63"/>
+				<reportElement x="25" y="146" width="489" height="63" uuid="6954f1f5-9643-4abc-a103-1ace1a7cf3ae"/>
 				<textElement verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="false" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["This is to acknowledge that an application for "+$P{closeConnectionType}+" "+$P{applicationType}+" has been approved by commissioner for Water tap connection with H.S.C No."+$P{consumerCode}+", with address "+$P{address}+". Disconnection is effective from "+$P{closeApprovalDate}+"."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement uuid="3f16c27b-54d5-410d-a416-f25b4d13bef7" x="342" y="96" width="209" height="23"/>
+				<reportElement x="342" y="96" width="209" height="23" uuid="3f16c27b-54d5-410d-a416-f25b4d13bef7"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
 					<font size="12" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Approval Date : </style>"+$P{applicationDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Approval Date : </style>"+$P{closeApprovalDate}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="fc5a9caf-2a7c-46da-9e8a-7c4df632632c" x="342" y="291" width="194" height="20"/>
+				<reportElement x="342" y="291" width="194" height="20" uuid="fc5a9caf-2a7c-46da-9e8a-7c4df632632c"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<text><![CDATA[Signature]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="f7cd0629-54e8-4fd8-8a5b-b648e7ae6137" x="342" y="307" width="194" height="20"/>
+				<reportElement x="342" y="307" width="194" height="20" uuid="f7cd0629-54e8-4fd8-8a5b-b648e7ae6137"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<text><![CDATA[Commissioner]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="0fc56cfb-daab-45df-93ed-971bb6983687" x="342" y="323" width="194" height="20"/>
+				<reportElement x="342" y="323" width="194" height="20" uuid="0fc56cfb-daab-45df-93ed-971bb6983687"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="e253dff5-83d2-4974-beb6-2b5889365713" x="99" y="96" width="122" height="23"/>
+				<reportElement x="99" y="96" width="122" height="23" uuid="e253dff5-83d2-4974-beb6-2b5889365713"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{consumerCode}]]></textFieldExpression>
 			</textField>
 			<image hAlign="Center" vAlign="Bottom" onErrorType="Blank">
-				<reportElement uuid="d476b9bb-dda4-4360-acd5-0ee1f65f4f15" x="343" y="240" width="193" height="50"/>
+				<reportElement x="343" y="240" width="193" height="50" uuid="d476b9bb-dda4-4360-acd5-0ee1f65f4f15"/>
 				<imageExpression><![CDATA[$P{usersignature}]]></imageExpression>
 			</image>
 		</band>

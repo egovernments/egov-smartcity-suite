@@ -63,7 +63,26 @@ public class CouncilMemberIndex {
     
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String address;
-
+    
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String ulbName;
+    
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String districtName;
+    
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String regionName;
+    
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String ulbGrade;
+    
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String ulbCode;
+    
+    @JsonFormat (shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
+    private Date createdDate;
+   
     public String getId() {
         return id;
     }
@@ -183,6 +202,53 @@ public class CouncilMemberIndex {
     public void setAddress(String address) {
         this.address = address;
     }
-    
-   
+
+    public String getUlbName() {
+        return ulbName;
+    }
+
+    public void setUlbName(String ulbName) {
+        this.ulbName = ulbName;
+    }
+
+    public String getDistrictName() {
+        return districtName;
+    }
+
+    public void setDistrictName(String districtName) {
+        this.districtName = districtName;
+    }
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
+    }
+
+    public String getUlbGrade() {
+        return ulbGrade;
+    }
+
+    public void setUlbGrade(String ulbGrade) {
+        this.ulbGrade = ulbGrade;
+    }
+
+    public String getUlbCode() {
+        return ulbCode;
+    }
+
+    public void setUlbCode(String ulbCode) {
+        this.ulbCode = ulbCode;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
 }

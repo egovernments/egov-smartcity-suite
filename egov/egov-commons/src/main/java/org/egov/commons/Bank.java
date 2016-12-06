@@ -39,141 +39,172 @@
  */
 package org.egov.commons;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Bank implements java.io.Serializable {
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-	private static final long serialVersionUID = 1L;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
 
-	@JsonIgnore
-	private Integer id;
+@Entity
+@Table(name = "BANK")
+@SequenceGenerator(name = Bank.SEQ_BANK, sequenceName = Bank.SEQ_BANK, allocationSize = 1)
+@Unique(fields = { "code", "name" }, enableDfltMsg = true)
+public class Bank extends AbstractPersistable<Integer> {
 
-	private String code;
+    private static final long serialVersionUID = -2839424467289504649L;
 
-	private String name;
-	@JsonIgnore
-	private String narration;
-	@JsonIgnore
-	private Boolean isactive;
-	@JsonIgnore
-	private Date lastmodified;
-	@JsonIgnore
-	private Date created;
-	@JsonIgnore
-	private BigDecimal modifiedby;
-	@JsonIgnore
-	private String type;
-	@JsonIgnore
-	private Set<Bankbranch> bankbranchs = new HashSet<Bankbranch>(0);
+    public static final String SEQ_BANK = "SEQ_BANK";
 
-	public Bank() {
-		//For hibernate to work
-	}
+    @Id
+    @GeneratedValue(generator = SEQ_BANK, strategy = GenerationType.SEQUENCE)
+    @JsonIgnore
+    private Integer id;
 
-	public Bank(String code, String name, Boolean isactive, Date lastmodified, Date created, BigDecimal modifiedby) {
-		this.code = code;
-		this.name = name;
-		this.isactive = isactive;
-		this.lastmodified = lastmodified;
-		this.created = created;
-		this.modifiedby = modifiedby;
-	}
+    @Required
+    @Length(max = 50)
+    private String code;
 
-	public Bank(String code, String name, String narration, Boolean isactive, Date lastmodified, Date created, BigDecimal modifiedby, String type, Set<Bankbranch> bankbranchs) {
-		this.code = code;
-		this.name = name;
-		this.narration = narration;
-		this.isactive = isactive;
-		this.lastmodified = lastmodified;
-		this.created = created;
-		this.modifiedby = modifiedby;
-		this.type = type;
-		this.bankbranchs = bankbranchs;
-	}
+    @Required
+    @Length(max = 100)
+    private String name;
 
-	public Integer getId() {
-		return this.id;
-	}
+    @JsonIgnore
+    @Length(max = 250)
+    private String narration;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    @JsonIgnore
+    @Required
+    private Boolean isactive;
 
-	public String getCode() {
-		return this.code;
-	}
+    @JsonIgnore
+    @Length(max = 50)
+    private String type;
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    @JsonIgnore
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "bank", targetEntity = Bankbranch.class)
+    private Set<Bankbranch> bankbranchs = new HashSet<>(0);
 
-	public String getName() {
-		return this.name;
-	}
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "createdby")
+    private User createdBy;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @JsonIgnore
+    private Date createdDate;
 
-	public String getNarration() {
-		return this.narration;
-	}
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lastModifiedBy")
+    private User lastModifiedBy;
 
-	public void setNarration(String narration) {
-		this.narration = narration;
-	}
+    @JsonIgnore
+    private Date lastModifiedDate;
 
-	public Date getLastmodified() {
-		return this.lastmodified;
-	}
+    @Override
+    public Integer getId() {
+        return id;
+    }
 
-	public void setLastmodified(Date lastmodified) {
-		this.lastmodified = lastmodified;
-	}
+    @Override
+    public void setId(final Integer id) {
+        this.id = id;
+    }
 
-	public Date getCreated() {
-		return this.created;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setCreated(Date created) {
-		this.created = created;
-	}
+    public void setCode(final String code) {
+        this.code = code;
+    }
 
-	public BigDecimal getModifiedby() {
-		return this.modifiedby;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setModifiedby(BigDecimal modifiedby) {
-		this.modifiedby = modifiedby;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public String getType() {
-		return this.type;
-	}
+    public String getNarration() {
+        return narration;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setNarration(final String narration) {
+        this.narration = narration;
+    }
 
-	public Set<Bankbranch> getBankbranchs() {
-		return this.bankbranchs;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setBankbranchs(Set<Bankbranch> bankbranchs) {
-		this.bankbranchs = bankbranchs;
-	}
+    public void setType(final String type) {
+        this.type = type;
+    }
+
+    public Set<Bankbranch> getBankbranchs() {
+        return bankbranchs;
+    }
+
+    public void setBankbranchs(final Set<Bankbranch> bankbranchs) {
+        this.bankbranchs = bankbranchs;
+    }
 
     public Boolean getIsactive() {
         return isactive;
     }
 
-    public void setIsactive(Boolean isactive) {
+    public void setIsactive(final Boolean isactive) {
         this.isactive = isactive;
+    }
+
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(final User createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(final Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public User getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(final User lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(final Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
 }

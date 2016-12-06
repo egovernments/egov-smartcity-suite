@@ -43,11 +43,9 @@ package org.egov.wtms.bean.dashboard;
 @SuppressWarnings("serial")
 public class WaterChargeDashBoardRequest {
 
-    
-    private String city;
+
     private String ulbGrade;
     private String ulbCode;
-    private String ulbName;
     private String regionName;
     private String districtName;
     private String fromDate;
@@ -104,15 +102,6 @@ public class WaterChargeDashBoardRequest {
         this.type = type;
     }
 
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-
     public String getUlbCode() {
         return ulbCode;
     }
@@ -129,13 +118,4 @@ public class WaterChargeDashBoardRequest {
         this.ulbGrade = ulbGrade;
     }
 
-    public String getUlbName() {
-        return ulbName;
-    }
-
-    public void setUlbName(String ulbName) {
-        this.ulbName = ulbName;
-    }
-
-    
 }

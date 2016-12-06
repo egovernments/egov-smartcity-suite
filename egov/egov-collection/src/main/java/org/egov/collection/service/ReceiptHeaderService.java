@@ -152,7 +152,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * @return List of all receipts created by given user from given counter id
      *         and having given status
      */
-    public List<ReceiptHeader> findAllByPositionAndInboxItemDetails(final Long positionId, final String groupingCriteria) {
+    public List<ReceiptHeader> findAllByPositionAndInboxItemDetails(final List<Long> positionIds,
+            final String groupingCriteria) {
         final StringBuilder query = new StringBuilder(
                 "from org.egov.collection.entity.ReceiptHeader where 1=1 and state.value != 'END' and state.status != 2");
         String wfAction = null, serviceCode = null, userName = null, receiptDate = null, receiptType = null;
@@ -167,7 +168,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             receiptType = params[5];
         }
         final boolean allCounters = counterId == null || counterId < 0;
-        final boolean allPositions = positionId == null || positionId.equals(CollectionConstants.ALL);
+        // final boolean allPositions = positionIds == null ||
+        // positionIds.equals(CollectionConstants.ALL);
         final boolean allServices = serviceCode == null || serviceCode.equals(CollectionConstants.ALL);
         final boolean allWfAction = wfAction == null || wfAction.equals(CollectionConstants.ALL);
         final boolean allUserName = userName == null || userName.equals(CollectionConstants.ALL);
@@ -180,8 +182,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             LOGGER.error("Exception while parsing ReceiptDate" + e.getMessage());
         }
 
-        if (!allPositions)
-            query.append(" and state.ownerPosition.id = :positionId");
+        // if (!allPositions)
+        query.append(" and state.ownerPosition.id in :positionIds");
         if (!allCounters)
             query.append(" and location.id = :counterId");
         if (!allServices && receiptType.equals(CollectionConstants.SERVICE_TYPE_BILLING))
@@ -199,8 +201,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         query.append(" order by receiptdate  desc");
         final Query listQuery = getSession().createQuery(query.toString());
 
-        if (!allPositions)
-            listQuery.setLong("positionId", positionId);
+        // if (!allPositions)
+        listQuery.setParameterList("positionIds", positionIds);
         if (!allCounters)
             listQuery.setInteger("counterId", counterId);
         if (!allServices && receiptType.equals(CollectionConstants.SERVICE_TYPE_BILLING))
@@ -869,22 +871,17 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             throws ApplicationRuntimeException {
         try {
             Position operatorPosition;
-            Employee employee = null;
-            final Boolean isEmployee = collectionsUtil.isEmployee(receiptHeader.getCreatedBy());
-            if (!isEmployee) {
-                employee = employeeService.getEmployeeById(collectionsUtil.getLoggedInUser().getId());
-                operatorPosition = collectionsUtil.getPositionByDeptDesgAndBoundary(receiptHeader.getReceiptMisc()
-                        .getBoundary());
-            } else {
-                operatorPosition = collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy());
-                employee = employeeService.getEmployeeById(receiptHeader.getCreatedBy().getId());
-            }
+            Employee employee = employeeService.getEmployeeById(receiptHeader.getCreatedBy().getId());
+
             final Department department = departmentService.getDepartmentByName(collectionsUtil.getAppConfigValue(
                     CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                     CollectionConstants.COLLECTION_DEPARTMENTFORWORKFLOWAPPROVER));
             final Designation designation = designationService.getDesignationByName(collectionsUtil.getAppConfigValue(
                     CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                     CollectionConstants.COLLECTION_DESIGNATIONFORAPPROVER));
+            final Boolean isEmployee = collectionsUtil.isEmployee(receiptHeader.getCreatedBy());
+            if (!isEmployee)
+                employee = employeeService.getEmployeeById(collectionsUtil.getLoggedInUser().getId());
             Boundary boundary = null;
             for (final Jurisdiction jur : employee.getJurisdictions())
                 boundary = jur.getBoundary();
@@ -901,10 +898,16 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             else if (actionName.equals(CollectionConstants.WF_ACTION_APPROVE))
                 perform(receiptHeader, CollectionConstants.WF_STATE_APPROVED,
                         CollectionConstants.RECEIPT_STATUS_CODE_APPROVED, "", approverPosition, remarks);
-            else if (actionName.equals(CollectionConstants.WF_ACTION_REJECT))
+            else if (actionName.equals(CollectionConstants.WF_ACTION_REJECT)) {
+                if (!isEmployee)
+                    operatorPosition = collectionsUtil.getPositionByDeptDesgAndBoundary(receiptHeader.getReceiptMisc()
+                            .getBoundary());
+                else
+                    operatorPosition = collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy());
                 perform(receiptHeader, CollectionConstants.WF_STATE_REJECTED,
                         CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED, CollectionConstants.WF_ACTION_SUBMIT,
                         operatorPosition, remarks);
+            }
         } catch (final ValidationException e) {
             LOGGER.error(e.getErrors());
             final List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -919,9 +922,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
     @Transactional
     public void performWorkflowForAllReceipts(final String actionName, final List<ReceiptHeader> receiptHeaders,
-            final String remarks, final Position operatorPosition, final Position approverPosition)
-            throws ApplicationRuntimeException {
+            final String remarks) throws ApplicationRuntimeException {
         try {
+            final Position approverPosition = getApproverPosition(receiptHeaders.get(0));
             for (final ReceiptHeader receiptHeader : receiptHeaders)
                 if (actionName.equals(CollectionConstants.WF_ACTION_SUBMIT))
                     perform(receiptHeader, CollectionConstants.WF_ACTION_APPROVE,
@@ -930,10 +933,12 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 else if (actionName.equals(CollectionConstants.WF_ACTION_APPROVE))
                     perform(receiptHeader, CollectionConstants.WF_STATE_APPROVED,
                             CollectionConstants.RECEIPT_STATUS_CODE_APPROVED, "", approverPosition, remarks);
-                else if (actionName.equals(CollectionConstants.WF_ACTION_REJECT))
+                else if (actionName.equals(CollectionConstants.WF_ACTION_REJECT)) {
+                    final Position operatorPosition = getOperatorPosition(receiptHeaders.get(0));
                     perform(receiptHeader, CollectionConstants.WF_STATE_REJECTED,
                             CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED,
                             CollectionConstants.WF_ACTION_SUBMIT, operatorPosition, remarks);
+                }
         } catch (final ValidationException e) {
             LOGGER.error(e.getErrors());
             final List<ValidationError> errors = new ArrayList<ValidationError>();

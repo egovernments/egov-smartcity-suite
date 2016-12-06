@@ -63,6 +63,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseDemand;
@@ -111,10 +112,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, currentAction);
     }
 
-    @Override
-    protected Assignment getWorkflowInitiator(final TradeLicense license) {
-        return assignmentService.getPrimaryAssignmentForUser(license.getCreatedBy().getId());
-    }
 
     @Override
     protected LicenseAppType getLicenseApplicationTypeForRenew() {
@@ -139,7 +136,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
         final BigDecimal recalDemandAmount = calculateFeeAmount(license);
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
-        final Assignment wfInitiator = getWorkflowInitiator(license);
+        final Position wfInitiator = getWorkflowInitiator(license);
         if (BUTTONAPPROVE.equals(workFlowAction)) {
             if (license.getLicenseAppType() != null
                     && !license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
@@ -179,7 +176,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             if (license.getLicenseAppType() != null
                     && license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
                 license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_ACTIVE));
-            else if (wfInitiator.equals(userAssignment)) {
+            else if (wfInitiator.equals(userAssignment.getPosition())) {
                 license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_CANCELLED));
                 license = (TradeLicense) licenseUtils.applicationStatusChange(license,
                         Constants.APPLICATION_STATUS_CANCELLED);
@@ -200,14 +197,14 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     public ReportOutput prepareReportInputDataForDig(final License license, final String districtName,
-            final String cityMunicipalityName) {
+                                                     final String cityMunicipalityName) {
         return reportService.createReport(
                 new ReportRequest("licenseCertificate", license, getReportParamsForCertificate(license, districtName,
                         cityMunicipalityName)));
     }
 
     private Map<String, Object> getReportParamsForCertificate(final License license, final String districtName,
-            final String cityMunicipalityName) {
+                                                              final String cityMunicipalityName) {
         final Map<String, Object> reportParams = new HashMap<>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final Format formatterYear = new SimpleDateFormat("YYYY");
@@ -224,7 +221,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams
                 .put("appType", license.getLicenseAppType() != null
                         ? "New".equals(license.getLicenseAppType().getName())
-                                ? "New Trade" : "Renewal"
+                        ? "New Trade" : "Renewal"
                         : "New");
         if (ApplicationThreadLocals.getMunicipalityName().contains("Corporation"))
             reportParams.put("carporationulbType", Boolean.TRUE);

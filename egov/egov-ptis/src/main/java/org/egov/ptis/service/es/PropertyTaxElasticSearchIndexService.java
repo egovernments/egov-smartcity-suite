@@ -47,6 +47,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_DI
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_GRADEWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REGIONWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_WARDWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
 
 import java.math.BigDecimal;
@@ -219,6 +221,14 @@ public class PropertyTaxElasticSearchIndexService {
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest)
                 .filter(QueryBuilders.matchQuery(IS_ACTIVE, true))
                 .filter(QueryBuilders.matchQuery(IS_EXEMPTED, false));
+        if(StringUtils.isNotBlank(collectionDetailsRequest.getPropertyType())){
+            if (collectionDetailsRequest.getPropertyType().equalsIgnoreCase(DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT))
+                boolQuery = boolQuery
+                        .filter(QueryBuilders.termsQuery("propertyType", DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST));
+            else
+                boolQuery = boolQuery
+                        .filter(QueryBuilders.matchQuery("propertyType", collectionDetailsRequest.getPropertyType()));
+        }
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(PROPERTY_TAX_INDEX_NAME)
                 .withQuery(boolQuery).addAggregation(AggregationBuilders.sum(TOTALDEMAND).field(TOTAL_DEMAND))
                 .build();
@@ -478,16 +488,16 @@ public class PropertyTaxElasticSearchIndexService {
         LOGGER.debug("Time taken by defaulters aggregation is : " + timeTaken + MILLISECS);
 
         List<TaxDefaulters> taxDefaulters = new ArrayList<>();
-        TaxDefaulters taxDfaulter;
+        TaxDefaulters taxDefaulter;
         startTime = System.currentTimeMillis();
         for (PropertyTaxIndex property : propertyTaxRecords) {
-            taxDfaulter = new TaxDefaulters();
-            taxDfaulter.setOwnerName(property.getConsumerName());
-            taxDfaulter.setPropertyType(property.getPropertyType());
-            taxDfaulter.setUlbName(property.getCityName());
-            taxDfaulter.setBalance(BigDecimal.valueOf(property.getTotalBalance()));
-            taxDfaulter.setPeriod(StringUtils.EMPTY);
-            taxDefaulters.add(taxDfaulter);
+            taxDefaulter = new TaxDefaulters();
+            taxDefaulter.setOwnerName(property.getConsumerName());
+            taxDefaulter.setPropertyType(property.getPropertyType());
+            taxDefaulter.setUlbName(property.getCityName());
+            taxDefaulter.setBalance(BigDecimal.valueOf(property.getTotalBalance()));
+            taxDefaulter.setPeriod(StringUtils.isBlank(property.getDuePeriod()) ? StringUtils.EMPTY : property.getDuePeriod());
+            taxDefaulters.add(taxDefaulter);
         }
         timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken for setting values in getTopDefaulters() is : " + timeTaken + MILLISECS);

@@ -40,6 +40,7 @@
 package org.egov.wtms.web.controller.application;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -56,7 +57,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.ValidationException;
 
+import org.apache.commons.io.FileUtils;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -86,6 +89,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfWriter;
 
 import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
 
@@ -165,23 +174,93 @@ public class DigitalSignatureConnectionController {
     public void downloadSignedWorkOrderConnection(final HttpServletRequest request, final HttpServletResponse response) {
         String signedFileStoreId = request.getParameter("signedFileStoreId");
         File file = fileStoreService.fetch(signedFileStoreId, WaterTaxConstants.FILESTORE_MODULECODE);
+        try {
         final FileStoreMapper fileStoreMapper = fileStoreMapperRepository.findByFileStoreId(signedFileStoreId);
-        response.setContentType("application/pdf");  
-        response.setContentType("application/octet-stream");
-        response.setHeader("content-disposition", "attachment; filename=\"" + fileStoreMapper.getFileName() + "\"");
-        try(FileInputStream inStream = new FileInputStream(file)){
-            PrintWriter outStream = response.getWriter();
-            int bytesRead = -1;
-            while ((bytesRead = inStream.read()) != -1) {
-                outStream.write(bytesRead);
-            }
+        final List<InputStream> pdfs = new ArrayList<InputStream>();
+        final byte[] bFile = FileUtils.readFileToByteArray(file);
+        pdfs.add(new ByteArrayInputStream(bFile));
+        getServletResponse(response, pdfs, fileStoreMapper.getFileName());
         } catch(FileNotFoundException fileNotFoundExcep) {
             throw new ApplicationRuntimeException("Exception while loading file : " + fileNotFoundExcep);
         } catch(final IOException ioExcep) {
             throw new ApplicationRuntimeException("Exception while generating work order : " + ioExcep);
         }
     }
+    
+    private HttpServletResponse getServletResponse(final HttpServletResponse response, final List<InputStream> pdfs,
+            final String filename) {
+        try {
+            final ByteArrayOutputStream output = new ByteArrayOutputStream();
+            final byte[] data = concatPDFs(pdfs, output);
+            response.setHeader(WaterTaxConstants.CONTENT_DISPOSITION, "attachment;filename=" + filename + ".pdf");
+            response.setContentType("application/pdf");
+            response.setContentLength(data.length);
+            response.getOutputStream().write(data);
+            return response;
+        } catch (final IOException e) {
+            throw new ValidationException(e.getMessage());
+        }
+    }
+    private byte[] concatPDFs(final List<InputStream> streamOfPDFFiles, final ByteArrayOutputStream outputStream) {
+        Document document = null;
+        try {
+            final List<InputStream> pdfs = streamOfPDFFiles;
+            final List<PdfReader> readers = new ArrayList<PdfReader>();
+            final Iterator<InputStream> iteratorPDFs = pdfs.iterator();
 
+            // Create Readers for the pdfs.
+            while (iteratorPDFs.hasNext()) {
+                final InputStream pdf = iteratorPDFs.next();
+                final PdfReader pdfReader = new PdfReader(pdf);
+                readers.add(pdfReader);
+                if (null == document)
+                    document = new Document(pdfReader.getPageSize(1));
+            }
+            // Create a writer for the outputstream
+            final PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+
+            document.open();
+            final PdfContentByte cb = writer.getDirectContent(); // Holds the
+            // PDF
+            // data
+
+            PdfImportedPage page;
+            int pageOfCurrentReaderPDF = 0;
+            final Iterator<PdfReader> iteratorPDFReader = readers.iterator();
+
+            // Loop through the PDF files and add to the output.
+            while (iteratorPDFReader.hasNext()) {
+                final PdfReader pdfReader = iteratorPDFReader.next();
+
+                // Create a new page in the target for each source page.
+                while (pageOfCurrentReaderPDF < pdfReader.getNumberOfPages()) {
+                    document.newPage();
+                    pageOfCurrentReaderPDF++;
+                    page = writer.getImportedPage(pdfReader, pageOfCurrentReaderPDF);
+                    cb.addTemplate(page, 0, 0);
+                }
+                pageOfCurrentReaderPDF = 0;
+            }
+            outputStream.flush();
+            document.close();
+            outputStream.close();
+
+        } catch (final Exception e) {
+
+            throw new ValidationException(e.getMessage());
+        } finally {
+            if (document.isOpen())
+                document.close();
+            try {
+                if (outputStream != null)
+                    outputStream.close();
+            } catch (final IOException ioe) {
+                throw new ValidationException(ioe.getMessage());
+            }
+        }
+        return outputStream.toByteArray();
+    }
+    
     @RequestMapping(value = "/digitalSignaturePending-form", method = RequestMethod.GET)
     public String searchForm(final HttpServletRequest request, final Model model) {
         String cityMunicipalityName = (String)request.getSession().getAttribute("citymunicipalityname");

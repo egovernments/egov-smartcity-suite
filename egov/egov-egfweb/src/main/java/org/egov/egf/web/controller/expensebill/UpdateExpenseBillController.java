@@ -43,7 +43,6 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.service.ChartOfAccountsService;
@@ -144,7 +143,7 @@ public class UpdateExpenseBillController extends BaseBillController {
     }
 
     @RequestMapping(value = "/update/{billId}", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute(EG_BILLREGISTER) final EgBillregister egBillregister,
+    public String update(@ModelAttribute(EG_BILLREGISTER) final EgBillregister egBillregister,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model,
             final HttpServletRequest request, @RequestParam final String workFlowAction)
             throws ApplicationException, IOException {
@@ -169,8 +168,9 @@ public class UpdateExpenseBillController extends BaseBillController {
                 && !request.getParameter(APPROVAL_POSITION).isEmpty())
             approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
 
-        if (egBillregister.getStatus() != null
-                && FinancialConstants.CONTINGENCYBILL_REJECTED_STATUS.equals(egBillregister.getStatus().getCode())) {
+        if (egBillregister.getState() != null
+                && (FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())
+                        || financialUtils.isBillEditable(egBillregister.getState()))) {
             populateBillDetails(egBillregister);
             validateBillNumber(egBillregister, resultBinder);
             validateLedgerAndSubledger(egBillregister, resultBinder);

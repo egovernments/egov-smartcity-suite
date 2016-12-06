@@ -107,7 +107,7 @@ public class FunctionService {
     }
 
     public List<CFunction> findByNameLikeOrCodeLike(final String name) {
-        return functionRepository.findByIsNotLeafAndNameContainingIgnoreCaseOrCodeContainingIgnoreCase(true,name, name);
+        return functionRepository.findByNameContainingIgnoreCaseOrCodeContainingIgnoreCase(name, name);
     }
 
     public List<CFunction> search(final CFunction function) {
@@ -117,24 +117,24 @@ public class FunctionService {
         final Root<CFunction> functions = createQuery.from(CFunction.class);
         createQuery.select(functions);
         final Metamodel m = entityManager.getMetamodel();
-        final javax.persistence.metamodel.EntityType<CFunction> CFunction_ = m.entity(CFunction.class);
+        final javax.persistence.metamodel.EntityType<CFunction> tempFunction = m.entity(CFunction.class);
 
-        final List<Predicate> predicates = new ArrayList<Predicate>();
+        final List<Predicate> predicates = new ArrayList<>();
         if (function.getName() != null) {
             final String name = "%" + function.getName().toLowerCase() + "%";
             predicates.add(cb.isNotNull(functions.get("name")));
             predicates.add(cb.like(
-                    cb.lower(functions.get(CFunction_.getDeclaredSingularAttribute("name", String.class))), name));
+                    cb.lower(functions.get(tempFunction.getDeclaredSingularAttribute("name", String.class))), name));
         }
         if (function.getCode() != null) {
             final String code = "%" + function.getCode().toLowerCase() + "%";
             predicates.add(cb.isNotNull(functions.get("code")));
             predicates.add(cb.like(
-                    cb.lower(functions.get(CFunction_.getDeclaredSingularAttribute("code", String.class))), code));
+                    cb.lower(functions.get(tempFunction.getDeclaredSingularAttribute("code", String.class))), code));
         }
         if (function.getIsActive())
             predicates.add(
-                    cb.equal(functions.get(CFunction_.getDeclaredSingularAttribute("isActive", Boolean.class)), true));
+                    cb.equal(functions.get(tempFunction.getDeclaredSingularAttribute("isActive", Boolean.class)), true));
         if (function.getParentId() != null)
 
             predicates.add(cb.equal(functions.get("parentId"), function.getParentId()));
@@ -142,8 +142,7 @@ public class FunctionService {
         createQuery.where(predicates.toArray(new Predicate[] {}));
         final TypedQuery<CFunction> query = entityManager.createQuery(createQuery);
 
-        final List<CFunction> resultList = query.getResultList();
-        return resultList;
+        return query.getResultList();
     }
 
 }

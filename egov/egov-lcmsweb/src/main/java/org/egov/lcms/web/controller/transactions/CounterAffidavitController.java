@@ -39,11 +39,17 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.lcms.transactions.entity.LegalCase;
+import org.egov.lcms.transactions.entity.PwrDocuments;
 import org.egov.lcms.transactions.service.LegalCaseService;
+import org.egov.lcms.utils.LegalCaseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,6 +58,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -61,15 +68,20 @@ public class CounterAffidavitController {
     @Autowired
     private LegalCaseService legalCaseService;
 
+    @Autowired
+    private LegalCaseUtil legalCaseUtil;
+
     @RequestMapping(value = "/create/", method = RequestMethod.GET)
     public String viewForm(@ModelAttribute("legalCase") final LegalCase legalCase,
             @RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
-        model.addAttribute("legalCase", legalCase);
-        model.addAttribute("pwrDocList", legalCaseService.getPwrDocList(legalCase));
-        if (legalCase.getLegalCaseDepartment().isEmpty())
+        if (legalCase.getCounterAffidavits().isEmpty()) {
             model.addAttribute("mode", "countercreate");
-        else
+            model.addAttribute("legalCase", legalCase);
+        } else {
+            final LegalCase newlegalCase = getPwrDocuments(legalCase);
             model.addAttribute("mode", "counteredit");
+            model.addAttribute("legalCase", newlegalCase);
+        }
         return "legalcase-caaffidavit";
     }
 
@@ -82,17 +94,25 @@ public class CounterAffidavitController {
     @RequestMapping(value = "/create/", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute("legalCase") final LegalCase legalCase, final BindingResult errors,
             final RedirectAttributes redirectAttrs, @RequestParam("lcNumber") final String lcNumber,
-            final Model model) {
+            @RequestParam("file") final MultipartFile[] files, final Model model) throws IOException {
         if (errors.hasErrors())
             return "legalcase-caaffidavit";
         else
-            legalCaseService.update(legalCase);
+            legalCaseService.update(legalCase, files);
         redirectAttrs.addFlashAttribute("legalCase", legalCase);
         model.addAttribute("message", "Counter Affidavit Details Saved Successfully.");
-        model.addAttribute("legalcase", legalCase);
-        model.addAttribute("pwrDocList", legalCaseService.getPwrDocList(legalCase));
+        final LegalCase newlegalCase = getPwrDocuments(legalCase);
+        model.addAttribute("legalcase", newlegalCase);
+        model.addAttribute("mode", "view");
         return "legalcase-ca-success";
 
+    }
+
+    private LegalCase getPwrDocuments(final LegalCase legalCase) {
+        List<PwrDocuments> documentDetailsList = new ArrayList<PwrDocuments>();
+        documentDetailsList = legalCaseUtil.getPwrDocumentList(legalCase);
+        legalCase.getPwrList().get(0).setPwrDocuments(documentDetailsList);
+        return legalCase;
     }
 
 }

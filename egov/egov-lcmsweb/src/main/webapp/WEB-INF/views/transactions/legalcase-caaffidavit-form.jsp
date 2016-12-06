@@ -79,32 +79,6 @@
 								cssClass="add-margin error-msg" />
 						</div>
 					</div>
-
-					<c:choose>
-						<c:when test="${not empty pwrDocList}">
-
-							<jsp:include page="pwrDocumentdetails-view.jsp"></jsp:include>
-
-						</c:when>
-						<c:otherwise>
-							<div class="form-group">
-								<label class="col-sm-3 control-label text-right"><font
-									size="4"><spring:message code="lbl.mesg.document" /></font> </label>
-								<div class="col-sm-3 add-margin">
-
-									<input type="file" id="file"
-										name="pwrList[0].pwrDocuments[0].files"
-										class="file-ellipsis upload-file">
-
-									<form:errors path="pwrList[0].pwrDocuments[0].files"
-										cssClass="add-margin error-msg" />
-
-								</div>
-							</div>
-
-						</c:otherwise>
-					</c:choose>
-
 					<div class="panel-heading ">
 						<div class="panel-title" style="font-weight: bold">Counter
 							Affidavit Details</div>
@@ -152,3 +126,5 @@
 					</div>
 
 					<div>
+					 </div>
+			 <div id="pwrDocuments"></div>

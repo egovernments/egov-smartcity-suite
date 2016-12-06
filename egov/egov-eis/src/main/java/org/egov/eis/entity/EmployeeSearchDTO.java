@@ -39,7 +39,6 @@
  */
 package org.egov.eis.entity;
 
-
 public class EmployeeSearchDTO {
 
     private String name;
@@ -55,83 +54,117 @@ public class EmployeeSearchDTO {
     private String functionary;
     private String status;
     private String employeeType;
-    
+    private Boolean isHOD;
+
     public String getName() {
         return name;
     }
-    public void setName(String name) {
+
+    public void setName(final String name) {
         this.name = name;
     }
+
     public String getCode() {
         return code;
     }
-    public void setCode(String code) {
+
+    public void setCode(final String code) {
         this.code = code;
     }
+
     public String getAadhaar() {
         return aadhaar;
     }
-    public void setAadhaar(String aadhaar) {
+
+    public void setAadhaar(final String aadhaar) {
         this.aadhaar = aadhaar;
     }
+
     public String getPan() {
         return pan;
     }
-    public void setPan(String pan) {
+
+    public void setPan(final String pan) {
         this.pan = pan;
     }
+
     public String getMobileNumber() {
         return mobileNumber;
     }
-    public void setMobileNumber(String mobileNumber) {
+
+    public void setMobileNumber(final String mobileNumber) {
         this.mobileNumber = mobileNumber;
     }
+
     public String getEmail() {
         return email;
     }
-    public void setEmail(String email) {
+
+    public void setEmail(final String email) {
         this.email = email;
     }
+
     public String getDepartment() {
         return department;
     }
-    public void setDepartment(String department) {
+
+    public void setDepartment(final String department) {
         this.department = department;
     }
+
     public String getDesignation() {
         return designation;
     }
-    public void setDesignation(String designation) {
+
+    public void setDesignation(final String designation) {
         this.designation = designation;
     }
+
     public String getPosition() {
         return position;
     }
-    public void setPosition(String position) {
+
+    public void setPosition(final String position) {
         this.position = position;
     }
+
     public String getFunction() {
         return function;
     }
-    public void setFunction(String function) {
+
+    public void setFunction(final String function) {
         this.function = function;
     }
+
     public String getFunctionary() {
         return functionary;
     }
-    public void setFunctionary(String functionary) {
+
+    public void setFunctionary(final String functionary) {
         this.functionary = functionary;
     }
+
     public String getStatus() {
         return status;
     }
-    public void setStatus(String status) {
+
+    public void setStatus(final String status) {
         this.status = status;
     }
+
     public String getEmployeeType() {
         return employeeType;
     }
-    public void setEmployeeType(String employeeType) {
+
+    public void setEmployeeType(final String employeeType) {
         this.employeeType = employeeType;
+    }
+
+    public Boolean getIsHOD() {
+        return isHOD;
+    }
+
+    public void setIsHOD(final Boolean hod) {
+        isHOD = hod;
     }
 }

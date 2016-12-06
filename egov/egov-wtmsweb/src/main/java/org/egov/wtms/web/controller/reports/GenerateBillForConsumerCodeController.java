@@ -126,7 +126,6 @@ public class GenerateBillForConsumerCodeController {
     public void generatePDF(final String consumerCode, final HttpServletRequest request,
             final HttpServletResponse response) {
         final String signedFileStoreId = request.getParameter("signedFileStoreId");
-        response.setHeader("content-disposition", "attachment; filename=\"" + "generate_bill.pdf" + "\"");
         if (signedFileStoreId != null)
             try {
                 final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(signedFileStoreId);

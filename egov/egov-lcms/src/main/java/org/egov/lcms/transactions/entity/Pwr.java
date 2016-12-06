@@ -70,7 +70,7 @@ import org.hibernate.envers.NotAudited;
 @Table(name = "EGLC_PWR")
 @SequenceGenerator(name = Pwr.SEQ_EGLC_PWR, sequenceName = Pwr.SEQ_EGLC_PWR, allocationSize = 1)
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
-    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class Pwr extends AbstractAuditable {
 
     private static final long serialVersionUID = 1517694643078084884L;
@@ -90,7 +90,7 @@ public class Pwr extends AbstractAuditable {
     @Audited
     private Date caFilingdate;
 
-    @OneToMany(mappedBy = "pwr", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "pwr", fetch = FetchType.LAZY)
     @NotAudited
     private List<PwrDocuments> pwrDocuments = new ArrayList<PwrDocuments>(0);
 

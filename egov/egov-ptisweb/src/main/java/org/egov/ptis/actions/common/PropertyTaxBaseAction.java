@@ -571,8 +571,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     public void transitionWorkFlow(final PropertyImpl property) {
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
-        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
-        Position pos = null;
+        Position pos;
         Assignment wfInitiator = null;
         String nature = getNatureOfTask();
 
@@ -583,6 +582,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 approverPositionId = assignment.getPosition().getId();
                 approverName = (assignment.getEmployee().getName()).concat("~").concat(
                         assignment.getPosition().getName());
+                wfInitiator = assignment;
             }
         } else {
             currentState = null;
@@ -595,7 +595,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         }
         if (property.getId() != null)
             wfInitiator = propertyService.getWorkflowInitiator(property);
-        else
+        else if(wfInitiator==null)
             wfInitiator = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(user.getId());
 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {

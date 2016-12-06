@@ -163,7 +163,7 @@
         <postgres-version>9.4.1212</postgres-version>
 
         <!-- Other application dependency versions -->
-        <struts2-version>2.5.2</struts2-version>
+        <struts2-version>2.5.5</struts2-version>
         <struts2-jquery-version>3.7.1</struts2-jquery-version>
         <xstream-version>1.4.9</xstream-version>
         <xpp3-version>1.1.4c</xpp3-version>
@@ -203,8 +203,6 @@
         <httpclient-version>4.5.2</httpclient-version>
         <sitemesh-version>2.4.2</sitemesh-version>
         <ehcache-web-version>2.0.4</ehcache-web-version>
-        <cglib-version>3.2.4</cglib-version>
-        <asm-all-version>3.3.1</asm-all-version>
         <joda-time-version>2.9.6</joda-time-version>
         <joda-time-jsptag-version>1.1.1</joda-time-jsptag-version>
         <jsoup-version>1.10.1</jsoup-version>
@@ -291,16 +289,6 @@
                 <groupId>org.elasticsearch</groupId>
                 <artifactId>elasticsearch</artifactId>
                 <version>${elastic-search-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.jayway.jsonpath</groupId>
-                        <artifactId>json-path</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <!-- HIBERNATE DEPENDENCIES START -->
@@ -391,16 +379,11 @@
                 <version>${struts2-version}</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>javassist</groupId>
+                        <groupId>org.javassist</groupId>
                         <artifactId>javassist</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>asm</groupId>
-                        <artifactId>*</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
-
             <dependency>
                 <groupId>org.apache.struts</groupId>
                 <artifactId>struts2-json-plugin</artifactId>
@@ -413,27 +396,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-rest-plugin</artifactId>
-                <version>${struts2-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.codehaus.jackson</groupId>
-                        <artifactId>jackson-core-asl</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.codehaus.jackson</groupId>
-                        <artifactId>jackson-mapper-asl</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
                 <artifactId>struts2-convention-plugin</artifactId>
-                <version>${struts2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-jasperreports-plugin</artifactId>
                 <version>${struts2-version}</version>
             </dependency>
             <dependency>
@@ -819,22 +782,6 @@
                 <version>${ehcache-web-version}</version>
             </dependency>
             <dependency>
-                <groupId>cglib</groupId>
-                <artifactId>cglib</artifactId>
-                <version>${cglib-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>asm</groupId>
-                <artifactId>asm-all</artifactId>
-                <version>${asm-all-version}</version>
-            </dependency>
-            <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
                 <version>${joda-time-version}</version>
@@ -1150,10 +1097,6 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm-all</artifactId>
         </dependency>
         <dependency>
             <groupId>ma.glasnost.orika</groupId>

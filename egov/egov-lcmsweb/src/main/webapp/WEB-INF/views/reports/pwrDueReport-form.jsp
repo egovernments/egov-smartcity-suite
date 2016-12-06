@@ -55,17 +55,18 @@
 					<div class="panel-heading">
 						<div class="panel-title">Report on PWR Due</div>
 					</div>
+					<jsp:include page="dueReportdetails.jsp"></jsp:include>
 				</div>
-				<jsp:include page="dueReportdetails.jsp"></jsp:include>
-			</div>
-
 
 			<div class="row">
-				<div class="text-center">
-					<button type="button" id="pwrDueReportSearch" value="pwrDueReportSearch"
-						class="btn btn-primary">Search</button>
-					<a href="javascript:void(0)" class="btn btn-default"
-						onclick="self.close()"> Close</a>
+					<div class="text-center">
+						<button type="button" id="pwrDueReportSearch"
+							value="pwrDueReportSearch" class="btn btn-primary">
+							<spring:message code="lbl.search" />
+						</button>
+						<a href="javascript:void(0)" class="btn btn-default"
+							onclick="self.close()"><spring:message code="lbl.close" /></a>
+					</div>
 				</div>
 			</div>
 	</div>
@@ -74,20 +75,18 @@
 		class="col-md-12 table-header text-left">
 		<fmt:formatDate value="${currentDate}" var="currDate"
 			pattern="dd-MM-yyyy" />
-		<spring:message code="lbl.reportgeneration" />
-		:
+		<spring:message code="lbl.reportgeneration" />:
 		<c:out value="${currDate}"></c:out>
 	</div>
 	<table class="table table-bordered table-hover multiheadertbl"
-		id="pwrDueReport-table" >
+		id="pwrDueReport-table">
 	</table>
-
-
-</div>
 </div>
 
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
@@ -96,14 +95,11 @@
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-
 <script
 	src="<cdn:url value='/resources/js/app/commonDueReport.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>
 <script
 	src="<cdn:url value='/resources/js/app/dueLegalCaseReport.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>
-

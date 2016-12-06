@@ -80,7 +80,16 @@ $(document).ready(function(){
 		var fromDate = $("#fromDate").val();
 		var toDate = $("#toDate").val();
 		var posId = $("#positionId").val();
+		var hoddept = (null!=$("#hodDeptId").val() || 'undefined'!=$("#hodDeptId").val())?$("#hodDeptId").val():null;
 		var validate = true;
+		if($("#isHodYes").prop("checked") && hoddept==null){
+			$('.hoderror').html('HOD Department is required').show();
+			validate = false;	
+		}
+		else{
+			$('.hoderror').hide();
+		}
+		
 		if(null==deptId || ''==deptId){
 			$('.departmenterror').html('Department is required').show();
 			validate = false;
@@ -147,6 +156,10 @@ $(document).ready(function(){
 		}
 	});
 	
+	$("#isHodNo").blur(function (){
+		$("#hoderror").hide();
+	});
+	
 	function validateDateRange() {
 
 		if($("#fromDate").val() != '' && $("#toDate").val() != ''){
@@ -176,27 +189,27 @@ $(document).ready(function(){
 	}
 	
 	function validatePrimaryPosition(index)
-	{
-
-		positionId = $("#positionId").val();
-		assignmentId = $("#editassignIds").val();
+	{		
 		$.ajax({
 			url: '/eis/employee/ajax/primaryPosition',
 			type: "GET",
 			data: {
 				positionId : $("#positionId").val(),
-				assignmentId : $("#editassignIds").val()   
+				assignmentId : $("#editassignIds").val(), 
+				code : $("#code").val(),
+				fromDate : $("#fromDate").val(),
+				toDate : $("#toDate").val()
 			},
 			dataType : 'json',
 			success: function (response) {
-				if(response == true){
-					$("#primary_yes").prop("checked",false);
-					$("#primary_no").prop("checked",true);
-					addRow(index);		
+				if(response != ""){
+					response = response.substring(0,response.length-1);
+					bootbox.alert("Assignment overlaps with existing primary assignment of employee "+response);
 					edit=false;
 				}
 				else{
-					addRow(index);		
+					deleteRow.remove();
+					addRow(editedRowIndex);		
 					edit=false;
 				}
 				resetAssignmentValues();
@@ -268,16 +281,15 @@ $(document).ready(function(){
 				addRow(rowCount);
 				rowCount++;
 			}
-			else{
-				deleteRow.remove();
-				if(primary==true ){
-					validatePrimaryPosition(editedRowIndex);
+			else{		
+				if(primary==true ){	
+					 validatePrimaryPosition(editedRowIndex);
 				}
 				else{
+					deleteRow.remove();
 					addRow(editedRowIndex);		
 					edit=false;
 				}
-
 			}
 			resetAssignmentValues();
 		}	
@@ -311,16 +323,32 @@ $(document).ready(function(){
 		var ftn = (null!=$("#functionId").val() || 'undefined'!=$("#functionId").val())?$("#functionId").val():null;
 		var functionary = (null!=$("#functionaryId").val() || 'undefined'!=$("#functionaryId").val())?$("#functionaryId").val():null;
 		var grade = (null!=$("#gradeId").val() || 'undefined'!=$("#gradeId").val())?$("#gradeId").val():null;
+		$('.hoderror').hide;
 		var hoddept = (null!=$("#hodDeptId").val() || 'undefined'!=$("#hodDeptId").val())?$("#hodDeptId").val():null;
-		var hoddept = (null!=$("#hodDeptId").val() || 'undefined'!=$("#hodDeptId").val())?$("#hodDeptId").val():null;
-		var hodInput="";
+		var result = $('#hodDeptId :selected').map(function(i, opt) {
+			  return $(opt).text();
+			}).toArray().join(', ');
+	   var hoddeptname = result.split(",");
 		
+		var hodInput="";
+		var hodname = "";
+		var hodDepartment = "";
+		if(null!=hoddeptname){
+			for(var i=0;i<hoddeptname.length;i++) {
+				
+				hodname = hodname+'<input type="text" id="assignments['+index+'].hodDept['+i+'].hod" name="assignments['+index+'].hodDept['+i+'].hod" value="'+hoddeptname[i]+'"/>';
+			}
+			hodname = hodname+'<input type="hidden" id="hodNames'+index+'" value="'+hoddeptname+'"/>';
+		}
 		if(null!=hoddept){
 			for(var i=0;i<hoddept.length;i++) {
 				hodInput = hodInput+'<input type="hidden" id="assignments['+index+'].deptSet['+i+'].hod" name="assignments['+index+'].deptSet['+i+'].hod" value="'+hoddept[i]+'"/>';
+				hodDepartment = hodDepartment+'<input type="hidden" id="assignments['+index+'].hodList['+i+'].hod" name="assignments['+index+'].hodList['+i+'].hod" value="'+hoddept[i]+'"/>';
+
 			}
 			hodInput = hodInput+'<input type="hidden" id="hodIds'+index+'" value="'+hoddept+'"/>';
 		}
+		
 		var del="";
 		  del='<span class="add-padding"><i id="delete_row" class="fa fa-remove"  value="'+index+'"></i></span>';
 		var text = 
@@ -358,8 +386,13 @@ $(document).ready(function(){
 							'<input type="hidden" id="assignments['+index+'].functionary" name="assignments['+index+'].functionary" '+
 							'value="'+functionary+'"/>'+
 							'<input type="hidden" id="assignments['+index+'].grade" name="assignments['+index+'].grade" '+
-							'value="'+grade+'"/>'+hodInput+
-						'</td>'+	
+							'value="'+grade+'"/>' +
+						'</td>'+
+						'<td>'+	
+						hodInput +
+						hodname +
+						hodDepartment +
+					'</td>'+
 						'<td>'+	
 							'<span class="add-padding"><i id="edit_row" class="fa fa-edit" value="'+index+'"></i></span>'+del+
 						'</td>'+	
@@ -371,6 +404,7 @@ $(document).ready(function(){
 		$("#table_department"+index+"").val($("#deptId").find('option:selected').text());
 		$("#table_designation"+index+"").val($("#designationName").val());
 		$("#table_position"+index+"").val($("#positionName").val());
+		
 	}
 	
 	$(document).on('click',"#delete_row",function (){
@@ -393,6 +427,8 @@ $(document).ready(function(){
 		edit = true;
 		deleteRow = $(this).closest('tr');
 		editedRowIndex =$(this).attr("value");
+		var hodInput="";
+		var hoddept = $("#hodDeptIds"+editedRowIndex).val() ;
 		var primary = document.getElementById("assignments["+editedRowIndex+"].primary").value;
 		var fromDate = document.getElementById("assignments["+editedRowIndex+"].fromDate").value;
 		var toDate = document.getElementById("assignments["+editedRowIndex+"].toDate").value;
@@ -406,6 +442,15 @@ $(document).ready(function(){
 		var functionary = document.getElementById("assignments["+editedRowIndex+"].functionary").value;
 		var grade = document.getElementById("assignments["+editedRowIndex+"].grade").value;
 		
+	
+		if(null!=hoddept && hoddept != "0"){
+			for(var i=0;i<hoddept;i++) {
+              	hodInput = document.getElementById("assignments["+editedRowIndex+"].deptSet["+i+"].hod").value + "," + hodInput ;		
+			}
+			
+		}else{
+			hodInput=(null!=$("#hodIds"+editedRowIndex).val() || 'undefined'!=$("#hodIds"+editedRowIndex).val())?$("#hodIds"+editedRowIndex).val():null;
+		}
 		if(primary=="true"){
 			$("#primary_yes").prop("checked",true);
 			$("#primary_no").prop("checked",false);
@@ -425,17 +470,22 @@ $(document).ready(function(){
 		$("#functionId").val(ftn);
 		$("#functionaryId").val(functionary);
 		$("#grade").val(grade);
-		if(null!=document.getElementById("hodIds"+editedRowIndex)) {
-			var hodIds = document.getElementById("hodIds").value;
-			if(null!=hodIds){
-				var dataArray = hodIds.split(","); 
+		if(hodInput!="" && hodInput!=null) {
+			
+				var dataArray = hodInput.split(","); 
 				$("#hodDeptId").val(dataArray);
 				$("#isHodYes").prop("checked",true);
 				$("#isHodNo").prop("checked",false);
 				$('#hodDeptDiv').show();
-			}	
+				
 		}	
+		else{
+			$("#isHodYes").prop("checked",false);
+			$("#isHodNo").prop("checked",true);
+			$('#hodDeptDiv').hide();
+		}
 	});
+	
 	
 	$("#isHodYes").click(function () {
 		$('#hodDeptDiv').show();

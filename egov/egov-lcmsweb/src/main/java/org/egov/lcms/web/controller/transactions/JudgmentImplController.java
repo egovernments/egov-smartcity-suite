@@ -39,13 +39,19 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.lcms.transactions.entity.AppealDocuments;
 import org.egov.lcms.transactions.entity.Judgment;
 import org.egov.lcms.transactions.entity.JudgmentImpl;
 import org.egov.lcms.transactions.service.JudgmentImplService;
 import org.egov.lcms.transactions.service.JudgmentService;
+import org.egov.lcms.utils.LegalCaseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -54,6 +60,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -65,34 +72,43 @@ public class JudgmentImplController {
 
     @Autowired
     private JudgmentService judgmentService;
+    @Autowired
+    private LegalCaseUtil legalCaseUtil;
 
     @ModelAttribute
-    private JudgmentImpl getJudgment(@RequestParam("lcNumber") final String lcNumber,
-            final HttpServletRequest request) {
+    private JudgmentImpl getJudgment(@RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request,
+            final Model model) {
         final Judgment judgment = judgmentService.findByLCNumber(lcNumber);
         if (judgment.getJudgmentImpl().isEmpty()) {
             final JudgmentImpl judgemnetImpl = new JudgmentImpl();
+            model.addAttribute("mode", "create");
             return judgemnetImpl;
-        } else
+        } else {
+            model.addAttribute("mode", "edit");
             return judgment.getJudgmentImpl().get(0);
+        }
     }
 
     @RequestMapping(value = "/new/", method = RequestMethod.GET)
     public String viewForm(@ModelAttribute("judgmentImpl") JudgmentImpl judgmentImpl,
             @RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
         final Judgment judgment = judgmentService.findByLCNumber(lcNumber);
-        judgmentImpl = getJudgment(lcNumber, request);
+        judgmentImpl = getJudgment(lcNumber, request, model);
         model.addAttribute("legalCase", judgment.getLegalCase());
-        model.addAttribute("judgmentImpl", judgmentImpl);
         model.addAttribute("judgment", judgment);
-        model.addAttribute("mode", "create");
+        model.addAttribute("judgmentImpl", judgmentImpl);
+        if (!judgmentImpl.getAppeal().isEmpty()) {
+            final JudgmentImpl newjudgmentImpl = getAppealDocuments(judgmentImpl);
+            model.addAttribute("judgmentImpl", newjudgmentImpl);
+        }
         return "judgmentimpl-new";
     }
 
     @RequestMapping(value = "/new/", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute("judgmentImpl") final JudgmentImpl judgmentImpl,
             final BindingResult errors, final RedirectAttributes redirectAttrs,
-            @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request, final Model model) {
+            @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request,
+            @RequestParam("file") final MultipartFile[] files, final Model model) throws IOException {
         final Judgment judgment = judgmentService.findByLCNumber(lcNumber);
         if (errors.hasErrors()) {
             model.addAttribute("judgment", judgment);
@@ -100,13 +116,24 @@ public class JudgmentImplController {
             return "judgmentimpl-new";
         } else
             judgmentImpl.setJudgment(judgment);
-        judgmentImplService.saveOrUpdate(judgmentImpl);
-        model.addAttribute("mode", "create");
-        model.addAttribute("appealDocList", judgmentImplService.getAppealDocList(judgmentImpl));
+        judgmentImplService.saveOrUpdate(judgmentImpl, files);
+        if (judgmentImpl.getImplementationFailure() != null
+                && judgmentImpl.getImplementationFailure().toString().equals("Appeal")) {
+            final JudgmentImpl newjudgmentImpl = getAppealDocuments(judgmentImpl);
+            model.addAttribute("judgmentImpl", newjudgmentImpl);
+        }
+        model.addAttribute("mode", "view");
         redirectAttrs.addFlashAttribute("judgmentImpl", judgmentImpl);
         model.addAttribute("message", "Judgment Implementation Saved successfully.");
         return "judgmentimpl-success";
 
+    }
+
+    private JudgmentImpl getAppealDocuments(final JudgmentImpl judgmentImpl) {
+        List<AppealDocuments> documentDetailsList = new ArrayList<AppealDocuments>();
+        documentDetailsList = legalCaseUtil.getAppealDocumentList(judgmentImpl);
+        judgmentImpl.getAppeal().get(0).setAppealDocuments(documentDetailsList);
+        return judgmentImpl;
     }
 
 }

@@ -39,18 +39,20 @@
  */
 package org.egov.eis.repository;
 
+import java.util.List;
+
 import org.egov.eis.entity.HeadOfDepartments;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface HeadOfDepartmentsRepository extends JpaRepository<HeadOfDepartments, Long> {
-    
-    @Query(" from HeadOfDepartments HOD where HOD.assignment.id=:assignId and  HOD.hod is not null")
-    List<HeadOfDepartments> getAllHodDepartments(@Param("assignId")Long assignId);
 
+    @Query(" select HOD.hod.id from HeadOfDepartments HOD where HOD.assignment.id=:assignId and  HOD.hod is not null")
+    List<Long> getAllHodDepartmentIds(@Param("assignId") Long assignId);
+
+    @Query(" from HeadOfDepartments HOD where HOD.assignment.id=:assignId and  HOD.hod is not null")
+    List<HeadOfDepartments> getAllHodDepartments(@Param("assignId") Long assignId);
 }

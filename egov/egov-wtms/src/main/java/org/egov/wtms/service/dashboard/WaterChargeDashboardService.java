@@ -53,8 +53,10 @@ import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.wtms.bean.dashboard.TaxPayerResponseDetails;
+import org.egov.wtms.bean.dashboard.WaterChargeConnectionTypeResponse;
 import org.egov.wtms.bean.dashboard.WaterChargeDashBoardRequest;
 import org.egov.wtms.bean.dashboard.WaterChargeDashBoardResponse;
+import org.egov.wtms.bean.dashboard.WaterTaxDefaulters;
 import org.egov.wtms.service.es.WaterChargeCollectionDocService;
 import org.egov.wtms.service.es.WaterChargeElasticSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,6 +117,26 @@ public class WaterChargeDashboardService {
 
         return responsemap;
     }
+    
+    public Map<String, List<WaterChargeConnectionTypeResponse>> getCollectionTypeIndexDetails(
+            final WaterChargeDashBoardRequest waterChargeDashBoardRequest) {
+
+        final Map<String, List<WaterChargeConnectionTypeResponse>> responsemap = new HashMap<>();
+       final List<WaterChargeConnectionTypeResponse> collectionTotalResponseList = waterChargeCollDocService
+                .getFullCollectionIndexDtlsForCOnnectionType(waterChargeDashBoardRequest);
+
+        final List<WaterChargeConnectionTypeResponse> collectionTrends = waterChargeCollDocService
+                .getMonthwiseCollectionDetailsForConnectionType(waterChargeDashBoardRequest);
+
+        final List<WaterChargeConnectionTypeResponse> collIndexData = waterChargeCollDocService
+                .getResponseDataForConnectionType(waterChargeDashBoardRequest);
+
+        responsemap.put("collectionWtTotal", collectionTotalResponseList);
+        responsemap.put("collTrends", collectionTrends);
+        responsemap.put("responseDetails", collIndexData);
+
+        return responsemap;
+    }
 
     /**
      * Gives the receipts details across all ULBs
@@ -164,7 +186,7 @@ public class WaterChargeDashboardService {
 
     }
     
-  /*  public List<TaxDefaulters> getTaxDefaulters(PropertyTaxDefaultersRequest propertyTaxDefaultersRequest) {
-        return waterChargeElasticSearchService.getTopDefaulters(propertyTaxDefaultersRequest);
-    }*/
+    public List<WaterTaxDefaulters> getTaxDefaulters(WaterChargeDashBoardRequest waterChargeDashBoardRequest) {
+        return waterChargeElasticSearchService.getTopDefaulters(waterChargeDashBoardRequest);
+    }
 }

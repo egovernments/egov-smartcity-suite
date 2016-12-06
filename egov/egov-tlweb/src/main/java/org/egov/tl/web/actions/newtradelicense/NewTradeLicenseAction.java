@@ -193,7 +193,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                     .write("<center style='color:red;font-weight:bolder'>Renewal workflow is in progress !</center>");
             return null;
         }
-        if (!tradeLicense.hasState() || tradeLicense.getCurrentState().getValue().equals("Closed"))
+        if (!tradeLicense.hasState() || "Closed".equals(tradeLicense.getCurrentState().getValue()))
             currentState = "";
         renewAppType = Constants.RENEWAL_LIC_APPTYPE;
         return super.beforeRenew();

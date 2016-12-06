@@ -111,15 +111,28 @@
 									}
 								}).data('datepicker');
 						doLoadingMask();
+						jQuery('#currentRow tbody tr').each(
+								function() {
+									if (jQuery(this).find(
+											'input[name="selectedReceipts"]')
+											.val() == "true") {
+										jQuery(this).find(
+												'input[type="checkbox"]').prop(
+												'checked', true);
+									} else {
+										jQuery(this).find(
+												'input[type="checkbox"]').prop(
+												'checked', false);
+									}
+								});
 					});
 
 	jQuery(window).load(function() {
 		undoLoadingMask();
 	});
 
-	var newServiceName = "###########";
-	var newFundName = "###########";
-	function handleReceiptSelectionEvent(obj) {
+	var isSelected;
+	function handleReceiptSelectionEvent() {
 
 		isSelected = document.getElementsByName('receiptIds');
 		dom.get("multipleserviceselectionerror").style.display = "none";
@@ -127,7 +140,7 @@
 
 		dom.get("button32").disabled = false;
 		dom.get("button32").className = "buttonsubmit";
-
+		var j = 0;
 		for (i = 0; i < isSelected.length; i++) {
 			if (isSelected[i].checked == true) {
 				document.getElementsByName('serviceNameArray')[i].value = document
@@ -146,6 +159,7 @@
 						.getElementsByName('totalOnlineAmountTempArray')[i].value;
 				document.getElementsByName('receiptDateArray')[i].value = document
 						.getElementsByName('receiptDateTempArray')[i].value;
+				document.getElementsByName('selectedReceipts')[j].value = true;
 			} else if (isSelected[i].checked == false) {
 				document.bankRemittanceForm.serviceNameArray[i].value = "";
 				document.bankRemittanceForm.fundCodeArray[i].value = "";
@@ -155,7 +169,9 @@
 				document.bankRemittanceForm.totalCardAmountArray[i].value = "";
 				document.bankRemittanceForm.totalOnlineAmountArray[i].value = "";
 				document.bankRemittanceForm.receiptDateArray[i].value = "";
+				document.getElementsByName('selectedReceipts')[j].value = false;
 			}
+			j++;
 		}
 		var totalCashAmt = document.getElementsByName('totalCashAmountArray');
 		var totalAmtDisplay = 0.00;
@@ -245,6 +261,13 @@
 		} else {
 			doLoadingMask('#loadingMask');
 			jQuery('#finYearId').prop("disabled", false);
+			var j = 0;
+			for (i = 0; i < isSelected.length; i++) {
+				if (isSelected[i].checked == true) {
+					document.getElementsByName('selectedReceipts')[j].value = true;
+				}
+				j++;
+			}
 			document.bankRemittanceForm.action = "bankRemittance-create.action";
 			return true;
 		}
@@ -281,6 +304,10 @@
 			return false;
 		}
 		jQuery('#finYearId').prop("disabled", false);
+		jQuery('#remittanceAmount').val("");
+		jQuery('#currentRow tbody tr').each(function() {
+			jQuery(this).find('input[name="selectedReceipts"]').val("");
+		});
 		document.bankRemittanceForm.action = "bankRemittance-listData.action";
 		return true;
 	}
@@ -440,14 +467,14 @@
 						<tr>
 							<td width="4%" class="bluebox">&nbsp;</td>
 							<td class="bluebox"><s:text name="bankremittance.fromdate" /></td>
-							<s:date name="fromDate" var="fromFormat"  format="dd/MM/yyyy" />
+							<s:date name="fromDate" var="fromFormat" format="dd/MM/yyyy" />
 							<td class="bluebox"><s:textfield id="fromDate"
-									name="fromDate" data-inputmask="'mask': 'd/m/y'" value="%{fromFormat}"
-									placeholder="DD/MM/YYYY" /></td>
+									name="fromDate" data-inputmask="'mask': 'd/m/y'"
+									value="%{fromFormat}" placeholder="DD/MM/YYYY" /></td>
 							<td class="bluebox"><s:text name="bankremittance.todate" /></td>
-							<s:date name="toDate" var="toFormat"  format="dd/MM/yyyy" />
-							<td class="bluebox"><s:textfield id="toDate" name="toDate" value="%{toFormat}"
-									data-inputmask="'mask': 'd/m/y'"
+							<s:date name="toDate" var="toFormat" format="dd/MM/yyyy" />
+							<td class="bluebox"><s:textfield id="toDate" name="toDate"
+									value="%{toFormat}" data-inputmask="'mask': 'd/m/y'"
 									placeholder="DD/MM/YYYY" /></td>
 						</tr>
 					</table>
@@ -456,9 +483,9 @@
 							id="search" value="Search" onclick="return searchDataToRemit()" />
 					</div>
 					<s:if test="%{!paramList.isEmpty()}">
-						<display:table name="paramList" uid="currentRow" pagesize="${pageSize}"
-							style="border:1px;width:100%" cellpadding="0" cellspacing="0"
-							export="false" requestURI=""
+						<display:table name="paramList" uid="currentRow"
+							pagesize="${pageSize}" style="border:1px;width:100%"
+							cellpadding="0" cellspacing="0" export="false" requestURI=""
 							excludedParams="serviceNameArray fundCodeArray departmentCodeArray totalCashAmountArray totalChequeAmountArray totalCardAmountArray totalATMAmountArray totalATMAmountTempArray departmentCodeTempArray totalOnlineAmountTempArray receiptDateTempArray serviceNameTempArray totalCardAmountTempArray totalCashAmountTempArray totalChequeAmountTempArray">
 							<display:column headerClass="bluebgheadtd"
 								class="blueborderfortd"
@@ -466,44 +493,55 @@
 								style="width:5%; text-align: center">
 								<input name="receiptIds" type="checkbox" id="receiptIds"
 									value="${currentRow.id}"
-									onClick="handleReceiptSelectionEvent(this.checked)" />
-								<input type="hidden" name="serviceNameTempArray" disabled="disabled"
-									id="serviceNameTempArray" value="${currentRow.SERVICENAME}" />
-								<input type="hidden" name="fundCodeTempArray" disabled="disabled"
-									id="fundCodeTempArray" value="${currentRow.FUNDCODE}" />
+									onClick="handleReceiptSelectionEvent()" />
+								<input type="hidden" name="selectedReceipts"
+									id="selectedReceipts"
+									value="${selectedReceipts[currentRow_rowNum-1]}" />
+								<input type="hidden" name="serviceNameTempArray"
+									disabled="disabled" id="serviceNameTempArray"
+									value="${currentRow.SERVICENAME}" />
+								<input type="hidden" name="fundCodeTempArray"
+									disabled="disabled" id="fundCodeTempArray"
+									value="${currentRow.FUNDCODE}" />
 								<input type="hidden" name="departmentCodeTempArray"
 									id="departmentCodeTempArray" disabled="disabled"
 									value="${currentRow.DEPARTMENTCODE}" />
-								<input type="hidden" name="totalCashAmountTempArray" disabled="disabled"
-									id="totalCashAmountTempArray"
+								<input type="hidden" name="totalCashAmountTempArray"
+									disabled="disabled" id="totalCashAmountTempArray"
 									value="${currentRow.SERVICETOTALCASHAMOUNT}" />
-								<input type="hidden" name="totalChequeAmountTempArray" disabled="disabled"
-									id="totalChequeAmountTempArray"
+								<input type="hidden" name="totalChequeAmountTempArray"
+									disabled="disabled" id="totalChequeAmountTempArray"
 									value="${currentRow.SERVICETOTALCHEQUEAMOUNT}" />
-								<input type="hidden" name="totalCardAmountTempArray" disabled="disabled"
-									id="totalCardAmountTempArray"
+								<input type="hidden" name="totalCardAmountTempArray"
+									disabled="disabled" id="totalCardAmountTempArray"
 									value="${currentRow.SERVICETOTALCARDPAYMENTAMOUNT}" />
-								<input type="hidden" name="totalOnlineAmountTempArray" disabled="disabled"
-									id="totalOnlineAmountTempArray"
+								<input type="hidden" name="totalOnlineAmountTempArray"
+									disabled="disabled" id="totalOnlineAmountTempArray"
 									value="${currentRow.SERVICETOTALONLINEPAYMENTAMOUNT}" />
-								<input type="hidden" name="receiptDateTempArray" disabled="disabled"
-									id="receiptDateTempArray" value="${currentRow.RECEIPTDATE}" />
+								<input type="hidden" name="receiptDateTempArray"
+									disabled="disabled" id="receiptDateTempArray"
+									value="${currentRow.RECEIPTDATE}" />
 								<input type="hidden" name="serviceNameArray"
-									id="serviceNameArray" />
-								<input type="hidden" name="fundCodeArray" id="fundCodeArray" />
+									id="serviceNameArray"
+									value="${serviceNameArray[currentRow_rowNum-1]}" />
+								<input type="hidden" name="fundCodeArray" id="fundCodeArray"
+									value="${fundCodeArray[currentRow_rowNum-1]}" />
 								<input type="hidden" name="departmentCodeArray"
-									id="departmentCodeArray" />
+									id="departmentCodeArray"
+									value="${departmentCodeArray[currentRow_rowNum-1]}" />
 								<input type="hidden" name="totalCashAmountArray"
-									id="totalCashAmountArray" />
+									id="totalCashAmountArray"
+									value="${totalCashAmountArray[currentRow_rowNum-1]}" />
 								<input type="hidden" name="totalChequeAmountArray"
-									id="totalChequeAmountArray" />
-								<input type="hidden" name="totalCardAmountArray" disabled="disabled"
-									id="totalCardAmountArray" />
-								<input type="hidden" name="totalOnlineAmountArray" disabled="disabled"
-									id="totalOnlineAmountArray" />
+									id="totalChequeAmountArray"
+									value="${totalChequeAmountArray[currentRow_rowNum-1]}" />
+								<input type="hidden" name="totalCardAmountArray"
+									disabled="disabled" id="totalCardAmountArray" />
+								<input type="hidden" name="totalOnlineAmountArray"
+									disabled="disabled" id="totalOnlineAmountArray" />
 								<input type="hidden" name="receiptDateArray"
-									id="receiptDateArray" />
-
+									id="receiptDateArray"
+									value="${receiptDateArray[currentRow_rowNum-1]}" />
 							</display:column>
 
 							<display:column headerClass="bluebgheadtd"

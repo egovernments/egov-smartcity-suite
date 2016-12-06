@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2016>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -40,8 +40,16 @@
 
 package org.egov.tl.web.controller;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.tl.entity.FeeType;
+import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.egov.tl.service.FeeTypeService;
+import org.egov.tl.service.SubCategoryDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -50,54 +58,65 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.validation.Valid;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/feeType")
 public class FeeTypeController {
-	private final static String FEETYPE_NEW = "feetype-new";
-	private final static String FEETYPE_RESULT = "feetype-result";
-	private final static String FEETYPE_EDIT = "feetype-edit";
-	private final static String FEETYPE_VIEW = "feetype-view";
-	@Autowired
-	private FeeTypeService feeTypeService;
+    private static final String FEETYPE_NEW = "feetype-new";
+    private static final String FEETYPE_RESULT = "feetype-result";
+    private static final String FEETYPE_EDIT = "feetype-edit";
+    private static final String FEETYPE_VIEW = "feetype-view";
 
-	private void prepareForNewForm(Model model) {
-		model.addAttribute("feeProcessTypes", FeeType.FeeProcessType.values());
-	}
+    @Autowired
+    private FeeTypeService feeTypeService;
 
-	@RequestMapping(value = "new", method = RequestMethod.GET)
-	public String newForm(final Model model) {
-		return FEETYPE_NEW;
-	}
+    @Autowired
+    public SubCategoryDetailsService subCategoryDetailsService;
 
-	@RequestMapping(value = "create", method = RequestMethod.POST)
-	public String create(@Valid @ModelAttribute final FeeType feeType,
-			final BindingResult errors, final Model model) {
-		if (errors.hasErrors())
-			return FEETYPE_RESULT;
-		feeTypeService.create(feeType);
-		return FEETYPE_RESULT;
-	}
+    @RequestMapping(value = "/feetype-by-subcategory", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<LicenseSubCategoryDetails> getFeeType(@RequestParam final Long subCategoryId) {
+        return subCategoryDetailsService.getFeeTypeDetails(subCategoryId);
+    }
 
-	@RequestMapping(value = "edit/{id}", method = RequestMethod.POST)
-	public String edit(@PathVariable("id") final String id) {
-		return FEETYPE_EDIT;
-	}
+    @RequestMapping(value = "/uom-by-subcategory", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<LicenseSubCategoryDetails> getUom(@RequestParam final Long subCategoryId, @RequestParam final Long feeTypeId) {
+        return subCategoryDetailsService.getUomDetails(subCategoryId, feeTypeId);
+    }
 
-	@RequestMapping(value = "update", method = RequestMethod.POST)
-	public String update(@Valid @ModelAttribute final FeeType feeType,
-			final BindingResult errors) {
-		if (errors.hasErrors())
-			return FEETYPE_RESULT;
-		feeTypeService.update(feeType);
-		return FEETYPE_RESULT;
-	}
+    @RequestMapping(value = "new", method = RequestMethod.GET)
+    public String newForm(final Model model) {
+        return FEETYPE_NEW;
+    }
 
-	@RequestMapping(value = "view/{id}", method = RequestMethod.POST)
-	public String view(@PathVariable("id") final String id) {
-		return FEETYPE_VIEW;
-	}
+    @RequestMapping(value = "create", method = RequestMethod.POST)
+    public String create(@Valid @ModelAttribute final FeeType feeType,
+            final BindingResult errors, final Model model) {
+        if (errors.hasErrors())
+            return FEETYPE_RESULT;
+        feeTypeService.create(feeType);
+        return FEETYPE_RESULT;
+    }
 
+    @RequestMapping(value = "edit/{id}", method = RequestMethod.POST)
+    public String edit(@PathVariable("id") final String id) {
+        return FEETYPE_EDIT;
+    }
+
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    public String update(@Valid @ModelAttribute final FeeType feeType,
+            final BindingResult errors) {
+        if (errors.hasErrors())
+            return FEETYPE_RESULT;
+        feeTypeService.update(feeType);
+        return FEETYPE_RESULT;
+    }
+
+    @RequestMapping(value = "view/{id}", method = RequestMethod.POST)
+    public String view(@PathVariable("id") final String id) {
+        return FEETYPE_VIEW;
+    }
 }

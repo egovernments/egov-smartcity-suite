@@ -2340,7 +2340,7 @@ public class PropertyTaxUtil {
         query.append(
                 "select pmv from PropertyMaterlizeView pmv where pmv.propertyId is not null and pmv.isActive = true and pmv.isExempted=false ");
         String arrearBalanceCond = " ((pmv.aggrArrDmd - pmv.aggrArrColl) + ((pmv.aggrCurrFirstHalfDmd + pmv.aggrCurrSecondHalfDmd) - (pmv.aggrCurrFirstHalfColl + pmv.aggrCurrSecondHalfColl))) ";
-        String arrearBalanceNotZeroCond = " and ((pmv.aggrArrDmd - pmv.aggrArrColl) + ((pmv.aggrCurrFirstHalfDmd + pmv.aggrCurrSecondHalfDmd) - (pmv.aggrCurrFirstHalfColl + pmv.aggrCurrSecondHalfColl)))!=0 ";
+        String arrearBalanceNotZeroCond = " and ((pmv.aggrArrDmd - pmv.aggrArrColl) + ((pmv.aggrCurrFirstHalfDmd + pmv.aggrCurrSecondHalfDmd) - (pmv.aggrCurrFirstHalfColl + pmv.aggrCurrSecondHalfColl)))>0 ";
         String orderByClause = " order by ";
         query.append(arrearBalanceNotZeroCond);
         if (StringUtils.isNotBlank(fromDemand) && StringUtils.isBlank(toDemand)) {

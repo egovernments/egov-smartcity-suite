@@ -28,6 +28,10 @@ public class CouncilMeetingIndex {
     @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date meetingDate;
     
+    @JsonFormat (shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
+    private Date createdDate;
+    
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String meetingTime;
     
@@ -72,6 +76,7 @@ public class CouncilMeetingIndex {
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String ulbCode;
+    
 
     public String getId() {
         return id;
@@ -223,6 +228,14 @@ public class CouncilMeetingIndex {
 
     public void setUlbCode(String ulbCode) {
         this.ulbCode = ulbCode;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
     
 }

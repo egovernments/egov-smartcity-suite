@@ -60,6 +60,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Date;
@@ -115,9 +116,20 @@ public class Assignment extends AbstractAuditable {
     @OneToMany(mappedBy = "assignment", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<HeadOfDepartments> deptSet = new ArrayList<HeadOfDepartments>(0);
 
+    @Transient
+    private List<HeadOfDepartments> hodList = new ArrayList<>(0);
+
     @Override
     public Long getId() {
         return id;
+    }
+
+    public List<HeadOfDepartments> getHodList() {
+        return hodList;
+    }
+
+    public void setHodList(final List<HeadOfDepartments> hodLists) {
+        hodList = hodLists;
     }
 
     @Override

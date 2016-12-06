@@ -29,24 +29,23 @@ public class BaseRegisterService {
             finalQuery.setParameter("statusId", baseRegisterForm.getStatusId());
         if (baseRegisterForm.getWardId() != null)
             finalQuery.setParameter("wardId", baseRegisterForm.getWardId());
-        List<BaseRegisterForm> resultList = finalQuery.list();
-        return resultList;
+        return finalQuery.list();
     }
 
-    public SQLQuery prepareQuery(final BaseRegisterForm baseRegisterForm) {
-        final StringBuilder selectQry = new StringBuilder();
+    private SQLQuery prepareQuery(final BaseRegisterForm baseRegisterForm) {
         StringBuilder whereQry = new StringBuilder();
-        selectQry
-                .append("select \"licenseid\", \"licensenumber\", \"tradetitle\", \"owner\", \"mobile\", \"categoryname\", \"subcategoryname\", \"assessmentno\"," +
-                        " \"wardname\", \"localityname\", \"tradeaddress\", \"commencementdate\", \"statusname\", cast(arrearlicensefee as bigint) " +
-                        "AS \"arrearlicensefee\", cast(arrearpenaltyfee as bigint) AS \"arrearpenaltyfee\", cast(curlicensefee as bigint) " +
-                        "AS \"curlicensefee\", cast(curpenaltyfee as bigint) AS \"curpenaltyfee\" from egtl_mv_baseregister_view where 1=1 ");
+        final StringBuilder selectQry = new StringBuilder("select \"licenseid\", \"licensenumber\", \"tradetitle\", \"owner\", \"mobile\", \"categoryname\", \"subcategoryname\", \"assessmentno\"," +
+                " \"wardname\", \"localityname\", trim(regexp_replace(\"tradeaddress\", '\\s+', ' ', 'g')) as \"tradeaddress\", \"commencementdate\", \"statusname\", cast(arrearlicensefee as bigint) " +
+                "AS \"arrearlicensefee\", cast(arrearpenaltyfee as bigint) AS \"arrearpenaltyfee\", cast(curlicensefee as bigint) " +
+                "AS \"curlicensefee\", cast(curpenaltyfee as bigint) AS \"curpenaltyfee\" from egtl_mv_baseregister_view where 1=1 ");
         if (baseRegisterForm.getCategoryId() != null)
             whereQry = whereQry.append(" and category = :categoryId");
         if (baseRegisterForm.getSubCategoryId() != null)
             whereQry = whereQry.append(" and subcategory = :subCategoryId");
         if (baseRegisterForm.getStatusId() != null)
             whereQry = whereQry.append(" and status = :statusId");
+        else
+            whereQry = whereQry.append(" and statusname not in ('Cancelled','Suspended')");
         if (baseRegisterForm.getWardId() != null)
             whereQry = whereQry.append(" and ward = :wardId");
         return entityManager.unwrap(Session.class).createSQLQuery(selectQry.append(whereQry).toString());

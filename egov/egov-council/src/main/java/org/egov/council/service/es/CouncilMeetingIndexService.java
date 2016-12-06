@@ -91,13 +91,18 @@ public class CouncilMeetingIndexService {
         int noOfPreamblesRejected =0;
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         CouncilMeetingIndex meetingIndex = new CouncilMeetingIndex();
+        meetingIndex.setDistrictName(cityWebsite.getDistrictName());
+        meetingIndex.setUlbGrade(cityWebsite.getGrade());
+        meetingIndex.setUlbCode(cityWebsite.getCode());
+        meetingIndex.setRegionName(cityWebsite.getRegionName());
+        meetingIndex.setUlbName(cityWebsite.getName());
         final SimpleDateFormat dateFormat = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
         if(councilMeeting != null){
-            meetingIndex.setUlbName(cityWebsite.getName());
             meetingIndex.setId(cityWebsite.getCode().concat("-").concat(councilMeeting.getMeetingNumber()));
             meetingIndex.setCommitteeType(councilMeeting.getCommitteeType().getName()!= null ?councilMeeting.getCommitteeType().getName():"");
            String meetingDate = dateFormat.format(councilMeeting.getMeetingDate());
             meetingIndex.setMeetingDate(dateFormat.parse(meetingDate));
+            meetingIndex.setCreatedDate(councilMeeting.getCreatedDate());
             meetingIndex.setMeetingLocation(councilMeeting.getMeetingLocation()!= null ?councilMeeting.getMeetingLocation():"");
             meetingIndex.setMeetingNumber(councilMeeting.getMeetingNumber() != null ?councilMeeting.getMeetingNumber():"");
             meetingIndex.setMeetingTime(councilMeeting.getMeetingTime() != null ?councilMeeting.getMeetingTime():"");

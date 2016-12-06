@@ -40,18 +40,28 @@
 package org.egov.ptis.master.service;
 
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.repository.AppConfigValueRepository;
 import org.egov.ptis.domain.repository.master.taxrates.TaxRatesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.TAX_RATES;
+import static org.egov.ptis.constants.PropertyTaxConstants.TAX_RATES_TEMP;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
 public class TaxRatesService {
 
     private final TaxRatesRepository taxRatesRepository;
+
+    @Autowired
+    public AppConfigValueRepository appConfigValueRepository;
 
     @Autowired
     public TaxRatesService(final TaxRatesRepository taxRatesRepository) {
@@ -61,4 +71,32 @@ public class TaxRatesService {
     public List<AppConfigValues> getAllTaxRates() {
         return taxRatesRepository.findAll();
     }
+
+    public Map<String, Double> getTaxDetails() {
+        List<AppConfigValues> taxRates = getAllTaxRates();
+        Map<String, Double> taxRatesMap = new HashMap<>();
+        for (AppConfigValues appConfig : taxRates) {
+            String[] rows = appConfig.getValue().split("\n");
+            for (String row : rows) {
+                String[] value = row.split("=");
+                if (!TAX_RATES_TEMP.contains(value[0])) {
+                    taxRatesMap.put(TAX_RATES.get(value[0]), Double.parseDouble(value[1]));
+                }
+            }
+
+        }
+        Map<String, Double> taxRatesDisplayMap = new LinkedHashMap<>();
+        taxRatesDisplayMap.put("General Tax Residential", taxRatesMap.get("General Tax Residential"));
+        taxRatesDisplayMap.put("General Tax Non Residential", taxRatesMap.get("General Tax Non Residential"));
+        taxRatesDisplayMap.put("Education Cess", taxRatesMap.get("Education Cess"));
+        taxRatesDisplayMap.put("Vacant Land Tax", taxRatesMap.get("Vacant Land Tax"));
+        taxRatesDisplayMap.put("Library Cess", taxRatesMap.get("Library Cess"));
+        return taxRatesDisplayMap;
+    }
+    
+    @Transactional
+    public void updateTaxRateAppconfig(AppConfigValues appConfigValue) {
+        appConfigValueRepository.save(appConfigValue);
+    }
+
 }

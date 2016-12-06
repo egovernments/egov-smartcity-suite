@@ -231,6 +231,9 @@ public class LineEstimate extends StateAware {
 
     private String cancellationRemarks;
 
+    @Transient
+    private List<LineEstimateDetails> tempLineEstimateDetails = new ArrayList<LineEstimateDetails>(0);
+
     @Override
     public Long getId() {
         return id;
@@ -544,5 +547,13 @@ public class LineEstimate extends StateAware {
 
     public void setCancellationRemarks(final String cancellationRemarks) {
         this.cancellationRemarks = cancellationRemarks;
+    }
+
+    public List<LineEstimateDetails> getTempLineEstimateDetails() {
+        return tempLineEstimateDetails;
+    }
+
+    public void setTempLineEstimateDetails(final List<LineEstimateDetails> tempLineEstimateDetails) {
+        this.tempLineEstimateDetails = tempLineEstimateDetails;
     }
 }

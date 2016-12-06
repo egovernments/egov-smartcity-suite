@@ -265,5 +265,10 @@
 		<put-attribute name="body" 
 			value="/WEB-INF/views/transactions/closeConnection-success.jsp" />	
 	</definition>
-	
+	<definition name="sewerage-connection-report-search" extends="base_layout">
+		<put-attribute name="page-title" value="title.sewerageNumberOfApplications" 
+			cascade="true"/>
+		<put-attribute name="body" 
+			value="/WEB-INF/views/reports/sewerage-connection-report-search.jsp" />	
+	</definition>
 </tiles-definitions>

@@ -47,7 +47,6 @@
 				</c:if>
 				<input type="hidden" id="mode" name="mode" value="${mode}" />
 	<%@ include file="lcinterimorder-form.jsp"%>
-	<jsp:include page="lcinterimorderdocuments-view.jsp"></jsp:include>
 	 <input type="hidden" name="lcInterimOrderDocList" value="${lcInterimOrderDocList}" />
  	<%-- <input type="hidden" id="legalCaseInterimOrder" name="legalCaseInterimOrder" value="${legalCaseInterimOrder.id}" /> --%>
 	<%-- <input type="hidden"  id="lcInterimOrderId" name="lcInterimOrderId" value="${lcInterimOrder.id}" />  --%>
@@ -63,6 +62,7 @@
 	</div>
 	</div>
 	</div>
+	<jsp:include page="lcinterimorderdocuments-view.jsp"></jsp:include>
 	<div class="form-group">
 		<div class="text-center">
 			<button type='submit' class='btn btn-primary' id="buttonSubmit">

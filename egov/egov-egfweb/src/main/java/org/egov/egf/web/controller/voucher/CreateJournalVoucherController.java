@@ -71,6 +71,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping(value = "/journalvoucher")
 public class CreateJournalVoucherController extends BaseVoucherController {
 
+    private static final String JOURNALVOUCHER_FORM = "journalvoucher-form";
+
+    private static final String VOUCHER_NUMBER_GENERATION_AUTO = "voucherNumberGenerationAuto";
+
+    private static final String STATE_TYPE = "stateType";
+
     private static final String APPROVAL_POSITION = "approvalPosition";
 
     @Autowired
@@ -97,12 +103,12 @@ public class CreateJournalVoucherController extends BaseVoucherController {
     public String showNewForm(@ModelAttribute("voucherHeader") final CVoucherHeader voucherHeader, final Model model) {
         voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL);
         setDropDownValues(model);
-        model.addAttribute("stateType", voucherHeader.getClass().getSimpleName());
+        model.addAttribute(STATE_TYPE, voucherHeader.getClass().getSimpleName());
         prepareWorkflow(model, voucherHeader, new WorkflowContainer());
         prepareValidActionListByCutOffDate(model);
         voucherHeader.setVoucherDate(new Date());
-        model.addAttribute("voucherNumberGenerationAuto", isVoucherNumberGenerationAuto(voucherHeader));
-        return "journalvoucher-form";
+        model.addAttribute(VOUCHER_NUMBER_GENERATION_AUTO, isVoucherNumberGenerationAuto(voucherHeader));
+        return JOURNALVOUCHER_FORM;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
@@ -118,13 +124,13 @@ public class CreateJournalVoucherController extends BaseVoucherController {
 
         if (resultBinder.hasErrors()) {
             setDropDownValues(model);
-            model.addAttribute("stateType", voucherHeader.getClass().getSimpleName());
+            model.addAttribute(STATE_TYPE, voucherHeader.getClass().getSimpleName());
             prepareWorkflow(model, voucherHeader, new WorkflowContainer());
             prepareValidActionListByCutOffDate(model);
             voucherHeader.setVoucherDate(new Date());
-            model.addAttribute("voucherNumberGenerationAuto", isVoucherNumberGenerationAuto(voucherHeader));
+            model.addAttribute(VOUCHER_NUMBER_GENERATION_AUTO, isVoucherNumberGenerationAuto(voucherHeader));
 
-            return "journalvoucher-form";
+            return JOURNALVOUCHER_FORM;
         } else {
             Long approvalPosition = 0l;
             String approvalComment = "";
@@ -138,20 +144,20 @@ public class CreateJournalVoucherController extends BaseVoucherController {
                         workFlowAction);
             } catch (final ValidationException e) {
                 setDropDownValues(model);
-                model.addAttribute("stateType", voucherHeader.getClass().getSimpleName());
+                model.addAttribute(STATE_TYPE, voucherHeader.getClass().getSimpleName());
                 prepareWorkflow(model, voucherHeader, new WorkflowContainer());
                 prepareValidActionListByCutOffDate(model);
                 voucherHeader.setVoucherDate(new Date());
-                model.addAttribute("voucherNumberGenerationAuto", isVoucherNumberGenerationAuto(voucherHeader));
+                model.addAttribute(VOUCHER_NUMBER_GENERATION_AUTO, isVoucherNumberGenerationAuto(voucherHeader));
                 resultBinder.reject("", e.getErrors().get(0).getMessage());
-                return "journalvoucher-form";
+                return JOURNALVOUCHER_FORM;
             }
 
             final String approverDetails = financialUtils.getApproverDetails(workFlowAction,
                     savedVoucherHeader.getState(), savedVoucherHeader.getId(), approvalPosition);
 
             return "redirect:/journalvoucher/success?approverDetails= " + approverDetails + "&voucherNumber="
-                    + savedVoucherHeader.getVoucherNumber();
+                    + savedVoucherHeader.getVoucherNumber() + "&workFlowAction=" + workFlowAction;
 
         }
     }
@@ -159,6 +165,7 @@ public class CreateJournalVoucherController extends BaseVoucherController {
     @RequestMapping(value = "/success", method = RequestMethod.GET)
     public String showSuccessPage(@RequestParam("voucherNumber") final String voucherNumber, final Model model,
             final HttpServletRequest request) {
+        final String workFlowAction = request.getParameter("workFlowAction");
         final String[] keyNameArray = request.getParameter("approverDetails").split(",");
         Long id = 0L;
         String approverName = "";
@@ -185,15 +192,16 @@ public class CreateJournalVoucherController extends BaseVoucherController {
 
         final CVoucherHeader voucherHeader = journalVoucherService.getByVoucherNumber(voucherNumber);
 
-        final String message = getMessageByStatus(voucherHeader, approverName, nextDesign);
+        final String message = getMessageByStatus(voucherHeader, approverName, nextDesign, workFlowAction);
 
         model.addAttribute("message", message);
 
         return "expensebill-success";
     }
 
-    private String getMessageByStatus(final CVoucherHeader voucherHeader, final String approverName, final String nextDesign) {
-        String message = "";
+    private String getMessageByStatus(final CVoucherHeader voucherHeader, final String approverName, final String nextDesign,
+            final String workFlowAction) {
+        String message;
 
         if (FinancialConstants.PREAPPROVEDVOUCHERSTATUS.equals(voucherHeader.getStatus()))
             message = messageSource.getMessage("msg.journal.voucher.create.success",
@@ -201,7 +209,7 @@ public class CreateJournalVoucherController extends BaseVoucherController {
         else if (FinancialConstants.CREATEDVOUCHERSTATUS.equals(voucherHeader.getStatus()))
             message = messageSource.getMessage("msg.journal.voucher.approved.success",
                     new String[] { voucherHeader.getVoucherNumber() }, null);
-        else if (FinancialConstants.WORKFLOW_STATE_CANCELLED.equals(voucherHeader.getState()))
+        else if (FinancialConstants.WORKFLOW_STATE_CANCELLED.equals(workFlowAction))
             message = messageSource.getMessage("msg.journal.voucher.cancel",
                     new String[] { voucherHeader.getVoucherNumber() }, null);
         else

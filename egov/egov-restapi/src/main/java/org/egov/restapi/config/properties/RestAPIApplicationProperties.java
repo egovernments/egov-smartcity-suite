@@ -45,45 +45,38 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
+
 @Configuration
-@PropertySource(name = "restAPIApplicationProperties", value = {
-		"classpath:config/restapi-config-properties",
-		"classpath:config/egov-erp-${user.name}.properties",
-		"classpath:config/application-config-${client.id}.properties",
-		"classpath:config/egov-erp-override.properties" }, ignoreResourceNotFound = true)
+@PropertySource(value = {
+        "classpath:config/restapi-config.properties",
+        "classpath:config/egov-erp-${user.name}.properties",
+        "classpath:config/application-config-${client.id}.properties",
+        "classpath:config/egov-erp-override.properties"}, ignoreResourceNotFound = true)
 public class RestAPIApplicationProperties {
 
-	@Autowired
-	private Environment environment;
+    @Autowired
+    private Environment environment;
 
-	public List<String> aponlineIPAddress() {
-		if (environment.getProperty("aponline.ipaddress") != null)
-			return Arrays.asList(environment.getProperty("aponline.ipaddress").split(","));
-		else
-			return Collections.EMPTY_LIST;
-	}
+    public List<String> aponlineIPAddress() {
+        return environment.getProperty("aponline.ipaddress") == null ?
+                emptyList() : Arrays.asList(environment.getProperty("aponline.ipaddress").split(","));
+    }
 
-	public List<String> esevaIPAddress() {
-		if (environment.getProperty("eseva.ipaddress") != null)
-			return Arrays.asList(environment.getProperty("eseva.ipaddress").split(","));
-		else
-			return Collections.EMPTY_LIST;
-	}
+    public List<String> esevaIPAddress() {
+        return environment.getProperty("eseva.ipaddress") == null ?
+                emptyList() : Arrays.asList(environment.getProperty("eseva.ipaddress").split(","));
+    }
 
-	public List<String> softtechIPAddress() {
-		if (environment.getProperty("softtech.ipaddress") != null)
-			return Arrays.asList(environment.getProperty("softtech.ipaddress").split(","));
-		else
-			return Collections.EMPTY_LIST;
-	}
-	
-	public List<String> cardIPAddress() {
-		if (environment.getProperty("card.ipaddress") != null)
-			return Arrays.asList(environment.getProperty("card.ipaddress").split(","));
-		else
-			return Collections.EMPTY_LIST;
-	}
+    public List<String> softtechIPAddress() {
+        return environment.getProperty("softtech.ipaddress") == null ?
+                emptyList() : Arrays.asList(environment.getProperty("softtech.ipaddress").split(","));
+    }
+
+    public List<String> cardIPAddress() {
+        return environment.getProperty("card.ipaddress") == null
+                ? emptyList() : Arrays.asList(environment.getProperty("card.ipaddress").split(","));
+    }
 }

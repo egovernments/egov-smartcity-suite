@@ -3258,7 +3258,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Starting reassignInstrumentHeader...");
 		final InstrumentHeader ih = (InstrumentHeader) persistenceService
-				.find("from InstrumentHeader where instrumentNumber=? and bankAccountId=? and isPayCheque=1 ",
+				.find("from InstrumentHeader where instrumentNumber=? and bankAccountId=? and isPayCheque='1' ",
 						chqNo, account);
 		ih.setIsPayCheque("1");
 		// ih.setInstrumentType(instType);

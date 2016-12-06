@@ -1,41 +1,41 @@
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
+ * accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *  Copyright (C) 2016  eGovernments Foundation
  *
- *     The updated version of eGov suite of products as by eGovernments Foundation
- *     is available at http://www.egovernments.org
+ *  The updated version of eGov suite of products as by eGovernments Foundation
+ *  is available at http://www.egovernments.org
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or
- *     http://www.gnu.org/licenses/gpl.html .
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/ or
+ *  http://www.gnu.org/licenses/gpl.html .
  *
- *     In addition to the terms of the GPL license to be adhered to in using this
- *     program, the following additional terms are to be complied with:
+ *  In addition to the terms of the GPL license to be adhered to in using this
+ *  program, the following additional terms are to be complied with:
  *
- *         1) All versions of this program, verbatim or modified must carry this
- *            Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
  *
- *         2) Any misrepresentation of the origin of the material is prohibited. It
- *            is required that all modified versions of this material be marked in
- *            reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- *         3) This license does not grant any rights to any user of the program
- *            with regards to rights under trademark law for use of the trade names
- *            or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 package org.egov.infra.config.persistence.event.listener;
@@ -45,7 +45,6 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infstr.models.BaseModel;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.event.spi.EventSource;
@@ -91,13 +90,13 @@ public class HibernateEventListener implements SaveOrUpdateEventListener, PreUpd
      * pre-insert event because Hibernate checks for not-null constraints before the pre-update and pre-insert are fired.
      */
     @Override
-    public void onSaveOrUpdate(final SaveOrUpdateEvent event) throws HibernateException {
+    public void onSaveOrUpdate(final SaveOrUpdateEvent event) {
         final EventSource session = event.getSession();
         final Object object = event.getObject();
         if (object instanceof BaseModel && !session.getPersistenceContext().reassociateIfUninitializedProxy(object)) {
             // only update the entity if it has been changed
             final Date currentDate = new Date();
-            final User usr = (User) session.load(User.class, ApplicationThreadLocals.getUserId());
+            final User usr = session.load(User.class, ApplicationThreadLocals.getUserId());
 
             final BaseModel entity = (BaseModel) session.getPersistenceContext().unproxyAndReassociate(object);
             if (entity.getCreatedBy() == null) {
@@ -108,7 +107,7 @@ public class HibernateEventListener implements SaveOrUpdateEventListener, PreUpd
             }
 
         } else if (object instanceof Auditable && !session.getPersistenceContext().reassociateIfUninitializedProxy(object)) {
-            final User usr = (User) session.load(User.class, ApplicationThreadLocals.getUserId());
+            final User usr = session.load(User.class, ApplicationThreadLocals.getUserId());
             final AbstractAuditable entity = (AbstractAuditable) session.getPersistenceContext().unproxyAndReassociate(object);
             if (entity.getCreatedBy() == null) {
                 final Date currentDate = new Date();
@@ -134,7 +133,7 @@ public class HibernateEventListener implements SaveOrUpdateEventListener, PreUpd
         // get the user object from a different session
         final SessionFactory factory = session.getFactory();
         final Session session2 = factory.openSession();
-        final User usr = (User) session2.load(User.class, ApplicationThreadLocals.getUserId());
+        final User usr = session2.load(User.class, ApplicationThreadLocals.getUserId());
         session2.flush();
         session2.close();
         return usr;

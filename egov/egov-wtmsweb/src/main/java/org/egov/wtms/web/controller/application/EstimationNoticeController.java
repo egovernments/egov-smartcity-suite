@@ -43,12 +43,15 @@ import org.apache.commons.lang.WordUtils;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.utils.NumberToWord;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.autonumber.EstimationNumberGenerator;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +77,9 @@ public class EstimationNoticeController {
 
     @Autowired
     private ReportService reportService;
+    
+    @Autowired
+    private AutonumberServiceBeanResolver beanResolver;
 
     public static final String ESTIMATION_NOTICE = "estimationNotice";
     @Autowired
@@ -88,8 +94,12 @@ public class EstimationNoticeController {
     @RequestMapping(value = "/estimationNotice", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateEstimationNotice(final HttpServletRequest request,
             final HttpSession session) {
+        EstimationNumberGenerator estimationNoGen = beanResolver.getAutoNumberServiceFor(EstimationNumberGenerator.class);
+        
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(request.getParameter("pathVar"));
+        waterConnectionDetails.setEstimationNumber(estimationNoGen.generateEstimationNumber());
+        waterConnectionDetailsService.saveAndFlushWaterConnectionDetail(waterConnectionDetails);
         return generateReport(waterConnectionDetails, session);
     }
 
@@ -102,6 +112,7 @@ public class EstimationNoticeController {
                     PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ACTIVE);
             final String doorNo[] = assessmentDetails.getPropertyAddress().split(",");
             String ownerName = "";
+            double totalCharges = 0;
             for (final OwnerName names : assessmentDetails.getOwnerNames()) {
                 ownerName = names.getOwnerName();
                 break;
@@ -121,13 +132,17 @@ public class EstimationNoticeController {
             reportParams.put("estimationDate",
                     formatter.format(waterConnectionDetails.getFieldInspectionDetails().getCreatedDate()));
             reportParams.put("estimationCharges", waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges());
+            reportParams.put("estimationNumber", waterConnectionDetails.getEstimationNumber());
             reportParams.put("donationCharges", waterConnectionDetails.getDonationCharges());
-            reportParams.put("totalCharges", waterConnectionDetails.getDonationCharges()+ waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges());
+            totalCharges = waterConnectionDetails.getDonationCharges()+ waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges();
+            reportParams.put("totalCharges",totalCharges);
             reportParams.put("applicationDate", formatter.format(waterConnectionDetails.getApplicationDate()));
             reportParams.put("applicantName", ownerName);
             reportParams.put("address", assessmentDetails.getPropertyAddress());
             reportParams.put("houseNo", doorNo[0]);
-            reportInput = new ReportRequest(ESTIMATION_NOTICE, waterConnectionDetails.getEstimationDetails(), reportParams);
+            reportParams.put("propertyID", waterConnectionDetails.getConnection().getPropertyIdentifier());
+            reportParams.put("amountInWords", getTotalAmntInWords(totalCharges));
+            reportInput = new ReportRequest(ESTIMATION_NOTICE, waterConnectionDetails, reportParams);
         }
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
@@ -142,5 +157,9 @@ public class EstimationNoticeController {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(applicationNumber);
         return generateReport(waterConnectionDetails, session);
+    }
+    
+    public String getTotalAmntInWords(Double totalCharges) {
+        return NumberToWord.amountInWords(totalCharges);
     }
 }

@@ -54,8 +54,7 @@ public interface FunctionRepository extends JpaRepository<CFunction, Long> {
 
     List<CFunction> findByNameContainingIgnoreCaseAndCodeContainingIgnoreCase(String name, String code);
 
-    List<CFunction> findByIsNotLeafAndNameContainingIgnoreCaseOrCodeContainingIgnoreCase(Boolean isNotLeaf, String name,
-            String code);
+    List<CFunction> findByNameContainingIgnoreCaseOrCodeContainingIgnoreCase(String name, String code);
 
     List<CFunction> findByNameContainingIgnoreCase(String name);
 

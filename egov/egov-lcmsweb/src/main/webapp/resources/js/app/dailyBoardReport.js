@@ -53,6 +53,9 @@ jQuery(document).ready(function($) {
 function submitForm() {
 	if($('form').valid()){
 		var caseType = $("#caseCategory").val();
+		var caseNumber = $("#caseNumber").val();
+		var lcNumber = $("#lcNumber").val();
+
 		var today = getdate();
 		
 		oTable= $('#dailyBoardReportResult-table');
@@ -97,19 +100,22 @@ function submitForm() {
 						'officerIncharge' : $("#officerIncharge").val()
 					}
 				},
-				columns :[{"title" : "S.no"},
+				columns :[{"title" : "S.no","sClass" : "text-center"},
 				             
-					       { "data" : "caseTitle" , "title": "Case Title"},  
-						  { "data" : "courtName", "title": "Court Name"},
-						  { "data" : "caseNumber", "title": "Case Number"},
-						  { "data" : "petitionerName", "title": "Petitioners"},
-						  { "data" : "respondantName", "title": "Respondants"},
-						  { "data" : "petitionType", "title": "Petition Type"},
-						  { "data" : "standingCouncil", "title": "Standing Council"},
-						  { "data" : "officerIncharge", "title": "In Charge Officer"},
-						  { "data" : "caseStatus", "title": "Status"},
-						  { "data" : "nextDate", "title": "Next Imp Date"}
+					       { "data" : "caseTitle" , "title": "Case Title" ,"sClass" : "text-center"},  
+						  { "data" : "courtName", "title": "Court Name","sClass" : "text-center"},
+						  { "data" : "caseNumber", "title": "Case Number","sClass" : "text-center"},
+						  { "data" : "petitionerName", "title": "Petitioners","sClass" : "text-center"},
+						  { "data" : "respondantName", "title": "Respondants","sClass" : "text-center"},
+						  { "data" : "petitionType", "title": "Petition Type","sClass" : "text-center"},
+						  { "data" : "standingCouncil", "title": "Standing Council","sClass" : "text-center"},
+						  { "data" : "officerIncharge", "title": "In Charge Officer","sClass" : "text-center"},
+						  { "data" : "caseStatus", "title": "Status","sClass" : "text-center"},
+						  { "data" : "nextDate", "title": "Next Imp Date","sClass" : "text-center"}
 						  ],
+						  "fnRowCallback" : function(row, data, index) {
+								$('td:eq(3)',row).html('<a href="javascript:void(0);" onclick="openLegalCase(\''+ data.lcNumber +'\')">' + data.caseNumber + '</a>');
+							},
 				           "fnDrawCallback": function ( oSettings ) {
 				                if ( oSettings.bSorted || oSettings.bFiltered )
 				                {
@@ -171,4 +177,6 @@ function getdate()
     return today;
 }
 
-
+function openLegalCase(lcNumber) {
+	window.open("/lcms/application/view/?lcNumber="+ lcNumber , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+}

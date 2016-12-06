@@ -177,7 +177,7 @@ public class LegalCaseInterimOrder extends AbstractAuditable {
     @Column(name = "actiontaken")
     private String actionTaken;
 
-    @OneToMany(mappedBy = "legalCaseInterimOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalCaseInterimOrder", fetch = FetchType.LAZY)
     @NotAudited
     private List<LcInterimOrderDocuments> lcInterimOrderDocuments = new ArrayList<LcInterimOrderDocuments>(0);
 
