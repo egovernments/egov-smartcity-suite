@@ -70,15 +70,16 @@ public class AjaxEstimateTemplateAction extends BaseFormAction {
     private String query;
     private List<EstimateTemplate> estimateTemplateList;
     private Long category;
+
     public List getSubCategories() {
         return subCategories;
     }
 
-    public void setSubCategories(List subCategories) {
+    public void setSubCategories(final List subCategories) {
         this.subCategories = subCategories;
     }
 
-    public void setCategory(Long category) {
+    public void setCategory(final Long category) {
         this.category = category;
     }
 
