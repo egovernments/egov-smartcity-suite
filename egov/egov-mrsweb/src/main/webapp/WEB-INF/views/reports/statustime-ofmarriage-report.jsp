@@ -59,7 +59,7 @@
 						<div class="panel-body custom-form">
 							<div class="form-group">
 								<div class="col-sm-3 control-label">
-								<label>Applicant Type</label>
+								<label><spring:message code="lbl.applicant.type" /></label>
 								</div>
 								<div class="col-sm-2">
 										<select name="applicantType" class="form-control">
@@ -82,13 +82,13 @@
 							</div>
 							<div class="form-group">
 								<div class="col-sm-3 control-label">
-								<label>From Date</label>
+								<label><spring:message code="lbl.from.date" /></label>
 								</div>
 								<div class="col-sm-2">
 									<input name="fromDate" class="form-control datepicker" id="fromDate">
 								</div>
 								<div class="col-sm-3 control-label">
-								<label>To Date</label>
+								<label><spring:message code="lbl.to.date" /></label>
 								</div>
 								<div class="col-sm-2">
 									<input name="toDate" class="form-control datepicker" id="toDate">
@@ -136,19 +136,19 @@
 
 
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css?rnd=${app_release_no}' context='/egi'/>" />
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css?rnd=${app_release_no}' context='/egi'/>">
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
 
 <script
 	src="<cdn:url value='/resources/js/app/statusattime-ofmarriage.js?rnd=${app_release_no}'/> "></script>

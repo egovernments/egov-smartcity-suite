@@ -59,12 +59,16 @@ $(document)
 				var month = currentDate.getMonth() + 1;
 				var year = currentDate.getFullYear();
 				var currentDate = day + "-" + month + "-" + year;
+				var fromdate = $('#txt-fromdate').val();
+				var todate = $('#txt-todate').val();
+				var status = $('#status').val();
+				var registrationunit = $('#registrationunit').val();
 				$('.report-section').removeClass('display-hide');
-				var reportdatatable = $("#registrationstatus_table")
+				$("#registrationstatus_table")
 						.dataTable(
 								{
 									ajax : {
-										url : "/mrs/report/registrationstatus",
+										url : "/mrs/report/applicantionsstatus-count",
 										type : "POST",
 										beforeSend : function() {
 											$('.loader-class')
@@ -111,65 +115,156 @@ $(document)
 								                },   
 									           },
 											{
-												"data" : "registrationNo",
-												render : function(data,
-	  													type, row, meta) {
-													if (row.registrationNo == 'undefined'
-															|| row.registrationNo == '') {
-														return "N/A";
-													} else {
-														return row.registrationNo;
-													}
-												},
+												"data" : "registrationUnit",
 												"sClass" : "text-left"
 											},
 											{
-												"data" : "husbandName",
-												"sClass" : "text-left"
-											},
-											{
-												"data" : "wifeName",
-												"sClass" : "text-left"
-											},
-											{
-												"data" : "registrationDate",
-												"sClass" : "text-left"
-											},
-											{
-												"data" : "dateOfMarriage",
-												"sClass" : "text-left"
-											},
-											{
-												"data" : "applicationType",
-												"sClass" : "text-left"
-											},
-											{
-												"data" : "feePaid",
-												"sClass" : "text-left"
-											},
-											{
-												"data" : "status",
-												"sClass" : "text-left"
-											} ,
-											{
-												"data" : "remarks",
+												"data" : "createdCount",
 												render : function(data,
 														type, row, meta) {
-													if (row.remarks == 'undefined' || row.remarks == '') {
-														return "N/A";
-													} else {
-														return row.remarks;
-													}
+													return parseInt(row.createdCount) !== 0 ? '<a onclick="openPopup(\'/mrs/report/applicantionsstatus-count?'
+															+ 'registrationunit='
+															+ row.registrationUnit
+															+ '&'
+															+ 'status=CREATED'
+															+ '&'
+															+ 'fromdate='
+															+ fromdate
+															+ '&'
+															+ 'todate='
+															+ todate
+															+ '\')" href="javascript:void(0);">'
+															+ row.createdCount
+															+ '</a>'
+															: row.createdCount;
 												},
-												"sClass" : "text-left"
-											}]
-
+												"sClass" : "text-center"
+											},
+											{
+												"data" : "approvedCount",
+												render : function(data,
+														type, row, meta) {
+													return parseInt(row.approvedCount) !== 0 ? '<a onclick="openPopup(\'/mrs/report/applicantionsstatus-count?'
+															+ 'registrationunit='
+															+ row.registrationUnit
+															+ '&'
+															+ 'status=APPROVED'
+															+ '&'
+															+ 'fromdate='
+															+ fromdate
+															+ '&'
+															+ 'todate='
+															+ todate
+															+ '\')" href="javascript:void(0);">'
+															+ row.approvedCount
+															+ '</a>'
+															: row.approvedCount;
+												},
+												"sClass" : "text-center"
+											},
+											{
+												"data" : "registeredCount",
+												render : function(data,
+														type, row, meta) {
+													return parseInt(row.registeredCount) !== 0 ? '<a onclick="openPopup(\'/mrs/report/applicantionsstatus-count?'
+															+ 'registrationunit='
+															+ row.registrationUnit
+															+ '&'
+															+ 'status=REGISTERED'
+															+ '&'
+															+ 'fromdate='
+															+ fromdate
+															+ '&'
+															+ 'todate='
+															+ todate
+															+ '\')" href="javascript:void(0);">'
+															+ row.registeredCount
+															+ '</a>'
+															: row.registeredCount;
+												},
+												"sClass" : "text-center"
+											},
+											{
+												"data" : "rejectedCount",
+												render : function(data,
+														type, row, meta) {
+													return parseInt(row.rejectedCount) !== 0 ? '<a onclick="openPopup(\'/mrs/report/applicantionsstatus-count?'
+															+ 'registrationunit='
+															+ row.registrationUnit
+															+ '&'
+															+ 'status=REJECTED'
+															+ '&'
+															+ 'fromdate='
+															+ fromdate
+															+ '&'
+															+ 'todate='
+															+ todate
+															+ '\')" href="javascript:void(0);">'
+															+ row.rejectedCount
+															+ '</a>'
+															: row.rejectedCount;
+												},
+												"sClass" : "text-center"
+											},
+											{
+												"data" : "cancelledCount",
+												render : function(data,
+														type, row, meta) {
+													return parseInt(row.cancelledCount) !== 0 ? '<a onclick="openPopup(\'/mrs/report/applicantionsstatus-count?'
+															+ 'regunit='
+															+ row.registrationUnit
+															+ '&'
+															+ 'status=CANCELLED'
+															+ '&'
+															+ 'fromdate='
+															+ fromdate
+															+ '&'
+															+ 'todate='
+															+ todate
+															+ '\')" href="javascript:void(0);">'
+															+ row.cancelledCount
+															+ '</a>'
+															: row.cancelledCount;
+												},
+												"sClass" : "text-center"
+											},
+											{
+												"data" : "total",
+												"sClass" : "text-center"
+											}],
+											"footerCallback" : function(row, data, start, end, display) {
+												var api = this.api(), data;
+												if (data.length == 0) {
+													jQuery('#report-footer').hide();
+												} else {
+													jQuery('#report-footer').show(); 
+												}
+												if (data.length > 0) {
+													updateTotalFooter(2, api);
+													updateTotalFooter(3, api);
+													updateTotalFooter(4, api);
+													updateTotalFooter(5, api);
+													updateTotalFooter(6, api);
+													updateTotalFooter(7, api);
+												}
+											},
+											"aoColumnDefs" : [ {
+												"aTargets" : [2,3,4,5,6,7],
+												"mRender" : function(data, type, full) {
+													return formatNumberInr(data);    
+												}
+											} ]		
 								});
-				
 
 			}
 
 		});
+
+function openPopup(url) {
+	window.open(url, 'window',
+			'scrollbars=1,resizable=yes,height=600,width=800,status=yes');
+
+}
 
 function getFormData($form) {
 var unindexed_array = $form.serializeArray();
@@ -180,4 +275,50 @@ indexed_array[n['name']] = n['value'];
 });
 
 return indexed_array;
+}
+
+function updateTotalFooter(colidx, api) {
+	// Remove the formatting to get integer data for summation
+	var intVal = function(i) {
+		return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1
+				: typeof i === 'number' ? i : 0;
+	};
+
+	// Total over all pages
+	total = api.column(colidx).data().reduce(function(a, b) {
+		return intVal(a) + intVal(b);
+	});
+
+	// Total over this page
+	pageTotal = api.column(colidx, {
+		page : 'current'
+	}).data().reduce(function(a, b) {
+		return intVal(a) + intVal(b);
+	}, 0);
+
+	// Update footer
+	jQuery(api.column(colidx).footer()).html(
+			formatNumberInr(pageTotal) + ' (' + formatNumberInr(total)
+					+ ')');
+}
+
+
+//inr formatting number
+function formatNumberInr(x) {
+	if (x) {
+		x = x.toString();
+		var afterPoint = '';
+		if (x.indexOf('.') > 0)
+			afterPoint = x.substring(x.indexOf('.'), x.length);
+		x = Math.floor(x);
+		x = x.toString();
+		var lastThree = x.substring(x.length - 3);
+		var otherNumbers = x.substring(0, x.length - 3);
+		if (otherNumbers != '')
+			lastThree = ',' + lastThree;
+		var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",")
+				+ lastThree + afterPoint;
+		return res;
+	}
+	return x;
 }

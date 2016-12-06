@@ -51,11 +51,13 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.infra.utils.DateUtils;
 import org.egov.mrs.application.reports.repository.MarriageRegistrationReportsRepository;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.enums.MaritalStatus;
+import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
@@ -90,6 +92,63 @@ public class MarriageRegistrationReportsService {
     @Autowired
     private MarriageRegistrationReportsRepository marriageRegistrationReportsRepository;
     
+    
+    public Date resetFromDateTimeStamp(final Date date){
+        Calendar cal1 = Calendar.getInstance();  
+        cal1.setTime(date);
+        cal1.set(Calendar.HOUR_OF_DAY, 0);
+        cal1.set(Calendar.MINUTE, 0);
+        cal1.set(Calendar.SECOND, 0);
+        cal1.set(Calendar.MILLISECOND, 0);
+        return cal1.getTime();
+    }
+    public Date resetToDateTimeStamp(final Date date){
+        Calendar cal1 = Calendar.getInstance();  
+        cal1.setTime(date);
+        cal1.set(Calendar.HOUR_OF_DAY, 23);
+        cal1.set(Calendar.MINUTE, 59);
+        cal1.set(Calendar.SECOND, 59);
+        cal1.set(Calendar.MILLISECOND, 999);
+        return cal1.getTime();
+    }
+    public Date getMonthStartday(final String monthyear) {
+        Date monthStartDate = new Date();
+        if (monthyear != null) {
+            final String[] month_year = monthyear.split("/");
+            final Calendar calnew = Calendar.getInstance();
+            calnew.set(Calendar.MONTH, Integer.parseInt(month_year[0]) - 1);
+            calnew.set(Calendar.YEAR, Integer.parseInt(month_year[1]));
+            calnew.set(Calendar.HOUR_OF_DAY, 0);
+            calnew.set(Calendar.MINUTE, 0);
+            calnew.set(Calendar.SECOND, 0);
+            calnew.set(Calendar.DAY_OF_MONTH,
+                    calnew.getActualMinimum(Calendar.DAY_OF_MONTH));
+            monthStartDate = calnew.getTime();
+
+        }
+        return monthStartDate;
+    }
+
+    public Date getMonthEndday(final String monthyear) {
+        Date monthEndDate = new Date();
+        if (monthyear != null) {
+            final String[] month_year = monthyear.split("/");
+            final Calendar calnew = Calendar.getInstance();
+            calnew.set(Calendar.MONTH, Integer.parseInt(month_year[0]) - 1);
+            calnew.set(Calendar.YEAR, Integer.parseInt(month_year[1]));
+            calnew.set(Calendar.HOUR_OF_DAY, 23);
+            calnew.set(Calendar.MINUTE, 59);
+            calnew.set(Calendar.SECOND, 59);
+            calnew.set(Calendar.MILLISECOND, 999);
+            calnew.set(Calendar.DAY_OF_MONTH,
+                    calnew.getActualMaximum(Calendar.DAY_OF_MONTH));
+            monthEndDate = calnew.getTime();
+
+        }
+        return monthEndDate;
+    }
+    
+    
     @SuppressWarnings("unchecked")
     public List<Object[]> searchMarriageRegistrationsForCertificateReport(final MarriageCertificate certificate)
             throws ParseException {
@@ -116,13 +175,18 @@ public class MarriageRegistrationReportsService {
         } else if (certificate.getCertificateType() != null && "ALL".equals(certificate.getCertificateType()))
             queryStrForRegistration.append(" and cert.certificatetype in('REGISTRATION','REISSUE','REJECTION')");
 
-        if (certificate.getFromDate() != null && certificate.getToDate() != null) {
+        if (certificate.getFromDate() != null) {
             queryStrForRegistration
                     .append(
-                    " and cert.certificatedate between to_timestamp(:fromDate,'yyyy-MM-dd HH24:mi:ss') and to_timestamp(:toDate,'YYYY-MM-DD HH24:MI:SS')");
-            params.put(FROM_DATE, sf.format(certificate.getFromDate()));
-            params.put(TO_DATE, certificate.getToDate() != null ? sf.format(certificate.getToDate())
-                    : sf.format(new Date()));
+                    " and cert.certificatedate >= to_timestamp(:fromDate,'yyyy-MM-dd HH24:mi:ss')");
+            params.put(FROM_DATE, sf.format(resetFromDateTimeStamp(certificate.getFromDate())));
+        }
+        
+        if (certificate.getToDate() != null) {
+            queryStrForRegistration
+                    .append(
+                    " and cert.certificatedate <= to_timestamp(:toDate,'YYYY-MM-DD HH24:MI:SS')");
+            params.put(TO_DATE,  sf.format(resetToDateTimeStamp(certificate.getToDate())));
         }
 
         if (certificate.getRegistration().getRegistrationNo() != null) {
@@ -150,13 +214,19 @@ public class MarriageRegistrationReportsService {
         } else if (certificate.getCertificateType() != null && "ALL".equals(certificate.getCertificateType()))
             queryStrForReissue.append(" and cert.certificatetype in('REGISTRATION','REISSUE','REJECTION')");
 
-        if (certificate.getFromDate() != null && certificate.getToDate() != null) {
+        
+        if (certificate.getFromDate() != null) {
             queryStrForReissue
                     .append(
-                    " and cert.certificatedate between to_timestamp(:fromDate,'yyyy-MM-dd HH24:mi:ss') and to_timestamp(:toDate,'YYYY-MM-DD HH24:MI:SS')");
-            params.put(FROM_DATE, sf.format(certificate.getFromDate()));
-            params.put(TO_DATE, certificate.getToDate() != null ? sf.format(certificate.getToDate())
-                    : sf.format(new Date()));
+                    " and cert.certificatedate >= to_timestamp(:fromDate,'yyyy-MM-dd HH24:mi:ss')");
+            params.put(FROM_DATE, sf.format(resetFromDateTimeStamp(certificate.getFromDate())));
+        }
+        
+        if (certificate.getToDate() != null) {
+            queryStrForReissue
+                    .append(
+                    " and cert.certificatedate <= to_timestamp(:toDate,'YYYY-MM-DD HH24:MI:SS')");
+            params.put(TO_DATE,  sf.format(resetToDateTimeStamp(certificate.getToDate())));
         }
 
         if (certificate.getRegistration().getRegistrationNo() != null) {
@@ -205,11 +275,21 @@ public class MarriageRegistrationReportsService {
         if (age != null && HUSBAND.equals(applicant)) {
             criteria.createAlias("marriageRegistration.husband", HUSBAND).add(Restrictions
                     .between("husband.ageInYearsAsOnMarriage", Integer.valueOf(values[0]), Integer.valueOf(values[1])));
-            criteria.add(Restrictions.between("marriageRegistration.applicationDate", fromDate, toDate));
+            if(fromDate != null) {
+            criteria.add(Restrictions.ge("marriageRegistration.applicationDate",fromDate));
+            }
+            if(toDate != null) {
+                criteria.add(Restrictions.le("marriageRegistration.applicationDate",toDate));
+            }
         } else {
             criteria.createAlias("marriageRegistration.wife", "wife").add(Restrictions
                     .between("wife.ageInYearsAsOnMarriage", Integer.valueOf(values[0]), Integer.valueOf(values[1])));
-            criteria.add(Restrictions.between("marriageRegistration.applicationDate", fromDate, toDate));
+            if(fromDate != null) {
+                criteria.add(Restrictions.ge("marriageRegistration.applicationDate",fromDate));
+            }
+            if(toDate != null) {
+                criteria.add(Restrictions.le("marriageRegistration.applicationDate",toDate));
+            }
         }
         criteria.createAlias("marriageRegistration.status", "status").add(Restrictions.in("status.code",
                 new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString() }));
@@ -242,13 +322,22 @@ public class MarriageRegistrationReportsService {
        if(maritalStatus != null){
            queryStrForHusbandCount.append(" and app.relationstatus=:maritalStatus");
            params.put("maritalStatus", maritalStatus);
-       }else if(fromDate != null && toDate != null){
+       }
+       if(fromDate != null){
            queryStrForHusbandCount
            .append(
-           " and app.createddate between to_timestamp(:fromDate,'yyyy-MM-dd HH24:mi:ss') and to_timestamp(:toDate,'YYYY-MM-DD HH24:MI:SS')");
-           params.put(FROM_DATE, sf.format(fromDate));
-           params.put(TO_DATE, sf.format(toDate));
+           " and app.createddate >= to_timestamp(:fromDate,'yyyy-MM-dd HH24:mi:ss') ");
+           params.put(FROM_DATE, sf.format(resetFromDateTimeStamp(fromDate)));
        }
+       
+       if(toDate != null){
+           queryStrForHusbandCount
+           .append(
+           " and app.createddate <= to_timestamp(:toDate,'YYYY-MM-DD HH24:MI:SS')");
+           params.put(TO_DATE,  sf.format(resetToDateTimeStamp(toDate)));
+       }
+       
+       
        
        queryStrForHusbandCount.append(" group by app.relationstatus, to_char(app.createddate,'Mon') order by to_char(app.createddate,'Mon') desc");
        final org.hibernate.Query query = getCurrentSession().createSQLQuery(queryStrForHusbandCount.toString());
@@ -268,12 +357,19 @@ public class MarriageRegistrationReportsService {
        if(maritalStatus != null){
            queryStrForWifeCount.append(" and app.relationstatus=:maritalStatus");
            params.put("maritalStatus", maritalStatus);
-       }else if(fromDate != null && toDate != null){
+       }
+       if(fromDate != null){
            queryStrForWifeCount
            .append(
-           " and app.createddate between to_timestamp(:fromDate,'yyyy-MM-dd HH24:mi:ss') and to_timestamp(:toDate,'YYYY-MM-DD HH24:MI:SS')");
-           params.put(FROM_DATE, sf.format(fromDate));
-           params.put(TO_DATE, sf.format(toDate));
+           " and app.createddate >= to_timestamp(:fromDate,'yyyy-MM-dd HH24:mi:ss')");
+           params.put(FROM_DATE, sf.format(resetFromDateTimeStamp(fromDate)));
+       }
+       
+       if(toDate != null){
+           queryStrForWifeCount
+           .append(
+           " and app.createddate <= to_timestamp(:toDate,'YYYY-MM-DD HH24:MI:SS')");
+           params.put(TO_DATE, sf.format(resetToDateTimeStamp(toDate)));
        }
        
        queryStrForWifeCount.append(" group by app.relationstatus, to_char(app.createddate,'Mon') order by to_char(app.createddate,'Mon') desc");
@@ -292,14 +388,22 @@ public class MarriageRegistrationReportsService {
 
         if (maritalStatus != null && HUSBAND.equals(applicant)) {
             criteria = criteria.createAlias("marriageRegistration.husband", HUSBAND);
-            if(fromDate != null && toDate != null){
-            criteria.add(Restrictions.between("husband.createdDate", fromDate, toDate));
+            if(fromDate != null){
+            criteria.add(Restrictions.ge("husband.createdDate", resetFromDateTimeStamp(fromDate)));
             }
+            
+            if(toDate != null){
+                criteria.add(Restrictions.le("husband.createdDate", resetToDateTimeStamp(toDate)));
+             }
+            
             criteria.add(Restrictions.eq("husband.maritalStatus", MaritalStatus.valueOf(maritalStatus)));
         } else {
             criteria =  criteria.createAlias("marriageRegistration.wife", "wife");
-            if(fromDate != null && toDate != null) {
-            criteria.add(Restrictions.between("wife.createdDate", fromDate, toDate));
+            if(fromDate != null) {
+            criteria.add(Restrictions.ge("wife.createdDate", resetFromDateTimeStamp(fromDate)));
+            }
+            if(toDate != null) {
+                criteria.add(Restrictions.le("wife.createdDate",resetToDateTimeStamp(toDate)));
             }
             if(maritalStatus != null) {
             criteria.add(Restrictions.eq("wife.maritalStatus", MaritalStatus.valueOf(maritalStatus)));
@@ -328,22 +432,25 @@ public class MarriageRegistrationReportsService {
             criteria.createAlias("marriageRegistration.status", "status").add(
                     Restrictions.eq("status.code", registration.getStatus()
                             .getCode()));
-        if (registration.getFromDate() != null
-                && registration.getToDate() != null)
-            criteria.add(Restrictions.between(
+        if (registration.getFromDate() != null )
+            criteria.add(Restrictions.ge(
                     "marriageRegistration.applicationDate",
-                    registration.getFromDate(), org.apache.commons.lang3.time.DateUtils.addDays(registration.getToDate(), 1)));
+                    resetFromDateTimeStamp(registration.getFromDate())));
+        if (registration.getToDate() != null )
+            criteria.add(Restrictions.le(
+                    "marriageRegistration.applicationDate",
+                    resetToDateTimeStamp(registration.getToDate()) ));
         criteria.addOrder(Order.desc("marriageRegistration.applicationDate"));
-        if (registration.getFromDate() != null && registration.getToDate() == null)
+        if (registration.getFromDate() != null)
         {
 
             final Calendar cal = Calendar.getInstance();
             final Date todate = cal.getTime();
             criteria.add(Restrictions.between(
                     "marriageRegistration.applicationDate",
-                    registration.getFromDate(), todate));
+                    registration.getFromDate(), todate!=null?todate:new Date()));
         }
-        if (registration.getFromDate() == null && registration.getToDate() != null)
+        if (registration.getToDate() == null)
         {
             final Calendar cal = Calendar.getInstance();
             cal.set(Calendar.YEAR, 2009);
@@ -351,47 +458,10 @@ public class MarriageRegistrationReportsService {
 
             criteria.add(Restrictions.between(
                     "marriageRegistration.applicationDate",
-                    fromdate, org.apache.commons.lang3.time.DateUtils.addDays(registration.getToDate(), 1)));
+                    fromdate, registration.getToDate() !=null ? DateUtils.addDays(registration.getToDate(), 1) : new Date()));
         }
 
         return criteria.list();
-    }
-
-    public Date getMonthStartday(final String monthyear) {
-        Date monthStartDate = new Date();
-        if (monthyear != null) {
-            final String[] month_year = monthyear.split("/");
-            final Calendar calnew = Calendar.getInstance();
-            calnew.set(Calendar.MONTH, Integer.parseInt(month_year[0]) - 1);
-            calnew.set(Calendar.YEAR, Integer.parseInt(month_year[1]));
-            calnew.set(Calendar.HOUR_OF_DAY, 0);
-            calnew.set(Calendar.MINUTE, 0);
-            calnew.set(Calendar.SECOND, 0);
-            calnew.set(Calendar.DAY_OF_MONTH,
-                    calnew.getActualMinimum(Calendar.DAY_OF_MONTH));
-            monthStartDate = calnew.getTime();
-
-        }
-        return monthStartDate;
-    }
-
-    public Date getMonthEndday(final String monthyear) {
-        Date monthEndDate = new Date();
-        if (monthyear != null) {
-            final String[] month_year = monthyear.split("/");
-            final Calendar calnew = Calendar.getInstance();
-            calnew.set(Calendar.MONTH, Integer.parseInt(month_year[0]) - 1);
-            calnew.set(Calendar.YEAR, Integer.parseInt(month_year[1]));
-            calnew.set(Calendar.HOUR_OF_DAY, 23);
-            calnew.set(Calendar.MINUTE, 59);
-            calnew.set(Calendar.SECOND, 59);
-            calnew.set(Calendar.MILLISECOND, 999);
-            calnew.set(Calendar.DAY_OF_MONTH,
-                    calnew.getActualMaximum(Calendar.DAY_OF_MONTH));
-            monthEndDate = calnew.getTime();
-
-        }
-        return monthEndDate;
     }
     
 @SuppressWarnings("unchecked")
@@ -501,9 +571,12 @@ public List<String[]> getCountOfApplications(final MarriageRegistration registra
             criteria.createAlias("marriageRegistration.wife", "wife").add(
                     Restrictions.eq("wife.religion.id", registration.getWife()
                             .getReligion().getId()));
-        if (null != fromDate && null != toDate)
-            criteria.add(Restrictions.between(
-                    "marriageRegistration.applicationDate", fromDate, toDate));
+        if (null != fromDate)
+            criteria.add(Restrictions.ge(
+                    "marriageRegistration.applicationDate", resetFromDateTimeStamp(fromDate)));
+        if (null != toDate)
+            criteria.add(Restrictions.le(
+                    "marriageRegistration.applicationDate",resetToDateTimeStamp(toDate)));
 
         criteria.add(Restrictions.in("status.code",
                 new String[] { MarriageRegistration.RegistrationStatus.APPROVED
@@ -529,9 +602,13 @@ public List<String[]> getCountOfApplications(final MarriageRegistration registra
             criteria.createAlias("marriageRegistration.marriageAct",
                     "marriageAct")
                     .add(Restrictions.eq("marriageAct.name", act));
-        if (fromDate != null && toDate != null)
-            criteria.add(Restrictions.between(
-                    "marriageRegistration.applicationDate", fromDate, toDate));
+        if (fromDate != null)
+            criteria.add(Restrictions.ge(
+                    "marriageRegistration.applicationDate",resetFromDateTimeStamp(fromDate)));
+        
+        if (toDate != null)
+            criteria.add(Restrictions.le(
+                    "marriageRegistration.applicationDate",resetToDateTimeStamp(toDate)));
 
         criteria.add(Restrictions.in("status.code",
                 new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString() }));
@@ -586,7 +663,7 @@ public List<String[]> getCountOfApplications(final MarriageRegistration registra
                 .append(" from egmrs_reissue rei,egmrs_registration reg, egmrs_applicant app, eg_boundary brndy,egw_status st");
         queryStrForReissue
                 .append(
-                        " where rei.registration=reg.id and reg.zone = brndy.id and reg.status = st.id and st.code not in ('CERTIFICATEREISSUED','CANCELLED') and EXTRACT(EPOCH FROM date_trunc('day',(now()-rei.applicationdate)))/60/60/24 between :fromdays and :todays ");
+                        " where rei.registration=reg.id and rei.zone = brndy.id and rei.status = st.id and st.code not in ('CERTIFICATEREISSUED','CANCELLED') and EXTRACT(EPOCH FROM date_trunc('day',(now()-rei.applicationdate)))/60/60/24 between :fromdays and :todays ");
         params.put("fromdays", Double.valueOf(values[0]));
         params.put("todays", Double.valueOf(values[1]));
 
@@ -641,4 +718,63 @@ public List<String[]> getCountOfApplications(final MarriageRegistration registra
 
     }
     
+    @SuppressWarnings("unchecked")
+    public List<String[]> getCountOfApplnsStatusWise(final String status,final Date fromDate,final Date toDate,final MarriageRegistrationUnit registrationUnit ){
+       
+        final Map<String, String> params = new HashMap<>();
+        final StringBuilder queryStrForRegCount = new StringBuilder(500);
+        queryStrForRegCount
+                .append("select regunit.name,st.code,count(*) from egmrs_registration reg,egmrs_registrationunit regunit,egw_status st ");
+        queryStrForRegCount.append("where reg.registrationunit=regunit.id and reg.status = st.id  ");
+       if(fromDate != null){
+           queryStrForRegCount.append(" and applicationdate >= to_timestamp(:fromdate,'yyyy-MM-dd HH24:mi:ss')");
+           params.put("fromdate",  sf.format(resetFromDateTimeStamp(fromDate)));
+       }
+       if(toDate != null){
+           queryStrForRegCount.append(" and applicationdate <=to_timestamp(:todate,'YYYY-MM-DD HH24:MI:SS')");
+           params.put("todate",sf.format(resetToDateTimeStamp(toDate)));
+       }
+       if(status != null && "ALL".equalsIgnoreCase(status)){
+           queryStrForRegCount
+           .append(" and st.code in ('CREATED','APPROVED','REGISTERED','REJECTED','CANCELLED')");
+       }else if(status != null){
+           queryStrForRegCount
+           .append(" and st.code=:status");
+           params.put("status", status);
+       }
+       
+       if(registrationUnit.getId() != null){
+           queryStrForRegCount
+           .append(" and  registrationunit=to_number(:regunitid,'999999')");
+           params.put("regunitid", registrationUnit.getId().toString());
+       }
+       queryStrForRegCount.append(" group by regunit.name,st.code order by regunit.name desc");
+
+       final org.hibernate.Query query = getCurrentSession().createSQLQuery(queryStrForRegCount.toString());
+       for (final String param : params.keySet())
+           query.setParameter(param, params.get(param)); 
+       return query.list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<MarriageRegistration> searchRegistrationByStatusForReport(final String registrationUnit, final String status,
+            final Date fromDate,final Date toDate)
+            throws ParseException {
+
+        final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class, "marriageRegistration")
+                .createAlias("marriageRegistration.status", "status");
+        if (fromDate != null)
+            criteria.add(Restrictions.ge("marriageRegistration.applicationDate", resetFromDateTimeStamp(fromDate)));
+        if (fromDate != null)
+            criteria.add(Restrictions.le("marriageRegistration.applicationDate",resetToDateTimeStamp(toDate)));
+        if (registrationUnit != null )
+            criteria.createAlias("marriageRegistration.marriageRegistrationUnit", "marriageRegistrationUnit").add(Restrictions.eq("marriageRegistrationUnit.name", registrationUnit.replaceAll("[^a-zA-Z0-9]", " ")));
+        if (status != null && !"ALL".equalsIgnoreCase(status)){
+            criteria.add(Restrictions.in("status.code", new String[] { status }));
+        } else {
+            criteria.add(Restrictions.in("status.code", new String[] {"CREATED","APPROVED","REGISTERED","REJECTED","CANCELLED"}));
+        }
+        return criteria.list();
+
+    }
 }

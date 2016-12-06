@@ -59,9 +59,9 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.mrs.application.MarriageConstants;
+import org.egov.mrs.application.reports.service.MarriageRegistrationReportsService;
 import org.egov.mrs.autonumber.MarriageCertificateNumberGenerator;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
@@ -109,6 +109,9 @@ public class MarriageCertificateService {
         
 	@Autowired
 	private MarriageCertificateRepository marriageCertificateRepository;
+	
+	@Autowired
+	private MarriageRegistrationReportsService marriageRegistrationReportsService;
 	
 	private InputStream generateCertificatePDF;
         	private Session getCurrentSession() {
@@ -305,14 +308,14 @@ public class MarriageCertificateService {
                         criteria.add(Restrictions.ilike("certificateNo", certificate.getCertificateNo().trim(),MatchMode.ANYWHERE));
                 if (certificate.getCertificateType() != null)
                         criteria.add(Restrictions.eq("certificateType", certificate.getCertificateType().trim()));
-                if (certificate.getFromDate() != null && certificate.getToDate() != null) {
-                        criteria.add(Restrictions.between("certificateDate", certificate.getFromDate(),
-                                        DateUtils.addDays(certificate.getToDate(), 1)));
+                if (certificate.getFromDate() != null) {
+                        criteria.add(Restrictions.ge("certificateDate", marriageRegistrationReportsService.resetFromDateTimeStamp(certificate.getFromDate())));
                 }
-                if(certificate.getFrequency() != null){
-                        if(certificate.getFrequency().equalsIgnoreCase("LATEST")){
-                                 criteria.addOrder(Order.desc("createdDate"));
-                        }
+                if (certificate.getToDate() != null) {
+                    criteria.add(Restrictions.le("certificateDate", marriageRegistrationReportsService.resetToDateTimeStamp(certificate.getToDate())));
+            }
+                if(certificate.getFrequency() != null && certificate.getFrequency().equalsIgnoreCase("LATEST")){
+                       criteria.addOrder(Order.desc("createdDate"));
                 }
                 return criteria.list();
         }

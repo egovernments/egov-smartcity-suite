@@ -87,13 +87,21 @@
 						</div>
 					
 						<div class="form-group">
-							<label for="dateOfMarriage" class="col-sm-2 control-label"><spring:message code="lbl.application.date" /></label>
+							<label for="dateOfMarriage" class="col-sm-2 control-label"><spring:message code="lbl.from.date" /></label>
 	
 							<div class="col-sm-3 add-margin">
-								<form:input id="registrationDate" path="applicationDate" type="text" cssClass="form-control datepicker" data-date-today-highlight="true" data-date-end-date="0d" />
-								<form:errors path="applicationDate" cssClass="error-msg"/>
+								<form:input id="fromDate" path="fromDate" type="text" cssClass="form-control datepicker" data-date-today-highlight="true" data-date-end-date="0d" />
+								<form:errors path="fromDate" cssClass="error-msg"/>
+							</div>
+							<label for="dateOfMarriage" class="col-sm-2 control-label"><spring:message code="lbl.to.date" /></label>
+	
+							<div class="col-sm-3 add-margin">
+								<form:input id="toDate" path="toDate" type="text" cssClass="form-control datepicker" data-date-today-highlight="true" data-date-end-date="0d" />
+								<form:errors path="fromDate" cssClass="error-msg"/>
 							</div>
 							
+					</div>
+					<div class="form-group">
 							<label class="col-sm-2 control-label">
 								<spring:message code="lbl.registrationunit"/></span>
 							</label>
