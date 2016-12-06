@@ -90,7 +90,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-
 @Service
 public class RecoveryNoticeService {
 
@@ -146,7 +145,7 @@ public class RecoveryNoticeService {
         ReportOutput reportOutput = new ReportOutput();
         final PtNotice notice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner(PropertyTaxConstants.NOTICE_TYPE_ESD,
                 basicProperty.getUpicNo());
-        Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
         final SimpleDateFormat formatter = new SimpleDateFormat("MMM yyyy");
         if (notice == null) {
             InputStream noticePDF = null;
@@ -155,14 +154,29 @@ public class RecoveryNoticeService {
             queryString.append("from City");
             final Query query = entityManager.createQuery(queryString.toString());
             final City city = (City) query.getSingleResult();
-            reportParams.put("cityName", city.getName());
+            reportParams.put("cityName", city.getPreferences().getMunicipalityName());
             final Address ownerAddress = basicProperty.getAddress();
-            reportParams.put("doorNo", StringUtils.isNotBlank(ownerAddress.getHouseNoBldgApt())? ownerAddress.getHouseNoBldgApt() : "N/A");
+            reportParams.put("doorNo",
+                    StringUtils.isNotBlank(ownerAddress.getHouseNoBldgApt()) ? ownerAddress.getHouseNoBldgApt() : "N/A");
             reportParams.put("totalTaxDue", getTotalPropertyTaxDue(basicProperty));
             reportParams.put("finYear", formatter.format(new Date()));
             reportParams.put("ownerName", basicProperty.getFullOwnerName());
             final DateTime noticeDate = new DateTime(new Date());
             reportParams.put("futureDate", DateUtils.getDefaultFormattedDate(noticeDate.plusDays(2).toDate()));
+            final String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(PropertyTaxConstants.NOTICE_TYPE_ESD);
+            reportParams.put("eSDNoticeNumber", noticeNo);
+            reportParams.put("eSDNoticeDate", DateUtils.getDefaultFormattedDate(new Date()));
+            final AppConfigValues appConfigValues = appConfigValuesService.getAppConfigValueByDate(PTMODULENAME,
+                    APPCONFIG_CLIENT_SPECIFIC_DMD_BILL, new Date());
+            final String value = appConfigValues != null ? appConfigValues.getValue() : "";
+            if ("Y".equalsIgnoreCase(value)) {
+                final DemandBillService demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
+                reportParams.putAll(demandBillService.getDemandBillDetails(basicProperty));
+            } else {
+                final EgBill egBill = getBillByAssessmentNumber(basicProperty);
+                reportParams.put("billDate", DateUtils.getDefaultFormattedDate(egBill.getCreateDate()));
+                reportParams.put("billNumber", egBill.getBillNo());
+            }
             final String cityGrade = city.getGrade();
             if (cityGrade != null && cityGrade != ""
                     && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
@@ -174,21 +188,6 @@ public class RecoveryNoticeService {
                 reportInput = new ReportRequest(PropertyTaxConstants.REPORT_ESD_NOTICE_MUNICIPALITY, reportParams,
                         reportParams);
             }
-            final AppConfigValues appConfigValues = appConfigValuesService.getAppConfigValueByDate(PTMODULENAME,
-                    APPCONFIG_CLIENT_SPECIFIC_DMD_BILL, new Date());
-            final String value = appConfigValues != null ? appConfigValues.getValue() : "";
-            if ("Y".equalsIgnoreCase(value)) {
-                final DemandBillService demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
-                reportParams.putAll(demandBillService.getDemandBillDetails(basicProperty));
-            } else {
-                final EgBill egBill = getBillByAssessmentNumber(basicProperty);
-                reportParams.put("billDate", DateUtils.getDefaultFormattedDate(egBill.getCreateDate()));
-                reportParams.put("billNumber", egBill.getBillNo());
-                reportParams = prepareReportRequest(egBill, basicProperty);
-            }
-            final String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(PropertyTaxConstants.NOTICE_TYPE_ESD);
-            reportParams.put("eSDNoticeNumber", noticeNo);
-            reportParams.put("eSDNoticeDate", DateUtils.getDefaultFormattedDate(new Date()));
             reportInput.setPrintDialogOnOpenReport(true);
             reportInput.setReportFormat(FileFormat.PDF);
             reportOutput = reportService.createReport(reportInput);
@@ -211,42 +210,8 @@ public class RecoveryNoticeService {
         }
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=ESDNotice_"+basicProperty.getUpicNo()+".pdf");
+        headers.add("content-disposition", "inline;filename=ESDNotice_" + basicProperty.getUpicNo() + ".pdf");
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
-    }
-
-    private Map<String, Object> prepareReportRequest(final EgBill egBill, final BasicProperty basicProperty) {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
-        final SimpleDateFormat formatter = new SimpleDateFormat("MMM yyyy");
-        final StringBuilder queryString = new StringBuilder();
-        queryString.append("from City");
-        final Query query = entityManager.createQuery(queryString.toString());
-        final City city = (City) query.getSingleResult();
-        reportParams.put("cityName", city.getName());
-        reportParams.put("billDate", DateUtils.getDefaultFormattedDate(egBill.getCreateDate()));
-        reportParams.put("billNumber", egBill.getBillNo());
-        final Address ownerAddress = basicProperty.getAddress();
-        reportParams.put("doorNo", ownerAddress.getHouseNoBldgApt());
-        reportParams.put("totalTaxDue", getTotalPropertyTaxDue(basicProperty));
-        reportParams.put("finYear", formatter.format(new Date()));
-        reportParams.put("ownerName", basicProperty.getFullOwnerName());
-        final DateTime noticeDate = new DateTime(new Date());
-        reportParams.put("futureDate", DateUtils.getDefaultFormattedDate(noticeDate.plusDays(2).toDate()));
-        ReportRequest reportInput = null;
-        final String cityGrade = city.getGrade();
-        if (cityGrade != null && cityGrade != ""
-                && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
-            reportParams.put("sectionAct", PropertyTaxConstants.CORPORATION_ESD_NOTICE_SECTION_ACT);
-            reportInput = new ReportRequest(PropertyTaxConstants.REPORT_ESD_NOTICE_CORPORATION, reportParams,
-                    reportParams);
-        } else {
-            reportParams.put("sectionAct", PropertyTaxConstants.MUNICIPALITY_ESD_NOTICE_SECTION_ACT);
-            reportInput = new ReportRequest(PropertyTaxConstants.REPORT_ESD_NOTICE_MUNICIPALITY, reportParams,
-                    reportParams);
-        }
-        reportInput.setPrintDialogOnOpenReport(true);
-        reportInput.setReportFormat(FileFormat.PDF);
-        return reportParams;
     }
 
     public EgBill getBillByAssessmentNumber(final BasicProperty basicProperty) {
