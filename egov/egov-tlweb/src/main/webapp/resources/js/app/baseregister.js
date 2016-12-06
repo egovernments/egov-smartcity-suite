@@ -132,6 +132,15 @@ function onSubmitEvent(event) {
                     "data": "status",
                     "sTitle": "Status"
                 }, {
+                    "data": "unitofmeasure",
+                    "sTitle": "UOM"
+                }, {
+                    "data": "tradearea",
+                    "sTitle": "Unit value"
+                }, {
+                    "data": "rate",
+                    "sTitle": "Rate"
+                }, {
                     "data": "arrearlicfee",
                     "sTitle": "License Fee(Arrears)"
                 }, {
@@ -153,14 +162,14 @@ function onSubmitEvent(event) {
                     jQuery('#report-footer').show();
                 }
                 if (data.length > 0) {
-                    updateTotalFooter(12, api);
-                    updateTotalFooter(13, api);
-                    updateTotalFooter(14, api);
                     updateTotalFooter(15, api);
+                    updateTotalFooter(16, api);
+                    updateTotalFooter(17, api);
+                    updateTotalFooter(18, api);
                 }
             },
             "aoColumnDefs": [{
-                "aTargets": [12, 13, 14, 15],
+                "aTargets": [15, 16, 17, 18],
                 "mRender": function (data, type, full) {
                     return formatNumberInr(data);
                 }

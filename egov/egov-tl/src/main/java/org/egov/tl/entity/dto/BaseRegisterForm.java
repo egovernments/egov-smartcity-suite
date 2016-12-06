@@ -67,7 +67,9 @@ public class BaseRegisterForm {
     private BigInteger arrearpenaltyfee = BigInteger.ZERO;
     private BigInteger curlicensefee = BigInteger.ZERO;
     private BigInteger curpenaltyfee = BigInteger.ZERO;
-
+    private String unitofmeasure;
+    private BigInteger tradewt = BigInteger.ZERO;
+    private BigInteger rateval = BigInteger.ZERO;
 
     public Long getCategoryId() {
         return categoryId;
@@ -236,5 +238,29 @@ public class BaseRegisterForm {
 
     public void setLicenseid(BigInteger licenseid) {
         this.licenseid = licenseid;
+    }
+
+    public String getUnitofmeasure() {
+        return unitofmeasure;
+    }
+
+    public void setUnitofmeasure(String unitofmeasure) {
+        this.unitofmeasure = unitofmeasure;
+    }
+
+    public BigInteger getTradewt() {
+        return tradewt;
+    }
+
+    public void setTradewt(BigInteger tradewt) {
+        this.tradewt = tradewt;
+    }
+
+    public BigInteger getRateval() {
+        return rateval;
+    }
+
+    public void setRateval(BigInteger rateval) {
+        this.rateval = rateval;
     }
 }

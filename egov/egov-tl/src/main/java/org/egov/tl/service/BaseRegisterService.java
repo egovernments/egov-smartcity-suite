@@ -37,7 +37,7 @@ public class BaseRegisterService {
         final StringBuilder selectQry = new StringBuilder("select \"licenseid\", \"licensenumber\", \"tradetitle\", \"owner\", \"mobile\", \"categoryname\", \"subcategoryname\", \"assessmentno\"," +
                 " \"wardname\", \"localityname\", trim(regexp_replace(\"tradeaddress\", '\\s+', ' ', 'g')) as \"tradeaddress\", \"commencementdate\", \"statusname\", cast(arrearlicensefee as bigint) " +
                 "AS \"arrearlicensefee\", cast(arrearpenaltyfee as bigint) AS \"arrearpenaltyfee\", cast(curlicensefee as bigint) " +
-                "AS \"curlicensefee\", cast(curpenaltyfee as bigint) AS \"curpenaltyfee\" from egtl_mv_baseregister_view where 1=1 ");
+                "AS \"curlicensefee\", cast(curpenaltyfee as bigint) AS \"curpenaltyfee\",\"unitofmeasure\",\"tradewt\",\"rateval\"  from egtl_mv_baseregister_view where 1=1 ");
         if (baseRegisterForm.getCategoryId() != null)
             whereQry = whereQry.append(" and category = :categoryId");
         if (baseRegisterForm.getSubCategoryId() != null)
