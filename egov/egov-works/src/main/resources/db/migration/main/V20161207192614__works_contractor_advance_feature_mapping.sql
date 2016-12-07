@@ -1,0 +1,41 @@
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'WorksCreateContractorAdvance') ,(select id FROM eg_feature WHERE name = 'Create Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'WorksUpdateContractorAdvance') ,(select id FROM eg_feature WHERE name = 'Create Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'WorksContractorAdvanceSuccess') ,(select id FROM eg_feature WHERE name = 'Create Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'WorksValidateContractorAdvance') ,(select id FROM eg_feature WHERE name = 'Create Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'AbstractEstimateView') ,(select id FROM eg_feature WHERE name = 'Create Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'ViewBillOfQuatities') ,(select id FROM eg_feature WHERE name = 'Create Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'AbstractEstimatePDF') ,(select id FROM eg_feature WHERE name = 'Create Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'File Download') ,(select id FROM eg_feature WHERE name = 'Create Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'LetterOfAcceptancePDF') ,(select id FROM eg_feature WHERE name = 'Create Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'WorksViewLetterOfAcceptance') ,(select id FROM eg_feature WHERE name = 'Create Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'LineEstimatePDF') ,(select id FROM eg_feature WHERE name = 'Create Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'DownloadLineEstimateDoc') ,(select id FROM eg_feature WHERE name = 'Create Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'WorksViewLineEstimate') ,(select id FROM eg_feature WHERE name = 'Create Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id from eg_action where name ='View-Asset' and contextroot = 'egassets') ,(select id FROM eg_feature WHERE name = 'Create Contractor Advance'));
+
+INSERT INTO eg_feature(ID,NAME,DESCRIPTION,MODULE) VALUES (NEXTVAL('seq_eg_feature'),'Update Contractor Advance','Update Contractor Advance',(select id from EG_MODULE where name = 'Works Management'));
+
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'WorksUpdateContractorAdvance') ,(select id FROM eg_feature WHERE name = 'Update Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'WorksContractorAdvanceSuccess') ,(select id FROM eg_feature WHERE name = 'Update Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'WorksValidateContractorAdvance') ,(select id FROM eg_feature WHERE name = 'Update Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'AbstractEstimateView') ,(select id FROM eg_feature WHERE name = 'Update Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'ViewBillOfQuatities') ,(select id FROM eg_feature WHERE name = 'Update Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'AbstractEstimatePDF') ,(select id FROM eg_feature WHERE name = 'Update Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'File Download') ,(select id FROM eg_feature WHERE name = 'Update Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'LetterOfAcceptancePDF') ,(select id FROM eg_feature WHERE name = 'Update Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'WorksViewLetterOfAcceptance') ,(select id FROM eg_feature WHERE name = 'Update Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'LineEstimatePDF') ,(select id FROM eg_feature WHERE name = 'Update Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'DownloadLineEstimateDoc') ,(select id FROM eg_feature WHERE name = 'Update Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'WorksViewLineEstimate') ,(select id FROM eg_feature WHERE name = 'Update Contractor Advance'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id from eg_action where name ='View-Asset' and contextroot = 'egassets') ,(select id FROM eg_feature WHERE name = 'Update Contractor Advance'));
+
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'AbstractEstimateView') ,(select id FROM eg_feature WHERE name = 'Search Advance Requisition'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'ViewBillOfQuatities') ,(select id FROM eg_feature WHERE name = 'Search Advance Requisition'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'AbstractEstimatePDF') ,(select id FROM eg_feature WHERE name = 'Search Advance Requisition'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'File Download') ,(select id FROM eg_feature WHERE name = 'Search Advance Requisition'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'LetterOfAcceptancePDF') ,(select id FROM eg_feature WHERE name = 'Search Advance Requisition'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'WorksViewLetterOfAcceptance') ,(select id FROM eg_feature WHERE name = 'Search Advance Requisition'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'LineEstimatePDF') ,(select id FROM eg_feature WHERE name = 'Search Advance Requisition'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'DownloadLineEstimateDoc') ,(select id FROM eg_feature WHERE name = 'Search Advance Requisition'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'WorksViewLineEstimate') ,(select id FROM eg_feature WHERE name = 'Search Advance Requisition'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id from eg_action where name ='View-Asset' and contextroot = 'egassets') ,(select id FROM eg_feature WHERE name = 'Search Advance Requisition'));

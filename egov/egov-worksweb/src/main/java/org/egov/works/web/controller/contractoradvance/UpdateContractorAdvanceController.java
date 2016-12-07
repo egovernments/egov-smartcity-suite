@@ -39,11 +39,189 @@
  */
 package org.egov.works.web.controller.contractoradvance;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.egov.commons.service.ChartOfAccountsService;
+import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
+import org.egov.works.contractoradvance.service.ContractorAdvanceService;
+import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.google.gson.JsonObject;
 
 @Controller
 @RequestMapping(value = "/contractoradvance")
-public class UpdateContractorAdvanceController {
+public class UpdateContractorAdvanceController extends GenericWorkFlowController {
 
+    @Autowired
+    private ContractorAdvanceService contractorAdvanceService;
+
+    @Autowired
+    private ChartOfAccountsService chartOfAccountsService;
+
+    @Autowired
+    private LineEstimateService lineEstimateService;
+
+    @Autowired
+    private DepartmentService departmentService;
+
+    @Autowired
+    private WorksUtils worksUtils;
+
+    @Autowired
+    private MBHeaderService mbHeaderService;
+
+    @ModelAttribute
+    public ContractorAdvanceRequisition getContractorAdvanceRequisition(
+            @PathVariable final String contractorAdvanceRequisitionId) {
+        final ContractorAdvanceRequisition contractorAdvanceRequisition = contractorAdvanceService
+                .getContractorAdvanceRequisitionById(Long.parseLong(contractorAdvanceRequisitionId));
+        return contractorAdvanceRequisition;
+    }
+
+    @RequestMapping(value = "/update/{contractorAdvanceRequisitionId}", method = RequestMethod.GET)
+    public String updateContractorAdvance(final Model model, @PathVariable final String contractorAdvanceRequisitionId,
+            final HttpServletRequest request) throws ApplicationException {
+        final ContractorAdvanceRequisition contractorAdvanceRequisition = getContractorAdvanceRequisition(
+                contractorAdvanceRequisitionId);
+        setDropDownValues(model);
+        return loadViewData(model, request, contractorAdvanceRequisition);
+    }
+
+    private void setDropDownValues(final Model model) {
+        model.addAttribute("debitAccounts",
+                chartOfAccountsService.getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_ADVANCE_PURPOSE));
+        model.addAttribute("creditAccounts",
+                chartOfAccountsService.getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE));
+    }
+
+    private String loadViewData(final Model model, final HttpServletRequest request,
+            final ContractorAdvanceRequisition contractorAdvanceRequisition) {
+        model.addAttribute("stateType", contractorAdvanceRequisition.getClass().getSimpleName());
+        final WorkflowContainer workflowContainer = new WorkflowContainer();
+        if (contractorAdvanceRequisition.getState() != null) {
+            model.addAttribute("currentState", contractorAdvanceRequisition.getState().getValue());
+            workflowContainer.setPendingActions(contractorAdvanceRequisition.getState().getNextAction());
+            model.addAttribute("pendingActions", contractorAdvanceRequisition.getState().getNextAction());
+            model.addAttribute("amountRule", contractorAdvanceRequisition.getAdvanceRequisitionAmount());
+        }
+
+        final Double advancePaidTillNow = contractorAdvanceService.getTotalAdvancePaid(
+                contractorAdvanceRequisition.getId() == null ? -1L : contractorAdvanceRequisition.getId(),
+                contractorAdvanceRequisition.getWorkOrderEstimate().getId(),
+                ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.APPROVED.toString());
+        final Double totalMBAmountOfMBs = mbHeaderService.getTotalMBAmountOfMBs(null,
+                contractorAdvanceRequisition.getWorkOrderEstimate().getId(),
+                ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CANCELLED.toString());
+        model.addAttribute("advancePaidTillNow", advancePaidTillNow);
+        model.addAttribute("totalMBAmountOfMBs", totalMBAmountOfMBs);
+
+        workflowContainer.setAmountRule(contractorAdvanceRequisition.getAdvanceRequisitionAmount());
+        prepareWorkflow(model, contractorAdvanceRequisition, workflowContainer);
+        if (contractorAdvanceRequisition.getState() != null
+                && contractorAdvanceRequisition.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
+            model.addAttribute("mode", "edit");
+        else
+            model.addAttribute("mode", "view");
+
+        model.addAttribute("workflowHistory", lineEstimateService.getHistory(contractorAdvanceRequisition.getState(),
+                contractorAdvanceRequisition.getStateHistory()));
+        model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
+        model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
+        model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
+        model.addAttribute("workOrderEstimate", contractorAdvanceRequisition.getWorkOrderEstimate());
+
+        final ContractorAdvanceRequisition newContractorAdvanceRequisition = getContractorAdvanceDocuments(
+                contractorAdvanceRequisition);
+        model.addAttribute("contractorAdvanceRequisition", newContractorAdvanceRequisition);
+        model.addAttribute("documentDetails", contractorAdvanceRequisition.getDocumentDetails());
+
+        return "contractorAdvance-update";
+    }
+
+    private ContractorAdvanceRequisition getContractorAdvanceDocuments(
+            final ContractorAdvanceRequisition contractorAdvanceRequisition) {
+        List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
+        documentDetailsList = worksUtils.findByObjectIdAndObjectType(contractorAdvanceRequisition.getId(),
+                WorksConstants.CONTRACTOR_ADVANCE);
+        contractorAdvanceRequisition.setDocumentDetails(documentDetailsList);
+        return contractorAdvanceRequisition;
+    }
+
+    @RequestMapping(value = "/update/{contractorAdvanceRequisitionId}", method = RequestMethod.POST)
+    public String update(
+            @ModelAttribute("contractorAdvanceRequisition") final ContractorAdvanceRequisition contractorAdvanceRequisition,
+            final BindingResult errors, final RedirectAttributes redirectAttributes, final Model model,
+            final HttpServletRequest request, @RequestParam("file") final MultipartFile[] files)
+            throws ApplicationException, IOException {
+
+        String mode = "";
+        String workFlowAction = "";
+        ContractorAdvanceRequisition updatedContractorAdvanceRequisition = null;
+
+        if (request.getParameter("mode") != null)
+            mode = request.getParameter("mode");
+
+        if (request.getParameter("workFlowAction") != null)
+            workFlowAction = request.getParameter("workFlowAction");
+
+        Long approvalPosition = 0l;
+        String approvalComment = "";
+
+        if (request.getParameter("approvalComent") != null)
+            approvalComment = request.getParameter("approvalComent");
+
+        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+
+        if (contractorAdvanceRequisition.getStatus().getCode()
+                .equals(ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.REJECTED.toString())
+                && WorksConstants.FORWARD_ACTION.equals(workFlowAction) && WorksConstants.EDIT.equals(mode)) {
+            final JsonObject jsonObject = new JsonObject();
+            contractorAdvanceService.validateARFInDrafts(contractorAdvanceRequisition.getWorkOrderEstimate().getId(), jsonObject,
+                    errors);
+            contractorAdvanceService.validateARFInWorkFlow(contractorAdvanceRequisition.getWorkOrderEstimate().getId(),
+                    jsonObject, errors);
+            contractorAdvanceService.validateInput(contractorAdvanceRequisition, errors);
+        }
+
+        if (errors.hasErrors()) {
+            setDropDownValues(model);
+            return loadViewData(model, request, contractorAdvanceRequisition);
+        } else {
+            if (null != workFlowAction)
+                updatedContractorAdvanceRequisition = contractorAdvanceService.updateContractorAdvanceRequisition(
+                        contractorAdvanceRequisition, approvalPosition, approvalComment, null, workFlowAction, mode, files);
+
+            redirectAttributes.addFlashAttribute("contractorAdvanceRequisition", updatedContractorAdvanceRequisition);
+
+            final String pathVars = worksUtils.getPathVars(contractorAdvanceRequisition.getStatus(),
+                    contractorAdvanceRequisition.getState(), contractorAdvanceRequisition.getId(), approvalPosition);
+
+            return "redirect:/contractoradvance/contractoradvance-success?pathVars=" + pathVars + "&arfNumber="
+                    + contractorAdvanceRequisition.getAdvanceRequisitionNumber();
+        }
+    }
 }

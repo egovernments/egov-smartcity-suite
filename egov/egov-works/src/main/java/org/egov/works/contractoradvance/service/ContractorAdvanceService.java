@@ -39,6 +39,9 @@
  */
 package org.egov.works.contractoradvance.service;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -46,17 +49,44 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.model.advance.EgAdvanceRequisitionDetails;
+import org.egov.model.advance.EgAdvanceRequisitionMis;
+import org.egov.pims.commons.Position;
+import org.egov.works.autonumber.AdvanceRequisitionNumberGenerator;
 import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
+import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus;
 import org.egov.works.contractoradvance.entity.SearchRequestContractorRequisition;
 import org.egov.works.contractoradvance.repository.ContractorAdvanceRepository;
+import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.hibernate.Session;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.google.gson.JsonObject;
 
 @Service
 @Transactional(readOnly = true)
 public class ContractorAdvanceService {
+    private static final Logger LOG = LoggerFactory.getLogger(ContractorAdvanceService.class);
 
     @Autowired
     private ContractorAdvanceRepository contractorAdvanceRepository;
@@ -67,6 +97,32 @@ public class ContractorAdvanceService {
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
+
+    @Autowired
+    private WorksUtils worksUtils;
+
+    @Autowired
+    private AdvanceRequisitionNumberGenerator advanceRequisitionNumberGenerator;
+
+    @Autowired
+    private AssignmentService assignmentService;
+
+    @Autowired
+    private SecurityUtils securityUtils;
+
+    @Autowired
+    private PositionMasterService positionMasterService;
+
+    @Autowired
+    private MBHeaderService mbHeaderService;
+
+    @Autowired
+    @Qualifier("parentMessageSource")
+    private MessageSource messageSource;
+
+    @Autowired
+    @Qualifier("workflowService")
+    private SimpleWorkflowService<ContractorAdvanceRequisition> contractorAdvanceRequisitionWorkflowService;
 
     public ContractorAdvanceRequisition getContractorAdvanceRequisitionById(final Long id) {
         return contractorAdvanceRepository.findOne(id);
@@ -155,4 +211,237 @@ public class ContractorAdvanceService {
         return qry;
     }
 
+    public ContractorAdvanceRequisition getContractorAdvanceByARFNumber(final String arfNumber) {
+        return contractorAdvanceRepository.findByAdvanceRequisitionNumber(arfNumber);
+    }
+
+    @Transactional
+    public ContractorAdvanceRequisition create(final ContractorAdvanceRequisition contractorAdvanceRequisition,
+            final MultipartFile[] files,
+            final Long approvalPosition,
+            final String approvalComent, final String additionalRule, final String workFlowAction) throws IOException {
+
+        contractorAdvanceRequisition.setStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.CONTRACTOR_ADVANCE,
+                ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CREATED.toString()));
+        contractorAdvanceRequisition.setAdvanceRequisitionDate(new Date());
+        contractorAdvanceRequisition
+                .setAdvanceRequisitionNumber(advanceRequisitionNumberGenerator.getNextNumber(contractorAdvanceRequisition));
+        for (final EgAdvanceRequisitionDetails details : contractorAdvanceRequisition.getEgAdvanceReqDetailses())
+            details.setEgAdvanceRequisition(contractorAdvanceRequisition);
+
+        final EgAdvanceRequisitionMis requisitionMis = new EgAdvanceRequisitionMis();
+        requisitionMis.setEgAdvanceRequisition(contractorAdvanceRequisition);
+        requisitionMis
+                .setEgDepartment(contractorAdvanceRequisition.getWorkOrderEstimate().getEstimate().getExecutingDepartment());
+        requisitionMis.setFundsource(contractorAdvanceRequisition.getWorkOrderEstimate().getEstimate().getFundSource());
+        if (contractorAdvanceRequisition.getWorkOrderEstimate().getEstimate().getLineEstimateDetails() != null) {
+            requisitionMis.setFunction(contractorAdvanceRequisition.getWorkOrderEstimate().getEstimate().getLineEstimateDetails()
+                    .getLineEstimate().getFunction());
+            requisitionMis.setFund(contractorAdvanceRequisition.getWorkOrderEstimate().getEstimate().getLineEstimateDetails()
+                    .getLineEstimate().getFund());
+            requisitionMis.setScheme(contractorAdvanceRequisition.getWorkOrderEstimate().getEstimate().getLineEstimateDetails()
+                    .getLineEstimate().getScheme());
+            requisitionMis.setSubScheme(contractorAdvanceRequisition.getWorkOrderEstimate().getEstimate().getLineEstimateDetails()
+                    .getLineEstimate().getSubScheme());
+        }
+        contractorAdvanceRequisition.setEgAdvanceReqMises(requisitionMis);
+
+        ContractorAdvanceRequisition savedContractorAdvanceRequisition = contractorAdvanceRepository
+                .save(contractorAdvanceRequisition);
+
+        createContractorAdvanceWorkflowTransition(savedContractorAdvanceRequisition, approvalPosition, approvalComent,
+                additionalRule, workFlowAction);
+
+        savedContractorAdvanceRequisition = contractorAdvanceRepository
+                .save(savedContractorAdvanceRequisition);
+
+        final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, savedContractorAdvanceRequisition,
+                WorksConstants.CONTRACTOR_ADVANCE);
+        if (!documentDetails.isEmpty()) {
+            savedContractorAdvanceRequisition.setDocumentDetails(documentDetails);
+            worksUtils.persistDocuments(documentDetails);
+        }
+        return savedContractorAdvanceRequisition;
+    }
+
+    public void createContractorAdvanceWorkflowTransition(final ContractorAdvanceRequisition contractorAdvanceRequisition,
+            final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final String workFlowAction) {
+        if (LOG.isDebugEnabled())
+            LOG.debug(" Create WorkFlow Transition Started  ...");
+        final User user = securityUtils.getCurrentUser();
+        final DateTime currentDate = new DateTime();
+        Position pos = null;
+        Assignment wfInitiator = null;
+        final String currState = "";
+        final String natureOfwork = WorksConstants.WORKFLOWTYPE_ARF_DISPLAYNAME;
+
+        if (null != contractorAdvanceRequisition.getId())
+            wfInitiator = assignmentService.getPrimaryAssignmentForUser(contractorAdvanceRequisition.getCreatedBy().getId());
+        if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+            final String stateValue = WorksConstants.WF_STATE_REJECTED;
+            contractorAdvanceRequisition.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                    .withOwner(wfInitiator.getPosition()).withNextAction("").withNatureOfTask(natureOfwork);
+        } else {
+            if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
+                pos = positionMasterService.getPositionById(approvalPosition);
+            WorkFlowMatrix wfmatrix = null;
+            if (null == contractorAdvanceRequisition.getState()) {
+                wfmatrix = contractorAdvanceRequisitionWorkflowService.getWfMatrix(contractorAdvanceRequisition.getStateType(),
+                        null, null, additionalRule, currState, null);
+                contractorAdvanceRequisition.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
+                        .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
+            } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+                final String stateValue = WorksConstants.WF_STATE_CANCELLED;
+                wfmatrix = contractorAdvanceRequisitionWorkflowService.getWfMatrix(contractorAdvanceRequisition.getStateType(),
+                        null, null, additionalRule, contractorAdvanceRequisition.getCurrentState().getValue(), null);
+                contractorAdvanceRequisition.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                        .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);
+            } else {
+                wfmatrix = contractorAdvanceRequisitionWorkflowService.getWfMatrix(contractorAdvanceRequisition.getStateType(),
+                        null, contractorAdvanceRequisition.getAdvanceRequisitionAmount(), additionalRule,
+                        contractorAdvanceRequisition.getCurrentState().getValue(),
+                        contractorAdvanceRequisition.getState().getNextAction());
+                contractorAdvanceRequisition.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
+                        .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
+            }
+        }
+        if (LOG.isDebugEnabled())
+            LOG.debug(" WorkFlow Transition Completed  ...");
+    }
+
+    @Transactional
+    public ContractorAdvanceRequisition updateContractorAdvanceRequisition(
+            final ContractorAdvanceRequisition contractorAdvanceRequisition,
+            final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final String workFlowAction, final String mode, final MultipartFile[] files)
+            throws ValidationException, IOException {
+        ContractorAdvanceRequisition updatedContractorAdvanceRequisition = null;
+
+        if (contractorAdvanceRequisition.getStatus().getCode()
+                .equals(ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.REJECTED.toString())) {
+            updatedContractorAdvanceRequisition = update(contractorAdvanceRequisition, files);
+            contractorContractorAdvanceStatusChange(updatedContractorAdvanceRequisition, workFlowAction, mode);
+        } else {
+            contractorContractorAdvanceStatusChange(contractorAdvanceRequisition, workFlowAction, mode);
+            if (workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE)) {
+                contractorAdvanceRequisition.setApprovedDate(new Date());
+                contractorAdvanceRequisition.setApprovedBy(securityUtils.getCurrentUser());
+            }
+        }
+        updatedContractorAdvanceRequisition = contractorAdvanceRepository.save(contractorAdvanceRequisition);
+
+        createContractorAdvanceWorkflowTransition(updatedContractorAdvanceRequisition, approvalPosition, approvalComent,
+                additionalRule, workFlowAction);
+
+        updatedContractorAdvanceRequisition = contractorAdvanceRepository.save(updatedContractorAdvanceRequisition);
+
+        return updatedContractorAdvanceRequisition;
+    }
+
+    private ContractorAdvanceRequisition update(final ContractorAdvanceRequisition contractorAdvanceRequisition,
+            final MultipartFile[] files) throws IOException {
+        final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, contractorAdvanceRequisition,
+                WorksConstants.CONTRACTOR_ADVANCE);
+        if (!documentDetails.isEmpty()) {
+            contractorAdvanceRequisition.setDocumentDetails(documentDetails);
+            worksUtils.persistDocuments(documentDetails);
+        }
+        return contractorAdvanceRepository.save(contractorAdvanceRequisition);
+    }
+
+    public void contractorContractorAdvanceStatusChange(final ContractorAdvanceRequisition contractorAdvanceRequisition,
+            final String workFlowAction, final String mode) throws ValidationException {
+        if (null != contractorAdvanceRequisition && null != contractorAdvanceRequisition.getStatus()
+                && null != contractorAdvanceRequisition.getStatus().getCode())
+            if (workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE))
+                contractorAdvanceRequisition.setStatus(worksUtils.getStatusByModuleAndCode(
+                        WorksConstants.CONTRACTOR_ADVANCE,
+                        ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.APPROVED.toString()));
+            else if (workFlowAction.equals(WorksConstants.REJECT_ACTION))
+                contractorAdvanceRequisition.setStatus(worksUtils.getStatusByModuleAndCode(
+                        WorksConstants.CONTRACTOR_ADVANCE,
+                        ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.REJECTED.toString()));
+            else if (contractorAdvanceRequisition.getStatus().getCode()
+                    .equals(ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.REJECTED.toString())
+                    && workFlowAction.equals(WorksConstants.CANCEL_ACTION))
+                contractorAdvanceRequisition.setStatus(worksUtils.getStatusByModuleAndCode(
+                        WorksConstants.CONTRACTOR_ADVANCE,
+                        ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CANCELLED.toString()));
+            else if (contractorAdvanceRequisition.getStatus().getCode()
+                    .equals(ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.REJECTED.toString())
+                    && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
+                contractorAdvanceRequisition.setStatus(worksUtils.getStatusByModuleAndCode(
+                        WorksConstants.CONTRACTOR_ADVANCE,
+                        ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.RESUBMITTED.toString()));
+            else if ((WorksConstants.RESUBMITTED_STATUS.equalsIgnoreCase(contractorAdvanceRequisition.getStatus().getCode()) ||
+                    WorksConstants.CREATED_STATUS.equalsIgnoreCase(contractorAdvanceRequisition.getStatus().getCode()) ||
+                    WorksConstants.CHECKED_STATUS.equalsIgnoreCase(contractorAdvanceRequisition.getStatus().getCode()))
+                    && contractorAdvanceRequisition.getState() != null
+                    && WorksConstants.SUBMIT_ACTION.equalsIgnoreCase(workFlowAction))
+                contractorAdvanceRequisition.setStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.CONTRACTOR_ADVANCE,
+                        WorksConstants.CHECKED_STATUS));
+    }
+
+    public Double getTotalAdvancePaid(final Long contractorAdvanceId, final Long workOrderEstimateId, final String approvedCode) {
+        return contractorAdvanceRepository.getTotalAdvancePaid(contractorAdvanceId, workOrderEstimateId, approvedCode);
+    }
+
+    public void validateInput(final ContractorAdvanceRequisition contractorAdvanceRequisition, final BindingResult resultBinder) {
+        final Double advancePaidTillNow = getTotalAdvancePaid(
+                contractorAdvanceRequisition.getId() == null ? -1L : contractorAdvanceRequisition.getId(),
+                contractorAdvanceRequisition.getWorkOrderEstimate().getId(),
+                ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.APPROVED.toString());
+        Double totalMBAmountOfMBs = mbHeaderService.getTotalMBAmountOfMBs(null,
+                contractorAdvanceRequisition.getWorkOrderEstimate().getId(),
+                ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CANCELLED.toString());
+        if (totalMBAmountOfMBs == null)
+            totalMBAmountOfMBs = 0D;
+        if (contractorAdvanceRequisition.getAdvanceRequisitionAmount()
+                .add(BigDecimal.valueOf(advancePaidTillNow + totalMBAmountOfMBs)).compareTo(BigDecimal
+                        .valueOf(contractorAdvanceRequisition.getWorkOrderEstimate().getWorkOrder().getWorkOrderAmount())) > 0)
+            resultBinder.reject("error.advance.exceeded", new String[] {},
+                    null);
+    }
+
+    public void validateARFInDrafts(final Long workOrderEstimateId, final JsonObject jsonObject, final BindingResult errors) {
+        final ContractorAdvanceRequisition contractorAdvanceRequisition = contractorAdvanceRepository
+                .findByWorkOrderEstimate_IdAndStatus_codeEquals(workOrderEstimateId, WorksConstants.NEW);
+        String userName = "";
+        if (contractorAdvanceRequisition != null) {
+            userName = worksUtils.getApproverName(contractorAdvanceRequisition.getState().getOwnerPosition().getId());
+            final String message = messageSource.getMessage("error.arf.newstatus",
+                    new String[] { contractorAdvanceRequisition.getAdvanceRequisitionNumber(),
+                            contractorAdvanceRequisition.getStatus().getDescription(),
+                            userName },
+                    null);
+            jsonObject.addProperty("draftsError", message);
+            if (errors != null)
+                errors.reject("draftsError", message);
+        }
+    }
+
+    public void validateARFInWorkFlow(final Long workOrderEstimateId, final JsonObject jsonObject, final BindingResult errors) {
+        final ContractorAdvanceRequisition contractorAdvanceRequisition = contractorAdvanceRepository
+                .findByWorkOrderEstimateAndStatus(workOrderEstimateId,
+                        ContractorAdvanceRequisitionStatus.CANCELLED.toString(),
+                        ContractorAdvanceRequisitionStatus.APPROVED.toString(),
+                        ContractorAdvanceRequisitionStatus.NEW.toString());
+        String userName = "";
+        if (contractorAdvanceRequisition != null) {
+            userName = worksUtils.getApproverName(contractorAdvanceRequisition.getState().getOwnerPosition().getId());
+            final String message = messageSource.getMessage("error.arf.workflow",
+                    new String[] { contractorAdvanceRequisition.getAdvanceRequisitionNumber(),
+                            contractorAdvanceRequisition.getStatus().getDescription(),
+                            userName },
+                    null);
+            jsonObject.addProperty("workFlowError", message);
+            if (errors != null)
+                errors.reject("workFlowError", message);
+        }
+    }
 }

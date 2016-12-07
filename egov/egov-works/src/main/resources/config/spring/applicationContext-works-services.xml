@@ -182,4 +182,10 @@
     <bean id="RevisionAbstractEstimateInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
          <constructor-arg index="0" ref="RevisionAbstractEstimatePersistenceService"/>
     </bean>
+    <bean id="ContractorAdvanceRequisitionPersistenceService" parent="persistenceService">
+        <constructor-arg name="type" value="org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition" />
+    </bean>
+    <bean id="ContractorAdvanceRequisitionInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+         <constructor-arg index="0" ref="ContractorAdvanceRequisitionPersistenceService"/>
+    </bean>
 </beans>

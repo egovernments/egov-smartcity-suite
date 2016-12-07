@@ -39,6 +39,11 @@
  */
 package org.egov.works.contractoradvance.entity;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -46,9 +51,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.egov.infra.admin.master.entity.User;
 import org.egov.model.advance.EgAdvanceRequisition;
+import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 
 @Entity
@@ -68,7 +77,7 @@ public class ContractorAdvanceRequisition extends EgAdvanceRequisition {
     public static final String GETALLDRAWINGOFFICERFROMARF = "getAllDrawingOfficerFromARF";
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "workorder_estimate_id", nullable = false)
+    @JoinColumn(name = "WORKORDER_ESTIMATE_ID", nullable = false)
     private WorkOrderEstimate workOrderEstimate;
 
     @Transient
@@ -77,9 +86,15 @@ public class ContractorAdvanceRequisition extends EgAdvanceRequisition {
     @Transient
     private String approvalComent;
 
-    private String cancellationReason;
+    @Temporal(value = TemporalType.DATE)
+    @Column(name = "approveddate")
+    private Date approvedDate;
 
-    private String cancellationRemarks;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "approvedby")
+    private User approvedBy;
+
+    private final transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
 
     @Override
     public String getStateDetails() {
@@ -110,19 +125,30 @@ public class ContractorAdvanceRequisition extends EgAdvanceRequisition {
         this.approvalComent = approvalComent;
     }
 
-    public String getCancellationReason() {
-        return cancellationReason;
+    public List<DocumentDetails> getDocumentDetails() {
+        return documentDetails;
     }
 
-    public void setCancellationReason(final String cancellationReason) {
-        this.cancellationReason = cancellationReason;
+    public void setDocumentDetails(final List<DocumentDetails> documentDetails) {
+        this.documentDetails.clear();
+        if (documentDetails != null)
+            this.documentDetails.addAll(documentDetails);
     }
 
-    public String getCancellationRemarks() {
-        return cancellationRemarks;
+    public Date getApprovedDate() {
+        return approvedDate;
     }
 
-    public void setCancellationRemarks(final String cancellationRemarks) {
-        this.cancellationRemarks = cancellationRemarks;
+    public void setApprovedDate(final Date approvedDate) {
+        this.approvedDate = approvedDate;
     }
+
+    public User getApprovedBy() {
+        return approvedBy;
+    }
+
+    public void setApprovedBy(final User approvedBy) {
+        this.approvedBy = approvedBy;
+    }
+
 }

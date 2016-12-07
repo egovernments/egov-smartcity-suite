@@ -38,33 +38,27 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page contentType="text/html" language="java"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<style>
-      .position_alert{
-        position:fixed;z-index:9999;top:85px;right:20px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
-      }
-</style>
-<form:form id="contractorAdvanceForm" class="form-horizontal form-groups-bordered" modelAttribute="contractorAdvanceRequisition" role="form" method="post" enctype="multipart/form-data">
-	<form:hidden path="id" />
-	<input type="hidden" name="woeId" id="woeId" value="${woeId}" />
-	<form:hidden path="workOrderEstimate" id="workOrderEstimate" value="${workOrderEstimate.id}" /> 
-	<input type="hidden" name="mode" id="mode" value="${mode }" />
-	<div class="position_alert">
-		<form:hidden path="advanceRequisitionAmount" id="advanceRequisitionAmount" value='<c:out value="${contractorAdvanceRequisition.advanceRequisitionAmount}" default="0.0" />'/>
-		<spring:message	code="lbl.advance.amount" /> : &#8377 <span id="advanceAmount"><c:out value="${contractorAdvanceRequisition.advanceRequisitionAmount }" default="0.0"></c:out></span>
-	</div>
-	<div class="new-page-header"><spring:message code="hdr.viewcontractoradvance" /></div> 
-	<jsp:include page="contractorAdvance-header.jsp"/>
-	<jsp:include page="contractorAdvance-detailsview.jsp"/>
-	<jsp:include page="../common/uploadDocuments.jsp"/>
-	<c:if test="${!workflowHistory.isEmpty() }">
-		<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>
-	</c:if>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+
+<div id="main">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title text-center">
+						<c:out value="${message}" /><br />
+					</div>
+				</div>
+			</div>
+		</div>					
+	</div>	
 	<div class="row">
 		<div class="col-sm-12 text-center">
 			<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
 		</div>
-	</div>
-</form:form>
+	</div>	
+</div>

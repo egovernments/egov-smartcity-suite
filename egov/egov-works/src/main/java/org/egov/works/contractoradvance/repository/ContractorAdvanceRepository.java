@@ -59,4 +59,16 @@ public interface ContractorAdvanceRepository extends JpaRepository<ContractorAdv
     @Query("select distinct(car.workOrderEstimate.workOrder.contractor.name) from ContractorAdvanceRequisition as car where upper(car.workOrderEstimate.workOrder.contractor.name) like upper(:contractorName) or upper(car.workOrderEstimate.workOrder.contractor.code) like upper(:contractorName)")
     List<String> findContractorsToSearchCR(@Param("contractorName") String contractorName);
 
+    ContractorAdvanceRequisition findByAdvanceRequisitionNumber(final String arfNumber);
+
+    @Query("select sum(advanceRequisitionAmount) from ContractorAdvanceRequisition where id != :contractorAdvanceId and status.code = :statusCode and workOrderEstimate.id = :workOrderEstimateId")
+    Double getTotalAdvancePaid(@Param("contractorAdvanceId") final Long contractorAdvanceId,
+            @Param("workOrderEstimateId") final Long workOrderEstimateId, @Param("statusCode") final String statusCode);
+
+    ContractorAdvanceRequisition findByWorkOrderEstimate_IdAndStatus_codeEquals(final Long woeId, final String status);
+
+    @Query("select car from ContractorAdvanceRequisition as car where car.workOrderEstimate.id =:workOrderEstimateId and status.code not in (:cancelledStatus, :approvedStatus, :newStatus)")
+    ContractorAdvanceRequisition findByWorkOrderEstimateAndStatus(@Param("workOrderEstimateId") Long workOrderEstimateId,
+            @Param("cancelledStatus") String cancelledStatus, @Param("approvedStatus") String approvedStatus,
+            @Param("newStatus") String newStatus);
 }

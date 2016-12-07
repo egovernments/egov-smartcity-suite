@@ -47,6 +47,7 @@
 	id="searchRequestLetterOfAcceptance" class="form-horizontal form-groups-bordered">
 	<div class="alert text-left" style="color: red;" id="errorMessage" hidden="true"></div>
 	<input type="hidden" value="<spring:message code="error.date.todate.fromdate" />" id="errorToDateAndFromDate" />
+	<input type="hidden" value="<spring:message code="msg.select.loa" />" id="errorSelectLOA" />
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
@@ -135,8 +136,8 @@
 	</div>
 	<div class="row">
 		<div class="col-sm-12 text-center">
-			<button type='button' class='btn btn-primary' id="btncreatecr">
-				<spring:message code='lbl.createcr' />
+			<button type='button' class='btn btn-primary' id="btncreatearf">
+				<spring:message code='lbl.createarf' />
 			</button>
 		</div>
 	</div>

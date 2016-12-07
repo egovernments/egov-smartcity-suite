@@ -39,16 +39,26 @@
  */
 package org.egov.works.web.controller.contractoradvance;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
 import org.egov.works.contractoradvance.entity.SearchRequestContractorRequisition;
 import org.egov.works.contractoradvance.service.ContractorAdvanceService;
 import org.egov.works.web.adaptor.SearchContractorAdvanceJsonAdaptor;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -56,6 +66,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 @Controller
 @RequestMapping(value = "/contractoradvance")
@@ -66,6 +77,9 @@ public class AjaxContractorAdvanceController {
 
     @Autowired
     private ContractorAdvanceService contractorAdvanceService;
+
+    @Autowired
+    private WorkOrderEstimateService workOrderEstimateService;
 
     @RequestMapping(value = "/ajaxarfnumbers-searchcr", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> getAdvanceRequisitionNumberToSearchCR(@RequestParam final String advanceRequisitionNumber) {
@@ -101,4 +115,27 @@ public class AjaxContractorAdvanceController {
         return json;
     }
 
+    @RequestMapping(value = "/validatearf/{workOrderEstimateId}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String validateContractorAdvance(@PathVariable final Long workOrderEstimateId,
+            final HttpServletRequest request, final HttpServletResponse response) {
+        final JsonObject jsonObject = new JsonObject();
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
+        contractorAdvanceService.validateARFInDrafts(workOrderEstimate.getId(), jsonObject, null);
+        contractorAdvanceService.validateARFInWorkFlow(workOrderEstimate.getId(), jsonObject, null);
+        if (jsonObject.toString().length() > 2) {
+            sendAJAXResponse(jsonObject.toString(), response);
+            return "";
+        }
+        return null;
+    }
+
+    protected void sendAJAXResponse(final String msg, final HttpServletResponse response) {
+        try {
+            final Writer httpResponseWriter = response.getWriter();
+            IOUtils.write(msg, httpResponseWriter);
+            IOUtils.closeQuietly(httpResponseWriter);
+        } catch (final IOException e) {
+            throw new ApplicationRuntimeException("error.validate.re");
+        }
+    }
 }

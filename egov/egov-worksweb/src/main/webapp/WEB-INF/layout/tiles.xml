@@ -490,6 +490,21 @@
         <put-attribute name="page-title" value="lbl.search.estimates" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/abstractestimate/searchestimates-form.jsp"/>
      </definition>
+     
+     <definition name="contractorAdvance-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.create.arf" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/contractoradvance/contractorAdvance-form.jsp"/>
+     </definition>
+     
+     <definition name="contractorAdvance-success" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.create.arf" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/contractoradvance/contractorAdvance-success.jsp"/>
+	</definition>
+	
+	<definition name="contractorAdvance-update" extends="base_layout">
+        <put-attribute name="page-title" value="title.contractoradvance.update" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/contractoradvance/contractorAdvance-update.jsp"/>
+    </definition>
 
     <definition name="searchcontractoradvance" extends="base_layout">
         <put-attribute name="page-title" value="title.search.contractoradvance" cascade="true"/>

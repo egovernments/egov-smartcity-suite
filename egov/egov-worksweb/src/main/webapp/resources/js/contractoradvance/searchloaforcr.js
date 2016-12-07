@@ -210,6 +210,27 @@ $(document).ready(function() {
 	});
 });
 
-$('#btncreatere').click(function(e) {
-	//on select of radio buttun setting workorder estimate id check whats the requirement for creating Requization and change according to that
+$('#btncreatearf').click(function(e) {
+	var woeId = $('input[name=selectCheckbox]:checked').val();
+	if(woeId == null) {
+		bootbox.alert($('#errorSelectLOA').val());
+	} else {
+		$.ajax({
+			type: "GET",
+			url: "/egworks/contractoradvance/validatearf/"+woeId,
+			cache: true,
+		}).done(function(value) {
+			if(value == '') {
+				window.location = "/egworks/contractoradvance/create?woeId=" + woeId;
+			} else {
+				var json = $.parseJSON(value);
+				$('#errorMessage').html('');
+				$.each(json, function(key, value){
+					$('#errorMessage').append(value + '</br>');
+					window.scrollTo(0, 0);
+				});
+				$('#errorMessage').show();
+			}
+		});
+	}
 });

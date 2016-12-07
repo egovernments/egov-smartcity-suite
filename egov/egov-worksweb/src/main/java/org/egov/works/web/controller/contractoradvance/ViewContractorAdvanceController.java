@@ -39,11 +39,18 @@
  */
 package org.egov.works.web.controller.contractoradvance;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
 import org.egov.works.contractoradvance.service.ContractorAdvanceService;
+import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -58,14 +65,40 @@ public class ViewContractorAdvanceController {
     @Autowired
     private ContractorAdvanceService contractorAdvanceService;
 
+    @Autowired
+    private WorksUtils worksUtils;
+
+    @Autowired
+    private LineEstimateService lineEstimateService;
+
     @RequestMapping(value = "/view/{advanceRequisitionId}", method = RequestMethod.GET)
     public String viewMilestoneTemplate(@PathVariable final String advanceRequisitionId, final Model model,
             final HttpServletRequest request)
             throws ApplicationException {
         final ContractorAdvanceRequisition contractorAdvanceRequisition = contractorAdvanceService
                 .getContractorAdvanceRequisitionById(Long.parseLong(advanceRequisitionId));
-        model.addAttribute("contractorAdvanceRequisition", contractorAdvanceRequisition);
+        final ContractorAdvanceRequisition updatedContractorAdvance = getContractorAdvanceDocuments(contractorAdvanceRequisition);
+        final Double advancePaidTillNow = contractorAdvanceService.getTotalAdvancePaid(
+                contractorAdvanceRequisition.getId() == null ? -1L : contractorAdvanceRequisition.getId(),
+                contractorAdvanceRequisition.getWorkOrderEstimate().getId(),
+                ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CANCELLED.toString());
+        model.addAttribute("advancePaidTillNow", advancePaidTillNow);
+        model.addAttribute("contractorAdvanceRequisition", updatedContractorAdvance);
+        model.addAttribute("workOrderEstimate", updatedContractorAdvance.getWorkOrderEstimate());
+        model.addAttribute("documentDetails", updatedContractorAdvance.getDocumentDetails());
+        model.addAttribute("mode", "view");
+        model.addAttribute("workflowHistory",
+                lineEstimateService.getHistory(updatedContractorAdvance.getState(), updatedContractorAdvance.getStateHistory()));
         return "contractorAdvance-view";
+    }
+
+    private ContractorAdvanceRequisition getContractorAdvanceDocuments(
+            final ContractorAdvanceRequisition contractorAdvanceRequisition) {
+        List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
+        documentDetailsList = worksUtils.findByObjectIdAndObjectType(contractorAdvanceRequisition.getId(),
+                WorksConstants.CONTRACTOR_ADVANCE);
+        contractorAdvanceRequisition.setDocumentDetails(documentDetailsList);
+        return contractorAdvanceRequisition;
     }
 
 }

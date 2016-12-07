@@ -301,6 +301,8 @@ public class WorksConstants {
 
     public static final String CONTRACTOR_NETPAYABLE_PURPOSE = "Creditors-Contractor Payable";
 
+    public static final String CONTRACTOR_ADVANCE_PURPOSE = "CONTRACTOR_ADVANCE_ACCOUNTCODE";
+
     public static final String CONTRACTOR_DEDUCTIONS_PURPOSE = "Contractor Deductions";
 
     public static final String RETENTION_MONEY_DEDUCTIONS_PURPOSE = "RETENTION_MONEY";
@@ -411,6 +413,8 @@ public class WorksConstants {
     public static final String BILL_EDIT_DESIGNATIONS = "BILL_EDIT_DESIGNATIONS";
 
     public static final String MODE = "mode";
-    
+
     public static final String CONTRACTOR_ADVANCE = "CONTRACTORADVANCE";
+
+    public static final String WORKFLOWTYPE_ARF_DISPLAYNAME = "Contractor Advance Requisition";
 }

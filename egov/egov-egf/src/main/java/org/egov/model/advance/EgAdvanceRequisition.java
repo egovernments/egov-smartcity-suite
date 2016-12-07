@@ -40,9 +40,9 @@
 package org.egov.model.advance;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -96,7 +96,7 @@ public class EgAdvanceRequisition extends StateAware {
 
     @OrderBy("id")
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egAdvanceRequisition", targetEntity = EgAdvanceRequisitionDetails.class)
-    private Set<EgAdvanceRequisitionDetails> egAdvanceReqDetailses = new HashSet<EgAdvanceRequisitionDetails>(0);
+    private List<EgAdvanceRequisitionDetails> egAdvanceReqDetailses = new ArrayList<EgAdvanceRequisitionDetails>(0);
 
     public EgAdvanceRequisition() {
     }
@@ -172,11 +172,11 @@ public class EgAdvanceRequisition extends StateAware {
         this.egAdvanceReqMises = egAdvanceReqMises;
     }
 
-    public Set<EgAdvanceRequisitionDetails> getEgAdvanceReqDetailses() {
+    public List<EgAdvanceRequisitionDetails> getEgAdvanceReqDetailses() {
         return egAdvanceReqDetailses;
     }
 
-    public void setEgAdvanceReqDetailses(final Set<EgAdvanceRequisitionDetails> egAdvanceReqDetailses) {
+    public void setEgAdvanceReqDetailses(final List<EgAdvanceRequisitionDetails> egAdvanceReqDetailses) {
         this.egAdvanceReqDetailses = egAdvanceReqDetailses;
     }
 
@@ -188,7 +188,7 @@ public class EgAdvanceRequisition extends StateAware {
     public EgAdvanceRequisition(final Long id, final String advanceRequisitionNumber, final EgwStatus status,
             final Date advanceRequisitionDate, final BigDecimal advanceRequisitionAmount, final String narration,
             final String arftype, final EgAdvanceRequisitionMis egAdvanceReqMises,
-            final Set<EgAdvanceRequisitionDetails> egAdvanceReqDetailses) {
+            final List<EgAdvanceRequisitionDetails> egAdvanceReqDetailses) {
         super();
         // this.id = id;
         this.advanceRequisitionNumber = advanceRequisitionNumber;
