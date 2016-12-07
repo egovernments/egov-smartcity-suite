@@ -58,16 +58,20 @@ import javax.validation.ValidationException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.egov.demand.model.EgBill;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.wtms.application.service.GenerateConnectionBillService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.service.bill.WaterConnectionBillService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.hibernate.Query;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -83,6 +87,10 @@ import com.lowagie.text.pdf.PdfWriter;
 @Controller
 @RequestMapping(value = "/report")
 public class GenerateBillForConsumerCodeController {
+    
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
@@ -106,6 +114,10 @@ public class GenerateBillForConsumerCodeController {
             final HttpServletResponse response) {
         WaterConnectionBillService waterConnectionBillService = null;
         try {
+            EgBill  egBill=getBillByConsumerCode(consumerCode);
+              if (egBill!=null)
+                  throw new ValidationException("err.demand.bill.generated");
+              else 
             waterConnectionBillService = (WaterConnectionBillService) beanProvider
                     .getBean("waterConnectionBillService");
         } catch (final NoSuchBeanDefinitionException e) {
@@ -218,4 +230,24 @@ public class GenerateBillForConsumerCodeController {
         }
         return outputStream.toByteArray();
     }
+    
+    public EgBill getBillByConsumerCode(final String consumerCode) {
+        EgBill  egBill=null;
+        final String query = " select distinct bill From EgBill bill,EgBillType billtype,WaterConnection conn,WaterConnectionDetails connDet,EgwStatus status,WaterDemandConnection conndem  , EgDemand demd "
+                        + "where billtype.id=bill.egBillType and billtype.code='MANUAL' and bill.consumerId = conn.consumerCode and conn.id=connDet.connection and connDet.id=conndem.waterConnectionDetails "
+                        + " and demd.id=bill.egDemand and demd.id=conndem.demand and connDet.connectionType='NON_METERED' "
+                        + " and demd.isHistory = 'N' and  bill.is_Cancelled='N' and bill.serviceCode='WT' "
+                        + " and connDet.connectionStatus='ACTIVE' and connDet.status=status.id and status.moduletype='WATERTAXAPPLICATION' "
+                        + " and status.code='SANCTIONED' and conn.consumerCode =:consumerCode  order by bill.id desc";
+        final Query hibquery = persistenceService.getSession().createQuery(query.toString())
+                        .setString("consumerCode", consumerCode);
+        List<EgBill>egBilltemp=hibquery.list();
+        if(!egBilltemp.isEmpty())
+        {
+                egBill=egBilltemp.get(0);
+        }
+        LOGGER.debug(
+                        "query to get Bill for single consumernumber" + query.toString() + " for consumer No= " + consumerCode);
+        return egBill;
+}
 }
