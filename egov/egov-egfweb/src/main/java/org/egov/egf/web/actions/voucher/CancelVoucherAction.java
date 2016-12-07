@@ -339,7 +339,7 @@ public class CancelVoucherAction extends BaseFormAction {
                 final Query query = session.createQuery(cancelVhQuery);
 
                 query.setLong("modifiedby", loggedInUser);
-                query.setDate("modifiedDate", modifiedDate);
+                query.setTimestamp("modifiedDate", modifiedDate);
                 query.setLong("vhId", selectedVhs[i]);
                 query.executeUpdate();
                 // for old vouchers when workflow was not implemented
@@ -355,7 +355,7 @@ public class CancelVoucherAction extends BaseFormAction {
                 final Query query = session.createQuery(cancelVhQuery);
                 query.setLong("vhId", selectedVhs[i]);
                 query.setLong("modifiedby", loggedInUser);
-                query.setDate("modifiedDate", modifiedDate);
+                query.setTimestamp("modifiedDate", modifiedDate);
                 query.executeUpdate();
                 if (FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE.equalsIgnoreCase(voucherObj.getName())){
                      int count = paymentService.backUpdateRemittanceDateInGL(voucherHeader.getId());  
@@ -367,7 +367,7 @@ public class CancelVoucherAction extends BaseFormAction {
                 final Query query = session.createQuery(cancelVhQuery);
                 query.setLong("vhId", selectedVhs[i]);
                 query.setLong("modifiedby", loggedInUser);
-                query.setDate("modifiedDate", modifiedDate);
+                query.setTimestamp("modifiedDate", modifiedDate);
                 query.executeUpdate();
                 if (FinancialConstants.CONTRAVOUCHER_NAME_INTERFUND.equalsIgnoreCase(voucherObj.getName())) {
                     Long vhId;
@@ -385,7 +385,7 @@ public class CancelVoucherAction extends BaseFormAction {
                 final Query query = session.createQuery(cancelVhQuery);
                 query.setLong("vhId", selectedVhs[i]);
                 query.setLong("modifiedby", loggedInUser);
-                query.setDate("modifiedDate", modifiedDate);
+                query.setTimestamp("modifiedDate", modifiedDate);
                 query.executeUpdate();
                 continue;
             }
