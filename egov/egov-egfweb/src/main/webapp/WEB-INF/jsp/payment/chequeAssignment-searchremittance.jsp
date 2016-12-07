@@ -255,6 +255,8 @@
 					value="%{selectedRows}" />
 				<s:hidden id="paymentMode" name="paymentMode" value="%{paymentMode}" />
 				<s:hidden id="bankaccount" name="bankaccount" value="%{bankaccount}" />
+				<s:hidden id="selectedRowsId" name="selectedRowsId"
+					value="%{selectedRowsId}" />
 				<s:submit id="assignChequeBtn" method="create" value="Assign Cheque"
 					cssClass="buttonsubmit" onclick="return validate()" />
 				<input type="button" value="Close"
@@ -264,6 +266,7 @@
 		<s:token />
 	</s:form>
 	<script>
+		var selectedRowsId=new Array();
 			function update(obj)
 			{
 				if(obj.checked)
@@ -273,6 +276,7 @@
 			}
 			function validate()
 			{
+				resetSelectedRowsId();
 				if(dom.get('departmentid') && dom.get('departmentid').options[dom.get('departmentid').selectedIndex].value==-1)
 				{
 					bootbox.alert('Select Cheque Issued From');
@@ -286,6 +290,7 @@
 				dom.get('departmentid').disabled=false;
 				<s:if test="%{paymentMode!='cheque'}">
 				if(validateChequeDateForNonChequeMode()){
+					 
 					document.chequeAssignment.action= "/EGF/payment/chequeAssignment-create.action";
 					document.chequeAssignment.submit();
 					return true;
@@ -294,6 +299,7 @@
 					return false;
 				</s:if> 
 				<s:else>
+				 
 				document.chequeAssignment.action= "/EGF/payment/chequeAssignment-create.action";
 				document.chequeAssignment.submit();
 				return true;
@@ -499,7 +505,37 @@
 						document.getElementById('isSelected'+i).checked=false;
 					document.getElementById('selectedRows').value=0;
 				}
+				resetSelectedRowsId();
 			}
+			
+			function resetSelectedRowsId(){
+				var chequeSize='<s:property value ="%{chequeAssignmentList.size()}"/>';
+				   selectedRowsId = new Array();
+					for(var index=0;index<chequeSize;index++){
+						var obj = document.getElementById('isSelected'+index);
+						if(obj.checked == false){
+							 
+							if(document.getElementsByName("chequeAssignmentList["+index+"].voucherHeaderId")[0])
+								document.getElementsByName("chequeAssignmentList["+index+"].voucherHeaderId")[0].disabled=true;
+							
+							 
+							if(document.getElementsByName("chequeAssignmentList["+index+"].voucherNumber")[0])
+								 document.getElementsByName("chequeAssignmentList["+index+"].voucherNumber")[0].disabled=true;
+							 
+								 
+							if(document.getElementsByName("chequeAssignmentList["+index+"].voucherDate")[0])
+								 document.getElementsByName("chequeAssignmentList["+index+"].voucherDate")[0].disabled=true;
+							 
+							if(document.getElementsByName("chequeAssignmentList["+index+"].paidAmount")[0])
+								paidAmount = document.getElementsByName("chequeAssignmentList["+index+"].paidAmount")[0].disabled=true;
+							 
+							
+						}
+					}
+					 
+			}
+			
+			 
 		</script>
 	<s:if test="%{isFieldMandatory('department')}">
 		<script>

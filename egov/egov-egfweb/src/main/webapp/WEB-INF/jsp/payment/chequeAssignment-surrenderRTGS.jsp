@@ -1,4 +1,4 @@
-<%--
+ <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -43,16 +43,19 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="/EGF/resources/css/ccMenu.css?rnd=${app_release_no}" />
+<link rel="stylesheet" type="text/css" 
+href="/EGF/resources/css/ccMenu.css?rnd=${app_release_no}" />
 <title><s:text name="surrender.rtgs" /></title>
 </head>
 <body>
+
 	<s:form action="chequeAssignment" theme="simple">
 		<s:token />
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="Surrender RTGS" />
 		</jsp:include>
-		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> 
+		<s:actionmessage />
 		</span>
 			<div class="subheadnew"></div>
 			<div class="formmainbox">
@@ -89,17 +92,27 @@
 								<s:hidden name="instrumentHeaderId" value="%{id}" />
 								<s:hidden name="paymentVoucherNumber"
 									value="%{voucherHeaderId.id}" />
+									
+									
 								<td style="text-align: center" class="blueborderfortdnew" />
 								<s:property value="#stat.index+1" />
 								</td>
 								<td style="text-align: center" class="blueborderfortdnew"><s:property
-										value="%{transactionNumber}" /></td>
+										value="%{transactionNumber}" /><s:hidden name="transactionNumber"
+								value="%{transactionNumber}" /></td>
+										
+										
 								<td style="text-align: right" class="blueborderfortdnew"><s:text
 										name="format.number">
 										<s:param value="%{instrumentAmount}" />
 									</s:text></td>
+							
+									
 								<td style="text-align: center" class="blueborderfortdnew"><s:date
-										name="%{transactionDate}" format="dd/MM/yyyy" /></td>
+										name="%{transactionDate}" format="dd/MM/yyyy" /> <s:hidden name="transactionDate"
+								value="%{transactionDate}" />
+								</td>
+								
 								<td style="text-align: center" class="blueborderfortdnew">
 									<s:iterator var="v" value="instrumentVouchers" status="st">
 										<A href="#"
@@ -108,10 +121,11 @@
 										</A>
 									</s:iterator>
 								</td>
-								<td style="text-align: center" class="blueborderfortdnew"><s:checkbox
+								<td style="text-align: center" class="blueborderfortdnew">
+								<s:checkbox
 										name="surrender"
 										value='%{surrender[#stat.index]!=null?true:false}'
-										fieldValue="%{id}" /></td>
+										fieldValue="%{id}" id="surrender%{#stat.index}"/></td>
 								<td style="text-align: center" class="blueborderfortdnew">
 									<s:select name="surrendarReasons" id="surrendarReasons"
 										list="surrendarReasonMap" headerKey="-1"
@@ -135,8 +149,18 @@
 				<s:if test="%{instrumentHeaderList.size()>0}">
 					<div class="buttonbottom">
 						<s:hidden name="button" id="button" />
-						<s:submit type="submit" cssClass="buttonsubmit" name="Surrender"
+						
+					
+					 <s:hidden name="selectedRowsId" id="selectedRowsId"
+						value="%{selectedRowsId}" />
+						 
+					
+						<input type="button" Class="buttonsubmit" name="Surrender"
 							value="Surrender" onclick="return surrenderChq();" method="save" />
+							
+						
+					
+					
 						<input type="button" value="Close"
 							onclick="javascript:window.close()" class="button" />
 					</div>
@@ -201,7 +225,8 @@
  	window.open("/EGF/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+val+"&showMode="+mode,"","height=650,width=900,scrollbars=yes,left=30,top=30,status=yes");
  	}
  	function surrenderChq(){
-		
+ 		resetSelectedRowsId();
+ 		disableAll();
  		document.getElementById('button').value='surrender';
  		document.chequeAssignment.action = '/EGF/payment/chequeAssignment-save.action?containsRTGS=true';
 		document.chequeAssignment.submit();
@@ -209,6 +234,7 @@
  	}
   	function Reassign()
  	{
+		resetSelectedRowsId();
 	 	document.getElementById('button').value='surrenderAndReassign';
 	 	var chqGenMode='<s:property value="isChequeNoGenerationAuto()"/>';
 	 	var alertNumber='<s:text name="chq.number.missing.alert"/>';
@@ -249,11 +275,60 @@
 	 		}
 	 	
  		}
+	 	disableAll();
+	 	document.chequeAssignment.action = '/EGF/payment/chequeAssignment-save.action?containsRTGS='+document.getElementById('containsRTGS').value;
+		document.chequeAssignment.submit();
 		
  	}
+ 	var selectedRowsId = new Array();
+  	function resetSelectedRowsId(){
+  		
+  		var newSurrendarReasonsObj=document.getElementsByName('surrendarReasons');
+ 		//var newSerialNoObj=document.getElementsByName('newSerialNo');
+ 		var newChqNoObj=document.getElementsByName('transactionNumber');
+ 		var newChqDateObj=document.getElementsByName('transactionDate');
+		var chequeSize='<s:property value ="%{instrumentHeaderList.size()}"/>';
+		   selectedRowsId = new Array();
+			for(var index=0;index<chequeSize;index++){
+				var obj = document.getElementById('surrender'+index);
+				if(obj.checked == true){
+				selectedRowsId.push(document.getElementsByName("instrumentHeaderId")[index].value+";"+
+							newChqNoObj[index].value+";"+
+							newChqDateObj[index].value+";"+";"+
+							//newSerialNoObj[index].value+";"+
+							newSurrendarReasonsObj[index].value				
+							);
+					
+					
+				}
+			}
+			document.getElementById('selectedRowsId').value = selectedRowsId;
+	}
+	
+  	function disableAll()
+	{
+		var frmIndex=0;
+		for(var i=0;i<document.forms[frmIndex].length;i++)
+			{
+				for(var i=0;i<document.forms[0].length;i++)
+					{
+						if(document.forms[0].elements[i].name != 'bankaccount' && document.forms[0].elements[i].name != 'bank_branch'
+							&& document.forms[0].elements[i].name != 'fromDate' && document.forms[0].elements[i].name != 'toDate' &&
+							document.forms[0].elements[i].name != 'button' && document.forms[0].elements[i].name != 'selectedRowsId'
+							&& document.forms[0].elements[i].name != 'containsRTGS' && document.forms[0].elements[i].name != 'voucherNumber'
+							&& document.forms[0].elements[i].name != 'instrumentNumber' && document.forms[0].elements[i].name != 'surrender'
+							&& document.forms[0].elements[i].name != 'department' && document.forms[0].elements[i].name != 'newInstrumentNumber' 
+							&& document.forms[0].elements[i].name != 'newInstrumentDate' && document.forms[0].elements[i].name != 'surrendarReasons' 
+							&& document.forms[0].elements[i].name != 'newInstrumentDate'){
+							document.forms[frmIndex].elements[i].disabled =true;
+						}						
+					}	
+			}
+	}
  	
  		
 	</script>
 </body>
 
 </html>
+ 
