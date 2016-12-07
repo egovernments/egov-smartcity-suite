@@ -92,7 +92,6 @@ public class MarriageRegistrationReportsService {
     @Autowired
     private MarriageRegistrationReportsRepository marriageRegistrationReportsRepository;
     
-    
     public Date resetFromDateTimeStamp(final Date date){
         Calendar cal1 = Calendar.getInstance();  
         cal1.setTime(date);
@@ -578,9 +577,9 @@ public List<String[]> getCountOfApplications(final MarriageRegistration registra
             criteria.add(Restrictions.le(
                     "marriageRegistration.applicationDate",resetToDateTimeStamp(toDate)));
 
-        criteria.add(Restrictions.in("status.code",
+        /*criteria.add(Restrictions.in("status.code",
                 new String[] { MarriageRegistration.RegistrationStatus.APPROVED
-                        .toString() }));
+                        .toString() }));*/
         return criteria.list();
     }
 
@@ -637,7 +636,7 @@ public List<String[]> getCountOfApplications(final MarriageRegistration registra
     
     
     @SuppressWarnings("unchecked")
-    public List<MarriageRegistration> getAgeingRegDetails(final String day,final int year)
+    public List<Object[]> getAgeingRegDetails(final String day,final int year)
             throws ParseException {
         final String[] values = day.split("-");
 
@@ -646,24 +645,24 @@ public List<String[]> getCountOfApplications(final MarriageRegistration registra
 
         queryStrForRegistration
                 .append(
-                        "Select reg.applicationno,reg.registrationno,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name from egmrs_applicant app where app.id = reg.wife),reg.dateofmarriage,reg.applicationdate,reg.placeofmarriage, brndy.name,st.code,'Marriage Registration'");
+                        "Select reg.applicationno,reg.registrationno,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name from egmrs_applicant app where app.id = reg.wife),reg.dateofmarriage,reg.applicationdate,reg.placeofmarriage, brndy.name,st.code,'Marriage Registration',state.owner_pos,state.nextaction");
         queryStrForRegistration
-                .append(" from egmrs_registration reg,egmrs_applicant app, eg_boundary brndy,egw_status st");
+                .append(" from egmrs_registration reg,egmrs_applicant app, eg_boundary brndy,egw_status st,eg_wf_states state");
         queryStrForRegistration
                 .append(
-                        " where  reg.zone = brndy.id and reg.status = st.id and st.code not in ('REGISTERED','CANCELLED') and EXTRACT(EPOCH FROM date_trunc('day',(now()-reg.applicationdate)))/60/60/24 between :fromdays and :todays ");
+                        " where reg.state_id = state.id and reg.zone = brndy.id and reg.status = st.id and st.code not in ('REGISTERED','CANCELLED') and EXTRACT(EPOCH FROM date_trunc('day',(now()-reg.applicationdate)))/60/60/24 between :fromdays and :todays ");
         params.put("fromdays", Double.valueOf(values[0]));
         params.put("todays", Double.valueOf(values[1]));
 
         final StringBuilder queryStrForReissue = new StringBuilder(500);
         queryStrForReissue
                 .append(
-                        "Select rei.applicationno,reg.registrationno,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name from egmrs_applicant app where app.id = reg.wife),reg.dateofmarriage,rei.applicationdate,reg.placeofmarriage,brndy.name,st.code,'Reissue'");
+                        "Select rei.applicationno,reg.registrationno,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name from egmrs_applicant app where app.id = reg.wife),reg.dateofmarriage,rei.applicationdate,reg.placeofmarriage,brndy.name,st.code,'Reissue',state1.owner_pos,state1.nextaction as action1");
         queryStrForReissue
-                .append(" from egmrs_reissue rei,egmrs_registration reg, egmrs_applicant app, eg_boundary brndy,egw_status st");
+                .append(" from egmrs_reissue rei,egmrs_registration reg, egmrs_applicant app, eg_boundary brndy,egw_status st,eg_wf_states state1");
         queryStrForReissue
                 .append(
-                        " where rei.registration=reg.id and rei.zone = brndy.id and rei.status = st.id and st.code not in ('CERTIFICATEREISSUED','CANCELLED') and EXTRACT(EPOCH FROM date_trunc('day',(now()-rei.applicationdate)))/60/60/24 between :fromdays and :todays ");
+                        " where rei.state_id = state1.id and rei.registration=reg.id and rei.zone = brndy.id and rei.status = st.id and st.code not in ('CERTIFICATEREISSUED','CANCELLED') and EXTRACT(EPOCH FROM date_trunc('day',(now()-rei.applicationdate)))/60/60/24 between :fromdays and :todays ");
         params.put("fromdays", Double.valueOf(values[0]));
         params.put("todays", Double.valueOf(values[1]));
 

@@ -59,6 +59,7 @@ import java.util.Map.Entry;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.utils.DateUtils;
+import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.application.reports.service.MarriageRegistrationReportsService;
 import org.egov.mrs.domain.entity.ApplicationStatusResultForReport;
 import org.egov.mrs.domain.entity.MaritalStatusReport;
@@ -67,6 +68,7 @@ import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.MarriageRegistration.RegistrationStatus;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.entity.RegistrationCertificatesResultForReport;
+import org.egov.mrs.domain.entity.RegistrationReportsSearchResult;
 import org.egov.mrs.domain.enums.MaritalStatus;
 import org.egov.mrs.masters.entity.MarriageAct;
 import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
@@ -78,6 +80,7 @@ import org.egov.mrs.web.adaptor.MaritalStatusReportJsonAdaptor;
 import org.egov.mrs.web.adaptor.MarriageReIssueJsonAdaptor;
 import org.egov.mrs.web.adaptor.MarriageRegistrationCertificateReportJsonAdaptor;
 import org.egov.mrs.web.adaptor.MarriageRegistrationJsonAdaptor;
+import org.egov.mrs.web.adaptor.MarriageRegistrationReportsJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -134,6 +137,8 @@ public class MarriageRegistrationReportsController {
 
     @Autowired
     private ReligionService religionService;
+    @Autowired
+    private MarriageUtils marriageUtils;
 
     @ModelAttribute("zones")
     public List<Boundary> getZonesList() {
@@ -890,10 +895,39 @@ public class MarriageRegistrationReportsController {
         public String viewAgeingRegDetails(@PathVariable final int year,
                 @PathVariable final String dayRange, final Model model)
                 throws ParseException {
-            final List<MarriageRegistration> marriageRegistrations = marriageRegistrationReportsService
-                    .getAgeingRegDetails(dayRange,year);
-            model.addAttribute(MARRIAGE_REGISTRATIONS, marriageRegistrations);
+            model.addAttribute("year", year);
+            model.addAttribute("dayRange", dayRange);
             return "ageingreport-view";
+        }
+        
+        @RequestMapping(value = "/ageing-report/view/", method = RequestMethod.POST,produces = MediaType.TEXT_PLAIN_VALUE)
+        @ResponseBody
+        public String getAgeingRegDetails(@RequestParam("year") final int year,
+                @RequestParam("dayRange") final String dayRange, final Model model)
+                throws ParseException {
+            List<RegistrationReportsSearchResult> reportsSearchResults = new ArrayList<>();
+            final List<Object[]> marriageRegistrations = marriageRegistrationReportsService
+                    .getAgeingRegDetails(dayRange,year);
+            RegistrationReportsSearchResult reportsSearchResult = new RegistrationReportsSearchResult();
+            for (Object[] mrgReg : marriageRegistrations) {
+                reportsSearchResult.setApplicationNo(mrgReg[0].toString());
+                reportsSearchResult.setRegistrationNo(mrgReg[1].toString());
+                reportsSearchResult.setApplicationType(mrgReg[9].toString());
+                reportsSearchResult.setHusbandName(mrgReg[2].toString());
+                reportsSearchResult.setWifeName(mrgReg[3].toString());
+                reportsSearchResult.setDateOfMarriage(mrgReg[4].toString());
+                reportsSearchResult.setRegistrationDate(mrgReg[5].toString());
+                reportsSearchResult.setPlaceOfMarriage(mrgReg[6].toString());
+                reportsSearchResult.setZone(mrgReg[7].toString());
+                reportsSearchResult.setStatus(mrgReg[8].toString());
+                reportsSearchResult.setUserName(marriageUtils.getApproverName(Long.valueOf(mrgReg[10].toString())));
+                reportsSearchResult.setPendingAction(mrgReg[11].toString());
+                reportsSearchResults.add(reportsSearchResult);
+            }
+            return new StringBuilder("{ \"data\":")
+                    .append(toJSON(reportsSearchResults, RegistrationReportsSearchResult.class,
+                            MarriageRegistrationReportsJsonAdaptor.class)).append("}")
+                    .toString();
         }
     
 

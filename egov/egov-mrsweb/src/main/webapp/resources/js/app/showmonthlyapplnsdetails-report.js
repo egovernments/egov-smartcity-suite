@@ -80,17 +80,17 @@ $(document)
 												"sPdfMessage" : "Report Generated On "
 														+ currentDate
 														+ "",
-												"sTitle" : "Marriage Registration Status Report",
+												"sTitle" : "Marriage Monthly Applications Details Report",
 												"sPdfOrientation" : "landscape"
 											},
 											{
 												"sExtends" : "xls",
-												"sPdfMessage" : "Marriage Registration Status Report",
+												"sPdfMessage" : "Marriage Monthly Applications Details Report",
 												"sTitle" : "Marriage Registration Status Report"
 											},
 											{
 												"sExtends" : "print",
-												"sTitle" : "Marriage Registration Status Report"
+												"sTitle" : "Marriage Monthly Applications Details Report"
 											} ]
 								},
 								aaSorting : [],

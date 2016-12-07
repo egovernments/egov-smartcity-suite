@@ -39,11 +39,15 @@
 
 package org.egov.mrs.application;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +62,9 @@ public class MarriageUtils {
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
     
+    @Autowired
+    private AssignmentService assignmentService;
+    
     public boolean isLoggedInUserApprover() {
         List<Role> approvers = securityUtils.getCurrentUser().getRoles().stream()
                 .filter(role -> role.getName().equalsIgnoreCase(MarriageConstants.APPROVER_ROLE_NAME)).collect(Collectors.toList());
@@ -70,5 +77,18 @@ public class MarriageUtils {
     
     public EgwStatus getStatusByCodeAndModuleType(final String code, final String moduleName) {
         return egwStatusHibernateDAO.getStatusByModuleAndCode(moduleName, code);
+    }
+    
+    public String getApproverName(final Long approvalPosition) {
+        Assignment assignment = null;
+        List<Assignment> asignList = null;
+        if (approvalPosition != null)
+            assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
+        if (assignment != null) {
+            asignList = new ArrayList<Assignment>();
+            asignList.add(assignment);
+        } else if (assignment == null)
+            asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
+        return !asignList.isEmpty() ? asignList.get(0).getEmployee().getName() : "";
     }
 }

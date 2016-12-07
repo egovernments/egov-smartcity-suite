@@ -2,7 +2,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2016>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -37,63 +37,57 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-
-<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-heading">
-				<div class="panel-title">Marriage Registration Applications Ageing Results</div>
-			</div>
-			<div class="panel-body custom">
-				<table class="table table-bordered  multiheadertbl"
-					name="marriageregistrationactwise" id=marriageregistrationactwise>
-					<thead>
-						<tr>
+<input type="hidden" name="year" id="hdnyear" value="${year}">
+<input type="hidden" name="dayRange" id="hdndayRange" value="${dayRange}">
+<br /><br />
+<div class="row display-hide report-section" id="regageingtable_container">   
+	<div class="col-md-12 table-header text-left">The Registration Status Search result is</div>             
+	<div class="col-md-12 form-group report-table-container">
+	    <table class="table table-bordered table-hover multiheadertbl" id="registrationageing_table">
+	    	<thead>
+	    		<tr>
 							<th>S.No</th>
 							<th><spring:message code="lbl.application.no" /></th>
 							<th><spring:message code="lbl.registration.no" /></th>
 							<th>Application Type</th>
 							<th><spring:message code="lbl.husband.name" /></th>
 							<th><spring:message code="lbl.wife.name" /></th>
-							<th><spring:message code="lbl.date.of.marriage" /></th>
 							<th><spring:message code="lbl.application.date" /></th>
+							<th><spring:message code="lbl.date.of.marriage" /></th>
 							<th><spring:message code="lbl.place.of.marriage" /></th>
 							<th><spring:message code="lbl.zone" /></th>
 							<th><spring:message code="lbl.status" /></th>
+							<th>User Name</th>
+							<th>Pending Action</th>
 						</tr>
-					</thead>
-					<tbody>
-						<c:forEach items="${marriageRegistrations}" var="reg"
-							varStatus="counter">
-							<tr>
-								<td>${counter.index+1}</td>
-								<td><c:out value="${reg[0]}" /></td>
-								<td><c:out value="${reg[1]!=null?reg[1]:'N/A'}"></c:out></td>
-								<td><c:out value="${reg[9]}" /></td>
-								<td><c:out value="${reg[2]}" /></td>
-								<td><c:out value="${reg[3]}" /></td>
-								<td><c:out value="${reg[4]}" /></td>
-								<td><c:out value="${reg[5]}" /></td>
-								<td><c:out value="${reg[6]}" /></td>
-								<td><c:out value="${reg[7]}" /></td>
-								<td><c:out value="${reg[8]}" /></td>
-							</tr>
-						</c:forEach>
-					</tbody>
-				</table>
-			</div>
-		</div>
+	    	</thead>
+	    	<tbody>
+	    	</tbody>
+		</table>
 	</div>
 </div>
-<div class="row">
-	<div class="text-center">
-		<a href="javascript:void(0)" class="btn btn-default"
-			onclick="self.close()"><spring:message code="lbl.close" /></a>
-	</div>
-</div>
+
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css?rnd=${app_release_no}' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css?rnd=${app_release_no}' context='/egi'/>">
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
+
+<script src="<cdn:url value='/resources/js/app/viewageing-details.js?rnd=${app_release_no}'/> "></script>
