@@ -47,9 +47,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -64,9 +66,13 @@ import org.egov.commons.Fund;
 import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
+import org.egov.commons.utils.EntityType;
+import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.models.ServiceAccountDetails;
@@ -77,6 +83,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ServiceDetailsAction.NEW, location = "serviceDetails-new.jsp"),
@@ -89,6 +96,7 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = ServiceDetailsAction.BEFOREMODIFY, location = "serviceDetails-beforeModify.jsp"), })
 public class ServiceDetailsAction extends BaseFormAction {
 
+    private static final Logger LOGGER = Logger.getLogger(ServiceDetailsAction.class);
     private static final long serialVersionUID = 1L;
     private PersistenceService<ServiceCategory, Long> serviceCategoryService;
     private PersistenceService<ServiceDetails, Long> serviceDetailsService;
@@ -96,9 +104,9 @@ public class ServiceDetailsAction extends BaseFormAction {
     protected static final String BEFORECREATE = "beforeCreate";
     protected static final String BEFOREMODIFY = "beforeModify";
     protected static final String MESSAGE = "message";
-    private List<ServiceAccountDetails> accountDetails = new ArrayList<ServiceAccountDetails>(0);
-    private List<ServiceSubledgerInfo> subledgerDetails = new ArrayList<ServiceSubledgerInfo>(0);
-    private List<Long> departmentList = new ArrayList<Long>();
+    private List<ServiceAccountDetails> accountDetails = new ArrayList<>(0);
+    private List<ServiceSubledgerInfo> subledgerDetails = new ArrayList<>(0);
+    private List<Long> departmentList = new ArrayList<>();
     private List<ServiceDetails> serviceList;
     private Boolean isVoucherApproved = Boolean.FALSE;
     @Autowired
@@ -114,7 +122,12 @@ public class ServiceDetailsAction extends BaseFormAction {
     private ChartOfAccountsDAO chartOfAccountsDAO;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
-    private TreeMap<String, String> serviceTypeMap = new TreeMap<String, String>();
+    private SortedMap<String, String> serviceTypeMap = new TreeMap<>();
+    private String deptId;
+    @Autowired
+    private ApplicationContext context;
+
+    private EgovCommon egovCommon;
 
     public ServiceDetailsAction() {
         addRelatedEntity("serviceCategory", ServiceCategory.class);
@@ -148,8 +161,24 @@ public class ServiceDetailsAction extends BaseFormAction {
             accountDetails.addAll(serviceDetails.getServiceAccountDtls());
             for (final ServiceAccountDetails account : serviceDetails.getServiceAccountDtls())
                 subledgerDetails.addAll(account.getSubledgerDetails());
-            for (final Department department : serviceDetails.getServiceDept())
+            for (ServiceSubledgerInfo serviceSubledgerInfo : subledgerDetails) {
+                EntityType entityType = null;
+                try {
+                    entityType = egovCommon.getEntityType(serviceSubledgerInfo.getDetailType(),
+                            serviceSubledgerInfo.getDetailKeyId());
+                } catch (ApplicationException e) {
+                    LOGGER.error("Exception while setting subledger details", e);
+                    throw new ApplicationRuntimeException("Exception while setting subledger details", e);
+                }
+                if (entityType != null) {
+                    serviceSubledgerInfo.setDetailCode(entityType.getCode());
+                    serviceSubledgerInfo.setDetailKey(entityType.getName());
+                }
+            }
+            for (final Department department : serviceDetails.getServiceDept()) {
                 departmentList.add(department.getId());
+                setDeptId(department.getId().toString());
+            }
         } else if (null != serviceDetails.getServiceCategory() && null != serviceDetails.getServiceCategory().getCode()) {
             final ServiceCategory category = serviceCategoryService.findById(serviceDetails.getServiceCategory()
                     .getId(), false);
@@ -159,8 +188,8 @@ public class ServiceDetailsAction extends BaseFormAction {
             final ServiceCategory category = serviceCategoryService.findById(serviceCategoryId, false);
             serviceDetails.setServiceCategory(category);
         }
-        headerFields = new ArrayList<String>(0);
-        mandatoryFields = new ArrayList<String>(0);
+        headerFields = new ArrayList<>(0);
+        mandatoryFields = new ArrayList<>(0);
         getHeaderMandateFields();
         setupDropdownDataExcluding();
 
@@ -279,9 +308,9 @@ public class ServiceDetailsAction extends BaseFormAction {
 
     private void formatServiceDetails() {
 
-        for (final Long deptId : departmentList) {
+        for (final Long departId : departmentList) {
 
-            final Department dept = departmentService.getDepartmentById(deptId);
+            final Department dept = departmentService.getDepartmentById(departId);
             serviceDetails.addServiceDept(dept);
         }
         for (final ServiceAccountDetails account : accountDetails) {
@@ -499,11 +528,23 @@ public class ServiceDetailsAction extends BaseFormAction {
         this.mandatoryFields = mandatoryFields;
     }
 
-    public TreeMap<String, String> getServiceTypeMap() {
+    public SortedMap<String, String> getServiceTypeMap() {
         return serviceTypeMap;
     }
 
-    public void setServiceTypeMap(final TreeMap<String, String> serviceTypeMap) {
+    public void setServiceTypeMap(final SortedMap<String, String> serviceTypeMap) {
         this.serviceTypeMap = serviceTypeMap;
+    }
+
+    public String getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(final String deptId) {
+        this.deptId = deptId;
+    }
+
+    public void setEgovCommon(EgovCommon egovCommon) {
+        this.egovCommon = egovCommon;
     }
 }
