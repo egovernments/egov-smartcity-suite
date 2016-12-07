@@ -65,6 +65,7 @@ import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -118,7 +119,8 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(Long.valueOf(id));
         final AbstractEstimate abstractEstimate = workOrder.getWorkOrderEstimates().get(0).getEstimate();
         if (workOrder.getEgwStatus().getCode().equals(WorksConstants.REJECTED))
-            return "redirect:/letterofacceptance/newform?estimateNumber=" + abstractEstimate.getEstimateNumber() + "&mode=edit";
+            return "redirect:/letterofacceptance/newform?estimateNumber=" + abstractEstimate.getEstimateNumber()
+                    + "&mode=edit";
         else {
             model.addAttribute("stateType", workOrder.getClass().getSimpleName());
             if (workOrder.getCurrentState() != null
@@ -135,8 +137,8 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
             List<String> validActions = Collections.emptyList();
             validActions = customizedWorkFlowService.getNextValidActions(workOrder.getStateType(),
                     workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
-                    workflowContainer.getAdditionalRule(), workOrder.getState().getValue(), workflowContainer.getPendingActions(),
-                    workOrder.getCreatedDate());
+                    workflowContainer.getAdditionalRule(), workOrder.getState().getValue(),
+                    workflowContainer.getPendingActions(), workOrder.getCreatedDate());
             model.addAttribute("validActionList", validActions);
             model.addAttribute("mode", "workflowView");
             final WorkOrder newWorkOrder = letterOfAcceptanceService.getWorkOrderDocuments(workOrder);
@@ -144,7 +146,8 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
             model.addAttribute("workOrder", newWorkOrder);
             model.addAttribute("abstractEstimate", abstractEstimate);
             model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
-            model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(abstractEstimate.getId()));
+            model.addAttribute("measurementsPresent",
+                    measurementSheetService.existsByEstimate(abstractEstimate.getId()));
             model.addAttribute("workflowHistory",
                     lineEstimateService.getHistory(workOrder.getState(), workOrder.getStateHistory()));
             model.addAttribute("amountRule", workOrder.getWorkOrderAmount());
@@ -166,8 +169,16 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-        final WorkOrder savedWorkOrder = letterOfAcceptanceService.forward(workOrder, approvalPosition, approvalComment, null,
-                workFlowAction);
+        final WorkOrder savedWorkOrder = letterOfAcceptanceService.forward(workOrder, approvalPosition, approvalComment,
+                null, workFlowAction);
+
+        if (savedWorkOrder.getEgwStatus().getCode().equals(WorksConstants.APPROVED)) {
+
+            final WorkOrderEstimate workOrderEstimate = savedWorkOrder.getWorkOrderEstimates().get(0);
+
+            letterOfAcceptanceService.sendSmsToContractor(workOrderEstimate);
+            letterOfAcceptanceService.sendEmailToContractor(workOrderEstimate);
+        }
 
         final String pathVars = worksUtils.getPathVars(savedWorkOrder.getEgwStatus(), savedWorkOrder.getState(),
                 savedWorkOrder.getId(), approvalPosition);
