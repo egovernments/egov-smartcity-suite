@@ -57,9 +57,10 @@
 		</thead>
 		<tbody>
 			<tr>
-				<td class="text-center"><span id="nameOfWork1">${nameOfWork}</span></td>
-				<td class="text-center"><span id="loaNumber">${loaNumber}</span></td>
-				<td class="text-right"><span id="loaAmount">${loaAmount}</span></td>
+				<td ><span id="nameOfWork1">${nameOfWork}</span></td>
+				<td ><span id="loaNumber">${loaNumber}</span></td>
+				<td class="text-right"><span id="loaAmount"><fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
+							minFractionDigits="2" value="${loaAmount}" /></span></td>
 			</tr>
 		</tbody>
 	</table>

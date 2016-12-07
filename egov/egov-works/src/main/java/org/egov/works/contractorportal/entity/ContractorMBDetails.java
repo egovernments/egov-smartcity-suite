@@ -62,6 +62,8 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.works.workorder.entity.WorkOrderActivity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "EGW_CONTRACTOR_MB_DETAILS")
 @SequenceGenerator(name = ContractorMBDetails.SEQ_EGW_CONTRACTOR_MB_DETAILS, sequenceName = ContractorMBDetails.SEQ_EGW_CONTRACTOR_MB_DETAILS, allocationSize = 1)
@@ -78,11 +80,13 @@ public class ContractorMBDetails extends AbstractAuditable {
     @Required(message = "mbdetails.mbheader.null")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CONTRACTOR_MBHEADER_ID", nullable = false)
+    @JsonIgnore
     private ContractorMBHeader contractorMBHeader;
 
     @Required(message = "mbdetails.activity.null")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WO_ACTIVITY_ID", nullable = true)
+    @JsonIgnore
     private WorkOrderActivity workOrderActivity;
 
     @GreaterThan(value = 0, message = "mbdetails.quantity.non.negative")

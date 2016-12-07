@@ -89,7 +89,9 @@
 				<spring:message code="lbl.workorderamount" />
 			</div>
 			<div class="col-xs-3 add-margin view-content">
-				<span name=workOrderAmount id="workOrderAmount">${contractorMB.workOrderEstimate.workOrder.workOrderAmount }</span>
+				<span name=workOrderAmount id="workOrderAmount">
+				<fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
+							minFractionDigits="2" value="${contractorMB.workOrderEstimate.workOrder.workOrderAmount }" /></span>
 			</div>
 			<div class="col-xs-3 add-margin">
 				<spring:message code="lbl.total.bills.paid" />
