@@ -39,17 +39,26 @@
  */
 package org.egov.ptis.master.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
+import org.egov.ptis.report.bean.PropertyUsageSearchResult;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Service for PropertyUsage
@@ -68,6 +77,9 @@ public class PropertyUsageService {
     public PropertyUsageService(final PropertyUsageDAO propertyUsageHibernateDAO) {
         this.propertyUsageHibernateDAO = propertyUsageHibernateDAO;
     }
+    
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public PropertyUsage create(PropertyUsage propertyUsage) {
 
@@ -100,5 +112,40 @@ public class PropertyUsageService {
             roleNameList.add(roleName);
         }
         return roleNameList.toString().toUpperCase();
+    }
+    
+    public List<PropertyUsageSearchResult> getPropertyUsageByTypeUsgAndfromDate(final PropertyUsage propertyUsage) {
+        StringBuffer queryString =  new StringBuffer();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("dd/MM/yyyy");
+        List<PropertyUsageSearchResult> propertyUsageSearchList= new ArrayList<PropertyUsageSearchResult>();
+        queryString.append(" from PropertyUsage PU where PU.isEnabled = 1 ");
+        queryString.append(" and PU.isResidential = :isResidential ");
+        if(StringUtils.isNotBlank(propertyUsage.getUsageName())) {
+            queryString.append(" and upper(PU.usageName) like :usageName ");
+        }
+        if(propertyUsage.getFromDate() != null ) {
+            queryString.append(" and PU.fromDate >= :fromDate ");
+        }
+        queryString.append(" order by usageName ");
+        final Query qry = entityManager.createQuery(queryString.toString());
+        qry.setParameter("isResidential", propertyUsage.getIsResidential());
+        if(StringUtils.isNotBlank(propertyUsage.getUsageName())) {
+            qry.setParameter("usageName", "%"+propertyUsage.getUsageName().toUpperCase()+"%");
+        }
+        if(propertyUsage.getFromDate() != null ) {
+            qry.setParameter("fromDate",propertyUsage.getFromDate());
+        }
+        List<PropertyUsage> propertyUsageList = qry.getResultList();
+        
+        for(PropertyUsage propertyUsageObj : propertyUsageList) {
+            PropertyUsageSearchResult propertyUsageSearchObj = new PropertyUsageSearchResult();
+            propertyUsageSearchObj.setUsageName(propertyUsageObj.getUsageName());
+            propertyUsageSearchObj.setUsageType(propertyUsageObj.getIsResidential() ? "Residential" : "Non-Residential");
+            propertyUsageSearchObj.setFromDate(dateTimeFormatter.print(new DateTime(propertyUsageObj.getFromDate())));
+            propertyUsageSearchObj.setToDate(dateTimeFormatter.print(new DateTime(propertyUsageObj.getToDate())));
+            propertyUsageSearchList.add(propertyUsageSearchObj);
+        }
+        
+        return propertyUsageSearchList;
     }
 }
