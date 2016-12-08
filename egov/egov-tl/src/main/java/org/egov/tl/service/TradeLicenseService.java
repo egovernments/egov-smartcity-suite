@@ -313,4 +313,13 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         }
         return finalList;
     }
+    @Transactional
+    public void updateClosureStatus(TradeLicense license) {
+        license = (TradeLicense) licenseUtils.applicationStatusChange(license,
+                Constants.APPLICATION_STATUS_CANCELLED);
+        license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_CANCELLED));
+        license.setActive(false);
+        licenseRepository.save(license);
+        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
+    }
 }

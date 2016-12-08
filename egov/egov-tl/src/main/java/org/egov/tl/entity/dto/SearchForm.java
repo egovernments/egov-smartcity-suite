@@ -107,6 +107,9 @@ public class SearchForm {
                         && license.isStatusActive())
                     licenseActions.add("Renew License");
             }
+            if (license.getStatus().getStatusCode().equals(Constants.STATUS_ACTIVE))
+                licenseActions.add("Closure");
+
         } else if (license.isLegacy() && !license.isPaid())
             licenseActions.add("Modify Legacy License");
 
