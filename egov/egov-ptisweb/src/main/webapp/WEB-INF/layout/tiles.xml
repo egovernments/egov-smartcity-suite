@@ -365,6 +365,10 @@
     <definition name="esdnotice-form" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.title.esd.notice" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/reports/esdnotice-form.jsp"/>
-    </definition> 
+    </definition>
+	<definition name="tax-exemption-reason" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.hdr.taxExemption" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/masters/exemptionreason/tax-exemption-reason-view.jsp" />
+	</definition>
     
 </tiles-definitions> 
