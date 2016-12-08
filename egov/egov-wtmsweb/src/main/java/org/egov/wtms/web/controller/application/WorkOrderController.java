@@ -127,6 +127,7 @@ public class WorkOrderController {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final String doorno[] = assessmentDetails.getPropertyAddress().split(",");
             String ownerName = "";
+            double total = 0;
             for (final OwnerName names : assessmentDetails.getOwnerNames()) {
                 ownerName = names.getOwnerName();
                 break;
@@ -164,10 +165,17 @@ public class WorkOrderController {
             reportParams.put("workFlowAction", workFlowAction);
             reportParams.put("consumerNumber", connectionDetails.getConnection().getConsumerCode());
             reportParams.put("applicantname", WordUtils.capitalize(ownerName));
+            reportParams.put("applicantionDate",formatter.format(connectionDetails.getApplicationDate()));
             reportParams.put("address", assessmentDetails.getPropertyAddress());
             reportParams.put("doorno", doorno[0]);
             reportParams.put("usersignature", (securityUtils.getCurrentUser().getSignature()!=null ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()):null));
             reportParams.put("applicationDate",formatter.format(connectionDetails.getApplicationDate()));
+            reportParams.put("donationCharges", connectionDetails.getDonationCharges());
+            reportParams.put("securityDeposit", connectionDetails.getFieldInspectionDetails().getSecurityDeposit());
+            reportParams.put("roadCuttingCharges", connectionDetails.getFieldInspectionDetails().getRoadCuttingCharges());
+            reportParams.put("superVisionCharges", connectionDetails.getFieldInspectionDetails().getSupervisionCharges());
+            total=connectionDetails.getDonationCharges()+connectionDetails.getFieldInspectionDetails().getSecurityDeposit()+connectionDetails.getFieldInspectionDetails().getRoadCuttingCharges()+connectionDetails.getFieldInspectionDetails().getSupervisionCharges();
+            reportParams.put("total",total);
             reportInput = new ReportRequest(CONNECTIONWORKORDER, connectionDetails, reportParams);
         }
         final HttpHeaders headers = new HttpHeaders();
