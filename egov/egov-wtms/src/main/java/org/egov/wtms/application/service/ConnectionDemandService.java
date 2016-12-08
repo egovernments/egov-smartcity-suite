@@ -185,10 +185,14 @@ public class ConnectionDemandService {
         final FieldInspectionDetails fieldInspectionDetails = waterConnectionDetails.getFieldInspectionDetails();
         EgDemand egDemand = null;
         if (null != fieldInspectionDetails)
+        {
             feeDetails.put(WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE,
                     fieldInspectionDetails.getEstimationCharges());
-
-        // if
+            feeDetails.put(WaterTaxConstants.WATERTAX_SECURITY_CHARGE, fieldInspectionDetails.getSecurityDeposit());
+            feeDetails.put(WaterTaxConstants.WATERTAX_ROADCUTTING_CHARGE, fieldInspectionDetails.getRoadCuttingCharges());
+            feeDetails.put(WaterTaxConstants.WATERTAX_SUPERVISION_CHARGE, fieldInspectionDetails.getSupervisionCharges());
+        }
+        // iffe
         // (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getCode()))
         if (!WaterTaxConstants.CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
             donationDetails = getDonationDetails(waterConnectionDetails);
@@ -300,6 +304,15 @@ public class ConnectionDemandService {
                 else if (WaterTaxConstants.WATERTAX_DONATION_CHARGE
                         .equals(detail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
                     splitAmount.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, detail.getAmount().doubleValue());
+                else if (WaterTaxConstants.WATERTAX_SECURITY_CHARGE
+                        .equals(detail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                    splitAmount.put(WaterTaxConstants.WATERTAX_SECURITY_CHARGE, detail.getAmount().doubleValue());
+                else if (WaterTaxConstants.WATERTAX_ROADCUTTING_CHARGE
+                        .equals(detail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                    splitAmount.put(WaterTaxConstants.WATERTAX_ROADCUTTING_CHARGE, detail.getAmount().doubleValue());
+                else if (WaterTaxConstants.WATERTAX_SUPERVISION_CHARGE
+                        .equals(detail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                    splitAmount.put(WaterTaxConstants.WATERTAX_SUPERVISION_CHARGE, detail.getAmount().doubleValue());
         return splitAmount;
     }
 
