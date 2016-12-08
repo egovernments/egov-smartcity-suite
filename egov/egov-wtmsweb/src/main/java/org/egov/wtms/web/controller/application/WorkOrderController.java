@@ -135,40 +135,40 @@ public class WorkOrderController {
 
             if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode())) {
                 reportParams.put("conntitle", WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
-                reportParams.put("applicationtype", messageSource.getMessage("msg.new.watertap.conn", null, null));
+                reportParams.put("applicationType", messageSource.getMessage("msg.new.watertap.conn", null, null));
             } else if (WaterTaxConstants.ADDNLCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode())) {
                 reportParams.put("conntitle", WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
-                reportParams.put("applicationtype", messageSource.getMessage("msg.add.watertap.conn", null, null));
+                reportParams.put("applicationType", messageSource.getMessage("msg.add.watertap.conn", null, null));
             } else {
                 reportParams.put("conntitle", WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
-                reportParams.put("applicationtype", messageSource.getMessage("msg.changeofuse.watertap.conn", null, null));
+                reportParams.put("applicationType", messageSource.getMessage("msg.changeofuse.watertap.conn", null, null));
             }
             reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
             reportParams.put("district", session.getAttribute("districtName"));
             reportParams.put("purpose", connectionDetails.getUsageType().getName());
             if(null != workFlowAction) {
                 if(workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)) {
-                    reportParams.put("workorderdate", formatter.format(connectionDetails.getWorkOrderDate()));
-                    reportParams.put("workorderno", connectionDetails.getWorkOrderNumber());
+                    reportParams.put("workOrderDate", formatter.format(connectionDetails.getWorkOrderDate()));
+                    reportParams.put("workOrderNo", connectionDetails.getWorkOrderNumber());
                 }
                 if(workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_PREVIEW_BUTTON)) {
-                    reportParams.put("workorderdate", "");
-                    reportParams.put("workorderno", "");
+                    reportParams.put("workOrderDate", "");
+                    reportParams.put("workOrderNo", "");
                 }
                 if(workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_SIGN_BUTTON)) {
-                    reportParams.put("workorderdate", formatter.format(connectionDetails.getWorkOrderDate()));
-                    reportParams.put("workorderno", connectionDetails.getWorkOrderNumber());
+                    reportParams.put("workOrderDate", formatter.format(connectionDetails.getWorkOrderDate()));
+                    reportParams.put("workOrderNo", connectionDetails.getWorkOrderNumber());
                     User user = securityUtils.getCurrentUser();
                     reportParams.put("userId", user.getId());
                 }
             }
             reportParams.put("workFlowAction", workFlowAction);
             reportParams.put("consumerNumber", connectionDetails.getConnection().getConsumerCode());
-            reportParams.put("applicantname", WordUtils.capitalize(ownerName));
+            reportParams.put("applicantName", WordUtils.capitalize(ownerName));
             reportParams.put("applicantionDate",formatter.format(connectionDetails.getApplicationDate()));
             reportParams.put("address", assessmentDetails.getPropertyAddress());
             reportParams.put("doorno", doorno[0]);
-            reportParams.put("usersignature", (securityUtils.getCurrentUser().getSignature()!=null ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()):null));
+            reportParams.put("userSignature", (securityUtils.getCurrentUser().getSignature()!=null ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()):null));
             reportParams.put("applicationDate",formatter.format(connectionDetails.getApplicationDate()));
             reportParams.put("donationCharges", connectionDetails.getDonationCharges());
             reportParams.put("securityDeposit", connectionDetails.getFieldInspectionDetails().getSecurityDeposit());

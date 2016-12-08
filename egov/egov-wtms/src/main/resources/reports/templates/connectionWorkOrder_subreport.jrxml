@@ -1,6 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-12-07T18:04:06 -->
+<!-- 2016-12-08T11:12:13 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="connectionWorkOrder_subreport" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -8,7 +47,7 @@
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="municipality" class="java.lang.String"/>
-	<parameter name="applicantname" class="java.lang.String"/>
+	<parameter name="applicantName" class="java.lang.String"/>
 	<parameter name="doorno" class="java.lang.String"/>
 	<parameter name="consumerNumber" class="java.lang.String"/>
 	<parameter name="address" class="java.lang.String"/>
@@ -17,8 +56,8 @@
 	<parameter name="superVisionCharges" class="java.lang.Double"/>
 	<parameter name="securityDeposit" class="java.lang.Double"/>
 	<parameter name="total" class="java.lang.Double"/>
-	<parameter name="workorderno" class="java.lang.String"/>
-	<parameter name="workorderdate" class="java.lang.String"/>
+	<parameter name="workorderNo" class="java.lang.String"/>
+	<parameter name="workorderDate" class="java.lang.String"/>
 	<parameter name="applicationDate" class="java.lang.String"/>
 	<group name="connection_group">
 		<groupHeader>
@@ -57,7 +96,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA["In the reference 1st cited,Sri/Smt "+		$P{applicantname}		 +" "+
+					<textFieldExpression><![CDATA["In the reference 1st cited,Sri/Smt "+		$P{applicantName}		 +" "+
 "has submitted an application seeking tap connection to the house bearing "+
 "D.No"+" "+$P{doorno} 	+" "+"locality and paid the following amounts towards donation and other changes.  "]]></textFieldExpression>
 				</textField>
@@ -80,7 +119,7 @@
 					<textElement verticalAlignment="Middle" markup="styled">
 						<font size="8" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["1.Application of Sri/Smt "+ $P{applicantname} +" "+ "D.No "+$P{doorno}  +" " +"Locality " +$P{address}	 + " "+"Dated"+" "+$P{applicationDate}]]></textFieldExpression>
+					<textFieldExpression><![CDATA["1.Application of Sri/Smt "+ $P{applicantName} +" "+ "D.No "+$P{doorno}  +" " +"Locality " +$P{address}	 + " "+"Dated"+" "+$P{applicationDate}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="54" y="68" width="42" height="15" uuid="d0af5b8a-82d8-4463-8be3-d02292357def"/>
@@ -222,7 +261,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{applicantname}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{applicantName}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="113" y="422" width="150" height="12" uuid="ca1060ea-d4f2-4a59-8c9f-89235390a38f"/>
@@ -284,12 +323,12 @@
 				<textField>
 					<reportElement x="82" y="3" width="158" height="15" uuid="eb635a14-06a1-43a9-8327-7f30a1a4ead9"/>
 					<textElement verticalAlignment="Bottom"/>
-					<textFieldExpression><![CDATA[$P{workorderno}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{workorderNo}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="374" y="4" width="96" height="15" uuid="b9dc197b-b9d5-4dbb-8a99-c857c69f091a"/>
 					<textElement verticalAlignment="Bottom"/>
-					<textFieldExpression><![CDATA[$P{workorderdate}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{workorderDate}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
 					<reportElement x="95" y="90" width="386" height="12" uuid="f94b5f2c-2788-437a-9176-e98b59d706e4"/>

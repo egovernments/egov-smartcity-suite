@@ -233,12 +233,12 @@ public class GenerateBillForConsumerCodeController {
     
     public EgBill getBillByConsumerCode(final String consumerCode) {
         EgBill  egBill=null;
-        final String query = " select distinct bill From EgBill bill,EgBillType billtype,WaterConnection conn,WaterConnectionDetails connDet,EgwStatus status,WaterDemandConnection conndem  , EgDemand demd "
+        final String query = "select distinct bill From EgBill bill,EgBillType billtype,WaterConnection conn,WaterConnectionDetails connDet,EgwStatus status,WaterDemandConnection conndem  , EgDemand demd "
                         + "where billtype.id=bill.egBillType and billtype.code='MANUAL' and bill.consumerId = conn.consumerCode and conn.id=connDet.connection and connDet.id=conndem.waterConnectionDetails "
-                        + " and demd.id=bill.egDemand and demd.id=conndem.demand and connDet.connectionType='NON_METERED' "
-                        + " and demd.isHistory = 'N' and  bill.is_Cancelled='N' and bill.serviceCode='WT' "
-                        + " and connDet.connectionStatus='ACTIVE' and connDet.status=status.id and status.moduletype='WATERTAXAPPLICATION' "
-                        + " and status.code='SANCTIONED' and conn.consumerCode =:consumerCode  order by bill.id desc";
+                        + " and demd.id=bill.egDemand and demd.id=conndem.demand and connDet.connectionType='"+WaterTaxConstants.NON_METERED+"' "
+                        + " and demd.isHistory = '"+WaterTaxConstants.DEMANDISHISTORY+"' and  bill.is_Cancelled='"+WaterTaxConstants.DEMANDISHISTORY+"' and bill.serviceCode='"+WaterTaxConstants.COLLECTION_STRING_SERVICE_CODE+"'"
+                        + " and connDet.connectionStatus='"+WaterTaxConstants.MASTERSTATUSACTIVE+"' and connDet.status=status.id and status.moduletype='"+WaterTaxConstants.MODULETYPE+"' "
+                        + " and status.code='"+WaterTaxConstants.APPLICATION_STATUS_SANCTIONED+"' and conn.consumerCode =:consumerCode  order by bill.id desc";
         final Query hibquery = persistenceService.getSession().createQuery(query.toString())
                         .setString("consumerCode", consumerCode);
         List<EgBill>egBilltemp=hibquery.list();
