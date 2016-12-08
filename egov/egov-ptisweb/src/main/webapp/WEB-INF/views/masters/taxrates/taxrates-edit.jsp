@@ -2,7 +2,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2016>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -66,12 +66,6 @@
 
 							</div>
 							<div class="panel-body history-slide">
-								<%-- <div
-								class="row hidden-xs visible-sm visible-md visible-lg view-content header-color">
-								<div class="col-sm-2 col-xs-6 add-margin">
-									<spring:message code="lbl.taxRates.value" />
-								</div>
-							</div> --%>
 								<div class="form-group col-sm-6 col-sm-offset-3">
 									<table class="table table-bordered table-hover">
 										<thead>
@@ -94,13 +88,15 @@
 															maxFractionDigits="2" value="${taxRate.value}" /> <c:choose>
 															<c:when
 																test="${taxRate.key ne 'Vacant Land Tax'  && taxRate.key ne 'Library Cess'}">
+																<c:set var="tax" value="${taxRate.key}"></c:set>
+																<c:set var="taxId" value="${fn:replace(tax,' ','_')}"></c:set>
 																<input type="text" name="${taxRate.key}-value"
-																	id="${taxRate.key}"
+																	id="${taxId}"
 																	value="<c:out value="${taxRate.value}" />"
 																	class="patternvalidation" data-pattern="decimalvalue"
 																	autocomplete="off" maxlength="5">
 																<input type="hidden" value="${taxRate.value}"
-																	name="${taxRate.key}-existing" id="${taxRate.key}-id">
+																	name="${taxId}-existing" id="${taxId}-exist">
 															</c:when>
 															<c:otherwise>
 																<c:out value="${taxRate.value}" />
@@ -119,7 +115,7 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-					<input type="submit" id="btnsearch" value="Update" class="btn btn-primary"></input> 
+					<input type="submit" id="btnsearch" value="Update" class="btn btn-primary" onclick="return validateTaxValues();"></input> 
 					<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message
 							code="lbl.close" /></a>
 				</div>
@@ -127,4 +123,5 @@
 		</div>
 	</div>
 </form:form>
+<script src="<cdn:url value='/resources/js/app/taxrates.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
