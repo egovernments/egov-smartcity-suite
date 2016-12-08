@@ -39,6 +39,7 @@
  */
 package org.egov.ptis.master.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,14 +73,14 @@ public class PropertyUsageService {
 
     @Autowired
     private UserService userService;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     public PropertyUsageService(final PropertyUsageDAO propertyUsageHibernateDAO) {
         this.propertyUsageHibernateDAO = propertyUsageHibernateDAO;
     }
-    
-    @PersistenceContext
-    private EntityManager entityManager;
 
     public PropertyUsage create(PropertyUsage propertyUsage) {
 
@@ -115,11 +116,10 @@ public class PropertyUsageService {
     }
     
     public List<PropertyUsageSearchResult> getPropertyUsageByTypeUsgAndfromDate(final PropertyUsage propertyUsage) {
-        StringBuffer queryString =  new StringBuffer();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("dd/MM/yyyy");
+        StringBuffer queryString =  new StringBuffer(200);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         List<PropertyUsageSearchResult> propertyUsageSearchList= new ArrayList<PropertyUsageSearchResult>();
-        queryString.append(" from PropertyUsage PU where PU.isEnabled = 1 ");
-        queryString.append(" and PU.isResidential = :isResidential ");
+        queryString.append(" from PropertyUsage PU where PU.isEnabled = 1 and PU.isResidential = :isResidential ");
         if(StringUtils.isNotBlank(propertyUsage.getUsageName())) {
             queryString.append(" and upper(PU.usageName) like :usageName ");
         }
@@ -141,8 +141,8 @@ public class PropertyUsageService {
             PropertyUsageSearchResult propertyUsageSearchObj = new PropertyUsageSearchResult();
             propertyUsageSearchObj.setUsageName(propertyUsageObj.getUsageName());
             propertyUsageSearchObj.setUsageType(propertyUsageObj.getIsResidential() ? "Residential" : "Non-Residential");
-            propertyUsageSearchObj.setFromDate(dateTimeFormatter.print(new DateTime(propertyUsageObj.getFromDate())));
-            propertyUsageSearchObj.setToDate(dateTimeFormatter.print(new DateTime(propertyUsageObj.getToDate())));
+            propertyUsageSearchObj.setFromDate(dateFormat.format(propertyUsageObj.getFromDate()));
+            propertyUsageSearchObj.setToDate(dateFormat.format(propertyUsageObj.getToDate()));
             propertyUsageSearchList.add(propertyUsageSearchObj);
         }
         
