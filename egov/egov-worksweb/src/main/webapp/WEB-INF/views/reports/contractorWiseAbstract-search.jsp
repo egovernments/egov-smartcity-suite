@@ -63,6 +63,6 @@
 		<jsp:include page="contractorWiseAbstractReport-searchresults.jsp"/>
 		
 <script
- 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.stickytableheaders.min.js' context='/egi'/>"
+ 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.stickytableheaders.min.js?rnd=${app_release_no}' context='/egi'/>"
  	type="text/javascript"></script>
 <script src="<cdn:url value='/resources/js/reports/contractorwiseabstractreport.js?rnd=${app_release_no}'/>"></script>
