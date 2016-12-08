@@ -121,6 +121,37 @@
 						</div>
 					</div>
 				</div>
+				
+				<div class="form-group">
+					<div class="row">
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.supervisioncharges" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:input class="form-control patternvalidation text-right" data-pattern="decimalvalue" maxlength="8" id="supervisionCharges" path="fieldInspectionDetails.supervisionCharges" readonly="true"/>
+							<form:errors path="fieldInspectionDetails.supervisionCharges" cssClass="add-margin error-msg" />		
+						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.securitydeposit" /></label>
+						<div class="col-sm-3 add-margin"> 
+							<form:input class="form-control text-right patternvalidation" data-pattern="decimalvalue" maxlength="8" id="securityDeposit" path="fieldInspectionDetails.securityDeposit" value="0.00" />
+							<form:errors path="fieldInspectionDetails.securityDeposit" cssClass="add-margin error-msg" />
+						</div>
+					</div>
+				</div>
+				
+				
+				<div class="form-group">
+					<div class="row">
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.roadcuttingcharges" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:input class="form-control patternvalidation text-right" data-pattern="decimalvalue" maxlength="8" id="roadCuttingCharges" path="fieldInspectionDetails.roadCuttingCharges" value="0.00" />
+							<form:errors path="fieldInspectionDetails.roadCuttingCharges" cssClass="add-margin error-msg" />		
+						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.applicationfee" /></label>
+						<div class="col-sm-3 add-margin"> 
+							<form:input class="form-control text-right patternvalidation" data-pattern="decimalvalue" maxlength="8" id="applicationFee" path="fieldInspectionDetails.applicationFee" value="0.00"  />
+							<form:errors path="fieldInspectionDetails.applicationFee" cssClass="add-margin error-msg" />
+						</div>
+					</div>
+				</div>
 				<div class="form-group">
 					<div class="row">
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.attachdocument"/></label>

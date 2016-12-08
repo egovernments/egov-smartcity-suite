@@ -66,7 +66,7 @@
 								pattern="dd/MM/yyyy" />
 							<c:out value="${HD}" />
 						</div>
-						
+
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
@@ -74,54 +74,52 @@
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${hearings.purposeofHearings}</div>
-							<div class="col-xs-3 add-margin">
-							<spring:message
-								code="lbl.outcomeofhearing" />
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.outcomeofhearing" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${hearings.hearingOutcome}</div>
-					   </div>
-					   <div class="row add-border">
+					</div>
+					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
-						<spring:message
-								code="lbl.additionallawyer" />
+							<spring:message code="lbl.additionallawyer" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${hearings.additionalLawyers}</div>
-							<div class="col-xs-3 add-margin">
-							<spring:message
-								code="lbl.standingcounsel" />
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.standingcounsel" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${hearings.isStandingCounselPresent}</div>
-					   </div>
-					<c:choose>
-						<c:when test="${not empty hearings.employeeHearingList}">
-							<table class="table table-striped table-bordered"
-								id="employeeDetails">
-								<thead>
-									<tr>
-										<th class="text-center">Position-Employee</th>
-									</tr>
-								</thead>
-								<tbody>
-									<c:forEach items="${hearings.employeeHearingList}"
-										var="employeeHearingList" varStatus="counter">
-										<tr>
-											<td class="text-left"><c:out
-													value="${employeeHearingList.employee.name}"></c:out>-
-													<c:out
-													value="${employeeHearingList.employee.username}"></c:out></td>
-										</tr>
-									</c:forEach>
-								</tbody>
-							</table>
-						</c:when>
-					</c:choose>
+					</div>
+
 				</div>
 			</div>
 		</div>
 	</div>
+	<c:choose>
+		<c:when test="${not empty hearings.employeeHearingList}">
+			<table class="table table-striped table-bordered"
+				id="employeeDetails">
+				<thead>
+					<tr>
+						<th class="text-center">Position-Employee</th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach items="${hearings.employeeHearingList}"
+						var="employeeHearingList" varStatus="counter">
+						<tr>
+							<td class="text-left"><c:out
+									value="${employeeHearingList.employee.name}"></c:out>- <c:out
+									value="${employeeHearingList.employee.username}"></c:out></td>
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
+		</c:when>
+	</c:choose>
+
 	<div class="row text-center">
 		<div class="add-margin">
 			<a href="javascript:void(0)" class="btn btn-default"

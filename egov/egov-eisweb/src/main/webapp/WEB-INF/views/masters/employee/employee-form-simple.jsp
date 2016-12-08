@@ -45,15 +45,15 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <%@ include file="/includes/taglibs.jsp" %>
-<script src="<cdn:url value='/resources/js/app/employeedataentry.js'/>"></script>
+<script src="<cdn:url value='/resources/js/app/employeedataentry.js?rnd=${app_release_no}'/>"></script>
 
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css?rnd=${app_release_no}' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css?rnd=${app_release_no}' context='/egi'/>"/>
 
-<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-<script src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js?rnd=${app_release_no}' context='/egi'/>"></script>
 
-<script src="<cdn:url value='/resources/js/app/ajaxCommonFunctions.js'/>"></script>
+<script src="<cdn:url value='/resources/js/app/ajaxCommonFunctions.js?rnd=${app_release_no}'/>"></script>
 
 		
 		
@@ -246,4 +246,4 @@
                 
              </form:form>
     </div>
-<script src="<cdn:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
+<script src="<cdn:url value='/resources/js/app/fileuploadndmaps.js?rnd=${app_release_no}'/>"></script>

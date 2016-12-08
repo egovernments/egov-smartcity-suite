@@ -52,6 +52,6 @@ public class CollectionDocumentMapper extends CustomMapper<CollectionIndex, Coll
 
     @Override
     public void mapAtoB(CollectionIndex collectionIndex, CollectionDocument collectionDocument, MappingContext context) {
-        collectionDocument.setId(collectionIndex.getCityCode() + "_" + collectionIndex.getId());
+        collectionDocument.setId(collectionIndex.getCityCode() + "_" + collectionIndex.getReceiptNumber());
     }
 }

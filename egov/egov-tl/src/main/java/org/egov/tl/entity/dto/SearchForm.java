@@ -94,6 +94,7 @@ public class SearchForm {
     private void addActions(final License license, final String userRoles) {
         final List<String> licenseActions = new ArrayList<>();
         licenseActions.add("View Trade");
+        licenseActions.add("Generate Demand Notice");
         if (license.getStatus() != null) {
             if (userRoles.contains(Constants.ROLE_BILLCOLLECTOR) && license.canCollectFee())
                 licenseActions.add("Collect Fees");
@@ -106,6 +107,9 @@ public class SearchForm {
                         && license.isStatusActive())
                     licenseActions.add("Renew License");
             }
+            if (license.getStatus().getStatusCode().equals(Constants.STATUS_ACTIVE))
+                licenseActions.add("Closure");
+
         } else if (license.isLegacy() && !license.isPaid())
             licenseActions.add("Modify Legacy License");
 

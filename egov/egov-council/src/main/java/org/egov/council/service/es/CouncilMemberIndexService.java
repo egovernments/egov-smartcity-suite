@@ -60,9 +60,15 @@ public class CouncilMemberIndexService {
     @Autowired
     private CouncilMemberIndexRepository councilMemberIndexRepository;
     
+    
     public CouncilMemberIndex createCouncilMemberIndex(final CouncilMember councilMember){
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         CouncilMemberIndex memberIndex = new CouncilMemberIndex();
+        memberIndex.setDistrictName(cityWebsite.getDistrictName());
+        memberIndex.setUlbGrade(cityWebsite.getGrade());
+        memberIndex.setUlbCode(cityWebsite.getCode());
+        memberIndex.setRegionName(cityWebsite.getRegionName());
+        memberIndex.setUlbName(cityWebsite.getName());
         if(councilMember != null){
             memberIndex.setId(cityWebsite.getCode().concat("-").concat(councilMember.getId().toString()));
             memberIndex.setName(councilMember.getName() != null ?councilMember.getName():"");
@@ -79,6 +85,7 @@ public class CouncilMemberIndexService {
             memberIndex.setElectionDate(councilMember.getElectionDate());
             memberIndex.setOathDate(councilMember.getOathDate());
             memberIndex.setElectionWard(councilMember.getElectionWard() != null ?councilMember.getElectionWard().getName():"");
+            memberIndex.setCreatedDate(councilMember.getCreatedDate());
             councilMemberIndexRepository.save(memberIndex);
         }
         

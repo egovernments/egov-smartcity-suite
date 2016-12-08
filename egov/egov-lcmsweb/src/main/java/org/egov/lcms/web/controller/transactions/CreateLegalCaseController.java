@@ -84,7 +84,7 @@ public class CreateLegalCaseController extends GenericLegalCaseController {
         final String caseNumber = legalCase.getCaseNumber() + "/" + legalCase.getWpYear();
         final LegalCase validateCasenumber = legalCaseService.getLegalCaseByCaseNumber(caseNumber);
         if (validateCasenumber != null)
-            errors.reject("error.legalCase.caseNumber");
+            errors.reject("error.legalcase.casenumber");
         if (errors.hasErrors()) {
             model.addAttribute("mode", "create");
             model.addAttribute("bipartisanRespondentDetailsList", legalCase.getBipartisanRespondentDetailsList());

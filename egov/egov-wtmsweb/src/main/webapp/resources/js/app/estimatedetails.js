@@ -51,6 +51,8 @@ $(document).ready(function()
 		loadConnectionCategories();
     });
 	
+	
+	
 	function loadConnectionCategories(){
 	    if ($('#connectionCategorie :selected').text().localeCompare("BPL") == 0)  {
 	    	$("#cardHolderDiv").show();
@@ -217,4 +219,5 @@ function calculateTotalAmount() {
     	}
     }
     $('#grandTotal').val(grandTotal);
+    $('#supervisionCharges').val(0.15*grandTotal);
 }

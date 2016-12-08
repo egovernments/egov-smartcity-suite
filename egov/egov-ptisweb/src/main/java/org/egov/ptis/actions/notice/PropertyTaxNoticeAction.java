@@ -523,9 +523,17 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         }
         infoBean.setNoticeDate(new Date());
         ownerType=property.getPropertyDetail().getPropertyTypeMaster().getType();
-        if(ownerType.equalsIgnoreCase(VACANT_LAND) || (noticeMode != null && noticeMode.equalsIgnoreCase(DEMOLITION))){
-        	owner="(On Land)";
-     	}
+        infoBean.setOwnershipType(ownerType);
+        if (ownerType.equalsIgnoreCase(VACANT_LAND)
+                || (noticeMode != null && noticeMode.equalsIgnoreCase(DEMOLITION))) {
+            owner = "(On Land)";
+            infoBean.setExtentOfSite(new BigDecimal(property.getPropertyDetail().getSitalArea().getArea()));
+            infoBean.setSurveyNumber(property.getPropertyDetail().getSurveyNumber());
+            infoBean.setNorthBoundary(propertyId.getNorthBoundary());
+            infoBean.setSouthBoundary(propertyId.getSouthBoundary());
+            infoBean.setEastBoundary(propertyId.getEastBoundary());
+            infoBean.setWestBoundary(propertyId.getWestBoundary());
+        }
         infoBean.setOwnerTypeForReport(owner);
         propertyNotice.setOwnerInfo(infoBean);
        

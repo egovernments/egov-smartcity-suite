@@ -122,9 +122,10 @@
 													<div class="col-sm-3 add-margin view-content">
 														${judgmentImpl.appeal[0].appealFiledBy}</div>
 
-												</div></div>
-							</c:when>
-							</c:choose>
+												</div>
+											</c:when>
+										</c:choose>
+							</div>
 
 
 							<c:choose>
@@ -185,20 +186,18 @@
 					</div>
 				</div>
 			</div>
-		
-		<c:choose>
-			<c:when
-				test="${judgmentImpl.judgmentImplIsComplied == 'NO' && judgmentImpl.implementationFailure == 'Appeal'}">
-				<jsp:include page="appealdocuments-view.jsp"></jsp:include>
-			</c:when>
-		</c:choose>
 
-		<div class="form-group text-center">
-			<a onclick="self.close()" class="btn btn-default"
-				href="javascript:void(0)"><spring:message code="lbl.close" /></a>
+			<c:choose>
+				<c:when
+					test="${judgmentImpl.judgmentImplIsComplied == 'NO' && judgmentImpl.implementationFailure == 'Appeal'}">
+					<jsp:include page="appealdocuments-view.jsp"></jsp:include>
+				</c:when>
+			</c:choose>
 
+			<div class="form-group text-center">
+				<a onclick="self.close()" class="btn btn-default"
+					href="javascript:void(0)"><spring:message code="lbl.close" /></a>
+
+			</div>
 		</div>
-		</div>
-	</div>
-	</div>
 </form:form>

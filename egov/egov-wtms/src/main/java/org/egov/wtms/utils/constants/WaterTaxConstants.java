@@ -65,6 +65,8 @@ public class WaterTaxConstants {
     public static final String EGMODULE_NAME = "Water Tax Management";
     public static final String WATERTAX_SECURITY_CHARGE = "WTAXSECURITY";
     public static final String WATERTAX_DONATION_CHARGE = "WTAXDONATION";
+    public static final String WATERTAX_ROADCUTTING_CHARGE = "WTAXROADCUTTING";
+    public static final String WATERTAX_SUPERVISION_CHARGE ="WTAXSUPERVISION";
     public static final String CONNECTION_FEE = "Connection fee";
     public static final String ADDNLCONNECTION = "ADDNLCONNECTION";
     public static final String CLOSINGCONNECTION = "CLOSINGCONNECTION";

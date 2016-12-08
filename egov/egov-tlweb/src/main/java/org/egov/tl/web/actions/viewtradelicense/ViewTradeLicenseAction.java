@@ -40,10 +40,7 @@
 
 package org.egov.tl.web.actions.viewtradelicense;
 
-import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Actions;
-import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.*;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
@@ -54,13 +51,15 @@ import org.egov.tl.service.AbstractLicenseService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
+import org.egov.tl.web.actions.newtradelicense.NewTradeLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
 @ParentPackage("egov")
-@Result(name = "report", location = "viewTradeLicense-report.jsp")
-public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense>  {
+@Results({@Result(name = "report", location = "viewTradeLicense-report.jsp"),
+        @Result(name = "message", location = "viewTradeLicense-message.jsp")})
+public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private static final long serialVersionUID = 1L;
 
     protected TradeLicense tradeLicense = new TradeLicense();
@@ -87,9 +86,9 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense>  {
         return super.showForApproval();
     }
 
-    @Actions ({
-        @Action(value = "/viewtradelicense/viewTradeLicense-view"),
-        @Action(value = "/public/viewtradelicense/viewTradeLicense-view")
+    @Actions({
+            @Action(value = "/viewtradelicense/viewTradeLicense-view"),
+            @Action(value = "/public/viewtradelicense/viewTradeLicense-view")
     })
     public String view() {
         if (license() != null && license().getId() != null)
@@ -115,6 +114,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense>  {
                 getSession().remove("model.id");
             }
     }
+
 
     @SkipValidation
     @Action(value = "/viewtradelicense/viewTradeLicense-generateRejCertificate")
@@ -185,4 +185,21 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense>  {
         return reportId;
     }
 
+
+    @Action(value = "/viewtradelicense/viewTradeLicense-closure")
+    public String viewClosure() {
+        if (license() != null && license().getId() != null)
+            tradeLicense = tradeLicenseService.getLicenseById(license().getId());
+        else if (applicationNo != null && !applicationNo.isEmpty())
+            tradeLicense = tradeLicenseService.getLicenseByApplicationNumber(applicationNo);
+        return "closure";
+    }
+
+    @Action(value = "/viewtradelicense/viewTradeLicense-cancelLicense")
+    public String updateLicenseClosure() {
+        tradeLicense = tradeLicenseService.getLicenseById(tradeLicense.getId());
+        tradeLicenseService.updateClosureStatus(tradeLicense);
+        addActionMessage(this.getText("license.closure.msg") + license().getLicenseNumber());
+        return "message";
+    }
 }

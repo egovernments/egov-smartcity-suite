@@ -44,15 +44,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>	
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>		
 <div id="errorBlock" class="help-block"></div>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/filer/jquery.filer-dragdropbox-theme.css' context='/egi'/>">
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/filer/jquery.filer.css' context='/egi'/>">
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/filer/jquery.filer.min.js' context='/egi'/>"></script>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/filer/jquery.filer-dragdropbox-theme.css?rnd=${app_release_no}' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/filer/jquery.filer.css?rnd=${app_release_no}' context='/egi'/>">
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/filer/jquery.filer.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
 
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/plugins/image-gallery/bootstrap-image-gallery.css' context='/egi'/>">
-<link rel="stylesheet" href="<cdn:url value='/resources/global/js/image-gallery/css/blueimp-gallery.min.css' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/plugins/image-gallery/bootstrap-image-gallery.css?rnd=${app_release_no}' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url value='/resources/global/js/image-gallery/css/blueimp-gallery.min.css?rnd=${app_release_no}' context='/egi'/>">
 
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/image-gallery/js/jquery.blueimp-gallery.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/image-gallery/js/bootstrap-image-gallery.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/image-gallery/js/jquery.blueimp-gallery.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/image-gallery/js/bootstrap-image-gallery.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <style>
 #links{
 	    position: relative;

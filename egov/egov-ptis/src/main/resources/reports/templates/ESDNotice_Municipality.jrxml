@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-12-01T18:05:29 -->
+<!-- 2016-12-06T17:24:46 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ESDCertificate_Corporation" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5f99a57d-d4d7-42d2-824c-02ee7d858b01">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="billNumber" class="java.lang.String"/>
@@ -167,11 +167,11 @@
 				<textFieldExpression><![CDATA["        Therefore, take notice that essential services to the above said premises, such as Water Supply, Drainage etc., will be ordered for disconnection under Section 91 of A.P. Municipalities Act 1965, if the dues are not paid within <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+"(48)"+"</style> hours i.e. on or before <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{futureDate}+"</style> without any further notice."]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="277" y="453" width="249" height="20" uuid="be5fd33e-a114-4a16-9eb3-479d7a3947f7">
+				<reportElement x="309" y="453" width="223" height="20" uuid="be5fd33e-a114-4a16-9eb3-479d7a3947f7">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center">
-					<font size="14" isBold="true"/>
+					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Municipal Commissioner,]]></text>
 			</staticText>
@@ -198,10 +198,10 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{sectionAct}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement positionType="Float" x="237" y="476" width="310" height="25" uuid="123f48ac-1892-4e93-9ef8-3850d17a201f"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="292" y="472" width="254" height="25" uuid="123f48ac-1892-4e93-9ef8-3850d17a201f"/>
 				<textElement textAlignment="Center">
-					<font size="14" isBold="true"/>
+					<font size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>

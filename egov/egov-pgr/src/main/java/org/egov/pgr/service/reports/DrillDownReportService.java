@@ -146,7 +146,7 @@ public class DrillDownReportService {
     private void buildWhereClause(final DateTime fromDate, final DateTime toDate, final String complaintDateType,
                                   final StringBuilder query, final String department, final String boundary, final String complainttype) {
 
-        query.append(" WHERE cd.status  = cs.id and cd.complainttype= ctype.id  and cd.state_id = state.id ");
+        query.append(" WHERE cd.status  = cs.id and cd.complainttype= ctype.id  and cd.state_id = state.id and emp.isprimary = true");
 
         if (fromDate != null || "lastsevendays".equals(complaintDateType) || "lastthirtydays".equals(complaintDateType) || "lastninetydays".equals(complaintDateType))
             query.append(" and cd.createddate >=   :fromDates ");

@@ -53,6 +53,9 @@ jQuery(document).ready(function($) {
 function submitForm() {
 	if($('form').valid()){
 		var caseType = $("#caseCategory").val();
+		var caseNumber = $("#caseNumber").val();
+		var lcNumber = $("#lcNumber").val();
+
 		var today = getdate();
 		
 		oTable= $('#dailyBoardReportResult-table');
@@ -110,6 +113,9 @@ function submitForm() {
 						  { "data" : "caseStatus", "title": "Status","sClass" : "text-center"},
 						  { "data" : "nextDate", "title": "Next Imp Date","sClass" : "text-center"}
 						  ],
+						  "fnRowCallback" : function(row, data, index) {
+								$('td:eq(3)',row).html('<a href="javascript:void(0);" onclick="openLegalCase(\''+ data.lcNumber +'\')">' + data.caseNumber + '</a>');
+							},
 				           "fnDrawCallback": function ( oSettings ) {
 				                if ( oSettings.bSorted || oSettings.bFiltered )
 				                {
@@ -171,4 +177,6 @@ function getdate()
     return today;
 }
 
-
+function openLegalCase(lcNumber) {
+	window.open("/lcms/application/view/?lcNumber="+ lcNumber , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+}
