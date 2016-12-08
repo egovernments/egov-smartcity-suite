@@ -55,9 +55,6 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.report.bean.PropertyUsageSearchResult;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
