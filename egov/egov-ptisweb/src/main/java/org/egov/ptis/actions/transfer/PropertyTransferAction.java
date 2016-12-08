@@ -717,7 +717,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                         && StringUtils.isNotBlank(propertyMutation.getReceiptNum())) {
                     propertyMutation.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                             .withComments(approverComments).withStateValue(
-                                    propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER)
+                                    propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)
                                             ? TRANSFER_FEE_COLLECTED : WF_STATE_UD_REVENUE_INSPECTOR_APPROVED)
                             .withDateInfo(currentDate.toDate()).withOwner(pos)
                             .withNextAction(WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING);
