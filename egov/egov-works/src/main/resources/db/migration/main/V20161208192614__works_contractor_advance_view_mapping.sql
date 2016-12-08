@@ -1,0 +1,10 @@
+insert into eg_feature_role (ROLE, FEATURE) values ((select id from eg_role where name = 'Works View Access') ,(select id FROM eg_feature where name = 'Search Advance Requisition'));
+
+insert into eg_roleaction(roleid, actionid) values ((select id from eg_role where name = 'Works View Access'), (select id from eg_action where name = 'SearchContractorAdvance' and contextroot = 'egworks'));
+insert into eg_roleaction(roleid, actionid) values ((select id from eg_role where name = 'Works View Access'), (select id from eg_action where name = 'SearchResultContractorAdvance' and contextroot = 'egworks'));
+insert into eg_roleaction(roleid, actionid) values ((select id from eg_role where name = 'Works View Access'), (select id from eg_action where name = 'GetAdvanceRequisitionNumberToSearchCR' and contextroot = 'egworks'));
+insert into eg_roleaction(roleid, actionid) values ((select id from eg_role where name = 'Works View Access'), (select id from eg_action where name = 'getWorkOrderNumberToSearchCR' and contextroot = 'egworks'));
+insert into eg_roleaction(roleid, actionid) values ((select id from eg_role where name = 'Works View Access'), (select id from eg_action where name = 'getContractorToSearchCR' and contextroot = 'egworks'));
+insert into eg_roleaction(roleid, actionid) values ((select id from eg_role where name = 'Works View Access'), (select id from eg_action where name = 'ViewContractorAdvance' and contextroot = 'egworks'));
+
+--rollback delete from eg_roleaction where actionid in (select id from eg_action where name in ('SearchContractorAdvance', 'SearchResultContractorAdvance','GetAdvanceRequisitionNumberToSearchCR', 'getWorkOrderNumberToSearchCR','getContractorToSearchCR','ViewContractorAdvance') and contextroot = 'egworks') and roleid in(select id from eg_role where name in('Works View Access'));

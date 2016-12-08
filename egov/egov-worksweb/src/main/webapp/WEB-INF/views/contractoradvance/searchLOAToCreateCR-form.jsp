@@ -142,4 +142,4 @@
 		</div>
 	</div>
 </div>
-<script src="<cdn:url value='/resources/js/contractoradvance/searchloaforcr.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/contractoradvance/searchloatocreatecr.js?rnd=${app_release_no}'/>"></script>

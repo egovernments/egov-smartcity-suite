@@ -92,7 +92,7 @@
 									</td>		
 								</tr>									 										
 						 	</tbody></table>						 								
-							<div class="add-margin error-msg text-left"><font size="2"><spring:message code="msg.documents.maxsize" /></font></div>
+							<div class="add-margin error-msg text-left padding-10"><font size="2"><spring:message code="msg.documents.maxsize" /></font></div>
 						</td>
 					</tr>
 					<tr>

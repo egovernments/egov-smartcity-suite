@@ -41,6 +41,7 @@
 <%@ page contentType="text/html" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <style>
       .position_alert{
         position:fixed;z-index:9999;top:85px;right:20px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
@@ -68,3 +69,4 @@
 		</div>
 	</div>
 </form:form>
+<script src="<cdn:url value='/resources/js/contractoradvance/contractoradvance.js?rnd=${app_release_no}'/>"></script>

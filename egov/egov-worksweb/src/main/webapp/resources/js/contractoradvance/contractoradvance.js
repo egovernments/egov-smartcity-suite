@@ -127,3 +127,15 @@ function validateContractorAdvance() {
 	}
 	return true;
 }
+
+function viewLOA(workOrderId) {
+	window.open("/egworks/letterofacceptance/view/"+ workOrderId , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+}
+
+function viewLineEstimate(lineEstimateID) {
+	window.open("/egworks/lineestimate/view/"+ lineEstimateID , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+}
+
+function viewAbstractEstimate(abstractEstimateID) {
+	window.open("/egworks/abstractestimate/view/"+ abstractEstimateID , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+}

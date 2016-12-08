@@ -483,7 +483,7 @@
 	
 	<definition name="loatocreatecr-search" extends="base_layout">
         <put-attribute name="page-title" value="title.search.letterofacceptance" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/contractoradvance/searchworkorderforcr-search.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/contractoradvance/searchLOAToCreateCR-form.jsp"/>
     </definition>
 	
 	<definition name="estimate-searchform" extends="base_layout">
