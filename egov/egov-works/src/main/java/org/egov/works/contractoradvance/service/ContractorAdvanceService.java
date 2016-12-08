@@ -69,7 +69,6 @@ import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
-import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,10 +92,6 @@ public class ContractorAdvanceService {
 
     @PersistenceContext
     private EntityManager entityManager;
-
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
 
     @Autowired
     private WorksUtils worksUtils;
@@ -123,7 +118,7 @@ public class ContractorAdvanceService {
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<ContractorAdvanceRequisition> contractorAdvanceRequisitionWorkflowService;
-
+    
     public ContractorAdvanceRequisition getContractorAdvanceRequisitionById(final Long id) {
         return contractorAdvanceRepository.findOne(id);
     }
@@ -226,6 +221,7 @@ public class ContractorAdvanceService {
         contractorAdvanceRequisition.setAdvanceRequisitionDate(new Date());
         contractorAdvanceRequisition
                 .setAdvanceRequisitionNumber(advanceRequisitionNumberGenerator.getNextNumber(contractorAdvanceRequisition));
+        contractorAdvanceRequisition.setArftype(WorksConstants.STATUS_MODULE_NAME);
         for (final EgAdvanceRequisitionDetails details : contractorAdvanceRequisition.getEgAdvanceReqDetailses())
             details.setEgAdvanceRequisition(contractorAdvanceRequisition);
 
