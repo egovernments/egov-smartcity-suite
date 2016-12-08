@@ -588,7 +588,8 @@ public class WaterChargeElasticSearchService {
             taxDfaulter.setConnectionType(waterChargedoc.getConnectionType());
             taxDfaulter.setUlbName(waterChargedoc.getCityName());
             taxDfaulter.setBalance(BigDecimal.valueOf(waterChargedoc.getWaterTaxDue()));
-            taxDfaulter.setPeriod(StringUtils.isBlank(waterChargedoc.getDuePeriod()) ? StringUtils.EMPTY : waterChargedoc.getDuePeriod());
+            taxDfaulter.setPeriod(StringUtils.isBlank(waterChargedoc.getDuePeriod()) ? StringUtils.EMPTY
+                    : waterChargedoc.getDuePeriod());
             taxDefaulters.add(taxDfaulter);
         }
         timeTaken = System.currentTimeMillis() - startTime;

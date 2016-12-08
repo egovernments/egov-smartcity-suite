@@ -117,12 +117,12 @@ public class WaterChargeDashboardService {
 
         return responsemap;
     }
-    
+
     public Map<String, List<WaterChargeConnectionTypeResponse>> getCollectionTypeIndexDetails(
             final WaterChargeDashBoardRequest waterChargeDashBoardRequest) {
 
         final Map<String, List<WaterChargeConnectionTypeResponse>> responsemap = new HashMap<>();
-       final List<WaterChargeConnectionTypeResponse> collectionTotalResponseList = waterChargeCollDocService
+        final List<WaterChargeConnectionTypeResponse> collectionTotalResponseList = waterChargeCollDocService
                 .getFullCollectionIndexDtlsForCOnnectionType(waterChargeDashBoardRequest);
 
         final List<WaterChargeConnectionTypeResponse> collectionTrends = waterChargeCollDocService
@@ -185,8 +185,8 @@ public class WaterChargeDashboardService {
         return waterChargeElasticSearchService.getBottomTenTaxPerformers(waterChargeDashBoardRequest);
 
     }
-    
-    public List<WaterTaxDefaulters> getTaxDefaulters(WaterChargeDashBoardRequest waterChargeDashBoardRequest) {
+
+    public List<WaterTaxDefaulters> getTaxDefaulters(final WaterChargeDashBoardRequest waterChargeDashBoardRequest) {
         return waterChargeElasticSearchService.getTopDefaulters(waterChargeDashBoardRequest);
     }
 }
