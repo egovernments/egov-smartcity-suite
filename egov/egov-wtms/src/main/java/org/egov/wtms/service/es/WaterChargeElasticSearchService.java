@@ -393,7 +393,7 @@ public class WaterChargeElasticSearchService {
                     .divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
             taxDetail.setCurrentYearTillDateBalDmd(proportionalDemand.subtract(totalCollections));
             final BigDecimal lastYearCollection = waterChargeCollDocService.getCollectionBetweenDates(
-                    waterChargedashBoardRequest, lastYearFromDate, lastYearToDate, "UAT Kurnool");
+                    waterChargedashBoardRequest, lastYearFromDate, lastYearToDate, fieldName);
             // variance = ((lastYearCollection/currentYearCollection )*100)
             BigDecimal variation=BigDecimal.ZERO;
             taxDetail.setLastYearTillDateColl(lastYearCollection);
