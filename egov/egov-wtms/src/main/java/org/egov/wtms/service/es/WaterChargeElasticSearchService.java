@@ -585,7 +585,7 @@ public class WaterChargeElasticSearchService {
         for (final WaterChargeDocument waterChargedoc : waterChargeRecords) {
             taxDfaulter = new WaterTaxDefaulters();
             taxDfaulter.setOwnerName(waterChargedoc.getConsumerName());
-            taxDfaulter.setConnectionType(waterChargedoc.getConnectionType());
+            taxDfaulter.setConnectionType(waterChargedoc.getUsage());
             taxDfaulter.setUlbName(waterChargedoc.getCityName());
             taxDfaulter.setBalance(BigDecimal.valueOf(waterChargedoc.getWaterTaxDue()));
             taxDfaulter.setPeriod(StringUtils.isBlank(waterChargedoc.getDuePeriod()) ? StringUtils.EMPTY
