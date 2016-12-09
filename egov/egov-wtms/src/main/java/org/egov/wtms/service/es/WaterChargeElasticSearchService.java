@@ -393,15 +393,17 @@ public class WaterChargeElasticSearchService {
                     .divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
             taxDetail.setCurrentYearTillDateBalDmd(proportionalDemand.subtract(totalCollections));
             final BigDecimal lastYearCollection = waterChargeCollDocService.getCollectionBetweenDates(
-                    waterChargedashBoardRequest, lastYearFromDate, lastYearToDate, fieldName);
-            // variance = ((currentYearCollection -
-            // lastYearCollection)*100)/lastYearCollection
-            BigDecimal variation;
+                    waterChargedashBoardRequest, lastYearFromDate, lastYearToDate, "UAT Kurnool");
+            // variance = ((lastYearCollection/currentYearCollection )*100)
+            BigDecimal variation=BigDecimal.ZERO;
+            taxDetail.setLastYearTillDateColl(lastYearCollection);
             if (lastYearCollection.compareTo(BigDecimal.ZERO) == 0)
                 variation = WaterTaxConstants.BIGDECIMAL_100;
             else
-                variation = totalCollections.subtract(lastYearCollection).multiply(WaterTaxConstants.BIGDECIMAL_100)
-                        .divide(lastYearCollection, 1, BigDecimal.ROUND_HALF_UP);
+                if(totalCollections.compareTo(BigDecimal.ZERO)>0){
+                variation =taxDetail.getLastYearTillDateColl().multiply(WaterTaxConstants.BIGDECIMAL_100)
+                        .divide(totalCollections, 1, BigDecimal.ROUND_HALF_UP);
+                }
             taxDetail.setLastYearVar(variation);
             taxPayers.add(taxDetail);
         }
