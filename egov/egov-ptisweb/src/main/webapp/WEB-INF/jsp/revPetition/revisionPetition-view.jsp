@@ -45,16 +45,16 @@
 <html>
 <head>
 <link
-	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css?rnd=${app_release_no}' context='/egi'/>"
 	rel="stylesheet" type="text/css" />
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css?rnd=${app_release_no}' context='/egi'/>">
 <script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/javascript/objection.js' context='/ptis'/>"></script>
+	src="<cdn:url value='/resources/javascript/objection.js?rnd=${app_release_no}' context='/ptis'/>"></script>
 <title><s:text name="objectionView.title" /></title>
 <script type="text/javascript">
 	jQuery.noConflict();
@@ -322,8 +322,8 @@
 </script>
 <script
         src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
-	<script src="<cdn:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
-<link href="<cdn:url value='/resources/css/headertab.css'/>"
+	<script src="<cdn:url value='/resources/javascript/helper.js?rnd=${app_release_no}' context='/ptis'/>"></script>
+<link href="<cdn:url value='/resources/css/headertab.css?rnd=${app_release_no}'/>"
 	rel="stylesheet" type="text/css" />
 </head>
 <body onload="loadOnStartUp();">
