@@ -41,7 +41,7 @@ package org.egov.ptis.web.controller.masters.exemptionrates;
 
 import java.util.List;
 
-import org.egov.ptis.domain.entity.property.TaxExeptionReason;
+import org.egov.ptis.domain.entity.property.TaxExemptionReason;
 import org.egov.ptis.master.service.TaxExemptionReasonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -61,13 +61,13 @@ public class ViewExemptionReasonController {
     }
 
     @ModelAttribute
-    public TaxExeptionReason taxExemptionModel() {
-        return new TaxExeptionReason();
+    public TaxExemptionReason taxExemptionModel() {
+        return new TaxExemptionReason();
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public String showTaxExemptionReason(final Model model) {
-        final List<TaxExeptionReason> taxExemption = taxExemptionService.getAllTaxExemption();
+        final List<TaxExemptionReason> taxExemption = taxExemptionService.getAllTaxExemption();
         model.addAttribute("exemptionReason", taxExemption);
         return "tax-exemption-reason";
 

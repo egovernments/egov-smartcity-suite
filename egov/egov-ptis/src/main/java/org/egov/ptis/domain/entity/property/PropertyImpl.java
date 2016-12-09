@@ -107,7 +107,7 @@ public class PropertyImpl extends StateAware implements Property {
     private BigDecimal manualAlv;
     private String occupierName;
     private Boolean isExemptedFromTax = false;
-    private TaxExeptionReason taxExemptedReason;
+    private TaxExemptionReason taxExemptedReason;
     private String docNumber;
     private Boundary areaBndry;
     private BigDecimal alv;
@@ -373,12 +373,12 @@ public class PropertyImpl extends StateAware implements Property {
     }
 
     @Override
-    public TaxExeptionReason getTaxExemptedReason() {
+    public TaxExemptionReason getTaxExemptedReason() {
         return taxExemptedReason;
     }
 
     @Override
-    public void setTaxExemptedReason(final TaxExeptionReason taxExemptedReason) {
+    public void setTaxExemptedReason(final TaxExemptionReason taxExemptedReason) {
         this.taxExemptedReason = taxExemptedReason;
     }
 

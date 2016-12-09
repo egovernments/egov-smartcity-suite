@@ -41,7 +41,7 @@ package org.egov.ptis.master.service;
 
 import java.util.List;
 
-import org.egov.ptis.domain.entity.property.TaxExeptionReason;
+import org.egov.ptis.domain.entity.property.TaxExemptionReason;
 import org.egov.ptis.domain.repository.master.taxexemption.TaxExemptionReasonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,7 +58,7 @@ public class TaxExemptionReasonService {
         this.taxExemptionRepository = taxExemptionRepository;
     }
 
-    public List<TaxExeptionReason> getAllTaxExemption() {
+    public List<TaxExemptionReason> getAllTaxExemption() {
         return taxExemptionRepository.findAll();
     }
 }

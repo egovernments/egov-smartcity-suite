@@ -149,9 +149,9 @@ public interface Property extends Auditable {
 
     public void setIsExemptedFromTax(Boolean isExemptedFromTax);
 
-	public TaxExeptionReason getTaxExemptedReason();
+	public TaxExemptionReason getTaxExemptedReason();
 
-	public void setTaxExemptedReason(TaxExeptionReason taxExemptedReason);
+	public void setTaxExemptedReason(TaxExemptionReason taxExemptedReason);
 
     public String getDocNumber();
 

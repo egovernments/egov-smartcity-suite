@@ -120,7 +120,7 @@ import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.RoofType;
 import org.egov.ptis.domain.entity.property.StructureClassification;
-import org.egov.ptis.domain.entity.property.TaxExeptionReason;
+import org.egov.ptis.domain.entity.property.TaxExemptionReason;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
@@ -228,7 +228,7 @@ public class CreateAction extends PropertyTaxBaseAction{
         addRelatedEntity("property.propertyDetail.roofType", RoofType.class);
         addRelatedEntity("property.propertyDetail.wallType", WallType.class);
         addRelatedEntity("property.propertyDetail.woodType", WoodType.class);
-        addRelatedEntity("property.taxExemptedReason", TaxExeptionReason.class);
+        addRelatedEntity("property.taxExemptedReason", TaxExemptionReason.class);
     }
     
     @Override
@@ -275,7 +275,7 @@ public class CreateAction extends PropertyTaxBaseAction{
                 "from StructureClassification where isActive = true order by typeName ");
         final List<String> apartmentsList = getPersistenceService().findAllBy("from Apartment order by name");
         final List<String> taxExemptionReasonList = getPersistenceService().findAllBy(
-                "from TaxExeptionReason order by name");
+                "from TaxExemptionReason where isActive = true order by name");
 
         final List<Boundary> localityList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 LOCALITY, LOCATION_HIERARCHY_TYPE);
