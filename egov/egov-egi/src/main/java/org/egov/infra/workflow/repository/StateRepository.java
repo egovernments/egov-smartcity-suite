@@ -40,18 +40,19 @@
 
 package org.egov.infra.workflow.repository;
 
+import java.util.Date;
+import java.util.List;
+
 import org.egov.infra.workflow.entity.State;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface StateRepository extends JpaRepository<State, Long> {
 
-    Long countByOwnerPosition_Id(Long id);
+    Long countByOwnerPosition_IdAndCreatedDateGreaterThanEqual(Long id, Date givenDate);
 
     @Query("select distinct s.type from State s where s.ownerPosition.id in (:ownerIds)  and s.status <> 2")
     List<String> findAllTypeByOwnerAndStatus(@Param("ownerIds") List<Long> ownerIds);
