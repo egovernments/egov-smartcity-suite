@@ -61,11 +61,11 @@
 									<thead>
 										<tr>
 											<th class="text-left"><spring:message code="lbl.sno" /></th>
-											<th class="text-left"><spring:message code="lbl.structureclassification.code" /></th>
-											<th class="text-left"><spring:message code="lbl.structureclassification.name" /></th>
-											<th class="text-left"><spring:message code="lbl.structureclassification.description" /></th>			
-											<th class="text-left"><spring:message code="lbl.structureclassification.fromdate" /></th>
-											<th class="text-left"><spring:message code="lbl.structureclassification.todate" /></th>
+											<th class="text-left"><spring:message code="lbl.code" /></th>
+											<th class="text-left"><spring:message code="lbl.name" /></th>
+											<th class="text-left"><spring:message code="lbl.description" /></th>			
+											<th class="text-left"><spring:message code="lbl.fromDate" /></th>
+											<th class="text-left"><spring:message code="lbl.toDate" /></th>
 
 										</tr>
 									</thead>
