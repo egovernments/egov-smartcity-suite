@@ -47,6 +47,7 @@ public class Constants {
     public static final String STRONG_PASSWORD = "(?=^.{8,32}$)(?=.*\\d)(?!.*[&<>#%\\'\\\"\\\\\\/])(?!.*\\s)(?=.*[A-Z])(?=.*[a-z]).*$";
     public static final String MEDIUM_PASSWORD = "(?=^.{8,32}$)(?=.*\\d)(?!.*\\s)(?=.*[A-Z])(?=.*[a-z]).*$";
     public static final String LOW_PASSWORD = "(?=^.{4,32}$)(?!.*\\s)(?=.*\\d)(?=.*[A-Z])(?=.*[a-z]).*$";
+    public static final String NONE_PASSWORD = "(?=^.{6,32}$)(?!.*\\s).*$";
     public static final String EMAIL = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
     public static final String MIXEDCHAR = "^[a-z|A-Z|]+[a-z|A-Z|&/ :,-.]*";
     public static final String ALPHANUMERIC = "[0-9a-zA-Z]+";

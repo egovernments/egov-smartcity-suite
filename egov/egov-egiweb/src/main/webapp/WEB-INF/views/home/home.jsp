@@ -399,6 +399,7 @@
 								<div class="col-md-8 add-margin">
 									<input type="password" class="form-control check-password" id="retype-pass" maxlength="32">
 									<div class="password-error error-msg display-hide">Password is incorrect</div>
+									<div class="password-error-msg display-hide">${pwdmsg}</div>
 								</div>
 							</div>
 							<div class="form-group text-right">
