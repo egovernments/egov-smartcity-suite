@@ -47,62 +47,55 @@
 	<body>
 		<div id="content" class="printable">
 			<div class="formmainbox panel-primary">
-										<div class="subheadnew text-center" id="headingdiv">
-											<s:text name="page.title.viewtrade" />
-										</div>
-										<table>
-											<tr>
-												<td align="left" style="color: #FF0000">
-													<s:actionerror cssStyle="color: #FF0000" />
-													<s:fielderror />
-													<s:actionmessage />
-												</td>
-											</tr>
-										</table>
-										<s:form action="viewTradeLicense-cancelLicense" theme="simple" name="viewForm">
-											<s:push value="model">
-												<s:hidden name="actionName" value="create" />
-                                                <s:hidden name="licenseid" id="licenseId" value="%{id}"/>
-												<s:hidden id="detailChanged" name="detailChanged"></s:hidden>
-												<c:set var="trclass" value="greybox" />
-												<div class="text-right error-msg" style="font-size:14px;">
-													<s:text name="dateofapplication.lbl" /> : <s:date name="applicationDate"  
-													format="dd/MM/yyyy"/></div>
-	                   							<s:if test="%{applicationNumber!=null}">
-	                    	 						<div class="text-right error-msg" style="font-size:14px;">
-	                    	 							<s:text name="application.num" /> : <s:property value="%{applicationNumber}" />
-	                    	 						</div>
-	                 							</s:if>
-												<table width="100%">
-													<%@ include file='../common/view.jsp'%>
-												</table>
-											</s:push>
-										</s:form>
-		
-		
+				<div class="subheadnew text-center" id="headingdiv">
+					<s:text name="page.title.viewtrade" />
+				</div>
+				<table>
+					<tr>
+						<td align="left" style="color: #FF0000">
+							<s:actionerror cssStyle="color: #FF0000" />
+							<s:fielderror />
+							<s:actionmessage />
+						</td>
+					</tr>
+				</table>
+				<s:form action="viewTradeLicense-cancelLicense" theme="simple" name="viewForm">
+					<s:push value="model">
+						<s:hidden name="actionName" value="create" />
+						<s:hidden name="licenseid" id="licenseId" value="%{id}"/>
+						<s:hidden id="detailChanged" name="detailChanged"></s:hidden>
+						<c:set var="trclass" value="greybox" />
+						<div class="text-right error-msg" style="font-size:14px;">
+							<s:text name="dateofapplication.lbl" /> : <s:date name="applicationDate"
+							format="dd/MM/yyyy"/></div>
+						<s:if test="%{applicationNumber!=null}">
+							<div class="text-right error-msg" style="font-size:14px;">
+								<s:text name="application.num" /> : <s:property value="%{applicationNumber}" />
+							</div>
+						</s:if>
+						<table width="100%">
+							<%@ include file='../common/view.jsp'%>
+						</table>
+						<div class="panel panel-primary" id="workflowDiv" >
+							<%@ include file='../common/commonWorkflowMatrix.jsp'%>
+							<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
+						</div>
+					</s:push>
+				</s:form>
+			</div>
 		</div>
-		</div>
-		<div align="center" class="buttonbottom" id="buttondiv">
-			<table>
-				<tr>
-					<td>
-                        <button type="submit" id="btnsave" class="btn btn-primary" onclick="return formsubmit();">
-                            Cancel License</button>
-                    </td>
-					<td>
-						<input name="button2" type="button" class="button" id="button" onclick="window.close();" value="Close" />
-					</td>
-				</tr>
-			</table>
-		</div>
-        <script>
-            function formsubmit(){
-                var licid=jQuery('#licenseId').val();
-                document.viewForm.action='${pageContext.request.contextPath}/viewtradelicense/viewTradeLicense-cancelLicense.action?model.id='+licid;
-                document.viewForm.submit();
-            }
-        </script>
-		<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>
 
+		<script>
+			function onSubmitValidations() {
+				return true;
+			}
+			function onSubmit() {
+				var licid=jQuery('#licenseId').val();
+				document.viewForm.action='${pageContext.request.contextPath}/viewtradelicense/viewTradeLicense-cancelLicense.action?model.id='+licid;
+				return true;
+			}
+
+        </script>
+		<script src="<cdn:url  value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 	</body>
 </html>
