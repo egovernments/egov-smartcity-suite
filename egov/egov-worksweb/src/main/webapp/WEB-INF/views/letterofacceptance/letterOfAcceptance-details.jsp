@@ -127,7 +127,7 @@
 			<span class="input-group-addon"> <i class="fa fa-search specific" onclick="searchContractor();"></i></span>
 			<form:hidden path="contractor" name="contractor" id="contractor" />
 		</div>	
-		<form:errors path="contractor" cssClass="add-margin error-msg" />  
+			<form:errors path="contractor" cssClass="add-margin error-msg" />  
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.contractor.code" /></label>
 	<div class="col-sm-3 add-margin">
