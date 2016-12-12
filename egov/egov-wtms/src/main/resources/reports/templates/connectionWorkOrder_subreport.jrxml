@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-12-08T11:12:13 -->
+<!-- 2016-12-12T17:16:57 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="connectionWorkOrder_subreport" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -320,12 +320,12 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$P{total}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="82" y="3" width="158" height="15" uuid="eb635a14-06a1-43a9-8327-7f30a1a4ead9"/>
 					<textElement verticalAlignment="Bottom"/>
 					<textFieldExpression><![CDATA[$P{workorderNo}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="374" y="4" width="96" height="15" uuid="b9dc197b-b9d5-4dbb-8a99-c857c69f091a"/>
 					<textElement verticalAlignment="Bottom"/>
 					<textFieldExpression><![CDATA[$P{workorderDate}]]></textFieldExpression>
