@@ -1,4 +1,4 @@
-$netPayableAccountCodeId = 0;
+var $netPayableAccountCodeId = 0;
 var subLedgerDisplayName;
 var detailTypeName;
 var detailKeyName;
@@ -58,7 +58,7 @@ $(document).ready(function(){
 	});
 
 	entityName.initialize();
-	var entityName_typeahead = $('#subLedgerCode').typeahead({
+$('#subLedgerCode').typeahead({
 		hint : true,
 		highlight : true,
 		minLength : 3
@@ -450,13 +450,10 @@ function deleteCreditDetailsRow(obj) {
 function deleteAccountDetails(obj) {
 	var index = obj.id.split('_')[1];
 	var glcodeid = document.getElementById('accountDetailsGlCodeId_'+index).value;
-	if($netPayableAccountCodeId)
+	if($netPayableAccountCodeId && $netPayableAccountCodeId==glcodeid)
 	{
-		if($netPayableAccountCodeId==glcodeid)
-		{
 			$netPayableAccountCodeId=0;
 			netpayableamount = 0;
-		}
 	}
 	var rowcount=$("#tblaccountdetails tbody tr").length;
     if(rowcount<=1) {
@@ -471,49 +468,44 @@ function deleteAccountDetails(obj) {
 		$('#accountDetailsCreditAmount_0').val("");
 		$('.accountDetailsDebitDetailTypeId_0').val("");
 		$('.accountDetailsDebitDetailKeyId_0').val("");
-		deleteSubLedgerDetails(obj);
+		deleteSubLedgerDetails(glcodeid);
 		calculateBillAmount();
 	} else {
-		deleteSubLedgerDetails(obj);
+		deleteSubLedgerDetails(glcodeid);
 		deleteRow(obj,'tblaccountdetails');
 		calculateBillAmount();
 		return true;
 	}	
 }
 
-function deleteSubLedgerDetails(obj) {
-	var rowcount=$("#tblsubledgerdetails tbody tr").length;
-    if(rowcount<=1) {
-    	$('#subledhgerrow').prop("hidden","true");
-    	$('#subledhgerrow').prop('subledgerinvisible',"true");
-    	$('#subLedgerGlCodeId_0').val("");  
-    	$('#subLedgerIsDebit_0').val("");
-    	$('#subLedgerDebitAmount_0').val("");
-    	$('#subLedgerCreditAmount_0').val("");
-        $('.subLedgerGlCode_0').html("");
-        $('#subLedgerDetailTypeId_0').val("");
-    	$('#subLedgerDetailKeyId_0').val("");
-    	$('.subLedgerType_0').html("");
-    	$('.subLedgerName_0').html("");
-    	$('.subLedgerAmount_0').html("");
-	}else{
-	var index = obj.id.split('_')[1];
-	var glcodeid = document.getElementById('accountDetailsGlCodeId_'+index).value;
+function deleteSubLedgerDetails(glcodeid) {
 	$('#tblsubledgerdetails  > tbody > tr:visible[id="subledhgerrow"]').each(function() {
 		if($(this).find(".subLedgerGlCodeIdId").val()==glcodeid){
-			deleteRow($(this).find(".subLedgerAmount")[0],'tblsubledgerdetails');
+			var rowcount=$("#tblsubledgerdetails tbody tr").length;
+		    if(rowcount<=1) {
+		    	$('#subledhgerrow').prop("hidden","true");
+		    	$('#subledhgerrow').prop('subledgerinvisible',"true");
+		    	$('#subLedgerGlCodeId_0').val("");  
+		    	$('#subLedgerIsDebit_0').val("");
+		    	$('#subLedgerDebitAmount_0').val("");
+		    	$('#subLedgerCreditAmount_0').val("");
+		        $('.subLedgerGlCode_0').html("");
+		        $('#subLedgerDetailTypeId_0').val("");
+		    	$('#subLedgerDetailKeyId_0').val("");
+		    	$('.subLedgerType_0').html("");
+		    	$('.subLedgerName_0').html("");
+		    	$('.subLedgerAmount_0').html("");
+			}else{
+				deleteRow($(this).find(".subLedgerAmount")[0],'tblsubledgerdetails');
+			}
 		}
 			
 	});
-  }
 }
 
 
 function validateAccountDetails()
 {	
-	var debitDetailsCount = $("#tbldebitdetails > tbody > tr:visible[id='debitdetailsrow']").length;
-	var netPayableCount = $("#tblnetpayable > tbody > tr:visible[id='netpayablerow']").length;
-
 	var flag = true;
 	
 	$('#tbldebitdetails  > tbody > tr:visible[id="debitdetailsrow"]').each(function(index) {
@@ -826,7 +818,6 @@ function calculateBillAmount(){
 
 function validateWorkFlowApprover(name) {
 	document.getElementById("workFlowAction").value = name;
-	var approverPosId = document.getElementById("approvalPosition");
 	var button = document.getElementById("workFlowAction").value;
 	if (button != null && button == 'Submit') {
 		$('#approvalDepartment').attr('required', 'required');

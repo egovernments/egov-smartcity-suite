@@ -140,7 +140,7 @@
 		</many-to-one>
 		
 		<property name="isExemptedFromTax" column="isExemptedFromTax" />
-		<many-to-one name="taxExemptedReason" class="org.egov.ptis.domain.entity.property.TaxExeptionReason"  cascade="none" column="TAX_EXEMPTED_REASON" />
+		<many-to-one name="taxExemptedReason" class="org.egov.ptis.domain.entity.property.TaxExemptionReason"  cascade="none" column="TAX_EXEMPTED_REASON" />
 		<property name="docNumber" column="DOC_NUMBER"/>
 		
 		<many-to-one name="areaBndry" class="org.egov.infra.admin.master.entity.Boundary"

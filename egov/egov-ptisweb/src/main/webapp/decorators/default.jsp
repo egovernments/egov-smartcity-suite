@@ -48,25 +48,25 @@
         <title>eGov  - <decorator:title/> </title>
 
 		<link href="<cdn:url value='/resources/css/propertytax.css?${app_release_no}'/>" rel="stylesheet" type="text/css" />
-		<link href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
-		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+		<link href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css?rnd=${app_release_no}' context='/egi'/>" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css?rnd=${app_release_no}' context='/egi'/>">
 		
-		<link rel="stylesheet" type="text/css" href="<cdn:url value='/resources/yui2.8/fonts/fonts-min.css'/>"/>
-		<link rel="stylesheet" type="text/css" href="<cdn:url value='/resources/yui2.8/assets/skins/sam/datatable.css'/>"/>
+		<link rel="stylesheet" type="text/css" href="<cdn:url value='/resources/yui2.8/fonts/fonts-min.css?rnd=${app_release_no}'/>"/>
+		<link rel="stylesheet" type="text/css" href="<cdn:url value='/resources/yui2.8/assets/skins/sam/datatable.css?rnd=${app_release_no}'/>"/>
         <link href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>"
               rel="stylesheet" type="text/css"/>
 
-		<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"> </script>
-		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/yuiloader/yuiloader-min.js'/>"></script>
-		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/yahoo-dom-event/yahoo-dom-event.js'/>"></script>
-		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/element/element-min.js'/>"></script>
-		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/connection/connection-min.js'/>"></script>
-		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/datasource/datasource-min.js'/>"></script>
-		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/datatable/datatable-min.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/jquery.js?rnd=${app_release_no}' context='/egi'/>"> </script>
+		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/yuiloader/yuiloader-min.js?rnd=${app_release_no}'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/yahoo-dom-event/yahoo-dom-event.js?rnd=${app_release_no}'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/element/element-min.js?rnd=${app_release_no}'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/connection/connection-min.js?rnd=${app_release_no}'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/datasource/datasource-min.js?rnd=${app_release_no}'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/datatable/datatable-min.js?rnd=${app_release_no}'/>"></script>
 		
-		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/yahoo/yahoo-min.js'/>"></script>
-		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/dom/dom-min.js'/>"></script>
-		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/animation/animation-min.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/yahoo/yahoo-min.js?rnd=${app_release_no}'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/dom/dom-min.js?rnd=${app_release_no}'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/animation/animation-min.js?rnd=${app_release_no}'/>"></script>
 		
 		<script type="text/javascript" src="<cdn:url value='/resources/javascript/propertyTax.js?${app_release_no}'/>"></script>
 	    <script type="text/javascript" src="<cdn:url value='/resources/javascript/helper.js?${app_release_no}'/>"></script>
@@ -80,8 +80,8 @@
 		<script type="text/javascript" src="<cdn:url value='/resources/javascript/json2.js?${app_release_no}'/>"></script>
 		
 	    <script type="text/javascript" src="<cdn:url value='/resources/javascript/jquery/ajax-script.js?${app_release_no}'/>"></script>
-	    <script type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-	    <script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
+	    <script type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	    <script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
     	<decorator:head/>
     </head>
     

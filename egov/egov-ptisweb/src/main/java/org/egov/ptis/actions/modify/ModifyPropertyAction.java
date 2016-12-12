@@ -878,7 +878,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         final List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
         final List<String> apartmentsList = getPersistenceService().findAllBy("from Apartment order by name");
         final List<String> taxExemptionReasonList = getPersistenceService().findAllBy(
-                "from TaxExeptionReason order by name");
+                "from TaxExemptionReason where isActive = true order by name");
         setFloorNoMap(FLOOR_MAP);
         addDropdownData("floorType", floorTypes);
         addDropdownData("roofType", roofTypes);

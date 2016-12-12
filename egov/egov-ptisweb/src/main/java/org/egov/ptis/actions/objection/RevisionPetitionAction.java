@@ -342,7 +342,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         addDropdownData("roofType", getPersistenceService().findAllBy("from RoofType order by name"));
         final List<String> apartmentsList = getPersistenceService().findAllBy("from Apartment order by name");
         final List<String> taxExemptionReasonList = getPersistenceService().findAllBy(
-                "from TaxExeptionReason order by name");
+                "from TaxExemptionReason where isActive = true order by name");
 
         addDropdownData("wallType", wallTypes);
         addDropdownData("woodType", woodTypes);

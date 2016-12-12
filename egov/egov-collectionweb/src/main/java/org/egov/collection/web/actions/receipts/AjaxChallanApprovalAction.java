@@ -95,8 +95,7 @@ public class AjaxChallanApprovalAction extends BaseFormAction {
     @Action(value = "/receipts/ajaxChallanApproval-approverDesignationList")
     public String approverDesignationList() {
         if (approverDeptId != null)
-            designationMasterList = collectionsUtil.getDesignationsAllowedForChallanApproval(
-                    approverDeptId, receiptHeaderService.findById(receiptheaderId, false));
+            designationMasterList = collectionsUtil.getDesignationsAllowedForChallanApproval(approverDeptId);
 
         return DESIGNATIONLIST;
     }

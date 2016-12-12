@@ -290,16 +290,15 @@ public class ChallanAction extends BaseFormAction {
         return NEW;
     }
 
-    private void setLoginDept()  {
-            final Department loginUserDepartment = collectionsUtil.getDepartmentOfLoggedInUser();
-            if (loginUserDepartment == null) {
-                throw new ValidationException(Arrays.asList(new ValidationError("Department does not exists",
-                        "viewchallan.validation.error.user.notexists")));
-            }
-            setDeptId(loginUserDepartment.getId().toString());
-            setDept(loginUserDepartment);
-            addDropdownData("approverDepartmentList", collectionsUtil
-                    .getDepartmentsAllowedForChallanApproval(collectionsUtil.getLoggedInUser(), receiptHeader));
+    private void setLoginDept() {
+        final Department loginUserDepartment = collectionsUtil.getDepartmentOfLoggedInUser();
+        if (loginUserDepartment == null) {
+            throw new ValidationException(Arrays.asList(new ValidationError("Department does not exists",
+                    "viewchallan.validation.error.user.notexists")));
+        }
+        setDeptId(loginUserDepartment.getId().toString());
+        setDept(loginUserDepartment);
+        addDropdownData("approverDepartmentList", collectionsUtil.getDepartmentsAllowedForChallanApproval());
     }
 
     /**
@@ -382,12 +381,7 @@ public class ChallanAction extends BaseFormAction {
 
         receiptHeader.getReceiptDetails().clear();
         errors.clear();
-
-        // addDropdownData("designationMasterList",collectionsUtil.
-        // getDesignationsAllowedForChallanApproval(collectionsUtil.getLoggedInUser(),receiptHeader));
-        addDropdownData("approverDepartmentList", collectionsUtil.getDepartmentsAllowedForChallanApproval(
-                collectionsUtil.getLoggedInUser(), receiptHeader));
-
+        addDropdownData("approverDepartmentList", collectionsUtil.getDepartmentsAllowedForChallanApproval());
         populateAndPersistChallanReceipt();
         if (receiptHeader.getChallan().getState() != null
                 && receiptHeader.getChallan().getState().getOwnerPosition() != null)
@@ -660,10 +654,8 @@ public class ChallanAction extends BaseFormAction {
 
         // cheque/DD types
         if (instrumentProxyList != null)
-            if (getInstrumentType()
-                    .equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
-                    || getInstrumentType()
-                            .equals(CollectionConstants.INSTRUMENTTYPE_DD))
+            if (getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
+                    || getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_DD))
                 instrumentHeaderList = populateInstrumentHeaderForChequeDD(instrumentHeaderList, instrumentProxyList);
         instrumentHeaderList = receiptHeaderService.createInstrument(instrumentHeaderList);
 
@@ -1024,8 +1016,9 @@ public class ChallanAction extends BaseFormAction {
             setChequeAllowed(Boolean.FALSE);
         if (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_DD))
             setDdAllowed(Boolean.FALSE);
-       // if (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_BANK))
-            setBankAllowed(Boolean.FALSE);
+        // if
+        // (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_BANK))
+        setBankAllowed(Boolean.FALSE);
     }
 
     /*
@@ -1491,7 +1484,7 @@ public class ChallanAction extends BaseFormAction {
     public void setFunctionId(final Long functionId) {
         this.functionId = functionId;
     }
-    
+
     public Date getCutOffDate() {
         return cutOffDate;
     }
@@ -1531,7 +1524,7 @@ public class ChallanAction extends BaseFormAction {
     public void setInstrumentType(String instrumentType) {
         this.instrumentType = instrumentType;
     }
-    
+
     @Override
     public void validate() {
         super.validate();

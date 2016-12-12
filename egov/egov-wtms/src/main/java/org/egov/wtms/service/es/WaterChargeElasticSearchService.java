@@ -394,14 +394,16 @@ public class WaterChargeElasticSearchService {
             taxDetail.setCurrentYearTillDateBalDmd(proportionalDemand.subtract(totalCollections));
             final BigDecimal lastYearCollection = waterChargeCollDocService.getCollectionBetweenDates(
                     waterChargedashBoardRequest, lastYearFromDate, lastYearToDate, fieldName);
-            // variance = ((currentYearCollection -
-            // lastYearCollection)*100)/lastYearCollection
-            BigDecimal variation;
+            // variance = ((lastYearCollection/currentYearCollection )*100)
+            BigDecimal variation=BigDecimal.ZERO;
+            taxDetail.setLastYearTillDateColl(lastYearCollection);
             if (lastYearCollection.compareTo(BigDecimal.ZERO) == 0)
                 variation = WaterTaxConstants.BIGDECIMAL_100;
             else
-                variation = totalCollections.subtract(lastYearCollection).multiply(WaterTaxConstants.BIGDECIMAL_100)
-                        .divide(lastYearCollection, 1, BigDecimal.ROUND_HALF_UP);
+                if(totalCollections.compareTo(BigDecimal.ZERO)>0){
+                variation =taxDetail.getLastYearTillDateColl().multiply(WaterTaxConstants.BIGDECIMAL_100)
+                        .divide(totalCollections, 1, BigDecimal.ROUND_HALF_UP);
+                }
             taxDetail.setLastYearVar(variation);
             taxPayers.add(taxDetail);
         }
@@ -585,7 +587,7 @@ public class WaterChargeElasticSearchService {
         for (final WaterChargeDocument waterChargedoc : waterChargeRecords) {
             taxDfaulter = new WaterTaxDefaulters();
             taxDfaulter.setOwnerName(waterChargedoc.getConsumerName());
-            taxDfaulter.setConnectionType(waterChargedoc.getConnectionType());
+            taxDfaulter.setConnectionType(waterChargedoc.getUsage());
             taxDfaulter.setUlbName(waterChargedoc.getCityName());
             taxDfaulter.setBalance(BigDecimal.valueOf(waterChargedoc.getWaterTaxDue()));
             taxDfaulter.setPeriod(StringUtils.isBlank(waterChargedoc.getDuePeriod()) ? StringUtils.EMPTY

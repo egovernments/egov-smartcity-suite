@@ -40,8 +40,13 @@
 
 package org.egov.tl.web.actions.viewtradelicense;
 
-import org.apache.struts2.convention.annotation.*;
+import org.apache.struts2.convention.annotation.Actions;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.eis.entity.Assignment;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
@@ -51,10 +56,10 @@ import org.egov.tl.service.AbstractLicenseService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
-import org.egov.tl.web.actions.newtradelicense.NewTradeLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
+import java.util.List;
 
 @ParentPackage("egov")
 @Results({@Result(name = "report", location = "viewTradeLicense-report.jsp"),
@@ -65,6 +70,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     protected TradeLicense tradeLicense = new TradeLicense();
     protected String reportId;
     private String applicationNo;
+    private Long licenseid;
 
     @Autowired
     private ReportService reportService;
@@ -197,9 +203,42 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     @Action(value = "/viewtradelicense/viewTradeLicense-cancelLicense")
     public String updateLicenseClosure() {
-        tradeLicense = tradeLicenseService.getLicenseById(tradeLicense.getId());
-        tradeLicenseService.updateClosureStatus(tradeLicense);
-        addActionMessage(this.getText("license.closure.msg") + license().getLicenseNumber());
+        populateWorkflowBean();
+        if (getLicenseid() != null) {
+            tradeLicense = tradeLicenseService.getLicenseById(getLicenseid());
+            tradeLicenseService.cancelLicenseWorkflow(tradeLicense, workflowBean);
+            if (workflowBean.getWorkFlowAction().contains(Constants.BUTTONFORWARD)) {
+                List<Assignment> assignments = assignmentService.getAssignmentsForPosition(workflowBean.getApproverPositionId());
+                String nextDesgn = !assignments.isEmpty() ? assignments.get(0).getDesignation().getName() : "";
+                final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
+                addActionMessage(this.getText("license.closure.sent") + " " + nextDesgn + " - " + userName);
+            }
+            else if (workflowBean.getWorkFlowAction().contains(Constants.BUTTONREJECT)) {
+                if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED)) {
+                    List<Assignment> assignments = assignmentService.getAssignmentsForPosition(license().getState().getInitiatorPosition().getId());
+                    final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
+                    addActionMessage(this.getText("license.closure.rejectedfirst") + (" "+license().getState().getInitiatorPosition().getDeptDesig().getDesignation().getName() + " - ") + " " + userName);
+                } else addActionMessage(this.getText("license.closure.rejected") + " "+license().getLicenseNumber());
+
+
+            } else
+                addActionMessage(this.getText("license.closure.msg") + license().getLicenseNumber());
+        }
         return "message";
     }
+
+    @Override
+    public String getAdditionalRule() {
+        return Constants.CLOSURE_ADDITIONAL_RULE;
+    }
+
+    public Long getLicenseid() {
+        return licenseid;
+    }
+
+    public void setLicenseid(Long licenseid) {
+        this.licenseid = licenseid;
+    }
+
+
 }

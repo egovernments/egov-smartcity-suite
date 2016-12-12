@@ -95,7 +95,7 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
-import org.egov.ptis.domain.entity.property.TaxExeptionReason;
+import org.egov.ptis.domain.entity.property.TaxExemptionReason;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
@@ -208,8 +208,8 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             floor.setPropertyDetail(propertyModel.getPropertyDetail());
         }
         if (StringUtils.isNotBlank(taxExemptedReason) && !taxExemptedReason.equals("-1")) {
-            final TaxExeptionReason taxExemptionReason = (TaxExeptionReason) propertyPerService.find(
-                    "From TaxExeptionReason where id = ?", Long.valueOf(taxExemptedReason));
+            final TaxExemptionReason taxExemptionReason = (TaxExemptionReason) propertyPerService.find(
+                    "From TaxExemptionReason where id = ?", Long.valueOf(taxExemptedReason));
             propertyModel.setTaxExemptedReason(taxExemptionReason);
             propertyModel.setIsExemptedFromTax(Boolean.TRUE);
         } else {

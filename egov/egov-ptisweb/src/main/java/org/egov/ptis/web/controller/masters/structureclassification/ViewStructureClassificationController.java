@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2016>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -37,65 +37,37 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.ptis.web.controller.masters.structureclassification;
 
-package org.egov.ptis.domain.entity.property;
+import org.egov.ptis.domain.entity.property.StructureClassification;
+import org.egov.ptis.master.service.StructureClassificationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.SafeHtml;
+@Controller
+@RequestMapping(value = "/structureclassification")
+public class ViewStructureClassificationController {
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+    private final StructureClassificationService structureClassificationService;
 
-@Entity
-@Table(name = "egpt_exemption_reason")
-@SequenceGenerator(name = TaxExeptionReason.SEQ_TAX_EXEMPTION_REASON, sequenceName = TaxExeptionReason.SEQ_TAX_EXEMPTION_REASON, allocationSize = 1)
-public class TaxExeptionReason extends AbstractAuditable {
+    @Autowired
+    public ViewStructureClassificationController(final StructureClassificationService structureClassificationService) {
+        this.structureClassificationService = structureClassificationService;
+    }
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    @ModelAttribute
+    public StructureClassification structureClassificationModel() {
+        return new StructureClassification();
+    }
 
-	public static final String SEQ_TAX_EXEMPTION_REASON = "SEQ_EGPT_EXEMPTION_REASON";
-
-	@Id
-	@GeneratedValue(generator = SEQ_TAX_EXEMPTION_REASON, strategy = GenerationType.SEQUENCE)
-	private Long id;
-
-	@SafeHtml
-	private String name;
-
-	@SafeHtml
-	private String code;
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	@Override
-	public Long getId() {
-		return id;
-	}
-
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @RequestMapping(value = "/view", method = RequestMethod.GET)
+    public String showStructureType(final Model model) {
+        model.addAttribute("structureclassifications", structureClassificationService.getAllActiveStructureTypes());
+        return "structureclassification-view";
+    }
 
 }

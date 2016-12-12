@@ -62,4 +62,12 @@ public class TradeLicense extends License {
         details.append("<br/> Remarks : ").append(this.getState().getComments());
         return details.toString();
     }
+
+    @Override
+    public  String myLinkId() {
+        if ("Closure License".equals(this.getState().getNatureOfTask()))
+            return "/tl/viewtradelicense/viewTradeLicense-closure.action?model.id="+this.id;
+        else
+            return "/tl/newtradelicense/newTradeLicense-showForApproval.action?model.id="+this.id;
+    }
 }

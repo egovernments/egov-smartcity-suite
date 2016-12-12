@@ -370,5 +370,10 @@
 		<put-attribute name="page-title" value="lbl.hdr.taxExemption" cascade="true" />
 		<put-attribute name="body" value="/WEB-INF/views/masters/exemptionreason/tax-exemption-reason-view.jsp" />
 	</definition>
+	
+	<definition name="structureclassification-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.structureclassification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/structures/structureclassification-view.jsp"/>
+    </definition>
     
 </tiles-definitions> 

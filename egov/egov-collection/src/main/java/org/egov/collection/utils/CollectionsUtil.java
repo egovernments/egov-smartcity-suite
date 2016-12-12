@@ -172,8 +172,7 @@ public class CollectionsUtil {
      * @return the <code>EgwStatus</code> instance
      */
     public EgwStatus getStatusForModuleAndCode(final String moduleName, final String statusCode) {
-        final EgwStatus status = egwStatusDAO.getStatusByModuleAndCode(moduleName, statusCode);
-        return status;
+        return egwStatusDAO.getStatusByModuleAndCode(moduleName, statusCode);
     }
 
     /**
@@ -309,14 +308,13 @@ public class CollectionsUtil {
         final List<AppConfigValues> deptCodesApp = appConfigValuesService
                 .getConfigValuesByModuleAndKey(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                         CollectionConstants.COLLECTION_DEPARTMENT_COLLMODES);
-        final List<String> deptCodes = new ArrayList<String>();
+        final List<String> deptCodes = new ArrayList<>();
         for (final AppConfigValues deptCode : deptCodesApp)
             deptCodes.add(deptCode.getValue());
-        List<Assignment> assignList = null;
+        List<Assignment> assignList;
         Boolean isDeptAllowed = false;
         final Boolean isEmp = isEmployee(loggedInUser);
         if (isEmp) {
-            // dept = getDepartmentOfUser(loggedInUser);
             assignList = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(loggedInUser.getId());
             for (final Assignment assign : assignList)
                 if (!deptCodes.isEmpty() && deptCodes.contains(assign.getDepartment().getCode()))
@@ -367,7 +365,7 @@ public class CollectionsUtil {
         final String departmentStr = getDepartmentForWorkFlow();
         final String[] department = departmentStr.split(",");
         final String[] designation = designationStr.split(",");
-        List<Assignment> assignment = new ArrayList<Assignment>();
+        List<Assignment> assignment = new ArrayList<>();
         for (final String dept : department) {
             for (final String desg : designation) {
                 assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
@@ -520,7 +518,7 @@ public class CollectionsUtil {
     public String getAppConfigValue(final String moduleName, final String key) {
         final List<AppConfigValues> appConfValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName,
                 key);
-        if (appConfValues != null && appConfValues.size() > 0)
+        if (appConfValues != null && !appConfValues.isEmpty())
             return appConfValues.get(0).getValue();
         else
             return "";
@@ -610,9 +608,9 @@ public class CollectionsUtil {
      * @return list of non-primary department of the given user
      */
     public List<Department> getAllNonPrimaryAssignmentsOfUser(final User user) {
-        final List<Department> departmentlist = new ArrayList<Department>();
+        final List<Department> departmentlist = new ArrayList<>();
         try {
-            final HashMap<String, String> paramMap = new HashMap<String, String>();
+            final HashMap<String, String> paramMap = new HashMap<>();
             paramMap.put("code", EisManagersUtill.getEmployeeService().getEmpForUserId(user.getId()).getCode());
             final List<EmployeeView> employeeViewList = (List<EmployeeView>) eisService.getEmployeeInfoList(paramMap);
             if (!employeeViewList.isEmpty())
@@ -639,11 +637,10 @@ public class CollectionsUtil {
         return nonPrimaryAssignments.isEmpty() ? null : nonPrimaryAssignments.get(0);
     }
 
-    public List<Designation> getDesignationsAllowedForChallanApproval(final Integer departmentId,
-            final ReceiptHeader receiptHeaderObj) {
-        List<Designation> designations = new ArrayList<Designation>(0);
+    public List<Designation> getDesignationsAllowedForChallanApproval(final Integer departmentId) {
+        List<Designation> designations = new ArrayList<>(0);
         designations = designationService.getAllDesignationByDepartment(Long.valueOf(departmentId), new Date());
-        final List<Designation> designation = new ArrayList<Designation>(0);
+        final List<Designation> designation = new ArrayList<>(0);
 
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
@@ -655,9 +652,8 @@ public class CollectionsUtil {
         return designation;
     }
 
-    public List<Department> getDepartmentsAllowedForChallanApproval(final User loggedInUser,
-            final ReceiptHeader receiptHeaderObj) {
-        final List<Department> departments = new ArrayList<Department>(0);
+    public List<Department> getDepartmentsAllowedForChallanApproval() {
+        final List<Department> departments = new ArrayList<>(0);
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.COLLECTION_DESIG_CHALLAN_WORKFLOW);
@@ -837,12 +833,21 @@ public class CollectionsUtil {
                 createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
         return createVoucherForBillingService;
     }
+    
+    public Designation getDesignationForApprover() {
+        return designationService.getDesignationByName(getAppConfigValue(
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.COLLECTION_DESIGNATIONFORAPPROVER));
+     }
 
     public String getApproverName(final Position position) {
-        String approver;
-        final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(position.getId());
+        String approver = null;
+        final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId());
+        for(Assignment assignment: assignments) {
+            if (assignment.getDesignation().equals(getDesignationForApprover()))
         approver = assignment.getEmployee().getName().concat("~").concat(assignment.getEmployee().getCode())
                 .concat("~").concat(assignment.getPosition().getName());
+        }
         return approver;
     }
 
@@ -857,7 +862,7 @@ public class CollectionsUtil {
     public Date getRemittanceVoucherDate(final Date receiptDate) {
         Boolean useReceiptDateAsContraVoucherDate = false;
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        Date voucherDate = null;
+        Date voucherDate;
         Date rcptDate = null;
         if (getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_USERECEIPTDATEFORCONTRA).equals(CollectionConstants.YES))
