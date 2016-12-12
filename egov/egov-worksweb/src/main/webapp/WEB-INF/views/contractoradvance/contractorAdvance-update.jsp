@@ -51,6 +51,7 @@
 <form:form id="contractorAdvanceForm" class="form-horizontal form-groups-bordered" modelAttribute="contractorAdvanceRequisition" role="form" action="" method="post" enctype="multipart/form-data">
 	<input id="cancelConfirm" type="hidden" value="<spring:message code="msg.cancel.arf.confirm" />" />
 	<input id="errorAdvanceExceeded" type="hidden" value="<spring:message code="error.advance.exceeded" />" />
+	<input id="errorAdvanceZero" type="hidden" value="<spring:message code="error.creditordebitamount.zero" />" />
 	<input type="hidden" name="id" id="id" value="${contractorAdvanceRequisition.id }" /> 
 	<input type="hidden" name="mode" id="mode" value="${mode }" />
 	<input type="hidden" name="totalMBAmountOfMBs" id="totalMBAmountOfMBs" value="${totalMBAmountOfMBs }" />

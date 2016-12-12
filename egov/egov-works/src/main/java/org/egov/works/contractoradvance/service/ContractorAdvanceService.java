@@ -118,7 +118,7 @@ public class ContractorAdvanceService {
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<ContractorAdvanceRequisition> contractorAdvanceRequisitionWorkflowService;
-    
+
     public ContractorAdvanceRequisition getContractorAdvanceRequisitionById(final Long id) {
         return contractorAdvanceRepository.findOne(id);
     }
@@ -388,7 +388,7 @@ public class ContractorAdvanceService {
     }
 
     public void validateInput(final ContractorAdvanceRequisition contractorAdvanceRequisition, final BindingResult resultBinder) {
-        final Double advancePaidTillNow = getTotalAdvancePaid(
+        Double advancePaidTillNow = getTotalAdvancePaid(
                 contractorAdvanceRequisition.getId() == null ? -1L : contractorAdvanceRequisition.getId(),
                 contractorAdvanceRequisition.getWorkOrderEstimate().getId(),
                 ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.APPROVED.toString());
@@ -397,6 +397,8 @@ public class ContractorAdvanceService {
                 ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CANCELLED.toString());
         if (totalMBAmountOfMBs == null)
             totalMBAmountOfMBs = 0D;
+        if (advancePaidTillNow == null)
+            advancePaidTillNow = 0D;
         if (contractorAdvanceRequisition.getAdvanceRequisitionAmount()
                 .add(BigDecimal.valueOf(advancePaidTillNow + totalMBAmountOfMBs)).compareTo(BigDecimal
                         .valueOf(contractorAdvanceRequisition.getWorkOrderEstimate().getWorkOrder().getWorkOrderAmount())) > 0)

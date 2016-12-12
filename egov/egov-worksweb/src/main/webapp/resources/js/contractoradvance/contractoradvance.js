@@ -53,9 +53,15 @@ $(document).ready(function(){
 	});
 
 	$('#debitamount').change(function() {
-		$('#creditamount').val(parseFloat($(this).val()).toFixed(2));
-		$('#advanceRequisitionAmount').val(parseFloat($(this).val()).toFixed(2));
-		$('#advanceAmount').html(parseFloat($(this).val()).toFixed(2));
+		if ($(this).val() > 0) {
+			$('#creditamount').val(parseFloat($(this).val()).toFixed(2));
+			$('#advanceRequisitionAmount').val(parseFloat($(this).val()).toFixed(2));
+			$('#advanceAmount').html(parseFloat($(this).val()).toFixed(2));
+		} else {
+			$('#creditamount').val('');
+			$('#advanceRequisitionAmount').val('');
+			$('#advanceAmount').html('');
+		}
 	});
 	
 	$('#debitGlcodeId').trigger('change');
@@ -121,6 +127,10 @@ function validateContractorAdvance() {
 	var totalMBAmountOfMBs = $('#totalMBAmountOfMBs').val() == "" ? 0 : parseFloat($('#totalMBAmountOfMBs').val());
 	var advanceRequisitionAmount = $('#advanceRequisitionAmount').val() == "" ? 0 : parseFloat($('#advanceRequisitionAmount').val());
 	
+	if (advanceRequisitionAmount <= 0) {
+		bootbox.alert($('#errorAdvanceZero').val());
+		return false;
+	}
 	if (workOrderAmount < (advancePaidTillNow + advanceRequisitionAmount + totalMBAmountOfMBs)) {
 		bootbox.alert($('#errorAdvanceExceeded').val());
 		return false;

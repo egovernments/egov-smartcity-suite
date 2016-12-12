@@ -55,6 +55,7 @@
 	<form:hidden path="workOrderEstimate" id="workOrderEstimate" value="${workOrderEstimate.id}" /> 
 	<input type="hidden" name="mode" id="mode" value="${mode }" />
 	<input id="errorAdvanceExceeded" type="hidden" value="<spring:message code="error.advance.exceeded" />" />
+	<input id="errorAdvanceZero" type="hidden" value="<spring:message code="error.creditordebitamount.zero" />" />
 	<input type="hidden" name="totalMBAmountOfMBs" id="totalMBAmountOfMBs" value="${totalMBAmountOfMBs }" />
 	<div class="position_alert">
 		<form:hidden path="advanceRequisitionAmount" id="advanceRequisitionAmount" value='${contractorAdvanceRequisition.advanceRequisitionAmount}'/>
