@@ -84,6 +84,10 @@ public class SearchContractorAdvanceJsonAdaptor implements JsonSerializer<Contra
         } else
             jsonObject.addProperty("currentowner", "NA");
 
+        jsonObject.addProperty("advanceBillNumber",
+                contractorAdvanceRequisition.getEgAdvanceReqMises().getEgBillregister() != null
+                        ? contractorAdvanceRequisition.getEgAdvanceReqMises().getEgBillregister().getBillnumber() : "NA");
+
         jsonObject.addProperty("contractorRequisitionId", contractorAdvanceRequisition.getId());
         return jsonObject;
     }

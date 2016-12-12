@@ -49,6 +49,7 @@ public class SearchRequestContractorRequisition {
     private Date toDate;
     private String contractorName;
     private String egwStatus;
+    private String advanceBillNumber;
 
     public String getWorkOrderNumber() {
         return workOrderNumber;
@@ -96,6 +97,14 @@ public class SearchRequestContractorRequisition {
 
     public void setEgwStatus(final String egwStatus) {
         this.egwStatus = egwStatus;
+    }
+
+    public String getAdvanceBillNumber() {
+        return advanceBillNumber;
+    }
+
+    public void setAdvanceBillNumber(final String advanceBillNumber) {
+        this.advanceBillNumber = advanceBillNumber;
     }
 
 }

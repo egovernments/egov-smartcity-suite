@@ -96,7 +96,8 @@ function callAjaxSearch() {
 					"data" : "contractorName"}, {
 					"data" : "requisitionAmount","sClass" : "text-right"}, {
 					"data" : "status"}, {
-					"data" : "owner"} ]
+					"data" : "currentowner"},{
+					"data" : "advanceBillNumber"} ]
 			});
 }
 
@@ -199,5 +200,33 @@ $(document).ready(function() {
 		displayKey : 'name',
 		source : contractor.ttAdapter()
 	});
+	
+	var advanceBillNumber = new Bloodhound({
+	    datumTokenizer: function (datum) {
+	        return Bloodhound.tokenizers.whitespace(datum.value);
+	    },
+	    queryTokenizer: Bloodhound.tokenizers.whitespace,
+	    remote: {
+	        url: '/egworks/contractoradvance/ajaxadvancebillnumbers?advanceBillNumber=%QUERY',
+	        filter: function (data) {
+	            return $.map(data, function (ct) {
+	                return {
+	                    name: ct
+	                };
+	            });
+	        }
+	    }
+	});
+
+	advanceBillNumber.initialize();
+	var advanceBillNumber_typeahead = $('#advanceBillNumber').typeahead({
+		hint : true,
+		highlight : true,
+		minLength : 3
+	}, {
+		displayKey : 'name',
+		source : advanceBillNumber.ttAdapter()
+	});
+
 
 });

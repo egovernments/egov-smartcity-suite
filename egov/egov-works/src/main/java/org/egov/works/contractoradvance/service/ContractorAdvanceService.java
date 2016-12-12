@@ -179,6 +179,10 @@ public class ContractorAdvanceService {
             queryStr.append(
                     " and car.status.code = :status)");
 
+        if (StringUtils.isNotBlank(searchRequestContractorRequisition.getAdvanceBillNumber()))
+            queryStr.append(
+                    " and upper(car.egAdvanceReqMises.egBillregister.billnumber) = :advanceBillNumber)");
+
     }
 
     private Query setParameterForSearchContractorAdvance(
@@ -201,6 +205,9 @@ public class ContractorAdvanceService {
                 qry.setParameter("fromDate", searchRequestContractorRequisition.getFromDate());
             if (searchRequestContractorRequisition.getToDate() != null)
                 qry.setParameter("toDate", searchRequestContractorRequisition.getToDate());
+            if (StringUtils.isNotBlank(searchRequestContractorRequisition.getAdvanceBillNumber()))
+                qry.setParameter("advanceBillNumber",
+                        searchRequestContractorRequisition.getAdvanceBillNumber().toUpperCase());
 
         }
         return qry;
@@ -442,4 +449,11 @@ public class ContractorAdvanceService {
                 errors.reject("workFlowError", message);
         }
     }
+
+    public List<String> findAdvanceBillNumber(final String advanceBillNumber) {
+        final List<String> advanceBillNumbers = contractorAdvanceRepository
+                .findAdvanceBillNumber("%" + advanceBillNumber + "%");
+        return advanceBillNumbers;
+    }
+
 }

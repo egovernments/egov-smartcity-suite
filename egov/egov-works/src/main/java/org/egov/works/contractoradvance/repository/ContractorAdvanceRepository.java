@@ -71,4 +71,8 @@ public interface ContractorAdvanceRepository extends JpaRepository<ContractorAdv
     ContractorAdvanceRequisition findByWorkOrderEstimateAndStatus(@Param("workOrderEstimateId") Long workOrderEstimateId,
             @Param("cancelledStatus") String cancelledStatus, @Param("approvedStatus") String approvedStatus,
             @Param("newStatus") String newStatus);
+
+    @Query("select distinct(car.egAdvanceReqMises.egBillregister.billnumber) from ContractorAdvanceRequisition as car where upper(car.egAdvanceReqMises.egBillregister.billnumber) like upper(:advanceBillNumber)")
+    List<String> findAdvanceBillNumber(@Param("advanceBillNumber") String advanceBillNumber);
+
 }

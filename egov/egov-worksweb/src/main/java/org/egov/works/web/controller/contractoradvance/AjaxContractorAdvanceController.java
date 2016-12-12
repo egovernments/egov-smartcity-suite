@@ -138,4 +138,10 @@ public class AjaxContractorAdvanceController {
             throw new ApplicationRuntimeException("error.validate.re");
         }
     }
+
+    @RequestMapping(value = "/ajaxadvancebillnumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> getAdvanceBillNumber(@RequestParam final String advanceBillNumber) {
+        return contractorAdvanceService.findAdvanceBillNumber(advanceBillNumber);
+    }
+
 }

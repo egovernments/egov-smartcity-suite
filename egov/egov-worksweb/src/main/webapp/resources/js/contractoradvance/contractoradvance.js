@@ -149,3 +149,8 @@ function viewLineEstimate(lineEstimateID) {
 function viewAbstractEstimate(abstractEstimateID) {
 	window.open("/egworks/abstractestimate/view/"+ abstractEstimateID , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 }
+
+$('#viewAdvanceBill').click(function(){
+	var sourcePath = $('#sourcePath').val();
+	window.open(sourcePath , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+});

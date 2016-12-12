@@ -85,7 +85,7 @@
 								<tr>
 									<td><c:out value="${advanceDtls.chartofaccounts.glcode}" /></td>
 									<td><c:out value="${advanceDtls.chartofaccounts.name}" /></td>
-									<td><c:out value="${advanceDtls.debitamount}" /></td>
+									<td class="text-right"><c:out value="${advanceDtls.debitamount}" /></td>
 								</tr>
 							</c:if>
 						</c:forEach>
@@ -112,7 +112,7 @@
 								<tr>
 									<td><c:out value="${advanceDtls.chartofaccounts.glcode}" /></td>
 									<td><c:out value="${advanceDtls.chartofaccounts.name}" /></td>
-									<td><c:out value="${advanceDtls.creditamount}" /></td>
+									<td class="text-right"><c:out value="${advanceDtls.creditamount}" /></td>
 								</tr>
 							</c:if>
 						</c:forEach>

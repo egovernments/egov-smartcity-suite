@@ -51,6 +51,7 @@
 	<form:hidden path="id" />
 	<input type="hidden" name="woeId" id="woeId" value="${woeId}" />
 	<form:hidden path="workOrderEstimate" id="workOrderEstimate" value="${workOrderEstimate.id}" /> 
+	<input type="hidden" id="sourcePath" value="${contractorAdvanceRequisition.egAdvanceReqMises.egBillregister.egBillregistermis.sourcePath}" />
 	<input type="hidden" name="mode" id="mode" value="${mode }" />
 	<div class="position_alert">
 		<form:hidden path="advanceRequisitionAmount" id="advanceRequisitionAmount" value='<c:out value="${contractorAdvanceRequisition.advanceRequisitionAmount}" default="0.0" />'/>
@@ -65,6 +66,7 @@
 	</c:if>
 	<div class="row">
 		<div class="col-sm-12 text-center">
+			<button type='submit' class='btn btn-primary' id="viewAdvanceBill" ><spring:message code='lbl.viewadvancebill' /></button>
 			<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
 		</div>
 	</div>

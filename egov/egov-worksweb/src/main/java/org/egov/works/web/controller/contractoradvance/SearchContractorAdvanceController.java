@@ -39,6 +39,7 @@
  */
 package org.egov.works.web.controller.contractoradvance;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.commons.EgwStatus;
@@ -65,8 +66,12 @@ public class SearchContractorAdvanceController {
             @ModelAttribute final SearchRequestContractorRequisition searchRequestContractorRequisition,
             final Model model) throws ApplicationException {
         model.addAttribute("searchRequestContractorRequisition", searchRequestContractorRequisition);
-        final List<EgwStatus> egwStatus = egwStatusHibernateDAO.getStatusByModule(WorksConstants.CONTRACTOR_ADVANCE);
-        model.addAttribute("egwStatus", egwStatus);
+        final List<EgwStatus> egwStatuses = egwStatusHibernateDAO.getStatusByModule(WorksConstants.CONTRACTOR_ADVANCE);
+        final List<EgwStatus> newEgwStatuses = new ArrayList<EgwStatus>();
+        for (final EgwStatus egwStatus : egwStatuses)
+            if (!egwStatus.getCode().equalsIgnoreCase(WorksConstants.NEW))
+                newEgwStatuses.add(egwStatus);
+        model.addAttribute("egwStatus", newEgwStatuses);
         return "searchcontractoradvance";
     }
 

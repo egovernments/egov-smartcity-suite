@@ -120,6 +120,17 @@
 								cssClass="add-margin error-msg" />
 						</div>
 					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.advancebillnumber" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="advanceBillNumber" id="advanceBillNumber"
+								class="form-control"
+								placeholder="Type first 3 letters of Advance bill number" />
+							<form:errors path="advanceBillNumber"
+								cssClass="add-margin error-msg" />
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -151,6 +162,7 @@
 					<th><spring:message code="lbl.arfamount" /></th>
 					<th><spring:message code="lbl.status" /></th>
 					<th><spring:message code="lbl.owner" /></th>
+					<th><spring:message code="lbl.advancebillnumber" /></th>
 				</tr>
 			</thead>
 		</table>
