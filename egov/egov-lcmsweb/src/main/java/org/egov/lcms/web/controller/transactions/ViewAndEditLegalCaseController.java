@@ -46,7 +46,7 @@ import java.util.List;
 import org.egov.lcms.masters.service.CourtMasterService;
 import org.egov.lcms.masters.service.PetitionTypeMasterService;
 import org.egov.lcms.transactions.entity.LegalCase;
-import org.egov.lcms.transactions.entity.LegalCaseDocuments;
+import org.egov.lcms.transactions.entity.LegalCaseUploadDocuments;
 import org.egov.lcms.transactions.service.LegalCaseService;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,9 +130,9 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
     }
 
     private LegalCase getLegalCaseDocuments(final LegalCase legalCase) {
-        List<LegalCaseDocuments> documentDetailsList = new ArrayList<LegalCaseDocuments>();
+        List<LegalCaseUploadDocuments> documentDetailsList = new ArrayList<LegalCaseUploadDocuments>();
         documentDetailsList = legalCaseUtil.getLegalCaseDocumentList(legalCase);
-        legalCase.setLegalCaseDocuments(documentDetailsList);
+        legalCase.setLegalCaseUploadDocuments(documentDetailsList);
         return legalCase;
     }
 

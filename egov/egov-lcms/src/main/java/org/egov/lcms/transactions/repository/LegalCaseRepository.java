@@ -43,7 +43,7 @@ import java.util.List;
 
 import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.LegalCase;
-import org.egov.lcms.transactions.entity.LegalCaseDocuments;
+import org.egov.lcms.transactions.entity.LegalCaseUploadDocuments;
 import org.egov.lcms.transactions.entity.PwrDocuments;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -57,8 +57,8 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, Long> {
 
     LegalCase findByCaseNumber(String number);
     
-    @Query("select lcd from LegalCaseDocuments lcd where lcd.legalCase.id=:legalcaseId order by lcd.id desc")
-    List<LegalCaseDocuments>getLegalCaseDocumentList(@Param("legalcaseId") Long legalcaseId);
+    @Query("select lcd from LegalCaseUploadDocuments lcd where lcd.legalCase.id=:legalcaseId order by lcd.id desc")
+    List<LegalCaseUploadDocuments>getLegalCaseUploadDocumentList(@Param("legalcaseId") Long legalcaseId);
     
     @Query("select lcd from PwrDocuments lcd where lcd.pwr.id=:pwrId order by lcd.id desc")
     List<PwrDocuments>getPwrDocumentList(@Param("pwrId") Long pwrId);

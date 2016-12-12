@@ -223,7 +223,7 @@ public class LegalCase extends AbstractAuditable {
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY)
     @NotAudited
-    private List<LegalCaseDocuments> legalCaseDocuments = new ArrayList<LegalCaseDocuments>();
+    private List<LegalCaseUploadDocuments> legalCaseUploadDocuments = new ArrayList<LegalCaseUploadDocuments>();
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Audited
@@ -831,12 +831,12 @@ public class LegalCase extends AbstractAuditable {
         this.judgmentsBeanList = judgmentsBeanList;
     }
 
-    public List<LegalCaseDocuments> getLegalCaseDocuments() {
-        return legalCaseDocuments;
+    public List<LegalCaseUploadDocuments> getLegalCaseUploadDocuments() {
+        return legalCaseUploadDocuments;
     }
 
-    public void setLegalCaseDocuments(final List<LegalCaseDocuments> legalCaseDocuments) {
-        this.legalCaseDocuments = legalCaseDocuments;
+    public void setLegalCaseUploadDocuments(final List<LegalCaseUploadDocuments> legalCaseUploadDocuments) {
+        this.legalCaseUploadDocuments = legalCaseUploadDocuments;
     }
 
     public List<LegalCaseDisposal> getLegalCaseDisposal() {

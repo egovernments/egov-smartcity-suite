@@ -39,11 +39,11 @@
  */
 package org.egov.lcms.transactions.repository;
 
-import org.egov.lcms.transactions.entity.LegalCaseDocuments;
+import org.egov.lcms.transactions.entity.LegalCaseUploadDocuments;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface LegalCaseDocumentsRepository extends JpaRepository<LegalCaseDocuments, Long> {
+public interface LegalCaseUploadDocumentsRepository extends JpaRepository<LegalCaseUploadDocuments, Long> {
 
 }

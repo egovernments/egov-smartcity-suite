@@ -59,13 +59,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "eglc_legalcase_document")
-@SequenceGenerator(name = LegalCaseDocuments.SEQ_LEGALCASEDOCUMENTS, sequenceName = LegalCaseDocuments.SEQ_LEGALCASEDOCUMENTS, allocationSize = 1)
-public class LegalCaseDocuments extends AbstractPersistable<Long> {
+@SequenceGenerator(name = LegalCaseUploadDocuments.SEQ_LEGALCASEUPLOADDOCUMENTS, sequenceName = LegalCaseUploadDocuments.SEQ_LEGALCASEUPLOADDOCUMENTS, allocationSize = 1)
+public class LegalCaseUploadDocuments extends AbstractPersistable<Long> {
     private static final long serialVersionUID = -4555037259173138199L;
-    public static final String SEQ_LEGALCASEDOCUMENTS = "SEQ_eglc_legalcase_document";
+    public static final String SEQ_LEGALCASEUPLOADDOCUMENTS = "SEQ_eglc_legalcase_document";
 
     @Id
-    @GeneratedValue(generator = SEQ_LEGALCASEDOCUMENTS, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_LEGALCASEUPLOADDOCUMENTS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull

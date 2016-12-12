@@ -51,11 +51,11 @@ import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.CounterAffidavit;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseAdvocate;
-import org.egov.lcms.transactions.entity.LegalCaseDocuments;
+import org.egov.lcms.transactions.entity.LegalCaseUploadDocuments;
 import org.egov.lcms.transactions.entity.Pwr;
 import org.egov.lcms.transactions.entity.PwrDocuments;
-import org.egov.lcms.transactions.repository.LegalCaseDocumentsRepository;
 import org.egov.lcms.transactions.repository.LegalCaseRepository;
+import org.egov.lcms.transactions.repository.LegalCaseUploadDocumentsRepository;
 import org.egov.lcms.transactions.repository.PwrDocumentsRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
@@ -83,7 +83,7 @@ public class LegalCaseService {
     private FileStoreService fileStoreService;
 
     @Autowired
-    private LegalCaseDocumentsRepository legalCaseDocumentsRepository;
+    private LegalCaseUploadDocumentsRepository legalCaseUploadDocumentsRepository;
 
     @Autowired
     public LegalCaseService(final LegalCaseRepository legalCaseRepository) {
@@ -112,10 +112,10 @@ public class LegalCaseService {
         legalcase = prepareChildEntities(legalcase);
         updateNextDate(legalcase, legalcase.getPwrList());
         final LegalCase savedlegalcase = legalCaseRepository.save(legalcase);
-        final List<LegalCaseDocuments> documentDetails = getLegalcaseDocumentDetails(savedlegalcase, files);
+        final List<LegalCaseUploadDocuments> documentDetails = getLegalcaseUploadDocumentDetails(savedlegalcase, files);
         if (!documentDetails.isEmpty()) {
-            savedlegalcase.setLegalCaseDocuments(documentDetails);
-            persistLegalcaseDocuments(documentDetails);
+            savedlegalcase.setLegalCaseUploadDocuments(documentDetails);
+            persistLegalcaseUploadDocuments(documentDetails);
         }
         return savedlegalcase;
     }
@@ -173,8 +173,8 @@ public class LegalCaseService {
 
     }
 
-    public List<LegalCaseDocuments> getLegalCaseDocList(final LegalCase legalCase) {
-        return legalCase.getLegalCaseDocuments();
+    public List<LegalCaseUploadDocuments> getLegalCaseDocList(final LegalCase legalCase) {
+        return legalCase.getLegalCaseUploadDocuments();
     }
 
     public List<PwrDocuments> getPwrDocList(final LegalCase legalCase) {
@@ -311,14 +311,14 @@ public class LegalCaseService {
                 pwrDocumentsRepository.save(doc);
     }
 
-    public List<LegalCaseDocuments> getLegalcaseDocumentDetails(final LegalCase legalCase, final MultipartFile[] files)
+    public List<LegalCaseUploadDocuments> getLegalcaseUploadDocumentDetails(final LegalCase legalCase, final MultipartFile[] files)
             throws IOException {
-        final List<LegalCaseDocuments> documentDetailsList = new ArrayList<LegalCaseDocuments>();
+        final List<LegalCaseUploadDocuments> documentDetailsList = new ArrayList<LegalCaseUploadDocuments>();
 
         if (files != null)
             for (int i = 0; i < files.length; i++)
                 if (!files[i].isEmpty()) {
-                    final LegalCaseDocuments applicationDocument = new LegalCaseDocuments();
+                    final LegalCaseUploadDocuments applicationDocument = new LegalCaseUploadDocuments();
                     applicationDocument.setLegalCase(legalCase);
                     applicationDocument.setDocumentName(LcmsConstants.LEGALCASE_DOCUMENTNAME);
                     applicationDocument.setSupportDocs(
@@ -330,10 +330,10 @@ public class LegalCaseService {
         return documentDetailsList;
     }
 
-    public void persistLegalcaseDocuments(final List<LegalCaseDocuments> documentDetailsList) {
+    public void persistLegalcaseUploadDocuments(final List<LegalCaseUploadDocuments> documentDetailsList) {
         if (documentDetailsList != null && !documentDetailsList.isEmpty())
-            for (final LegalCaseDocuments doc : documentDetailsList)
-                legalCaseDocumentsRepository.save(doc);
+            for (final LegalCaseUploadDocuments doc : documentDetailsList)
+                legalCaseUploadDocumentsRepository.save(doc);
     }
 
 }
