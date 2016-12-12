@@ -40,13 +40,10 @@
 package org.egov.wtms.application.service;
 
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -718,8 +715,7 @@ public class WaterConnectionDetailsService {
     }
 
     public void updateIndexes(final WaterConnectionDetails waterConnectionDetails, final String sourceChannel) {
-       
-        
+
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
@@ -816,7 +812,7 @@ public class WaterConnectionDetailsService {
                 applicationIndex.setOwnerName(user.getUsername() + "::" + user.getName());
                 applicationIndex.setApproved(ApprovalStatus.INPROGRESS);
                 applicationIndex.setClosed(ClosureStatus.NO);
-                applicationIndex.setStatus(waterConnectionDetails.getStatus().getDescription()); 
+                applicationIndex.setStatus(waterConnectionDetails.getStatus().getDescription());
                 if (sourceChannel == null)
                     applicationIndex.setChannel(WaterTaxConstants.SYSTEM);
                 else
@@ -942,7 +938,7 @@ public class WaterConnectionDetailsService {
     public WaterConnectionDetails getParentConnectionDetailsForParentConnectionNotNull(final String consumercode,
             final ConnectionStatus connectionStatus) {
         return waterConnectionDetailsRepository
-                .findByConnection_ConsumerCodeAndConnectionStatusAndAndConnection_ParentConnectionIsNotNull(
+                .findByConnection_ConsumerCodeAndConnectionStatusAndConnection_ParentConnectionIsNotNull(
                         consumercode, connectionStatus);
     }
 
@@ -978,7 +974,6 @@ public class WaterConnectionDetailsService {
         return balance;
     }
 
-   
     public BigDecimal getTotalAmountTillCurrentFinYear(final WaterConnectionDetails waterConnectionDetails) {
         final EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         BigDecimal balance = BigDecimal.ZERO;

@@ -110,7 +110,7 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     WaterConnectionDetails findByConnection_PropertyIdentifierAndConnectionStatusAndConnection_ParentConnectionIsNull(
             String propertyIdentifier, ConnectionStatus connectionStatus);
     
-    WaterConnectionDetails findByConnection_ConsumerCodeAndConnectionStatusAndAndConnection_ParentConnectionIsNotNull(
+    WaterConnectionDetails findByConnection_ConsumerCodeAndConnectionStatusAndConnection_ParentConnectionIsNotNull(
             String consumercode, ConnectionStatus connectionStatus);
 
     @Query("select wcd.waterConnectionDetails from org.egov.wtms.application.entity.WaterDemandConnection wcd where wcd.demand=:demand")
