@@ -1341,17 +1341,18 @@ public class WaterChargeCollectionDocService {
         receiptData.setResidentialAchievement(totalResCollections.multiply(WaterTaxConstants.BIGDECIMAL_100)
                 .divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
 
-        final BigDecimal totalCommDemandValue = connectionCOmmercialTotalDemandMap.get(name).setScale(0,
-                BigDecimal.ROUND_HALF_UP);
-        final BigDecimal totalCommCollections = connectionCOmmercialTotalCollectionMap.get(name).setScale(0,
-                BigDecimal.ROUND_HALF_UP);
+        final BigDecimal totalCommDemandValue = !connectionCOmmercialTotalDemandMap.isEmpty()?(
+                connectionCOmmercialTotalDemandMap.get(name).setScale(0,
+                BigDecimal.ROUND_HALF_UP)):BigDecimal.ZERO;
+        final BigDecimal totalCommCollections = !connectionCOmmercialTotalCollectionMap.isEmpty() ?(connectionCOmmercialTotalCollectionMap.get(name).setScale(0,
+                BigDecimal.ROUND_HALF_UP)):BigDecimal.ZERO;
         final BigDecimal commproportionalDemand = totalCommDemandValue
                 .divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(noOfMonths));
-        receiptData.setCommercialAchievement(totalCommCollections.multiply(WaterTaxConstants.BIGDECIMAL_100)
-                .divide(commproportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
+        receiptData.setCommercialAchievement(commproportionalDemand.compareTo(BigDecimal.ZERO)>0 ?totalCommCollections.multiply(WaterTaxConstants.BIGDECIMAL_100)
+                .divide(commproportionalDemand, 1, BigDecimal.ROUND_HALF_UP):BigDecimal.ZERO);
 
-        receiptData.setWaterChargeCommercialaverage(totalCommDemandValue
-                .divide(BigDecimal.valueOf(connectionCommercialcountMap.get(name)), 1, BigDecimal.ROUND_HALF_UP));
+        receiptData.setWaterChargeCommercialaverage(connectionCommercialcountMap.get(name) !=null ?(totalCommDemandValue
+                .divide(BigDecimal.valueOf(connectionCommercialcountMap.get(name)), 1, BigDecimal.ROUND_HALF_UP)):BigDecimal.ZERO);
 
         receiptData.setWaterChargeResidentialaverage(
                 totalResDemandValue.divide(BigDecimal.valueOf(entry.getValue()), 1, BigDecimal.ROUND_HALF_UP));
