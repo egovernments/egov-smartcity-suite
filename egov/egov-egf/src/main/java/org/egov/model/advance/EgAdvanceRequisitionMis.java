@@ -61,6 +61,7 @@ import org.egov.commons.SubScheme;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.model.bills.EgBillregister;
 
 @Entity
 @Table(name = "EG_ADVANCEREQUISITIONMIS")
@@ -68,65 +69,69 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 public class EgAdvanceRequisitionMis extends AbstractAuditable {
 
     private static final long serialVersionUID = 699827158343906305L;
-    
+
     public static final String SEQ_EG_ADVANCEREQUISITIONMIS = "SEQ_EG_ADVANCEREQUISITIONMIS";
-    
+
     @Id
     @GeneratedValue(generator = SEQ_EG_ADVANCEREQUISITIONMIS, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FIELDID")
     private Boundary fieldId;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SUBFIELDID")
     private Boundary subFieldId;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DEPARTMENTID")
     private Department egDepartment;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SCHEMEID")
     private Scheme scheme;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SUBSCHEMEID")
     private SubScheme subScheme;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "VOUCHERHEADERID")
     private CVoucherHeader voucherheader;
-    
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "BILLREGISTER")
+    private EgBillregister egBillregister;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ADVANCEREQUISITIONID")
     private EgAdvanceRequisition egAdvanceRequisition;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FUNDSOURCEID")
     private Fundsource fundsource;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FUNDID")
     private Fund fund;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FUNCTIONARYID")
     private Functionary functionaryId;
-    
+
     private String payto;
-    
+
     private Date paybydate;
-    
+
     private String referencenumber;
 
     private String sourcePath;
-    
+
     private String partyBillNumber;
-    
+
     private Date partyBillDate;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_FUNCTION")
     private CFunction function;
@@ -135,10 +140,12 @@ public class EgAdvanceRequisitionMis extends AbstractAuditable {
         super();
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }
@@ -305,6 +312,14 @@ public class EgAdvanceRequisitionMis extends AbstractAuditable {
 
     public void setFunction(final CFunction function) {
         this.function = function;
+    }
+
+    public EgBillregister getEgBillregister() {
+        return egBillregister;
+    }
+
+    public void setEgBillregister(final EgBillregister egBillregister) {
+        this.egBillregister = egBillregister;
     }
 
 }
