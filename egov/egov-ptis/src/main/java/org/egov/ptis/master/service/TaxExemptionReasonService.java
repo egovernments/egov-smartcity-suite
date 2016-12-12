@@ -58,7 +58,7 @@ public class TaxExemptionReasonService {
         this.taxExemptionRepository = taxExemptionRepository;
     }
 
-    public List<TaxExemptionReason> getAllTaxExemption() {
-        return taxExemptionRepository.findAll();
+    public List<TaxExemptionReason> getAllActiveTaxExemptions() {
+        return taxExemptionRepository.findByIsActiveTrueOrderByName();
     }
 }

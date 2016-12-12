@@ -67,7 +67,7 @@ public class ViewExemptionReasonController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String showTaxExemptionReason(final Model model) {
-        final List<TaxExemptionReason> taxExemption = taxExemptionService.getAllTaxExemption();
+        final List<TaxExemptionReason> taxExemption = taxExemptionService.getAllActiveTaxExemptions();
         model.addAttribute("exemptionReason", taxExemption);
         return "tax-exemption-reason";
 

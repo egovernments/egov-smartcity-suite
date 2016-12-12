@@ -42,12 +42,12 @@ package org.egov.ptis.domain.repository.master.taxexemption;
 import java.util.List;
 
 import org.egov.ptis.domain.entity.property.TaxExemptionReason;
-import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface TaxExemptionReasonRepository extends JpaRepository<TaxExemptionReason, Long> {
-
-    @Override
-    @Query(value = "Select name,code from egpt_exemption_reason")
-    List<TaxExemptionReason> findAll();
+    
+    List<TaxExemptionReason> findByIsActiveTrueOrderByName();
+    
 }
