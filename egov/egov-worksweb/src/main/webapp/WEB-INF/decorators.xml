@@ -39,11 +39,7 @@
   -->
 <decorators defaultdir="/WEB-INF/jsp/decorators">
     <excludes>
-        <pattern>/40*.jsp</pattern>       	
-        <pattern>/commonyui/egov/genericScreenWithLeaf.jsp</pattern>
-        <pattern>/mobile/upload*</pattern>
-        <pattern>/commonyui/egov/menutree.jsp</pattern>
-        <pattern>/estimate/abstractEstimate!maps*</pattern>
+        <pattern>/40*.jsp</pattern> 
         <pattern>/*Ajax.action</pattern>
         <pattern>/*Ajax.do</pattern>
         <pattern>/*decorate=false*</pattern>
