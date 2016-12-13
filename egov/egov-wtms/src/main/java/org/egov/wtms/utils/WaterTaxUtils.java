@@ -96,9 +96,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 @Service
 public class WaterTaxUtils {
 
-    @Qualifier("entityQueryService")
-    private @Autowired PersistenceService entityQueryService;
-
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
@@ -506,7 +503,7 @@ public class WaterTaxUtils {
     }
 
     public List<Installment> getInstallmentListByStartDate(final Date startDate) {
-        return entityQueryService.findAllByNamedQuery(QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR, startDate,
+        return persistenceService.findAllByNamedQuery(QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR, startDate,
                 startDate, PTMODULENAME);
     }
 

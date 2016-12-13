@@ -258,7 +258,7 @@ public class WaterConnectionDetailsService {
         updateIndexes(savedWaterConnectionDetails, sourceChannel);
         waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, workFlowAction);
         if (LOG.isDebugEnabled())
-            LOG.debug("updating water Connection Deatail is complted");
+            LOG.debug("updating water Connection Deatail is completed");
 
         return savedWaterConnectionDetails;
     }
@@ -939,8 +939,8 @@ public class WaterConnectionDetailsService {
     public WaterConnectionDetails getParentConnectionDetailsForParentConnectionNotNull(final String consumercode,
             final ConnectionStatus connectionStatus) {
         return waterConnectionDetailsRepository
-                .findByConnection_ConsumerCodeAndConnectionStatusAndConnection_ParentConnectionIsNotNull(
-                        consumercode, connectionStatus);
+                .findByConnection_ConsumerCodeAndConnectionStatusAndConnection_ParentConnectionIsNotNull(consumercode,
+                        connectionStatus);
     }
 
     public WaterConnectionDetails getWaterConnectionDetailsByDemand(final EgDemand demand) {

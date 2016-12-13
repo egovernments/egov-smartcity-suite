@@ -158,10 +158,15 @@ public class ReportGenerationService {
             reportParams.put("applicationDate", formatter.format(connectionDetails.getApplicationDate()));
             reportParams.put("donationCharges", connectionDetails.getDonationCharges());
             reportParams.put("securityDeposit", connectionDetails.getFieldInspectionDetails().getSecurityDeposit());
-            reportParams.put("roadCuttingCharges", connectionDetails.getFieldInspectionDetails().getRoadCuttingCharges());
-            reportParams.put("superVisionCharges", connectionDetails.getFieldInspectionDetails().getSupervisionCharges());
-            total=connectionDetails.getDonationCharges()+connectionDetails.getFieldInspectionDetails().getSecurityDeposit()+connectionDetails.getFieldInspectionDetails().getRoadCuttingCharges()+connectionDetails.getFieldInspectionDetails().getSupervisionCharges();
-            reportParams.put("total",total);
+            reportParams.put("roadCuttingCharges",
+                    connectionDetails.getFieldInspectionDetails().getRoadCuttingCharges());
+            reportParams.put("superVisionCharges",
+                    connectionDetails.getFieldInspectionDetails().getSupervisionCharges());
+            total = connectionDetails.getDonationCharges()
+                    + connectionDetails.getFieldInspectionDetails().getSecurityDeposit()
+                    + connectionDetails.getFieldInspectionDetails().getRoadCuttingCharges()
+                    + connectionDetails.getFieldInspectionDetails().getSupervisionCharges();
+            reportParams.put("total", total);
             reportInput = new ReportRequest(WaterTaxConstants.CONNECTION_WORK_ORDER, connectionDetails, reportParams);
         }
         reportOutput = reportService.createReport(reportInput);

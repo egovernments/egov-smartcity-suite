@@ -40,7 +40,6 @@
 
 package org.egov.wtms.bean.dashboard;
 
-@SuppressWarnings("serial")
 public class WaterChargeDashBoardRequest {
 
     private String ulbGrade;

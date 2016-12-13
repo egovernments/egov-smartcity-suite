@@ -101,19 +101,17 @@ public class WaterChargeDocument {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String consumerCode;
 
-
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String applicationCode;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String districtName;
-    
+
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String cityGrade;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String cityName;
-
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String cityCode;
@@ -147,7 +145,7 @@ public class WaterChargeDocument {
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String status;
-    
+
     @Field(type = FieldType.Long)
     private Long monthlyRate;
 
@@ -156,7 +154,6 @@ public class WaterChargeDocument {
 
     @Field(type = FieldType.Long)
     private Long waterTaxDue;
-    
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String locality;
@@ -175,22 +172,21 @@ public class WaterChargeDocument {
 
     @Field(type = FieldType.Long)
     private Long currentDemand;
-    
+
     @Field(type = FieldType.Long)
     private Long totalCollection;
-    
+
     @Field(type = FieldType.Long)
     private Long totalDemand;
-    
+
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String revenueWard;
-    
+
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String duePeriod;
-    
+
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String billCollector;
-    
 
     public static Builder builder() {
         return new Builder();
@@ -276,17 +272,15 @@ public class WaterChargeDocument {
         return revenueWard;
     }
 
-    public void setRevenueWard(String revenueWard) {
+    public void setRevenueWard(final String revenueWard) {
         this.revenueWard = revenueWard;
     }
-
-   
 
     public Long getTotalCollection() {
         return totalCollection;
     }
 
-    public void setTotalCollection(Long totalCollection) {
+    public void setTotalCollection(final Long totalCollection) {
         this.totalCollection = totalCollection;
     }
 
@@ -294,7 +288,7 @@ public class WaterChargeDocument {
         return totalDemand;
     }
 
-    public void setTotalDemand(Long totalDemand) {
+    public void setTotalDemand(final Long totalDemand) {
         this.totalDemand = totalDemand;
     }
 
@@ -331,7 +325,7 @@ public class WaterChargeDocument {
     }
 
     public void setId() {
-        this.id = ApplicationThreadLocals.getCityCode().concat("-").concat(consumerCode);
+        id = ApplicationThreadLocals.getCityCode().concat("-").concat(consumerCode);
     }
 
     public String getClosureType() {
@@ -349,8 +343,6 @@ public class WaterChargeDocument {
     public void setWaterSource(final String waterSource) {
         this.waterSource = waterSource;
     }
-
-  
 
     public Long getSumpCapacity() {
         return sumpCapacity;
@@ -407,8 +399,6 @@ public class WaterChargeDocument {
     public void setConsumerCode(final String consumerCode) {
         this.consumerCode = consumerCode;
     }
-
-  
 
     public String getApplicationCode() {
         return applicationCode;
@@ -497,14 +487,12 @@ public class WaterChargeDocument {
     public void setPropertylocation(final GeoPoint propertylocation) {
         this.propertylocation = propertylocation;
     }
-    
-    
 
     public String getCityGrade() {
         return cityGrade;
     }
 
-    public void setCityGrade(String cityGrade) {
+    public void setCityGrade(final String cityGrade) {
         this.cityGrade = cityGrade;
     }
 
@@ -512,7 +500,7 @@ public class WaterChargeDocument {
         return cityName;
     }
 
-    public void setCityName(String cityName) {
+    public void setCityName(final String cityName) {
         this.cityName = cityName;
     }
 
@@ -520,7 +508,7 @@ public class WaterChargeDocument {
         return cityCode;
     }
 
-    public void setCityCode(String cityCode) {
+    public void setCityCode(final String cityCode) {
         this.cityCode = cityCode;
     }
 
@@ -528,16 +516,15 @@ public class WaterChargeDocument {
         return legacy;
     }
 
-    public void setLegacy(Boolean legacy) {
+    public void setLegacy(final Boolean legacy) {
         this.legacy = legacy;
     }
 
-    
     public String getDuePeriod() {
         return duePeriod;
     }
 
-    public void setDuePeriod(String duePeriod) {
+    public void setDuePeriod(final String duePeriod) {
         this.duePeriod = duePeriod;
     }
 
@@ -545,10 +532,9 @@ public class WaterChargeDocument {
         return billCollector;
     }
 
-    public void setBillCollector(String billCollector) {
+    public void setBillCollector(final String billCollector) {
         this.billCollector = billCollector;
     }
-
 
     public static final class Builder {
         private String aadhaarNumber;
@@ -596,15 +582,16 @@ public class WaterChargeDocument {
         private Builder() {
         }
 
-        public Builder withDuePeriod( String duePeriod) {
+        public Builder withDuePeriod(final String duePeriod) {
             this.duePeriod = duePeriod;
             return this;
         }
-        
-        public Builder withBillCollector( String billCollector) {
+
+        public Builder withBillCollector(final String billCollector) {
             this.billCollector = billCollector;
             return this;
-        } 
+        }
+
         public Builder withWardlocation(final GeoPoint wardlocation) {
             wardLocation = wardlocation;
             return this;
@@ -659,10 +646,12 @@ public class WaterChargeDocument {
             this.totalDemand = totalDemand;
             return this;
         }
+
         public Builder withTotalCollection(final Long totalCollection) {
             this.totalCollection = totalCollection;
             return this;
         }
+
         public Builder withTotaldue(final Long totaldue) {
             totalDue = totaldue;
             return this;
@@ -774,11 +763,12 @@ public class WaterChargeDocument {
         }
 
         public Builder withCityName(final String cityname) {
-            cityName=cityname;
+            cityName = cityname;
             return this;
         }
+
         public Builder withCityCode(final String citycode) {
-            cityCode=citycode;
+            cityCode = citycode;
             return this;
         }
 
@@ -850,7 +840,6 @@ public class WaterChargeDocument {
             return waterChargeIndex;
         }
 
-        
     }
 
 }
