@@ -652,6 +652,8 @@ public abstract class AbstractLicenseService<T extends License> {
                         .withOwner(license.getState().getInitiatorPosition()).withNextAction("SI/SS Approval Pending");
             }
         else if (license.getState() == null || "END".equals(license.getState().getValue()) || "Closed".equals(license.getState().getValue())) {
+            final WorkFlowMatrix newwfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
+                    null, workflowBean.getAdditionaRule(), "NEW", null);
             licenseUtils.applicationStatusChange(license, APPLICATION_STATUS_CREATED_CODE);
             license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
             final Assignment wfInitiator = this.assignmentService
@@ -659,8 +661,8 @@ public abstract class AbstractLicenseService<T extends License> {
             license.reinitiateTransition().start()
                     .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
-                    .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(owner)
-                    .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator.getPosition());
+                    .withStateValue(newwfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(owner)
+                    .withNextAction(newwfmatrix.getNextAction()).withInitiator(wfInitiator.getPosition());
         } else if ("Revenue Clerk/JA Approved".equals(license.getState().getValue()) || WORKFLOW_STATE_REJECTED.equals(license.getState().getValue())) {
             licenseUtils.applicationStatusChange(license, APPLICATION_STATUS_CREATED_CODE);
             license.setStatus(licenseStatusService.getLicenseStatusByName(Constants.LICENSE_STATUS_UNDERWORKFLOW));
