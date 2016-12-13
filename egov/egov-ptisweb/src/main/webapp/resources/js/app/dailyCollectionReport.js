@@ -79,8 +79,7 @@ $('#dailyCollectionReportSearch').click(function(e){
 			},
 			"fnRowCallback" : function(row, data, index) {
 				data.totalLibCess = data.currentCess + data.arrearCess;
-				if(data.currentCess != null && data.arrearCess != null) 
-				   $('td:eq(15)',row).html(parseFloat(data.totalLibCess));
+				$('td:eq(15)',row).html(parseFloat(data.totalLibCess));
 			},
 			searchable:true,
 			data: searchResult,
