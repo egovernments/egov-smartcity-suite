@@ -54,6 +54,7 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -172,7 +173,7 @@ public class ChangeOfUseService {
         if (appProcessTime != null)
             changeOfUse.setDisposalDate(waterConnectionDetailsService.getDisposalDate(changeOfUse, appProcessTime));
         final WaterConnectionDetails savedChangeOfUse = waterConnectionDetailsRepository.save(changeOfUse);
-        if (userService.getUserById(savedChangeOfUse.getCreatedBy().getId()).getUsername().equals("anonymous")) {
+        if (userService.getUserById(savedChangeOfUse.getCreatedBy().getId()).getUsername().equals(WaterTaxConstants.USERNAME_ANONYMOUS)) {
             ApplicationThreadLocals.setUserId(Long.valueOf("40"));
             savedChangeOfUse.setCreatedBy(userService.getUserById(ApplicationThreadLocals.getUserId()));
         }
