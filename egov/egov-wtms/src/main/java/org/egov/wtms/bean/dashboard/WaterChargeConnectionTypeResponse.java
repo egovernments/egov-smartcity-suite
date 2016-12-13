@@ -66,7 +66,13 @@ public class WaterChargeConnectionTypeResponse {
     private BigDecimal lastYearTillDateColl = BigDecimal.ZERO;
     private BigDecimal totalDmd = BigDecimal.ZERO;
     private BigDecimal currentYearTillDateDmd = BigDecimal.ZERO;
-
+    private BigDecimal previousYearResidentialColl = BigDecimal.ZERO;//previousYearCollection ex:2014
+    private BigDecimal lastYearResidentialColl = BigDecimal.ZERO;//lasYearColl
+    private BigDecimal currentYearResidentialColl = BigDecimal.ZERO;
+    
+    private BigDecimal previousYearCommercialColl = BigDecimal.ZERO;//previousYearCollection ex:2014
+    private BigDecimal lastYearCommercialColl = BigDecimal.ZERO;//lasYearColl
+    private BigDecimal currentYearCommercialColl = BigDecimal.ZERO;
     private BigDecimal performance = BigDecimal.ZERO;
     private BigDecimal lastYearVar = BigDecimal.ZERO;
 
@@ -275,6 +281,54 @@ public class WaterChargeConnectionTypeResponse {
 
     public void setTotalDmd(final BigDecimal totalDmd) {
         this.totalDmd = totalDmd;
+    }
+
+    public BigDecimal getPreviousYearResidentialColl() {
+        return previousYearResidentialColl;
+    }
+
+    public void setPreviousYearResidentialColl(BigDecimal previousYearResidentialColl) {
+        this.previousYearResidentialColl = previousYearResidentialColl;
+    }
+
+    public BigDecimal getLastYearResidentialColl() {
+        return lastYearResidentialColl;
+    }
+
+    public void setLastYearResidentialColl(BigDecimal lastYearResidentialColl) {
+        this.lastYearResidentialColl = lastYearResidentialColl;
+    }
+
+    public BigDecimal getCurrentYearResidentialColl() {
+        return currentYearResidentialColl;
+    }
+
+    public void setCurrentYearResidentialColl(BigDecimal currentYearResidentialColl) {
+        this.currentYearResidentialColl = currentYearResidentialColl;
+    }
+
+    public BigDecimal getPreviousYearCommercialColl() {
+        return previousYearCommercialColl;
+    }
+
+    public void setPreviousYearCommercialColl(BigDecimal previousYearCommercialColl) {
+        this.previousYearCommercialColl = previousYearCommercialColl;
+    }
+
+    public BigDecimal getLastYearCommercialColl() {
+        return lastYearCommercialColl;
+    }
+
+    public void setLastYearCommercialColl(BigDecimal lastYearCommercialColl) {
+        this.lastYearCommercialColl = lastYearCommercialColl;
+    }
+
+    public BigDecimal getCurrentYearCommercialColl() {
+        return currentYearCommercialColl;
+    }
+
+    public void setCurrentYearCommercialColl(BigDecimal currentYearCommercialColl) {
+        this.currentYearCommercialColl = currentYearCommercialColl;
     }
 
 }

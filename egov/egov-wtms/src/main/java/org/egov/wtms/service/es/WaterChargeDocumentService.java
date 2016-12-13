@@ -63,6 +63,7 @@ import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.entity.es.WaterChargeDocument;
 import org.egov.wtms.repository.es.WaterChargeDocumentRepository;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +92,9 @@ public class WaterChargeDocumentService {
     @Autowired
     public WaterChargeDocumentService(final WaterChargeDocumentRepository waterChargeIndexRepository) {
         this.waterChargeIndexRepository = waterChargeIndexRepository;
+    }
+    public Iterable<WaterChargeDocument> searchwaterChargeIndex(final BoolQueryBuilder searchQuery) {
+        return waterChargeIndexRepository.search(searchQuery);
     }
 
     public WaterChargeDocument updateWaterChargeIndex(final WaterChargeDocument waterChargeDocument,
