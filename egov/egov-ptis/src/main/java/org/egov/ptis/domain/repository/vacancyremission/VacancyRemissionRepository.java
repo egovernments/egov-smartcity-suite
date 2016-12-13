@@ -39,6 +39,7 @@
  */
 package org.egov.ptis.domain.repository.vacancyremission;
 
+import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -55,10 +56,16 @@ public interface VacancyRemissionRepository extends JpaRepository<VacancyRemissi
 	
 	@Query("select vr from VacancyRemission vr where vr.basicProperty.upicNo=:upicNo and vr.status = 'Rejection Acknowledgement Generated' order by id desc ")
 	public List<VacancyRemission> findAllRejectionAckGeneratedForUpicNo(@Param("upicNo") String name);
-
+	
+	@Query("select vr from VacancyRemission vr,VacancyRemissionApproval vra where vr.basicProperty.upicNo=:upicNo and vr.id=vra.vacancyRemission order by vr.id desc ")
+        public List<VacancyRemission> findAllSpecialNoticesGeneratedForUpicNo(@Param("upicNo") String name);
+	
 	@Query("select vr from VacancyRemission vr where vr.basicProperty.upicNo=:upicNo and vr.status = 'REJECTED'")
 	public VacancyRemission findRejectedByUpicNo(@Param("upicNo") String name);
 	
 	@Query("select vr from VacancyRemission vr where vr.basicProperty.upicNo=:upicNo order by id asc ")
 	public List<VacancyRemission> getAllVacancyRemissionByUpicNo(@Param("upicNo") String name);
+	
+	@Query("select DT from DocumentType DT where DT.name=:name")
+	public DocumentType findDocumentTypeByName(@Param("name") String name);
 }

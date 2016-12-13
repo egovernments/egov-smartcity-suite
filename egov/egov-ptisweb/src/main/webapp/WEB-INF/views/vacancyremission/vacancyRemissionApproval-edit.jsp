@@ -74,7 +74,11 @@
 					</div>
 				</div>
 				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading">
+			<div>
+				<%@ include
+					file="/WEB-INF/views/vacancyremission/vr-documents-view.jsp"%>
+			</div>
+			<div class="panel-heading">
 						<div class="panel-title">
 							VR Details History
 							<div class="panel-body history-slide">

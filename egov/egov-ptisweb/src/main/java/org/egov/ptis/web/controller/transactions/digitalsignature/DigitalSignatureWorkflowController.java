@@ -61,6 +61,10 @@ import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
+import org.egov.ptis.domain.entity.property.VacancyRemission;
+import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
+import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionApprovalRepository;
+import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionRepository;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +97,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETI
 import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
+
 
 /**
  * @author subhash
@@ -156,6 +162,9 @@ public class DigitalSignatureWorkflowController {
 
     @Autowired
     private FileStoreMapperRepository fileStoreMapperRepository;
+    
+    @Autowired
+    private VacancyRemissionApprovalRepository vacancyRemissionApprovalRepository;
 
     @RequestMapping(value = "/propertyTax/transitionWorkflow")
     public String transitionWorkflow(final HttpServletRequest request, final Model model) {
@@ -194,6 +203,19 @@ public class DigitalSignatureWorkflowController {
                         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
                         basicPropertyService.persist(basicProperty);
                     }
+                    else{
+                        final VacancyRemission vacancyRemission = (VacancyRemission) getCurrentSession()
+                                .createQuery("from VacancyRemission where applicationNumber = :applicationNo")
+                                .setParameter("applicationNo", applicationNumber).uniqueResult();
+                        if(vacancyRemission !=null){
+                            final BasicProperty basicProperty = vacancyRemission.getBasicProperty();
+                            transitionWorkFlow(vacancyRemission);
+                            propertyService.updateIndexes(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
+                            vacancyRemissionApprovalRepository.save(vacancyRemission.getVacancyRemissionApproval().get(0));
+                            basicPropertyService.persist(basicProperty);
+                        }
+                    }
+
                 }
             }
         }
@@ -273,22 +295,41 @@ public class DigitalSignatureWorkflowController {
                     .withNextAction(wfmatrix.getNextAction());
         }
     }
+    
+    private void transitionWorkFlow(final VacancyRemission vacancyRemission) {
+        if (propertyService.isMeesevaUser(vacancyRemission.getCreatedBy())) {
+            vacancyRemission.transition().end();
+            vacancyRemission.getBasicProperty().setUnderWorkflow(false);
+        } else {
+            final DateTime currentDate = new DateTime();
+            final User user = securityUtils.getCurrentUser();
+            final Assignment wfInitiator = getWorkflowInitiator(vacancyRemission,vacancyRemission.getBasicProperty());
+            final Position pos = wfInitiator.getPosition();
+            final VacancyRemissionApproval  vacancyRemissionApproval = vacancyRemission.getVacancyRemissionApproval().get(0);
+            final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(vacancyRemissionApproval.getStateType(), null,
+                    null, null, vacancyRemissionApproval.getCurrentState().getValue(), null);
+            vacancyRemissionApproval.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                    .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
+                    .withOwner(vacancyRemission.getCurrentState().getInitiatorPosition()!=null?vacancyRemission.getCurrentState().getInitiatorPosition():pos)
+                    .withNextAction(wfmatrix.getNextAction());
+        }
+    }
 
     private Assignment getWorkflowInitiator(final StateAware state, final BasicProperty basicProperty) {
         Assignment wfInitiator = null;
         if(basicProperty.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE)){
-        	if(!state.getStateHistory().isEmpty())
-        		wfInitiator = assignmentService.getPrimaryAssignmentForPositon(state.getStateHistory().get(0)
+                if(!state.getStateHistory().isEmpty())
+                        wfInitiator = assignmentService.getPrimaryAssignmentForPositon(state.getStateHistory().get(0)
                     .getOwnerPosition().getId());
         } else{
-	        if (propertyService.isEmployee(state.getCreatedBy()))
-	            wfInitiator = assignmentService.getPrimaryAssignmentForUser(state.getCreatedBy().getId());
-	        else if (!state.getStateHistory().isEmpty())
-	            wfInitiator = assignmentService.getAssignmentsForPosition(
-	                    state.getStateHistory().get(0).getOwnerPosition().getId(), new Date()).get(0);
-	        else
-	            wfInitiator = assignmentService.getAssignmentsForPosition(state.getState().getOwnerPosition().getId(),
-	                    new Date()).get(0);
+                if (propertyService.isEmployee(state.getCreatedBy()))
+                    wfInitiator = assignmentService.getPrimaryAssignmentForUser(state.getCreatedBy().getId());
+                else if (!state.getStateHistory().isEmpty())
+                    wfInitiator = assignmentService.getAssignmentsForPosition(
+                            state.getStateHistory().get(0).getOwnerPosition().getId(), new Date()).get(0);
+                else
+                    wfInitiator = assignmentService.getAssignmentsForPosition(state.getState().getOwnerPosition().getId(),
+                            new Date()).get(0);
         }
         return wfInitiator;
     }

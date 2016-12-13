@@ -61,7 +61,7 @@ body
 	</div>
 </c:if>
 <form:form id="vacancyRemissionForm" method="post"
-	class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemission">
+	class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemission" enctype="multipart/form-data">
 	<div class="page-container" id="page-container">
         	<div class="main-content">
 			<jsp:include page="../common/commonPropertyDetailsView.jsp"></jsp:include>
@@ -73,6 +73,9 @@ body
 								<div class="panel-title"><spring:message code="lbl.vacancyremission.details" /></div>
 							</div>
 							<div class="panel-body custom-form">
+							       <div class="panel-body custom-form">
+							<%@ include file="/WEB-INF/views/vacancyremission/vacancy-remission-documents.jsp"%>
+							     </div>
 								<div class="form-group">
 									<label class="col-sm-3 control-label text-right">
 										<spring:message code="lbl.fromDate" /> <span class="mandatory"></span>

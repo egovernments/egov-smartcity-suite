@@ -39,14 +39,19 @@
  */
 package org.egov.ptis.web.controller.vacancyremission;
 
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.service.property.VacancyRemissionService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,6 +61,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -76,19 +83,36 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
         this.propertyTaxUtil = propertyTaxUtil;
         this.vacancyRemissionService = vacancyRemissionService;
     }
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
+    
+    @Autowired
+    private AssignmentService assignmentService;
+    
+    @Autowired
+    private PositionMasterService positionMasterService;
 
     @ModelAttribute
     public VacancyRemission vacancyRemissionModel(@PathVariable Long id) {
-        VacancyRemission vacancyRemission = vacancyRemissionService.getVacancyRemissionById(id);
-        return vacancyRemission;
+        return vacancyRemissionService.getVacancyRemissionById(id);
     }
 
     @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final Long id, final HttpServletRequest request) {
         VacancyRemission vacancyRemission = vacancyRemissionService.getVacancyRemissionById(id);
+        String userDesignationList=propertyTaxCommonUtils.getAllDesignationsForUser(securityUtils.getCurrentUser().getId());
         if (vacancyRemission != null) {
             model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
             model.addAttribute("currentState", vacancyRemission.getCurrentState().getValue());
+            if(!vacancyRemission.getDocuments().isEmpty()){
+                model.addAttribute("attachedDocuments", vacancyRemission.getDocuments());
+            }
+            model.addAttribute("userDesignationList", userDesignationList);
+            model.addAttribute("designation", COMMISSIONER_DESGN);
             prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
             BasicProperty basicProperty = vacancyRemission.getBasicProperty();
             vacancyRemissionService.addModelAttributes(model, basicProperty);
@@ -101,6 +125,8 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
             final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model) {
 
         String senderName = vacancyRemission.getCurrentState().getSenderName();
+        Assignment currAsssignment=assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
+        String currDesignation = currAsssignment.getDesignation().getName();
         senderName=senderName.substring(senderName.lastIndexOf(":") + 1);
         if (!resultBinder.hasErrors()) {
             String workFlowAction = "";
@@ -110,12 +136,15 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
             Long approvalPosition = 0l;
             String approvalComent = "";
             String successMsg = "";
-
             if (request.getParameter("approvalComent") != null)
                 approvalComent = request.getParameter("approvalComent");
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-
+            else if (COMMISSIONER_DESGN.equalsIgnoreCase(currDesignation)
+                    && (workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD)
+                            || workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT))) {
+                approvalPosition = Long.valueOf(vacancyRemission.getState().getInitiatorPosition().getId());
+            }
             Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
             vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
                     workFlowAction,propertyByEmployee);
@@ -126,7 +155,10 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
                 } else if (workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT)) {
                     successMsg = "Vacancy Remission rejected successfully and forwarded to : "
                             + vacancyRemissionService.getInitiatorName(vacancyRemission);
-                }
+                }else if(workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD) && COMMISSIONER_DESGN.equalsIgnoreCase(currDesignation)){
+                    successMsg = "Vacancy Remission Approved successfully and forwarded to : "
+                            + vacancyRemissionService.getInitiatorName(vacancyRemission);
+                }              
                 else {
                     successMsg = "Vacancy Remission Saved Successfully in the System and forwarded to : "
                             + propertyTaxUtil.getApproverUserName(approvalPosition)+" with application number : "+vacancyRemission.getApplicationNumber();
