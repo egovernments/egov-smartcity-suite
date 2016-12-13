@@ -189,7 +189,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         && waterConnectionDetails.getApplicationType().getCode()
                                 .equalsIgnoreCase(WaterTaxConstants.CHANGEOFUSE)) {
                     final WaterConnectionDetails connectionToBeDeactivated = waterConnectionDetailsRepository
-                            .findByConnection_ConsumerCodeAndConnectionStatus(
+                            .findConnectionDetailsByConsumerCodeAndConnectionStatus(
                                     waterConnectionDetails.getConnection().getConsumerCode(), ConnectionStatus.ACTIVE);
                     connectionToBeDeactivated.setConnectionStatus(ConnectionStatus.INACTIVE);
                     connectionToBeDeactivated.setIsHistory(true);

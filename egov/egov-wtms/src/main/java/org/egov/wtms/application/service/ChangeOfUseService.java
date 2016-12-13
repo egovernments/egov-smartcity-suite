@@ -100,7 +100,7 @@ public class ChangeOfUseService {
         final String propertyID = parentWaterConnectionDetail.getConnection().getPropertyIdentifier();
         final String consumerCode = parentWaterConnectionDetail.getConnection().getConsumerCode();
         final WaterConnectionDetails inWorkflow = waterConnectionDetailsRepository
-                .findByConnection_ConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.INPROGRESS);
+                .findConnectionDetailsByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.INPROGRESS);
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(propertyID,
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
         if (parentWaterConnectionDetail.getConnectionStatus().equals(ConnectionStatus.HOLDING))

@@ -314,7 +314,7 @@ public class WaterConnectionDetailsService {
 
     public WaterConnectionDetails findByConsumerCodeAndConnectionStatus(final String consumerCode,
             final ConnectionStatus connectionStatus) {
-        return waterConnectionDetailsRepository.findByConnection_ConsumerCodeAndConnectionStatus(consumerCode,
+        return waterConnectionDetailsRepository.findConnectionDetailsByConsumerCodeAndConnectionStatus(consumerCode,
                 connectionStatus);
     }
 
