@@ -211,18 +211,8 @@ public class UpdateContractorAdvanceController extends GenericWorkFlowController
             contractorAdvanceService.validateInput(contractorAdvanceRequisition, errors);
         }
 
-        if (workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE)) {
-            contractorAdvanceRequisition.setApprovedDate(new Date());
-            final EgBillregister egBillregister = new EgBillregister();
-            contractorAdvanceService.generateAdvanceBills(contractorAdvanceRequisition, egBillregister);
-            final List<String> errorMessages = new ArrayList<>();
-            contractorAdvanceService.validateLedgerAndSubledger(egBillregister, errorMessages);
-            if (errorMessages.size() == 0)
-                contractorAdvanceRequisition.getEgAdvanceReqMises().setEgBillregister(egBillregister);
-            else
-                for (final String error : errorMessages)
-                    errors.reject("", error);
-        }
+        if (workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE))
+            populateAndValidateAdvanceBill(contractorAdvanceRequisition, errors);
 
         if (errors.hasErrors()) {
             setDropDownValues(model);
@@ -240,5 +230,19 @@ public class UpdateContractorAdvanceController extends GenericWorkFlowController
             return "redirect:/contractoradvance/contractoradvance-success?pathVars=" + pathVars + "&arfNumber="
                     + contractorAdvanceRequisition.getAdvanceRequisitionNumber();
         }
+    }
+
+    private void populateAndValidateAdvanceBill(final ContractorAdvanceRequisition contractorAdvanceRequisition,
+            final BindingResult errors) {
+        contractorAdvanceRequisition.setApprovedDate(new Date());
+        final EgBillregister egBillregister = new EgBillregister();
+        contractorAdvanceService.generateAdvanceBills(contractorAdvanceRequisition, egBillregister);
+        final List<String> errorMessages = new ArrayList<>();
+        contractorAdvanceService.validateLedgerAndSubledger(egBillregister, errorMessages);
+        if (errorMessages.size() == 0)
+            contractorAdvanceRequisition.getEgAdvanceReqMises().setEgBillregister(egBillregister);
+        else
+            for (final String error : errorMessages)
+                errors.reject("", error);
     }
 }
