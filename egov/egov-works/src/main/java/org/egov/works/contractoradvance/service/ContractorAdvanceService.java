@@ -647,6 +647,7 @@ public class ContractorAdvanceService {
                             ContractorAdvanceRequisitionStatus.NEW.toString());
         else
             contractorAdvanceRequisition = contractorAdvanceRepository.findByIdNotAndStatusCodes(contractorAdvanceRegisterId,
+                    workOrderEstimateId,
                     ContractorAdvanceRequisitionStatus.CANCELLED.toString(),
                     ContractorAdvanceRequisitionStatus.APPROVED.toString(),
                     ContractorAdvanceRequisitionStatus.NEW.toString());

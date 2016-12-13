@@ -93,7 +93,7 @@
 				<tr>
 					<th><spring:message code="lbl.account.code"/><span class="mandatory"></th>
 					<th><spring:message code="lbl.account.head"/></th>
-					<th><spring:message code="lbl.debit.amount"/><span class="mandatory"></span></th>
+					<th><spring:message code="lbl.credit.amount"/><span class="mandatory"></span></th>
 				</tr>
 			</thead>
 			<tbody>

@@ -77,8 +77,9 @@ public interface ContractorAdvanceRepository extends JpaRepository<ContractorAdv
     @Query("select distinct(car.egAdvanceReqMises.egBillregister.billnumber) from ContractorAdvanceRequisition as car where upper(car.egAdvanceReqMises.egBillregister.billnumber) like upper(:advanceBillNumber)")
     List<String> findAdvanceBillNumber(@Param("advanceBillNumber") String advanceBillNumber);
 
-    @Query("select car from ContractorAdvanceRequisition as car where car.id !=:id and status.code not in (:cancelledStatus, :approvedStatus, :newStatus)")
+    @Query("select car from ContractorAdvanceRequisition as car where car.id !=:id and car.workOrderEstimate.id =:workOrderEstimateId and status.code not in (:cancelledStatus, :approvedStatus, :newStatus)")
     ContractorAdvanceRequisition findByIdNotAndStatusCodes(@Param("id") Long id,
+            @Param("workOrderEstimateId") Long workOrderEstimateId,
             @Param("cancelledStatus") String cancelledStatus, @Param("approvedStatus") String approvedStatus,
             @Param("newStatus") String newStatus);
 }
