@@ -991,7 +991,8 @@ public interface PropertyTaxConstants {
     public static final String NOTICE_TYPE_SPECIAL_NOTICE = "Special Notice";
     public static final String NOTICE_TYPE_MUTATION_CERTIFICATE = "Mutation Certificate";
     public static final String NOTICE_TYPE_DEMAND_BILL = "Demand Bill";
-    public static final String NOTICE_TYPE_PROCEEDINGS = "Proceedings";
+    public static final String NOTICE_TYPE_RPPROCEEDINGS = "RP Proceedings";
+    public static final String NOTICE_TYPE_RPHEARINGS = "RP Hearing Notice";
     public static final String NOTICE_TYPE_ESD = "ESD Notice";
 
     public static final String CREATE_AUDIT_ACTION = "Create Property";
@@ -1342,7 +1343,13 @@ public interface PropertyTaxConstants {
     public static final String VR_STATUS_WORKFLOW = "IN_WORKFLOW";
     public static final String VR_STATUS_APPROVED = "APPROVED";
     public static final String VR_STATUS_REJECTED = "REJECTED";
-
+    public static final String NOTICE_TYPE_VACANCYREMISSION_PREFIX = "VACANREMISSION";
+    public static final String VR_SPECIALNOTICE_TEMPLATE = "mainVRProceedings";
+    public static final String NOTICE_TYPE_VACANCYREMISSION_PROCEEDINGS = "Vacancy Remission Proceedings";
+    public static final String VR_STATUS_NOTICE_GENERATED = "Specialnotice Generated";
+    public static final String VR_CURR_STATUS = "VacancyRemission:Assistant Approved";
+    public static final String NOTICE_TYPE_VRPROCEEDINGS = "VR Proceedings";
+    
     public static final String VACANTLAND_PROPERTY_CATEGORY = "VACANTLAND";
     public static final String MEESEVA_OPERATOR_ROLE = "MeeSeva Operator";
 
