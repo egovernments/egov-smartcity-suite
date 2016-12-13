@@ -47,13 +47,11 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
-import org.egov.eis.service.DesignationService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -90,11 +88,8 @@ public class ApproveAcknowledgementController {
     private NoticeService noticeService;
 
     @Autowired
-    FileStoreService fileStoreService;
+    private FileStoreService fileStoreService;
     
-    @Autowired
-    DesignationService designationService;
-
     @Autowired
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 
@@ -102,7 +97,7 @@ public class ApproveAcknowledgementController {
     private VacancyRemissionService vacancyRemissionService;
 
     public static final String VR_SPECIALNOTICE_TEMPLATE = "mainVRProceedings";
-    final SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
+    public static final String SAMPLE_FILE = "VR Proceedings/";
 
     @RequestMapping(value = "/generatenotice", method = RequestMethod.GET)
     public String generateSpecialNotice(final Model model,final HttpServletRequest request, final HttpSession session) {
@@ -117,47 +112,29 @@ public class ApproveAcknowledgementController {
         digitalSignEnabled = propertyTaxCommonUtils.isDigitalSignatureEnabled();
         final VacancyRemission vacancyRemission = vacancyRemissionService
                 .getLatestSpecialNoticeGeneratedVacancyRemissionForProperty(pathvars[0]);
-        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(PropertyTaxConstants.NOTICE_TYPE_VRPROCEEDINGS,
+        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_VRPROCEEDINGS,
                 vacancyRemission.getApplicationNumber());
         InputStream noticePdf = null;
-        if(WFLOW_ACTION_STEP_SIGN.equals(workFlowAction) && notice==null){
+        if (WFLOW_ACTION_STEP_SIGN.equals(workFlowAction) && notice == null) {
             noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(NOTICE_TYPE_VRPROCEEDINGS);
-        reportOutput = vacancyRemissionService.generateReport(vacancyRemission, request, pathvars[1],noticeNo);
-        if (reportOutput != null && reportOutput.getReportOutputData() != null)
-            noticePdf = new ByteArrayInputStream(reportOutput.getReportOutputData());
-        final PtNotice savedNotice=noticeService.saveNotice(vacancyRemission.getApplicationNumber(),noticeNo,
-                PropertyTaxConstants.NOTICE_TYPE_VRPROCEEDINGS, vacancyRemission.getBasicProperty(),
-                noticePdf);
-        fileStoreIds = savedNotice.getFileStore().getFileStoreId();
-        } /*else if (WFLOW_ACTION_STEP_NOTICE_GENERATE.equalsIgnoreCase(workFlowAction) && notice != null) {
-            final FileStoreMapper fsm = notice.getFileStore();
-            final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
-            byte[] bFile;
-            try {
-                bFile = FileUtils.readFileToByteArray(file);
-                fileStoreIds = notice.getFileStore().getFileStoreId();
+            reportOutput = vacancyRemissionService.generateReport(vacancyRemission, request, pathvars[1], noticeNo);
+            if (reportOutput != null && reportOutput.getReportOutputData() != null)
+                noticePdf = new ByteArrayInputStream(reportOutput.getReportOutputData());
+            final PtNotice savedNotice = noticeService.saveNotice(vacancyRemission.getApplicationNumber(), noticeNo,
+                    NOTICE_TYPE_VRPROCEEDINGS, vacancyRemission.getBasicProperty(), noticePdf);
+            fileStoreIds = savedNotice.getFileStore().getFileStoreId();
+        } else if (workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_PREVIEW)) {
 
-            } catch (final IOException e) {
-
-                throw new ApplicationRuntimeException("Exception while generating VRSpecial Notcie : " + e);
-            }
-            if (reportOutput != null) {
-                reportOutput.setReportOutputData(bFile);
-                reportOutput.setReportFormat(FileFormat.PDF);
-                reportId = reportViewerUtil.addReportToTempCache(reportOutput);
-            }
-        }*/
-        else if(workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_PREVIEW)){
-            
-            return "redirect:/vacancyremission/generatenotice/preview/" +pathvars[0]+"?approver="+pathvars[1];
+            return "redirect:/vacancyremission/generatenotice/preview/" + pathvars[0] + "?approver=" + pathvars[1];
         }
-        model.addAttribute("ulbCode",ulbCode);
-        model.addAttribute("fileStoreIds",fileStoreIds);
-        model.addAttribute("digitalSignEnabled",digitalSignEnabled);
-        if (WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction)) 
+        model.addAttribute("ulbCode", ulbCode);
+        model.addAttribute("fileStoreIds", fileStoreIds);
+        model.addAttribute("digitalSignEnabled", digitalSignEnabled);
+        if (WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
             return "vacancyremission-dig-sign";
         else
-            return "redirect:/vacancyremission/generatenotice/proceedings/" +pathvars[0]+"?workFlowAction="+workFlowAction;
+            return "redirect:/vacancyremission/generatenotice/proceedings/" + pathvars[0] + "?workFlowAction="
+                    + workFlowAction;
     }
 
     @RequestMapping(value = {"/generatenotice/preview/{assessmentNo}","/generatenotice/proceedings/{assessmentNo}"}, method = RequestMethod.GET)
@@ -169,9 +146,9 @@ public class ApproveAcknowledgementController {
         String approverName = request.getParameter("approver");
         final VacancyRemission vacancyRemission = vacancyRemissionService
                 .getLatestSpecialNoticeGeneratedVacancyRemissionForProperty(assessmentNo);
-        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(PropertyTaxConstants.NOTICE_TYPE_VRPROCEEDINGS,
+        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_VRPROCEEDINGS,
                 vacancyRemission.getApplicationNumber());
-        if(notice!=null){
+        if (notice != null) {
             final FileStoreMapper fsm = notice.getFileStore();
             final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
             byte[] bFile;
@@ -184,13 +161,13 @@ public class ApproveAcknowledgementController {
             noticeOutput.setReportOutputData(bFile);
             noticeOutput.setReportFormat(FileFormat.PDF);
             fileName = notice.getNoticeNo();
-        }else {
-            noticeOutput = vacancyRemissionService.generateReport(vacancyRemission, request, approverName,null);
-            fileName = ("VR Proceedings/").concat(assessmentNo);
+        } else {
+            noticeOutput = vacancyRemissionService.generateReport(vacancyRemission, request, approverName, null);
+            fileName = SAMPLE_FILE.concat(assessmentNo);
         }
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename="+fileName+".pdf");
+        headers.add("content-disposition", "inline;filename=" + fileName + ".pdf");
         return new ResponseEntity<>(noticeOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 }

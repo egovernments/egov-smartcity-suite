@@ -39,6 +39,48 @@
  */
 package org.egov.ptis.domain.service.property;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_BAL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CITY_GRADE_CORPORATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.VR_SPECIALNOTICE_TEMPLATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_NOTICE_GENERATED;
+import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_REJECTION_ACK_GENERATED;
+import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_INSPECTOR_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_INSPECTOR_REJECTED;
+
+import java.io.ByteArrayInputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
@@ -63,7 +105,6 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.enums.TransactionType;
@@ -88,21 +129,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-
-import java.io.ByteArrayInputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -158,7 +184,7 @@ public class VacancyRemissionService {
     private EisCommonService eisCommonService;
 
     @Autowired
-    DesignationService designationService;
+    private DesignationService designationService;
     
     @Autowired
     private UserService userService;
@@ -478,8 +504,8 @@ public class VacancyRemissionService {
                                 .withNextAction(wfmatrix.getNextAction());
 	                if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)){
 	                	Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
-	                    Installment installmentFirstHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
-	                    Installment installmentSecondHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
+	                    Installment installmentFirstHalf = installmentMap.get(CURRENTYEAR_FIRST_HALF);
+	                    Installment installmentSecondHalf = installmentMap.get(CURRENTYEAR_SECOND_HALF);
 	                    /*
 	                     * If VR is done in 1st half, provide 50% rebate on taxes of the 2nd half
 	                     */
@@ -549,17 +575,17 @@ public class VacancyRemissionService {
     }
     
     public ReportOutput generateReport(final VacancyRemission vacancyRemission, final HttpServletRequest request, String approvedUser, String noticeNo) {
-        ReportRequest reportInput = null;
+        ReportRequest reportInput;
         ReportOutput reportOutput = null;
         if (vacancyRemission != null) {
             final Map<String, Object> reportParams = new HashMap<>();
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-            final String cityGrade = (request.getSession().getAttribute("cityGrade") != null
-                    ? request.getSession().getAttribute("cityGrade").toString() : null);
+            final String cityGrade = request.getSession().getAttribute("cityGrade") != null
+                    ? request.getSession().getAttribute("cityGrade").toString() : null;
             Boolean isCorporation;
-            if (cityGrade != null && cityGrade != ""
-                    && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
+            if (!cityGrade.equals(null) && !cityGrade.equals("")
+                    && cityGrade.equalsIgnoreCase(CITY_GRADE_CORPORATION)) {
                 isCorporation = true;
             } else
                 isCorporation = false;
@@ -570,7 +596,7 @@ public class VacancyRemissionService {
                     .getDesignationByName(COMMISSIONER_DESGN).getId());
             reportParams.put("isCorporation", isCorporation);
             reportParams.put("cityName", cityName);
-            reportParams.put("userSignature", (!users.isEmpty() && users.get(0).getSignature() != null) ? new ByteArrayInputStream(users.get(0).getSignature()) : null);
+            reportParams.put("userSignature", !users.isEmpty() && users.get(0).getSignature() != null ? new ByteArrayInputStream(users.get(0).getSignature()) : "");
             reportParams.put("loggedInUsername",
                     userService.getUserById(ApplicationThreadLocals.getUserId()).getName());
             reportParams.put("approvedDate", formatter.format(vacancyRemission.getState().getCreatedDate()));

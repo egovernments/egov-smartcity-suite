@@ -99,8 +99,8 @@ public class VacanyRemissionMonthlyUpdateController {
         documentTypes = propertyService.getDocumentTypesForTransactionType(TransactionType.VRMONTHLYUPDATE);
         model.addAttribute("remissionDetailsObj", remissionDetails);
         model.addAttribute("documentTypes", documentTypes);
-        if(!vacancyRemission.getDocuments().isEmpty()){
-         model.addAttribute("attachedDocuments", vacancyRemission.getDocuments());
+        if (!vacancyRemission.getDocuments().isEmpty()) {
+            model.addAttribute("attachedDocuments", vacancyRemission.getDocuments());
         }
         vacancyRemissionService.addModelAttributes(model, vacancyRemission.getBasicProperty());
         return "vacancyRemissionDetails-form";

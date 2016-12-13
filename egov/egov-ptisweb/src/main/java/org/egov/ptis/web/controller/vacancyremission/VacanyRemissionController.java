@@ -142,7 +142,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
             documentTypes = propertyService.getDocumentTypesForTransactionType(TransactionType.VACANCYREMISION);
             if (property != null)
                 // When called from common search
-                if (("commonSearch").equalsIgnoreCase(mode)) {
+                if ("commonSearch".equalsIgnoreCase(mode)) {
                     Boolean enableVacancyRemission = Boolean.FALSE;
                     if (property.getPropertyDetail().getPropertyTypeMaster().getCode()
                             .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {

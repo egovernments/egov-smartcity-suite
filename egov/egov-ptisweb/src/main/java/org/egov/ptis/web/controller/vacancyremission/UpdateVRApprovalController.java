@@ -161,13 +161,14 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
             if (workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE)){
                 final User user = securityUtils.getCurrentUser();
                 final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
-                               approvalPosition = userAssignment.getPosition().getId();
-                               successMsg = "Vacancy Remission Approved Successfully in the System and forwarded to "
-                                       + userAssignment.getEmployee().getName().concat("~").concat(userAssignment.getPosition().getName());
+                approvalPosition = userAssignment.getPosition().getId();
+                successMsg = "Vacancy Remission Approved Successfully in the System and forwarded to " + userAssignment
+                        .getEmployee().getName().concat("~").concat(userAssignment.getPosition().getName());
             }
-            if(!workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_PREVIEW) && !WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction)){
-            vacancyRemissionService.saveVacancyRemissionApproval(vacancyRemissionApproval, approvalPosition,
-                    approvalComent, null, workFlowAction);
+            if (!workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_PREVIEW)
+                    && !WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction)) {
+                vacancyRemissionService.saveVacancyRemissionApproval(vacancyRemissionApproval, approvalPosition,
+                        approvalComent, null, workFlowAction);
             }
 
             if (StringUtils.isNotBlank(workFlowAction)) {

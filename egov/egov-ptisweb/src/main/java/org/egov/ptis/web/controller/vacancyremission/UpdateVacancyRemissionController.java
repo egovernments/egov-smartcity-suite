@@ -39,9 +39,13 @@
  */
 package org.egov.ptis.web.controller.vacancyremission;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -62,27 +66,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 @Controller
 @RequestMapping(value = "/vacancyremission")
 public class UpdateVacancyRemissionController extends GenericWorkFlowController {
 
-	private static final String VACANCYREMISSION_EDIT = "vacancyRemission-edit";
+    private static final String VACANCYREMISSION_EDIT = "vacancyRemission-edit";
     private static final String VACANCYREMISSION_SUCCESS = "vacancyRemission-success";
+    private static final String APPROVAL_POS = "approvalPosition";
     private VacancyRemissionService vacancyRemissionService;
-
     private PropertyTaxUtil propertyTaxUtil;
-
-    @Autowired
-    public UpdateVacancyRemissionController(VacancyRemissionService vacancyRemissionService,
-            PropertyTaxUtil propertyTaxUtil) {
-        this.propertyTaxUtil = propertyTaxUtil;
-        this.vacancyRemissionService = vacancyRemissionService;
-    }
     
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
@@ -92,10 +84,14 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
     
     @Autowired
     private AssignmentService assignmentService;
-    
-    @Autowired
-    private PositionMasterService positionMasterService;
 
+    @Autowired
+    public UpdateVacancyRemissionController(VacancyRemissionService vacancyRemissionService,
+            PropertyTaxUtil propertyTaxUtil) {
+        this.propertyTaxUtil = propertyTaxUtil;
+        this.vacancyRemissionService = vacancyRemissionService;
+    }
+    
     @ModelAttribute
     public VacancyRemission vacancyRemissionModel(@PathVariable Long id) {
         return vacancyRemissionService.getVacancyRemissionById(id);
@@ -138,8 +134,8 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
             String successMsg = "";
             if (request.getParameter("approvalComent") != null)
                 approvalComent = request.getParameter("approvalComent");
-            if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-                approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+            if (request.getParameter(APPROVAL_POS) != null && !request.getParameter(APPROVAL_POS).isEmpty())
+                approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POS));
             else if (COMMISSIONER_DESGN.equalsIgnoreCase(currDesignation)
                     && (workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD)
                             || workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT))) {
