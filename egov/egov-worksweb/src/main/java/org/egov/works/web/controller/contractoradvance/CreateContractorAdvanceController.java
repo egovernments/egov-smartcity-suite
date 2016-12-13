@@ -122,9 +122,11 @@ public class CreateContractorAdvanceController extends GenericWorkFlowController
             @RequestParam String workFlowAction, @RequestParam("file") final MultipartFile[] files) throws IOException {
 
         final JsonObject jsonObject = new JsonObject();
-        contractorAdvanceService.validateARFInDrafts(contractorAdvanceRequisition.getWorkOrderEstimate().getId(), jsonObject,
+        contractorAdvanceService.validateARFInDrafts(contractorAdvanceRequisition.getId(),
+                contractorAdvanceRequisition.getWorkOrderEstimate().getId(), jsonObject,
                 resultBinder);
-        contractorAdvanceService.validateARFInWorkFlow(contractorAdvanceRequisition.getWorkOrderEstimate().getId(), jsonObject,
+        contractorAdvanceService.validateARFInWorkFlow(contractorAdvanceRequisition.getId(),
+                contractorAdvanceRequisition.getWorkOrderEstimate().getId(), jsonObject,
                 resultBinder);
         contractorAdvanceService.validateInput(contractorAdvanceRequisition, resultBinder);
 

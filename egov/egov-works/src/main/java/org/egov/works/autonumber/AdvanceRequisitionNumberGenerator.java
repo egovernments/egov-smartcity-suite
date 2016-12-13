@@ -40,6 +40,7 @@
 
 package org.egov.works.autonumber;
 
+import org.egov.model.bills.EgBillregister;
 import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
 import org.springframework.stereotype.Service;
 
@@ -47,4 +48,5 @@ import org.springframework.stereotype.Service;
 public interface AdvanceRequisitionNumberGenerator {
     String getNextNumber(ContractorAdvanceRequisition advanceRequisition);
 
+    String getAdvanceBillNumber(EgBillregister egBillregister);
 }

@@ -285,6 +285,8 @@ public class WorksConstants {
 
     public static final String BILL_EXPENDITURE_TYPE = "Works";
 
+    public static final String BILL_ADVANCE_TYPE = "Advance";
+
     public static final String APPCONFIG_KEY_DESIGNATION_TECHSANCTION_AUTHORITY = "DESIGNATION_TECHSANCTION_AUTHORITY";
 
     public static final String APPCONFIG_KEY_BUDGETCHECK_REQUIRED = "budgetCheckRequired";
@@ -417,4 +419,8 @@ public class WorksConstants {
     public static final String CONTRACTOR_ADVANCE = "CONTRACTORADVANCE";
 
     public static final String WORKFLOWTYPE_ARF_DISPLAYNAME = "Contractor Advance Requisition";
+
+    public static final String ADVANCE_BILL = "ADVANCEBILL";
+
+    public static final String EXPENSE_BILL_VIEW_URL = "/EGF/expensebill/view/";
 }

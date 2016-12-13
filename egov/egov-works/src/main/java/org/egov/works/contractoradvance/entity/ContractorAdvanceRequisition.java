@@ -98,7 +98,7 @@ public class ContractorAdvanceRequisition extends EgAdvanceRequisition {
 
     @Override
     public String getStateDetails() {
-        return "Contractor ARF : " + getAdvanceRequisitionNumber();
+        return "ARF Number : " + getAdvanceRequisitionNumber();
     }
 
     public WorkOrderEstimate getWorkOrderEstimate() {

@@ -41,6 +41,7 @@ package org.egov.works.web.controller.contractoradvance;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,6 +51,7 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.model.bills.EgBillregister;
 import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
 import org.egov.works.contractoradvance.service.ContractorAdvanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
@@ -200,11 +202,26 @@ public class UpdateContractorAdvanceController extends GenericWorkFlowController
                 .equals(ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.REJECTED.toString())
                 && WorksConstants.FORWARD_ACTION.equals(workFlowAction) && WorksConstants.EDIT.equals(mode)) {
             final JsonObject jsonObject = new JsonObject();
-            contractorAdvanceService.validateARFInDrafts(contractorAdvanceRequisition.getWorkOrderEstimate().getId(), jsonObject,
+            contractorAdvanceService.validateARFInDrafts(contractorAdvanceRequisition.getId(),
+                    contractorAdvanceRequisition.getWorkOrderEstimate().getId(), jsonObject,
                     errors);
-            contractorAdvanceService.validateARFInWorkFlow(contractorAdvanceRequisition.getWorkOrderEstimate().getId(),
+            contractorAdvanceService.validateARFInWorkFlow(contractorAdvanceRequisition.getId(),
+                    contractorAdvanceRequisition.getWorkOrderEstimate().getId(),
                     jsonObject, errors);
             contractorAdvanceService.validateInput(contractorAdvanceRequisition, errors);
+        }
+
+        if (workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE)) {
+            contractorAdvanceRequisition.setApprovedDate(new Date());
+            final EgBillregister egBillregister = new EgBillregister();
+            contractorAdvanceService.generateAdvanceBills(contractorAdvanceRequisition, egBillregister);
+            final List<String> errorMessages = new ArrayList<>();
+            contractorAdvanceService.validateLedgerAndSubledger(egBillregister, errorMessages);
+            if (errorMessages.size() == 0)
+                contractorAdvanceRequisition.getEgAdvanceReqMises().setEgBillregister(egBillregister);
+            else
+                for (final String error : errorMessages)
+                    errors.reject("", error);
         }
 
         if (errors.hasErrors()) {

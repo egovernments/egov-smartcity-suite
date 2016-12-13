@@ -120,8 +120,8 @@ public class AjaxContractorAdvanceController {
             final HttpServletRequest request, final HttpServletResponse response) {
         final JsonObject jsonObject = new JsonObject();
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
-        contractorAdvanceService.validateARFInDrafts(workOrderEstimate.getId(), jsonObject, null);
-        contractorAdvanceService.validateARFInWorkFlow(workOrderEstimate.getId(), jsonObject, null);
+        contractorAdvanceService.validateARFInDrafts(null, workOrderEstimate.getId(), jsonObject, null);
+        contractorAdvanceService.validateARFInWorkFlow(null, workOrderEstimate.getId(), jsonObject, null);
         if (jsonObject.toString().length() > 2) {
             sendAJAXResponse(jsonObject.toString(), response);
             return "";

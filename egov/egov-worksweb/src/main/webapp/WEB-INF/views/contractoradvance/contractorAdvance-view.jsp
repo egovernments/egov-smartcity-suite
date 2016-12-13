@@ -66,7 +66,9 @@
 	</c:if>
 	<div class="row">
 		<div class="col-sm-12 text-center">
-			<button type='submit' class='btn btn-primary' id="viewAdvanceBill" ><spring:message code='lbl.viewadvancebill' /></button>
+			<c:if test="${contractorAdvanceRequisition.status.code == 'APPROVED' }">
+				<button type='submit' class='btn btn-primary' id="viewAdvanceBill" ><spring:message code='lbl.viewadvancebill' /></button>
+			</c:if>
 			<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
 		</div>
 	</div>

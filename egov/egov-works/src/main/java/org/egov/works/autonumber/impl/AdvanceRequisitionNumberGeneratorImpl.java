@@ -46,6 +46,7 @@ import java.util.Date;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.model.bills.EgBillregister;
 import org.egov.works.autonumber.AdvanceRequisitionNumberGenerator;
 import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdvanceRequisitionNumberGeneratorImpl implements AdvanceRequisitionNumberGenerator {
 
     private static final String ADVANCEREQUISITION_NUMBER_SEQ_PREFIX = "SEQ_ADVANCEREQUISITION_NUMBER";
+
+    private static final String ADVANCEBILL_NUMBER_SEQ_PREFIX = "SEQ_ADVANCEBILL_NUMBER";
 
     @Autowired
     private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
@@ -82,4 +85,16 @@ public class AdvanceRequisitionNumberGeneratorImpl implements AdvanceRequisition
         return cal.get(Calendar.MONTH) + 1;
     }
 
+    @Override
+    @Transactional
+    public String getAdvanceBillNumber(final EgBillregister egBillregister) {
+        final CFinancialYear financialYear = financialYearHibernateDAO
+                .getFinYearByDate(egBillregister.getBilldate());
+        final String finYearRange[] = financialYear.getFinYearRange().split("-");
+        final String sequenceName = ADVANCEBILL_NUMBER_SEQ_PREFIX + "_" + finYearRange[0] + "_" + finYearRange[1];
+        Serializable sequenceNumber;
+        sequenceNumber = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        return String.format("ADV/%06d/%02d/%s", sequenceNumber,
+                getMonthOfTransaction(egBillregister.getBilldate()), financialYear.getFinYearRange());
+    }
 }
