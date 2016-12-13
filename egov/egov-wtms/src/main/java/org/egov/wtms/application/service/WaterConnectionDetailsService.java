@@ -265,6 +265,8 @@ public class WaterConnectionDetailsService {
 
     @Transactional
     public WaterConnectionDetails createExisting(final WaterConnectionDetails waterConnectionDetails) {
+        waterConnectionDetails.getConnection()
+        .setConsumerCode(waterTaxNumberGenerator.getNextConsumerNumber());
         waterConnectionDetails.getExistingConnection().setWaterConnectionDetails(waterConnectionDetails);
         waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getConnection().getConsumerCode());
         waterConnectionDetails.setApplicationDate(waterConnectionDetails.getExecutionDate());
