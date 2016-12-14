@@ -71,6 +71,13 @@
 	           <form:errors path="${applicant}.otherName" cssClass="add-margin error-msg"/>
 		</div>
 		<label class="col-sm-6 text-right">
+			<spring:message code="lbl.parentsName"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-6">
+			<form:input path="${applicant}.parentsName" id="txt-parentsName" type="text" class="form-control low-width is_valid_alphabet" maxlength="20" placeholder="" autocomplete="off" required="required"/>
+	           <form:errors path="${applicant}.parentsName" cssClass="add-margin error-msg"/>
+		</div>
+		<label class="col-sm-6 text-right">
 				<spring:message code="lbl.religion"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-6">
@@ -195,31 +202,58 @@
                  <form:errors path="${applicant}.contactInfo.residenceAddress" cssClass="add-margin error-msg"/>
 	</div>
 	<label class="col-sm-2 control-label">
+			<spring:message code="lbl.street"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3">
+			<form:input path="${applicant}.street" id="txt-street" type="text" class="form-control is_valid_alphabet inline-elem"  placeholder="" autocomplete="off" required="required"/>
+            <form:errors path="${applicant}.street" cssClass="add-margin error-msg"/>
+		</div>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-3 control-label">
+			<spring:message code="lbl.locality"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3">
+			<form:input path="${applicant}.locality" id="txt-locality" type="text" class="form-control is_valid_alphabet inline-elem"  placeholder="" autocomplete="off" required="required"/>
+            <form:errors path="${applicant}.locality" cssClass="add-margin error-msg"/>
+		</div>
+	<label class="col-sm-2 control-label">
+			<spring:message code="lbl.city"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3">
+			<form:input path="${applicant}.city" id="txt-city" type="text" class="form-control is_valid_alphabet inline-elem"  placeholder="" autocomplete="off" required="required"/>
+            <form:errors path="${applicant}.city" cssClass="add-margin error-msg"/>
+		</div>
+</div>
+
+<div class="form-group">
+	
+	<label class="col-sm-3 control-label">
 		<spring:message code="lbl.office.address"/><span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3">
 		<form:textarea path="${applicant}.contactInfo.officeAddress" id="${applicant}.contactInfo.officeAddress" type="text" class="form-control low-width patternvalidation" data-pattern="regexp_alphabetspecialcharacters" maxlength="256" placeholder="" autocomplete="off" required="required" />
                  <form:errors path="${applicant}.contactInfo.officeAddress" cssClass="add-margin error-msg"/>
 	</div>
-</div>
-<div class="form-group">
-	<label class="col-sm-3 control-label">
+	<label class="col-sm-2 control-label">
 		<spring:message code="lbl.phoneno"/><span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3">
 		<form:input path="${applicant}.contactInfo.mobileNo" id="${applicant}.contactInfo.mobileNo" type="text" cssClass="form-control low-width patternvalidation mobileno-field" data-pattern="number" minlength="10" maxlength="10" placeholder="" autocomplete="off" required="required" />
                  <form:errors path="${applicant}.contactInfo.mobileNo" cssClass="add-margin error-msg"/>
 	</div>
-	<label class="col-sm-2 control-label">
+	
+</div>
+<div class="form-group">
+<label class="col-sm-3 control-label">
 		<spring:message code="lbl.occupation"/><span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3">
 		<form:input path="${applicant}.occupation" id="${applicant}.occupation" type="text" class="form-control low-width is_valid_alphabet" maxlength="20" placeholder="" autocomplete="off" required="required" />
           	<form:errors path="${applicant}.occupation" cssClass="add-margin error-msg"/>
 	</div>
-</div>
-<div class="form-group">
-	<label class="col-sm-3 control-label">
+	<label class="col-sm-2 control-label">
 		<spring:message code="lbl.email"/>
 	</label>
 	<div class="col-sm-3">
@@ -227,13 +261,32 @@
 		<span class=""></span>
                  <form:errors path="${applicant}.contactInfo.email" cssClass="add-margin error-msg"/>
 	</div>
-	
+</div>
+
+<div class="form-group">
+<label class="col-sm-3 control-label">
+		<spring:message code="lbl.qualification"/>
+	</label>
+	<div class="col-sm-3">
+		<form:input path="${applicant}.qualification" id="${applicant}.qualification" type="text" class="form-control low-width is_valid_alphabet" maxlength="20" placeholder="" autocomplete="off" />
+          	<form:errors path="${applicant}.qualification" cssClass="add-margin error-msg"/>
+	</div>
 	<label class="col-sm-2 control-label">
+		<spring:message code="lbl.nationality"/>
+	</label>
+	<div class="col-sm-3">
+		<form:input path="${applicant}.nationality" id="${applicant}.nationality" type="text" cssClass="form-control low-width" maxlength="20" placeholder="" autocomplete="off" />
+		<span class=""></span>
+                 <form:errors path="${applicant}.nationality" cssClass="add-margin error-msg"/>
+	</div>
+</div>
+<div class="form-group">
+<label class="col-sm-3 control-label">
 		<spring:message code="lbl.handicapped"/>
 	</label>
-	<div class="col-sm-3 text-left">
+	<div class="col-sm-3">
 		<form:checkbox path="${applicant}.handicapped"   />
 		<span class=""></span>
                  <form:errors path="${applicant}.handicapped" cssClass="add-margin error-msg"/>
 	</div>
-</div>
+	</div>

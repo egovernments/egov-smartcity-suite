@@ -74,21 +74,38 @@
             <form:errors path="zone" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
-
+	
 	<div class="form-group">
 		<label class="col-sm-3 control-label">
+			<spring:message code="lbl.street"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3">
+			<form:input path="street" id="txt-street" type="text" class="form-control is_valid_alphabet inline-elem"  placeholder="" autocomplete="off" required="required"/>
+            <form:errors path="street" cssClass="add-margin error-msg"/>
+		</div>
+		<label class="col-sm-2 control-label">
+			<spring:message code="lbl.locality"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3">
+			<form:input path="locality" id="txt-locality" type="text" class="form-control is_valid_alphabet inline-elem"  placeholder="" autocomplete="off" required="required"/>
+            <form:errors path="locality" cssClass="add-margin error-msg"/>
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label class="col-sm-3 control-label">
+			<spring:message code="lbl.city"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3">
+			<form:input path="city" id="txt-city" type="text" class="form-control is_valid_alphabet inline-elem"  placeholder="" autocomplete="off" required="required"/>
+            <form:errors path="city" cssClass="add-margin error-msg"/>
+		</div>
+		<label class="col-sm-2 control-label">
 			<spring:message code="lbl.date.of.marriage"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
 			<form:input path="dateOfMarriage" id="txt-dateOfMarriage" type="text" class="form-control low-width datepicker today" data-date-today-highlight="true" data-date-end-date="0d" placeholder="" autocomplete="off" required="required"/>
             <form:errors path="dateOfMarriage" cssClass="add-margin error-msg"/>
-		</div>
-		<label class="col-sm-2 control-label">
-			<spring:message code="lbl.place.of.marriage"/><span class="mandatory"></span>
-		</label>
-		<div class="col-sm-3">
-			<form:input path="placeOfMarriage" id="txt-placeOfMarriage" type="text" class="form-control low-width is_valid_alphabet" placeholder="" autocomplete="off" required="required"/>
-            <form:errors path="placeOfMarriage" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
 
@@ -115,6 +132,30 @@
 	</div>
 	<div class="form-group">
 	<label class="col-sm-3 control-label">
+			<spring:message code="lbl.marriage.venue"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3">
+			<form:select path="venue" id="select-venue" cssClass="form-control" cssErrorClass="form-control error" required="required">
+			<form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
+			<form:options items="${venuelist}"/>
+			</form:select>
+			<%-- <form:input path="placeOfMarriage" id="txt-placeOfMarriage" type="text" class="form-control low-width is_valid_alphabet" placeholder="" autocomplete="off" required="required"/> --%>
+            <form:errors path="venue" cssClass="add-margin error-msg"/>
+		</div>
+		<label class="col-sm-2 control-label" id="txt-venuelabel" style="display: none;">
+			<spring:message code="lbl.place.of.marriage"/>
+		</label>
+		<div class="col-sm-3">
+			
+		<form:input path="placeOfMarriage"  id="txt-venue" style="display: none;" type="text" class="form-control low-width patternvalidation"  placeholder="" autocomplete="off"/>
+			
+            <form:errors path="placeOfMarriage" cssClass="add-margin error-msg"/>
+		</div>
+		
+	</div>
+	
+	<div class="form-group">
+	<label class="col-sm-3 control-label">
 			<spring:message code="lbl.law"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
@@ -125,6 +166,7 @@
              </form:select>
             <form:errors path="marriageAct" cssClass="add-margin error-msg"/>
 		</div>
+		
 	</div>
 
 <c:set value="husband" var="applicant" scope="request"></c:set>

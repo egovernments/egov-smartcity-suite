@@ -47,6 +47,25 @@ $('.mobileno-field').blur( function () {
 		}
 	});
 
+
+
+$('#select-venue').change(function(){
+	if (this.value =='Residence')
+	{
+		$('#txt-venuelabel').hide();
+		$('#txt-venue').hide();
+		
+		
+	}
+	else {
+		$('#txt-venuelabel').show();
+		$('#txt-venue').show();
+		
+
+}
+})
+
+
 $('.month-field').blur( function () {
 	var month = parseInt( $(this).val() );
 	if (month != null && month != undefined && (month < 0 || month > 12)) {
@@ -105,10 +124,14 @@ $('#select-marriagefees').change( function () {
 						'feeId' : $('#select-marriagefees').val()
 						}
 				}).done(function(value) {
-										if (value == 0)
-											$('#txt-feepaid').val('');
-										else
+										if (value == 0){
 											$('#txt-feepaid').val(value);
+											$('#txt-feepaid').attr('readonly', true);
+										}
+										else{
+											$('#txt-feepaid').val(value);
+										$('#txt-feepaid').attr('readonly', false);
+				}
 				
 				});
 			}

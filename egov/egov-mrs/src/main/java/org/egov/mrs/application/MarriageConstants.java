@@ -39,19 +39,22 @@
 
 package org.egov.mrs.application;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MarriageConstants {
-    
+
     public static final String MODULE_NAME = "Marriage Registration";
     public static final String BOUNDARY_TYPE = "Zone";
     public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
-    
+
     public static final String APPROVER_ROLE_NAME = "ULB Operator";
     public static final String DATE_FORMAT_DDMMYYYY = "dd-MM-yyyy";
-    
+
     public static final String REISSUE_FEECRITERIA = "Re-Issue Fee";
-    public static final String ADDITIONAL_RULE_REGISTRATION = "MARRIAGE REGISTRATION"; 
+    public static final String ADDITIONAL_RULE_REGISTRATION = "MARRIAGE REGISTRATION";
     public static final String IMAGE_CONTEXT_PATH = "/egi";
-    
+
     // validactions
     public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
     public static final String WFLOW_ACTION_STEP_CANCEL = "Cancel Registration";
@@ -59,16 +62,45 @@ public class MarriageConstants {
     public static final String WFLOW_ACTION_STEP_FORWARD = "Forward";
     public static final String WFLOW_ACTION_STEP_APPROVE = "Approve";
     public static final String WFLOW_ACTION_STEP_PRINTCERTIFICATE = "Print Certificate";
-    
+
     public static final String APPROVED = "APPROVED";
     public static final String MARRIAGEFEECOLLECTION_FUCNTION_CODE = "MARRIAGE_FUNCTION_CODE";
     public static final String FILESTORE_MODULECODE = "MRS";
-    public static final String SENDSMSFROOMMARRIAGEMODULE="SENDSMSFROOMMARRIAGEMODULE";
-    public static final String SENDEMAILFROOMMARRIAGEMODULE="SENDEMAILFROOMMARRIAGEMODULE";
-    
+    public static final String SENDSMSFROOMMARRIAGEMODULE = "SENDSMSFROOMMARRIAGEMODULE";
+    public static final String SENDEMAILFROOMMARRIAGEMODULE = "SENDEMAILFROOMMARRIAGEMODULE";
+
     public static final String APPL_INDEX_MODULE_NAME = "Marriage Registration";
-    
+
     public static final String REGISTER_NO_OF_DAYS = "90";
     public static final String MARRIAGEREGISTRATION_DAYS_VALIDATION = "MARRIAGEREGISTRATION_DAYS_VALIDATION";
-    
+
+    public static final List<String> venuelist = new ArrayList<String>() {
+        /**
+         *
+         */
+        private static final long serialVersionUID = -6112513531476444226L;
+
+        {
+            add("Residence");
+            add("Function Hall");
+            add("Worship Place");
+            add("Others");
+
+        }
+    };
+
+    public static final List<String> witnessRelation = new ArrayList<String>() {
+        /**
+         *
+         */
+        private static final long serialVersionUID = -8054560659655351886L;
+
+        {
+
+            add("S/o");
+            add("D/o");
+            add("W/o");
+
+        }
+    };
 }

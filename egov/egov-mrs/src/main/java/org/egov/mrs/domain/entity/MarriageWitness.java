@@ -40,8 +40,11 @@
 package org.egov.mrs.domain.entity;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -55,6 +58,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.mrs.domain.enums.MRApplicantType;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
@@ -83,10 +87,20 @@ public class MarriageWitness extends AbstractAuditable {
     @SafeHtml
     @Length(max = 30)
     private String relationshipWithApplicant;
-    
+
     @NotNull
     @Length(min = 25)
     private Integer age;
+
+    @NotNull
+    @SafeHtml
+    @Length(max = 30)
+    private String witnessRelation;
+
+    @NotNull
+    @SafeHtml
+    @Length(max = 30)
+    private String relativeName;
 
     @SafeHtml
     @Length(max = 20)
@@ -95,15 +109,15 @@ public class MarriageWitness extends AbstractAuditable {
     private byte[] signature;
     @Transient
     private byte[] photo;
-    
+
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "photoFileStore") 
+    @JoinColumn(name = "photoFileStore")
     private FileStoreMapper photoFileStore;
-    
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "signatureFileStore")
     private FileStoreMapper signatureFileStore;
-    
+
     private transient MultipartFile photoFile;
     private transient MultipartFile signatureFile;
     private transient String encodedPhoto;
@@ -114,10 +128,15 @@ public class MarriageWitness extends AbstractAuditable {
     @JoinColumn(name = "registration")
     private MarriageRegistration registration;
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "applicantType")
+    private MRApplicantType applicantType;
+
     @Embedded
     private Contact contactInfo;
-    
-	public String getFullName() {
+
+    public String getFullName() {
         String fullName = getName().getFirstName();
 
         fullName += getName().getMiddleName() == null ? "" : " " + getName().getMiddleName();
@@ -125,7 +144,7 @@ public class MarriageWitness extends AbstractAuditable {
 
         return fullName;
     }
-    
+
     @Override
     public Long getId() {
         return id;
@@ -159,12 +178,12 @@ public class MarriageWitness extends AbstractAuditable {
     public void setRelationshipWithApplicant(final String relationshipWithApplicant) {
         this.relationshipWithApplicant = relationshipWithApplicant;
     }
-    
+
     public Integer getAge() {
         return age;
     }
 
-    public void setAge(Integer age) {
+    public void setAge(final Integer age) {
         this.age = age;
     }
 
@@ -211,51 +230,73 @@ public class MarriageWitness extends AbstractAuditable {
     public MultipartFile getPhotoFile() {
         return photoFile;
     }
-    
-    public void setPhotoFile(MultipartFile photoFile) {
+
+    public void setPhotoFile(final MultipartFile photoFile) {
         this.photoFile = photoFile;
     }
-    
+
     public MultipartFile getSignatureFile() {
         return signatureFile;
     }
-    
-    public void setSignatureFile(MultipartFile signatureFile) {
+
+    public void setSignatureFile(final MultipartFile signatureFile) {
         this.signatureFile = signatureFile;
     }
-    
+
     public String getEncodedPhoto() {
         return encodedPhoto;
     }
-    
-    public void setEncodedPhoto(String encodedPhoto) {
+
+    public void setEncodedPhoto(final String encodedPhoto) {
         this.encodedPhoto = encodedPhoto;
     }
-    
+
     public String getEncodedSignature() {
         return encodedSignature;
     }
-    
-    public void setEncodedSignature(String encodedSignature) {
+
+    public void setEncodedSignature(final String encodedSignature) {
         this.encodedSignature = encodedSignature;
     }
 
-	public FileStoreMapper getPhotoFileStore() {
-		return photoFileStore;
-	}
+    public FileStoreMapper getPhotoFileStore() {
+        return photoFileStore;
+    }
 
-	public void setPhotoFileStore(FileStoreMapper photoFileStore) {
-		this.photoFileStore = photoFileStore;
-	}
+    public void setPhotoFileStore(final FileStoreMapper photoFileStore) {
+        this.photoFileStore = photoFileStore;
+    }
 
-	public FileStoreMapper getSignatureFileStore() {
-		return signatureFileStore;
-	}
+    public FileStoreMapper getSignatureFileStore() {
+        return signatureFileStore;
+    }
 
-	public void setSignatureFileStore(FileStoreMapper signatureFileStore) {
-		this.signatureFileStore = signatureFileStore;
-	}
-    
-    
-    
+    public void setSignatureFileStore(final FileStoreMapper signatureFileStore) {
+        this.signatureFileStore = signatureFileStore;
+    }
+
+    public MRApplicantType getApplicantType() {
+        return applicantType;
+    }
+
+    public void setApplicantType(final MRApplicantType applicantType) {
+        this.applicantType = applicantType;
+    }
+
+    public String getWitnessRelation() {
+        return witnessRelation;
+    }
+
+    public void setWitnessRelation(final String witnessRelation) {
+        this.witnessRelation = witnessRelation;
+    }
+
+    public String getRelativeName() {
+        return relativeName;
+    }
+
+    public void setRelativeName(final String relativeName) {
+        this.relativeName = relativeName;
+    }
+
 }

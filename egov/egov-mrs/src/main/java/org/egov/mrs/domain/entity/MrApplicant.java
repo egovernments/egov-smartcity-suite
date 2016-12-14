@@ -127,15 +127,14 @@ public class MrApplicant extends AbstractAuditable {
     private byte[] photo;
     @Transient
     private byte[] signature;
-    
+
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "photoFileStore") 
+    @JoinColumn(name = "photoFileStore")
     private FileStoreMapper photoFileStore;
-    
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "signatureFileStore")
     private FileStoreMapper signatureFileStore;
-    
 
     @NotNull
     @Valid
@@ -150,7 +149,27 @@ public class MrApplicant extends AbstractAuditable {
     @Valid
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "applicant")
     private List<MrApplicantDocument> applicantDocuments = new ArrayList<MrApplicantDocument>();
-    
+
+    @NotNull
+    @Length(max = 20)
+    private String parentsName;
+
+    @Length(max = 20)
+    private String qualification;
+
+    @NotNull
+    @Length(max = 20)
+    private String nationality;
+
+    @NotNull
+    private String street;
+
+    @NotNull
+    private String locality;
+
+    @NotNull
+    private String city;
+
     @Transient
     private List<MarriageDocument> documents;
 
@@ -162,8 +181,8 @@ public class MrApplicant extends AbstractAuditable {
 
     private transient String encodedPhoto;
     private transient String encodedSignature;
-    
-    private boolean handicapped=false;
+
+    private boolean handicapped = false;
 
     public String getFullName() {
         String fullName = getName().getFirstName();
@@ -185,12 +204,11 @@ public class MrApplicant extends AbstractAuditable {
         if (getSignatureFile() != null)
             setSignature(FileCopyUtils.copyToByteArray(getSignatureFile().getInputStream()));
     }
-    
+
     public boolean isCopyFilesToByteArray() {
         return photoFile.getSize() > 0 || signatureFile.getSize() > 0;
     }
 
-    
     @Override
     public Long getId() {
         return id;
@@ -349,43 +367,89 @@ public class MrApplicant extends AbstractAuditable {
     public String getEncodedPhoto() {
         return encodedPhoto;
     }
-    
-    public void setEncodedPhoto(String encodedPhoto) {
+
+    public void setEncodedPhoto(final String encodedPhoto) {
         this.encodedPhoto = encodedPhoto;
     }
-    
+
     public String getEncodedSignature() {
         return encodedSignature;
     }
-    
-    public void setEncodedSignature(String encodedSignature) {
+
+    public void setEncodedSignature(final String encodedSignature) {
         this.encodedSignature = encodedSignature;
     }
 
-	public FileStoreMapper getPhotoFileStore() {
-		return photoFileStore;
-	}
+    public FileStoreMapper getPhotoFileStore() {
+        return photoFileStore;
+    }
 
-	public void setPhotoFileStore(FileStoreMapper photoFileStore) {
-		this.photoFileStore = photoFileStore;
-	}
+    public void setPhotoFileStore(final FileStoreMapper photoFileStore) {
+        this.photoFileStore = photoFileStore;
+    }
 
-	public FileStoreMapper getSignatureFileStore() {
-		return signatureFileStore;
-	}
+    public FileStoreMapper getSignatureFileStore() {
+        return signatureFileStore;
+    }
 
-	public void setSignatureFileStore(FileStoreMapper signatureFileStore) {
-		this.signatureFileStore = signatureFileStore;
-	}
+    public void setSignatureFileStore(final FileStoreMapper signatureFileStore) {
+        this.signatureFileStore = signatureFileStore;
+    }
 
     public boolean isHandicapped() {
         return handicapped;
     }
 
-    public void setHandicapped(boolean handicapped) {
+    public void setHandicapped(final boolean handicapped) {
         this.handicapped = handicapped;
     }
 
-    
-    
+    public String getQualification() {
+        return qualification;
+    }
+
+    public void setQualification(final String qualification) {
+        this.qualification = qualification;
+    }
+
+    public String getNationality() {
+        return nationality;
+    }
+
+    public void setNationality(final String nationality) {
+        this.nationality = nationality;
+    }
+
+    public String getParentsName() {
+        return parentsName;
+    }
+
+    public void setParentsName(final String parentsName) {
+        this.parentsName = parentsName;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(final String street) {
+        this.street = street;
+    }
+
+    public String getLocality() {
+        return locality;
+    }
+
+    public void setLocality(final String locality) {
+        this.locality = locality;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(final String city) {
+        this.city = city;
+    }
+
 }

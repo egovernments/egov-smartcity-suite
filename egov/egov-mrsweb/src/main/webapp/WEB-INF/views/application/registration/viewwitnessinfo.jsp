@@ -49,7 +49,17 @@
 <c:forEach items="${registration.witnesses}" varStatus="loop" var="witness">
 <div class="panel-heading">
 	<div class="panel-title">
+	<c:if test="${witness.applicantType=='Husband' && loop.index==0}">
+		<div>Husband Side witness</div>
+		
+		</c:if>
+		<%-- Information Of Witness #<c:out value="${loop.index+1}"></c:out> --%>
+		<c:if test="${witness.applicantType=='Wife' && loop.index==2}">
+		<div>Wife Side witness</div>
+		
+		</c:if>
 		Information Of Witness #<c:out value="${loop.index+1}"></c:out>
+		
 	</div>
 </div>
 <div class="panel-body">
@@ -63,6 +73,12 @@
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.occupation"/></div>
 			<div class="col-xs-3 add-margin view-content"><c:out value="${witness.occupation}" default="N/A"></c:out></div>
 		</div>
+		
+		<div class="row add-border">
+				<div class="col-xs-3 add-margin"><spring:message code="lbl.witness.info"/></div>
+				<div class="col-xs-3 add-margin view-content"><c:out value="${witness.relativeName}" default="N/A"></c:out></div>
+			</div>
+		
 		
 		<div class="row add-border">
 				<div class="col-xs-3 add-margin"><spring:message code="lbl.relationship.applicant"/></div>

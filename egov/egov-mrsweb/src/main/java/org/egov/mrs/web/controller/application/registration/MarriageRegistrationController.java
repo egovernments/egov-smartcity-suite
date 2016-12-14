@@ -115,6 +115,8 @@ public class MarriageRegistrationController extends GenericWorkFlowController {
         model.addAttribute("acts", marriageActService.getActs());
         model.addAttribute("religionPractice", Arrays.asList(ReligionPractice.values()));
         model.addAttribute("maritalStatusList", Arrays.asList(MaritalStatus.values()));
+        model.addAttribute("venuelist", MarriageConstants.venuelist);
+        model.addAttribute("witnessRelation", MarriageConstants.witnessRelation);
         model.addAttribute("feesList", marriageFeeService.getActiveGeneralTypeFeeses());
         model.addAttribute("generalDocuments", marriageDocumentService.getGeneralDocuments());
         model.addAttribute("individualDocuments", marriageDocumentService.getIndividualDocuments());

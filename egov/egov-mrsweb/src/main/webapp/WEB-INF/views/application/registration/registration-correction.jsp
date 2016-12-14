@@ -80,21 +80,39 @@
 				    	<div class="panel panel-primary" data-collapsed="0">
 				    		<c:set value="witnesses[0]" var="witness" scope="request"></c:set>
 				    		<form:hidden path="witnesses[0].id"/>
+				    		<input type="hidden" name="marriageRegistration" value="${registration.id}" />
+				    		<form:hidden path="witnesses[0].applicantType" />
 					    	<jsp:include page="witnessinfo.jsp">
-								<jsp:param value="subheading.witness1.info" name="header" />
+								<jsp:param value="subheading.witness1.info" name="subhead" />
+								<jsp:param value="husbandside.witness" name="header" />
+								
 							</jsp:include>
 							
 							<c:set value="witnesses[1]" var="witness" scope="request"></c:set>
 							<form:hidden path="witnesses[1].id"/>
+				    		<form:hidden path="witnesses[1].applicantType"/>
 							<jsp:include page="witnessinfo.jsp">
-								<jsp:param value="subheading.witness2.info" name="header" />
+								<jsp:param value="subheading.witness2.info" name="subhead" />
+								<jsp:param value="" name="header" />
+								
 							</jsp:include>
 							
 							<c:set value="witnesses[2]" var="witness" scope="request"></c:set>
 							<form:hidden path="witnesses[2].id"/>
+				    		<form:hidden path="witnesses[2].applicantType" />
 							<jsp:include page="witnessinfo.jsp">
-								<jsp:param value="subheading.witness3.info" name="header" />
+								<jsp:param value="subheading.witness3.info" name="subhead" />
+								<jsp:param value="wifeside.witness" name="header" />
 							</jsp:include>	
+							
+							<c:set value="witnesses[3]" var="witness" scope="request"></c:set>
+							<form:hidden path="witnesses[3].id"/>
+				    		<form:hidden path="witnesses[3].applicantType"/>
+							<jsp:include page="witnessinfo.jsp">
+								<jsp:param value="subheading.witness4.info" name="subhead" />
+								<jsp:param value="" name="header" />
+							</jsp:include>	
+							
 							<jsp:include page="priestinfo.jsp"></jsp:include>
 						</div>
 				    </div>

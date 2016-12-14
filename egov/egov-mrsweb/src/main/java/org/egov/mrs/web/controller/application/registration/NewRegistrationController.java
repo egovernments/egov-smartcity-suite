@@ -48,13 +48,17 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.masters.entity.MarriageFee;
 import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -75,6 +79,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/registration")
 public class NewRegistrationController extends MarriageRegistrationController {
+    
+    @Autowired
+    protected AssignmentService assignmentService;
     
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public String showRegistration( final Model model) { 
@@ -108,6 +115,15 @@ public class NewRegistrationController extends MarriageRegistrationController {
             return "registration-form";
               
         }
+        Assignment currentuser = null;
+        Integer loggedInUser = ApplicationThreadLocals.getUserId().intValue();
+        currentuser = assignmentService.getPrimaryAssignmentForUser(loggedInUser.longValue());
+        if(null==currentuser){
+            model.addAttribute("message", "msg.superuser");
+            return "marriagecommon-error";
+           
+        }
+            
 
         obtainWorkflowParameters(workflowContainer, request);
         final String appNo = marriageRegistrationService.createRegistration(registration, workflowContainer);

@@ -54,6 +54,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -78,7 +79,7 @@ public class MarriageRegistration extends StateAware {
 
     private static final long serialVersionUID = 6743094118312883758L;
     public static final String SEQ_REGISTRATION = "SEQ_EGMRS_REGISTRATION";
-    
+
     public enum RegistrationStatus {
         CREATED, APPROVED, REJECTED, REGISTERED, CANCELLED
     }
@@ -103,11 +104,23 @@ public class MarriageRegistration extends StateAware {
     @JoinColumn(name = "marriageact")
     private MarriageAct marriageAct;
 
-    @NotNull
     @SafeHtml
     @Length(max = 30)
     private String placeOfMarriage;
-    
+
+    @SafeHtml
+    @NotNull
+    private String venue;
+
+    @NotNull
+    private String street;
+
+    @NotNull
+    private String locality;
+
+    @NotNull
+    private String city;
+
     /*
      * @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "registration") //Refers to registration field of
      * the Applicant class private Applicant husband = new Applicant();
@@ -119,20 +132,21 @@ public class MarriageRegistration extends StateAware {
     @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "husband")
-  //  @QueryInit("name.firstName")
+    // @QueryInit("name.firstName")
     private MrApplicant husband = new MrApplicant();
 
     @NotNull
     @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "wife")
- //   @QueryInit("name.firstName")
+    // @QueryInit("name.firstName")
     private MrApplicant wife = new MrApplicant();
 
     @NotNull
     @Valid
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "registration")
     @Size(max = 3)
+    @OrderBy("id")
     private List<MarriageWitness> witnesses = new LinkedList<MarriageWitness>();
 
     @Valid
@@ -159,8 +173,7 @@ public class MarriageRegistration extends StateAware {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "zone")
     private Boundary zone;
-    
-    
+
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "registrationUnit")
@@ -189,13 +202,13 @@ public class MarriageRegistration extends StateAware {
     private Date fromDate;
     @Transient
     private Date toDate;
-    
+
     @Transient
     private String month_year;
-    
+
     @Transient
     private int year;
-    
+
     private boolean isLegacy;
     private boolean isActive;
 
@@ -203,7 +216,7 @@ public class MarriageRegistration extends StateAware {
     @Valid
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "registration")
     private List<RegistrationDocument> registrationDocuments = new ArrayList<RegistrationDocument>();
-    
+
     @OneToMany(mappedBy = "registration", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MarriageCertificate> marriageCertificate = new ArrayList<MarriageCertificate>();
 
@@ -216,9 +229,9 @@ public class MarriageRegistration extends StateAware {
     }
 
     public boolean isFeeCollected() {
-        if(demand!=null)
+        if (demand != null)
             return demand.getBaseDemand().compareTo(demand.getAmtCollected()) == 0 ? true : false;
-        else 
+        else
             return false;
     }
 
@@ -272,14 +285,6 @@ public class MarriageRegistration extends StateAware {
 
     public void setMarriageAct(final MarriageAct marriageAct) {
         this.marriageAct = marriageAct;
-    }
-
-    public String getPlaceOfMarriage() {
-        return placeOfMarriage;
-    }
-
-    public void setPlaceOfMarriage(final String placeOfMarriage) {
-        this.placeOfMarriage = placeOfMarriage;
     }
 
     public MrApplicant getHusband() {
@@ -458,10 +463,10 @@ public class MarriageRegistration extends StateAware {
         return status;
     }
 
-    public void setStatus(EgwStatus status) {
+    public void setStatus(final EgwStatus status) {
         this.status = status;
     }
-    
+
     public boolean isActive() {
         return isActive;
     }
@@ -474,10 +479,10 @@ public class MarriageRegistration extends StateAware {
         return marriageCertificate;
     }
 
-    public void setMarriageCertificate(List<MarriageCertificate> marriageCertificate) {
+    public void setMarriageCertificate(final List<MarriageCertificate> marriageCertificate) {
         this.marriageCertificate = marriageCertificate;
     }
-    
+
     public void addCertificate(final MarriageCertificate certificate) {
         getMarriageCertificate().add(certificate);
     }
@@ -486,53 +491,93 @@ public class MarriageRegistration extends StateAware {
         getMarriageCertificate().remove(certificate);
     }
 
-	public Date getFromDate() {
-		return fromDate;
-	}
+    public Date getFromDate() {
+        return fromDate;
+    }
 
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
+    public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
+    }
 
-	public Date getToDate() {
-		return toDate;
-	}
+    public Date getToDate() {
+        return toDate;
+    }
 
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
+    public void setToDate(final Date toDate) {
+        this.toDate = toDate;
+    }
 
-	public MarriageRegistrationUnit getMarriageRegistrationUnit() {
-		return marriageRegistrationUnit;
-	}
+    public MarriageRegistrationUnit getMarriageRegistrationUnit() {
+        return marriageRegistrationUnit;
+    }
 
-	public void setMarriageRegistrationUnit(
-			MarriageRegistrationUnit marriageRegistrationUnit) {
-		this.marriageRegistrationUnit = marriageRegistrationUnit;
-	}
-    
-	public boolean isLegacy() {
-		return isLegacy;
-	}
+    public void setMarriageRegistrationUnit(
+            final MarriageRegistrationUnit marriageRegistrationUnit) {
+        this.marriageRegistrationUnit = marriageRegistrationUnit;
+    }
 
-	public void setLegacy(boolean isLegacy) {
-		this.isLegacy = isLegacy;
-	}
+    public boolean isLegacy() {
+        return isLegacy;
+    }
 
-	public String getMonth_year() {
-		return month_year;
-	}
+    public void setLegacy(final boolean isLegacy) {
+        this.isLegacy = isLegacy;
+    }
 
-	public void setMonth_year(String month_year) {
-		this.month_year = month_year;
-	}
+    public String getMonth_year() {
+        return month_year;
+    }
 
-	public int getYear() {
-		return year;
-	}
+    public void setMonth_year(final String month_year) {
+        this.month_year = month_year;
+    }
 
-	public void setYear(int year) {
-		this.year = year;
-	}
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(final int year) {
+        this.year = year;
+    }
+
+    public String getPlaceOfMarriage() {
+        return placeOfMarriage;
+    }
+
+    public void setPlaceOfMarriage(final String placeOfMarriage) {
+        this.placeOfMarriage = placeOfMarriage;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(final String street) {
+        this.street = street;
+    }
+
+    public String getLocality() {
+        return locality;
+    }
+
+    public void setLocality(final String locality) {
+        this.locality = locality;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(final String city) {
+        this.city = city;
+    }
+
+    public String getVenue() {
+        return venue;
+    }
+
+    public void setVenue(final String venue) {
+        this.venue = venue;
+    }
 
 }

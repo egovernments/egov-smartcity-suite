@@ -46,8 +46,13 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
 <div class="panel-heading">
+<c:if test="${not empty param.header}">
 	<div class="panel-title">
 		<spring:message code="${param.header}"/>
+	</div>
+</c:if>
+	<div class="panel-title">
+		<spring:message code="${param.subhead}" />
 	</div>
 </div>
 <div class="form-group">
@@ -63,6 +68,30 @@
             <form:errors path="${witness}.name.middleName" cssClass="add-margin error-msg"/>
             <form:errors path="${witness}.name.lastName" cssClass="add-margin error-msg"/>
 		</div>
+		
+		<label class="col-sm-6 text-right" >
+			<spring:message code="lbl.witness.info"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-6" >
+	        <form:select path="${witness}.witnessRelation" id="${witness}.witnessRelation" class="form-control is_valid_alphabet inline-elem" style="width: 30%"
+					cssErrorClass="form-control error" required="required" >
+                <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
+                <form:options items="${witnessRelation}"/>
+           </form:select>
+           	<form:input path="${witness}.relativeName" id="${witness}.relativeName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="30" style="width: 50%" placeholder="" autocomplete="off" required="required"/>
+           
+	         
+	         <form:errors path="${witness}.witnessRelation" cssClass="add-margin error-msg"/>
+	         <form:errors path="${witness}.relativeName" cssClass="add-margin error-msg"/>
+		</div>
+		<label class="col-sm-6 text-right" >
+			<spring:message code="lbl.applicant.aadhaarNo"/>
+		</label>
+		<div class="col-sm-6" >
+			<form:input path="${witness}.aadhaarNo" id="${witness}.aadhaarNo" type="text" cssClass="form-control low-width patternvalidation" data-pattern="number" maxlength="60" placeholder="" autocomplete="off" />
+	           <form:errors path="${witness}.aadhaarNo" cssClass="add-margin error-msg"/>
+		</div>
+		
 		<label class="col-sm-6 text-right" >
 			<spring:message code="lbl.occupation"/>
 		</label>

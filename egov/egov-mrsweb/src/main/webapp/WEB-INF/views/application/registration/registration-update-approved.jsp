@@ -77,20 +77,32 @@
 				    		<c:set value="witnesses[0]" var="witness" scope="request"></c:set>
 				    		<form:hidden path="witnesses[0].id"/>
 					    	<jsp:include page="witnessinfo.jsp">
-								<jsp:param value="subheading.witness1.info" name="header" />
+					    	<jsp:param value="husbandside.witness" name="header" />
+								<jsp:param value="subheading.witness1.info" name="subhead" />
 							</jsp:include>
 							
 							<c:set value="witnesses[1]" var="witness" scope="request"></c:set>
 							<form:hidden path="witnesses[1].id"/>
 							<jsp:include page="witnessinfo.jsp">
-								<jsp:param value="subheading.witness2.info" name="header" />
+								<jsp:param value="subheading.witness2.info" name="subhead" />
+								<jsp:param value="" name="header" />
+								
 							</jsp:include>
 							
 							<c:set value="witnesses[2]" var="witness" scope="request"></c:set>
 							<form:hidden path="witnesses[2].id"/>
 							<jsp:include page="witnessinfo.jsp">
-								<jsp:param value="subheading.witness3.info" name="header" />
+								<jsp:param value="subheading.witness3.info" name="subhead" />
+								<jsp:param value="wifeside.witness" name="header" />
+								
 							</jsp:include>	
+							<c:set value="witnesses[3]" var="witness" scope="request"></c:set>
+							<form:hidden path="witnesses[3].id"/>
+							<jsp:include page="witnessinfo.jsp">
+								<jsp:param value="subheading.witness4.info" name="subhead" />
+								<jsp:param value="" name="header" />
+							</jsp:include>	
+							
 							<c:set value="priest" var="priest" scope="request"></c:set>
 							<form:hidden path="priest.id"/>
 							<jsp:include page="priestinfo.jsp"></jsp:include>
