@@ -205,8 +205,24 @@ function removeMandatory() {
 	}
 }
 
+function validateApplicationDate(){
+	var one_day=1000*60*60*24
+	var start = $('#txt-dateOfMarriage').datepicker('getDate'); // date of marriage
+	var end = new Date(); // current date
+	// Math.ceil((end.getTime() - start.getTime())/one_day);
+	var days   = Math.round((end.getTime() - start.getTime())/one_day);
+	return days;
+}
+
 
 $(".btn-primary").click(function() { 
+	if($('#allowDaysValidation').val()=="YES"){
+		var noOfDays = validateApplicationDate();
+		if(noOfDays>90){
+			bootbox.alert("Application will not be accepted beyond 90 days from the date of marriage "+$('#txt-dateOfMarriage').val());
+			return false; 
+		}
+	}
 	removeMandatory();
 	var action = $('#workFlowAction').val();
 	if(action == 'Reject') { 

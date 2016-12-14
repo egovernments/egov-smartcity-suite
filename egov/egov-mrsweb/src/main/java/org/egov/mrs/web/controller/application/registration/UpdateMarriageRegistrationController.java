@@ -47,6 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.StringUtils;
 import org.egov.mrs.application.MarriageConstants;
@@ -95,6 +96,12 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
 
     private void buildMrgRegistrationUpdateResult(final Long id, final Model model) {
         final MarriageRegistration registration = marriageRegistrationService.get(id);
+        if(!registration.isLegacy()){
+            final AppConfigValues  allowValidation = getDaysValidationAppConfValue();
+            model.addAttribute("allowDaysValidation", (allowValidation!=null && !allowValidation.getValue().isEmpty())?allowValidation.getValue():"NO");
+        } else {
+            model.addAttribute("allowDaysValidation","NO");
+        }
         marriageRegistrationService.prepareDocumentsForView(registration);
         marriageApplicantService.prepareDocumentsForView(registration.getHusband());
         marriageApplicantService.prepareDocumentsForView(registration.getWife());
@@ -125,8 +132,8 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String updateRegistration(@ModelAttribute MarriageRegistration marriageRegistration,
-            @ModelAttribute final WorkflowContainer workflowContainer,
+    public String updateRegistration(final WorkflowContainer workflowContainer,
+            @ModelAttribute MarriageRegistration marriageRegistration,
             final Model model,
             final HttpServletRequest request,
             final BindingResult errors) throws IOException {
@@ -134,9 +141,13 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         String workFlowAction = "";
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
+        
+        validateApplicationDate(marriageRegistration,errors,request);
 
-        if (errors.hasErrors())
+        if (errors.hasErrors()){
+            model.addAttribute("registration", marriageRegistration);
             return MRG_REGISTRATION_EDIT;
+        }
         String message = StringUtils.EMPTY;
         if (workFlowAction != null && !workFlowAction.isEmpty()) {
             workflowContainer.setWorkFlowAction(workFlowAction);
@@ -185,8 +196,14 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
     public String modifyRegisteredApplication(@RequestParam final Long id,
             @ModelAttribute final MarriageRegistration registration,
             final Model model, final HttpServletRequest request, final BindingResult errors) {
-        if (errors.hasErrors())
+        
+        validateApplicationDate(registration,errors,request);
+
+        if (errors.hasErrors()){
+            model.addAttribute("registration", registration);
             return MRG_REGISTRATION_EDIT_APPROVED;
+              
+        }
 
         marriageRegistrationService.updateRegistration(registration);
         model.addAttribute("message", messageSource.getMessage("msg.update.registration", null, null));

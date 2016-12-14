@@ -42,7 +42,11 @@ package org.egov.mrs.web.controller.application.registration;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -50,6 +54,7 @@ import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.masters.entity.MarriageFee;
 import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -58,6 +63,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * Handles the Marriage Registration
@@ -88,16 +94,19 @@ public class NewRegistrationController extends MarriageRegistrationController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String register(@ModelAttribute final MarriageRegistration registration,
-            @ModelAttribute final WorkflowContainer workflowContainer,
+    public String register(final WorkflowContainer workflowContainer,
+            @ModelAttribute("registration") final MarriageRegistration registration,
             final Model model,
             final HttpServletRequest request,
-            final BindingResult errors) {
+            final BindingResult errors,final RedirectAttributes redirectAttributes) {
+        
+        validateApplicationDate(registration,errors,request);
 
         if (errors.hasErrors()){
+            model.addAttribute("registration", registration);
             prepareWorkFlowForNewMarriageRegistration(registration, model);
             return "registration-form";
-            
+              
         }
 
         obtainWorkflowParameters(workflowContainer, request);
@@ -106,7 +115,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
 
         return "registration-ack";
     }
-
+    
     @RequestMapping(value = "/workflow", method = RequestMethod.POST)
     public String handleWorkflowAction(@RequestParam final Long id,
             @ModelAttribute final MarriageRegistration registration,

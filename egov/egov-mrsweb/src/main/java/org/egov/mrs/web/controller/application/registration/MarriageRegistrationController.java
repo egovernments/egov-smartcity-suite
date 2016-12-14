@@ -40,13 +40,22 @@
 package org.egov.mrs.web.controller.application.registration;
 
 import static org.egov.mrs.application.MarriageConstants.BOUNDARY_TYPE;
+import static org.egov.mrs.application.MarriageConstants.REGISTER_NO_OF_DAYS;
 import static org.egov.mrs.application.MarriageConstants.REVENUE_HIERARCHY_TYPE;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.MarriageUtils;
+import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.enums.MaritalStatus;
 import org.egov.mrs.domain.enums.ReligionPractice;
 import org.egov.mrs.domain.service.MarriageApplicantService;
@@ -56,9 +65,11 @@ import org.egov.mrs.masters.service.MarriageActService;
 import org.egov.mrs.masters.service.MarriageFeeService;
 import org.egov.mrs.masters.service.MarriageRegistrationUnitService;
 import org.egov.mrs.masters.service.ReligionService;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 public class MarriageRegistrationController extends GenericWorkFlowController {
@@ -93,6 +104,9 @@ public class MarriageRegistrationController extends GenericWorkFlowController {
     @Autowired
     protected MarriageRegistrationUnitService marriageRegistrationUnitService;
     
+    @Autowired
+    protected AppConfigValueService appConfigValuesService;
+    
     @ModelAttribute
     public void prepareForm(final Model model) {
         model.addAttribute("zones",
@@ -105,6 +119,28 @@ public class MarriageRegistrationController extends GenericWorkFlowController {
         model.addAttribute("generalDocuments", marriageDocumentService.getGeneralDocuments());
         model.addAttribute("individualDocuments", marriageDocumentService.getIndividualDocuments());
         model.addAttribute("marriageRegistrationUnit", marriageRegistrationUnitService.getActiveRegistrationunit());
+        final AppConfigValues  allowValidation = getDaysValidationAppConfValue();
+        model.addAttribute("allowDaysValidation", (allowValidation!=null && !allowValidation.getValue().isEmpty())?allowValidation.getValue():"NO");
+    }
+    
+    public AppConfigValues getDaysValidationAppConfValue(){
+        return appConfigValuesService.getConfigValuesByModuleAndKey(
+            MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION).get(0);
+    }
+    
+    public void validateApplicationDate(final MarriageRegistration registration,
+            final BindingResult errors, final HttpServletRequest request){ 
+        final AppConfigValues  allowValidation = getDaysValidationAppConfValue();
+        if(allowValidation!=null && !allowValidation.getValue().isEmpty()){
+            if(allowValidation.getValue().equalsIgnoreCase("YES")){
+                if(registration.getDateOfMarriage()!=null && !registration.isLegacy()){ 
+                    final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                   if(!new DateTime(new Date()).isBefore(new DateTime(registration.getDateOfMarriage()).plusDays(Integer.parseInt(REGISTER_NO_OF_DAYS)-1))){
+                           errors.reject("err.validate.marriageRegistration.applicationDate", new String[] {sdf.format(registration.getDateOfMarriage()) },null);
+                   }  
+                }
+            }  
+        }
     }
 
 }

@@ -53,6 +53,7 @@
 			enctype="multipart/form-data">
 			<input type="hidden" name="marriageRegistration" value="${registration.id}" />
 			<input type="hidden" id="registrationStatus" value="${registration.status.code}" /> 
+			<input type="hidden" id="allowDaysValidation" value="${allowDaysValidation}" />
 			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 			<input type="hidden" id="feeCollected" value="${registration.feeCollected}" />
 				<c:if test="${registration.status.code =='APPROVED' && !registration.feeCollected}"> 

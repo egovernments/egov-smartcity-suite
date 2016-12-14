@@ -54,6 +54,7 @@
 
 			<input type="hidden" name="marriageRegistration" value="${registration.id}" />
 			<input type="hidden" id="registrationStatus" value="${registration.status.code}" /> 
+			<input type="hidden" id="allowDaysValidation" value="${allowDaysValidation}" />
 			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">

@@ -56,13 +56,22 @@
 		<c:if test="${registration.status == 'Approved'}">
 			<c:set value="/mrs/registration/certificate?registrationId=${registration.id}" var="actionUrl"></c:set>
 		</c:if>
-		<form:form role="form" action="${actionUrl}"
+		<form:form role="form" action="${actionUrl}" method="POST"
 			modelAttribute="registration" id="form-registration"
 			cssClass="form-horizontal form-groups-bordered"
-			enctype="multipart/form-data">
+			enctype="multipart/form-data"> 
 
+			<div>
+				<spring:hasBindErrors name="registration">
+				<div class="alert alert-danger col-md-12 col-md-offset-0">  
+			     			<form:errors path="*" /><br/>
+			   	</div>
+			    </spring:hasBindErrors> 
+			     <br/>
+			</div>
 			<input type="hidden" id="registrationId" value="${registration.id}" />
 			<input type="hidden" id="registrationStatus" value="${registration.status}" />
+			<input type="hidden" id="allowDaysValidation" value="${allowDaysValidation}" />
 				  <ul class="nav nav-tabs" id="settingstab">
 				    <li class="active"><a data-toggle="tab" href="#applicant-info" data-tabidx=0>Applicant's Information</a></li>
 				    <li><a data-toggle="tab" href="#witness-info" data-tabidx=1>Witnesses Information</a></li>

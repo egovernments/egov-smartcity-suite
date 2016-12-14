@@ -68,4 +68,7 @@ public class MarriageConstants {
     
     public static final String APPL_INDEX_MODULE_NAME = "Marriage Registration";
     
+    public static final String REGISTER_NO_OF_DAYS = "90";
+    public static final String MARRIAGEREGISTRATION_DAYS_VALIDATION = "MARRIAGEREGISTRATION_DAYS_VALIDATION";
+    
 }
