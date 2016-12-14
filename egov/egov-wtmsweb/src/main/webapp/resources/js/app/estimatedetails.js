@@ -219,5 +219,5 @@ function calculateTotalAmount() {
     	}
     }
     $('#grandTotal').val(grandTotal);
-    $('#supervisionCharges').val(parseInt(Math.round(0.15*grandTotal)));
+    $('#supervisionCharges').val(Math.round(0.15*grandTotal).toFixed(2));
 }
