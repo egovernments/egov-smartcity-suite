@@ -151,6 +151,6 @@
 	</c:when>
 </c:choose>
 <script type="text/javascript"
-	src="<cdn:url value='/resources/js/app/documentsupload.js'/>"></script>
+	src="<cdn:url value='/resources/js/app/documentsupload.js?rnd=${app_release_no}'/>"></script>
 
 

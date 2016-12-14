@@ -107,7 +107,7 @@ public class VacancyRemission extends StateAware {
     private List<VacancyRemissionApproval> vacancyRemissionApproval = new LinkedList<VacancyRemissionApproval>();
     
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JoinTable(name = "egpt_vacancy_remission_docs", joinColumns = @JoinColumn(name = "vacancyremision"), inverseJoinColumns = @JoinColumn(name = "document"))
+    @JoinTable(name = "egpt_vacancy_remission_docs", joinColumns = @JoinColumn(name = "vacancyremission"), inverseJoinColumns = @JoinColumn(name = "document"))
     private List<Document> documents = new ArrayList<>(0);
     
     @Transient

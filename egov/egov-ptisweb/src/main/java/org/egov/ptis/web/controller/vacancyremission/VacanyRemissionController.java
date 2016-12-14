@@ -131,7 +131,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
 
     @ModelAttribute("documentsList")
     public List<DocumentType> documentsList(@ModelAttribute final VacancyRemission vacancyRemission) {
-        return vacancyRemissionService.getDocuments(TransactionType.VACANCYREMISION);
+        return vacancyRemissionService.getDocuments(TransactionType.VACANCYREMISSION);
     }
     @RequestMapping(value = "/create/{assessmentNo},{mode}", method = RequestMethod.GET)
     public String newForm(final Model model, @PathVariable final String assessmentNo, @PathVariable final String mode,
@@ -139,7 +139,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
         if (basicProperty != null) {
             final Property property = basicProperty.getActiveProperty();
             List<DocumentType> documentTypes;
-            documentTypes = propertyService.getDocumentTypesForTransactionType(TransactionType.VACANCYREMISION);
+            documentTypes = propertyService.getDocumentTypesForTransactionType(TransactionType.VACANCYREMISSION);
             if (property != null)
                 // When called from common search
                 if ("commonSearch".equalsIgnoreCase(mode)) {

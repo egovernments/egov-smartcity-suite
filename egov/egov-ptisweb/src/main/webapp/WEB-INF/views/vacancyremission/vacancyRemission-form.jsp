@@ -74,7 +74,7 @@ body
 							</div>
 							<div class="panel-body custom-form">
 							       <div class="panel-body custom-form">
-							<%@ include file="/WEB-INF/views/vacancyremission/vacancy-remission-documents.jsp"%>
+							       	<jsp:include page="vacancy-remission-documents.jsp"></jsp:include>
 							     </div>
 								<div class="form-group">
 									<label class="col-sm-3 control-label text-right">
