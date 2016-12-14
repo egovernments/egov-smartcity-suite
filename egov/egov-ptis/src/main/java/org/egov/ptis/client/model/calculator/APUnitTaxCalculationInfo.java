@@ -47,6 +47,7 @@ import java.math.BigDecimal;
 @XStreamAlias("unitinfo")
 public class APUnitTaxCalculationInfo extends UnitTaxCalculationInfo {
 	private BigDecimal capitalValue;
+    private BigDecimal marketValue;
 
 	public BigDecimal getCapitalValue() {
 		return capitalValue;
@@ -55,5 +56,13 @@ public class APUnitTaxCalculationInfo extends UnitTaxCalculationInfo {
 	public void setCapitalValue(BigDecimal capitalValue) {
 		this.capitalValue = capitalValue;
 	}
+
+    public BigDecimal getMarketValue() {
+        return marketValue;
+    }
+
+    public void setMarketValue(BigDecimal marketValue) {
+        this.marketValue = marketValue;
+    }
 
 }

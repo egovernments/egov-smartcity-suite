@@ -72,7 +72,7 @@
         
         <td class="blueborderfortd">
         	<s:textfield name="propertyDetail.currentCapitalValue"
-				id="currentCapitalValue" maxlength="15" readOnly="true" value="%{propertyDetail.currentCapitalValue}" title="Current capital value of Land"
+				id="currentCapitalValue" maxlength="15" value="%{propertyDetail.currentCapitalValue}" title="Current capital value of Land"
 				onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.currentCapitalValue');checkZero(this,'propertyDetail.currentCapitalValue');" />
         </td>
         
@@ -115,11 +115,3 @@
 			</td>
 	</tr>
 </table>
-<script type="text/javascript">
-	 jQuery("#marketValue").blur(function() {
-		 var vacantLandArea = jQuery("#vacantLandArea").val();
-		 var marketValue =  jQuery("#marketValue").val();
-		 var capitalValue = vacantLandArea * marketValue;
-		 jQuery("#currentCapitalValue").val(roundoff(capitalValue));
-	 });
-</script>

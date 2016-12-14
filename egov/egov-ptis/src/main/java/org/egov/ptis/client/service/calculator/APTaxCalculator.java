@@ -378,7 +378,11 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         unitTaxCalculationInfo.setFloorNumber("VACANT");
         unitTaxCalculationInfo.setBaseRateEffectiveDate(occupancyDate);
         unitTaxCalculationInfo.setCapitalValue(new BigDecimal(property.getPropertyDetail().getCurrentCapitalValue()));
-        unitTaxCalculationInfo.setNetARV(unitTaxCalculationInfo.getCapitalValue());
+        unitTaxCalculationInfo.setMarketValue(property.getPropertyDetail().getMarketValue() != null
+                ? new BigDecimal(property.getPropertyDetail().getMarketValue()) : BigDecimal.ZERO);
+        unitTaxCalculationInfo.setNetARV(
+                unitTaxCalculationInfo.getCapitalValue().compareTo(unitTaxCalculationInfo.getMarketValue()) < 0
+                        ? unitTaxCalculationInfo.getMarketValue() : unitTaxCalculationInfo.getCapitalValue());
 
         calculateApplicableTaxes(applicableTaxes, unitTaxCalculationInfo, installment, property.getPropertyDetail()
                 .getPropertyTypeMaster().getCode(), null, null);
