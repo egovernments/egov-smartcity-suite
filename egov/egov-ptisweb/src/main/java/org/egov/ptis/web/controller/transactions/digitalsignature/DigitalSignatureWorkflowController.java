@@ -52,6 +52,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETI
 import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITALLY_SIGNED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_PRINT_PENDING;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -97,7 +99,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 
 /**
  * @author subhash
@@ -161,7 +162,7 @@ public class DigitalSignatureWorkflowController {
 
     @Autowired
     private FileStoreMapperRepository fileStoreMapperRepository;
-    
+
     @Autowired
     private VacancyRemissionApprovalRepository vacancyRemissionApprovalRepository;
 
@@ -201,12 +202,11 @@ public class DigitalSignatureWorkflowController {
                         transitionWorkFlow(propertyMutation);
                         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
                         basicPropertyService.persist(basicProperty);
-                    }
-                    else{
+                    } else {
                         final VacancyRemission vacancyRemission = (VacancyRemission) getCurrentSession()
                                 .createQuery("from VacancyRemission where applicationNumber = :applicationNo")
                                 .setParameter("applicationNo", applicationNumber).uniqueResult();
-                        if(vacancyRemission !=null){
+                        if (vacancyRemission != null) {
                             final BasicProperty basicProperty = vacancyRemission.getBasicProperty();
                             transitionWorkFlow(vacancyRemission);
                             propertyService.updateIndexes(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
@@ -218,11 +218,10 @@ public class DigitalSignatureWorkflowController {
                 }
             }
         }
-        if (isDigiEnabled != null && isDigiEnabled.equals("false")) {
+        if (isDigiEnabled != null && isDigiEnabled.equals("false"))
             model.addAttribute("successMessage", NOTICE_SUCCESS_MESSAGE);
-        } else {
+        else
             model.addAttribute("successMessage", DIGISIGN_SUCCESS_MESSAGE);
-        }
         model.addAttribute("fileStoreId", fileStoreId.length == 1 ? fileStoreId[0] : "");
         return DIGITAL_SIGNATURE_SUCCESS;
     }
@@ -230,30 +229,31 @@ public class DigitalSignatureWorkflowController {
     private String getTypeForUpdateIndexes(final String applicationType) {
         return applicationType.equals(NEW_ASSESSMENT) ? APPLICATION_TYPE_NEW_ASSESSENT : applicationType
                 .equals(ADDTIONAL_RULE_ALTER_ASSESSMENT) ? APPLICATION_TYPE_ALTER_ASSESSENT : applicationType
-                .equals(ADDTIONAL_RULE_BIFURCATE_ASSESSMENT) ? APPLICATION_TYPE_BIFURCATE_ASSESSENT : applicationType
-                .equals(DEMOLITION) ? PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION : applicationType
-                .equals(GENERAL_REVISION_PETITION) ? APPLICATION_TYPE_GRP : null;
+                        .equals(ADDTIONAL_RULE_BIFURCATE_ASSESSMENT) ? APPLICATION_TYPE_BIFURCATE_ASSESSENT : applicationType
+                                .equals(DEMOLITION) ? PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION : applicationType
+                                        .equals(GENERAL_REVISION_PETITION) ? APPLICATION_TYPE_GRP : null;
     }
 
     private String transitionWorkFlow(final PropertyImpl property) {
         final String applicationType = property.getCurrentState().getValue().startsWith(CREATE) ? NEW_ASSESSMENT
                 : property.getCurrentState().getValue().startsWith(ALTER) ? ADDTIONAL_RULE_ALTER_ASSESSMENT : property
                         .getCurrentState().getValue().startsWith(BIFURCATE) ? ADDTIONAL_RULE_BIFURCATE_ASSESSMENT
-                        : property.getCurrentState().getValue().startsWith(STR_DEMOLITION) ? DEMOLITION : property
-                                .getCurrentState().getValue().startsWith(GRP) ? GENERAL_REVISION_PETITION : null;
+                                : property.getCurrentState().getValue().startsWith(STR_DEMOLITION) ? DEMOLITION : property
+                                        .getCurrentState().getValue().startsWith(GRP) ? GENERAL_REVISION_PETITION : null;
         if (propertyService.isMeesevaUser(property.getCreatedBy())) {
             property.transition().end();
             property.getBasicProperty().setUnderWorkflow(false);
         } else {
             final User user = securityUtils.getCurrentUser();
             final DateTime currentDate = new DateTime();
-            final Assignment wfInitiator = getWorkflowInitiator(property,property.getBasicProperty());
-            final WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null,
-                    applicationType, property.getCurrentState().getValue(), null);
+            final Assignment wfInitiator = getWorkflowInitiator(property, property.getBasicProperty());
+            final String currentState = new StringBuilder(property.getCurrentState().getValue().split(":")[0]).append(":")
+                    .append(WF_STATE_DIGITALLY_SIGNED).toString();
             property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                    .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
-                    .withOwner(property.getCurrentState().getInitiatorPosition()!=null?property.getCurrentState().getInitiatorPosition():wfInitiator.getPosition())
-                    .withNextAction(wfmatrix.getNextAction());
+                    .withStateValue(currentState).withDateInfo(currentDate.toDate())
+                    .withOwner(property.getCurrentState().getInitiatorPosition() != null
+                            ? property.getCurrentState().getInitiatorPosition() : wfInitiator.getPosition())
+                    .withNextAction(WF_STATE_NOTICE_PRINT_PENDING);
         }
         return applicationType;
     }
@@ -268,11 +268,12 @@ public class DigitalSignatureWorkflowController {
             revPetition.transition().end();
         } else {
             final User user = securityUtils.getCurrentUser();
-            final Assignment wfInitiator = getWorkflowInitiator(revPetition,revPetition.getBasicProperty());
+            final Assignment wfInitiator = getWorkflowInitiator(revPetition, revPetition.getBasicProperty());
             final WorkFlowMatrix wfmatrix = revisionPetitionWorkFlowService.getWfMatrix(revPetition.getStateType(),
                     null, null, null, revPetition.getCurrentState().getValue(), null);
             revPetition.transition(true).withStateValue(wfmatrix.getNextState())
-            .withOwner(revPetition.getCurrentState().getInitiatorPosition()!=null?revPetition.getCurrentState().getInitiatorPosition():wfInitiator.getPosition())
+                    .withOwner(revPetition.getCurrentState().getInitiatorPosition() != null
+                            ? revPetition.getCurrentState().getInitiatorPosition() : wfInitiator.getPosition())
                     .withSenderName(user.getUsername() + "::" + user.getName()).withDateInfo(new DateTime().toDate())
                     .withNextAction(wfmatrix.getNextAction());
         }
@@ -285,16 +286,17 @@ public class DigitalSignatureWorkflowController {
         } else {
             final DateTime currentDate = new DateTime();
             final User user = securityUtils.getCurrentUser();
-            final Assignment wfInitiator = getWorkflowInitiator(propertyMutation,propertyMutation.getBasicProperty());
+            final Assignment wfInitiator = getWorkflowInitiator(propertyMutation, propertyMutation.getBasicProperty());
             final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(), null,
                     null, propertyMutation.getType(), propertyMutation.getCurrentState().getValue(), null);
             propertyMutation.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
-                    .withOwner(propertyMutation.getCurrentState().getInitiatorPosition()!=null?propertyMutation.getCurrentState().getInitiatorPosition():wfInitiator.getPosition())
+                    .withOwner(propertyMutation.getCurrentState().getInitiatorPosition() != null
+                            ? propertyMutation.getCurrentState().getInitiatorPosition() : wfInitiator.getPosition())
                     .withNextAction(wfmatrix.getNextAction());
         }
     }
-    
+
     private void transitionWorkFlow(final VacancyRemission vacancyRemission) {
         if (propertyService.isMeesevaUser(vacancyRemission.getCreatedBy())) {
             vacancyRemission.transition().end();
@@ -302,34 +304,33 @@ public class DigitalSignatureWorkflowController {
         } else {
             final DateTime currentDate = new DateTime();
             final User user = securityUtils.getCurrentUser();
-            final Assignment wfInitiator = getWorkflowInitiator(vacancyRemission,vacancyRemission.getBasicProperty());
+            final Assignment wfInitiator = getWorkflowInitiator(vacancyRemission, vacancyRemission.getBasicProperty());
             final Position pos = wfInitiator.getPosition();
-            final VacancyRemissionApproval  vacancyRemissionApproval = vacancyRemission.getVacancyRemissionApproval().get(0);
+            final VacancyRemissionApproval vacancyRemissionApproval = vacancyRemission.getVacancyRemissionApproval().get(0);
             final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(vacancyRemissionApproval.getStateType(), null,
                     null, null, vacancyRemissionApproval.getCurrentState().getValue(), null);
             vacancyRemissionApproval.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
-                    .withOwner(vacancyRemission.getCurrentState().getInitiatorPosition()!=null?vacancyRemission.getCurrentState().getInitiatorPosition():pos)
+                    .withOwner(vacancyRemission.getCurrentState().getInitiatorPosition() != null
+                            ? vacancyRemission.getCurrentState().getInitiatorPosition() : pos)
                     .withNextAction(wfmatrix.getNextAction());
         }
     }
 
     private Assignment getWorkflowInitiator(final StateAware state, final BasicProperty basicProperty) {
         Assignment wfInitiator = null;
-        if(basicProperty.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE)){
-                if(!state.getStateHistory().isEmpty())
-                        wfInitiator = assignmentService.getPrimaryAssignmentForPositon(state.getStateHistory().get(0)
-                    .getOwnerPosition().getId());
-        } else{
-                if (propertyService.isEmployee(state.getCreatedBy()))
-                    wfInitiator = assignmentService.getPrimaryAssignmentForUser(state.getCreatedBy().getId());
-                else if (!state.getStateHistory().isEmpty())
-                    wfInitiator = assignmentService.getAssignmentsForPosition(
-                            state.getStateHistory().get(0).getOwnerPosition().getId(), new Date()).get(0);
-                else
-                    wfInitiator = assignmentService.getAssignmentsForPosition(state.getState().getOwnerPosition().getId(),
-                            new Date()).get(0);
-        }
+        if (basicProperty.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE)) {
+            if (!state.getStateHistory().isEmpty())
+                wfInitiator = assignmentService.getPrimaryAssignmentForPositon(state.getStateHistory().get(0)
+                        .getOwnerPosition().getId());
+        } else if (propertyService.isEmployee(state.getCreatedBy()))
+            wfInitiator = assignmentService.getPrimaryAssignmentForUser(state.getCreatedBy().getId());
+        else if (!state.getStateHistory().isEmpty())
+            wfInitiator = assignmentService.getAssignmentsForPosition(
+                    state.getStateHistory().get(0).getOwnerPosition().getId(), new Date()).get(0);
+        else
+            wfInitiator = assignmentService.getAssignmentsForPosition(state.getState().getOwnerPosition().getId(),
+                    new Date()).get(0);
         return wfInitiator;
     }
 
@@ -339,20 +340,19 @@ public class DigitalSignatureWorkflowController {
 
     @RequestMapping(value = "/propertyTax/downloadSignedNotice")
     public void downloadSignedNotice(final HttpServletRequest request, final HttpServletResponse response) {
-        String signedFileStoreId = request.getParameter("signedFileStoreId");
-        File file = fileStoreService.fetch(signedFileStoreId, PropertyTaxConstants.FILESTORE_MODULE_NAME);
+        final String signedFileStoreId = request.getParameter("signedFileStoreId");
+        final File file = fileStoreService.fetch(signedFileStoreId, PropertyTaxConstants.FILESTORE_MODULE_NAME);
         final FileStoreMapper fileStoreMapper = fileStoreMapperRepository.findByFileStoreId(signedFileStoreId);
         response.setContentType("application/pdf");
         response.setContentType("application/octet-stream");
         response.setHeader("content-disposition", "attachment; filename=\"" + fileStoreMapper.getFileName() + "\"");
-        try (FileInputStream inStream = new FileInputStream(file)){
-            OutputStream outStream = response.getOutputStream();
+        try (FileInputStream inStream = new FileInputStream(file)) {
+            final OutputStream outStream = response.getOutputStream();
             int bytesRead = -1;
-            byte[] buffer = FileUtils.readFileToByteArray(file);
-            while ((bytesRead = inStream.read(buffer)) != -1) {
+            final byte[] buffer = FileUtils.readFileToByteArray(file);
+            while ((bytesRead = inStream.read(buffer)) != -1)
                 outStream.write(buffer, 0, bytesRead);
-            }
-        } catch (FileNotFoundException fileNotFoundExcep) {
+        } catch (final FileNotFoundException fileNotFoundExcep) {
             throw new ApplicationRuntimeException("Exception while loading file : " + fileNotFoundExcep);
         } catch (final IOException ioExcep) {
             throw new ApplicationRuntimeException("Exception while downloading notice : " + ioExcep);

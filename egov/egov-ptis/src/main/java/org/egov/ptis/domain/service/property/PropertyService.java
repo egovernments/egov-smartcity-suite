@@ -3215,6 +3215,20 @@ public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final 
         return propertyStatusValuesDAO.getPropertyStatusValuesByReferenceBasicProperty(basicProperty);
     }
     
+    public Assignment getUserOnRejection(final PropertyImpl property) {
+        List<StateHistory> history = property.getStateHistory();
+        Assignment userAssignment = null;
+        for(StateHistory state: history) {   
+            List<Assignment> assignments = assignmentService.getAssignmentsForPosition(state.getOwnerPosition().getId());
+            for(Assignment assignment:assignments)
+            if(assignment != null && assignment.getDesignation().getName().equals(PropertyTaxConstants.REVENUE_INSPECTOR_DESGN))
+                userAssignment = assignment;
+        }
+     
+        return userAssignment;
+        
+    }
+    
     public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
         return excessCollAmtMap;
     }

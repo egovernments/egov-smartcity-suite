@@ -55,9 +55,6 @@
 		jQuery.noConflict();
 		jQuery("#loadingMask").remove();
 	  function loadOnStartUp() {
-		//enableFieldsForPropType();
-		//toggleFloorDetails();
-   		//setCorrCheckBox();
    		var propType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';
    		var appurtenantLandChecked = '<s:property value="%{propertyDetail.appurtenantLandChecked}"/>';
 		enableFieldsForPropTypeView(propType,appurtenantLandChecked);
@@ -66,14 +63,17 @@
 		if(appurtenantLandChecked == null) {
 			jQuery('#appurtenantRow').hide();
 		}
-		//var buildingPlanDetailsChecked = '<s:property value="%{propertyDetail.buildingPlanDetailsChecked}"/>';
-		//if(buildingPlanDetailsChecked != 'true') {
-		//	jQuery('tr.bpddetails').hide();
-		//}
 		var structure = '<s:property value="%{propertyDetail.structure}"/>';
 		if(structure == 'false') {
 			jQuery('td.siteowner').hide();
 		}
+
+		var userDesign = '<s:property value="%{userDesgn}"/>';
+		var propertyStatus = '<s:property value="%{status}"/>';
+		if(userDesign == 'Commissioner') {
+			jQuery('#Forward').hide();
+		} 
+		
    		
 	}
  function setCorrCheckBox(){
@@ -185,21 +185,18 @@
 						<tr>
 							<%@ include file="../common/workflowHistoryView.jsp"%>
 						<tr>					
-					</s:if>
-					<s:if test="%{!(model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)
-					     || model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED))}">
+					</s:if> 
+					<s:if test="%{!userDesgn.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}">
 						<tr>
 							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 						</tr> 
-					</s:if>
+					</s:if> 
 				</table>
 				<br/>
-				<s:if test="%{(model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING) ||
-				     model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED))}"> 
+				<s:if test="%{userDesgn.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}"> 
 					<div id="workflowCommentsDiv" align="center">
 						<table width="100%">
 							<tr>
-								<%-- <td width="10%" class="${approverEvenCSS}">&nbsp;</td> --%>
 								 <td width="25%" class="${approverEvenCSS}">&nbsp;</td> 
 								<td class="${approverEvenCSS}" width="13%"><s:text name="wf.approver.remarks"/>:</td>
 								<td class="${approverEvenTextCSS}"><textarea

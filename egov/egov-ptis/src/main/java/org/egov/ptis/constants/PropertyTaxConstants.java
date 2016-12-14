@@ -629,6 +629,7 @@ public interface PropertyTaxConstants {
     public static final String WF_STATE_REGISTRATION_PENDING = "Registration Pending";
     public static final String WF_STATE_REGISTRATION_COMPLETED = "Registration Completed";
     public static final String WF_STATE_BILL_COLLECTOR_APPROVAL_PENDING = "Bill Collector Approval Pending";
+    public static final String WF_STATE_NOTICE_PRINT_PENDING = "Notice Print Pending";
 
     public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
 
@@ -724,6 +725,11 @@ public interface PropertyTaxConstants {
     public static final String END_APPROVER_DESGN = "RO";
     public static final String JUNIOR_ASSISTANT = "Junior Assistant";
     public static final String SENIOR_ASSISTANT = "Senior Assistant";
+    public static final String ASSISTANT_COMMISSIONER_DESIGN = "Assistant commissioner";
+    public static final String DEPUTY_COMMISSIONER_DESIGN = "Deputy commissioner";
+    public static final String ADDITIONAL_COMMISSIONER_DESIGN = "Additional Commissioner";
+    public static final String ZONAL_COMMISSIONER_DESIGN = "Zonal Commissioner";
+    public static final String JUNIOR_OR_SENIOR_ASSISTANT_DESIGN = "Senior Assistant,Junior Assistant";
 
     public static final String NEW_ASSESSMENT = "NEW ASSESSMENT";
     public static final String ADDTIONAL_RULE_ALTER_ASSESSMENT = "ALTER ASSESSMENT";
@@ -1380,6 +1386,12 @@ public interface PropertyTaxConstants {
     public static final String VACANTLAND_MIN_CUR_CAPITALVALUE = "500";
     public static final String WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING = "UD Revenue Inspector Approval Pending";
     public static final String WF_STATE_UD_REVENUE_INSPECTOR_APPROVED = "UD Revenue Inspector Approved";
+    public static final String WF_STATE_ASSISTANT_MUNICIPAL_COMMISSIONER_APPROVAL_PENDING = "Assistant Municipal Commissioner Approval Pending";
+    public static final String WF_STATE_DEPUTY_MUNICIPAL_COMMISSIONER_APPROVAL_PENDING = "Deputy Municipal Commissioner Approval Pending";
+    public static final String WF_STATE_ADDITIONAL_MUNICIPAL_COMMISSIONER_APPROVAL_PENDING = "Additional Municipal Commissioner Approval Pending";
+    public static final String WF_STATE_MUNICIPAL_COMMISSIONER_APPROVAL_PENDING = "Municipal Commissioner Approval Pending";
+    public static final String WF_STATE_MUNICIPAL_COMMISSIONER_APPROVED = "Municipal Commissioner Approved";
+    
 
     public static final String NATURE_OF_USAGE_RESIDENCE = "Residence";
     public static final String GRADE_NAGAR_PANCHAYAT = "NP";
@@ -1547,4 +1559,5 @@ public interface PropertyTaxConstants {
     public static final String CORPORATION_ESD_NOTICE_SECTION_ACT = "(Issued under Section 269(2) of Municipal Corporations Act,1955 (formerly GHMC Act, 1955)";
     
     public static final String MUNICIPALITY_ESD_NOTICE_SECTION_ACT = "(Issued under Section 91 of A.P. Municipalities Act 1965)";
+    
 }
