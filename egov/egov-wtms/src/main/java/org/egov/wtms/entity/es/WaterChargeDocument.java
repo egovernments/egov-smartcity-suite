@@ -100,6 +100,9 @@ public class WaterChargeDocument {
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String consumerCode;
+    
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String oldConsumerCode;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String applicationCode;
@@ -536,6 +539,14 @@ public class WaterChargeDocument {
         this.billCollector = billCollector;
     }
 
+    public String getOldConsumerCode() {
+        return oldConsumerCode;
+    }
+
+    public void setOldConsumerCode(String oldConsumerCode) {
+        this.oldConsumerCode = oldConsumerCode;
+    }
+
     public static final class Builder {
         private String aadhaarNumber;
         private String adminWard;
@@ -551,6 +562,7 @@ public class WaterChargeDocument {
         private String closureType;
         private String connectionType;
         private String consumerCode;
+        private String oldConsumerCode;
         private String consumerName;
         private Date createdDate;
         private Long currentDemand;
@@ -681,6 +693,11 @@ public class WaterChargeDocument {
             this.consumerCode = consumerCode;
             return this;
         }
+        
+        public Builder withOldConsumerCode(final String oldConsumerCode) {
+            this.oldConsumerCode = oldConsumerCode;
+            return this;
+        }
 
         public Builder withConsumername(final String consumername) {
             consumerName = consumername;
@@ -796,6 +813,7 @@ public class WaterChargeDocument {
             final WaterChargeDocument waterChargeIndex = new WaterChargeDocument();
             waterChargeIndex.setWardlocation(wardLocation);
             waterChargeIndex.setConsumerCode(consumerCode);
+            waterChargeIndex.setOldConsumerCode(oldConsumerCode);
             waterChargeIndex.setId();
             waterChargeIndex.setPropertylocation(propertyLocation);
             waterChargeIndex.setAadhaarNumber(aadhaarNumber);
