@@ -301,11 +301,11 @@ public class WaterConnectionDetailsService {
     public WaterConnectionDetails findByApplicationNumberOrConsumerCodeAndStatus(final String number,
             final ConnectionStatus connectionStatus) {
         return waterConnectionDetailsRepository
-                .findByApplicationNumberOrConnection_ConsumerCodeAndConnectionStatus(number, number, connectionStatus);
+                .findConnectionDetailsByApplicationNumberOrConsumerCodeAndConnectionStatus(number, number, connectionStatus);
     }
 
     public WaterConnectionDetails findByApplicationNumberOrConsumerCode(final String number) {
-        return waterConnectionDetailsRepository.findByApplicationNumberOrConnection_ConsumerCode(number, number);
+        return waterConnectionDetailsRepository.findConnectionDetailsByApplicationNumberOrConsumerCode(number, number);
     }
 
     public WaterConnectionDetails findByConnection(final WaterConnection waterConnection) {
@@ -647,6 +647,7 @@ public class WaterConnectionDetailsService {
                     approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
                             waterConnectionDetails);
             else if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_APPROVED)
+                    || waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED)
                     || WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN
                             .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                     || !"".equals(workFlowAction) && workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
