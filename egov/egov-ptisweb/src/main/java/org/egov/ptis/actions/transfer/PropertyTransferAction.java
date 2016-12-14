@@ -696,7 +696,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             if (null != approverPositionId && approverPositionId != -1)
                 pos = (Position) persistenceService.find("from Position where id=?", approverPositionId);
             else if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
-                pos = positionMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId());
+                pos = propertyMutation.getCurrentState().getOwnerPosition();
             else
                 pos = wfInitiator.getPosition();
             if (null == propertyMutation.getState()) {
