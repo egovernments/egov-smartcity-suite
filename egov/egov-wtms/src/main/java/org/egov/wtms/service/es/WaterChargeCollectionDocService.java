@@ -1479,9 +1479,9 @@ public class WaterChargeCollectionDocService {
         receiptData.setResidentialAchievement(totalResCollections.multiply(WaterTaxConstants.BIGDECIMAL_100)
                 .divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
 
-        final BigDecimal totalCommDemandValue = !connectionCOmmercialTotalDemandMap.isEmpty()
+        final BigDecimal totalCommDemandValue = !connectionCOmmercialTotalDemandMap.isEmpty() && connectionCOmmercialTotalDemandMap.get(name) !=null
                 ? connectionCOmmercialTotalDemandMap.get(name).setScale(0, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO;
-        final BigDecimal totalCommCollections = !connectionCOmmercialTotalCollectionMap.isEmpty()
+        final BigDecimal totalCommCollections = !connectionCOmmercialTotalCollectionMap.isEmpty() && connectionCOmmercialTotalCollectionMap.get(name) !=null
                 ? connectionCOmmercialTotalCollectionMap.get(name).setScale(0, BigDecimal.ROUND_HALF_UP)
                 : BigDecimal.ZERO;
         final BigDecimal commproportionalDemand = totalCommDemandValue
