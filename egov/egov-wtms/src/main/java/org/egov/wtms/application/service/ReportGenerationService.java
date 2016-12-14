@@ -136,16 +136,16 @@ public class ReportGenerationService {
             if (null != workFlowAction) {
                 if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)
                         || workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_SIGN_BUTTON)) {
-                    reportParams.put("workorderDate", formatter.format(connectionDetails.getWorkOrderDate()));
-                    reportParams.put("workorderNo", connectionDetails.getWorkOrderNumber());
+                    reportParams.put("workOrderDate", formatter.format(connectionDetails.getWorkOrderDate()));
+                    reportParams.put("workOrderNo", connectionDetails.getWorkOrderNumber());
                     if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_SIGN_BUTTON)) {
                         final User user = securityUtils.getCurrentUser();
                         reportParams.put("userId", user.getId());
                     }
                 }
                 if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_PREVIEW_BUTTON)) {
-                    reportParams.put("workorderDate", "");
-                    reportParams.put("workorderNo", "");
+                    reportParams.put("workOrderDate", "");
+                    reportParams.put("workOrderNo", "");
                 }
             }
             reportParams.put("workFlowAction", workFlowAction);

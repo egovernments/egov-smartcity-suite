@@ -56,8 +56,8 @@
 	<parameter name="superVisionCharges" class="java.lang.Double"/>
 	<parameter name="securityDeposit" class="java.lang.Double"/>
 	<parameter name="total" class="java.lang.Double"/>
-	<parameter name="workorderNo" class="java.lang.String"/>
-	<parameter name="workorderDate" class="java.lang.String"/>
+	<parameter name="workOrderNo" class="java.lang.String"/>
+	<parameter name="workOrderDate" class="java.lang.String"/>
 	<parameter name="applicationDate" class="java.lang.String"/>
 	<group name="connection_group">
 		<groupHeader>
@@ -323,12 +323,12 @@
 				<textField isBlankWhenNull="true">
 					<reportElement x="82" y="3" width="158" height="15" uuid="eb635a14-06a1-43a9-8327-7f30a1a4ead9"/>
 					<textElement verticalAlignment="Bottom"/>
-					<textFieldExpression><![CDATA[$P{workorderNo}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{workOrderNo}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="374" y="4" width="96" height="15" uuid="b9dc197b-b9d5-4dbb-8a99-c857c69f091a"/>
 					<textElement verticalAlignment="Bottom"/>
-					<textFieldExpression><![CDATA[$P{workorderDate}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{workOrderDate}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
 					<reportElement x="95" y="90" width="386" height="12" uuid="f94b5f2c-2788-437a-9176-e98b59d706e4"/>
