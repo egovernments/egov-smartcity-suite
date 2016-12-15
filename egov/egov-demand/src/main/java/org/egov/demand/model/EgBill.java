@@ -39,368 +39,368 @@
  */
 package org.egov.demand.model;
 
-import org.egov.infra.admin.master.entity.Module;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.egov.infra.admin.master.entity.Module;
+
 /**
  * EgBill entity.
- * 
+ *
  * @author MyEclipse Persistence Tools
  */
 
 public class EgBill implements java.io.Serializable {
 
-	// Fields
-
-	private Long id;
-	private EgDemand egDemand;
-	private EgBillType egBillType;
-	private String citizenName;
-	private String citizenAddress;
-	private String billNo;
-	private Date issueDate;
-	private Date lastDate;
-	private Module module;
-	private Long userId;
-	private Date createDate;
-	private Date modifiedDate;
-	private Set<EgBillDetails> egBillDetails = new HashSet<EgBillDetails>(0);
-	private String is_History;
-	private String is_Cancelled;
-	private String fundCode;
-	private BigDecimal functionaryCode;
-	private String fundSourceCode;
-	private String departmentCode;
-	private String collModesNotAllowed;
-	private Integer boundaryNum;
-	private String boundaryType;
-	private BigDecimal totalAmount;
-	private BigDecimal totalCollectedAmount;
-	private String serviceCode;
-	private Boolean partPaymentAllowed;
-	private Boolean overrideAccountHeadsAllowed;
-	private String description;
-	private BigDecimal minAmtPayable;
-	private String consumerId;
-	private String displayMessage;
-	private Boolean callBackForApportion;
-	private String transanctionReferenceNumber;
-	private String emailId;
-
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(id).append("-").append(totalAmount).append("-")
-				.append(description).append("-").append(egBillDetails);
-		return sb.toString();
-	}
-
-	/**
-	 * Checks if the given GL code exists in the bill details for this bill.
-	 * 
-	 * @param glCode
-	 * @return
-	 */
-	public boolean containsGLCode(String glCode) {
-		boolean contains = false;
-		for (EgBillDetails bd : getEgBillDetails()) {
-			if (bd.getGlcode().equals(glCode)) {
-				contains = true;
-				break;
-			}
-		}
-		return contains;
-	}
-
-	/**
-	 * Returns the difference between the CR and DR amount for the given GL code
-	 * if it exists; null otherwise.
-	 */
-	public BigDecimal balanceForGLCode(String glCode) {
-		BigDecimal balance = BigDecimal.ZERO;
-		for (EgBillDetails bd : getEgBillDetails()) {
-			if (bd.getGlcode().equals(glCode)) {
-				balance = bd.balance();
-				break;
-			}
-		}
-		return balance;
-	}
-
-	public String getDisplayMessage() {
-		return displayMessage;
-	}
-
-	public void setDisplayMessage(String displayMessage) {
-		this.displayMessage = displayMessage;
-	}
-
-	public BigDecimal getMinAmtPayable() {
-		return minAmtPayable;
-	}
-
-	public void setMinAmtPayable(BigDecimal minAmtPayable) {
-		this.minAmtPayable = minAmtPayable;
-	}
-
-	public String getFundCode() {
-		return fundCode;
-	}
-
-	public void setFundCode(String fundCode) {
-		this.fundCode = fundCode;
-	}
-
-	public String getFundSourceCode() {
-		return fundSourceCode;
-	}
+    // Fields
+
+    /**
+    * 
+    */
+    private static final long serialVersionUID = 1L;
+    private Long id;
+    private EgDemand egDemand;
+    private EgBillType egBillType;
+    private String citizenName;
+    private String citizenAddress;
+    private String billNo;
+    private Date issueDate;
+    private Date lastDate;
+    private Module module;
+    private Long userId;
+    private Date createDate;
+    private Date modifiedDate;
+    private Set<EgBillDetails> egBillDetails = new HashSet<EgBillDetails>(0);
+    private String is_History;
+    private String is_Cancelled;
+    private String fundCode;
+    private BigDecimal functionaryCode;
+    private String fundSourceCode;
+    private String departmentCode;
+    private String collModesNotAllowed;
+    private Integer boundaryNum;
+    private String boundaryType;
+    private BigDecimal totalAmount;
+    private BigDecimal totalCollectedAmount;
+    private String serviceCode;
+    private Boolean partPaymentAllowed;
+    private Boolean overrideAccountHeadsAllowed;
+    private String description;
+    private BigDecimal minAmtPayable;
+    private String consumerId;
+    private String displayMessage;
+    private Boolean callBackForApportion;
+    private String transanctionReferenceNumber;
+    private String emailId;
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(id).append("-").append(totalAmount).append("-").append(description).append("-").append(egBillDetails);
+        return sb.toString();
+    }
+
+    /**
+     * Checks if the given GL code exists in the bill details for this bill.
+     * 
+     * @param glCode
+     * @return
+     */
+    public boolean containsGLCode(final String glCode) {
+        boolean contains = false;
+        for (final EgBillDetails bd : getEgBillDetails())
+            if (bd.getGlcode().equals(glCode)) {
+                contains = true;
+                break;
+            }
+        return contains;
+    }
+
+    /**
+     * Returns the difference between the CR and DR amount for the given GL code
+     * if it exists; null otherwise.
+     */
+    public BigDecimal balanceForGLCode(final String glCode) {
+        BigDecimal balance = BigDecimal.ZERO;
+        for (final EgBillDetails bd : getEgBillDetails())
+            if (bd.getGlcode().equals(glCode)) {
+                balance = bd.balance();
+                break;
+            }
+        return balance;
+    }
+
+    public String getDisplayMessage() {
+        return displayMessage;
+    }
+
+    public void setDisplayMessage(final String displayMessage) {
+        this.displayMessage = displayMessage;
+    }
+
+    public BigDecimal getMinAmtPayable() {
+        return minAmtPayable;
+    }
+
+    public void setMinAmtPayable(final BigDecimal minAmtPayable) {
+        this.minAmtPayable = minAmtPayable;
+    }
+
+    public String getFundCode() {
+        return fundCode;
+    }
+
+    public void setFundCode(final String fundCode) {
+        this.fundCode = fundCode;
+    }
+
+    public String getFundSourceCode() {
+        return fundSourceCode;
+    }
+
+    public void setFundSourceCode(final String fundSourceCode) {
+        this.fundSourceCode = fundSourceCode;
+    }
+
+    public String getDepartmentCode() {
+        return departmentCode;
+    }
+
+    public void setDepartmentCode(final String departmentCode) {
+        this.departmentCode = departmentCode;
+    }
+
+    public String getCollModesNotAllowed() {
+        return collModesNotAllowed;
+    }
+
+    public void setCollModesNotAllowed(final String collModesNotAllowed) {
+        this.collModesNotAllowed = collModesNotAllowed;
+    }
+
+    public Integer getBoundaryNum() {
+        return boundaryNum;
+    }
+
+    public void setBoundaryNum(final Integer boundaryNum) {
+        this.boundaryNum = boundaryNum;
+    }
+
+    public String getBoundaryType() {
+        return boundaryType;
+    }
+
+    public void setBoundaryType(final String boundaryType) {
+        this.boundaryType = boundaryType;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public EgDemand getEgDemand() {
+        return egDemand;
+    }
+
+    public void setEgDemand(final EgDemand egDemand) {
+        this.egDemand = egDemand;
+    }
+
+    public EgBillType getEgBillType() {
+        return egBillType;
+    }
+
+    public void setEgBillType(final EgBillType egBillType) {
+        this.egBillType = egBillType;
+    }
+
+    public String getCitizenName() {
+        return citizenName;
+    }
+
+    public void setCitizenName(final String citizenName) {
+        this.citizenName = citizenName;
+    }
+
+    public String getCitizenAddress() {
+        return citizenAddress;
+    }
+
+    public void setCitizenAddress(final String citizenAddress) {
+        this.citizenAddress = citizenAddress;
+    }
+
+    public Date getIssueDate() {
+        return issueDate;
+    }
+
+    public void setIssueDate(final Date issueDate) {
+        this.issueDate = issueDate;
+    }
+
+    public Date getLastDate() {
+        return lastDate;
+    }
+
+    public void setLastDate(final Date lastDate) {
+        this.lastDate = lastDate;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(final Long userId) {
+        this.userId = userId;
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(final Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public Date getModifiedDate() {
+        return modifiedDate;
+    }
+
+    public void setModifiedDate(final Date modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
+
+    public Set<EgBillDetails> getEgBillDetails() {
+        return egBillDetails;
+    }
+
+    public void setEgBillDetails(final Set<EgBillDetails> egBillDetails) {
+        this.egBillDetails = egBillDetails;
+    }
+
+    public String getIs_History() {
+        return is_History;
+    }
+
+    public void setIs_History(final String is_History) {
+        this.is_History = is_History;
+    }
+
+    public String getIs_Cancelled() {
+        return is_Cancelled;
+    }
+
+    public void setIs_Cancelled(final String is_Cancelled) {
+        this.is_Cancelled = is_Cancelled;
+    }
 
-	public void setFundSourceCode(String fundSourceCode) {
-		this.fundSourceCode = fundSourceCode;
-	}
+    public void addEgBillDetails(final EgBillDetails egBillDetails) {
+        getEgBillDetails().add(egBillDetails);
+    }
 
-	public String getDepartmentCode() {
-		return departmentCode;
-	}
+    public void removeEgBillDetails(final EgBillDetails egBillDetails) {
+        getEgBillDetails().remove(egBillDetails);
+    }
 
-	public void setDepartmentCode(String departmentCode) {
-		this.departmentCode = departmentCode;
-	}
+    public String getServiceCode() {
+        return serviceCode;
+    }
 
-	public String getCollModesNotAllowed() {
-		return collModesNotAllowed;
-	}
+    public void setServiceCode(final String serviceCode) {
+        this.serviceCode = serviceCode;
+    }
 
-	public void setCollModesNotAllowed(String collModesNotAllowed) {
-		this.collModesNotAllowed = collModesNotAllowed;
-	}
+    public Boolean getPartPaymentAllowed() {
+        return partPaymentAllowed;
+    }
 
-	public Integer getBoundaryNum() {
-		return boundaryNum;
-	}
+    public void setPartPaymentAllowed(final Boolean partPaymentAllowed) {
+        this.partPaymentAllowed = partPaymentAllowed;
+    }
 
-	public void setBoundaryNum(Integer boundaryNum) {
-		this.boundaryNum = boundaryNum;
-	}
+    public Boolean getOverrideAccountHeadsAllowed() {
+        return overrideAccountHeadsAllowed;
+    }
 
-	public String getBoundaryType() {
-		return boundaryType;
-	}
+    public void setOverrideAccountHeadsAllowed(final Boolean overrideAccountHeadsAllowed) {
+        this.overrideAccountHeadsAllowed = overrideAccountHeadsAllowed;
+    }
 
-	public void setBoundaryType(String boundaryType) {
-		this.boundaryType = boundaryType;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public Long getId() {
-		return this.id;
-	}
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
 
-	public EgDemand getEgDemand() {
-		return this.egDemand;
-	}
+    public void setTotalAmount(final BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+    }
 
-	public void setEgDemand(EgDemand egDemand) {
-		this.egDemand = egDemand;
-	}
+    public BigDecimal getTotalCollectedAmount() {
+        return totalCollectedAmount;
+    }
 
-	public EgBillType getEgBillType() {
-		return this.egBillType;
-	}
+    public void setTotalCollectedAmount(final BigDecimal totalCollectedAmount) {
+        this.totalCollectedAmount = totalCollectedAmount;
+    }
 
-	public void setEgBillType(EgBillType egBillType) {
-		this.egBillType = egBillType;
-	}
+    public String getBillNo() {
+        return billNo;
+    }
 
-	public String getCitizenName() {
-		return this.citizenName;
-	}
+    public void setBillNo(final String billNo) {
+        this.billNo = billNo;
+    }
 
-	public void setCitizenName(String citizenName) {
-		this.citizenName = citizenName;
-	}
+    public Module getModule() {
+        return module;
+    }
 
-	public String getCitizenAddress() {
-		return this.citizenAddress;
-	}
+    public void setModule(final Module module) {
+        this.module = module;
+    }
 
-	public void setCitizenAddress(String citizenAddress) {
-		this.citizenAddress = citizenAddress;
-	}
+    public BigDecimal getFunctionaryCode() {
+        return functionaryCode;
+    }
 
-	public Date getIssueDate() {
-		return this.issueDate;
-	}
+    public void setFunctionaryCode(final BigDecimal functionaryCode) {
+        this.functionaryCode = functionaryCode;
+    }
 
-	public void setIssueDate(Date issueDate) {
-		this.issueDate = issueDate;
-	}
+    public String getConsumerId() {
+        return consumerId;
+    }
 
-	public Date getLastDate() {
-		return this.lastDate;
-	}
+    public void setConsumerId(final String consumerId) {
+        this.consumerId = consumerId;
+    }
 
-	public void setLastDate(Date lastDate) {
-		this.lastDate = lastDate;
-	}
+    public Boolean getCallBackForApportion() {
+        return callBackForApportion;
+    }
 
-	public Long getUserId() {
-		return this.userId;
-	}
+    public void setCallBackForApportion(final Boolean callBackForApportion) {
+        this.callBackForApportion = callBackForApportion;
+    }
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
-
-	public Date getCreateDate() {
-		return createDate;
-	}
-
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-	}
-
-	public Date getModifiedDate() {
-		return modifiedDate;
-	}
-
-	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
-	}
-
-	public Set<EgBillDetails> getEgBillDetails() {
-		return egBillDetails;
-	}
-
-	public void setEgBillDetails(Set<EgBillDetails> egBillDetails) {
-		this.egBillDetails = egBillDetails;
-	}
-
-	public String getIs_History() {
-		return is_History;
-	}
-
-	public void setIs_History(String is_History) {
-		this.is_History = is_History;
-	}
-
-	public String getIs_Cancelled() {
-		return is_Cancelled;
-	}
-
-	public void setIs_Cancelled(String is_Cancelled) {
-		this.is_Cancelled = is_Cancelled;
-	}
-
-	public void addEgBillDetails(EgBillDetails egBillDetails) {
-		getEgBillDetails().add(egBillDetails);
-	}
-
-	public void removeEgBillDetails(EgBillDetails egBillDetails) {
-		getEgBillDetails().remove(egBillDetails);
-	}
-
-	public String getServiceCode() {
-		return serviceCode;
-	}
-
-	public void setServiceCode(String serviceCode) {
-		this.serviceCode = serviceCode;
-	}
-
-	public Boolean getPartPaymentAllowed() {
-		return partPaymentAllowed;
-	}
-
-	public void setPartPaymentAllowed(Boolean partPaymentAllowed) {
-		this.partPaymentAllowed = partPaymentAllowed;
-	}
-
-	public Boolean getOverrideAccountHeadsAllowed() {
-		return overrideAccountHeadsAllowed;
-	}
-
-	public void setOverrideAccountHeadsAllowed(
-			Boolean overrideAccountHeadsAllowed) {
-		this.overrideAccountHeadsAllowed = overrideAccountHeadsAllowed;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public BigDecimal getTotalAmount() {
-		return totalAmount;
-	}
-
-	public void setTotalAmount(BigDecimal totalAmount) {
-		this.totalAmount = totalAmount;
-	}
-
-	public BigDecimal getTotalCollectedAmount() {
-		return totalCollectedAmount;
-	}
-
-	public void setTotalCollectedAmount(BigDecimal totalCollectedAmount) {
-		this.totalCollectedAmount = totalCollectedAmount;
-	}
-
-	public String getBillNo() {
-		return billNo;
-	}
-
-	public void setBillNo(String billNo) {
-		this.billNo = billNo;
-	}
-
-	public Module getModule() {
-		return module;
-	}
-
-	public void setModule(Module module) {
-		this.module = module;
-	}
-
-	public BigDecimal getFunctionaryCode() {
-		return functionaryCode;
-	}
-
-	public void setFunctionaryCode(BigDecimal functionaryCode) {
-		this.functionaryCode = functionaryCode;
-	}
-
-	public String getConsumerId() {
-		return consumerId;
-	}
-
-	public void setConsumerId(String consumerId) {
-		this.consumerId = consumerId;
-	}
-
-	public Boolean getCallBackForApportion() {
-		return callBackForApportion;
-	}
-
-	public void setCallBackForApportion(Boolean callBackForApportion) {
-		this.callBackForApportion = callBackForApportion;
-	}
-
-	public String getTransanctionReferenceNumber() {
+    public String getTransanctionReferenceNumber() {
         return transanctionReferenceNumber;
     }
 
-    public void setTransanctionReferenceNumber(String transanctionReferenceNumber) {
+    public void setTransanctionReferenceNumber(final String transanctionReferenceNumber) {
         this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
 
@@ -408,29 +408,27 @@ public class EgBill implements java.io.Serializable {
         return emailId;
     }
 
-    public void setEmailId(String emailId) {
+    public void setEmailId(final String emailId) {
         this.emailId = emailId;
     }
 
     @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (id == null ? 0 : id.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		EgBill other = (EgBill) obj;
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        final EgBill other = (EgBill) obj;
 
-		if (id != null && other != null && id.equals(other.id)) {
-			return true;
-		}
-		return false;
-	}
+        if (id != null && other != null && id.equals(other.id))
+            return true;
+        return false;
+    }
 
 }

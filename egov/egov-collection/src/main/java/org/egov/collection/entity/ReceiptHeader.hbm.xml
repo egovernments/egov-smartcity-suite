@@ -181,11 +181,14 @@
 		<property name="payeeAddress" type="string">
 			<column name="payeeaddress" length="1024" />
 		</property>
-			<property name="source" type="string">
+		<property name="source" type="string">
 			<column name="source" length="20" />
 		</property>
 		<property name="payeeEmail" type="string">
 			<column name="payeeemail" length="254" />
+		</property>
+		<property name="consumerType" type="string">
+			<column name="consumertype" length="100" />
 		</property>	
 	</class>
 	<query name="RECEIPTS_FOR_VOUCHERS">

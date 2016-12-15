@@ -148,6 +148,9 @@ public class CollectionDocument {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
     @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date createdDate;
+    
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String consumerType;
 
     public String getId() {
         return id;
@@ -387,5 +390,13 @@ public class CollectionDocument {
 
     public void setCreatedDate(final Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public String getConsumerType() {
+        return consumerType;
+    }
+
+    public void setConsumerType(String consumerType) {
+        this.consumerType = consumerType;
     }
 }
