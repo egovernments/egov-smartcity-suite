@@ -61,8 +61,8 @@
 	</spring:hasBindErrors>
 	<div class="row">
 		<div class="col-md-12">
-			<jsp:include page="overheadHeader.jsp" />
-			<jsp:include page="overheadDetails.jsp" />
+			<jsp:include page="overheadheader.jsp" />
+			<jsp:include page="overheaddetails.jsp" />
 		</div>
 	</div>
 	<div class="row">

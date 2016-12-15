@@ -65,11 +65,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({
-        @Result(name = MilestoneTemplateAction.NEW, location = "milestoneTemplate-new.jsp"),
-        @Result(name = MilestoneTemplateAction.SEARCH, location = "milestoneTemplate-search.jsp"),
-        @Result(name = MilestoneTemplateAction.SUCCESS, location = "milestoneTemplate-success.jsp"),
-        @Result(name = MilestoneTemplateAction.EDIT, location = "milestoneTemplate-edit.jsp"),
-        @Result(name = MilestoneTemplateAction.VIEW, location = "milestoneTemplate-view.jsp")
+        @Result(name = MilestoneTemplateAction.NEW, location = "milestonetemplate-new.jsp"),
+        @Result(name = MilestoneTemplateAction.SEARCH, location = "milestonetemplate-search.jsp"),
+        @Result(name = MilestoneTemplateAction.SUCCESS, location = "milestonetemplate-success.jsp"),
+        @Result(name = MilestoneTemplateAction.EDIT, location = "milestonetemplate-edit.jsp"),
+        @Result(name = MilestoneTemplateAction.VIEW, location = "milestonetemplate-view.jsp")
 
 })
 public class MilestoneTemplateAction extends SearchFormAction {

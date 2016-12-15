@@ -52,7 +52,7 @@
 		</div>
 	</div>
 	<div class="panel-body custom-form">
-	   <%@ include file="estimateDetails.jsp"%>   
+	   <%@ include file="estimatedetails.jsp"%>   
 	   <form:hidden path="lineEstimateDetails" value="${abstractEstimate.lineEstimateDetails.id}"/>
 	   <form:hidden path="" name="lineEstimateAmount" id="lineEstimateAmount" value="${abstractEstimate.lineEstimateDetails.estimateAmount}"/>
 	   

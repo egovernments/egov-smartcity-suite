@@ -102,7 +102,7 @@
 				<c:if test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true}">
 					<%@ include file="spilloverestimate-viewtechnicalsanction.jsp"%>
 				</c:if>
-				<%@ include file="../common/uploadDocuments.jsp"%>
+				<%@ include file="../common/uploaddocuments.jsp"%>
 			</div>
 			<div class="tab-pane fade" id="workdetails">
 				<c:choose>
@@ -131,13 +131,13 @@
 			</div>
 			<div class="text-center">
 				<c:if test="${!workflowHistory.isEmpty()}">
-						<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>
+						<jsp:include page="../common/commonworkflowhistory-view.jsp"></jsp:include>
 				</c:if>
 				<c:choose>
 					<c:when test="${mode == 'workflowView' }">
-						<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+						<jsp:include page="../common/commonworkflowmatrix.jsp"/>
 						<div class="buttonbottom" align="center">
-							<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+							<jsp:include page="../common/commonworkflowmatrix-button.jsp" />
 						</div>
 					</c:when>
 					<c:otherwise>

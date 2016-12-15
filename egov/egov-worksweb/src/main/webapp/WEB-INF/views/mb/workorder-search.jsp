@@ -50,7 +50,68 @@
 		<div class="alert text-left" style="color: red;" id="errorMessage" hidden="true"></div>
 		<div class="row">
 			<div class="col-md-12">
-				<jsp:include page="workorder-searchform.jsp" />
+				<div class="panel-heading"></div>
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title" style="text-align: center;">
+						<spring:message code="title.search.letterofacceptance.tocreatemb" />
+					</div>
+				</div>
+				<div class="panel-body">
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.loanumber" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="workOrderNumber"	id="workOrderNumber" class="form-control"	placeholder="Type first 3 letters of LOA Number" />
+							<form:errors path="workOrderNumber" cssClass="add-margin error-msg" />
+						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.abstractestimatenumber" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="estimateNumber"	id="estimateNumber" class="form-control"	placeholder="Type first 3 letters of Abstract/Detailed Estimate Number" />
+							<form:errors path="estimateNumber" cssClass="add-margin error-msg" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fromdate" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="fromDate" class="form-control datepicker"	id="fromDate" data-inputmask="'mask': 'd/m/y'" />
+							<form:errors path="fromDate" cssClass="add-margin error-msg" />
+						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.todate" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="toDate" class="form-control datepicker" id="toDate" data-inputmask="'mask': 'd/m/y'" />
+							<form:errors path="toDate" cssClass="add-margin error-msg" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.contractor" /></label>
+							<div class="col-sm-3 add-margin">
+				              <form:input path="contractor" id="contractorSearch" class="form-control" placeholder="Type first 3 letters of Contractor Name Or Code"/>
+				              <form:errors path="contractor" cssClass="add-margin error-msg" />
+			                  </div>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="departmentName" data-first-option="false" id="departments" class="form-control">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${departments}" itemValue="id"	itemLabel="name" />
+							</form:select>
+							<form:errors path="departmentName" cssClass="add-margin error-msg" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.workidnumber" /></label>
+						<div class="col-sm-3 add-margin">
+						<form:input path="workIdentificationNumber" class="form-control" id="workIdentificationNumber"	placeholder="Type first 3 letters of Work Identification Number" />
+						<form:errors path="workIdentificationNumber" cssClass="add-margin error-msg" />
+						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.status" /></label>
+						<div class="col-sm-3 add-margin">
+						<form:input path="egwStatus" class="form-control" id="egwStatus" value="" readonly="true" />
+						</div>
+					</div>
+				</div>
+			</div>
 			</div>
 		</div>
 		
@@ -64,13 +125,13 @@
 				</div>
 		</div>
 	</form:form>
-	<jsp:include page="workorder-searchResult.jsp" />
+	<jsp:include page="workorder-searchresult.jsp" />
 	<script src="<cdn:url value='/resources/js/mb/searchloaformbheader.js?rnd=${app_release_no}'/>"></script>
 </div>
 <div id="successPage" hidden="true">
 	<jsp:include page="mb-success.jsp"/>
 </div>
 <div id="measurementBookDiv" hidden="true">
-	<jsp:include page="measurementBook-form.jsp"/>
+	<jsp:include page="measurementbook-form.jsp"/>
 </div>
 <script src="<cdn:url value='/resources/js/mb/mbajaxsubmit.js?rnd=${app_release_no}'/>"></script>

@@ -57,7 +57,7 @@
 			</c:choose>
 			</div>
 			</c:if>
-				<jsp:include page="overhead-commonView.jsp" />
+				<jsp:include page="overhead-commonview.jsp" />
 			<div class="col-sm-12 text-center">
 				<div class="row">
 				<c:if test="${ mode != 'view' && mode != 'edit'}">

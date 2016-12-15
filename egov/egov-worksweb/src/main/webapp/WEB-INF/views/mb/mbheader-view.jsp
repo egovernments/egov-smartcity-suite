@@ -104,7 +104,7 @@
 		<div class="tab-content">
 			<div class="tab-pane fade in active" id="mbheader">
 				<jsp:include page="mbheader-viewheader.jsp" />
-				<jsp:include page="../common/uploadDocuments.jsp"/>
+				<jsp:include page="../common/uploaddocuments.jsp"/>
 			</div>
 			
 			<div class="tab-pane" id="tenderitems">
@@ -125,17 +125,17 @@
 					<%@ include file="mbheader-viewnontenderitems.jsp"%>
 			</div>
 			<div class="tab-pane fade" id="contractorMeasurements" >
-				<%@ include file="contractorMeasurements.jsp"%>
+				<%@ include file="contractormeasurements.jsp"%>
 			</div>
 			<c:if test="${!workflowHistory.isEmpty()}">
-				<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>
+				<jsp:include page="../common/commonworkflowhistory-view.jsp"></jsp:include>
 			</c:if>
 			<div class="text-center">
 				<c:choose>
 					<c:when test="${mode == 'workflowView' }">
-						<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+						<jsp:include page="../common/commonworkflowmatrix.jsp"/>
 						<div class="buttonbottom" align="center">
-							<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+							<jsp:include page="../common/commonworkflowmatrix-button.jsp" />
 						</div>
 					</c:when>
 					<c:otherwise>

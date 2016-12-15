@@ -78,7 +78,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 @ParentPackage("egov")
 @Results({
         @Result(name = ContractorAction.NEW, location = "contractor-new.jsp"),
-        @Result(name = ContractorAction.SEARCH_CONTRACTOR, location = "contractor-searchContractor.jsp"),
+        @Result(name = ContractorAction.SEARCH_CONTRACTOR, location = "contractor-searchcontractor.jsp"),
         @Result(name = ContractorAction.SEARCH, location = "contractor-search.jsp"),
         @Result(name = ContractorAction.SUCCESS, location = "contractor-success.jsp"),
         @Result(name = ContractorAction.EDIT, location = "contractor-edit.jsp"),

@@ -53,10 +53,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({
-        @Result(name = ScheduleCategoryAction.NEW, location = "scheduleCategory-new.jsp"),
-        @Result(name = ScheduleCategoryAction.EDIT, location = "scheduleCategory-edit.jsp"),
-        @Result(name = ScheduleCategoryAction.SUCCESS, location = "scheduleCategory-success.jsp"),
-        @Result(name = ScheduleCategoryAction.SEARCH_SCHEDULECATEGORY, location = "scheduleCategory-search.jsp")
+        @Result(name = ScheduleCategoryAction.NEW, location = "schedulecategory-new.jsp"),
+        @Result(name = ScheduleCategoryAction.EDIT, location = "schedulecategory-edit.jsp"),
+        @Result(name = ScheduleCategoryAction.SUCCESS, location = "schedulecategory-success.jsp"),
+        @Result(name = ScheduleCategoryAction.SEARCH_SCHEDULECATEGORY, location = "schedulecategory-search.jsp")
 })
 public class ScheduleCategoryAction extends BaseFormAction {
 

@@ -37,12 +37,18 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
+<form:form name="mbHeaderSearchForm" role="form" modelAttribute="searchRequestMBHeader"
+	id="searchRequestMBHeader"	class="form-horizontal form-groups-bordered">
+	<div class="alert text-left" style="color: red;" id="errorMessage" hidden="true"></div>
+	<div class="row">
+		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title" style="text-align: center;">
@@ -116,4 +122,18 @@
 							<form:errors path="mbStatus" cssClass="add-margin error-msg" />
 						</div>
 					</div>
-</div></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+			<div class="col-sm-12 text-center">
+				<button type='button' class='btn btn-primary' id="btnsearch">
+					<spring:message code='lbl.search' />
+				</button>
+				<a href='javascript:void(0)' class='btn btn-default'
+			onclick='self.close()'><spring:message code='lbl.close' /></a>
+			</div>
+</form:form>
+<jsp:include page="mbheader-searchresult.jsp" />
+<script src="<cdn:url value='/resources/js/mb/searchmbheader.js?rnd=${app_release_no}'/>"></script>

@@ -168,7 +168,7 @@
 		</div>
 	</div>
 </form:form>
-<jsp:include page="milestoneDetails-view.jsp" />
+<jsp:include page="milestonedetails-view.jsp" />
 <div class="row">
 	<div class="col-sm-12 text-center">
 		<a href='javascript:void(0)' class='btn btn-default'

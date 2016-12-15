@@ -76,7 +76,7 @@
 	<%@ include file="contractormb-header.jsp"%>
 	<%@ include file="contractormb-details.jsp"%>
 	<%@ include file="contractormb-additionalitems.jsp"%>
-	<jsp:include page="../common/uploadDocuments.jsp"/>
+	<jsp:include page="../common/uploaddocuments.jsp"/>
 	<div class="form-group" align="center">
 		<label class="col-sm-4 control-label text-right">
 		    <spring:message code="lbl.remarks" />

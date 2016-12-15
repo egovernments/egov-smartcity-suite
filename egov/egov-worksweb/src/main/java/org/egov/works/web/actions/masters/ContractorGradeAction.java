@@ -61,10 +61,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 @Results({
-        @Result(name = ContractorGradeAction.NEW, location = "contractorGrade-new.jsp"),
-        @Result(name = ContractorGradeAction.EDIT, location = "contractorGrade-edit.jsp"),
-        @Result(name = ContractorGradeAction.SEARCH, location = "contractorGrade-searchPage.jsp"),
-        @Result(name = ContractorGradeAction.INDEX, location = "contractorGrade-index.jsp")
+        @Result(name = ContractorGradeAction.NEW, location = "contractorgrade-new.jsp"),
+        @Result(name = ContractorGradeAction.EDIT, location = "contractorgrade-edit.jsp"),
+        @Result(name = ContractorGradeAction.SEARCH, location = "contractorgrade-searchpage.jsp"),
+        @Result(name = ContractorGradeAction.INDEX, location = "contractorgrade-index.jsp")
 })
 @ParentPackage("egov")
 public class ContractorGradeAction extends SearchFormAction {

@@ -75,11 +75,11 @@ import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({
-        @Result(name = ScheduleOfRateAction.NEW, location = "scheduleOfRate-new.jsp"),
-        @Result(name = ScheduleOfRateAction.SEARCH, location = "scheduleOfRate-search.jsp"),
-        @Result(name = ScheduleOfRateAction.EDIT, location = "scheduleOfRate-edit.jsp"),
-        @Result(name = ScheduleOfRateAction.SUCCESS, location = "scheduleOfRate-success.jsp"),
-        @Result(name = ScheduleOfRateAction.VIEW, location = "scheduleOfRate-view.jsp")
+        @Result(name = ScheduleOfRateAction.NEW, location = "scheduleofrate-new.jsp"),
+        @Result(name = ScheduleOfRateAction.SEARCH, location = "scheduleofrate-search.jsp"),
+        @Result(name = ScheduleOfRateAction.EDIT, location = "scheduleofrate-edit.jsp"),
+        @Result(name = ScheduleOfRateAction.SUCCESS, location = "scheduleofrate-success.jsp"),
+        @Result(name = ScheduleOfRateAction.VIEW, location = "scheduleofrate-view.jsp")
 })
 @ParentPackage("egov")
 public class ScheduleOfRateAction extends SearchFormAction {

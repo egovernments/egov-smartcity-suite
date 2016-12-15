@@ -57,7 +57,7 @@ ul {
 </div>
 </s:if>
 
-<%@ include file='contractor-commonView.jsp' %>
+<%@ include file='contractor-commonview.jsp' %>
 <s:hidden name="model.id" id="model"/>
 <div class="row text-center">
 	<div class="add-margin">

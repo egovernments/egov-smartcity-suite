@@ -45,7 +45,7 @@
 <body onload="replaceExemptionFormChar();">
 <div class="new-page-header"><s:text  name="contractor.viewConractor.view" /></div>
 
-<%@ include file='contractor-commonView.jsp'%>
+<%@ include file='contractor-commonview.jsp'%>
 
 <div class="row text-center">
 	<div class="add-margin">

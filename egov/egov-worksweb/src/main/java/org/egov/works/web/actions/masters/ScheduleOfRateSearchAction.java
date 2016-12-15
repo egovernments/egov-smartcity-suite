@@ -53,8 +53,8 @@ import org.egov.works.masters.service.ScheduleOfRateService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
-@Results({ @Result(name = ScheduleOfRateSearchAction.SEARCH_RESULTS, location = "scheduleOfRateSearch-searchResults.jsp"),
-        @Result(name = ScheduleOfRateSearchAction.SOR, location = "scheduleOfRateSearch-SOR.jsp") })
+@Results({ @Result(name = ScheduleOfRateSearchAction.SEARCH_RESULTS, location = "scheduleofratesearch-searchresults.jsp"),
+        @Result(name = ScheduleOfRateSearchAction.SOR, location = "scheduleofratesearch-sor.jsp") })
 public class ScheduleOfRateSearchAction extends BaseFormAction {
 
     private static final long serialVersionUID = -3299140283276738474L;
