@@ -80,6 +80,7 @@ public class CollectionDashboardService {
 
     @Autowired
     private CollectionDocumentElasticSearchService collectionDocumentElasticSearchService;
+    private static final String MILLISECS = " (millisecs) ";
 
     /**
      * Provides State-wise Collection Statistics for Property Tax, Water Charges
@@ -101,8 +102,8 @@ public class CollectionDashboardService {
             consolidatedData = new CollectionDashBoardStats();
             consolidatedColl = collectionDocumentElasticSearchService.getFinYearsCollByService(serviceDetail.getName());
             Long timeTaken = System.currentTimeMillis() - startTime;
-            LOGGER.debug(
-                    "Time taken by getFinYearsCollByService() for Property Tax is : " + timeTaken + " (millisecs) ");
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("Time taken by getFinYearsCollByService() for Property Tax is : " + timeTaken + MILLISECS);
             if (!consolidatedColl.isEmpty()) {
                 consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
                 consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
@@ -111,7 +112,8 @@ public class CollectionDashboardService {
 
             startTime = System.currentTimeMillis();
             timeTaken = System.currentTimeMillis() - startTime;
-            LOGGER.debug("Time taken by Property Tax getTotalDemand() is : " + timeTaken + " (millisecs) ");
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("Time taken by Property Tax getTotalDemand() is : " + timeTaken + MILLISECS);
             if (consolidatedData.getLytdColl().compareTo(BigDecimal.ZERO) == 0)
                 variance = CollectionConstants.BIGDECIMAL_100;
             else

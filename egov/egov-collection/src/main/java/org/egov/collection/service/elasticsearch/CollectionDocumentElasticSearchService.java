@@ -203,8 +203,7 @@ public class CollectionDocumentElasticSearchService {
      * @param ulbCodeField
      * @return BoolQueryBuilder
      */
-    private BoolQueryBuilder prepareWhereClause(final CollectionDashBoardRequest collectionDashBoardRequest,
-            final String serviceDetails) {
+    private BoolQueryBuilder prepareWhereClause(final CollectionDashBoardRequest collectionDashBoardRequest) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.rangeQuery("totalAmount").from(0).to(null));
         if (StringUtils.isNotBlank(collectionDashBoardRequest.getRegionName()))
@@ -294,7 +293,8 @@ public class CollectionDocumentElasticSearchService {
                     .divide(collectionDocumentDetails.getLytdColl(), 1, BigDecimal.ROUND_HALF_UP);
         collectionDocumentDetails.setLyVar(variance);
         final Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getCompleteCollectionIndexDetails() is : " + timeTaken + MILLISECS);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken by getCompleteCollectionIndexDetails() is : " + timeTaken + MILLISECS);
         return collectionDocumentDetails;
     }
 
@@ -311,7 +311,7 @@ public class CollectionDocumentElasticSearchService {
     public BigDecimal getCollectionBetweenDates(final CollectionDashBoardRequest collectionDashBoardRequest,
             final Date fromDate, final Date toDate, final String cityName, final String serviceDetails) {
         final Long startTime = System.currentTimeMillis();
-        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDashBoardRequest, COLLECTION_INDEX_NAME);
+        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDashBoardRequest);
         boolQuery = boolQuery
                 .filter(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                         .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
@@ -331,7 +331,8 @@ public class CollectionDocumentElasticSearchService {
 
         final Sum aggr = collAggr.get(COLLECTIONTOTAL);
         final Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getCollectionBetweenDates() is : " + timeTaken + MILLISECS);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken by getCollectionBetweenDates() is : " + timeTaken + MILLISECS);
         return BigDecimal.valueOf(aggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
     }
 
@@ -411,7 +412,8 @@ public class CollectionDocumentElasticSearchService {
          * sum of totalAmount from Collection index
          */
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getCollectionAndDemandValues() is : " + timeTaken + MILLISECS);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken by getCollectionAndDemandValues() is : " + timeTaken + MILLISECS);
 
         startTime = System.currentTimeMillis();
         for (final Map.Entry<String, BigDecimal> entry : totalCollMap.entrySet()) {
@@ -437,7 +439,8 @@ public class CollectionDocumentElasticSearchService {
             collIndDataList.add(collIndData);
         }
         timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken for setting values in getResponseTableData() is : " + timeTaken + MILLISECS);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken for setting values in getResponseTableData() is : " + timeTaken + MILLISECS);
         return collIndDataList;
     }
 
@@ -456,7 +459,7 @@ public class CollectionDocumentElasticSearchService {
     public Map<String, BigDecimal> getCollectionAndDemandValues(
             final CollectionDashBoardRequest collectionDashBoardRequest, final Date fromDate, final Date toDate,
             final String fieldName, final String aggregationField, final String serviceDetails) {
-        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDashBoardRequest, serviceDetails);
+        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDashBoardRequest);
         if (StringUtils.isNotBlank(serviceDetails))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(BILLING_SERVICE, serviceDetails));
 
@@ -561,8 +564,9 @@ public class CollectionDocumentElasticSearchService {
             finYearEndDate = org.apache.commons.lang3.time.DateUtils.addYears(finYearEndDate, -1);
         }
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getMonthwiseCollectionsForConsecutiveYears() for 3 consecutive years is : "
-                + timeTaken + MILLISECS);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken by getMonthwiseCollectionsForConsecutiveYears() for 3 consecutive years is : "
+                    + timeTaken + MILLISECS);
 
         startTime = System.currentTimeMillis();
         /**
@@ -595,7 +599,8 @@ public class CollectionDocumentElasticSearchService {
                 collTrendsList.add(collTrend);
             }
         timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken setting values in getMonthwiseCollectionDetails() is : " + timeTaken + MILLISECS);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken setting values in getMonthwiseCollectionDetails() is : " + timeTaken + MILLISECS);
         return collTrendsList;
     }
 
@@ -610,7 +615,7 @@ public class CollectionDocumentElasticSearchService {
     private Aggregations getMonthwiseCollectionsForConsecutiveYears(
             final CollectionDashBoardRequest collectionDashBoardRequest, final Date fromDate, final Date toDate,
             final String serviceDetail) {
-        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDashBoardRequest, COLLECTION_INDEX_NAME);
+        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDashBoardRequest);
         boolQuery = boolQuery
                 .filter(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                         .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
@@ -634,7 +639,7 @@ public class CollectionDocumentElasticSearchService {
             final CollectionDashBoardRequest collectionDashBoardRequest, final String indexName, final Boolean order,
             final String orderingAggregationName, final int size, final String serviceDetail) {
         final List<TaxPayerDashBoardDetails> taxPayers = new ArrayList<>();
-        final BoolQueryBuilder boolQuery = prepareWhereClause(collectionDashBoardRequest, null);
+        final BoolQueryBuilder boolQuery = prepareWhereClause(collectionDashBoardRequest);
         String groupingField;
         if (StringUtils.isNotBlank(collectionDashBoardRequest.getUlbCode())
                 || StringUtils.isNotBlank(collectionDashBoardRequest.getType())
@@ -654,7 +659,8 @@ public class CollectionDocumentElasticSearchService {
                 response -> response.getAggregations());
 
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by ulbWiseAggregations is : " + timeTaken + MILLISECS);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken by ulbWiseAggregations is : " + timeTaken + MILLISECS);
 
         TaxPayerDashBoardDetails taxDetail;
         startTime = System.currentTimeMillis();
@@ -690,8 +696,9 @@ public class CollectionDocumentElasticSearchService {
             taxPayers.add(taxDetail);
         }
         timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug(
-                "Time taken for setting values in returnUlbWiseAggregationResults() is : " + timeTaken + MILLISECS);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug(
+                    "Time taken for setting values in returnUlbWiseAggregationResults() is : " + timeTaken + MILLISECS);
         return returnTopResults(taxPayers, size, order);
     }
 

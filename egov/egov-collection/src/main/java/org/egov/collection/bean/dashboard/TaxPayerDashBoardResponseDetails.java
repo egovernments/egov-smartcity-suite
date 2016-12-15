@@ -42,19 +42,23 @@ package org.egov.collection.bean.dashboard;
 import java.util.List;
 
 public class TaxPayerDashBoardResponseDetails {
-	
-	private List<TaxPayerDashBoardDetails> producers;
-	private List<TaxPayerDashBoardDetails> achievers;
-	public List<TaxPayerDashBoardDetails> getProducers() {
-		return producers;
-	}
-	public void setProducers(List<TaxPayerDashBoardDetails> producers) {
-		this.producers = producers;
-	}
-	public List<TaxPayerDashBoardDetails> getAchievers() {
-		return achievers;
-	}
-	public void setAchievers(List<TaxPayerDashBoardDetails> achievers) {
-		this.achievers = achievers;
-	}
+
+    private List<TaxPayerDashBoardDetails> producers;
+    private List<TaxPayerDashBoardDetails> achievers;
+
+    public List<TaxPayerDashBoardDetails> getProducers() {
+        return producers;
+    }
+
+    public void setProducers(final List<TaxPayerDashBoardDetails> producers) {
+        this.producers = producers;
+    }
+
+    public List<TaxPayerDashBoardDetails> getAchievers() {
+        return achievers;
+    }
+
+    public void setAchievers(final List<TaxPayerDashBoardDetails> achievers) {
+        this.achievers = achievers;
+    }
 }
