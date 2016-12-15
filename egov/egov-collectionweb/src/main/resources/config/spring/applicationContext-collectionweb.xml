@@ -47,6 +47,7 @@
 	<import resource="applicationSecurityContext-collection.xml"/>
 	<import resource="applicationQuartzContext-collection.xml"/>
 
-	<context:component-scan base-package="org.egov.collection.web" />
-
+    <context:component-scan base-package="org.egov.collection.web">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
 </beans>

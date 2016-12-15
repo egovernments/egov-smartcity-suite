@@ -265,4 +265,8 @@
 	select rh from org.egov.collection.entity.ReceiptHeader rh where rh.id = ? and rh.status.code<>'CANCELLED']]>
 	</query>
   	
+  	<query name="DISTINCT_SERVICE_DETAILS">
+    <![CDATA[select distinct rh.service from org.egov.collection.entity.ReceiptHeader rh where rh.status.code<>'CANCELLED']]>
+    </query> 
+    
 </hibernate-mapping>

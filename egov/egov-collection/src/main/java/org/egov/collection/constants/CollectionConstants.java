@@ -39,6 +39,8 @@
  */
 package org.egov.collection.constants;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.TreeMap;
 
 import org.egov.services.instrument.InstrumentService;
@@ -150,12 +152,12 @@ public final class CollectionConstants {
     public static final String APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_FUNCTIONCODE = "COLLECTION_BANKREMITTANCE_FUNCTIONCODE";
     public static final String APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWCOLUMNSCARDONLINE = "COLLECTION_BANKREMITTANCE_SHOWCOLUMNSCARDONLINE";
     public static final String APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWREMITDATE = "COLLECTION_BANKREMITTANCE_SHOWREMITDATE";
-    public static final String APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE= "COLLECTIONDATAENTRYCUTOFFDATE";
+    public static final String APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE = "COLLECTIONDATAENTRYCUTOFFDATE";
 
     // named queries (collections)
     public static final String QUERY_RECEIPTS_FOR_VOUCHERS = "RECEIPTS_FOR_VOUCHERS";
     public static final String QUERY_RECEIPTDETAIL_BY_RECEIPTNUMBER = "QUERY_RECEIPTDETAIL_BY_RECEIPTNUMBER";
-    public static final String QUERY_RECEIPT_VOUCHER_BY_RECEIPTID="RECEIPT_VOUCHER_BY_RECEIPTID";
+    public static final String QUERY_RECEIPT_VOUCHER_BY_RECEIPTID = "RECEIPT_VOUCHER_BY_RECEIPTID";
 
     public static final String QUERY_RECEIPTS_FOR_BOUNCED_INSTRUMENTS = "RECEIPTS_FOR_BOUNCED_INSTRUMENTS";
     // public static final String QUERY_RECEIPTS_FOR_PAYEEDETAIL =
@@ -571,7 +573,22 @@ public final class CollectionConstants {
         }
     };
 
-    public static final char[] REVENUEHEADS=new char[] {'I','A','L'};
+    public static final char[] REVENUEHEADS = new char[] { 'I', 'A', 'L' };
     public static final Integer DEFAULT_PAGE_SIZE = 30;
     public static final Integer QUARTZ_BULKBILL_JOBS = 2;
+    
+    public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
+    public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
+
+    public static final String DASHBOARD_GROUPING_DISTRICTWISE = "district";
+    public static final String DASHBOARD_GROUPING_ULBWISE = "ulb";
+    public static final String DASHBOARD_GROUPING_REGIONWISE = "region";
+    public static final String DASHBOARD_GROUPING_GRADEWISE = "grade";
+    public static final String DASHBOARD_GROUPING_WARDWISE = "ward";
+    public static final String DASHBOARD_GROUPING_CITYWISE = "city";
+    public static final String COLLECTION_INDEX_NAME = "receipts";
+    public static final BigDecimal BIGDECIMAL_100 = BigDecimal.valueOf(100);
+    public static final String DISTINCT_SERVICE_DETAILS="DISTINCT_SERVICE_DETAILS";
+    
+    
 }
