@@ -43,9 +43,18 @@
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
-		<td colspan="5">
+		<td colspan="2">
 			<div class="headingsmallbg">
 				<s:text name="docsectiontitle" />
+			</div>
+		</td>
+		<td colspan="2">
+			<div class="headingsmallbg" style="text-align: right;">
+				<s:if
+					test="%{showTaxCalcBtn}">
+					<input type="button" name="calculateTax" id="calculateTax"
+						value="Show Tax" class="buttonsubmit" />
+				</s:if>
 			</div>
 		</td>
 	</tr>

@@ -389,5 +389,7 @@
 				</div>
 			</s:push>
 		</s:form>
+	<%@ include file="../workflow/commontaxcalc-details.jsp"%>
+	<script type="text/javascript" src="<cdn:url value='/resources/javascript/tax-calculator.js?rnd=${app_release_no}'/>"></script>
 	</body>
 </html>

@@ -64,6 +64,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_NEWPR
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_NEWPROPERTY_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_DEMAND_INACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
@@ -79,7 +80,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJ
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -102,6 +106,7 @@ import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Area;
+import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
@@ -118,6 +123,7 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
+import org.egov.ptis.client.service.calculator.APTaxCalculator;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.enums.TransactionType;
@@ -146,10 +152,13 @@ import org.egov.ptis.domain.entity.property.TaxExemptionReason;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
+import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.google.gson.GsonBuilder;
 
 /**
  * @author parvati
@@ -186,6 +195,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private PropertyImpl property = new PropertyImpl();
     @Autowired
     private PropertyPersistenceService basicPropertyService;
+    @Autowired
+    private APTaxCalculator taxCalculator;    
 
     private Long zoneId;
     private Long wardId;
@@ -261,6 +272,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
     private String indexNumber;
     private String modifyRsn;
+    private Boolean showTaxCalcBtn = Boolean.FALSE;
 
     public CreatePropertyAction() {
         super();
@@ -307,6 +319,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 property.setMeesevaApplicationNumber(request.getParameter("applicationNo"));
                 property.setMeesevaServiceCode(request.getParameter("meesevaServicecode"));
             }
+        }
+        if (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
+                StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) || 
+                    StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)) {
+            showTaxCalcBtn = Boolean.TRUE;
         }
         return RESULT_NEW;
     }
@@ -472,6 +489,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 || property.getState().getNextAction() != null && property.getState().getNextAction()
                         .equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)
                 || currState.endsWith(WFLOW_ACTION_NEW)) {
+            if (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
+                    StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) || 
+                        StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)) {
+                showTaxCalcBtn = Boolean.TRUE;
+            }
             mode = EDIT;
             return RESULT_NEW;
         } else {
@@ -510,7 +532,12 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     + ", userDesgn: " + userDesgn);
         if (mode.equalsIgnoreCase(EDIT)) {
             validate();
-            if (hasErrors())
+            if (hasErrors() && (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
+                    StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) || 
+                        StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))) {
+                showTaxCalcBtn = Boolean.TRUE;
+                return RESULT_NEW;
+            } else if (hasErrors())
                 return RESULT_NEW;
             updatePropertyDetails();
             try {
@@ -1147,6 +1174,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         }
         validateApproverDetails();
         super.validate();
+        if (isBlank(getModelId())) {
+            if (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
+                    StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) || 
+                    StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)) {
+                showTaxCalcBtn = Boolean.TRUE;
+            }
+        }
     }
 
     @SkipValidation
@@ -1271,6 +1305,64 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             LOGGER.debug("create: Property creation ended");
         }
         return "dataEntry-ack";
+    }
+
+    @SkipValidation
+    @Action(value="/createProperty-calculateTax")
+    public void calculateTax() {
+        LOGGER.debug("entering calculateTax()");
+        validate();
+        if (hasErrors()) {
+            try {
+                ServletActionContext.getResponse().getWriter().write(getText("enter.mandatory.fields"));
+            } catch (IOException e) {
+                LOGGER.error("calculateTax() : User has not entered all the mandatory fields", e);
+            }
+        } else {
+            HashMap<Installment, TaxCalculationInfo> instTaxMap = new HashMap<Installment, TaxCalculationInfo>();
+            final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService().find(
+                    "from PropertyMutationMaster pmm where pmm.type=? AND pmm.id=?", PROP_CREATE_RSN, mutationId);
+            BasicProperty basicProperty = new BasicPropertyImpl();
+            if (basicProp == null) {
+                basicProperty= createBasicProp(STATUS_DEMAND_INACTIVE);
+                basicProperty.setPropertyMutationMaster(propertyMutationMaster);
+            } else {
+                updatePropertyId(basicProp);
+                basicProp.setPropertyMutationMaster(propertyMutationMaster);
+            }
+            taxExemptionId = (taxExemptionId == null || taxExemptionId.isEmpty()) ? "-1" : taxExemptionId;
+            property = propService.createProperty(property, getAreaOfPlot(), propertyMutationMaster.getCode(),
+                    propTypeId, propUsageId, propOccId, STATUS_DEMAND_INACTIVE, getDocNumber(), getNonResPlotArea(),
+                    getFloorTypeId(), getRoofTypeId(), getWallTypeId(), getWoodTypeId(), Long.valueOf(taxExemptionId));
+            if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+                propCompletionDate = propService.getLowestDtOfCompFloorWise(property.getPropertyDetail().getFloorDetails());
+            else
+                propCompletionDate = property.getPropertyDetail().getDateOfCompletion();
+            if (basicProp == null) {
+                basicProperty.setPropOccupationDate(propCompletionDate);
+                property.setBasicProperty(basicProperty);
+            } else {
+                basicProp.setPropOccupationDate(propCompletionDate);
+                property.setBasicProperty(basicProp);
+            }
+            if (propTypeMstr != null && propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
+                property.setPropertyDetail(propService.changePropertyDetail(property, property.getPropertyDetail(), 0)
+                        .getPropertyDetail());
+            try {
+                instTaxMap = taxCalculator.calculatePropertyTax(property, propCompletionDate);
+            } catch (TaxCalculatorExeption e) {
+                LOGGER.error("calculateTax() : There are no Unit rates defined for chosen combinations", e);
+            }
+            String resultString = propertyTaxCommonUtils.getCurrentHalfyearTax(instTaxMap, propTypeMstr);
+            String jsonsString = new GsonBuilder().create().toJson(resultString);
+            ServletActionContext.getResponse().setContentType("application/json");
+            try {
+                ServletActionContext.getResponse().getWriter().write(jsonsString);
+            } catch (IOException e) {
+                LOGGER.error("calculateTax() : Error while writing response", e);
+            }
+        }
+        LOGGER.debug("exiting calculateTax()");
     }
 
     @Override
@@ -1811,5 +1903,12 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                         securityUtils.getCurrentUser().getId())
                 : null;
     }
+    
+    public Boolean getShowTaxCalcBtn() {
+        return showTaxCalcBtn;
+    }
 
+    public void setShowTaxCalcBtn(Boolean showTaxCalcBtn) {
+        this.showTaxCalcBtn = showTaxCalcBtn;
+    }
 }

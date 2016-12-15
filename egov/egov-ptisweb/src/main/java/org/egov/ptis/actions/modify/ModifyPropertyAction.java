@@ -82,6 +82,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_WORKFLOW_PROPERTYIMPL_BYID;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_DATAENTRY;
@@ -96,6 +97,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -120,6 +122,7 @@ import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Area;
+import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.persistence.entity.Address;
@@ -135,6 +138,7 @@ import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
+import org.egov.ptis.client.service.calculator.APTaxCalculator;
 import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -163,11 +167,14 @@ import org.egov.ptis.domain.entity.property.RoofType;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
+import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.google.gson.GsonBuilder;
 
 /**
  * This class is used to do Addition/Alteration/Bifurcation of an Assessment
@@ -296,6 +303,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private String oldPropertyTypeCode;
     private Boolean isMeesevaUser = Boolean.FALSE;
     private String meesevaApplicationNumber;
+    private Boolean showTaxCalcBtn = Boolean.FALSE;
 
     @Autowired
     private PropertyPersistenceService basicPropertyService;
@@ -307,6 +315,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private SecurityUtils securityUtils;
     @Autowired
     private ReportViewerUtil reportViewerUtil;
+    @Autowired
+    private APTaxCalculator taxCalculator;  
 
     public ModifyPropertyAction() {
         super();
@@ -348,6 +358,11 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 + ", PropTypeId: " + getPropTypeId() + ", PropertyCategory: " + getPropertyCategory()
                 + ", PropUsageId: " + getPropUsageId() + ", PropOccId: " + getPropOccId());
         LOGGER.debug("Exiting from modifyForm");
+        if ((StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
+                StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) || 
+                    StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)) && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn)) {
+            showTaxCalcBtn = Boolean.TRUE;
+        }
         return target;
     }
 
@@ -501,6 +516,11 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
             LOGGER.debug("view: PropertyModel by model id: " + propertyModel);
         }
+        if ((StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
+                StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) || 
+                    StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)) && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn)) {
+            showTaxCalcBtn = Boolean.TRUE;
+        }
         final String currWfState = propertyModel.getState().getValue();
         populateFormData(Boolean.TRUE);
         corrsAddress = PropertyTaxUtil.getOwnerAddress(propertyModel.getBasicProperty().getPropertyOwnerInfo());
@@ -568,6 +588,11 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         LOGGER.debug("forwardModify: Modify property started " + propertyModel);
         setOldPropertyTypeCode(basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode());
         validate();
+        if (hasErrors() && (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
+                StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) || 
+                    StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)) && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn)) {
+            showTaxCalcBtn = Boolean.TRUE;
+        }
         final long startTimeMillis = System.currentTimeMillis();
         isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
 
@@ -1420,6 +1445,69 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return PRINT_ACK;
     }
+    
+    @SkipValidation
+    @Action(value="/modifyProperty-calculateTax")
+    public void calculateTax() {
+        LOGGER.debug("entering calculateTax()");
+        setOldPropertyTypeCode(basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode());
+        validate();
+        if (hasErrors()) {
+            try {
+                ServletActionContext.getResponse().getWriter().write(getText("enter.mandatory.fields"));
+            } catch (IOException e) {
+                LOGGER.error("calculateTax() : User has not entered all the mandatory fields", e);
+            }
+        } else {
+            if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
+                final Area area = new Area();
+                area.setArea(new Float(areaOfPlot));
+                propertyModel.getPropertyDetail().setSitalArea(area);
+            }
+            if (propTypeId != null && !propTypeId.trim().isEmpty() && !propTypeId.equals("-1"))
+                propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
+                        "from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
+            propertyModel.getPropertyDetail().setPropertyTypeMaster(propTypeMstr);
+            Date propCompletionDate = null;
+            final PropertyTypeMaster proptypeMstr = propertyTypeMasterDAO.findById(Integer.valueOf(propTypeId), false);
+            if (!proptypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+                propCompletionDate = propService.getLowestDtOfCompFloorWise(propertyModel.getPropertyDetail()
+                        .getFloorDetailsProxy());
+            else
+                propCompletionDate = propertyModel.getPropertyDetail().getDateOfCompletion();
+            setProperty(propService.createProperty(propertyModel, getAreaOfPlot(), modifyRsn, propTypeId, propUsageId,
+                    propOccId, STATUS_WORKFLOW, propertyModel.getDocNumber(), null, floorTypeId, roofTypeId, wallTypeId,
+                    woodTypeId,
+                    taxExemptedReason));
+            updatePropertyID(basicProp);
+            final Long oldPropTypeId = oldProperty.getPropertyDetail().getPropertyTypeMaster().getId();
+            if ((oldPropTypeId == propTypeMstr.getId() && Long.parseLong(propTypeId) != propTypeMstr.getId()
+                    || oldPropTypeId != propTypeMstr
+                            .getId() && Long.parseLong(propTypeId) == propTypeMstr.getId())
+                    && !propertyModel.getStatus().equals('W'))
+                if (propTypeMstr != null
+                        && org.apache.commons.lang.StringUtils.equals(propTypeMstr.getId().toString(), propTypeId))
+                    changePropertyDetail(propertyModel, new VacantProperty(), 0);
+                else
+                    changePropertyDetail(propertyModel, new BuiltUpProperty(), propertyModel.getPropertyDetail()
+                            .getNoofFloors());
+            HashMap<Installment, TaxCalculationInfo> instTaxMap = new HashMap<Installment, TaxCalculationInfo>();
+            try {
+                instTaxMap = taxCalculator.calculatePropertyTax(propertyModel, propCompletionDate);
+            } catch (TaxCalculatorExeption e) {
+                LOGGER.error("calculateTax() : There are no Unit rates defined for chosen combinations", e);
+            }
+            String resultString = propertyTaxCommonUtils.getCurrentHalfyearTax(instTaxMap, propTypeMstr);
+            String jsonsString = new GsonBuilder().create().toJson(resultString);
+            ServletActionContext.getResponse().setContentType("application/json");
+            try {
+                ServletActionContext.getResponse().getWriter().write(jsonsString);
+            } catch (IOException e) {
+                LOGGER.error("calculateTax() : Error while writing response", e);
+            }
+        }
+        LOGGER.debug("exiting calculateTax()");
+    }
 
     public BasicProperty getBasicProp() {
         return basicProp;
@@ -2087,4 +2175,11 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 : currentDesignation;
     }
 
+    public Boolean getShowTaxCalcBtn() {
+        return showTaxCalcBtn;
+    }
+
+    public void setShowTaxCalcBtn(Boolean showTaxCalcBtn) {
+        this.showTaxCalcBtn = showTaxCalcBtn;
+    }
 }
