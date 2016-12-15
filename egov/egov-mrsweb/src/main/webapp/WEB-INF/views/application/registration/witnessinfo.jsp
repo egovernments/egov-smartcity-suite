@@ -73,7 +73,7 @@
 			<spring:message code="lbl.witness.info"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-6" >
-	        <form:select path="${witness}.witnessRelation" id="${witness}.witnessRelation" class="form-control is_valid_alphabet inline-elem" style="width: 30%"
+	        <form:select path="${witness}.witnessRelation" id="${witness}.witnessRelation" class="form-control" style="width: 30%"
 					cssErrorClass="form-control error" required="required" >
                 <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
                 <form:options items="${witnessRelation}"/>

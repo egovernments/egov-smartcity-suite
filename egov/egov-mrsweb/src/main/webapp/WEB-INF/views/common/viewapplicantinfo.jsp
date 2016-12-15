@@ -77,7 +77,21 @@
 	<div  class="col-sm-3 "><spring:message code="lbl.religion"/></div>
 	<div class="col-sm-3 add-margin view-content"><c:out value="${param.appReligion}"></c:out></div>
 </div>
+	<div class="row add-border">
+	<div class="col-sm-3 add-margin"><spring:message code="lbl.parentsName"/></div>
+	<div class="col-sm-3 add-margin view-content"><c:out value="${param.appparentsName}" default="N/A"></c:out></div>
 	
+	<div class="col-sm-3 add-margin"><spring:message code="lbl.street"/></div>
+	<div class="col-sm-3 add-margin view-content"><c:out value="${param.appstreet}" default="N/A"></c:out></div>
+</div>
+
+<div class="row add-border">
+	<div class="col-sm-3 add-margin"><spring:message code="lbl.locality"/></div>
+	<div class="col-sm-3 add-margin view-content"><c:out value="${param.applocality}" default="N/A"></c:out></div>
+	
+	<div class="col-sm-3 add-margin"><spring:message code="lbl.city"/></div>
+	<div class="col-sm-3 add-margin view-content"><c:out value="${param.appcity}" default="N/A"></c:out></div>
+</div>
 <div class="row add-border">
 	<div  class="col-sm-3 "><spring:message code="lbl.religiontype"/></div>
 	<div class="col-sm-3 add-margin view-content"><c:out value="${param.appReligionPractice}"></c:out></div>

@@ -72,6 +72,18 @@
 	<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.marriageAct.name}"/></div>
 </div>
 <div class="row add-border">
+	    <div class="col-sm-3 add-margin"><spring:message code="lbl.marriage.venue"/></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.venue}"></c:out></div>
+		<div class="col-sm-3 add-margin"><spring:message code="lbl.street"/></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.street}"></c:out></div>
+	</div>
+	<div class="row add-border">
+	    <div class="col-sm-3 add-margin"><spring:message code="lbl.city"/></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.city}"></c:out></div>
+		<div class="col-sm-3 add-margin"><spring:message code="lbl.locality"/></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.locality}"></c:out></div>
+	</div>
+<div class="row add-border">
 <div  class="col-sm-3 "><spring:message code="lbl.place.of.marriage"/></div>
 	<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.placeOfMarriage}" /></div>
 <div class="col-sm-3 "><spring:message code="lbl.registrationunit"/></div>
@@ -86,6 +98,7 @@
 	<jsp:param value="${reIssue.registration.husband.name.firstName}" name="appFirstName"/>
 	<jsp:param value="${reIssue.registration.husband.name.middleName}" name="appMiddleName"/>
 	<jsp:param value="${reIssue.registration.husband.name.lastName}" name="appLastName"/>
+	<jsp:param value="${reIssue.registration.husband.parentsName}" name="appparentsName"/>	
 	<jsp:param value="${reIssue.registration.husband.encodedSignature}" name="signature"/>
 	<jsp:param value="${reIssue.registration.husband.encodedPhoto}" name="photo"/>
 	<jsp:param value="${reIssue.registration.husband.otherName}" name="appOtherName"/>
@@ -95,6 +108,9 @@
 	<jsp:param value="${reIssue.registration.husband.ageInMonthsAsOnMarriage}" name="appAgeInMonths"/>
 	<jsp:param value="${reIssue.registration.husband.maritalStatus}" name="appPresentRelation"/>
 	<jsp:param value="${reIssue.registration.husband.occupation}" name="appOccupation"/>
+	<jsp:param value="${reIssue.registration.husband.street}" name="appstreet"/>
+	<jsp:param value="${reIssue.registration.husband.locality}" name="applocality"/>
+	<jsp:param value="${reIssue.registration.husband.city}" name="appcity"/>
 	<jsp:param value="${reIssue.registration.husband.contactInfo.residenceAddress}" name="appResidenceAddress"/>
 	<jsp:param value="${reIssue.registration.husband.contactInfo.officeAddress}" name="appOfficeAddress"/>
 	<jsp:param value="${reIssue.registration.husband.contactInfo.mobileNo}" name="appMobileNo"/>
@@ -109,6 +125,7 @@
 	<jsp:param value="${reIssue.registration.wife.name.firstName}" name="appFirstName"/>
 	<jsp:param value="${reIssue.registration.wife.name.middleName}" name="appMiddleName"/>
 	<jsp:param value="${reIssue.registration.wife.name.lastName}" name="appLastName"/>
+	<jsp:param value="${reIssue.registration.wife.parentsName}" name="appparentsName"/>
 	<jsp:param value="${reIssue.registration.wife.encodedSignature}" name="signature"/>
 	<jsp:param value="${reIssue.registration.wife.encodedPhoto}" name="photo"/>
 	<jsp:param value="${reIssue.registration.wife.otherName}" name="appOtherName"/>
@@ -118,6 +135,9 @@
 	<jsp:param value="${reIssue.registration.wife.ageInMonthsAsOnMarriage}" name="appAgeInMonths"/>
 	<jsp:param value="${reIssue.registration.wife.maritalStatus}" name="appPresentRelation"/>
 	<jsp:param value="${reIssue.registration.wife.occupation}" name="appOccupation"/>
+	<jsp:param value="${reIssue.registration.wife.street}" name="appstreet"/>
+	<jsp:param value="${reIssue.registration.wife.locality}" name="applocality"/>
+	<jsp:param value="${reIssue.registration.wife.city}" name="appcity"/>
 	<jsp:param value="${reIssue.registration.wife.contactInfo.residenceAddress}" name="appResidenceAddress"/>
 	<jsp:param value="${reIssue.registration.wife.contactInfo.officeAddress}" name="appOfficeAddress"/>
 	<jsp:param value="${reIssue.registration.wife.contactInfo.mobileNo}" name="appMobileNo"/>

@@ -81,7 +81,7 @@
 </div>
 <div class="row add-border">
 	<div class="col-sm-3 add-margin"><spring:message code="lbl.parentsName"/></div>
-	<div class="col-sm-3 add-margin view-content"><c:out value="${param.appparentsname}" default="N/A"></c:out></div>
+	<div class="col-sm-3 add-margin view-content"><c:out value="${param.appparentsName}" default="N/A"></c:out></div>
 	
 	<div class="col-sm-3 add-margin"><spring:message code="lbl.street"/></div>
 	<div class="col-sm-3 add-margin view-content"><c:out value="${param.appstreet}" default="N/A"></c:out></div>
