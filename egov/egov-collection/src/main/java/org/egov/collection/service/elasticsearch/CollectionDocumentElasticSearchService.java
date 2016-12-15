@@ -104,7 +104,7 @@ public class CollectionDocumentElasticSearchService {
     private static final String CITY_GRADE = "cityGrade";
     private static final String DISTRICT_NAME = "districtName";
     private static final String REGION_NAME = "regionName";
-    private static final String BILLING_SERVICE = "serviceDetails";
+    private static final String BILLING_SERVICE = "billingService";
     private static final String TOTAL_AMOUNT = "totalAmount";
     private static final String COLLECTIONTOTAL = "collectiontotal";
     private static final String CANCELLED = "Cancelled";
