@@ -48,7 +48,6 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
 import org.egov.works.contractoradvance.service.ContractorAdvanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,9 +67,6 @@ public class ViewContractorAdvanceController {
     @Autowired
     private WorksUtils worksUtils;
 
-    @Autowired
-    private LineEstimateService lineEstimateService;
-
     @RequestMapping(value = "/view/{advanceRequisitionId}", method = RequestMethod.GET)
     public String viewMilestoneTemplate(@PathVariable final String advanceRequisitionId, final Model model,
             final HttpServletRequest request)
@@ -88,7 +84,7 @@ public class ViewContractorAdvanceController {
         model.addAttribute("documentDetails", updatedContractorAdvance.getDocumentDetails());
         model.addAttribute("mode", "view");
         model.addAttribute("workflowHistory",
-                lineEstimateService.getHistory(updatedContractorAdvance.getState(), updatedContractorAdvance.getStateHistory()));
+                worksUtils.getHistory(updatedContractorAdvance.getState(), updatedContractorAdvance.getStateHistory()));
         return "contractorAdvance-view";
     }
 

@@ -182,7 +182,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("createdbybydesignation", worksUtils.getUserDesignation(lineEstimate.getCreatedBy()));
         model.addAttribute("mode", "readOnly");
         model.addAttribute("workflowHistory",
-                lineEstimateService.getHistory(lineEstimate.getState(), lineEstimate.getStateHistory()));
+                worksUtils.getHistory(lineEstimate.getState(), lineEstimate.getStateHistory()));
         return responsePage;
     }
 
@@ -398,7 +398,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             model.addAttribute("mode", "view");
 
         model.addAttribute("workflowHistory",
-                lineEstimateService.getHistory(lineEstimate.getState(), lineEstimate.getStateHistory()));
+                worksUtils.getHistory(lineEstimate.getState(), lineEstimate.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
         model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));

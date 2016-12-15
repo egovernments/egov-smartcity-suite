@@ -319,7 +319,7 @@ public class WorkOrderEstimateService {
         return workOrderEstimateRepository.findWorkOrderEstimateByEstimateNumber(estimateNumber, WorksConstants.APPROVED);
     }
 
-    public List<WorkOrderEstimate> searchWorkOrderToCreateCR(
+    public List<WorkOrderEstimate> searchWorkOrderToCreateContractorAdvance(
             final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
 
         List<WorkOrderEstimate> workOrderEstimateList = new ArrayList<WorkOrderEstimate>();

@@ -423,4 +423,6 @@ public class WorksConstants {
     public static final String ADVANCE_BILL = "ADVANCEBILL";
 
     public static final String EXPENSE_BILL_VIEW_URL = "/EGF/expensebill/view/";
+
+    public static final String CONTRACTOR_ADVANCE_VIEW_URL = "/egworks/contractoradvance/view/";
 }

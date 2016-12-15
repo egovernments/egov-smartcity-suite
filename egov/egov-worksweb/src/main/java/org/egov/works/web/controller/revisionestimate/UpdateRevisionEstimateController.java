@@ -57,13 +57,13 @@ import org.egov.works.abstractestimate.service.ActivityService;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.masters.service.ScheduleOfRateService;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.revisionestimate.service.RevisionEstimateService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
@@ -95,7 +95,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
     private MeasurementSheetService measurementSheetService;
 
     @Autowired
-    private LineEstimateService lineEstimateService;
+    private WorksUtils worksUtils;
 
     @Autowired
     private EstimateService estimateService;
@@ -131,8 +131,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
                 .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
         revisionEstimateService.loadDataForView(revisionEstimate, workOrderEstimate, model);
 
-        if (revisionEstimate.getCurrentState() != null
-        /* && !WorksConstants.NEW.equals(revisionEstimate.getCurrentState().getValue()) */) {
+        if (revisionEstimate.getCurrentState() != null) {
             model.addAttribute("currentState", revisionEstimate.getCurrentState().getValue());
             model.addAttribute("amountRule", revisionEstimate.getEstimateValue());
             model.addAttribute("pendingActions", revisionEstimate.getCurrentState().getNextAction());
@@ -152,7 +151,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
         }
 
         model.addAttribute("workflowHistory",
-                lineEstimateService.getHistory(revisionEstimate.getState(), revisionEstimate.getStateHistory()));
+                worksUtils.getHistory(revisionEstimate.getState(), revisionEstimate.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
         model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
@@ -184,7 +183,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
         revisionEstimateService.loadDataForView(revisionEstimate, workOrderEstimate, model);
 
         model.addAttribute("workflowHistory",
-                lineEstimateService.getHistory(revisionEstimate.getState(), revisionEstimate.getStateHistory()));
+                worksUtils.getHistory(revisionEstimate.getState(), revisionEstimate.getStateHistory()));
         model.addAttribute("estimateValue", revisionEstimate.getEstimateValue().setScale(2, BigDecimal.ROUND_HALF_EVEN));
         model.addAttribute("mode", "view");
         return "revisionEstimate-view";

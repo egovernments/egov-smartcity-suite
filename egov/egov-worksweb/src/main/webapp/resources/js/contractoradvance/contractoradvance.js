@@ -124,14 +124,14 @@ function validateWorkFlowApprover(name) {
 function validateContractorAdvance() {
 	var advancePaidTillNow = $('#advancePaidTillNow').val() == "" ? 0 : parseFloat($('#advancePaidTillNow').val());
 	var workOrderAmount = $('#workOrderAmount').val() == "" ? 0 : parseFloat($('#workOrderAmount').val());
-	var totalMBAmountOfMBs = $('#totalMBAmountOfMBs').val() == "" ? 0 : parseFloat($('#totalMBAmountOfMBs').val());
+	var totalPartBillsAmount = $('#totalPartBillsAmount').val() == "" ? 0 : parseFloat($('#totalPartBillsAmount').val());
 	var advanceRequisitionAmount = $('#advanceRequisitionAmount').val() == "" ? 0 : parseFloat($('#advanceRequisitionAmount').val());
 	
 	if (advanceRequisitionAmount <= 0) {
 		bootbox.alert($('#errorAdvanceZero').val());
 		return false;
 	}
-	if (workOrderAmount < (advancePaidTillNow + advanceRequisitionAmount + totalMBAmountOfMBs)) {
+	if (workOrderAmount < (advancePaidTillNow + advanceRequisitionAmount + totalPartBillsAmount)) {
 		bootbox.alert($('#errorAdvanceExceeded').val());
 		return false;
 	}

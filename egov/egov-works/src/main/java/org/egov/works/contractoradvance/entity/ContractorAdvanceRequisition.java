@@ -48,8 +48,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -62,8 +60,6 @@ import org.egov.works.workorder.entity.WorkOrderEstimate;
 
 @Entity
 @Table(name = "EGW_CONTRACTOR_ADVANCE")
-@NamedQueries({
-        @NamedQuery(name = ContractorAdvanceRequisition.GETALLCONTRACTORSINARF, query = "select distinct(arf.workOrderEstimate.workOrder.contractor) from ContractorAdvanceRequisition arf") })
 public class ContractorAdvanceRequisition extends EgAdvanceRequisition {
 
     private static final long serialVersionUID = -8267145890478916279L;
@@ -71,10 +67,6 @@ public class ContractorAdvanceRequisition extends EgAdvanceRequisition {
     public enum ContractorAdvanceRequisitionStatus {
         NEW, CREATED, CHECKED, REJECTED, RESUBMITTED, CANCELLED, APPROVED
     }
-
-    public static final String GETALLCONTRACTORSINARF = "getAllContractorsInARF";
-
-    public static final String GETALLDRAWINGOFFICERFROMARF = "getAllDrawingOfficerFromARF";
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WORKORDER_ESTIMATE_ID", nullable = false)
@@ -98,7 +90,7 @@ public class ContractorAdvanceRequisition extends EgAdvanceRequisition {
 
     @Override
     public String getStateDetails() {
-        return "ARF Number : " + getAdvanceRequisitionNumber();
+        return "Contractor ARF Number : " + getAdvanceRequisitionNumber();
     }
 
     public WorkOrderEstimate getWorkOrderEstimate() {

@@ -107,4 +107,8 @@ public interface ContractorBillRegisterRepository extends JpaRepository<Contract
             @Param("glCodeId") final BigDecimal glCodeId, @Param("status") final String status,
             @Param("contractorBillId") final Long contractorBillId);
 
+    @Query("select sum(cbr.billamount) from ContractorBillRegister as cbr where cbr.workOrderEstimate.id = :workOrderEstimateId and upper(cbr.billstatus) != :status and cbr.billtype = :billtype")
+    Double findSumOfBillAmountByWorkOrderEstimateAndStatusAndBilltype(
+            @Param("workOrderEstimateId") final Long workOrderEstimateId, @Param("status") final String status,
+            @Param("billtype") final String billtype);
 }

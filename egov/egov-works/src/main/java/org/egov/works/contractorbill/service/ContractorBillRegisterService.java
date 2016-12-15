@@ -994,4 +994,8 @@ public class ContractorBillRegisterService {
 
     }
 
+    public Double getTotalPartBillsAmount(final Long workOrderEstimateId, final String billStatus, final String billtype) {
+        return contractorBillRegisterRepository.findSumOfBillAmountByWorkOrderEstimateAndStatusAndBilltype(workOrderEstimateId,
+                billStatus, billtype);
+    }
 }

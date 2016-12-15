@@ -60,6 +60,7 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
@@ -111,6 +112,9 @@ public class WorksUtils {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private EisCommonService eisCommonService;
 
     public void persistDocuments(final List<DocumentDetails> documentDetailsList) {
         if (documentDetailsList != null && !documentDetailsList.isEmpty())
@@ -345,4 +349,51 @@ public class WorksUtils {
         return cutOffDate;
     }
 
+    public List<Hashtable<String, Object>> getHistory(final State state, final List<StateHistory> history) {
+        User user = null;
+        final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
+        final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
+        if (null != state) {
+            for (final StateHistory stateHistory : history) {
+                final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
+                HistoryMap.put("date", stateHistory.getDateInfo());
+                HistoryMap.put("comments", stateHistory.getComments());
+                HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
+                        + stateHistory.getLastModifiedBy().getName());
+                HistoryMap.put("status", stateHistory.getValue());
+                final Position owner = stateHistory.getOwnerPosition();
+                user = stateHistory.getOwnerUser();
+                if (null != user) {
+                    HistoryMap.put("user", user.getUsername() + "::" + user.getName());
+                    HistoryMap.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
+                            ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
+                } else if (null != owner && null != owner.getDeptDesig()) {
+                    user = eisCommonService.getUserForPosition(owner.getId(), new Date());
+                    HistoryMap.put("user",
+                            null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+                    HistoryMap.put("department", null != owner.getDeptDesig().getDepartment()
+                            ? owner.getDeptDesig().getDepartment().getName() : "");
+                }
+                historyTable.add(HistoryMap);
+            }
+            map.put("date", state.getDateInfo());
+            map.put("comments", state.getComments() != null ? state.getComments() : "");
+            map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
+            map.put("status", state.getValue());
+            final Position ownerPosition = state.getOwnerPosition();
+            user = state.getOwnerUser();
+            if (null != user) {
+                map.put("user", user.getUsername() + "::" + user.getName());
+                map.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
+                        ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
+            } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
+                user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                map.put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+                map.put("department", null != ownerPosition.getDeptDesig().getDepartment()
+                        ? ownerPosition.getDeptDesig().getDepartment().getName() : "");
+            }
+            historyTable.add(map);
+        }
+        return historyTable;
+    }
 }

@@ -46,9 +46,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.model.advance.EgAdvanceRequisitionDetails;
 import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
 import org.egov.works.contractoradvance.service.ContractorAdvanceService;
-import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.contractorbill.entity.enums.BillTypes;
+import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
@@ -86,7 +88,7 @@ public class CreateContractorAdvanceController extends GenericWorkFlowController
     private MessageSource messageSource;
 
     @Autowired
-    private MBHeaderService mbHeaderService;
+    private ContractorBillRegisterService contractorBillRegisterService;
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String showNewForm(
@@ -96,22 +98,9 @@ public class CreateContractorAdvanceController extends GenericWorkFlowController
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
                 .getWorkOrderEstimateById(Long.valueOf(woeId));
         prepareWorkflow(model, contractorAdvanceRequisition, new WorkflowContainer());
-        final Double advancePaidTillNow = contractorAdvanceService.getTotalAdvancePaid(
-                contractorAdvanceRequisition.getId() == null ? -1L : contractorAdvanceRequisition.getId(),
-                Long.valueOf(woeId),
-                ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.APPROVED.toString());
-        final Double totalMBAmountOfMBs = mbHeaderService.getTotalMBAmountOfMBs(null,
-                Long.valueOf(woeId),
-                ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CANCELLED.toString());
-        model.addAttribute("advancePaidTillNow", advancePaidTillNow);
-        model.addAttribute("totalMBAmountOfMBs", totalMBAmountOfMBs);
-        model.addAttribute("documentDetails", contractorAdvanceRequisition.getDocumentDetails());
-        model.addAttribute("stateType", contractorAdvanceRequisition.getClass().getSimpleName());
-        model.addAttribute("woeId", woeId);
-        model.addAttribute("mode", "new");
         model.addAttribute("workOrderEstimate", workOrderEstimate);
-        model.addAttribute("contractorAdvanceRequisition", contractorAdvanceRequisition);
-        setDropDownValues(model);
+        contractorAdvanceRequisition.setWorkOrderEstimate(workOrderEstimate);
+        setModelValues(contractorAdvanceRequisition, model);
         return "contractorAdvance-form";
     }
 
@@ -129,25 +118,15 @@ public class CreateContractorAdvanceController extends GenericWorkFlowController
                 contractorAdvanceRequisition.getWorkOrderEstimate().getId(), jsonObject,
                 resultBinder);
         contractorAdvanceService.validateInput(contractorAdvanceRequisition, resultBinder);
+        for (final EgAdvanceRequisitionDetails details : contractorAdvanceRequisition.getEgAdvanceReqDetailses())
+            contractorAdvanceService.getEgAdvanceRequisitionDetails(contractorAdvanceRequisition, details, resultBinder);
 
         if (resultBinder.hasErrors()) {
-            setDropDownValues(model);
-            final Double advancePaidTillNow = contractorAdvanceService.getTotalAdvancePaid(
-                    contractorAdvanceRequisition.getId() == null ? -1L : contractorAdvanceRequisition.getId(),
-                    contractorAdvanceRequisition.getWorkOrderEstimate().getId(),
-                    ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.APPROVED.toString());
-            final Double totalMBAmountOfMBs = mbHeaderService.getTotalMBAmountOfMBs(null,
-                    contractorAdvanceRequisition.getWorkOrderEstimate().getId(),
-                    ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CANCELLED.toString());
+            setModelValues(contractorAdvanceRequisition, model);
             prepareWorkflow(model, contractorAdvanceRequisition, new WorkflowContainer());
-            model.addAttribute("advancePaidTillNow", advancePaidTillNow);
-            model.addAttribute("totalMBAmountOfMBs", totalMBAmountOfMBs);
-            model.addAttribute("documentDetails", contractorAdvanceRequisition.getDocumentDetails());
-            model.addAttribute("stateType", contractorAdvanceRequisition.getClass().getSimpleName());
-            model.addAttribute("woeId", contractorAdvanceRequisition.getWorkOrderEstimate().getId());
-            model.addAttribute("mode", "new");
             model.addAttribute("workOrderEstimate", contractorAdvanceRequisition.getWorkOrderEstimate());
-            model.addAttribute("contractorAdvanceRequisition", contractorAdvanceRequisition);
+            model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
+            model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
 
             return "contractorAdvance-form";
         } else {
@@ -241,10 +220,24 @@ public class CreateContractorAdvanceController extends GenericWorkFlowController
         return message;
     }
 
-    private void setDropDownValues(final Model model) {
+    private void setModelValues(final ContractorAdvanceRequisition contractorAdvanceRequisition, final Model model) {
         model.addAttribute("debitAccounts",
                 chartOfAccountsService.getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_ADVANCE_PURPOSE));
         model.addAttribute("creditAccounts",
                 chartOfAccountsService.getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE));
+        final Double advancePaidTillNow = contractorAdvanceService.getTotalAdvancePaid(
+                contractorAdvanceRequisition.getId() == null ? -1L : contractorAdvanceRequisition.getId(),
+                Long.valueOf(contractorAdvanceRequisition.getWorkOrderEstimate().getId()),
+                ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.APPROVED.toString());
+        final Double totalPartBillsAmount = contractorBillRegisterService.getTotalPartBillsAmount(
+                Long.valueOf(contractorAdvanceRequisition.getWorkOrderEstimate().getId()),
+                ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CANCELLED.toString(),
+                BillTypes.Part_Bill.toString());
+        model.addAttribute("advancePaidTillNow", advancePaidTillNow);
+        model.addAttribute("totalPartBillsAmount", totalPartBillsAmount);
+        model.addAttribute("documentDetails", contractorAdvanceRequisition.getDocumentDetails());
+        model.addAttribute("stateType", contractorAdvanceRequisition.getClass().getSimpleName());
+        model.addAttribute("contractorAdvanceRequisition", contractorAdvanceRequisition);
+        model.addAttribute("mode", "new");
     }
 }

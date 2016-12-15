@@ -43,7 +43,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +59,6 @@ import org.egov.egf.budget.model.BudgetControlType;
 import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
@@ -74,8 +72,6 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.workflow.entity.State;
-import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.model.budget.BudgetUsage;
@@ -138,9 +134,6 @@ public class LineEstimateService {
 
     @Autowired
     private WorksUtils worksUtils;
-
-    @Autowired
-    private EisCommonService eisCommonService;
 
     @Autowired
     @Qualifier("workflowService")
@@ -513,54 +506,6 @@ public class LineEstimateService {
             lineEstimatesForAbstractEstimates.add(result);
         }
         return lineEstimatesForAbstractEstimates;
-    }
-
-    public List<Hashtable<String, Object>> getHistory(final State state, final List<StateHistory> history) {
-        User user = null;
-        final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
-        final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
-        if (null != state) {
-            for (final StateHistory stateHistory : history) {
-                final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
-                HistoryMap.put("date", stateHistory.getDateInfo());
-                HistoryMap.put("comments", stateHistory.getComments());
-                HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
-                        + stateHistory.getLastModifiedBy().getName());
-                HistoryMap.put("status", stateHistory.getValue());
-                final Position owner = stateHistory.getOwnerPosition();
-                user = stateHistory.getOwnerUser();
-                if (null != user) {
-                    HistoryMap.put("user", user.getUsername() + "::" + user.getName());
-                    HistoryMap.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
-                            ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
-                } else if (null != owner && null != owner.getDeptDesig()) {
-                    user = eisCommonService.getUserForPosition(owner.getId(), new Date());
-                    HistoryMap.put("user",
-                            null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                    HistoryMap.put("department", null != owner.getDeptDesig().getDepartment()
-                            ? owner.getDeptDesig().getDepartment().getName() : "");
-                }
-                historyTable.add(HistoryMap);
-            }
-            map.put("date", state.getDateInfo());
-            map.put("comments", state.getComments() != null ? state.getComments() : "");
-            map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
-            map.put("status", state.getValue());
-            final Position ownerPosition = state.getOwnerPosition();
-            user = state.getOwnerUser();
-            if (null != user) {
-                map.put("user", user.getUsername() + "::" + user.getName());
-                map.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
-                        ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
-            } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
-                user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
-                map.put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                map.put("department", null != ownerPosition.getDeptDesig().getDepartment()
-                        ? ownerPosition.getDeptDesig().getDepartment().getName() : "");
-            }
-            historyTable.add(map);
-        }
-        return historyTable;
     }
 
     public Long getApprovalPositionByMatrixDesignation(final LineEstimate lineEstimate, Long approvalPosition,

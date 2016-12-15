@@ -65,7 +65,6 @@ import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBForCancelledBillService;
 import org.egov.works.mb.service.MBHeaderService;
@@ -90,9 +89,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/contractorbill")
 public class UpdateContractorBillController extends GenericWorkFlowController {
-    @Autowired
-    private LineEstimateService lineEstimateService;
-
     @Autowired
     private DepartmentService departmentService;
 
@@ -405,7 +401,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
         model.addAttribute("billDetailsMap", contractorBillRegisterService.getBillDetailsMap(contractorBillRegister, model));
 
-        model.addAttribute("workflowHistory", lineEstimateService.getHistory(contractorBillRegister.getState(),
+        model.addAttribute("workflowHistory", worksUtils.getHistory(contractorBillRegister.getState(),
                 contractorBillRegister.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
@@ -458,7 +454,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         model.addAttribute("createdbybydesignation",
                 worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy()));
         model.addAttribute("mode", "readOnly");
-        model.addAttribute("workflowHistory", lineEstimateService.getHistory(contractorBillRegister.getState(),
+        model.addAttribute("workflowHistory", worksUtils.getHistory(contractorBillRegister.getState(),
                 contractorBillRegister.getStateHistory()));
         return "contractorBill-view";
     }

@@ -79,7 +79,9 @@ import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition.Cont
 import org.egov.works.contractoradvance.entity.SearchRequestContractorRequisition;
 import org.egov.works.contractoradvance.repository.ContractorAdvanceRepository;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
+import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
@@ -144,6 +146,9 @@ public class ContractorAdvanceService {
 
     @Autowired
     private AdvanceBillNumberGenerator advanceBillNumberGenerator;
+
+    @Autowired
+    private ContractorBillRegisterService contractorBillRegisterService;
 
     public ContractorAdvanceRequisition getContractorAdvanceRequisitionById(final Long id) {
         return contractorAdvanceRepository.findOne(id);
@@ -255,10 +260,8 @@ public class ContractorAdvanceService {
         contractorAdvanceRequisition
                 .setAdvanceRequisitionNumber(advanceRequisitionNumberGenerator.getNextNumber(contractorAdvanceRequisition));
         contractorAdvanceRequisition.setArftype(WorksConstants.STATUS_MODULE_NAME);
-        for (final EgAdvanceRequisitionDetails details : contractorAdvanceRequisition.getEgAdvanceReqDetailses()) {
+        for (final EgAdvanceRequisitionDetails details : contractorAdvanceRequisition.getEgAdvanceReqDetailses())
             details.setEgAdvanceRequisition(contractorAdvanceRequisition);
-            getEgAdvanceRequisitionDetails(contractorAdvanceRequisition, details);
-        }
         contractorAdvanceRequisition.setEgAdvanceReqMises(setEgAdvanceReqMis(contractorAdvanceRequisition));
 
         ContractorAdvanceRequisition savedContractorAdvanceRequisition = contractorAdvanceRepository
@@ -290,6 +293,8 @@ public class ContractorAdvanceService {
         if (!contractorAdvanceRequisition.getWorkOrderEstimate().getEstimate().getFinancialDetails().isEmpty()) {
             requisitionMis.setFunction(
                     contractorAdvanceRequisition.getWorkOrderEstimate().getEstimate().getFinancialDetails().get(0).getFunction());
+            requisitionMis.setFunctionaryId(contractorAdvanceRequisition.getWorkOrderEstimate().getEstimate()
+                    .getFinancialDetails().get(0).getFunctionary());
             requisitionMis.setFund(
                     contractorAdvanceRequisition.getWorkOrderEstimate().getEstimate().getFinancialDetails().get(0).getFund());
             requisitionMis.setScheme(
@@ -300,8 +305,8 @@ public class ContractorAdvanceService {
         return requisitionMis;
     }
 
-    private void getEgAdvanceRequisitionDetails(final ContractorAdvanceRequisition contractorAdvanceRequisition,
-            final EgAdvanceRequisitionDetails egAdvanceRequisitionDetails) {
+    public void getEgAdvanceRequisitionDetails(final ContractorAdvanceRequisition contractorAdvanceRequisition,
+            final EgAdvanceRequisitionDetails egAdvanceRequisitionDetails, final BindingResult errors) {
         boolean isDebit = false;
         CChartOfAccounts coa = null;
         if (egAdvanceRequisitionDetails.getChartofaccounts().getId() != 0)
@@ -309,34 +314,40 @@ public class ContractorAdvanceService {
         if (egAdvanceRequisitionDetails.getDebitamount() != null
                 && BigDecimal.ZERO.compareTo(egAdvanceRequisitionDetails.getDebitamount()) != 0)
             isDebit = true;
-        final List<CChartOfAccounts> contractorAdvanceAccountList = chartOfAccountsHibernateDAO
-                .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_ADVANCE_PURPOSE);
-        if (coa != null && coa.getGlcode() != null)
-            if (!contractorAdvanceAccountList.isEmpty() && contractorAdvanceAccountList.contains(coa)) {
-                Accountdetailtype contractorAccountDetailType = null;
-                final List<Accountdetailtype> detailCode = chartOfAccountsHibernateDAO
-                        .getAccountdetailtypeListByGLCode(coa.getGlcode());
-                if (detailCode != null && !detailCode.isEmpty()) {
-                    contractorAccountDetailType = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(
-                            coa.getGlcode(), WorksConstants.ACCOUNTDETAIL_TYPE_CONTRACTOR);
-                    if (contractorAccountDetailType != null)
-                        egAdvanceRequisitionDetails.getEgAdvanceReqpayeeDetailses()
-                                .add(getEgAdvanceReqPayeeDetails(egAdvanceRequisitionDetails,
-                                        contractorAccountDetailType.getId(),
-                                        isDebit ? egAdvanceRequisitionDetails.getDebitamount()
-                                                : egAdvanceRequisitionDetails.getCreditamount(),
-                                        isDebit,
-                                        Integer.valueOf(
-                                                contractorAdvanceRequisition.getWorkOrderEstimate().getWorkOrder().getContractor()
-                                                        .getId().toString())));
-                }
-            }
+        if (coa != null && coa.getGlcode() != null) {
+            Accountdetailtype contractorAccountDetailType = null;
+            contractorAccountDetailType = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(
+                    coa.getGlcode(), WorksConstants.ACCOUNTDETAIL_TYPE_CONTRACTOR);
+            if (contractorAccountDetailType != null) {
+                if (egAdvanceRequisitionDetails.getEgAdvanceReqpayeeDetailses().isEmpty())
+                    egAdvanceRequisitionDetails.getEgAdvanceReqpayeeDetailses()
+                            .add(getEgAdvanceReqPayeeDetails(egAdvanceRequisitionDetails,
+                                    contractorAccountDetailType.getId(), new EgAdvanceReqPayeeDetails(),
+                                    isDebit ? egAdvanceRequisitionDetails.getDebitamount()
+                                            : egAdvanceRequisitionDetails.getCreditamount(),
+                                    isDebit,
+                                    Integer.valueOf(
+                                            contractorAdvanceRequisition.getWorkOrderEstimate().getWorkOrder().getContractor()
+                                                    .getId().toString())));
+                else
+                    for (EgAdvanceReqPayeeDetails payeeDetails : egAdvanceRequisitionDetails.getEgAdvanceReqpayeeDetailses())
+                        payeeDetails = getEgAdvanceReqPayeeDetails(egAdvanceRequisitionDetails,
+                                contractorAccountDetailType.getId(), payeeDetails,
+                                isDebit ? egAdvanceRequisitionDetails.getDebitamount()
+                                        : egAdvanceRequisitionDetails.getCreditamount(),
+                                isDebit,
+                                Integer.valueOf(
+                                        contractorAdvanceRequisition.getWorkOrderEstimate().getWorkOrder().getContractor()
+                                                .getId().toString()));
+            } else
+                errors.reject("error.contractoradvance.validate.glcode.for.subledger", new String[] { coa.getGlcode() },
+                        null);
+        }
     }
 
     public EgAdvanceReqPayeeDetails getEgAdvanceReqPayeeDetails(final EgAdvanceRequisitionDetails egAdvanceRequisitionDetails,
-            final Integer accountsDetailTypeId,
+            final Integer accountsDetailTypeId, final EgAdvanceReqPayeeDetails egAdvanceReqPayeeDetails,
             final BigDecimal amount, final boolean isDebit, final Integer accountsDetailKeyId) {
-        final EgAdvanceReqPayeeDetails egAdvanceReqPayeeDetails = new EgAdvanceReqPayeeDetails();
         egAdvanceReqPayeeDetails.setAccountdetailKeyId(accountsDetailKeyId);
         egAdvanceReqPayeeDetails.setAccountDetailType(accountdetailtypeRepository.findOne(accountsDetailKeyId));
         if (isDebit)
@@ -415,6 +426,8 @@ public class ContractorAdvanceService {
                 contractorAdvanceRequisition.setApprovedBy(securityUtils.getCurrentUser());
                 createAndApproveAdvanceBills(contractorAdvanceRequisition.getEgAdvanceReqMises().getEgBillregister(),
                         new ArrayList<>());
+                contractorAdvanceRequisition.getEgAdvanceReqMises().setSourcePath(WorksConstants.CONTRACTOR_ADVANCE_VIEW_URL
+                        + contractorAdvanceRequisition.getId());
             }
         }
         updatedContractorAdvanceRequisition = contractorAdvanceRepository.save(contractorAdvanceRequisition);
@@ -439,13 +452,11 @@ public class ContractorAdvanceService {
     }
 
     @Transactional
-    public EgBillregister generateAdvanceBills(final ContractorAdvanceRequisition contractorAdvanceRequisition,
-            final EgBillregister egBillregister) {
+    public void generateAdvanceBills(final ContractorAdvanceRequisition contractorAdvanceRequisition,
+            final EgBillregister egBillregister, final BindingResult errors) {
         populateBillRegister(contractorAdvanceRequisition, egBillregister);
-        populateBillDetails(contractorAdvanceRequisition, egBillregister);
+        populateBillDetails(contractorAdvanceRequisition, egBillregister, errors);
         populateBillregistermis(contractorAdvanceRequisition, egBillregister);
-
-        return egBillregister;
     }
 
     private void populateBillRegister(final ContractorAdvanceRequisition contractorAdvanceRequisition,
@@ -466,24 +477,23 @@ public class ContractorAdvanceService {
     }
 
     private void populateBillDetails(final ContractorAdvanceRequisition contractorAdvanceRequisition,
-            final EgBillregister egBillregister) {
+            final EgBillregister egBillregister, final BindingResult errors) {
         for (final EgAdvanceRequisitionDetails details : contractorAdvanceRequisition.getEgAdvanceReqDetailses()) {
             final EgBilldetails egBilldetails = new EgBilldetails();
             egBilldetails.setFunctionid(BigDecimal
-                    .valueOf(contractorAdvanceRequisition.getWorkOrderEstimate().getEstimate().getFinancialDetails().get(0)
-                            .getFunction().getId()));
+                    .valueOf(contractorAdvanceRequisition.getEgAdvanceReqMises().getFunction().getId()));
             egBilldetails.setCreditamount(details.getCreditamount());
             egBilldetails.setDebitamount(details.getDebitamount());
             egBilldetails.setChartOfAccounts(details.getChartofaccounts());
             egBilldetails.setEgBillregister(egBillregister);
             egBilldetails.setGlcodeid(BigDecimal.valueOf(details.getChartofaccounts().getId()));
             egBilldetails.setLastupdatedtime(new Date());
-            egBillregister.addEgBilldetailes(getEgBillPayeeDetails(contractorAdvanceRequisition, egBilldetails));
+            egBillregister.addEgBilldetailes(getEgBillPayeeDetails(contractorAdvanceRequisition, egBilldetails, errors));
         }
     }
 
     private EgBilldetails getEgBillPayeeDetails(final ContractorAdvanceRequisition contractorAdvanceRequisition,
-            final EgBilldetails egBilldetails) {
+            final EgBilldetails egBilldetails, final BindingResult errors) {
         boolean isDebit = false;
         CChartOfAccounts coa = null;
         if (BigDecimal.ZERO.compareTo(egBilldetails.getGlcodeid()) != 0)
@@ -491,24 +501,20 @@ public class ContractorAdvanceService {
         if (egBilldetails.getDebitamount() != null
                 && BigDecimal.ZERO.compareTo(egBilldetails.getDebitamount()) != 0)
             isDebit = true;
-        final List<CChartOfAccounts> contractorRefundAccountList = chartOfAccountsHibernateDAO
-                .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_ADVANCE_PURPOSE);
-        if (coa != null && coa.getGlcode() != null && !contractorRefundAccountList.isEmpty()
-                && contractorRefundAccountList.contains(coa)) {
+        if (coa != null && coa.getGlcode() != null) {
             Accountdetailtype contractorAccountDetailType = null;
-            final List<Accountdetailtype> detailCode = chartOfAccountsHibernateDAO
-                    .getAccountdetailtypeListByGLCode(coa.getGlcode());
-            if (detailCode != null && !detailCode.isEmpty()) {
-                contractorAccountDetailType = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(
-                        coa.getGlcode(), WorksConstants.ACCOUNTDETAIL_TYPE_CONTRACTOR);
-                if (contractorAccountDetailType != null)
-                    egBilldetails.getEgBillPaydetailes().add(getEgPayeeDetails(egBilldetails,
-                            contractorAccountDetailType.getId(),
-                            isDebit ? egBilldetails.getDebitamount() : egBilldetails.getCreditamount(), isDebit,
-                            Integer.valueOf(
-                                    contractorAdvanceRequisition.getWorkOrderEstimate().getWorkOrder().getContractor().getId()
-                                            .toString())));
-            }
+            contractorAccountDetailType = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(
+                    coa.getGlcode(), WorksConstants.ACCOUNTDETAIL_TYPE_CONTRACTOR);
+            if (contractorAccountDetailType != null)
+                egBilldetails.getEgBillPaydetailes().add(getEgPayeeDetails(egBilldetails,
+                        contractorAccountDetailType.getId(),
+                        isDebit ? egBilldetails.getDebitamount() : egBilldetails.getCreditamount(), isDebit,
+                        Integer.valueOf(
+                                contractorAdvanceRequisition.getWorkOrderEstimate().getWorkOrder().getContractor().getId()
+                                        .toString())));
+            else
+                errors.reject("error.contractoradvance.validate.glcode.for.subledger", new String[] { coa.getGlcode() },
+                        null);
         }
 
         return egBilldetails;
@@ -534,6 +540,7 @@ public class ContractorAdvanceService {
         billregistermis.setEgBillregister(egBillregister);
         billregistermis.setFieldid(contractorAdvanceRequisition.getEgAdvanceReqMises().getFieldId());
         billregistermis.setFunction(contractorAdvanceRequisition.getEgAdvanceReqMises().getFunction());
+        billregistermis.setFunctionaryid(contractorAdvanceRequisition.getEgAdvanceReqMises().getFunctionaryId());
         billregistermis.setFund(contractorAdvanceRequisition.getEgAdvanceReqMises().getFund());
         billregistermis.setPayto(contractorAdvanceRequisition.getEgAdvanceReqMises().getPayto());
         billregistermis.setScheme(contractorAdvanceRequisition.getEgAdvanceReqMises().getScheme());
@@ -593,35 +600,35 @@ public class ContractorAdvanceService {
         return contractorAdvanceRepository.getTotalAdvancePaid(contractorAdvanceId, workOrderEstimateId, approvedCode);
     }
 
-    public void validateInput(final ContractorAdvanceRequisition contractorAdvanceRequisition, final BindingResult resultBinder) {
+    public void validateInput(final ContractorAdvanceRequisition contractorAdvanceRequisition, final BindingResult errors) {
         Double advancePaidTillNow = getTotalAdvancePaid(
                 contractorAdvanceRequisition.getId() == null ? -1L : contractorAdvanceRequisition.getId(),
                 contractorAdvanceRequisition.getWorkOrderEstimate().getId(),
                 ContractorAdvanceRequisitionStatus.APPROVED.toString());
-        Double totalMBAmountOfMBs = mbHeaderService.getTotalMBAmountOfMBs(null,
-                contractorAdvanceRequisition.getWorkOrderEstimate().getId(),
-                ContractorAdvanceRequisitionStatus.CANCELLED.toString());
-        if (totalMBAmountOfMBs == null)
-            totalMBAmountOfMBs = 0D;
+        Double totalPartBillsAmount = contractorBillRegisterService.getTotalPartBillsAmount(
+                Long.valueOf(contractorAdvanceRequisition.getWorkOrderEstimate().getId()),
+                ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CANCELLED.toString(),
+                BillTypes.Part_Bill.toString());
+        final List<MBHeader> mbHeaders = mbHeaderService
+                .getMBHeadersByWorkOrderEstimate(contractorAdvanceRequisition.getWorkOrderEstimate());
+        if (!mbHeaders.isEmpty())
+            errors.reject("error.mb.created", new String[] {}, null);
+        if (totalPartBillsAmount == null)
+            totalPartBillsAmount = 0D;
         if (advancePaidTillNow == null)
             advancePaidTillNow = 0D;
         if (contractorAdvanceRequisition.getAdvanceRequisitionAmount()
-                .add(BigDecimal.valueOf(advancePaidTillNow + totalMBAmountOfMBs)).compareTo(BigDecimal
+                .add(BigDecimal.valueOf(advancePaidTillNow + totalPartBillsAmount)).compareTo(BigDecimal
                         .valueOf(contractorAdvanceRequisition.getWorkOrderEstimate().getWorkOrder().getWorkOrderAmount())) > 0)
-            resultBinder.reject("error.advance.exceeded", new String[] {},
+            errors.reject("error.advance.exceeded", new String[] {},
                     null);
     }
 
     public void validateARFInDrafts(final Long contractorAdvanceRegisterId, final Long workOrderEstimateId,
             final JsonObject jsonObject, final BindingResult errors) {
         ContractorAdvanceRequisition contractorAdvanceRequisition = null;
-        if (contractorAdvanceRegisterId == null)
-            contractorAdvanceRequisition = contractorAdvanceRepository
-                    .findByWorkOrderEstimate_IdAndStatus_codeEquals(workOrderEstimateId, WorksConstants.NEW);
-        else
-            contractorAdvanceRequisition = contractorAdvanceRepository.findByIdNotAndStatus_codeEquals(
-                    contractorAdvanceRegisterId,
-                    WorksConstants.NEW);
+        contractorAdvanceRequisition = contractorAdvanceRepository
+                .findByWorkOrderEstimate_IdAndStatus_codeEquals(workOrderEstimateId, WorksConstants.NEW);
         String userName = "";
         if (contractorAdvanceRequisition != null) {
             userName = worksUtils.getApproverName(contractorAdvanceRequisition.getState().getOwnerPosition().getId());
@@ -639,18 +646,11 @@ public class ContractorAdvanceService {
     public void validateARFInWorkFlow(final Long contractorAdvanceRegisterId, final Long workOrderEstimateId,
             final JsonObject jsonObject, final BindingResult errors) {
         ContractorAdvanceRequisition contractorAdvanceRequisition = null;
-        if (contractorAdvanceRegisterId == null)
-            contractorAdvanceRequisition = contractorAdvanceRepository
-                    .findByWorkOrderEstimateAndStatus(workOrderEstimateId,
-                            ContractorAdvanceRequisitionStatus.CANCELLED.toString(),
-                            ContractorAdvanceRequisitionStatus.APPROVED.toString(),
-                            ContractorAdvanceRequisitionStatus.NEW.toString());
-        else
-            contractorAdvanceRequisition = contractorAdvanceRepository.findByIdNotAndStatusCodes(contractorAdvanceRegisterId,
-                    workOrderEstimateId,
-                    ContractorAdvanceRequisitionStatus.CANCELLED.toString(),
-                    ContractorAdvanceRequisitionStatus.APPROVED.toString(),
-                    ContractorAdvanceRequisitionStatus.NEW.toString());
+        contractorAdvanceRequisition = contractorAdvanceRepository
+                .findByWorkOrderEstimateAndStatus(workOrderEstimateId,
+                        ContractorAdvanceRequisitionStatus.CANCELLED.toString(),
+                        ContractorAdvanceRequisitionStatus.APPROVED.toString(),
+                        ContractorAdvanceRequisitionStatus.NEW.toString());
         String userName = "";
         if (contractorAdvanceRequisition != null) {
             userName = worksUtils.getApproverName(contractorAdvanceRequisition.getState().getOwnerPosition().getId());

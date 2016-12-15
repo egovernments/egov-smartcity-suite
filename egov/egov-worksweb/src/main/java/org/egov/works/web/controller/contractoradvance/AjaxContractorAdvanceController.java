@@ -52,8 +52,6 @@ import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
 import org.egov.works.contractoradvance.entity.SearchRequestContractorRequisition;
 import org.egov.works.contractoradvance.service.ContractorAdvanceService;
 import org.egov.works.web.adaptor.SearchContractorAdvanceJsonAdaptor;
-import org.egov.works.workorder.entity.WorkOrderEstimate;
-import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -77,9 +75,6 @@ public class AjaxContractorAdvanceController {
 
     @Autowired
     private ContractorAdvanceService contractorAdvanceService;
-
-    @Autowired
-    private WorkOrderEstimateService workOrderEstimateService;
 
     @RequestMapping(value = "/ajaxarfnumbers-searchcr", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> getAdvanceRequisitionNumberToSearchCR(@RequestParam final String advanceRequisitionNumber) {
@@ -119,9 +114,8 @@ public class AjaxContractorAdvanceController {
     public @ResponseBody String validateContractorAdvance(@PathVariable final Long workOrderEstimateId,
             final HttpServletRequest request, final HttpServletResponse response) {
         final JsonObject jsonObject = new JsonObject();
-        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
-        contractorAdvanceService.validateARFInDrafts(null, workOrderEstimate.getId(), jsonObject, null);
-        contractorAdvanceService.validateARFInWorkFlow(null, workOrderEstimate.getId(), jsonObject, null);
+        contractorAdvanceService.validateARFInDrafts(null, workOrderEstimateId, jsonObject, null);
+        contractorAdvanceService.validateARFInWorkFlow(null, workOrderEstimateId, jsonObject, null);
         if (jsonObject.toString().length() > 2) {
             sendAJAXResponse(jsonObject.toString(), response);
             return "";

@@ -60,7 +60,6 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.entity.MBDetails;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
@@ -92,9 +91,6 @@ import com.google.gson.JsonObject;
 public class UpdateMBController extends GenericWorkFlowController {
     @Autowired
     private MBHeaderService mbHeaderService;
-
-    @Autowired
-    private LineEstimateService lineEstimateService;
 
     @Autowired
     private DepartmentService departmentService;
@@ -334,7 +330,7 @@ public class UpdateMBController extends GenericWorkFlowController {
             isMBEditable = true;
 
         model.addAttribute("workflowHistory",
-                lineEstimateService.getHistory(mbHeader.getState(), mbHeader.getStateHistory()));
+                worksUtils.getHistory(mbHeader.getState(), mbHeader.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
         model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));

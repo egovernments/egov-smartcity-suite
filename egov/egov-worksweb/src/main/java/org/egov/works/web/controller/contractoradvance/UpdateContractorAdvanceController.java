@@ -51,12 +51,13 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.model.advance.EgAdvanceRequisitionDetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
 import org.egov.works.contractoradvance.service.ContractorAdvanceService;
+import org.egov.works.contractorbill.entity.enums.BillTypes;
+import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,8 +72,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.gson.JsonObject;
-
 @Controller
 @RequestMapping(value = "/contractoradvance")
 public class UpdateContractorAdvanceController extends GenericWorkFlowController {
@@ -84,16 +83,13 @@ public class UpdateContractorAdvanceController extends GenericWorkFlowController
     private ChartOfAccountsService chartOfAccountsService;
 
     @Autowired
-    private LineEstimateService lineEstimateService;
-
-    @Autowired
     private DepartmentService departmentService;
 
     @Autowired
     private WorksUtils worksUtils;
 
     @Autowired
-    private MBHeaderService mbHeaderService;
+    private ContractorBillRegisterService contractorBillRegisterService;
 
     @ModelAttribute
     public ContractorAdvanceRequisition getContractorAdvanceRequisition(
@@ -134,11 +130,12 @@ public class UpdateContractorAdvanceController extends GenericWorkFlowController
                 contractorAdvanceRequisition.getId() == null ? -1L : contractorAdvanceRequisition.getId(),
                 contractorAdvanceRequisition.getWorkOrderEstimate().getId(),
                 ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.APPROVED.toString());
-        final Double totalMBAmountOfMBs = mbHeaderService.getTotalMBAmountOfMBs(null,
-                contractorAdvanceRequisition.getWorkOrderEstimate().getId(),
-                ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CANCELLED.toString());
+        final Double totalPartBillsAmount = contractorBillRegisterService.getTotalPartBillsAmount(
+                Long.valueOf(contractorAdvanceRequisition.getWorkOrderEstimate().getId()),
+                ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CANCELLED.toString(),
+                BillTypes.Part_Bill.toString());
         model.addAttribute("advancePaidTillNow", advancePaidTillNow);
-        model.addAttribute("totalMBAmountOfMBs", totalMBAmountOfMBs);
+        model.addAttribute("totalPartBillsAmount", totalPartBillsAmount);
 
         workflowContainer.setAmountRule(contractorAdvanceRequisition.getAdvanceRequisitionAmount());
         prepareWorkflow(model, contractorAdvanceRequisition, workflowContainer);
@@ -148,7 +145,7 @@ public class UpdateContractorAdvanceController extends GenericWorkFlowController
         else
             model.addAttribute("mode", "view");
 
-        model.addAttribute("workflowHistory", lineEstimateService.getHistory(contractorAdvanceRequisition.getState(),
+        model.addAttribute("workflowHistory", worksUtils.getHistory(contractorAdvanceRequisition.getState(),
                 contractorAdvanceRequisition.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
@@ -201,14 +198,9 @@ public class UpdateContractorAdvanceController extends GenericWorkFlowController
         if (contractorAdvanceRequisition.getStatus().getCode()
                 .equals(ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.REJECTED.toString())
                 && WorksConstants.FORWARD_ACTION.equals(workFlowAction) && WorksConstants.EDIT.equals(mode)) {
-            final JsonObject jsonObject = new JsonObject();
-            contractorAdvanceService.validateARFInDrafts(contractorAdvanceRequisition.getId(),
-                    contractorAdvanceRequisition.getWorkOrderEstimate().getId(), jsonObject,
-                    errors);
-            contractorAdvanceService.validateARFInWorkFlow(contractorAdvanceRequisition.getId(),
-                    contractorAdvanceRequisition.getWorkOrderEstimate().getId(),
-                    jsonObject, errors);
             contractorAdvanceService.validateInput(contractorAdvanceRequisition, errors);
+            for (final EgAdvanceRequisitionDetails details : contractorAdvanceRequisition.getEgAdvanceReqDetailses())
+                contractorAdvanceService.getEgAdvanceRequisitionDetails(contractorAdvanceRequisition, details, errors);
         }
 
         if (workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE))
@@ -236,7 +228,7 @@ public class UpdateContractorAdvanceController extends GenericWorkFlowController
             final BindingResult errors) {
         contractorAdvanceRequisition.setApprovedDate(new Date());
         final EgBillregister egBillregister = new EgBillregister();
-        contractorAdvanceService.generateAdvanceBills(contractorAdvanceRequisition, egBillregister);
+        contractorAdvanceService.generateAdvanceBills(contractorAdvanceRequisition, egBillregister, errors);
         final List<String> errorMessages = new ArrayList<>();
         contractorAdvanceService.validateLedgerAndSubledger(egBillregister, errorMessages);
         if (errorMessages.size() == 0)

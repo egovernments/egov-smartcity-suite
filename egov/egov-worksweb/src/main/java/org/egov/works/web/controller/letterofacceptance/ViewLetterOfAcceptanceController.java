@@ -50,7 +50,6 @@ import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
@@ -75,8 +74,6 @@ public class ViewLetterOfAcceptanceController {
     private WorksUtils worksUtils;
 
     @Autowired
-    private LineEstimateService lineEstimateService;
-    @Autowired
     private MeasurementSheetService measurementSheetService;
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
@@ -92,7 +89,7 @@ public class ViewLetterOfAcceptanceController {
         model.addAttribute("documentDetails", newWorkOrder.getDocumentDetails());
         model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(abstractEstimate.getId()));
         model.addAttribute("workflowHistory",
-                lineEstimateService.getHistory(workOrder.getState(), workOrder.getStateHistory()));
+                worksUtils.getHistory(workOrder.getState(), workOrder.getStateHistory()));
         return "letterOfAcceptance-view";
     }
 

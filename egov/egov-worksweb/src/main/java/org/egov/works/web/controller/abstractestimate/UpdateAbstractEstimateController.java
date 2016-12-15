@@ -61,7 +61,6 @@ import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.masters.service.ScheduleOfRateService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
@@ -84,9 +83,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class UpdateAbstractEstimateController extends GenericWorkFlowController {
     @Autowired
     private EstimateService estimateService;
-
-    @Autowired
-    private LineEstimateService lineEstimateService;
 
     @Autowired
     private DepartmentService departmentService;
@@ -261,7 +257,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         estimateService.loadLocationAppConfigValue(model);
 
         model.addAttribute("workflowHistory",
-                lineEstimateService.getHistory(abstractEstimate.getState(), abstractEstimate.getStateHistory()));
+                worksUtils.getHistory(abstractEstimate.getState(), abstractEstimate.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
         model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));

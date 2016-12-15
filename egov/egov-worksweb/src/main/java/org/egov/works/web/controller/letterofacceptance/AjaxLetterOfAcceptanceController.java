@@ -464,10 +464,10 @@ public class AjaxLetterOfAcceptanceController {
     }
 
     @RequestMapping(value = "/ajaxsearch-loatocreatecm", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchWorkOrdersToCreateCR(
+    public @ResponseBody String searchWorkOrdersToCreateContractorAdvance(
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
         final List<WorkOrderEstimate> workOrderEstimateList = workOrderEstimateService
-                .searchWorkOrderToCreateCR(searchRequestLetterOfAcceptance);
+                .searchWorkOrderToCreateContractorAdvance(searchRequestLetterOfAcceptance);
         final String result = new StringBuilder("{ \"data\":").append(searchWorkOrderToCreateCR(workOrderEstimateList))
                 .append("}").toString();
         return result;

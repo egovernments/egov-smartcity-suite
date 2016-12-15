@@ -61,7 +61,6 @@ import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
@@ -84,9 +83,6 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
 
     @Autowired
     private LetterOfAcceptanceService letterOfAcceptanceService;
-
-    @Autowired
-    private LineEstimateService lineEstimateService;
 
     @Autowired
     private WorksUtils worksUtils;
@@ -149,7 +145,7 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
             model.addAttribute("measurementsPresent",
                     measurementSheetService.existsByEstimate(abstractEstimate.getId()));
             model.addAttribute("workflowHistory",
-                    lineEstimateService.getHistory(workOrder.getState(), workOrder.getStateHistory()));
+                    worksUtils.getHistory(workOrder.getState(), workOrder.getStateHistory()));
             model.addAttribute("amountRule", workOrder.getWorkOrderAmount());
             return "letterOfAcceptance-view";
         }
@@ -200,7 +196,7 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
         model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
         model.addAttribute("mode", "modify");
         model.addAttribute("workflowHistory",
-                lineEstimateService.getHistory(workOrder.getState(), workOrder.getStateHistory()));
+                worksUtils.getHistory(workOrder.getState(), workOrder.getStateHistory()));
         return "letterOfAcceptance-modify";
     }
 

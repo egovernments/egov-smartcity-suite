@@ -54,30 +54,28 @@
 	<input id="errorAdvanceZero" type="hidden" value="<spring:message code="error.creditordebitamount.zero" />" />
 	<input type="hidden" name="id" id="id" value="${contractorAdvanceRequisition.id }" /> 
 	<input type="hidden" name="mode" id="mode" value="${mode }" />
-	<input type="hidden" name="totalMBAmountOfMBs" id="totalMBAmountOfMBs" value="${totalMBAmountOfMBs }" />
+	<input type="hidden" name="totalPartBillsAmount" id="totalPartBillsAmount" value="${totalPartBillsAmount }" />
 	<input type="hidden"  name="workOrderEstimate" id="workOrderEstimate" value="${contractorAdvanceRequisition.workOrderEstimate.id}" />
 	<div class="position_alert">
+		<form:hidden path="advanceRequisitionAmount" id="advanceRequisitionAmount" value='${contractorAdvanceRequisition.advanceRequisitionAmount}'/>
 		<spring:message	code="lbl.advance.amount" /> : &#8377 <span id="advanceAmount"><c:out value="${contractorAdvanceRequisition.advanceRequisitionAmount }" default="0.0"></c:out></span>
 	</div>
-	<div class="new-page-header"><spring:message code="lbl.create.arf" /></div>
-	<div class="panel panel-primary" data-collapsed="0">
-		<div>
-			<spring:hasBindErrors name="contractorAdvanceRequisition">
-	       		<div class="alert alert-danger col-md-10 col-md-offset-1">
-		      			<form:errors path="*" cssClass="error-msg add-margin" /><br/>
-		      	</div>
-        	</spring:hasBindErrors>
-        </div>
-		<div class="panel-body">
-			<jsp:include page="contractoradvance-header.jsp"/>
-			<c:if test="${mode == 'edit'}">
-				<jsp:include page="contractoradvance-details.jsp"/>
-			</c:if>
-			<c:if test="${mode == 'view' }">
-				<jsp:include page="contractoradvance-detailsview.jsp"/>
-			</c:if>
-		</div>
-		
+	<div class="new-page-header"><spring:message code="title.contractoradvance.update" /></div>
+	<div>
+		<spring:hasBindErrors name="contractorAdvanceRequisition">
+       		<div class="alert alert-danger col-md-10 col-md-offset-1">
+	      			<form:errors path="*" cssClass="error-msg add-margin" /><br/>
+	      	</div>
+       	</spring:hasBindErrors>
+       </div>
+	<div class="panel-body">
+		<jsp:include page="contractoradvance-header.jsp"/>
+		<c:if test="${mode == 'edit'}">
+			<jsp:include page="contractoradvance-details.jsp"/>
+		</c:if>
+		<c:if test="${mode == 'view' }">
+			<jsp:include page="contractoradvance-detailsview.jsp"/>
+		</c:if>
 	</div>
 	<jsp:include page="../common/uploaddocuments.jsp"/>
 	<c:if test="${!workflowHistory.isEmpty() }">
