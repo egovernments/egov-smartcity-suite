@@ -68,8 +68,7 @@
 			jQuery('td.siteowner').hide();
 		}
 
-		var userDesign = '<s:property value="%{userDesgn}"/>';
-		var propertyStatus = '<s:property value="%{status}"/>';
+		var userDesign = '<s:property value="%{currentDesignation}"/>';
 		if(userDesign == 'Commissioner') {
 			jQuery('#Forward').hide();
 		} 
@@ -186,14 +185,15 @@
 							<%@ include file="../common/workflowHistoryView.jsp"%>
 						<tr>					
 					</s:if> 
-					<s:if test="%{!userDesgn.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}">
+					<s:if test="%{!currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}">
 						<tr>
 							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 						</tr> 
 					</s:if> 
 				</table>
 				<br/>
-				<s:if test="%{userDesgn.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}"> 
+				currentDesignation : <s:property value="%{currentDesignation}"/>
+				<s:if test="%{currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}"> 
 					<div id="workflowCommentsDiv" align="center">
 						<table width="100%">
 							<tr>

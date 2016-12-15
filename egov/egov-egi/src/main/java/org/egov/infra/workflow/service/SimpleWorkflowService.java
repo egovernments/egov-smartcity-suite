@@ -350,18 +350,4 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
         return commonWfMatrixCriteria;
     }
 
-    /*
-     * private Criteria commonWorkFlowMatrixCriteria(final String type, final String additionalRule, final String currentState,
-     * final String pendingActions,final String designation) { final Criteria commonWfMatrixCriteria =
-     * this.stateAwarePersistenceService.getSession().createCriteria( WorkFlowMatrix.class);
-     * commonWfMatrixCriteria.add(Restrictions.eq("objectType", type)); if (additionalRule != null &&
-     * !"".equals(additionalRule.trim())) commonWfMatrixCriteria.add(Restrictions.eq("additionalRule", additionalRule)); if
-     * (pendingActions != null && !"".equals(pendingActions.trim()))
-     * commonWfMatrixCriteria.add(Restrictions.ilike("pendingActions", pendingActions, MatchMode.ANYWHERE)); if (currentState !=
-     * null && !"".equals(currentState.trim())) commonWfMatrixCriteria.add(Restrictions.ilike("currentState", currentState,
-     * MatchMode.ANYWHERE)); else commonWfMatrixCriteria.add(Restrictions.ilike("currentState", "NEW", MatchMode.ANYWHERE));
-     * if(StringUtils.isNotBlank(designation)) commonWfMatrixCriteria.add(Restrictions.ilike("currentDesignation", designation));
-     * return commonWfMatrixCriteria; }
-     */
-
 }

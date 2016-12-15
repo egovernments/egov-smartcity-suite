@@ -3229,6 +3229,11 @@ public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final 
         
     }
     
+    public String getDesignationForPositionAndUser(Long positionId,Long userId) {
+        Assignment assignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(positionId, userId, new Date());
+        return assignment != null ? assignment.getDesignation().getName() : null; 
+    }
+    
     public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
         return excessCollAmtMap;
     }

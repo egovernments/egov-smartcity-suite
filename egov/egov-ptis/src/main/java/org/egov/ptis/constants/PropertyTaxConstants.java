@@ -630,6 +630,10 @@ public interface PropertyTaxConstants {
     public static final String WF_STATE_REGISTRATION_COMPLETED = "Registration Completed";
     public static final String WF_STATE_BILL_COLLECTOR_APPROVAL_PENDING = "Bill Collector Approval Pending";
     public static final String WF_STATE_NOTICE_PRINT_PENDING = "Notice Print Pending";
+    public static final String WF_STATE_ASSISTANT_COMMISSIONER_APPROVED = "Assistant Commissioner Approved";
+    public static final String WF_STATE_ZONAL_COMMISSIONER_APPROVED = "Zonal Commissioner Approved";
+    public static final String WF_STATE_DEPUTY_COMMISSIONER_APPROVED = "Deputy Commissioner Approved";
+    public static final String WF_STATE_ADDITIONAL_COMMISSIONER_APPROVED = "Additional Commissioner Approved";
 
     public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
 

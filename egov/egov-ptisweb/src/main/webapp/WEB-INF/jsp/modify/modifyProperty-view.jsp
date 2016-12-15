@@ -120,9 +120,14 @@
 				toggleFloorDetailsView();
 				showHideFirmName();
 				showHideLengthBreadth();
+				var userDesign = '<s:property value="%{currentDesignation}"/>';
+				if(userDesign == 'Commissioner') {
+					jQuery('#Forward').hide();
+				}
 			}
 
-			function enableDisableFirmName(obj){ 
+			function enableDisableFirmName(obj) { 
+				if(obj != null) {
 				var selIndex = obj.selectedIndex;
 				var selText = obj.options[selIndex].text; 
 				var rIndex = getRow(obj).rowIndex;
@@ -135,6 +140,7 @@
 				} else{
 					firmval.readOnly = false;
 				}
+			  }
 			}  
 
 			function showHideLengthBreadth(){
@@ -348,17 +354,13 @@
 							<%@ include file="../common/workflowHistoryView.jsp"%>
 						<tr>					
 					</s:if> 
-					<s:if test="%{(!(model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)
-					     || model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)) ||
-						((userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.toUpperCase()) || 
-							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.toUpperCase()))
-							&& model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITALLY_SIGNED)))}">
+					<s:if test="%{!currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}">
 						<tr>
 							 <%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 						</tr>
 					</s:if>
-					<s:if test="%{model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING) ||
-					    model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)}">
+					currentDesignation : <s:property value="%{currentDesignation}"/>
+					<s:if test="%{currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}">
 						<div id="workflowCommentsDiv" align="center">
 					         <table width="100%">
 								<tr>

@@ -261,7 +261,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
     private String indexNumber;
     private String modifyRsn;
-    private String currentDesignation;
 
     public CreatePropertyAction() {
         super();
@@ -657,9 +656,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE))
             propertyInitiatedBy = propertyTaxUtil.getApproverUserName(property.getStateHistory().get(0)
                     .getOwnerPosition().getId());
-        else if (propService.isEmployee(property.getCreatedBy())) {
+        else if (propService.isEmployee(property.getCreatedBy()))
             setPropertyInitiatedBy(getInitiator());
-        } else
+        else
             propertyInitiatedBy = propertyTaxUtil.getApproverUserName(property.getStateHistory().get(0)
                     .getOwnerPosition().getId());
         if (property.getState().getValue().equals("Closed")) {
@@ -706,7 +705,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     + ", ZoneId: " + zoneId + ", WardId: " + wardId);
         setUserInfo();
         setUserDesignations();
-        setCurrentDesignation(getUserDesgn());
         propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser());
         if (isNotBlank(getModelId())) {
             property = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
@@ -824,7 +822,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                             : "List is NULL"));
 
         LOGGER.debug("Exiting from prepare");
-        
+
     }
 
     private BasicProperty createBasicProp(final Character status) {
@@ -1800,18 +1798,18 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     public void setModifyRsn(final String modifyRsn) {
         this.modifyRsn = modifyRsn;
     }
-    
+
     @Override
     public String getPendingActions() {
         return getProperty() != null ? getProperty().getCurrentState().getNextAction() : null;
     }
 
+    @Override
     public String getCurrentDesignation() {
-        return (getProperty().getId() != null && !getProperty().getCurrentState().getValue().endsWith(STATUS_REJECTED))
-                        ? currentDesignation : null;
+        return getProperty().getId() != null && !getProperty().getCurrentState().getValue().endsWith(STATUS_REJECTED)
+                ? propService.getDesignationForPositionAndUser(getProperty().getCurrentState().getOwnerPosition().getId(),
+                        securityUtils.getCurrentUser().getId())
+                : null;
     }
 
-    public void setCurrentDesignation(String currentDesignation) {
-        this.currentDesignation = currentDesignation;
-    }
 }

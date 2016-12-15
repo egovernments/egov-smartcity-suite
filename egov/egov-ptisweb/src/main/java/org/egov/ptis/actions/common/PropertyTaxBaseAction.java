@@ -596,10 +596,13 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             }
         }
 
-        final Assignment loggedInUserAssign = assignmentService.getPrimaryAssignmentForUser(user.getId());
-        String loggedInUserDesignation = loggedInUserAssign.getDesignation().getName();
-
-        if (loggedInUserDesignation.equals(JUNIOR_ASSISTANT) || loggedInUserDesignation.equals(SENIOR_ASSISTANT))
+        Assignment loggedInUserAssign = null;
+        String loggedInUserDesignation = "";
+        if (property.getState() != null) {
+            loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                    property.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
+            loggedInUserDesignation = loggedInUserAssign.getDesignation().getName();
+        } else if (loggedInUserDesignation.equals(JUNIOR_ASSISTANT) || loggedInUserDesignation.equals(SENIOR_ASSISTANT))
             loggedInUserDesignation = null;
 
         if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)
@@ -666,8 +669,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 pos = (Position) persistenceService.find("from Position where id=?", approverPositionId);
             else
                 pos = wfInitiator.getPosition();
-            
-            if (null == property.getState()) {
+
+            if (property.getState() == null) {
                 wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null,
                         null, getAdditionalRule(), currentState, null);
                 property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())

@@ -481,5 +481,9 @@ public class AssignmentService {
             final Date toDate) {
         return assignmentRepository.getPrimaryAssignmentForPositionAndDateRange(posId, fromDate, toDate);
     }
+    
+    public Assignment getAssignmentByPositionAndUserAsOnDate(final Long posId,final Long userId,final Date currDate) {
+        return assignmentRepository.findByPositionAndEmployee(posId,userId,currDate);
+    }
 
 }
