@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 
 <input type="hidden" id="revisionEstimateId" value="${revisionEstimate.id }" />
 <div id="main">
@@ -73,3 +74,4 @@ $('#viewPdf').click(function() {
 	window.open("/egworks/revisionestimate/revisionagreementPDF/"+revisionEstimateId,"","height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
 });
 </script>
+<script src="<cdn:url value='/resources/js/common/commondisablebackspace.js?rnd=${app_release_no}'/>"></script>

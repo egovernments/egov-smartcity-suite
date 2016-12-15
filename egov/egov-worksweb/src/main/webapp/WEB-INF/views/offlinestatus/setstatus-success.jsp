@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <div id="main">
 <div class="row">
 	<div class="col-md-12">
@@ -56,3 +57,4 @@
 				id="closeButton" name="closeButton" onclick="window.close();" />
 	</div>
 </div>
+<script src="<cdn:url value='/resources/js/common/commondisablebackspace.js?rnd=${app_release_no}'/>"></script>

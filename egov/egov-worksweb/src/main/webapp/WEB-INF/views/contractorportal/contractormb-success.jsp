@@ -41,6 +41,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <div class="page-container" id="page-container">
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="main-content">
@@ -59,3 +60,4 @@
 		</div>
 	</div>
 </div>
+<script src="<cdn:url value='/resources/js/common/commondisablebackspace.js?rnd=${app_release_no}'/>"></script>

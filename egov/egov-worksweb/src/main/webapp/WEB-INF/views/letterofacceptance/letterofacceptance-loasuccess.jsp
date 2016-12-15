@@ -76,3 +76,4 @@
 	</div>
 </div>
 <script src="<cdn:url value='/resources/js/searchletterofacceptancehelper.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/common/commondisablebackspace.js?rnd=${app_release_no}'/>"></script>
