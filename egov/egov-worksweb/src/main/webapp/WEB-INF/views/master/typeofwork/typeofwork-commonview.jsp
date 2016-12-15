@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -37,28 +36,57 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-
-<hibernate-mapping>
-	<class name="org.egov.commons.EgwTypeOfWork" table="EGW_TYPEOFWORK">
-		<id name="id">
-			<column name="ID" not-null="true" />
-			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-				<param name="sequence_name">SEQ_EGW_TYPEOFWORK</param>
-			</generator>
-		</id>
-		<property name="code" column="CODE" not-null="true" />
-		<many-to-one name="parentid" class="org.egov.commons.EgwTypeOfWork" column="PARENTID" />
-		<many-to-one name="egPartytype" class="org.egov.commons.EgPartytype" fetch="select">
-			<column name="PARTYTYPEID" precision="22" scale="0" />
-		</many-to-one>
-		<property name="description" column="DESCRIPTION" not-null="true" />
-		<property name="createdby" column="CREATEDBY" not-null="true" />
-		<property name="createddate" column="CREATEDDATE" type="timestamp" not-null="true" />
-		<property name="lastmodifiedby" column="LASTMODIFIEDBY" />
-		<property name="lastmodifieddate" column="LASTMODIFIEDDATE" type="timestamp" />
-	</class>
-</hibernate-mapping>
+  --%>
+<%@ page contentType="text/html" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<div class="row">
+	<div class="col-md-12">
+		<div id="overheadTable" class="panel panel-primary" data-collapsed="0"
+			style="text-align: left">
+			
+			<div class="panel-body">
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.code" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<c:out value="${typeofwork.code}" />
+					</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.name" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<c:out value="${typeofwork.name}" />
+					</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.description" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<c:choose>
+							<c:when test = "${typeofwork.description == null }">
+								<c:out value="NA" />
+							</c:when>
+							<c:otherwise>
+								<c:out value="${typeofwork.description}" />
+							</c:otherwise>
+						</c:choose>
+					</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.isactive" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<c:choose>
+							<c:when test = "${typeofwork.active == true }">
+								<spring:message code="lbl.yes" />
+							</c:when>
+							<c:otherwise>
+								<spring:message code="lbl.isactive.no" />
+							</c:otherwise>
+						</c:choose>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -40,9 +40,9 @@
 package org.egov.egf.web.actions.masters;
 
 
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validation;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -51,6 +51,8 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgPartytype;
 import org.egov.commons.EgwTypeOfWork;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -59,8 +61,9 @@ import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.Date;
-import java.util.List;
+import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.Validation;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
 @Validation()
@@ -135,8 +138,8 @@ public class ContractTypeAction extends BaseFormAction {
                         .getId());
             typeOfWork.setParentid(parentTypeOfWk);
             typeOfWork.setEgPartytype(appliedParty);
-            typeOfWork.setCreatedby(getLoggedInUser());
-            typeOfWork.setCreateddate(new Date());
+            typeOfWork.setCreatedBy(persistenceService.getSession().load(User.class, ApplicationThreadLocals.getUserId()));
+            typeOfWork.setCreatedDate(new Date());
 
             masterDataCache.removeFromCache("egi-partyTypeMaster");
             masterDataCache.removeFromCache("egi-partyTypeAllChild");
@@ -187,8 +190,8 @@ public class ContractTypeAction extends BaseFormAction {
                         .getId());
             typeOfWkOld.setParentid(parentTypeOfWk);
             typeOfWkOld.setEgPartytype(appliedParty);
-            typeOfWkOld.setLastmodifieddate(new Date());
-            typeOfWkOld.setLastmodifiedby(getLoggedInUser());
+            typeOfWkOld.setLastModifiedDate(new Date());
+            typeOfWkOld.setLastModifiedBy(persistenceService.getSession().load(User.class, ApplicationThreadLocals.getUserId()));
 
             setTypeOfWork(typeOfWkOld);
 

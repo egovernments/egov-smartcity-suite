@@ -515,5 +515,16 @@
         <put-attribute name="page-title" value="hdr.viewcontractoradvance" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/contractoradvance/contractoradvance-view.jsp"/>
     </definition>
+    
+    <definition name="typeofwork-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.createtypeofwork" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/typeofwork/typeofwork-form.jsp"/>
+    </definition>
+    
+    <definition name="typeofwork-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.viewtypeofwork" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/typeofwork/typeofwork-success.jsp"/>
+    </definition>
+    
 
 </tiles-definitions>

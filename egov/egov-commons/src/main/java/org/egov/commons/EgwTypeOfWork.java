@@ -39,145 +39,150 @@
  */
 package org.egov.commons;
 
-import java.util.Date;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-public class EgwTypeOfWork implements java.io.Serializable{
-	
-    private static final long serialVersionUID = 1L;
-        private Long id;
-	private String code;
-	private EgwTypeOfWork parentid;
-	private EgPartytype egPartytype;
-	private String description;
-	private Integer createdby;
-	private Integer lastmodifiedby;
-	private Date createddate;
-	private Date lastmodifieddate;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 
-	/**
-	 * @return the code
-	 */
-	public String getCode() {
-		return code;
-	}
+@Entity
+@Table(name = "EGW_TYPEOFWORK")
+@Unique(id = "id", tableName = "EGW_TYPEOFWORK", columnName = { "code" }, fields = { "code" }, enableDfltMsg = true)
+@SequenceGenerator(name = EgwTypeOfWork.SEQ_EGW_TYPEOFWORK, sequenceName = EgwTypeOfWork.SEQ_EGW_TYPEOFWORK, allocationSize = 1)
+public class EgwTypeOfWork extends AbstractAuditable {
 
-	/**
-	 * @param code the code to set
-	 */
-	public void setCode(String code) {
-		this.code = code;
-	}
+    private static final long serialVersionUID = 5516485821231001698L;
 
-	/**
-	 * @return the createdby
-	 */
-	public Integer getCreatedby() {
-		return createdby;
-	}
+    public static final String SEQ_EGW_TYPEOFWORK = "SEQ_EGW_TYPEOFWORK";
 
-	/**
-	 * @param createdby the createdby to set
-	 */
-	public void setCreatedby(Integer createdby) {
-		this.createdby = createdby;
-	}
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_TYPEOFWORK, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	/**
-	 * @return the createddate
-	 */
-	public Date getCreateddate() {
-		return createddate;
-	}
+    @NotNull
+    private String code;
 
-	/**
-	 * @param createddate the createddate to set
-	 */
-	public void setCreateddate(Date createddate) {
-		this.createddate = createddate;
-	}
+    @NotNull
+    private String name;
 
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parentid")
+    private EgwTypeOfWork parentid;
 
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "partytypeid")
+    private EgPartytype egPartytype;
 
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
+    private String description;
 
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
+    private boolean active = true;
 
-	/**
-	 * @return the lastmodifiedby
-	 */
-	public Integer getLastmodifiedby() {
-		return lastmodifiedby;
-	}
+    /**
+     * @return the id
+     */
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	/**
-	 * @param lastmodifiedby the lastmodifiedby to set
-	 */
-	public void setLastmodifiedby(Integer lastmodifiedby) {
-		this.lastmodifiedby = lastmodifiedby;
-	}
+    /**
+     * @param id
+     *            the id to set
+     */
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	/**
-	 * @return the lastmodifieddate
-	 */
-	public Date getLastmodifieddate() {
-		return lastmodifieddate;
-	}
+    /**
+     * @return the parentid
+     */
+    public EgwTypeOfWork getParentid() {
+        return parentid;
+    }
 
-	/**
-	 * @param lastmodifieddate the lastmodifieddate to set
-	 */
-	public void setLastmodifieddate(Date lastmodifieddate) {
-		this.lastmodifieddate = lastmodifieddate;
-	}
+    /**
+     * @param parentid
+     *            the parentid to set
+     */
+    public void setParentid(final EgwTypeOfWork parentid) {
+        this.parentid = parentid;
+    }
 
-	/**
-	 * @return the parentid
-	 */
-	public EgwTypeOfWork getParentid() {
-		return parentid;
-	}
+    /**
+     * @return the egPartytype
+     */
+    public EgPartytype getEgPartytype() {
+        return egPartytype;
+    }
 
-	/**
-	 * @param parentid the parentid to set
-	 */
-	public void setParentid(EgwTypeOfWork parentid) {
-		this.parentid = parentid;
-	}
+    /**
+     * @param egPartytype
+     *            the egPartytype to set
+     */
+    public void setEgPartytype(final EgPartytype egPartytype) {
+        this.egPartytype = egPartytype;
+    }
 
-	/**
-	 * @return the egPartytype
-	 */
-	public EgPartytype getEgPartytype() {
-		return egPartytype;
-	}
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * @param egPartytype the egPartytype to set
-	 */
-	public void setEgPartytype(EgPartytype egPartytype) {
-		this.egPartytype = egPartytype;
-	}
+    /**
+     * @param name
+     *            the name to set
+     */
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * @param code
+     *            the code to set
+     */
+    public void setCode(final String code) {
+        this.code = code;
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description
+     *            the description to set
+     */
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    public boolean getActive() {
+        return active;
+    }
+
+    public void setActive(final boolean active) {
+        this.active = active;
+    }
 
 }
