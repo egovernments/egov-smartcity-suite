@@ -166,6 +166,10 @@
 		<property name="consumerId" type="java.lang.String">
 			<column name="CONSUMER_ID" />
 		</property>
+		
+		<property name="consumerType" type="java.lang.String">
+			<column name="consumertype" />
+		</property>
 
 		<set name="egBillDetails" inverse="true" cascade="all,delete-orphan" table="EG_BILL_DETAILS"
 			order-by="ORDER_NO">
