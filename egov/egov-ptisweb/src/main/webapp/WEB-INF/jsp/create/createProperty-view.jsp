@@ -192,7 +192,6 @@
 					</s:if> 
 				</table>
 				<br/>
-				currentDesignation : <s:property value="%{currentDesignation}"/>
 				<s:if test="%{currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}"> 
 					<div id="workflowCommentsDiv" align="center">
 						<table width="100%">
