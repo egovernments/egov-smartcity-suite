@@ -74,7 +74,7 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     List<WaterConnectionDetails> findAllByApplicationTypeAndConnectionStatusOrderByApplicationNumberAsc(
             ApplicationType applicationType, ConnectionStatus connectionStatus);
 
-    @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.consumerCode =:consumerCode or wcd.applicationNumber =:applicationNumber and wcd.connectionStatus =:connectionStatus")
+    @Query("select wcd from WaterConnectionDetails wcd where wcd.applicationNumber =:applicationNumber or (wcd.connection.consumerCode =:consumerCode and wcd.connectionStatus =:connectionStatus)")
     WaterConnectionDetails findConnectionDetailsByApplicationNumberOrConsumerCodeAndConnectionStatus(@Param("consumerCode") String consumerCode, @Param("applicationNumber") String applicationNumber , @Param("connectionStatus") ConnectionStatus connectionStatus );
     
     @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.consumerCode =:consumerCode or wcd.applicationNumber =:applicationNumber")
