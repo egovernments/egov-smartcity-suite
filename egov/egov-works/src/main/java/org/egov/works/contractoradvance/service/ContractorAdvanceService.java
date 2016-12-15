@@ -610,7 +610,8 @@ public class ContractorAdvanceService {
                 ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CANCELLED.toString(),
                 BillTypes.Part_Bill.toString());
         final List<MBHeader> mbHeaders = mbHeaderService
-                .getMBHeadersByWorkOrderEstimate(contractorAdvanceRequisition.getWorkOrderEstimate());
+                .getMBHeadersByWorkOrderEstimateIdAndNotEgwStatusCode(contractorAdvanceRequisition.getWorkOrderEstimate().getId(),
+                        ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CANCELLED.toString());
         if (!mbHeaders.isEmpty())
             errors.reject("error.mb.created", new String[] {}, null);
         if (totalPartBillsAmount == null)
