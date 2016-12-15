@@ -97,6 +97,13 @@
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.locality"/></div>
 		<div class="col-sm-3 add-margin view-content"><c:out value="${registration.locality}"></c:out></div>
 	</div>
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin"><spring:message code="lbl.marriage.photo"/></div>
+	<div class="col-sm-3 add-margin">
+	<c:set value="${registration.encodedMarriagePhoto}" var="ph"/>
+	<img class="add-border" id="marrige-photo" height="150" width="130" src="data:image/jpeg;base64,${registration.encodedMarriagePhoto}">
+	</div>
+	</div>
 </div>
 
 
@@ -163,3 +170,11 @@
 	<jsp:param value="${registration.wife.contactInfo.email}" name="appEmail"/>
 	<jsp:param value="${registration.wife.handicapped}" name="appHandicapped"/>
 	</jsp:include>
+<div class="panel-body">
+		<div class="row add-border">
+		    <div class="col-sm-3 add-margin"><spring:message code="lbl.serial.no"/></div>
+			<div class="col-sm-3 add-margin view-content"><c:out value="${registration.serialNo!=null?registration.serialNo:'N/A'}"></c:out></div>
+			<div class="col-sm-3 add-margin"><spring:message code="lbl.page.no"/></div>
+			<div class="col-sm-3 add-margin view-content"><c:out value="${registration.pageNo!=null?registration.pageNo:'N/A'}"></c:out></div>
+		</div>
+	</div>

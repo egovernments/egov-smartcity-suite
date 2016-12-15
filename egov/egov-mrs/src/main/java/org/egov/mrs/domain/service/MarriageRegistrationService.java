@@ -215,6 +215,7 @@ public class MarriageRegistrationService {
             }
         });
         try {
+            registration.setMarriagePhotoFileStore(addToFileStore(registration.getMarriagePhotoFile()));
             registration.getWife().setPhotoFileStore(addToFileStore(registration.getWife().getPhotoFile()));
             registration.getWife().setSignatureFileStore(addToFileStore(registration.getWife().getSignatureFile()));
             registration.getHusband().setPhotoFileStore(addToFileStore(registration.getHusband().getPhotoFile()));
@@ -310,7 +311,8 @@ public class MarriageRegistrationService {
                 LOG.error("Error while copying Multipart file bytes", e);
             }
         });
-
+        if (marriageRegistration.getMarriagePhotoFile().getSize() != 0)
+            marriageRegistration.setMarriagePhotoFileStore(addToFileStore(marriageRegistration.getMarriagePhotoFile()));
         if (marriageRegistration.getHusband().getPhotoFile().getSize() != 0)
             marriageRegistration.getHusband().setPhotoFileStore(addToFileStore(marriageRegistration.getHusband().getPhotoFile()));
         if (marriageRegistration.getWife().getPhotoFile().getSize() != 0)

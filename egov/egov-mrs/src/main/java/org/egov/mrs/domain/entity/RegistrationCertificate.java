@@ -72,15 +72,16 @@ public class RegistrationCertificate {
     private User user;
     private byte[] husbandPhoto;
     private byte[] wifePhoto;
+    private byte[] marriagePhoto;
 
     
 
-    public RegistrationCertificate(final MarriageRegistration registration, final User user,byte[] husbandPhoto, byte[] wifePhoto) {
+    public RegistrationCertificate(final MarriageRegistration registration, final User user,byte[] husbandPhoto, byte[] wifePhoto,byte[] marriagePhoto) {
         this.registration = registration;
         this.user = user;
         this.husbandPhoto=husbandPhoto;
         this.wifePhoto=wifePhoto;
-        
+        this.marriagePhoto=marriagePhoto;
         
     }
 
@@ -144,7 +145,12 @@ public class RegistrationCertificate {
 			return new java.io.ByteArrayInputStream(this.husbandPhoto);
 		return null;
     }
-
+	
+   public InputStream getMarriagePhoto() {
+            if (this.marriagePhoto != null)
+                    return new java.io.ByteArrayInputStream(this.marriagePhoto);
+            return null;
+    }
     public String getRoleName() {
         return new ArrayList<Role>(user.getRoles()).get(0).getName();
     }
@@ -201,4 +207,6 @@ public class RegistrationCertificate {
     {
     	return registration.getApplicationNo();
     }
+    
+    
 }

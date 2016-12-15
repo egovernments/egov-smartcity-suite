@@ -65,14 +65,19 @@ import javax.validation.constraints.Size;
 import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.mrs.masters.entity.MarriageAct;
 import org.egov.mrs.masters.entity.MarriageFee;
 import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
+@Unique(id = "id", tableName = "egmrs_registration", columnName = { "serialno" }, fields = {
+"serialNo" }, enableDfltMsg = true, message = "Serial No. already exist.")
 @Table(name = "egmrs_registration")
 @SequenceGenerator(name = MarriageRegistration.SEQ_REGISTRATION, sequenceName = MarriageRegistration.SEQ_REGISTRATION, allocationSize = 1)
 public class MarriageRegistration extends StateAware {
@@ -121,25 +126,16 @@ public class MarriageRegistration extends StateAware {
     @NotNull
     private String city;
 
-    /*
-     * @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "registration") //Refers to registration field of
-     * the Applicant class private Applicant husband = new Applicant();
-     * @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "registration") //Refers to registration field of
-     * the Applicant class private Applicant wife = new Applicant();
-     */
-
     @NotNull
     @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "husband")
-    // @QueryInit("name.firstName")
     private MrApplicant husband = new MrApplicant();
 
     @NotNull
     @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "wife")
-    // @QueryInit("name.firstName")
     private MrApplicant wife = new MrApplicant();
 
     @NotNull
@@ -222,7 +218,24 @@ public class MarriageRegistration extends StateAware {
 
     @Transient
     private List<MarriageDocument> documents;
+    
+    @Transient
+    private byte[] marriagePhoto;
+    
+    private transient MultipartFile marriagePhotoFile;
 
+    @Transient
+    private String encodedMarriagePhoto;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "marriagePhotoFileStore")
+    private FileStoreMapper marriagePhotoFileStore;
+    
+    @NotNull
+    private String serialNo;
+    @NotNull
+    private String pageNo;
+    
     @Override
     public String getStateDetails() {
         return "Marriage registration application no : " + applicationNo;
@@ -580,4 +593,53 @@ public class MarriageRegistration extends StateAware {
         this.venue = venue;
     }
 
+    public byte[] getMarriagePhoto() {
+        return marriagePhoto;
+    }
+
+    public void setMarriagePhoto(byte[] marriagePhoto) {
+        this.marriagePhoto = marriagePhoto;
+    }
+
+    public MultipartFile getMarriagePhotoFile() {
+        return marriagePhotoFile;
+    }
+
+    public void setMarriagePhotoFile(MultipartFile marriagePhotoFile) {
+        this.marriagePhotoFile = marriagePhotoFile;
+    }
+
+    public String getEncodedMarriagePhoto() {
+        return encodedMarriagePhoto;
+    }
+
+    public void setEncodedMarriagePhoto(String encodedMarriagePhoto) {
+        this.encodedMarriagePhoto = encodedMarriagePhoto;
+    }
+
+    public FileStoreMapper getMarriagePhotoFileStore() {
+        return marriagePhotoFileStore;
+    }
+
+    public void setMarriagePhotoFileStore(FileStoreMapper marriagePhotoFileStore) {
+        this.marriagePhotoFileStore = marriagePhotoFileStore;
+    }
+
+    public String getSerialNo() {
+        return serialNo;
+    }
+
+    public void setSerialNo(String serialNo) {
+        this.serialNo = serialNo;
+    }
+
+    public String getPageNo() {
+        return pageNo;
+    }
+
+    public void setPageNo(String pageNo) {
+        this.pageNo = pageNo;
+    }
+
+    
 }

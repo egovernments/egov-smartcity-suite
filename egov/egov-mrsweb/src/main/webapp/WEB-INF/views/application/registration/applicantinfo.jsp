@@ -137,7 +137,7 @@
 			</c:choose>
 		</div>
 		<label class="col-sm-4 text-right">
-				<spring:message code="lbl.photo"/><span class="mandatory"></span>
+				<spring:message code="lbl.photo"/>
 		</label>
 		
 		<div class="col-sm-8 setimage">
@@ -165,7 +165,7 @@
 				</c:when>
 				<c:otherwise>
 					<img class="add-border" id="${applicant}-photo" height="150" width="130" name="${applicant}.photo">
-					<input type="file" id="${applicant}-photo" name="${applicant}.photoFile" class="file-ellipsis upload-file" required="true" >
+					<input type="file" id="${applicant}-photo" name="${applicant}.photoFile" class="file-ellipsis upload-file" >
 				</c:otherwise> 
 			</c:choose>
 			

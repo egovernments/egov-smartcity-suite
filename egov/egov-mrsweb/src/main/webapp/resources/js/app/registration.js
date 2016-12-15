@@ -47,6 +47,7 @@ $(document).ready( function () {
 			return false;
 			});
 		$(".file-ellipsis.upload-file").attr('disabled', 'disabled'); 
+		$('.exclude_readonly_input').removeAttr('readonly');
 	}
 	
 	if($('#registrationStatus').val()=='APPROVED' && $("#feeCollected").val()=='false'){ 
@@ -155,7 +156,7 @@ $(document).ready( function () {
 	});
 	
 	// New Marriage Registration Screen
-	$('#Forward').click(function(e){
+	$('#Forward').click(function(){
 		if($('form').valid()){
 			
 		}else{
@@ -215,7 +216,7 @@ function validateApplicationDate(){
 }
 
 
-$(".btn-primary").click(function() { 
+$(".btn-primary").click(function(e) { 
 	if($('#allowDaysValidation').val()=="YES"){
 		var noOfDays = validateApplicationDate();
 		if(noOfDays>90){
@@ -263,5 +264,13 @@ $(".btn-primary").click(function() {
 		 }
 	} 
 	
+	 if(action == 'Print Certificate') { 
+		 if($('form').valid()){
+				
+			}else{
+				e.preventDefault();
+			}
+	 }
+	 
 	//validateWorkFlowApprover(action);  
 });

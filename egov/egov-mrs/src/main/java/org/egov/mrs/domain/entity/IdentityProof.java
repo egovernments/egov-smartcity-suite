@@ -69,7 +69,7 @@ public class IdentityProof extends AbstractPersistable<Long> {
     @GeneratedValue(generator = SEQ_IDENTITYPROOF, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    private boolean photograph=true;
+    private boolean photograph;
     private boolean deaceasedDeathCertificate;
     private boolean divorceCertificate;
     private boolean schoolLeavingCertificate;

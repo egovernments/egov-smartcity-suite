@@ -166,7 +166,24 @@
              </form:select>
             <form:errors path="marriageAct" cssClass="add-margin error-msg"/>
 		</div>
-		
+		<label class="col-sm-2 text-right" >
+			<spring:message code="lbl.marriage.photo"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3 setimage">			
+		 	
+			<c:choose>
+				<c:when test="${currentState != 'NEW' && currentState != 'DATAENTRY'}">
+				    <form:hidden  path="marriagePhotoFileStore"/>
+					<form:hidden class="encodedPhoto" path="encodedMarriagePhoto"/>
+					<img id="marriage-photo" class="add-margin marriage-img" height="150" width="130" />
+					<input type="file" id="marriage-photo" name="marriagePhotoFile" class="file-ellipsis upload-file validate-file" data-fileto="#marriage-photo" >
+				</c:when>
+				<c:otherwise>
+					<img id="marriage-photo" class="add-margin marriage-img" height="150" width="130" />
+					<input type="file" id="marriage-photo" name="marriagePhotoFile" class="file-ellipsis upload-file validate-file" required="true" data-fileto="#marriage-photo">
+				</c:otherwise>
+			</c:choose>
+		</div>
 	</div>
 
 <c:set value="husband" var="applicant" scope="request"></c:set>
@@ -180,4 +197,23 @@
 <jsp:include page="applicantinfo.jsp">
 	<jsp:param value="subheading.wife.info" name="header" />
 </jsp:include>
+
+<c:if test="${registration.status.code =='APPROVED' || currentState == 'DATAENTRY' || registration.status.code =='REGISTERED'}">
+<div class="form-group">
+		<label class="col-sm-3 control-label">
+			<spring:message code="lbl.serial.no"/><span class="mandatory"></span>
+		</label>   
+		<div class="col-sm-3">
+			<form:input path="serialNo" id="txt-serialNo" type="text" class="exclude_readonly_input form-control low-width patternvalidation" data-pattern="number" maxlength="12"  placeholder="" autocomplete="off" required="required"/>
+            <form:errors path="serialNo" cssClass="add-margin error-msg"/>
+		</div>
+		<label class="col-sm-2 control-label">
+			<spring:message code="lbl.page.no"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3">
+			<form:input path="pageNo" id="txt-pageNo" type="text" class="exclude_readonly_input form-control low-width  patternvalidation" data-pattern="number" maxlength="12" placeholder="" autocomplete="off" required="required"/>
+            <form:errors path="pageNo" cssClass="add-margin error-msg"/>
+		</div>
+	</div>
+</c:if>
 </div>

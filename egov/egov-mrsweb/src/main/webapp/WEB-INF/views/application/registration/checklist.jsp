@@ -115,7 +115,7 @@
 	
 	<div class="form-group">
 		<label class="col-sm-6 control-label">
-			<spring:message code="lbl.photograph"/><span class="mandatory"></span>
+			<spring:message code="lbl.photograph"/>
 		</label>
 		<div class="col-sm-1 text-center">
 			<form:hidden path="husband.proofsAttached.id"/>
