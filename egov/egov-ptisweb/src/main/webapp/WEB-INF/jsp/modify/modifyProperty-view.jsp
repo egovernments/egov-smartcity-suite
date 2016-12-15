@@ -159,7 +159,8 @@
 		        }
 			}
 
-			function calculatePlintArea(obj){ 
+			function calculatePlintArea(obj) { 
+				if(obj != null) {
 				var rIndex = getRow(obj).rowIndex;
 				var tbl = document.getElementById('floorDetails');
 				var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
@@ -180,9 +181,11 @@
 					}else
 						builtUpArea.value="";
 				}
+			  }
 			}
 			
 			function enableDisableLengthBreadth(obj){ 
+				if(obj != null) {
 				var selIndex = obj.selectedIndex;
 				if(obj.value=='true'){
 						obj.value='true';
@@ -212,6 +215,7 @@
 						builtUpArea.readOnly = false;
 					}
 				}
+				}
 			}
 
 			function enableAppartnaumtLandDetailsView() {
@@ -228,7 +232,6 @@
 			function enableFieldsForPropTypeView() {
 				var propType = '<s:property value="%{model.propertyDetail.propertyTypeMaster.type}"/>';
 				if (propType != "select") {
-					//onChangeOfPropertyTypeFromMixedToOthers(propType);
 					if (propType == "Vacant Land") {
 						jQuery('tr.floordetails').hide();
 						jQuery('tr.vacantlanddetaills').show();
@@ -237,7 +240,6 @@
 						jQuery('#appurtenantRow').hide();
 						jQuery('tr.extentSite').hide();
 						jQuery('tr.appurtenant').hide();
-					//	jQuery('tr.superStructureRow').hide();
 						jQuery("#apartment").prop('selectedIndex', 0);
 						jQuery('td.apartmentRow').hide();
 					} else {
@@ -248,7 +250,6 @@
 						jQuery('#appurtenantRow').hide();
 						jQuery('tr.extentSite').show();
 						jQuery('tr.appurtenant').show();
-					//	jQuery('tr.superStructureRow').show();
 						jQuery('td.apartmentRow').show();
 					}
 				}
@@ -354,12 +355,13 @@
 							<%@ include file="../common/workflowHistoryView.jsp"%>
 						<tr>					
 					</s:if> 
-					<s:if test="%{!currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}">
+					<s:if test="%{(currentDesignation != null && !@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(currentDesignation.toUpperCase())) ||
+					   model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REJECTED)}">
 						<tr>
 							 <%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 						</tr>
 					</s:if>
-					<s:if test="%{currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}">
+					<s:if test="%{currentDesignation != null && currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}">
 						<div id="workflowCommentsDiv" align="center">
 					         <table width="100%">
 								<tr>

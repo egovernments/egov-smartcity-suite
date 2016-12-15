@@ -212,5 +212,5 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
             @Param("fromDate") Date fromDate, @Param("toDate") Date toDate);
     
     @Query(" from Assignment A where A.position.id=:posId and A.employee.id = :userId and A.fromDate<=:givenDate and A.toDate>=:givenDate ")
-    Assignment findByPositionAndEmployee(@Param("posId") Long posId,@Param ("userId") Long userId,@Param("givenDate") Date givenDate);
+    List<Assignment> findByPositionAndEmployee(@Param("posId") Long posId,@Param ("userId") Long userId,@Param("givenDate") Date givenDate);
 }

@@ -596,12 +596,12 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             }
         }
 
-        Assignment loggedInUserAssign = null;
+        List<Assignment> loggedInUserAssign = null;
         String loggedInUserDesignation = "";
         if (property.getState() != null) {
             loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
                     property.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
-            loggedInUserDesignation = loggedInUserAssign.getDesignation().getName();
+            loggedInUserDesignation = (!loggedInUserAssign.isEmpty()) ? loggedInUserAssign.get(0).getDesignation().getName() : null;
         }
 
         if (loggedInUserDesignation.equals(JUNIOR_ASSISTANT) || loggedInUserDesignation.equals(SENIOR_ASSISTANT))

@@ -3217,21 +3217,25 @@ public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final 
     
     public Assignment getUserOnRejection(final PropertyImpl property) {
         List<StateHistory> history = property.getStateHistory();
+        Collections.reverse(history);
         Assignment userAssignment = null;
+        boolean exists = false;
         for(StateHistory state: history) {   
             List<Assignment> assignments = assignmentService.getAssignmentsForPosition(state.getOwnerPosition().getId());
-            for(Assignment assignment:assignments)
-            if(assignment != null && assignment.getDesignation().getName().equals(PropertyTaxConstants.REVENUE_INSPECTOR_DESGN))
+            for(Assignment assignment:assignments) {
+            if(assignment != null && assignment.getDesignation().getName().equals(PropertyTaxConstants.REVENUE_INSPECTOR_DESGN)) {
                 userAssignment = assignment;
+                exists = true;
+            }
+           }
+            if(exists) break;
         }
-     
         return userAssignment;
-        
     }
     
     public String getDesignationForPositionAndUser(Long positionId,Long userId) {
-        Assignment assignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(positionId, userId, new Date());
-        return assignment != null ? assignment.getDesignation().getName() : null; 
+        List<Assignment> assignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(positionId, userId, new Date());
+        return (!assignment.isEmpty()) ? assignment.get(0).getDesignation().getName() : null; 
     }
     
     public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {

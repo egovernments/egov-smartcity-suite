@@ -864,7 +864,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         LOGGER.debug("Entered into preapre, ModelId: " + getModelId());
         super.prepare();
         setUserInfo();
-        setCurrentDesignation(getUserDesgn());
         setUserDesignations();
         propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser());
         if (getModelId() != null && !getModelId().isEmpty()) {
@@ -2168,11 +2167,25 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     }
 
     @Override
+    public String getPendingActions() {
+        if (propWF != null)
+            return propWF.getCurrentState().getNextAction();
+        else if (propertyModel.getId() != null && !propertyModel.getCurrentState().getValue().endsWith(STATUS_REJECTED))
+            return propertyModel.getCurrentState().getNextAction();
+        else
+            return pendingActions;
+    }
+
+    @Override
     public String getCurrentDesignation() {
-        return propWF.getId() != null && !getProperty().getCurrentState().getValue().endsWith(STATUS_REJECTED)
-                ? propService.getDesignationForPositionAndUser(propWF.getCurrentState().getOwnerPosition().getId(),
-                        securityUtils.getCurrentUser().getId())
-                : currentDesignation;
+        if (propWF != null && !propWF.getCurrentState().getValue().endsWith(STATUS_REJECTED))
+            return propService.getDesignationForPositionAndUser(propWF.getCurrentState().getOwnerPosition().getId(),
+                    securityUtils.getCurrentUser().getId());
+        else if (propertyModel.getId() != null && !propertyModel.getCurrentState().getValue().endsWith(STATUS_REJECTED))
+            return propService.getDesignationForPositionAndUser(propertyModel.getCurrentState().getOwnerPosition().getId(),
+                    securityUtils.getCurrentUser().getId());
+        else
+            return currentDesignation;
     }
 
     public Boolean getShowTaxCalcBtn() {
