@@ -401,7 +401,7 @@ public class PropertyTaxCommonUtils {
     private String preparResponeString(PropertyTypeMaster propTypeMstr, BigDecimal annualValue, BigDecimal totalPropertyTax,
             BigDecimal vacLandTax, BigDecimal genTax, BigDecimal unAuthPenalty, BigDecimal eduTax, BigDecimal libCess,
             BigDecimal sewrageTax, BigDecimal serviceCharges) {
-        StringBuilder resultString = new StringBuilder(100);
+        StringBuilder resultString = new StringBuilder(200);
         resultString.append(
                 "Annual Rental Value=" + formatAmount(annualValue) + "~Total Tax=" + formatAmount(totalPropertyTax));
         if (OWNERSHIP_TYPE_VAC_LAND.equalsIgnoreCase(propTypeMstr.getCode())) {
@@ -423,8 +423,8 @@ public class PropertyTaxCommonUtils {
         return resultString.toString();
     }
     
-    public String formatAmount(BigDecimal number) {
-        number = number.setScale(0, RoundingMode.CEILING);
-        return NumberUtil.formatNumber(number);
+    public String formatAmount(BigDecimal tax) {
+        tax = tax.setScale(0, RoundingMode.CEILING);
+        return NumberUtil.formatNumber(tax);
     }
 }

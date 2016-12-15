@@ -1174,13 +1174,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         }
         validateApproverDetails();
         super.validate();
-        if (isBlank(getModelId())) {
-            if (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
+        if (isBlank(getModelId()) && (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
                     StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) || 
-                    StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)) {
+                    StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))) {
                 showTaxCalcBtn = Boolean.TRUE;
             }
-        }
     }
 
     @SkipValidation
