@@ -415,7 +415,7 @@ public class WaterTaxExternalService {
         billPayeeDet = new BillPayeeDetails(bill.getCitizenName(), bill.getCitizenAddress(), bill.getEmailId());
 
         final BillDetails billDetails = new BillDetails(bill.getId().toString(), bill.getCreateDate(),
-                bill.getConsumerId(), "",bill.getBoundaryNum().toString(), bill.getBoundaryType(), bill.getDescription(),
+                bill.getConsumerId(), bill.getConsumerType(),bill.getBoundaryNum().toString(), bill.getBoundaryType(), bill.getDescription(),
                 amountPaid, // the actual amount paid, which might include
                 // advances
                 bill.getMinAmtPayable());
@@ -667,6 +667,7 @@ public class WaterTaxExternalService {
         }
 
         bill.setConsumerId(billObj.getConsumerId());
+        bill.setConsumerType(billObj.getConsumerType());
         bill.setCallBackForApportion(Boolean.TRUE);
         return bill;
     };

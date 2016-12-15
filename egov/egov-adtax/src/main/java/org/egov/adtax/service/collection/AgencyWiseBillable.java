@@ -270,7 +270,10 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
             return AdvertisementTaxConstants.AGENCY_PREFIX_CONSUMERCODE.concat(agencyWiseCollection.getId().toString());
         return null;
     }
-
+    @Override
+    public String getConsumerType() {
+        return "";
+    }
     @Override
     public Boolean isCallbackForApportion() {
         return Boolean.FALSE;

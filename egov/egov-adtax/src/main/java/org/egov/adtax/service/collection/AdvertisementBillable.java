@@ -296,6 +296,10 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
     }
 
     @Override
+    public String getConsumerType() {
+        return "";
+    }
+    @Override
     public String getTransanctionReferenceNumber() {
         return transanctionReferenceNumber;
     }

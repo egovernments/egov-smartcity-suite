@@ -106,6 +106,11 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     }
 
     @Override
+    public String getConsumerType() {
+        return "";
+    }
+    
+    @Override
     public Module getModule() {
         return licenseUtils.getModule(moduleName);
     }

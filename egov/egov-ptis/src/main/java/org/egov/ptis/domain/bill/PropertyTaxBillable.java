@@ -153,7 +153,10 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     public Long getUserId() {
         return userId;
     }
-
+    @Override
+    public String getConsumerType() {
+        return "";
+    }
     /*
      * (non-Javadoc)
      * @see org.egov.demand.interfaces.Billable#getBillAddres()

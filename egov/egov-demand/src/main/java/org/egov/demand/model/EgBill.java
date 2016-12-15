@@ -90,6 +90,7 @@ public class EgBill implements java.io.Serializable {
     private String description;
     private BigDecimal minAmtPayable;
     private String consumerId;
+    private String consumerType;
     private String displayMessage;
     private Boolean callBackForApportion;
     private String transanctionReferenceNumber;
@@ -388,10 +389,11 @@ public class EgBill implements java.io.Serializable {
         this.consumerId = consumerId;
     }
 
+    
     public Boolean getCallBackForApportion() {
         return callBackForApportion;
     }
-
+   
     public void setCallBackForApportion(final Boolean callBackForApportion) {
         this.callBackForApportion = callBackForApportion;
     }
@@ -410,6 +412,15 @@ public class EgBill implements java.io.Serializable {
 
     public void setEmailId(final String emailId) {
         this.emailId = emailId;
+    }
+
+    
+    public String getConsumerType() {
+        return consumerType;
+    }
+
+    public void setConsumerType(String consumerType) {
+        this.consumerType = consumerType;
     }
 
     @Override
