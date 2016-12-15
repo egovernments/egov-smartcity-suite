@@ -90,6 +90,12 @@ function isValidFile(id) {
 	var ext = myfile.split('.').pop();
 	if($.inArray(ext.toLowerCase(), fileformatsinclude) > -1){
 		getTotalFileSize();
+		var charlen = (myfile.split('/').pop().split('\\').pop()).length;
+		if(charlen > 50){
+			bootbox.alert('File length should not exceed 50 characters!');
+			$("#"+id).replaceWith($("#"+id).val('').clone(true));
+			return false;			
+		}
 	} else {
 		bootbox.alert("Please upload .doc, .docx, .xls, .xlsx, .rtf, .pdf, jpeg, .jpg, .png, .txt, .zip and .dxf format documents only");
 		$("#"+id).val('');

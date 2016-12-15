@@ -41,15 +41,19 @@ $(document).ready(function(){
 	$('#debitGlcodeId').change(function() {
 		if($(this).val() == '')
 			$('#debitAccountHead').val('');
-		else
-			$('#debitAccountHead').val($("#debitGlcodeId option:selected").text());
+		else {
+			var accountHead = $("#debitGlcodeId option:selected").text().split('-').slice(1).join('-');
+			$('#debitAccountHead').val(accountHead);
+		}
 	});
 
 	$('#creditGlcodeId').change(function() {
 		if($(this).val() == '')
 			$('#creditAccountHead').val('');
-		else
-			$('#creditAccountHead').val($("#creditGlcodeId option:selected").text());
+		else {
+			var accountHead = $("#creditGlcodeId option:selected").text().split('-').slice(1).join('-');
+			$('#creditAccountHead').val(accountHead);
+		}
 	});
 
 	$('#debitamount').change(function() {
@@ -117,6 +121,7 @@ function validateWorkFlowApprover(name) {
 				}
 			});
 		}
+		window.scrollTo(0, 0);
 		return false;
 	}
 	if (button != null && button == 'Forward') {
@@ -126,6 +131,7 @@ function validateWorkFlowApprover(name) {
 		$('#approvalComent').removeAttr('required');
 		if(!$("form").valid())
 		{
+			window.scrollTo(0, 0);
 			return false;
 		}
 	}
@@ -135,8 +141,10 @@ function validateWorkFlowApprover(name) {
 	if(validateContractorAdvance()) {
 		document.forms[0].submit;
 		return true;
-	}
+	} else {
+		window.scrollTo(0, 0);
 		return false;
+	}
 }
 
 function validateContractorAdvance() {
