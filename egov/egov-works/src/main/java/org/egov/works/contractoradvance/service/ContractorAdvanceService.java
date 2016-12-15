@@ -630,7 +630,8 @@ public class ContractorAdvanceService {
         contractorAdvanceRequisition = contractorAdvanceRepository
                 .findByWorkOrderEstimate_IdAndStatus_codeEquals(workOrderEstimateId, WorksConstants.NEW);
         String userName = "";
-        if (contractorAdvanceRequisition != null) {
+        if (contractorAdvanceRequisition != null && contractorAdvanceRequisition.getState() != null
+                && contractorAdvanceRequisition.getState().getOwnerPosition() != null) {
             userName = worksUtils.getApproverName(contractorAdvanceRequisition.getState().getOwnerPosition().getId());
             final String message = messageSource.getMessage("error.arf.newstatus",
                     new String[] { contractorAdvanceRequisition.getAdvanceRequisitionNumber(),
@@ -652,7 +653,8 @@ public class ContractorAdvanceService {
                         ContractorAdvanceRequisitionStatus.APPROVED.toString(),
                         ContractorAdvanceRequisitionStatus.NEW.toString());
         String userName = "";
-        if (contractorAdvanceRequisition != null) {
+        if (contractorAdvanceRequisition != null && contractorAdvanceRequisition.getState() != null
+                && contractorAdvanceRequisition.getState().getOwnerPosition() != null) {
             userName = worksUtils.getApproverName(contractorAdvanceRequisition.getState().getOwnerPosition().getId());
             final String message = messageSource.getMessage("error.arf.workflow",
                     new String[] { contractorAdvanceRequisition.getAdvanceRequisitionNumber(),
