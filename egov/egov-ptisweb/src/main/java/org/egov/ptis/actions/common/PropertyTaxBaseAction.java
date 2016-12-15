@@ -602,7 +602,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
                     property.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
             loggedInUserDesignation = loggedInUserAssign.getDesignation().getName();
-        } else if (loggedInUserDesignation.equals(JUNIOR_ASSISTANT) || loggedInUserDesignation.equals(SENIOR_ASSISTANT))
+        }
+
+        if (loggedInUserDesignation.equals(JUNIOR_ASSISTANT) || loggedInUserDesignation.equals(SENIOR_ASSISTANT))
             loggedInUserDesignation = null;
 
         if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)
