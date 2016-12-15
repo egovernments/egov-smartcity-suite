@@ -327,6 +327,7 @@ public class CollectionIndexElasticSearchService {
         BigDecimal balance = BigDecimal.ZERO;
         BigDecimal variance = BigDecimal.ZERO;
         String aggregationField = REGION_NAME;
+        Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
 
         /**
          * Select the grouping based on the type parameter, by default the grouping is done based on Regions. If type is region,
@@ -401,6 +402,11 @@ public class CollectionIndexElasticSearchService {
         Map<String, BigDecimal> lytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest,
                 DateUtils.addYears(fromDate, -1), DateUtils.addYears(toDate, -1), COLLECTION_INDEX_NAME, TOTAL_AMOUNT,
                 aggregationField);
+
+        //Fetch ward wise Bill Collector details for ward based grouping
+        if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+            wardWiseBillCollectors = getWardWiseBillCollectors(collectionDetailsRequest);
+
         Long timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken by getCollectionAndDemandValues() is : " + timeTaken + MILLISECS);
 
@@ -419,9 +425,17 @@ public class CollectionIndexElasticSearchService {
                 collIndData.setUlbGrade(collectionDetailsRequest.getUlbGrade());
             } else if (aggregationField.equals(CITY_GRADE))
                 collIndData.setUlbGrade(name);
-            else if (aggregationField.equals(REVENUE_WARD))
+            else if (aggregationField.equals(REVENUE_WARD)) {
                 collIndData.setWardName(name);
-
+                //If the grouping is based on ward, set the Bill Collector name and number
+                if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(collectionDetailsRequest.getType())
+                        && !wardWiseBillCollectors.isEmpty()) {
+                    collIndData.setBillCollector(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
+                            : wardWiseBillCollectors.get(name).getBillCollector());
+                    collIndData.setMobileNumber(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
+                            : wardWiseBillCollectors.get(name).getMobileNumber());
+                }
+            }
             collIndData.setTodayColl(todayCollMap.get(name) == null ? BigDecimal.ZERO : todayCollMap.get(name));
             collIndData.setCytdColl(entry.getValue());
             // Proportional Demand = (totalDemand/12)*noOfmonths
@@ -1137,6 +1151,20 @@ public class CollectionIndexElasticSearchService {
         List<BillCollectorIndex> billCollectorsList = elasticsearchTemplate.queryForList(searchQueryColl,
                 BillCollectorIndex.class);
         return billCollectorsList;
+    }
+
+    /**
+     * Fetches Ward wise Bill Colelctor details
+     * @param collectionDetailsRequest
+     * @return Map
+     */
+    public Map<String, BillCollectorIndex> getWardWiseBillCollectors(CollectionDetailsRequest collectionDetailsRequest) {
+        Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
+        List<BillCollectorIndex> billCollectors = getBillCollectorDetails(collectionDetailsRequest);
+        for (BillCollectorIndex billCollector : billCollectors) {
+            wardWiseBillCollectors.put(billCollector.getRevenueWard(), billCollector);
+        }
+        return wardWiseBillCollectors;
     }
 
 }
