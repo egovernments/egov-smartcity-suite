@@ -1,0 +1,1 @@
+update chartofaccounts set purposeid = (select id from egf_accountcode_purpose where name = 'CONTRACTOR_ADVANCE_ACCOUNTCODE') where glcode = '4604002';

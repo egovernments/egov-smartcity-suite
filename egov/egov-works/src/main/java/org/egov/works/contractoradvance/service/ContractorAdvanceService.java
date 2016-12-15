@@ -349,7 +349,7 @@ public class ContractorAdvanceService {
             final Integer accountsDetailTypeId, final EgAdvanceReqPayeeDetails egAdvanceReqPayeeDetails,
             final BigDecimal amount, final boolean isDebit, final Integer accountsDetailKeyId) {
         egAdvanceReqPayeeDetails.setAccountdetailKeyId(accountsDetailKeyId);
-        egAdvanceReqPayeeDetails.setAccountDetailType(accountdetailtypeRepository.findOne(accountsDetailKeyId));
+        egAdvanceReqPayeeDetails.setAccountDetailType(accountdetailtypeRepository.findOne(accountsDetailTypeId));
         if (isDebit)
             egAdvanceReqPayeeDetails.setDebitAmount(amount);
         else

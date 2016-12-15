@@ -69,7 +69,9 @@
 					<td>
 						<form:select path="egAdvanceReqDetailses[0].chartofaccounts" id="debitGlcodeId" class="form-control table-input" required="required">
 							<form:option value=""><spring:message code="lbl.select" /></form:option>
-							<form:options items="${debitAccounts }" itemLabel="name" itemValue="id"/>
+							<c:forEach items="${debitAccounts }" var="account">
+								<form:option value="${account.id }">${account.glcode } - ${account.name }</form:option>
+							</c:forEach>
 						</form:select> 
 						<form:errors path="egAdvanceReqDetailses[0].chartofaccounts" cssClass="add-margin error-msg" />
 					</td>
@@ -101,7 +103,9 @@
 					<td>
 						<form:select path="egAdvanceReqDetailses[1].chartofaccounts" id="creditGlcodeId" class="form-control table-input" required="required">
 							<form:option value=""><spring:message code="lbl.select" /></form:option>
-							<form:options items="${creditAccounts }" itemLabel="name" itemValue="id"/>
+							<c:forEach items="${creditAccounts }" var="account">
+								<form:option value="${account.id }">${account.glcode } - ${account.name }</form:option>
+							</c:forEach>
 						</form:select> 
 						<form:errors path="egAdvanceReqDetailses[1].chartofaccounts" cssClass="add-margin error-msg" />
 					</td>

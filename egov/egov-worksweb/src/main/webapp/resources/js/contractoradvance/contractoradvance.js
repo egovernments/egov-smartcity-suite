@@ -64,6 +64,24 @@ $(document).ready(function(){
 		}
 	});
 	
+	var debitGlcodeId = $('#debitGlcodeId').val();
+	$("#debitGlcodeId").each(function() {
+		if($(this).children('option').length == 2) {
+		 	$(this).find('option').eq(1).prop('selected', true);
+		} else {
+			$(this).val(debitGlcodeId);
+		}
+	});
+	
+	var creditGlcodeId = $('#creditGlcodeId').val();
+	$("#creditGlcodeId").each(function() {
+		if($(this).children('option').length == 2) {
+		 	$(this).find('option').eq(1).prop('selected', true);
+		} else {
+			$(this).val(creditGlcodeId);
+		}
+	});
+	
 	$('#debitGlcodeId').trigger('change');
 	$('#creditGlcodeId').trigger('change');
 });
