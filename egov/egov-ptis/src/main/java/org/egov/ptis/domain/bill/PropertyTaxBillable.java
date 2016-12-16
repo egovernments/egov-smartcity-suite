@@ -155,7 +155,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     }
     @Override
     public String getConsumerType() {
-        return "";
+        return getBasicProperty().getProperty().getPropertyDetail().getPropertyTypeMaster().getType();
     }
     /*
      * (non-Javadoc)
