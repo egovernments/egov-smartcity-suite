@@ -58,5 +58,7 @@ public interface ComplaintIndexCustomRepository {
     String getFunctionryMobileNumber(String functionaryName);
 
     SearchResponse findAllGrievanceBySource(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query, String grouByField);
+    
+    SearchResponse findByAllFunctionary(ComplaintDashBoardRequest complaintDashBoardRequest,BoolQueryBuilder query);
 
 }

@@ -187,4 +187,22 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
         }
         return StringUtils.EMPTY;
     }
+    
+    @Override
+    public SearchResponse findByAllFunctionary(ComplaintDashBoardRequest complaintDashBoardRequest,
+        BoolQueryBuilder query) {
+            int size = 1000;
+            if (complaintDashBoardRequest.getSize() >= 0)
+                size = complaintDashBoardRequest.getSize();
+            
+            return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME).setSize(0)
+                            .addAggregation(AggregationBuilders.terms("ulbwise").field("cityCode").size(120)
+                                            .subAggregation(AggregationBuilders.terms("departmentwise").field("departmentCode").size(size)
+                                                            .subAggregation(AggregationBuilders.terms("functionarywise").field("currentFunctionaryName").size(size)
+                                                                            .subAggregation(AggregationBuilders.topHits("complaintrecord").addField("cityName")
+                                                                                              .addField("cityCode").addField("cityDistrictName").addField("departmentName").setSize(1))
+                                                                            .subAggregation(getCountWithGrouping("closedComplaintCount", "ifClosed", 2)))))
+                            .execute().actionGet();
+            
+    }
 }

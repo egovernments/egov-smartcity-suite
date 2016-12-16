@@ -165,4 +165,9 @@ public class ComplaintIndexController {
     public List<String> getSourceNameList() throws JsonProcessingException {
         return complaintIndexService.getSourceNameList();
     }
+    
+    @RequestMapping(value = "/grievance/allfunctionaries", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> getAllFunctionaryResponse(@RequestBody ComplaintDashBoardRequest complaintRequest){
+        return complaintIndexService.getAllFunctionaryResponse(complaintRequest);
+    }
 }
