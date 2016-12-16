@@ -46,6 +46,7 @@ import static org.egov.mrs.application.MarriageConstants.REVENUE_HIERARCHY_TYPE;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -121,18 +122,20 @@ public class MarriageRegistrationController extends GenericWorkFlowController {
         model.addAttribute("generalDocuments", marriageDocumentService.getGeneralDocuments());
         model.addAttribute("individualDocuments", marriageDocumentService.getIndividualDocuments());
         model.addAttribute("marriageRegistrationUnit", marriageRegistrationUnitService.getActiveRegistrationunit());
-        final AppConfigValues  allowValidation = getDaysValidationAppConfValue();
+        final AppConfigValues  allowValidation = getDaysValidationAppConfValue(
+                MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION);
         model.addAttribute("allowDaysValidation", (allowValidation!=null && !allowValidation.getValue().isEmpty())?allowValidation.getValue():"NO");
     }
     
-    public AppConfigValues getDaysValidationAppConfValue(){
-        return appConfigValuesService.getConfigValuesByModuleAndKey(
-            MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION).get(0);
+    public AppConfigValues getDaysValidationAppConfValue(String moduleName, String keyName){
+        List<AppConfigValues> appConfigValues=appConfigValuesService.getConfigValuesByModuleAndKey(moduleName,keyName);
+        return (appConfigValues.size()>0 ?appConfigValues.get(0):null);
     }
     
     public void validateApplicationDate(final MarriageRegistration registration,
             final BindingResult errors, final HttpServletRequest request){ 
-        final AppConfigValues  allowValidation = getDaysValidationAppConfValue();
+        final AppConfigValues  allowValidation = getDaysValidationAppConfValue(
+                MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION);
         if(allowValidation!=null && !allowValidation.getValue().isEmpty()){
             if(allowValidation.getValue().equalsIgnoreCase("YES")){
                 if(registration.getDateOfMarriage()!=null && !registration.isLegacy()){ 

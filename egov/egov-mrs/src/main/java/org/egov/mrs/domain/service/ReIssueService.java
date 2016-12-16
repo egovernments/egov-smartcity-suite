@@ -56,7 +56,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.mrs.application.MarriageConstants;
@@ -128,6 +130,9 @@ public class ReIssueService {
         this.reIssueRepository = reIssueRepository;
     }
 
+    @Autowired
+    protected AppConfigValueService appConfigValuesService;
+    
     @Transactional
     public void create(final ReIssue reIssue) {
         reIssueRepository.save(reIssue);
@@ -198,19 +203,28 @@ public class ReIssueService {
         reissue.setStatus(workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT)?
                 marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.REJECTED.toString(), MarriageConstants.MODULE_NAME)
                 :marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.CANCELLED.toString(), MarriageConstants.MODULE_NAME));
+        
         if(workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL_REISSUE)){
-            MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(reissue,request,MarriageCertificateType.REJECTION.toString());
-            reissue.addCertificate(marriageCertificate);
-            reiSsueUpdateIndexesService.updateReIssueAppIndex(reissue); 
-            marriageSmsAndEmailService.sendSMSForReIssueApplication(reissue);
-            marriageSmsAndEmailService.sendEmailForReIssueApplication(reissue);
-        }
+            List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(
+                    MarriageConstants.MODULE_NAME, MarriageConstants.REISSUE_PRINTREJECTIONCERTIFICATE);
+   // As per configuration, save rejection certificate.
+            if (appConfigValues != null && appConfigValues.size() > 0
+                    && appConfigValues.get(0).getValue().equalsIgnoreCase("YES")) {
+
+                MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(reissue, request,
+                        MarriageCertificateType.REJECTION.toString());
+                reissue.addCertificate(marriageCertificate);
+            }
+         }
+        reiSsueUpdateIndexesService.updateReIssueAppIndex(reissue); 
+        marriageSmsAndEmailService.sendSMSForReIssueApplication(reissue);
+        marriageSmsAndEmailService.sendEmailForReIssueApplication(reissue);
         reissue.setRejectionReason(workflowContainer.getApproverComments());
         workflowService.transition(reissue, workflowContainer, workflowContainer.getApproverComments());
        
         return reissue;
     }
-
+    
     
     private void updateReIssueData( final ReIssue reissue) {
         if(reissue.getFeeCriteria()!=null)

@@ -70,7 +70,7 @@
 			<form:hidden path="" name="registration.id" id="reIssueRegistrationId" value="${reissue.registration.id}"/>	
 			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 			
-			<c:if test="${reissue.status.code =='APPROVED' && !reissue.feeCollected}"> 
+			<c:if test="${reissue.status.code =='CREATED' && !reissue.feeCollected}"> 
 			 <div  data-collapsed="0">
 				<div class="panel-heading">
 					<div  style="color: red; font-size: 16px;" align="center">

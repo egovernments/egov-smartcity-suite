@@ -203,7 +203,9 @@ public class RegistrationBillable extends AbstractBillable implements Billable {
 
     @Override
     public String getDescription() {
-        return "Marriage Registration with Registration No : " + registration.getRegistrationNo();
+        return (registration.getRegistrationNo() != null
+                ? "Marriage Registration with Registration No. : " + registration.getRegistrationNo()
+                : "Marriage Registration with Application No. : " + registration.getApplicationNo());
     }
 
     @Override

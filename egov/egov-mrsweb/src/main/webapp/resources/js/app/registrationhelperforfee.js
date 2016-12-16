@@ -134,12 +134,12 @@ $(document)
 														"render" : function(
 																data, type,
 																row, meta) {
-														 if (row.status == 'Approved') {
+														// if (row.status == 'Approved') {
 																return ('<select class="dropchange"><option value="">Select from Below</option><option  value='
 																		+ collectfeeurl
 																		+ row.id + '>Collect Fee</option></select>');
 															}
-														}
+														//}
 
 													} ]
 
@@ -227,12 +227,12 @@ $(document)
 														"render" : function(
 																data, type,
 																row, meta) {
-														 if (row.status == 'Approved') {
+														 /*if (row.status == 'Approved') {*/
 																return ('<select class="dropchange"><option value="">Select from Below</option><option  value='
 																		+ collectfeeurl
 																		+ row.id + '>Collect Fee</option></select>');
 															}
-														}
+														//}
 
 													} ]
 

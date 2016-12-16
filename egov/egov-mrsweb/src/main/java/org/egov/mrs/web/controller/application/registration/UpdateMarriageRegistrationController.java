@@ -97,7 +97,8 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
     private void buildMrgRegistrationUpdateResult(final Long id, final Model model) {
         final MarriageRegistration registration = marriageRegistrationService.get(id);
         if(!registration.isLegacy()){
-            final AppConfigValues  allowValidation = getDaysValidationAppConfValue();
+            final AppConfigValues  allowValidation = getDaysValidationAppConfValue(
+                    MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION);
             model.addAttribute("allowDaysValidation", (allowValidation!=null && !allowValidation.getValue().isEmpty())?allowValidation.getValue():"NO");
         } else {
             model.addAttribute("allowDaysValidation","NO");

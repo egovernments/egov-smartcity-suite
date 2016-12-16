@@ -115,12 +115,12 @@ public class MarriageRegistrationJsonAdaptor implements JsonSerializer<MarriageR
                 jsonObject.addProperty("feePaid", org.apache.commons.lang.StringUtils.EMPTY);
 
             if (!registration.isFeeCollected()) {
-                if (registration.getStatus().getCode()
+              /*  if (registration.getStatus().getCode()
                         .equalsIgnoreCase(MarriageRegistration.RegistrationStatus.APPROVED.toString())
-                        && registration.getCurrentState().getNextAction().equalsIgnoreCase("Certificate Print Pending")) {
+                        && registration.getCurrentState().getNextAction().equalsIgnoreCase("Certificate Print Pending")) {*/
                     jsonObject.addProperty("feeCollected", "No");
                     jsonObject.addProperty("feeCollectionPending", true);
-                }
+               // }
             }
             else
                 jsonObject.addProperty("feeCollected", "Yes");

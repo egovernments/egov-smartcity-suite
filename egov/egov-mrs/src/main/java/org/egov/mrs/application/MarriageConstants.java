@@ -73,6 +73,7 @@ public class MarriageConstants {
 
     public static final String REGISTER_NO_OF_DAYS = "90";
     public static final String MARRIAGEREGISTRATION_DAYS_VALIDATION = "MARRIAGEREGISTRATION_DAYS_VALIDATION";
+    public static final String REISSUE_PRINTREJECTIONCERTIFICATE = "REISSUE_PRINTREJECTIONCERTIFICATE";
 
     public static final List<String> venuelist = new ArrayList<String>() {
         /**

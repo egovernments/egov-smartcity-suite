@@ -70,7 +70,7 @@
 			<form:hidden path="" name="registration.id" id="reIssueRegistrationId" value="${reIssue.registration.id}"/>	
 			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 			
-			<c:if test="${reIssue.status.code =='APPROVED' && !reIssue.feeCollected}"> 
+			<c:if test="${reIssue.status.code =='CREATED' && !reIssue.feeCollected}"> 
 			 <div  data-collapsed="0">
 				<div class="panel-heading">
 					<div  style="color: red; font-size: 16px;" align="center">
@@ -102,14 +102,27 @@
 					    	</div>
 					    </div>
 					  </div>
+			
 					
 			<jsp:include page="../../common/reg-reissue-wfhistory.jsp"></jsp:include>
 			<c:choose>
 				<c:when test="${mode != 'view'}">			
 					<jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
-					<div class="buttonbottom" align="center">
-						<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
-					</div>
+					<c:choose>
+						<c:when
+							test="${reIssue.status.code =='CREATED' && !reIssue.feeCollected}">
+							<div class="buttonbottom" align="center">
+								<input type="button" name="button2" id="button2" value="Close"
+									class="btn btn-default" onclick="window.close();" />
+							</div>
+						</c:when>
+						<c:otherwise>
+							<div class="buttonbottom" align="center">
+								<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
+							</div>
+
+						</c:otherwise>
+					</c:choose>
 				</c:when> 
 				<c:otherwise>
 					<div class="buttonbottom" align="center"><a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a></div>

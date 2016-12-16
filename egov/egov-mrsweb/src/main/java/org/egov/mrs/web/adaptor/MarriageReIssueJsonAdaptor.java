@@ -98,10 +98,10 @@ public class MarriageReIssueJsonAdaptor implements JsonSerializer<ReIssue> {
                                 jsonObject.addProperty("feePaid", StringUtils.EMPTY);
 
                         if (!reIssue.isFeeCollected()){
-                                if (reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.APPROVED.toString())
+                             /*   if (reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.APPROVED.toString())
                                                 && reIssue.getCurrentState().getNextAction().equalsIgnoreCase("Certificate Print Pending")) {
-                                        jsonObject.addProperty("feeCollected","No");
-                                }
+                            */            jsonObject.addProperty("feeCollected","No");
+                                //}
                         }
                         else
                             jsonObject.addProperty("feeCollected", "Yes");

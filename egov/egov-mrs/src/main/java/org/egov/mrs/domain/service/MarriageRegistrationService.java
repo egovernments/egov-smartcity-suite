@@ -483,7 +483,7 @@ public class MarriageRegistrationService {
         final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class, "marriageRegistration")
                 .createAlias("marriageRegistration.status", "status");
         buildMarriageRegistrationSearchCriteria(registration, criteria);
-        criteria.add(Restrictions.in("status.code", new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString() }));
+        criteria.add(Restrictions.in("status.code", new String[] { MarriageRegistration.RegistrationStatus.CREATED.toString(),MarriageRegistration.RegistrationStatus.APPROVED.toString() }));
         return criteria.list();
     }
 
@@ -493,7 +493,7 @@ public class MarriageRegistrationService {
         final Criteria criteria = getCurrentSession().createCriteria(ReIssue.class, "reIssue")
                 .createAlias("reIssue.status", "status");
         buildReIssueSearchCriteria(mrSearchFilter, criteria);
-        criteria.add(Restrictions.in("status.code", new String[] { ReIssue.ReIssueStatus.APPROVED.toString() }));
+         criteria.add(Restrictions.in("status.code", new String[] {ReIssue.ReIssueStatus.CREATED.toString(), ReIssue.ReIssueStatus.APPROVED.toString() }));
         return criteria.list();
     }
 

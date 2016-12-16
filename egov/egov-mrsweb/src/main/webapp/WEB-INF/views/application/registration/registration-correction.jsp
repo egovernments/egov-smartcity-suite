@@ -56,7 +56,7 @@
 			<input type="hidden" id="allowDaysValidation" value="${allowDaysValidation}" />
 			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 			<input type="hidden" id="feeCollected" value="${registration.feeCollected}" />
-				<c:if test="${registration.status.code =='APPROVED' && !registration.feeCollected}"> 
+				<c:if test="${registration.status.code =='CREATED' && !registration.feeCollected}">  
 				 <div  data-collapsed="0">
 					<div class="panel-heading">
 						<div  style="color: red; font-size: 16px;" align="center">
@@ -127,9 +127,19 @@
 			</div>
 			<jsp:include page="../../common/reg-reissue-wfhistory.jsp"></jsp:include>
 			 <jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
-			<div class="buttonbottom" align="center">
-				<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
-			</div>
+			<c:choose>
+				<c:when test="${registration.status.code =='CREATED' && !registration.feeCollected}"> 
+					<div class="buttonbottom" align="center">
+					<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();" />
+					</div>	
+				</c:when>
+				<c:otherwise>
+				<div class="buttonbottom" align="center">
+							<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
+						</div>
+				
+				</c:otherwise>
+			</c:choose>
 		</form:form>
 	</div>
 </div>
