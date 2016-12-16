@@ -46,8 +46,8 @@
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />
 	<input type="hidden" id="seniourAdvisRequired"
 		name="seniourAdvisRequired" value="${legalCase.isSenioradvrequired}" />
-	<jsp:include page="../transactions/viewSummarizedCase.jsp" />
-	<%@ include file="legalcase-standingCouncil.jsp"%>
+	<jsp:include page="../transactions/view-summarizedcase.jsp" />
+	<%@ include file="legalcase-standingcouncil-form.jsp"%>
 
 	
 	<div class="form-group">

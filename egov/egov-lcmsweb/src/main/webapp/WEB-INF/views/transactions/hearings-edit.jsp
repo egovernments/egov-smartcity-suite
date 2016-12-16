@@ -45,7 +45,7 @@
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />
 	<input type="hidden" id="lcNumber" name="lcNumber"
 		value="${hearings.legalCase.lcNumber}" />
-	<jsp:include page="../transactions/viewSummarizedCase.jsp" />
+	<jsp:include page="../transactions/view-summarizedcase.jsp" />
 	<%@ include file="hearings-form.jsp"%>
 	<input type="hidden" name="hearings" value="${hearings.id}" />
 	<div class="form-group">

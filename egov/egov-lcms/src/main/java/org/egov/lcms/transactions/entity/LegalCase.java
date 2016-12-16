@@ -151,7 +151,7 @@ public class LegalCase extends AbstractAuditable {
     private Date caseReceivingDate;
 
     @Audited
-    private Boolean isfiledbycorporation;
+    private Boolean isFiledByCorporation;
 
     @Length(max = 50)
     @Column(name = "lcnumber")
@@ -216,6 +216,11 @@ public class LegalCase extends AbstractAuditable {
 
     @Audited
     private String oldReferenceNumber;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reportstatus")
+    @Audited
+    private ReportStatus reportStatus;
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Audited
@@ -291,7 +296,7 @@ public class LegalCase extends AbstractAuditable {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (getIsfiledbycorporation() == true && getStampNumber().length() == 0)
+        if (getIsFiledByCorporation() == true && getStampNumber().length() == 0)
             errors.add(new ValidationError("stampNumber", "case.stampNumber.invalid"));
         for (final BipartisanDetails bipartisanDetails2 : getBipartisanDetails()) {
             final BipartisanDetails element = bipartisanDetails2;
@@ -550,14 +555,6 @@ public class LegalCase extends AbstractAuditable {
 
     public void setCasetitle(final String casetitle) {
         caseTitle = casetitle;
-    }
-
-    public String getAppealnum() {
-        return appealNum;
-    }
-
-    public void setAppealnum(final String appealnum) {
-        appealNum = appealnum;
     }
 
     public String getRemarks() {
@@ -913,12 +910,12 @@ public class LegalCase extends AbstractAuditable {
         this.noticeDate = noticeDate;
     }
 
-    public Boolean getIsfiledbycorporation() {
-        return isfiledbycorporation;
+    public Boolean getIsFiledByCorporation() {
+        return isFiledByCorporation;
     }
 
-    public void setIsfiledbycorporation(final Boolean isfiledbycorporation) {
-        this.isfiledbycorporation = isfiledbycorporation;
+    public void setIsFiledByCorporation(final Boolean isFiledByCorporation) {
+        this.isFiledByCorporation = isFiledByCorporation;
     }
 
     public List<LegalCaseAdvocate> getLegalCaseAdvocates() {
@@ -935,6 +932,14 @@ public class LegalCase extends AbstractAuditable {
 
     public void setOldReferenceNumber(final String oldReferenceNumber) {
         this.oldReferenceNumber = oldReferenceNumber;
+    }
+
+    public ReportStatus getReportStatus() {
+        return reportStatus;
+    }
+
+    public void setReportStatus(final ReportStatus reportStatus) {
+        this.reportStatus = reportStatus;
     }
 
 }

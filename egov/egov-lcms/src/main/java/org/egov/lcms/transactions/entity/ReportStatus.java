@@ -37,36 +37,63 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.transactions.repository;
+package org.egov.lcms.transactions.entity;
 
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-import org.egov.lcms.transactions.entity.BipartisanDetails;
-import org.egov.lcms.transactions.entity.LegalCase;
-import org.egov.lcms.transactions.entity.LegalCaseUploadDocuments;
-import org.egov.lcms.transactions.entity.PwrDocuments;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.Length;
 
-@Repository
-public interface LegalCaseRepository extends JpaRepository<LegalCase, Long> {
+@Entity
+@Table(name = "eglc_reportstatus")
+@SequenceGenerator(name = ReportStatus.SEQ_EGLC_REPORTSTATUS, sequenceName = ReportStatus.SEQ_EGLC_REPORTSTATUS, allocationSize = 1)
+public class ReportStatus extends AbstractAuditable {
 
-    LegalCase findByLcNumber(String number);
+    private static final long serialVersionUID = 1517694643078084884L;
+    public static final String SEQ_EGLC_REPORTSTATUS = "SEQ_EGLC_REPORTSTATUS";
 
-    LegalCase findByCaseNumber(String number);
+    @Id
+    @GeneratedValue(generator = SEQ_EGLC_REPORTSTATUS, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-    @Query("select lcd from LegalCaseUploadDocuments lcd where lcd.legalCase.id=:legalcaseId order by lcd.id desc")
-    List<LegalCaseUploadDocuments> getLegalCaseUploadDocumentList(@Param("legalcaseId") Long legalcaseId);
+    @Length(max = 25)
+    @Audited
+    private String code;
 
-    @Query("select lcd from PwrDocuments lcd where lcd.pwr.id=:pwrId order by lcd.id desc")
-    List<PwrDocuments> getPwrDocumentList(@Param("pwrId") Long pwrId);
+    @Length(max = 25)
+    @Audited
+    private String name;
 
-    @Query("select lcd from BipartisanDetails lcd where lcd.legalCase.id=:legalcaseId order by lcd.id desc")
-    List<BipartisanDetails> getBipartitionDetList(@Param("legalcaseId") Long legalcaseId);
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-    @Query("select lcd from BipartisanDetails lcd where lcd.legalCase.id=:legalcaseId and lcd.isRepondent=true order by lcd.id desc")
-    List<BipartisanDetails> getRespondantBipartitionDetList(@Param("legalcaseId") Long legalcaseId);
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(final String code) {
+        this.code = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
 
 }

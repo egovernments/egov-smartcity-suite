@@ -91,7 +91,7 @@
 								</div>
 								<div class="row add-border">
 									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.caseNumber" />
+										<spring:message code="lbl.casenumber" />
 									</div>
 									<div class="col-xs-3 add-margin view-content">
 										<c:out value="${legalCase.caseNumber}" />
@@ -173,7 +173,7 @@
 										<spring:message code="lbl.fieldbycarp" />
 									</div>
 									<div class="col-sm-3 add-margin view-content">
-										${legalCase.isfiledbycorporation}</div>
+										${legalCase.isFiledByCorporation}</div>
 									<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.oldreferencenumber" />
 									</div>

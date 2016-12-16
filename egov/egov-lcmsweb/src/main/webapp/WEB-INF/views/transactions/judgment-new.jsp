@@ -48,7 +48,7 @@
 <form:form id="judgmentform" class="form-horizontal form-groups-bordered" 
 		modelAttribute="judgment" role="form"  method="post" enctype="multipart/form-data">
 	 <input type="hidden" name="legalCase" value="${legalCase.id}" />  
-	 <jsp:include page="../transactions/viewSummarizedCase.jsp"/>  
+	 <jsp:include page="../transactions/view-summarizedcase.jsp"/>  
 	 <%@ include file="judgment-form.jsp"%>
 	 <input type="hidden" name="mode" value="${mode}" />
 	 </div>

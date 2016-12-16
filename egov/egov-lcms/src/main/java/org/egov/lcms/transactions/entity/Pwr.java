@@ -88,7 +88,7 @@ public class Pwr extends AbstractAuditable {
     @Temporal(TemporalType.DATE)
     @Column(name = "cafilingdate")
     @Audited
-    private Date caFilingdate;
+    private Date caFilingDate;
 
     @OneToMany(mappedBy = "pwr", fetch = FetchType.LAZY)
     @NotAudited
@@ -108,22 +108,6 @@ public class Pwr extends AbstractAuditable {
     @Column(name = "pwrapprovaldate")
     @Audited
     private Date pwrApprovalDate;
-
-    public Date getCaFilingdate() {
-        return caFilingdate;
-    }
-
-    public void setCaFilingdate(final Date caFilingdate) {
-        this.caFilingdate = caFilingdate;
-    }
-
-    public Date getPwrApprovalDate() {
-        return pwrApprovalDate;
-    }
-
-    public void setPwrApprovalDate(final Date pwrApprovalDate) {
-        this.pwrApprovalDate = pwrApprovalDate;
-    }
 
     @Override
     public Long getId() {
@@ -147,7 +131,7 @@ public class Pwr extends AbstractAuditable {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
         if (!DateUtils.compareDates(getCaDueDate(), legalCase.getCaseDate()))
             errors.add(new ValidationError("caDueDate", "caDueDate.less.casedate"));
-        if (!DateUtils.compareDates(getCaFilingdate(), legalCase.getCaseDate()))
+        if (!DateUtils.compareDates(getCaFilingDate(), legalCase.getCaseDate()))
             errors.add(new ValidationError("caFilingDate", "caFilingDate.less.casedate"));
         if (!DateUtils.compareDates(getPwrDueDate(), legalCase.getCaseDate()))
             errors.add(new ValidationError("pwrDueDate", "pwrDueDate.less.casedate"));
@@ -178,6 +162,22 @@ public class Pwr extends AbstractAuditable {
 
     public void setPwrDocuments(final List<PwrDocuments> pwrDocuments) {
         this.pwrDocuments = pwrDocuments;
+    }
+
+    public Date getCaFilingDate() {
+        return caFilingDate;
+    }
+
+    public void setCaFilingDate(final Date caFilingDate) {
+        this.caFilingDate = caFilingDate;
+    }
+
+    public Date getPwrApprovalDate() {
+        return pwrApprovalDate;
+    }
+
+    public void setPwrApprovalDate(final Date pwrApprovalDate) {
+        this.pwrApprovalDate = pwrApprovalDate;
     }
 
 }

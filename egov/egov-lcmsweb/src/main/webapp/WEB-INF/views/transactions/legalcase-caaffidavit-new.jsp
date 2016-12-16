@@ -50,14 +50,14 @@
 	enctype="multipart/form-data">
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />
 	<input type="hidden" id="mode" name="mode" value="${mode}" />
-	<jsp:include page="../transactions/viewSummarizedCase.jsp" />
+	<jsp:include page="../transactions/view-summarizedcase.jsp" />
 	<%-- <%@ include file="legalcase-assignedDeptDet.jsp"%> --%>
 	<%@ include file="legalcase-caaffidavit-form.jsp"%>
 	</div>
 	</div>
 	</div>
 	</div>
-	<jsp:include page="pwrDocumentdetails-view.jsp"></jsp:include>
+	<jsp:include page="pwrdocumentdetails-view.jsp"></jsp:include>
 	
 	<div class="form-group">
 		<div class="text-center">

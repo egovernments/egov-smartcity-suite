@@ -48,7 +48,7 @@
 		value="${legalCase.lcNumber}" />
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />
 	<input type="hidden" value="${mode}" id="mode" />
-	<jsp:include page="../transactions/viewSummarizedCase.jsp" />
+	<jsp:include page="../transactions/view-summarizedcase.jsp" />
 	<%@ include file="lcinterimorder-form.jsp"%>
 	<c:if test="${not empty message}">
 		<div role="alert">${message}</div>
