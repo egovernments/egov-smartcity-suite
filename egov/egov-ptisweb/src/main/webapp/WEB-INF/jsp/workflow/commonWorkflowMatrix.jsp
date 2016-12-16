@@ -113,7 +113,7 @@ function setApprover() {
 <s:hidden id="additionalRule" name="additionalRule" value="%{additionalRule}"/>
 <s:hidden id="amountRule" name="amountRule" value="%{amountRule}"/>
 <s:hidden id="workFlowDepartment" name="workFlowDepartment" value="%{workFlowDepartment}"/>
-<s:hidden id="pendingActions" name="pendingActions" value="%{state.nextAction}"/>
+<s:hidden id="pendingActions" name="pendingActions" value="%{pendingActions}"/>
 <s:hidden id="approverName" name="approverName" />
 
 <s:if test="%{#request.approverOddTextCss==null}">
