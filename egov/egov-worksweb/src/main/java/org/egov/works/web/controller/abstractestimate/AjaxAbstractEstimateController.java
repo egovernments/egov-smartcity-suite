@@ -63,6 +63,7 @@ import org.egov.works.abstractestimate.entity.AbstractEstimateForCopyEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchRequest;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchResult;
 import org.egov.works.abstractestimate.entity.Activity;
+import org.egov.works.abstractestimate.entity.EstimateTemplateSearchRequest;
 import org.egov.works.abstractestimate.entity.SearchRequestCancelEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.masters.entity.EstimateTemplate;
@@ -80,6 +81,7 @@ import org.egov.works.web.adaptor.CopyEstimateJsonAdaptor;
 import org.egov.works.web.adaptor.EstimateActivityJsonAdaptor;
 import org.egov.works.web.adaptor.EstimateTemplateJsonAdaptor;
 import org.egov.works.web.adaptor.SearchEstimatesToCancelJson;
+import org.egov.works.web.adaptor.TemplateJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
@@ -135,6 +137,9 @@ public class AjaxAbstractEstimateController {
 
     @Autowired
     private CopyEstimateJsonAdaptor copyEstimateJsonAdaptor;
+
+    @Autowired
+    private TemplateJsonAdaptor templateJsonAdaptor;
 
     public Object toSearchAbstractEstimateForLOAResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
@@ -351,6 +356,24 @@ public class AjaxAbstractEstimateController {
     public Object toSearchEstimateResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class, copyEstimateJsonAdaptor).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+
+    @RequestMapping(value = "/ajaxestimatetemplates-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchEstimateTemplates(
+            @ModelAttribute final EstimateTemplateSearchRequest estimateTemplateSearchRequest,
+            final HttpServletRequest request) {
+        estimateTemplateSearchRequest.setStatus(1);
+        final List<EstimateTemplate> estimateTemplates = estimateService.searchEstimateTemplates(estimateTemplateSearchRequest);
+        final String result = new StringBuilder("{ \"data\":").append(toSearchEstimateTemplatesResultJson(estimateTemplates))
+                .append("}").toString();
+        return result;
+    }
+
+    public Object toSearchEstimateTemplatesResultJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(EstimateTemplate.class, templateJsonAdaptor).create();
         final String json = gson.toJson(object);
         return json;
     }

@@ -526,5 +526,9 @@
         <put-attribute name="body" value="/WEB-INF/views/master/typeofwork/typeofwork-success.jsp"/>
     </definition>
     
-
+	<definition name="estimatetemplate-searchform" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.searchestimatetemplate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/abstractestimate/searchestimatetemplate-form.jsp"/>
+     </definition>
+     
 </tiles-definitions>

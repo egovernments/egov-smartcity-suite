@@ -91,6 +91,7 @@ import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchResult
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.AssetsForEstimate;
 import org.egov.works.abstractestimate.entity.EstimateTechnicalSanction;
+import org.egov.works.abstractestimate.entity.EstimateTemplateSearchRequest;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
@@ -105,6 +106,7 @@ import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.masters.entity.EstimateTemplate;
 import org.egov.works.masters.service.NatureOfWorkService;
 import org.egov.works.masters.service.OverheadService;
 import org.egov.works.masters.service.ScheduleCategoryService;
@@ -1520,6 +1522,51 @@ public class EstimateService {
                 qry.setParameter("createdBy", abstractEstimateForCopyEstimate.getAbstractEstimateCreatedBy());
             if (abstractEstimateForCopyEstimate.getTypeOfWork() != null)
                 qry.setParameter("typeOfWork", abstractEstimateForCopyEstimate.getTypeOfWork());
+        }
+        return qry;
+    }
+
+    public List<EstimateTemplate> searchEstimateTemplates(final EstimateTemplateSearchRequest estimateTemplateSearchRequest) {
+        final StringBuilder queryStr = new StringBuilder(500);
+        queryStr.append(
+                "select distinct(et) from EstimateTemplate et where 1 = 1 ");
+
+        if (estimateTemplateSearchRequest != null) {
+            if (estimateTemplateSearchRequest.getTypeOfWork() != null)
+                queryStr.append(" and et.workType.id = :typeOfWork");
+            if (estimateTemplateSearchRequest.getSubTypeOfWork() != null)
+                queryStr.append(" and et.subType.id = :subTypeOfWork");
+            if (estimateTemplateSearchRequest.getTemplateCode() != null)
+                queryStr.append(" and upper(et.code) = :code");
+            if (estimateTemplateSearchRequest.getTemplateDescription() != null)
+                queryStr.append(" and upper(et.description) = :description");
+            if (estimateTemplateSearchRequest.getTemplateName() != null)
+                queryStr.append(" and upper(et.name) = :name");
+            if (estimateTemplateSearchRequest.getStatus() != null)
+                queryStr.append(" and et.status = :status");
+        }
+
+        final Query query = setQueryParametersForSearchEstimateTemplate(estimateTemplateSearchRequest, queryStr);
+        return query.getResultList();
+    }
+
+    private Query setQueryParametersForSearchEstimateTemplate(
+            final EstimateTemplateSearchRequest estimateTemplateSearchRequest,
+            final StringBuilder queryStr) {
+        final Query qry = entityManager.createQuery(queryStr.toString());
+        if (estimateTemplateSearchRequest != null) {
+            if (estimateTemplateSearchRequest.getTypeOfWork() != null)
+                qry.setParameter("typeOfWork", estimateTemplateSearchRequest.getTypeOfWork());
+            if (estimateTemplateSearchRequest.getSubTypeOfWork() != null)
+                qry.setParameter("subTypeOfWork", estimateTemplateSearchRequest.getSubTypeOfWork());
+            if (estimateTemplateSearchRequest.getTemplateCode() != null)
+                qry.setParameter("code", estimateTemplateSearchRequest.getTemplateCode().toUpperCase());
+            if (estimateTemplateSearchRequest.getTemplateDescription() != null)
+                qry.setParameter("description", estimateTemplateSearchRequest.getTemplateDescription().toUpperCase());
+            if (estimateTemplateSearchRequest.getTemplateName() != null)
+                qry.setParameter("name", estimateTemplateSearchRequest.getTemplateName().toUpperCase());
+            if (estimateTemplateSearchRequest.getStatus() != null)
+                qry.setParameter("status", estimateTemplateSearchRequest.getStatus());
         }
         return qry;
     }

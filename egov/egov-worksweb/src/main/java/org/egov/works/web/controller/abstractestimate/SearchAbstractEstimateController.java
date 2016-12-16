@@ -55,6 +55,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.OfflineStatusesForAbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchRequest;
+import org.egov.works.abstractestimate.entity.EstimateTemplateSearchRequest;
 import org.egov.works.abstractestimate.entity.SearchAbstractEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
@@ -252,5 +253,16 @@ public class SearchAbstractEstimateController {
         model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
         model.addAttribute("abstractEstimateCreatedByUsers", abstractEstimateCreatedByUsers);
         return "estimate-searchform";
+    }
+
+    @RequestMapping(value = "/searchestimatetemplateform", method = RequestMethod.GET)
+    public String showSearchEstimateTemplateForm(@RequestParam("typeOfWork") final Long typeOfWorkId,
+            @RequestParam("subTypeOfWork") final Long subTypeOfWorkId, final Model model) {
+        model.addAttribute("typeOfWorkId", typeOfWorkId);
+        model.addAttribute("subTypeOfWorkId", subTypeOfWorkId);
+        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
+        model.addAttribute("subTypeOfWork", egwTypeOfWorkHibernateDAO.getSubTypeOfWorkByParentId(typeOfWorkId));
+        model.addAttribute("estimateTemplateSearchRequest", new EstimateTemplateSearchRequest());
+        return "estimatetemplate-searchform";
     }
 }
