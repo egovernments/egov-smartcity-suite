@@ -112,7 +112,7 @@ public class SearchForm {
 
         }
 
-        if (license.isLegacy() && !license.isPaid())
+        if (license.isLegacy() && !license.hasState())
             licenseActions.add("Modify Legacy License");
 
         if (userRoles.contains(Constants.TL_APPROVER_ROLENAME) && license.getDateOfExpiry() != null
