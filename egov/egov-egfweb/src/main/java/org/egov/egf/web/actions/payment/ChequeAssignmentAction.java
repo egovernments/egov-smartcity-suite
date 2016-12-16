@@ -1109,13 +1109,13 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         chequeAssignmentList = new ArrayList<>();
         String[] selectedRowsIdArray;
         if (selectedRowsId != null)
-            selectedRowsIdArray = selectedRowsId.split(",");
+            selectedRowsIdArray = selectedRowsId.split(";,");
         else
             selectedRowsIdArray = new String[0];
         int length = selectedRowsIdArray.length;
         for (int i = 0; i < length; i++) {
             ChequeAssignment chequeAssignment = new ChequeAssignment();
-            String[] items = selectedRowsIdArray[i].split(";");
+            String[] items = selectedRowsIdArray[i].split("\\~");
             chequeAssignment.setVoucherHeaderId(Long.valueOf(items[0]));
             chequeAssignment.setPaidTo(items[1]);
             chequeAssignment.setSerialNo(items[2]);
@@ -1127,7 +1127,10 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 e.printStackTrace();
             }
             chequeAssignment.setVoucherNumber(items[5]);
-            chequeAssignment.setPaidAmount(BigDecimal.valueOf(Double.valueOf(items[7])));
+            String item = items[7];
+            if (item.contains(";"))
+                item = items[7].replace(";", "");
+            chequeAssignment.setPaidAmount(BigDecimal.valueOf(Double.valueOf(item)));
             chequeAssignment.setIsSelected(true);
             chequeAssignmentList.add(chequeAssignment);
         }
@@ -1799,37 +1802,35 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     }
 
     private List<InstrumentHeader> prepareInstrumentList() {
-        String[] selectedArray = selectedRowsId.split(",");
+        String[] selectedArray = selectedRowsId.split(";,");
         if (!selectedRowsId.isEmpty()) {
             instrumentHeaderList = new ArrayList<>();
             int length = selectedArray.length;
             for (int i = 0; i < length; i++) {
                 InstrumentHeader instrumentsHeader = new InstrumentHeader();
-                String[] items = selectedArray[i].split(";");
-                if(items[0]!=null && !items[0].isEmpty())
-            	{
-                instrumentsHeader.setId(Long.valueOf(items[0]));
-            	}
-                if(items[1]!=null && !items[1].isEmpty())
-            	{
-                instrumentsHeader.setInstrumentNumber(items[1]);
-            	}
+                String[] items = selectedArray[i].split("\\~");
+                if (items[0] != null && !items[0].isEmpty()) {
+                    instrumentsHeader.setId(Long.valueOf(items[0]));
+                }
+                if (items[1] != null && !items[1].isEmpty()) {
+                    instrumentsHeader.setInstrumentNumber(items[1]);
+                }
                 try {
-                	if(items[2]!=null && !items[2].isEmpty())
-                	{
-                    instrumentsHeader.setInstrumentDate(formatter.parse(items[2]));
-                	}
+                    if (items[2] != null && !items[2].isEmpty()) {
+                        instrumentsHeader.setInstrumentDate(formatter.parse(items[2]));
+                    }
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                if(items[3]!=null && !items[3].isEmpty())
-                {
-                instrumentsHeader.setSerialNo(financialYearDAO.findById(Long.valueOf(items[3]), false));
+                if (items[3] != null && !items[3].isEmpty()) {
+                    instrumentsHeader.setSerialNo(financialYearDAO.findById(Long.valueOf(items[3]), false));
                 }
-                if(items[4]!=null && !items[4].isEmpty())
-            	{
-                instrumentsHeader.setSurrendarReason(items[4]);
-            	}
+                if (items[4] != null && !items[4].isEmpty()) {
+                    String item = items[4];
+                    if (item.contains(";"))
+                        item = items[4].replace(";", "");
+                    instrumentsHeader.setSurrendarReason(item);
+                }
                 instrumentHeaderList.add(instrumentsHeader);
             }
         }

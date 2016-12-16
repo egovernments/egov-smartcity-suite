@@ -292,11 +292,11 @@ href="/EGF/resources/css/ccMenu.css?rnd=${app_release_no}" />
 			for(var index=0;index<chequeSize;index++){
 				var obj = document.getElementById('surrender'+index);
 				if(obj.checked == true){
-				selectedRowsId.push(document.getElementsByName("instrumentHeaderId")[index].value+";"+
-							newChqNoObj[index].value+";"+
-							newChqDateObj[index].value+";"+";"+
+				selectedRowsId.push(document.getElementsByName("instrumentHeaderId")[index].value+"~"+
+							newChqNoObj[index].value+"~"+
+							newChqDateObj[index].value+"~"+"~"+
 							//newSerialNoObj[index].value+";"+
-							newSurrendarReasonsObj[index].value				
+							newSurrendarReasonsObj[index].value+";"				
 							);
 					
 					
