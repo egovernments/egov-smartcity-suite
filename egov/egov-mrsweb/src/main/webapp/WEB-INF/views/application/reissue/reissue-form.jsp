@@ -51,12 +51,12 @@
 		<div class="text-right error-msg" style="font-size:14px;"></div>
 			<c:set value="/mrs/reissue/create" var="actionUrl" />
 			<c:if test="${reIssue.status.code == 'REJECTED'}">
-				 <c:set value="/mrs/reissue/workflow?id=${reIssue.id}" var="actionUrl" />
+				 <c:set value="/mrs/reissue/workflow" var="actionUrl" />
 			</c:if>
 			<form:form role="form" action="${actionUrl}"
 				modelAttribute="reIssue" id="form-reissue"
 				cssClass="form-horizontal form-groups-bordered"
-				enctype="multipart/form-data">
+				enctype="multipart/form-data" method="POST">
 				
 				<input type="hidden" name="reIssue" id="reIssue" value="${reIssue.id}" /> 
 				<input type="hidden" id="reIssueId" value="${reIssue.id}" />

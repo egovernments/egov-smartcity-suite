@@ -176,8 +176,7 @@ public class NewReIssueController extends GenericWorkFlowController {
     }
 
     @RequestMapping(value = "/workflow", method = RequestMethod.POST)
-    public String handleWorkflowAction(@RequestParam final Long id,
-            @ModelAttribute ReIssue reIssue,
+    public String handleWorkflowAction(@ModelAttribute ReIssue reIssue,
             @ModelAttribute final WorkflowContainer workflowContainer,
             final Model model,
             final HttpServletRequest request,
@@ -189,7 +188,7 @@ public class NewReIssueController extends GenericWorkFlowController {
         obtainWorkflowParameters(workflowContainer, request);
         switch (workflowContainer.getWorkFlowAction()) {
         case "Forward":
-            reIssue = reIssueService.forwardReIssue(id, reIssue, workflowContainer);
+            reIssue = reIssueService.forwardReIssue(reIssue.getId(), reIssue, workflowContainer);
             break;
         case "Cancel ReIssue":
             reIssue = reIssueService.rejectReIssue(reIssue, workflowContainer,request);

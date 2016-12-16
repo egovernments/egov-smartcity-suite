@@ -140,14 +140,12 @@ $(".btn-primary").click(function() {
 			  }
 			  else {
 				  validateWorkFlowApprover(action);
-				  document.forms[0].submit(); 
+				  //document.forms[0].submit(); 
 			  }
 		 } else {
 		     return false;
 		 }
-	}
-	
-	 if(action == 'Cancel ReIssue') { 
+	}else if(action == 'Cancel ReIssue') { 
 		 $('#Cancel Registration').attr('formnovalidate','true');
 		 var r = confirm("Do You Really Want to Cancel The ReIssue!");
 		 if (r == true) {
@@ -159,12 +157,14 @@ $(".btn-primary").click(function() {
 			  }
 			  else {
 				  validateWorkFlowApprover(action);
-				  document.forms[0].submit();
+				  //document.forms[0].submit();
 			  }
 		 } else {
 		     return false;
 		 }
-	} 
+	} else{
+		validateWorkFlowApprover(action);
+	}
 	
-	validateWorkFlowApprover(action);  
+	  
 });
