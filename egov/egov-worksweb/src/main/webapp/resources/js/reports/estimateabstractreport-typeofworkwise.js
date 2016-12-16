@@ -482,7 +482,7 @@ $(document).ready(function(){
 								selected="selected";
 							}
 						}
-					     $('#subTypeOfWork').append($('<option '+ selected +'>').text(val.description).attr('value', val.id));
+					     $('#subTypeOfWork').append($('<option '+ selected +'>').text(val.name).attr('value', val.id));
 					});
 				});
 		}

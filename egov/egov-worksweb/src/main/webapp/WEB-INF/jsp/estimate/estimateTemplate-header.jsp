@@ -183,14 +183,14 @@ for(i=0;i<document.estimateTemplateForm.elements.length;i++){
 			    <s:text name="estimate.template.search.type" /> <span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="workType" id="workType" cssClass="form-control" list="dropdownData.parentCategoryList" listKey="id" listValue="description" value="%{workType.id}" onChange="setupSubTypes(this);"/>
+				<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="workType" id="workType" cssClass="form-control" list="dropdownData.parentCategoryList" listKey="id" listValue="name" value="%{workType.id}" onChange="setupSubTypes(this);"/>
             	<egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']" dropdownId='subType' url='estimate/ajaxEstimate-subcategories.action' selectedValue="%{subType.id}"/>
 			</div>
 			<label class="col-sm-2 control-label text-right">
 			    <s:text name="estimate.template.search.subtype" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="subType" value="%{subType.id}" id="subType" cssClass="form-control" list="dropdownData.categoryList" listKey="id" listValue="description"/>
+				<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="subType" value="%{subType.id}" id="subType" cssClass="form-control" list="dropdownData.categoryList" listKey="id" listValue="name"/>
 			</div>
 		</div>
 	</div>

@@ -114,7 +114,7 @@ function bodyOnLoad() {
 					headerValue="%{getText('estimate.default.select')}" name="typeOfWork"
 					id="workType" cssClass="form-control"
 					list="dropdownData.parentCategoryList" listKey="id"
-					listValue="description" value="%{typeOfWork.id}"
+					listValue="name" value="%{typeOfWork.id}"
 					onChange="setupSubTypes(this);" />
 				<egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']"
 					dropdownId='subType'
@@ -129,7 +129,7 @@ function bodyOnLoad() {
 					headerValue="%{getText('estimate.default.select')}" name="subTypeOfWork"
 					value="%{subType.id}" id="subType" cssClass="form-control"
 					list="dropdownData.categoryList" listKey="id"
-					listValue="description" />
+					listValue="name" />
 			</div>
 		</div>
 				

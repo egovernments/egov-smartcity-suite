@@ -60,16 +60,18 @@ public class LetterOfAcceptanceForMilestoneJSONAdaptor implements JsonSerializer
         if (workOrderEstimate != null)
             if (workOrderEstimate.getWorkOrder().getEstimateNumber() != null) {
                 jsonObject.addProperty("estimateNumber", workOrderEstimate.getEstimate().getEstimateNumber());
-                jsonObject.addProperty("typeOfWork", workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate()
-                        .getTypeOfWork().getDescription());
-                if (workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().getSubTypeOfWork() != null)
+                jsonObject.addProperty("typeOfWork", workOrderEstimate.getEstimate().getLineEstimateDetails()
+                        .getLineEstimate().getTypeOfWork().getName());
+                if (workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate()
+                        .getSubTypeOfWork() != null)
                     jsonObject.addProperty("subTypeOfWork", workOrderEstimate.getEstimate().getLineEstimateDetails()
-                            .getLineEstimate().getSubTypeOfWork().getDescription());
+                            .getLineEstimate().getSubTypeOfWork().getName());
                 else
                     jsonObject.addProperty("subTypeOfWork", "");
-                jsonObject.addProperty("estimateDate", workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate()
-                        .getLineEstimateDate().toString());
-                jsonObject.addProperty("nameOfTheWork", workOrderEstimate.getEstimate().getLineEstimateDetails().getNameOfWork());
+                jsonObject.addProperty("estimateDate", workOrderEstimate.getEstimate().getLineEstimateDetails()
+                        .getLineEstimate().getLineEstimateDate().toString());
+                jsonObject.addProperty("nameOfTheWork",
+                        workOrderEstimate.getEstimate().getLineEstimateDetails().getNameOfWork());
                 jsonObject.addProperty("workIdentificationNumber",
                         workOrderEstimate.getEstimate().getLineEstimateDetails().getProjectCode().getCode());
                 jsonObject.addProperty("workOrderNumber", workOrderEstimate.getWorkOrder().getWorkOrderNumber());

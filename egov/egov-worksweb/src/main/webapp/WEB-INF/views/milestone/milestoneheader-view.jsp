@@ -89,7 +89,7 @@
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A"
-							value="${workOrderEstimate.estimate.parentCategory.description}"></c:out>
+							value="${workOrderEstimate.estimate.parentCategory.name}"></c:out>
 							<input type="hidden" id="typeOfWork" value="${workOrderEstimate.estimate.parentCategory.id}"/>
 					</div>
 					<div class="col-xs-3 add-margin">
@@ -97,7 +97,7 @@
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A"
-							value="${workOrderEstimate.estimate.category.description}"></c:out>
+							value="${workOrderEstimate.estimate.category.name}"></c:out>
 						<input type="hidden" id="subTypeOfWork" value="${workOrderEstimate.estimate.category.id}"/>
 					</div>
 				</div>

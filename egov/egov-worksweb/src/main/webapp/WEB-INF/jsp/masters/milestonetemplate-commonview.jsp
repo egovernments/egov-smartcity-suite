@@ -76,13 +76,13 @@
 						<s:text name="milestone.template.type" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<s:property value="%{typeOfWork.description}" />
+						<s:property value="%{typeOfWork.name}" />
 					</div>
 					<div class="col-xs-3 add-margin">
 						<s:text name="milestone.template.subtype" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<s:property value="%{subTypeOfWork.description}" />
+						<s:property value="%{subTypeOfWork.name}" />
 					</div>
 				</div>
 			</div>

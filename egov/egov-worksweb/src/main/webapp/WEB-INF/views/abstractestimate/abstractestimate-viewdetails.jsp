@@ -144,7 +144,7 @@
 		</div> 
 	
 		<div class="col-xs-3 add-margin view-content">
-			<c:out value="${abstractEstimate.parentCategory.description}"></c:out>
+			<c:out value="${abstractEstimate.parentCategory.name}"></c:out>
 		</div>
 		<div class="col-xs-3 add-margin">
 			<spring:message code="lbl.subtypeofwork" />
@@ -153,7 +153,7 @@
 		<div class="col-xs-3 add-margin view-content">
 			<c:choose>
 					<c:when test="${abstractEstimate.category != null}">
-						<c:out value="${abstractEstimate.category.description}"></c:out>
+						<c:out value="${abstractEstimate.category.name}"></c:out>
 					</c:when>
 					<c:otherwise>
 						<c:out default="N/A" value="N/A"></c:out>

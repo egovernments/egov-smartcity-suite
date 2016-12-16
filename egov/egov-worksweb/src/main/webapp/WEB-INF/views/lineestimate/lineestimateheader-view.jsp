@@ -165,7 +165,7 @@
 						<spring:message code="lbl.typeofwork" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${lineEstimate.typeOfWork.description}" />
+						<c:out default="N/A" value="${lineEstimate.typeOfWork.name}" />
 					</div>
 				</div>
 				<div class="row add-border">
@@ -173,7 +173,7 @@
 						<spring:message code="lbl.subtypeofwork" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${lineEstimate.subTypeOfWork.description}" />
+						<c:out default="N/A" value="${lineEstimate.subTypeOfWork.name}" />
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.modeofallotment" />

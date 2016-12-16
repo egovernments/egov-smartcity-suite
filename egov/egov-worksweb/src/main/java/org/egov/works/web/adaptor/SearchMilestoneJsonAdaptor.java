@@ -53,12 +53,12 @@ import com.google.gson.JsonSerializer;
 public class SearchMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
 
     @Override
-    public JsonElement serialize(final Milestone milestone, final Type type,
-            final JsonSerializationContext jsc) {
+    public JsonElement serialize(final Milestone milestone, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (milestone != null) {
             if (milestone.getWorkOrderEstimate().getWorkOrder().getEstimateNumber() != null) {
-                jsonObject.addProperty("estimateNumber", milestone.getWorkOrderEstimate().getEstimate().getEstimateNumber());
+                jsonObject.addProperty("estimateNumber",
+                        milestone.getWorkOrderEstimate().getEstimate().getEstimateNumber());
                 jsonObject.addProperty("workIdentificationNumber",
                         milestone.getWorkOrderEstimate().getEstimate().getProjectCode().getCode());
                 jsonObject.addProperty("nameOfWork", milestone.getWorkOrderEstimate().getEstimate().getName());
@@ -66,13 +66,13 @@ public class SearchMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
                         milestone.getWorkOrderEstimate().getEstimate().getExecutingDepartment().getName());
                 if (milestone.getWorkOrderEstimate().getEstimate().getParentCategory() != null)
                     jsonObject.addProperty("typeOfWork",
-                            milestone.getWorkOrderEstimate().getEstimate().getParentCategory().getDescription());
+                            milestone.getWorkOrderEstimate().getEstimate().getParentCategory().getName());
                 if (milestone.getWorkOrderEstimate().getEstimate().getCategory() != null)
                     jsonObject.addProperty("subTypeOfWork",
-                            milestone.getWorkOrderEstimate().getEstimate().getCategory().getDescription());
+                            milestone.getWorkOrderEstimate().getEstimate().getCategory().getName());
                 if (milestone.getWorkOrderEstimate().getEstimate().getLineEstimateDetails() != null)
-                    jsonObject.addProperty("lineEstimateId",
-                            milestone.getWorkOrderEstimate().getEstimate().getLineEstimateDetails().getLineEstimate().getId());
+                    jsonObject.addProperty("lineEstimateId", milestone.getWorkOrderEstimate().getEstimate()
+                            .getLineEstimateDetails().getLineEstimate().getId());
             } else {
                 jsonObject.addProperty("estimateNumber", "");
                 jsonObject.addProperty("workIdentificationNumber", "");
@@ -83,8 +83,10 @@ public class SearchMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
                 jsonObject.addProperty("lineEstimateId", "");
             }
             if (milestone.getWorkOrderEstimate().getWorkOrder() != null) {
-                jsonObject.addProperty("agreementAmount", milestone.getWorkOrderEstimate().getWorkOrder().getWorkOrderAmount());
-                jsonObject.addProperty("workOrderNumber", milestone.getWorkOrderEstimate().getWorkOrder().getWorkOrderNumber());
+                jsonObject.addProperty("agreementAmount",
+                        milestone.getWorkOrderEstimate().getWorkOrder().getWorkOrderAmount());
+                jsonObject.addProperty("workOrderNumber",
+                        milestone.getWorkOrderEstimate().getWorkOrder().getWorkOrderNumber());
                 jsonObject.addProperty("workOrderId", milestone.getWorkOrderEstimate().getWorkOrder().getId());
             } else {
                 jsonObject.addProperty("agreementAmount", "");

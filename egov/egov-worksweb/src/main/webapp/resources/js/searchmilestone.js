@@ -56,7 +56,7 @@ $(document).ready(function(){
 					$('#subTypeOfWork').empty();
 					$('#subTypeOfWork').append($("<option value=''>Select from below</option>"));
 					$.each(value, function(index, val) {
-					     $('#subTypeOfWork').append($('<option>').text(val.description).attr('value', val.id));
+					     $('#subTypeOfWork').append($('<option>').text(val.name).attr('value', val.id));
 					});
 				});
 			}

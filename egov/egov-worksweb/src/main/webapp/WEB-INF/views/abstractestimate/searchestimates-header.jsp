@@ -75,10 +75,10 @@
 					<c:forEach items="${typeOfWork}" var="work">
 						<c:choose>
 							<c:when test="${typeOfWorkId == work.id }">
-								<option value="${work.id }" selected="selected">${work.description }</option>
+								<option value="${work.id }" selected="selected">${work.name }</option>
 							</c:when>
 							<c:otherwise>
-								<option value="${work.id }">${work.description }</option>
+								<option value="${work.id }">${work.name }</option>
 							</c:otherwise>
 						</c:choose>
 					</c:forEach>

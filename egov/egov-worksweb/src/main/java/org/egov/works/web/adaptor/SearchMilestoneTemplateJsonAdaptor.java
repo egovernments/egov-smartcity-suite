@@ -53,7 +53,8 @@ import com.google.gson.JsonSerializer;
 @Component
 public class SearchMilestoneTemplateJsonAdaptor implements JsonSerializer<MilestoneTemplate> {
     @Override
-    public JsonElement serialize(final MilestoneTemplate milestoneTemplate, final Type type, final JsonSerializationContext jsc) {
+    public JsonElement serialize(final MilestoneTemplate milestoneTemplate, final Type type,
+            final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (milestoneTemplate != null) {
             if (milestoneTemplate.getCode() != null)
@@ -61,11 +62,11 @@ public class SearchMilestoneTemplateJsonAdaptor implements JsonSerializer<Milest
             else
                 jsonObject.addProperty("code", "");
             if (milestoneTemplate.getTypeOfWork() != null)
-                jsonObject.addProperty("typeOfWork", milestoneTemplate.getTypeOfWork().getDescription());
+                jsonObject.addProperty("typeOfWork", milestoneTemplate.getTypeOfWork().getName());
             else
                 jsonObject.addProperty("typeOfWork", "");
             if (milestoneTemplate.getSubTypeOfWork() != null)
-                jsonObject.addProperty("subTypeOfWork", milestoneTemplate.getSubTypeOfWork().getDescription());
+                jsonObject.addProperty("subTypeOfWork", milestoneTemplate.getSubTypeOfWork().getName());
             else
                 jsonObject.addProperty("subTypeOfWork", "");
 

@@ -118,16 +118,12 @@ public class EstimateAbstractReportPDFController {
     public @ResponseBody ResponseEntity<byte[]> generatePDFDepartmentWise(final HttpServletRequest request,
             @RequestParam("adminSanctionFromDate") final Date adminSanctionFromDate,
             @RequestParam("adminSanctionToDate") final Date adminSanctionToDate,
-            @RequestParam("department") final Long department,
-            @RequestParam("scheme") final Integer scheme,
-            @RequestParam("subScheme") final Integer subScheme,
-            @RequestParam("workCategory") final String workCategory,
-            @RequestParam("beneficiary") final String beneficiary,
-            @RequestParam("workStatus") final String workStatus,
+            @RequestParam("department") final Long department, @RequestParam("scheme") final Integer scheme,
+            @RequestParam("subScheme") final Integer subScheme, @RequestParam("workCategory") final String workCategory,
+            @RequestParam("beneficiary") final String beneficiary, @RequestParam("workStatus") final String workStatus,
             @RequestParam("natureOfWork") final Long natureOfWork,
             @RequestParam("spillOverFlag") final boolean spillOverFlag,
-            @RequestParam("contentType") final String contentType,
-            final HttpSession session) throws IOException {
+            @RequestParam("contentType") final String contentType, final HttpSession session) throws IOException {
         final EstimateAbstractReport searchRequest = new EstimateAbstractReport();
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         searchRequest.setAdminSanctionFromDate(adminSanctionFromDate);
@@ -146,20 +142,20 @@ public class EstimateAbstractReportPDFController {
 
         String queryParameters = messageSource.getMessage("msg.estimateabstractreport.by.departmentwise", null, null);
         if (spillOverFlag)
-            queryParameters = messageSource.getMessage("msg.estimateabstractreport.by.departmentwise.for.spillover", null, null);
-        if (adminSanctionFromDate != null
-                || adminSanctionToDate != null
-                || department != null)
+            queryParameters = messageSource.getMessage("msg.estimateabstractreport.by.departmentwise.for.spillover",
+                    null, null);
+        if (adminSanctionFromDate != null || adminSanctionToDate != null || department != null)
             queryParameters += " for ";
 
         if (adminSanctionFromDate != null && adminSanctionToDate != null)
-            queryParameters += messageSource.getMessage("msg.daterange", null, null) + sdf.format(adminSanctionFromDate) + " - "
-                    + sdf.format(adminSanctionToDate)
-                    + ", ";
+            queryParameters += messageSource.getMessage("msg.daterange", null, null) + sdf.format(adminSanctionFromDate)
+                    + " - " + sdf.format(adminSanctionToDate) + ", ";
         if (adminSanctionFromDate != null && adminSanctionToDate == null)
-            queryParameters += messageSource.getMessage("msg.adminsanctionfromdate", null, null) + adminSanctionFromDate + ", ";
+            queryParameters += messageSource.getMessage("msg.adminsanctionfromdate", null, null) + adminSanctionFromDate
+                    + ", ";
         if (adminSanctionToDate != null && adminSanctionFromDate == null)
-            queryParameters += messageSource.getMessage("msg.adminsanctiontodate", null, null) + adminSanctionToDate + ", ";
+            queryParameters += messageSource.getMessage("msg.adminsanctiontodate", null, null) + adminSanctionToDate
+                    + ", ";
         if (department != null)
             queryParameters += messageSource.getMessage("msg.department", null, null)
                     + departmentService.getDepartmentById(department).getName() + ", ";
@@ -191,8 +187,8 @@ public class EstimateAbstractReportPDFController {
         return generateReportDepartmentWise(estimateAbstractReports, request, session, contentType, searchRequest);
     }
 
-    private ResponseEntity<byte[]> generateReportDepartmentWise(final List<EstimateAbstractReport> estimateAbstractReports,
-            final HttpServletRequest request,
+    private ResponseEntity<byte[]> generateReportDepartmentWise(
+            final List<EstimateAbstractReport> estimateAbstractReports, final HttpServletRequest request,
             final HttpSession session, final String contentType, final EstimateAbstractReport searchRequest) {
         final List<EstimateAbstractReport> estimateAbstractReportPdfList = new ArrayList<EstimateAbstractReport>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
@@ -230,8 +226,9 @@ public class EstimateAbstractReportPDFController {
                     pdf.setAeAdminSanctionedAmountInCrores("NA");
 
                 if (eadwr.getWorkValueOfAdminSanctionedAEInCrores() != null)
-                    pdf.setWorkValueOfAdminSanctionedAEInCrores(new BigDecimal(eadwr.getWorkValueOfAdminSanctionedAEInCrores())
-                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                    pdf.setWorkValueOfAdminSanctionedAEInCrores(
+                            new BigDecimal(eadwr.getWorkValueOfAdminSanctionedAEInCrores())
+                                    .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
                     pdf.setWorkValueOfAdminSanctionedAEInCrores("NA");
 
@@ -320,11 +317,13 @@ public class EstimateAbstractReportPDFController {
                 estimateAbstractReportPdfList.add(pdf);
             }
 
-        reportParams.put("heading", messageSource.getMessage("msg.estimateabstractreport.by.departmentwise", null, null));
+        reportParams.put("heading",
+                messageSource.getMessage("msg.estimateabstractreport.by.departmentwise", null, null));
         reportParams.put("reportRunDate", formatter.format(new Date()));
         reportParams.put("dataRunDate", dataRunDate);
 
-        reportInput = new ReportRequest(messageSource.getMessage("msg.estimateabstractreportbydepartmentwisepdf", null, null),
+        reportInput = new ReportRequest(
+                messageSource.getMessage("msg.estimateabstractreportbydepartmentwisepdf", null, null),
                 estimateAbstractReportPdfList, reportParams);
 
         final HttpHeaders headers = new HttpHeaders();
@@ -346,18 +345,14 @@ public class EstimateAbstractReportPDFController {
     public @ResponseBody ResponseEntity<byte[]> generatePDFTypeOfWorkWise(final HttpServletRequest request,
             @RequestParam("adminSanctionFromDate") final Date adminSanctionFromDate,
             @RequestParam("adminSanctionToDate") final Date adminSanctionToDate,
-            @RequestParam("typeOfWork") final Long typeOfWork,
-            @RequestParam("subTypeOfWork") final Long subTypeOfWork,
+            @RequestParam("typeOfWork") final Long typeOfWork, @RequestParam("subTypeOfWork") final Long subTypeOfWork,
             @RequestParam("departments") final Set<Department> departments,
-            @RequestParam("scheme") final Integer scheme,
-            @RequestParam("subScheme") final Integer subScheme,
+            @RequestParam("scheme") final Integer scheme, @RequestParam("subScheme") final Integer subScheme,
             @RequestParam("workCategory") final String workCategory,
             @RequestParam("beneficiary") final String beneficiary,
-            @RequestParam("natureOfWork") final Long natureOfWork,
-            @RequestParam("workStatus") final String workStatus,
+            @RequestParam("natureOfWork") final Long natureOfWork, @RequestParam("workStatus") final String workStatus,
             @RequestParam("spillOverFlag") final boolean spillOverFlag,
-            @RequestParam("contentType") final String contentType,
-            final HttpSession session) throws IOException {
+            @RequestParam("contentType") final String contentType, final HttpSession session) throws IOException {
         final EstimateAbstractReport searchRequest = new EstimateAbstractReport();
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         searchRequest.setAdminSanctionFromDate(adminSanctionFromDate);
@@ -378,27 +373,28 @@ public class EstimateAbstractReportPDFController {
 
         String queryParameters = messageSource.getMessage("msg.estimateabstractreport.by.typeofworkwise", null, null);
         if (spillOverFlag)
-            queryParameters = messageSource.getMessage("msg.estimateabstractreport.by.typeofworkwise.for.spillover", null, null);
-        if (adminSanctionFromDate != null
-                || adminSanctionToDate != null)
+            queryParameters = messageSource.getMessage("msg.estimateabstractreport.by.typeofworkwise.for.spillover",
+                    null, null);
+        if (adminSanctionFromDate != null || adminSanctionToDate != null)
             queryParameters += " for ";
 
         if (adminSanctionFromDate != null && adminSanctionToDate != null)
-            queryParameters += messageSource.getMessage("msg.daterange", null, null) + sdf.format(adminSanctionFromDate) + " - "
-                    + sdf.format(adminSanctionToDate)
-                    + ", ";
+            queryParameters += messageSource.getMessage("msg.daterange", null, null) + sdf.format(adminSanctionFromDate)
+                    + " - " + sdf.format(adminSanctionToDate) + ", ";
         if (adminSanctionFromDate != null && adminSanctionToDate == null)
-            queryParameters += messageSource.getMessage("msg.adminsanctionfromdate", null, null) + adminSanctionFromDate + ", ";
+            queryParameters += messageSource.getMessage("msg.adminsanctionfromdate", null, null) + adminSanctionFromDate
+                    + ", ";
         if (adminSanctionToDate != null && adminSanctionFromDate == null)
-            queryParameters += messageSource.getMessage("msg.adminsanctiontodate", null, null) + adminSanctionToDate + ", ";
+            queryParameters += messageSource.getMessage("msg.adminsanctiontodate", null, null) + adminSanctionToDate
+                    + ", ";
 
         if (typeOfWork != null)
             queryParameters += messageSource.getMessage("msg.typeofwork", null, null)
-                    + egwTypeOfWorkHibernateDAO.getTypeOfWorkById(typeOfWork).getDescription() + ", ";
+                    + egwTypeOfWorkHibernateDAO.getTypeOfWorkById(typeOfWork).getName() + ", ";
 
         if (subTypeOfWork != null)
             queryParameters += messageSource.getMessage("msg.subtypeofwork", null, null)
-                    + egwTypeOfWorkHibernateDAO.getTypeOfWorkById(typeOfWork).getDescription() + ", ";
+                    + egwTypeOfWorkHibernateDAO.getTypeOfWorkById(typeOfWork).getName() + ", ";
 
         if (departments != null && !departments.toString().equalsIgnoreCase("[null]")
                 && !departments.toString().equalsIgnoreCase("[]")) {
@@ -418,7 +414,8 @@ public class EstimateAbstractReportPDFController {
                     + subSchemeService.findById(subScheme, false).getName() + ", ";
 
         if (workCategory != null)
-            queryParameters += messageSource.getMessage("msg.workcategory", null, null) + workCategory.replace('_', ' ') + ", ";
+            queryParameters += messageSource.getMessage("msg.workcategory", null, null) + workCategory.replace('_', ' ')
+                    + ", ";
 
         if (beneficiary != null)
             queryParameters += messageSource.getMessage("msg.beneficiary", null, null)
@@ -436,8 +433,8 @@ public class EstimateAbstractReportPDFController {
         return generateReportTypeOfWorkWise(estimateAbstractReports, request, session, contentType, searchRequest);
     }
 
-    private ResponseEntity<byte[]> generateReportTypeOfWorkWise(final List<EstimateAbstractReport> estimateAbstractReports,
-            final HttpServletRequest request,
+    private ResponseEntity<byte[]> generateReportTypeOfWorkWise(
+            final List<EstimateAbstractReport> estimateAbstractReports, final HttpServletRequest request,
             final HttpSession session, final String contentType, final EstimateAbstractReport searchRequest) {
         final List<EstimateAbstractReport> estimateAbstractReportPdfList = new ArrayList<EstimateAbstractReport>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
@@ -485,8 +482,9 @@ public class EstimateAbstractReportPDFController {
                     pdf.setAeAdminSanctionedAmountInCrores("NA");
 
                 if (eadwr.getWorkValueOfAdminSanctionedAEInCrores() != null)
-                    pdf.setWorkValueOfAdminSanctionedAEInCrores(new BigDecimal(eadwr.getWorkValueOfAdminSanctionedAEInCrores())
-                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                    pdf.setWorkValueOfAdminSanctionedAEInCrores(
+                            new BigDecimal(eadwr.getWorkValueOfAdminSanctionedAEInCrores())
+                                    .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
                     pdf.setWorkValueOfAdminSanctionedAEInCrores("NA");
                 if (eadwr.getTechnicalSanctionedEstimates() != null)
@@ -574,19 +572,20 @@ public class EstimateAbstractReportPDFController {
                 estimateAbstractReportPdfList.add(pdf);
             }
 
-        reportParams.put("heading", messageSource.getMessage("msg.estimateabstractreport.by.typeofworkwise", null, null));
+        reportParams.put("heading",
+                messageSource.getMessage("msg.estimateabstractreport.by.typeofworkwise", null, null));
         reportParams.put("reportRunDate", formatter.format(new Date()));
         reportParams.put("dataRunDate", dataRunDate);
-        if (searchRequest.getDepartments() != null && !searchRequest.getDepartments().toString().equalsIgnoreCase("[null]")
+        if (searchRequest.getDepartments() != null
+                && !searchRequest.getDepartments().toString().equalsIgnoreCase("[null]")
                 && !searchRequest.getDepartments().toString().equalsIgnoreCase("[]"))
-            reportInput = new ReportRequest(messageSource.getMessage("msg.estimateabstractreportbytypeofworkwisewithdeptpdf",
-                    null, null), estimateAbstractReportPdfList,
-                    reportParams);
+            reportInput = new ReportRequest(
+                    messageSource.getMessage("msg.estimateabstractreportbytypeofworkwisewithdeptpdf", null, null),
+                    estimateAbstractReportPdfList, reportParams);
         else
             reportInput = new ReportRequest(
                     messageSource.getMessage("msg.estimateabstractreportbytypeofworkwisepdf", null, null),
-                    estimateAbstractReportPdfList,
-                    reportParams);
+                    estimateAbstractReportPdfList, reportParams);
 
         final HttpHeaders headers = new HttpHeaders();
         if (contentType.equalsIgnoreCase("pdf")) {

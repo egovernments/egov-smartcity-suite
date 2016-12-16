@@ -63,7 +63,7 @@
 						<spring:message code="lbl.select" />
 					</form:option>
 					<form:options items="${typeOfWork}" itemValue="id"
-						itemLabel="description" />
+						itemLabel="name" />
 				</form:select>
 				</div>
 	
@@ -77,7 +77,7 @@
 						<spring:message code="lbl.select" />
 					</form:option>
 					<form:options items="${typeOfWork}" itemValue="id"
-						itemLabel="description" />
+						itemLabel="name" />
 				</form:select>
 			</div>
 		</div>

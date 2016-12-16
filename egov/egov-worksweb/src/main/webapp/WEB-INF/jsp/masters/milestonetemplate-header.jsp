@@ -110,7 +110,7 @@
 					headerValue="%{getText('estimate.default.select')}"
 					name="typeOfWork" id="typeOfWork" cssClass="form-control"
 					list="dropdownData.parentCategoryList" listKey="id"
-					listValue="description" value="%{typeOfWork.id}"
+					listValue="name" value="%{typeOfWork.id}"
 					onChange="setupSubTypes(this);"/>
 				<egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']"
 					dropdownId='subType'
@@ -125,7 +125,7 @@
 					headerValue="%{getText('estimate.default.select')}"
 					name="subTypeOfWork" value="%{subTypeOfWork.id}" id="subType"
 					cssClass="form-control" list="dropdownData.categoryList"
-					listKey="id" listValue="description" />
+					listKey="id" listValue="name" />
 			</div>
 		</div>
 	</div>
