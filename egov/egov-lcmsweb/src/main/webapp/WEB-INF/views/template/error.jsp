@@ -52,10 +52,10 @@
 		
 		<title>eGov Urban Portal</title>
 		
-		<link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
-	    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+		<link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png?rnd=${app_release_no}' context='/egi'/>" sizes="32x32">
+	    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css?rnd=${app_release_no}' context='/egi'/>">
 		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
-		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css?rnd=${app_release_no}' context='/egi'/>">
 		
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
