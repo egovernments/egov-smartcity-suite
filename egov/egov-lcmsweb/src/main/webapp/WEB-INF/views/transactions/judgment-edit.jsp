@@ -46,7 +46,7 @@
 	id="judgmentform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 
-	<jsp:include page="../transactions/viewSummarizedCase.jsp" />
+	<jsp:include page="../transactions/view-summarizedcase.jsp" />
 	<%@ include file="judgment-form.jsp"%>
 	<input type="hidden" name="judgment" value="${judgment.id}" />
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />
@@ -68,9 +68,9 @@
 	</div>
 </form:form>
 <script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css?rnd=${app_release_no}' context='/egi'/>">
 <script type="text/javascript"
 	src="<cdn:url value='/resources/js/app/judgmentHelper.js?rnd=${app_release_no}'/>"></script>
 <script type="text/javascript"

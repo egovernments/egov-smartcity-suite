@@ -221,7 +221,7 @@ public class PropertyTaxElasticSearchIndexService {
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest)
                 .filter(QueryBuilders.matchQuery(IS_ACTIVE, true))
                 .filter(QueryBuilders.matchQuery(IS_EXEMPTED, false));
-        if(StringUtils.isNotBlank(collectionDetailsRequest.getPropertyType())){
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getPropertyType())) {
             if (collectionDetailsRequest.getPropertyType().equalsIgnoreCase(DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT))
                 boolQuery = boolQuery
                         .filter(QueryBuilders.termsQuery("propertyType", DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST));
@@ -343,6 +343,7 @@ public class PropertyTaxElasticSearchIndexService {
     public List<TaxPayerDetails> returnUlbWiseAggregationResults(CollectionDetailsRequest collectionDetailsRequest,
             String indexName, Boolean order, String orderingAggregationName, int size, boolean isBillCollectorWise) {
         List<TaxPayerDetails> taxPayers = new ArrayList<>();
+        Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest)
                 .filter(QueryBuilders.matchQuery(IS_ACTIVE, true))
                 .filter(QueryBuilders.matchQuery(IS_EXEMPTED, false));
@@ -387,6 +388,10 @@ public class PropertyTaxElasticSearchIndexService {
             }
         });
 
+        //Fetch ward wise Bill Collector details for ward based grouping
+        if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+            wardWiseBillCollectors = collectionIndexElasticSearchService.getWardWiseBillCollectors(collectionDetailsRequest);
+
         Long timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken by ulbWiseAggregations is : " + timeTaken + MILLISECS);
 
@@ -403,9 +408,17 @@ public class PropertyTaxElasticSearchIndexService {
             taxDetail.setDistrictName(collectionDetailsRequest.getDistrictName());
             taxDetail.setUlbGrade(collectionDetailsRequest.getUlbGrade());
             String fieldName = String.valueOf(entry.getKey());
-            if (groupingField.equals(REVENUE_WARD))
+            // If the grouping is based on ward, set the Bill Collector name and number
+            if (groupingField.equals(REVENUE_WARD)) {
                 taxDetail.setWardName(fieldName);
-            else
+                if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(collectionDetailsRequest.getType())
+                        && !wardWiseBillCollectors.isEmpty()) {
+                    taxDetail.setBillCollector(wardWiseBillCollectors.get(fieldName) == null ? StringUtils.EMPTY
+                            : wardWiseBillCollectors.get(fieldName).getBillCollector());
+                    taxDetail.setMobileNumber(wardWiseBillCollectors.get(fieldName) == null ? StringUtils.EMPTY
+                            : wardWiseBillCollectors.get(fieldName).getMobileNumber());
+                }
+            } else
                 taxDetail.setUlbName(fieldName);
             // Proportional Demand = (totalDemand/12)*noOfmonths
             int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;

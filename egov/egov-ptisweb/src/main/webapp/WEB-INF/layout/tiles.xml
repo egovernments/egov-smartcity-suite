@@ -131,6 +131,16 @@
     	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyRemission-form.jsp"/>
     </definition>
     
+    <definition name="vacancy-remission-spcl-notice" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.vacancyremission" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancy-remission-spcl-notice.jsp"/>
+    </definition>
+    
+    <definition name="vacancyremission-dig-sign" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.vacancyremission" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyremission-dig-sign.jsp"/>
+    </definition>
+    
     <definition name="vacancyRemission-edit" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.vacancyremission" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyRemission-edit.jsp"/>

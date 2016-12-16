@@ -45,6 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 @JsonInclude(value = Include.NON_EMPTY)
 public class WaterTaxPayerDetails implements Comparable<WaterTaxPayerDetails> {
 
@@ -66,7 +67,7 @@ public class WaterTaxPayerDetails implements Comparable<WaterTaxPayerDetails> {
         return regionName;
     }
 
-    public void setRegionName(String regionName) {
+    public void setRegionName(final String regionName) {
         this.regionName = regionName;
     }
 
@@ -74,7 +75,7 @@ public class WaterTaxPayerDetails implements Comparable<WaterTaxPayerDetails> {
         return districtName;
     }
 
-    public void setDistrictName(String districtName) {
+    public void setDistrictName(final String districtName) {
         this.districtName = districtName;
     }
 
@@ -82,7 +83,7 @@ public class WaterTaxPayerDetails implements Comparable<WaterTaxPayerDetails> {
         return ulbGrade;
     }
 
-    public void setUlbGrade(String ulbGrade) {
+    public void setUlbGrade(final String ulbGrade) {
         this.ulbGrade = ulbGrade;
     }
 
@@ -90,7 +91,7 @@ public class WaterTaxPayerDetails implements Comparable<WaterTaxPayerDetails> {
         return ulbName;
     }
 
-    public void setUlbName(String ulbName) {
+    public void setUlbName(final String ulbName) {
         this.ulbName = ulbName;
     }
 
@@ -98,7 +99,7 @@ public class WaterTaxPayerDetails implements Comparable<WaterTaxPayerDetails> {
         return wardName;
     }
 
-    public void setWardName(String wardName) {
+    public void setWardName(final String wardName) {
         this.wardName = wardName;
     }
 
@@ -106,7 +107,7 @@ public class WaterTaxPayerDetails implements Comparable<WaterTaxPayerDetails> {
         return billCollector;
     }
 
-    public void setBillCollector(String billCollector) {
+    public void setBillCollector(final String billCollector) {
         this.billCollector = billCollector;
     }
 
@@ -114,27 +115,23 @@ public class WaterTaxPayerDetails implements Comparable<WaterTaxPayerDetails> {
         return totalDmd;
     }
 
-    public void setTotalDmd(BigDecimal totalDmd) {
+    public void setTotalDmd(final BigDecimal totalDmd) {
         this.totalDmd = totalDmd;
     }
-
-   
 
     public BigDecimal getAchievement() {
         return achievement;
     }
 
-    public void setAchievement(BigDecimal achievement) {
+    public void setAchievement(final BigDecimal achievement) {
         this.achievement = achievement;
     }
-
-   
 
     public BigDecimal getCurrentYearTillDateDmd() {
         return currentYearTillDateDmd;
     }
 
-    public void setCurrentYearTillDateDmd(BigDecimal currentYearTillDateDmd) {
+    public void setCurrentYearTillDateDmd(final BigDecimal currentYearTillDateDmd) {
         this.currentYearTillDateDmd = currentYearTillDateDmd;
     }
 
@@ -142,7 +139,7 @@ public class WaterTaxPayerDetails implements Comparable<WaterTaxPayerDetails> {
         return currentYearTillDateBalDmd;
     }
 
-    public void setCurrentYearTillDateBalDmd(BigDecimal currentYearTillDateBalDmd) {
+    public void setCurrentYearTillDateBalDmd(final BigDecimal currentYearTillDateBalDmd) {
         this.currentYearTillDateBalDmd = currentYearTillDateBalDmd;
     }
 
@@ -150,7 +147,7 @@ public class WaterTaxPayerDetails implements Comparable<WaterTaxPayerDetails> {
         return lastYearTillDateColl;
     }
 
-    public void setLastYearTillDateColl(BigDecimal lastYearTillDateColl) {
+    public void setLastYearTillDateColl(final BigDecimal lastYearTillDateColl) {
         this.lastYearTillDateColl = lastYearTillDateColl;
     }
 
@@ -158,13 +155,12 @@ public class WaterTaxPayerDetails implements Comparable<WaterTaxPayerDetails> {
         return lastYearVar;
     }
 
-    public void setLastYearVar(BigDecimal lastYearVar) {
+    public void setLastYearVar(final BigDecimal lastYearVar) {
         this.lastYearVar = lastYearVar;
     }
 
     @Override
-    public int compareTo(WaterTaxPayerDetails object) {
-        // TODO Auto-generated method stub
+    public int compareTo(final WaterTaxPayerDetails object) {
         return achievement.compareTo(object.getAchievement());
     }
 
@@ -172,7 +168,7 @@ public class WaterTaxPayerDetails implements Comparable<WaterTaxPayerDetails> {
         return currentYearTillDateColl;
     }
 
-    public void setCurrentYearTillDateColl(BigDecimal currentYearTillDateColl) {
+    public void setCurrentYearTillDateColl(final BigDecimal currentYearTillDateColl) {
         this.currentYearTillDateColl = currentYearTillDateColl;
     }
 
@@ -180,31 +176,31 @@ public class WaterTaxPayerDetails implements Comparable<WaterTaxPayerDetails> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((achievement == null) ? 0 : achievement.hashCode());
-        result = prime * result + ((billCollector == null) ? 0 : billCollector.hashCode());
-        result = prime * result + ((currentYearTillDateBalDmd == null) ? 0 : currentYearTillDateBalDmd.hashCode());
-        result = prime * result + ((currentYearTillDateColl == null) ? 0 : currentYearTillDateColl.hashCode());
-        result = prime * result + ((currentYearTillDateDmd == null) ? 0 : currentYearTillDateDmd.hashCode());
-        result = prime * result + ((districtName == null) ? 0 : districtName.hashCode());
-        result = prime * result + ((lastYearTillDateColl == null) ? 0 : lastYearTillDateColl.hashCode());
-        result = prime * result + ((lastYearVar == null) ? 0 : lastYearVar.hashCode());
-        result = prime * result + ((regionName == null) ? 0 : regionName.hashCode());
-        result = prime * result + ((totalDmd == null) ? 0 : totalDmd.hashCode());
-        result = prime * result + ((ulbGrade == null) ? 0 : ulbGrade.hashCode());
-        result = prime * result + ((ulbName == null) ? 0 : ulbName.hashCode());
-        result = prime * result + ((wardName == null) ? 0 : wardName.hashCode());
+        result = prime * result + (achievement == null ? 0 : achievement.hashCode());
+        result = prime * result + (billCollector == null ? 0 : billCollector.hashCode());
+        result = prime * result + (currentYearTillDateBalDmd == null ? 0 : currentYearTillDateBalDmd.hashCode());
+        result = prime * result + (currentYearTillDateColl == null ? 0 : currentYearTillDateColl.hashCode());
+        result = prime * result + (currentYearTillDateDmd == null ? 0 : currentYearTillDateDmd.hashCode());
+        result = prime * result + (districtName == null ? 0 : districtName.hashCode());
+        result = prime * result + (lastYearTillDateColl == null ? 0 : lastYearTillDateColl.hashCode());
+        result = prime * result + (lastYearVar == null ? 0 : lastYearVar.hashCode());
+        result = prime * result + (regionName == null ? 0 : regionName.hashCode());
+        result = prime * result + (totalDmd == null ? 0 : totalDmd.hashCode());
+        result = prime * result + (ulbGrade == null ? 0 : ulbGrade.hashCode());
+        result = prime * result + (ulbName == null ? 0 : ulbName.hashCode());
+        result = prime * result + (wardName == null ? 0 : wardName.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
             return false;
         if (getClass() != obj.getClass())
             return false;
-        WaterTaxPayerDetails other = (WaterTaxPayerDetails) obj;
+        final WaterTaxPayerDetails other = (WaterTaxPayerDetails) obj;
         if (achievement == null) {
             if (other.achievement != null)
                 return false;
@@ -272,9 +268,5 @@ public class WaterTaxPayerDetails implements Comparable<WaterTaxPayerDetails> {
             return false;
         return true;
     }
-
-    
-
-  
 
 }

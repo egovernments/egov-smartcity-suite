@@ -74,14 +74,14 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     List<WaterConnectionDetails> findAllByApplicationTypeAndConnectionStatusOrderByApplicationNumberAsc(
             ApplicationType applicationType, ConnectionStatus connectionStatus);
 
-    WaterConnectionDetails findByApplicationNumberOrConnection_ConsumerCodeAndConnectionStatus(String applicationNumber,
-            String consumerCode ,ConnectionStatus connectionStatus );
+    @Query("select wcd from WaterConnectionDetails wcd where wcd.applicationNumber =:applicationNumber or (wcd.connection.consumerCode =:consumerCode and wcd.connectionStatus =:connectionStatus)")
+    WaterConnectionDetails findConnectionDetailsByApplicationNumberOrConsumerCodeAndConnectionStatus(@Param("consumerCode") String consumerCode, @Param("applicationNumber") String applicationNumber , @Param("connectionStatus") ConnectionStatus connectionStatus );
     
-    WaterConnectionDetails findByApplicationNumberOrConnection_ConsumerCode(String applicationNumber,
-            String consumerCode  );
+    @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.consumerCode =:consumerCode or wcd.applicationNumber =:applicationNumber")
+    WaterConnectionDetails findConnectionDetailsByApplicationNumberOrConsumerCode(@Param("consumerCode") String consumerCode, @Param("applicationNumber") String applicationNumber );
 
-    WaterConnectionDetails findByConnection_ConsumerCodeAndConnectionStatus(String consumerCode,
-            ConnectionStatus connectionStatus);
+    @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.consumerCode =:consumerCode and wcd.connectionStatus =:connectionStatus")
+    WaterConnectionDetails findConnectionDetailsByConsumerCodeAndConnectionStatus(@Param("consumerCode") String consumerCode, @Param("connectionStatus") ConnectionStatus connectionStatus);
 
     WaterConnectionDetails findByConnection(WaterConnection waterConnection);
 
@@ -110,7 +110,7 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     WaterConnectionDetails findByConnection_PropertyIdentifierAndConnectionStatusAndConnection_ParentConnectionIsNull(
             String propertyIdentifier, ConnectionStatus connectionStatus);
     
-    WaterConnectionDetails findByConnection_ConsumerCodeAndConnectionStatusAndAndConnection_ParentConnectionIsNotNull(
+    WaterConnectionDetails findByConnection_ConsumerCodeAndConnectionStatusAndConnection_ParentConnectionIsNotNull(
             String consumercode, ConnectionStatus connectionStatus);
 
     @Query("select wcd.waterConnectionDetails from org.egov.wtms.application.entity.WaterDemandConnection wcd where wcd.demand=:demand")

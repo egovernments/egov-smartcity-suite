@@ -39,49 +39,36 @@
  */
 package org.egov.lcms.transactions.entity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.web.multipart.MultipartFile;
 
 @Entity
-@Table(name = "eglc_legalcase_document")
-@SequenceGenerator(name = LegalCaseDocuments.SEQ_LEGALCASEDOCUMENTS, sequenceName = LegalCaseDocuments.SEQ_LEGALCASEDOCUMENTS, allocationSize = 1)
-public class LegalCaseDocuments extends AbstractPersistable<Long> {
-    private static final long serialVersionUID = -4555037259173138199L;
-    public static final String SEQ_LEGALCASEDOCUMENTS = "SEQ_eglc_legalcase_document";
+@Table(name = "eglc_reportstatus")
+@SequenceGenerator(name = ReportStatus.SEQ_EGLC_REPORTSTATUS, sequenceName = ReportStatus.SEQ_EGLC_REPORTSTATUS, allocationSize = 1)
+public class ReportStatus extends AbstractAuditable {
+
+    private static final long serialVersionUID = 1517694643078084884L;
+    public static final String SEQ_EGLC_REPORTSTATUS = "SEQ_EGLC_REPORTSTATUS";
 
     @Id
-    @GeneratedValue(generator = SEQ_LEGALCASEDOCUMENTS, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_EGLC_REPORTSTATUS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "legalcase", nullable = false)
-    private LegalCase legalCase;
+    @Length(max = 25)
+    @Audited
+    private String code;
 
-    @NotNull
-    @Length(min = 3, max = 100)
-    private String documentName;
-
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "eglc_legalcase_filestore", joinColumns = @JoinColumn(name = "legalcaseDocId"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
-    private FileStoreMapper supportDocs;
-
-    private transient MultipartFile[] files;
+    @Length(max = 25)
+    @Audited
+    private String name;
 
     @Override
     public Long getId() {
@@ -93,36 +80,20 @@ public class LegalCaseDocuments extends AbstractPersistable<Long> {
         this.id = id;
     }
 
-    public FileStoreMapper getSupportDocs() {
-        return supportDocs;
+    public String getCode() {
+        return code;
     }
 
-    public void setSupportDocs(final FileStoreMapper supportDocs) {
-        this.supportDocs = supportDocs;
+    public void setCode(final String code) {
+        this.code = code;
     }
 
-    public MultipartFile[] getFiles() {
-        return files;
+    public String getName() {
+        return name;
     }
 
-    public void setFiles(final MultipartFile[] files) {
-        this.files = files;
-    }
-
-    public String getDocumentName() {
-        return documentName;
-    }
-
-    public void setDocumentName(final String documentName) {
-        this.documentName = documentName;
-    }
-
-    public LegalCase getLegalCase() {
-        return legalCase;
-    }
-
-    public void setLegalCase(final LegalCase legalCase) {
-        this.legalCase = legalCase;
+    public void setName(final String name) {
+        this.name = name;
     }
 
 }

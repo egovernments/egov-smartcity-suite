@@ -49,6 +49,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -56,6 +57,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -102,6 +105,10 @@ public class VacancyRemission extends StateAware {
     @OrderBy("id")
     @OneToMany(mappedBy = "vacancyRemission", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<VacancyRemissionApproval> vacancyRemissionApproval = new LinkedList<VacancyRemissionApproval>();
+    
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JoinTable(name = "egpt_vacancy_remission_docs", joinColumns = @JoinColumn(name = "vacancyremission"), inverseJoinColumns = @JoinColumn(name = "document"))
+    private List<Document> documents = new ArrayList<>(0);
     
     @Transient
     private String meesevaApplicationNumber;
@@ -202,6 +209,14 @@ public class VacancyRemission extends StateAware {
 
     public void setSource(Character source) {
         this.source = source;
+    }
+    
+    public List<Document> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<Document> documents) {
+        this.documents = documents;
     }
 
 }

@@ -63,6 +63,7 @@ import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.entity.es.WaterChargeDocument;
 import org.egov.wtms.repository.es.WaterChargeDocumentRepository;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +92,9 @@ public class WaterChargeDocumentService {
     @Autowired
     public WaterChargeDocumentService(final WaterChargeDocumentRepository waterChargeIndexRepository) {
         this.waterChargeIndexRepository = waterChargeIndexRepository;
+    }
+    public Iterable<WaterChargeDocument> searchwaterChargeIndex(final BoolQueryBuilder searchQuery) {
+        return waterChargeIndexRepository.search(searchQuery);
     }
 
     public WaterChargeDocument updateWaterChargeIndex(final WaterChargeDocument waterChargeDocument,
@@ -152,7 +156,7 @@ public class WaterChargeDocumentService {
         waterChargeDocument.setDistrictName(defaultString((String) cityInfo.get(CITY_DIST_NAME_KEY)));
         waterChargeDocument.setConnectionType(waterConnectionDetails.getConnectionType().name());
         waterChargeDocument.setWaterTaxDue(amountTodisplayInIndex.longValue());
-        waterChargeDocument.setUsage(waterConnectionDetails.getUsageType().getCode());
+        waterChargeDocument.setUsage(waterConnectionDetails.getUsageType().getName());
         waterChargeDocument.setConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());
         waterChargeDocument.setWaterSource(waterConnectionDetails.getWaterSource().getWaterSourceType());
         waterChargeDocument.setPropertyType(waterConnectionDetails.getPropertyType().getName());
@@ -259,7 +263,7 @@ public class WaterChargeDocumentService {
                         .withDistrictName(defaultString((String) cityInfo.get(CITY_DIST_NAME_KEY)))
                         .withConnectiontype(waterConnectionDetails.getConnectionType().name())
                         .withWaterTaxDue(amountTodisplayInIndex.longValue())
-                        .withUsage(waterConnectionDetails.getUsageType().getCode())
+                        .withUsage(waterConnectionDetails.getUsageType().getName())
                         .withConsumerCode(waterConnectionDetails.getConnection().getConsumerCode())
                         .withWatersource(waterConnectionDetails.getWaterSource().getWaterSourceType())
                         .withPropertytype(waterConnectionDetails.getPropertyType().getName())

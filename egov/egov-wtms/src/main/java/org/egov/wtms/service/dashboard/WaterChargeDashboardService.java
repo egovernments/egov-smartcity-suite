@@ -131,9 +131,9 @@ public class WaterChargeDashboardService {
         final List<WaterChargeConnectionTypeResponse> collIndexData = waterChargeCollDocService
                 .getResponseDataForConnectionType(waterChargeDashBoardRequest);
 
-        responsemap.put("collectionWtTotal", collectionTotalResponseList);
+       responsemap.put("collectionWtTotal", collectionTotalResponseList);
         responsemap.put("collTrends", collectionTrends);
-        responsemap.put("responseDetails", collIndexData);
+       responsemap.put("responseDetails", collIndexData);
 
         return responsemap;
     }

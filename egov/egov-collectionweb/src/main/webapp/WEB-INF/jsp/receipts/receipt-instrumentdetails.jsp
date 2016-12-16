@@ -314,7 +314,7 @@ function showInstrumentDetails(obj){
 									class="mandatory1">*</span></td>
 								<td class="bluebox"><s:textfield id="bankName" type="text"
 										name="instrumentProxyList[0].bankId.name"
-										onkeyup='autocompletecodeBank(this,event)'
+										onfocus='autocompletecodeBank(this,event)'
 										onblur='fillAfterSplitBank(this)' /> <s:hidden id="bankID"
 										name="instrumentProxyList[0].bankId.id" />
 									<div id="bankcodescontainer"></div></td>

@@ -39,6 +39,14 @@
  */
 package org.egov.eis.web.actions;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -52,13 +60,6 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.pims.commons.Designation;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  *
@@ -88,6 +89,7 @@ public class AjaxWorkFlowAction extends BaseFormAction {
     private String pendingAction;
     // private String designationRule;
     private String departmentRule;
+    private String designation;
     private List<String> roleList;
     @Autowired
     private AssignmentService assignmentService;
@@ -114,9 +116,14 @@ public class AjaxWorkFlowAction extends BaseFormAction {
     public String getDesignationsByObjectType() {
         if ("END".equals(currentState))
             currentState = "";
-        designationList = customizedWorkFlowService.getNextDesignations(type,
-                departmentRule, amountRule, additionalRule, currentState,
-                pendingAction, new Date());
+        if (StringUtils.isNotBlank(designation))
+            designationList = customizedWorkFlowService.getNextDesignations(type,
+                    departmentRule, amountRule, additionalRule, currentState,
+                    pendingAction, new Date(), designation);
+        else
+            designationList = customizedWorkFlowService.getNextDesignations(type,
+                    departmentRule, amountRule, additionalRule, currentState,
+                    pendingAction, new Date());
         if (designationList.isEmpty())
             designationList = persistenceService.findAllBy("from Designation");
         return WF_DESIGNATIONS;
@@ -124,7 +131,7 @@ public class AjaxWorkFlowAction extends BaseFormAction {
 
     /**
      * For Struts 1.x This method is called to get valid actions(Approve,Reject) and nextaction(END)
-     * 
+     *
      * @throws IOException
      */
 
@@ -214,6 +221,14 @@ public class AjaxWorkFlowAction extends BaseFormAction {
 
     public void setRoleList(final List<String> roleList) {
         this.roleList = roleList;
+    }
+
+    public String getDesignation() {
+        return designation;
+    }
+
+    public void setDesignation(final String designation) {
+        this.designation = designation;
     }
 
 }

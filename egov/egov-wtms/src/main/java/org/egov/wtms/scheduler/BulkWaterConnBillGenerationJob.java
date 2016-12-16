@@ -79,8 +79,9 @@ public class BulkWaterConnBillGenerationJob extends AbstractQuartzJob {
         if (waterConnectionBillService != null && schedularEnable)
             waterConnectionBillService.bulkBillGeneration(modulo, billsCount);
         final Long timeTaken = System.currentTimeMillis() - jobStartTime;
-        if(LOGGER.isDebugEnabled())
-        LOGGER.debug("Water tax Schedular completed for City and time taked is :"  + waterTaxUtils.getCityCode() +" == "+ timeTaken );
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Water tax Schedular completed for City and time taked is :" + waterTaxUtils.getCityCode()
+                    + " == " + timeTaken);
     }
 
     public Integer getBillsCount() {

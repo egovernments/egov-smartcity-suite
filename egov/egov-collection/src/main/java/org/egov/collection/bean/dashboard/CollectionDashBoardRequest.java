@@ -37,13 +37,73 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.transactions.repository;
 
-import org.egov.lcms.transactions.entity.LegalCaseDocuments;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+package org.egov.collection.bean.dashboard;
 
-@Repository
-public interface LegalCaseDocumentsRepository extends JpaRepository<LegalCaseDocuments, Long> {
+public class CollectionDashBoardRequest {
+
+    private String regionName;
+    private String districtName;
+    private String ulbGrade;
+    private String ulbCode;
+    private String fromDate;
+    private String toDate;
+    private String type;
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(final String regionName) {
+        this.regionName = regionName;
+    }
+
+    public String getDistrictName() {
+        return districtName;
+    }
+
+    public void setDistrictName(final String districtName) {
+        this.districtName = districtName;
+    }
+
+    public String getUlbGrade() {
+        return ulbGrade;
+    }
+
+    public void setUlbGrade(final String ulbGrade) {
+        this.ulbGrade = ulbGrade;
+    }
+
+    public String getUlbCode() {
+        return ulbCode;
+    }
+
+    public void setUlbCode(final String ulbCode) {
+        this.ulbCode = ulbCode;
+    }
+
+    public String getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(final String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public String getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(final String toDate) {
+        this.toDate = toDate;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(final String type) {
+        this.type = type;
+    }
 
 }

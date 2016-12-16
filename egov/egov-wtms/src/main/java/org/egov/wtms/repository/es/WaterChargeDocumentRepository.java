@@ -48,6 +48,6 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 public interface WaterChargeDocumentRepository extends ElasticsearchRepository<WaterChargeDocument, String> {
     Page<WaterChargeDocument> findByConsumerCodeAndCityName(String consumerCode, String cityName, Pageable pageable);
 
-    WaterChargeDocument findByConsumerCodeAndCityName(String consumerCode,  String cityName);
+    WaterChargeDocument findByConsumerCodeAndCityName(String consumerCode, String cityName);
 
 }

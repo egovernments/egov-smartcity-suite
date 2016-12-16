@@ -44,7 +44,7 @@
 <head>
  <%@ include file="/includes/meta.jsp" %>    
 		<title>eGov Financials <decorator:title/></title>
-		<link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
+		<link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png?rnd=${app_release_no}' context='/egi'/>" sizes="32x32">
 		<link href="<cdn:url value='/resources/css/budget.css?rnd=${app_release_no}'/>" rel="stylesheet" type="text/css" />
 		<link href="<cdn:url value='/resources/css/commonegovnew.css?rnd=${app_release_no}'/>" rel="stylesheet" type="text/css" />
 		<link href="${pageContext.request.contextPath}/resources/css/error.css?rnd=${app_release_no}" rel="stylesheet" type="text/css"></link>
@@ -62,18 +62,18 @@
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/jsCommonMethods.js?rnd=${app_release_no}"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/calenderNew.js?rnd=${app_release_no}"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/helper.js?rnd=${app_release_no}"></script>
-		<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"> </script>
-		<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery-ui/jquery-ui.js' context='/egi'/>"> </script>
+		<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/jquery.js?rnd=${app_release_no}' context='/egi'/>"> </script>
+		<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery-ui/jquery-ui.js?rnd=${app_release_no}' context='/egi'/>"> </script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/ajax-script.js?rnd=${app_release_no}"></script>
-		<link rel="stylesheet" type="text/css" href="<cdn:url value='/resources/global/js/jquery-ui/jquery-ui.css' context='/egi'/>" />
+		<link rel="stylesheet" type="text/css" href="<cdn:url value='/resources/global/js/jquery-ui/jquery-ui.css?rnd=${app_release_no}' context='/egi'/>" />
 		
-		<link href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+		<link href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css?rnd=${app_release_no}' context='/egi'/>" rel="stylesheet" type="text/css" />
     <link href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>"
           rel="stylesheet" type="text/css"/>
-		<script type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-		<script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
-		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
-		<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>" ></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js?rnd=${app_release_no}' context='/egi'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css?rnd=${app_release_no}' context='/egi'/>"/>
+		<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js?rnd=${app_release_no}' context='/egi'/>" ></script>
 		<decorator:head/>
 	</head>
 	

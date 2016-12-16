@@ -43,8 +43,6 @@ import java.math.BigDecimal;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class WaterTaxDefaulters {
     private String ulbName = StringUtils.EMPTY;
     private String connectionType = StringUtils.EMPTY;
@@ -56,16 +54,15 @@ public class WaterTaxDefaulters {
         return ulbName;
     }
 
-    public void setUlbName(String ulbName) {
+    public void setUlbName(final String ulbName) {
         this.ulbName = ulbName;
     }
-
 
     public String getConnectionType() {
         return connectionType;
     }
 
-    public void setConnectionType(String connectionType) {
+    public void setConnectionType(final String connectionType) {
         this.connectionType = connectionType;
     }
 
@@ -73,7 +70,7 @@ public class WaterTaxDefaulters {
         return ownerName;
     }
 
-    public void setOwnerName(String ownerName) {
+    public void setOwnerName(final String ownerName) {
         this.ownerName = ownerName;
     }
 
@@ -81,7 +78,7 @@ public class WaterTaxDefaulters {
         return period;
     }
 
-    public void setPeriod(String period) {
+    public void setPeriod(final String period) {
         this.period = period;
     }
 
@@ -89,7 +86,7 @@ public class WaterTaxDefaulters {
         return balance;
     }
 
-    public void setBalance(BigDecimal balance) {
+    public void setBalance(final BigDecimal balance) {
         this.balance = balance;
     }
 

@@ -122,7 +122,7 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String showLegacyUpdateForm() {
         if (!license().isNew())
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-        if (tradeLicense != null && tradeLicense.isLegacy() && tradeLicense.isPaid())
+        if (tradeLicense != null && tradeLicense.isLegacy() && tradeLicense.hasState())
             throw new ValidationException("legacy.license.modify.excp", "You can't modify this license");
         prepareFeeDetails();
         return "update";

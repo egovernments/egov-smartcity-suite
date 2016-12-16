@@ -105,6 +105,13 @@
 			</div> --%>
 </c:if>
 						<c:if test="${!citizenRole}" >
+												<div class="form-group">
+					<label for="field-1" class="col-md-4 control-label"> <spring:message
+										code="lbl.oldconsumerno" /></label>
+						<div class="col-md-4 add-margin">
+							<input type="text" name="oldConsumerNumber" class="form-control patternvalidation" data-pattern="number" maxlength="15" id="app-oldcode" />
+						</div>
+						</div>
 						<div class="form-group">
 					<label for="field-1" class="col-md-4 control-label"> <spring:message
 										code="lbl.applicant.name" /></label>

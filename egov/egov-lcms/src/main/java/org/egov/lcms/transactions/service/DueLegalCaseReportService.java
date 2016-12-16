@@ -148,7 +148,8 @@ public class DueLegalCaseReportService {
 		}
 		if (reportType.equals(LcmsConstants.DUEEMPLOYEEHEARINGREPORT)) {
 			statusCodeList.add(LcmsConstants.LEGALCASE_STATUS_CREATED);
-			statusCodeList.add(LcmsConstants.LEGALCASE_STATUS_IN_PROGRESS);
+			statusCodeList.add(LcmsConstants.HEARING_STATUS);
+			statusCodeList.add(LcmsConstants.INTERIMSTAY_STATUS);
 			queryResult.setParameterList("statusCodeList", statusCodeList);
 		}
 		if (reportType.equals(LcmsConstants.DUEJUDGEMENTIMPLPREPORT)) {

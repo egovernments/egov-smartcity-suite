@@ -81,7 +81,7 @@ public class HearingsService {
         buildEmplyeeList(hearings);
         updateNextDate(hearings, hearings.getLegalCase());
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
-                LcmsConstants.LEGALCASE_STATUS_IN_PROGRESS);
+                LcmsConstants.HEARING_STATUS);
         hearings.getLegalCase().setStatus(statusObj);
         return hearingsRepository.save(hearings);
     }

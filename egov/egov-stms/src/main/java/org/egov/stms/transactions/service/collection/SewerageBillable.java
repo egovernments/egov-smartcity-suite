@@ -124,6 +124,10 @@ public class SewerageBillable extends AbstractBillable implements Billable {
     }
 
     @Override
+    public String getConsumerType() {
+        return "";
+    }
+    @Override
     public List<EgDemand> getAllDemands() {
         List<EgDemand> demands = null;
         if (getCurrentDemand() != null) {

@@ -64,15 +64,17 @@ public class ReconnectionService {
      * @param approvalComent
      * @param additionalRule
      * @param workFlowAction
-     * @return Update Old Connection Object And Creates New WaterConnectionDetails with INPROGRESS of ApplicationType as
-     * "CHNAGEOFUSE"
+     * @return Update Old Connection Object And Creates New
+     *         WaterConnectionDetails with INPROGRESS of ApplicationType as
+     *         "CHNAGEOFUSE"
      */
     @Transactional
     public WaterConnectionDetails updateReConnection(final WaterConnectionDetails waterConnectionDetails,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction, final String sourceChannel) {
 
-        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, "", sourceChannel);
+        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, "",
+                sourceChannel);
         final WaterConnectionDetails savedwaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
 

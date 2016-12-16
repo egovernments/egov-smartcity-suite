@@ -91,7 +91,7 @@
 								</div>
 								<div class="row add-border">
 									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.caseNumber" />
+										<spring:message code="lbl.casenumber" />
 									</div>
 									<div class="col-xs-3 add-margin view-content">
 										<c:out value="${legalCase.caseNumber}" />
@@ -173,7 +173,7 @@
 										<spring:message code="lbl.fieldbycarp" />
 									</div>
 									<div class="col-sm-3 add-margin view-content">
-										${legalCase.isfiledbycorporation}</div>
+										${legalCase.isFiledByCorporation}</div>
 									<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.oldreferencenumber" />
 									</div>
@@ -363,13 +363,13 @@
 	</div>
 </div>
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css?rnd=${app_release_no}' context='/egi'/>">
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css?rnd=${app_release_no}' context='/egi'/>" />
 <script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
         src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script

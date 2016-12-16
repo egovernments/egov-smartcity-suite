@@ -42,6 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <style>
@@ -68,7 +69,13 @@ body
 								<div class="panel-title"><spring:message code="lbl.vacancyremission.details" /></div>
 							</div>
 							<div class="panel-body custom-form">
-								<div class="form-group">
+							<c:if test="${attachedDocuments.size() > 0}">
+								<div>
+									<%@ include
+										file="/WEB-INF/views/vacancyremission/vr-documents-view.jsp"%>
+								</div>
+							</c:if>
+							<div class="form-group">
 									<label class="col-sm-3 control-label text-right">
 										<spring:message code="lbl.fromDate" /> <span class="mandatory"></span>
 									</label>
@@ -97,8 +104,11 @@ body
 						</div>
 					</div>
 				</div>
-				
+				<c:choose>				
+				<c:when test="${!fn:containsIgnoreCase(userDesignationList, designation)}">
 				<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+				</c:when>
+				</c:choose>
 				<div class="buttonbottom" align="center">
 					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 				</div>

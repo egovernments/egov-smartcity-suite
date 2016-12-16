@@ -281,6 +281,14 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
             return getWaterConnectionDetails().getApplicationNumber();
     }
 
+    
+    @Override
+    public String getConsumerType() {
+        if (getWaterConnectionDetails().getUsageType() != null)
+            return getWaterConnectionDetails().getUsageType().getName();
+        else
+            return "";
+    }
     @Override
     public Boolean isCallbackForApportion() {
         if(getWaterConnectionDetails().getConnectionStatus() !=null && getWaterConnectionDetails().getConnectionStatus().equals(ConnectionStatus.ACTIVE)) 

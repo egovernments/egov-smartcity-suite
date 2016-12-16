@@ -103,12 +103,20 @@
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${legalCase.counterAffidavits[0].eOfficeComputerNumber}</div>
+							<div class="col-xs-2 add-margin">
+							<spring:message code="lbl.cafillingdate" />
+						</div>
+						<div class="col-xs-3 add-margin view-content">
+							<fmt:formatDate pattern="dd/MM/yyyy"
+								value="${legalCase.pwrList[0].caFilingDate}" var="cafilingdate" />
+							<c:out value="${cafilingdate}" />
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-<jsp:include page="pwrDocumentdetails-view.jsp"></jsp:include>
+<jsp:include page="pwrdocumentdetails-view.jsp"></jsp:include>
 
 <div class="form-group">
 		<div class="text-center">

@@ -607,14 +607,14 @@
 					for(var index=0;index<chequeSize;index++){
 						var obj = document.getElementById('isSelected'+index);
 						if(obj.checked == true){
-						selectedRowsId.push(document.getElementsByName("chequeAssignmentList["+index+"].voucherHeaderId")[0].value+";"+
-									document.getElementsByName("chequeAssignmentList["+index+"].paidTo")[0].value+";"+
-									document.getElementsByName("chequeAssignmentList["+index+"].serialNo")[0].value+";"+
-									document.getElementsByName("chequeAssignmentList["+index+"].chequeNumber")[0].value+";"+
-									document.getElementsByName("chequeAssignmentList["+index+"].chequeDate")[0].value+";"+
-									document.getElementsByName("chequeAssignmentList["+index+"].voucherNumber")[0].value+";"+
-									document.getElementsByName("chequeAssignmentList["+index+"].voucherDate")[0].value+";"+
-									document.getElementsByName("chequeAssignmentList["+index+"].paidAmount")[0].value);
+						selectedRowsId.push(document.getElementsByName("chequeAssignmentList["+index+"].voucherHeaderId")[0].value+"~"+
+									document.getElementsByName("chequeAssignmentList["+index+"].paidTo")[0].value+"~"+
+									document.getElementsByName("chequeAssignmentList["+index+"].serialNo")[0].value+"~"+
+									document.getElementsByName("chequeAssignmentList["+index+"].chequeNumber")[0].value+"~"+
+									document.getElementsByName("chequeAssignmentList["+index+"].chequeDate")[0].value+"~"+
+									document.getElementsByName("chequeAssignmentList["+index+"].voucherNumber")[0].value+"~"+
+									document.getElementsByName("chequeAssignmentList["+index+"].voucherDate")[0].value+"~"+
+									document.getElementsByName("chequeAssignmentList["+index+"].paidAmount")[0].value+";");
 							
 							
 						}
@@ -710,7 +710,6 @@
 							if(document.getElementsByName("chequeAssignmentList["+index+"].paidAmount")[0])
 								paidAmount = document.getElementsByName("chequeAssignmentList["+index+"].paidAmount")[0].disabled=true;
 							 
-							
 						}
 					}
 					 

@@ -68,7 +68,8 @@ public class WaterDemandConnectionService {
         this.waterDemandConnectionRepository = waterDemandConnectionRepository;
     }
 
-    public List<WaterDemandConnection> findByWaterConnectionDetails(final WaterConnectionDetails waterConnectionDetails) {
+    public List<WaterDemandConnection> findByWaterConnectionDetails(
+            final WaterConnectionDetails waterConnectionDetails) {
         return waterDemandConnectionRepository.findByWaterConnectionDetails(waterConnectionDetails);
     }
 

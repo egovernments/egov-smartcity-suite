@@ -2,7 +2,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2016>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -37,39 +37,43 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ include file="/includes/taglibs.jsp"%>
-<form:form role="form" method="post" modelAttribute="legalCaseDisposal"
-	id="legalCaseDisposalForm"
-	cssClass="form-horizontal form-groups-bordered"
-	enctype="multipart/form-data">
-	<input type="hidden" name="legalCase" value="${legalCase.id}" />
-	<jsp:include page="../transactions/viewSummarizedCase.jsp" />
-	<%@ include file="legalcaseDisposal-form.jsp"%>
-	<input type="hidden" name="legalCaseDisposal"
-		value="${legalCaseDisposal.id}" />
 
-	</div>
-	</div>
-	</div>
-	</div>
-	<div class="form-group">
-		<div class="text-center">
-			<button type='submit' class='btn btn-primary' id="buttonid">
-				<spring:message code='lbl.update' />
-			</button>
-			<button type="button" class="btn btn-default" id="btnclose">
-				<spring:message code="lbl.close" />
-			</button>
-		</div>
-	</div>
-</form:form>
-<script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-<link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
-<script type="text/javascript"
-	src="<cdn:url value='/resources/js/app/legalcaseDisposal.js?rnd=${app_release_no}'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/js/app/legalcaseSearch.js?rnd=${app_release_no}'/>"></script>
+<%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page language="java" pageEncoding="UTF-8"%>
+
+<div> 
+      
+</div>
+		<script type="text/javascript">
+
+		jQuery(document)
+					.ready(
+							function() {
+								var fileStoreIds = '<c:out value="${fileStoreIds}" />';
+								var ulbCode = '<c:out value="${ulbCode}" />';
+								var isDigiEnabled = '<c:out value="${digitalSignEnabled}"/>';
+								var callBackUrl = '/ptis/digitalSignature/propertyTax/transitionWorkflow';
+								var actionUrl = null;
+
+								if (isDigiEnabled == 'true') {
+									actionUrl = '/digisign/reports/selectCertificate.jsp?fileStoreId='
+											+ fileStoreIds
+											+ '&moduleName=PTIS&ulbCode='
+											+ ulbCode
+											+ '&callBackUrl='
+											+ callBackUrl;
+								} else {
+									actionUrl = callBackUrl + '?fileStoreId='
+											+ fileStoreIds + '&isDigiEnabled='
+											+ isDigiEnabled;
+								}
+
+								jQuery('<form>.').attr({
+									method : 'post',
+									action : actionUrl,
+									target : '_self'
+								}).appendTo(document.body).submit();
+							});
+		</script>
 

@@ -39,13 +39,13 @@
  */
 package org.egov.collection.integration.models;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("bill")
 public class BillDetails {
@@ -59,6 +59,8 @@ public class BillDetails {
     @XStreamAsAttribute
     private final String consumerCode;
 
+    private final String consumerType;
+
     private final String boundaryNum;
     private final String boundaryType;
     private final String description;
@@ -69,8 +71,8 @@ public class BillDetails {
     @XStreamAlias("accounts")
     private final List<BillAccountDetails> accounts = new ArrayList<BillAccountDetails>(0);
 
-    public BillDetails(final String refNo, final Date billDate, final String consumerCode, final String boundaryNum,
-            final String boundaryType, final String description, final BigDecimal totalAmount,
+    public BillDetails(final String refNo, final Date billDate, final String consumerCode, final String consumerType,
+            final String boundaryNum, final String boundaryType, final String description, final BigDecimal totalAmount,
             final BigDecimal minimumAmount) {
         this.refNo = refNo;
         this.billDate = billDate;
@@ -80,6 +82,7 @@ public class BillDetails {
         this.totalAmount = totalAmount;
         this.minimumAmount = minimumAmount;
         this.consumerCode = consumerCode;
+        this.consumerType = consumerType;
     }
 
     public String getRefNo() {
@@ -121,6 +124,10 @@ public class BillDetails {
     public String getConsumerCode() {
         return consumerCode;
     }
+    
+    public String getConsumerType() {
+        return consumerType;
+    }
 
     @Override
     public boolean equals(final Object obj) {
@@ -129,7 +136,8 @@ public class BillDetails {
             if (refNo.equals(billDetail.refNo) && billDate.equals(billDetail.billDate)
                     && boundaryNum.equals(billDetail.boundaryNum) && boundaryType.equals(billDetail.boundaryType)
                     && description.equals(billDetail.description) && minimumAmount.equals(billDetail.minimumAmount)
-                    && consumerCode.equals(billDetail.consumerCode) && totalAmount.equals(billDetail.totalAmount))
+                    && consumerCode.equals(billDetail.consumerCode) && totalAmount.equals(billDetail.totalAmount)
+                    && consumerType.equals(billDetail.consumerType))
                 return true;
         }
         return false;
@@ -142,11 +150,8 @@ public class BillDetails {
     @Override
     public int hashCode() {
         return billDate.hashCode() + refNo.hashCode() + boundaryNum.hashCode() + boundaryType.hashCode()
-                + description.hashCode() + minimumAmount.hashCode() + consumerCode.hashCode() + totalAmount.hashCode();
+                + description.hashCode() + minimumAmount.hashCode() + consumerCode.hashCode() + totalAmount.hashCode()
+                + consumerType.hashCode();
     }
 
-    /*
-     * public String toString(){ return "BillDetails [ RefNo : " + this.refNo +
-     * " BillAccounts : " + this.accounts + " ]"; }
-     */
 }

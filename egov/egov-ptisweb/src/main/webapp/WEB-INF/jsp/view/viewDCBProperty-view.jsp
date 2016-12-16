@@ -629,7 +629,7 @@
 															<td class="blueborderfortd">
 																<div align="center">
 																	<s:date name="#rcpt.getReceiptDate()"
-																		format="dd/MM/yyyy h:mm:ss" />
+																		format="dd/MM/yyyy h:mm:ss aa" />
 																</div>
 															</td>
 															<td class="blueborderfortd">
@@ -683,7 +683,7 @@
 															<td class="blueborderfortd">
 																<div align="center">
 																	<s:date name="#rcpt.getReceiptDate()"
-																		format="dd/MM/yyyy h:mm:ss" />
+																		format="dd/MM/yyyy h:mm:ss aa" />
 																</div>
 															</td>
 															<td class="blueborderfortd">
@@ -741,7 +741,7 @@
 															<td class="blueborderfortd">
 																<div align="center">
 																	<s:date name="#rcpt.getReceiptDate()"
-																		format="dd/MM/yyyy h:mm:ss" />
+																		format="dd/MM/yyyy" />
 																</div>
 															</td>
 															<td class="blueborderfortd">
