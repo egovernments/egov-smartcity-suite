@@ -1,45 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-12-12T17:16:57 -->
+<!-- 2016-12-15T20:41:21 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="connectionWorkOrder_subreport" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -59,6 +20,7 @@
 	<parameter name="workOrderNo" class="java.lang.String"/>
 	<parameter name="workOrderDate" class="java.lang.String"/>
 	<parameter name="applicationDate" class="java.lang.String"/>
+	<parameter name="locality" class="java.lang.String"/>
 	<group name="connection_group">
 		<groupHeader>
 			<band height="507">
@@ -68,7 +30,7 @@
 						<font size="8" isPdfEmbedded="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Tap Connection   Municipality-Sanction of tap connection to the house bearing"+" "+
-"D.No "+ $P{doorno}  + " "+ "Locality" +" "+ $P{address} +" "  +"Orders issued."]]></textFieldExpression>
+"D.No "+ $P{doorno}  + " "+ "Locality" +" "+ $P{locality} +" "  +"Orders issued."]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="54" y="33" width="42" height="15" uuid="5b913242-3c3c-4ba9-bd21-8514e7c34f8c"/>
@@ -98,14 +60,14 @@
 					</textElement>
 					<textFieldExpression><![CDATA["In the reference 1st cited,Sri/Smt "+		$P{applicantName}		 +" "+
 "has submitted an application seeking tap connection to the house bearing "+
-"D.No"+" "+$P{doorno} 	+" "+"locality and paid the following amounts towards donation and other changes.  "]]></textFieldExpression>
+"D.No"+" "+$P{doorno} 	+" "+"locality "+$P{locality}+" and paid the following amounts towards donation and other changes."]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="29" y="3" width="66" height="15" uuid="f33dbd89-d45d-4afd-a014-20038ecf3b07"/>
 					<textElement textAlignment="Left" verticalAlignment="Bottom" markup="styled">
 						<font size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["ROC.No"]]></textFieldExpression>
+					<textFieldExpression><![CDATA["ROC.No:"]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="348" y="4" width="40" height="15" uuid="6d440c50-1dd4-4031-b154-4a33fb593bd2"/>
@@ -119,7 +81,7 @@
 					<textElement verticalAlignment="Middle" markup="styled">
 						<font size="8" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["1.Application of Sri/Smt "+ $P{applicantName} +" "+ "D.No "+$P{doorno}  +" " +"Locality " +$P{address}	 + " "+"Dated"+" "+$P{applicationDate}]]></textFieldExpression>
+					<textFieldExpression><![CDATA["1.Application of Sri/Smt "+ $P{applicantName} +" "+ "D.No "+$P{doorno}  +" " +"Locality " +$P{locality}	 + " "+"Dated"+" "+$P{applicationDate}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="54" y="68" width="42" height="15" uuid="d0af5b8a-82d8-4463-8be3-d02292357def"/>
@@ -199,14 +161,14 @@
 					<text><![CDATA[:        Rs.]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="360" y="327" width="100" height="15" uuid="264dd04c-fcde-4ee9-9973-231bccbdd4e1"/>
+					<reportElement x="370" y="345" width="100" height="15" uuid="264dd04c-fcde-4ee9-9973-231bccbdd4e1"/>
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
 					<text><![CDATA[Commissioner]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="316" y="347" width="164" height="15" uuid="aa117596-c0be-4f17-a7b1-e19446febf7a"/>
+					<reportElement x="326" y="365" width="164" height="15" uuid="aa117596-c0be-4f17-a7b1-e19446febf7a"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
@@ -234,11 +196,11 @@
 					<textFieldExpression><![CDATA["D.No"]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yyyy">
-					<reportElement x="53" y="422" width="67" height="12" uuid="dcc8c6c3-3a68-4be8-9659-8dadfb36c980"/>
+					<reportElement x="53" y="418" width="210" height="12" uuid="dcc8c6c3-3a68-4be8-9659-8dadfb36c980"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
-						<font size="8"/>
+						<font size="8" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Consumer No:"]]></textFieldExpression>
+					<textFieldExpression><![CDATA["CONSUMER NO: "+$P{consumerNumber}]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yyyy">
 					<reportElement x="53" y="438" width="426" height="34" uuid="27a53af9-db70-470c-8b54-70300273551c"/>
@@ -264,13 +226,6 @@
 					<textFieldExpression><![CDATA[$P{applicantName}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="113" y="422" width="150" height="12" uuid="ca1060ea-d4f2-4a59-8c9f-89235390a38f"/>
-					<textElement verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$P{consumerNumber}]]></textFieldExpression>
-				</textField>
-				<textField>
 					<reportElement x="95" y="405" width="168" height="12" uuid="8dee361c-36ad-4208-962f-9f32a74746b0"/>
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
@@ -283,7 +238,7 @@
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA["2.Therefore sanction is hereby accorded for execution of 1/2,3/4  new tap " + 
-"connection on tap rate /Meter rate to the above premises with  consumer no:" +" "+$P{consumerNumber}]]></textFieldExpression>
+"connection on tap rate /Meter rate to the above premises with <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">consumer no: "+$P{consumerNumber}+"</style>"]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="264" y="187" width="158" height="15" uuid="948285da-82c6-4a51-b3ab-5bda822cc6d6"/>
@@ -342,7 +297,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA["This has the approval of the Chairperson Municipal Council	"]]></textFieldExpression>
+					<textFieldExpression><![CDATA["(This has the approval of the Chairperson Municipal Council, "+$P{municipality} +")"]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>

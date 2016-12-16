@@ -1,45 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-12-08T11:10:04 -->
+<!-- 2016-12-15T22:19:26 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="connectionWorkOrder" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -66,6 +27,8 @@
 	<parameter name="superVisionCharges" class="java.lang.Double"/>
 	<parameter name="securityDeposit" class="java.lang.Double"/>
 	<parameter name="total" class="java.lang.Double"/>
+	<parameter name="locality" class="java.lang.String"/>
+	<parameter name="commissionerName" class="java.lang.String"/>
 	<background>
 		<band height="780" splitType="Stretch">
 			<rectangle>
@@ -74,13 +37,13 @@
 		</band>
 	</background>
 	<detail>
-		<band height="371" splitType="Stretch">
+		<band height="368" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="0" y="42" width="555" height="15" uuid="6ea68d39-6c99-43ca-8be4-14d6867b8b73"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Work Order For "+$P{conntitle}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Present: "+$P{commissionerName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="0" y="27" width="555" height="15" uuid="95f98e65-ec01-4888-b179-bf757e76d450"/>
@@ -97,14 +60,14 @@
 				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="20" y="57" width="100" height="15" uuid="c58d977b-8206-48c6-94c4-35619ef6a4a7"/>
+				<reportElement x="20" y="73" width="100" height="15" uuid="c58d977b-8206-48c6-94c4-35619ef6a4a7"/>
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<text><![CDATA[Department Use]]></text>
 			</staticText>
 			<subreport>
-				<reportElement x="0" y="71" width="554" height="300" uuid="e51712b8-69b6-4ea7-93e7-e6b27fdbdda7"/>
+				<reportElement x="0" y="85" width="554" height="283" uuid="e51712b8-69b6-4ea7-93e7-e6b27fdbdda7"/>
 				<subreportParameter name="municipality">
 					<subreportParameterExpression><![CDATA[$P{municipality}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -144,29 +107,32 @@
 				<subreportParameter name="total">
 					<subreportParameterExpression><![CDATA[$P{total}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="locality">
+					<subreportParameterExpression><![CDATA[$P{locality}]]></subreportParameterExpression>
+				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("connectionWorkOrder_subreport.jasper")]]></subreportExpression>
 			</subreport>
-		</band>
-	</detail>
-	<summary>
-		<band height="369">
-			<textField isBlankWhenNull="true">
-				<reportElement x="1" y="39" width="555" height="15" uuid="3c9f481d-8ab2-4f4d-9129-d4e3f1902535"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="186" y="56" width="190" height="15" uuid="94ed341e-c301-409d-be72-b61755e97862"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Work Order For "+$P{conntitle}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Commissioner"]]></textFieldExpression>
 			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="363">
 			<textField isBlankWhenNull="true">
-				<reportElement x="1" y="24" width="555" height="15" uuid="d1cfd597-4be1-47c4-a1f6-26e28df81acf"/>
+				<reportElement x="0" y="24" width="555" height="15" uuid="d1cfd597-4be1-47c4-a1f6-26e28df81acf"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{district}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="21" y="53" width="100" height="15" uuid="fd9c0f67-68f3-4087-8a00-1b3e4c8110fa"/>
+				<reportElement x="21" y="67" width="100" height="15" uuid="fd9c0f67-68f3-4087-8a00-1b3e4c8110fa"/>
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
@@ -180,7 +146,7 @@
 				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
 			</textField>
 			<subreport>
-				<reportElement x="0" y="67" width="554" height="300" uuid="993dfb1f-06b9-4736-a724-278e2ca40811"/>
+				<reportElement x="0" y="79" width="554" height="283" uuid="993dfb1f-06b9-4736-a724-278e2ca40811"/>
 				<subreportParameter name="municipality">
 					<subreportParameterExpression><![CDATA[$P{municipality}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -220,9 +186,26 @@
 				<subreportParameter name="total">
 					<subreportParameterExpression><![CDATA[$P{total}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="locality">
+					<subreportParameterExpression><![CDATA[$P{locality}]]></subreportParameterExpression>
+				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("connectionWorkOrder_subreport.jasper")]]></subreportExpression>
 			</subreport>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="39" width="555" height="15" uuid="6ded3333-e863-488a-a692-cbc89dfea7bc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Present: "+$P{commissionerName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="186" y="53" width="190" height="15" uuid="4f2f353c-dbd2-491c-a417-dd7201455ea3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Commissioner"]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>

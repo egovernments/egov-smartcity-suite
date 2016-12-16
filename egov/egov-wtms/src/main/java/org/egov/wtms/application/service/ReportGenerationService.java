@@ -120,7 +120,11 @@ public class ReportGenerationService {
                     ownerName = names.getOwnerName();
                     break;
                 }
-            if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode()))
+            Set<User> users=assignmentService.getUsersByDesignations(WaterTaxConstants.DESG_COMM);
+            String commissionerName="";
+            for (User user :  users) 
+                commissionerName=user.getName();
+          if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode()))
                 reportParams.put("applicationtype", wcmsMessageSource.getMessage("msg.new.watertap.conn", null, null));
             else if (WaterTaxConstants.ADDNLCONNECTION
                     .equalsIgnoreCase(connectionDetails.getApplicationType().getCode()))
@@ -162,11 +166,13 @@ public class ReportGenerationService {
                     connectionDetails.getFieldInspectionDetails().getRoadCuttingCharges());
             reportParams.put("superVisionCharges",
                     connectionDetails.getFieldInspectionDetails().getSupervisionCharges());
+            reportParams.put("locality", assessmentDetails.getBoundaryDetails().getLocalityName());
             total = connectionDetails.getDonationCharges()
                     + connectionDetails.getFieldInspectionDetails().getSecurityDeposit()
                     + connectionDetails.getFieldInspectionDetails().getRoadCuttingCharges()
                     + connectionDetails.getFieldInspectionDetails().getSupervisionCharges();
             reportParams.put("total", total);
+            reportParams.put("commissionerName",commissionerName);
             reportInput = new ReportRequest(WaterTaxConstants.CONNECTION_WORK_ORDER, connectionDetails, reportParams);
         }
         reportOutput = reportService.createReport(reportInput);
