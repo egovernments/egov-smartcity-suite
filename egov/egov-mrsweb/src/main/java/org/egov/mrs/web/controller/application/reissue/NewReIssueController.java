@@ -40,11 +40,15 @@
 package org.egov.mrs.web.controller.application.reissue;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.utils.StringUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
@@ -56,6 +60,7 @@ import org.egov.mrs.masters.entity.MarriageFee;
 import org.egov.mrs.masters.service.MarriageFeeService;
 import org.egov.mrs.masters.service.MarriageRegistrationUnitService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -90,6 +95,10 @@ public class NewReIssueController extends GenericWorkFlowController {
     @Autowired
     private MarriageDocumentService marriageDocumentService;
   
+    @Autowired
+    protected ResourceBundleMessageSource messageSource;
+    @Autowired
+    protected AppConfigValueService appConfigValuesService;
     
     @Autowired
     private MarriageRegistrationUnitService marriageRegistrationUnitService;
@@ -173,7 +182,7 @@ public class NewReIssueController extends GenericWorkFlowController {
             final Model model,
             final HttpServletRequest request,
             final BindingResult errors) throws IOException {
-        
+        String message = StringUtils.EMPTY;   
         if (errors.hasErrors())
             return "reissue-view";
        
@@ -184,14 +193,24 @@ public class NewReIssueController extends GenericWorkFlowController {
             break;
         case "Cancel ReIssue":
             reIssue = reIssueService.rejectReIssue(reIssue, workflowContainer,request);
+            message = messageSource.getMessage("msg.rejected.reissue", null, null);
             break;
         }
-        // On Cancel, output rejection certificate 
+ 
+            // On Cancel, output rejection certificate 
         if (workflowContainer.getWorkFlowAction() != null && !workflowContainer.getWorkFlowAction().isEmpty()
-                && workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL_REISSUE))
-            return "redirect:/certificate/reissue?id="
-                    + reIssue.getId();
+                && workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL_REISSUE)) {
+            List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(
+                    MarriageConstants.MODULE_NAME, MarriageConstants.REISSUE_PRINTREJECTIONCERTIFICATE);
+            if (appConfigValues != null && appConfigValues.size() > 0
+                    && appConfigValues.get(0).getValue().equalsIgnoreCase("YES"))
+            {
+                return "redirect:/certificate/reissue?id="
+                        + reIssue.getId();
+            }
+        }
         model.addAttribute("ackNumber", reIssue.getApplicationNo());
+        model.addAttribute("message", message);
         return "reissue-ack";
     }
 
