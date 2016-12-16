@@ -41,6 +41,7 @@
 <%@ page contentType="text/html" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <style>
       .position_alert{
         position:fixed;z-index:9999;top:85px;right:20px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
@@ -55,6 +56,22 @@
 				</div>
 			</div>
 			<div class="panel-body">
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.arfnumber" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<c:out value="${contractorAdvanceRequisition.advanceRequisitionNumber}"></c:out>
+					</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.arfdate" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<fmt:formatDate
+								value="${contractorAdvanceRequisition.advanceRequisitionDate}"
+								pattern="dd/MM/yyyy" />
+					</div>
+				</div>
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.remarks" />
