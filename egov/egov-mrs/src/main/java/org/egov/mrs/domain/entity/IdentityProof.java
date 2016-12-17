@@ -78,6 +78,8 @@ public class IdentityProof extends AbstractPersistable<Long> {
     private boolean rationCard;
     private boolean msebBill;
     private boolean telephoneBill;
+    private boolean aadhar;
+    private boolean notaryAffidavit;
 
     @Override
     public Long getId() {
@@ -159,5 +161,21 @@ public class IdentityProof extends AbstractPersistable<Long> {
 
     public void setTelephoneBill(final boolean telephoneBill) {
         this.telephoneBill = telephoneBill;
+    }
+
+    public boolean isAadhar() {
+        return aadhar;
+    }
+
+    public void setAadhar(boolean aadhar) {
+        this.aadhar = aadhar;
+    }
+
+    public boolean isNotaryAffidavit() {
+        return notaryAffidavit;
+    }
+
+    public void setNotaryAffidavit(boolean notaryAffidavit) {
+        this.notaryAffidavit = notaryAffidavit;
     }
 }

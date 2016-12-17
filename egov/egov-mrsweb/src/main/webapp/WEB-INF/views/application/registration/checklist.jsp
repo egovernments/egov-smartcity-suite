@@ -130,6 +130,20 @@
 	</div>
 	
 	<div class="form-group">
+		<label class="col-sm-6 control-label">
+			<spring:message code="lbl.aadhar"/></span>
+		</label>
+		<div class="col-sm-1 text-center">
+			<form:checkbox path="husband.proofsAttached.aadhar" value="false" />
+			<form:errors path="husband.proofsAttached.aadhar" cssClass="add-margin error-msg"/>
+		</div>
+		<div class="col-sm-1 text-center">
+			<form:checkbox path="wife.proofsAttached.aadhar" value="false" />
+			<form:errors path="wife.proofsAttached.aadhar" cssClass="add-margin error-msg"/>
+		</div>
+	</div>
+	
+	<div class="form-group">
 		<label class="col-sm-6 control-label text-left view-content">
 			<spring:message code="lbl.proof.of.age"/><span class="mandatory"></span><br>
 			<spring:message code="lbl.proof.note"/>
@@ -189,6 +203,34 @@
 		<div class="col-sm-1 text-center">
 			<form:checkbox path="wife.proofsAttached.deaceasedDeathCertificate" value="${wife.proofsAttached.deaceasedDeathCertificate}" id="ageProofWDDC"/>
 			<form:errors path="wife.proofsAttached.deaceasedDeathCertificate" cssClass="add-margin error-msg"/>
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label class="col-sm-6 control-label text-right">
+			<spring:message code="lbl.passport"/>
+		</label>
+		<div class="col-sm-1 text-center">
+			<form:checkbox path="husband.proofsAttached.passport" value="${husband.proofsAttached.passport}" id="ageProofHPassport"/>
+			<form:errors path="husband.proofsAttached.passport" cssClass="add-margin error-msg"/>
+		</div>
+		<div class="col-sm-1 text-center">
+			<form:checkbox path="wife.proofsAttached.passport" value="${wife.proofsAttached.passport}" id="ageProofWPassport"/>
+			<form:errors path="wife.proofsAttached.passport" cssClass="add-margin error-msg"/>
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label class="col-sm-6 control-label">
+			<spring:message code="lbl.notary.affidavit"/>
+		</label>
+		<div class="col-sm-1 text-center">
+			<form:checkbox path="husband.proofsAttached.notaryAffidavit" value="${husband.proofsAttached.notaryAffidavit}" id="ageProofHNA"/>
+			<form:errors path="husband.proofsAttached.notaryAffidavit" cssClass="add-margin error-msg"/>
+		</div>
+		<div class="col-sm-1 text-center">
+			<form:checkbox path="wife.proofsAttached.notaryAffidavit" value="${wife.proofsAttached.notaryAffidavit}" id="ageProofWNA"/>
+			<form:errors path="wife.proofsAttached.notaryAffidavit" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
 	
