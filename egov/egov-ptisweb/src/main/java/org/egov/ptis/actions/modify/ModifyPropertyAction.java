@@ -94,6 +94,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 
@@ -2174,7 +2175,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     @Override
     public String getCurrentDesignation() {
-        if (propWF != null && !propWF.getCurrentState().getValue().endsWith(STATUS_REJECTED))
+        if (propWF != null && !(propWF.getCurrentState().getValue().endsWith(STATUS_REJECTED) ||
+                propWF.getCurrentState().getValue().endsWith(WFLOW_ACTION_NEW)))
             return propService.getDesignationForPositionAndUser(propWF.getCurrentState().getOwnerPosition().getId(),
                     securityUtils.getCurrentUser().getId());
         else if (propertyModel.getId() != null && !propertyModel.getCurrentState().getValue().endsWith(STATUS_REJECTED))

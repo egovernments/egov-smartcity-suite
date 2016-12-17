@@ -79,6 +79,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
@@ -1891,10 +1892,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     @Override
     public String getCurrentDesignation() {
-        return getProperty().getId() != null && !getProperty().getCurrentState().getValue().endsWith(STATUS_REJECTED)
-                ? propService.getDesignationForPositionAndUser(getProperty().getCurrentState().getOwnerPosition().getId(),
-                        securityUtils.getCurrentUser().getId())
-                : null;
+        return getProperty().getId() != null && !(getProperty().getCurrentState().getValue().endsWith(STATUS_REJECTED) ||
+                getProperty().getCurrentState().getValue().endsWith(WFLOW_ACTION_NEW))
+                        ? propService.getDesignationForPositionAndUser(getProperty().getCurrentState().getOwnerPosition().getId(),
+                                securityUtils.getCurrentUser().getId())
+                        : null;
     }
 
     public Boolean getShowTaxCalcBtn() {
