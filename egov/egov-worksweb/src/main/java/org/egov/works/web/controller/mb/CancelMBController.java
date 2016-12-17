@@ -44,7 +44,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
-import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.entity.SearchRequestCancelMB;
@@ -94,9 +93,8 @@ public class CancelMBController {
         String message = "";
 
         final ContractorBillRegister contractorBillRegister = contractorBillRegisterService
-                .getContratorBillForWorkOrder(mbHeader.getWorkOrderEstimate(),
-                        ContractorBillRegister.BillStatus.CANCELLED.toString(),
-                        BillTypes.Final_Bill.toString());
+                .getContratorBillForCancelMB(mbHeader.getWorkOrderEstimate(),
+                        ContractorBillRegister.BillStatus.CANCELLED.toString());
         if (contractorBillRegister != null) {
             message = messageSource.getMessage("error.mb.bill.created", new String[] { contractorBillRegister.getBillnumber() },
                     null);
