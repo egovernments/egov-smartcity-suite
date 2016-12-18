@@ -52,7 +52,8 @@
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<input type="hidden" name="marriageRegistration" value="${registration.id}" />
-			<input type="hidden" id="registrationStatus" value="${registration.status.code}" /> 
+			<input type="hidden" id="registrationStatus"
+				value="${registration.status.code}" />
 			<input type="hidden" id="allowDaysValidation" value="${allowDaysValidation}" />
 			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 			<input type="hidden" id="feeCollected" value="${registration.feeCollected}" />
@@ -101,7 +102,7 @@
 							<form:hidden path="witnesses[2].id"/>
 				    		<form:hidden path="witnesses[2].applicantType" />
 							<jsp:include page="witnessinfo.jsp">
-								<jsp:param value="subheading.witness3.info" name="subhead" />
+								<jsp:param value="subheading.witness1.info" name="subhead" />
 								<jsp:param value="wifeside.witness" name="header" />
 							</jsp:include>	
 							
@@ -109,7 +110,7 @@
 							<form:hidden path="witnesses[3].id"/>
 				    		<form:hidden path="witnesses[3].applicantType"/>
 							<jsp:include page="witnessinfo.jsp">
-								<jsp:param value="subheading.witness4.info" name="subhead" />
+								<jsp:param value="subheading.witness2.info" name="subhead" />
 								<jsp:param value="" name="header" />
 							</jsp:include>	
 							

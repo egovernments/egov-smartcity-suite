@@ -95,7 +95,7 @@
 	    <div class="col-sm-3 add-margin"><spring:message code="lbl.city"/></div>
 		<div class="col-sm-3 add-margin view-content"><c:out value="${registration.city}"></c:out></div>
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.locality"/></div>
-		<div class="col-sm-3 add-margin view-content"><c:out value="${registration.locality}"></c:out></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${registration.locality.name}"></c:out></div>
 	</div>
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.marriage.photo"/></div>
@@ -130,7 +130,8 @@
 		<jsp:param value="${registration.husband.maritalStatus}" name="appPresentRelation"/>
 		<jsp:param value="${registration.husband.occupation}" name="appOccupation"/>
 		<jsp:param value="${registration.husband.street}" name="appstreet"/>
-		<jsp:param value="${registration.husband.locality}" name="applocality"/>
+		<jsp:param value="${registration.husband.locality.name}" name="applocality"/>
+		<jsp:param value="${registration.husband.nationality.name}" name="appNationality"/>
 		<jsp:param value="${registration.husband.city}" name="appcity"/>
 		<jsp:param value="${registration.husband.contactInfo.residenceAddress}" name="appResidenceAddress"/>
 		<jsp:param value="${registration.husband.contactInfo.officeAddress}" name="appOfficeAddress"/>
@@ -151,7 +152,7 @@
 	<jsp:param value="${registration.wife.name.firstName}" name="appFirstName"/>
 	<jsp:param value="${registration.wife.name.middleName}" name="appMiddleName"/>
 	<jsp:param value="${registration.wife.name.lastName}" name="appLastName"/>
-	<jsp:param value="${registration.husband.parentsName}" name="appparentsName"/>
+	<jsp:param value="${registration.wife.parentsName}" name="appparentsName"/>
 	<jsp:param value="${registration.wife.encodedSignature}" name="signature"/>
 	<jsp:param value="${registration.wife.encodedPhoto}" name="photo"/>
 	<jsp:param value="${registration.wife.otherName}" name="appOtherName"/>
@@ -161,9 +162,10 @@
 	<jsp:param value="${registration.wife.ageInMonthsAsOnMarriage}" name="appAgeInMonths"/>
 	<jsp:param value="${registration.wife.maritalStatus}" name="appPresentRelation"/>
 	<jsp:param value="${registration.wife.occupation}" name="appOccupation"/>
-	<jsp:param value="${registration.husband.street}" name="appstreet"/>
-	<jsp:param value="${registration.husband.locality}" name="applocality"/>
-	<jsp:param value="${registration.husband.city}" name="appcity"/>
+	<jsp:param value="${registration.wife.street}" name="appstreet"/>
+	<jsp:param value="${registration.wife.locality.name}" name="applocality"/>
+	<jsp:param value="${registration.wife.city}" name="appcity"/>
+	<jsp:param value="${registration.wife.nationality.name}" name="appNationality"/>
 	<jsp:param value="${registration.wife.contactInfo.residenceAddress}" name="appResidenceAddress"/>
 	<jsp:param value="${registration.wife.contactInfo.officeAddress}" name="appOfficeAddress"/>
 	<jsp:param value="${registration.wife.contactInfo.mobileNo}" name="appMobileNo"/>

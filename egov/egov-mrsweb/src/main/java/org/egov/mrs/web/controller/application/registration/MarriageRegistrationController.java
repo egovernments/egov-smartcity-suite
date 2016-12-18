@@ -50,6 +50,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.commons.service.NationalityService;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -57,6 +58,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.domain.entity.MarriageRegistration;
+import org.egov.mrs.domain.enums.MREducationQualification;
 import org.egov.mrs.domain.enums.MaritalStatus;
 import org.egov.mrs.domain.enums.ReligionPractice;
 import org.egov.mrs.domain.service.MarriageApplicantService;
@@ -98,54 +100,61 @@ public class MarriageRegistrationController extends GenericWorkFlowController {
 
     @Autowired
     protected ResourceBundleMessageSource messageSource;
-    
+
     @Autowired
     protected MarriageApplicantService marriageApplicantService;
-    
+
     @Autowired
     protected MarriageRegistrationUnitService marriageRegistrationUnitService;
-    
+
     @Autowired
     protected AppConfigValueService appConfigValuesService;
-    
+
+    @Autowired
+    protected NationalityService nationalityService;
+
     @ModelAttribute
     public void prepareForm(final Model model) {
         model.addAttribute("zones",
                 boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BOUNDARY_TYPE, REVENUE_HIERARCHY_TYPE));
+        model.addAttribute("localitylist", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName
+                (MarriageConstants.BOUNDARYTYPE_LOCALITY, MarriageConstants.LOCATION_HIERARCHY_TYPE));
         model.addAttribute("religions", religionService.getReligions());
         model.addAttribute("acts", marriageActService.getActs());
         model.addAttribute("religionPractice", Arrays.asList(ReligionPractice.values()));
         model.addAttribute("maritalStatusList", Arrays.asList(MaritalStatus.values()));
         model.addAttribute("venuelist", MarriageConstants.venuelist);
         model.addAttribute("witnessRelation", MarriageConstants.witnessRelation);
+        model.addAttribute("Educationqualificationlist", MREducationQualification.values());
+        model.addAttribute("nationalitylist", nationalityService.findAll());
         model.addAttribute("feesList", marriageFeeService.getActiveGeneralTypeFeeses());
         model.addAttribute("generalDocuments", marriageDocumentService.getGeneralDocuments());
         model.addAttribute("individualDocuments", marriageDocumentService.getIndividualDocuments());
         model.addAttribute("marriageRegistrationUnit", marriageRegistrationUnitService.getActiveRegistrationunit());
-        final AppConfigValues  allowValidation = getDaysValidationAppConfValue(
+        final AppConfigValues allowValidation = getDaysValidationAppConfValue(
                 MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION);
-        model.addAttribute("allowDaysValidation", (allowValidation!=null && !allowValidation.getValue().isEmpty())?allowValidation.getValue():"NO");
+        model.addAttribute("allowDaysValidation",
+                allowValidation != null && !allowValidation.getValue().isEmpty() ? allowValidation.getValue() : "NO");
     }
-    
-    public AppConfigValues getDaysValidationAppConfValue(String moduleName, String keyName){
-        List<AppConfigValues> appConfigValues=appConfigValuesService.getConfigValuesByModuleAndKey(moduleName,keyName);
-        return (appConfigValues.size()>0 ?appConfigValues.get(0):null);
+
+    public AppConfigValues getDaysValidationAppConfValue(final String moduleName, final String keyName) {
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, keyName);
+        return appConfigValues.size() > 0 ? appConfigValues.get(0) : null;
     }
-    
+
     public void validateApplicationDate(final MarriageRegistration registration,
-            final BindingResult errors, final HttpServletRequest request){ 
-        final AppConfigValues  allowValidation = getDaysValidationAppConfValue(
+            final BindingResult errors, final HttpServletRequest request) {
+        final AppConfigValues allowValidation = getDaysValidationAppConfValue(
                 MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION);
-        if(allowValidation!=null && !allowValidation.getValue().isEmpty()){
-            if(allowValidation.getValue().equalsIgnoreCase("YES")){
-                if(registration.getDateOfMarriage()!=null && !registration.isLegacy()){ 
+        if (allowValidation != null && !allowValidation.getValue().isEmpty())
+            if (allowValidation.getValue().equalsIgnoreCase("YES"))
+                if (registration.getDateOfMarriage() != null && !registration.isLegacy()) {
                     final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                   if(!new DateTime(new Date()).isBefore(new DateTime(registration.getDateOfMarriage()).plusDays(Integer.parseInt(REGISTER_NO_OF_DAYS)-1))){
-                           errors.reject("err.validate.marriageRegistration.applicationDate", new String[] {sdf.format(registration.getDateOfMarriage()) },null);
-                   }  
+                    if (!new DateTime(new Date()).isBefore(new DateTime(registration.getDateOfMarriage()).plusDays(Integer
+                            .parseInt(REGISTER_NO_OF_DAYS) - 1)))
+                        errors.reject("err.validate.marriageRegistration.applicationDate",
+                                new String[] { sdf.format(registration.getDateOfMarriage()) }, null);
                 }
-            }  
-        }
     }
 
 }

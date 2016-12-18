@@ -77,7 +77,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Unique(id = "id", tableName = "egmrs_registration", columnName = { "serialno" }, fields = {
-"serialNo" }, enableDfltMsg = true, message = "Serial No. already exist.")
+        "serialNo" }, enableDfltMsg = true, message = "Serial No. already exist.")
 @Table(name = "egmrs_registration")
 @SequenceGenerator(name = MarriageRegistration.SEQ_REGISTRATION, sequenceName = MarriageRegistration.SEQ_REGISTRATION, allocationSize = 1)
 public class MarriageRegistration extends StateAware {
@@ -111,6 +111,7 @@ public class MarriageRegistration extends StateAware {
 
     @SafeHtml
     @Length(max = 30)
+    @NotNull
     private String placeOfMarriage;
 
     @SafeHtml
@@ -121,7 +122,9 @@ public class MarriageRegistration extends StateAware {
     private String street;
 
     @NotNull
-    private String locality;
+    @ManyToOne
+    @JoinColumn(name = "locality")
+    private Boundary locality;
 
     @NotNull
     private String city;
@@ -218,10 +221,10 @@ public class MarriageRegistration extends StateAware {
 
     @Transient
     private List<MarriageDocument> documents;
-    
+
     @Transient
     private byte[] marriagePhoto;
-    
+
     private transient MultipartFile marriagePhotoFile;
 
     @Transient
@@ -230,12 +233,12 @@ public class MarriageRegistration extends StateAware {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "marriagePhotoFileStore")
     private FileStoreMapper marriagePhotoFileStore;
-    
+
     @NotNull
     private String serialNo;
     @NotNull
     private String pageNo;
-    
+
     @Override
     public String getStateDetails() {
         return "Marriage registration application no : " + applicationNo;
@@ -569,14 +572,6 @@ public class MarriageRegistration extends StateAware {
         this.street = street;
     }
 
-    public String getLocality() {
-        return locality;
-    }
-
-    public void setLocality(final String locality) {
-        this.locality = locality;
-    }
-
     public String getCity() {
         return city;
     }
@@ -593,11 +588,19 @@ public class MarriageRegistration extends StateAware {
         this.venue = venue;
     }
 
+    public Boundary getLocality() {
+        return locality;
+    }
+
+    public void setLocality(final Boundary locality) {
+        this.locality = locality;
+    }
+
     public byte[] getMarriagePhoto() {
         return marriagePhoto;
     }
 
-    public void setMarriagePhoto(byte[] marriagePhoto) {
+    public void setMarriagePhoto(final byte[] marriagePhoto) {
         this.marriagePhoto = marriagePhoto;
     }
 
@@ -605,7 +608,7 @@ public class MarriageRegistration extends StateAware {
         return marriagePhotoFile;
     }
 
-    public void setMarriagePhotoFile(MultipartFile marriagePhotoFile) {
+    public void setMarriagePhotoFile(final MultipartFile marriagePhotoFile) {
         this.marriagePhotoFile = marriagePhotoFile;
     }
 
@@ -613,7 +616,7 @@ public class MarriageRegistration extends StateAware {
         return encodedMarriagePhoto;
     }
 
-    public void setEncodedMarriagePhoto(String encodedMarriagePhoto) {
+    public void setEncodedMarriagePhoto(final String encodedMarriagePhoto) {
         this.encodedMarriagePhoto = encodedMarriagePhoto;
     }
 
@@ -621,7 +624,7 @@ public class MarriageRegistration extends StateAware {
         return marriagePhotoFileStore;
     }
 
-    public void setMarriagePhotoFileStore(FileStoreMapper marriagePhotoFileStore) {
+    public void setMarriagePhotoFileStore(final FileStoreMapper marriagePhotoFileStore) {
         this.marriagePhotoFileStore = marriagePhotoFileStore;
     }
 
@@ -629,7 +632,7 @@ public class MarriageRegistration extends StateAware {
         return serialNo;
     }
 
-    public void setSerialNo(String serialNo) {
+    public void setSerialNo(final String serialNo) {
         this.serialNo = serialNo;
     }
 
@@ -637,9 +640,8 @@ public class MarriageRegistration extends StateAware {
         return pageNo;
     }
 
-    public void setPageNo(String pageNo) {
+    public void setPageNo(final String pageNo) {
         this.pageNo = pageNo;
     }
 
-    
 }

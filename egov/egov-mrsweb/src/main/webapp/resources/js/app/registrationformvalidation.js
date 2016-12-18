@@ -49,7 +49,7 @@ $('.mobileno-field').blur( function () {
 
 
 
-$('#select-venue').change(function(){
+/*$('#select-venue').change(function(){
 	if (this.value =='Residence')
 	{
 		$('#txt-venuelabel').hide();
@@ -63,7 +63,7 @@ $('#select-venue').change(function(){
 		
 
 }
-})
+})*/
 
 
 $('.month-field').blur( function () {

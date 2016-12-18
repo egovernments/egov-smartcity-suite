@@ -63,8 +63,11 @@ import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.egov.common.entity.Nationality;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.mrs.domain.enums.MREducationQualification;
 import org.egov.mrs.domain.enums.MaritalStatus;
 import org.egov.mrs.domain.enums.ReligionPractice;
 import org.egov.mrs.masters.entity.MarriageReligion;
@@ -154,18 +157,21 @@ public class MrApplicant extends AbstractAuditable {
     @Length(max = 20)
     private String parentsName;
 
-    @Length(max = 20)
-    private String qualification;
+    @Enumerated(EnumType.STRING)
+    private MREducationQualification qualification;
 
     @NotNull
-    @Length(max = 20)
-    private String nationality;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "nationality")
+    private Nationality nationality;
 
     @NotNull
     private String street;
 
     @NotNull
-    private String locality;
+    @ManyToOne
+    @JoinColumn(name = "locality")
+    private Boundary locality;
 
     @NotNull
     private String city;
@@ -404,22 +410,6 @@ public class MrApplicant extends AbstractAuditable {
         this.handicapped = handicapped;
     }
 
-    public String getQualification() {
-        return qualification;
-    }
-
-    public void setQualification(final String qualification) {
-        this.qualification = qualification;
-    }
-
-    public String getNationality() {
-        return nationality;
-    }
-
-    public void setNationality(final String nationality) {
-        this.nationality = nationality;
-    }
-
     public String getParentsName() {
         return parentsName;
     }
@@ -436,20 +426,36 @@ public class MrApplicant extends AbstractAuditable {
         this.street = street;
     }
 
-    public String getLocality() {
-        return locality;
-    }
-
-    public void setLocality(final String locality) {
-        this.locality = locality;
-    }
-
     public String getCity() {
         return city;
     }
 
     public void setCity(final String city) {
         this.city = city;
+    }
+
+    public Nationality getNationality() {
+        return nationality;
+    }
+
+    public void setNationality(final Nationality nationality) {
+        this.nationality = nationality;
+    }
+
+    public Boundary getLocality() {
+        return locality;
+    }
+
+    public void setLocality(final Boundary locality) {
+        this.locality = locality;
+    }
+
+    public MREducationQualification getQualification() {
+        return qualification;
+    }
+
+    public void setQualification(final MREducationQualification qualification) {
+        this.qualification = qualification;
     }
 
 }

@@ -41,21 +41,25 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <div class="row">
-	<div class="col-md-12"> 
-		<div class="text-right error-msg" style="font-size:14px;"></div>
-		<form:form role="form" method="post" action="/mrs/registration/update-approved"
+	<div class="col-md-12">
+		<div class="text-right error-msg" style="font-size: 14px;"></div>
+		<form:form role="form" method="post"
+			action="/mrs/registration/update-approved"
 			modelAttribute="registration" id="form-updateregistration"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 
-			<input type="hidden" name="marriageRegistration" value="${registration.id}" />
-			<input type="hidden" id="registrationStatus" value="${registration.status.code}" /> 
-			<input type="hidden" id="allowDaysValidation" value="${allowDaysValidation}" />
-			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
+			<input type="hidden" name="marriageRegistration"
+				value="${registration.id}" />
+			<input type="hidden" id="registrationStatus"
+				value="${registration.status.code}" />
+			<input type="hidden" id="allowDaysValidation"
+				value="${allowDaysValidation}" />
+			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -63,75 +67,84 @@
 					</div>
 				</div>
 				<div class="panel-body custom-form ">
-					  <div class="container-fluid">	
-					  <ul class="nav nav-tabs" id="settingstab">
-					    <li class="active"><a data-toggle="tab" href="#applicant-info">Applicant's Information</a></li>
-					    <li><a data-toggle="tab" href="#witness-info">Witnesses Information</a></li>
-					    <li><a data-toggle="tab" href="#checklist-info">Checklist</a></li>
-					  </ul>
-					  <div class="tab-content">
-					    <div id="applicant-info" class="tab-pane fade in active">
-					    	<jsp:include page="generalinfo.jsp"></jsp:include>
-					    </div>
-					    <div id="witness-info" class="tab-pane fade">
-				    		<c:set value="witnesses[0]" var="witness" scope="request"></c:set>
-				    		<form:hidden path="witnesses[0].id"/>
-					    	<jsp:include page="witnessinfo.jsp">
-					    	<jsp:param value="husbandside.witness" name="header" />
-								<jsp:param value="subheading.witness1.info" name="subhead" />
-							</jsp:include>
-							
-							<c:set value="witnesses[1]" var="witness" scope="request"></c:set>
-							<form:hidden path="witnesses[1].id"/>
-							<jsp:include page="witnessinfo.jsp">
-								<jsp:param value="subheading.witness2.info" name="subhead" />
-								<jsp:param value="" name="header" />
-								
-							</jsp:include>
-							
-							<c:set value="witnesses[2]" var="witness" scope="request"></c:set>
-							<form:hidden path="witnesses[2].id"/>
-							<jsp:include page="witnessinfo.jsp">
-								<jsp:param value="subheading.witness3.info" name="subhead" />
-								<jsp:param value="wifeside.witness" name="header" />
-								
-							</jsp:include>	
-							<c:set value="witnesses[3]" var="witness" scope="request"></c:set>
-							<form:hidden path="witnesses[3].id"/>
-							<jsp:include page="witnessinfo.jsp">
-								<jsp:param value="subheading.witness4.info" name="subhead" />
-								<jsp:param value="" name="header" />
-							</jsp:include>	
-							
-							<c:set value="priest" var="priest" scope="request"></c:set>
-							<form:hidden path="priest.id"/>
-							<jsp:include page="priestinfo.jsp"></jsp:include>
-					    </div>
-					     <div id="checklist-info" class="tab-pane fade">
-					    	<div class="panel panel-primary" data-collapsed="0">
-					    		<jsp:include page="checklist.jsp"></jsp:include>
-					    	</div>
-					    	<div class="panel panel-primary" data-collapsed="0">
-					    		<jsp:include page="documentdetails.jsp"></jsp:include>
-				    		</div>
-				   		 </div>
-					 
-					  </div>
+					<div class="container-fluid">
+						<ul class="nav nav-tabs" id="settingstab">
+							<li class="active"><a data-toggle="tab"
+								href="#applicant-info">Applicant's Information</a></li>
+							<li><a data-toggle="tab" href="#witness-info">Witnesses
+									Information</a></li>
+							<li><a data-toggle="tab" href="#checklist-info">Checklist</a></li>
+						</ul>
+						<div class="tab-content">
+							<div id="applicant-info" class="tab-pane fade in active">
+								<jsp:include page="generalinfo.jsp"></jsp:include>
+							</div>
+							<div id="witness-info" class="tab-pane fade">
+								<c:set value="witnesses[0]" var="witness" scope="request"></c:set>
+								<form:hidden path="witnesses[0].id" />
+								<jsp:include page="witnessinfo.jsp">
+									<jsp:param value="husbandside.witness" name="header" />
+									<jsp:param value="subheading.witness1.info" name="subhead" />
+								</jsp:include>
+
+								<c:set value="witnesses[1]" var="witness" scope="request"></c:set>
+								<form:hidden path="witnesses[1].id" />
+								<jsp:include page="witnessinfo.jsp">
+									<jsp:param value="subheading.witness2.info" name="subhead" />
+									<jsp:param value="" name="header" />
+
+								</jsp:include>
+
+								<c:set value="witnesses[2]" var="witness" scope="request"></c:set>
+								<form:hidden path="witnesses[2].id" />
+								<jsp:include page="witnessinfo.jsp">
+									<jsp:param value="subheading.witness1.info" name="subhead" />
+									<jsp:param value="wifeside.witness" name="header" />
+
+								</jsp:include>
+								<c:set value="witnesses[3]" var="witness" scope="request"></c:set>
+								<form:hidden path="witnesses[3].id" />
+								<jsp:include page="witnessinfo.jsp">
+									<jsp:param value="subheading.witness2.info" name="subhead" />
+									<jsp:param value="" name="header" />
+								</jsp:include>
+
+								<c:set value="priest" var="priest" scope="request"></c:set>
+								<form:hidden path="priest.id" />
+								<jsp:include page="priestinfo.jsp"></jsp:include>
+							</div>
+							<div id="checklist-info" class="tab-pane fade">
+								<div class="panel panel-primary" data-collapsed="0">
+									<jsp:include page="checklist.jsp"></jsp:include>
+								</div>
+								<div class="panel panel-primary" data-collapsed="0">
+									<jsp:include page="documentdetails.jsp"></jsp:include>
+								</div>
+							</div>
+
+						</div>
+					</div>
 				</div>
 			</div>
-			</div>
 			<div class="row">
-				<div class="text-center">					
-					<button type="submit" class="btn btn-primary"><spring:message code="lbl.update"/></button>
-			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+				<div class="text-center">
+					<button type="submit" class="btn btn-primary">
+						<spring:message code="lbl.update" />
+					</button>
+					<a href="javascript:void(0)" class="btn btn-default"
+						onclick="self.close()"><spring:message code="lbl.close" /></a>
 				</div>
 			</div>
 		</form:form>
-		
+
 	</div>
 </div>
 
-<script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script src="<cdn:url value='/resources/js/app/registration.js?rnd=${app_release_no}'/> "></script>
-<script src="<cdn:url value='/resources/js/app/registrationformvalidation.js?rnd=${app_release_no}'/> "></script>
-<script src="<cdn:url value='/resources/js/app/viewregistration.js?rnd=${app_release_no}'/> "></script>
+<script
+	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/js/app/registration.js?rnd=${app_release_no}'/> "></script>
+<script
+	src="<cdn:url value='/resources/js/app/registrationformvalidation.js?rnd=${app_release_no}'/> "></script>
+<script
+	src="<cdn:url value='/resources/js/app/viewregistration.js?rnd=${app_release_no}'/> "></script>
