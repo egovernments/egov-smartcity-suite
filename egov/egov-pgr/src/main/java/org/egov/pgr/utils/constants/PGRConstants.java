@@ -79,4 +79,11 @@ public class PGRConstants {
     public static final String USER_SELECT_QRY = "  SELECT   emp.name||'~'|| pos.name    as name, ";
     public static final String COMPLAINTTYPE_SELECT_QRY = " SELECT ctype.name as name, ";
     public static final String DEPT_SELECT_QRY = " SELECT dept.name as name, ";
+    
+    //Dashboard
+    public static final String CITY_CODE = "cityCode";
+    public static final String WARD_NUMBER = "wardNo";
+    public static final String WARD_NAME = "wardName";
+    public static final String CITY_NAME = "cityName";
+    public static final String DISTRICT_NAME = "cityDistrictName";
 }

@@ -60,5 +60,11 @@ public interface ComplaintIndexCustomRepository {
     SearchResponse findAllGrievanceBySource(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query, String grouByField);
     
     SearchResponse findByAllFunctionary(ComplaintDashBoardRequest complaintDashBoardRequest,BoolQueryBuilder query);
+    
+    SearchResponse findByAllUlb(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query);
+    
+    SearchResponse findBYAllWards(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query);
+    
+    SearchResponse findBYAllLocalities(final ComplaintDashBoardRequest complaintDashBoardRequest, final BoolQueryBuilder query);
 
 }

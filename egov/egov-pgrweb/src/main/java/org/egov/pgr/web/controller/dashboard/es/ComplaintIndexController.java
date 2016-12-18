@@ -170,4 +170,19 @@ public class ComplaintIndexController {
     public Map<String, Object> getAllFunctionaryResponse(@RequestBody ComplaintDashBoardRequest complaintRequest){
         return complaintIndexService.getAllFunctionaryResponse(complaintRequest);
     }
+    
+    @RequestMapping(value = "/grievance/allulb", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> getAllUlbResponse(@RequestBody ComplaintDashBoardRequest complaintRequest){
+        return complaintIndexService.getAllUlbResponse(complaintRequest);
+    }
+    
+    @RequestMapping(value = "/grievance/allwards", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> getAllWardsResponse(@RequestBody ComplaintDashBoardRequest complaintRequest){
+        return complaintIndexService.getAllWardResponse(complaintRequest);
+    }
+    
+    @RequestMapping(value = "/grievance/alllocalities", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> getAllLocalitiesResponse(@RequestBody ComplaintDashBoardRequest complaintRequest){
+        return complaintIndexService.getAllLocalityResponse(complaintRequest);
+    }
 }
