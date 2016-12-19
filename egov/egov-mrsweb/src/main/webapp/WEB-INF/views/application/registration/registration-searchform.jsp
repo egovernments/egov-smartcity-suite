@@ -61,11 +61,12 @@
 							<form:input id="registrationNo" path="registrationNo" type="text" cssClass="form-control low-width is_valid_alphnumeric" autocomplete="off" required="required" />
 							<form:errors path="registrationNo" cssClass="error-msg"/>
 						</div>
-						<label for="dateOfMarriage" class="col-sm-2 control-label"><spring:message
-								code="lbl.date.of.marriage" /></label>
+						<label for="registrationNo" class="col-sm-2 control-label"><spring:message
+								code="lbl.application.no" /></label>
+
 						<div class="col-sm-3 add-margin">
-							<form:input id="dateOfMarriage" path="dateOfMarriage" type="text" cssClass="form-control datepicker" data-date-today-highlight="true" data-date-end-date="0d" />
-							<form:errors path="dateOfMarriage" cssClass="error-msg"/>
+							<form:input id="applicationNo" path="applicationNo" type="text" cssClass="form-control low-width is_valid_alphnumeric" autocomplete="off" required="required" />
+							<form:errors path="applicationNo" cssClass="error-msg"/>
 						</div>
 					</div>
 					
@@ -113,6 +114,12 @@
 				             </form:select>
 				            <form:errors path="marriageRegistrationUnit.id" cssClass="add-margin error-msg"/>
 						</div>
+						<label for="dateOfMarriage" class="col-sm-2 control-label"><spring:message
+								code="lbl.date.of.marriage" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:input id="dateOfMarriage" path="dateOfMarriage" type="text" cssClass="form-control datepicker" data-date-today-highlight="true" data-date-end-date="0d" />
+							<form:errors path="dateOfMarriage" cssClass="error-msg"/>
+						</div>
 					</div>
 				
 				<c:if test="${mode=='collectmrfee'}">
@@ -126,6 +133,7 @@
 					     	</select>
 							<%-- <form:errors path="marriageRegistrationType" cssClass="error-msg"/> --%>
 						</div>
+						
 					</div>
 				</c:if>
 				

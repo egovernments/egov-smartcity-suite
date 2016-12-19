@@ -55,11 +55,11 @@
 	    	<thead>
 	    		<tr>
 	    			<th>Registration No</th>
+	    			<th>Application No</th>
 	    			<th>Registration Date</th>
 	    			<th>Marriage Date</th>
 	    			<th>Husband Name</th>
 	    			<th>Wife Name</th>
-	    			<th>Is Certificate issued?</th>
 	    			<th>Marriage Fee</th>
 	    			<th>Status</th>
 	    			<th>Registration Unit</th>

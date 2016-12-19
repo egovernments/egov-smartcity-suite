@@ -42,22 +42,23 @@ $(document)
 		.ready(
 				function() {
 
-					
 					var collectfeeurl;
-					
 
-					$('#btnregistrationsearch').click(function() {
-						var url;
-						if($('#marriageRegistrationType').val()=='REGISTRATION'){
-							url = '/mrs/registration/collectmrfeeajaxsearch';
-							collectfeeurl = '/mrs/collection/bill/';
-							callAjaxSearch(url);
-						} else {
-							url = '/mrs/registration/collectmrreissuefeeajaxsearch';
-							collectfeeurl = '/mrs/collection/reissuebill/';
-							callReIssueAjaxSearch(url);
-						}
-					});
+					$('#btnregistrationsearch')
+							.click(
+									function() {
+										var url;
+										if ($('#marriageRegistrationType')
+												.val() == 'REGISTRATION') {
+											url = '/mrs/registration/collectmrfeeajaxsearch';
+											collectfeeurl = '/mrs/collection/bill/';
+											callAjaxSearch(url);
+										} else {
+											url = '/mrs/registration/collectmrreissuefeeajaxsearch';
+											collectfeeurl = '/mrs/collection/reissuebill/';
+											callReIssueAjaxSearch(url);
+										}
+									});
 
 					function callAjaxSearch(callURL) {
 						$('.report-section').removeClass('display-hide');
@@ -67,9 +68,8 @@ $(document)
 											ajax : {
 												url : callURL,
 												type : "POST",
-												
-												"data" : 
-													getFormData($('form'))
+
+												"data" : getFormData($('form'))
 											},
 											"bDestroy" : true,
 											"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
@@ -97,6 +97,10 @@ $(document)
 														"sClass" : "text-left"
 													},
 													{
+														"data" : "applicationNo",
+														"sClass" : "text-left"
+													},
+													{
 														"data" : "registrationDate",
 														"sClass" : "text-left"
 													},
@@ -110,10 +114,6 @@ $(document)
 													},
 													{
 														"data" : "wifeName",
-														"sClass" : "text-left"
-													},
-													{
-														"data" : "certificateIssued",
 														"sClass" : "text-left"
 													},
 													{
@@ -134,20 +134,20 @@ $(document)
 														"render" : function(
 																data, type,
 																row, meta) {
-														// if (row.status == 'Approved') {
-																return ('<select class="dropchange"><option value="">Select from Below</option><option  value='
-																		+ collectfeeurl
-																		+ row.id + '>Collect Fee</option></select>');
-															}
-														//}
+															// if (row.status ==
+															// 'Approved') {
+															return ('<select class="dropchange"><option value="">Select from Below</option><option  value='
+																	+ collectfeeurl
+																	+ row.id + '>Collect Fee</option></select>');
+														}
+													// }
 
 													} ]
 
 										});
 
 					}
-					
-					
+
 					function callReIssueAjaxSearch(callURL) {
 						$('.report-section').removeClass('display-hide');
 						var reportdatatable = $("#registration_table")
@@ -156,14 +156,23 @@ $(document)
 											ajax : {
 												url : callURL,
 												type : "POST",
-												
+
 												"data" : {
-													'registrationNo' : $("#registrationNo").val(),
-													'dateOfMarriage': $("#dateOfMarriage").val(),
-													'husbandName': $("#husbandName").val(),
-													'wifeName': $("#wifeName").val(),
-													'applicationDate' : $("#registrationDate").val()
-													}
+													'registrationNo' : $(
+															"#registrationNo")
+															.val(),
+													'dateOfMarriage' : $(
+															"#dateOfMarriage")
+															.val(),
+													'husbandName' : $(
+															"#husbandName")
+															.val(),
+													'wifeName' : $("#wifeName")
+															.val(),
+													'applicationDate' : $(
+															"#registrationDate")
+															.val()
+												}
 											},
 											"bDestroy" : true,
 											"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
@@ -191,6 +200,10 @@ $(document)
 														"sClass" : "text-left"
 													},
 													{
+														"data" : "applicationNo",
+														"sClass" : "text-left"
+													},
+													{
 														"data" : "registrationDate",
 														"sClass" : "text-left"
 													},
@@ -207,17 +220,14 @@ $(document)
 														"sClass" : "text-left"
 													},
 													{
-														"data" : "certificateIssued",
-														"sClass" : "text-left"
-													},
-													{
 														"data" : "feePaid",
 														"sClass" : "text-left"
 													},
 													{
 														"data" : "status",
 														"sClass" : "text-left"
-													},{
+													},
+													{
 														"data" : "marriageRegistrationUnit",
 														"sClass" : "text-left"
 													},
@@ -227,12 +237,15 @@ $(document)
 														"render" : function(
 																data, type,
 																row, meta) {
-														 /*if (row.status == 'Approved') {*/
-																return ('<select class="dropchange"><option value="">Select from Below</option><option  value='
-																		+ collectfeeurl
-																		+ row.id + '>Collect Fee</option></select>');
-															}
-														//}
+															/*
+															 * if (row.status ==
+															 * 'Approved') {
+															 */
+															return ('<select class="dropchange"><option value="">Select from Below</option><option  value='
+																	+ collectfeeurl
+																	+ row.id + '>Collect Fee</option></select>');
+														}
+													// }
 
 													} ]
 
@@ -248,13 +261,12 @@ $(document)
 
 					});
 
-					function openPopup(url) {
-						window
-								.open(url, 'window',
-										'scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
-					}
-
 				});
+
+function openPopup(url) {
+	window.open(url, 'window',
+			'scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
+}
 
 function getFormData($form) {
 	var unindexed_array = $form.serializeArray();

@@ -87,6 +87,18 @@ $(document).ready( function () {
 							},
 								"sClass" : "text-left"
 							}, {
+								"data" : "applicationNo",
+								render : function(data,
+										type, row, meta) {
+									if (row.applicationNo == 'undefined'
+											|| row.applicationNo == '') {
+										return "N/A";
+									} else {
+										return row.applicationNo;
+									}
+								},
+								"sClass" : "text-left"
+							},{
 								"data" : "registrationDate",
 								"sClass" : "text-left"
 							}, {
@@ -97,9 +109,6 @@ $(document).ready( function () {
 								"sClass" : "text-left"
 							}, {
 								"data" : "wifeName",
-								"sClass" : "text-left"
-							}, {
-								"data" : "certificateIssued",
 								"sClass" : "text-left"
 							}, {
 								"data" : "feePaid",
