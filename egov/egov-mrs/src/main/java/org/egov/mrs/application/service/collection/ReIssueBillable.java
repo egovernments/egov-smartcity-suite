@@ -79,6 +79,7 @@ public class ReIssueBillable extends AbstractBillable implements Billable {
     public static final String DEFAULT_FUND_CODE = "01";
     public static final String DISPLAY_MESSAGE = "Marriage Certificate fee Collection";
     public static final String BILLTYPE_AUTO = "AUTO";
+    public static final String MARRIAGE_REISSUE_MESSAGE = "Marriage_Certificate_Issue";
 
     private Long userId;
     private EgBillType billType;
@@ -276,4 +277,9 @@ public class ReIssueBillable extends AbstractBillable implements Billable {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    @Override
+    public String getConsumerType() {
+          return MARRIAGE_REISSUE_MESSAGE;
+    }
 }

@@ -78,6 +78,7 @@ public class RegistrationBillable extends AbstractBillable implements Billable {
     public static final String DEFAULT_FUND_SRC_CODE = "01";
     public static final String DEFAULT_FUND_CODE = "01";
     public static final String DISPLAY_MESSAGE = "Marriage Registration Fee Collection";
+    public static final String MARRIAGE_REGISTRATION = "Marriage_Registration";
     public static final String BILLTYPE_AUTO = "AUTO";
 
     private Long userId;
@@ -278,4 +279,10 @@ public class RegistrationBillable extends AbstractBillable implements Billable {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    @Override
+    public String getConsumerType() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
