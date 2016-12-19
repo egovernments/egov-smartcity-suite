@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-12-15T13:02:16 -->
+<!-- 2016-12-19T16:32:02 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="registrationcertificate" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="02afdd73-b1f8-4b82-bdec-843293ab245b">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
@@ -28,6 +28,7 @@
 	<parameter name="wifeParentName" class="java.lang.String">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
+	<parameter name="certificateno" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -94,16 +95,16 @@
 				<imageExpression><![CDATA[$F{marriagePhoto}]]></imageExpression>
 			</image>
 		</band>
-		<band height="170">
+		<band height="141">
 			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="30" width="555" height="140" isPrintWhenDetailOverflows="true" uuid="83440142-c0ff-41dd-b286-90115c3367ba"/>
+				<reportElement x="-2" y="0" width="555" height="140" isPrintWhenDetailOverflows="true" uuid="83440142-c0ff-41dd-b286-90115c3367ba"/>
 				<textElement markup="styled">
 					<font size="12" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["         I, <style forecolor=\"#000000\" isBold=\"true\">" +  $P{registrarName} + "</style> hereby certify that I have registered the marriage of bridegroom <style forecolor=\"#000000\" isBold=\"true\">" + $F{husbandName} + "</style> son of <style forecolor=\"#000000\" isBold=\"true\">" + $P{husbandParentName} + "</style> with bride <style forecolor=\"#000000\" isBold=\"true\">" + $F{wifeName} + "</style> daughter of <style forecolor=\"#000000\" isBold=\"true\">" + $P{wifeParentName} + "</style> on this <style forecolor=\"#000000\" isBold=\"true\" >"+$P{applicationdateday}+"</style> day of <style forecolor=\"#000000\" isBold=\"true\" >"+$P{applicationdatemonth}+"</style>,<style forecolor=\"#000000\" isBold=\"true\" >"+$P{applicationdateyear}+"</style> in pursuance of the memorandum date the <style forecolor=\"#000000\" isBold=\"true\" >"+$P{marriagedateday}+"</style> day of <style forecolor=\"#000000\" isBold=\"true\" >"+$P{marriagedatemonth}+"</style>,<style forecolor=\"#000000\" isBold=\"true\" >"+$P{marriagedateyear}+"</style> received by me from the parties and the same has been entered at Serial No.<style forecolor=\"#000000\" isBold=\"true\" >"+$P{serialno}+"</style> in page <style forecolor=\"#000000\" isBold=\"true\" >"+$P{pageno}+"</style> of the Register of Marriages maintained by me."]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="94">
+		<band height="117">
 			<staticText>
 				<reportElement x="397" y="30" width="130" height="20" uuid="1cb4d697-fd0e-4d1f-81d4-221a3a0acc75"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
@@ -117,48 +118,59 @@
 				<textFieldExpression><![CDATA[$F{zoneName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="5" y="3" width="113" height="20" uuid="0365c0da-8615-4757-8f2d-4cfaf0e33398"/>
+				<reportElement x="1" y="20" width="113" height="20" uuid="0365c0da-8615-4757-8f2d-4cfaf0e33398"/>
 				<text><![CDATA[Center :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="5" y="26" width="113" height="20" uuid="e4cd506a-4077-45ef-bcfe-8177f8d0112d"/>
+				<reportElement x="0" y="43" width="113" height="20" uuid="e4cd506a-4077-45ef-bcfe-8177f8d0112d"/>
 				<text><![CDATA[Registration Number:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="118" y="26" width="159" height="20" uuid="e8693e79-54cd-410c-a3de-9f3fe09cc882"/>
+				<reportElement x="118" y="43" width="159" height="20" uuid="e8693e79-54cd-410c-a3de-9f3fe09cc882"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{registrationNumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="118" y="3" width="191" height="20" uuid="c04e30e7-2c90-4bd0-b432-598da79736fb"/>
+				<reportElement x="118" y="20" width="202" height="20" uuid="c04e30e7-2c90-4bd0-b432-598da79736fb"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{registrationcenter}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="5" y="50" width="113" height="20" uuid="1962f1f1-7f29-4279-a1ca-4c2b1374f775"/>
+				<reportElement x="2" y="67" width="113" height="20" uuid="1962f1f1-7f29-4279-a1ca-4c2b1374f775"/>
 				<text><![CDATA[Application Number:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="5" y="72" width="43" height="20" uuid="62c2e67f-7c9e-43ee-aad3-c9e51630351d"/>
+				<reportElement x="10" y="90" width="43" height="20" uuid="62c2e67f-7c9e-43ee-aad3-c9e51630351d"/>
 				<text><![CDATA[Date :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="118" y="50" width="159" height="20" uuid="775e9f8c-9f52-4989-83a0-ce7780b77fbb"/>
+				<reportElement x="118" y="67" width="159" height="20" uuid="775e9f8c-9f52-4989-83a0-ce7780b77fbb"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{applicationNumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="118" y="71" width="145" height="20" uuid="630d621d-2efe-4b2d-96a9-3f6d6a39da89"/>
+				<reportElement x="120" y="90" width="145" height="20" uuid="630d621d-2efe-4b2d-96a9-3f6d6a39da89"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{certificateDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="0" width="111" height="20" uuid="60c26d1c-db5f-488b-8401-f70856487519"/>
+				<text><![CDATA[Certificate No:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="120" y="0" width="189" height="20" uuid="47cebf59-3e47-46c5-bcda-d488939241c6"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{certificateno}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

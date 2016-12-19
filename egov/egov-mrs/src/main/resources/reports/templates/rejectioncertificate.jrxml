@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2016-12-19T16:40:28 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="02afdd73-b1f8-4b82-bdec-843293ab245b">
 	<property name="ireport.zoom" value="1.2418426461183105"/>
 	<property name="ireport.x" value="0"/>
@@ -15,6 +17,7 @@
 	<parameter name="certificateDate" class="java.lang.String"/>
 	<parameter name="registrationNumber" class="java.lang.String"/>
 	<parameter name="applicationNumber" class="java.lang.String"/>
+	<parameter name="certificateno" class="java.lang.String"/>
 	<field name="rejectionReason" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
@@ -87,27 +90,27 @@
 				<textFieldExpression><![CDATA[$F{rejectionReason}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="107">
+		<band height="135">
 			<staticText>
-				<reportElement x="14" y="13" width="113" height="20" uuid="558c62af-5119-479d-a647-0821b3eadfaa"/>
+				<reportElement x="14" y="33" width="113" height="20" uuid="558c62af-5119-479d-a647-0821b3eadfaa"/>
 				<text><![CDATA[Center :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="127" y="13" width="191" height="20" uuid="369fb1da-a923-4933-b290-567f18d1ffe7"/>
+				<reportElement x="127" y="33" width="191" height="20" uuid="369fb1da-a923-4933-b290-567f18d1ffe7"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{registrationcenter}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="127" y="81" width="145" height="20" uuid="a6e66122-7344-447b-9cac-29c1a609e2ae"/>
+				<reportElement x="127" y="104" width="145" height="20" uuid="a6e66122-7344-447b-9cac-29c1a609e2ae"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{certificateDate}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="14" y="80" width="43" height="20" uuid="94fd93da-ee7f-4601-876c-ed6792f671df"/>
+				<reportElement x="14" y="103" width="43" height="20" uuid="94fd93da-ee7f-4601-876c-ed6792f671df"/>
 				<text><![CDATA[Date :]]></text>
 			</staticText>
 			<staticText>
@@ -123,26 +126,37 @@
 				<textFieldExpression><![CDATA[$P{zoneName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="14" y="36" width="113" height="20" uuid="9d85bbf6-c969-498b-9ba5-350d7e5be909"/>
+				<reportElement x="14" y="56" width="113" height="20" uuid="9d85bbf6-c969-498b-9ba5-350d7e5be909"/>
 				<text><![CDATA[Registration Number:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="14" y="58" width="113" height="20" uuid="a79857e5-b9dd-4b6e-a70e-d8c59addf5ba"/>
+				<reportElement x="14" y="78" width="113" height="20" uuid="a79857e5-b9dd-4b6e-a70e-d8c59addf5ba"/>
 				<text><![CDATA[Application Number:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="127" y="58" width="159" height="20" uuid="2fe4b3f4-f1bb-40ff-b34f-d375f3fe4066"/>
+				<reportElement x="127" y="78" width="159" height="20" uuid="2fe4b3f4-f1bb-40ff-b34f-d375f3fe4066"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{applicationNumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="127" y="36" width="159" height="20" uuid="c81db8d3-d7d0-49de-9ce7-c20d88800961"/>
+				<reportElement x="127" y="56" width="159" height="20" uuid="c81db8d3-d7d0-49de-9ce7-c20d88800961"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{registrationNumber}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="14" y="13" width="113" height="20" uuid="c79f8d14-7a62-49e9-9ac5-3e8ecc653375"/>
+				<text><![CDATA[Certificate No :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="127" y="15" width="191" height="18" uuid="eddd8d0e-8a4d-4d7b-ba84-f51490ba2054"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{certificateno}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
