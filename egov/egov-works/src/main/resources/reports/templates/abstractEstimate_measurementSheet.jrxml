@@ -38,12 +38,11 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-08-03T17:51:57 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="measurementSheet" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="20" topMargin="30" bottomMargin="0" uuid="5617245c-868f-4ad2-9c27-16c5e3aa50b0">
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="measurementSheet" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="555" leftMargin="0" rightMargin="20" topMargin="30" bottomMargin="0" uuid="5617245c-868f-4ad2-9c27-16c5e3aa50b0">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
-	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
+	<import value="org.egov.infra.reporting.util.*"/>
 	<field name="sNo" class="java.lang.Object"/>
 	<field name="no" class="java.lang.Object"/>
 	<field name="scheduleCategory" class="java.lang.Object"/>

@@ -205,11 +205,11 @@ public class WorkProgressRegisterPDFController {
                 else
                     pdf.setBudgetHead("");
                 if (wpr.getTypeOfWork() != null)
-                    pdf.setTypeOfWork(wpr.getTypeOfWork().getDescription());
+                    pdf.setTypeOfWork(wpr.getTypeOfWork().getName());
                 else
                     pdf.setTypeOfWork("");
                 if (wpr.getSubTypeOfWork() != null)
-                    pdf.setSubTypeOfWork(wpr.getSubTypeOfWork().getDescription());
+                    pdf.setSubTypeOfWork(wpr.getSubTypeOfWork().getName());
                 else
                     pdf.setSubTypeOfWork("");
                 if (wpr.getAdminSanctionBy() != null)

@@ -394,7 +394,7 @@ public class EstimateAbstractReportPDFController {
 
         if (subTypeOfWork != null)
             queryParameters += messageSource.getMessage("msg.subtypeofwork", null, null)
-                    + egwTypeOfWorkHibernateDAO.getTypeOfWorkById(typeOfWork).getName() + ", ";
+                    + egwTypeOfWorkHibernateDAO.getTypeOfWorkById(subTypeOfWork).getName() + ", ";
 
         if (departments != null && !departments.toString().equalsIgnoreCase("[null]")
                 && !departments.toString().equalsIgnoreCase("[]")) {
