@@ -126,63 +126,55 @@ public class CreateOverheadController {
     }
 
     private void validateOverhead(final Overhead overhead, final BindingResult resultBinder) {
-        final String overheadName = overhead.getName();
-        final Overhead existingOverhead = overheadService.getOverheadByName(overheadName);
-        final Long overheadId = overhead.getId();
-        if (existingOverhead != null && !existingOverhead.getId().equals(overheadId))
-            resultBinder.reject("error.overheadname.exists", new String[] { existingOverhead.getName() },
+        final Overhead existingOverhead = overheadService.getOverheadByName(overhead.getName());
+        if (existingOverhead != null && !existingOverhead.getId().equals(overhead.getId()))
+            resultBinder.reject("error.overheadname.exists", new String[] { overhead.getName() },
                     "error.overheadname.exists");
-        if (!overheadName.matches(WorksConstants.ALPHANUMERICWITHSPECIALCHAR))
+        if (overhead.getName() != null && !overhead.getName().matches(WorksConstants.ALPHANUMERICWITHSPECIALCHAR))
             resultBinder.reject("error.name.invalid", "error.name.invalid");
 
         if (overhead.getTempOverheadRateValues() == null)
-            resultBinder.reject("error.overhead.altleastone.overheadrate.needed", new String[] { "" },
+            resultBinder.reject("error.overhead.altleastone.overheadrate.needed",
                     "error.overhead.altleastone.overheadrate.needed");
         if (overhead.getName() == null)
-            resultBinder.reject("error.overhead.overheadname", new String[] { "" }, "error.overhead.overheadname");
+            resultBinder.reject("error.overhead.overheadname", "error.overhead.overheadname");
         if (overhead.getDescription() == null)
-            resultBinder.reject("error.overhead.overheaddescription", new String[] { "" },
-                    "error.overhead.overheaddescription");
+            resultBinder.reject("error.overhead.overheaddescription", "error.overhead.overheaddescription");
         if (overhead.getAccountCode() == null)
-            resultBinder.reject("error.overhead.overheadaccountcode", new String[] { "" },
-                    "error.overhead.overheadaccountcode");
+            resultBinder.reject("error.overhead.overheadaccountcode", "error.overhead.overheadaccountcode");
         for (final OverheadRate overheadRates : overhead.getTempOverheadRateValues()) {
-            if (overheadRates.getValidity().getEndDate() != null)
-                if (overheadRates.getValidity().getStartDate().after(overheadRates.getValidity().getEndDate())) {
-                    resultBinder.reject("overhead.date.invalid", new String[] { "" }, "overhead.date.invalid");
-                    break;
-                }
+            if (overheadRates.getValidity().getEndDate() != null
+                    && overheadRates.getValidity().getStartDate().after(overheadRates.getValidity().getEndDate())) {
+                resultBinder.reject("overhead.date.invalid", "overhead.date.invalid");
+                break;
+            }
             if ((overheadRates.getPercentage() == null || overheadRates.getPercentage() == 0.0)
                     && (overheadRates.getLumpsumAmount() == null || overheadRates.getLumpsumAmount() == 0.0)) {
-                resultBinder.reject("overhead.overheadRates.invalid", new String[] { "" },
-                        "overhead.overheadRates.invalid");
+                resultBinder.reject("overhead.overheadRates.invalid", "overhead.overheadRates.invalid");
                 break;
             }
 
             if (overheadRates.getPercentage() != null && overheadRates.getPercentage() > 0.0
                     && overheadRates.getLumpsumAmount() != null && overheadRates.getLumpsumAmount() > 0.0) {
-                resultBinder.reject("overhead.lumpsumandpercentage.invalid", new String[] { "" },
-                        "overhead.lumpsumandpercentage.invalid");
+                resultBinder.reject("overhead.lumpsumandpercentage.invalid", "overhead.lumpsumandpercentage.invalid");
                 break;
             }
 
             if (overheadRates.getPercentage() != null && overheadRates.getPercentage() > 0.0
                     && overheadRates.getLumpsumAmount() != null && overheadRates.getLumpsumAmount() <= 0.0) {
-                resultBinder.reject("overhead.lumpsumandpercentage.invalid", new String[] { "" },
-                        "overhead.lumpsumandpercentage.invalid");
+                resultBinder.reject("overhead.lumpsumandpercentage.invalid", "overhead.lumpsumandpercentage.invalid");
                 break;
             }
 
             if (overheadRates.getPercentage() != null && overheadRates.getPercentage() <= 0.0
                     && overheadRates.getLumpsumAmount() != null && overheadRates.getLumpsumAmount() > 0.0) {
-                resultBinder.reject("overhead.lumpsumandpercentage.invalid", new String[] { "" },
-                        "overhead.lumpsumandpercentage.invalid");
+                resultBinder.reject("overhead.lumpsumandpercentage.invalid", "overhead.lumpsumandpercentage.invalid");
                 break;
             }
 
             if (overheadRates.getPercentage() != null
                     && (overheadRates.getPercentage() < 0.0 || overheadRates.getPercentage() > 100)) {
-                resultBinder.reject("overhead.percentage.invalid", new String[] { "" }, "overhead.percentage.invalid");
+                resultBinder.reject("overhead.percentage.invalid", "overhead.percentage.invalid");
                 break;
             }
         }
