@@ -965,7 +965,7 @@ public class ComplaintIndexService {
         if (isNotBlank(complaintDashBoardRequest.getUlbGrade()))
             boolQuery = boolQuery.filter(matchQuery("cityGrade", complaintDashBoardRequest.getUlbGrade()));
         if (isNotBlank(complaintDashBoardRequest.getCategoryId()))
-            boolQuery = boolQuery.filter(matchQuery("", complaintDashBoardRequest.getCategoryId()));
+            boolQuery = boolQuery.filter(matchQuery("categoryId", complaintDashBoardRequest.getCategoryId()));
         if (isNotBlank(complaintDashBoardRequest.getDistrictName()))
             boolQuery = boolQuery
                     .filter(matchQuery("cityDistrictName", complaintDashBoardRequest.getDistrictName()));
