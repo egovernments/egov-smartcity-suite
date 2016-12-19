@@ -519,6 +519,7 @@ public class WaterChargeCollectionDocService {
         BigDecimal balance;
         BigDecimal variance;
         String aggregationField = WaterTaxConstants.REGIONNAMEAGGREGATIONFIELD;
+        Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
 
         /**
          * Select the grouping based on the type parameter, by default the
@@ -591,6 +592,8 @@ public class WaterChargeCollectionDocService {
                 org.apache.commons.lang3.time.DateUtils.addYears(fromDate, -1),
                 org.apache.commons.lang3.time.DateUtils.addYears(toDate, -1), WaterTaxConstants.COLLECTION_INDEX_NAME,
                 TOTAL_AMOUNT, aggregationField);
+        if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+            wardWiseBillCollectors = getWardWiseBillCollectors(collectionDetailsRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken by getCollectionAndDemandValues() is (millisecs) : " + timeTaken);
@@ -611,6 +614,11 @@ public class WaterChargeCollectionDocService {
                 collIndData.setUlbGrade(name);
             else if (WaterTaxConstants.REVENUEWARDAGGREGATIONFIELD.equals(aggregationField))
                 collIndData.setWardName(name);
+            if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(collectionDetailsRequest.getType())
+                    && !wardWiseBillCollectors.isEmpty()) {
+                collIndData.setBillCollector(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
+                        : wardWiseBillCollectors.get(name).getBillCollector());
+            }
             collIndData.setTodayColl(todayCollMap.get(name) == null ? BigDecimal.ZERO : todayCollMap.get(name));
             collIndData.setCurrentYearTillDateColl(entry.getValue());
             // Proportional Demand = (totalDemand/12)*noOfmonths
@@ -1625,5 +1633,6 @@ public class WaterChargeCollectionDocService {
             wardWiseBillCollectors.put(billCollector.getRevenueWard(), billCollector);
         return wardWiseBillCollectors;
     }
+    
 
 }
