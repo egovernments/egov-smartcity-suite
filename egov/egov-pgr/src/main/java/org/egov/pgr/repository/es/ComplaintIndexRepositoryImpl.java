@@ -48,18 +48,20 @@ import static org.egov.pgr.repository.es.util.ComplaintElasticsearchUtils.getCou
 import static org.egov.pgr.repository.es.util.ComplaintElasticsearchUtils.getCountWithGrouping;
 import static org.egov.pgr.repository.es.util.ComplaintElasticsearchUtils.getCountWithGroupingAndOrder;
 import static org.egov.pgr.utils.constants.PGRConstants.CITY_CODE;
-import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_DATE_FORMAT;
-import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_NAME;
-import static org.egov.pgr.utils.constants.PGRConstants.WARD_NUMBER;
-import static org.egov.pgr.utils.constants.PGRConstants.WARD_NAME;
 import static org.egov.pgr.utils.constants.PGRConstants.CITY_NAME;
 import static org.egov.pgr.utils.constants.PGRConstants.DISTRICT_NAME;
+import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_DATE_FORMAT;
+import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_NAME;
+import static org.egov.pgr.utils.constants.PGRConstants.WARD_NAME;
+import static org.egov.pgr.utils.constants.PGRConstants.WARD_NUMBER;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.pgr.entity.es.ComplaintDashBoardRequest;
+import org.egov.pgr.entity.es.ComplaintIndex;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -70,6 +72,8 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 
 public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomRepository {
 
@@ -121,29 +125,31 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                 .addAggregation(
                         getCountWithGroupingAndOrder("complaintTypeWise", "complaintTypeName", size,
                                 complaintDashBoardRequest.getSortField(), complaintDashBoardRequest.getSortDirection())
-                                .subAggregation(getAverageWithExclusion("complaintTypeSatisfactionAverage", "satisfactionIndex"))
-                                .subAggregation(
-                                        getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", "ifClosed", 2)
-                                                .subAggregation(
-                                                        AggregationBuilders.range("ComplaintTypeAgeing")
-                                                                .field("complaintAgeingdaysFromDue")
-                                                                .addRange("1week", 0, 8).addRange("1month", 8, 32)
-                                                                .addRange("3months", 32, 91)
-                                                                .addUnboundedFrom("remainingMonths", 91))
-                                                .subAggregation(getCountWithGrouping("complaintTypeSla", "ifSLA", 2))))
+                                        .subAggregation(
+                                                getAverageWithExclusion("complaintTypeSatisfactionAverage", "satisfactionIndex"))
+                                        .subAggregation(
+                                                getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", "ifClosed", 2)
+                                                        .subAggregation(
+                                                                AggregationBuilders.range("ComplaintTypeAgeing")
+                                                                        .field("complaintAgeingdaysFromDue")
+                                                                        .addRange("1week", 0, 8).addRange("1month", 8, 32)
+                                                                        .addRange("3months", 32, 91)
+                                                                        .addUnboundedFrom("remainingMonths", 91))
+                                                        .subAggregation(getCountWithGrouping("complaintTypeSla", "ifSLA", 2))))
                 .addAggregation(
                         getCountWithGroupingAndOrder("groupByField", grouByField, size,
                                 complaintDashBoardRequest.getSortField(), complaintDashBoardRequest.getSortDirection())
-                                .subAggregation(getAverageWithExclusion("groupByFieldSatisfactionAverage", "satisfactionIndex"))
-                                .subAggregation(
-                                        getCountWithGrouping("groupFieldWiseOpenAndClosedCount", "ifClosed", 2)
-                                                .subAggregation(
-                                                        AggregationBuilders.range("groupByFieldAgeing")
-                                                                .field("complaintAgeingdaysFromDue")
-                                                                .addRange("1week", 0, 8).addRange("1month", 8, 32)
-                                                                .addRange("3months", 32, 91)
-                                                                .addUnboundedFrom("remainingMonths", 91))
-                                                .subAggregation(getCountWithGrouping("groupByFieldSla", "ifSLA", 2))))
+                                        .subAggregation(
+                                                getAverageWithExclusion("groupByFieldSatisfactionAverage", "satisfactionIndex"))
+                                        .subAggregation(
+                                                getCountWithGrouping("groupFieldWiseOpenAndClosedCount", "ifClosed", 2)
+                                                        .subAggregation(
+                                                                AggregationBuilders.range("groupByFieldAgeing")
+                                                                        .field("complaintAgeingdaysFromDue")
+                                                                        .addRange("1week", 0, 8).addRange("1month", 8, 32)
+                                                                        .addRange("3months", 32, 91)
+                                                                        .addUnboundedFrom("remainingMonths", 91))
+                                                        .subAggregation(getCountWithGrouping("groupByFieldSla", "ifSLA", 2))))
                 .execute().actionGet();
 
         final HashMap<String, SearchResponse> result = new HashMap<>();
@@ -259,7 +265,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     }
 
     @Override
-    public SearchResponse findBYAllWards(final ComplaintDashBoardRequest complaintDashBoardRequest, final BoolQueryBuilder query) {
+    public SearchResponse findBYAllWards(final ComplaintDashBoardRequest complaintDashBoardRequest,
+            final BoolQueryBuilder query) {
         int size = 1000;
         if (complaintDashBoardRequest.getSize() >= 0)
             size = complaintDashBoardRequest.getSize();
@@ -291,5 +298,12 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                 .addAggregation(AggregationBuilders.missing("nolocality").field("localityName")
                         .subAggregation(getCountWithGrouping("noLocalityComplaintCount", "ifClosed", 2)))
                 .execute().actionGet();
+    }
+
+    @Override
+    public List<ComplaintIndex> findAllComplaintsBySource(final String fieldName, final String paramValue) {
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(QueryBuilders.matchQuery(fieldName, paramValue))
+                .build();
+        return elasticsearchTemplate.queryForList(searchQuery, ComplaintIndex.class);
     }
 }
