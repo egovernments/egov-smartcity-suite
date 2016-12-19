@@ -39,12 +39,13 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 
-<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-11-18T16:46:30 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2016-12-19T15:12:34 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_dishonored_cheque_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="749560f5-966f-4c9c-9c04-ed0be706f118">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="384"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.lang.*"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="java.util.*"/>
@@ -200,7 +201,7 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="260" splitType="Stretch">
+		<band height="192" splitType="Stretch">
 			<staticText>
 				<reportElement style="Title" x="233" y="21" width="320" height="33" uuid="eaf9cda1-5895-40ec-a667-a71eaef20715"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -217,8 +218,8 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[Cheque From Date:]]></text>
 			</staticText>
@@ -259,8 +260,8 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[Cheque To Date:]]></text>
 			</staticText>
@@ -271,8 +272,8 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="-1" y="130" width="144" height="20" uuid="266f61fa-0668-4f83-a18f-5a9e3f23b77b"/>
 				<box leftPadding="5" rightPadding="5"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true" isStrikeThrough="false" pdfFontName="Times-Bold"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isStrikeThrough="false" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[Service:]]></text>
 			</staticText>
@@ -287,8 +288,8 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="489" y="130" width="124" height="20" uuid="aa71d1b1-0b5b-4cd9-bc61-7657160ee61d"/>
 				<box leftPadding="5" rightPadding="5"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[Payment Mode:]]></text>
 			</staticText>
@@ -303,8 +304,8 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="-1" y="150" width="144" height="21" uuid="1c015ab1-63b7-45a5-bfcb-a1a70e33a30a"/>
 				<box leftPadding="5" rightPadding="5"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[Status:]]></text>
 			</staticText>
@@ -327,8 +328,8 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="489" y="150" width="124" height="20" uuid="1d7deff9-bd50-4b3f-9bd4-515e8c726137"/>
 				<box leftPadding="5" rightPadding="5"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true" isStrikeThrough="false" pdfFontName="Times-Bold"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isStrikeThrough="false" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[Location:]]></text>
 			</staticText>
@@ -343,8 +344,8 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 			<staticText>
 				<reportElement x="-1" y="171" width="144" height="21" uuid="00b6928b-52cc-4321-9e96-af664c5b4c29"/>
 				<box leftPadding="5" rightPadding="5"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[Instrument Number:]]></text>
 			</staticText>
@@ -757,8 +758,8 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="3" y="141" width="137" height="18" uuid="e8bda2f0-db11-49dd-8610-b25f6a82096c"/>
 				<box leftPadding="5" rightPadding="5"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true" isStrikeThrough="false" pdfFontName="Times-Bold"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isStrikeThrough="false" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[Service:]]></text>
 			</staticText>
@@ -773,8 +774,8 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="455" y="141" width="127" height="20" uuid="196501f1-90e7-43f9-ae31-b7b411d79b10"/>
 				<box leftPadding="5" rightPadding="5"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[Payment Mode:]]></text>
 			</staticText>
@@ -787,8 +788,8 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true" isItalic="false" pdfFontName="Times-Bold"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isItalic="false" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[Cheque To Date:]]></text>
 			</staticText>
@@ -801,8 +802,8 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[Cheque From Date:]]></text>
 			</staticText>
@@ -821,16 +822,16 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="3" y="160" width="137" height="20" uuid="91ef8e7a-b27d-43a1-91cc-c3bd045345df"/>
 				<box leftPadding="5" rightPadding="5"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[Status:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="455" y="159" width="127" height="21" uuid="9a01a0a7-87c4-4ea5-ad76-c3e98259334e"/>
 				<box leftPadding="5" rightPadding="5"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true" isStrikeThrough="false" pdfFontName="Times-Bold"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isStrikeThrough="false" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[Location:]]></text>
 			</staticText>
@@ -845,8 +846,8 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 			<staticText>
 				<reportElement x="3" y="180" width="137" height="21" uuid="18b52abe-957e-4c55-835e-129e8f90da13"/>
 				<box leftPadding="5" rightPadding="5"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[Instrument Number:]]></text>
 			</staticText>
