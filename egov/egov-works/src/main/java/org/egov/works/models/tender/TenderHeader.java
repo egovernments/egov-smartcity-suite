@@ -61,7 +61,7 @@ public class TenderHeader extends BaseModel {
 
     @Required(message = "tenderHeader.tenderNo.null")
     @Length(max = 50, message = "tenderHeader.tenderNo.length")
-    @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "tenderHeader.tenderNo.alphaNumeric")
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHSPECIALCHAR, message = "tenderHeader.tenderNo.alphaNumeric")
     private String tenderNo;
 
     @Required(message = "tenderHeader.tenderDate.null")

@@ -102,8 +102,8 @@ public class EgPartytypeHibernateDAO {
     }
 
     public EgPartytype getPartytypeByCode(final String code) {
-        final Query qry = getCurrentSession().createQuery("from EgPartytype pt where code=:code");
-        qry.setString("code", code);
+        final Query qry = getCurrentSession().createQuery("from EgPartytype pt where upper(code) =:code");
+        qry.setString("code", code.toUpperCase());
         return (EgPartytype) qry.uniqueResult();
     }
 

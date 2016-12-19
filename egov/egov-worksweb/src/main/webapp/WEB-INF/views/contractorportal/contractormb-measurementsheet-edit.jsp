@@ -53,14 +53,14 @@
 	                    <tr>
 		                    <th><spring:message code="lbl.slno" /></th>
 		                    <th><spring:message code="lbl.description" /></th>
-		                    <th><spring:message code="lbl.no" /></th>
+		                    <th><spring:message code="lbl.number" /></th>
 		                    <th><spring:message code="lbl.length" /></th>
 		                    <th><spring:message code="lbl.width" /></th>
 		                    <th><spring:message code="lbl.depthorheight" /></th>
 		                    <th><spring:message code="lbl.quantity" /></th>
 		                    <th><spring:message code="lbl.identifier" /></th>
 		                    <th><spring:message code="lbl.remarks" /></th>
-		                    <th><spring:message code="lbl.no" /></th>
+		                    <th><spring:message code="lbl.number" /></th>
 		                    <th><spring:message code="lbl.length" /></th>
 		                    <th><spring:message code="lbl.width" /></th>
 		                    <th><spring:message code="lbl.depthorheight" /></th>

@@ -88,7 +88,7 @@ public class ContractorDetail extends AbstractAuditable {
 
     @Column(name = "REGISTRATION_NUMBER")
     @Length(max = 50, message = "contractorDetail.registrationNumber.length")
-    @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractorDetail.registrationNumber.alphaNumeric")
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHSPECIALCHAR, message = "contractorDetail.registrationNumber.alphaNumeric")
     private String registrationNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)

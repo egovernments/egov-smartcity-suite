@@ -95,12 +95,12 @@ public class Contractor extends AbstractAuditable implements EntityType {
 
     @Required(message = "contractor.code.null")
     @Length(max = 50, message = "contractor.code.length")
-    @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractor.code.alphaNumeric")
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHSPECIALCHAR, message = "contractor.code.alphaNumeric")
     private String code;
 
     @Required(message = "contractor.name.null")
     @Length(max = 100, message = "contractor.name.length")
-    @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractor.name.alphaNumeric")
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHSPECIALCHAR, message = "contractor.name.alphaNumeric")
     private String name;
 
     @Length(max = 250, message = "contractor.correspondenceAddress.length")
@@ -151,7 +151,7 @@ public class Contractor extends AbstractAuditable implements EntityType {
     private String bankAccount;
 
     @Length(max = 50, message = "contractor.pwdApprovalCode.length")
-    @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractor.pwdApprovalCode.alphaNumeric")
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHSPECIALCHAR, message = "contractor.pwdApprovalCode.alphaNumeric")
     @Column(name = "PWD_APPROVAL_CODE")
     private String pwdApprovalCode;
 

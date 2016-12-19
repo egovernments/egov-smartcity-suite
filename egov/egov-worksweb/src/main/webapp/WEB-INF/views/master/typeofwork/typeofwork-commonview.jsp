@@ -42,7 +42,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <div class="row">
 	<div class="col-md-12">
-		<div id="overheadTable" class="panel panel-primary" data-collapsed="0"
+		<div class="panel panel-primary" data-collapsed="0"
 			style="text-align: left">
 			
 			<div class="panel-body">
@@ -81,7 +81,7 @@
 								<spring:message code="lbl.yes" />
 							</c:when>
 							<c:otherwise>
-								<spring:message code="lbl.isactive.no" />
+								<spring:message code="lbl.no" />
 							</c:otherwise>
 						</c:choose>
 					</div>

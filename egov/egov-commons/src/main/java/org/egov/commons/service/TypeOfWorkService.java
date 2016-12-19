@@ -61,8 +61,7 @@ public class TypeOfWorkService {
 
     @Transactional
     public EgwTypeOfWork create(final EgwTypeOfWork typeOfWork) {
-        final EgwTypeOfWork newTypeOfWork = typeOfWorkRepository.save(typeOfWork);
-        return newTypeOfWork;
+        return typeOfWorkRepository.save(typeOfWork);
     }
 
     public EgwTypeOfWork getTypeOfWorkById(final Long typeOfWorkId) {
@@ -76,4 +75,5 @@ public class TypeOfWorkService {
     public List<EgwTypeOfWork> findAll() {
         return typeOfWorkRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
+
 }

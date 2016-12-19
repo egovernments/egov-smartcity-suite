@@ -52,10 +52,11 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGW_TYPEOFWORK")
-@Unique(id = "id", tableName = "EGW_TYPEOFWORK", columnName = { "code" }, fields = { "code" }, enableDfltMsg = true)
+@Unique(fields = { "code" }, enableDfltMsg = true)
 @SequenceGenerator(name = EgwTypeOfWork.SEQ_EGW_TYPEOFWORK, sequenceName = EgwTypeOfWork.SEQ_EGW_TYPEOFWORK, allocationSize = 1)
 public class EgwTypeOfWork extends AbstractAuditable {
 
@@ -68,9 +69,11 @@ public class EgwTypeOfWork extends AbstractAuditable {
     private Long id;
 
     @NotNull
+    @SafeHtml
     private String code;
 
     @NotNull
+    @SafeHtml
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -81,103 +84,62 @@ public class EgwTypeOfWork extends AbstractAuditable {
     @JoinColumn(name = "partytypeid")
     private EgPartytype egPartytype;
 
+    @SafeHtml
     private String description;
 
     private boolean active = true;
 
-    /**
-     * @return the id
-     */
     @Override
     public Long getId() {
         return id;
     }
 
-    /**
-     * @param id
-     *            the id to set
-     */
     @Override
     public void setId(final Long id) {
         this.id = id;
     }
 
-    /**
-     * @return the parentid
-     */
     public EgwTypeOfWork getParentid() {
         return parentid;
     }
 
-    /**
-     * @param parentid
-     *            the parentid to set
-     */
     public void setParentid(final EgwTypeOfWork parentid) {
         this.parentid = parentid;
     }
 
-    /**
-     * @return the egPartytype
-     */
     public EgPartytype getEgPartytype() {
         return egPartytype;
     }
 
-    /**
-     * @param egPartytype
-     *            the egPartytype to set
-     */
     public void setEgPartytype(final EgPartytype egPartytype) {
         this.egPartytype = egPartytype;
     }
 
-    /**
-     * @return the name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * @param name
-     *            the name to set
-     */
     public void setName(final String name) {
         this.name = name;
     }
 
-    /**
-     * @return the code
-     */
     public String getCode() {
         return code;
     }
 
-    /**
-     * @param code
-     *            the code to set
-     */
     public void setCode(final String code) {
         this.code = code;
     }
 
-    /**
-     * @return the description
-     */
     public String getDescription() {
         return description;
     }
 
-    /**
-     * @param description
-     *            the description to set
-     */
     public void setDescription(final String description) {
         this.description = description;
     }
 
-    public boolean getActive() {
+    public boolean isActive() {
         return active;
     }
 

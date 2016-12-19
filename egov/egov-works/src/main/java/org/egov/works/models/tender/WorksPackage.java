@@ -119,7 +119,7 @@ public class WorksPackage extends StateAware implements Auditable {
 
     @NotEmpty(message = "wp.tenderFileNumber.is.null")
     @Length(max = 50, message = "wp.tenderFileNumber.length")
-    @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "wp.tenderFileNumber.alphaNumeric")
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHSPECIALCHAR, message = "wp.tenderFileNumber.alphaNumeric")
     private String tenderFileNumber;
     private Long documentNumber;
     private EgwStatus egwStatus;

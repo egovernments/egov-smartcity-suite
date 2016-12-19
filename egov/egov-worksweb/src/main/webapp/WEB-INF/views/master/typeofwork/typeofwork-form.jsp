@@ -48,8 +48,6 @@
 	action="/egworks/masters/typeofwork-save" modelAttribute="typeofwork"
 	class="form-horizontal form-groups-bordered">
 
-	<div class="errorstyle" id="typeofwork_error"
-		class="alert alert-danger" style="display: none;"></div>
 	<spring:hasBindErrors name="typeofwork">
 		<div class="alert alert-danger col-md-12">
 			<form:errors path="*" cssClass="add-margin" />

@@ -37,21 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-if($('#isActiveValue').val() == 'false')
-	$('#isactive').prop('checked', false);
 
 function createNewTypeOfWork() {
 	window.location = "/egworks/masters/typeofwork-newform";
-}
-
-
-function validateNameForSpecialCharacters(event) {
-	$("#name").on('keyup',function(event){
-		var lastChar = this.value.slice(-1);
-		var valid = /^[a-zA-Z ]*$/.test(lastChar),
-			val = this.value;
-		if(!valid){
-			this.value = val.substring(0,val.length-1);
-		}
-	});
 }

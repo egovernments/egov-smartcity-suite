@@ -42,10 +42,14 @@ package org.egov.works.web.controller.masters;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
+import org.egov.commons.EgPartytype;
 import org.egov.commons.EgwTypeOfWork;
+import org.egov.commons.dao.EgPartytypeHibernateDAO;
 import org.egov.commons.service.TypeOfWorkService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.validation.regex.Constants;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -68,6 +72,9 @@ public class CreateTypeOfWorkController {
     @Qualifier("messageSource")
     private MessageSource messageSource;
 
+    @Autowired
+    private EgPartytypeHibernateDAO egPartytypeHibernateDAO;
+
     @RequestMapping(value = "/typeofwork-newform", method = RequestMethod.GET)
     public String showTypeOfWorkForm(final Model model) {
         final EgwTypeOfWork typeOfWork = new EgwTypeOfWork();
@@ -76,15 +83,18 @@ public class CreateTypeOfWorkController {
     }
 
     @RequestMapping(value = "/typeofwork-save", method = RequestMethod.POST)
-    public String createTypeOfWork(@ModelAttribute("typeofwork") final EgwTypeOfWork typeOfWork, final Model model,
-            final BindingResult resultBinder) throws ApplicationException, IOException {
-        validateTypeOfWork(typeOfWork, resultBinder);
+    public String createTypeOfWork(@Valid @ModelAttribute("typeofwork") final EgwTypeOfWork egwTypeOfWork,
+            final BindingResult resultBinder, final Model model) throws ApplicationException, IOException {
+        validateTypeOfWork(egwTypeOfWork, resultBinder);
         if (resultBinder.hasErrors()) {
-            model.addAttribute("typeofwork", typeOfWork);
+            model.addAttribute("typeofwork", egwTypeOfWork);
             return "typeofwork-form";
         }
-        typeOfWorkService.create(typeOfWork);
-        return "redirect:/masters/typeofwork-success?typeOfWorkId=" + typeOfWork.getId();
+        final EgPartytype egPartytype = egPartytypeHibernateDAO
+                .getPartytypeByCode(WorksConstants.PARTY_TYPE_CONTRACTOR);
+        egwTypeOfWork.setEgPartytype(egPartytype);
+        typeOfWorkService.create(egwTypeOfWork);
+        return "redirect:/masters/typeofwork-success?typeOfWorkId=" + egwTypeOfWork.getId();
 
     }
 
@@ -114,14 +124,14 @@ public class CreateTypeOfWorkController {
         if (typeOfWork.getName() == null)
             resultBinder.reject("error.typeofwork.name", "error.typeofwork.name");
 
-        if (!typeOfWork.getCode().matches(WorksConstants.alphaNumericwithspecialchar))
+        if (typeOfWork.getCode() != null && !typeOfWork.getCode().matches(WorksConstants.ALPHANUMERICWITHHYPHENSLASH))
             resultBinder.reject("error.typeofwork.code.invalid", "error.typeofwork.code.invalid");
 
-        if (typeOfWork.getName() != null && !typeOfWork.getName().matches(WorksConstants.alphaNumericwithspecialchar))
-            resultBinder.reject("error.overheadname.invalid", "error.overheadname.invalid");
+        if (typeOfWork.getName() != null && !typeOfWork.getName().matches(WorksConstants.ALPHANUMERICWITHSPECIALCHAR))
+            resultBinder.reject("error.name.invalid", "error.name.invalid");
 
         if (typeOfWork.getDescription() != null
-                && !typeOfWork.getDescription().matches(WorksConstants.alphaNumericwithspecialchar))
+                && !typeOfWork.getDescription().matches(Constants.ALPHANUMERICWITHSPECIALCHAR))
             resultBinder.reject("error.typeofwork.description.invalid", "error.typeofwork.description.invalid");
 
     }

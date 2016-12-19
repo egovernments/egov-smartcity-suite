@@ -46,7 +46,6 @@
 	</div>
 	<div class="panel-body">
 		<div class="form-group">
-			<input type = "hidden" id = "isActiveValue" value ="${typeofwork.active }">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.code" /><span
 						class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
@@ -56,12 +55,14 @@
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.name" /><span
 						class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="name" id="name" data-errormsg="Name is mandatory!" data-idx="0" data-optional="0" class="form-control table-input" onclick = "validateNameForSpecialCharacters(event)" maxlength = "100" required = "required" />
+				<form:input path="name" id="name" data-errormsg="Name is mandatory!" data-idx="0" data-optional="0" class="form-control table-input patternvalidation" data-pattern="alphabetwithspace" maxlength = "100" required = "required" />
 				<form:errors path="name" cssClass="add-margin error-msg" />
 			</div>
+		</div>
+		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.description" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:textarea path="description" id = "description" class="form-control patternvalidation" data-pattern="alphanumericwithallspecialcharacters" maxlength = "1024" />
+				<form:textarea path="description" id = "description" class="form-control  patternvalidation" data-pattern="alphanumericwithallspecialcharacters" maxlength = "1024" />
 				<form:errors path="description" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.isactive" /></label>
@@ -70,6 +71,5 @@
 				<form:errors path="active" cssClass="add-margin error-msg" />
 			</div>
 		</div>
-		
 	</div>
 </div>
