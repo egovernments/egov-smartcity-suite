@@ -43,8 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.works.contractorbill.entity.ContractorBillRegister;
-import org.egov.works.contractorbill.service.ContractorBillRegisterService;
+import org.egov.works.contractorbill.entity.ContractorBillRegister.BillStatus;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.entity.SearchRequestCancelMB;
 import org.egov.works.mb.service.MBHeaderService;
@@ -71,9 +70,6 @@ public class CancelMBController {
     @Autowired
     private MBHeaderService mbHeaderService;
 
-    @Autowired
-    private ContractorBillRegisterService contractorBillRegisterService;
-
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
     public String showSearchMBForm(
             @ModelAttribute final SearchRequestCancelMB searchRequestCancelMB,
@@ -92,11 +88,10 @@ public class CancelMBController {
         MBHeader mbHeader = mbHeaderService.getMBHeaderById(mbId);
         String message = "";
 
-        final ContractorBillRegister contractorBillRegister = contractorBillRegisterService
-                .getContratorBillForCancelMB(mbHeader.getWorkOrderEstimate(),
-                        ContractorBillRegister.BillStatus.CANCELLED.toString());
-        if (contractorBillRegister != null) {
-            message = messageSource.getMessage("error.mb.bill.created", new String[] { contractorBillRegister.getBillnumber() },
+        if (mbHeader.getEgBillregister() != null
+                && !mbHeader.getEgBillregister().getStatus().getCode().equalsIgnoreCase(BillStatus.CANCELLED.toString())) {
+            message = messageSource.getMessage("error.mb.bill.created",
+                    new String[] { mbHeader.getEgBillregister().getBillnumber() },
                     null);
             model.addAttribute("errorMessage", message);
             return "mb-success";

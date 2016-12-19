@@ -999,8 +999,4 @@ public class ContractorBillRegisterService {
                 billStatus, billtype);
     }
 
-    public ContractorBillRegister getContratorBillForCancelMB(final WorkOrderEstimate workOrderEstimate, final String status) {
-        return contractorBillRegisterRepository.findByWorkOrderEstimateAndStatus(workOrderEstimate, status);
-    }
-
 }
