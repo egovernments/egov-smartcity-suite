@@ -44,10 +44,10 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.pgr.utils.constants.PGRConstants.CITY_CODE;
 import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_CITY;
+import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -181,15 +181,15 @@ public class ComplaintIndexService {
         complaintIndex.setComplaintAgeingFromDue(0);
         complaintIndex.setIsSLA("Y");
         complaintIndex.setIfSLA(1);
-        complaintIndex.setInitialFunctionaryName(assignedUser != null ? assignedUser.getName()
-                : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
+        complaintIndex.setInitialFunctionaryName(assignedUser != null ? assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName()
+                : NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName());
         complaintIndex.setInitialFunctionaryAssigneddate(new Date());
         complaintIndex.setInitialFunctionarySLADays(getFunctionarySlaDays(complaint));
         complaintIndex.setInitialFunctionaryAgeingFromDue(0);
         complaintIndex.setInitialFunctionaryIsSLA("Y");
         complaintIndex.setInitialFunctionaryIfSLA(1);
-        complaintIndex.setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName()
-                : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
+        complaintIndex.setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName()
+                : NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName());
         complaintIndex.setCurrentFunctionaryMobileNumber(Objects.nonNull(assignedUser)
                 ? assignedUser.getMobileNumber() : EMPTY);
         complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
@@ -211,7 +211,7 @@ public class ComplaintIndexService {
     }
 
     public void updateComplaintIndex(final Complaint complaint, final Long approvalPosition,
-            final String approvalComment) {
+                                     final String approvalComment) {
         // fetch the complaint from index and then update the new fields
         ComplaintIndex complaintIndex = complaintIndexRepository.findByCrn(complaint.getCrn());
         final String status = complaintIndex.getComplaintStatusName();
@@ -231,8 +231,8 @@ public class ComplaintIndexService {
         // If complaint is forwarded
         if (approvalPosition != null && !approvalPosition.equals(Long.valueOf(0))) {
             complaintIndex
-                    .setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName()
-                            : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
+                    .setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName()
+                            : NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName());
             complaintIndex.setCurrentFunctionaryMobileNumber(Objects.nonNull(assignedUser)
                     ? assignedUser.getMobileNumber() : EMPTY);
             complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
@@ -246,8 +246,8 @@ public class ComplaintIndexService {
             complaintIndex.setComplaintIsClosed("Y");
             complaintIndex.setIfClosed(1);
             complaintIndex.setClosedByFunctionaryName(
-                    assignedUser != null ? assignedUser.getName()
-                            : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
+                    assignedUser != null ? assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName()
+                            : NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName());
             final long duration = Math.abs(complaintIndex.getCreatedDate().getTime() - new Date().getTime())
                     / (24 * 60 * 60 * 1000);
             complaintIndex.setComplaintDuration(duration);
@@ -305,8 +305,8 @@ public class ComplaintIndexService {
         complaintIndex.setCityRegionName(city.getRegionName());
         // Update current Functionary Complaint index variables
         complaintIndex
-                .setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName()
-                        : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
+                .setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName()
+                        : NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName());
         complaintIndex.setCurrentFunctionaryMobileNumber(Objects.nonNull(assignedUser)
                 ? assignedUser.getMobileNumber() : EMPTY);
         complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
@@ -316,8 +316,8 @@ public class ComplaintIndexService {
         // For Escalation level1
         if (escalationLevel == 0) {
             complaintIndex.setEscalation1FunctionaryName(
-                    assignedUser != null ? assignedUser.getName()
-                            : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
+                    assignedUser != null ? assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName()
+                            : NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName());
             complaintIndex.setEscalation1FunctionaryAssigneddate(new Date());
             complaintIndex.setEscalation1FunctionarySLADays(getFunctionarySlaDays(complaint));
             complaintIndex.setEscalation1FunctionaryAgeingFromDue(0);
@@ -327,8 +327,8 @@ public class ComplaintIndexService {
         } else if (escalationLevel == 1) {
             // update escalation level 2 fields
             complaintIndex.setEscalation2FunctionaryName(
-                    assignedUser != null ? assignedUser.getName()
-                            : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
+                    assignedUser != null ? assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName()
+                            : NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName());
             complaintIndex.setEscalation2FunctionaryAssigneddate(new Date());
             complaintIndex.setEscalation2FunctionarySLADays(getFunctionarySlaDays(complaint));
             complaintIndex.setEscalation2FunctionaryAgeingFromDue(0);
@@ -338,8 +338,8 @@ public class ComplaintIndexService {
         } else if (escalationLevel == 2) {
             // update escalation level 3 fields
             complaintIndex.setEscalation3FunctionaryName(
-                    assignedUser != null ? assignedUser.getName()
-                            : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
+                    assignedUser != null ? assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName()
+                            : NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName());
             complaintIndex.setEscalation3FunctionaryAssigneddate(new Date());
             complaintIndex.setEscalation3FunctionarySLADays(getFunctionarySlaDays(complaint));
             complaintIndex.setEscalation3FunctionaryAgeingFromDue(0);
@@ -873,7 +873,7 @@ public class ComplaintIndexService {
                 responseDetail.setOpenComplaintCount(noLocalityCountBucket.getDocCount());
         }
         responseDetailsList.add(responseDetail);
-        
+
         result.put("complaints", responseDetailsList);
         return result;
     }
@@ -991,8 +991,8 @@ public class ComplaintIndexService {
     }
 
     private ComplaintDashBoardResponse populateResponse(final ComplaintDashBoardRequest complaintDashBoardRequest,
-            final Bucket bucket,
-            final String groupByField) {
+                                                        final Bucket bucket,
+                                                        final String groupByField) {
         ComplaintDashBoardResponse responseDetail = new ComplaintDashBoardResponse();
 
         responseDetail = setDefaultValues(responseDetail);
