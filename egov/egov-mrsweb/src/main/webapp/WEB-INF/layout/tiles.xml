@@ -405,4 +405,10 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/report-viewregistration-statusdetails.jsp" />
 	</definition>
+	<definition name="religion-wise-statutory-report" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.religion.wise.registration"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/reports/religion-wise-statutory-report.jsp" />
+	</definition>
 </tiles-definitions>

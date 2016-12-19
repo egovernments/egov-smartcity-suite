@@ -56,8 +56,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.DateUtils;
 import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.application.reports.service.MarriageRegistrationReportsService;
@@ -69,6 +75,8 @@ import org.egov.mrs.domain.entity.MarriageRegistration.RegistrationStatus;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.entity.RegistrationCertificatesResultForReport;
 import org.egov.mrs.domain.entity.RegistrationReportsSearchResult;
+import org.egov.mrs.domain.entity.SearchModel;
+import org.egov.mrs.domain.entity.SearchResult;
 import org.egov.mrs.domain.enums.MaritalStatus;
 import org.egov.mrs.masters.entity.MarriageAct;
 import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
@@ -81,8 +89,10 @@ import org.egov.mrs.web.adaptor.MarriageReIssueJsonAdaptor;
 import org.egov.mrs.web.adaptor.MarriageRegistrationCertificateReportJsonAdaptor;
 import org.egov.mrs.web.adaptor.MarriageRegistrationJsonAdaptor;
 import org.egov.mrs.web.adaptor.MarriageRegistrationReportsJsonAdaptor;
+import org.egov.mrs.web.adaptor.ReligionWiseReportJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -139,6 +149,9 @@ public class MarriageRegistrationReportsController {
     private ReligionService religionService;
     @Autowired
     private MarriageUtils marriageUtils;
+    
+    @Autowired
+    private CityService cityService;
 
     @ModelAttribute("zones")
     public List<Boundary> getZonesList() {
@@ -930,5 +943,38 @@ public class MarriageRegistrationReportsController {
                     .toString();
         }
     
+        @RequestMapping(value = "/religion-wise-registrations-report", method = RequestMethod.GET)
+        public String showAgeWiseStatutoryReport(final Model model) {
+            model.addAttribute("searchRequest", new SearchModel());
+            model.addAttribute(YEARLIST, getPreviousyears());
+            return "religion-wise-statutory-report";
+        }
 
+        @RequestMapping(value = "/religion-wise-registrations-report", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+        @ResponseBody
+        public String getAgeWiseStatutoryReportDetails(@ModelAttribute final SearchModel searchRequest,
+                final Model model)
+                throws ParseException {
+            final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
+            if (cityWebsite != null)
+                searchRequest.setUlbName(cityWebsite.getName());
+            List<SearchResult> religionsSearchResults = marriageRegistrationReportsService.getUlbWiseReligionDetails(searchRequest);
+            return new StringBuilder("{ \"data\":")
+                    .append(toJSON(religionsSearchResults, SearchResult.class,
+                            ReligionWiseReportJsonAdaptor.class)).append("}")
+                    .toString();
+        }
+        
+        
+        @RequestMapping(value = "/print-religion-wise-details", method = RequestMethod.GET)
+        @ResponseBody
+        public ResponseEntity<byte[]> printReligionWiseReport(HttpServletRequest request,
+                        @RequestParam("year") final int year, final Model model, final HttpSession session) throws IOException, ParseException {
+            SearchModel searchRequest = new SearchModel();
+            searchRequest.setYear(year);
+            List<SearchResult> religionsSearchResults = marriageRegistrationReportsService.getUlbWiseReligionDetails(searchRequest);
+            
+            return marriageRegistrationReportsService.generateReligionWiseReport(year,religionsSearchResults, session, request);
+            
+        }
 }

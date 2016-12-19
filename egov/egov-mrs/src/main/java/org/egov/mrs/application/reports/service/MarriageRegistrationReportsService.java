@@ -40,8 +40,10 @@
 
 package org.egov.mrs.application.reports.service;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -50,25 +52,53 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.web.utils.WebUtils;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.reports.repository.MarriageRegistrationReportsRepository;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
+import org.egov.mrs.domain.entity.SearchModel;
+import org.egov.mrs.domain.entity.SearchResult;
 import org.egov.mrs.domain.enums.MaritalStatus;
+import org.egov.mrs.entity.es.MarriageRegistrationIndex;
 import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class MarriageRegistrationReportsService {
+    
+    private Map<String, Object> reportParams = null;
+    private ReportRequest reportInput = null;
+    private ReportOutput reportOutput = null;
     
     private static final String TO_DATE = "toDate";
 
@@ -84,6 +114,9 @@ public class MarriageRegistrationReportsService {
     
     @PersistenceContext
     private EntityManager entityManager;
+    
+    @Autowired
+    private ReportService reportService;
 
     private Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -91,6 +124,9 @@ public class MarriageRegistrationReportsService {
 
     @Autowired
     private MarriageRegistrationReportsRepository marriageRegistrationReportsRepository;
+    
+    @Autowired
+    private ElasticsearchTemplate elasticsearchTemplate;
     
     public Date resetFromDateTimeStamp(final Date date){
         Calendar cal1 = Calendar.getInstance();  
@@ -776,4 +812,103 @@ public List<String[]> getCountOfApplications(final MarriageRegistration registra
         return criteria.list();
 
     }
+    
+    public List<SearchResult> getUlbWiseReligionDetails(final SearchModel searchRequest) throws ParseException{
+        
+        final SearchResponse ulbWiseResponse = findAllReligionByUlbName(searchRequest,
+                getQueryFilter(searchRequest));
+        
+        final List<SearchResult> responseDetailsList = new ArrayList<>();
+        Terms ulbs = ulbWiseResponse.getAggregations().get("groupByUlbName");
+        
+        for (Terms.Bucket ulb : ulbs.getBuckets()) {
+            long countOthers = 0;
+            long total=0;
+            SearchResult searchResult = new SearchResult();
+            searchResult.setUlbName(ulb.getKeyAsString());     
+            Terms religions = ulb.getAggregations().get("groupByReligion");
+            for (Terms.Bucket religion : religions.getBuckets()) {
+                if("Christian".equals(religion.getKeyAsString())) {
+                    total=total+religion.getDocCount();
+                    searchResult.setChristian(religion.getDocCount());
+                }else if("Hindu".equals(religion.getKeyAsString())) {
+                    total=total+religion.getDocCount();
+                    searchResult.setHindu(religion.getDocCount());               
+                }else if("Muslim".equals(religion.getKeyAsString())) {
+                    total=total+religion.getDocCount();
+                    searchResult.setMuslim(religion.getDocCount());
+                }else {
+                    total=total+religion.getDocCount();
+                    countOthers = countOthers+religion.getDocCount();
+                }
+            }
+            searchResult.setOthers(countOthers);
+            searchResult.setTotal(total);
+            responseDetailsList.add(searchResult);
+        }
+        return responseDetailsList;
+    }
+    public BoolQueryBuilder getQueryFilter(final SearchModel searchRequest) throws ParseException{
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("ulbName", searchRequest.getUlbName()));
+        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+        final Date fromDate = formatter.parse(searchRequest.getYear() + "/" + 1 + "/" + 1);
+        final Date toDate = formatter.parse(searchRequest.getYear() + "/" + 12 + "/" + 31);
+        if (fromDate != null && toDate != null){
+         boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery("registrationDate")
+                .from(fromDate)
+                .to(toDate));
+        }
+        boolQuery = boolQuery.filter(QueryBuilders.matchQuery("applicationStatus", "Registered"));
+        return boolQuery;
+    }
+    
+    public List<MarriageRegistrationIndex> getSearchResultByBoolQuery(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort) {
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("marriageregistration").withQuery(boolQuery)
+                .withSort(sort).build();
+        return elasticsearchTemplate.queryForList(searchQuery, MarriageRegistrationIndex.class);
+    }
+    
+    public SearchResponse findAllReligionByUlbName(SearchModel searchRequest,
+                                                   BoolQueryBuilder query) {
+
+        return elasticsearchTemplate.getClient().prepareSearch("marriageregistration")
+                .setQuery(query).setSize(0)
+                .addAggregation(getCountWithGrouping("groupByUlbName", "ulbName", 120)
+                        .subAggregation(getCountWithGrouping("groupByReligion", "husbandReligion", 30)))
+                .execute().actionGet();
+    }
+    
+    public static AggregationBuilder<?> getCountWithGrouping(String aggregationName, String fieldName, int size){
+        return AggregationBuilders.terms(aggregationName).field(fieldName).size(size);
+} 
+    
+    public ResponseEntity<byte[]> generateReligionWiseReport(final int year,final List<SearchResult> searchResponse,
+            final HttpSession session, final HttpServletRequest request) throws IOException {
+        final HttpHeaders headers = new HttpHeaders();
+        reportOutput = new ReportOutput();
+        final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
+        final String url = WebUtils.extractRequestDomainURL(request, false);
+        final String cityLogo = url.concat(MarriageConstants.IMAGE_CONTEXT_PATH);
+        reportOutput = generateReportOutputForReligionWiseReport(year,searchResponse, cityName, cityLogo);
+           
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=WorkOrderNotice.pdf");
+        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+    }
+
+    
+    public ReportOutput generateReportOutputForReligionWiseReport(final int year,final List<SearchResult> searchResponse,
+            String cityName,
+            String logoPath) {
+        
+        reportParams = new HashMap<>();
+        reportParams.put("cityName", cityName);
+        reportParams.put("logoPath", logoPath);
+        reportParams.put("year", year);
+        reportParams.put("remarks", "");
+        reportParams.put("searchResponse",searchResponse);
+        reportInput = new ReportRequest("printreligionwisereport", searchResponse, reportParams);
+        return reportService.createReport(reportInput);
+    }
+    
 }

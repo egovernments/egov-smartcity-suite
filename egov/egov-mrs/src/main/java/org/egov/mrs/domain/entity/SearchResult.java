@@ -60,6 +60,13 @@ public class SearchResult {
     private boolean feeCollectionPending;
     private String applicationType;
     private String remarks;
+    private String ulbName;
+    private long christian;
+    private long hindu;
+    private long muslim;
+    private long others;
+    private long total;
+    
 
     public Long getRegistrationId() {
         return registrationId;
@@ -156,4 +163,53 @@ public class SearchResult {
     public void setRemarks(final String remarks) {
         this.remarks = remarks;
     }
+
+    public String getUlbName() {
+        return ulbName;
+    }
+
+    public void setUlbName(String ulbName) {
+        this.ulbName = ulbName;
+    }
+
+    public long getChristian() {
+        return christian;
+    }
+
+    public void setChristian(long christian) {
+        this.christian = christian;
+    }
+
+    public long getHindu() {
+        return hindu;
+    }
+
+    public void setHindu(long hindu) {
+        this.hindu = hindu;
+    }
+
+    public long getMuslim() {
+        return muslim;
+    }
+
+    public void setMuslim(long muslim) {
+        this.muslim = muslim;
+    }
+
+    public long getOthers() {
+        return others;
+    }
+
+    public void setOthers(long others) {
+        this.others = others;
+    }
+
+    public long getTotal() {
+        return total;
+    }
+
+    public void setTotal(long total) {
+        this.total = total;
+    }
+
 }

@@ -58,6 +58,9 @@ public class SearchModel {
     private Date toDate;
     private boolean registrationApproved;
     private boolean registrationRejected;
+    private int year;
+    private String ulbName;
+    private String districtName;
     
     public String getRegistrationNo() {
         return registrationNo;
@@ -129,6 +132,30 @@ public class SearchModel {
     
     public void setRegistrationRejected(boolean registrationRejected) {
         this.registrationRejected = registrationRejected;
+    }
+    
+    public void setYear(int year) {
+        this.year = year;
+    }
+    
+    public int getYear() {
+        return year;
+    }
+
+    public String getUlbName() {
+        return ulbName;
+    }
+
+    public void setUlbName(String ulbName) {
+        this.ulbName = ulbName;
+    }
+
+    public String getDistrictName() {
+        return districtName;
+    }
+
+    public void setDistrictName(String districtName) {
+        this.districtName = districtName;
     }
     
 }
