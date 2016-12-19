@@ -236,7 +236,7 @@ public class CollectionCommon {
                         billDetail.getMinimumAmount(), collDetails.getPartPaymentAllowed(),
                         collDetails.getOverrideAccountHeadsAllowed(), collDetails.getCallbackForApportioning(),
                         collDetails.getDisplayMessage(), service, collModesNotAllowed.toString(),
-                        billPayee.getPayeeName(), billPayee.getPayeeAddress(), billPayee.getPayeeEmail());
+                        billPayee.getPayeeName(), billPayee.getPayeeAddress(), billPayee.getPayeeEmail(),billDetail.getConsumerType());
 
                 if (collDetails.getTransactionReferenceNumber() != null) {
                     receiptHeader.setManualreceiptnumber(collDetails.getTransactionReferenceNumber());

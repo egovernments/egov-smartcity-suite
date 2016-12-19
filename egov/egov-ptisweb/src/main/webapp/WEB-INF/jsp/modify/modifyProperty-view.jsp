@@ -56,10 +56,10 @@
 	         </s:elseif>
 		</title>
 		<link
-			href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
+			href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css?rnd=${app_release_no}' context='/egi'/>"
 			rel="stylesheet" type="text/css" />
 		<script
-			src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+			src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js?rnd=${app_release_no}' context='/egi'/>"></script>
 		<script type="text/javascript">
 			jQuery.noConflict();
 			jQuery("#loadingMask").remove();
@@ -120,9 +120,14 @@
 				toggleFloorDetailsView();
 				showHideFirmName();
 				showHideLengthBreadth();
+				var userDesign = '<s:property value="%{currentDesignation}"/>';
+				if(userDesign == 'Commissioner') {
+					jQuery('#Forward').hide();
+				}
 			}
 
-			function enableDisableFirmName(obj){ 
+			function enableDisableFirmName(obj) { 
+				if(obj != null) {
 				var selIndex = obj.selectedIndex;
 				var selText = obj.options[selIndex].text; 
 				var rIndex = getRow(obj).rowIndex;
@@ -135,6 +140,7 @@
 				} else{
 					firmval.readOnly = false;
 				}
+			  }
 			}  
 
 			function showHideLengthBreadth(){
@@ -153,7 +159,8 @@
 		        }
 			}
 
-			function calculatePlintArea(obj){ 
+			function calculatePlintArea(obj) { 
+				if(obj != null) {
 				var rIndex = getRow(obj).rowIndex;
 				var tbl = document.getElementById('floorDetails');
 				var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
@@ -174,9 +181,11 @@
 					}else
 						builtUpArea.value="";
 				}
+			  }
 			}
 			
 			function enableDisableLengthBreadth(obj){ 
+				if(obj != null) {
 				var selIndex = obj.selectedIndex;
 				if(obj.value=='true'){
 						obj.value='true';
@@ -206,6 +215,7 @@
 						builtUpArea.readOnly = false;
 					}
 				}
+				}
 			}
 
 			function enableAppartnaumtLandDetailsView() {
@@ -222,7 +232,6 @@
 			function enableFieldsForPropTypeView() {
 				var propType = '<s:property value="%{model.propertyDetail.propertyTypeMaster.type}"/>';
 				if (propType != "select") {
-					//onChangeOfPropertyTypeFromMixedToOthers(propType);
 					if (propType == "Vacant Land") {
 						jQuery('tr.floordetails').hide();
 						jQuery('tr.vacantlanddetaills').show();
@@ -231,7 +240,6 @@
 						jQuery('#appurtenantRow').hide();
 						jQuery('tr.extentSite').hide();
 						jQuery('tr.appurtenant').hide();
-					//	jQuery('tr.superStructureRow').hide();
 						jQuery("#apartment").prop('selectedIndex', 0);
 						jQuery('td.apartmentRow').hide();
 					} else {
@@ -242,7 +250,6 @@
 						jQuery('#appurtenantRow').hide();
 						jQuery('tr.extentSite').show();
 						jQuery('tr.appurtenant').show();
-					//	jQuery('tr.superStructureRow').show();
 						jQuery('td.apartmentRow').show();
 					}
 				}
@@ -288,7 +295,7 @@
 
 </script>
         <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script src="<cdn:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
+<script src="<cdn:url value='/resources/javascript/helper.js?rnd=${app_release_no}' context='/ptis'/>"></script>
 	</head>
 	<body onload="loadOnStartUp();">
 		<div align="left" class="errortext">
@@ -348,17 +355,13 @@
 							<%@ include file="../common/workflowHistoryView.jsp"%>
 						<tr>					
 					</s:if> 
-					<s:if test="%{(!(model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)
-					     || model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)) ||
-						((userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.toUpperCase()) || 
-							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.toUpperCase()))
-							&& model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITALLY_SIGNED)))}">
+					<s:if test="%{(currentDesignation != null && !@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(currentDesignation.toUpperCase())) ||
+					   model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REJECTED)}">
 						<tr>
 							 <%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 						</tr>
 					</s:if>
-					<s:if test="%{model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING) ||
-					    model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)}">
+					<s:if test="%{currentDesignation != null && currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}">
 						<div id="workflowCommentsDiv" align="center">
 					         <table width="100%">
 								<tr>
@@ -388,5 +391,7 @@
 				</div>
 			</s:push>
 		</s:form>
+	<%@ include file="../workflow/commontaxcalc-details.jsp"%>
+	<script type="text/javascript" src="<cdn:url value='/resources/javascript/tax-calculator.js?rnd=${app_release_no}'/>"></script>
 	</body>
 </html>

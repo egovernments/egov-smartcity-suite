@@ -313,4 +313,5 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         }
         return finalList;
     }
+
 }

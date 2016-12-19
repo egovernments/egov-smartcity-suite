@@ -276,12 +276,13 @@
 				</table>
 			</div>
 			<div class="buttonbottom">
+			<s:hidden id="selectedRowsId" name="selectedRowsId"
+					value="%{selectedRowsId}" />
 				<s:hidden id="selectedRows" name="selectedRows"
 					value="%{selectedRows}" />
 				<s:hidden id="paymentMode" name="paymentMode" value="%{paymentMode}" />
 				<s:hidden id="bankaccount" name="bankaccount" value="%{bankaccount}" />
-				<input type="submit" class="buttonsubmit" value="Assign Cheque"
-					id="assignChequeBtn" name="button" onclick="return validate();" />
+				<input type="button" class="buttonsubmit" value="Assign Cheque" id="assignChequeBtn"  onclick="validate();" />
 				<input type="button" value="Close"
 					onclick="javascript:window.close()" class="button" />
 			</div>
@@ -289,15 +290,21 @@
 		<s:token />
 	</s:form>
 	<script>
+	var mode="";
+			var selectedRowsId=new Array();
 			function update(obj)
 			{
 				if(obj.checked)
 					document.getElementById('selectedRows').value=parseInt(document.getElementById('selectedRows').value)+1;
 				else
 					document.getElementById('selectedRows').value=parseInt(document.getElementById('selectedRows').value)-1;
+				
 			}
+			
 			function validate()
 			{
+				
+				resetSelectedRowsId();
 				var result=true;
 				if(dom.get('departmentid') && dom.get('departmentid').options[dom.get('departmentid').selectedIndex].value==-1)
 				{
@@ -330,13 +337,23 @@
 					bootbox.alert('Year code should not be empty');
 					return false;
 				}
+				
 					result= validateChequeDateForNonChequeMode();  
 				</s:if> 
 				<s:if test="%{paymentMode=='cheque'}">
 					 result=validateChequeDateForChequeMode();
 				</s:if> 
+
+				if(document.getElementById("paymentMode").value!="cash")
+					{
+				disableAll();
+					}else
+						{
+						disableforCash();
+						
+						}
 				dom.get('departmentid').disabled=false;  
-				document.forms[0].action='${pageContext.request.contextPath}/payment/chequeAssignment-create.action?departmentId='+document.getElementById('departmentid').value;
+				document.forms[0].action='${pageContext.request.contextPath}/payment/chequeAssignment-create.action';
 		    	document.forms[0].submit();
 				
 				return result;   
@@ -384,6 +401,7 @@
 			
 			function validateChequeDateForNonChequeMode(){
 				var flag = true;
+				mode="cash";
 				var noOfSelectedRows=document.getElementById('selectedRows').value;
 				//bootbox.alert("sizseled"+noOfSelectedRows);
 				var chkCount=0;
@@ -580,6 +598,30 @@
 				if (sRtn != undefined)
 					document.getElementById("chequeNumber"+index).value = sRtn;
 			}
+			function resetSelectedRowsId(){
+				
+				if(document.getElementById("paymentMode").value!="cash")
+					{
+				var chequeSize='<s:property value ="%{chequeAssignmentList.size()}"/>';
+				   selectedRowsId = new Array();
+					for(var index=0;index<chequeSize;index++){
+						var obj = document.getElementById('isSelected'+index);
+						if(obj.checked == true){
+						selectedRowsId.push(document.getElementsByName("chequeAssignmentList["+index+"].voucherHeaderId")[0].value+"~"+
+									document.getElementsByName("chequeAssignmentList["+index+"].paidTo")[0].value+"~"+
+									document.getElementsByName("chequeAssignmentList["+index+"].serialNo")[0].value+"~"+
+									document.getElementsByName("chequeAssignmentList["+index+"].chequeNumber")[0].value+"~"+
+									document.getElementsByName("chequeAssignmentList["+index+"].chequeDate")[0].value+"~"+
+									document.getElementsByName("chequeAssignmentList["+index+"].voucherNumber")[0].value+"~"+
+									document.getElementsByName("chequeAssignmentList["+index+"].voucherDate")[0].value+"~"+
+									document.getElementsByName("chequeAssignmentList["+index+"].paidAmount")[0].value+";");
+							
+							
+						}
+					}
+					document.getElementById('selectedRowsId').value = selectedRowsId;
+			}
+			}
 			
 			function checkAll(obj)
 			{
@@ -596,6 +638,10 @@
 						document.getElementById('isSelected'+i).checked=false;
 					document.getElementById('selectedRows').value=0;
 				}
+				if(document.getElementById("paymentMode").value!="cash")
+					{
+				resetSelectedRowsId();
+					}
 			}
 
 			function  populateYearcode(departmentid){
@@ -625,6 +671,49 @@
 				});
 
 		    }
+			
+			function disableAll()
+			{
+				var frmIndex=0;
+				for(var i=0;i<document.forms[frmIndex].length;i++)
+					{
+						for(var i=0;i<document.forms[0].length;i++)
+							{
+								if(document.forms[0].elements[i].name != 'reassignSurrenderChq' && document.forms[0].elements[i].name != 'vouchermis.departmentid'
+									&& document.forms[0].elements[i].name != 'selectedRows' && document.forms[0].elements[i].name != 'paymentMode' &&
+									document.forms[0].elements[i].name != 'bankaccount' && document.forms[0].elements[i].name != 'selectedRowsId'){
+									document.forms[frmIndex].elements[i].disabled =true;   
+								}						
+							}	
+					}
+			}
+			
+			
+			function disableforCash(){
+				var chequeSize='<s:property value ="%{chequeAssignmentList.size()}"/>';
+				   selectedRowsId = new Array();
+					for(var index=0;index<chequeSize;index++){
+						var obj = document.getElementById('isSelected'+index);
+						if(obj.checked == false){
+							 
+							if(document.getElementsByName("chequeAssignmentList["+index+"].voucherHeaderId")[0])
+								document.getElementsByName("chequeAssignmentList["+index+"].voucherHeaderId")[0].disabled=true;
+							
+							 
+							if(document.getElementsByName("chequeAssignmentList["+index+"].voucherNumber")[0])
+								 document.getElementsByName("chequeAssignmentList["+index+"].voucherNumber")[0].disabled=true;
+							 
+								 
+							if(document.getElementsByName("chequeAssignmentList["+index+"].voucherDate")[0])
+								 document.getElementsByName("chequeAssignmentList["+index+"].voucherDate")[0].disabled=true;
+							 
+							if(document.getElementsByName("chequeAssignmentList["+index+"].paidAmount")[0])
+								paidAmount = document.getElementsByName("chequeAssignmentList["+index+"].paidAmount")[0].disabled=true;
+							 
+						}
+					}
+					 
+			}
 		</script>
 	<%-- 	<s:if test="%{isFieldMandatory('department')}">
 		<s:if

@@ -876,3 +876,97 @@ tbody tr.shown td.details-control {
 {
 	background:#eee !important;
 }
+
+.popup {
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	top: 0;
+	overflow:auto;
+	display: none;
+}
+
+.popup-container {
+	width: 50%;
+	background-color: rgb(255, 255, 255);
+	margin: 10% auto;
+	border-radius: 2px;
+}
+
+.popup-header {
+    position:relative;
+	padding: 10px;
+	font-weight: bold;
+	text-align: center;
+	background-color: #6b4f2c;
+}
+
+.popup-content {
+	padding: 10px 10px 20px;
+}
+
+.popup-content table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.popup-content table, .popup-content th, .popup-content td {
+	border: 1px solid #d4d4d4;
+	text-align: center;
+}
+
+.popup-content th {
+	background: rgba(212, 212, 212, 0.5);
+}
+
+.popup-show {
+	display: block;
+}
+
+.close-pop {
+	position: absolute;
+	cursor: pointer;
+	border-radius: 3px;
+	width: 25px;
+	height: 20px;
+    top:10px;
+    right:10px;
+}
+.popup-content table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.popup-content table, .popup-content th, .popup-content td {
+	border: 1px solid #d4d4d4;
+	text-align: center;
+}
+
+.popup-content th, .popup-content td {
+	padding: 5px;
+}
+
+.popup-content th {
+	background: rgba(212, 212, 212, 0.5);
+}
+
+.popup-show {
+	display: block;
+}
+
+.close-pop {
+	position: absolute;
+	cursor: pointer;
+	border-radius: 3px;
+	width: 25px;
+	height: 20px;
+    top:10px;
+    right:10px;
+}
+
+#loading p {
+	font-style: italic;
+	font-size: 16px;
+	margin: 10px 0 0 0;
+}

@@ -44,11 +44,11 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/javascript/dateValidation.js'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/javascript/dateValidation.js?rnd=${app_release_no}'/>"></script>
 
 <form:form id="vacancyRemissionDetailsForm" method="post"
-	class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemission">
+	class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemission" enctype="multipart/form-data">
 	<div class="page-container" id="page-container">
         	<div class="main-content">
 			<jsp:include page="../common/commonPropertyDetailsView.jsp"></jsp:include>
@@ -60,8 +60,14 @@
 								<div class="panel-title"><spring:message code="lbl.vacancyremission.details" /></div>
 							</div>
 							<div class="panel-body custom-form">
-								<div class="form-group">
-									<label class="col-sm-3 control-label text-right">
+							<div>
+								<%@ include
+									file="/WEB-INF/views/vacancyremission/vr-documents-view.jsp"%>
+							</div>
+							<%@ include
+								file="/WEB-INF/views/vacancyremission/vacancy-remission-documents.jsp"%>
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right">
 										<spring:message code="lbl.vacancyremission.details.comments" /> <span class="mandatory"></span>
 									</label>
 									<div class="col-sm-8 add-margin">

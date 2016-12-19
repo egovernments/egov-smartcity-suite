@@ -68,7 +68,12 @@ public class NoticeNumberGeneratorImpl implements NoticeNumberGenerator {
                 noticeTypeCode = "MC";
             else if (noticeType.equalsIgnoreCase(PropertyTaxConstants.NOTICE_TYPE_ESD))
                 noticeTypeCode = "ESD";
-
+            else if (noticeType.equalsIgnoreCase(PropertyTaxConstants.NOTICE_TYPE_RPPROCEEDINGS))
+                noticeTypeCode = "RP";
+            else if (noticeType.equalsIgnoreCase(PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE))
+                noticeTypeCode = "HN";
+            else if (noticeType.equalsIgnoreCase(PropertyTaxConstants.NOTICE_TYPE_VRPROCEEDINGS))
+                noticeTypeCode = "VR";
             final String sequenceName = SEQ_EGPT_NOTICE_NUMBER;
             final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
             noticeNumber = String.format("%s/%s%06d", noticeTypeCode, ApplicationThreadLocals.getCityCode(), nextSequence);

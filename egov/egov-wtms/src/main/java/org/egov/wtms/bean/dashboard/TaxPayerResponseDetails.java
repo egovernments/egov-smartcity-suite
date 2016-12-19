@@ -43,22 +43,27 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 @JsonInclude(value = Include.NON_EMPTY)
 public class TaxPayerResponseDetails {
-	
-	private List<WaterTaxPayerDetails> producers;
-	private List<WaterTaxPayerDetails> achievers;
-	public List<WaterTaxPayerDetails> getProducers() {
-		return producers;
-	}
+
+    private List<WaterTaxPayerDetails> producers;
+    private List<WaterTaxPayerDetails> achievers;
+
+    public List<WaterTaxPayerDetails> getProducers() {
+        return producers;
+    }
+
     public List<WaterTaxPayerDetails> getAchievers() {
         return achievers;
     }
-    public void setAchievers(List<WaterTaxPayerDetails> achievers) {
+
+    public void setAchievers(final List<WaterTaxPayerDetails> achievers) {
         this.achievers = achievers;
     }
-    public void setProducers(List<WaterTaxPayerDetails> producers) {
+
+    public void setProducers(final List<WaterTaxPayerDetails> producers) {
         this.producers = producers;
     }
-	
+
 }

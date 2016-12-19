@@ -41,6 +41,8 @@
 package org.egov.ptis.service.es;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_PT;
+import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_VLT;
+import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_WTMS;
 import static org.egov.ptis.constants.PropertyTaxConstants.COLLECTION_INDEX_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_DISTRICTWISE;
@@ -56,6 +58,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NA
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -78,7 +81,6 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.es.BillCollectorIndex;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
@@ -140,13 +142,20 @@ public class CollectionIndexElasticSearchService {
      * @return BigDecimal
      */
     public BigDecimal getConsolidatedCollForYears(Date fromDate, Date toDate, String billingService) {
-        QueryBuilder queryBuilder = QueryBuilders.boolQuery()
-                .must(QueryBuilders.matchQuery(BILLING_SERVICE, billingService))
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .must(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                         .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
                 .mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
+
+        if (COLLECION_BILLING_SERVICE_WTMS.equalsIgnoreCase(billingService))
+            boolQuery = boolQuery.must(QueryBuilders.matchQuery(BILLING_SERVICE, billingService));
+        else
+            boolQuery = boolQuery.must(QueryBuilders.boolQuery()
+                    .filter(QueryBuilders.termsQuery(BILLING_SERVICE,
+                            Arrays.asList(COLLECION_BILLING_SERVICE_PT, COLLECION_BILLING_SERVICE_VLT))));
+
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME)
-                .withQuery(queryBuilder).addAggregation(AggregationBuilders.sum(COLLECTIONTOTAL).field(TOTAL_AMOUNT))
+                .withQuery(boolQuery).addAggregation(AggregationBuilders.sum(COLLECTIONTOTAL).field(TOTAL_AMOUNT))
                 .build();
 
         Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl, new ResultsExtractor<Aggregations>() {
@@ -197,7 +206,8 @@ public class CollectionIndexElasticSearchService {
             boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery(TOTAL_DEMAND).from(0).to(null));
         else if (indexName.equals(COLLECTION_INDEX_NAME))
             boolQuery = QueryBuilders.boolQuery()
-                    .filter(QueryBuilders.matchQuery(BILLING_SERVICE, COLLECION_BILLING_SERVICE_PT));
+                    .filter(QueryBuilders.termsQuery(BILLING_SERVICE,
+                            Arrays.asList(COLLECION_BILLING_SERVICE_PT, COLLECION_BILLING_SERVICE_VLT)));
         if (StringUtils.isNotBlank(collectionDetailsRequest.getRegionName()))
             boolQuery = boolQuery
                     .filter(QueryBuilders.matchQuery(REGION_NAME, collectionDetailsRequest.getRegionName()));
@@ -208,7 +218,14 @@ public class CollectionIndexElasticSearchService {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_GRADE, collectionDetailsRequest.getUlbGrade()));
         if (StringUtils.isNotBlank(collectionDetailsRequest.getUlbCode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_CODE, collectionDetailsRequest.getUlbCode()));
-
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getPropertyType())){
+            if (DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT.equalsIgnoreCase(collectionDetailsRequest.getPropertyType()))
+                boolQuery = boolQuery
+                        .filter(QueryBuilders.termsQuery("consumerType", DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST));
+            else
+                boolQuery = boolQuery
+                        .filter(QueryBuilders.matchQuery("consumerType", collectionDetailsRequest.getPropertyType()));
+        }
         return boolQuery;
     }
 
@@ -327,6 +344,7 @@ public class CollectionIndexElasticSearchService {
         BigDecimal balance = BigDecimal.ZERO;
         BigDecimal variance = BigDecimal.ZERO;
         String aggregationField = REGION_NAME;
+        Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
 
         /**
          * Select the grouping based on the type parameter, by default the grouping is done based on Regions. If type is region,
@@ -380,16 +398,8 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(new Date(), 1);
         }
         int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
-        Map<String, BigDecimal> cytdCollMap;
-        /**
-         * For current year's till date collection, if property type is given, fetch the sum of totalCollection from the Property
-         * Tax index, else sum of totalAmount from Collection index
-         */
-        if (StringUtils.isNotBlank(collectionDetailsRequest.getPropertyType()))
-            cytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate, toDate,
-                    PROPERTY_TAX_INDEX_NAME, "totalCollection", aggregationField);
-        else
-            cytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate, toDate,
+        
+        Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate, toDate,
                     COLLECTION_INDEX_NAME, TOTAL_AMOUNT, aggregationField);
         // For total demand
         Map<String, BigDecimal> totalDemandMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
@@ -401,6 +411,11 @@ public class CollectionIndexElasticSearchService {
         Map<String, BigDecimal> lytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest,
                 DateUtils.addYears(fromDate, -1), DateUtils.addYears(toDate, -1), COLLECTION_INDEX_NAME, TOTAL_AMOUNT,
                 aggregationField);
+
+        // Fetch ward wise Bill Collector details for ward based grouping
+        if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+            wardWiseBillCollectors = getWardWiseBillCollectors(collectionDetailsRequest);
+
         Long timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken by getCollectionAndDemandValues() is : " + timeTaken + MILLISECS);
 
@@ -419,9 +434,17 @@ public class CollectionIndexElasticSearchService {
                 collIndData.setUlbGrade(collectionDetailsRequest.getUlbGrade());
             } else if (aggregationField.equals(CITY_GRADE))
                 collIndData.setUlbGrade(name);
-            else if (aggregationField.equals(REVENUE_WARD))
+            else if (aggregationField.equals(REVENUE_WARD)) {
                 collIndData.setWardName(name);
-
+                // If the grouping is based on ward, set the Bill Collector name and number
+                if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(collectionDetailsRequest.getType())
+                        && !wardWiseBillCollectors.isEmpty()) {
+                    collIndData.setBillCollector(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
+                            : wardWiseBillCollectors.get(name).getBillCollector());
+                    collIndData.setMobileNumber(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
+                            : wardWiseBillCollectors.get(name).getMobileNumber());
+                }
+            }
             collIndData.setTodayColl(todayCollMap.get(name) == null ? BigDecimal.ZERO : todayCollMap.get(name));
             collIndData.setCytdColl(entry.getValue());
             // Proportional Demand = (totalDemand/12)*noOfmonths
@@ -478,17 +501,6 @@ public class CollectionIndexElasticSearchService {
         else
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("isActive", true))
                     .filter(QueryBuilders.matchQuery("isExempted", false));
-
-        // If property type is given, then apply the property type condition only to Property Tax index
-        if (indexName.equals(PROPERTY_TAX_INDEX_NAME)
-                && StringUtils.isNotBlank(collectionDetailsRequest.getPropertyType())) {
-            if (collectionDetailsRequest.getPropertyType().equalsIgnoreCase(DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT))
-                boolQuery = boolQuery
-                        .filter(QueryBuilders.termsQuery("propertyType", DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST));
-            else
-                boolQuery = boolQuery
-                        .filter(QueryBuilders.matchQuery("propertyType", collectionDetailsRequest.getPropertyType()));
-        }
 
         AggregationBuilder aggregation = AggregationBuilders.terms(BY_CITY).field(aggregationField).size(120)
                 .subAggregation(AggregationBuilders.sum("total").field(fieldName));
@@ -1137,6 +1149,20 @@ public class CollectionIndexElasticSearchService {
         List<BillCollectorIndex> billCollectorsList = elasticsearchTemplate.queryForList(searchQueryColl,
                 BillCollectorIndex.class);
         return billCollectorsList;
+    }
+
+    /**
+     * Fetches Ward wise Bill Colelctor details
+     * @param collectionDetailsRequest
+     * @return Map
+     */
+    public Map<String, BillCollectorIndex> getWardWiseBillCollectors(CollectionDetailsRequest collectionDetailsRequest) {
+        Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
+        List<BillCollectorIndex> billCollectors = getBillCollectorDetails(collectionDetailsRequest);
+        for (BillCollectorIndex billCollector : billCollectors) {
+            wardWiseBillCollectors.put(billCollector.getRevenueWard(), billCollector);
+        }
+        return wardWiseBillCollectors;
     }
 
 }

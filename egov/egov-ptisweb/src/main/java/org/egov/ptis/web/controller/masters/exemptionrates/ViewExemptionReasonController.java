@@ -37,65 +37,39 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.ptis.web.controller.masters.exemptionrates;
 
-package org.egov.ptis.domain.entity.property;
+import java.util.List;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.ptis.domain.entity.property.TaxExemptionReason;
+import org.egov.ptis.master.service.TaxExemptionReasonService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+@Controller
+@RequestMapping(value = "/exemption/view")
+public class ViewExemptionReasonController {
+    private final TaxExemptionReasonService taxExemptionService;
 
-@Entity
-@Table(name = "egpt_exemption_reason")
-@SequenceGenerator(name = TaxExeptionReason.SEQ_TAX_EXEMPTION_REASON, sequenceName = TaxExeptionReason.SEQ_TAX_EXEMPTION_REASON, allocationSize = 1)
-public class TaxExeptionReason extends AbstractAuditable {
+    @Autowired
+    public ViewExemptionReasonController(final TaxExemptionReasonService taxExemptionService) {
+        this.taxExemptionService = taxExemptionService;
+    }
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    @ModelAttribute
+    public TaxExemptionReason taxExemptionModel() {
+        return new TaxExemptionReason();
+    }
 
-	public static final String SEQ_TAX_EXEMPTION_REASON = "SEQ_EGPT_EXEMPTION_REASON";
+    @RequestMapping(method = RequestMethod.GET)
+    public String showTaxExemptionReason(final Model model) {
+        final List<TaxExemptionReason> taxExemption = taxExemptionService.getAllActiveTaxExemptions();
+        model.addAttribute("exemptionReason", taxExemption);
+        return "tax-exemption-reason";
 
-	@Id
-	@GeneratedValue(generator = SEQ_TAX_EXEMPTION_REASON, strategy = GenerationType.SEQUENCE)
-	private Long id;
-
-	@SafeHtml
-	private String name;
-
-	@SafeHtml
-	private String code;
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	@Override
-	public Long getId() {
-		return id;
-	}
-
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
-
+    }
 }

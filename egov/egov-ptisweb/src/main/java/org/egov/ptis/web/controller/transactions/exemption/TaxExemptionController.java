@@ -75,7 +75,7 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.egov.ptis.domain.entity.property.TaxExeptionReason;
+import org.egov.ptis.domain.entity.property.TaxExemptionReason;
 import org.egov.ptis.domain.service.exemption.TaxExemptionService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,8 +135,8 @@ public class TaxExemptionController extends GenericWorkFlowController {
 
     @SuppressWarnings("unchecked")
     @ModelAttribute("taxExemptionReasons")
-    public List<TaxExeptionReason> getTaxExemptionReasons() {
-        return taxExemptionService.getSession().createQuery("from TaxExeptionReason order by name").list();
+    public List<TaxExemptionReason> getTaxExemptionReasons() {
+        return taxExemptionService.getSession().createQuery("from TaxExemptionReason where isActive = true order by name").list();
     }
 
     @RequestMapping(value = "/form/{assessmentNo}", method = RequestMethod.GET)

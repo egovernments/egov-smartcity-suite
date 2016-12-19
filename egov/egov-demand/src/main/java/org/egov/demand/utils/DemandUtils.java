@@ -104,7 +104,7 @@ public class DemandUtils {
                         bill.getPartPaymentAllowed(), bill.getOverrideAccountHeadsAllowed(), collModesList,
                         COLLECTIONTYPE.F);
                 billPayeeDet = new BillPayeeDetails(bill.getCitizenName(), bill.getCitizenAddress(), bill.getEmailId());
-                billDetails = new BillDetails(bill.getId().toString(), bill.getCreateDate(), bill.getConsumerId(),
+                billDetails = new BillDetails(bill.getId().toString(), bill.getCreateDate(), bill.getConsumerId(),bill.getConsumerType(),
                         bill.getBoundaryNum().toString(), bill.getBoundaryType(), bill.getDescription(),
                         bill.getTotalAmount(), bill.getMinAmtPayable());
                 billPayeeDetList.add(billPayeeDet);

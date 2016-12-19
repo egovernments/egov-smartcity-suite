@@ -55,7 +55,12 @@
 					window.location = "../revPetition/revPetition-newForm.action?propertyId=" + assessmentNum;
 				}  */else if (selectedValue == 'CollectTax') {
 					window.location = "/../ptis/search/searchProperty-searchOwnerDetails.action?assessmentNum=" + assessmentNum;
-				} /* else if (selectedValue == 'EDIT_DATAENTRY') {
+				}else if(selectedValue == 'VacancyRemissionMonthlyUpdate'){
+					window.location = "/ptis/vacancyremission/monthlyupdate/" + assessmentNum;
+				}else if(selectedValue == 'VacancyRemissionFinalApproval'){
+					window.location = "/ptis/vacancyremissionapproval/create/" + assessmentNum;
+				}
+				/* else if (selectedValue == 'EDIT_DATAENTRY') {
 					window.location = "../modify/modifyProperty-modifyDataEntry.action?modifyRsn=EDIT_DATA_ENTRY&indexNumber=" + assessmentNum;
 				} *//*  else if (selectedValue == 'ADD_EDIT_DEMAND') {
 					window.location = "../edit/editDemand-newEditForm.action?propertyId=" + assessmentNum;
@@ -243,7 +248,7 @@
 									   </c:if>
 									   
 									</s:if>
-									<%-- <s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@PTVERIFIER_ROLE.toUpperCase()) && #attr.currentRowObject.isDemandActive
+									<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@PTVERIFIER_ROLE.toUpperCase()) && #attr.currentRowObject.isDemandActive
 									&& #attr.currentRowObject.propType!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_EWSHS}">
 										<c:if test="${currentRowObject.propType != 'VAC_LAND' && currentRowObject.isTaxExempted == false}">
 											<c:if test="${currentRowObject.enableMonthlyUpdate == true && currentRowObject.enableVRApproval == false}">
@@ -257,7 +262,7 @@
 												</option>
 											</c:if>
 										</c:if>
-									</s:if> --%>
+									</s:if> 
 								</select>
 								</display:column>
 								<display:setProperty name="paging.banner.item" value="Record" />

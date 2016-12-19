@@ -65,113 +65,103 @@ import com.google.gson.GsonBuilder;
 @Controller
 @RequestMapping("/closedperiod")
 public class ClosedPeriodController {
-	private final static String CLOSEDPERIOD_RESULT = "closedperiod-result";
-	private final static String CLOSEDPERIOD_EDIT = "closedperiod-edit";
-	private final static String CLOSEDPERIOD_SEARCH = "closedperiod-search";
-	@Autowired
-	private ClosedPeriodService closedPeriodService;
-	@Autowired
-	private MessageSource messageSource;
-	@Autowired
-	private CFinancialYearService cFinancialYearService;
+    private static final String CLOSEDPERIOD_RESULT = "closedperiod-result";
+    private static final String CLOSEDPERIOD_EDIT = "closedperiod-edit";
+    private static final String CLOSEDPERIOD_SEARCH = "closedperiod-search";
+    private static final String CLOSEDPERIOD = "closedPeriod";
+    @Autowired
+    private ClosedPeriodService closedPeriodService;
+    @Autowired
+    private MessageSource messageSource;
+    @Autowired
+    private CFinancialYearService cFinancialYearService;
 
-	private void prepareNewForm(Model model) {
-		model.addAttribute("cFinancialYears", cFinancialYearService.findAll());
-	}
+    private void prepareNewForm(final Model model) {
+        model.addAttribute("cFinancialYears", cFinancialYearService.findAll());
+    }
 
+    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
+    public String edit(@PathVariable("id") final Long id, final Model model) {
+        final ClosedPeriod closedPeriod = closedPeriodService.findOne(id);
 
-	@RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-	public String edit(@PathVariable("id") final Long id, Model model) {
-		ClosedPeriod closedPeriod = closedPeriodService.findOne(id);
+        prepareNewForm(model);
+        model.addAttribute(CLOSEDPERIOD, closedPeriod);
+        return CLOSEDPERIOD_EDIT;
+    }
 
-		prepareNewForm(model);
-		model.addAttribute("closedPeriod", closedPeriod);
-		return CLOSEDPERIOD_EDIT;
-	}
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public String update(@ModelAttribute final ClosedPeriod closedPeriod,
+            final BindingResult errors, final Model model,
+            final RedirectAttributes redirectAttrs) {
+        if (errors.hasErrors()) {
+            prepareNewForm(model);
+            return CLOSEDPERIOD_EDIT;
+        }
+        final List<ClosedPeriod> closePer = closedPeriodService.findAll();
+        final Long cId = closedPeriod.getcFinancialYearId().getId();
+        if (!closePer.isEmpty()) {
+            for (final ClosedPeriod cp : closePer)
+                if (cp.getcFinancialYearId().getId() == closedPeriod.getcFinancialYearId().getId()
+                        && !closedPeriod.getIsClosed()) {
+                    closedPeriodService.delete(cp);
+                    redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.reopenedperiod.success", null, null));
+                    return "redirect:/closedperiod/result/" + cId;
+                }
+        } else if (closePer.isEmpty() && closedPeriod.getIsClosed()) {
+            closedPeriodService.update(closedPeriod);
+            redirectAttrs.addFlashAttribute("message", messageSource
+                    .getMessage("msg.closedPeriod.success", null, null));
+            return "redirect:/closedperiod/result/" + closedPeriod.getId();
+        }
 
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public String update(@ModelAttribute final ClosedPeriod closedPeriod,
-			final BindingResult errors, final Model model,
-			final RedirectAttributes redirectAttrs) {
-		if (errors.hasErrors()) {
-			prepareNewForm(model);
-			return CLOSEDPERIOD_EDIT;
-		}
-		String result = null;
-		List<ClosedPeriod> closePer = closedPeriodService.findAll();
-		Long cId = closedPeriod.getcFinancialYearId().getId();
-		if (closePer.size() != 0) {
-			for (ClosedPeriod cp : closePer) {
-				if (cp.getcFinancialYearId().getId() == closedPeriod
-						.getcFinancialYearId().getId()
-						&& closedPeriod.getIsClosed() == false) {
-					closedPeriodService.delete(cp);
+        if (!closedPeriod.getcFinancialYearId().getIsClosed()
+                && !closedPeriod.getIsClosed()) {
+            redirectAttrs.addFlashAttribute("message", messageSource
+                    .getMessage("msg.reopenedperiod.success", null, null));
+            return "redirect:/closedperiod/result/" + cId;
 
-					redirectAttrs
-							.addFlashAttribute("message", messageSource
-									.getMessage("msg.closedPeriod.success",
-											null, null));
-					return "redirect:/closedperiod/result/" + cId;
-				}
+        }
 
-			}
-		} else if (closePer.size() == 0 && closedPeriod.getIsClosed() == true) {
-			closedPeriodService.update(closedPeriod);
-			redirectAttrs.addFlashAttribute("message", messageSource
-					.getMessage("msg.closedPeriod.success", null, null));
-			return "redirect:/closedperiod/result/" + closedPeriod.getId();
-		}
+        closedPeriodService.update(closedPeriod);
+        redirectAttrs.addFlashAttribute("message", messageSource.getMessage(
+                "msg.closedPeriod.success", null, null));
+        return "redirect:/closedperiod/result/" + closedPeriod.getId();
 
-		if (closedPeriod.getcFinancialYearId().getIsClosed() == false
-				&& closedPeriod.getIsClosed() == false) {
-			redirectAttrs.addFlashAttribute("message", messageSource
-					.getMessage("msg.closedPeriod.success", null, null));
-			return "redirect:/closedperiod/result/" + cId;
+    }
 
-		}
+    @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
+    public String result(@PathVariable("id") final Long id, final Model model) {
+        final ClosedPeriod closedPeriod = closedPeriodService.findOne(id);
+        model.addAttribute(CLOSEDPERIOD, closedPeriod);
+        return CLOSEDPERIOD_RESULT;
+    }
 
-		closedPeriodService.update(closedPeriod);
-		redirectAttrs.addFlashAttribute("message", messageSource.getMessage(
-				"msg.closedPeriod.success", null, null));
-		return "redirect:/closedperiod/result/" + closedPeriod.getId();
+    @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
+    public String search(@PathVariable("mode") final String mode, final Model model) {
+        final ClosedPeriod closedPeriod = new ClosedPeriod();
+        prepareNewForm(model);
+        model.addAttribute(CLOSEDPERIOD, closedPeriod);
+        return CLOSEDPERIOD_SEARCH;
 
-	}
+    }
 
+    @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String ajaxsearch(
+            @PathVariable("mode") final String mode, final Model model,
+            @ModelAttribute final ClosedPeriod closedPeriod) {
+        final List<ClosedPeriod> searchResultList = closedPeriodService
+                .search(closedPeriod);
 
-	@RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
-	public String result(@PathVariable("id") final Long id, Model model) {
-		ClosedPeriod closedPeriod = closedPeriodService.findOne(id);
-		model.addAttribute("closedPeriod", closedPeriod);
-		return CLOSEDPERIOD_RESULT;
-	}
+        return new StringBuilder("{ \"data\":")
+                .append(toSearchResultJson(searchResultList)).append("}")
+                .toString();
+    }
 
-	@RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
-	public String search(@PathVariable("mode") final String mode, Model model) {
-		ClosedPeriod closedPeriod = new ClosedPeriod();
-		prepareNewForm(model);
-		model.addAttribute("closedPeriod", closedPeriod);
-		return CLOSEDPERIOD_SEARCH;
-
-	}
-
-	@RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-	public @ResponseBody String ajaxsearch(
-			@PathVariable("mode") final String mode, Model model,
-			@ModelAttribute final ClosedPeriod closedPeriod) {
-		List<ClosedPeriod> searchResultList = closedPeriodService
-				.search(closedPeriod);
-
-		String result = new StringBuilder("{ \"data\":")
-				.append(toSearchResultJson(searchResultList)).append("}")
-				.toString();
-		return result;
-	}
-
-	public Object toSearchResultJson(final Object object) {
-		final GsonBuilder gsonBuilder = new GsonBuilder();
-		final Gson gson = gsonBuilder.registerTypeAdapter(ClosedPeriod.class,
-				new ClosedPeriodJsonAdaptor()).create();
-		final String json = gson.toJson(object);
-		return json;
-	}
+    public Object toSearchResultJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(ClosedPeriod.class,
+                new ClosedPeriodJsonAdaptor()).create();
+        return gson.toJson(object);
+    }
 }

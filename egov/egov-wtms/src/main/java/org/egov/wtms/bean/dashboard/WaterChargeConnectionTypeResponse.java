@@ -45,17 +45,17 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 @JsonInclude(value = Include.NON_EMPTY)
 public class WaterChargeConnectionTypeResponse {
 
-  
     private String ulbName = StringUtils.EMPTY;
     private BigDecimal residentialtotalCollection = BigDecimal.ZERO;
     private BigDecimal comercialtotalCollection = BigDecimal.ZERO;
-    private Long residentialConnectionCount =0L;
-    private Long commercialConnectionCount =0L;
+    private Long residentialConnectionCount = 0L;
+    private Long commercialConnectionCount = 0L;
     private BigDecimal waterChargeResidentialaverage;
-    private BigDecimal waterChargeCommercialaverage ;
+    private BigDecimal waterChargeCommercialaverage;
     private String regionName = StringUtils.EMPTY;
     private String districtName = StringUtils.EMPTY;
     private String ulbGrade = StringUtils.EMPTY;
@@ -66,7 +66,13 @@ public class WaterChargeConnectionTypeResponse {
     private BigDecimal lastYearTillDateColl = BigDecimal.ZERO;
     private BigDecimal totalDmd = BigDecimal.ZERO;
     private BigDecimal currentYearTillDateDmd = BigDecimal.ZERO;
-
+    private BigDecimal previousYearResidentialColl = BigDecimal.ZERO;//previousYearCollection ex:2014
+    private BigDecimal lastYearResidentialColl = BigDecimal.ZERO;//lasYearColl
+    private BigDecimal currentYearResidentialColl = BigDecimal.ZERO;
+    
+    private BigDecimal previousYearCommercialColl = BigDecimal.ZERO;//previousYearCollection ex:2014
+    private BigDecimal lastYearCommercialColl = BigDecimal.ZERO;//lasYearColl
+    private BigDecimal currentYearCommercialColl = BigDecimal.ZERO;
     private BigDecimal performance = BigDecimal.ZERO;
     private BigDecimal lastYearVar = BigDecimal.ZERO;
 
@@ -76,167 +82,253 @@ public class WaterChargeConnectionTypeResponse {
     private BigDecimal currentYearColl = BigDecimal.ZERO;
     private BigDecimal residentialAchievement = BigDecimal.ZERO;
     private BigDecimal commercialAchievement = BigDecimal.ZERO;
-    
+
     public BigDecimal getCurrentYearTillDateDmd() {
         return currentYearTillDateDmd;
     }
-    public void setCurrentYearTillDateDmd(BigDecimal currentYearTillDateDmd) {
+
+    public void setCurrentYearTillDateDmd(final BigDecimal currentYearTillDateDmd) {
         this.currentYearTillDateDmd = currentYearTillDateDmd;
     }
+
     public BigDecimal getPerformance() {
         return performance;
     }
-    public void setPerformance(BigDecimal performance) {
+
+    public void setPerformance(final BigDecimal performance) {
         this.performance = performance;
     }
+
     public BigDecimal getLastYearVar() {
         return lastYearVar;
     }
-    public void setLastYearVar(BigDecimal lastYearVar) {
+
+    public void setLastYearVar(final BigDecimal lastYearVar) {
         this.lastYearVar = lastYearVar;
     }
+
     public String getUlbName() {
         return ulbName;
     }
-    public void setUlbName(String ulbName) {
+
+    public void setUlbName(final String ulbName) {
         this.ulbName = ulbName;
     }
-   
-    
+
     public BigDecimal getWaterChargeResidentialaverage() {
         return waterChargeResidentialaverage;
     }
-    public void setWaterChargeResidentialaverage(BigDecimal waterChargeResidentialaverage) {
+
+    public void setWaterChargeResidentialaverage(final BigDecimal waterChargeResidentialaverage) {
         this.waterChargeResidentialaverage = waterChargeResidentialaverage;
     }
+
     public BigDecimal getWaterChargeCommercialaverage() {
         return waterChargeCommercialaverage;
     }
-    public void setWaterChargeCommercialaverage(BigDecimal waterChargeCommercialaverage) {
+
+    public void setWaterChargeCommercialaverage(final BigDecimal waterChargeCommercialaverage) {
         this.waterChargeCommercialaverage = waterChargeCommercialaverage;
     }
+
     public BigDecimal getResidentialAchievement() {
         return residentialAchievement;
     }
-    public void setResidentialAchievement(BigDecimal residentialAchievement) {
+
+    public void setResidentialAchievement(final BigDecimal residentialAchievement) {
         this.residentialAchievement = residentialAchievement;
     }
+
     public BigDecimal getCommercialAchievement() {
         return commercialAchievement;
     }
-    public void setCommercialAchievement(BigDecimal commercialAchievement) {
+
+    public void setCommercialAchievement(final BigDecimal commercialAchievement) {
         this.commercialAchievement = commercialAchievement;
     }
+
     public BigDecimal getResidentialtotalCollection() {
         return residentialtotalCollection;
     }
-    public void setResidentialtotalCollection(BigDecimal residentialtotalCollection) {
+
+    public void setResidentialtotalCollection(final BigDecimal residentialtotalCollection) {
         this.residentialtotalCollection = residentialtotalCollection;
     }
+
     public BigDecimal getComercialtotalCollection() {
         return comercialtotalCollection;
     }
-    public void setComercialtotalCollection(BigDecimal comercialtotalCollection) {
+
+    public void setComercialtotalCollection(final BigDecimal comercialtotalCollection) {
         this.comercialtotalCollection = comercialtotalCollection;
     }
-   
+
     public Long getResidentialConnectionCount() {
         return residentialConnectionCount;
     }
-    public void setResidentialConnectionCount(Long residentialConnectionCount) {
+
+    public void setResidentialConnectionCount(final Long residentialConnectionCount) {
         this.residentialConnectionCount = residentialConnectionCount;
     }
+
     public Long getCommercialConnectionCount() {
         return commercialConnectionCount;
     }
-    public void setCommercialConnectionCount(Long commercialConnectionCount) {
+
+    public void setCommercialConnectionCount(final Long commercialConnectionCount) {
         this.commercialConnectionCount = commercialConnectionCount;
     }
+
     public String getRegionName() {
         return regionName;
     }
-    public void setRegionName(String regionName) {
+
+    public void setRegionName(final String regionName) {
         this.regionName = regionName;
     }
+
     public String getDistrictName() {
         return districtName;
     }
-    public void setDistrictName(String districtName) {
+
+    public void setDistrictName(final String districtName) {
         this.districtName = districtName;
     }
+
     public String getUlbGrade() {
         return ulbGrade;
     }
-    public void setUlbGrade(String ulbGrade) {
+
+    public void setUlbGrade(final String ulbGrade) {
         this.ulbGrade = ulbGrade;
     }
+
     public String getWardName() {
         return wardName;
     }
-    public void setWardName(String wardName) {
+
+    public void setWardName(final String wardName) {
         this.wardName = wardName;
     }
-    
+
     public String getMonth() {
         return month;
     }
-    public void setMonth(String month) {
+
+    public void setMonth(final String month) {
         this.month = month;
     }
+
     public BigDecimal getPreviousYearColl() {
         return previousYearColl;
     }
-    public void setPreviousYearColl(BigDecimal previousYearColl) {
+
+    public void setPreviousYearColl(final BigDecimal previousYearColl) {
         this.previousYearColl = previousYearColl;
     }
+
     public BigDecimal getLastYearColl() {
         return lastYearColl;
     }
-    public void setLastYearColl(BigDecimal lastYearColl) {
+
+    public void setLastYearColl(final BigDecimal lastYearColl) {
         this.lastYearColl = lastYearColl;
     }
+
     public BigDecimal getCurrentYearColl() {
         return currentYearColl;
     }
-    public void setCurrentYearColl(BigDecimal currentYearColl) {
+
+    public void setCurrentYearColl(final BigDecimal currentYearColl) {
         this.currentYearColl = currentYearColl;
     }
+
     public BigDecimal getTodayColl() {
         return todayColl;
     }
-    public void setTodayColl(BigDecimal todayColl) {
+
+    public void setTodayColl(final BigDecimal todayColl) {
         this.todayColl = todayColl;
     }
+
     public BigDecimal getLastYearTodayColl() {
         return lastYearTodayColl;
     }
-    public void setLastYearTodayColl(BigDecimal lastYearTodayColl) {
+
+    public void setLastYearTodayColl(final BigDecimal lastYearTodayColl) {
         this.lastYearTodayColl = lastYearTodayColl;
     }
+
     public BigDecimal getCurrentYearTillDateColl() {
         return currentYearTillDateColl;
     }
-    public void setCurrentYearTillDateColl(BigDecimal currentYearTillDateColl) {
+
+    public void setCurrentYearTillDateColl(final BigDecimal currentYearTillDateColl) {
         this.currentYearTillDateColl = currentYearTillDateColl;
     }
+
     public BigDecimal getLastYearTillDateColl() {
         return lastYearTillDateColl;
     }
-    public void setLastYearTillDateColl(BigDecimal lastYearTillDateColl) {
+
+    public void setLastYearTillDateColl(final BigDecimal lastYearTillDateColl) {
         this.lastYearTillDateColl = lastYearTillDateColl;
     }
+
     public BigDecimal getTotalDmd() {
         return totalDmd;
     }
-    public void setTotalDmd(BigDecimal totalDmd) {
+
+    public void setTotalDmd(final BigDecimal totalDmd) {
         this.totalDmd = totalDmd;
     }
-  
-    
-    
-   
-   
-  
 
+    public BigDecimal getPreviousYearResidentialColl() {
+        return previousYearResidentialColl;
+    }
+
+    public void setPreviousYearResidentialColl(BigDecimal previousYearResidentialColl) {
+        this.previousYearResidentialColl = previousYearResidentialColl;
+    }
+
+    public BigDecimal getLastYearResidentialColl() {
+        return lastYearResidentialColl;
+    }
+
+    public void setLastYearResidentialColl(BigDecimal lastYearResidentialColl) {
+        this.lastYearResidentialColl = lastYearResidentialColl;
+    }
+
+    public BigDecimal getCurrentYearResidentialColl() {
+        return currentYearResidentialColl;
+    }
+
+    public void setCurrentYearResidentialColl(BigDecimal currentYearResidentialColl) {
+        this.currentYearResidentialColl = currentYearResidentialColl;
+    }
+
+    public BigDecimal getPreviousYearCommercialColl() {
+        return previousYearCommercialColl;
+    }
+
+    public void setPreviousYearCommercialColl(BigDecimal previousYearCommercialColl) {
+        this.previousYearCommercialColl = previousYearCommercialColl;
+    }
+
+    public BigDecimal getLastYearCommercialColl() {
+        return lastYearCommercialColl;
+    }
+
+    public void setLastYearCommercialColl(BigDecimal lastYearCommercialColl) {
+        this.lastYearCommercialColl = lastYearCommercialColl;
+    }
+
+    public BigDecimal getCurrentYearCommercialColl() {
+        return currentYearCommercialColl;
+    }
+
+    public void setCurrentYearCommercialColl(BigDecimal currentYearCommercialColl) {
+        this.currentYearCommercialColl = currentYearCommercialColl;
+    }
 
 }

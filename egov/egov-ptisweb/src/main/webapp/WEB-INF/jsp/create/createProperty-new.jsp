@@ -47,18 +47,18 @@
 <title><s:if test="mode=='create' || mode=='edit'">
 		<s:text name='NewProp.title' />
 	</s:if></title>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css?rnd=${app_release_no}' context='/egi'/>">
 <script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js?rnd=${app_release_no}' context='/egi'/>"
 	type="text/javascript"></script>
 <link
-	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css?rnd=${app_release_no}' context='/egi'/>"
 	rel="stylesheet" type="text/css" />
 <script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js?rnd=${app_release_no}' context='/egi'/>"
 	type="text/javascript"></script>
 <script
-	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"
+	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js?rnd=${app_release_no}' context='/egi'/>"
 	type="text/javascript"></script>
 </head>
 
@@ -149,6 +149,43 @@
 				console.warn("No Date Picker " + e);
 			}
 		});
+
+		jQuery('#calculateTax').click( function () {
+			jQuery.ajax({url:"/ptis/create/createProperty-calculateTax.action",
+				data : jQuery("form").serialize(),
+    			cache:false,
+    			beforeSend: function(){
+    				jQuery("#fpoptbl").hide();
+    				jQuery('#loading').show();
+    				jQuery('#popup').show();
+    			}
+    		}).success(function (response) {
+    			jQuery('.popup').addClass('popup-show');
+    			console.log(JSON.stringify(response));
+    			jQuery('#fpoptbl tbody').html("");
+    			if(response.startsWith("Please")) {
+    				jQuery('#fpoptbl tbody').append(response);
+    				jQuery("#fpoptbl").show();
+					jQuery('#loading').hide(); 
+        		} else {
+    				var splitByTelde = response.split('~');
+    				for(i=0; i<splitByTelde.length;i++) {
+    					var rowarry=splitByTelde[i].split('=');
+    					var tablerow="<tr><td>"+ rowarry[0] +"</td><td>"+"Rs "+ rowarry[1] +"</td><tr>";
+    					jQuery('#fpoptbl tbody').append(tablerow);
+    					jQuery("#fpoptbl").show();
+    					jQuery('#loading').hide(); 
+    				}
+        		}
+    		});
+		});
+
+		jQuery(document).on('click', '.popup', function (event) {
+			if(jQuery(event.target).hasClass('close-pop'))
+			{
+				jQuery(this).removeClass('popup-show');
+			} 
+		}); 
 
 		function loadOnStartUp() {
 			document.getElementById('assessmentRow').style.display = "none";
@@ -280,6 +317,7 @@
 	</script>
 	<script
             src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
-		<script src="<cdn:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
+		<script src="<cdn:url value='/resources/javascript/helper.js?rnd=${app_release_no}' context='/ptis'/>"></script>
+	<%@ include file="../workflow/commontaxcalc-details.jsp"%>
 </body>
 </html>

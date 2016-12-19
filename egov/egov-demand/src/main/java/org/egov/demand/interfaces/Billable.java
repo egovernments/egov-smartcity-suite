@@ -120,6 +120,8 @@ public interface Billable {
 	 * The "consumer code" of the entity being billed - e.g. a property ID in case of property tax.
 	 */
 	String getConsumerId();
+	
+	String getConsumerType();
 
 	/**
 	 * If apportioning of a payment into the various account heads is to be done by Collections,

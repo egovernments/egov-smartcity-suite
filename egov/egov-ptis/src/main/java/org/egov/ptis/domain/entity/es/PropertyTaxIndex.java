@@ -71,7 +71,7 @@ public class PropertyTaxIndex {
     private String adminWardName;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String propertyType;
+    private String consumerType;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String regionName;
@@ -248,12 +248,12 @@ public class PropertyTaxIndex {
         this.adminWardName = adminWardName;
     }
 
-    public String getPropertyType() {
-        return propertyType;
+    public String getConsumerType() {
+        return consumerType;
     }
 
-    public void setPropertyType(String propertyType) {
-        this.propertyType = propertyType;
+    public void setConsumerType(String consumerType) {
+        this.consumerType = consumerType;
     }
 
     public String getRegionName() {

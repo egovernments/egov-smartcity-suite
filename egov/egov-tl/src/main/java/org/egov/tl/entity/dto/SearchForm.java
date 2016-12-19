@@ -107,7 +107,12 @@ public class SearchForm {
                         && license.isStatusActive())
                     licenseActions.add("Renew License");
             }
-        } else if (license.isLegacy() && !license.isPaid())
+            if (license.getStatus().getStatusCode().equals(Constants.STATUS_ACTIVE))
+                licenseActions.add("Closure");
+
+        }
+
+        if (license.isLegacy() && !license.hasState())
             licenseActions.add("Modify Legacy License");
 
         if (userRoles.contains(Constants.TL_APPROVER_ROLENAME) && license.getDateOfExpiry() != null

@@ -493,14 +493,16 @@ public class EmployeeService implements EntityTypeService {
         boolean positionExistsInWF = false;
         boolean positionExistsInWFHistory = false;
         final List<Position> updatedPositionList = positionMasterService.getPositionsForEmployee(employee.getId());
+
         if (StringUtils.isNotBlank(removedassignIds)) {
             final String[] deletedAssignIds = removedassignIds.split(",");
             for (final String assignId : deletedAssignIds) {
                 final Assignment assignment = assignmentService.getAssignmentById(Long.valueOf(assignId));
                 if (assignment != null && !assignment.equals("")) {
-                    positionExistsInWF = stateService.isPositionUnderWorkflow(assignment.getPosition().getId());
+                    positionExistsInWF = stateService.isPositionUnderWorkflow(assignment.getPosition().getId(),
+                            assignment.getFromDate());
                     positionExistsInWFHistory = stateHistoryService
-                            .isPositionUnderWorkflowHistory(assignment.getPosition().getId());
+                            .isPositionUnderWorkflowHistory(assignment.getPosition().getId(), assignment.getFromDate());
                 }
                 if (positionExistsInWF || positionExistsInWFHistory)
                     return assignment.getPosition().getName();
@@ -526,14 +528,17 @@ public class EmployeeService implements EntityTypeService {
 
         getCurrentSession().evict(employee);
         final Employee updatedEmployee = getEmployeeById(employee.getId());
+        final List<Assignment> oldAssignmentList = assignmentService.getAllAssignmentsByEmpId(updatedEmployee.getId());
         final List<Position> oldPositionList = positionMasterService.getPositionsForEmployee(updatedEmployee.getId());
         oldPositionList.removeAll(updatedPositionList);
-        for (final Position position : oldPositionList) {
-            positionExistsInWF = stateService.isPositionUnderWorkflow(position.getId());
-            positionExistsInWFHistory = stateHistoryService.isPositionUnderWorkflowHistory(position.getId());
-            if (positionExistsInWF || positionExistsInWFHistory)
-                return position.getName();
-        }
+        for (final Assignment assign : oldAssignmentList)
+            if (oldPositionList.contains(assign.getPosition())) {
+                positionExistsInWF = stateService.isPositionUnderWorkflow(assign.getPosition().getId(), assign.getFromDate());
+                positionExistsInWFHistory = stateHistoryService.isPositionUnderWorkflowHistory(assign.getPosition().getId(),
+                        assign.getFromDate());
+                if (positionExistsInWF || positionExistsInWFHistory)
+                    return assign.getPosition().getName();
+            }
         return StringUtils.EMPTY;
     }
 

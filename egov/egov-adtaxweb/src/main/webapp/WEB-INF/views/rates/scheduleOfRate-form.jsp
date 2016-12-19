@@ -45,7 +45,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css?rnd=${app_release_no}' context='/egi'/>">
 
 <div class="row">
 	<div class="col-md-12">

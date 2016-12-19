@@ -125,6 +125,6 @@
     </bean>
 
     <!-- Imports user-defined @Controller beans that process client requests -->
-    <context:component-scan base-package=" org.egov.collection.web.actions.citizen.reports"/>
-
+    <context:component-scan base-package="org.egov.collection.web.actions.citizen.reports"/>
+    <context:component-scan base-package="org.egov.collection.web.controller"/>
 </beans>

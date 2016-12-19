@@ -58,8 +58,8 @@ import org.egov.lcms.transactions.entity.JudgmentDocuments;
 import org.egov.lcms.transactions.entity.JudgmentImpl;
 import org.egov.lcms.transactions.entity.LcInterimOrderDocuments;
 import org.egov.lcms.transactions.entity.LegalCase;
-import org.egov.lcms.transactions.entity.LegalCaseDocuments;
 import org.egov.lcms.transactions.entity.LegalCaseInterimOrder;
+import org.egov.lcms.transactions.entity.LegalCaseUploadDocuments;
 import org.egov.lcms.transactions.entity.PwrDocuments;
 import org.egov.lcms.transactions.repository.JudgmentImplRepository;
 import org.egov.lcms.transactions.repository.JudgmentRepository;
@@ -131,8 +131,8 @@ public class LegalCaseUtil {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
-    public List<LegalCaseDocuments> getLegalCaseDocumentList(final LegalCase legalcase) {
-        final List<LegalCaseDocuments> legalDoc = legalCaseRepository.getLegalCaseDocumentList(legalcase.getId());
+    public List<LegalCaseUploadDocuments> getLegalCaseDocumentList(final LegalCase legalcase) {
+        final List<LegalCaseUploadDocuments> legalDoc = legalCaseRepository.getLegalCaseUploadDocumentList(legalcase.getId());
         return legalDoc;
     }
 

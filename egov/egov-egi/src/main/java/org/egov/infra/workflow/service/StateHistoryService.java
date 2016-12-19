@@ -40,6 +40,8 @@
 
 package org.egov.infra.workflow.service;
 
+import java.util.Date;
+
 import org.egov.infra.workflow.repository.StateHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,8 +58,8 @@ public class StateHistoryService {
         this.stateHistoryRepository = stateHistoryRepository;
     }
 
-    public boolean isPositionUnderWorkflowHistory(final Long posId) {
-        return stateHistoryRepository.countByOwnerPosition_Id(posId) > 0;
+    public boolean isPositionUnderWorkflowHistory(final Long posId, final Date givenDate) {
+        return stateHistoryRepository.countByOwnerPosition_IdAndCreatedDateGreaterThanEqual(posId, givenDate) > 0;
     }
 
 }

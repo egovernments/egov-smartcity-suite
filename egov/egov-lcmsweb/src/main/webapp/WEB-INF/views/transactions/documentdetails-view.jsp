@@ -21,12 +21,12 @@
 		</c:choose>
 		</div>
 	</div>
-	<c:if test="${!legalCase.legalCaseDocuments.isEmpty() && mode == 'view' || mode =='edit'}">
-		<c:forEach items="${legalCase.legalCaseDocuments}" var="legalCaseDocuments">
-			<a href="/egi/downloadfile?fileStoreId=${legalCaseDocuments.supportDocs.fileStoreId}&moduleName=LCMS">${legalCaseDocuments.supportDocs.fileName }</a><br />
+	<c:if test="${!legalCase.legalCaseUploadDocuments.isEmpty() && mode == 'view' || mode =='edit'}">
+		<c:forEach items="${legalCase.legalCaseUploadDocuments}" var="legalCaseUploadDocuments">
+			<a href="/egi/downloadfile?fileStoreId=${legalCaseUploadDocuments.supportDocs.fileStoreId}&moduleName=LCMS">${legalCaseUploadDocuments.supportDocs.fileName }</a><br />
 		</c:forEach>
 	</c:if>
-	<c:if test="${mode == 'view' && legalCase.legalCaseDocuments.isEmpty()}">
+	<c:if test="${mode == 'view' && legalCase.legalCaseUploadDocuments.isEmpty()}">
 		<spring:message code="lbl.no.documents" />
 	</c:if>
 	<c:if test="${ mode != 'view'}">

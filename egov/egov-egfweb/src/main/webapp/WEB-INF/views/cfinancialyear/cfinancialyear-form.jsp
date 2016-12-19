@@ -126,7 +126,7 @@
 											<td><c:if test="${mode == 'create'}">
 													<input type="text" value="${var1.name}"
 														name="cFiscalPeriod[${counter.index}].name" id="name"
-														size="10"
+														maxlength="10"
 														class="form-control text-right patternvalidation" />
 													<input type="hidden" id="cmdaddListId"
 														value="cFiscalPeriod[${counter.index}].id" />
@@ -134,7 +134,7 @@
 													<input type="text"
 														name="cFiscalPeriod[${counter.index}].name"
 														value="${var1.name}"
-														id="cFiscalPeriod[${counter.index}].name" size="10"
+														id="cFiscalPeriod[${counter.index}].name" maxlength="10"
 														readonly="readonly"
 														class="form-control text-right patternvalidation" />
 												</c:if> </td>

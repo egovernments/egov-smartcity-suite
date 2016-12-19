@@ -50,14 +50,23 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_S
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -84,11 +93,16 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.NumberUtil;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
+import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
+import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.service.DemandBill.DemandBillService;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -347,5 +361,70 @@ public class PropertyTaxCommonUtils {
         }
         return wfInitiatorAssignment;
     }
+    
+    public String getCurrentHalfyearTax(HashMap<Installment, TaxCalculationInfo> instTaxMap, PropertyTypeMaster propTypeMstr) {
+        Installment currentInstall = getCurrentPeriodInstallment();
+        TaxCalculationInfo calculationInfo = instTaxMap.get(currentInstall);
+        BigDecimal annualValue = calculationInfo.getTotalNetARV();
+        BigDecimal totalPropertyTax = calculationInfo.getTotalTaxPayable();
+        BigDecimal genTax = BigDecimal.ZERO;
+        BigDecimal libCess = BigDecimal.ZERO;
+        BigDecimal eduTax = BigDecimal.ZERO;
+        BigDecimal unAuthPenalty = BigDecimal.ZERO;
+        BigDecimal vacLandTax = BigDecimal.ZERO;
+        BigDecimal sewrageTax = BigDecimal.ZERO;
+        BigDecimal serviceCharges = BigDecimal.ZERO;
+        for (UnitTaxCalculationInfo unitTaxCalcInfo : calculationInfo.getUnitTaxCalculationInfos()) {
+            for (MiscellaneousTax miscTax : unitTaxCalcInfo.getMiscellaneousTaxes()) {
+                if (miscTax.getTaxName() == DEMANDRSN_CODE_GENERAL_TAX) {
+                    genTax = genTax.add(miscTax.getTotalCalculatedTax());
+                } else if (miscTax.getTaxName() == DEMANDRSN_CODE_UNAUTHORIZED_PENALTY) {
+                    unAuthPenalty = unAuthPenalty.add(miscTax.getTotalCalculatedTax());
+                } else if (miscTax.getTaxName() == DEMANDRSN_CODE_EDUCATIONAL_CESS) {
+                    eduTax = eduTax.add(miscTax.getTotalCalculatedTax());
+                } else if (miscTax.getTaxName() == DEMANDRSN_CODE_VACANT_TAX) {
+                    vacLandTax = vacLandTax.add(miscTax.getTotalCalculatedTax());
+                } else if (miscTax.getTaxName() == DEMANDRSN_CODE_LIBRARY_CESS) {
+                    libCess = libCess.add(miscTax.getTotalCalculatedTax());
+                } else if (miscTax.getTaxName() == DEMANDRSN_CODE_SEWERAGE_TAX) {
+                    sewrageTax = sewrageTax.add(miscTax.getTotalCalculatedTax());
+                } else if (miscTax.getTaxName() == DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES) {
+                    serviceCharges = serviceCharges.add(miscTax.getTotalCalculatedTax());
+                }
+            }
+        }
+        String resultString = preparResponeString(propTypeMstr, annualValue, totalPropertyTax, vacLandTax, genTax, unAuthPenalty,
+                eduTax, libCess, sewrageTax, serviceCharges);
+        return resultString;
+    }
 
+    private String preparResponeString(PropertyTypeMaster propTypeMstr, BigDecimal annualValue, BigDecimal totalPropertyTax,
+            BigDecimal vacLandTax, BigDecimal genTax, BigDecimal unAuthPenalty, BigDecimal eduTax, BigDecimal libCess,
+            BigDecimal sewrageTax, BigDecimal serviceCharges) {
+        StringBuilder resultString = new StringBuilder(200);
+        resultString.append(
+                "Annual Rental Value=" + formatAmount(annualValue) + "~Total Tax=" + formatAmount(totalPropertyTax));
+        if (OWNERSHIP_TYPE_VAC_LAND.equalsIgnoreCase(propTypeMstr.getCode())) {
+            resultString.append("~Vacant Land Tax=" + formatAmount(vacLandTax));
+        } else {
+            resultString.append("~Property Tax=" + formatAmount(genTax) +"~Education Cess=" + formatAmount(eduTax));
+        }
+        resultString.append("~Library Cess=" + formatAmount(libCess));
+        Boolean isCorporation = propertyTaxUtil.isCorporation();
+        if (isCorporation) {
+            resultString.append("~Sewrage Tax=" + formatAmount(sewrageTax));
+        }
+        if (isCorporation && propertyTaxUtil.isPrimaryServiceApplicable()) {
+            resultString.append("~Service Charges=" + formatAmount(serviceCharges));
+        }
+        if (!OWNERSHIP_TYPE_VAC_LAND.equalsIgnoreCase(propTypeMstr.getCode())) {
+            resultString.append("~Unauthorized Penalty="+ formatAmount(unAuthPenalty));
+        }
+        return resultString.toString();
+    }
+    
+    public String formatAmount(BigDecimal tax) {
+        tax = tax.setScale(0, RoundingMode.CEILING);
+        return NumberUtil.formatNumber(tax);
+    }
 }

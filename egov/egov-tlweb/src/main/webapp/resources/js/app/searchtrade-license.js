@@ -437,4 +437,7 @@ function goToAction(obj, id){
 		window.open("../newtradelicense/newTradeLicense-beforeRenew.action?model.id="+id,  'rl'+id, 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand Notice')
 		window.open("/tl/demandnotice/report?licenseId=" + id, 'dn' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+	else if (obj.options[obj.selectedIndex].innerHTML == 'Closure')
+		window.open("../viewtradelicense/viewTradeLicense-closure.action?id="+id,  'vt'+id, 'scrollbars=yes,width=1000,height=700,status=yes');
+
 }

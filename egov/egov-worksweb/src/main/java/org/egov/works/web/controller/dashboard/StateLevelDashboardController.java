@@ -44,7 +44,6 @@ import static org.egov.works.utils.WorksConstants.DISTRICT_COLUMN_HEADER_NAME;
 import static org.egov.works.utils.WorksConstants.SECTOR_COLUMN_HEADER_NAME;
 import static org.egov.works.utils.WorksConstants.ULB_COLUMN_HEADER_NAME;
 import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_DISTNAME_COLUMN_NAME;
-import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME;
 import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_TYPEOFWORKNAME_COLUMN_NAME;
 import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_ULBNAME_COLUMN_NAME;
 

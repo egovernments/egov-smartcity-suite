@@ -52,7 +52,7 @@ body
 }
 </style>
 <script type="text/javascript"
-	src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
+	src="<cdn:url value='/resources/javascript/validations.js?rnd=${app_release_no}'/>"></script>
 
 <form:form id="demolition" method="post"
 	class="form-horizontal form-groups-bordered" modelAttribute="property">
@@ -156,9 +156,8 @@ body
 											path="propertyDetail.currentCapitalValue" maxlength="15"
 											value="" id="currentCapitalValue"
 											cssClass="form-control"
-											onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.currentCapitalValue');checkZero(this,'propertyDetail.currentCapitalValue');"
-											readonly="true" /> <form:errors
-											path="propertyDetail.currentCapitalValue"
+											onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.currentCapitalValue');checkZero(this,'propertyDetail.currentCapitalValue');"/> 	
+										<form:errors path="propertyDetail.currentCapitalValue"
 											cssClass="add-margin error-msg" />
 									</td>
 
@@ -220,13 +219,3 @@ body
 		</div>
 	</div>
 </form:form>
-<script type="text/javascript">
-	jQuery("#marketValue").blur(function() {
-		var vacantLandArea = jQuery("#vacantLandArea").val();
-		var marketValue = jQuery("#marketValue").val();
-		var capitalValue = vacantLandArea * marketValue;
-		jQuery("#currentCapitalValue").val(roundoff(capitalValue));
-	});
-</script>
-
-

@@ -44,8 +44,8 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/javascript/dateValidation.js'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/javascript/dateValidation.js?rnd=${app_release_no}'/>"></script>
 
 <form:form id="vacancyRemissionApprovalForm" method="post"
 	class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemissionApproval">
@@ -74,7 +74,11 @@
 					</div>
 				</div>
 				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading">
+			<div>
+				<%@ include
+					file="/WEB-INF/views/vacancyremission/vr-documents-view.jsp"%>
+			</div>
+			<div class="panel-heading">
 						<div class="panel-title">
 							VR Details History
 							<div class="panel-body history-slide">

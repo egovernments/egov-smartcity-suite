@@ -48,7 +48,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.DASHBOARD_GROUPING
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DASHBOARD_GROUPING_ULBWISE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DASHBOARD_GROUPING_WARDWISE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DATE_FORMAT_YYYYMMDD;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_TAX_INDEX_NAME;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -110,6 +109,7 @@ public class WaterChargeCollectionDocService {
     private static final String BY_CITY = "by_city";
     private static final String CITYCODE = "cityCode";
     private static final String AGGR_DATE = "date_agg";
+    private static final String CONN_STATUS = "ACTIVE";
 
     @Autowired
     private CFinancialYearService cFinancialYearService;
@@ -218,8 +218,9 @@ public class WaterChargeCollectionDocService {
     public BigDecimal getTotalDemandBasedOnInputFilters(final WaterChargeDashBoardRequest collectionDetailsRequest) {
         final BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, null);
         final SearchQuery searchQueryColl = new NativeSearchQueryBuilder()
-                .withIndices(WATER_TAX_INDEX_NAME).withQuery(boolQuery).addAggregation(AggregationBuilders
-                        .sum(WaterTaxConstants.WATERCHARGETOTALDEMAND).field(WaterTaxConstants.WATERCHARGETOTALDEMAND))
+                .withIndices(WaterTaxConstants.WATER_TAX_INDEX_NAME).withQuery(boolQuery)
+                .addAggregation(AggregationBuilders.sum(WaterTaxConstants.WATERCHARGETOTALDEMAND)
+                        .field(WaterTaxConstants.WATERCHARGETOTALDEMAND))
                 .build();
 
         final Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl,
@@ -574,15 +575,17 @@ public class WaterChargeCollectionDocService {
         }
         final int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
 
-        Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate, toDate,
-                    COLLECTION_INDEX_NAME, TOTAL_AMOUNT, aggregationField);
+        final Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
+                toDate, COLLECTION_INDEX_NAME, TOTAL_AMOUNT, aggregationField);
 
         // For total demand
         final Map<String, BigDecimal> totalDemandMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
-                toDate, WATER_TAX_INDEX_NAME, WaterTaxConstants.WATERCHARGETOTALDEMAND, aggregationField);
+                toDate, WaterTaxConstants.WATER_TAX_INDEX_NAME, WaterTaxConstants.WATERCHARGETOTALDEMAND,
+                aggregationField);
         // For current year demand
         final Map<String, BigDecimal> currYrTotalDemandMap = getCollectionAndDemandValues(collectionDetailsRequest,
-                fromDate, toDate, WATER_TAX_INDEX_NAME, WaterTaxConstants.WATERCHARGETOTALDEMAND, aggregationField);
+                fromDate, toDate, WaterTaxConstants.WATER_TAX_INDEX_NAME, WaterTaxConstants.WATERCHARGETOTALDEMAND,
+                aggregationField);
         // For last year's till today's date collections
         final Map<String, BigDecimal> lytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest,
                 org.apache.commons.lang3.time.DateUtils.addYears(fromDate, -1),
@@ -668,7 +671,7 @@ public class WaterChargeCollectionDocService {
                             .gte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                             .lte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
                     .mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
-       
+
         final AggregationBuilder aggregation = AggregationBuilders.terms(BY_CITY).field(aggregationField).size(120)
                 .subAggregation(AggregationBuilders.sum("total").field(fieldName));
 
@@ -822,7 +825,9 @@ public class WaterChargeCollectionDocService {
         final Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
         String monthName;
         final List<Map<String, BigDecimal>> yearwiseMonthlyCollList = new ArrayList<>();
+        final List<Map<String, BigDecimal>> yearwiseMonthlyCommercialCollList = new ArrayList<>();
         Map<String, BigDecimal> monthwiseColl;
+        Map<String, BigDecimal> monthwiseColl2;
         /**
          * For month-wise collections between the date ranges if dates are sent
          * in the request, consider fromDate and toDate+1 , else calculate from
@@ -837,28 +842,55 @@ public class WaterChargeCollectionDocService {
             fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
             toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
         }
-        Long startTime = System.currentTimeMillis();
+
+        final Long startTime = System.currentTimeMillis();
         for (int count = 0; count <= 2; count++) {
             monthwiseColl = new LinkedHashMap<>();
-            final Aggregations collAggr = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate,
-                    toDate);
-            final Histogram dateaggs = collAggr.get(AGGR_DATE);
+            final Aggregations collAggr = getMonthwiseCollectionsForConsecutiveYearsTemp(collectionDetailsRequest,
+                    fromDate, toDate, WaterTaxConstants.RESIDENTIALCONNECTIONTYPEFORDASHBOARD);
+            final Aggregations collAggrComm = getMonthwiseCollectionsForConsecutiveYearsTemp(collectionDetailsRequest,
+                    fromDate, toDate, WaterTaxConstants.COMMERCIALCONNECTIONTYPEFORDASHBOARD);
 
-            for (final Histogram.Bucket entry : dateaggs.getBuckets()) {
-                dateArr = entry.getKeyAsString().split("T");
-                dateForMonth = DateUtils.getDate(dateArr[0], DATE_FORMAT_YYYYMMDD);
-                month = Integer.valueOf(dateArr[0].split("-", 3)[1]);
-                monthName = monthValuesMap.get(month);
-                aggregateSum = entry.getAggregations().get("current_total");
-                // If the total amount is greater than 0 and the month belongs
-                // to respective financial year, add values to the map
-                if (DateUtils.between(dateForMonth, finYearStartDate, finYearEndDate)
-                        && BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
-                                .compareTo(BigDecimal.ZERO) > 0)
-                    monthwiseColl.put(monthName,
-                            BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            if (collAggr != null) {
+                final Histogram dateaggs = collAggr.get(AGGR_DATE);
+                for (final Histogram.Bucket entry : dateaggs.getBuckets()) {
+                    dateArr = entry.getKeyAsString().split("T");
+                    dateForMonth = DateUtils.getDate(dateArr[0], DATE_FORMAT_YYYYMMDD);
+                    month = Integer.valueOf(dateArr[0].split("-", 3)[1]);
+                    monthName = monthValuesMap.get(month);
+                    aggregateSum = entry.getAggregations().get("current_total");
+                    // If the total amount is greater than 0 and the month
+                    // belongs
+                    // to respective financial year, add values to the map
+                    if (DateUtils.between(dateForMonth, finYearStartDate, finYearEndDate)
+                            && BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
+                                    .compareTo(BigDecimal.ZERO) > 0)
+                        monthwiseColl.put(monthName,
+                                BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                }
             }
             yearwiseMonthlyCollList.add(monthwiseColl);
+            monthwiseColl2 = new LinkedHashMap<>();
+
+            if (collAggrComm != null) {
+                final Histogram commdateaggs = collAggrComm.get(AGGR_DATE);
+                for (final Histogram.Bucket entry : commdateaggs.getBuckets()) {
+                    dateArr = entry.getKeyAsString().split("T");
+                    dateForMonth = DateUtils.getDate(dateArr[0], DATE_FORMAT_YYYYMMDD);
+                    month = Integer.valueOf(dateArr[0].split("-", 3)[1]);
+                    monthName = monthValuesMap.get(month);
+                    aggregateSum = entry.getAggregations().get("current_total");
+                    // If the total amount is greater than 0 and the month
+                    // belongs
+                    // to respective financial year, add values to the map
+                    if (DateUtils.between(dateForMonth, finYearStartDate, finYearEndDate)
+                            && BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
+                                    .compareTo(BigDecimal.ZERO) > 0)
+                        monthwiseColl2.put(monthName,
+                                BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                }
+            }
+            yearwiseMonthlyCommercialCollList.add(monthwiseColl2);
 
             /**
              * If dates are passed in request, get result for the date range,
@@ -875,13 +907,12 @@ public class WaterChargeCollectionDocService {
             finYearStartDate = org.apache.commons.lang3.time.DateUtils.addYears(finYearStartDate, -1);
             finYearEndDate = org.apache.commons.lang3.time.DateUtils.addYears(finYearEndDate, -1);
         }
-        Long timeTaken = System.currentTimeMillis() - startTime;
+        final Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(
                     "Time taken by getMonthwiseCollectionsForConsecutiveYears() for 3 consecutive years is (millisecs): "
                             + timeTaken);
 
-        startTime = System.currentTimeMillis();
         /**
          * If dates are passed in request, get result for the date range, else
          * get results for all 12 months
@@ -892,29 +923,85 @@ public class WaterChargeCollectionDocService {
                     .entrySet()) {
                 collTrend = new WaterChargeConnectionTypeResponse();
                 collTrend.setMonth(entry.getValue());
-                collTrend.setCurrentYearColl(yearwiseMonthlyCollList.get(0).get(collTrend.getMonth()) == null
+                collTrend.setCurrentYearResidentialColl(yearwiseMonthlyCollList.get(0).get(collTrend.getMonth()) == null
                         ? BigDecimal.ZERO : yearwiseMonthlyCollList.get(0).get(collTrend.getMonth()));
-                collTrend.setLastYearColl(yearwiseMonthlyCollList.get(1).get(collTrend.getMonth()) == null
+                collTrend.setLastYearResidentialColl(yearwiseMonthlyCollList.get(1).get(collTrend.getMonth()) == null
                         ? BigDecimal.ZERO : yearwiseMonthlyCollList.get(1).get(collTrend.getMonth()));
-                collTrend.setPreviousYearColl(yearwiseMonthlyCollList.get(2).get(collTrend.getMonth()) == null
-                        ? BigDecimal.ZERO : yearwiseMonthlyCollList.get(2).get(collTrend.getMonth()));
+                collTrend
+                        .setPreviousYearResidentialColl(yearwiseMonthlyCollList.get(2).get(collTrend.getMonth()) == null
+                                ? BigDecimal.ZERO : yearwiseMonthlyCollList.get(2).get(collTrend.getMonth()));
+
+                collTrend.setCurrentYearCommercialColl(
+                        yearwiseMonthlyCommercialCollList.get(0).get(collTrend.getMonth()) == null ? BigDecimal.ZERO
+                                : yearwiseMonthlyCommercialCollList.get(0).get(collTrend.getMonth()));
+                collTrend.setLastYearCommercialColl(
+                        yearwiseMonthlyCommercialCollList.get(1).get(collTrend.getMonth()) == null ? BigDecimal.ZERO
+                                : yearwiseMonthlyCommercialCollList.get(1).get(collTrend.getMonth()));
+                collTrend.setPreviousYearCommercialColl(
+                        yearwiseMonthlyCommercialCollList.get(2).get(collTrend.getMonth()) == null ? BigDecimal.ZERO
+                                : yearwiseMonthlyCommercialCollList.get(2).get(collTrend.getMonth()));
                 collTrendsList.add(collTrend);
             }
         else
             for (final Map.Entry<String, BigDecimal> entry : yearwiseMonthlyCollList.get(0).entrySet()) {
                 collTrend = new WaterChargeConnectionTypeResponse();
                 collTrend.setMonth(entry.getKey());
-                collTrend.setCurrentYearColl(entry.getValue());
-                collTrend.setLastYearColl(yearwiseMonthlyCollList.get(1).get(collTrend.getMonth()) == null
+                collTrend.setCurrentYearResidentialColl(entry.getValue());
+                collTrend.setLastYearResidentialColl(yearwiseMonthlyCollList.get(1).get(collTrend.getMonth()) == null
                         ? BigDecimal.ZERO : yearwiseMonthlyCollList.get(1).get(collTrend.getMonth()));
-                collTrend.setPreviousYearColl(yearwiseMonthlyCollList.get(2).get(collTrend.getMonth()) == null
-                        ? BigDecimal.ZERO : yearwiseMonthlyCollList.get(2).get(collTrend.getMonth()));
+                collTrend
+                        .setPreviousYearResidentialColl(yearwiseMonthlyCollList.get(2).get(collTrend.getMonth()) == null
+                                ? BigDecimal.ZERO : yearwiseMonthlyCollList.get(2).get(collTrend.getMonth()));
+
+                collTrend.setCurrentYearCommercialColl(
+                        yearwiseMonthlyCommercialCollList.get(0).get(collTrend.getMonth()) == null ? BigDecimal.ZERO
+                                : yearwiseMonthlyCommercialCollList.get(0).get(collTrend.getMonth()));
+                collTrend.setLastYearCommercialColl(
+                        yearwiseMonthlyCommercialCollList.get(1).get(collTrend.getMonth()) == null ? BigDecimal.ZERO
+                                : yearwiseMonthlyCommercialCollList.get(1).get(collTrend.getMonth()));
+                collTrend.setPreviousYearCommercialColl(
+                        yearwiseMonthlyCommercialCollList.get(2).get(collTrend.getMonth()) == null ? BigDecimal.ZERO
+                                : yearwiseMonthlyCommercialCollList.get(2).get(collTrend.getMonth()));
                 collTrendsList.add(collTrend);
             }
-        timeTaken = System.currentTimeMillis() - startTime;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken setting values in getMonthwiseCollectionDetails() is (millisecs) : " + timeTaken);
         return collTrendsList;
+    }
+
+    private Aggregations getMonthwiseCollectionsForConsecutiveYearsTemp(
+            final WaterChargeDashBoardRequest collectionDetailsRequest, final Date fromDate, final Date toDate,
+            final String usageType) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+        boolQuery = boolQuery.mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
+        boolQuery = boolQuery.filter(QueryBuilders.matchQuery(BILLING_SERVICE, COLLECION_BILLING_SERVICE_WTMS));
+        boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerType", usageType));
+
+        if (boolQuery != null) {
+            if (StringUtils.isNotBlank(collectionDetailsRequest.getRegionName()))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WaterTaxConstants.REGIONNAMEAGGREGATIONFIELD,
+                        collectionDetailsRequest.getRegionName()));
+            if (StringUtils.isNotBlank(collectionDetailsRequest.getDistrictName()))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WaterTaxConstants.DISTRICTNAMEAGGREGATIONFIELD,
+                        collectionDetailsRequest.getDistrictName()));
+
+            if (StringUtils.isNotBlank(collectionDetailsRequest.getUlbGrade()))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WaterTaxConstants.CITYGRADEAGGREGATIONFIELD,
+                        collectionDetailsRequest.getUlbGrade()));
+
+            if (StringUtils.isNotBlank(collectionDetailsRequest.getUlbCode()))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITYCODE, collectionDetailsRequest.getUlbCode()));
+        }
+
+        boolQuery = boolQuery.filter(QueryBuilders.rangeQuery(RECEIPT_DATEINDEX)
+                .gte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(fromDate))
+                .lte(WaterTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false));
+        @SuppressWarnings("rawtypes")
+        final AggregationBuilder monthAggregation = AggregationBuilders.dateHistogram(AGGR_DATE)
+                .field(RECEIPT_DATEINDEX).interval(DateHistogramInterval.MONTH)
+                .subAggregation(AggregationBuilders.sum("current_total").field(TOTAL_AMOUNT));
+        final SearchQuery searchQueryColl = new NativeSearchQueryBuilder()
+                .withIndices(WaterTaxConstants.COLLECTION_INDEX_NAME).withQuery(boolQuery)
+                .addAggregation(monthAggregation).build();
+        return elasticsearchTemplate.query(searchQueryColl, response -> response.getAggregations());
     }
 
     /**
@@ -1275,31 +1362,30 @@ public class WaterChargeCollectionDocService {
                 WaterTaxConstants.WATER_TAX_INDEX_NAME, CNSUMER_CODEINDEX, aggregationField,
                 WaterTaxConstants.RESIDENTIALCONNECTIONTYPEFORDASHBOARD);
         final Map<String, BigDecimal> connectionResidentialTotalCollectionMap = getSumOfConnectionTotalCollection(
-                collectionDetailsRequest, WaterTaxConstants.WATER_TAX_INDEX_NAME, aggregationField,
-                WaterTaxConstants.RESIDENTIALCONNECTIONTYPEFORDASHBOARD,"totalCollection");
-        
+                collectionDetailsRequest, WaterTaxConstants.COLLECTION_INDEX_NAME, aggregationField,
+                WaterTaxConstants.RESIDENTIALCONNECTIONTYPEFORDASHBOARD, null);
+
         final Map<String, BigDecimal> connectionResidentialTotalDemandMap = getSumOfConnectionTotalCollection(
                 collectionDetailsRequest, WaterTaxConstants.WATER_TAX_INDEX_NAME, aggregationField,
-                WaterTaxConstants.RESIDENTIALCONNECTIONTYPEFORDASHBOARD,TOTAL_DEMAND);
+                WaterTaxConstants.RESIDENTIALCONNECTIONTYPEFORDASHBOARD, TOTAL_DEMAND);
 
-        
-        
         final Map<String, Long> connectionCommercialcountMap = getConnectionCountResults(collectionDetailsRequest,
                 WaterTaxConstants.WATER_TAX_INDEX_NAME, CNSUMER_CODEINDEX, aggregationField,
                 WaterTaxConstants.COMMERCIALCONNECTIONTYPEFORDASHBOARD);
-        
+
         final Map<String, BigDecimal> connectionCOmmercialTotalCollectionMap = getSumOfConnectionTotalCollection(
-                collectionDetailsRequest, WaterTaxConstants.WATER_TAX_INDEX_NAME, aggregationField,
-                WaterTaxConstants.COMMERCIALCONNECTIONTYPEFORDASHBOARD,"totalCollection");
+                collectionDetailsRequest, WaterTaxConstants.COLLECTION_INDEX_NAME, aggregationField,
+                WaterTaxConstants.COMMERCIALCONNECTIONTYPEFORDASHBOARD, null);
 
         final Map<String, BigDecimal> connectionCOmmercialTotalDemandMap = getSumOfConnectionTotalCollection(
                 collectionDetailsRequest, WaterTaxConstants.WATER_TAX_INDEX_NAME, aggregationField,
-                WaterTaxConstants.COMMERCIALCONNECTIONTYPEFORDASHBOARD,TOTAL_DEMAND);
+                WaterTaxConstants.COMMERCIALCONNECTIONTYPEFORDASHBOARD, TOTAL_DEMAND);
 
         for (final Map.Entry<String, Long> entry : connectionResidentialcountMap.entrySet())
             prepareResponseDataForConnectionType(collectionDetailsRequest, waterchargeConndemandList, aggregationField,
                     connectionResidentialTotalDemandMap, connectionCommercialcountMap,
-                    connectionCOmmercialTotalDemandMap, entry,connectionResidentialTotalCollectionMap,connectionCOmmercialTotalCollectionMap);
+                    connectionCOmmercialTotalDemandMap, entry, connectionResidentialTotalCollectionMap,
+                    connectionCOmmercialTotalCollectionMap);
 
         return waterchargeConndemandList;
 
@@ -1315,7 +1401,7 @@ public class WaterChargeCollectionDocService {
         String name;
         final WaterChargeConnectionTypeResponse receiptData = new WaterChargeConnectionTypeResponse();
         name = entry.getKey();
-        
+
         if (WaterTaxConstants.REGIONNAMEAGGREGATIONFIELD.equals(aggregationField))
             receiptData.setRegionName(name);
         else if (WaterTaxConstants.DISTRICTNAMEAGGREGATIONFIELD.equals(aggregationField)) {
@@ -1327,41 +1413,54 @@ public class WaterChargeCollectionDocService {
             receiptData.setUlbGrade(collectionDetailsRequest.getUlbGrade());
         } else if (WaterTaxConstants.CITYGRADEAGGREGATIONFIELD.equals(aggregationField))
             receiptData.setUlbGrade(name);
-        else if (WaterTaxConstants.REVENUEWARDAGGREGATIONFIELD.equals(aggregationField))        
+        else if (WaterTaxConstants.REVENUEWARDAGGREGATIONFIELD.equals(aggregationField))
             receiptData.setWardName(name);
-          final Date fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
-         final Date toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
-        
-         final int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
-         final BigDecimal totalResDemandValue =  connectionResidentialTotalDemandMap.get(name).setScale(0,
-                 BigDecimal.ROUND_HALF_UP);
-         final BigDecimal totalResCollections = connectionResidentialTotalCollectionMap.get(name).setScale(0,
-                 BigDecimal.ROUND_HALF_UP);
-         final BigDecimal proportionalDemand = totalResDemandValue
-                 .divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(noOfMonths));
-         receiptData.setResidentialAchievement(totalResCollections.multiply(WaterTaxConstants.BIGDECIMAL_100)
-                 .divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
-        
-         final BigDecimal totalCommDemandValue =  connectionCOmmercialTotalDemandMap.get(name). setScale(0, 
-                 BigDecimal.ROUND_HALF_UP);
-         final BigDecimal totalCommCollections = connectionCOmmercialTotalCollectionMap.get(name).setScale(0,
-                 BigDecimal.ROUND_HALF_UP);
-         final BigDecimal commproportionalDemand = totalCommDemandValue
-                 .divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(noOfMonths));
-         receiptData.setCommercialAchievement(totalCommCollections.multiply(WaterTaxConstants.BIGDECIMAL_100)
-                 .divide(commproportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
-        
-         receiptData.setWaterChargeCommercialaverage(totalCommDemandValue.divide(BigDecimal.valueOf(connectionCommercialcountMap.get(name)), 1, BigDecimal.ROUND_HALF_UP));
-         
-         
-         receiptData.setWaterChargeResidentialaverage(totalResDemandValue.divide(BigDecimal.valueOf(entry.getValue()), 1, BigDecimal.ROUND_HALF_UP));
-       
+        final Date fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+        final Date toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
+
+        final int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
+        final BigDecimal totalResDemandValue = !connectionResidentialTotalDemandMap.isEmpty()
+                && connectionResidentialTotalDemandMap.get(name) != null
+                        ? connectionResidentialTotalDemandMap.get(name).setScale(0, BigDecimal.ROUND_HALF_UP)
+                        : BigDecimal.ZERO;
+        final BigDecimal totalResCollections = !connectionResidentialTotalCollectionMap.isEmpty()
+                && connectionResidentialTotalCollectionMap.get(name) != null
+                        ? connectionResidentialTotalCollectionMap.get(name).setScale(0, BigDecimal.ROUND_HALF_UP)
+                        : BigDecimal.ZERO;
+        final BigDecimal proportionalDemand = totalResDemandValue
+                .divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(noOfMonths));
+        receiptData.setResidentialAchievement(totalResCollections.multiply(WaterTaxConstants.BIGDECIMAL_100)
+                .divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
+
+        final BigDecimal totalCommDemandValue = !connectionCOmmercialTotalDemandMap.isEmpty()
+                && connectionCOmmercialTotalDemandMap.get(name) != null
+                        ? connectionCOmmercialTotalDemandMap.get(name).setScale(0, BigDecimal.ROUND_HALF_UP)
+                        : BigDecimal.ZERO;
+        final BigDecimal totalCommCollections = !connectionCOmmercialTotalCollectionMap.isEmpty()
+                && connectionCOmmercialTotalCollectionMap.get(name) != null
+                        ? connectionCOmmercialTotalCollectionMap.get(name).setScale(0, BigDecimal.ROUND_HALF_UP)
+                        : BigDecimal.ZERO;
+        final BigDecimal commproportionalDemand = totalCommDemandValue
+                .divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(noOfMonths));
+        receiptData.setCommercialAchievement(commproportionalDemand.compareTo(BigDecimal.ZERO) > 0
+                ? totalCommCollections.multiply(WaterTaxConstants.BIGDECIMAL_100).divide(commproportionalDemand, 1,
+                        BigDecimal.ROUND_HALF_UP)
+                : BigDecimal.ZERO);
+
+        receiptData.setWaterChargeCommercialaverage(connectionCommercialcountMap.get(name) != null
+                ? totalCommDemandValue.divide(BigDecimal.valueOf(connectionCommercialcountMap.get(name)), 1,
+                        BigDecimal.ROUND_HALF_UP)
+                : BigDecimal.ZERO);
+
+        receiptData.setWaterChargeResidentialaverage(
+                totalResDemandValue.divide(BigDecimal.valueOf(entry.getValue()), 1, BigDecimal.ROUND_HALF_UP));
+
         receiptData.setResidentialConnectionCount(entry.getValue());
         receiptData.setUlbName(name);
-        receiptData.setResidentialtotalCollection(connectionResidentialTotalCollectionMap.get(name));
+        receiptData.setResidentialtotalCollection(!connectionResidentialTotalCollectionMap.isEmpty() && connectionResidentialTotalCollectionMap.get(name)!=null ?connectionResidentialTotalCollectionMap.get(name):BigDecimal.ZERO);
         receiptData.setCommercialConnectionCount(connectionCommercialcountMap.get(name));
-        receiptData.setComercialtotalCollection(connectionCOmmercialTotalCollectionMap.get(name));
-        
+        receiptData.setComercialtotalCollection(!connectionCOmmercialTotalCollectionMap.isEmpty() && connectionCOmmercialTotalCollectionMap.get(name)!=null?connectionCOmmercialTotalCollectionMap.get(name):BigDecimal.ZERO);
+
         waterchargeConndemandList.add(receiptData);
     }
 
@@ -1437,8 +1536,8 @@ public class WaterChargeCollectionDocService {
             final String indexName, final String fieldName, final String aggregationField,
             final String connectionTypeField) {
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, indexName);
-        if (indexName.equals(WATER_TAX_INDEX_NAME))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("status", "ACTIVE"));
+        if (indexName.equals(WaterTaxConstants.WATER_TAX_INDEX_NAME))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(STATUS, CONN_STATUS));
         boolQuery = boolQuery.filter(QueryBuilders.matchQuery("usage", connectionTypeField));
 
         final AggregationBuilder aggregation = AggregationBuilders.terms(BY_CITY).field(aggregationField).size(120)
@@ -1461,20 +1560,23 @@ public class WaterChargeCollectionDocService {
 
     public Map<String, BigDecimal> getSumOfConnectionTotalCollection(
             final WaterChargeDashBoardRequest collectionDetailsRequest, final String indexName,
-            final String aggregationField, final String connectionTypeField,final String totalagrregatefild) {
+            final String aggregationField, final String connectionTypeField, final String totalagrregatefild) {
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, indexName);
-        if (indexName.equals(WATER_TAX_INDEX_NAME))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("status", "ACTIVE"));
-        boolQuery = boolQuery.filter(QueryBuilders.matchQuery("usage", connectionTypeField));
-         AggregationBuilder aggregation=null;
-        if(totalagrregatefild.equals("totalCollection")){
-         aggregation = AggregationBuilders.terms(BY_CITY).field(aggregationField).size(120)
-                .subAggregation(AggregationBuilders.sum(TOTALDEMAND).field(totalagrregatefild));
+        if (indexName.equals(WaterTaxConstants.WATER_TAX_INDEX_NAME)) {
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(STATUS, CONN_STATUS));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("usage", connectionTypeField));
+        } else {
+            boolQuery = boolQuery.mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerType", connectionTypeField));
         }
+        AggregationBuilder aggregation;
+        if (totalagrregatefild == null)
+            aggregation = AggregationBuilders.terms(BY_CITY).field(aggregationField).size(120)
+                    .subAggregation(AggregationBuilders.sum(TOTALDEMAND).field(TOTAL_AMOUNT));
         else
-           aggregation = AggregationBuilders.terms(BY_CITY).field(aggregationField).size(120)
-            .subAggregation(AggregationBuilders.sum(TOTALDEMAND).field(TOTAL_DEMAND));
-    
+            aggregation = AggregationBuilders.terms(BY_CITY).field(aggregationField).size(120)
+                    .subAggregation(AggregationBuilders.sum(TOTALDEMAND).field(TOTAL_DEMAND));
+
         final SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName).withQuery(boolQuery)
                 .addAggregation(aggregation).build();
 
@@ -1507,6 +1609,21 @@ public class WaterChargeCollectionDocService {
                 .withSort(new FieldSortBuilder("billCollector").order(SortOrder.ASC))
                 .withPageable(new PageRequest(0, 250)).build();
         return elasticsearchTemplate.queryForList(searchQueryColl, BillCollectorIndex.class);
+    }
+
+    /**
+     * Fetches Ward wise Bill Colelctor details
+     * 
+     * @param collectionDetailsRequest
+     * @return Map
+     */
+    public Map<String, BillCollectorIndex> getWardWiseBillCollectors(
+            final WaterChargeDashBoardRequest collectionDetailsRequest) {
+        final Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
+        final List<BillCollectorIndex> billCollectors = getBillCollectorDetails(collectionDetailsRequest);
+        for (final BillCollectorIndex billCollector : billCollectors)
+            wardWiseBillCollectors.put(billCollector.getRevenueWard(), billCollector);
+        return wardWiseBillCollectors;
     }
 
 }

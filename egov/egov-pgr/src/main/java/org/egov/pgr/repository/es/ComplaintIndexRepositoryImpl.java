@@ -40,6 +40,24 @@
 
 package org.egov.pgr.repository.es;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.pgr.repository.es.util.ComplaintElasticsearchUtils.getAverageWithExclusion;
+import static org.egov.pgr.repository.es.util.ComplaintElasticsearchUtils.getAverageWithFilter;
+import static org.egov.pgr.repository.es.util.ComplaintElasticsearchUtils.getCount;
+import static org.egov.pgr.repository.es.util.ComplaintElasticsearchUtils.getCountBetweenSpecifiedDates;
+import static org.egov.pgr.repository.es.util.ComplaintElasticsearchUtils.getCountWithGrouping;
+import static org.egov.pgr.repository.es.util.ComplaintElasticsearchUtils.getCountWithGroupingAndOrder;
+import static org.egov.pgr.utils.constants.PGRConstants.CITY_CODE;
+import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_DATE_FORMAT;
+import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_NAME;
+import static org.egov.pgr.utils.constants.PGRConstants.WARD_NUMBER;
+import static org.egov.pgr.utils.constants.PGRConstants.WARD_NAME;
+import static org.egov.pgr.utils.constants.PGRConstants.CITY_NAME;
+import static org.egov.pgr.utils.constants.PGRConstants.DISTRICT_NAME;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.pgr.entity.es.ComplaintDashBoardRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -53,19 +71,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.pgr.repository.es.util.ComplaintElasticsearchUtils.getAverageWithExclusion;
-import static org.egov.pgr.repository.es.util.ComplaintElasticsearchUtils.getAverageWithFilter;
-import static org.egov.pgr.repository.es.util.ComplaintElasticsearchUtils.getCount;
-import static org.egov.pgr.repository.es.util.ComplaintElasticsearchUtils.getCountBetweenSpecifiedDates;
-import static org.egov.pgr.repository.es.util.ComplaintElasticsearchUtils.getCountWithGrouping;
-import static org.egov.pgr.repository.es.util.ComplaintElasticsearchUtils.getCountWithGroupingAndOrder;
-import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_DATE_FORMAT;
-import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_NAME;
-
 public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomRepository {
 
     private static final DateTimeFormatter formatter = DateTimeFormat.forPattern(PGR_INDEX_DATE_FORMAT);
@@ -74,10 +79,11 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     private ElasticsearchTemplate elasticsearchTemplate;
 
     @Override
-    public Map<String, SearchResponse> findAllGrievanceByFilter(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query, String grouByField) {
+    public Map<String, SearchResponse> findAllGrievanceByFilter(final ComplaintDashBoardRequest complaintDashBoardRequest,
+            final BoolQueryBuilder query, final String grouByField) {
         /**
-         * For Current day's complaint count if dates are sent in the request,
-         * consider the toDate, else take date range between current date +1 day
+         * For Current day's complaint count if dates are sent in the request, consider the toDate, else take date range between
+         * current date +1 day
          */
         DateTime fromDate = new DateTime();
         DateTime toDate;
@@ -85,16 +91,15 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                 && isNotBlank(complaintDashBoardRequest.getToDate())) {
             fromDate = new DateTime(complaintDashBoardRequest.getFromDate());
             toDate = fromDate.plusDays(1);
-        } else {
+        } else
             toDate = fromDate.plusDays(1);
-        }
 
-        //This is size used to fetch those many number of documents
+        // This is size used to fetch those many number of documents
         int size = 120;
         if (complaintDashBoardRequest.getSize() >= 0)
             size = complaintDashBoardRequest.getSize();
 
-        SearchResponse consolidatedResponse = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+        final SearchResponse consolidatedResponse = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                 .setQuery(query).setSize(0)
                 .addAggregation(getCount("countAggregation", "crn"))
                 .addAggregation(getCountWithGrouping("closedCount", "ifClosed", 2))
@@ -108,27 +113,40 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                         fromDate.toString(formatter), toDate.toString(formatter)))
                 .execute().actionGet();
 
-        SearchResponse tableResponse = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
-                .setQuery(query).setSize(0)
-                .addAggregation(getCountWithGroupingAndOrder("complaintTypeWise", "complaintTypeName", size,
-                        complaintDashBoardRequest.getSortField(), complaintDashBoardRequest.getSortDirection())
-                        .subAggregation(getAverageWithExclusion("complaintTypeSatisfactionAverage", "satisfactionIndex"))
-                        .subAggregation(getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", "ifClosed", 2)
-                                .subAggregation(AggregationBuilders.range("ComplaintTypeAgeing").field("complaintAgeingdaysFromDue")
-                                        .addRange("1week", 0, 8).addRange("1month", 8, 32)
-                                        .addRange("3months", 32, 91).addUnboundedFrom("remainingMonths", 91))
-                                .subAggregation(getCountWithGrouping("complaintTypeSla", "ifSLA", 2))))
-                .addAggregation(getCountWithGroupingAndOrder("groupByField", grouByField, size,
-                        complaintDashBoardRequest.getSortField(), complaintDashBoardRequest.getSortDirection())
-                        .subAggregation(getAverageWithExclusion("groupByFieldSatisfactionAverage", "satisfactionIndex"))
-                        .subAggregation(getCountWithGrouping("groupFieldWiseOpenAndClosedCount", "ifClosed", 2)
-                                .subAggregation(AggregationBuilders.range("groupByFieldAgeing").field("complaintAgeingdaysFromDue")
-                                        .addRange("1week", 0, 8).addRange("1month", 8, 32)
-                                        .addRange("3months", 32, 91).addUnboundedFrom("remainingMonths", 91))
-                                .subAggregation(getCountWithGrouping("groupByFieldSla", "ifSLA", 2))))
+        final SearchResponse tableResponse = elasticsearchTemplate
+                .getClient()
+                .prepareSearch(PGR_INDEX_NAME)
+                .setQuery(query)
+                .setSize(0)
+                .addAggregation(
+                        getCountWithGroupingAndOrder("complaintTypeWise", "complaintTypeName", size,
+                                complaintDashBoardRequest.getSortField(), complaintDashBoardRequest.getSortDirection())
+                                .subAggregation(getAverageWithExclusion("complaintTypeSatisfactionAverage", "satisfactionIndex"))
+                                .subAggregation(
+                                        getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", "ifClosed", 2)
+                                                .subAggregation(
+                                                        AggregationBuilders.range("ComplaintTypeAgeing")
+                                                                .field("complaintAgeingdaysFromDue")
+                                                                .addRange("1week", 0, 8).addRange("1month", 8, 32)
+                                                                .addRange("3months", 32, 91)
+                                                                .addUnboundedFrom("remainingMonths", 91))
+                                                .subAggregation(getCountWithGrouping("complaintTypeSla", "ifSLA", 2))))
+                .addAggregation(
+                        getCountWithGroupingAndOrder("groupByField", grouByField, size,
+                                complaintDashBoardRequest.getSortField(), complaintDashBoardRequest.getSortDirection())
+                                .subAggregation(getAverageWithExclusion("groupByFieldSatisfactionAverage", "satisfactionIndex"))
+                                .subAggregation(
+                                        getCountWithGrouping("groupFieldWiseOpenAndClosedCount", "ifClosed", 2)
+                                                .subAggregation(
+                                                        AggregationBuilders.range("groupByFieldAgeing")
+                                                                .field("complaintAgeingdaysFromDue")
+                                                                .addRange("1week", 0, 8).addRange("1month", 8, 32)
+                                                                .addRange("3months", 32, 91)
+                                                                .addUnboundedFrom("remainingMonths", 91))
+                                                .subAggregation(getCountWithGrouping("groupByFieldSla", "ifSLA", 2))))
                 .execute().actionGet();
 
-        HashMap<String, SearchResponse> result = new HashMap<>();
+        final HashMap<String, SearchResponse> result = new HashMap<>();
         result.put("consolidatedResponse", consolidatedResponse);
         result.put("tableResponse", tableResponse);
 
@@ -136,23 +154,23 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     }
 
     @Override
-    public String getWardName(String wardNo) {
-        SearchResponse response = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+    public String getWardName(final String wardNo) {
+        final SearchResponse response = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                 .setSize(1)
-                .setQuery(QueryBuilders.matchQuery("wardNo", wardNo))
+                .setQuery(QueryBuilders.matchQuery(WARD_NUMBER, wardNo))
                 .execute().actionGet();
 
-        for (SearchHit hit : response.getHits()) {
+        for (final SearchHit hit : response.getHits()) {
             final Map<String, Object> fields = hit.getSource();
-            return fields.get("wardName").toString();
+            return fields.get(WARD_NAME).toString();
         }
 
         return StringUtils.EMPTY;
     }
 
     @Override
-    public SearchResponse findAllGrievanceByComplaintType(ComplaintDashBoardRequest complaintDashBoardRequest,
-                                                          BoolQueryBuilder query, String grouByField) {
+    public SearchResponse findAllGrievanceByComplaintType(final ComplaintDashBoardRequest complaintDashBoardRequest,
+            final BoolQueryBuilder query, final String grouByField) {
 
         return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                 .setQuery(query).setSize(0)
@@ -162,8 +180,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     }
 
     @Override
-    public SearchResponse findAllGrievanceBySource(ComplaintDashBoardRequest complaintDashBoardRequest,
-                                                   BoolQueryBuilder query, String grouByField) {
+    public SearchResponse findAllGrievanceBySource(final ComplaintDashBoardRequest complaintDashBoardRequest,
+            final BoolQueryBuilder query, final String grouByField) {
 
         return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                 .setQuery(query).setSize(0)
@@ -175,16 +193,103 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     }
 
     @Override
-    public String getFunctionryMobileNumber(String functionaryName) {
-        SearchResponse response = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+    public String getFunctionryMobileNumber(final String functionaryName) {
+        final SearchResponse response = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                 .setSize(1)
                 .setQuery(QueryBuilders.matchQuery("currentFunctionaryName", functionaryName))
                 .execute().actionGet();
 
-        for (SearchHit hit : response.getHits()) {
+        for (final SearchHit hit : response.getHits()) {
             final Map<String, Object> fields = hit.getSource();
             return fields.get("currentFunctionaryMobileNumber").toString();
         }
         return StringUtils.EMPTY;
+    }
+
+    @Override
+    public SearchResponse findByAllFunctionary(final ComplaintDashBoardRequest complaintDashBoardRequest,
+            final BoolQueryBuilder query) {
+        int size = 1000;
+        if (complaintDashBoardRequest.getSize() >= 0)
+            size = complaintDashBoardRequest.getSize();
+
+        return elasticsearchTemplate
+                .getClient()
+                .prepareSearch(PGR_INDEX_NAME)
+                .setQuery(query).setSize(0)
+                .addAggregation(
+                        AggregationBuilders
+                                .terms("ulbwise")
+                                .field(CITY_CODE)
+                                .size(120)
+                                .subAggregation(
+                                        AggregationBuilders
+                                                .terms("departmentwise")
+                                                .field("departmentCode")
+                                                .size(size)
+                                                .subAggregation(
+                                                        AggregationBuilders
+                                                                .terms("functionarywise")
+                                                                .field("currentFunctionaryName")
+                                                                .size(size)
+                                                                .subAggregation(
+                                                                        AggregationBuilders.topHits("complaintrecord")
+                                                                                .addField(CITY_NAME)
+                                                                                .addField(CITY_CODE).addField(DISTRICT_NAME)
+                                                                                .addField("departmentName").setSize(1))
+                                                                .subAggregation(
+                                                                        getCountWithGrouping("closedComplaintCount", "ifClosed",
+                                                                                2)))))
+                .execute().actionGet();
+
+    }
+
+    @Override
+    public SearchResponse findByAllUlb(final ComplaintDashBoardRequest complaintDashBoardRequest, final BoolQueryBuilder query) {
+        int size = 120;
+        if (complaintDashBoardRequest.getSize() >= 0)
+            size = complaintDashBoardRequest.getSize();
+
+        return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME).setSize(0).setQuery(query)
+                .addAggregation(AggregationBuilders.terms("ulbwise").field(CITY_CODE).size(size)
+                        .subAggregation(AggregationBuilders.topHits("complaintrecord").addField(CITY_CODE)
+                                .addField(DISTRICT_NAME).addField(CITY_NAME).setSize(1))
+                        .subAggregation(getCountWithGrouping("complaintCount", "ifClosed", 2)))
+                .execute().actionGet();
+    }
+
+    @Override
+    public SearchResponse findBYAllWards(final ComplaintDashBoardRequest complaintDashBoardRequest, final BoolQueryBuilder query) {
+        int size = 1000;
+        if (complaintDashBoardRequest.getSize() >= 0)
+            size = complaintDashBoardRequest.getSize();
+
+        return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME).setSize(0).setQuery(query)
+                .addAggregation(AggregationBuilders.terms("ulbwise").field(CITY_CODE).size(120)
+                        .subAggregation(AggregationBuilders.terms("wardwise").field(WARD_NUMBER).size(size)
+                                .subAggregation(AggregationBuilders.topHits("complaintrecord").addField(CITY_CODE)
+                                        .addField(DISTRICT_NAME).addField(CITY_NAME).addField(WARD_NAME).setSize(1))
+                                .subAggregation(getCountWithGrouping("complaintCount", "ifClosed", 2))))
+                .execute().actionGet();
+    }
+
+    @Override
+    public SearchResponse findBYAllLocalities(final ComplaintDashBoardRequest complaintDashBoardRequest,
+            final BoolQueryBuilder query) {
+        int size = 1000;
+        if (complaintDashBoardRequest.getSize() >= 0)
+            size = complaintDashBoardRequest.getSize();
+
+        return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME).setSize(0).setQuery(query)
+                .addAggregation(AggregationBuilders.terms("ulbwise").field(CITY_CODE).size(120)
+                        .subAggregation(AggregationBuilders.terms("wardwise").field(WARD_NUMBER).size(size)
+                                .subAggregation(AggregationBuilders.terms("localitywise").field("localityName").size(size)
+                                        .subAggregation(AggregationBuilders.topHits("complaintrecord").addField(CITY_CODE)
+                                                .addField("cityDistrictName").addField(CITY_NAME)
+                                                .addField(WARD_NAME).addField("localityName").setSize(1))
+                                        .subAggregation(getCountWithGrouping("complaintCount", "ifClosed", 2)))))
+                .addAggregation(AggregationBuilders.missing("nolocality").field("localityName")
+                        .subAggregation(getCountWithGrouping("noLocalityComplaintCount", "ifClosed", 2)))
+                .execute().actionGet();
     }
 }

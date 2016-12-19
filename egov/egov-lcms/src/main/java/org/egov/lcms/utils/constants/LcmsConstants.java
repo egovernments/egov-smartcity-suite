@@ -127,7 +127,8 @@ public class LcmsConstants {
 	public static final String LEGALCASE_STATUS_ORDER_REPLYTOTI = "ORDER_REPLY_TO_TI";
 	public static final String ADVOCATEBILL_REJECTED_STATUS = "PROSECUTOR_REJECTED";
 	public static final String ADVOCATEBILL_EDITED_STATUS = "BILL_EDITTED";
-	public static final String LEGALCASE_STATUS_IN_PROGRESS = "IN_PROGRESS";
+	public static final String HEARING_STATUS = "HEARING";
+	public static final String INTERIMSTAY_STATUS = "INTERIM_STAY";
 	/**
 	 * Time series report action constants
 	 */
@@ -215,5 +216,9 @@ public class LcmsConstants {
 	public static final String LCINTERIOMORDER_DOCUMENTNAME ="LcInterimOrder";
 	public static final String PWR_DOCUMENTNAME ="Pwr";
 	public static final String APPEAL_DOCUMENTNAME ="Appeal";
+	
+	public static final String CODE_REPORTSTATUS_COUNTERFILED = "COUNTER_FILED";
+        public static final String CODE_REPORTSTATUS_PWRPENDING = "PWR_PENDING";
+        public static final String CODE_REPORTSTATUS_DCAPENDING = "DCA_PENDING";
 
 }

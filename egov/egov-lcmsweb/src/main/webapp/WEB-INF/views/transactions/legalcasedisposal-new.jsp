@@ -37,59 +37,39 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form role="form" method="post" modelAttribute="legalCaseAdvocate"
-	id="legalCaseAdvocateform"
-	cssClass="form-horizontal form-groups-bordered"
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+
+<form:form id="legacasedisposalform"
+	class="form-horizontal form-groups-bordered"
+	modelAttribute="legalCaseDisposal" role="form" method="post"
 	enctype="multipart/form-data">
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />
-	<input type="hidden" id="seniourAdvisRequired"
-		name="seniourAdvisRequired" value="${legalCase.isSenioradvrequired}" />
-	<jsp:include page="../transactions/viewSummarizedCase.jsp" />
-	<%@ include file="legalcase-standingCouncil.jsp"%>
-
-	
-	<div class="form-group">
-		<div class="text-center">
-			<button type="submit" name="submit" id="subitstandingcouncil" class="btn btn-default"
-				value="Save">
-				<spring:message code="lbl.submit" />
-			</button>
-			<button type='button' class='btn btn-default' id="btnclose">
-				<spring:message code='lbl.close' />
-		</div>
+	<jsp:include page="../transactions/view-summarizedcase.jsp" />
+	<%@ include file="legalcasedisposal-form.jsp"%>
+	</div>
+	</div>
+	</div>
 	</div>
 </form:form>
+<div class="form-group">
+	<div class="text-center">
+		<button type="submit" name="submit" id="buttonid"
+			class="btn btn-primary" value="Save">
+			<spring:message code="lbl.save" />
+		</button>
+		<button type='button' class='btn btn-default' id="btnclose">
+			<spring:message code='lbl.close' />
+	</div>
+</div>
 <script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
-
-<script
-	src="<cdn:url value='/resources/js/app/standingCouncil.js?rnd=${app_release_no}'/>"></script>
-	<script src="<cdn:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
-	<script>
-	$('#btnclose').click(function(){
-		bootbox.confirm({
-		    message: 'Information entered in this screen will be lost if you close this page ? Please confirm if you want to close. ',
-		    buttons: {
-		        'cancel': {
-		            label: 'No',
-		            className: 'btn-default pull-right'
-		        },
-		        'confirm': {
-		            label: 'Yes',
-		            className: 'btn-danger pull-right'
-		        }
-		    },
-		    callback: function(result) {
-		        if (result) {
-		             window.close();
-		        }
-		    }
-		});
-		
-	});
-	
-	</script>
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css?rnd=${app_release_no}' context='/egi'/>">
+<script type="text/javascript"
+	src="<cdn:url value='/resources/js/app/legalcaseDisposal.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/js/app/legalcaseSearch.js?rnd=${app_release_no}'/>"></script>

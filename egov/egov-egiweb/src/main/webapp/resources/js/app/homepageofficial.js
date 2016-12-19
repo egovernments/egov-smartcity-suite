@@ -96,7 +96,7 @@ $(document).ready(function()
 	                		$("#old-pass").val("");
 	                		$('.change-password').modal('show');
 	                	} else  if (data == "NEWPWD_INVALID") {
-	                		msg = "Password must be at least 8 to 32 characters long and must have one or more :- upper case and lower case alphabet,number and special character except [& < > # % \" ' / \ and space]";
+	                		msg = $('.password-error-msg').html();
 	                		$("#new-pass").val("");
 	                		$("#retype-pass").val("");
 	                		$('.change-password').modal('show');

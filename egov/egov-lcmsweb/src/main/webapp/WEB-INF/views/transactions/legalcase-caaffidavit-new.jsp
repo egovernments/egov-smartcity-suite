@@ -50,14 +50,14 @@
 	enctype="multipart/form-data">
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />
 	<input type="hidden" id="mode" name="mode" value="${mode}" />
-	<jsp:include page="../transactions/viewSummarizedCase.jsp" />
+	<jsp:include page="../transactions/view-summarizedcase.jsp" />
 	<%-- <%@ include file="legalcase-assignedDeptDet.jsp"%> --%>
 	<%@ include file="legalcase-caaffidavit-form.jsp"%>
 	</div>
 	</div>
 	</div>
 	</div>
-	<jsp:include page="pwrDocumentdetails-view.jsp"></jsp:include>
+	<jsp:include page="pwrdocumentdetails-view.jsp"></jsp:include>
 	
 	<div class="form-group">
 		<div class="text-center">
@@ -71,9 +71,9 @@
 	</div>
 </form:form>
 <script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css?rnd=${app_release_no}' context='/egi'/>">
 
 <script
 	src="<cdn:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>

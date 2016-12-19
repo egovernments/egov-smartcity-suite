@@ -148,6 +148,7 @@ public abstract class BillServiceInterface {
 		}
 		
 		bill.setConsumerId(billObj.getConsumerId());
+		bill.setConsumerType(billObj.getConsumerType());
 		bill.setCallBackForApportion(billObj.isCallbackForApportion());
 		egBillDAO.create(bill);
 		return bill;

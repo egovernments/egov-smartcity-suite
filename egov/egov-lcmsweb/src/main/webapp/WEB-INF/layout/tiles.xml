@@ -200,7 +200,7 @@
 </definition>
 <definition name="legalCase-newForm" extends="base_layout">
 	<put-attribute name="page-title" value="title.createcase" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-newForm.jsp"/>
+	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-new.jsp"/>
 </definition>
 
 <definition name="legalcasedetails-view" extends="base_layout">
@@ -282,9 +282,9 @@
 	<put-attribute name="body" value="/WEB-INF/views/masters/advocatemaster/advocatemaster-search.jsp"/>
 </definition>
 
-<definition name="search-legalCaseForm" extends="base_layout">
+<definition name="searchlegalcase-form" extends="base_layout">
 	<put-attribute name="page-title" value="title.legalcase.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/search/search-legalCaseForm.jsp"/>
+	<put-attribute name="body" value="/WEB-INF/views/search/searchlegalcase-form.jsp"/>
 </definition>
 
 <definition name="judgment-new" extends="base_layout">
@@ -331,7 +331,7 @@
 
 <definition name="legalcase-standingCouncil" extends="base_layout">
 	<put-attribute name="page-title" value="title.standingCouncil" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-standingCouncil.jsp"/>
+	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-standingcouncil-new.jsp"/>
 </definition>
 
 <definition name="lcinterimorder-list" extends="base_layout">
@@ -346,22 +346,22 @@
 
 <definition name="legalcaseDisposal-new" extends="base_layout">
 	<put-attribute name="page-title" value="title.closecase" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcaseDisposal-new.jsp"/>
+	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcasedisposal-new.jsp"/>
 </definition>
 
 <definition name="legalcaseDisposal-success" extends="base_layout">
 	<put-attribute name="page-title" value="title.closecase" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcaseDisposal-success.jsp"/>
+	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcasedisposal-success.jsp"/>
 </definition>
 
 <definition name="legalcaseDisposal-edit" extends="base_layout">
 	<put-attribute name="page-title" value="title.editclosecase" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcaseDisposal-edit.jsp"/>
+	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcasedisposal-edit.jsp"/>
 </definition>
-<definition name="legalcase-standingCouncil" extends="base_layout">
+<!-- <definition name="legalcase-standingCouncil" extends="base_layout">
 	<put-attribute name="page-title" value="title.standingCouncil" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-standing_newForm.jsp"/>
-</definition>
+	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-standing-form.jsp"/>
+</definition> -->
 <definition name="legalcase-caaffidavit" extends="base_layout">
 	<put-attribute name="page-title" value="title.caaffidavittile" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-caaffidavit-new.jsp"/>

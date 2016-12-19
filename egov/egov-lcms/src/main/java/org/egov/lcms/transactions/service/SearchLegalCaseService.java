@@ -47,21 +47,27 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.lcms.reports.entity.LegalCaseSearchResult;
+import org.egov.lcms.transactions.entity.ReportStatus;
+import org.egov.lcms.transactions.repository.ReportStatusRepository;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class SearchLegalCaseService {
+
+    @Autowired
+    private ReportStatusRepository reportStatusRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Session getCurrentSession()
-    {
+    public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
@@ -72,11 +78,11 @@ public class SearchLegalCaseService {
         queryStr.append(" from LegalCase legalObj,CourtMaster courtmaster,CaseTypeMaster casetypemaster,");
         queryStr.append(" PetitionTypeMaster petmaster,EgwStatus egwStatus");
         queryStr.append(" where legalObj.courtMaster.id=courtmaster.id and ");
-        queryStr.append(" legalObj.caseTypeMaster.id=casetypemaster.id and legalObj.petitionTypeMaster.id=petmaster.id and ");
+        queryStr.append(
+                " legalObj.caseTypeMaster.id=casetypemaster.id and legalObj.petitionTypeMaster.id=petmaster.id and ");
         queryStr.append(" legalObj.status.id=egwStatus.id and egwStatus.moduletype =:mdoculeType ");
 
-        getAppendQuery(legalCaseSearchResultOblj,
-                queryStr);
+        getAppendQuery(legalCaseSearchResultOblj, queryStr);
         Query queryResult = getCurrentSession().createQuery(queryStr.toString());
         queryResult = setParametersToQuery(legalCaseSearchResultOblj, queryResult);
         final List<LegalCaseSearchResult> legalcaseSearchList = queryResult.list();
@@ -84,8 +90,7 @@ public class SearchLegalCaseService {
 
     }
 
-    private Query setParametersToQuery(final LegalCaseSearchResult legalCaseSearchResultOblj,
-            final Query queryResult) {
+    private Query setParametersToQuery(final LegalCaseSearchResult legalCaseSearchResultOblj, final Query queryResult) {
         queryResult.setString("mdoculeType", LcmsConstants.MODULE_TYPE_LEGALCASE);
         if (StringUtils.isNotBlank(legalCaseSearchResultOblj.getLcNumber()))
             queryResult.setString("lcNumber", legalCaseSearchResultOblj.getLcNumber());
@@ -108,8 +113,7 @@ public class SearchLegalCaseService {
             queryResult.setDate("toDate", legalCaseSearchResultOblj.getCaseToDate());
         if (legalCaseSearchResultOblj.getPetitionTypeId() != null)
             queryResult.setInteger("petiontionType", legalCaseSearchResultOblj.getPetitionTypeId());
-        if (legalCaseSearchResultOblj.getIsStatusExcluded() !=null)
-        {
+        if (legalCaseSearchResultOblj.getIsStatusExcluded() != null) {
             final List<String> statusCodeList = new ArrayList<String>();
             statusCodeList.add(LcmsConstants.LEGALCASE_STATUS_CLOSED);
             statusCodeList.add(LcmsConstants.LEGALCASE_STATUS_JUDGMENT_IMPLIMENTED);
@@ -119,8 +123,7 @@ public class SearchLegalCaseService {
         return queryResult;
     }
 
-    private void getAppendQuery(final LegalCaseSearchResult legalCaseSearchResultOblj,
-            final StringBuilder queryStr) {
+    private void getAppendQuery(final LegalCaseSearchResult legalCaseSearchResultOblj, final StringBuilder queryStr) {
         if (StringUtils.isNotBlank(legalCaseSearchResultOblj.getLcNumber()))
             queryStr.append(" and legalObj.lcNumber =:lcNumber");
         if (StringUtils.isNotBlank(legalCaseSearchResultOblj.getCaseNumber()))
@@ -141,9 +144,13 @@ public class SearchLegalCaseService {
             queryStr.append(" and legalObj.caseDate <=:toDate ");
         if (legalCaseSearchResultOblj.getPetitionTypeId() != null)
             queryStr.append(" and petmaster.id =:petiontionType ");
-
-        if (legalCaseSearchResultOblj.getIsStatusExcluded() !=null )
+        if (legalCaseSearchResultOblj.getIsStatusExcluded() != null)
             queryStr.append(" and egwStatus.code not in (:statusCodeList ) ");
+    }
+
+    public List<ReportStatus> getReportStatus() {
+        final List<ReportStatus> reportStatusList = reportStatusRepository.findAll();
+        return reportStatusList;
     }
 
 }

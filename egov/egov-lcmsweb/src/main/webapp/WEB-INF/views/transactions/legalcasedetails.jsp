@@ -116,7 +116,7 @@
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.caseNumber" /><span class="mandatory"></span>:</label>
+			code="lbl.casenumber" /><span class="mandatory"></span>:</label>
 	<div class="col-sm-2 add-margin text-center">
 		<form:input class="form-control patternvalidation"
 			data-pattern="number" maxlength="50" id="caseNumber"
@@ -221,9 +221,9 @@
 	<label class="col-sm-3 control-label text-right" id="persons"><spring:message
 			code="lbl.fieldbycarp" /> ?:</label>
 	<div class="col-sm-3 add-margin">
-		<form:checkbox id="activeid" path="isfiledbycorporation"
-			value="isfiledbycorporation" />
-		<form:errors path="isfiledbycorporation" />
+		<form:checkbox id="activeid" path="isFiledByCorporation"
+			value="isFiledByCorporation" />
+		<form:errors path="isFiledByCorporation" />
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.oldreferencenumber" />:</label>
@@ -235,5 +235,5 @@
 </div>
 
 <script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js?rnd=${app_release_no}' context='/egi'/>"
 	type="text/javascript"></script>

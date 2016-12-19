@@ -101,4 +101,4 @@
 	</div>
 </div>
 
-<script src="<cdn:url value='/resources/js/app/walltype.js'/>"></script>
+<script src="<cdn:url value='/resources/js/app/walltype.js?rnd=${app_release_no}'/>"></script>

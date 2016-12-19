@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-12-06T13:16:08 -->
+<!-- 2016-12-08T13:39:19 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice_municipality" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -418,7 +418,7 @@ $P{ownerInfo}.getOwnerTypeForReport()+"-New Assessment (or) Amendment)\n(Issued 
 				<textElement textAlignment="Left" markup="styled">
 					<font size="8" isBold="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[!$P{ownerInfo}.getOwnershipType().equalsIgnoreCase("Vacant Land") ? "Reasons for increase if any:\tThe MRV has been fixed based on I) Location, II) type of construction,III) Plinth Area,\n\t\t\tIV) Age V) Nature of usage of the Building." + "\n\nZone No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">" + $P{ownerInfo}.getZoneName()+"</style>" : "Reasons for increase if any:   Due to increase of capital value of the lands fixed by the registration department for the purpose of registration." + "\n\nZone No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">" + $P{ownerInfo}.getZoneName()+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[!$P{ownerInfo}.getOwnershipType().equalsIgnoreCase("Vacant Land") ? "Reasons for increase if any:\tThe MRV has been fixed based on I) Location, II) type of construction,III) Plinth Area,\n\t\t\tIV) Age V) Nature of usage of the Building." + "\n\nZone No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">" + $P{ownerInfo}.getZoneName()+"</style>" : "Reasons for increase if any:   Due to increase of capital value of the lands fixed by the registration department for the purpose of registration."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="83" y="45" width="373" height="15" uuid="2a902623-599d-467f-81c1-7a8427b308a9"/>

@@ -41,7 +41,6 @@ package org.egov.lcms.transactions.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.egov.infra.filestore.service.FileStoreService;
@@ -51,12 +50,14 @@ import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.CounterAffidavit;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseAdvocate;
-import org.egov.lcms.transactions.entity.LegalCaseDocuments;
+import org.egov.lcms.transactions.entity.LegalCaseUploadDocuments;
 import org.egov.lcms.transactions.entity.Pwr;
 import org.egov.lcms.transactions.entity.PwrDocuments;
-import org.egov.lcms.transactions.repository.LegalCaseDocumentsRepository;
+import org.egov.lcms.transactions.entity.ReportStatus;
 import org.egov.lcms.transactions.repository.LegalCaseRepository;
+import org.egov.lcms.transactions.repository.LegalCaseUploadDocumentsRepository;
 import org.egov.lcms.transactions.repository.PwrDocumentsRepository;
+import org.egov.lcms.transactions.repository.ReportStatusRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +84,10 @@ public class LegalCaseService {
     private FileStoreService fileStoreService;
 
     @Autowired
-    private LegalCaseDocumentsRepository legalCaseDocumentsRepository;
+    private LegalCaseUploadDocumentsRepository legalCaseUploadDocumentsRepository;
+
+    @Autowired
+    private ReportStatusRepository reportStatusRepository;
 
     @Autowired
     public LegalCaseService(final LegalCaseRepository legalCaseRepository) {
@@ -111,11 +115,12 @@ public class LegalCaseService {
                 LcmsConstants.LEGALCASE_STATUS_CREATED));
         legalcase = prepareChildEntities(legalcase);
         updateNextDate(legalcase, legalcase.getPwrList());
+        setLegalCaseReportStatus(legalcase, legalcase.getPwrList());
         final LegalCase savedlegalcase = legalCaseRepository.save(legalcase);
-        final List<LegalCaseDocuments> documentDetails = getLegalcaseDocumentDetails(savedlegalcase, files);
+        final List<LegalCaseUploadDocuments> documentDetails = getLegalcaseUploadDocumentDetails(savedlegalcase, files);
         if (!documentDetails.isEmpty()) {
-            savedlegalcase.setLegalCaseDocuments(documentDetails);
-            persistLegalcaseDocuments(documentDetails);
+            savedlegalcase.setLegalCaseUploadDocuments(documentDetails);
+            persistLegalcaseUploadDocuments(documentDetails);
         }
         return savedlegalcase;
     }
@@ -143,7 +148,6 @@ public class LegalCaseService {
         final List<CounterAffidavit> caListtemp = new ArrayList<CounterAffidavit>(0);
         for (final Pwr legalpwr : pwrList) {
             legalpwr.setLegalCase(legalcase);
-            legalpwr.setCaFilingdate(new Date());
             pwrListtemp.add(legalpwr);
         }
         legalcase.getPwrList().clear();
@@ -173,8 +177,8 @@ public class LegalCaseService {
 
     }
 
-    public List<LegalCaseDocuments> getLegalCaseDocList(final LegalCase legalCase) {
-        return legalCase.getLegalCaseDocuments();
+    public List<LegalCaseUploadDocuments> getLegalCaseDocList(final LegalCase legalCase) {
+        return legalCase.getLegalCaseUploadDocuments();
     }
 
     public List<PwrDocuments> getPwrDocList(final LegalCase legalCase) {
@@ -222,7 +226,6 @@ public class LegalCaseService {
         if (!legalcase.getPwrList().isEmpty()) {
             for (final Pwr legalpwr : legalcase.getPwrList()) {
                 legalpwr.setLegalCase(legalcase);
-                legalpwr.setCaFilingdate(new Date());
                 pwrListtemp.add(legalpwr);
             }
             legalcase.getPwrList().clear();
@@ -275,8 +278,8 @@ public class LegalCaseService {
 
     public void updateNextDate(final LegalCase legalCase, final List<Pwr> pwr) {
 
-        if (pwr.get(0).getCaFilingdate() != null)
-            legalCase.setNextDate(pwr.get(0).getCaFilingdate());
+        if (pwr.get(0).getCaFilingDate() != null)
+            legalCase.setNextDate(pwr.get(0).getCaFilingDate());
         else if (pwr.get(0).getCaDueDate() != null)
             legalCase.setNextDate(pwr.get(0).getCaDueDate());
         else if (pwr.get(0).getPwrDueDate() != null)
@@ -311,14 +314,14 @@ public class LegalCaseService {
                 pwrDocumentsRepository.save(doc);
     }
 
-    public List<LegalCaseDocuments> getLegalcaseDocumentDetails(final LegalCase legalCase, final MultipartFile[] files)
-            throws IOException {
-        final List<LegalCaseDocuments> documentDetailsList = new ArrayList<LegalCaseDocuments>();
+    public List<LegalCaseUploadDocuments> getLegalcaseUploadDocumentDetails(final LegalCase legalCase,
+            final MultipartFile[] files) throws IOException {
+        final List<LegalCaseUploadDocuments> documentDetailsList = new ArrayList<LegalCaseUploadDocuments>();
 
         if (files != null)
             for (int i = 0; i < files.length; i++)
                 if (!files[i].isEmpty()) {
-                    final LegalCaseDocuments applicationDocument = new LegalCaseDocuments();
+                    final LegalCaseUploadDocuments applicationDocument = new LegalCaseUploadDocuments();
                     applicationDocument.setLegalCase(legalCase);
                     applicationDocument.setDocumentName(LcmsConstants.LEGALCASE_DOCUMENTNAME);
                     applicationDocument.setSupportDocs(
@@ -330,10 +333,29 @@ public class LegalCaseService {
         return documentDetailsList;
     }
 
-    public void persistLegalcaseDocuments(final List<LegalCaseDocuments> documentDetailsList) {
+    public void persistLegalcaseUploadDocuments(final List<LegalCaseUploadDocuments> documentDetailsList) {
         if (documentDetailsList != null && !documentDetailsList.isEmpty())
-            for (final LegalCaseDocuments doc : documentDetailsList)
-                legalCaseDocumentsRepository.save(doc);
+            for (final LegalCaseUploadDocuments doc : documentDetailsList)
+                legalCaseUploadDocumentsRepository.save(doc);
+    }
+
+    public void setLegalCaseReportStatus(final LegalCase legalCase, final List<Pwr> pwr) {
+        final String caseStatus = legalCase.getStatus().getCode();
+        final ReportStatus reportStatus = null;
+        if (caseStatus.equalsIgnoreCase(LcmsConstants.LEGALCASE_STATUS_CREATED))
+            if (reportStatus == null && pwr != null && !pwr.isEmpty())
+                if (pwr.get(0).getCaFilingDate() != null)
+                    legalCase.setReportStatus(getReportStatusByCode(LcmsConstants.CODE_REPORTSTATUS_COUNTERFILED));
+                else if (pwr.get(0).getPwrApprovalDate() == null)
+                    legalCase.setReportStatus(getReportStatusByCode(LcmsConstants.CODE_REPORTSTATUS_PWRPENDING));
+                else
+                    legalCase.setReportStatus(getReportStatusByCode(LcmsConstants.CODE_REPORTSTATUS_DCAPENDING));
+
+    }
+
+    public ReportStatus getReportStatusByCode(final String reportStatusCode) {
+        final ReportStatus reportStatus = reportStatusRepository.findByCode(reportStatusCode);
+        return reportStatus;
     }
 
 }

@@ -49,14 +49,18 @@ public interface ApplicationWorkflowCustom {
     /**
      * Creates the matrix workflow transition.
      *
-     * @param waterConnectionDetails the water connection details
-     * @param approvalPosition the approval position
-     * @param approvalComent the approval coment
-     * @param additionalRule the additional rule
-     * @param workFlowAction the work flow action
+     * @param waterConnectionDetails
+     *            the water connection details
+     * @param approvalPosition
+     *            the approval position
+     * @param approvalComent
+     *            the approval coment
+     * @param additionalRule
+     *            the additional rule
+     * @param workFlowAction
+     *            the work flow action
      */
-    public void createCommonWorkflowTransition(WaterConnectionDetails waterConnectionDetails,
-            Long approvalPosition, String approvalComent, String additionalRule,
-            String workFlowAction);
+    public void createCommonWorkflowTransition(WaterConnectionDetails waterConnectionDetails, Long approvalPosition,
+            String approvalComent, String additionalRule, String workFlowAction);
 
 }

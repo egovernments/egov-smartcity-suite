@@ -51,8 +51,8 @@ body
   font-size:14px;
 }
 </style>
-<script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/javascript/dateValidation.js'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/javascript/dateValidation.js?rnd=${app_release_no}'/>"></script>
 <c:if test="${errorMsg != ''}">
  	<div class="panel-heading">
 				<div class="add-margin error-msg" style="text-align:center;">
@@ -61,7 +61,7 @@ body
 	</div>
 </c:if>
 <form:form id="vacancyRemissionForm" method="post"
-	class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemission">
+	class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemission" enctype="multipart/form-data">
 	<div class="page-container" id="page-container">
         	<div class="main-content">
 			<jsp:include page="../common/commonPropertyDetailsView.jsp"></jsp:include>
@@ -73,6 +73,9 @@ body
 								<div class="panel-title"><spring:message code="lbl.vacancyremission.details" /></div>
 							</div>
 							<div class="panel-body custom-form">
+							       <div class="panel-body custom-form">
+							       	<jsp:include page="vacancy-remission-documents.jsp"></jsp:include>
+							     </div>
 								<div class="form-group">
 									<label class="col-sm-3 control-label text-right">
 										<spring:message code="lbl.fromDate" /> <span class="mandatory"></span>

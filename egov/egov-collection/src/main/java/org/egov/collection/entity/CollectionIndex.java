@@ -145,6 +145,9 @@ public class CollectionIndex extends AbstractAuditable {
     private String receiptCreator;
 
     private String revenueWard;
+    
+    @Length(max = 100)
+    private String consumerType;
 
     @Override
     public Long getId() {
@@ -421,6 +424,14 @@ public class CollectionIndex extends AbstractAuditable {
     public void setRevenueWard(final String revenueWard) {
         this.revenueWard = revenueWard;
     }
+    
+    public String getConsumerType() {
+        return consumerType;
+    }
+
+    public void setConsumerType(String consumerType) {
+        this.consumerType = consumerType;
+    }
 
     public static CollectionIndexBuilder builder() {
         return new CollectionIndexBuilder();
@@ -450,6 +461,7 @@ public class CollectionIndex extends AbstractAuditable {
         private String revenueward;
         private String status;
         private String consumercode;
+        private String consumerType;
 
         public CollectionIndex build() throws ApplicationRuntimeException {
             final CollectionIndex collectionIndex = new CollectionIndex();
@@ -476,6 +488,7 @@ public class CollectionIndex extends AbstractAuditable {
             collectionIndex.setRevenueWard(revenueward);
             collectionIndex.setChannel(channel);
             collectionIndex.setStatus(status);
+            collectionIndex.setConsumerType(consumerType);
             collectionIndex.validate();
             return collectionIndex;
         }
@@ -597,6 +610,11 @@ public class CollectionIndex extends AbstractAuditable {
             this.channel = channel;
             return this;
         }
+        
+        public CollectionIndexBuilder withConsumerType(final String consumerType) {
+            this.consumerType = consumerType;
+            return this;
+        }
     }
 
     private void validate() throws ApplicationRuntimeException {
@@ -613,4 +631,6 @@ public class CollectionIndex extends AbstractAuditable {
         if (getStatus() == null)
             throw new ApplicationRuntimeException("Receipt Status is mandatory");
     }
+
+    
 }

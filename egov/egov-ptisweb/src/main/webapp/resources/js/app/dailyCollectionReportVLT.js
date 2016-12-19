@@ -78,8 +78,8 @@ $('#dailyCollectionReportSearchVLT').click(function(e){
 				
 			},
 			"fnRowCallback" : function(row, data, index) {
-				if(data.currentCess != null && data.arrearCess != null) 
-				   $('td:eq(15)',row).html(parseFloat(data.arrearCess) + parseFloat(data.currentCess));
+				data.totalLibCess = data.currentCess + data.arrearCess;
+				$('td:eq(15)',row).html(parseFloat(data.totalLibCess));
 			},
 			searchable:true,
 			data: searchResult,

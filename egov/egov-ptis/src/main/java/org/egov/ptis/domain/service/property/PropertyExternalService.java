@@ -218,7 +218,7 @@ import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.RoofType;
 import org.egov.ptis.domain.entity.property.StructureClassification;
-import org.egov.ptis.domain.entity.property.TaxExeptionReason;
+import org.egov.ptis.domain.entity.property.TaxExemptionReason;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
@@ -1144,25 +1144,25 @@ public class PropertyExternalService {
     @SuppressWarnings("unchecked")
     public List<MasterCodeNamePairDetails> getExemptionCategories() {
         final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
-        final List<TaxExeptionReason> taxExeptionReasonList = entityManager.createQuery(
-                "from TaxExeptionReason order by name").getResultList();
-        for (final TaxExeptionReason taxExeptionReason : taxExeptionReasonList) {
+        final List<TaxExemptionReason> taxExemptionReasonList = entityManager.createQuery(
+                "from TaxExemptionReason where isActive = true order by name").getResultList();
+        for (final TaxExemptionReason taxExemptionReason : taxExemptionReasonList) {
             final MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
-            mstrCodeNamePairDetails.setCode(taxExeptionReason.getCode());
-            mstrCodeNamePairDetails.setName(taxExeptionReason.getName());
+            mstrCodeNamePairDetails.setCode(taxExemptionReason.getCode());
+            mstrCodeNamePairDetails.setName(taxExemptionReason.getName());
             mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
         }
         return mstrCodeNamePairDetailsList;
     }
 
-    public TaxExeptionReason getTaxExemptionReasonByCode(final String exemptionReasonCode) {
-        TaxExeptionReason taxExeptionReason = null;
-        final Query qry = entityManager.createQuery("from TaxExeptionReason ter where ter.code = :code");
+    public TaxExemptionReason getTaxExemptionReasonByCode(final String exemptionReasonCode) {
+        TaxExemptionReason taxExemptionReason = null;
+        final Query qry = entityManager.createQuery("from TaxExemptionReason ter where ter.code = :code");
         qry.setParameter("code", "" + exemptionReasonCode);
         final List list = qry.getResultList();
         if (null != list && !list.isEmpty())
-            taxExeptionReason = (TaxExeptionReason) qry.getSingleResult();
-        return taxExeptionReason;
+            taxExemptionReason = (TaxExemptionReason) qry.getSingleResult();
+        return taxExemptionReason;
     }
 
     @SuppressWarnings("unchecked")
@@ -1284,7 +1284,7 @@ public class PropertyExternalService {
         if (documents != null)
             propertyImpl.setDocuments(documents);
         if(StringUtils.isNotBlank(exemptionCode)){
-	        final TaxExeptionReason taxExemptedReason = getTaxExemptionReasonByCode(exemptionCode);
+	        final TaxExemptionReason taxExemptedReason = getTaxExemptionReasonByCode(exemptionCode);
 	        propertyImpl.setTaxExemptedReason(taxExemptedReason);
         }
         if(StringUtils.isNotBlank(apartmentCmplxCode)){

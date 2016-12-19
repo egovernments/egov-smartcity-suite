@@ -66,7 +66,7 @@ function callAlertForDesignation() {
 	}
 }
 	
-function loadDesignationByDeptAndType(typeValue,departmentValue,currentStateValue,amountRuleValue,additionalRuleValue,pendingActionsValue) {
+function loadDesignationByDeptAndType(typeValue,departmentValue,currentStateValue,amountRuleValue,additionalRuleValue,pendingActionsValue,currentDesignation) {
 	  var designationObj =document.getElementById('approverDesignation');
 	  designationObj.options.length = 0;
 	  designationObj.options[0] = new Option("----Choose----","-1");
@@ -74,7 +74,7 @@ function loadDesignationByDeptAndType(typeValue,departmentValue,currentStateValu
 	  approverObj.options.length = 0;
 	  approverObj.options[0] = new Option("----Choose----","-1");
 	  populateapproverDesignation({departmentRule:departmentValue,type:typeValue,amountRule:amountRuleValue,additionalRule:additionalRuleValue,
-	  													currentState:currentStateValue,pendingAction:pendingActionsValue});
+	  													currentState:currentStateValue,pendingAction:pendingActionsValue,designation:currentDesignation});
 }
 
 function loadDesignationFromMatrix() {
@@ -85,7 +85,8 @@ function loadDesignationFromMatrix() {
 	var additionalRule = dom.get('additionalRule').value;
 	var pendingAction = document.getElementById('pendingActions').value;
 	var stateType = '<s:property value="%{stateType}"/>';
-	loadDesignationByDeptAndType(stateType,dept,currentState,amountRule,additionalRule,pendingAction); 
+	var currentDesignation = document.getElementById('currentDesignation').value;
+	loadDesignationByDeptAndType(stateType,dept,currentState,amountRule,additionalRule,pendingAction,currentDesignation); 
 }
 
 function populateApprover() {
@@ -95,7 +96,7 @@ function populateApprover() {
 function setDesignation() {
 	document.getElementById("approverDesignation").value = '<s:property value="%{approverDesignation}"/>';
 	populateApprover();
-}
+} 
 
 function setApprover() {
 	document.getElementById("approverPositionId").value = '<s:property value="%{approverPositionId}"/>';

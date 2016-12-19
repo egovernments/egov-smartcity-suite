@@ -351,5 +351,5 @@
 		</div>
 	</div>
 </div> --%>
-<div id="legalCaseDocuments"></div>
+<div id="legalCaseUploadDocuments"></div>
 <input type="hidden" id="mode"  name="mode" value="${mode}" />

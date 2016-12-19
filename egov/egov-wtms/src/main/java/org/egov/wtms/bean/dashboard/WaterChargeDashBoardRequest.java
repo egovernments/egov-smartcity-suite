@@ -40,9 +40,7 @@
 
 package org.egov.wtms.bean.dashboard;
 
-@SuppressWarnings("serial")
 public class WaterChargeDashBoardRequest {
-
 
     private String ulbGrade;
     private String ulbCode;
@@ -53,12 +51,11 @@ public class WaterChargeDashBoardRequest {
     private String type;
     private String wardName;
 
-     
     public String getWardName() {
         return wardName;
     }
 
-    public void setWardName(String wardName) {
+    public void setWardName(final String wardName) {
         this.wardName = wardName;
     }
 
@@ -66,7 +63,7 @@ public class WaterChargeDashBoardRequest {
         return regionName;
     }
 
-    public void setRegionName(String regionName) {
+    public void setRegionName(final String regionName) {
         this.regionName = regionName;
     }
 
@@ -74,7 +71,7 @@ public class WaterChargeDashBoardRequest {
         return districtName;
     }
 
-    public void setDistrictName(String districtName) {
+    public void setDistrictName(final String districtName) {
         this.districtName = districtName;
     }
 
@@ -82,7 +79,7 @@ public class WaterChargeDashBoardRequest {
         return fromDate;
     }
 
-    public void setFromDate(String fromDate) {
+    public void setFromDate(final String fromDate) {
         this.fromDate = fromDate;
     }
 
@@ -90,7 +87,7 @@ public class WaterChargeDashBoardRequest {
         return toDate;
     }
 
-    public void setToDate(String toDate) {
+    public void setToDate(final String toDate) {
         this.toDate = toDate;
     }
 
@@ -98,7 +95,7 @@ public class WaterChargeDashBoardRequest {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
@@ -106,7 +103,7 @@ public class WaterChargeDashBoardRequest {
         return ulbCode;
     }
 
-    public void setUlbCode(String ulbCode) {
+    public void setUlbCode(final String ulbCode) {
         this.ulbCode = ulbCode;
     }
 
@@ -114,7 +111,7 @@ public class WaterChargeDashBoardRequest {
         return ulbGrade;
     }
 
-    public void setUlbGrade(String ulbGrade) {
+    public void setUlbGrade(final String ulbGrade) {
         this.ulbGrade = ulbGrade;
     }
 

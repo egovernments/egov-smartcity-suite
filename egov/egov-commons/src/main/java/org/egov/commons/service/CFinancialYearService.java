@@ -91,7 +91,7 @@ public class CFinancialYearService {
         if (cFinancialYear.getFinYearRange() != null)
             return cFinancialYearRepository.findByFinancialYearRange(cFinancialYear.getFinYearRange());
         else
-            return cFinancialYearRepository.findAll();
+            return findAll();
     }
 
     public Date getNextFinancialYearStartingDate() {

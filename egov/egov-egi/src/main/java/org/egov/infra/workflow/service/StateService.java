@@ -40,13 +40,14 @@
 
 package org.egov.infra.workflow.service;
 
+import java.util.Date;
+import java.util.List;
+
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.repository.StateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -59,15 +60,15 @@ public class StateService {
         this.stateRepository = stateRepository;
     }
 
-    public boolean isPositionUnderWorkflow(final Long posId) {
-        return stateRepository.countByOwnerPosition_Id(posId) > 0;
+    public boolean isPositionUnderWorkflow(final Long posId, final Date givenDate) {
+        return stateRepository.countByOwnerPosition_IdAndCreatedDateGreaterThanEqual(posId, givenDate) > 0;
     }
 
-    public List<String> getAssignedWorkflowTypeNames(List<Long> ownerIds) {
+    public List<String> getAssignedWorkflowTypeNames(final List<Long> ownerIds) {
         return stateRepository.findAllTypeByOwnerAndStatus(ownerIds);
     }
 
-    public State getStateById(Long id) {
+    public State getStateById(final Long id) {
         return stateRepository.findOne(id);
     }
 

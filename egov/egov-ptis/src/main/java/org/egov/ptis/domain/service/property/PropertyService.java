@@ -142,7 +142,9 @@ import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.RoofType;
 import org.egov.ptis.domain.entity.property.StructureClassification;
-import org.egov.ptis.domain.entity.property.TaxExeptionReason;
+import org.egov.ptis.domain.entity.property.TaxExemptionReason;
+import org.egov.ptis.domain.entity.property.VacancyRemission;
+import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -161,6 +163,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 import org.json.JSONArray;
 import org.json.JSONException;
+import java.util.stream.Collectors;
+import org.springframework.web.multipart.MultipartFile;
+import org.apache.commons.lang3.ArrayUtils;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
  * Service class to perform services related to an Assessment
@@ -284,8 +290,8 @@ public class PropertyService {
         } else
             property.getPropertyDetail().setWoodType(null);
         if (taxExemptId != null && taxExemptId != -1) {
-            final TaxExeptionReason taxExemptionReason = (TaxExeptionReason) getPropPerServ().find(
-                    "From TaxExeptionReason where id = ?", taxExemptId);
+            final TaxExemptionReason taxExemptionReason = (TaxExemptionReason) getPropPerServ().find(
+                    "From TaxExemptionReason where id = ?", taxExemptId);
             property.setTaxExemptedReason(taxExemptionReason);
             property.setIsExemptedFromTax(Boolean.TRUE);
         }
@@ -2076,6 +2082,35 @@ public class PropertyService {
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
+        }else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION)) {
+            final VacancyRemission vacancyRemission = (VacancyRemission) stateAwareObject;
+            ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(vacancyRemission.getApplicationNumber());
+            User owner = vacancyRemission.getBasicProperty().getPrimaryOwner();
+            VacancyRemissionApproval vacancyRemissionApproval = vacancyRemission.getVacancyRemissionApproval().get(0);
+            String source = getApplicationSource(vacancyRemission.getBasicProperty());
+            if (applicationIndex == null) {
+                applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
+                        .withApplicationNumber(vacancyRemission.getApplicationNumber()).withApplicationDate(vacancyRemission.getCreatedDate()!=null?vacancyRemission.getCreatedDate():new Date())
+                        .withApplicationType(applictionType).withApplicantName(owner.getName())
+                        .withStatus(vacancyRemissionApproval.getState().getValue()).withUrl(format(APPLICATION_VIEW_URL, vacancyRemission.getApplicationNumber(), applictionType))
+                        .withApplicantAddress(vacancyRemission.getBasicProperty().getAddress().toString()).withOwnername(user.getUsername() + "::" + user.getName())
+                        .withChannel(source).withMobileNumber(owner.getMobileNumber())
+                        .withAadharNumber(owner.getAadhaarNumber()).withConsumerCode(vacancyRemission.getBasicProperty().getUpicNo())
+                        .withClosed(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO)
+                        .withApproved(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:vacancyRemissionApproval.getState().getValue().contains(WF_STATE_REJECTED)||vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
+                        .build();
+                applicationIndexService.createApplicationIndex(applicationIndex);
+            } else {
+                applicationIndex.setStatus(vacancyRemissionApproval.getState().getValue());
+                applicationIndex.setApplicantName(owner.getName());
+                applicationIndex.setOwnerName(user.getUsername()+"::"+user.getName());
+                applicationIndex.setMobileNumber(owner.getMobileNumber());
+                applicationIndex.setAadharNumber(owner.getAadhaarNumber());
+                applicationIndex.setClosed(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO);
+                applicationIndex.setApproved(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:vacancyRemissionApproval.getState().getValue().contains(WF_STATE_REJECTED)||vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS);
+                applicationIndexService.updateApplicationIndex(applicationIndex);
+            }
+
         }
 
     }
@@ -3157,6 +3192,20 @@ public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final 
         return currentPropertyTaxDue.add(arrearPropertyTaxDue);
     }
     
+    public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
+        if (ArrayUtils.isNotEmpty(files))
+            return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
+                try {
+                    return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                            file.getContentType(), PropertyTaxConstants.FILESTORE_MODULE_NAME);
+                } catch (final Exception e) {
+                    throw new ApplicationRuntimeException("err.input.stream", e);
+                }
+            }).collect(Collectors.toSet());
+        else
+            return Collections.emptySet();
+    }
+    
     /**
      * Method to get children created for property
      * @param basicProperty
@@ -3164,6 +3213,29 @@ public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final 
      */
     public List<PropertyStatusValues> findChildrenForProperty(final BasicProperty basicProperty) {
         return propertyStatusValuesDAO.getPropertyStatusValuesByReferenceBasicProperty(basicProperty);
+    }
+    
+    public Assignment getUserOnRejection(final PropertyImpl property) {
+        List<StateHistory> history = property.getStateHistory();
+        Collections.reverse(history);
+        Assignment userAssignment = null;
+        boolean exists = false;
+        for(StateHistory state: history) {   
+            List<Assignment> assignments = assignmentService.getAssignmentsForPosition(state.getOwnerPosition().getId());
+            for(Assignment assignment:assignments) {
+            if(assignment != null && assignment.getDesignation().getName().equals(PropertyTaxConstants.REVENUE_INSPECTOR_DESGN)) {
+                userAssignment = assignment;
+                exists = true;
+            }
+           }
+            if(exists) break;
+        }
+        return userAssignment;
+    }
+    
+    public String getDesignationForPositionAndUser(Long positionId,Long userId) {
+        List<Assignment> assignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(positionId, userId, new Date());
+        return (!assignment.isEmpty()) ? assignment.get(0).getDesignation().getName() : null; 
     }
     
     public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {

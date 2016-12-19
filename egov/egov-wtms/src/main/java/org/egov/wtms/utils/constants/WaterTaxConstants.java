@@ -65,6 +65,8 @@ public class WaterTaxConstants {
     public static final String EGMODULE_NAME = "Water Tax Management";
     public static final String WATERTAX_SECURITY_CHARGE = "WTAXSECURITY";
     public static final String WATERTAX_DONATION_CHARGE = "WTAXDONATION";
+    public static final String WATERTAX_ROADCUTTING_CHARGE = "WTAXROADCUTTING";
+    public static final String WATERTAX_SUPERVISION_CHARGE ="WTAXSUPERVISION";
     public static final String CONNECTION_FEE = "Connection fee";
     public static final String ADDNLCONNECTION = "ADDNLCONNECTION";
     public static final String CLOSINGCONNECTION = "CLOSINGCONNECTION";
@@ -261,6 +263,7 @@ public class WaterTaxConstants {
     public static final String CURRENTYEAR_FIRST_HALF = "Current 1st Half";
     public static final String CURRENTYEAR_SECOND_HALF = "Current 2nd Half";
     public static final String GLCODE_FOR_ADVANCE = "3504106";
+    public static final String [] DESG_COMM = {"Commissioner"};
 
     public static final List<String> ORDERED_DEMAND_RSNS_LIST = Arrays.asList(WATERTAXREASONCODE,
             DEMANDRSN_CODE_ADVANCE);

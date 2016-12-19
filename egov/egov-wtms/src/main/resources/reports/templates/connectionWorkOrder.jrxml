@@ -1,88 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
+<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
+<!-- 2016-12-15T22:19:26 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="connectionWorkOrder" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="468"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
-	<parameter name="usersignature" class="java.lang.Object"/>
+	<parameter name="userSignature" class="java.lang.Object"/>
 	<parameter name="district" class="java.lang.String"/>
 	<parameter name="conntitle" class="java.lang.String"/>
-	<parameter name="applicationtype" class="java.lang.String"/>
+	<parameter name="applicantType" class="java.lang.String"/>
 	<parameter name="municipality" class="java.lang.String"/>
-	<parameter name="applicantname" class="java.lang.String"/>
+	<parameter name="applicantName" class="java.lang.String"/>
 	<parameter name="doorno" class="java.lang.String"/>
 	<parameter name="purpose" class="java.lang.String"/>
 	<parameter name="address" class="java.lang.String"/>
-	<parameter name="workorderno" class="java.lang.String"/>
-	<parameter name="workorderdate" class="java.lang.String"/>
+	<parameter name="workorderNo" class="java.lang.String"/>
+	<parameter name="workorderDate" class="java.lang.String"/>
 	<parameter name="applicationDate" class="java.lang.String"/>
 	<parameter name="consumerNumber" class="java.lang.String"/>
 	<parameter name="userId" class="java.lang.Long"/>
 	<parameter name="workFlowAction" class="java.lang.String"/>
+	<parameter name="donationCharges" class="java.lang.Double"/>
+	<parameter name="roadCuttingCharges" class="java.lang.Double"/>
+	<parameter name="superVisionCharges" class="java.lang.Double"/>
+	<parameter name="securityDeposit" class="java.lang.Double"/>
+	<parameter name="total" class="java.lang.Double"/>
+	<parameter name="locality" class="java.lang.String"/>
+	<parameter name="commissionerName" class="java.lang.String"/>
 	<background>
 		<band height="780" splitType="Stretch">
 			<rectangle>
-				<reportElement x="7" y="5" width="540" height="349" uuid="0e6d2994-c285-439a-bbb6-836a2e4ff230"/>
-			</rectangle>
-			<rectangle>
-				<reportElement x="7" y="379" width="540" height="400" uuid="2781f9f9-9612-497c-85d7-5e83a8d360fa"/>
-			</rectangle>
-			<rectangle>
-				<reportElement x="19" y="75" width="517" height="267" uuid="27a98bab-d01e-4a95-adf7-8e0ef5518dd2"/>
-			</rectangle>
-			<rectangle>
-				<reportElement x="19" y="443" width="517" height="324" uuid="8ebea2f7-0232-41c1-be72-1826d5ac648b"/>
+				<reportElement x="7" y="5" width="540" height="775" uuid="0e6d2994-c285-439a-bbb6-836a2e4ff230"/>
 			</rectangle>
 		</band>
 	</background>
 	<detail>
-		<band height="802" splitType="Stretch">
+		<band height="368" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="0" y="42" width="555" height="15" uuid="6ea68d39-6c99-43ca-8be4-14d6867b8b73"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Work Order For "+$P{conntitle}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Present: "+$P{commissionerName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="0" y="27" width="555" height="15" uuid="95f98e65-ec01-4888-b179-bf757e76d450"/>
@@ -98,259 +59,153 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="1" y="416" width="555" height="15" uuid="9fdc266b-0a4b-42c5-a6c9-c9e3c04831c8"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Work Order For "+$P{conntitle}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="1" y="401" width="555" height="15" uuid="53a70ba6-703a-4abc-828b-20e049be9702"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{district}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="386" width="555" height="15" uuid="30b3d4aa-adf7-4b94-a989-6e0cc80988d4"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="70" y="130" width="435" height="15" uuid="86c51035-7a99-4c14-8923-09aff6cb1aff"/>
-				<textElement verticalAlignment="Middle" markup="styled">
-					<font size="8" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Water Supply - "+$P{municipality}+", Work order for fixing of water tap</style>"]]></textFieldExpression>
-			</textField>
 			<staticText>
-				<reportElement x="29" y="130" width="42" height="15" uuid="3c551f20-c6f7-44df-a210-5fbd222c62bc"/>
-				<textElement verticalAlignment="Middle">
-					<font size="8" isBold="false"/>
-				</textElement>
-				<text><![CDATA[Subject :]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="28" y="151" width="42" height="15" uuid="f222aecf-0d24-4477-8036-dd900b4d9166"/>
-				<textElement verticalAlignment="Middle">
-					<font size="8" isBold="false"/>
-				</textElement>
-				<text><![CDATA[Note : ]]></text>
-			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="26" y="294" width="228" height="30" uuid="089a9d46-0c17-46f3-a998-7a7c2e981d06"/>
-				<box topPadding="2"/>
-				<textElement verticalAlignment="Top">
-					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{address}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="26" y="274" width="132" height="15" uuid="308016cd-d5f2-4be2-a19b-b9e9d6807f48"/>
-				<textElement verticalAlignment="Middle">
-					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{applicantname}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="337" y="297" width="164" height="15" uuid="0ffe897f-e02e-4bd2-862a-df68075566ef"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="34" y="328" width="237" height="15" uuid="c33ce68e-be05-42a8-8503-a9822e4f1334"/>
-				<box leftPadding="2"/>
-				<textElement verticalAlignment="Middle">
-					<font size="8"/>
-				</textElement>
-				<text><![CDATA[CC To : Municipal Assistant Engineer/ Municipal Engineer]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="27" y="253" width="316" height="15" uuid="3268191a-38ec-4d90-b429-ad1adc3947bc"/>
-				<textElement verticalAlignment="Middle">
-					<font size="8" isBold="false"/>
-				</textElement>
-				<text><![CDATA[** With Orders of ChairPerson / Mayor **]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="381" y="277" width="100" height="15" uuid="6dc216b3-e96a-4034-83c5-2d471a08c27d"/>
-				<textElement verticalAlignment="Middle">
-					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<text><![CDATA[Commissioner]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="27" y="639" width="316" height="15" uuid="7e106c14-6b55-4407-bb9f-15e7f0a9ecb3"/>
-				<textElement verticalAlignment="Middle">
-					<font size="8" isBold="false"/>
-				</textElement>
-				<text><![CDATA[** With Orders of ChairPerson / Mayor **]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="381" y="700" width="100" height="15" uuid="8904d45b-df45-4f19-b7ba-604475d26b2c"/>
-				<textElement verticalAlignment="Middle">
-					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<text><![CDATA[Commissioner]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="28" y="529" width="42" height="15" uuid="75ed1b2e-8db8-47fc-aa3f-4660c0a83ee9"/>
-				<textElement verticalAlignment="Middle">
-					<font size="8" isBold="false"/>
-				</textElement>
-				<text><![CDATA[Note : ]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="34" y="749" width="237" height="15" uuid="88964dfb-0561-435d-a276-8d2e878cde6a"/>
-				<box leftPadding="2"/>
-				<textElement verticalAlignment="Middle">
-					<font size="8"/>
-				</textElement>
-				<text><![CDATA[CC To : Municipal Assistant Engineer/ Municipal Engineer]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="27" y="504" width="44" height="15" uuid="de69d465-78fa-4c29-996a-c252c01b0442"/>
-				<textElement verticalAlignment="Middle">
-					<font size="8" isBold="false"/>
-				</textElement>
-				<text><![CDATA[Subject :]]></text>
-			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="26" y="662" width="132" height="15" uuid="93e81665-a8e9-473e-8884-7361e385161a"/>
-				<textElement verticalAlignment="Middle">
-					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{applicantname}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="26" y="682" width="228" height="30" uuid="9c726dd5-cef2-4585-8b3f-14cd19128262"/>
-				<box topPadding="2"/>
-				<textElement verticalAlignment="Top">
-					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{address}]]></textFieldExpression>
-			</textField>
-			<textField pattern="dd/MM/yyyy">
-				<reportElement x="35" y="170" width="491" height="15" uuid="48973e99-8221-4fa9-8dc0-7703f4302997"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA["1. Application for <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{applicationtype}+"</style> submitted on <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{applicationDate}+"</style> by <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Mr/Mrs. "+$P{applicantname}+"</style>."]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="29" y="79" width="190" height="15" uuid="f837c596-4af8-4442-a7b8-e9695e314b59"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Work Order No : <style isBold=\"true\">"+$P{workorderno}+"</style>"]]></textFieldExpression>
-			</textField>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="29" y="94" width="497" height="15" uuid="6a363806-e39f-452c-a45b-b052ec667241"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Date : <style isBold=\"true\">"+$P{workorderdate}+"</style>"]]></textFieldExpression>
-			</textField>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="35" y="185" width="490" height="17" uuid="08194b59-1e80-46ec-9f8b-93abe753c238"/>
-				<textElement verticalAlignment="Middle" markup="styled">
-					<font size="8" isBold="false" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["2. Municipal Assistant Engineer / Municipal Engineer Recommendation Date : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{workorderdate}+"</style>."]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="29" y="451" width="188" height="15" uuid="70ef35e7-87ec-42de-a5f0-0f7615ba4ab1"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Work Order No : <style isBold=\"true\">"+$P{workorderno}+"</style>"]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="71" y="504" width="435" height="15" uuid="3b6cfa68-e6c2-4bda-861f-b1a157c785dd"/>
-				<textElement verticalAlignment="Middle" markup="styled">
-					<font size="8" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Water Supply - "+$P{municipality}+", Work order for fixing of water tap</style>"]]></textFieldExpression>
-			</textField>
-			<textField pattern="dd/MM/yyyy">
-				<reportElement x="34" y="545" width="491" height="15" uuid="f6611217-63f4-44f8-872b-8ce7291e46c2"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA["1. Application for <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{applicationtype}+"</style> submitted on <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{applicationDate}+"</style> by <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Mr/Mrs. "+$P{applicantname}+"</style>."]]></textFieldExpression>
-			</textField>
-			<textField pattern="dd/MM/yyyy">
-				<reportElement x="34" y="560" width="490" height="18" uuid="cfa360a6-771a-45eb-8560-f78d15515857"/>
-				<textElement verticalAlignment="Middle" markup="styled">
-					<font size="8" isBold="false" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["2. Municipal Assistant Engineer / Municipal Engineer Recommendation Date : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{workorderdate}+"</style>."]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="337" y="720" width="164" height="15" uuid="118495f4-42f7-4cec-82b3-057977c90130"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="26" y="57" width="100" height="15" uuid="c58d977b-8206-48c6-94c4-35619ef6a4a7"/>
+				<reportElement x="20" y="73" width="100" height="15" uuid="c58d977b-8206-48c6-94c4-35619ef6a4a7"/>
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<text><![CDATA[Department Use]]></text>
 			</staticText>
+			<subreport>
+				<reportElement x="0" y="85" width="554" height="283" uuid="e51712b8-69b6-4ea7-93e7-e6b27fdbdda7"/>
+				<subreportParameter name="municipality">
+					<subreportParameterExpression><![CDATA[$P{municipality}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="applicantName">
+					<subreportParameterExpression><![CDATA[$P{applicantName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="doorno">
+					<subreportParameterExpression><![CDATA[$P{doorno}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="address">
+					<subreportParameterExpression><![CDATA[$P{address}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="workorderNo">
+					<subreportParameterExpression><![CDATA[$P{workorderNo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="workorderDate">
+					<subreportParameterExpression><![CDATA[$P{workorderDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="applicationDate">
+					<subreportParameterExpression><![CDATA[$P{applicationDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="consumerNumber">
+					<subreportParameterExpression><![CDATA[$P{consumerNumber}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="donationCharges">
+					<subreportParameterExpression><![CDATA[$P{donationCharges}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="roadCuttingCharges">
+					<subreportParameterExpression><![CDATA[$P{roadCuttingCharges}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="superVisionCharges">
+					<subreportParameterExpression><![CDATA[$P{superVisionCharges}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="securityDeposit">
+					<subreportParameterExpression><![CDATA[$P{securityDeposit}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="total">
+					<subreportParameterExpression><![CDATA[$P{total}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="locality">
+					<subreportParameterExpression><![CDATA[$P{locality}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("connectionWorkOrder_subreport.jasper")]]></subreportExpression>
+			</subreport>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="186" y="56" width="190" height="15" uuid="94ed341e-c301-409d-be72-b61755e97862"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Commissioner"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="363">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="24" width="555" height="15" uuid="d1cfd597-4be1-47c4-a1f6-26e28df81acf"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{district}]]></textFieldExpression>
+			</textField>
 			<staticText>
-				<reportElement x="27" y="427" width="100" height="15" uuid="7b4b746c-e1eb-4308-a12f-686f7d9553c2"/>
+				<reportElement x="21" y="67" width="100" height="15" uuid="fd9c0f67-68f3-4087-8a00-1b3e4c8110fa"/>
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<text><![CDATA[To Citizen]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="34" y="590" width="492" height="27" uuid="145ada94-6661-43ac-81a5-27435daa7d56"/>
-				<textElement verticalAlignment="Middle" markup="styled">
-					<font size="8" isBold="false" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["             Work order issued to <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{applicantname}+"</style>, Door No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{doorno}+"</style> for "+$P{applicationtype}+" for the purpose of <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{purpose}+"</style> to His/Her as mentioned in the above note."]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="34" y="213" width="492" height="29" uuid="52141567-b473-460a-bf85-9348172ff125"/>
-				<textElement verticalAlignment="Middle" markup="styled">
-					<font size="8" isBold="false" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["             Work order issued to <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{applicantname}+"</style>, Door No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{doorno}+"</style> for "+$P{applicationtype}+" for the purpose of <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{purpose}+"</style> to His/Her as mentioned in the above note."]]></textFieldExpression>
-			</textField>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="29" y="466" width="497" height="15" uuid="d5cd9be7-8839-4ca8-81d4-00c57eb09e84"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Date : <style isBold=\"true\">"+$P{workorderdate}+"</style>"]]></textFieldExpression>
-			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="29" y="109" width="190" height="15" uuid="85b11de5-e4aa-40f0-9a32-d668a72eed14"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
-					<font size="8"/>
+				<reportElement x="0" y="9" width="555" height="15" uuid="6d27d034-adfa-478d-80c2-afd0eed30c35"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA["HSC Number : <style isBold=\"true\">"+$P{consumerNumber}+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="29" y="481" width="188" height="15" uuid="fe4a6dde-3734-4a78-a64d-dee44d5b8687"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
-					<font size="8"/>
+			<subreport>
+				<reportElement x="0" y="79" width="554" height="283" uuid="993dfb1f-06b9-4736-a724-278e2ca40811"/>
+				<subreportParameter name="municipality">
+					<subreportParameterExpression><![CDATA[$P{municipality}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="applicantName">
+					<subreportParameterExpression><![CDATA[$P{applicantName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="doorno">
+					<subreportParameterExpression><![CDATA[$P{doorno}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="address">
+					<subreportParameterExpression><![CDATA[$P{address}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="workorderNo">
+					<subreportParameterExpression><![CDATA[$P{workorderNo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="workorderDate">
+					<subreportParameterExpression><![CDATA[$P{workorderDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="applicationDate">
+					<subreportParameterExpression><![CDATA[$P{applicationDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="consumerNumber">
+					<subreportParameterExpression><![CDATA[$P{consumerNumber}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="donationCharges">
+					<subreportParameterExpression><![CDATA[$P{donationCharges}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="roadCuttingCharges">
+					<subreportParameterExpression><![CDATA[$P{roadCuttingCharges}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="superVisionCharges">
+					<subreportParameterExpression><![CDATA[$P{superVisionCharges}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="securityDeposit">
+					<subreportParameterExpression><![CDATA[$P{securityDeposit}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="total">
+					<subreportParameterExpression><![CDATA[$P{total}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="locality">
+					<subreportParameterExpression><![CDATA[$P{locality}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("connectionWorkOrder_subreport.jasper")]]></subreportExpression>
+			</subreport>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="39" width="555" height="15" uuid="6ded3333-e863-488a-a692-cbc89dfea7bc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA["HSC Number : <style isBold=\"true\">"+$P{consumerNumber}+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Present: "+$P{commissionerName}]]></textFieldExpression>
 			</textField>
-			<image hAlign="Center" vAlign="Bottom" onErrorType="Blank">
-				<reportElement x="334" y="644" width="171" height="51" uuid="d476b9bb-dda4-4360-acd5-0ee1f65f4f15"/>
-				<imageExpression><![CDATA[$P{usersignature}]]></imageExpression>
-			</image>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="186" y="53" width="190" height="15" uuid="4f2f353c-dbd2-491c-a417-dd7201455ea3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Commissioner"]]></textFieldExpression>
+			</textField>
 		</band>
-	</detail>
+	</summary>
 </jasperReport>

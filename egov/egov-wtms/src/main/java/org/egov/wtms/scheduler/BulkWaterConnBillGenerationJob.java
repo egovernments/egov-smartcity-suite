@@ -40,7 +40,6 @@
 package org.egov.wtms.scheduler;
 
 import org.apache.log4j.Logger;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.wtms.service.bill.WaterConnectionBillService;
 import org.egov.wtms.utils.WaterTaxUtils;
@@ -52,7 +51,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class BulkWaterConnBillGenerationJob extends AbstractQuartzJob {
 
-  
     private static final long serialVersionUID = 6652765005378915324L;
 
     private static final Logger LOGGER = Logger.getLogger(BulkWaterConnBillGenerationJob.class);
@@ -65,28 +63,25 @@ public class BulkWaterConnBillGenerationJob extends AbstractQuartzJob {
     private WaterConnectionBillService waterConnectionBillService;
 
     @Autowired
-    private UserService userService;
-    
-    @Autowired
     private WaterTaxUtils waterTaxUtils;
 
     @Override
     public void executeJob() {
-        LOGGER.debug("Water tax Schedular Running in City:");
+        LOGGER.debug("Water tax Schedular Running in City:" + waterTaxUtils.getCityCode());
         final Long jobStartTime = System.currentTimeMillis();
-        Boolean schedularEnable=waterTaxUtils.getAppconfigValueForSchedulearEnabled();
-        WaterConnectionBillService waterConnectionBillService = null;
+        final Boolean schedularEnable = waterTaxUtils.getAppconfigValueForSchedulearEnabled();
         try {
             waterConnectionBillService = (WaterConnectionBillService) beanProvider
                     .getBean("waterConnectionBillService");
         } catch (final NoSuchBeanDefinitionException e) {
             LOGGER.warn("waterConnectionBillService implementation not found");
         }
-        if (waterConnectionBillService != null && (schedularEnable || schedularEnable== true)){
-            waterConnectionBillService.bulkBillGeneration(modulo, billsCount); 
-        }
+        if (waterConnectionBillService != null && schedularEnable)
+            waterConnectionBillService.bulkBillGeneration(modulo, billsCount);
         final Long timeTaken = System.currentTimeMillis() - jobStartTime;
-        LOGGER.debug("Water tax Schedular completed for City and time taked is :" + timeTaken +"==="+waterTaxUtils.getCityCode());
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Water tax Schedular completed for City and time taked is :" + waterTaxUtils.getCityCode()
+                    + " == " + timeTaken);
     }
 
     public Integer getBillsCount() {

@@ -110,7 +110,8 @@ public class DailyWTCollectionReportService {
     public Set<User> getUsers() {
         final String operatorDesignation = appConfigValueService
                 .getAppConfigValueByDate(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                        CollectionConstants.COLLECTION_DESIGNATIONFORCSCOPERATOR, new Date()).getValue();
+                        CollectionConstants.COLLECTION_DESIGNATIONFORCSCOPERATOR, new Date())
+                .getValue();
         return assignmentService.getUsersByDesignations(operatorDesignation.split(","));
     }
 
@@ -119,8 +120,7 @@ public class DailyWTCollectionReportService {
     }
 
     public List<DailyWTCollectionReport> getCollectionDetails(final Date fromDate, final Date toDate,
-            final String collectionMode,
-            final String collectionOperator, final String status) throws ParseException {
+            final String collectionMode, final String collectionOperator, final String status) throws ParseException {
         final StringBuilder queryStr = new StringBuilder(500);
 
         queryStr.append(
@@ -160,16 +160,15 @@ public class DailyWTCollectionReportService {
             if (null != waterConnection)
                 result.setConnectionType(waterConnection.getConnectionType().toString());
             final StringBuilder queryString = new StringBuilder();
-            queryString.append(
-                    "select wardboundary.name as \"wardName\",dcbinfo.houseno as \"houseNo\" from egwtr_mv_dcb_view dcbinfo"
+            queryString
+                    .append("select wardboundary.name as \"wardName\",dcbinfo.houseno as \"houseNo\" from egwtr_mv_dcb_view dcbinfo"
                             + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id  where dcbinfo.hscno = '"
                             + receiptHeader.getConsumerCode() + "'");
             final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryString.toString());
             finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DefaultersReport.class));
             List<DefaultersReport> listforWardAndHsc = new ArrayList<DefaultersReport>();
             listforWardAndHsc = finalQuery.list();
-            if (!listforWardAndHsc.isEmpty())
-            {
+            if (!listforWardAndHsc.isEmpty()) {
                 result.setDoorNumber(listforWardAndHsc.get(0).getHouseNo());
                 result.setWardName(listforWardAndHsc.get(0).getWardName());
             }
@@ -191,7 +190,8 @@ public class DailyWTCollectionReportService {
             }
             result.setPaidAt(receiptHeader.getSource());
             result.setPaymentMode(paymentMode.toString());
-            final List<ReceiptDetail> receiptDetailsList = new ArrayList<ReceiptDetail>(receiptHeader.getReceiptDetails());
+            final List<ReceiptDetail> receiptDetailsList = new ArrayList<ReceiptDetail>(
+                    receiptHeader.getReceiptDetails());
             final int lastindex = receiptDetailsList.size() - 2;
             if (null != receiptDetailsList.get(0).getDescription()) {
                 final int index = receiptDetailsList.get(0).getDescription().indexOf("-");
@@ -202,33 +202,36 @@ public class DailyWTCollectionReportService {
             if (null != receiptDetailsList.get(lastindex).getDescription()) {
                 final int index = receiptDetailsList.get(lastindex).getDescription().indexOf("-");
                 final int hashIndex = receiptDetailsList.get(lastindex).getDescription().indexOf("#");
-                final String instDesc = receiptDetailsList.get(lastindex).getDescription().substring(index + 1, hashIndex);
+                final String instDesc = receiptDetailsList.get(lastindex).getDescription().substring(index + 1,
+                        hashIndex);
                 result.setToInstallment(instDesc);
             }
             for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
                 final String rdesc = receiptDetail.getDescription();
                 if (null != rdesc) {
-                    final String receiptDmdRsnDesc = rdesc.substring(0, receiptDetail.getDescription().indexOf("-")).trim();
+                    final String receiptDmdRsnDesc = rdesc.substring(0, receiptDetail.getDescription().indexOf("-"))
+                            .trim();
                     String currentInstallment = null;
                     if (Arrays.asList(WaterTaxConstants.CREATECONNECTIONDMDDESC).contains(receiptDmdRsnDesc))
-                        currentInstallment = connectionDemandService
-                                .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date())
-                                .getDescription();
+                        currentInstallment = connectionDemandService.getCurrentInstallment(
+                                WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date()).getDescription();
                     else if (Arrays.asList(WaterTaxConstants.WATERCHARGESDMDDESC).contains(receiptDmdRsnDesc))
                         if (ConnectionType.METERED.equals(waterConnection.getConnectionType()))
                             currentInstallment = connectionDemandService
-                                    .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY, new Date())
+                                    .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY,
+                                            new Date())
                                     .getDescription();
                         else if (ConnectionType.NON_METERED.equals(waterConnection.getConnectionType()))
                             currentInstallment = connectionDemandService
-                                    .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date())
+                                    .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null,
+                                            new Date())
                                     .getDescription();
 
-                    if (null != rdesc
-                            && rdesc.substring(rdesc.indexOf("-") + 1, rdesc.indexOf("#")).trim().equals(currentInstallment))
+                    if (null != rdesc && rdesc.substring(rdesc.indexOf("-") + 1, rdesc.indexOf("#")).trim()
+                            .equals(currentInstallment))
                         currCollection = currCollection.add(receiptDetail.getCramount());
-                    else if (null != rdesc
-                            && !rdesc.substring(rdesc.indexOf("-") + 1, rdesc.indexOf("#")).trim().equals(currentInstallment))
+                    else if (null != rdesc && !rdesc.substring(rdesc.indexOf("-") + 1, rdesc.indexOf("#")).trim()
+                            .equals(currentInstallment))
                         arrCollection = arrCollection.add(receiptDetail.getCramount());
                 }
             }

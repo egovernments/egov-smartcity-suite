@@ -172,8 +172,7 @@ public class CollectionsUtil {
      * @return the <code>EgwStatus</code> instance
      */
     public EgwStatus getStatusForModuleAndCode(final String moduleName, final String statusCode) {
-        final EgwStatus status = egwStatusDAO.getStatusByModuleAndCode(moduleName, statusCode);
-        return status;
+        return egwStatusDAO.getStatusByModuleAndCode(moduleName, statusCode);
     }
 
     /**
@@ -249,8 +248,8 @@ public class CollectionsUtil {
         if (locationId != null && !locationId.isEmpty())
             location = getLocationById(Long.valueOf(locationId));
         if (location == null)
-            throw new ValidationException(Arrays.asList(new ValidationError("Location Not Found",
-                    "submitcollections.validation.error.location.notfound")));
+            throw new ValidationException(Arrays.asList(
+                    new ValidationError("Location Not Found", "submitcollections.validation.error.location.notfound")));
         return location;
     }
 
@@ -306,17 +305,16 @@ public class CollectionsUtil {
      */
     public List<String> getCollectionModesNotAllowed(final User loggedInUser) {
         final List<String> collectionsModeNotAllowed = new ArrayList<String>(0);
-        final List<AppConfigValues> deptCodesApp = appConfigValuesService
-                .getConfigValuesByModuleAndKey(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                        CollectionConstants.COLLECTION_DEPARTMENT_COLLMODES);
-        final List<String> deptCodes = new ArrayList<String>();
+        final List<AppConfigValues> deptCodesApp = appConfigValuesService.getConfigValuesByModuleAndKey(
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.COLLECTION_DEPARTMENT_COLLMODES);
+        final List<String> deptCodes = new ArrayList<>();
         for (final AppConfigValues deptCode : deptCodesApp)
             deptCodes.add(deptCode.getValue());
-        List<Assignment> assignList = null;
+        List<Assignment> assignList;
         Boolean isDeptAllowed = false;
         final Boolean isEmp = isEmployee(loggedInUser);
         if (isEmp) {
-            // dept = getDepartmentOfUser(loggedInUser);
             assignList = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(loggedInUser.getId());
             for (final Assignment assign : assignList)
                 if (!deptCodes.isEmpty() && deptCodes.contains(assign.getDepartment().getCode()))
@@ -324,8 +322,8 @@ public class CollectionsUtil {
         }
 
         if (isEmp && !isDeptAllowed)
-            throw new ValidationException(Arrays.asList(new ValidationError("Department",
-                    "billreceipt.counter.deptcode.null")));
+            throw new ValidationException(
+                    Arrays.asList(new ValidationError("Department", "billreceipt.counter.deptcode.null")));
         else if (!isEmp || isDeptAllowed)
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
         // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
@@ -367,12 +365,12 @@ public class CollectionsUtil {
         final String departmentStr = getDepartmentForWorkFlow();
         final String[] department = departmentStr.split(",");
         final String[] designation = designationStr.split(",");
-        List<Assignment> assignment = new ArrayList<Assignment>();
+        List<Assignment> assignment = new ArrayList<>();
         for (final String dept : department) {
             for (final String desg : designation) {
-                assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                        .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),
-                        boundary.getId());
+                assignment = assignmentService.findByDepartmentDesignationAndBoundary(
+                        departmentService.getDepartmentByName(dept).getId(),
+                        designationService.getDesignationByName(desg).getId(), boundary.getId());
                 if (!assignment.isEmpty())
                     break;
             }
@@ -400,10 +398,9 @@ public class CollectionsUtil {
     public Position getPositionOfUser(final User user) {
         return posService.getCurrentPositionForUser(user.getId());
     }
-    
- 
+
     public List<Position> getPositionsForEmployee(final User user) {
-        return posService.getPositionsForEmployee(user.getId(),null);
+        return posService.getPositionsForEmployee(user.getId(), null);
     }
 
     /**
@@ -427,12 +424,10 @@ public class CollectionsUtil {
      *         the given date
      */
     public CFinancialYear getFinancialYearforDate(final Date date) {
-        return (CFinancialYear) persistenceService
-                .getSession()
-                .createQuery(
-                        "from CFinancialYear cfinancialyear where ? between "
-                                + "cfinancialyear.startingDate and cfinancialyear.endingDate").setDate(0, date).list()
-                .get(0);
+        return (CFinancialYear) persistenceService.getSession()
+                .createQuery("from CFinancialYear cfinancialyear where ? between "
+                        + "cfinancialyear.startingDate and cfinancialyear.endingDate")
+                .setDate(0, date).list().get(0);
     }
 
     /**
@@ -497,7 +492,7 @@ public class CollectionsUtil {
      *
      * @param moduleName
      *            a <code>String<code> representing the module name
-     * @param key
+     * &#64;param key
      *            a <code>String</code> representing the key
      * @param defaultValue
      *            Default value to be returned in case the key is not defined
@@ -513,14 +508,14 @@ public class CollectionsUtil {
      *
      * @param moduleName
      *            a <code>String<code> representing the module name
-     * @param key
+     * &#64;param key
      *            a <code>String</code> representing the key
      * @return <code>String</code> representing the configuration value
      */
     public String getAppConfigValue(final String moduleName, final String key) {
         final List<AppConfigValues> appConfValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName,
                 key);
-        if (appConfValues != null && appConfValues.size() > 0)
+        if (appConfValues != null && !appConfValues.isEmpty())
             return appConfValues.get(0).getValue();
         else
             return "";
@@ -532,7 +527,7 @@ public class CollectionsUtil {
      *
      * @param moduleName
      *            a <code>String<code> representing the module name
-     * @param key
+     * &#64;param key
      *            a <code>String</code> representing the key
      * @return <code>List<AppConfigValues></code> representing the list of
      *         configuration values
@@ -610,9 +605,9 @@ public class CollectionsUtil {
      * @return list of non-primary department of the given user
      */
     public List<Department> getAllNonPrimaryAssignmentsOfUser(final User user) {
-        final List<Department> departmentlist = new ArrayList<Department>();
+        final List<Department> departmentlist = new ArrayList<>();
         try {
-            final HashMap<String, String> paramMap = new HashMap<String, String>();
+            final HashMap<String, String> paramMap = new HashMap<>();
             paramMap.put("code", EisManagersUtill.getEmployeeService().getEmpForUserId(user.getId()).getCode());
             final List<EmployeeView> employeeViewList = (List<EmployeeView>) eisService.getEmployeeInfoList(paramMap);
             if (!employeeViewList.isEmpty())
@@ -639,11 +634,10 @@ public class CollectionsUtil {
         return nonPrimaryAssignments.isEmpty() ? null : nonPrimaryAssignments.get(0);
     }
 
-    public List<Designation> getDesignationsAllowedForChallanApproval(final Integer departmentId,
-            final ReceiptHeader receiptHeaderObj) {
-        List<Designation> designations = new ArrayList<Designation>(0);
+    public List<Designation> getDesignationsAllowedForChallanApproval(final Integer departmentId) {
+        List<Designation> designations = new ArrayList<>(0);
         designations = designationService.getAllDesignationByDepartment(Long.valueOf(departmentId), new Date());
-        final List<Designation> designation = new ArrayList<Designation>(0);
+        final List<Designation> designation = new ArrayList<>(0);
 
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
@@ -655,16 +649,15 @@ public class CollectionsUtil {
         return designation;
     }
 
-    public List<Department> getDepartmentsAllowedForChallanApproval(final User loggedInUser,
-            final ReceiptHeader receiptHeaderObj) {
-        final List<Department> departments = new ArrayList<Department>(0);
+    public List<Department> getDepartmentsAllowedForChallanApproval() {
+        final List<Department> departments = new ArrayList<>(0);
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.COLLECTION_DESIG_CHALLAN_WORKFLOW);
         if (null != appConfigValue && !appConfigValue.isEmpty())
             for (final AppConfigValues app : appConfigValue) {
-                final List<Assignment> assignments = assignmentService.findPrimaryAssignmentForDesignationName(app
-                        .getValue());
+                final List<Assignment> assignments = assignmentService
+                        .findPrimaryAssignmentForDesignationName(app.getValue());
                 for (final Assignment assign : assignments)
                     if (!departments.contains(assign.getDepartment()))
                         departments.add(assign.getDepartment());
@@ -685,10 +678,10 @@ public class CollectionsUtil {
      *          account head
      */
     public boolean isPropertyTaxArrearAccountHead(final String glcode, final String description) {
-        final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(
-                CollectionConstants.MODULE_NAME_PROPERTYTAX, "ISARREARACCOUNT");
-        final AppConfigValues penaltyGlCode = appConfigValuesService.getAppConfigValueByDate(
-                CollectionConstants.MODULE_NAME_PROPERTYTAX, "PTPENALTYGLCODE", new Date());
+        final List<AppConfigValues> list = appConfigValuesService
+                .getConfigValuesByModuleAndKey(CollectionConstants.MODULE_NAME_PROPERTYTAX, "ISARREARACCOUNT");
+        final AppConfigValues penaltyGlCode = appConfigValuesService
+                .getAppConfigValueByDate(CollectionConstants.MODULE_NAME_PROPERTYTAX, "PTPENALTYGLCODE", new Date());
         boolean retValue = false;
         LOGGER.debug("isPropertyTaxArrearAccountHead glcode " + glcode + " description " + description);
         if (penaltyGlCode != null && penaltyGlCode.getValue().equals(glcode)) {
@@ -780,11 +773,11 @@ public class CollectionsUtil {
             instrumentType = receiptHeader.getReceiptInstrument().iterator().next().getInstrumentType().getType();
 
         if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL) {
-            final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService
-                    .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
+            final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(
+                    billingService.getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
             try {
-                receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(new BillReceiptInfoImpl(receiptHeader,
-                        chartOfAccountsHibernateDAO, persistenceService, null));
+                receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(
+                        new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService, null));
             } catch (final Exception e) {
                 final String errMsg = "Exception while constructing collection index for receipt number ["
                         + receiptHeader.getReceiptnumber() + "]!";
@@ -792,22 +785,15 @@ public class CollectionsUtil {
                 throw new ApplicationRuntimeException(errMsg, e);
             }
         }
-        final CollectionIndex collectionIndex = CollectionIndex
-                .builder()
-                .withReceiptDate(receiptHeader.getReceiptdate())
-                .withReceiptnumber(receiptHeader.getReceiptnumber())
-                .withBillingservice(billingService.getName())
-                .withPaymentMode(instrumentType)
-                .withTotalamount(receiptHeader.getTotalAmount())
-                .withChannel(receiptHeader.getSource())
+        final CollectionIndex collectionIndex = CollectionIndex.builder()
+                .withReceiptDate(receiptHeader.getReceiptdate()).withReceiptnumber(receiptHeader.getReceiptnumber())
+                .withBillingservice(billingService.getName()).withPaymentMode(instrumentType)
+                .withTotalamount(receiptHeader.getTotalAmount()).withChannel(receiptHeader.getSource())
                 .withStatus(receiptHeader.getStatus().getDescription())
                 .withConsumerCode(receiptHeader.getConsumerCode() != null ? receiptHeader.getConsumerCode() : "")
-                .withBillNumber(
-                        receiptHeader.getReferencenumber() != null ? receiptHeader.getReferencenumber()
-                                : null)
-                .withPaymentGateway(
-                        receiptHeader.getOnlinePayment() != null ? receiptHeader.getOnlinePayment().getService()
-                                .getName() : "")
+                .withBillNumber(receiptHeader.getReferencenumber() != null ? receiptHeader.getReferencenumber() : null)
+                .withPaymentGateway(receiptHeader.getOnlinePayment() != null
+                        ? receiptHeader.getOnlinePayment().getService().getName() : "")
                 .withConsumerName(receiptHeader.getPayeeName() != null ? receiptHeader.getPayeeName() : "")
                 .withReceiptCreator(receiptHeader.getCreatedBy() != null ? receiptHeader.getCreatedBy().getName() : "")
                 .withArrearAmount(receiptAmountInfo.getArrearsAmount())
@@ -822,7 +808,9 @@ public class CollectionsUtil {
                         receiptAmountInfo.getInstallmentFrom() != null ? receiptAmountInfo.getInstallmentFrom() : "")
                 .withInstallmentTo(
                         receiptAmountInfo.getInstallmentTo() != null ? receiptAmountInfo.getInstallmentTo() : "")
-                .withRevenueWard(receiptAmountInfo.getRevenueWard()).build();
+                .withRevenueWard(receiptAmountInfo.getRevenueWard())
+                .withConsumerType(receiptHeader.getConsumerType() != null ? receiptHeader.getConsumerType() : "")
+                .build();
         return collectionIndex;
     }
 
@@ -838,18 +826,26 @@ public class CollectionsUtil {
         return createVoucherForBillingService;
     }
 
+    public Designation getDesignationForApprover() {
+        return designationService
+                .getDesignationByName(getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                        CollectionConstants.COLLECTION_DESIGNATIONFORAPPROVER));
+    }
+
     public String getApproverName(final Position position) {
-        String approver;
-        final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(position.getId());
-        approver = assignment.getEmployee().getName().concat("~").concat(assignment.getEmployee().getCode())
-                .concat("~").concat(assignment.getPosition().getName());
+        String approver = null;
+        final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId());
+        for (final Assignment assignment : assignments)
+            if (assignment.getDesignation().equals(getDesignationForApprover()))
+                approver = assignment.getEmployee().getName().concat("~").concat(assignment.getEmployee().getCode())
+                        .concat("~").concat(assignment.getPosition().getName());
         return approver;
     }
 
     public List<ReceiptDetail> reconstructReceiptDetail(final ReceiptHeader receiptHeader,
             final List<ReceiptDetail> receiptDetailList) {
-        final BillingIntegrationService billingService = (BillingIntegrationService) getBean(receiptHeader.getService()
-                .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
+        final BillingIntegrationService billingService = (BillingIntegrationService) getBean(
+                receiptHeader.getService().getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
         return billingService.reconstructReceiptDetail(receiptHeader.getReferencenumber(),
                 receiptHeader.getTotalAmount(), receiptDetailList);
     }
@@ -857,7 +853,7 @@ public class CollectionsUtil {
     public Date getRemittanceVoucherDate(final Date receiptDate) {
         Boolean useReceiptDateAsContraVoucherDate = false;
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        Date voucherDate = null;
+        Date voucherDate;
         Date rcptDate = null;
         if (getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_USERECEIPTDATEFORCONTRA).equals(CollectionConstants.YES))
@@ -887,8 +883,8 @@ public class CollectionsUtil {
     public Boolean getVoucherType() {
         Boolean voucherTypeForChequeDDCard = false;
         if (getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD).equals(
-                CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
+                CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD)
+                        .equals(CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
             voucherTypeForChequeDDCard = true;
         return voucherTypeForChequeDDCard;
     }
@@ -935,9 +931,10 @@ public class CollectionsUtil {
 
     public void emailReceiptAsAttachment(final ReceiptHeader receiptHeader, final byte[] attachment) {
         String emailBody = collectionApplicationProperties.getEmailBody();
-        emailBody = String.format(emailBody, ApplicationThreadLocals.getCityName(), receiptHeader.getTotalAmount()
-                .toString(), receiptHeader.getService().getName(), receiptHeader.getConsumerCode(), receiptHeader
-                .getReceiptdate().toString(), ApplicationThreadLocals.getCityName());
+        emailBody = String.format(emailBody, ApplicationThreadLocals.getCityName(),
+                receiptHeader.getTotalAmount().toString(), receiptHeader.getService().getName(),
+                receiptHeader.getConsumerCode(), receiptHeader.getReceiptdate().toString(),
+                ApplicationThreadLocals.getCityName());
         String emailSubject = collectionApplicationProperties.getEmailSubject();
         emailSubject = String.format(emailSubject, receiptHeader.getService().getName());
         messagingService.sendEmailWithAttachment(receiptHeader.getPayeeEmail(), emailSubject, emailBody,

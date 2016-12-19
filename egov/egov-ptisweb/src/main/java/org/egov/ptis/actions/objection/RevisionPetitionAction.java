@@ -42,6 +42,7 @@
  */
 package org.egov.ptis.actions.objection;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
@@ -50,7 +51,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.HEARING_TIMINGS;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_RPPROCEEDINGS;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISIONPETITION_STATUS_CODE;
@@ -342,7 +343,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         addDropdownData("roofType", getPersistenceService().findAllBy("from RoofType order by name"));
         final List<String> apartmentsList = getPersistenceService().findAllBy("from Apartment order by name");
         final List<String> taxExemptionReasonList = getPersistenceService().findAllBy(
-                "from TaxExeptionReason order by name");
+                "from TaxExemptionReason where isActive = true order by name");
 
         addDropdownData("wallType", wallTypes);
         addDropdownData("woodType", woodTypes);
@@ -459,15 +460,14 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             LOGGER.debug("ObjectionAction | addHearingDate | start " + objection);
         InputStream hearingNoticePdf = null;
         ReportOutput reportOutput = new ReportOutput();
-
+        final String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE);
         updateStateAndStatus(objection);
-        reportOutput = createHearingNoticeReport(reportOutput, objection);
+        reportOutput = createHearingNoticeReport(reportOutput, objection, noticeNo);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             hearingNoticePdf = new ByteArrayInputStream(reportOutput.getReportOutputData());
         if (hearingNoticePdf != null)
-            noticeService.saveNotice(objection.getObjectionNumber(), objection.getObjectionNumber(),
-                    PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE, objection.getBasicProperty(),
-                    hearingNoticePdf);// Save Notice
+            noticeService.saveNotice(objection.getObjectionNumber(), noticeNo,
+                    NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE, objection.getBasicProperty(), hearingNoticePdf);// Save Notice
         revisionPetitionService.updateRevisionPetition(objection);
         sendEmailandSms(objection, REVISION_PETITION_HEARINGNOTICEGENERATED);
         if (LOGGER.isDebugEnabled())
@@ -480,7 +480,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
      * @param objection
      * @return ReportOutput
      */
-    private ReportOutput createHearingNoticeReport(ReportOutput reportOutput, final RevisionPetition objection) {
+    private ReportOutput createHearingNoticeReport(ReportOutput reportOutput, final RevisionPetition objection,final String noticeNo) {
         reportOutput.setReportFormat(FileFormat.PDF);
         final HashMap<String, Object> reportParams = new HashMap<String, Object>();
 
@@ -509,7 +509,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 reportParams.put("hearingNoticeDate", "");
             reportParams.put("currentDate", dateformat.format(new Date()));
             reportParams.put("recievedOn", dateformat.format(objection.getRecievedOn()));
-            reportParams.put("docNumberObjection", objection.getObjectionNumber());
+            reportParams.put("docNumberObjection", noticeNo);
             reportParams.put("houseNo", objection.getBasicProperty().getAddress().getHouseNoBldgApt());
             reportParams.put("locality", objection.getBasicProperty().getPropertyID().getLocality().getName());
             reportParams.put("assessmentNo", objection.getBasicProperty().getUpicNo());
@@ -552,9 +552,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
         final ReportOutput reportOutput = new ReportOutput();
         if (objection != null && objection.getObjectionNumber() != null) {
-            final PtNotice ptNotice = noticeService.getPtNoticeByNoticeNumberAndNoticeType(
-                    objection.getObjectionNumber(), PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE);
-
+            final PtNotice ptNotice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(
+                    NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE, objection.getObjectionNumber());
             final FileStoreMapper fsm = ptNotice.getFileStore();
             final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
             byte[] bFile;
@@ -732,7 +731,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         PropertyNoticeInfo propertyNotice = null;
         InputStream specialNoticePdf = null;
         String noticeNo = null;
-        PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(PropertyTaxConstants.NOTICE_TYPE_PROCEEDINGS,
+        PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_RPPROCEEDINGS,
                 objection.getObjectionNumber());
         final List<User> users = eisCommonService.getAllActiveUsersByGivenDesig(designationService
                 .getDesignationByName(COMMISSIONER_DESGN).getId());
@@ -753,7 +752,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         } else {
             if (WFLOW_ACTION_STEP_SIGN.equals(actionType) && notice == null) {
-                noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(NOTICE_TYPE_SPECIAL_NOTICE);
+                noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(NOTICE_TYPE_RPPROCEEDINGS);
             }
             propertyNotice = new PropertyNoticeInfo(property, noticeNo);
 
@@ -787,12 +786,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 specialNoticePdf = new ByteArrayInputStream(reportOutput.getReportOutputData());
             if (WFLOW_ACTION_STEP_SIGN.equals(actionType)) {
                 if (notice == null) {
-                    final PtNotice savedNotice = noticeService.saveNotice(
-                            objection.getObjectionNumber(),
-                            objection.getObjectionNumber().concat(
-                                    PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_PROCEEDINGS_PREFIX),
-                            PropertyTaxConstants.NOTICE_TYPE_PROCEEDINGS, objection.getBasicProperty(),
-                            specialNoticePdf);
+                    final PtNotice savedNotice = noticeService.saveNotice(objection.getObjectionNumber(), noticeNo,
+                            NOTICE_TYPE_RPPROCEEDINGS, objection.getBasicProperty(), specialNoticePdf);
                     setFileStoreIds(savedNotice.getFileStore().getFileStoreId());
                 } else {
                     final PtNotice savedNotice = noticeService.updateNotice(notice, specialNoticePdf);
@@ -820,8 +815,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             floorInfo.setNatureOfUsage(floor.getPropertyUsage().getUsageName());
             floorInfo.setPlinthArea(new BigDecimal(floor.getBuiltUpArea().getArea()));
             floorInfo.setBuildingAge(floor.getDepreciationMaster().getDepreciationName());
-            floorInfo.setMonthlyRentalValue(BigDecimal.ZERO);
-            floorInfo.setYearlyRentalValue(BigDecimal.ZERO);
+            floorInfo.setMonthlyRentalValue(floor.getFloorDmdCalc() != null ? floor.getFloorDmdCalc().getMrv()
+                    : BigDecimal.ZERO);
+            floorInfo.setYearlyRentalValue(floor.getFloorDmdCalc() != null ? floor.getFloorDmdCalc().getAlv()
+                    : BigDecimal.ZERO);
             floorInfo.setBldngFloorNo(FLOOR_MAP.get(floor.getFloorNo()));
             floorInfo.setTaxPayableForNewRates(BigDecimal.ZERO);
 
@@ -841,7 +838,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         final Address ownerAddress = basicProperty.getAddress();
         BigDecimal totalTax = BigDecimal.ZERO;
         BigDecimal propertyTax = BigDecimal.ZERO;
-
         if (basicProperty.getPropertyOwnerInfo().size() > 1)
         	infoBean.setOwnerName(basicProperty.getFullOwnerName().concat(" and others"));
         else
@@ -858,7 +854,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         final String occupancyYear = formatNowYear.format(basicProperty.getPropOccupationDate());
         infoBean.setInstallmentYear(occupancyYear);
         infoBean.setAssessmentNo(basicProperty.getUpicNo());
-        infoBean.setAssessmentDate(dateformat.format(basicProperty.getAssessmentdate()).toString());
+        infoBean.setAssessmentDate(dateformat.format(basicProperty.getAssessmentdate()));
         final Ptdemand currDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
 
         //Sets data for the current property
@@ -1082,10 +1078,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         /* return STRUTS_RESULT_MESSAGE; */
         final ReportOutput reportOutput = new ReportOutput();
         if (objection != null && objection.getObjectionNumber() != null) {
-            final PtNotice ptNotice = noticeService.getPtNoticeByNoticeNumberAndNoticeType(objection
-                    .getObjectionNumber()
-                    .concat(PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_SPECIALNOTICE_PREFIX),
-                    PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE);
+            final PtNotice ptNotice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(
+                    objection.getObjectionNumber(), NOTICE_TYPE_RPPROCEEDINGS);
             if (ptNotice != null) {
                 final FileStoreMapper fsm = ptNotice.getFileStore();
                 final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);

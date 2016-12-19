@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-12-06T13:00:07 -->
+<!-- 2016-12-08T13:16:09 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice_corp" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -417,7 +417,7 @@
 				<textElement textAlignment="Left" markup="styled">
 					<font size="8" isBold="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[!$P{ownerInfo}.getOwnershipType().equalsIgnoreCase("Vacant Land") ? "Reasons for increase if any:\tThe MRV has been fixed based on I) Location, II) type of construction,III) Plinth Area,\n\t\t\tIV) Age V) Nature of usage of the Building." + "\n\nZone No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">" + $P{ownerInfo}.getZoneName()+"</style>" : "Reasons for increase if any:   Due to increase of capital value of the lands fixed by the registration department for the purpose of registration." + "\n\nZone No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">" + $P{ownerInfo}.getZoneName()+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[!$P{ownerInfo}.getOwnershipType().equalsIgnoreCase("Vacant Land") ? "Reasons for increase if any:\tThe MRV has been fixed based on I) Location, II) type of construction,III) Plinth Area,\n\t\t\tIV) Age V) Nature of usage of the Building."  + "\n\nZone No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">" + $P{ownerInfo}.getZoneName()+"</style>" : "Reasons for increase if any:   Due to increase of capital value of the lands fixed by the registration department for the purpose of registration."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="83" y="45" width="373" height="15" uuid="2a902623-599d-467f-81c1-7a8427b308a9"/>
@@ -427,7 +427,7 @@
 				<textFieldExpression><![CDATA["FORM D"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="37" y="295" width="45" height="27" isRemoveLineWhenBlank="true" uuid="7b974808-7254-459b-a6fc-9bb5f0e13644">
+				<reportElement x="37" y="280" width="45" height="27" isRemoveLineWhenBlank="true" uuid="7b974808-7254-459b-a6fc-9bb5f0e13644">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{ownerInfo}.getOwnershipType().equals("Vacant Land")]]></printWhenExpression>
@@ -445,7 +445,7 @@
 				<textFieldExpression><![CDATA[$P{ownerInfo}.getSurveyNumber()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="37" y="275" width="45" height="20" isRemoveLineWhenBlank="true" uuid="877deb67-7c00-468c-8220-7ad9f5fedadc">
+				<reportElement x="37" y="260" width="45" height="20" isRemoveLineWhenBlank="true" uuid="877deb67-7c00-468c-8220-7ad9f5fedadc">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{ownerInfo}.getOwnershipType().equals("Vacant Land")]]></printWhenExpression>
@@ -463,7 +463,7 @@
 				<text><![CDATA[Survey Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="82" y="275" width="55" height="20" isRemoveLineWhenBlank="true" uuid="e3eaa571-ff51-4db9-ab8e-bf19cc1adad7">
+				<reportElement x="82" y="260" width="55" height="20" isRemoveLineWhenBlank="true" uuid="e3eaa571-ff51-4db9-ab8e-bf19cc1adad7">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{ownerInfo}.getOwnershipType().equals("Vacant Land")]]></printWhenExpression>
 				</reportElement>
@@ -480,7 +480,7 @@
 				<text><![CDATA[Extent of Site(sq.mt)]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="82" y="295" width="55" height="27" isRemoveLineWhenBlank="true" uuid="433e6de5-db64-487b-9215-a43e8c3c84ed">
+				<reportElement x="82" y="280" width="55" height="27" isRemoveLineWhenBlank="true" uuid="433e6de5-db64-487b-9215-a43e8c3c84ed">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{ownerInfo}.getOwnershipType().equals("Vacant Land")]]></printWhenExpression>
 				</reportElement>
@@ -498,7 +498,7 @@
 				<textFieldExpression><![CDATA[$P{ownerInfo}.getExtentOfSite().setScale(2,BigDecimal.ROUND_HALF_DOWN)]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="137" y="295" width="94" height="12" isRemoveLineWhenBlank="true" uuid="62f8302c-915d-4422-916b-d31f0ca356f1">
+				<reportElement x="137" y="280" width="94" height="12" isRemoveLineWhenBlank="true" uuid="62f8302c-915d-4422-916b-d31f0ca356f1">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{ownerInfo}.getOwnershipType().equals("Vacant Land")]]></printWhenExpression>
@@ -516,7 +516,7 @@
 				<text><![CDATA[East]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="137" y="307" width="94" height="15" isRemoveLineWhenBlank="true" uuid="7d4ad691-00c5-4b7a-ab5a-7374e96a9a0d">
+				<reportElement x="137" y="292" width="94" height="15" isRemoveLineWhenBlank="true" uuid="7d4ad691-00c5-4b7a-ab5a-7374e96a9a0d">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{ownerInfo}.getOwnershipType().equals("Vacant Land")]]></printWhenExpression>
 				</reportElement>
@@ -533,7 +533,7 @@
 				<textFieldExpression><![CDATA[$P{ownerInfo}.getEastBoundary()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="231" y="307" width="94" height="15" isRemoveLineWhenBlank="true" uuid="de900dee-67f3-43ef-b2fc-599b26e83dc0">
+				<reportElement x="231" y="292" width="94" height="15" isRemoveLineWhenBlank="true" uuid="de900dee-67f3-43ef-b2fc-599b26e83dc0">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{ownerInfo}.getOwnershipType().equals("Vacant Land")]]></printWhenExpression>
 				</reportElement>
@@ -550,7 +550,7 @@
 				<textFieldExpression><![CDATA[$P{ownerInfo}.getWestBoundary()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="231" y="295" width="94" height="12" isRemoveLineWhenBlank="true" uuid="5b3c5302-0878-470d-b066-5301291e989d">
+				<reportElement x="231" y="280" width="94" height="12" isRemoveLineWhenBlank="true" uuid="5b3c5302-0878-470d-b066-5301291e989d">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{ownerInfo}.getOwnershipType().equals("Vacant Land")]]></printWhenExpression>
@@ -568,7 +568,7 @@
 				<text><![CDATA[West]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="325" y="295" width="94" height="12" isRemoveLineWhenBlank="true" uuid="357fe664-81f4-4468-b650-b7f7af071a53">
+				<reportElement x="325" y="280" width="94" height="12" isRemoveLineWhenBlank="true" uuid="357fe664-81f4-4468-b650-b7f7af071a53">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{ownerInfo}.getOwnershipType().equals("Vacant Land")]]></printWhenExpression>
 				</reportElement>
@@ -585,7 +585,7 @@
 				<text><![CDATA[North]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="325" y="307" width="94" height="15" isRemoveLineWhenBlank="true" uuid="2bbf26bd-2139-431a-9874-4f8d93acd463">
+				<reportElement x="325" y="292" width="94" height="15" isRemoveLineWhenBlank="true" uuid="2bbf26bd-2139-431a-9874-4f8d93acd463">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{ownerInfo}.getOwnershipType().equals("Vacant Land")]]></printWhenExpression>
 				</reportElement>
@@ -602,7 +602,7 @@
 				<textFieldExpression><![CDATA[$P{ownerInfo}.getNorthBoundary()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="419" y="295" width="94" height="12" isRemoveLineWhenBlank="true" uuid="7b176d21-b034-482a-8554-8561a9789d23">
+				<reportElement x="419" y="280" width="94" height="12" isRemoveLineWhenBlank="true" uuid="7b176d21-b034-482a-8554-8561a9789d23">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{ownerInfo}.getOwnershipType().equals("Vacant Land")]]></printWhenExpression>
 				</reportElement>
@@ -619,7 +619,7 @@
 				<text><![CDATA[South]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="419" y="307" width="94" height="15" isRemoveLineWhenBlank="true" uuid="855e97f0-c258-4a16-8a66-e96939197c2a">
+				<reportElement x="419" y="292" width="94" height="15" isRemoveLineWhenBlank="true" uuid="855e97f0-c258-4a16-8a66-e96939197c2a">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{ownerInfo}.getOwnershipType().equals("Vacant Land")]]></printWhenExpression>
 				</reportElement>
@@ -636,7 +636,7 @@
 				<textFieldExpression><![CDATA[$P{ownerInfo}.getSouthBoundary()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="137" y="275" width="376" height="20" isRemoveLineWhenBlank="true" uuid="22b7797a-efe8-41f3-b03f-e7b8df081c27">
+				<reportElement x="137" y="260" width="376" height="20" isRemoveLineWhenBlank="true" uuid="22b7797a-efe8-41f3-b03f-e7b8df081c27">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{ownerInfo}.getOwnershipType().equals("Vacant Land")]]></printWhenExpression>
@@ -654,7 +654,7 @@
 				<text><![CDATA[Boundaries]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="37" y="260" width="118" height="12" isRemoveLineWhenBlank="true" uuid="064d7e04-51b8-4cec-aa7d-d828c46619c1">
+				<reportElement x="37" y="245" width="118" height="12" isRemoveLineWhenBlank="true" uuid="064d7e04-51b8-4cec-aa7d-d828c46619c1">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{ownerInfo}.getOwnershipType().equalsIgnoreCase("Vacant Land")]]></printWhenExpression>
 				</reportElement>

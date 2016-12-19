@@ -131,6 +131,16 @@
     	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyRemission-form.jsp"/>
     </definition>
     
+    <definition name="vacancy-remission-spcl-notice" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.vacancyremission" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancy-remission-spcl-notice.jsp"/>
+    </definition>
+    
+    <definition name="vacancyremission-dig-sign" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.vacancyremission" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyremission-dig-sign.jsp"/>
+    </definition>
+    
     <definition name="vacancyRemission-edit" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.vacancyremission" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyRemission-edit.jsp"/>
@@ -365,6 +375,15 @@
     <definition name="esdnotice-form" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.title.esd.notice" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/reports/esdnotice-form.jsp"/>
-    </definition> 
+    </definition>
+	<definition name="tax-exemption-reason" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.hdr.taxExemption" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/masters/exemptionreason/tax-exemption-reason-view.jsp" />
+	</definition>
+	
+	<definition name="structureclassification-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.structureclassification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/structures/structureclassification-view.jsp"/>
+    </definition>
     
 </tiles-definitions> 

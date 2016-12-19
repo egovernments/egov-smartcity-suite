@@ -177,7 +177,7 @@ public class CFinancialYearController {
     @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
     public String search(@PathVariable("mode") final String mode, final Model model) {
         final CFinancialYear cFinancialYear = new CFinancialYear();
-        model.addAttribute("financialYears", cFinancialYearRepository.findAll());
+        model.addAttribute("financialYears", cFinancialYearService.findAll());
         prepareNewForm(model);
         model.addAttribute("CFinancialYear", cFinancialYear);
         return CFINANCIALYEAR_SEARCH;

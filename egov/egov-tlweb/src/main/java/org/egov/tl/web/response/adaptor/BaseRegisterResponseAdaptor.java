@@ -70,6 +70,9 @@ public class BaseRegisterResponseAdaptor implements JsonSerializer<BaseRegisterF
         baseRegisterResponse.addProperty("arrearpenaltyfee", baseRegisterForm.getArrearpenaltyfee());
         baseRegisterResponse.addProperty("curlicfee", baseRegisterForm.getCurlicensefee());
         baseRegisterResponse.addProperty("curpenaltyfee", baseRegisterForm.getCurpenaltyfee());
+        baseRegisterResponse.addProperty("unitofmeasure", baseRegisterForm.getUnitofmeasure());
+        baseRegisterResponse.addProperty("tradearea", baseRegisterForm.getTradewt());
+        baseRegisterResponse.addProperty("rate", baseRegisterForm.getRateval());
         return baseRegisterResponse;
     }
 }

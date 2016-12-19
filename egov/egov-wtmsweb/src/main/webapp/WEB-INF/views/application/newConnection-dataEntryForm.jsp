@@ -75,9 +75,9 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.consumerno" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="connection.consumerCode" id="consumerCodeData"
+							<form:input path="connection.oldConsumerNumber" id="consumerCodeData"
 								class="form-control text-left patternvalidation" data-pattern="number" maxlength="15" required="required" />
-								<form:errors path="connection.consumerCode" cssClass="add-margin error-msg" />	
+								<form:errors path="connection.oldConsumerNumber" cssClass="add-margin error-msg" />	
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.connectiondate" /><span class="mandatory"></span></label>

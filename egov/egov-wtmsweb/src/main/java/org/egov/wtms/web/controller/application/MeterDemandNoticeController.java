@@ -100,8 +100,7 @@ public class MeterDemandNoticeController {
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
     private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
+  
     String errorMessage = "";
 
     @Autowired
@@ -125,6 +124,8 @@ public class MeterDemandNoticeController {
 
     private ResponseEntity<byte[]> generateReport(final WaterConnectionDetails waterConnectionDetails,
             final HttpSession session) {
+         ReportRequest reportInput = null ;
+         ReportOutput reportOutput ;
         if (waterConnectionDetails != null) {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
@@ -192,14 +193,12 @@ public class MeterDemandNoticeController {
             final SimpleDateFormat formatter, final AssessmentDetails assessmentDetails, final String ownerName,
             final EgBill billObj, final MeterReadingConnectionDetails meterReadingpriviousObj, final String monthName,
             final String yearName) {
-        if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+        if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+                ||WaterTaxConstants.ADDNLCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType()
+                        .getCode()))
             reportParams.put("applicationType",
-                    WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()).toString());
-        else if (WaterTaxConstants.ADDNLCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType()
-                .getCode()))
-            reportParams.put("applicationType",
-                    WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()).toString());
-        
+                    WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()));
+      
         reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
         reportParams.put("district", session.getAttribute("districtName"));
         reportParams.put("waterCharges", waterConnectionDetails.getConnectionType().name());
@@ -234,7 +233,7 @@ public class MeterDemandNoticeController {
   
 
     public BigDecimal getTotalDue(final WaterConnectionDetails waterConnectionDetails,Date givenDate) {
-        BigDecimal balance = BigDecimal.ZERO;
+        BigDecimal balance;
         balance = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
         final BigDecimal demnadDetCurrentamount = getCurrentMonthDemandAmount(waterConnectionDetails, givenDate);
         balance = balance.subtract(demnadDetCurrentamount);
@@ -249,7 +248,7 @@ public class MeterDemandNoticeController {
                 WaterTaxConstants.WATERTAXREASONCODE, installment);
         final List<EgDemandDetails> demnadDetList = demandGenericDao.getDemandDetailsForDemandAndReasons(
         		waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand(), Arrays.asList(demandReasonObj));
-        if(demnadDetList.size() > 0){
+        if(!demnadDetList.isEmpty()){
         final int detLength = demnadDetList.size() - 1;
         if (demnadDetList.get(detLength - detLength).getAmount() != null)
             currentAmount = demnadDetList.get(detLength).getAmount();
@@ -258,7 +257,8 @@ public class MeterDemandNoticeController {
     }
 
     @RequestMapping(value = "/meterdemandnotice/view/{applicationNumber}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> viewEstimationNotice(@PathVariable final String applicationNumber,
+    @ResponseBody
+    public ResponseEntity<byte[]> viewEstimationNotice(@PathVariable final String applicationNumber,
             final HttpSession session) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(applicationNumber);

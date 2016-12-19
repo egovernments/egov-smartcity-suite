@@ -86,9 +86,9 @@ public class LegalCaseInterimOrderService {
     public LegalCaseInterimOrder persist(final LegalCaseInterimOrder legalCaseInterimOrder, final MultipartFile[] files)
             throws IOException {
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
-                LcmsConstants.LEGALCASE_STATUS_IN_PROGRESS);
-        updateNextDate(legalCaseInterimOrder, legalCaseInterimOrder.getLegalCase());
+                LcmsConstants.INTERIMSTAY_STATUS);
         legalCaseInterimOrder.getLegalCase().setStatus(statusObj);
+        updateNextDate(legalCaseInterimOrder, legalCaseInterimOrder.getLegalCase());
         final LegalCaseInterimOrder savedlcInterimOrder = legalCaseInterimOrderRepository.save(legalCaseInterimOrder);
         final List<LcInterimOrderDocuments> documentDetails = getDocumentDetails(savedlcInterimOrder, files);
         if (!documentDetails.isEmpty()) {
