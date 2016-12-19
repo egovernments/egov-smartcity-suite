@@ -150,7 +150,7 @@
     	   jQuery.ajax({
 				type: "GET",
 				url: "/egi/aadhaar/"+aadharNo,
-				cache: true,
+				cache: true
 			}).done(function(value) {
 				console.log('response received!')
 				var userInfoObj = jQuery.parseJSON(value);
@@ -199,7 +199,7 @@
 				url: "/ptis/public/common/ajaxCommon-getUserByMobileNo.action",
 				cache: true,
 				dataType: "json",
-				data:{"mobileNumber" : mobileNo},
+				data:{"mobileNumber" : mobileNo}
 			}).done(function(response) {
 				if(response.exists) {
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.name']").val(response.name);

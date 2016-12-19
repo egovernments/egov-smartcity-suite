@@ -48,13 +48,11 @@
         <title>eGov  - <decorator:title/> </title>
 
 		<link href="<cdn:url value='/resources/css/propertytax.css?${app_release_no}'/>" rel="stylesheet" type="text/css" />
-		<link href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css?rnd=${app_release_no}' context='/egi'/>" rel="stylesheet" type="text/css" />
 		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css?rnd=${app_release_no}' context='/egi'/>">
-		
 		<link rel="stylesheet" type="text/css" href="<cdn:url value='/resources/yui2.8/fonts/fonts-min.css?rnd=${app_release_no}'/>"/>
 		<link rel="stylesheet" type="text/css" href="<cdn:url value='/resources/yui2.8/assets/skins/sam/datatable.css?rnd=${app_release_no}'/>"/>
-        <link href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>"
-              rel="stylesheet" type="text/css"/>
+		<link href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css?rnd=${app_release_no}' context='/egi'/>" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" type="text/css" href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>"/>
 
 		<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/jquery.js?rnd=${app_release_no}' context='/egi'/>"> </script>
 		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/yuiloader/yuiloader-min.js?rnd=${app_release_no}'/>"></script>
@@ -82,6 +80,13 @@
 	    <script type="text/javascript" src="<cdn:url value='/resources/javascript/jquery/ajax-script.js?${app_release_no}'/>"></script>
 	    <script type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js?rnd=${app_release_no}' context='/egi'/>"></script>
 	    <script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
+    	
+    	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+			<script src="<cdn:url  value='/resources/global/js/ie8/html5shiv.min.js'/>"></script>
+			<script src="<cdn:url  value='/resources/global/js/ie8/respond.min.js'/>"></script>
+		<![endif]-->
+    	
     	<decorator:head/>
     </head>
     

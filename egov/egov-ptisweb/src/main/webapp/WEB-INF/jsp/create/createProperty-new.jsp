@@ -47,10 +47,6 @@
 <title><s:if test="mode=='create' || mode=='edit'">
 		<s:text name='NewProp.title' />
 	</s:if></title>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css?rnd=${app_release_no}' context='/egi'/>">
-<script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js?rnd=${app_release_no}' context='/egi'/>"
-	type="text/javascript"></script>
 <link
 	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css?rnd=${app_release_no}' context='/egi'/>"
 	rel="stylesheet" type="text/css" />
