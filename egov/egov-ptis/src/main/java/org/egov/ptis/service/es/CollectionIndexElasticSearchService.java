@@ -218,7 +218,14 @@ public class CollectionIndexElasticSearchService {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_GRADE, collectionDetailsRequest.getUlbGrade()));
         if (StringUtils.isNotBlank(collectionDetailsRequest.getUlbCode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_CODE, collectionDetailsRequest.getUlbCode()));
-
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getPropertyType())){
+            if (DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT.equalsIgnoreCase(collectionDetailsRequest.getPropertyType()))
+                boolQuery = boolQuery
+                        .filter(QueryBuilders.termsQuery("consumerType", DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST));
+            else
+                boolQuery = boolQuery
+                        .filter(QueryBuilders.matchQuery("consumerType", collectionDetailsRequest.getPropertyType()));
+        }
         return boolQuery;
     }
 
@@ -391,16 +398,8 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(new Date(), 1);
         }
         int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
-        Map<String, BigDecimal> cytdCollMap;
-        /**
-         * For current year's till date collection, if property type is given, fetch the sum of totalCollection from the Property
-         * Tax index, else sum of totalAmount from Collection index
-         */
-        if (StringUtils.isNotBlank(collectionDetailsRequest.getPropertyType()))
-            cytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate, toDate,
-                    PROPERTY_TAX_INDEX_NAME, "totalCollection", aggregationField);
-        else
-            cytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate, toDate,
+        
+        Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate, toDate,
                     COLLECTION_INDEX_NAME, TOTAL_AMOUNT, aggregationField);
         // For total demand
         Map<String, BigDecimal> totalDemandMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
@@ -502,17 +501,6 @@ public class CollectionIndexElasticSearchService {
         else
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("isActive", true))
                     .filter(QueryBuilders.matchQuery("isExempted", false));
-
-        // If property type is given, then apply the property type condition only to Property Tax index
-        if (indexName.equals(PROPERTY_TAX_INDEX_NAME)
-                && StringUtils.isNotBlank(collectionDetailsRequest.getPropertyType())) {
-            if (collectionDetailsRequest.getPropertyType().equalsIgnoreCase(DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT))
-                boolQuery = boolQuery
-                        .filter(QueryBuilders.termsQuery("propertyType", DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST));
-            else
-                boolQuery = boolQuery
-                        .filter(QueryBuilders.matchQuery("propertyType", collectionDetailsRequest.getPropertyType()));
-        }
 
         AggregationBuilder aggregation = AggregationBuilders.terms(BY_CITY).field(aggregationField).size(120)
                 .subAggregation(AggregationBuilders.sum("total").field(fieldName));

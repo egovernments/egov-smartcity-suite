@@ -94,6 +94,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 
@@ -316,7 +317,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     @Autowired
     private ReportViewerUtil reportViewerUtil;
     @Autowired
-    private APTaxCalculator taxCalculator;  
+    private APTaxCalculator taxCalculator;
 
     public ModifyPropertyAction() {
         super();
@@ -359,10 +360,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 + ", PropUsageId: " + getPropUsageId() + ", PropOccId: " + getPropOccId());
         LOGGER.debug("Exiting from modifyForm");
         if ((StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
-                StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) || 
-                    StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)) && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn)) {
+                StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) ||
+                StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
+                && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn))
             showTaxCalcBtn = Boolean.TRUE;
-        }
         return target;
     }
 
@@ -517,10 +518,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             LOGGER.debug("view: PropertyModel by model id: " + propertyModel);
         }
         if ((StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
-                StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) || 
-                    StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)) && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn)) {
+                StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) ||
+                StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
+                && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn))
             showTaxCalcBtn = Boolean.TRUE;
-        }
         final String currWfState = propertyModel.getState().getValue();
         populateFormData(Boolean.TRUE);
         corrsAddress = PropertyTaxUtil.getOwnerAddress(propertyModel.getBasicProperty().getPropertyOwnerInfo());
@@ -589,10 +590,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         setOldPropertyTypeCode(basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode());
         validate();
         if (hasErrors() && (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
-                StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) || 
-                    StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)) && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn)) {
+                StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) ||
+                StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
+                && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn))
             showTaxCalcBtn = Boolean.TRUE;
-        }
         final long startTimeMillis = System.currentTimeMillis();
         isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
 
@@ -840,11 +841,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         propService.updateIndexes(propertyModel, getApplicationType());
         propertyImplService.update(propertyModel);
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
-        String username = "";
-        if (propService.isEmployee(propertyModel.getCreatedBy()))
-            username = getInitiator();
-        else
-            username = propertyTaxUtil.getApproverUserName(propertyModel.getStateHistory().get(0).getOwnerPosition().getId());
+        final String username = getInitiator();
         final Assignment wfInitiator = propService.getWorkflowInitiator(propertyModel);
         if (wfInitiator.getEmployee().getUsername().equals(securityUtils.getCurrentUser().getUsername())) {
             wfInitiatorRejected = Boolean.TRUE;
@@ -1444,20 +1441,20 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return PRINT_ACK;
     }
-    
+
     @SkipValidation
-    @Action(value="/modifyProperty-calculateTax")
+    @Action(value = "/modifyProperty-calculateTax")
     public void calculateTax() {
         LOGGER.debug("entering calculateTax()");
         setOldPropertyTypeCode(basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode());
         validate();
-        if (hasErrors()) {
+        if (hasErrors())
             try {
                 ServletActionContext.getResponse().getWriter().write(getText("enter.mandatory.fields"));
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 LOGGER.error("calculateTax() : User has not entered all the mandatory fields", e);
             }
-        } else {
+        else {
             if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
                 final Area area = new Area();
                 area.setArea(new Float(areaOfPlot));
@@ -1493,15 +1490,15 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             HashMap<Installment, TaxCalculationInfo> instTaxMap = new HashMap<Installment, TaxCalculationInfo>();
             try {
                 instTaxMap = taxCalculator.calculatePropertyTax(propertyModel, propCompletionDate);
-            } catch (TaxCalculatorExeption e) {
+            } catch (final TaxCalculatorExeption e) {
                 LOGGER.error("calculateTax() : There are no Unit rates defined for chosen combinations", e);
             }
-            String resultString = propertyTaxCommonUtils.getCurrentHalfyearTax(instTaxMap, propTypeMstr);
-            String jsonsString = new GsonBuilder().create().toJson(resultString);
+            final String resultString = propertyTaxCommonUtils.getCurrentHalfyearTax(instTaxMap, propTypeMstr);
+            final String jsonsString = new GsonBuilder().create().toJson(resultString);
             ServletActionContext.getResponse().setContentType("application/json");
             try {
                 ServletActionContext.getResponse().getWriter().write(jsonsString);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 LOGGER.error("calculateTax() : Error while writing response", e);
             }
         }
@@ -2178,7 +2175,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     @Override
     public String getCurrentDesignation() {
-        if (propWF != null && !propWF.getCurrentState().getValue().endsWith(STATUS_REJECTED))
+        if (propWF != null && !(propWF.getCurrentState().getValue().endsWith(STATUS_REJECTED) ||
+                propWF.getCurrentState().getValue().endsWith(WFLOW_ACTION_NEW)))
             return propService.getDesignationForPositionAndUser(propWF.getCurrentState().getOwnerPosition().getId(),
                     securityUtils.getCurrentUser().getId());
         else if (propertyModel.getId() != null && !propertyModel.getCurrentState().getValue().endsWith(STATUS_REJECTED))
@@ -2192,7 +2190,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         return showTaxCalcBtn;
     }
 
-    public void setShowTaxCalcBtn(Boolean showTaxCalcBtn) {
+    public void setShowTaxCalcBtn(final Boolean showTaxCalcBtn) {
         this.showTaxCalcBtn = showTaxCalcBtn;
     }
 }

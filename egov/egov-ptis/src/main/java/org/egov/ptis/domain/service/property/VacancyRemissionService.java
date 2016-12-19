@@ -246,9 +246,9 @@ public class VacancyRemissionService {
         } else
             currentState = null;
 
-        if (vacancyRemission.getId() != null
-                && (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT) || workFlowAction
-                        .equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)))
+        if (vacancyRemission.getId() != null && (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)
+                || workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)
+                || workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_FORWARD)))
             wfInitiator = getWorkflowInitiator(vacancyRemission);
         else
             wfInitiator = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(user.getId());
@@ -298,7 +298,7 @@ public class VacancyRemissionService {
                         vacancyRemission.getBasicProperty().setUnderWorkflow(false);
                     }
                     else
-                        vacancyRemission.transition(false).withSenderName(user.getUsername() + "::" + user.getName())
+                        vacancyRemission.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                                 .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                                 .withDateInfo(currentDate.toDate()).withOwner(pos)
                                 .withNextAction(wfmatrix.getNextAction());

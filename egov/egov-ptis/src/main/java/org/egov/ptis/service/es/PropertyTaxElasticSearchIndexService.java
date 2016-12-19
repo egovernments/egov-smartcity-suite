@@ -222,12 +222,12 @@ public class PropertyTaxElasticSearchIndexService {
                 .filter(QueryBuilders.matchQuery(IS_ACTIVE, true))
                 .filter(QueryBuilders.matchQuery(IS_EXEMPTED, false));
         if (StringUtils.isNotBlank(collectionDetailsRequest.getPropertyType())) {
-            if (collectionDetailsRequest.getPropertyType().equalsIgnoreCase(DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT))
+            if (DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT.equalsIgnoreCase(collectionDetailsRequest.getPropertyType()))
                 boolQuery = boolQuery
-                        .filter(QueryBuilders.termsQuery("propertyType", DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST));
+                        .filter(QueryBuilders.termsQuery("consumerType", DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST));
             else
                 boolQuery = boolQuery
-                        .filter(QueryBuilders.matchQuery("propertyType", collectionDetailsRequest.getPropertyType()));
+                        .filter(QueryBuilders.matchQuery("consumerType", collectionDetailsRequest.getPropertyType()));
         }
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(PROPERTY_TAX_INDEX_NAME)
                 .withQuery(boolQuery).addAggregation(AggregationBuilders.sum(TOTALDEMAND).field(TOTAL_DEMAND))
@@ -506,7 +506,7 @@ public class PropertyTaxElasticSearchIndexService {
         for (PropertyTaxIndex property : propertyTaxRecords) {
             taxDefaulter = new TaxDefaulters();
             taxDefaulter.setOwnerName(property.getConsumerName());
-            taxDefaulter.setPropertyType(property.getPropertyType());
+            taxDefaulter.setPropertyType(property.getConsumerType());
             taxDefaulter.setUlbName(property.getCityName());
             taxDefaulter.setBalance(BigDecimal.valueOf(property.getTotalBalance()));
             taxDefaulter.setPeriod(StringUtils.isBlank(property.getDuePeriod()) ? StringUtils.EMPTY : property.getDuePeriod());

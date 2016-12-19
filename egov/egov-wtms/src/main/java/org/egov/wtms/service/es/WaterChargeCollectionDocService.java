@@ -1457,9 +1457,9 @@ public class WaterChargeCollectionDocService {
 
         receiptData.setResidentialConnectionCount(entry.getValue());
         receiptData.setUlbName(name);
-        receiptData.setResidentialtotalCollection(connectionResidentialTotalCollectionMap.get(name));
+        receiptData.setResidentialtotalCollection(!connectionResidentialTotalCollectionMap.isEmpty() && connectionResidentialTotalCollectionMap.get(name)!=null ?connectionResidentialTotalCollectionMap.get(name):BigDecimal.ZERO);
         receiptData.setCommercialConnectionCount(connectionCommercialcountMap.get(name));
-        receiptData.setComercialtotalCollection(connectionCOmmercialTotalCollectionMap.get(name));
+        receiptData.setComercialtotalCollection(!connectionCOmmercialTotalCollectionMap.isEmpty() && connectionCOmmercialTotalCollectionMap.get(name)!=null?connectionCOmmercialTotalCollectionMap.get(name):BigDecimal.ZERO);
 
         waterchargeConndemandList.add(receiptData);
     }
