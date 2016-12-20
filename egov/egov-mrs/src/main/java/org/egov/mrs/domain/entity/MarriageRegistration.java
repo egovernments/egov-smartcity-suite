@@ -45,6 +45,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -235,6 +236,7 @@ public class MarriageRegistration extends StateAware {
     private FileStoreMapper marriagePhotoFileStore;
 
     @NotNull
+    @Column(name = "serialno", unique = true)
     private String serialNo;
     @NotNull
     private String pageNo;

@@ -57,6 +57,8 @@ public interface MarriageRegistrationRepository extends JpaRepository<MarriageRe
     
     //List<Registration> findByRegistrationNoAndDateOfMarriageAndHusbandNameFirstName();
     
-    List<MarriageRegistration> findByCreatedDateAfterAndCreatedDateBeforeAndStatus(Date fromDate, Date toDate, EgwStatus status);   
+    List<MarriageRegistration> findByCreatedDateAfterAndCreatedDateBeforeAndStatus(Date fromDate, Date toDate, EgwStatus status);
+    
+    MarriageRegistration findBySerialNo(String serialNo);
     
 }

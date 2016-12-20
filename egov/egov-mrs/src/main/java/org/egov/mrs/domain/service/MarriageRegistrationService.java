@@ -621,5 +621,8 @@ public class MarriageRegistrationService {
         return criteria.list();
 
     }
-
+    
+    public MarriageRegistration findBySerialNo(final String serialNo) {
+        return registrationRepository.findBySerialNo(serialNo);
+    }
 }

@@ -127,6 +127,9 @@ $(document).ready( function () {
 		validateRegistrationNumber();
 	});
 	
+	$('#txt-serialNo').blur(function(){
+		validateSerialNumber();
+	});
 
 	
 	function validateApplicationNumber(){
@@ -154,7 +157,29 @@ $(document).ready( function () {
 		}	
 	}
 	
-	
+	function validateSerialNumber(){
+		var serialNo=$('#txt-serialNo').val();
+		if(serialNo != '') {
+			$.ajax({
+				url: "/mrs/registration/checkunique-serialno",      
+				type: "GET",
+				data: {
+					"serialNo"  : serialNo
+				},
+				dataType: "json",
+				success: function (response) { 
+					if(response != true) {
+							bootbox.alert("Entered Serial Number already exists. Please Enter Unique Number.");
+							$('#txt-serialNo').val('');
+					}
+				}, 
+				error: function (response) {
+					$('#txt-serialNo').val('');
+					bootbox.alert("connection validation failed");
+				}
+			});
+		}	
+	}
 	
 	function validateRegistrationNumber(){
 		regNo=$('#registrationNum').val();

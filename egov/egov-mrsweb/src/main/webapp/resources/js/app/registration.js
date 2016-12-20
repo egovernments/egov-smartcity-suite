@@ -262,7 +262,7 @@ $(".btn-primary").click(function(e) {
 		 } else {
 		     return false;
 		 }
-	} 
+	}
 	
 	 if(action == 'Print Certificate') { 
 		 if($('form').valid()){
@@ -271,6 +271,32 @@ $(".btn-primary").click(function(e) {
 				e.preventDefault();
 			}
 	 }
-	 
-	//validateWorkFlowApprover(action);  
 });
+
+$('#txt-serialNo').blur(function(){
+	validateSerialNumber();
+});
+
+function validateSerialNumber(){
+	var serialNo=$('#txt-serialNo').val();
+	if(serialNo != '') {
+		$.ajax({
+			url: "/mrs/registration/checkunique-serialno",      
+			type: "GET",
+			data: {
+				"serialNo"  : serialNo
+			},
+			dataType: "json",
+			success: function (response) { 
+				if(response != true) {
+						bootbox.alert("Entered Serial Number already exists. Please Enter Unique Number.");
+						$('#txt-serialNo').val('');
+				}
+			}, 
+			error: function (response) {
+				$('#txt-serialNo').val('');
+				bootbox.alert("connection validation failed");
+			}
+		});
+	}	
+}
