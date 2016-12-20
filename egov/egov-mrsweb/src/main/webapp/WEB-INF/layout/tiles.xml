@@ -411,4 +411,10 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/religion-wise-statutory-report.jsp" />
 	</definition>
+		<definition name="handicapped-marriage-report" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.handicapped.report.title"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/reports/handicapped-marriage-report.jsp" />
+	</definition>
 </tiles-definitions>

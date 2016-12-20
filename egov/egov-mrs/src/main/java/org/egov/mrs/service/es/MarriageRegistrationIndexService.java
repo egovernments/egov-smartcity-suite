@@ -41,7 +41,9 @@ package org.egov.mrs.service.es;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -50,7 +52,14 @@ import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.MarriageWitness;
 import org.egov.mrs.entity.es.MarriageRegistrationIndex;
 import org.egov.mrs.repository.es.MarriageRegistrationIndexRepository;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +70,10 @@ public class MarriageRegistrationIndexService {
     private MarriageRegistrationIndexRepository marriageRegistrationIndexRepository;
     @Autowired
     private CityService cityService;
+    
+    @Autowired
+    private ElasticsearchTemplate elasticsearchTemplate;
+
 
     public MarriageRegistrationIndex createMarriageIndex(final MarriageRegistration registration,
             final String applicationType) {
@@ -233,5 +246,28 @@ public class MarriageRegistrationIndexService {
         marriageRegistrationIndexRepository.save(registrationSearch);
         return registrationSearch;
     }
+     
+    public BoolQueryBuilder getQueryFilterForHandicap(final String applicantType, final String ulbName) {
+        BoolQueryBuilder boolQuery = null;
+        if (StringUtils.isNotBlank(ulbName) && null!=ulbName)
+            boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("ulbName", ulbName));
+        if (StringUtils.isNotBlank(applicantType) && null!=applicantType){
+            if(applicantType.equalsIgnoreCase("Husband"))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("husbandHandicapped", true));
+            else if(applicantType.equalsIgnoreCase("Wife"))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("wifeHandicapped", true));
+            else
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("husbandHandicapped", true)).
+                filter(QueryBuilders.matchQuery("wifeHandicapped", true));
+        }
+        return boolQuery;
+    }
 
+    public List<MarriageRegistrationIndex> getHandicapSearchResultByBoolQuery(final BoolQueryBuilder boolQuery) {
+        List<MarriageRegistrationIndex> resultList;
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("marriageregistration").withQuery(boolQuery)
+                .withSort(new FieldSortBuilder("consumerNumber").order(SortOrder.DESC)).build();
+        resultList = elasticsearchTemplate.queryForList(searchQuery, MarriageRegistrationIndex.class);
+        return resultList;
+    }   
 }
