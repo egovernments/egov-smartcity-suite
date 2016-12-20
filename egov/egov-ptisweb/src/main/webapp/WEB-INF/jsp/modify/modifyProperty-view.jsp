@@ -356,7 +356,8 @@
 						<tr>					
 					</s:if> 
 					<s:if test="%{(currentDesignation != null && !@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(currentDesignation.toUpperCase())) ||
-					   model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REJECTED)}">
+					   model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REJECTED) ||
+					   model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NEW)}">
 						<tr>
 							 <%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 						</tr>

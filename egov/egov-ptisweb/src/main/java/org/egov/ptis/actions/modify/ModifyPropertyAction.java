@@ -666,7 +666,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             meesevaParams.put("ADMISSIONFEE", "0");
             meesevaParams.put("APPLICATIONNUMBER", propertyModel.getMeesevaApplicationNumber());
             basicProp.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
-            basicProp.getProperty().setApplicationNo(propertyModel.getMeesevaApplicationNumber());
+           // basicProp.getProperty().setApplicationNo(propertyModel.getMeesevaApplicationNumber());
             basicPropertyService.updateBasicProperty(basicProp, meesevaParams);
         }
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
@@ -2179,7 +2179,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 propWF.getCurrentState().getValue().endsWith(WFLOW_ACTION_NEW)))
             return propService.getDesignationForPositionAndUser(propWF.getCurrentState().getOwnerPosition().getId(),
                     securityUtils.getCurrentUser().getId());
-        else if (propertyModel.getId() != null && !propertyModel.getCurrentState().getValue().endsWith(STATUS_REJECTED))
+        else if (propertyModel.getId() != null && !(propertyModel.getCurrentState().getValue().endsWith(STATUS_REJECTED) ||
+                propertyModel.getCurrentState().getValue().endsWith(WFLOW_ACTION_NEW)))
             return propService.getDesignationForPositionAndUser(propertyModel.getCurrentState().getOwnerPosition().getId(),
                     securityUtils.getCurrentUser().getId());
         else
