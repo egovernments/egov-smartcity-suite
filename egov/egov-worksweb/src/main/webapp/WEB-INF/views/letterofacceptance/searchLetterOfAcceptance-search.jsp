@@ -158,4 +158,4 @@
 </div>
 
 <script type="text/javascript"
-	src="<cdn:url value='/resources/js/searchletterofacceptance.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/searchletterofacceptance.js'/>"></script>
