@@ -77,6 +77,10 @@ import org.springframework.data.elasticsearch.core.query.SearchQuery;
 
 public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomRepository {
 
+    private static final String RE_OPENED = "reOpened";
+
+    private static final String RE_OPENED_COMPLAINT_COUNT = "reOpenedComplaintCount";
+
     private static final DateTimeFormatter formatter = DateTimeFormat.forPattern(PGR_INDEX_DATE_FORMAT);
 
     @Autowired
@@ -181,7 +185,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
         return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                 .setQuery(query).setSize(0)
                 .addAggregation(getCountWithGrouping("groupByField", grouByField, 120)
-                        .subAggregation(getCountWithGrouping("closedComplaintCount", "ifClosed", 2)))
+                        .subAggregation(getCountWithGrouping("closedComplaintCount", "ifClosed", 2))
+                        .subAggregation(getCountWithGrouping(RE_OPENED_COMPLAINT_COUNT, RE_OPENED, 2)))
                 .execute().actionGet();
     }
 
@@ -245,7 +250,9 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                                                                 .addField("departmentName").setSize(1))
                                                                 .subAggregation(
                                                                         getCountWithGrouping("closedComplaintCount", "ifClosed",
-                                                                                2)))))
+                                                                                2))
+                                                                .subAggregation(getCountWithGrouping(RE_OPENED_COMPLAINT_COUNT,
+                                                                        RE_OPENED, 2)))))
                 .execute().actionGet();
 
     }
@@ -260,7 +267,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                 .addAggregation(AggregationBuilders.terms("ulbwise").field(CITY_CODE).size(size)
                         .subAggregation(AggregationBuilders.topHits("complaintrecord").addField(CITY_CODE)
                                 .addField(DISTRICT_NAME).addField(CITY_NAME).setSize(1))
-                        .subAggregation(getCountWithGrouping("complaintCount", "ifClosed", 2)))
+                        .subAggregation(getCountWithGrouping("complaintCount", "ifClosed", 2))
+                        .subAggregation(getCountWithGrouping(RE_OPENED_COMPLAINT_COUNT, RE_OPENED, 2)))
                 .execute().actionGet();
     }
 
@@ -276,7 +284,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                         .subAggregation(AggregationBuilders.terms("wardwise").field(WARD_NUMBER).size(size)
                                 .subAggregation(AggregationBuilders.topHits("complaintrecord").addField(CITY_CODE)
                                         .addField(DISTRICT_NAME).addField(CITY_NAME).addField(WARD_NAME).setSize(1))
-                                .subAggregation(getCountWithGrouping("complaintCount", "ifClosed", 2))))
+                                .subAggregation(getCountWithGrouping("complaintCount", "ifClosed", 2))
+                                .subAggregation(getCountWithGrouping(RE_OPENED_COMPLAINT_COUNT, RE_OPENED, 2))))
                 .execute().actionGet();
     }
 
@@ -294,7 +303,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                         .subAggregation(AggregationBuilders.topHits("complaintrecord").addField(CITY_CODE)
                                                 .addField("cityDistrictName").addField(CITY_NAME)
                                                 .addField(WARD_NAME).addField("localityName").setSize(1))
-                                        .subAggregation(getCountWithGrouping("complaintCount", "ifClosed", 2)))))
+                                        .subAggregation(getCountWithGrouping("complaintCount", "ifClosed", 2)))
+                                .subAggregation(getCountWithGrouping(RE_OPENED_COMPLAINT_COUNT, RE_OPENED, 2))))
                 .addAggregation(AggregationBuilders.missing("nolocality").field("localityName")
                         .subAggregation(getCountWithGrouping("noLocalityComplaintCount", "ifClosed", 2)))
                 .execute().actionGet();

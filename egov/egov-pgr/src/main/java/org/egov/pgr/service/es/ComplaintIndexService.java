@@ -101,6 +101,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class ComplaintIndexService {
 
+    private static final String RE_OPENED_COMPLAINT_COUNT = "reOpenedComplaintCount";
+
     @Autowired
     private CityService cityService;
 
@@ -714,6 +716,12 @@ public class ComplaintIndexService {
                     responseDetail.setClosedComplaintCount(closedCountbucket.getDocCount());
                 else
                     responseDetail.setOpenComplaintCount(closedCountbucket.getDocCount());
+
+            final Terms reOpenedComplaints = bucket.getAggregations().get(RE_OPENED_COMPLAINT_COUNT);
+            for (final Bucket reOpenedCountbucket : reOpenedComplaints.getBuckets())
+                if (reOpenedCountbucket.getKeyAsNumber().intValue() == 1)
+                    responseDetail.setReOpenedComplaintCount(reOpenedCountbucket.getDocCount());
+
             responseDetailsList.add(responseDetail);
         }
         result.put("complaints", responseDetailsList);
@@ -752,6 +760,12 @@ public class ComplaintIndexService {
                             responseDetail.setClosedComplaintCount(closedCountbucket.getDocCount());
                         else
                             responseDetail.setOpenComplaintCount(closedCountbucket.getDocCount());
+
+                    final Terms reOpenedComplaints = functionaryBucket.getAggregations().get(RE_OPENED_COMPLAINT_COUNT);
+                    for (final Bucket reOpenedCountbucket : reOpenedComplaints.getBuckets())
+                        if (reOpenedCountbucket.getKeyAsNumber().intValue() == 1)
+                            responseDetail.setReOpenedComplaintCount(reOpenedCountbucket.getDocCount());
+
                     responseDetailsList.add(responseDetail);
                 }
             }
@@ -783,6 +797,12 @@ public class ComplaintIndexService {
                     responseDetail.setClosedComplaintCount(closedCountbucket.getDocCount());
                 else
                     responseDetail.setOpenComplaintCount(closedCountbucket.getDocCount());
+
+            final Terms reOpenedComplaints = ulbBucket.getAggregations().get(RE_OPENED_COMPLAINT_COUNT);
+            for (final Bucket reOpenedCountbucket : reOpenedComplaints.getBuckets())
+                if (reOpenedCountbucket.getKeyAsNumber().intValue() == 1)
+                    responseDetail.setReOpenedComplaintCount(reOpenedCountbucket.getDocCount());
+
             responseDetailsList.add(responseDetail);
         }
         result.put("complaints", responseDetailsList);
@@ -816,6 +836,12 @@ public class ComplaintIndexService {
                         responseDetail.setClosedComplaintCount(closedCountbucket.getDocCount());
                     else
                         responseDetail.setOpenComplaintCount(closedCountbucket.getDocCount());
+
+                final Terms reOpenedComplaints = wardBucket.getAggregations().get(RE_OPENED_COMPLAINT_COUNT);
+                for (final Bucket reOpenedCountbucket : reOpenedComplaints.getBuckets())
+                    if (reOpenedCountbucket.getKeyAsNumber().intValue() == 1)
+                        responseDetail.setReOpenedComplaintCount(reOpenedCountbucket.getDocCount());
+
                 responseDetailsList.add(responseDetail);
             }
         }
@@ -854,6 +880,11 @@ public class ComplaintIndexService {
                             responseDetail.setClosedComplaintCount(closedCountbucket.getDocCount());
                         else
                             responseDetail.setOpenComplaintCount(closedCountbucket.getDocCount());
+
+                    final Terms reOpenedComplaints = wardBucket.getAggregations().get(RE_OPENED_COMPLAINT_COUNT);
+                    for (final Bucket reOpenedCountbucket : reOpenedComplaints.getBuckets())
+                        if (reOpenedCountbucket.getKeyAsNumber().intValue() == 1)
+                            responseDetail.setReOpenedComplaintCount(reOpenedCountbucket.getDocCount());
                     responseDetailsList.add(responseDetail);
                 }
             }
@@ -1056,6 +1087,15 @@ public class ComplaintIndexService {
     }
 
     public List<ComplaintIndex> getFunctionaryWiseComplaints(final String functionaryName) {
-        return complaintIndexRepository.findAllComplaintsBySource("currentFunctionaryName", functionaryName);
+        final List<ComplaintIndex> complaints = complaintIndexRepository.findAllComplaintsBySource("currentFunctionaryName",
+                functionaryName);
+        String searchUrl;
+        for (final ComplaintIndex complaint : complaints)
+            if (isNotBlank(complaint.getCityCode())) {
+                final CityIndex city = cityIndexService.findOne(complaint.getCityCode());
+                searchUrl = city.getDomainurl() + "/pgr/complaint/citizen/anonymous/search?crn=" + complaint.getCrn();
+                complaint.setUrl(searchUrl);
+            }
+        return complaints;
     }
 }
