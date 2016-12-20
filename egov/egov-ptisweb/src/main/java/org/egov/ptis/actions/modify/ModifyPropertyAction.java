@@ -666,7 +666,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             meesevaParams.put("ADMISSIONFEE", "0");
             meesevaParams.put("APPLICATIONNUMBER", propertyModel.getMeesevaApplicationNumber());
             basicProp.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
-           // basicProp.getProperty().setApplicationNo(propertyModel.getMeesevaApplicationNumber());
+            basicProp.getWFProperty().setApplicationNo(propertyModel.getMeesevaApplicationNumber());
             basicPropertyService.updateBasicProperty(basicProp, meesevaParams);
         }
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
