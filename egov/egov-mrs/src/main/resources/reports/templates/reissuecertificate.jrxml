@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-12-20T17:03:43 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reissuecertificate" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="02afdd73-b1f8-4b82-bdec-843293ab245b">
-	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.zoom" value="1.8181818181818181"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="601"/>
+	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
-	<import value="org.egov.infstr.utils.*"/>
 	<import value="org.egov.mrs.domain.entity.RegistrationCertificate"/>
+	<import value="org.egov.infstr.utils.*"/>
 	<import value="org.egov.infra.reporting.util.ReportUtil"/>
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="certificateDate" class="java.lang.String"/>
@@ -58,6 +56,10 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
+			<image onErrorType="Blank">
+				<reportElement x="16" y="3" width="60" height="60" uuid="5aa9d832-3f1c-44fc-90ae-ab66af62cb6c"/>
+				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<detail>

@@ -276,7 +276,7 @@ public class MarriageCertificateService {
         ReportOutput reportOutput = null;
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
         final String url = WebUtils.extractRequestDomainURL(request, false);
-        final String cityLogo = url.concat(MarriageConstants.IMAGE_CONTEXT_PATH);
+        final String cityLogo = url.concat(MarriageConstants.IMAGE_CONTEXT_PATH).concat((String) request.getSession().getAttribute("citylogo"));
         String certificateNo = marriageCertificateNumberGenerator.generateCertificateNumber(reIssue, request.getSession().getAttribute("cityCode").toString());        
         reportOutput = generateCertificate(reIssue, certificateType, cityName, cityLogo,certificateNo);
         if (reportOutput != null && reportOutput.getReportOutputData() != null) {
