@@ -1139,7 +1139,7 @@ $('#searchTemplate').click(function() {
 	var typeOfWork =$('#parentCategory').val();
 	var subTypeOfWork = $('#category').val();
 	if(templateCode=="")
-		window.open("/egworks/abstractestimate/searchestimatetemplateform?typeOfWork="+typeOfWork+"&subTypeOfWork="+subTypeOfWork,'', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+		window.open("/egworks/estimatetemplate/searchestimatetemplateform?typeOfWork="+typeOfWork+"&subTypeOfWork="+subTypeOfWork,'', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 	else{
 		var templateId = $('#templateId').val();
 		var sorHiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;

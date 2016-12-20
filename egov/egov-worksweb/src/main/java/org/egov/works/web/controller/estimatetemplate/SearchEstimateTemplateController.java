@@ -37,37 +37,32 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.web.adaptor;
+package org.egov.works.web.controller.estimatetemplate;
 
-import java.lang.reflect.Type;
+import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
+import org.egov.works.abstractestimate.entity.EstimateTemplateSearchRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import org.egov.works.masters.entity.EstimateTemplate;
-import org.springframework.stereotype.Component;
+@Controller
+@RequestMapping("/estimatetemplate")
+public class SearchEstimateTemplateController {
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+    @Autowired
+    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
 
-@Component
-public class EstimateTemplateJsonAdaptor implements JsonSerializer<EstimateTemplate> {
-
-    @Override
-    public JsonElement serialize(final EstimateTemplate estimateTemplate, final Type typeOfSrc,
-            final JsonSerializationContext context) {
-        final JsonObject jsonObject = new JsonObject();
-        if (estimateTemplate != null) {
-            jsonObject.addProperty("id", estimateTemplate.getId());
-            jsonObject.addProperty("code", estimateTemplate.getCode());
-            jsonObject.addProperty("description", estimateTemplate.getDescription());
-            jsonObject.addProperty("name", estimateTemplate.getName());
-            jsonObject.addProperty("typeOfWork", estimateTemplate.getWorkType().getName());
-            jsonObject.addProperty("subTypeOfWork", estimateTemplate.getSubType().getName());
-            if (estimateTemplate.getStatus() == 0)
-                jsonObject.addProperty("status", "INACTIVE");
-            else
-                jsonObject.addProperty("status", "ACTIVE");
-        }
-        return jsonObject;
+    @RequestMapping(value = "/searchestimatetemplateform", method = RequestMethod.GET)
+    public String showSearchEstimateTemplateForm(@RequestParam("typeOfWork") final Long typeOfWorkId,
+            @RequestParam("subTypeOfWork") final Long subTypeOfWorkId, final Model model) {
+        model.addAttribute("typeOfWorkId", typeOfWorkId);
+        model.addAttribute("subTypeOfWorkId", subTypeOfWorkId);
+        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
+        model.addAttribute("subTypeOfWork", egwTypeOfWorkHibernateDAO.getSubTypeOfWorkByParentId(typeOfWorkId));
+        model.addAttribute("estimateTemplateSearchRequest", new EstimateTemplateSearchRequest());
+        return "estimatetemplate-searchform";
     }
 }

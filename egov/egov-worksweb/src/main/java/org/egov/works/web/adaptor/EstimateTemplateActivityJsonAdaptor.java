@@ -41,7 +41,10 @@ package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
 
-import org.egov.works.masters.entity.EstimateTemplate;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.works.abstractestimate.entity.NonSor;
+import org.egov.works.masters.entity.EstimateTemplateActivity;
+import org.egov.works.masters.entity.ScheduleOfRate;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
@@ -50,24 +53,35 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 @Component
-public class TemplateJsonAdaptor implements JsonSerializer<EstimateTemplate> {
+public class EstimateTemplateActivityJsonAdaptor implements JsonSerializer<EstimateTemplateActivity> {
 
     @Override
-    public JsonElement serialize(final EstimateTemplate estimateTemplate, final Type typeOfSrc,
+    public JsonElement serialize(final EstimateTemplateActivity estimateTemplateActivity, final Type typeOfSrc,
             final JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();
-        if (estimateTemplate != null) {
-            jsonObject.addProperty("id", estimateTemplate.getId());
-            jsonObject.addProperty("code", estimateTemplate.getCode());
-            jsonObject.addProperty("description", estimateTemplate.getDescription());
-            jsonObject.addProperty("name", estimateTemplate.getName());
-            jsonObject.addProperty("typeOfWork", estimateTemplate.getWorkType().getName());
-            jsonObject.addProperty("subTypeOfWork", estimateTemplate.getSubType().getName());
-            if (estimateTemplate.getStatus() == 0)
-                jsonObject.addProperty("status", "INACTIVE");
-            else
-                jsonObject.addProperty("status", "ACTIVE");
-        }
+        if (estimateTemplateActivity != null)
+            if (estimateTemplateActivity.getSchedule() != null) {
+                final ScheduleOfRate schedule = estimateTemplateActivity.getSchedule();
+                jsonObject.addProperty("scheduleId", schedule.getId());
+                jsonObject.addProperty("scheduleCategoryCode", schedule.getScheduleCategory().getCode());
+                jsonObject.addProperty("scheduleCode", schedule.getCode());
+                jsonObject.addProperty("scheduleSummary", schedule.getSummary());
+                jsonObject.addProperty("scheduleDescription", schedule.getSummary());
+                jsonObject.addProperty("scheduleUom", schedule.getUom().getUom());
+                jsonObject.addProperty("scheduleUomId", schedule.getUom().getId());
+                try {
+                    schedule.setSorRateValue(schedule.getRateOn(estimateTemplateActivity.getEstimateDate()).getRate().getValue());
+                } catch (final ApplicationRuntimeException e) {
+                    schedule.setSorRateValue(0D);
+                }
+                jsonObject.addProperty("scheduleRate", schedule.getSorRate());
+            } else {
+                final NonSor nonSor = estimateTemplateActivity.getNonSor();
+                jsonObject.addProperty("nonSorDescription", nonSor.getDescription());
+                jsonObject.addProperty("nonSorUomId", estimateTemplateActivity.getUom().getId());
+                jsonObject.addProperty("nonSorUom", estimateTemplateActivity.getUom().getUom());
+                jsonObject.addProperty("nonSorRate", estimateTemplateActivity.getRate().getValue());
+            }
         return jsonObject;
     }
 }

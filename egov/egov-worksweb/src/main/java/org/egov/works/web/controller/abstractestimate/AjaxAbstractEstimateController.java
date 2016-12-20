@@ -79,9 +79,9 @@ import org.egov.works.web.adaptor.AbstractEstimateForLOAJsonAdaptor;
 import org.egov.works.web.adaptor.AbstractEstimateForOfflineStatusJsonAdaptor;
 import org.egov.works.web.adaptor.CopyEstimateJsonAdaptor;
 import org.egov.works.web.adaptor.EstimateActivityJsonAdaptor;
+import org.egov.works.web.adaptor.EstimateTemplateActivityJsonAdaptor;
 import org.egov.works.web.adaptor.EstimateTemplateJsonAdaptor;
 import org.egov.works.web.adaptor.SearchEstimatesToCancelJson;
-import org.egov.works.web.adaptor.TemplateJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
@@ -126,7 +126,7 @@ public class AjaxAbstractEstimateController {
     private AbstractEstimateForOfflineStatusJsonAdaptor abstractEstimateForOfflineStatusJsonAdaptor;
 
     @Autowired
-    private EstimateTemplateJsonAdaptor estimateTemplateJsonAdaptor;
+    private EstimateTemplateActivityJsonAdaptor estimateTemplateActivityJsonAdaptor;
 
     @Autowired
     private EstimateActivityJsonAdaptor estimateActivityJsonAdaptor;
@@ -139,7 +139,7 @@ public class AjaxAbstractEstimateController {
     private CopyEstimateJsonAdaptor copyEstimateJsonAdaptor;
 
     @Autowired
-    private TemplateJsonAdaptor templateJsonAdaptor;
+    private EstimateTemplateJsonAdaptor estimateTemplateJsonAdaptor;
 
     public Object toSearchAbstractEstimateForLOAResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
@@ -208,7 +208,7 @@ public class AjaxAbstractEstimateController {
 
     public String estimateTemplateToJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(EstimateTemplateActivity.class, estimateTemplateJsonAdaptor)
+        final Gson gson = gsonBuilder.registerTypeAdapter(EstimateTemplateActivity.class, estimateTemplateActivityJsonAdaptor)
                 .create();
         final String json = gson.toJson(object);
         return json;
@@ -373,7 +373,7 @@ public class AjaxAbstractEstimateController {
 
     public Object toSearchEstimateTemplatesResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(EstimateTemplate.class, templateJsonAdaptor).create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(EstimateTemplate.class, estimateTemplateJsonAdaptor).create();
         final String json = gson.toJson(object);
         return json;
     }
