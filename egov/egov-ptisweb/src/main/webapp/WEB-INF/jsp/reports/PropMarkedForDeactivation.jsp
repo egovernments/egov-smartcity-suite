@@ -45,9 +45,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Report - List Of Properties Marked For Deactivation</title>
- 	<link href="<cdn:url value='/resources/css/propertytax.css?rnd=${app_release_no}'/>" rel="stylesheet" type="text/css" />
-	<link href="<cdn:url value='/resources/css/commonegov.css?rnd=${app_release_no}'/>" rel="stylesheet" type="text/css" />
-	<script type="text/javascript" src="<cdn:url value='/resources/erp2/js/ajaxCommonFunctions.js?rnd=${app_release_no}'/>"></script>
+ 	<link href="<cdn:url value='/resources/css/propertytax.css'/>" rel="stylesheet" type="text/css" />
+	<link href="<cdn:url value='/resources/css/commonegov.css'/>" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="<cdn:url value='/resources/erp2/js/ajaxCommonFunctions.js'/>"></script>
  
 
  <script type="text/javascript">

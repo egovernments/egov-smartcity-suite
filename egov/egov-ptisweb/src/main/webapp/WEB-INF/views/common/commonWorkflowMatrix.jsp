@@ -115,4 +115,4 @@
 			</div>				
 		</div>
 </c:if>
-<script src="<cdn:url value='/resources/js/app/commonworkflow.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/app/commonworkflow.js'/>"></script>

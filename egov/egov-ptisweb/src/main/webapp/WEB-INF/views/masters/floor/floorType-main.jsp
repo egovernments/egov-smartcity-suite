@@ -100,4 +100,4 @@
 		</form:form>
 	</div>
 </div>
-<script src="<cdn:url value='/resources/js/app/floortype.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/app/floortype.js'/>"></script>
