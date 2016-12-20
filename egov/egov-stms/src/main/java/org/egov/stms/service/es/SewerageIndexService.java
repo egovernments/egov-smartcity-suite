@@ -60,7 +60,6 @@ import org.egov.collection.entity.es.CollectionDocument;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.stms.elasticSearch.entity.DailySTCollectionReportSearch;
@@ -254,14 +253,11 @@ public class SewerageIndexService {
         final Date toDate = formatter.parse(searchRequest.getToDate());
         final String formattedToDate = newFormat.format(toDate);
 
-        // setting toDate time to 23:59:59
-        final DateTime dateTime = DateUtils.endOfGivenDate(new DateTime(formattedToDate));
-        final Date formatToDate = dateTime.toDate();
-
+      
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.matchQuery("cityName", searchRequest.getUlbName()));
         if (StringUtils.isNotBlank(searchRequest.getFromDate()))
-            boolQuery = boolQuery.filter(QueryBuilders.rangeQuery("receiptDate").gte(formattedFromDate).lte(formatToDate));
+            boolQuery = boolQuery.filter(QueryBuilders.rangeQuery("receiptDate").gte(formattedFromDate).lte(new DateTime(formattedToDate).plusDays(1).toDate()));
         if (StringUtils.isNotBlank(searchRequest.getCollectionMode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("channel", searchRequest.getCollectionMode()));
         if (StringUtils.isNotBlank(searchRequest.getCollectionOperator()))

@@ -161,7 +161,7 @@ public class SewerageCollectFeeSearchController {
             searchResult.setShscNumber(sewerageIndex.getShscNumber());
             searchResult.setApplicantName(sewerageIndex.getConsumerName());
             searchResult.setApplicationType(sewerageIndex.getApplicationType());
-            searchResult.setPropertyType(sewerageIndex.getPropertyType());
+            searchResult.setPropertyType(sewerageIndex.getPropertyType().toString().replace("_", " "));
             searchResult.setRevenueWard(sewerageIndex.getWard());
             searchResult.setAddress(sewerageIndex.getAddress());
             searchResult.setApplicationStatus(sewerageIndex.getApplicationStatus());
