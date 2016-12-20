@@ -51,8 +51,8 @@ body
   font-size:14px;
 }
 </style>
-<script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js?rnd=${app_release_no}'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/javascript/dateValidation.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/javascript/dateValidation.js'/>"></script>
 <c:if test="${errorMsg != ''}">
  	<div class="panel-heading">
 				<div class="add-margin error-msg" style="text-align:center;">
