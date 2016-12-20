@@ -156,7 +156,7 @@ $(document).ready( function () {
 	});
 	
 	// New Marriage Registration Screen
-	$('#Forward').click(function(){
+	$('#Forward').click(function(e){
 		if($('form').valid()){
 			
 		}else{
