@@ -42,8 +42,8 @@ package org.egov.works.web.controller.reports;
 import java.util.Collections;
 
 import org.egov.commons.CFinancialYear;
-import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.service.FinancialYearService;
+import org.egov.commons.service.TypeOfWorkService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.services.masters.SchemeService;
@@ -52,6 +52,7 @@ import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.masters.service.NatureOfWorkService;
 import org.egov.works.reports.entity.EstimateAbstractReport;
 import org.egov.works.reports.entity.enums.WorkStatus;
+import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -76,11 +77,10 @@ public class EstimateAbstractReportController {
     private NatureOfWorkService natureOfWorkService;
 
     @Autowired
-    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
+    private TypeOfWorkService typeOfWorkService;
 
     @RequestMapping(value = "/departmentwise-searchform", method = RequestMethod.GET)
-    public String departmentWiseShowSearchForm(
-            @ModelAttribute final EstimateAbstractReport estimateAbstractReport,
+    public String departmentWiseShowSearchForm(@ModelAttribute final EstimateAbstractReport estimateAbstractReport,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
         final CFinancialYear currentFinancialYear = financialYearService.getCurrentFinancialYear();
@@ -91,8 +91,7 @@ public class EstimateAbstractReportController {
     }
 
     @RequestMapping(value = "/typeofworkwise-searchform", method = RequestMethod.GET)
-    public String typeOfWorkWiseShowSearchForm(
-            @ModelAttribute final EstimateAbstractReport estimateAbstractReport,
+    public String typeOfWorkWiseShowSearchForm(@ModelAttribute final EstimateAbstractReport estimateAbstractReport,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
         final CFinancialYear currentFinancialYear = financialYearService.getCurrentFinancialYear();
@@ -109,7 +108,8 @@ public class EstimateAbstractReportController {
         model.addAttribute("subSchemes", Collections.emptyList());
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         model.addAttribute("beneficiary", Beneficiary.values());
-        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
+        model.addAttribute("typeOfWork",
+                typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
         model.addAttribute("workStatus", WorkStatus.values());
         model.addAttribute("workCategory", WorkCategory.values());
     }

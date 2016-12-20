@@ -44,7 +44,7 @@ import java.util.List;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
+import org.egov.commons.service.TypeOfWorkService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
@@ -104,7 +104,7 @@ public class SearchAbstractEstimateController {
     private MeasurementSheetService measurementSheetService;
 
     @Autowired
-    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
+    private TypeOfWorkService typeOfWorkService;
 
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String searchForm(@ModelAttribute final SearchAbstractEstimate searchAbstractEstimate, final Model model)
@@ -120,9 +120,10 @@ public class SearchAbstractEstimateController {
                             .equalsIgnoreCase(OfflineStatusesForAbstractEstimate.TECHNICAL_EVALUATION_DONE.toString())
                     && !egwStatus.getCode()
                             .equalsIgnoreCase(OfflineStatusesForAbstractEstimate.TENDER_DOCUMENT_RELEASED.toString())
-                    && !egwStatus.getCode().equalsIgnoreCase(OfflineStatusesForAbstractEstimate.TENDER_OPENED.toString())
                     && !egwStatus.getCode()
-                            .equalsIgnoreCase(OfflineStatusesForAbstractEstimate.NOTICEINVITINGTENDERRELEASED.toString()))
+                            .equalsIgnoreCase(OfflineStatusesForAbstractEstimate.TENDER_OPENED.toString())
+                    && !egwStatus.getCode().equalsIgnoreCase(
+                            OfflineStatusesForAbstractEstimate.NOTICEINVITINGTENDERRELEASED.toString()))
                 newEgwStatuses.add(egwStatus);
         model.addAttribute("abstractEstimateStatus", newEgwStatuses);
         model.addAttribute("searchAbstractEstimate", searchAbstractEstimate);
@@ -130,8 +131,7 @@ public class SearchAbstractEstimateController {
     }
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-    public String viewAbstractEstimate(@PathVariable final String id, final Model model)
-            throws ApplicationException {
+    public String viewAbstractEstimate(@PathVariable final String id, final Model model) throws ApplicationException {
         final AbstractEstimate abstractEstimate = estimateService.getAbstractEstimateById(Long.valueOf(id));
 
         getEstimateDocuments(abstractEstimate);
@@ -182,7 +182,8 @@ public class SearchAbstractEstimateController {
         if (departments != null)
             for (final Department department : departments)
                 departmentIds.add(department.getId());
-        final List<User> abstractEstimateCreatedByUsers = estimateService.getAbstractEstimateCreatedByUsers(departmentIds);
+        final List<User> abstractEstimateCreatedByUsers = estimateService
+                .getAbstractEstimateCreatedByUsers(departmentIds);
         model.addAttribute("abstractEstimateForLoaSearchRequest", abstractEstimateForLoaSearchRequest);
         model.addAttribute("abstractEstimateCreatedByUsers", abstractEstimateCreatedByUsers);
         model.addAttribute("departments", departments);
@@ -190,8 +191,8 @@ public class SearchAbstractEstimateController {
         final List<EgwStatus> egwStatuses = egwStatusHibernateDAO.getStatusByModule(WorksConstants.ABSTRACTESTIMATE);
         final List<EgwStatus> newEgwStatuses = new ArrayList<EgwStatus>();
         for (final EgwStatus egwStatus : egwStatuses)
-            if (egwStatus.getCode().equalsIgnoreCase(WorksConstants.APPROVED)
-                    || egwStatus.getCode().equalsIgnoreCase(OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString()))
+            if (egwStatus.getCode().equalsIgnoreCase(WorksConstants.APPROVED) || egwStatus.getCode()
+                    .equalsIgnoreCase(OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString()))
                 newEgwStatuses.add(egwStatus);
         model.addAttribute("egwStatus", newEgwStatuses);
 
@@ -232,7 +233,8 @@ public class SearchAbstractEstimateController {
         if (departments != null)
             for (final Department department : departments)
                 departmentIds.add(department.getId());
-        final List<User> abstractEstimateCreatedByUsers = estimateService.getAbstractEstimateCreatedByUsers(departmentIds);
+        final List<User> abstractEstimateCreatedByUsers = estimateService
+                .getAbstractEstimateCreatedByUsers(departmentIds);
         model.addAttribute("egwStatus", newEgwStatuses);
         model.addAttribute("abstractEstimateForLoaSearchRequest", abstractEstimateForLoaSearchRequest);
         model.addAttribute("abstractEstimateCreatedByUsers", abstractEstimateCreatedByUsers);
@@ -240,16 +242,17 @@ public class SearchAbstractEstimateController {
     }
 
     @RequestMapping(value = "/searchestimateform", method = RequestMethod.GET)
-    public String showSearchEstimateForm(@RequestParam("typeOfWork") final Long typeOfWorkId,
-            final Model model) {
+    public String showSearchEstimateForm(@RequestParam("typeOfWork") final Long typeOfWorkId, final Model model) {
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
         final List<Long> departmentIds = new ArrayList<Long>();
         if (departments != null)
             for (final Department department : departments)
                 departmentIds.add(department.getId());
-        final List<User> abstractEstimateCreatedByUsers = estimateService.getAbstractEstimateCreatedByUsers(departmentIds);
+        final List<User> abstractEstimateCreatedByUsers = estimateService
+                .getAbstractEstimateCreatedByUsers(departmentIds);
         model.addAttribute("typeOfWorkId", typeOfWorkId);
-        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
+        model.addAttribute("typeOfWork",
+                typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
         model.addAttribute("abstractEstimateCreatedByUsers", abstractEstimateCreatedByUsers);
         return "estimate-searchform";
     }

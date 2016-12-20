@@ -44,7 +44,7 @@ import java.util.List;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
+import org.egov.commons.service.TypeOfWorkService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
@@ -79,10 +79,10 @@ public class LetterOfAcceptanceSearchController {
     private SecurityUtils securityUtils;
 
     @Autowired
-    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
-
-    @Autowired
     private LetterOfAcceptanceService letterOfAcceptanceService;
+    
+    @Autowired
+    private TypeOfWorkService typeOfWorkService;
 
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String showSearchLineEstimateForm(
@@ -107,7 +107,7 @@ public class LetterOfAcceptanceSearchController {
     private void setDropDownValues(final Model model) {
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("egwStatus", egwStatusHibernateDAO.getStatusByModule(WorksConstants.WORKORDER));
-        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
+        model.addAttribute("typeOfWork", typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
 
     }
 

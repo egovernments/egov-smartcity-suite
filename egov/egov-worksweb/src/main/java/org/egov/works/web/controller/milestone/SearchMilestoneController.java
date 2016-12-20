@@ -42,7 +42,7 @@ package org.egov.works.web.controller.milestone;
 import java.util.List;
 
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
+import org.egov.commons.service.TypeOfWorkService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
@@ -73,10 +73,10 @@ public class SearchMilestoneController {
     private SecurityUtils securityUtils;
 
     @Autowired
-    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
-
-    @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
+    
+    @Autowired
+    private TypeOfWorkService typeOfWorkService;
 
     @RequestMapping(value = "/search-form", method = RequestMethod.GET)
     public String showSearchMilestoneForm(
@@ -93,14 +93,14 @@ public class SearchMilestoneController {
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("departments", departmentService.getAllDepartments());
-        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
+        model.addAttribute("typeOfWork", typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
     }
 
     @RequestMapping(value = "/searchmilestonetemplate", method = RequestMethod.GET)
     public String showSearchMilestoneTemplate(
             @ModelAttribute final MilestoneTemplate milestoneTemplate,
             final Model model) throws ApplicationException {
-        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
+        model.addAttribute("typeOfWork", typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
         return "milestoneTemplate-search";
     }
 

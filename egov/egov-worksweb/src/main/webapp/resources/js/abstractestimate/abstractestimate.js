@@ -1089,7 +1089,7 @@ $('#parentCategory').blur(function(){
 						selected="selected";
 					}
 				}
-				$('#category').append($('<option '+ selected +'>').text(val.description).attr('value', val.id));
+				$('#category').append($('<option '+ selected +'>').text(val.name).attr('value', val.id));
 			});
 		});
 	}

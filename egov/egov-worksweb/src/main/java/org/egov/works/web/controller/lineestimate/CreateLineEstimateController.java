@@ -52,8 +52,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.commons.service.TypeOfWorkService;
 import org.egov.egf.budget.model.BudgetControlType;
 import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -119,9 +119,6 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     private NatureOfWorkService natureOfWorkService;
 
     @Autowired
-    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
-
-    @Autowired
     @Qualifier("messageSource")
     private MessageSource messageSource;
 
@@ -145,6 +142,9 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
+
+    @Autowired
+    private TypeOfWorkService typeOfWorkService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
@@ -173,8 +173,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     public String create(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
             final RedirectAttributes redirectAttributes, final Model model, final BindingResult errors,
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request,
-            @RequestParam String workFlowAction)
-            throws ApplicationException, IOException {
+            @RequestParam String workFlowAction) throws ApplicationException, IOException {
         setDropDownValues(model);
         validateBudgetHead(lineEstimate, errors);
         lineEstimateService.validateLineEstimateDetails(lineEstimate, errors);
@@ -237,7 +236,8 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("beneficiary", Beneficiary.values());
         model.addAttribute("modeOfAllotment", modeOfAllotmentService.findAll());
         model.addAttribute("lineEstimateUOMs", lineEstimateUOMService.findAll());
-        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
+        model.addAttribute("typeOfWork",
+                typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         model.addAttribute("locations", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 WorksConstants.LOCATION_BOUNDARYTYPE, WorksConstants.LOCATION_HIERARCHYTYPE));
@@ -245,13 +245,12 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     }
 
     @RequestMapping(value = "/downloadLineEstimateDoc", method = RequestMethod.GET)
-    public void getLineEstimateDoc(final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException {
+    public void getLineEstimateDoc(final HttpServletRequest request, final HttpServletResponse response)
+            throws IOException {
         final ServletContext context = request.getServletContext();
         final String fileStoreId = request.getParameter("fileStoreId");
         String fileName = "";
-        final File downloadFile = fileStoreService.fetch(fileStoreId,
-                WorksConstants.FILESTORE_MODULECODE);
+        final File downloadFile = fileStoreService.fetch(fileStoreId, WorksConstants.FILESTORE_MODULECODE);
         final FileInputStream inputStream = new FileInputStream(downloadFile);
         LineEstimate lineEstimate = lineEstimateService
                 .getLineEstimateById(Long.parseLong(request.getParameter("lineEstimateId")));
@@ -299,8 +298,8 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     }
 
     @RequestMapping(value = "/lineestimate-success", method = RequestMethod.GET)
-    public ModelAndView successView(@ModelAttribute LineEstimate lineEstimate,
-            final HttpServletRequest request, final Model model, final ModelMap modelMap) {
+    public ModelAndView successView(@ModelAttribute LineEstimate lineEstimate, final HttpServletRequest request,
+            final Model model, final ModelMap modelMap) {
 
         final String[] keyNameArray = request.getParameter("pathVars").split(",");
         Long id = 0L;
@@ -322,8 +321,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             }
 
         if (id != null)
-            lineEstimate = lineEstimateService
-                    .getLineEstimateById(id);
+            lineEstimate = lineEstimateService.getLineEstimateById(id);
         model.addAttribute("approverName", approverName);
         model.addAttribute("currentUserDesgn", currentUserDesgn);
         model.addAttribute("nextDesign", nextDesign);
@@ -339,11 +337,10 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
                 final LineEstimateAppropriation lea = lineEstimateAppropriationService
                         .findLatestByLineEstimateDetails_EstimateNumber(led.getEstimateNumber());
-                final String tempMessage = messageSource
-                        .getMessage("msg.lineestimatedetails.budgetsanction.success",
-                                new String[] { count.toString(), led.getEstimateNumber(),
-                                        lea.getBudgetUsage().getAppropriationnumber() },
-                                null);
+                final String tempMessage = messageSource.getMessage("msg.lineestimatedetails.budgetsanction.success",
+                        new String[] { count.toString(), led.getEstimateNumber(),
+                                lea.getBudgetUsage().getAppropriationnumber() },
+                        null);
                 basMessages.add(tempMessage);
                 count++;
             }
@@ -353,7 +350,8 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         return new ModelAndView("lineestimate-success", "lineEstimate", lineEstimate);
     }
 
-    private String getMessageByStatus(final LineEstimate lineEstimate, final String approverName, final String nextDesign) {
+    private String getMessageByStatus(final LineEstimate lineEstimate, final String approverName,
+            final String nextDesign) {
         String message = "";
 
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CREATED.toString())
@@ -371,11 +369,8 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             message = messageSource.getMessage("msg.lineestimate.budgetsanction.success",
                     new String[] { lineEstimate.getLineEstimateNumber(), approverName, nextDesign }, null);
         else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()))
-            message = messageSource.getMessage(
-                    "msg.lineestimate.adminsanction.success",
-                    new String[] { lineEstimate.getLineEstimateNumber(),
-                            lineEstimate.getAdminSanctionNumber() },
-                    null);
+            message = messageSource.getMessage("msg.lineestimate.adminsanction.success",
+                    new String[] { lineEstimate.getLineEstimateNumber(), lineEstimate.getAdminSanctionNumber() }, null);
         else if (lineEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
             message = messageSource.getMessage("msg.lineestimate.reject",
                     new String[] { lineEstimate.getLineEstimateNumber(), approverName, nextDesign }, null);

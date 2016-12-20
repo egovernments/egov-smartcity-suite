@@ -52,7 +52,6 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -69,11 +68,15 @@ public class CreateTypeOfWorkController {
     private TypeOfWorkService typeOfWorkService;
 
     @Autowired
-    @Qualifier("messageSource")
     private MessageSource messageSource;
 
     @Autowired
     private EgPartytypeHibernateDAO egPartytypeHibernateDAO;
+
+    @ModelAttribute
+    public EgwTypeOfWork typeOfWorkModel() {
+        return new EgwTypeOfWork();
+    }
 
     @RequestMapping(value = "/typeofwork-newform", method = RequestMethod.GET)
     public String showTypeOfWorkForm(final Model model) {

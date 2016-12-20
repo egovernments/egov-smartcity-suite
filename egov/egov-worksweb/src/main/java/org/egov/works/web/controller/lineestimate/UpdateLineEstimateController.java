@@ -51,9 +51,9 @@ import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CFinancialYear;
-import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.commons.service.TypeOfWorkService;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.egf.budget.model.BudgetControlType;
 import org.egov.egf.budget.service.BudgetControlTypeService;
@@ -120,8 +120,6 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     @Autowired
     private NatureOfWorkService natureOfWorkService;
 
-    @Autowired
-    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
 
     @Autowired
     protected AssignmentService assignmentService;
@@ -150,6 +148,9 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private LineEstimateAppropriationService lineEstimateAppropriationService;
+    
+    @Autowired
+    private TypeOfWorkService typeOfWorkService;
 
     @ModelAttribute
     public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
@@ -369,7 +370,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("beneficiary", Beneficiary.values());
         model.addAttribute("modeOfAllotment", modeOfAllotmentService.findAll());
         model.addAttribute("lineEstimateUOMs", lineEstimateUOMService.findAll());
-        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
+        model.addAttribute("typeOfWork", typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         model.addAttribute("workCategory", WorkCategory.values());
         model.addAttribute("locations", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(

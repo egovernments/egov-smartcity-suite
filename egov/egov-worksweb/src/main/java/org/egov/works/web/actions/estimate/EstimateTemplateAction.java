@@ -51,7 +51,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwTypeOfWork;
-import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
+import org.egov.commons.service.TypeOfWorkService;
 import org.egov.commons.service.UOMService;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
@@ -90,10 +90,10 @@ public class EstimateTemplateAction extends SearchFormAction {
     public static final String SUCCESS = "success";
 
     @Autowired
-    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
-
-    @Autowired
     private UOMService uomService;
+    
+    @Autowired
+    private TypeOfWorkService typeOfWorkService;
 
     public EstimateTemplateAction() {
         addRelatedEntity("workType", EgwTypeOfWork.class);
@@ -128,7 +128,7 @@ public class EstimateTemplateAction extends SearchFormAction {
         super.prepare();
         setupDropdownDataExcluding("workType", "subType");
         addDropdownData("parentCategoryList",
-                getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
+                typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
         addDropdownData("uomList", uomService.findAll());
         addDropdownData("scheduleCategoryList",
                 getPersistenceService().findAllBy("from ScheduleCategory order by upper(code)"));
@@ -224,7 +224,7 @@ public class EstimateTemplateAction extends SearchFormAction {
     protected void populateCategoryList(final boolean categoryPopulated) {
         if (categoryPopulated)
             addDropdownData("categoryList",
-                    egwTypeOfWorkHibernateDAO.getSubTypeOfWorkByParentId(estimateTemplate.getWorkType().getId()));
+                    typeOfWorkService.getByParentidAndEgPartytype(estimateTemplate.getWorkType().getId(),WorksConstants.PARTY_TYPE_CONTRACTOR));
         else
             addDropdownData("categoryList", Collections.emptyList());
     }

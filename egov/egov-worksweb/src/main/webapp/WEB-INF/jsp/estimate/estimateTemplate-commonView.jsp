@@ -69,16 +69,16 @@
 						<s:text name="milestone.estimate.typeofwork" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<s:property value="%{workType.code}" />
+						<s:property value="%{workType.name}" />
 					</div>
 				</div>
-				<s:if test="%{subType.code != null}" >
+				<s:if test="%{subType.name != null}" >
 					<div class="row add-border">
 							<div class="col-xs-3 add-margin">
 								<s:text name="estimate.work.subtype" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<s:property value="%{subType.code}" />
+								<s:property value="%{subType.name}" />
 							</div>
 					</div>
 				</s:if>

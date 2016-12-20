@@ -60,11 +60,11 @@ import org.egov.assets.model.Asset;
 import org.egov.assets.service.AssetService;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.service.ChartOfAccountsService;
+import org.egov.commons.service.TypeOfWorkService;
 import org.egov.commons.service.UOMService;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.entity.Assignment;
@@ -193,9 +193,6 @@ public class EstimateService {
     private NatureOfWorkService natureOfWorkService;
 
     @Autowired
-    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
-
-    @Autowired
     private FundHibernateDAO fundHibernateDAO;
 
     @Autowired
@@ -223,6 +220,9 @@ public class EstimateService {
     @Qualifier("chartOfAccountsService")
     private ChartOfAccountsService chartOfAccountsService;
 
+    @Autowired
+    private TypeOfWorkService typeOfWorkService;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -238,7 +238,8 @@ public class EstimateService {
     }
 
     public List<AbstractEstimate> getAbstractEstimateByParentId(final Long id) {
-        return abstractEstimateRepository.findByParent_idAndEgwStatus_codeEquals(id, RevisionEstimateStatus.APPROVED.toString());
+        return abstractEstimateRepository.findByParent_idAndEgwStatus_codeEquals(id,
+                RevisionEstimateStatus.APPROVED.toString());
     }
 
     @Transactional
@@ -257,11 +258,11 @@ public class EstimateService {
 
         if (newAbstractEstimate.getLineEstimateDetails() != null
                 && newAbstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated())
-            newAbstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                    EstimateStatus.APPROVED.toString()));
+            newAbstractEstimate.setEgwStatus(egwStatusHibernateDAO
+                    .getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE, EstimateStatus.APPROVED.toString()));
         else
-            createAbstractEstimateWorkflowTransition(newAbstractEstimate, approvalPosition, approvalComent, additionalRule,
-                    workFlowAction);
+            createAbstractEstimateWorkflowTransition(newAbstractEstimate, approvalPosition, approvalComent,
+                    additionalRule, workFlowAction);
 
         abstractEstimateRepository.save(newAbstractEstimate);
 
@@ -323,7 +324,8 @@ public class EstimateService {
     }
 
     private List<MeasurementSheet> mergeMeasurementSheet(final Activity oldActivity, final Activity activity) {
-        final List<MeasurementSheet> newMsList = new LinkedList<MeasurementSheet>(oldActivity.getMeasurementSheetList());
+        final List<MeasurementSheet> newMsList = new LinkedList<MeasurementSheet>(
+                oldActivity.getMeasurementSheetList());
         for (final MeasurementSheet msnew : activity.getMeasurementSheetList()) {
             if (msnew.getId() == null) {
                 msnew.setActivity(oldActivity);
@@ -527,8 +529,8 @@ public class EstimateService {
     public MultiYearEstimate populateMultiYearEstimate(final AbstractEstimate abstractEstimate) {
         final MultiYearEstimate multiYearEstimate = new MultiYearEstimate();
         multiYearEstimate.setAbstractEstimate(abstractEstimate);
-        multiYearEstimate.setFinancialYear(worksUtils
-                .getFinancialYearByDate(abstractEstimate.getLineEstimateDetails().getLineEstimate().getLineEstimateDate()));
+        multiYearEstimate.setFinancialYear(worksUtils.getFinancialYearByDate(
+                abstractEstimate.getLineEstimateDetails().getLineEstimate().getLineEstimateDate()));
         multiYearEstimate.setPercentage(100);
         return multiYearEstimate;
     }
@@ -626,9 +628,10 @@ public class EstimateService {
         final WorkFlowMatrix wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(),
                 null, null, additionalRule, abstractEstimate.getCurrentState().getValue(), null);
         if (abstractEstimate.getEgwStatus() != null && abstractEstimate.getEgwStatus().getCode() != null)
-            if ((abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString()) ||
-                    abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.RESUBMITTED.toString()))
-                    && abstractEstimate.getState() != null && !WorksConstants.APPROVE_ACTION.equalsIgnoreCase(workFlowAction))
+            if ((abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString())
+                    || abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.RESUBMITTED.toString()))
+                    && abstractEstimate.getState() != null
+                    && !WorksConstants.APPROVE_ACTION.equalsIgnoreCase(workFlowAction))
                 if (mode.equals("edit"))
                     approvalPosition = abstractEstimate.getState().getOwnerPosition().getId();
                 else
@@ -775,14 +778,16 @@ public class EstimateService {
                 abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                         EstimateStatus.RESUBMITTED.toString()));
 
-            else if (abstractEstimate.getState() != null && workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE))
+            else if (abstractEstimate.getState() != null
+                    && workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE))
                 abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                         EstimateStatus.APPROVED.toString()));
 
-            else if ((abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString()) ||
-                    abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CHECKED.toString()) ||
-                    abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.RESUBMITTED.toString()))
-                    && abstractEstimate.getState() != null && workFlowAction.equalsIgnoreCase(WorksConstants.SUBMIT_ACTION))
+            else if ((abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString())
+                    || abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CHECKED.toString())
+                    || abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.RESUBMITTED.toString()))
+                    && abstractEstimate.getState() != null
+                    && workFlowAction.equalsIgnoreCase(WorksConstants.SUBMIT_ACTION))
                 abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                         EstimateStatus.CHECKED.toString()));
 
@@ -815,8 +820,7 @@ public class EstimateService {
                         .withNatureOfTask(natureOfwork);
         } else if (WorksConstants.SAVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
-                    abstractEstimate.getEstimateValue(),
-                    additionalRule, WorksConstants.NEW, null);
+                    abstractEstimate.getEstimateValue(), additionalRule, WorksConstants.NEW, null);
             if (abstractEstimate.getState() == null)
                 abstractEstimate.transition(true).start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(WorksConstants.NEW)
@@ -827,8 +831,7 @@ public class EstimateService {
                 pos = positionMasterService.getPositionById(approvalPosition);
             if (null == abstractEstimate.getState()) {
                 wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
-                        abstractEstimate.getEstimateValue(),
-                        additionalRule, currState, null);
+                        abstractEstimate.getEstimateValue(), additionalRule, currState, null);
                 abstractEstimate.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
                         .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
@@ -843,9 +846,8 @@ public class EstimateService {
                         .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);
             } else {
                 wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
-                        abstractEstimate.getEstimateValue(),
-                        additionalRule, abstractEstimate.getCurrentState().getValue(),
-                        abstractEstimate.getState().getNextAction());
+                        abstractEstimate.getEstimateValue(), additionalRule,
+                        abstractEstimate.getCurrentState().getValue(), abstractEstimate.getState().getNextAction());
                 abstractEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
@@ -867,8 +869,7 @@ public class EstimateService {
     public List<AbstractEstimate> searchAbstractEstimates(final SearchAbstractEstimate searchAbstractEstimate) {
         if (searchAbstractEstimate != null) {
             final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(AbstractEstimate.class)
-                    .createAlias("egwStatus", "status")
-                    .createAlias("projectCode", "pc");
+                    .createAlias("egwStatus", "status").createAlias("projectCode", "pc");
             criteria.add(Restrictions.isNull("parent.id"));
             if (searchAbstractEstimate.getAbstractEstimateNumber() != null)
                 criteria.add(Restrictions.eq("estimateNumber", searchAbstractEstimate.getAbstractEstimateNumber()));
@@ -919,21 +920,19 @@ public class EstimateService {
             if (abstractEstimateForLoaSearchRequest.getAdminSanctionToDate() != null)
                 queryStr.append(" and estimate.approvedDate <= :toDate");
             if (abstractEstimateForLoaSearchRequest.getAbstractEstimateCreatedBy() != null)
-                queryStr.append(
-                        " and estimate.createdBy.id = :createdById");
+                queryStr.append(" and estimate.createdBy.id = :createdById");
             if (abstractEstimateForLoaSearchRequest.getWorkIdentificationNumber() != null)
                 queryStr.append(" and upper(estimate.projectCode.code) = upper(:projectCode)");
 
         }
 
-        if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null && abstractEstimateForLoaSearchRequest.getEgwStatus()
-                .equalsIgnoreCase(OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString()))
+        if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null && abstractEstimateForLoaSearchRequest
+                .getEgwStatus().equalsIgnoreCase(OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString()))
             queryStr.append(
                     " and exists (select off.id from OfflineStatus as off where off.objectId = estimate.id and off.objectType = :objectType and upper(off.egwStatus.code) = upper(:offStatus) )");
-        else if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null && abstractEstimateForLoaSearchRequest.getEgwStatus()
-                .equalsIgnoreCase(WorksConstants.APPROVED))
-            queryStr.append(
-                    " and estimate.lineEstimateDetails.lineEstimate.modeOfAllotment = :modeOfAllotment");
+        else if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null
+                && abstractEstimateForLoaSearchRequest.getEgwStatus().equalsIgnoreCase(WorksConstants.APPROVED))
+            queryStr.append(" and estimate.lineEstimateDetails.lineEstimate.modeOfAllotment = :modeOfAllotment");
         else
             queryStr.append(
                     " and (exists (select off.id from OfflineStatus as off where off.objectId = estimate.id and off.objectType = :objectType and upper(off.egwStatus.code) = upper(:offStatus) ) or estimate.lineEstimateDetails.lineEstimate.modeOfAllotment = :modeOfAllotment)");
@@ -945,13 +944,15 @@ public class EstimateService {
         return abstractEstimates;
     }
 
-    private Query setQueryParametersForCreateLOA(final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest,
+    private Query setQueryParametersForCreateLOA(
+            final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest,
             final StringBuilder queryStr) {
         final Query qry = entityManager.createQuery(queryStr.toString());
         final List<AppConfigValues> nominationName = getNominationName();
         if (abstractEstimateForLoaSearchRequest != null) {
             if (abstractEstimateForLoaSearchRequest.getAdminSanctionNumber() != null)
-                qry.setParameter("adminSanctionNumber", "%" + abstractEstimateForLoaSearchRequest.getAdminSanctionNumber() + "%");
+                qry.setParameter("adminSanctionNumber",
+                        "%" + abstractEstimateForLoaSearchRequest.getAdminSanctionNumber() + "%");
             if (abstractEstimateForLoaSearchRequest.getExecutingDepartment() != null)
                 qry.setParameter("departmentId", abstractEstimateForLoaSearchRequest.getExecutingDepartment());
             if (abstractEstimateForLoaSearchRequest.getEstimateNumber() != null)
@@ -968,17 +969,18 @@ public class EstimateService {
             qry.setParameter("woStatus", WorksConstants.CANCELLED_STATUS);
             qry.setParameter("aeStatus", AbstractEstimate.EstimateStatus.APPROVED.toString());
         }
-        if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null && abstractEstimateForLoaSearchRequest.getEgwStatus()
-                .equalsIgnoreCase(OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString())) {
+        if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null && abstractEstimateForLoaSearchRequest
+                .getEgwStatus().equalsIgnoreCase(OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString())) {
             qry.setParameter("objectType", WorksConstants.ABSTRACTESTIMATE);
-            qry.setParameter("offStatus", AbstractEstimate.OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
+            qry.setParameter("offStatus",
+                    AbstractEstimate.OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
         } else if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null
-                && abstractEstimateForLoaSearchRequest.getEgwStatus()
-                        .equalsIgnoreCase(WorksConstants.APPROVED))
+                && abstractEstimateForLoaSearchRequest.getEgwStatus().equalsIgnoreCase(WorksConstants.APPROVED))
             qry.setParameter("modeOfAllotment", !nominationName.isEmpty() ? nominationName.get(0).getValue() : "");
         else {
             qry.setParameter("objectType", WorksConstants.ABSTRACTESTIMATE);
-            qry.setParameter("offStatus", AbstractEstimate.OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
+            qry.setParameter("offStatus",
+                    AbstractEstimate.OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
             qry.setParameter("modeOfAllotment", !nominationName.isEmpty() ? nominationName.get(0).getValue() : "");
         }
         return qry;
@@ -1011,8 +1013,9 @@ public class EstimateService {
     public void validateActivities(final AbstractEstimate abstractEstimate, final BindingResult errors) {
         for (int i = 0; i < abstractEstimate.getSorActivities().size() - 1; i++)
             for (int j = i + 1; j < abstractEstimate.getSorActivities().size(); j++)
-                if (abstractEstimate.getSorActivities().get(i).getSchedule() != null && abstractEstimate.getSorActivities().get(i)
-                        .getSchedule().getId().equals(abstractEstimate.getSorActivities().get(j).getSchedule().getId())) {
+                if (abstractEstimate.getSorActivities().get(i).getSchedule() != null
+                        && abstractEstimate.getSorActivities().get(i).getSchedule().getId()
+                                .equals(abstractEstimate.getSorActivities().get(j).getSchedule().getId())) {
                     errors.reject("error.sor.duplicate", "error.sor.duplicate");
                     break;
                 }
@@ -1075,8 +1078,8 @@ public class EstimateService {
             final BigDecimal diffValue = abstractEstimate.getEstimateValue()
                     .subtract(lineEstimateDetails.getEstimateAmount());
             bindErrors.reject("error.estimatevalue.greater",
-                    new String[] { diffValue.toString(), lineEstimateDetails.getEstimateAmount().setScale(2, BigDecimal.ROUND_UP)
-                            .toString() },
+                    new String[] { diffValue.toString(),
+                            lineEstimateDetails.getEstimateAmount().setScale(2, BigDecimal.ROUND_UP).toString() },
                     "error.estimatevalue.greater");
         }
     }
@@ -1092,7 +1095,8 @@ public class EstimateService {
         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
         model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
-        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
+        model.addAttribute("typeOfWork",
+                typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         model.addAttribute("finYear", financialYearDAO.findAll());
         model.addAttribute("uoms", uomService.findAll());
@@ -1124,16 +1128,15 @@ public class EstimateService {
                 && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionNumber() != null) {
             final AbstractEstimate esistingAbstractEstimate = abstractEstimateRepository
                     .findByEstimateTechnicalSanctionsIgnoreCase_TechnicalSanctionNumberAndEgwStatus_CodeNot(
-                            abstractEstimate.getEstimateTechnicalSanctions().get(0)
-                                    .getTechnicalSanctionNumber(),
+                            abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionNumber(),
                             EstimateStatus.CANCELLED.toString());
             if (esistingAbstractEstimate != null)
                 errors.reject("error.technumber.unique", "error.technumber.unique");
         }
         if (abstractEstimate.getEstimateDate() == null)
             errors.reject("errors.abbstractestimate.estimatedate", "errors.abbstractestimate.estimatedate");
-        if (abstractEstimate.getLineEstimateDetails() != null
-                && abstractEstimate.getEstimateDate() != null && abstractEstimate.getEstimateDate()
+        if (abstractEstimate.getLineEstimateDetails() != null && abstractEstimate.getEstimateDate() != null
+                && abstractEstimate.getEstimateDate()
                         .before(abstractEstimate.getLineEstimateDetails().getLineEstimate().getAdminSanctionDate()))
             errors.reject("error.abstractadminsanctiondatele", "error.abstractadminsanctiondatele");
     }
@@ -1141,15 +1144,15 @@ public class EstimateService {
     public void setTechnicalSanctionDetails(final AbstractEstimate abstractEstimate) {
         if (abstractEstimate.getEstimateTechnicalSanctions() != null) {
             abstractEstimate.getEstimateTechnicalSanctions().get(0).setAbstractEstimate(abstractEstimate);
-            abstractEstimate.setApprovedDate(abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionDate());
+            abstractEstimate.setApprovedDate(
+                    abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionDate());
         }
         abstractEstimate.setApprovedBy(securityUtils.getCurrentUser());
     }
 
     public List<String> getAbstractEstimateNumbersToCancelLineEstimate(final Long lineEstimateId) {
-        final List<String> estimateNumbers = abstractEstimateRepository
-                .findAbstractEstimateNumbersToCancelLineEstimate(lineEstimateId,
-                        AbstractEstimate.EstimateStatus.CANCELLED.toString());
+        final List<String> estimateNumbers = abstractEstimateRepository.findAbstractEstimateNumbersToCancelLineEstimate(
+                lineEstimateId, AbstractEstimate.EstimateStatus.CANCELLED.toString());
         return estimateNumbers;
     }
 
@@ -1161,7 +1164,8 @@ public class EstimateService {
         return savedAbstractEstimate;
     }
 
-    public List<AbstractEstimate> searchEstimatesToCancel(final SearchRequestCancelEstimate searchRequestCancelEstimate) {
+    public List<AbstractEstimate> searchEstimatesToCancel(
+            final SearchRequestCancelEstimate searchRequestCancelEstimate) {
         final StringBuilder queryStr = new StringBuilder(500);
         queryStr.append(
                 "select distinct(ae) from AbstractEstimate ae where exists (select distinct(activity.id) from Activity activity where activity.abstractEstimate.id = ae.id) and not exists (select distinct(woe) from WorkOrderEstimate as woe where woe.estimate.id = ae.id and woe.workOrder.egwStatus.code != :workOrderStatus) ");
@@ -1210,10 +1214,9 @@ public class EstimateService {
     }
 
     public List<String> findEstimateNumbersToCancelEstimate(final String code) {
-        final List<String> estimateNumbers = abstractEstimateRepository
-                .findAbstractEstimateNumbersToCancelEstimate("%" + code + "%",
-                        AbstractEstimate.EstimateStatus.CANCELLED.toString(),
-                        AbstractEstimate.EstimateStatus.APPROVED.toString());
+        final List<String> estimateNumbers = abstractEstimateRepository.findAbstractEstimateNumbersToCancelEstimate(
+                "%" + code + "%", AbstractEstimate.EstimateStatus.CANCELLED.toString(),
+                AbstractEstimate.EstimateStatus.APPROVED.toString());
         return estimateNumbers;
     }
 
@@ -1259,11 +1262,14 @@ public class EstimateService {
                 qry.setParameter("abstractEstimateNumber",
                         abstractEstimateForLoaSearchRequest.getAbstractEstimateNumber().toUpperCase());
             if (abstractEstimateForLoaSearchRequest.getAdminSanctionFromDate() != null)
-                qry.setParameter("abstractEstimateFromDate", abstractEstimateForLoaSearchRequest.getAdminSanctionFromDate());
+                qry.setParameter("abstractEstimateFromDate",
+                        abstractEstimateForLoaSearchRequest.getAdminSanctionFromDate());
             if (abstractEstimateForLoaSearchRequest.getAdminSanctionToDate() != null)
-                qry.setParameter("abstractEstimateToDate", abstractEstimateForLoaSearchRequest.getAdminSanctionToDate());
+                qry.setParameter("abstractEstimateToDate",
+                        abstractEstimateForLoaSearchRequest.getAdminSanctionToDate());
             if (abstractEstimateForLoaSearchRequest.getAbstractEstimateCreatedBy() != null)
-                qry.setParameter("abstractEstimateCreatedBy", abstractEstimateForLoaSearchRequest.getAbstractEstimateCreatedBy());
+                qry.setParameter("abstractEstimateCreatedBy",
+                        abstractEstimateForLoaSearchRequest.getAbstractEstimateCreatedBy());
 
             if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null) {
                 qry.setParameter("objectType", WorksConstants.ABSTRACTESTIMATE);
@@ -1282,10 +1288,9 @@ public class EstimateService {
     public List<String> getAbstractEstimateNumbersToSetOfflineStatus(final String code) {
         final List<AppConfigValues> nominationName = getNominationName();
 
-        final List<String> estimateNumbers = abstractEstimateRepository
-                .findAbstractEstimateNumbersToSetOfflineStatus("%" + code + "%",
-                        WorksConstants.APPROVED, WorksConstants.CANCELLED_STATUS,
-                        !nominationName.isEmpty() ? nominationName.get(0).getValue() : "");
+        final List<String> estimateNumbers = abstractEstimateRepository.findAbstractEstimateNumbersToSetOfflineStatus(
+                "%" + code + "%", WorksConstants.APPROVED, WorksConstants.CANCELLED_STATUS,
+                !nominationName.isEmpty() ? nominationName.get(0).getValue() : "");
         return estimateNumbers;
     }
 
@@ -1294,9 +1299,8 @@ public class EstimateService {
             final List<AppConfigValues> appConfigvalues = appConfigValuesService.getConfigValuesByModuleAndKey(
                     WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_GIS_INTEGRATION);
             final AppConfigValues value = appConfigvalues.get(0);
-            if (value.getValue().equalsIgnoreCase("Yes")
-                    && (StringUtils.isBlank(abstractEstimate.getLocation()) || abstractEstimate.getLatitude() == null ||
-                            abstractEstimate.getLongitude() == null))
+            if (value.getValue().equalsIgnoreCase("Yes") && (StringUtils.isBlank(abstractEstimate.getLocation())
+                    || abstractEstimate.getLatitude() == null || abstractEstimate.getLongitude() == null))
                 bindErrors.reject("error.locationdetails.required", "error.locationdetails.required");
         }
     }
@@ -1312,20 +1316,16 @@ public class EstimateService {
     }
 
     public List<String> getApprovedEstimateNumbersForCreateLOA(final String estimateNumber) {
-        final List<String> estimateNumbers = abstractEstimateRepository
-                .findEstimateNumbersToCreateLOA("%" + estimateNumber + "%",
-                        EstimateStatus.APPROVED.toString(), WorksConstants.CANCELLED_STATUS,
-                        WorksConstants.ABSTRACTESTIMATE,
-                        OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
+        final List<String> estimateNumbers = abstractEstimateRepository.findEstimateNumbersToCreateLOA(
+                "%" + estimateNumber + "%", EstimateStatus.APPROVED.toString(), WorksConstants.CANCELLED_STATUS,
+                WorksConstants.ABSTRACTESTIMATE, OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
         return estimateNumbers;
     }
 
     public List<String> getApprovedAdminSanctionNumbersForCreateLOA(final String adminSanctionNumber) {
-        final List<String> adminSanctionNumbers = abstractEstimateRepository
-                .findAdminSanctionNumbersToCreateLOA("%" + adminSanctionNumber + "%",
-                        EstimateStatus.APPROVED.toString(), WorksConstants.CANCELLED_STATUS,
-                        WorksConstants.ABSTRACTESTIMATE,
-                        OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
+        final List<String> adminSanctionNumbers = abstractEstimateRepository.findAdminSanctionNumbersToCreateLOA(
+                "%" + adminSanctionNumber + "%", EstimateStatus.APPROVED.toString(), WorksConstants.CANCELLED_STATUS,
+                WorksConstants.ABSTRACTESTIMATE, OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
         return adminSanctionNumbers;
     }
 
@@ -1423,20 +1423,23 @@ public class EstimateService {
     }
 
     public List<AbstractEstimate> getBySorIdAndEstimateDate(final Long sorId, final Date estimateDate) {
-        return abstractEstimateRepository.findBySorIdAndEstimateDate(sorId, estimateDate, WorksConstants.CANCELLED_STATUS);
+        return abstractEstimateRepository.findBySorIdAndEstimateDate(sorId, estimateDate,
+                WorksConstants.CANCELLED_STATUS);
     }
 
     public List<Activity> getActivitiesByParent(final Long activityId) {
-        return abstractEstimateRepository.findActivitiesByParent(activityId, RevisionEstimateStatus.APPROVED.toString());
+        return abstractEstimateRepository.findActivitiesByParent(activityId,
+                RevisionEstimateStatus.APPROVED.toString());
     }
 
     public List<WorkOrderEstimate> getBySorIdAndWorkOrderDate(final Long sorId, final Date workOrderDate) {
-        return abstractEstimateRepository.findBySorIdAndWorkOrderDate(sorId, workOrderDate, WorksConstants.CANCELLED_STATUS);
+        return abstractEstimateRepository.findBySorIdAndWorkOrderDate(sorId, workOrderDate,
+                WorksConstants.CANCELLED_STATUS);
     }
 
     public List<User> getCreatedByForEstimatePhotograph() {
-        return abstractEstimateRepository.findCreatedByForEstimatePhotograph(
-                AbstractEstimate.EstimateStatus.APPROVED.toString());
+        return abstractEstimateRepository
+                .findCreatedByForEstimatePhotograph(AbstractEstimate.EstimateStatus.APPROVED.toString());
     }
 
     private void createEstimateDeductionValues(final AbstractEstimate abstractEstimate) {
@@ -1444,7 +1447,8 @@ public class EstimateService {
         abstractEstimate.getAbsrtractEstimateDeductions().clear();
         for (final AbstractEstimateDeduction deductions : abstractEstimate.getTempDeductionValues()) {
             deduction = new AbstractEstimateDeduction();
-            deduction.setChartOfAccounts(chartOfAccountsService.findById(deductions.getChartOfAccounts().getId(), false));
+            deduction.setChartOfAccounts(
+                    chartOfAccountsService.findById(deductions.getChartOfAccounts().getId(), false));
             deduction.setAmount(deductions.getAmount());
             deduction.setAbstractEstimate(abstractEstimate);
             deduction.setPercentage(deductions.getPercentage());
@@ -1465,15 +1469,14 @@ public class EstimateService {
     }
 
     public List<AppConfigValues> getNominationName() {
-        final List<AppConfigValues> nominationName = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WorksConstants.WORKS_MODULE_NAME, WorksConstants.NOMINATION_NAME);
+        final List<AppConfigValues> nominationName = appConfigValuesService
+                .getConfigValuesByModuleAndKey(WorksConstants.WORKS_MODULE_NAME, WorksConstants.NOMINATION_NAME);
         return nominationName;
     }
 
     public List<Map<Long, String>> findEstimateNumbersToCopyEstimate(final String code) {
-        final List<Object[]> estimates = abstractEstimateRepository
-                .findAbstractEstimateNumbersToCopyEstimate("%" + code + "%",
-                        AbstractEstimate.EstimateStatus.APPROVED.toString());
+        final List<Object[]> estimates = abstractEstimateRepository.findAbstractEstimateNumbersToCopyEstimate(
+                "%" + code + "%", AbstractEstimate.EstimateStatus.APPROVED.toString());
         final List<Map<Long, String>> estimatesMap = new ArrayList<>();
         for (final Object[] ae : estimates) {
             final Map<Long, String> estimateMap = new HashMap<>();
@@ -1487,7 +1490,8 @@ public class EstimateService {
         return abstractEstimateRepository.findActivitiesByEstimate(estimateId);
     }
 
-    public List<AbstractEstimate> searchEstimatesToCopy(final AbstractEstimateForCopyEstimate abstractEstimateForCopyEstimate) {
+    public List<AbstractEstimate> searchEstimatesToCopy(
+            final AbstractEstimateForCopyEstimate abstractEstimateForCopyEstimate) {
         final StringBuilder queryStr = new StringBuilder(500);
         queryStr.append(
                 "select distinct(ae) from AbstractEstimate ae where exists (select distinct(activity.id) from Activity activity where activity.abstractEstimate.id = ae.id)");
@@ -1510,8 +1514,7 @@ public class EstimateService {
     }
 
     private Query setQueryParametersForAbstractEstimateToCopy(
-            final AbstractEstimateForCopyEstimate abstractEstimateForCopyEstimate,
-            final StringBuilder queryStr) {
+            final AbstractEstimateForCopyEstimate abstractEstimateForCopyEstimate, final StringBuilder queryStr) {
         final Query qry = entityManager.createQuery(queryStr.toString());
         if (abstractEstimateForCopyEstimate != null) {
             if (abstractEstimateForCopyEstimate.getEstimateNumber() != null)
@@ -1526,10 +1529,10 @@ public class EstimateService {
         return qry;
     }
 
-    public List<EstimateTemplate> searchEstimateTemplates(final EstimateTemplateSearchRequest estimateTemplateSearchRequest) {
+    public List<EstimateTemplate> searchEstimateTemplates(
+            final EstimateTemplateSearchRequest estimateTemplateSearchRequest) {
         final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append(
-                "select distinct(et) from EstimateTemplate et where 1 = 1 ");
+        queryStr.append("select distinct(et) from EstimateTemplate et where 1 = 1 ");
 
         if (estimateTemplateSearchRequest != null) {
             if (estimateTemplateSearchRequest.getTypeOfWork() != null)
@@ -1551,8 +1554,7 @@ public class EstimateService {
     }
 
     private Query setQueryParametersForSearchEstimateTemplate(
-            final EstimateTemplateSearchRequest estimateTemplateSearchRequest,
-            final StringBuilder queryStr) {
+            final EstimateTemplateSearchRequest estimateTemplateSearchRequest, final StringBuilder queryStr) {
         final Query qry = entityManager.createQuery(queryStr.toString());
         if (estimateTemplateSearchRequest != null) {
             if (estimateTemplateSearchRequest.getTypeOfWork() != null)

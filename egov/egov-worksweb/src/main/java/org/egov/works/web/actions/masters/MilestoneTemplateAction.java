@@ -52,7 +52,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwTypeOfWork;
-import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
+import org.egov.commons.service.TypeOfWorkService;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
@@ -84,7 +84,7 @@ public class MilestoneTemplateAction extends SearchFormAction {
     private WorksService worksService;
 
     @Autowired
-    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
+    private TypeOfWorkService typeOfWorkService;
 
     Long id;
     private String mode;
@@ -109,7 +109,7 @@ public class MilestoneTemplateAction extends SearchFormAction {
         super.prepare();
         setupDropdownDataExcluding("typeOfWork", "subTypeOfWork");
         addDropdownData("parentCategoryList",
-                getPersistenceService().findAllBy("from EgwTypeOfWork etw where etw.parentid is null"));
+                typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
         populateCategoryList(template.getTypeOfWork() != null);
     }
 
@@ -216,7 +216,7 @@ public class MilestoneTemplateAction extends SearchFormAction {
     protected void populateCategoryList(final boolean categoryPopulated) {
         if (categoryPopulated)
             addDropdownData("categoryList",
-                    egwTypeOfWorkHibernateDAO.getSubTypeOfWorkByParentId(template.getTypeOfWork().getId()));
+                    typeOfWorkService.getByParentidAndEgPartytype(template.getTypeOfWork().getId(),WorksConstants.PARTY_TYPE_CONTRACTOR));
         else
             addDropdownData("categoryList", Collections.emptyList());
     }

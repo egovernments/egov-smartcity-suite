@@ -76,4 +76,12 @@ public class TypeOfWorkService {
         return typeOfWorkRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 
+    public List<EgwTypeOfWork> getTypeOfWorkByPartyType(final String partyTypeCode) {
+        return typeOfWorkRepository.findByPartyType(partyTypeCode.toUpperCase());
+    }
+
+    public List<EgwTypeOfWork> getByParentidAndEgPartytype(final Long parentId, final String partyTypeCode) {
+        return typeOfWorkRepository.findByParentidAndEgPartytype(parentId, partyTypeCode.toUpperCase());
+    }
+
 }

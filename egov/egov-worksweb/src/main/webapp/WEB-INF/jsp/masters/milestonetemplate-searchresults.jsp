@@ -107,14 +107,14 @@ window.close();
 			   class="pagetabletd" title="Type of Work"
 			   titleKey="milestone.template.search.type"
 			   style="width:10%;text-align:left;cursor:pointer" >
-				   <s:property value="%{#attr.currentRow.typeOfWork.description}" />
+				   <s:property value="%{#attr.currentRow.typeOfWork.name}" />
 			</display:column>
                 
             <display:column headerClass="pagetableth"
 			   class="pagetabletd" title="SubType of Work"
 			   titleKey="milestone.template.search.subtype"
 			   style="width:10%;text-align:left;cursor:pointer" >
-			      <s:property value="%{#attr.currentRow.subTypeOfWork.description}" />
+			      <s:property value="%{#attr.currentRow.subTypeOfWork.name}" />
 			</display:column>
                 			  
 			<display:column headerClass="pagetableth"

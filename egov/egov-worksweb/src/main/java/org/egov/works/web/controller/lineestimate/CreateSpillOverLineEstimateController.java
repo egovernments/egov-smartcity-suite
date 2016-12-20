@@ -50,8 +50,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CChartOfAccountDetail;
-import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.commons.service.TypeOfWorkService;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.egf.budget.model.BudgetControlType;
 import org.egov.egf.budget.service.BudgetControlTypeService;
@@ -106,9 +106,6 @@ public class CreateSpillOverLineEstimateController {
     private NatureOfWorkService natureOfWorkService;
 
     @Autowired
-    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
-
-    @Autowired
     @Qualifier("messageSource")
     private MessageSource messageSource;
 
@@ -145,6 +142,9 @@ public class CreateSpillOverLineEstimateController {
     @Autowired
     private EstimateService estimateService;
 
+    @Autowired
+    private TypeOfWorkService typeOfWorkService;
+
     @RequestMapping(value = "/newspilloverform", method = RequestMethod.GET)
     public String showNewSpillOverLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
             final Model model) throws ApplicationException {
@@ -163,11 +163,10 @@ public class CreateSpillOverLineEstimateController {
     }
 
     @RequestMapping(value = "/create-spillover", method = RequestMethod.POST)
-    public String create(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
-            final Model model, final BindingResult errors, @RequestParam("file") final MultipartFile[] files,
+    public String create(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate, final Model model,
+            final BindingResult errors, @RequestParam("file") final MultipartFile[] files,
             final RedirectAttributes redirectAttributes, final HttpServletRequest request,
-            final BindingResult resultBinder)
-            throws ApplicationException, IOException {
+            final BindingResult resultBinder) throws ApplicationException, IOException {
 
         validateLineEstimateDetails(lineEstimate, errors);
         validateAdminSanctionDetail(lineEstimate, errors);
@@ -253,8 +252,8 @@ public class CreateSpillOverLineEstimateController {
                 && lineEstimate.getModeOfAllotment()
                         .equalsIgnoreCase(!nominationName.isEmpty() ? nominationName.get(0).getValue() : "")
                 && Double.parseDouble(estimateAmount.toString()) > Double.parseDouble(value.getValue()))
-            errors.reject("error.lineestimate.modeofentrustment",
-                    new String[] { !nominationName.isEmpty() ? nominationName.get(0).getValue() : "", estimateAmount.toString() },
+            errors.reject("error.lineestimate.modeofentrustment", new String[] {
+                    !nominationName.isEmpty() ? nominationName.get(0).getValue() : "", estimateAmount.toString() },
                     "error.lineestimate.modeofentrustment");
 
     }
@@ -269,8 +268,8 @@ public class CreateSpillOverLineEstimateController {
         if (StringUtils.isBlank(lineEstimate.getAdminSanctionNumber()))
             errors.rejectValue("adminSanctionNumber", "error.adminsanctionnumber.notnull");
         if (lineEstimate.getAdminSanctionNumber() != null) {
-            final LineEstimate checkLineEstimate = lineEstimateService.getLineEstimateByAdminSanctionNumber(lineEstimate
-                    .getAdminSanctionNumber());
+            final LineEstimate checkLineEstimate = lineEstimateService
+                    .getLineEstimateByAdminSanctionNumber(lineEstimate.getAdminSanctionNumber());
 
             if (checkLineEstimate != null)
                 errors.rejectValue("adminSanctionNumber", "error.adminsanctionnumber.unique");
@@ -284,7 +283,8 @@ public class CreateSpillOverLineEstimateController {
         model.addAttribute("beneficiary", Beneficiary.values());
         model.addAttribute("modeOfAllotment", modeOfAllotmentService.findAll());
         model.addAttribute("lineEstimateUOMs", lineEstimateUOMService.findAll());
-        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
+        model.addAttribute("typeOfWork",
+                typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         model.addAttribute("locations", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 WorksConstants.LOCATION_BOUNDARYTYPE, WorksConstants.LOCATION_HIERARCHYTYPE));
@@ -304,12 +304,12 @@ public class CreateSpillOverLineEstimateController {
     }
 
     @RequestMapping(value = "/spillover-lineestimate-success", method = RequestMethod.GET)
-    public ModelAndView successView(@RequestParam("lineEstimateNumber") final String lineEstimateNumber, final Model model) {
+    public ModelAndView successView(@RequestParam("lineEstimateNumber") final String lineEstimateNumber,
+            final Model model) {
         final LineEstimate lineEstimate = lineEstimateService.getLineEstimateByLineEstimateNumber(lineEstimateNumber);
 
         model.addAttribute("message", messageSource.getMessage("msg.spillover.lineestimate.success",
-                new String[] { lineEstimate.getLineEstimateNumber(), lineEstimate.getAdminSanctionNumber() },
-                null));
+                new String[] { lineEstimate.getLineEstimateNumber(), lineEstimate.getAdminSanctionNumber() }, null));
 
         return new ModelAndView("lineestimate-success");
     }
@@ -319,26 +319,22 @@ public class CreateSpillOverLineEstimateController {
         budgetheadid.add(lineEstimate.getBudgetHead().getId());
 
         try {
-            final BigDecimal budgetAvailable = budgetDetailsDAO
-                    .getPlanningBudgetAvailable(
-                            worksUtils.getFinancialYearByDate(new Date()).getId(),
-                            Integer.parseInt(lineEstimate
-                                    .getExecutingDepartment().getId().toString()),
-                            lineEstimate.getFunction().getId(),
-                            null,
-                            lineEstimate.getScheme() == null ? null : Integer.parseInt(lineEstimate.getScheme().getId()
-                                    .toString()),
-                            lineEstimate.getSubScheme() == null ? null : Integer.parseInt(lineEstimate.getSubScheme().getId()
-                                    .toString()),
-                            null, budgetheadid, Integer.parseInt(lineEstimate.getFund()
-                                    .getId().toString()));
+            final BigDecimal budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
+                    worksUtils.getFinancialYearByDate(new Date()).getId(),
+                    Integer.parseInt(lineEstimate.getExecutingDepartment().getId().toString()),
+                    lineEstimate.getFunction().getId(), null,
+                    lineEstimate.getScheme() == null ? null
+                            : Integer.parseInt(lineEstimate.getScheme().getId().toString()),
+                    lineEstimate.getSubScheme() == null ? null
+                            : Integer.parseInt(lineEstimate.getSubScheme().getId().toString()),
+                    null, budgetheadid, Integer.parseInt(lineEstimate.getFund().getId().toString()));
 
             BigDecimal totalAppropriationAmount = BigDecimal.ZERO;
 
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
                 if (lineEstimate.isBillsCreated() && led.getGrossAmountBilled() != null)
-                    totalAppropriationAmount = totalAppropriationAmount.add(led.getEstimateAmount().subtract(
-                            led.getGrossAmountBilled()));
+                    totalAppropriationAmount = totalAppropriationAmount
+                            .add(led.getEstimateAmount().subtract(led.getGrossAmountBilled()));
                 else
                     totalAppropriationAmount = totalAppropriationAmount.add(led.getEstimateAmount());
             if (BudgetControlType.BudgetCheckOption.MANDATORY.toString()
@@ -347,13 +343,15 @@ public class CreateSpillOverLineEstimateController {
                 errors.reject("error.budgetappropriation.amount",
                         new String[] { budgetAvailable.toString(), totalAppropriationAmount.toString() }, null);
         } catch (final ValidationException e) {
-            // TODO: Used ApplicationRuntimeException for time being since there is issue in session after
+            // TODO: Used ApplicationRuntimeException for time being since there
+            // is issue in session after
             // budgetDetailsDAO.getPlanningBudgetAvailable API call
             // TODO: needs to replace with errors.reject
             for (final ValidationError error : e.getErrors())
                 throw new ApplicationRuntimeException(error.getKey());
             /*
-             * for (final ValidationError error : e.getErrors()) errors.reject(error.getMessage());
+             * for (final ValidationError error : e.getErrors())
+             * errors.reject(error.getMessage());
              */
         }
     }

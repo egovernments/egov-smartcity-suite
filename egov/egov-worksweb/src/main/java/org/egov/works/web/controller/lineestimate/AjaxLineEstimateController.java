@@ -54,9 +54,9 @@ import org.egov.commons.CFunction;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
-import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.service.FinancialYearService;
 import org.egov.commons.service.FunctionService;
+import org.egov.commons.service.TypeOfWorkService;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.entity.Assignment;
@@ -122,9 +122,6 @@ public class AjaxLineEstimateController {
     private CrossHierarchyService crossHierarchyService;
 
     @Autowired
-    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
-
-    @Autowired
     private BoundaryService boundaryService;
 
     @Autowired
@@ -161,6 +158,9 @@ public class AjaxLineEstimateController {
     @Autowired
     private LineEstimateForEstimatePhotographJsonAdaptor lineEstimateForEstimatePhotographJsonAdaptor;
 
+    @Autowired
+    private TypeOfWorkService typeOfWorkService;
+
     @RequestMapping(value = "/getschemesbyfundid", method = RequestMethod.GET)
     public @ResponseBody List<Scheme> getAllSchemesByFundId(@RequestParam("fundId") final String fundId)
             throws ApplicationException {
@@ -195,7 +195,7 @@ public class AjaxLineEstimateController {
 
     @RequestMapping(value = "/getsubtypeofwork", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<EgwTypeOfWork> getSubTypeOfWork(@RequestParam("id") final Long id) {
-        return egwTypeOfWorkHibernateDAO.getSubTypeOfWorkByParentId(id);
+        return typeOfWorkService.getByParentidAndEgPartytype(id,WorksConstants.PARTY_TYPE_CONTRACTOR);
     }
 
     @RequestMapping(value = "/ajax-getward", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -223,8 +223,7 @@ public class AjaxLineEstimateController {
         final List<LineEstimatesForAbstractEstimate> searchResultList = lineEstimateService
                 .searchLineEstimatesForAbstractEstimate(lineEstimatesForAbstractEstimate);
         final String result = new StringBuilder("{ \"data\":")
-                .append(toSearchLineEstimateForAbstractEstimateResultJson(searchResultList))
-                .append("}").toString();
+                .append(toSearchLineEstimateForAbstractEstimateResultJson(searchResultList)).append("}").toString();
         return result;
     }
 
@@ -237,7 +236,8 @@ public class AjaxLineEstimateController {
 
     public Object toSearchLineEstimateForAbstractEstimateResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, new AbstractEstimateForLOAJsonAdaptor()).create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, new AbstractEstimateForLOAJsonAdaptor())
+                .create();
         final String json = gson.toJson(object);
         return json;
     }
@@ -285,8 +285,8 @@ public class AjaxLineEstimateController {
     @RequestMapping(value = "/ajax-assignmentByDepartmentAndDesignation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getAssignmentByDepartmentAndDesignation(
             @RequestParam("approvalDesignation") final Long approvalDesignation,
-            @RequestParam("approvalDepartment") final Long approvalDepartment)
-            throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException, ApplicationException {
+            @RequestParam("approvalDepartment") final Long approvalDepartment) throws JsonGenerationException,
+            JsonMappingException, IOException, NumberFormatException, ApplicationException {
         final List<User> users = new ArrayList<User>();
         List<Assignment> assignments = new ArrayList<Assignment>();
         if (approvalDepartment != null && approvalDepartment != 0 && approvalDepartment != -1
@@ -302,10 +302,11 @@ public class AjaxLineEstimateController {
     }
 
     @RequestMapping(value = "/ajaxsearchcreatedby", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String getCreatedByDepartment(
-            @RequestParam("department") final Long department)
-            throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException, ApplicationException {
-        final List<User> users = lineEstimateService.getLineEstimateCreatedByUsersForCancelLineEstimateByDepartment(department);
+    public @ResponseBody String getCreatedByDepartment(@RequestParam("department") final Long department)
+            throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException,
+            ApplicationException {
+        final List<User> users = lineEstimateService
+                .getLineEstimateCreatedByUsersForCancelLineEstimateByDepartment(department);
         final Gson jsonCreator = new GsonBuilder().registerTypeAdapter(User.class, new UserAdaptor()).create();
         return jsonCreator.toJson(users, new TypeToken<Collection<User>>() {
         }.getType());
@@ -316,8 +317,7 @@ public class AjaxLineEstimateController {
             @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest) {
         final List<LineEstimate> lineestimates = lineEstimateService
                 .searchLineEstimatesToCancel(lineEstimateSearchRequest);
-        final String result = new StringBuilder("{ \"data\":")
-                .append(toSearchLineEstimatesToCancelJson(lineestimates))
+        final String result = new StringBuilder("{ \"data\":").append(toSearchLineEstimatesToCancelJson(lineestimates))
                 .append("}").toString();
         return result;
     }
@@ -356,16 +356,14 @@ public class AjaxLineEstimateController {
             if (natureOfWorkId != null)
                 natureOfWork = natureOfWorkService.findById(natureOfWorkId);
             String accountType = null;
-            if (natureOfWork != null
-                    && natureOfWork.getExpenditureType().getValue()
-                            .equalsIgnoreCase(WorksConstants.NATUREOFWORK_EXPENDITURETYPE_CAPITAL))
+            if (natureOfWork != null && natureOfWork.getExpenditureType().getValue()
+                    .equalsIgnoreCase(WorksConstants.NATUREOFWORK_EXPENDITURETYPE_CAPITAL))
                 accountType = BudgetAccountType.CAPITAL_EXPENDITURE.toString();
-            else if (natureOfWork != null
-                    && natureOfWork.getExpenditureType().getValue()
-                            .equalsIgnoreCase(WorksConstants.NATUREOFWORK_EXPENDITURETYPE_REVENUE))
+            else if (natureOfWork != null && natureOfWork.getExpenditureType().getValue()
+                    .equalsIgnoreCase(WorksConstants.NATUREOFWORK_EXPENDITURETYPE_REVENUE))
                 accountType = BudgetAccountType.REVENUE_EXPENDITURE.toString();
-            budgetGroups = budgetGroupDAO.getBudgetGroupsByFundFunctionDeptAndAccountType(fundId, departmentId, functionId,
-                    accountType);
+            budgetGroups = budgetGroupDAO.getBudgetGroupsByFundFunctionDeptAndAccountType(fundId, departmentId,
+                    functionId, accountType);
             return budgetGroups;
         } catch (final ValidationException v) {
             return budgetGroups;
@@ -387,18 +385,22 @@ public class AjaxLineEstimateController {
     @RequestMapping(value = "/getfunctionsbyfundidanddepartmentid", method = RequestMethod.GET)
     public @ResponseBody List<CFunction> getAllFunctionsByFundIdAndDepartmentId(final Model model,
             @RequestParam("fundId") final Integer fundId, @RequestParam("departmentId") final Long departmentId)
-            throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException, ApplicationException {
-        final List<CFunction> functions = budgetDetailsHibernateDAO.getFunctionsByFundAndDepartment(fundId, departmentId);
+            throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException,
+            ApplicationException {
+        final List<CFunction> functions = budgetDetailsHibernateDAO.getFunctionsByFundAndDepartment(fundId,
+                departmentId);
         return functions;
     }
 
     @RequestMapping(value = "/getestimatenumbers-uploadphotographs", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<String> findEstimateNumbersForEstimatePhotograph(@RequestParam final String estimateNumber) {
+    public @ResponseBody List<String> findEstimateNumbersForEstimatePhotograph(
+            @RequestParam final String estimateNumber) {
         return lineEstimateService.getEstimateNumbersForEstimatePhotograph(estimateNumber);
     }
 
     @RequestMapping(value = "/getwin-uploadphotographs", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<String> findWinForEstimatePhotograph(@RequestParam final String workIdentificationNumber) {
+    public @ResponseBody List<String> findWinForEstimatePhotograph(
+            @RequestParam final String workIdentificationNumber) {
         return lineEstimateService.getWinForEstimatePhotograph(workIdentificationNumber);
     }
 
@@ -407,15 +409,15 @@ public class AjaxLineEstimateController {
             @ModelAttribute final EstimatePhotographSearchRequest estimatePhotographSearchRequest) {
         final List<LineEstimateDetails> searchResultList = lineEstimateService
                 .searchLineEstimatesForEstimatePhotograph(estimatePhotographSearchRequest);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchLineEstimateForEstimatePhotograph(searchResultList))
-                .append("}").toString();
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toSearchLineEstimateForEstimatePhotograph(searchResultList)).append("}").toString();
         return result;
     }
 
     public Object toSearchLineEstimateForEstimatePhotograph(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimateDetails.class, lineEstimateForEstimatePhotographJsonAdaptor)
-                .create();
+        final Gson gson = gsonBuilder
+                .registerTypeAdapter(LineEstimateDetails.class, lineEstimateForEstimatePhotographJsonAdaptor).create();
         final String json = gson.toJson(object);
         return json;
     }

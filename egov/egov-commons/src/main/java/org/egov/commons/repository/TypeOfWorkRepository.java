@@ -39,13 +39,26 @@
  */
 package org.egov.commons.repository;
 
+import java.util.List;
+
 import org.egov.commons.EgwTypeOfWork;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TypeOfWorkRepository extends JpaRepository<EgwTypeOfWork, Long> {
 
     EgwTypeOfWork findByCodeIgnoreCase(final String code);
+
+    List<EgwTypeOfWork> findByNameContainingIgnoreCase(final String name);
+
+    @Query("select tw from EgwTypeOfWork as tw where tw.parentid is null and upper(tw.egPartytype.code) = :partyTypeCode order by upper(tw.name)")
+    List<EgwTypeOfWork> findByPartyType(@Param("partyTypeCode") final String partyTypeCode);
+
+    @Query("select tw from EgwTypeOfWork as tw where tw.parentid.id =:parentId and upper(tw.egPartytype.code) = :partyTypeCode order by upper(tw.name)")
+    List<EgwTypeOfWork> findByParentidAndEgPartytype(@Param("parentId") final Long parentId,
+            @Param("partyTypeCode") final String partyTypeCode);
 
 }

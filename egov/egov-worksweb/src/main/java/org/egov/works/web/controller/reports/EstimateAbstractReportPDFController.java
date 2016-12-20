@@ -53,7 +53,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
+import org.egov.commons.service.TypeOfWorkService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
@@ -104,11 +104,11 @@ public class EstimateAbstractReportPDFController {
     private NatureOfWorkService natureOfWorkService;
 
     @Autowired
-    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
-
-    @Autowired
     @Qualifier("messageSource")
     private MessageSource messageSource;
+
+    @Autowired
+    private TypeOfWorkService typeOfWorkService;
 
     private final Map<String, Object> reportParams = new HashMap<String, Object>();
     private ReportRequest reportInput = null;
@@ -390,11 +390,11 @@ public class EstimateAbstractReportPDFController {
 
         if (typeOfWork != null)
             queryParameters += messageSource.getMessage("msg.typeofwork", null, null)
-                    + egwTypeOfWorkHibernateDAO.getTypeOfWorkById(typeOfWork).getName() + ", ";
+                    + typeOfWorkService.getTypeOfWorkById(typeOfWork).getName() + ", ";
 
         if (subTypeOfWork != null)
             queryParameters += messageSource.getMessage("msg.subtypeofwork", null, null)
-                    + egwTypeOfWorkHibernateDAO.getTypeOfWorkById(subTypeOfWork).getName() + ", ";
+                    + typeOfWorkService.getTypeOfWorkById(subTypeOfWork).getName() + ", ";
 
         if (departments != null && !departments.toString().equalsIgnoreCase("[null]")
                 && !departments.toString().equalsIgnoreCase("[]")) {

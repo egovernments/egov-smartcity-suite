@@ -91,14 +91,14 @@
 			   class="pagetabletd" title="Work Type"
 			   titleKey="mb.search.column.pages"
 			   style="width:10%;text-align:left;cursor:pointer" >
-				   <s:property value="%{#attr.currentRow.workType.description}" />
+				   <s:property value="%{#attr.currentRow.workType.name}" />
 			</display:column>
                 
             <display:column headerClass="pagetableth"
 			   class="pagetabletd" title="Work SubType"
 			   titleKey="mb.search.column.date"
 			   style="width:10%;text-align:left;cursor:pointer" >
-			      <s:property value="%{#attr.currentRow.subType.description}" />
+			      <s:property value="%{#attr.currentRow.subType.name}" />
 			</display:column>
                 			  
 			<display:column headerClass="pagetableth"
