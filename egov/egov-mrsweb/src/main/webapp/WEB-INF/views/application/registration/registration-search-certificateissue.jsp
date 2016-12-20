@@ -55,7 +55,7 @@
 	    		<tr>
 	    			<th>Registration No</th>
 	    			<th>Application No</th>
-	    			<th>Registration Date</th>
+	    			<th>Application Date</th>
 	    			<th>Marriage Date</th>
 	    			<th>Husband Name</th>
 	    			<th>Wife Name</th>

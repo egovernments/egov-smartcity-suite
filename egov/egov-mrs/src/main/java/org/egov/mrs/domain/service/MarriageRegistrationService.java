@@ -506,10 +506,10 @@ public class MarriageRegistrationService {
                             MatchMode.ANYWHERE));
         if (mrSearchFilter.getHusbandName() != null)
             criteria.createAlias("reIssue.registration.husband", "husband").add(
-                    Restrictions.ilike("husband.name.fullname", mrSearchFilter.getHusbandName()));
+                    Restrictions.ilike("husband.name.fullname", mrSearchFilter.getHusbandName(), MatchMode.ANYWHERE));
         if (mrSearchFilter.getWifeName() != null)
             criteria.createAlias("reIssue.registration.wife", "wife").add(
-                    Restrictions.ilike("wife.name.fullname", mrSearchFilter.getWifeName()));
+                    Restrictions.ilike("wife.name.fullname", mrSearchFilter.getWifeName(), MatchMode.ANYWHERE));
         if (mrSearchFilter.getApplicationDate() != null)
             criteria.add(Restrictions.between("reIssue.applicationDate", sdf.parse(mrSearchFilter.getApplicationDate()),
                     DateUtils.addDays(sdf.parse(mrSearchFilter.getApplicationDate()), 1)));

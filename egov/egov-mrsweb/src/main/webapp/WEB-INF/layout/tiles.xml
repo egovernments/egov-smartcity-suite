@@ -227,7 +227,7 @@
 			value="/WEB-INF/views/application/registration/registration-update-approved.jsp" />
 	</definition>
 	<definition name="registration-search-forfee" extends="base_layout">
-		<put-attribute name="page-title" value="title.modify.mrg.registration"
+		<put-attribute name="page-title" value="title.collect.fee"
 			cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/registration/registration-search-forfee.jsp" />
