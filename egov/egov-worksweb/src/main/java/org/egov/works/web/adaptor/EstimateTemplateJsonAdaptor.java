@@ -62,7 +62,10 @@ public class EstimateTemplateJsonAdaptor implements JsonSerializer<EstimateTempl
             jsonObject.addProperty("description", estimateTemplate.getDescription());
             jsonObject.addProperty("name", estimateTemplate.getName());
             jsonObject.addProperty("typeOfWork", estimateTemplate.getWorkType().getName());
-            jsonObject.addProperty("subTypeOfWork", estimateTemplate.getSubType().getName());
+            if (estimateTemplate.getSubType() != null)
+                jsonObject.addProperty("subTypeOfWork", estimateTemplate.getSubType().getName());
+            else
+                jsonObject.addProperty("subTypeOfWork", "");
             if (estimateTemplate.getStatus() == 0)
                 jsonObject.addProperty("status", "INACTIVE");
             else
