@@ -68,7 +68,8 @@ public class RegistrationWorkflowService {
     private static final String STEP_APPROVE = "Approve";
     private static final String STEP_FORWARD = "Forward";
     private static final String STEP_PRINT_CERTIFICATE = "Print Certificate";
-
+    private static final String APPROVER_REJECTED = "Approver Rejected Application";
+    private static final String INITIATOR_INITIAL_STATE = "Revenue Clerk Approval Pending";
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<MarriageRegistration> registrationWorkflowService;
@@ -135,8 +136,9 @@ public class RegistrationWorkflowService {
                 nextStateOwner = assignmentService
                       .getPrimaryAssignmentForUser(registration.getCreatedBy().getId()).getPosition();
                 
-                nextState = "Assistant Engineer Rejected";
-                nextAction = "Revenue Clerk Approval Pending";
+                
+                nextState = APPROVER_REJECTED;
+                nextAction = INITIATOR_INITIAL_STATE;
             } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_CANCEL) || 
                     workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_PRINT_CERTIFICATE)) {
                 nextAction = STATE_END;
@@ -199,8 +201,8 @@ public class RegistrationWorkflowService {
                 nextStateOwner = assignmentService
                       .getPrimaryAssignmentForUser(reIssue.getCreatedBy().getId()).getPosition();
                 
-                nextState = "Assistant Engineer Rejected";
-                nextAction = "Revenue Clerk Approval Pending";
+                nextState = APPROVER_REJECTED ;
+                nextAction = INITIATOR_INITIAL_STATE;
             }else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_CANCEL_REISSUE) ||
                     workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_PRINT_CERTIFICATE)) {
                 nextAction = STATE_END;
