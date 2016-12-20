@@ -44,7 +44,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<script src="<cdn:url value='/resources/js/app/designation.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/app/designation.js'/>"></script>
 		 
 			
 			<form:form  method ="post" action="create" class="form-horizontal form-groups-bordered" modelAttribute="employee" id="employeeForm" >
