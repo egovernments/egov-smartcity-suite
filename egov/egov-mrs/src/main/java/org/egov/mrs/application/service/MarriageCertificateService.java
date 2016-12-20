@@ -45,7 +45,6 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,7 +141,6 @@ public class MarriageCertificateService {
         ReportOutput reportOutput;
         Calendar calForApplnDate = Calendar.getInstance();
         Calendar calForMrgDate = Calendar.getInstance();
-        Formatter fmt = new Formatter();
         calForApplnDate.setTime(registration.getApplicationDate());
         calForMrgDate.setTime(registration.getDateOfMarriage());
         Map<String, Object> reportParams = new HashMap<String, Object>();
@@ -157,12 +155,12 @@ public class MarriageCertificateService {
         reportParams.put("registrarName", registration.getState().getSenderName().split("::")[1]);
         reportParams.put("husbandParentName", registration.getHusband().getParentsName());
         reportParams.put("wifeParentName", registration.getWife().getParentsName());
-        reportParams.put("applicationdateday", calForApplnDate.get(Calendar.DAY_OF_WEEK_IN_MONTH)
-                + getDayNumberSuffix(calForApplnDate.get(Calendar.DAY_OF_WEEK_IN_MONTH)));
+        reportParams.put("applicationdateday", calForApplnDate.get(Calendar.DAY_OF_MONTH)
+                + getDayNumberSuffix(calForApplnDate.get(Calendar.DAY_OF_MONTH)));
         reportParams.put("applicationdatemonth", monthName[calForApplnDate.get(Calendar.MONTH)]);
         reportParams.put("applicationdateyear", calForApplnDate.get(Calendar.YEAR));
-        reportParams.put("marriagedateday", calForMrgDate.get(Calendar.DAY_OF_WEEK_IN_MONTH)
-                + getDayNumberSuffix(calForMrgDate.get(Calendar.DAY_OF_WEEK_IN_MONTH)));
+        reportParams.put("marriagedateday", calForMrgDate.get(Calendar.DAY_OF_MONTH)
+                + getDayNumberSuffix(calForMrgDate.get(Calendar.DAY_OF_MONTH)));
         reportParams.put("marriagedatemonth", monthName[calForMrgDate.get(Calendar.MONTH)]);
         reportParams.put("marriagedateyear", calForMrgDate.get(Calendar.YEAR));
 
@@ -185,7 +183,6 @@ public class MarriageCertificateService {
         reportOutput = reportService.createReport(reportInput);
         // registration.setCertificateIssued(true);
         // marriageRegistrationService.update(registration);
-        fmt.close();
         return reportOutput;
     }
 
@@ -308,11 +305,31 @@ public class MarriageCertificateService {
         byte[] husbandPhoto = null;
         byte[] wifePhoto = null;
         byte[] marriagePhoto = null;
+        Calendar calForApplnDate = Calendar.getInstance();
+        Calendar calForMrgDate = Calendar.getInstance();
+        calForApplnDate.setTime(reIssue.getApplicationDate());
+        calForMrgDate.setTime(reIssue.getRegistration().getDateOfMarriage());
+        reportParams.put("certificateno", certificateNo);
+        
         reportParams.put("cityName", cityName);
         reportParams.put("certificateDate", new Date());
         reportParams.put("logoPath", logopath);
         reportParams.put("registrationcenter", reIssue.getMarriageRegistrationUnit().getName());
-        reportParams.put("certificateno", certificateNo);
+        reportParams.put("registrarName", reIssue.getState().getSenderName().split("::")[1]);
+        reportParams.put("husbandParentName", reIssue.getRegistration().getHusband().getParentsName());
+        reportParams.put("wifeParentName", reIssue.getRegistration().getWife().getParentsName());
+        reportParams.put("applicationdateday", calForApplnDate.get(Calendar.DAY_OF_MONTH)
+                + getDayNumberSuffix(calForApplnDate.get(Calendar.DAY_OF_MONTH)));
+        reportParams.put("applicationdatemonth", monthName[calForApplnDate.get(Calendar.MONTH)]);
+        reportParams.put("applicationdateyear", calForApplnDate.get(Calendar.YEAR));
+        reportParams.put("marriagedateday", calForMrgDate.get(Calendar.DAY_OF_MONTH)
+                + getDayNumberSuffix(calForMrgDate.get(Calendar.DAY_OF_MONTH)));
+        reportParams.put("marriagedatemonth", monthName[calForMrgDate.get(Calendar.MONTH)]);
+        reportParams.put("marriagedateyear", calForMrgDate.get(Calendar.YEAR));
+
+        reportParams.put("serialno", reIssue.getRegistration().getSerialNo());
+        reportParams.put("pageno", reIssue.getRegistration().getPageNo());
+        
         if (reIssue.getRegistration().getWife() != null && reIssue.getRegistration().getWife().getPhotoFileStore() != null)
             wifePhoto = FileUtils.readFileToByteArray(fileStoreService
                     .fetch(reIssue.getRegistration().getWife().getPhotoFileStore(), MarriageConstants.FILESTORE_MODULECODE));

@@ -354,7 +354,7 @@
 
 <div class="form-group">
 	<label class="col-sm-3 control-label"> <spring:message
-			code="lbl.qualification" />
+			code="lbl.qualification" /><span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3">
 		<form:select path="${applicant}.qualification"
@@ -369,7 +369,7 @@
 			cssClass="add-margin error-msg" />
 	</div>
 	<label class="col-sm-2 control-label"> <spring:message
-			code="lbl.nationality" />
+			code="lbl.nationality" /><span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3">
 		<form:select path="${applicant}.nationality"
