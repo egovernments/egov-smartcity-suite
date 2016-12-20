@@ -78,12 +78,16 @@
 	
 	function loadOnStartUp() {
 		var state='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING}" />';
-		if(<s:property value="%{!mutationFeePaid}"/> && state == '<s:property value="%{model.state.nextAction}"/>'){
+		 if(<s:property value="%{!mutationFeePaid}"/> && state == '<s:property value="%{model.state.nextAction}"/>'){
 			document.getElementById('Forward').style.visibility = 'hidden';
-		}
+		} 
 		if('<s:property value="%{type}" />' == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@ADDTIONAL_RULE_FULL_TRANSFER}" />'){
 			document.getElementById('Reject').value="Cancel";
 		}
+		var userDesign = '<s:property value="%{currentDesignation}"/>';
+		if(userDesign == 'Commissioner') {
+			jQuery('#Forward').hide();
+		} 
     };
 </script>
 <script
@@ -465,11 +469,8 @@
 					<tr>
 				</s:if>
 				<br />
-				<s:if
-					test="%{!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_APPROVED) && 
-				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED) &&
-				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REGISTRATION_COMPLETED)  &&
-				!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)}">
+				currentDesignation <s:property value="%{currentDesignation}"/>
+				<s:if test="%{currentDesignation != null && !currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}">
 					<div>
 						<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 					</div>
@@ -477,11 +478,7 @@
 						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
 					</div>
 				</s:if>
-				<s:elseif
-					test="%{model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_APPROVED) ||
-					model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REGISTRATION_COMPLETED) ||
-					model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED) ||
-					model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)}">
+					<s:elseif test="%{currentDesignation != null && currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}">
 					<div id="workflowCommentsDiv" align="center">
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
 							<tr>
@@ -501,26 +498,6 @@
 						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
 					</tr>
 				</s:elseif>
-				<%-- 		<s:else>
-					<div id="workflowCommentsDiv" align="center">
-						<table width="100%" border="0" cellspacing="0" cellpadding="0">
-							<tr>
-								<td width="25%" class="${approverEvenCSS}">&nbsp;</td>
-								<td class="${approverEvenCSS}" width="13%">Approver
-									Remarks:</td>
-								<td class="${approverEvenTextCSS}"><textarea
-										id="approverComments" name="approverComments" rows="2"
-										value="#approverComments" cols="35"></textarea></td>
-								<td class="${approverEvenCSS}">&nbsp;</td>
-								<td width="10%" class="${approverEvenCSS}">&nbsp;</td>
-								<td class="${approverEvenCSS}">&nbsp;</td>
-							</tr>
-							</table>
-					</div>
-					<tr>
-						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
-					</tr>
-				</s:else> --%>
 				</table>
 			</s:push>
 		</s:form>

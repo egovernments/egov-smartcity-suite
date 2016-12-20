@@ -39,6 +39,17 @@
  */
 $(document).ready(function()
 {	
+	
+	$('.btn-primary').click(function() {
+		var button = $(this).attr('id');
+		if (button != null && (button == 'Approve' || button == 'Sign' || button == 'Preview')) {
+			$('#approvalDepartment').removeAttr('required');
+			$('#approvalDesignation').removeAttr('required');
+			$('#approvalPosition').removeAttr('required');
+		}
+		
+	});
+	
 	$('#approvalDepartment').change(function(){
 		$.ajax({
 			url: "/eis/ajaxWorkFlow-getDesignationsByObjectType",     
@@ -50,7 +61,8 @@ $(document).ready(function()
 				currentState : $('#currentState').val(),
 				amountRule : $('#amountRule').val(),
 				additionalRule : $('#additionalRule').val(),
-				pendingAction : $('#pendingActions').val()
+				pendingAction : $('#pendingActions').val(),
+				currentDesignation : $('#currentDesignation').val()
 			},
 			dataType: "json",
 			success: function (response) {

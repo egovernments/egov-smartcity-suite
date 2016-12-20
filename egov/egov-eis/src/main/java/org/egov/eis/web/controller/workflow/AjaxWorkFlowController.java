@@ -39,9 +39,14 @@
  */
 package org.egov.eis.web.controller.workflow;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
 import org.egov.eis.service.AssignmentService;
@@ -57,11 +62,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 @Controller
 public class AjaxWorkFlowController {
@@ -74,38 +77,47 @@ public class AjaxWorkFlowController {
 
     @Autowired
     private AssignmentService assignmentService;
-/**
- * 
- * @param departmentRule
- * @param currentState
- * @param type
- * @param amountRule
- * @param additionalRule
- * @param pendingAction
- * @param approvalDepartment
- * @return List of Designation 
- */
+
+    /**
+     * 
+     * @param departmentRule
+     * @param currentState
+     * @param type
+     * @param amountRule
+     * @param additionalRule
+     * @param pendingAction
+     * @param approvalDepartment
+     * @return List of Designation
+     */
     @RequestMapping(value = "/ajaxWorkFlow-getDesignationsByObjectType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Designation> getDesignationsByObjectType(
             @ModelAttribute("designations") @RequestParam final String departmentRule, @RequestParam final String currentState,
             @RequestParam final String type,
             @RequestParam final String amountRule, @RequestParam final String additionalRule,
-            @RequestParam final String pendingAction, @RequestParam final Long approvalDepartment) {
+            @RequestParam final String pendingAction, @RequestParam final Long approvalDepartment,
+            @RequestParam final String currentDesignation) {
 
-        List<Designation> designationList = customizedWorkFlowService.getNextDesignations(type,
-                departmentRule, null, additionalRule, currentState,
-                pendingAction, new Date());
+        List<Designation> designationList = null;
+        if (StringUtils.isNotBlank(currentDesignation))
+            designationList = customizedWorkFlowService.getNextDesignations(type,
+                    departmentRule, null, additionalRule, currentState,
+                    pendingAction, new Date(), currentDesignation);
+        else
+            designationList = customizedWorkFlowService.getNextDesignations(type,
+                    departmentRule, null, additionalRule, currentState,
+                    pendingAction, new Date());
         if (designationList.isEmpty())
             designationList = designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
-       return designationList;
+        return designationList;
 
     }
-/**
- * 
- * @param approvalDepartment
- * @param approvalDesignation
- * @return Approver For workflow
- */
+
+    /**
+     * 
+     * @param approvalDepartment
+     * @param approvalDesignation
+     * @return Approver For workflow
+     */
     @RequestMapping(value = "/ajaxWorkFlow-positionsByDepartmentAndDesignation", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String getWorkFlowPositionByDepartmentAndDesignation(@RequestParam final Long approvalDepartment,
             @RequestParam final Long approvalDesignation, final HttpServletResponse response) {

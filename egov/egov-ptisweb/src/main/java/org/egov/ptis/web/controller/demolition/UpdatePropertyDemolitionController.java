@@ -39,11 +39,37 @@
  */
 package org.egov.ptis.web.controller.demolition;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_WORKFLOW_PROPERTYIMPL_BYID;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PREVIEW;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
+
+import java.util.Collections;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.Property;
@@ -62,11 +88,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
-
 @Controller
 @RequestMapping(value = "/demolition/update/{id}")
 public class UpdatePropertyDemolitionController extends GenericWorkFlowController {
@@ -78,15 +99,15 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     public static final String VIEW = "view";
 
     PropertyDemolitionService propertyDemolitionService;
-    
+
     @Autowired
     private PersistenceService<Property, Long> persistenceService;
-    
+
     @Autowired
     protected AssignmentService assignmentService;
 
     @Autowired
-    public UpdatePropertyDemolitionController(PropertyDemolitionService propertyDemolitionService) {
+    public UpdatePropertyDemolitionController(final PropertyDemolitionService propertyDemolitionService) {
         this.propertyDemolitionService = propertyDemolitionService;
     }
 
@@ -97,16 +118,15 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     private SecurityUtils securityUtils;
 
     private PropertyImpl property;
-    
+
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @ModelAttribute
-    public Property propertyModel(@PathVariable String id) {
+    public Property propertyModel(@PathVariable final String id) {
         property = propertyDemolitionService.findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID, Long.valueOf(id));
-        if (null == property) {
+        if (null == property)
             property = propertyDemolitionService.findByNamedQuery(QUERY_PROPERTYIMPL_BYID, Long.valueOf(id));
-        }
         return property;
     }
 
@@ -116,11 +136,21 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
         String userDesignationList = "";
         final String currState = property.getState().getValue();
         final String nextAction = property.getState().getNextAction();
-        
-        userDesignationList=propertyTaxCommonUtils.getAllDesignationsForUser(securityUtils.getCurrentUser().getId());
+
+        userDesignationList = propertyTaxCommonUtils.getAllDesignationsForUser(securityUtils.getCurrentUser().getId());
         model.addAttribute("stateType", property.getClass().getSimpleName());
         model.addAttribute("currentState", property.getCurrentState().getValue());
-        prepareWorkflow(model, property, new WorkflowContainer());
+        model.addAttribute("pendingActions", nextAction);
+        model.addAttribute("additionalRule", DEMOLITION);
+        final String currentDesignation = propertyDemolitionService.getLoggedInUserDesignation(
+                property.getCurrentState().getOwnerPosition().getId(),
+                securityUtils.getCurrentUser());
+        if (!currState.endsWith(STATUS_REJECTED))
+            model.addAttribute("currentDesignation", currentDesignation);
+        final WorkflowContainer workflowContainer = new WorkflowContainer();
+        workflowContainer.setPendingActions(nextAction);
+        workflowContainer.setAdditionalRule(DEMOLITION);
+        prepareWorkflow(model, property, workflowContainer);
         propertyDemolitionService.addModelAttributes(model, property.getBasicProperty());
 
         model.addAttribute("userDesignationList", userDesignationList);
@@ -136,7 +166,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute Property property, final BindingResult errors,
+    public String update(@Valid @ModelAttribute final Property property, final BindingResult errors,
             final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model,
             @RequestParam String workFlowAction) throws TaxCalculatorExeption {
 
@@ -150,7 +180,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
             final Character status = STATUS_WORKFLOW;
             Long approvalPosition = 0l;
             String approvalComent = "";
-            Property oldProperty = (PropertyImpl) property.getBasicProperty().getActiveProperty();
+            final Property oldProperty = property.getBasicProperty().getActiveProperty();
 
             if (request.getParameter("approvalComent") != null)
                 approvalComent = request.getParameter("approvalComent");
@@ -172,30 +202,40 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
 
             if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE) ||
                     WFLOW_ACTION_STEP_PREVIEW.equalsIgnoreCase(workFlowAction) ||
-                    WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction)) {
+                    WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
                 return "redirect:/notice/propertyTaxNotice-generateNotice.action?basicPropId="
                         + property.getBasicProperty().getId() + "&noticeType=" + NOTICE_TYPE_SPECIAL_NOTICE
-                        + "&noticeMode=" + APPLICATION_TYPE_DEMOLITION + "&actionType="+workFlowAction;
-            } else {
+                        + "&noticeMode=" + APPLICATION_TYPE_DEMOLITION + "&actionType=" + workFlowAction;
+            else {
 
-                if (request.getParameter("mode").equalsIgnoreCase(VIEW)) {
+                if (request.getParameter("mode").equalsIgnoreCase(VIEW))
                     propertyDemolitionService.updateProperty(property, approvalComent, workFlowAction,
                             approvalPosition, DEMOLITION);
-                } else {
+                else
                     propertyDemolitionService.saveProperty(oldProperty, property, status, approvalComent,
                             workFlowAction, approvalPosition, DEMOLITION);
-                }
                 Assignment assignment = new Assignment();
-                if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
+                if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE))
                     model.addAttribute("successMessage", "Property Demolition approved successfully and forwarded to  "
-                            + propertyTaxUtil.getApproverUserName(((PropertyImpl) property).getState().getOwnerPosition().getId()) + " with assessment number "
+                            + propertyTaxUtil.getApproverUserName(((PropertyImpl) property).getState().getOwnerPosition().getId())
+                            + " with assessment number "
                             + property.getBasicProperty().getUpicNo());
-                } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
-                    assignment = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
+                else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
+                    final PropertyImpl propertyImpl = (PropertyImpl) property;
+                    List<StateHistory> history = propertyImpl.getStateHistory();
+                    Collections.reverse(history);
+                    final String designation = propertyDemolitionService.getLoggedInUserDesignation(
+                            history.get(0).getOwnerPosition().getId(),
+                            securityUtils.getCurrentUser());
+                    assignment = propertyDemolitionService.getUserAssignmentOnReject(designation, (PropertyImpl) property);
+                    if (assignment == null)
+                        assignment = propertyDemolitionService.getWfInitiator((PropertyImpl) property);
+                    // assignment = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
                     model.addAttribute(
                             "successMessage",
-                            "Property Demolition rejected successfully and forwared to initiator "
-                                    + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName())+ " with application number "
+                            "Property Demolition rejected successfully and forwared to "
+                                    + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName())
+                                    + " with application number "
                                     + property.getApplicationNo());
                 } else
                     model.addAttribute("successMessage",

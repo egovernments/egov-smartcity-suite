@@ -40,6 +40,7 @@
 package org.egov.ptis.web.controller.transactions.digitalsignature;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
+
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
@@ -54,6 +55,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITALLY_SIGNED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_PRINT_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_TRANSFER_NOTICE_PRINT_PENDING;
+
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -287,13 +290,11 @@ public class DigitalSignatureWorkflowController {
             final DateTime currentDate = new DateTime();
             final User user = securityUtils.getCurrentUser();
             final Assignment wfInitiator = getWorkflowInitiator(propertyMutation, propertyMutation.getBasicProperty());
-            final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(), null,
-                    null, propertyMutation.getType(), propertyMutation.getCurrentState().getValue(), null);
             propertyMutation.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                    .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
+                    .withStateValue(WF_STATE_DIGITALLY_SIGNED).withDateInfo(currentDate.toDate())
                     .withOwner(propertyMutation.getCurrentState().getInitiatorPosition() != null
                             ? propertyMutation.getCurrentState().getInitiatorPosition() : wfInitiator.getPosition())
-                    .withNextAction(wfmatrix.getNextAction());
+                    .withNextAction(WF_STATE_TRANSFER_NOTICE_PRINT_PENDING);
         }
     }
 

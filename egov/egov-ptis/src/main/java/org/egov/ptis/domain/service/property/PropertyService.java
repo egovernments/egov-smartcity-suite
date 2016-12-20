@@ -3215,8 +3215,8 @@ public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final 
         return propertyStatusValuesDAO.getPropertyStatusValuesByReferenceBasicProperty(basicProperty);
     }
     
-    public Assignment getUserOnRejection(final PropertyImpl property) {
-        List<StateHistory> history = property.getStateHistory();
+    public Assignment getUserOnRejection(final StateAware stateAware) {
+        List<StateHistory> history = stateAware.getStateHistory();
         Collections.reverse(history);
         Assignment userAssignment = null;
         boolean exists = false;
