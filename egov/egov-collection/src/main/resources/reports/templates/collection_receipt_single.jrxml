@@ -38,11 +38,16 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
-<!-- 2016-06-02T12:28:12 -->
+
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2016-12-20T12:56:54 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt" language="groovy" pageWidth="595" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="30" bottomMargin="30" resourceBundle="custom" uuid="4b290c7e-638d-4115-b638-21eedae5185f">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.collection.constants.*"/>
 	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.collection.constants.CollectionConstants"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<import value="org.egov.erpcollection.web.constants.*"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/work/collections/reports/templates/"]]></defaultValueExpression>
 	</parameter>
@@ -51,6 +56,9 @@
 		<parameterDescription><![CDATA[SQL connection object]]></parameterDescription>
 		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
 	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
 	<field name="payeeName" class="java.lang.String">
 		<fieldDescription><![CDATA[Payee Name]]></fieldDescription>
 	</field>
@@ -82,6 +90,7 @@
 	</field>
 	<field name="instrumentDetails" class="java.util.Collection"/>
 	<field name="collectionType" class="java.lang.String"/>
+	<field name="createdBy" class="org.egov.infra.admin.master.entity.User"/>
 	<variable name="amountReceived" class="java.math.BigDecimal">
 		<initialValueExpression><![CDATA[new java.math.BigDecimal(0)]]></initialValueExpression>
 	</variable>
@@ -406,7 +415,7 @@
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("challan_receipt_instruments.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="20">
+		<band height="142">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<staticText>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="20" y="0" width="400" height="20" isRemoveLineWhenBlank="true" uuid="5ad501ab-bd6f-4e9b-98bf-5f7aa97b52cb">
@@ -423,7 +432,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[Shroff:]]></text>
+				<text><![CDATA[       Shroff:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="420" y="0" width="146" height="20" isRemoveLineWhenBlank="true" uuid="7ddf62fb-f79a-48be-b71d-464bb8c1f2b1">
@@ -441,6 +450,20 @@
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="20" y="40" width="178" height="20" uuid="122a3fca-9810-429e-8315-7b1078f5f564"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Collected By : "+$F{createdBy}.getName()]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 </jasperReport>
