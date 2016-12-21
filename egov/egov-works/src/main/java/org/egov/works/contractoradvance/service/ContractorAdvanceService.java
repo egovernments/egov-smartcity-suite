@@ -234,8 +234,10 @@ public class ContractorAdvanceService {
                 qry.setParameter("status", searchRequestContractorRequisition.getEgwStatus());
             if (searchRequestContractorRequisition.getFromDate() != null)
                 qry.setParameter("fromDate", searchRequestContractorRequisition.getFromDate());
-            if (searchRequestContractorRequisition.getToDate() != null)
-                qry.setParameter("toDate", searchRequestContractorRequisition.getToDate());
+            if (searchRequestContractorRequisition.getToDate() != null) {
+                final DateTime dateTime = new DateTime(searchRequestContractorRequisition.getToDate().getTime()).plusDays(1);
+                qry.setParameter("toDate", dateTime.toDate());
+            }
             if (StringUtils.isNotBlank(searchRequestContractorRequisition.getAdvanceBillNumber()))
                 qry.setParameter("advanceBillNumber",
                         searchRequestContractorRequisition.getAdvanceBillNumber().toUpperCase());
