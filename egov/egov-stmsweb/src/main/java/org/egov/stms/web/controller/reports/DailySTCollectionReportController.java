@@ -64,8 +64,6 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.stms.elasticSearch.entity.DailySTCollectionReportSearch;
 import org.egov.stms.service.es.SewerageIndexService;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.search.sort.FieldSortBuilder;
-import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -145,9 +143,8 @@ public class DailySTCollectionReportController {
         List<DailySTCollectionReportSearch> resultList;
         final City cityWebsite = cityService.getCityByName(ApplicationThreadLocals.getCityName());
         searchRequest.setUlbName(cityWebsite.getName());
-        final FieldSortBuilder fieldSortBuilder = new FieldSortBuilder("applicationDate").order(SortOrder.DESC);
         final BoolQueryBuilder boolQuery = sewerageIndexService.getDCRSearchResult(searchRequest);
-        resultList = sewerageIndexService.getDCRSewerageReportResult(searchRequest, boolQuery, fieldSortBuilder);
+        resultList = sewerageIndexService.getDCRSewerageReportResult(searchRequest, boolQuery);
 
         return resultList;
     }
