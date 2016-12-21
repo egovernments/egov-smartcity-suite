@@ -56,11 +56,13 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.utils.DateUtils;
+import org.egov.ptis.bean.dashboard.CollTableData;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.es.BillCollectorIndex;
 import org.egov.wtms.bean.dashboard.WaterChargeConnectionTypeResponse;
@@ -536,7 +538,8 @@ public class WaterChargeCollectionDocService {
                 aggregationField = WaterTaxConstants.CITYNAMEAGGREGATIONFIELD;
             else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_GRADEWISE))
                 aggregationField = WaterTaxConstants.CITYGRADEAGGREGATIONFIELD;
-            else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_WARDWISE))
+            else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_WARDWISE) 
+                    || collectionDetailsRequest.getType().equalsIgnoreCase(PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE))
                 aggregationField = WaterTaxConstants.REVENUEWARDAGGREGATIONFIELD;
 
         /**
@@ -1634,5 +1637,90 @@ public class WaterChargeCollectionDocService {
         return wardWiseBillCollectors;
     }
     
+    
+    public List<WaterChargeDashBoardResponse> getResponseTableDataForBillCollector(
+            final WaterChargeDashBoardRequest collectionDetailsRequest) {
+        
+        
+        Map<String, WaterChargeDashBoardResponse> wardReceiptDetails = new HashMap<>();
+        Map<String, List<WaterChargeDashBoardResponse>> billCollectorWiseMap = new LinkedHashMap<>();
+        List<WaterChargeDashBoardResponse> collDetails = new ArrayList<>();
+        List<WaterChargeDashBoardResponse> billCollectorWiseTableData = new ArrayList<>();
+        BigDecimal currDayColl = BigDecimal.ZERO;
+        BigDecimal cytdColl = BigDecimal.ZERO;
+        BigDecimal lytdColl = BigDecimal.ZERO;
+        BigDecimal cytdDmd = BigDecimal.ZERO;
+        BigDecimal performance = BigDecimal.ZERO;
+        BigDecimal totalDmd = BigDecimal.ZERO;
+        BigDecimal variance = BigDecimal.ZERO;
+        WaterChargeDashBoardResponse collTableData;
+        String billCollectorNameNumber;
+        List<WaterChargeDashBoardResponse> wardWiseData = getResponseTableData(collectionDetailsRequest);
+        for (WaterChargeDashBoardResponse tableData : wardWiseData) {
+            wardReceiptDetails.put(tableData.getWardName(), tableData);
+        }
+        
+        List<BillCollectorIndex> billCollectorsList = getBillCollectorDetails(collectionDetailsRequest);
+        
+        for (BillCollectorIndex billCollIndex : billCollectorsList) {
+            if (wardReceiptDetails.get(billCollIndex.getRevenueWard()) != null
+                    && StringUtils.isNotBlank(billCollIndex.getRevenueWard())) {
+                billCollectorNameNumber = billCollIndex.getBillCollector();
+                if (billCollectorWiseMap.isEmpty()) {
+                    collDetails.add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
+                    billCollectorWiseMap.put(billCollectorNameNumber, collDetails);
+                } else {
+                    if (!billCollectorWiseMap.containsKey(billCollectorNameNumber)) {
+                        collDetails = new ArrayList<>();
+                        collDetails.add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
+                        billCollectorWiseMap.put(billCollectorNameNumber, collDetails);
+                    } else {
+                        billCollectorWiseMap.get(billCollectorNameNumber)
+                                .add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
+                    }
+                }
+            }
+        }
+        for (Entry<String, List<WaterChargeDashBoardResponse>> entry : billCollectorWiseMap.entrySet()) {
+            collTableData = new WaterChargeDashBoardResponse();
+            currDayColl = BigDecimal.ZERO;
+            cytdColl = BigDecimal.ZERO;
+            lytdColl = BigDecimal.ZERO;
+            cytdDmd = BigDecimal.ZERO;
+            performance = BigDecimal.ZERO;
+            totalDmd = BigDecimal.ZERO;
+            variance = BigDecimal.ZERO;
 
+            for (WaterChargeDashBoardResponse tableData : entry.getValue()) {
+                currDayColl = currDayColl
+                        .add(tableData.getTodayColl() == null ? BigDecimal.ZERO : tableData.getTodayColl());
+                cytdColl = cytdColl.add(tableData.getCurrentYearTillDateColl() == null ? BigDecimal.ZERO : tableData.getCurrentYearTillDateColl());
+                cytdDmd = cytdDmd.add(tableData.getCurrentYearTillDateDmd() == null ? BigDecimal.ZERO : tableData.getCurrentYearTillDateDmd());
+                totalDmd = totalDmd.add(tableData.getTotalDmd() == null ? BigDecimal.ZERO : tableData.getTotalDmd());
+                lytdColl = lytdColl.add(tableData.getLastYearTillDateColl() == null ? BigDecimal.ZERO : tableData.getLastYearTillDateColl());
+            }
+            collTableData.setBillCollector(entry.getKey());
+            collTableData.setTodayColl(currDayColl);
+            collTableData.setCurrentYearTillDateColl(cytdColl);
+            collTableData.setCurrentYearTillDateDmd(cytdDmd);
+            collTableData.setCurrentYearTillDateBalDmd(cytdDmd.subtract(cytdColl));
+            collTableData.setTotalDmd(totalDmd);
+            collTableData.setLastYearTillDateColl(lytdColl);
+            if (cytdDmd != BigDecimal.valueOf(0)) {
+                performance = (collTableData.getCurrentYearTillDateColl().multiply(WaterTaxConstants.BIGDECIMAL_100))
+                        .divide(cytdDmd, 1, BigDecimal.ROUND_HALF_UP);
+                collTableData.setPerformance(performance);
+            }
+            if (collTableData.getLastYearTillDateColl().compareTo(BigDecimal.ZERO) == 0)
+                variance = WaterTaxConstants.BIGDECIMAL_100;
+            else
+                variance = ((collTableData.getCurrentYearTillDateColl().subtract(collTableData.getLastYearTillDateColl()))
+                        .multiply(WaterTaxConstants.BIGDECIMAL_100)).divide(collTableData.getLastYearTillDateColl(), 1,
+                                BigDecimal.ROUND_HALF_UP);
+            collTableData.setLastYearVar(variance);
+            billCollectorWiseTableData.add(collTableData);
+        }
+        return billCollectorWiseTableData;
+
+    }
 }
