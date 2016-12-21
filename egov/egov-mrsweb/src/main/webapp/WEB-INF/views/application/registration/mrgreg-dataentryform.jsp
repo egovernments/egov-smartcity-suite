@@ -44,7 +44,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-<script src="<cdn:url value='/resources/js/app/viewregistration.js?rnd=${app_release_no}'/> "></script>
+<script src="<cdn:url value='/resources/js/app/viewregistration.js'/> "></script>
 
 <div class="row" id="page-content">
 	<div class="col-md-12"> 
@@ -143,6 +143,6 @@
 	</div>
 </div>
 
-<script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/js/app/registrationformvalidation.js?rnd=${app_release_no}'/> "></script>
 <script src="<cdn:url value='/resources/js/app/mrgregdataentry.js?rnd=${app_release_no}'/> "></script> 
