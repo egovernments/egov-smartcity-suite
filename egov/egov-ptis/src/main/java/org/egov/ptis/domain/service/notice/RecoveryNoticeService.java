@@ -312,7 +312,7 @@ public class RecoveryNoticeService {
     public ResponseEntity<byte[]> generateInventoryNotice(final String assessmentNo) {
         ReportOutput reportOutput = new ReportOutput();
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner(PropertyTaxConstants.NOTICE_TYPE_INVENTORY,
+        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner(NOTICE_TYPE_INVENTORY,
                 basicProperty.getUpicNo());
         if (notice == null) {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -329,14 +329,14 @@ public class RecoveryNoticeService {
             populateReportParams(reportParams,city,basicProperty);
             reportParams.put(TOTAL_TAX_DUE, String.valueOf(getTotalPropertyTaxDue(basicProperty)));
             reportParams.put(REPORT_DATE, propertyTaxCommonUtils.getDateWithSufix(dateTime.getDayOfMonth()));
-            reportParams.put(REPORT_MON_YEAR, dateTime.monthOfYear().getAsShortText() + "," + String.valueOf(dateTime.getYear()));
+            reportParams.put(REPORT_MON_YEAR, dateTime.monthOfYear().getAsShortText() + "," + dateTime.getYear());
             final String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(NOTICE_TYPE_INVENTORY);
             final String cityGrade = city.getGrade();
             if (StringUtils.isNotBlank(cityGrade)
                     && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
                 reportParams.put(INST_LAST_DATE, propertyTaxCommonUtils.getDateWithSufix(currInstToDate.getDayOfMonth()));
                 reportParams.put(INST_MON_YEAR,
-                        currInstToDate.monthOfYear().getAsShortText() + "," + String.valueOf(currInstToDate.getYear()));
+                        currInstToDate.monthOfYear().getAsShortText() + "," + currInstToDate.getYear());
                 reportInput = new ReportRequest(REPORT_INVENTORY_NOTICE_CORPORATION, reportParams, reportParams);
             } else {
                 reportParams.put(INST_LAST_DATE, formatter.format(currentInstall.getToDate()));
