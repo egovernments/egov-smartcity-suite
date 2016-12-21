@@ -44,9 +44,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %> 
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css?rnd=${app_release_no}' context='/egi'/>">
-<script type="text/javascript"
-        src="<cdn:url value='/resources/js/app/appconfig.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/appconfig.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <div class="row">
 	<div class="col-md-12">

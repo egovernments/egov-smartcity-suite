@@ -56,9 +56,7 @@
 		<link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
 	    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
 		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
-        <link rel="stylesheet"
-              href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
-		
+        <link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
 		
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
 		
@@ -67,7 +65,6 @@
 			<script src="/egi/resources/global/js/ie8/html5shiv.min.js"></script>
 			<script src="/egi/resources/global/js/ie8/respond.min.js"></script>
 		<![endif]-->
-		
 		
 	</head>
 	<body  class="page-body">
