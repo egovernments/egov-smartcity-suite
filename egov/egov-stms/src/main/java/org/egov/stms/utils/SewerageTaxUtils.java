@@ -85,6 +85,8 @@ import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -151,7 +153,8 @@ public class SewerageTaxUtils {
 
         return false;
     }
-
+    
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public EgwStatus getStatusByCodeAndModuleType(final String code, final String moduleName) {
         return egwStatusHibernateDAO.getStatusByModuleAndCode(moduleName, code);
     }
@@ -474,5 +477,4 @@ public class SewerageTaxUtils {
         else
             return null;
     }
-
 }
