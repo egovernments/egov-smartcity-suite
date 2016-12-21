@@ -469,7 +469,6 @@
 					<tr>
 				</s:if>
 				<br />
-				currentDesignation <s:property value="%{currentDesignation}"/>
 				<s:if test="%{currentDesignation != null && !currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}">
 					<div>
 						<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
