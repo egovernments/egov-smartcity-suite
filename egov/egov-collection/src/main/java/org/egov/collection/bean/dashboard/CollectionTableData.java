@@ -51,10 +51,7 @@ public class CollectionTableData {
     private String ulbGrade = StringUtils.EMPTY;
     private String ulbName = StringUtils.EMPTY;
     private String wardName = StringUtils.EMPTY;
-    private BigDecimal serviceCollection = BigDecimal.ZERO;
     private BigDecimal totalCollection = BigDecimal.ZERO;
-
-
 
     public String getRegionName() {
         return regionName;
@@ -94,15 +91,6 @@ public class CollectionTableData {
 
     public void setWardName(String wardName) {
         this.wardName = wardName;
-    }
-
-
-    public BigDecimal getServiceCollection() {
-        return serviceCollection;
-    }
-
-    public void setServiceCollection(BigDecimal serviceCollection) {
-        this.serviceCollection = serviceCollection;
     }
 
     public BigDecimal getTotalCollection() {

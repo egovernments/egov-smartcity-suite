@@ -50,7 +50,7 @@ public class CollectionDocumentDetails {
     private BigDecimal lyVar = BigDecimal.ZERO;
     private List<CollectionDashBoardTrend> collTrends;
     private List<CollectionTableData> responseDetails;
-    public String serviceName;
+    private String serviceName;
     
     public BigDecimal getTodayColl() {
         return todayColl;

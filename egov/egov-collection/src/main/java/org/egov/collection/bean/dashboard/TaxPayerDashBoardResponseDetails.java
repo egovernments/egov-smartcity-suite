@@ -44,7 +44,6 @@ import java.util.List;
 public class TaxPayerDashBoardResponseDetails {
 
     private List<TaxPayerDashBoardDetails> producers;
-    private List<TaxPayerDashBoardDetails> achievers;
 
     public List<TaxPayerDashBoardDetails> getProducers() {
         return producers;
@@ -52,13 +51,5 @@ public class TaxPayerDashBoardResponseDetails {
 
     public void setProducers(final List<TaxPayerDashBoardDetails> producers) {
         this.producers = producers;
-    }
-
-    public List<TaxPayerDashBoardDetails> getAchievers() {
-        return achievers;
-    }
-
-    public void setAchievers(final List<TaxPayerDashBoardDetails> achievers) {
-        this.achievers = achievers;
     }
 }

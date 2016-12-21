@@ -41,6 +41,7 @@ package org.egov.collection.service.dashboard;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,6 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.servlet.http.HttpServletRequest;
 
 import org.egov.collection.bean.dashboard.CollectionDashBoardRequest;
 import org.egov.collection.bean.dashboard.CollectionDashBoardStats;
@@ -88,19 +88,55 @@ public class CollectionDashboardService {
      *
      * @return CollectionStats
      */
-    public TotalCollectionDashBoardStats getTotalCollectionStats(final HttpServletRequest request) {
+    public TotalCollectionDashBoardStats getTotalCollectionStats(
+            final CollectionDashBoardRequest collectionDashBoardRequest) {
         final TotalCollectionDashBoardStats consolidatedCollectionDetails = new TotalCollectionDashBoardStats();
-        BigDecimal variance = BigDecimal.ZERO;
+        BigDecimal variance;
         Long startTime = System.currentTimeMillis();
         CollectionDashBoardStats consolidatedData;
         final List<CollectionDashBoardStats> totalStatistics = new ArrayList<>();
+        final List<String> toBeExcluded = new ArrayList<>();
+        Map<String, BigDecimal> consolidatedColl = new HashMap<>();
+        for (final String service : collectionDashBoardRequest.getIncludeServices()) {
+            if (!service.equalsIgnoreCase(CollectionConstants.DASHBOARD_OTHERS)) {
+                consolidatedData = new CollectionDashBoardStats();
+                consolidatedColl = collectionDocumentElasticSearchService.getFinYearsCollByService(new ArrayList(Arrays
+                        .asList(service)));
+                Long timeTaken = System.currentTimeMillis() - startTime;
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Time taken by getFinYearsCollByService() for Property Tax is : " + timeTaken
+                            + MILLISECS);
+                if (!consolidatedColl.isEmpty()) {
+                    consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
+                    consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
+                }
+                consolidatedData.setServiceName(service);
+
+                startTime = System.currentTimeMillis();
+                timeTaken = System.currentTimeMillis() - startTime;
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Time taken by Property Tax getTotalDemand() is : " + timeTaken + MILLISECS);
+                if (consolidatedData.getLytdColl().compareTo(BigDecimal.ZERO) == 0)
+                    variance = CollectionConstants.BIGDECIMAL_100;
+                else
+                    variance = consolidatedData.getCytdColl().subtract(consolidatedData.getLytdColl())
+                            .multiply(CollectionConstants.BIGDECIMAL_100)
+                            .divide(consolidatedData.getLytdColl(), 1, BigDecimal.ROUND_HALF_UP);
+                consolidatedData.setLyVar(variance);
+                totalStatistics.add(consolidatedData);
+            }
+            toBeExcluded.add(service);
+        }
         final Query qry = entityManager.createNamedQuery(CollectionConstants.DISTINCT_SERVICE_DETAILS,
                 ServiceDetails.class);
         final List<ServiceDetails> serviceDetails = qry.getResultList();
-        Map<String, BigDecimal> consolidatedColl = new HashMap<>();
-        for (final ServiceDetails serviceDetail : serviceDetails) {
+        final List<String> serviceList = new ArrayList<>();
+        for (final ServiceDetails sd : serviceDetails)
+            serviceList.add(sd.getName());
+        serviceList.removeAll(toBeExcluded);
+        if (!serviceList.isEmpty()) {
             consolidatedData = new CollectionDashBoardStats();
-            consolidatedColl = collectionDocumentElasticSearchService.getFinYearsCollByService(serviceDetail.getName());
+            consolidatedColl = collectionDocumentElasticSearchService.getFinYearsCollByService(serviceList);
             Long timeTaken = System.currentTimeMillis() - startTime;
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Time taken by getFinYearsCollByService() for Property Tax is : " + timeTaken + MILLISECS);
@@ -108,7 +144,7 @@ public class CollectionDashboardService {
                 consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
                 consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
             }
-            consolidatedData.setServiceName(serviceDetail.getName());
+            consolidatedData.setServiceName(CollectionConstants.DASHBOARD_OTHERS);
 
             startTime = System.currentTimeMillis();
             timeTaken = System.currentTimeMillis() - startTime;
@@ -118,17 +154,21 @@ public class CollectionDashboardService {
                 variance = CollectionConstants.BIGDECIMAL_100;
             else
                 variance = consolidatedData.getCytdColl().subtract(consolidatedData.getLytdColl())
-                        .multiply(CollectionConstants.BIGDECIMAL_100)
-                        .divide(consolidatedData.getLytdColl(), 1, BigDecimal.ROUND_HALF_UP);
+                .multiply(CollectionConstants.BIGDECIMAL_100)
+                .divide(consolidatedData.getLytdColl(), 1, BigDecimal.ROUND_HALF_UP);
             consolidatedData.setLyVar(variance);
             totalStatistics.add(consolidatedData);
         }
         consolidatedCollectionDetails.setCollection(totalStatistics);
-        consolidatedColl = collectionDocumentElasticSearchService.getFinYearsCollByService(null);
-        if (!consolidatedColl.isEmpty()) {
-            consolidatedCollectionDetails.setTotalCurrentCollection(consolidatedColl.get("cytdColln"));
-            consolidatedCollectionDetails.setTotalLastYearCollection(consolidatedColl.get("lytdColln"));
-        }
+        BigDecimal currColl = BigDecimal.ZERO;
+        BigDecimal lastColl = BigDecimal.ZERO;
+        if (!totalStatistics.isEmpty())
+            for (final CollectionDashBoardStats stat : totalStatistics) {
+                currColl = currColl.add(stat.getCytdColl());
+                lastColl = lastColl.add(stat.getLytdColl());
+            }
+        consolidatedCollectionDetails.setTotalCurrentCollection(currColl);
+        consolidatedCollectionDetails.setTotalLastYearCollection(lastColl);
         return consolidatedCollectionDetails;
     }
 
@@ -140,31 +180,60 @@ public class CollectionDashboardService {
      */
     public List<TotalCollectionStatistics> getCollectionIndexDetails(
             final CollectionDashBoardRequest collectionDashBoardRequest) {
-        final List<CollectionDocumentDetails> collectionDocumentDetails = new ArrayList<>();
-        List<CollectionTableData> collIndexData = new ArrayList<>();
+        List<CollectionDocumentDetails> collectionDocumentDetails;
+        List<CollectionTableData> collTableData;
         final List<TotalCollectionStatistics> totalStats = new ArrayList<>();
-        TotalCollectionStatistics ts = null;
+        final List<String> toBeExcluded = new ArrayList<>();
+        TotalCollectionStatistics serviceObj = new TotalCollectionStatistics();
+        CollectionDocumentDetails collectionDocDetails;
+        List<CollectionDashBoardTrend> collectionTrends;
+        for (final String service : collectionDashBoardRequest.getIncludeServices()) {
+            if (!service.equalsIgnoreCase(CollectionConstants.DASHBOARD_OTHERS)) {
+                serviceObj = new TotalCollectionStatistics();
+                collectionDocumentDetails = new ArrayList<>();
+                collectionDocDetails = new CollectionDocumentDetails();
+                collectionDocDetails = collectionDocumentElasticSearchService.getCompleteCollectionIndexDetails(
+                        collectionDashBoardRequest, new ArrayList(Arrays.asList(service)));
+                collectionTrends = collectionDocumentElasticSearchService.getMonthwiseCollectionDetails(
+                        collectionDashBoardRequest, new ArrayList(Arrays.asList(service)));
+                collTableData = collectionDocumentElasticSearchService.getResponseTableData(collectionDashBoardRequest,
+                        new ArrayList(Arrays.asList(service)));
+                collectionDocDetails.setCollTrends(collectionTrends);
+                collectionDocDetails.setResponseDetails(collTableData);
+                collectionDocDetails.setServiceName(service);
+                collectionDocumentDetails.add(collectionDocDetails);
+                serviceObj.setCollectionDashBoardStats(collectionDocumentDetails);
+                totalStats.add(serviceObj);
+            }
+            toBeExcluded.add(service);
+        }
+        for (final String excService : collectionDashBoardRequest.getExcludeServices())
+            toBeExcluded.add(excService);
+
         final Query qry = entityManager.createNamedQuery(CollectionConstants.DISTINCT_SERVICE_DETAILS,
                 ServiceDetails.class);
         final List<ServiceDetails> serviceDetails = qry.getResultList();
-        for (final ServiceDetails serviceDetail : serviceDetails) {
-            CollectionDocumentDetails cds = new CollectionDocumentDetails();
-            ts = new TotalCollectionStatistics();
-            cds = collectionDocumentElasticSearchService.getCompleteCollectionIndexDetails(collectionDashBoardRequest,
-                    serviceDetail.getName());
-            final List<CollectionDashBoardTrend> collectionTrends = collectionDocumentElasticSearchService
-                    .getMonthwiseCollectionDetails(collectionDashBoardRequest, serviceDetail.getName());
-            collIndexData = collectionDocumentElasticSearchService.getResponseTableData(collectionDashBoardRequest,
-                    serviceDetail.getName());
-            cds.setCollTrends(collectionTrends);
-            cds.setResponseDetails(collIndexData);
-            cds.setServiceName(serviceDetail.getName());
-            collectionDocumentDetails.add(cds);
-            ts.setCollectionDashBoardStats(collectionDocumentDetails);
-
+        final List<String> tempList = new ArrayList<>();
+        for (final ServiceDetails sd : serviceDetails)
+            tempList.add(sd.getName());
+        tempList.removeAll(toBeExcluded);
+        if (!tempList.isEmpty()) {
+            collectionDocumentDetails = new ArrayList<>();
+            serviceObj = new TotalCollectionStatistics();
+            collectionDocDetails = new CollectionDocumentDetails();
+            collectionDocDetails = collectionDocumentElasticSearchService.getCompleteCollectionIndexDetails(
+                    collectionDashBoardRequest, tempList);
+            collectionTrends = collectionDocumentElasticSearchService.getMonthwiseCollectionDetails(
+                    collectionDashBoardRequest, tempList);
+            collTableData = collectionDocumentElasticSearchService.getResponseTableData(collectionDashBoardRequest,
+                    tempList);
+            collectionDocDetails.setCollTrends(collectionTrends);
+            collectionDocDetails.setResponseDetails(collTableData);
+            collectionDocDetails.setServiceName(CollectionConstants.DASHBOARD_OTHERS);
+            collectionDocumentDetails.add(collectionDocDetails);
+            serviceObj.setCollectionDashBoardStats(collectionDocumentDetails);
+            totalStats.add(serviceObj);
         }
-        totalStats.add(ts);
-
         return totalStats;
     }
 
@@ -176,7 +245,14 @@ public class CollectionDashboardService {
      */
     public TaxPayerDashBoardResponseDetails getTopTenTaxProducers(
             final CollectionDashBoardRequest collectionDashBoardRequest) {
-        return collectionDocumentElasticSearchService.getTopTenTaxPerformers(collectionDashBoardRequest);
+        final Query qry = entityManager.createNamedQuery(CollectionConstants.DISTINCT_SERVICE_DETAILS,
+                ServiceDetails.class);
+        final List<ServiceDetails> serviceDetails = qry.getResultList();
+        final List<String> serviceList = new ArrayList<>();
+        for (final ServiceDetails sd : serviceDetails)
+            serviceList.add(sd.getName());
+        serviceList.removeAll(collectionDashBoardRequest.getExcludeServices());
+        return collectionDocumentElasticSearchService.getTopTenTaxPerformers(collectionDashBoardRequest, serviceList);
     }
 
     /**
@@ -187,8 +263,15 @@ public class CollectionDashboardService {
      */
     public TaxPayerDashBoardResponseDetails getBottomTenTaxProducers(
             final CollectionDashBoardRequest collectionDashBoardRequest) {
-
-        return collectionDocumentElasticSearchService.getBottomTenTaxPerformers(collectionDashBoardRequest);
+        final Query qry = entityManager.createNamedQuery(CollectionConstants.DISTINCT_SERVICE_DETAILS,
+                ServiceDetails.class);
+        final List<ServiceDetails> serviceDetails = qry.getResultList();
+        final List<String> serviceList = new ArrayList<>();
+        for (final ServiceDetails sd : serviceDetails)
+            serviceList.add(sd.getName());
+        serviceList.removeAll(collectionDashBoardRequest.getExcludeServices());
+        return collectionDocumentElasticSearchService
+                .getBottomTenTaxPerformers(collectionDashBoardRequest, serviceList);
     }
 
 }
