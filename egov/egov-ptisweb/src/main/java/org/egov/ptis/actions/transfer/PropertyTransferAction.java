@@ -1153,8 +1153,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     @Override
     public String getCurrentDesignation() {
-        return propertyMutation != null && (!propertyMutation.getCurrentState().getValue().endsWith(STATUS_REJECTED) ||
-                propertyMutation.getCurrentState().getValue().endsWith(WFLOW_ACTION_NEW))
+        return propertyMutation != null && !(propertyMutation.getCurrentState().getValue().endsWith(STATUS_REJECTED) ||
+                propertyMutation.getCurrentState().getValue().equals(WFLOW_ACTION_NEW))
                         ? propertyService.getDesignationForPositionAndUser(
                                 propertyMutation.getCurrentState().getOwnerPosition().getId(),
                                 securityUtils.getCurrentUser().getId())
