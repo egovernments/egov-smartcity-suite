@@ -69,7 +69,7 @@
 								<div class="col-sm-3 add-margin">
 									<form:select path="estimateCreatedBy" data-first-option="false" id="aeCreatedByUsers" class="form-control">
 										<form:option value=""><spring:message code="lbl.select" /></form:option>
-										<form:options items="${aeCreatedByUsers}" itemValue="id" itemLabel="username" />
+										<form:options items="${aeCreatedByUsers}" itemValue="id" itemLabel="name" />
 									</form:select>
 									<form:errors path="estimateCreatedBy" cssClass="add-margin error-msg" />
 								</div>
