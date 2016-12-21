@@ -39,8 +39,9 @@
  */
 package org.egov.works.web.controller.estimatetemplate;
 
-import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
+import org.egov.commons.service.TypeOfWorkService;
 import org.egov.works.abstractestimate.entity.EstimateTemplateSearchRequest;
+import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -53,15 +54,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class SearchEstimateTemplateController {
 
     @Autowired
-    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
+    private TypeOfWorkService typeOfWorkService;
 
     @RequestMapping(value = "/searchestimatetemplateform", method = RequestMethod.GET)
     public String showSearchEstimateTemplateForm(@RequestParam("typeOfWork") final Long typeOfWorkId,
             @RequestParam("subTypeOfWork") final Long subTypeOfWorkId, final Model model) {
         model.addAttribute("typeOfWorkId", typeOfWorkId);
         model.addAttribute("subTypeOfWorkId", subTypeOfWorkId);
-        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
-        model.addAttribute("subTypeOfWork", egwTypeOfWorkHibernateDAO.getSubTypeOfWorkByParentId(typeOfWorkId));
+        model.addAttribute("typeOfWork",
+                typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
+        model.addAttribute("subTypeOfWork",
+                typeOfWorkService.getByParentidAndEgPartytype(typeOfWorkId, WorksConstants.PARTY_TYPE_CONTRACTOR));
         model.addAttribute("estimateTemplateSearchRequest", new EstimateTemplateSearchRequest());
         return "estimatetemplate-searchform";
     }
