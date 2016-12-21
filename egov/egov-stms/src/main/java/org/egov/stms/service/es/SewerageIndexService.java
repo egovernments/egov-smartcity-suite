@@ -49,7 +49,6 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.GROUPBYFIELD;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -209,7 +208,7 @@ public class SewerageIndexService {
     }
 
     public List<SewerageIndex> getSearchResultByBoolQuery(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort) {
-        List<SewerageIndex> resultList = new ArrayList<>();
+        List<SewerageIndex> resultList;
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
                 .withSort(sort).build();
         resultList = elasticsearchTemplate.queryForList(searchQuery, SewerageIndex.class);
@@ -235,7 +234,7 @@ public class SewerageIndexService {
     }
 
     public List<SewerageIndex> getCollectSearchResult(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort) {
-        List<SewerageIndex> resultList = new ArrayList<>();
+        List<SewerageIndex> resultList;
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
                 .withSort(sort).build();
 
@@ -247,17 +246,12 @@ public class SewerageIndexService {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final SimpleDateFormat newFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 
-        final Date fromDate = formatter.parse(searchRequest.getFromDate());
-        final String formattedFromDate = newFormat.format(fromDate);
-
-        final Date toDate = formatter.parse(searchRequest.getToDate());
-        final String formattedToDate = newFormat.format(toDate);
-
-      
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.matchQuery("cityName", searchRequest.getUlbName()));
         if (StringUtils.isNotBlank(searchRequest.getFromDate()))
-            boolQuery = boolQuery.filter(QueryBuilders.rangeQuery("receiptDate").gte(formattedFromDate).lte(new DateTime(formattedToDate).plusDays(1).toDate()));
+            boolQuery = boolQuery.filter(QueryBuilders.rangeQuery("receiptDate")
+                    .gte(newFormat.format(formatter.parse(searchRequest.getFromDate())))
+                    .lte(new DateTime(newFormat.format(formatter.parse(searchRequest.getToDate()))).plusDays(1).toDate()));
         if (StringUtils.isNotBlank(searchRequest.getCollectionMode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("channel", searchRequest.getCollectionMode()));
         if (StringUtils.isNotBlank(searchRequest.getCollectionOperator()))
@@ -294,8 +288,7 @@ public class SewerageIndexService {
 
             final SimpleDateFormat dateFormat = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
             final SimpleDateFormat myFormat = new SimpleDateFormat("dd/MM/yyyy");
-            final Date receiptDate = dateFormat.parse(collectionObject.getReceiptDate().toString());
-            dcrReportObject.setReceiptDate(myFormat.format(receiptDate));
+            dcrReportObject.setReceiptDate(myFormat.format(dateFormat.parse(collectionObject.getReceiptDate().toString())));
             dcrReportObject.setPaidAt(collectionObject.getChannel());
             dcrReportObject.setPaymentMode(collectionObject.getPaymentMode());
             dcrReportObject.setStatus(collectionObject.getStatus());
@@ -311,7 +304,7 @@ public class SewerageIndexService {
 
         final BoolQueryBuilder sewerageBoolQuery = getDCRSewerageSearchResult(searchRequest);
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage")
-                .withQuery(sewerageBoolQuery).withSort(fieldSortBuilder).build();
+                .withQuery(sewerageBoolQuery).withPageable(new PageRequest(0, 250)).withSort(fieldSortBuilder).build();
         sewerageResultList = elasticsearchTemplate.queryForList(searchQuery, SewerageIndex.class);
         for (final SewerageIndex sewerageIndex : sewerageResultList)
             for (final DailySTCollectionReportSearch dcrReportObj : dcrCollectionList)

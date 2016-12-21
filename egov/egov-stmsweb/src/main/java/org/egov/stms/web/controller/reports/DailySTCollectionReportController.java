@@ -42,7 +42,6 @@ package org.egov.stms.web.controller.reports;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -104,7 +103,7 @@ public class DailySTCollectionReportController {
 
     @ModelAttribute("collectionMode")
     public Map<String, String> loadInstrumentTypes() {
-        final Map<String, String> collectionModeMap = new LinkedHashMap<String, String>(0);
+        final Map<String, String> collectionModeMap = new LinkedHashMap<>(0);
         collectionModeMap.put(Source.ESEVA.toString(), Source.ESEVA.toString());
         collectionModeMap.put(Source.MEESEVA.toString(), Source.MEESEVA.toString());
         collectionModeMap.put(Source.APONLINE.toString(), Source.APONLINE.toString());
@@ -143,7 +142,7 @@ public class DailySTCollectionReportController {
     @ResponseBody
     public List<DailySTCollectionReportSearch> searchCollection(@ModelAttribute final DailySTCollectionReportSearch searchRequest)
             throws ParseException {
-        List<DailySTCollectionReportSearch> resultList = new ArrayList<>();
+        List<DailySTCollectionReportSearch> resultList;
         final City cityWebsite = cityService.getCityByName(ApplicationThreadLocals.getCityName());
         searchRequest.setUlbName(cityWebsite.getName());
         final FieldSortBuilder fieldSortBuilder = new FieldSortBuilder("applicationDate").order(SortOrder.DESC);
