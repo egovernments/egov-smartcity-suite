@@ -313,7 +313,7 @@ public class WaterTaxSearchController {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerName", searchRequest.getApplicantName()));
         if (StringUtils.isNotBlank(searchRequest.getConsumerCode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerCode", searchRequest.getConsumerCode()));
-        if (StringUtils.isNotBlank(searchRequest.getConsumerCode()))
+        if (StringUtils.isNotBlank(searchRequest.getOldConsumerCode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("oldConsumerCode", searchRequest.getOldConsumerCode()));
         if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("revenueWard", searchRequest.getRevenueWard()));
