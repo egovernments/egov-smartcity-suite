@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2016-12-21T13:27:31 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="InventoryNotice_Corporation" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="80" bottomMargin="80" uuid="1162aaaa-ad56-487b-8ab4-ee4284800f2e">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="ownerName" class="java.lang.String"/>
+	<parameter name="instLastDate" class="java.lang.String"/>
+	<parameter name="instMonYear" class="java.lang.String"/>
+	<parameter name="reportDate" class="java.lang.String"/>
+	<parameter name="reportMonYear" class="java.lang.String"/>
+	<parameter name="totalTaxDue" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="124" splitType="Stretch">
+			<textField>
+				<reportElement x="100" y="16" width="360" height="24" uuid="5591c1ef-8523-4a4b-8a53-5c62ef993405"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="230" y="40" width="100" height="16" uuid="44f8fc4f-194d-4793-a08b-0661304ed500"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[SCHEDULE - M]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="210" y="56" width="150" height="30" uuid="8bc73085-399c-420b-b757-8e4243e2e00e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Inventory Notice]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="86" width="420" height="17" uuid="8a93b0f8-e544-4694-ac0e-b177f6035667"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[(Issued under section 271 of Municipal Corporations Act,1955 (formerly ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="182" y="104" width="190" height="20" uuid="a13ed13b-ff9c-4215-ad2d-0b1b36e86279"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[GHMC Act, 1955)]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="408" splitType="Stretch">
+			<staticText>
+				<reportElement x="60" y="7" width="40" height="16" uuid="470acb01-0e91-407b-8453-dfd533d0883c"/>
+				<text><![CDATA[To ,]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="60" y="23" width="190" height="17" uuid="46f74c7f-6a95-4455-b86f-2872929aa5ff"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{ownerName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="61" y="177" width="40" height="20" uuid="6cbbb093-5eaf-426a-afde-47385e089af4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Dated this ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="101" y="177" width="30" height="20" uuid="ede00c3a-3a0b-4535-87dd-2d67ff4119cc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{reportDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="130" y="177" width="39" height="20" uuid="aa5ee93b-632a-4430-ab05-d7bcf5bc4fa4"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[day of ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="169" y="177" width="111" height="20" uuid="9c09f679-b249-4c90-8ef2-891605aacb31"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{reportMonYear}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="290" y="220" width="210" height="30" uuid="833863e5-2724-4ec1-a3c8-1fda9716c892"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[(Signature of the Officer Executing the warrant)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="60" y="260" width="323" height="30" uuid="3ed68155-b15e-43d3-adf2-ae6539fe805f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Inventory of the goods and chattels seized:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="82" y="301" width="20" height="20" uuid="98471f68-5e2b-4266-b6ae-7b7d5dcb75f5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[1.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="82" y="321" width="20" height="20" uuid="273126a8-3288-4bd5-bab4-2c7276e7d415"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[2.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="82" y="341" width="20" height="20" uuid="2f1a2c8b-bb69-4cab-ba78-916a0f61fc76"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[3.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="82" y="361" width="20" height="20" uuid="2f47835f-f694-42d8-8bb4-05a587995c3a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[4.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="82" y="381" width="20" height="20" uuid="6b288770-72d8-4e34-8ab1-bddd06890267"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[5.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="61" y="67" width="439" height="100" uuid="e5a6e0ef-5071-4eef-9aa7-864570a47348"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<paragraph lineSpacingSize="1.5"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Take notice that I have this day seized the goods and chattels specified in the inventory beneath this, for the sum of <style forecolor=\"#000000\" isBold=\"true\">"+$P{totalTaxDue}+"</style> due for the tax mentioned in the margin forthe half-year commencing (or terminating) on the <style forecolor=\"#000000\" isBold=\"true\">"+$P{instLastDate}+"</style> day of <style forecolor=\"#000000\" isBold=\"true\">"+$P{instMonYear}+"</style> and that unless you pay into the Municipal Office at <style forecolor=\"#000000\" isBold=\"true\">"+$P{cityName}+"</style> the amount due, together with the costs of recovery, within seven days from the day of the date of this notice, the goods and chattels will be sold."]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

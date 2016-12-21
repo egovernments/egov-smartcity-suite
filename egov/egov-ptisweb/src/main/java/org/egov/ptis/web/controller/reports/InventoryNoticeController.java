@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2016>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -37,6 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.ptis.web.controller.reports;
 
 import java.util.List;
@@ -55,37 +56,37 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/esdnotice")
-public class ESDNoticeController {
+@RequestMapping("/inventroy")
+public class InventoryNoticeController {
 
-    private static final String ESDNOTICE_FORM = "esdnotice-form";
-
+    private static final String INVENTORYNOTICE_FORM = "inventorynotice-form";
+    
     @Autowired
     private RecoveryNoticeService recoveryNoticeService;
-
+    
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String searchForm(final Model model) {
         model.addAttribute("egBill", new EgBill());
-        return ESDNOTICE_FORM;
+        return INVENTORYNOTICE_FORM;
     }
-
+    
     @RequestMapping(value = "/searchform", method = RequestMethod.POST)
-    public String searchProperty(@ModelAttribute("egBill") final EgBill egBill, final Model model,
+    public String inventoryNotice(@ModelAttribute("egBill") final EgBill egBill, final Model model,
             final BindingResult errors) {
-        List<String> errorList  = recoveryNoticeService.validateESDNotice(egBill.getConsumerId());
+        List<String> errorList = recoveryNoticeService.validateInventoryNotice(egBill.getConsumerId());
         for (String error : errorList) {
             errors.reject(error, error);
         }
         if (errors.hasErrors()) {
-            model.addAttribute("esdNotice", new EgBill());
-            return ESDNOTICE_FORM;
+            model.addAttribute("inventorynotice", new EgBill());
+            return INVENTORYNOTICE_FORM;
         } else
-            return "redirect:/esdnotice/generatenotice/" + egBill.getConsumerId();
+            return "redirect:/inventroy/generatenotice/" + egBill.getConsumerId();
     }
-
+    
     @RequestMapping(value = "/generatenotice/{assessmentNo}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateNotice(final Model model, @PathVariable final String assessmentNo) {
-        return recoveryNoticeService.generateESDNotice(assessmentNo);
+        return recoveryNoticeService.generateInventoryNotice(assessmentNo);
     }
 
 }

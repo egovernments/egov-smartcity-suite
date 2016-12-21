@@ -386,4 +386,9 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/structures/structureclassification-view.jsp"/>
     </definition>
     
+    <definition name="inventorynotice-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.title.inventory.notice" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/inventorynotice-form.jsp"/>
+    </definition>
+    
 </tiles-definitions> 

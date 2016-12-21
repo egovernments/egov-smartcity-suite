@@ -427,4 +427,16 @@ public class PropertyTaxCommonUtils {
         tax = tax.setScale(0, RoundingMode.CEILING);
         return NumberUtil.formatNumber(tax);
     }
+    
+    /**
+     * Returns the day of month along with suffix for the last digit (1st, 2nd, .. , 13th, .. , 23rd)
+     */
+    public String getDateWithSufix(int dayOfMonth) {
+        switch( (dayOfMonth<20) ? dayOfMonth : dayOfMonth%10 ) {
+            case 1 : return dayOfMonth+"st";
+            case 2 : return dayOfMonth+"nd";
+            case 3 : return dayOfMonth+"rd";
+            default : return dayOfMonth+"th";
+        }
+    }
 }
