@@ -219,15 +219,13 @@ public class ConnectionBillService extends BillServiceInterface {
                     .addYears(currInstallments.get(WaterTaxConstants.CURRENTYEAR_FIRST_HALF).getFromDate(), 1);
 
             final List<Installment> advanceInstallments = getAdvanceInstallmentsList(advanceStartDate);
-            final HashMap<String, Integer> orderMap = generateOrderForDemandDetails(demand.getEgDemandDetails(),
-                    billObj, advanceInstallments, currInstallments);
             BigDecimal currentInstDemand = BigDecimal.ZERO;
             for (final EgDemandDetails dmdDet : demand.getEgDemandDetails())
                 if (dmdDet.getInstallmentStartDate()
                         .equals(currInstallments.get(WaterTaxConstants.CURRENTYEAR_SECOND_HALF).getFromDate()))
                     currentInstDemand = currentInstDemand.add(dmdDet.getAmount());
             if (ConnectionStatus.ACTIVE.equals(waterConnectionDetails.getConnectionStatus()))
-                createAdvanceBillDetails(billDetails, currentInstDemand, orderMap, demand, billObj, advanceInstallments,
+                createAdvanceBillDetails(billDetails, currentInstDemand, demand, billObj, advanceInstallments,
                         currInstallments.get(WaterTaxConstants.CURRENTYEAR_SECOND_HALF));
         }
         return billDetails;
@@ -244,8 +242,8 @@ public class ConnectionBillService extends BillServiceInterface {
      * @param installment
      */
     private void createAdvanceBillDetails(final List<EgBillDetails> billDetails,
-            final BigDecimal currentInstallmentDemand, final HashMap<String, Integer> orderMap, final EgDemand demand,
-            final Billable billable, final List<Installment> advanceInstallments, final Installment dmdDetInstallment) {
+            final BigDecimal currentInstallmentDemand, final EgDemand demand, final Billable billable,
+            final List<Installment> advanceInstallments, final Installment dmdDetInstallment) {
 
         /*
          * Advance will be created with current year second half installment.
