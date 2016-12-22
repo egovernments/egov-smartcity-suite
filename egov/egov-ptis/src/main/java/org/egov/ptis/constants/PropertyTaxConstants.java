@@ -1117,6 +1117,8 @@ public interface PropertyTaxConstants {
     public static final String REPORT_TEMPLATENAME_RP_SPECIAL_NOTICE = "mainRPSpecialNotice";
     public static final String REPORT_ESD_NOTICE_CORPORATION = "ESDNotice_Corporation";
     public static final String REPORT_ESD_NOTICE_MUNICIPALITY = "ESDNotice_Municipality";
+    public static final String REPORT_DISTRESS_CORPORATION = "DistressWarrant_Corporation";
+    public static final String REPORT_DISTRESS_MUNICIPALITY = "DistressWarrant_Municipality";
 
     // Property Transfer related constants
     public static final String TRANSFER_FEE_COLLECTED = "Transfer Fee Collected";
@@ -1567,8 +1569,9 @@ public interface PropertyTaxConstants {
     public static final String REPORT_INVENTORY_NOTICE_MUNICIPALITY = "InventoryNotice_Municipality";
     public static final String NOTICE_TYPE_INVENTORY = "Inventory Notice";
     public static final String NOTICE_TYPE_DISTRESS = "Distress Notice";
+    //esd notice section act and distress section act for corporation use the same constant
     public static final String CORPORATION_ESD_NOTICE_SECTION_ACT = "(Issued under Section 269(2) of Municipal Corporations Act,1955 (formerly GHMC Act, 1955)";
     
     public static final String MUNICIPALITY_ESD_NOTICE_SECTION_ACT = "(Issued under Section 91 of A.P. Municipalities Act 1965)";
-    
+    public static final String MUNICIPALITY_DISTRESS_NOTICE_SECTION_ACT = "(Issued under Rule 30(3) of Taxation & Finance Rules appended to the A.P. Municipalities Act, 1965)";
 }

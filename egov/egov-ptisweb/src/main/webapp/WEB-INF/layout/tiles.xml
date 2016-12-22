@@ -391,4 +391,9 @@
     	<put-attribute name="body" value="/WEB-INF/views/reports/inventorynotice-form.jsp"/>
     </definition>
     
+    <definition name="distressnotice-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.title.distress.notice" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/distressnotice-form.jsp"/>
+    </definition>
+    
 </tiles-definitions> 

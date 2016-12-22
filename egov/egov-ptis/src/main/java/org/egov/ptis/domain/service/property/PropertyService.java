@@ -3227,6 +3227,18 @@ public class PropertyService {
             return Collections.emptySet();
     }
     
+    public BigDecimal getTotalPropertyTaxDueIncludingPenalty(final BasicProperty basicProperty) {
+        final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO.getDemandIncludingPenaltyCollMap(basicProperty.getProperty());
+        BigDecimal crntFirstHalfTaxDue = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR).subtract(
+                propertyTaxDetails.get(CURR_FIRSTHALF_COLL_STR));
+        BigDecimal crntSecondHalfTaxDue = propertyTaxDetails.get(CURR_SECONDHALF_DMD_STR).subtract(
+                propertyTaxDetails.get(CURR_SECONDHALF_COLL_STR));
+        BigDecimal arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
+                propertyTaxDetails.get(ARR_COLL_STR));
+        BigDecimal totalBalance = crntFirstHalfTaxDue.add(crntSecondHalfTaxDue).add(arrearPropertyTaxDue);
+        return totalBalance;
+    }
+    
     /**
      * Method to get children created for property
      * @param basicProperty

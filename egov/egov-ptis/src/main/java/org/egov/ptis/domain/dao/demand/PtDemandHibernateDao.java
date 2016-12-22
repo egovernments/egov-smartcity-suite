@@ -45,6 +45,7 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.model.EgBill;
+import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -564,6 +565,57 @@ public class PtDemandHibernateDao implements PtDemandDao {
         for (final Object record : qry.list())
             demandYears.add((String) record);
         return demandYears;
+    }
+    
+    @Override
+    public Map<String, BigDecimal> getDemandIncludingPenaltyCollMap(final Property property) {
+        final Ptdemand currDemand = getNonHistoryCurrDmdForProperty(property);
+        Installment installment = null;
+        List dmdCollList = new ArrayList();
+        Integer instId = null;
+        BigDecimal currFirstHalfDmd = BigDecimal.ZERO;
+        BigDecimal currSecondHalfDmd = BigDecimal.ZERO;
+        BigDecimal arrDmd = BigDecimal.ZERO;
+        BigDecimal currFirstHalfCollection = BigDecimal.ZERO;
+        BigDecimal currSecondHalfCollection = BigDecimal.ZERO;
+        BigDecimal arrColelection = BigDecimal.ZERO;
+        BigDecimal demand = BigDecimal.ZERO;
+        BigDecimal collection = BigDecimal.ZERO;
+        final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
+
+        if (currDemand != null)
+            dmdCollList = propertyDAO.getTotalDemandDetailsIncludingPenalty(currDemand);
+
+        Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+
+        for (final Object object : dmdCollList) {
+            final Object[] listObj = (Object[]) object;
+            instId = Integer.valueOf(listObj[0].toString());
+            demand = listObj[1] != null ? new BigDecimal((Double) listObj[1]) : BigDecimal.ZERO;
+            collection = listObj[2] != null ? new BigDecimal((Double) listObj[2]) : BigDecimal.ZERO;
+
+            installment = (Installment) installmentDao.findById(instId, false);
+            if (currYearInstMap.get(CURRENTYEAR_FIRST_HALF).equals(installment)) {
+                if (collection.compareTo(BigDecimal.ZERO) == 1)
+                    currFirstHalfCollection = currFirstHalfCollection.add(collection);
+                currFirstHalfDmd = currFirstHalfDmd.add(demand);
+            } else if (currYearInstMap.get(CURRENTYEAR_SECOND_HALF).equals(installment)) {
+                if (collection.compareTo(BigDecimal.ZERO) == 1)
+                    currSecondHalfCollection = currSecondHalfCollection.add(collection);
+                currSecondHalfDmd = currSecondHalfDmd.add(demand);
+            } else {
+                arrDmd = arrDmd.add(demand);
+                if (collection.compareTo(BigDecimal.ZERO) == 1)
+                    arrColelection = arrColelection.add(collection);
+            }
+        }
+        retMap.put(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR, currFirstHalfDmd);
+        retMap.put(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR, currSecondHalfDmd);
+        retMap.put(PropertyTaxConstants.ARR_DMD_STR, arrDmd);
+        retMap.put(PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR, currFirstHalfCollection);
+        retMap.put(PropertyTaxConstants.CURR_SECONDHALF_COLL_STR, currSecondHalfCollection);
+        retMap.put(PropertyTaxConstants.ARR_COLL_STR, arrColelection);
+        return retMap;
     }
 
 }

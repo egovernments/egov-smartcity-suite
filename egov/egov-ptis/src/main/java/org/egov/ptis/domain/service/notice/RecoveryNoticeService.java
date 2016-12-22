@@ -43,11 +43,11 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLIENT_SPEC
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_DISTRESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_INVENTORY_NOTICE_MUNICIPALITY;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_INVENTORY_NOTICE_CORPORATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_INVENTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_ESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_INVENTORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_INVENTORY_NOTICE_CORPORATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_INVENTORY_NOTICE_MUNICIPALITY;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -371,6 +371,104 @@ public class RecoveryNoticeService {
         reportOutput.setReportOutputData(bFile);
         reportOutput.setReportFormat(FileFormat.PDF);
         return reportOutput;
+    }
+    
+    @SuppressWarnings("unused")
+	public ArrayList<String> validateDistressNotice(final BasicProperty basicProperty)
+    {
+		ArrayList<String> errors = new ArrayList<String>();
+		final PtNotice esdNotice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner("ESD Notice",
+				basicProperty.getUpicNo());
+		final BigDecimal totalDue = getTotalPropertyTaxDueIncludingPenalty(basicProperty);
+		if (basicProperty == null)
+			errors.add("property.invalid");
+		else {
+			if (totalDue.compareTo(BigDecimal.ZERO) == 0)
+				errors.add("invalid.no.due");
+			else if (basicProperty.getProperty().getIsExemptedFromTax()) {
+				final String exemptedReason = basicProperty.getProperty().getTaxExemptedReason().getName();
+				errors.add("invalid.exempted");
+			} else {
+				if (esdNotice == null)
+					errors.add("invalid.esd.not.generated");
+				else if ((DateUtils.noOfDays(esdNotice.getNoticeDate(), new Date())) < 15)
+					errors.add("invalid.time.not.lapsed");
+			}
+		}
+		return errors;
+
+	}
+
+    public BigDecimal getTotalPropertyTaxDueIncludingPenalty(final BasicProperty basicProperty) {
+        return propertyService.getTotalPropertyTaxDueIncludingPenalty(basicProperty);
+    }
+
+    public ResponseEntity<byte[]> generateDistressNotice(final String assessmentNo) {
+	 	BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        ReportOutput reportOutput = new ReportOutput();
+        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner(PropertyTaxConstants.NOTICE_TYPE_DISTRESS,
+                basicProperty.getUpicNo());
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        
+        if (notice == null) {
+            InputStream noticePDF = null;
+            ReportRequest reportInput = null;
+            final StringBuilder queryString = new StringBuilder();
+            queryString.append("from City");
+            final Query query = entityManager.createQuery(queryString.toString());
+            final City city = (City) query.getSingleResult();
+            populateReportParams(reportParams,city,basicProperty);
+            reportParams.put("totalTaxDue", getTotalPropertyTaxDueIncludingPenalty(basicProperty));
+            DateTime noticeDate = new DateTime();
+            reportParams.put("noticeDay",  propertyTaxCommonUtils.getDateWithSufix(noticeDate.getDayOfMonth()));
+            reportParams.put("noticeMonth", noticeDate.monthOfYear().getAsShortText());
+            reportParams.put("noticeYear", noticeDate.getYear());
+            if(noticeDate.getMonthOfYear()>=4 && noticeDate.getMonthOfYear()<=10)
+            {
+            	reportParams.put("FinHalfStratMonth", "April");
+            }
+            else{
+            	reportParams.put("FinHalfStratMonth", "October");
+            }
+            final String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(PropertyTaxConstants.NOTICE_TYPE_DISTRESS);
+            reportParams.put("distressNoticeNumber", noticeNo);
+            reportParams.put("distressNoticeDate", DateUtils.getDefaultFormattedDate(new Date()));
+            
+          
+            final String cityGrade = city.getGrade();
+            if (cityGrade != null && cityGrade != ""
+                    && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
+                reportParams.put("sectionAct", PropertyTaxConstants.CORPORATION_ESD_NOTICE_SECTION_ACT);
+                reportInput = new ReportRequest(PropertyTaxConstants.REPORT_DISTRESS_CORPORATION, reportParams,
+                        reportParams);
+            } else {
+                reportParams.put("sectionAct", PropertyTaxConstants.MUNICIPALITY_DISTRESS_NOTICE_SECTION_ACT);
+                reportInput = new ReportRequest(PropertyTaxConstants.REPORT_DISTRESS_MUNICIPALITY, reportParams,
+                        reportParams);
+            }
+            reportInput.setReportFormat(FileFormat.PDF);
+            reportOutput = reportService.createReport(reportInput);
+            if (reportOutput != null && reportOutput.getReportOutputData() != null)
+                noticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
+            noticeService.saveNotice(basicProperty.getPropertyForBasicProperty().getApplicationNo(),
+                    noticeNo, PropertyTaxConstants.NOTICE_TYPE_DISTRESS, basicProperty, noticePDF);
+
+        } else {
+            final FileStoreMapper fsm = notice.getFileStore();
+            final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
+            byte[] bFile;
+            try {
+                bFile = FileUtils.readFileToByteArray(file);
+            } catch (final IOException e) {
+                throw new ApplicationRuntimeException("Exception while retrieving Distress Warrant Notice: " + e);
+            }
+            reportOutput.setReportOutputData(bFile);            
+            reportOutput.setReportFormat(FileFormat.PDF);
+        }
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=DistressNotice_" + basicProperty.getUpicNo() + ".pdf");
+        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
 }
