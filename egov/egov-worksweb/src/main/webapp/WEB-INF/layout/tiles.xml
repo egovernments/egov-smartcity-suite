@@ -531,4 +531,18 @@
         <put-attribute name="body" value="/WEB-INF/views/abstractestimate/searchestimatetemplate-form.jsp"/>
      </definition>
      
+     <definition name="typeofwork-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.searchtypeofwork" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/typeofwork/typeofwork-search.jsp"/>
+    </definition>
+    
+    <definition name="subtypeofwork-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.createsubtypeofwork" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/subtypeofwork/subtypeofwork-form.jsp"/>
+    </definition>
+    
+    <definition name="subtypeofwork-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.viewsubtypeofwork" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/subtypeofwork/subtypeofwork-success.jsp"/>
+    </definition>
 </tiles-definitions>

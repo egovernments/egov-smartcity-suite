@@ -41,3 +41,18 @@
 function createNewTypeOfWork() {
 	window.location = "/egworks/masters/typeofwork-newform";
 }
+
+function createNewSubTypeOfWork() {
+	window.location = "/egworks/masters/subtypeofwork-newform";
+}
+
+$(document).ready(function(){
+	var parentId = $('#parentId').val();
+	if (parentId != "") {
+		$('#typeofwork option').each(function() {
+			if ($(this).val() == parentId)
+				$(this).attr('selected', 'selected');
+		});
+	}
+
+});

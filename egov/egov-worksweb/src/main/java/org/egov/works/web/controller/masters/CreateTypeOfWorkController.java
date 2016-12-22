@@ -52,6 +52,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,6 +69,7 @@ public class CreateTypeOfWorkController {
     private TypeOfWorkService typeOfWorkService;
 
     @Autowired
+    @Qualifier("messageSource")
     private MessageSource messageSource;
 
     @Autowired
@@ -86,7 +88,7 @@ public class CreateTypeOfWorkController {
     }
 
     @RequestMapping(value = "/typeofwork-save", method = RequestMethod.POST)
-    public String createTypeOfWork(@Valid @ModelAttribute("typeofwork") final EgwTypeOfWork egwTypeOfWork,
+    public String createTypeOfWork(@Valid @ModelAttribute final EgwTypeOfWork egwTypeOfWork,
             final BindingResult resultBinder, final Model model) throws ApplicationException, IOException {
         validateTypeOfWork(egwTypeOfWork, resultBinder);
         if (resultBinder.hasErrors()) {
@@ -137,6 +139,55 @@ public class CreateTypeOfWorkController {
                 && !typeOfWork.getDescription().matches(Constants.ALPHANUMERICWITHSPECIALCHAR))
             resultBinder.reject("error.typeofwork.description.invalid", "error.typeofwork.description.invalid");
 
+    }
+
+    @RequestMapping(value = "/subtypeofwork-newform", method = RequestMethod.GET)
+    public String showSubTypeOfWorkForm(final Model model) {
+        final EgwTypeOfWork subTypeOfWork = new EgwTypeOfWork();
+        model.addAttribute("typeofwork",
+                typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
+        model.addAttribute("subtypeofwork", subTypeOfWork);
+        return "subtypeofwork-form";
+    }
+
+    @RequestMapping(value = "/subtypeofwork-save", method = RequestMethod.POST)
+    public String createSubTypeOfWork(@Valid @ModelAttribute final EgwTypeOfWork egwTypeOfWork,
+            final BindingResult resultBinder, final Model model) throws ApplicationException, IOException {
+        validateSubTypeOfWork(egwTypeOfWork, resultBinder);
+        if (resultBinder.hasErrors()) {
+            model.addAttribute("typeofwork",
+                    typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
+            model.addAttribute("subtypeofwork", egwTypeOfWork);
+            return "subtypeofwork-form";
+        }
+        final EgPartytype egPartytype = egPartytypeHibernateDAO
+                .getPartytypeByCode(WorksConstants.PARTY_TYPE_CONTRACTOR);
+        egwTypeOfWork.setEgPartytype(egPartytype);
+        typeOfWorkService.create(egwTypeOfWork);
+        return "redirect:/masters/subtypeofwork-success?subTypeOfWorkId=" + egwTypeOfWork.getId();
+
+    }
+
+    @RequestMapping(value = "/subtypeofwork-success", method = RequestMethod.GET)
+    public String subTypeOfWorkSuccessView(final Model model, final HttpServletRequest request) {
+        final Long subTypeOfWorkId = Long.valueOf(request.getParameter("subTypeOfWorkId"));
+        final EgwTypeOfWork newSubTypeOfWork = typeOfWorkService.getTypeOfWorkById(subTypeOfWorkId);
+
+        model.addAttribute("subtypeofwork", newSubTypeOfWork);
+        model.addAttribute("success",
+                messageSource.getMessage("msg.subtypeofwork.create.success",
+                        new String[] { newSubTypeOfWork.getName(),
+                                typeOfWorkService.getTypeOfWorkById(newSubTypeOfWork.getParentid().getId()).getName() },
+                        null));
+
+        return "subtypeofwork-success";
+
+    }
+
+    private void validateSubTypeOfWork(final EgwTypeOfWork subTypeOfWork, final BindingResult resultBinder) {
+        validateTypeOfWork(subTypeOfWork, resultBinder);
+        if (subTypeOfWork.getParentid() == null)
+            resultBinder.reject("error.typeofwork.select", "error.typeofwork.select");
     }
 
 }
