@@ -2403,12 +2403,16 @@ public class PropertyService {
      * @return List of property matching the input params
     */
    @SuppressWarnings("unchecked")
-public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final String assessmentNum, final String ownerName,final String doorNo) {
+   public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final String assessmentNum, final String oldMuncipalNum, final String ownerName,final String doorNo) {
        final StringBuilder queryStr = new StringBuilder();
        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ").append(
                " where pmv.isActive = true ");
        if (assessmentNum != null && !assessmentNum.trim().isEmpty())
            queryStr.append(" and pmv.propertyId=:assessmentNum ");
+      
+       if (oldMuncipalNum != null && !oldMuncipalNum.trim().isEmpty())
+           queryStr.append(" and pmv.oldMuncipalNum=:oldMuncipalNum ");
+       
        if (ownerName != null && !ownerName.trim().isEmpty())
            queryStr.append(" and upper(trim(pmv.ownerName)) like :OwnerName ");
        if (doorNo != null && !doorNo.trim().isEmpty())
@@ -2416,6 +2420,10 @@ public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final 
        final Query query = propPerServ.getSession().createQuery(queryStr.toString());
        if (assessmentNum != null && !assessmentNum.trim().isEmpty())
            query.setString("assessmentNum", assessmentNum);
+       
+       if (oldMuncipalNum != null && !oldMuncipalNum.trim().isEmpty())
+           query.setString("oldMuncipalNum", oldMuncipalNum);
+       
        if (doorNo != null && !doorNo.trim().isEmpty())
            query.setString("HouseNo", doorNo + "%");
        if (ownerName != null && !ownerName.trim().isEmpty())
@@ -2499,6 +2507,19 @@ public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final 
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
         if (StringUtils.isNotBlank(doorNo))
             query.setString("doorNo", doorNo + "%");
+        final List<PropertyMaterlizeView> propertyList = query.list();
+        return propertyList;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<PropertyMaterlizeView> getPropertyByOldMunicipalNo(final String oldMuncipalNum) {
+        final StringBuilder queryStr = new StringBuilder();
+        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv where pmv.isActive = true ");
+        if (StringUtils.isNotBlank(oldMuncipalNum))
+            queryStr.append("and pmv.oldMuncipalNum=:oldMuncipalNum ");
+        final Query query = propPerServ.getSession().createQuery(queryStr.toString());
+        if (StringUtils.isNotBlank(oldMuncipalNum))
+            query.setString("oldMuncipalNum", oldMuncipalNum );
         final List<PropertyMaterlizeView> propertyList = query.list();
         return propertyList;
     }
@@ -3261,5 +3282,4 @@ public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final 
     public void setTotalAlv(final BigDecimal totalAlv) {
         this.totalAlv = totalAlv;
     }
-
 }
