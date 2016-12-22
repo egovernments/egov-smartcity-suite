@@ -395,5 +395,9 @@
     	<put-attribute name="page-title" value="lbl.title.distress.notice" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/reports/distressnotice-form.jsp"/>
     </definition>
+    <definition name="add-mutation-fee-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.hdr.addMutation" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/masters/addmutationfee/add-mutationfee.jsp" />
+	</definition>
     
 </tiles-definitions> 
