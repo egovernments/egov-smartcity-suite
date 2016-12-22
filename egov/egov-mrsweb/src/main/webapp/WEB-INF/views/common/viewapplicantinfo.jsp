@@ -57,7 +57,7 @@
 		<c:out value="${param.appLastName}"></c:out>
 	</div>
 		
-	<div  class="col-sm-3 "><spring:message code="lbl.signature"/></div>
+	<%-- <div  class="col-sm-3 "><spring:message code="lbl.signature"/></div>
 	<div class="col-sm-3 add-margin view-content">
 		<c:choose>
 			<c:when test="${param.signature == null || param.signature == ''}">
@@ -68,12 +68,12 @@
 				<a id="signaturelink${status.index}">Click to download</a>
 			</c:otherwise>
 		</c:choose>
-	</div>
+	</div> --%>
 </div>
 
 <div class="row add-border">
-	<div  class="col-sm-3 "><spring:message code="lbl.othername"/></div>
-	<div class="col-sm-3 add-margin view-content"><c:out value="${param.appOtherName}"></c:out></div>
+<%-- 	<div  class="col-sm-3 "><spring:message code="lbl.othername"/></div>
+	<div class="col-sm-3 add-margin view-content"><c:out value="${param.appOtherName}"></c:out></div> --%>
 	<div  class="col-sm-3 "><spring:message code="lbl.religion"/></div>
 	<div class="col-sm-3 add-margin view-content"><c:out value="${param.appReligion}"></c:out></div>
 </div>
@@ -93,8 +93,8 @@
 	<div class="col-sm-3 add-margin view-content"><c:out value="${param.appcity}" default="N/A"></c:out></div>
 </div>
 <div class="row add-border">
-	<div  class="col-sm-3 "><spring:message code="lbl.religiontype"/></div>
-	<div class="col-sm-3 add-margin view-content"><c:out value="${param.appReligionPractice}"></c:out></div>
+	<%-- <div  class="col-sm-3 "><spring:message code="lbl.religiontype"/></div>
+	<div class="col-sm-3 add-margin view-content"><c:out value="${param.appReligionPractice}"></c:out></div> --%>
 	<div  class="col-sm-3 "><spring:message code="lbl.ageason.marriage"/></div>
 	<div class="col-sm-3 add-margin view-content" ><c:out value="${param.appAgeInYears}"></c:out> Years, <c:out value="${param.appAgeInMonths}"></c:out> Months</div>
 </div>

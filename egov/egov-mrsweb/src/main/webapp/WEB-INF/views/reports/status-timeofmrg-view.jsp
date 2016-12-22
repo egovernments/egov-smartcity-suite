@@ -65,7 +65,7 @@
 							<th><spring:message code="lbl.marital.status" /></th>
 							<th><spring:message code="lbl.age" /></th>
 							<th><spring:message code="lbl.date.of.marriage" /></th>
-							<th><spring:message code="lbl.act" /></th>
+							<%-- <th><spring:message code="lbl.act" /></th> --%>
 							<th><spring:message code="lbl.place.of.marriage" /></th>
 							<th><spring:message code="lbl.residence.address" /></th>
 						</tr>
@@ -84,7 +84,7 @@
 								<td><c:out value="${reg.wife.maritalStatus}" /></td>
 								<td><c:out value="${reg.wife.ageInYearsAsOnMarriage}" /></td>
 								<td><c:out value="${reg.dateOfMarriage}" /></td>
-								<td><c:out value="${reg.marriageAct.name}" /></td>
+								<%-- <td><c:out value="${reg.marriageAct.name}" /></td> --%>
 								<td><c:out value="${reg.placeOfMarriage}" /></td>
 								<td><c:choose>
 										<c:when test="${applicantType == 'husband'}">

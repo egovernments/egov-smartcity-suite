@@ -87,7 +87,7 @@ $(document).ready( function () {
 	    }  
 	});
 
-	$("input[id$='religionPractice1']").prop("checked", true);
+	/*$("input[id$='religionPractice1']").prop("checked", true);*/
 	
 	$('#table_search').keyup(function(){
     	$('#registration_table').fnFilter(this.value);

@@ -61,8 +61,8 @@
 </div>
 <div class="row">
 	<div class="form-group">
-		<div class="col-sm-3 add-margin"><spring:message code="lbl.law"/></div>
-		<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.marriageAct.name}"/></div>
+		<%-- <div class="col-sm-3 add-margin"><spring:message code="lbl.law"/></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.marriageAct.name}"/></div> --%>
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.place.of.marriage"/></div>
 		<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.placeOfMarriage}" /></div>
 	</div>
@@ -76,9 +76,9 @@
 	<jsp:param value="${reIssue.registration.husband.name.lastName}" name="appLastName"/>
 	<jsp:param value="${reIssue.registration.husband.encodedSignature}" name="signature"/>
 	<jsp:param value="${reIssue.registration.husband.encodedPhoto}" name="photo"/>
-	<jsp:param value="${reIssue.registration.husband.otherName}" name="appOtherName"/>
+	<%-- <jsp:param value="${reIssue.registration.husband.otherName}" name="appOtherName"/> --%>
 	<jsp:param value="${reIssue.registration.husband.religion.name}" name="appReligion"/>
-	<jsp:param value="${reIssue.registration.husband.religionPractice}" name="appReligionPractice"/>
+	<%-- <jsp:param value="${reIssue.registration.husband.religionPractice}" name="appReligionPractice"/> --%>
 	<jsp:param value="${reIssue.registration.husband.ageInYearsAsOnMarriage}" name="appAgeInYears"/>
 	<jsp:param value="${reIssue.registration.husband.ageInMonthsAsOnMarriage}" name="appAgeInMonths"/>
 	<jsp:param value="${reIssue.registration.husband.maritalStatus}" name="appPresentRelation"/>
@@ -98,9 +98,9 @@
 	<jsp:param value="${reIssue.registration.wife.name.lastName}" name="appLastName"/>
 	<jsp:param value="${reIssue.registration.wife.encodedSignature}" name="signature"/>
 	<jsp:param value="${reIssue.registration.wife.encodedPhoto}" name="photo"/>
-	<jsp:param value="${reIssue.registration.wife.otherName}" name="appOtherName"/>
+<%-- 	<jsp:param value="${reIssue.registration.wife.otherName}" name="appOtherName"/> --%>
 	<jsp:param value="${reIssue.registration.wife.religion.name}" name="appReligion"/>
-	<jsp:param value="${reIssue.registration.wife.religionPractice}" name="appReligionPractice"/>
+	<%-- <jsp:param value="${reIssue.registration.wife.religionPractice}" name="appReligionPractice"/> --%>
 	<jsp:param value="${reIssue.registration.wife.ageInYearsAsOnMarriage}" name="appAgeInYears"/>
 	<jsp:param value="${reIssue.registration.wife.ageInMonthsAsOnMarriage}" name="appAgeInMonths"/>
 	<jsp:param value="${reIssue.registration.wife.maritalStatus}" name="appPresentRelation"/>

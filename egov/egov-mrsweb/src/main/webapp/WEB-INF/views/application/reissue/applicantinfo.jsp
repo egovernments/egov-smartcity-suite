@@ -86,13 +86,13 @@
             <form:errors path="${applicant}.name.middleName" cssClass="add-margin error-msg"/>
             <form:errors path="${applicant}.name.lastName" cssClass="add-margin error-msg"/>
 		</div>
-		<div class="col-sm-2 control-label" style="padding-right: 5px;">
+		<%-- <div class="col-sm-2 control-label" style="padding-right: 5px;">
 			<spring:message code="lbl.othername"/>
 		</div>
 		<div class="col-sm-3" style="padding-left: 15px;">
 			<form:input path="${applicant}.otherName" id="txt-placeOfMarriage" type="text" class="form-control low-width is_valid_alphabet" maxlength="20" placeholder="" autocomplete="off"/>
             <form:errors path="${applicant}.otherName" cssClass="add-margin error-msg"/>
-		</div>
+		</div> --%>
 	</div>
 
 	<div class="form-group">

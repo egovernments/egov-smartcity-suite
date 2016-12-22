@@ -100,7 +100,7 @@ public class MrApplicant extends AbstractAuditable {
     @JoinColumn(name = "religion")
     private MarriageReligion religion;
 
-    @NotNull
+    /*@NotNull*/
     @Enumerated(EnumType.STRING)
     private ReligionPractice religionPractice;
 
@@ -212,7 +212,7 @@ public class MrApplicant extends AbstractAuditable {
     }
 
     public boolean isCopyFilesToByteArray() {
-        return photoFile.getSize() > 0 || signatureFile.getSize() > 0;
+        return ((photoFile!=null && photoFile.getSize() > 0) || (signatureFile!=null && signatureFile.getSize() > 0));
     }
 
     @Override

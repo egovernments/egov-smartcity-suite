@@ -101,7 +101,7 @@ public class MarriageRegistrationIndexService {
                     registration.getCreatedBy().getName() != null ? registration.getCreatedBy().getName() : "");
             registrationSearch
                     .setZone(registration.getZone().getName() != null ? registration.getZone().getName() : "");
-            registrationSearch.setMarriageAct(registration.getMarriageAct().getDescription() != null
+            registrationSearch.setMarriageAct(registration.getMarriageAct()!=null && registration.getMarriageAct().getDescription() != null
                     ? registration.getMarriageAct().getDescription() : "");
             registrationSearch.setPlaceOfMarriage(
                     registration.getPlaceOfMarriage() != null ? registration.getPlaceOfMarriage() : "");
@@ -123,7 +123,7 @@ public class MarriageRegistrationIndexService {
                 registrationSearch.setHusbandMaritalStatus(registration.getHusband().getMaritalStatus().name() != null
                         ? registration.getHusband().getMaritalStatus().name() : "");
                 registrationSearch
-                        .setHusbandReligionPractice(registration.getHusband().getReligionPractice().name() != null
+                        .setHusbandReligionPractice(registration.getHusband().getReligionPractice()!=null && registration.getHusband().getReligionPractice().name() != null
                                 ? registration.getHusband().getReligionPractice().name() : "");
                 registrationSearch.setHusbandOccupation(registration.getHusband().getOccupation() != null
                         ? registration.getHusband().getOccupation() : "");
@@ -155,7 +155,7 @@ public class MarriageRegistrationIndexService {
 
                 registrationSearch.setWifeMaritalStatus(registration.getWife().getMaritalStatus() != null
                         ? registration.getWife().getMaritalStatus().name() : "");
-                registrationSearch.setWifeReligionPractice(registration.getWife().getReligionPractice().name() != null
+                registrationSearch.setWifeReligionPractice(registration.getWife().getReligionPractice()!=null && registration.getWife().getReligionPractice().name() != null
                         ? registration.getWife().getReligionPractice().name() : "");
                 registrationSearch.setWifeOccupation(
                         registration.getWife().getOccupation() != null ? registration.getWife().getOccupation() : "");

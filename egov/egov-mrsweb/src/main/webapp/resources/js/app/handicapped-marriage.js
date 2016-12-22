@@ -57,7 +57,7 @@ $("#btn_handicapped_search").click(function(event){
 function submitButton(){
 		tableContainer = $("#handicappedSearchResults");
 		var applicantType=$('#applicantType').val();
-		alert(applicantType);
+		//alert(applicantType);
 		$('#searchResultDiv').show();
 		$.post("/mrs/report/handicapped-report-search",jQuery.param({applicantType:applicantType}))
 		.done(function(searchResult) {

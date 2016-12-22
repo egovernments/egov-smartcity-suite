@@ -59,7 +59,7 @@
 			&nbsp; &nbsp;
 			<c:out value="${param.appLastName}"></c:out>
 		</div>
-		<label class="col-sm-3 add-margin "> <spring:message
+		<%-- <label class="col-sm-3 add-margin "> <spring:message
 				code="lbl.signature" />
 		</label>
 		<div class="col-sm-3 add-margin view-content">
@@ -73,17 +73,17 @@
 					<a id="signaturelink${status.index}">Click to download</a>
 				</c:otherwise>
 			</c:choose>
-		</div>
+		</div> --%>
 	</div>
 
 
 	<div class="row add-border">
-		<div class="col-sm-3 add-margin">
+	<%-- 	<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.othername" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${param.appOtherName}" default="N/A"></c:out>
-		</div>
+		</div> --%>
 
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.religion" />
@@ -125,12 +125,12 @@
 	</div>
 
 	<div class="row add-border">
-		<div class="col-sm-3 add-margin">
+		<%-- <div class="col-sm-3 add-margin">
 			<spring:message code="lbl.religiontype" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${param.appReligionPractice}" default="NA"></c:out>
-		</div>
+		</div> --%>
 
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.ageason.marriage" />

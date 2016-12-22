@@ -105,7 +105,7 @@ public class MarriageRegistration extends StateAware {
     @NotNull
     private Date dateOfMarriage;
 
-    @NotNull
+   /* @NotNull*/
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "marriageact")
     private MarriageAct marriageAct;
@@ -145,7 +145,7 @@ public class MarriageRegistration extends StateAware {
     @NotNull
     @Valid
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "registration")
-    @Size(max = 3)
+    @Size(max = 4)
     @OrderBy("id")
     private List<MarriageWitness> witnesses = new LinkedList<MarriageWitness>();
 

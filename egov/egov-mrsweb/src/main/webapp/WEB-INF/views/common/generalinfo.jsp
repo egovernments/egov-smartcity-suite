@@ -88,12 +88,12 @@
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${reIssue.registration.zone.name}" />
 		</div>
-		<div class="col-sm-3 ">
+	<%-- 	<div class="col-sm-3 ">
 			<spring:message code="lbl.law" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${reIssue.registration.marriageAct.name}" />
-		</div>
+		</div> --%>
 	</div>
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">

@@ -76,7 +76,7 @@
 			<form:errors path="${applicant}.name.lastName"
 				cssClass="add-margin error-msg" />
 		</div>
-		<label class="col-sm-6 text-right"> <spring:message
+	<%-- 	<label class="col-sm-6 text-right"> <spring:message
 				code="lbl.othername" />
 		</label>
 		<div class="col-sm-6">
@@ -85,7 +85,7 @@
 				maxlength="20" placeholder="" autocomplete="off" />
 			<form:errors path="${applicant}.otherName"
 				cssClass="add-margin error-msg" />
-		</div>
+		</div> --%>
 		<label class="col-sm-6 text-right"> <spring:message
 				code="lbl.parentsName" /><span class="mandatory"></span>
 		</label>
@@ -112,13 +112,13 @@
 			<form:errors path="${applicant}.religion"
 				cssClass="add-margin error-msg" />
 		</div>
-		<label class="col-sm-6 text-right"> <spring:message
+		<%-- <label class="col-sm-6 text-right"> <spring:message
 				code="lbl.religiontype" />
 		</label>
 		<div class="col-sm-6 dynamic-span capitalize">
 			<form:radiobuttons path="${applicant}.religionPractice"
 				items="${religionPractice}" element="span" />
-		</div>
+		</div> --%>
 		<label class="col-sm-6 text-right"> <spring:message
 				code="lbl.ageason.marriage" /><span class="mandatory"></span>
 		</label>
@@ -141,7 +141,7 @@
 		</div>
 	</div>
 	<div class="col-sm-6">
-		<label class="col-sm-4 text-right"> <spring:message
+		<%-- <label class="col-sm-4 text-right"> <spring:message
 				code="lbl.signature" />
 		</label>
 		<div class="col-sm-8">
@@ -149,7 +149,7 @@
 				<c:when
 					test="${currentState != 'NEW' && currentState != 'DATAENTRY'}">
 					<form:hidden path="${applicant}.signatureFileStore" />
-					<%-- <img class="add-border" id="${applicant}-signature" height="150" width="130" name="${applicant}.signature"> --%>
+					<img class="add-border" id="${applicant}-signature" height="150" width="130" name="${applicant}.signature">
 					<script>
 						var applicant = '<c:out value="${applicant}" />';
 						var strData = '';
@@ -170,13 +170,13 @@
 						class="file-ellipsis upload-file">
 				</c:when>
 				<c:otherwise>
-					<%-- <img class="add-border" id="${applicant}-signature" height="150" width="130" name="${applicant}.signature"> --%>
+					<img class="add-border" id="${applicant}-signature" height="150" width="130" name="${applicant}.signature">
 					<input type="file" id="${applicant}.signatureFile"
 						name="${applicant}.signatureFile"
 						class="file-ellipsis upload-file">
 				</c:otherwise>
 			</c:choose>
-		</div>
+		</div> --%>
 		<label class="col-sm-4 text-right"> <spring:message
 				code="lbl.photo" />
 		</label>

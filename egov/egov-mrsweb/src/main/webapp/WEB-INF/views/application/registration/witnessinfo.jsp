@@ -191,7 +191,7 @@
 		<form:errors path="${witness}.contactInfo.residenceAddress"
 			cssClass="add-margin error-msg" />
 	</div>
-	<label class="col-sm-2 text-right"> <spring:message
+	<%-- <label class="col-sm-2 text-right"> <spring:message
 			code="lbl.office.address" /><span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3">
@@ -202,7 +202,7 @@
 			placeholder="" autocomplete="off" required="required" />
 		<form:errors path="${witness}.contactInfo.officeAddress"
 			cssClass="add-margin error-msg" />
-	</div>
+	</div> --%>
 </div>
 
 

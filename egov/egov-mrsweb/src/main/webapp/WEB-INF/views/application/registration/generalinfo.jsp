@@ -192,10 +192,10 @@
 	</div>
 
 	<div class="form-group">
-		<label class="col-sm-3 control-label"> <spring:message
+	<%--	<label class="col-sm-3 control-label"> <spring:message
 				code="lbl.law" /><span class="mandatory"></span>
 		</label>
-		<div class="col-sm-3">
+	 	<div class="col-sm-3">
 			<form:select path="marriageAct" id="select-marriageAct"
 				cssClass="form-control" cssErrorClass="form-control error"
 				required="required">
@@ -205,8 +205,8 @@
 				<form:options items="${acts}" itemValue="id" itemLabel="name" />
 			</form:select>
 			<form:errors path="marriageAct" cssClass="add-margin error-msg" />
-		</div>
-		<label class="col-sm-2 text-right"> <spring:message
+		</div> --%>
+		<label class="col-sm-3 text-right"> <spring:message
 				code="lbl.marriage.photo" /><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 setimage">

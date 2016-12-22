@@ -69,7 +69,7 @@ public class Contact {
     @Length(max = 256)
     private String residenceAddress;
 
-    @NotNull
+  /*  @NotNull*/
     @SafeHtml
     @Length(max = 256)
     private String officeAddress;

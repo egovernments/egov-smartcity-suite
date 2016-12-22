@@ -74,8 +74,8 @@
 	</div>
 	
 	<div class="row add-border">
-		<div class="col-sm-3 add-margin"><spring:message code="lbl.law"/></div>
-		<div class="col-sm-3 add-margin view-content"><c:out value="${registration.marriageAct.name}"></c:out></div>
+	<%-- 	<div class="col-sm-3 add-margin"><spring:message code="lbl.law"/></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${registration.marriageAct.name}"></c:out></div> --%>
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.place.of.marriage"/></div>
 		<div class="col-sm-3 add-margin view-content"><c:out value="${registration.placeOfMarriage}"></c:out></div>
 	</div>

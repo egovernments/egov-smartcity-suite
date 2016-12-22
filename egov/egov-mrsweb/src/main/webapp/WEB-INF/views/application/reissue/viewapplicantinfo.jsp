@@ -61,12 +61,12 @@
 			<c:out value="${reIssue.applicant.name.middleName}"></c:out>&nbsp; &nbsp;
 			<c:out value="${reIssue.applicant.name.lastName}"></c:out>
 		</div>
-		<div class="col-sm-3 ">
+		<%-- <div class="col-sm-3 ">
 			<spring:message code="lbl.othername"/>
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${reIssue.applicant.otherName}" default="NA"/>
-		</div>
+		</div> --%>
 	</div>
 
 <div class="row add-border">
