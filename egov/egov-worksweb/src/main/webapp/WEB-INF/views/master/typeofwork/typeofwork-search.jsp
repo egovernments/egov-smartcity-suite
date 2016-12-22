@@ -43,34 +43,49 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
-
-<form:form name="typeofworkForm" id="typeofworkForm" role="form"
-	action="/egworks/masters/typeofwork-save" modelAttribute="egwTypeOfWork"
+<form:form name="SearchRequestTypeOfWork" role="form" action=""
+	modelAttribute="searchRequestTypeOfWork" id="SearchRequestTypeOfWork"
 	class="form-horizontal form-groups-bordered">
-
-	<spring:hasBindErrors name="egwTypeOfWork">
-		<div class="alert alert-danger col-md-12">
-			<form:errors cssClass="add-margin" />
-			<br />
-		</div>
-	</spring:hasBindErrors>
 	<div class="row">
 		<div class="col-md-12">
-			<jsp:include page="typeofwork-header.jsp" />
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title" style="text-align:center;"><spring:message code="lbl.searchtypeofwork" /></div>
+				</div>
+				<div class="panel-body">
+					<div class="form-group">
+						<input type = "hidden" value = "${ mode }" />
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.typeofworkname" /></label>
+						<div class="col-sm-3 add-margin greybox2wk">
+							<form:select  path="typeOfWorkName" id="typeOfWorkName" cssClass="form-control">
+					           <form:option value="" > <spring:message code="lbl.select" /></form:option>
+					           <form:options items="${typeOfWork}" itemValue="name" itemLabel="name" />
+					        </form:select>
+					        <form:errors path="typeOfWorkName" cssClass="error" />
+						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.code" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:select  path="typeOfWorkCode" id="typeOfWorkCode" cssClass="form-control">
+					           <form:option value="" > <spring:message code="lbl.select" /></form:option>
+					           <form:options items="${typeOfWork}" itemValue="code" itemLabel="code" />
+					        </form:select>
+					        <form:errors path="typeOfWorkCode" cssClass="error" />
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-sm-12 text-center">
-			<button type="submit" name="submit" id="save" class="btn btn-primary"
-				value="Save">
-				<spring:message code="lbl.save" />
+			<button type='button' class='btn btn-primary' id="btnsearch">
+				<spring:message code='lbl.search' />
 			</button>
-			<button type="button" class="btn btn-default" id="button2"
-				onclick="window.close();">
-				<spring:message code="lbl.close" />
-			</button>
+			<a href='javascript:void(0)' class='btn btn-default'
+				onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>
 	</div>
 </form:form>
-<script
-	src="<cdn:url value='/resources/js/master/typeofwork.js?rnd=${app_release_no}'/>"></script>
+<jsp:include page="typeofwork-searchresult.jsp" />
+<script src="<cdn:url value='/resources/js/master/viewtypeofwork.js?rnd=${app_release_no}'/>"></script>
+

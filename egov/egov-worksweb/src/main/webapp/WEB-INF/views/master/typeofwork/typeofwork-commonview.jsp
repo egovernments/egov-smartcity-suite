@@ -64,7 +64,7 @@
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:choose>
-							<c:when test = "${typeofwork.description == null }">
+							<c:when test = "${empty typeofwork.description}">
 								<c:out value="NA" />
 							</c:when>
 							<c:otherwise>

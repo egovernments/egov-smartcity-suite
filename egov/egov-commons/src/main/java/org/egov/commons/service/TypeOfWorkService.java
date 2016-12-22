@@ -41,8 +41,17 @@ package org.egov.commons.service;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.EgwTypeOfWork;
+import org.egov.commons.TypeOfWorkSearchRequest;
 import org.egov.commons.repository.TypeOfWorkRepository;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -53,6 +62,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class TypeOfWorkService {
 
     private final TypeOfWorkRepository typeOfWorkRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     public TypeOfWorkService(final TypeOfWorkRepository typeOfWorkRepository) {
@@ -74,6 +86,21 @@ public class TypeOfWorkService {
 
     public List<EgwTypeOfWork> findAll() {
         return typeOfWorkRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    }
+
+    public List<EgwTypeOfWork> searchTypeOfWorkToView(final TypeOfWorkSearchRequest searchRequestTypeOfWork) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(EgwTypeOfWork.class)
+                .addOrder(Order.asc("createdDate"));
+        if (searchRequestTypeOfWork != null) {
+            if (searchRequestTypeOfWork.getTypeOfWorkCode() != null)
+                criteria.add(Restrictions.eq("code", searchRequestTypeOfWork.getTypeOfWorkCode()));
+            if (searchRequestTypeOfWork.getTypeOfWorkName() != null)
+                criteria.add(Restrictions.eq("name", searchRequestTypeOfWork.getTypeOfWorkName()));
+        }
+
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+
     }
 
     public List<EgwTypeOfWork> getTypeOfWorkByPartyType(final String partyTypeCode) {

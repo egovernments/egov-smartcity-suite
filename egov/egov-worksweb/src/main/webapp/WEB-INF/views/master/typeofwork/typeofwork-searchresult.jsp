@@ -38,39 +38,23 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
-
-<form:form name="typeofworkForm" id="typeofworkForm" role="form"
-	action="/egworks/masters/typeofwork-save" modelAttribute="egwTypeOfWork"
-	class="form-horizontal form-groups-bordered">
-
-	<spring:hasBindErrors name="egwTypeOfWork">
-		<div class="alert alert-danger col-md-12">
-			<form:errors cssClass="add-margin" />
-			<br />
-		</div>
-	</spring:hasBindErrors>
-	<div class="row">
-		<div class="col-md-12">
-			<jsp:include page="typeofwork-header.jsp" />
-		</div>
+<div class="row display-hide report-section">
+	<div class="col-md-12 table-header text-left">
+		<spring:message code="title.searchresult" />
 	</div>
-	<div class="row">
-		<div class="col-sm-12 text-center">
-			<button type="submit" name="submit" id="save" class="btn btn-primary"
-				value="Save">
-				<spring:message code="lbl.save" />
-			</button>
-			<button type="button" class="btn btn-default" id="button2"
-				onclick="window.close();">
-				<spring:message code="lbl.close" />
-			</button>
-		</div>
+	<div class="col-md-12 form-group report-table-container">
+		<table class="table table-bordered table-hover"
+			id="resultTable">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.slno" /></th>
+					<th><spring:message code="lbl.code" /></th>
+					<th><spring:message code="lbl.name" /></th>
+					<th><spring:message code="lbl.description" /></th>
+				</tr>
+			</thead>
+		</table>
 	</div>
-</form:form>
-<script
-	src="<cdn:url value='/resources/js/master/typeofwork.js?rnd=${app_release_no}'/>"></script>
+</div>
