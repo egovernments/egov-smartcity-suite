@@ -230,7 +230,6 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
                     assignment = propertyDemolitionService.getUserAssignmentOnReject(designation, (PropertyImpl) property);
                     if (assignment == null)
                         assignment = propertyDemolitionService.getWfInitiator((PropertyImpl) property);
-                    // assignment = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
                     model.addAttribute(
                             "successMessage",
                             "Property Demolition rejected successfully and forwared to "

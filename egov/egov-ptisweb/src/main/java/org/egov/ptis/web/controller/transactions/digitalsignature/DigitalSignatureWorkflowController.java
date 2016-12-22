@@ -40,23 +40,24 @@
 package org.egov.ptis.web.controller.transactions.digitalsignature;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
-
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITALLY_SIGNED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_PRINT_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_TRANSFER_NOTICE_PRINT_PENDING;
-
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -234,7 +235,8 @@ public class DigitalSignatureWorkflowController {
                 .equals(ADDTIONAL_RULE_ALTER_ASSESSMENT) ? APPLICATION_TYPE_ALTER_ASSESSENT : applicationType
                         .equals(ADDTIONAL_RULE_BIFURCATE_ASSESSMENT) ? APPLICATION_TYPE_BIFURCATE_ASSESSENT : applicationType
                                 .equals(DEMOLITION) ? PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION : applicationType
-                                        .equals(GENERAL_REVISION_PETITION) ? APPLICATION_TYPE_GRP : null;
+                                        .equals(EXEMPTION) ? APPLICATION_TYPE_TAX_EXEMTION : applicationType
+                                                .equals(GENERAL_REVISION_PETITION) ? APPLICATION_TYPE_GRP : null;
     }
 
     private String transitionWorkFlow(final PropertyImpl property) {
@@ -242,7 +244,9 @@ public class DigitalSignatureWorkflowController {
                 : property.getCurrentState().getValue().startsWith(ALTER) ? ADDTIONAL_RULE_ALTER_ASSESSMENT : property
                         .getCurrentState().getValue().startsWith(BIFURCATE) ? ADDTIONAL_RULE_BIFURCATE_ASSESSMENT
                                 : property.getCurrentState().getValue().startsWith(STR_DEMOLITION) ? DEMOLITION : property
-                                        .getCurrentState().getValue().startsWith(GRP) ? GENERAL_REVISION_PETITION : null;
+                                        .getCurrentState().getValue().startsWith(GRP) ? GENERAL_REVISION_PETITION : property
+                                                .getCurrentState().getValue().startsWith(WFLOW_ACTION_NAME_EXEMPTION) ? EXEMPTION
+                                                        : null;
         if (propertyService.isMeesevaUser(property.getCreatedBy())) {
             property.transition().end();
             property.getBasicProperty().setUnderWorkflow(false);
