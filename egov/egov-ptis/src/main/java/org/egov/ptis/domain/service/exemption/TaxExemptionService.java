@@ -321,7 +321,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                             .append(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
                             .toString();
             }
-        if (property.getId() != null)
+        if (property.getId() != null && property.getState() != null)
             wfInitiator = propertyService.getWorkflowInitiator(property);
         else
             wfInitiator = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(user.getId());
