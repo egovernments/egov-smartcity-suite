@@ -37,12 +37,6 @@
   ~
   ~     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<!-- <footer class="main">
-   <spring:message code='lbl.powerby'/>  <a href="http://egovernments.org/" target="_blank">
-   <spring:message code='lbl.egov.foundation'/></a>
-</footer> -->
 <footer class="main">
     Powered by <a href="http://egovernments.org/" target="_blank">eGovernments Foundation</a>
 </footer>
