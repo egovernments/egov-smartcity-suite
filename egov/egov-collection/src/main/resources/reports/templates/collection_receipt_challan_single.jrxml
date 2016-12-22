@@ -39,9 +39,8 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 
-
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-12-22T11:09:20 -->
+<!-- 2016-12-22T13:55:26 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="10" bottomMargin="10" resourceBundle="custom" uuid="5c91b890-033f-49f9-b0bf-0286bb2a2d5c">
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
@@ -71,7 +70,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="42">
+		<band height="40">
 			<image>
 				<reportElement x="10" y="0" width="40" height="40" uuid="a7e55e08-a858-4dbc-a0fb-af92b2efd2e0"/>
 				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
@@ -183,7 +182,7 @@
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("challan_receipt_instruments.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="20">
+		<band height="51">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<staticText>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="375" y="0" width="171" height="20" uuid="38d02c62-dd25-4233-a39f-8056df10e4e8"/>
@@ -199,22 +198,8 @@
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="160" y="0" width="215" height="20" uuid="d6e7db1c-01c5-44fa-9acb-b27d835ffc55"/>
-				<box leftPadding="5" rightPadding="5">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman"/>
-				</textElement>
-				<text><![CDATA[Shroff]]></text>
-			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="160" height="20" uuid="695b01c3-c570-403a-9d4e-449d8a216245"/>
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="220" height="20" uuid="8f6f110b-2792-4006-a4b6-648c25ae8b59"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -225,8 +210,36 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Collected By : "+$F{createdBy}.getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{createdBy}.getName()]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="100" height="20" uuid="0ebd8cab-29d7-480a-ac3e-fed1c9a43303"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Collected by:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="321" y="0" width="54" height="20" uuid="6a08b49e-981b-4b84-ba29-3d2776156890"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Shroff:]]></text>
+			</staticText>
 		</band>
 	</detail>
 </jasperReport>
