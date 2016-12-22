@@ -39,8 +39,9 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 
+
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-12-20T12:56:54 -->
+<!-- 2016-12-22T11:31:13 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt" language="groovy" pageWidth="595" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="30" bottomMargin="30" resourceBundle="custom" uuid="4b290c7e-638d-4115-b638-21eedae5185f">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.collection.constants.*"/>
@@ -415,10 +416,10 @@
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("challan_receipt_instruments.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="142">
+		<band height="20">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="20" y="0" width="400" height="20" isRemoveLineWhenBlank="true" uuid="5ad501ab-bd6f-4e9b-98bf-5f7aa97b52cb">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="180" y="0" width="240" height="20" isRemoveLineWhenBlank="true" uuid="5ad501ab-bd6f-4e9b-98bf-5f7aa97b52cb">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<printWhenExpression><![CDATA[$F{collectionType}.charAt( 0 )==CollectionConstants.COLLECTION_TYPE_COUNTER]]></printWhenExpression>
 				</reportElement>
@@ -451,13 +452,13 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="20" y="40" width="178" height="20" uuid="122a3fca-9810-429e-8315-7b1078f5f564"/>
+				<reportElement stretchType="RelativeToTallestObject" x="20" y="0" width="160" height="20" uuid="695b01c3-c570-403a-9d4e-449d8a216245"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
