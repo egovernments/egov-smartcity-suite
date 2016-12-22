@@ -87,7 +87,6 @@
 				id="${witness}.witnessRelation" class="form-control inline-elem"
 				style="width: 30%" cssErrorClass="form-control error"
 				required="required">
-				<form:option value="S/o"></form:option>
 				<form:options items="${witnessRelation}" />
 			</form:select>
 			<form:input path="${witness}.relativeName"

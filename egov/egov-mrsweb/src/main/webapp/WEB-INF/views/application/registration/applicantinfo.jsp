@@ -378,8 +378,24 @@
 			<form:option value="">
 				<spring:message code="lbl.default.option" />
 			</form:option>
-			<form:options items="${nationalitylist}" itemValue="id"
-				itemLabel="name" />
+			<c:choose>
+				<c:when test="${empty registration.husband.id}">
+					<c:forEach items="${nationalitylist}" var="auc" varStatus="status">
+						<c:choose>
+							<c:when test="${auc.name eq 'Indians'}">
+								<option value="${auc.id}" selected="true">${auc.name}</option>
+							</c:when>
+							<c:otherwise>
+								<option value="${auc.id}">${auc.name}</option>
+							</c:otherwise>
+						</c:choose>
+					</c:forEach>
+				</c:when>
+				<c:otherwise>
+					<form:options items="${nationalitylist}" itemValue="id"
+						itemLabel="name" />
+				</c:otherwise>
+			</c:choose>
 		</form:select>
 		<span class=""></span>
 		<form:errors path="${applicant}.nationality"
