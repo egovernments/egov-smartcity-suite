@@ -46,7 +46,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
 import org.egov.eis.service.AssignmentService;
@@ -79,7 +78,7 @@ public class AjaxWorkFlowController {
     private AssignmentService assignmentService;
 
     /**
-     * 
+     *
      * @param departmentRule
      * @param currentState
      * @param type
@@ -94,18 +93,11 @@ public class AjaxWorkFlowController {
             @ModelAttribute("designations") @RequestParam final String departmentRule, @RequestParam final String currentState,
             @RequestParam final String type,
             @RequestParam final String amountRule, @RequestParam final String additionalRule,
-            @RequestParam final String pendingAction, @RequestParam final Long approvalDepartment,
-            @RequestParam final String currentDesignation) {
+            @RequestParam final String pendingAction, @RequestParam final Long approvalDepartment) {
 
-        List<Designation> designationList = null;
-        if (StringUtils.isNotBlank(currentDesignation))
-            designationList = customizedWorkFlowService.getNextDesignations(type,
-                    departmentRule, null, additionalRule, currentState,
-                    pendingAction, new Date(), currentDesignation);
-        else
-            designationList = customizedWorkFlowService.getNextDesignations(type,
-                    departmentRule, null, additionalRule, currentState,
-                    pendingAction, new Date());
+        List<Designation> designationList = customizedWorkFlowService.getNextDesignations(type,
+                departmentRule, null, additionalRule, currentState,
+                pendingAction, new Date());
         if (designationList.isEmpty())
             designationList = designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
         return designationList;
@@ -113,7 +105,35 @@ public class AjaxWorkFlowController {
     }
 
     /**
-     * 
+     * Temporary API to get next designations based on logged in user designation
+     * @param departmentRule
+     * @param currentState
+     * @param type
+     * @param amountRule
+     * @param additionalRule
+     * @param pendingAction
+     * @param approvalDepartment
+     * @return List of Designation
+     */
+    @RequestMapping(value = "/ajaxWorkFlow-getDesignationsByObjectTypeAndDesignation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Designation> getDesignationsByObjectTypeAndDesignation(
+            @ModelAttribute("designations") @RequestParam final String departmentRule, @RequestParam final String currentState,
+            @RequestParam final String type,
+            @RequestParam final String amountRule, @RequestParam final String additionalRule,
+            @RequestParam final String pendingAction, @RequestParam final Long approvalDepartment,
+            @RequestParam final String currentDesignation) {
+
+        List<Designation> designationList = customizedWorkFlowService.getNextDesignations(type,
+                departmentRule, null, additionalRule, currentState,
+                pendingAction, new Date(), currentDesignation);
+        if (designationList.isEmpty())
+            designationList = designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
+        return designationList;
+
+    }
+
+    /**
+     *
      * @param approvalDepartment
      * @param approvalDesignation
      * @return Approver For workflow
