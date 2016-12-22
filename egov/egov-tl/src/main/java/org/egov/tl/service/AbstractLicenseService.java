@@ -93,6 +93,7 @@ import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.entity.enums.ApplicationType;
+import org.egov.tl.repository.LicenseDocumentTypeRepository;
 import org.egov.tl.repository.LicenseRepository;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
 import org.egov.tl.utils.Constants;
@@ -134,8 +135,7 @@ public abstract class AbstractLicenseService<T extends License> {
     protected FeeMatrixService feeMatrixService;
 
     @Autowired
-    @Qualifier("licenseDocumentTypeService")
-    protected PersistenceService<LicenseDocumentType, Long> licenseDocumentTypeService;
+    protected LicenseDocumentTypeRepository licenseDocumentTypeRepository;
 
     @Autowired
     protected LicenseApplicationIndexService licenseApplicationIndexService;
@@ -330,8 +330,8 @@ public abstract class AbstractLicenseService<T extends License> {
     @Transactional
     public void updateLegacyLicense(final T license, final Map<Integer, Integer> updatedInstallmentFees,
                                     final Map<Integer, Boolean> legacyFeePayStatus) {
-        this.updateLegacyDemand(license, updatedInstallmentFees, legacyFeePayStatus);
         processAndStoreDocument(license.getDocuments(), license);
+        this.updateLegacyDemand(license, updatedInstallmentFees, legacyFeePayStatus);
         licenseRepository.save(license);
     }
 
@@ -527,7 +527,7 @@ public abstract class AbstractLicenseService<T extends License> {
     @Transactional
     public void processAndStoreDocument(final List<LicenseDocument> documents, final License license) {
         documents.forEach(document -> {
-            document.setType(this.licenseDocumentTypeService.load(document.getType().getId(), LicenseDocumentType.class));
+            document.setType(licenseDocumentTypeRepository.findOne(document.getType().getId()));
             if (!(document.getUploads().isEmpty() || document.getUploadsContentType().isEmpty())) {
                 int fileCount = 0;
                 for (final File file : document.getUploads()) {
