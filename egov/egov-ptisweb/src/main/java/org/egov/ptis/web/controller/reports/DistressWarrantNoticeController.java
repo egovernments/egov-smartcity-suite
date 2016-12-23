@@ -39,9 +39,10 @@
  */
 package org.egov.ptis.web.controller.reports;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.egov.demand.model.EgBill;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.service.notice.RecoveryNoticeService;
@@ -76,10 +77,12 @@ public class DistressWarrantNoticeController {
 
 	@RequestMapping(value = "/searchform", method = RequestMethod.POST)
 	public String search(@ModelAttribute("egBill") final EgBill egBill, final Model model, final BindingResult errors) {
-		final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(egBill.getConsumerId());
-		ArrayList<String> hasErrors = recoveryNoticeService.validateDistressNotice(basicProperty);
+		List<String> hasErrors = recoveryNoticeService.validateRecoveryNotices(egBill.getConsumerId(),
+				PropertyTaxConstants.NOTICE_TYPE_DISTRESS);
 		for (String error : hasErrors) {
 			if (error == "invalid.exempted") {
+				final BasicProperty basicProperty = basicPropertyDAO
+						.getBasicPropertyByPropertyID(egBill.getConsumerId());
 				errors.reject(error, new String[] { basicProperty.getProperty().getTaxExemptedReason().getName() },
 						error);
 			} else
@@ -92,7 +95,7 @@ public class DistressWarrantNoticeController {
 	@RequestMapping(value = "/generatenotice/{assessmentNo}", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<byte[]> generateNotice(final Model model,
 			@PathVariable final String assessmentNo) {
-		return recoveryNoticeService.generateDistressNotice(assessmentNo);
+		return recoveryNoticeService.generateNotice(assessmentNo,PropertyTaxConstants.NOTICE_TYPE_DISTRESS);
 	}
 
 }

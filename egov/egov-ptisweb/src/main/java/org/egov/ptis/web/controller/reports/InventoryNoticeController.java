@@ -43,6 +43,7 @@ package org.egov.ptis.web.controller.reports;
 import java.util.List;
 
 import org.egov.demand.model.EgBill;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.service.notice.RecoveryNoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -70,23 +71,28 @@ public class InventoryNoticeController {
         return INVENTORYNOTICE_FORM;
     }
     
-    @RequestMapping(value = "/searchform", method = RequestMethod.POST)
-    public String inventoryNotice(@ModelAttribute("egBill") final EgBill egBill, final Model model,
-            final BindingResult errors) {
-        List<String> errorList = recoveryNoticeService.validateInventoryNotice(egBill.getConsumerId());
-        for (String error : errorList) {
-            errors.reject(error, error);
-        }
-        if (errors.hasErrors()) {
-            model.addAttribute("inventorynotice", new EgBill());
-            return INVENTORYNOTICE_FORM;
-        } else
-            return "redirect:/inventroy/generatenotice/" + egBill.getConsumerId();
-    }
+	@RequestMapping(value = "/searchform", method = RequestMethod.POST)
+	public String inventoryNotice(@ModelAttribute("egBill") final EgBill egBill, final Model model,
+			final BindingResult errors) {
+		List<String> errorList = recoveryNoticeService.validateRecoveryNotices(egBill.getConsumerId(),
+				PropertyTaxConstants.NOTICE_TYPE_INVENTORY);
+		for (String error : errorList) {
+			if (error == "common.no.property.due") {
+				errors.reject(error, new String[] { PropertyTaxConstants.NOTICE_TYPE_ESD }, error);
+			} else {
+				errors.reject(error, error);
+			}
+		}
+		if (errors.hasErrors()) {
+			model.addAttribute("inventorynotice", new EgBill());
+			return INVENTORYNOTICE_FORM;
+		} else
+			return "redirect:/inventroy/generatenotice/" + egBill.getConsumerId();
+	}
     
     @RequestMapping(value = "/generatenotice/{assessmentNo}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateNotice(final Model model, @PathVariable final String assessmentNo) {
-        return recoveryNoticeService.generateInventoryNotice(assessmentNo);
+        return recoveryNoticeService.generateNotice(assessmentNo,PropertyTaxConstants.NOTICE_TYPE_INVENTORY);
     }
 
 }
