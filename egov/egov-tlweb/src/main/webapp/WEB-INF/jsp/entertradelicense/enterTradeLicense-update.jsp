@@ -365,8 +365,6 @@
 									jQuery("#zoneName").val(data.boundaryDetails.zoneName);
 									jQuery("#wardName").val(data.boundaryDetails.wardName);
 									jQuery("#address").val(data.propertyAddress);
-									jQuery("#boundaryId").val(data.boundaryDetails.localityId);
-									jQuery("#addressOnAssessment").val(data.propertyAddress);
 								}
 							}
 						},
