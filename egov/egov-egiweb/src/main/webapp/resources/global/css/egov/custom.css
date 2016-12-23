@@ -1959,7 +1959,3 @@ footer.main a {
 .DTTT_print_info {
   display: none;
 }
-
-table.dataTable tbody tr.selected {
-    background-color: #FEC38B;
-}
