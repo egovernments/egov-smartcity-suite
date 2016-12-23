@@ -1,50 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
+  ~ accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~  Copyright (C) 2016  eGovernments Foundation
   ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
+  ~  The updated version of eGov suite of products as by eGovernments Foundation
+  ~  is available at http://www.egovernments.org
   ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  any later version.
   ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
   ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~  http://www.gnu.org/licenses/gpl.html .
   ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
+  ~  In addition to the terms of the GPL license to be adhered to in using this
+  ~  program, the following additional terms are to be complied with:
   ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
+  ~      1) All versions of this program, verbatim or modified must carry this
+  ~         Legal Notice.
   ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
+  ~      2) Any misrepresentation of the origin of the material is prohibited. It
+  ~         is required that all modified versions of this material be marked in
+  ~         reasonable ways as different from the original version.
   ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
+  ~      3) This license does not grant any rights to any user of the program
+  ~         with regards to rights under trademark law for use of the trade names
+  ~         or trademarks of eGovernments Foundation.
   ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-03-04T11:22:19 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="145"/>
+	<property name="ireport.y" value="116"/>
 	<parameter name="applicationnumber" class="java.lang.String"/>
 	<parameter name="licencenumber" class="java.lang.String"/>
 	<parameter name="wardName" class="java.lang.String"/>
@@ -118,10 +116,10 @@
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="47" width="555" height="39" uuid="fe129b4c-1eec-4825-a342-be2d9302bfa7"/>
-				<textElement verticalAlignment="Middle" markup="styled">
+				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["               Trade License is issued to "+$P{applicantName}+", to carry on the Trade / Operation of M/s "+$P{nameOfEstablishment}+ " "+$P{subCategory}+ " at premises No: "+$P{licenceAddress}+" Vide TIN NO: "+$P{licencenumber}+" for the year "+$P{installMentYear}+"."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["          Trade License is issued to "+$P{applicantName}+", to carry on the Trade / Operation of M/s "+$P{nameOfEstablishment}+ " "+$P{subCategory}+ " at premises No: "+$P{licenceAddress}+" Vide TIN NO: "+$P{licencenumber}+" for the year "+$P{installMentYear}+"."]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="0" y="17" width="68" height="20" uuid="53e788d3-5a77-41ae-93a8-00760a41f0ad"/>
@@ -139,20 +137,23 @@
 			</staticText>
 			<staticText>
 				<reportElement x="0" y="144" width="555" height="83" isPrintInFirstWholeBand="true" uuid="bd00e390-a498-4c91-9325-38c9cc726ac6"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[1. Exclusive container (Dust-bin) for storing the waste generated within the premises shall be installed and maintained by the Trader.
+
 2. Street littering is to be avoided by the Trader
+
 3. Plastic carry bags less than 40 microns thickness shall not be used by the Trader for any purposes.
+
 4. In case of eating establishments, the conditions attached herewith on over leaf are to be followed by the Trader scrupulously. ]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="1" y="115" width="555" height="29" isPrintInFirstWholeBand="true" uuid="9549ce6c-8843-4532-b67d-c7d05839976d"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<text><![CDATA[		The trader shall fulfill the following conditions, otherwise the trade license will be cancelled by the undersigned without giving any further notice.]]></text>
+				<text><![CDATA[          The trader shall fulfill the following conditions, otherwise the trade license will be cancelled by the undersigned without giving any further notice.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="383" y="17" width="59" height="20" uuid="c67c6385-263a-4696-9626-aca81e907863"/>
@@ -184,41 +185,34 @@
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="86" width="555" height="29" uuid="8186071d-2604-4011-a65b-e8ff41af7e0b"/>
-				<textElement verticalAlignment="Middle" markup="styled">
+				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["               License Fee Rs: "+$P{demandTotalamt}+" is paid on "+$P{demandUpdateDate}+" for running "+$P{appType}+ " of Trade License for the financial year " +$P{installMentYear}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["          License Fee Rs: "+$P{demandTotalamt}+" is paid on "+$P{demandUpdateDate}+" for running "+$P{appType}+ " of Trade License for the financial year " +$P{installMentYear}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="133">
 			<staticText>
-				<reportElement x="0" y="0" width="555" height="60" isPrintInFirstWholeBand="true" uuid="399465de-7a00-441f-918c-2f0d9459a449"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="555" height="60" isPrintInFirstWholeBand="true" uuid="399465de-7a00-441f-918c-2f0d9459a449"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<text><![CDATA[3.	This notice is deemed to be suspended / cancelled, if the undersigned considers such action necessary on the grounds of public health convenience of safety or if any of the restrictions or conditions of license or any provisions of the Act or those bye-laws are infringed or if the license has been obtained by any fraud or misrepresentation, revoke, suspend or cancel a license.]]></text>
+				<text><![CDATA[5. This notice is deemed to be suspended / cancelled, if the undersigned considers such action necessary on the grounds of public health convenience of safety or if any of the restrictions or conditions of license or any provisions of the Act or those bye-laws are infringed or if the license has been obtained by any fraud or misrepresentation, revoke, suspend or cancel a license.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="1" y="90" width="555" height="43" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="aa7d1ca1-7f27-4dc2-a775-3596aa694eaa"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<text><![CDATA[5.	This license is only for TRADE PURPOSE. It does not confer any power of permission for either temporary or permanent exemption from the provisions of any other section of the A.P. Municipal Corporation Act, 1994 (Formerly GHMC Act), bye-laws or rules in force.]]></text>
+				<text><![CDATA[7. This license is only for TRADE PURPOSE. It does not confer any power of permission for either temporary or permanent exemption from the provisions of any other section of the A.P. Municipal Corporation Act, 1994 (Formerly GHMC Act), bye-laws or rules in force.]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="269" y="73" width="173" height="17" uuid="a6796b42-7083-4ff4-a936-7cece08d1895"/>
-				<textElement verticalAlignment="Middle" markup="styled">
-					<font size="10" isBold="false" isPdfEmbedded="true"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1" y="60" width="554" height="30" uuid="a6796b42-7083-4ff4-a936-7cece08d1895"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top" markup="styled">
+					<font size="10" isBold="false" pdfFontName="Helvetica" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{carporationulbType}==true ? "A.P. Municipal Corporations Act, 1994 (Formerly GHMC Act, 1955)" :"APM Act, 1965"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["6. The License is invalid if the building structure is un-authorisedly constructed / effecting the road widening or not fulfilling the provisions or rules of the "+ ($P{carporationulbType} ? "A.P. Municipal Corporations Act, 1994 (Formerly GHMC Act, 1955)" :"APM Act, 1965")]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="1" y="60" width="542" height="30" isPrintInFirstWholeBand="true" uuid="f0479c58-0694-4926-b6ac-81743971eda3"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="10" isBold="false"/>
-				</textElement>
-				<text><![CDATA[4.     	The License is invalid if the building structure is un-authorisedly constructed / effecting the road widening or not fulfilling the provisions or rules of the ]]></text>
-			</staticText>
 		</band>
 		<band height="91">
 			<staticText>
@@ -230,7 +224,7 @@
 ]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="331" y="56" width="224" height="34" uuid="100e876f-d70f-4f36-936d-25d8657e34b5"/>
+				<reportElement stretchType="RelativeToTallestObject" x="331" y="56" width="194" height="34" uuid="100e876f-d70f-4f36-936d-25d8657e34b5"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -238,7 +232,7 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
