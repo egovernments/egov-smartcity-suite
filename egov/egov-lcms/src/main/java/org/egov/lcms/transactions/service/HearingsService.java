@@ -54,6 +54,7 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.lcms.transactions.entity.EmployeeHearing;
 import org.egov.lcms.transactions.entity.Hearings;
 import org.egov.lcms.transactions.entity.LegalCase;
+import org.egov.lcms.transactions.entity.ReportStatus;
 import org.egov.lcms.transactions.repository.HearingsRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
@@ -81,8 +82,10 @@ public class HearingsService {
         buildEmplyeeList(hearings);
         updateNextDate(hearings, hearings.getLegalCase());
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
-                LcmsConstants.HEARING_STATUS);
+                LcmsConstants.LEGALCASE_HEARING_STATUS);
         hearings.getLegalCase().setStatus(statusObj);
+        final ReportStatus reportStatus=null;
+        hearings.getLegalCase().setReportStatus(reportStatus);
         return hearingsRepository.save(hearings);
     }
 

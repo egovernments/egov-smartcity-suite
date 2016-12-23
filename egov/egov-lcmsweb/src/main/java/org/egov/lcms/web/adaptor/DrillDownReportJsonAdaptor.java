@@ -37,48 +37,36 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.transactions.service;
+package org.egov.lcms.web.adaptor;
 
-import java.util.List;
+import java.lang.reflect.Type;
 
-import org.egov.commons.EgwStatus;
-import org.egov.lcms.transactions.entity.LegalCaseDisposal;
-import org.egov.lcms.transactions.entity.ReportStatus;
-import org.egov.lcms.transactions.repository.LegalCaseDisposalRepository;
-import org.egov.lcms.utils.LegalCaseUtil;
-import org.egov.lcms.utils.constants.LcmsConstants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.egov.lcms.reports.entity.TimeSeriesReportResult;
 
-@Service
-@Transactional(readOnly = true)
-public class LegalCaseDisposalService {
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-    @Autowired
-    private LegalCaseDisposalRepository legalCaseDisposalRepository;
+public class DrillDownReportJsonAdaptor implements JsonSerializer<TimeSeriesReportResult> {
 
-    @Autowired
-    private LegalCaseUtil legalCaseUtil;
+    @Override
+    public JsonElement serialize(final TimeSeriesReportResult legalcaseresult, final Type typeOfSrc,
+            final JsonSerializationContext context) {
+        final JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("casenumber", legalcaseresult.getLegalCase().getCaseNumber());
+        jsonObject.addProperty("legalcaseno", legalcaseresult.getLegalCase().getLcNumber());
+        jsonObject.addProperty("casetitle", legalcaseresult.getLegalCase().getCaseTitle());
+        jsonObject.addProperty("courtname", legalcaseresult.getLegalCase().getCourtMaster().getName());
+        jsonObject.addProperty("petitioners", legalcaseresult.getLegalCase().getPetitionersNames());
+        jsonObject.addProperty("respondants", legalcaseresult.getLegalCase().getRespondantNames());
+        jsonObject.addProperty("department", legalcaseresult.getAssignDept());
+        jsonObject.addProperty("standingcouncil", legalcaseresult.getLegalCase().getOppPartyAdvocate());
+        jsonObject.addProperty("casestatus", legalcaseresult.getCaseStatus());
+        jsonObject.addProperty("statusDesc", legalcaseresult.getLegalCase().getStatus() != null
+                ? legalcaseresult.getLegalCase().getStatus().getDescription() : null);
 
-    @Transactional
-    public LegalCaseDisposal persist(final LegalCaseDisposal legalCaseDisposal) {
-        legalCaseDisposal.getLegalCase().setNextDate(legalCaseDisposal.getDisposalDate());
-        final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
-                LcmsConstants.LEGALCASE_STATUS_CLOSED);
-        legalCaseDisposal.getLegalCase().setStatus(statusObj);
-        final ReportStatus reportStatus=null;
-        legalCaseDisposal.getLegalCase().setReportStatus(reportStatus);
-        return legalCaseDisposalRepository.save(legalCaseDisposal);
-    }
-
-    public List<LegalCaseDisposal> findAll() {
-        return legalCaseDisposalRepository.findAll(new Sort(Sort.Direction.ASC, ""));
-    }
-
-    public LegalCaseDisposal findById(final Long id) {
-        return legalCaseDisposalRepository.findOne(id);
+        return jsonObject;
     }
 
 }

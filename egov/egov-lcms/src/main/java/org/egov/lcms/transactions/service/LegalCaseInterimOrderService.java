@@ -52,6 +52,7 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.lcms.transactions.entity.LcInterimOrderDocuments;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseInterimOrder;
+import org.egov.lcms.transactions.entity.ReportStatus;
 import org.egov.lcms.transactions.repository.LCInterimOrderDocumentsRepository;
 import org.egov.lcms.transactions.repository.LegalCaseInterimOrderRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
@@ -86,8 +87,10 @@ public class LegalCaseInterimOrderService {
     public LegalCaseInterimOrder persist(final LegalCaseInterimOrder legalCaseInterimOrder, final MultipartFile[] files)
             throws IOException {
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
-                LcmsConstants.INTERIMSTAY_STATUS);
+                LcmsConstants.LEGALCASE_INTERIMSTAY_STATUS);
         legalCaseInterimOrder.getLegalCase().setStatus(statusObj);
+        final ReportStatus reportStatus=null;
+        legalCaseInterimOrder.getLegalCase().setReportStatus(reportStatus);
         updateNextDate(legalCaseInterimOrder, legalCaseInterimOrder.getLegalCase());
         final LegalCaseInterimOrder savedlcInterimOrder = legalCaseInterimOrderRepository.save(legalCaseInterimOrder);
         final List<LcInterimOrderDocuments> documentDetails = getDocumentDetails(savedlcInterimOrder, files);

@@ -42,28 +42,43 @@ package org.egov.lcms.web.adaptor;
 import java.lang.reflect.Type;
 
 import org.egov.lcms.reports.entity.GenericSubReportResult;
+import org.egov.lcms.utils.constants.LcmsConstants;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-public class GenericSubReportAdaptor implements JsonSerializer<GenericSubReportResult> {
+public class GenericSubReportJsonAdaptor implements JsonSerializer<GenericSubReportResult> {
 
     @Override
-    public JsonElement serialize(GenericSubReportResult genericSubResult, Type typeOfSrc,
-            JsonSerializationContext context) {
+    public JsonElement serialize(final GenericSubReportResult genericSubResult, final Type typeOfSrc,
+            final JsonSerializationContext context) {
 
         final JsonObject jsonObject = new JsonObject();
-        if (genericSubResult != null) {
-            if (genericSubResult.getAggregatedBy() != null)
-                jsonObject.addProperty("aggregatedBy", genericSubResult.getAggregatedBy());
+
+        jsonObject.addProperty("aggregatedBy",
+                genericSubResult.getAggregatedBy() != null ? genericSubResult.getAggregatedBy() : "");
+        jsonObject.addProperty("noOfCase", genericSubResult.getNoOfCase());
+        if (genericSubResult.getAggregatedBy() == null && genericSubResult.getLegalCase() != null) {
+            jsonObject.addProperty("casenumber", genericSubResult.getLegalCase().getCaseNumber() != null
+                    ? genericSubResult.getLegalCase().getCaseNumber() : "");
+            jsonObject.addProperty("legalcaseno", genericSubResult.getLegalCase().getLcNumber());
+            jsonObject.addProperty("casetitle", genericSubResult.getLegalCase().getCaseTitle());
+            jsonObject.addProperty("courtname", genericSubResult.getLegalCase().getCourtMaster().getName());
+            jsonObject.addProperty("petitioners", genericSubResult.getLegalCase().getPetitionersNames());
+            jsonObject.addProperty("respondants", genericSubResult.getLegalCase().getRespondantNames());
+            jsonObject.addProperty("standingcouncil", genericSubResult.getLegalCase().getOppPartyAdvocate() != null
+                    ? genericSubResult.getLegalCase().getOppPartyAdvocate() : "");
+            jsonObject.addProperty("casestatus", genericSubResult.getCaseStatus());
+            if (genericSubResult.getCaseStatus().equalsIgnoreCase(LcmsConstants.LEGALCASE_STATUS_CREATED))
+                jsonObject.addProperty("statusDesc", genericSubResult.getLegalCase().getReportStatus() != null
+                        ? genericSubResult.getLegalCase().getReportStatus().getName() : "");
             else
-                jsonObject.addProperty("aggregatedBy", "");
-            if (genericSubResult.getNoOfCase() != null)
-                jsonObject.addProperty("noOfCase", genericSubResult.getNoOfCase());
-            else
-                jsonObject.addProperty("noOfCase", "");
+
+                jsonObject.addProperty("statusDesc", genericSubResult.getLegalCase().getStatus() != null
+                        ? genericSubResult.getLegalCase().getStatus().getDescription() : "");
+
         }
 
         return jsonObject;

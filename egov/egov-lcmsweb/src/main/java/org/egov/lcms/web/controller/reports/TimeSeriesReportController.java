@@ -52,6 +52,7 @@ import org.egov.infra.web.utils.WebUtils;
 import org.egov.lcms.reports.entity.TimeSeriesReportResult;
 import org.egov.lcms.transactions.service.TimeSeriesReportService;
 import org.egov.lcms.utils.constants.LcmsConstants;
+import org.egov.lcms.web.adaptor.DrillDownReportJsonAdaptor;
 import org.egov.lcms.web.adaptor.TimeSeriesReportJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -108,9 +109,34 @@ public class TimeSeriesReportController {
         timeSeriesReportObj.setPeriod(period);
         timeSeriesReportObj.setFromDate(fromDate);
         timeSeriesReportObj.setToDate(toDate);
-        final List<TimeSeriesReportResult> timeSeriesReportList = timeSeriesReportService.getTimeSeriesReports(timeSeriesReportObj);
+        final Boolean clickOnCount = Boolean.FALSE;
+
+        final List<TimeSeriesReportResult> timeSeriesReportList = timeSeriesReportService
+                .getTimeSeriesReports(timeSeriesReportObj, clickOnCount);
         final String result = new StringBuilder("{ \"data\":").append(
                 WebUtils.toJSON(timeSeriesReportList, TimeSeriesReportResult.class, TimeSeriesReportJsonAdaptor.class))
+                .append("}").toString();
+        return result;
+    }
+
+    @ExceptionHandler(Exception.class)
+    @RequestMapping(value = "/drilldownreportresult", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String getDrillDownReportResult(@RequestParam final String aggregatedBy,
+            @RequestParam final String aggregatedByValue, @RequestParam final String month,
+            @RequestParam final Integer year, @RequestParam final String period, final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException {
+
+        final TimeSeriesReportResult timeSeriesReportObj = new TimeSeriesReportResult();
+        timeSeriesReportObj.setAggregatedBy(aggregatedBy);
+        timeSeriesReportObj.setYear(year);
+        timeSeriesReportObj.setMonth(month);
+        timeSeriesReportObj.setPeriod(period);
+        timeSeriesReportObj.setAggregatedByValue(aggregatedByValue);
+        final Boolean clickOnCount = Boolean.TRUE;
+        final List<TimeSeriesReportResult> timeSeriesReportList = timeSeriesReportService
+                .getTimeSeriesReports(timeSeriesReportObj, clickOnCount);
+        final String result = new StringBuilder("{ \"data\":").append(
+                WebUtils.toJSON(timeSeriesReportList, TimeSeriesReportResult.class, DrillDownReportJsonAdaptor.class))
                 .append("}").toString();
         return result;
     }

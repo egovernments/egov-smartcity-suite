@@ -63,39 +63,47 @@ public class TimeSeriesReportService {
         return entityManager.unwrap(Session.class);
     }
 
-    public List<TimeSeriesReportResult> getTimeSeriesReports(final TimeSeriesReportResult timeSeriesReportResults) {
+    public List<TimeSeriesReportResult> getTimeSeriesReports(final TimeSeriesReportResult timeSeriesReportResults,
+            final Boolean clickOnCount) {
 
         final StringBuilder queryStr = new StringBuilder();
         if (timeSeriesReportResults.getAggregatedBy().equals(LcmsConstants.COURTNAME))
-            getAggregateQueryByCourtName(timeSeriesReportResults, queryStr);
+            getAggregateQueryByCourtName(timeSeriesReportResults, queryStr, clickOnCount);
 
         if (timeSeriesReportResults.getAggregatedBy().equals(LcmsConstants.PETITIONTYPE))
-            getAggregateQueryByPetitionType(timeSeriesReportResults, queryStr);
+            getAggregateQueryByPetitionType(timeSeriesReportResults, queryStr, clickOnCount);
 
         if (timeSeriesReportResults.getAggregatedBy().equals(LcmsConstants.CASECATEGORY))
-            getAggregateQueryByCaseCategory(timeSeriesReportResults, queryStr);
+            getAggregateQueryByCaseCategory(timeSeriesReportResults, queryStr, clickOnCount);
 
         if (timeSeriesReportResults.getAggregatedBy().equals(LcmsConstants.CASESTATUS))
-            getAggregateQueryByCaseStatus(timeSeriesReportResults, queryStr);
+            getAggregateQueryByCaseStatus(timeSeriesReportResults, queryStr, clickOnCount);
 
         if (timeSeriesReportResults.getAggregatedBy().equals(LcmsConstants.COURTTYPE))
-            getAggregateQueryByCourtType(timeSeriesReportResults, queryStr);
+            getAggregateQueryByCourtType(timeSeriesReportResults, queryStr, clickOnCount);
 
         if (timeSeriesReportResults.getAggregatedBy().equals(LcmsConstants.OFFICERINCHRGE))
-            getAggregateQueryByOfficerIncharge(timeSeriesReportResults, queryStr);
+            getAggregateQueryByOfficerIncharge(timeSeriesReportResults, queryStr, clickOnCount);
 
         if (timeSeriesReportResults.getAggregatedBy().equals(LcmsConstants.STANDINGCOUNSEL))
-            getAggregateQueryByStandingCounsel(timeSeriesReportResults, queryStr);
+            getAggregateQueryByStandingCounsel(timeSeriesReportResults, queryStr, clickOnCount);
 
         Query queryResult = getCurrentSession().createQuery(queryStr.toString());
-        queryResult = setParameterToQuery(timeSeriesReportResults, queryResult);
+        queryResult = setParameterToQuery(timeSeriesReportResults, queryResult, clickOnCount);
         final List<TimeSeriesReportResult> timeSeriesReportList = queryResult.list();
         return timeSeriesReportList;
 
     }
 
-    private Query setParameterToQuery(final TimeSeriesReportResult timeSeriesReportObj, final Query queryResult) {
+    private Query setParameterToQuery(final TimeSeriesReportResult timeSeriesReportObj, final Query queryResult,
+            final Boolean clickOnCount) {
 
+        if (clickOnCount) {
+            queryResult.setString("aggreagatedByValue", timeSeriesReportObj.getAggregatedByValue());
+            if (timeSeriesReportObj.getPeriod().equals(LcmsConstants.AGG_MONTH))
+                queryResult.setString("month", timeSeriesReportObj.getMonth());
+            queryResult.setInteger("year", timeSeriesReportObj.getYear());
+        }
         if (timeSeriesReportObj.getAggregatedBy().equals(LcmsConstants.CASESTATUS))
             queryResult.setString("moduleType", LcmsConstants.MODULE_TYPE_LEGALCASE);
 
@@ -111,22 +119,36 @@ public class TimeSeriesReportService {
     private void getAppendQuery(final TimeSeriesReportResult timeSeriesReportObj, final StringBuilder queryStr) {
 
         if (timeSeriesReportObj.getFromDate() != null)
-            queryStr.append(" legalcase.caseDate >=:fromDate  and ");
+            queryStr.append("  legalcase.caseDate >=:fromDate and ");
         if (timeSeriesReportObj.getToDate() != null)
-            queryStr.append(" legalcase.caseReceivingDate <=:toDate ");
+            queryStr.append("  legalcase.caseDate <=:toDate ");
     }
 
     private void getAggregateQueryByCourtName(final TimeSeriesReportResult timeSeriesReportResults,
-            final StringBuilder queryStr) {
-        queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as count,courtmaster.name  as aggregatedBy,");
+            final StringBuilder queryStr, final Boolean clickOnCount) {
+        if (!clickOnCount)
+            queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as count ");
+        else
+            queryStr.append("select distinct legalcase  as  legalCase ");
+        queryStr.append(" ,courtmaster.name  as aggregatedBy,");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
             queryStr.append(" to_char(legalcase.caseDate,'Mon') as month,");
         queryStr.append(" extract(year from legalcase.caseDate) as year ");
-        queryStr.append(" from LegalCase legalcase,CourtMaster courtmaster where legalcase.courtMaster.id=courtmaster.id and");
+        queryStr.append(" from LegalCase legalcase,CourtMaster courtmaster ");
+        queryStr.append(" where legalcase.courtMaster.id=courtmaster.id and ");
+        if (clickOnCount) {
+            queryStr.append(" legalcase.courtMaster.name=:aggreagatedByValue ");
+            if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
+                queryStr.append(" and to_char(legalcase.caseDate,'Mon')=:month ");
+            queryStr.append(" and extract(year from legalcase.caseDate)=:year ");
+
+        }
         getAppendQuery(timeSeriesReportResults, queryStr);
         queryStr.append(" group by courtmaster.name,");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
             queryStr.append(" to_char(legalcase.caseDate,'Mon'), ");
+        if (clickOnCount)
+            queryStr.append(" legalcase,");
         queryStr.append(" extract(year from legalcase.caseDate) ");
         queryStr.append(" order by courtmaster.name ,");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
@@ -136,16 +158,31 @@ public class TimeSeriesReportService {
     }
 
     private void getAggregateQueryByPetitionType(final TimeSeriesReportResult timeSeriesReportResults,
-            final StringBuilder queryStr) {
-        queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as count,petmaster.petitionType  as aggregatedBy,");
+            final StringBuilder queryStr, final Boolean clickOnCount) {
+        if (!clickOnCount)
+            queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as count");
+        else
+            queryStr.append("select distinct legalcase  as  legalCase ");
+        queryStr.append(",petmaster.petitionType  as aggregatedBy,");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
             queryStr.append(" to_char(legalcase.caseDate,'Mon') as month,");
         queryStr.append(" extract(year from legalcase.caseDate) as year ");
-        queryStr.append(" from LegalCase legalcase,PetitionTypeMaster petmaster where legalcase.petitionTypeMaster.id=petmaster.id and");
+        queryStr.append(" from LegalCase legalcase,PetitionTypeMaster petmaster ");
+
+        queryStr.append("where legalcase.petitionTypeMaster.id=petmaster.id and ");
+        if (clickOnCount) {
+            queryStr.append(" legalcase.petitionTypeMaster.petitionType=:aggreagatedByValue ");
+            if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
+                queryStr.append(" and to_char(legalcase.caseDate,'Mon')=:month ");
+            queryStr.append(" and extract(year from legalcase.caseDate)=:year ");
+
+        }
         getAppendQuery(timeSeriesReportResults, queryStr);
-        queryStr.append(" group by petmaster.petitionType,");
+        queryStr.append(" group by petmaster.petitionType");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
-            queryStr.append(" to_char(legalcase.caseDate,'Mon'), ");
+            queryStr.append(" ,to_char(legalcase.caseDate,'Mon') ,");
+        if (clickOnCount)
+            queryStr.append(" legalcase,");
         queryStr.append(" extract(year from legalcase.caseDate) ");
         queryStr.append(" order by petmaster.petitionType ,");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
@@ -154,38 +191,65 @@ public class TimeSeriesReportService {
 
     }
 
-    private void getAggregateQueryByCourtType(final TimeSeriesReportResult timeSeriesReportResults,
-            final StringBuilder queryStr) {
-        queryStr.append(
-                "SELECT COUNT(DISTINCT legalcase.id) as count,courtmaster.courtType.courtType  as aggregatedBy,");
+    private void getAggregateQueryByCaseCategory(final TimeSeriesReportResult timeSeriesReportResults,
+            final StringBuilder queryStr, final Boolean clickOnCount) {
+        if (!clickOnCount)
+            queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as count ");
+        else
+            queryStr.append("select distinct legalcase  as  legalCase ");
+        queryStr.append(",casetypemaster.caseType  as aggregatedBy,");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
             queryStr.append(" to_char(legalcase.caseDate,'Mon') as month,");
         queryStr.append(" extract(year from legalcase.caseDate) as year ");
-        queryStr.append(" from LegalCase legalcase,CourtMaster courtmaster where legalcase.courtMaster.id=courtmaster.id and ");
-        getAppendQuery(timeSeriesReportResults, queryStr);
-        queryStr.append(" group by courtmaster.courtType.courtType,");
-        if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
-            queryStr.append(" to_char(legalcase.caseDate,'Mon'), ");
-        queryStr.append(" extract(year from legalcase.caseDate) ");
-        queryStr.append(" order by courtmaster.courtType.courtType ,");
-        if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
-            queryStr.append(" to_char(legalcase.caseDate,'Mon'), ");
-        queryStr.append(" extract(year from legalcase.caseDate) ");
+        queryStr.append(" from LegalCase legalcase,CaseTypeMaster casetypemaster ");
 
+        queryStr.append(" where legalcase.caseTypeMaster.id=casetypemaster.id and ");
+        if (clickOnCount) {
+            queryStr.append(" legalcase.caseTypeMaster.caseType=:aggreagatedByValue ");
+            if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
+                queryStr.append(" and to_char(legalcase.caseDate,'Mon')=:month ");
+            queryStr.append(" and extract(year from legalcase.caseDate)=:year ");
+
+        }
+
+        getAppendQuery(timeSeriesReportResults, queryStr);
+        queryStr.append(" group by casetypemaster.caseType,");
+        if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
+            queryStr.append(" to_char(legalcase.caseDate,'Mon'), ");
+        if (clickOnCount)
+            queryStr.append(" legalcase,");
+        queryStr.append(" extract(year from legalcase.caseDate) ");
+        queryStr.append(" order by casetypemaster.caseType ,");
+        if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
+            queryStr.append(" to_char(legalcase.caseDate,'Mon'), ");
+        queryStr.append(" extract(year from legalcase.caseDate) ");
     }
 
     private void getAggregateQueryByCaseStatus(final TimeSeriesReportResult timeSeriesReportResults,
-            final StringBuilder queryStr) {
-
-        queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as count,egwStatus.description  as aggregatedBy,");
+            final StringBuilder queryStr, final Boolean clickOnCount) {
+        if (!clickOnCount)
+            queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as count ");
+        else
+            queryStr.append("select distinct legalcase  as  legalCase ");
+        queryStr.append(",egwStatus.description  as aggregatedBy,");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
             queryStr.append(" to_char(legalcase.caseDate,'Mon') as month,");
         queryStr.append(" extract(year from legalcase.caseDate) as year ");
-        queryStr.append(" from LegalCase legalcase,EgwStatus egwStatus where legalcase.status.id=egwStatus.id and egwStatus.moduletype =:moduleType and ");
+        queryStr.append(
+                " from LegalCase legalcase,EgwStatus egwStatus  where legalcase.status.id=egwStatus.id and egwStatus.moduletype =:moduleType and ");
+        if (clickOnCount) {
+            queryStr.append(" egwStatus.description=:aggreagatedByValue ");
+            if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
+                queryStr.append(" and to_char(legalcase.caseDate,'Mon')=:month ");
+            queryStr.append(" and extract(year from legalcase.caseDate)=:year ");
+
+        }
         getAppendQuery(timeSeriesReportResults, queryStr);
         queryStr.append(" group by egwStatus.description,");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
             queryStr.append(" to_char(legalcase.caseDate,'Mon'), ");
+        if (clickOnCount)
+            queryStr.append(" legalcase,");
         queryStr.append(" extract(year from legalcase.caseDate) ");
         queryStr.append(" order by egwStatus.description ,");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
@@ -194,35 +258,66 @@ public class TimeSeriesReportService {
 
     }
 
-    private void getAggregateQueryByCaseCategory(final TimeSeriesReportResult timeSeriesReportResults,
-            final StringBuilder queryStr) {
-        queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as count,casetypemaster.caseType  as aggregatedBy,");
+    private void getAggregateQueryByCourtType(final TimeSeriesReportResult timeSeriesReportResults,
+            final StringBuilder queryStr, final Boolean clickOnCount) {
+        if (!clickOnCount)
+            queryStr.append(" SELECT COUNT(DISTINCT legalcase.id) as count ");
+        else
+            queryStr.append("select distinct legalcase  as  legalCase ");
+        queryStr.append(",courtmaster.courtType.courtType  as aggregatedBy,");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
             queryStr.append(" to_char(legalcase.caseDate,'Mon') as month,");
         queryStr.append(" extract(year from legalcase.caseDate) as year ");
-        queryStr.append(" from LegalCase legalcase,CaseTypeMaster casetypemaster where legalcase.caseTypeMaster.id=casetypemaster.id and");
+        queryStr.append(" from LegalCase legalcase,CourtMaster courtmaster ");
+
+        queryStr.append(" where legalcase.courtMaster.id=courtmaster.id  and ");
+        if (clickOnCount) {
+            queryStr.append(" legalcase.courtMaster.courtType.courtType=:aggreagatedByValue ");
+            if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
+                queryStr.append(" and to_char(legalcase.caseDate,'Mon')=:month ");
+            queryStr.append(" and extract(year from legalcase.caseDate)=:year ");
+
+        }
+
         getAppendQuery(timeSeriesReportResults, queryStr);
-        queryStr.append(" group by casetypemaster.caseType,");
+        queryStr.append(" group by courtmaster.courtType.courtType,");
+        if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
+            queryStr.append(" to_char(legalcase.caseDate,'Mon'), ");
+        if (clickOnCount)
+            queryStr.append(" legalcase,");
+        queryStr.append(" extract(year from legalcase.caseDate) ");
+        queryStr.append(" order by courtmaster.courtType.courtType ,");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
             queryStr.append(" to_char(legalcase.caseDate,'Mon'), ");
         queryStr.append(" extract(year from legalcase.caseDate) ");
-        queryStr.append(" order by casetypemaster.caseType ,");
-        if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
-            queryStr.append(" to_char(legalcase.caseDate,'Mon'), ");
-        queryStr.append(" extract(year from legalcase.caseDate) ");
+
     }
 
     private void getAggregateQueryByOfficerIncharge(final TimeSeriesReportResult timeSeriesReportResults,
-            final StringBuilder queryStr) {
-        queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as count,legalcase.officerIncharge as aggregatedBy,");
+            final StringBuilder queryStr, final Boolean clickOnCount) {
+        if (!clickOnCount)
+            queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as count ");
+        else
+            queryStr.append("select distinct legalcase  as  legalCase ");
+        queryStr.append(",legalcase.officerIncharge as aggregatedBy,");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
             queryStr.append(" to_char(legalcase.caseDate,'Mon') as month,");
         queryStr.append(" extract(year from legalcase.caseDate) as year ");
-        queryStr.append(" from LegalCase legalcase where  ");
+        queryStr.append(" from LegalCase legalcase where");
+        if (clickOnCount) {
+            queryStr.append(" legalcase.officerIncharge=:aggreagatedByValue ");
+            if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
+                queryStr.append(" and to_char(legalcase.caseDate,'Mon')=:month ");
+            queryStr.append(" and extract(year from legalcase.caseDate)=:year ");
+
+        }
+
         getAppendQuery(timeSeriesReportResults, queryStr);
         queryStr.append(" group by legalcase.officerIncharge,");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
             queryStr.append(" to_char(legalcase.caseDate,'Mon'), ");
+        if (clickOnCount)
+            queryStr.append(" legalcase,");
         queryStr.append(" extract(year from legalcase.caseDate) ");
         queryStr.append(" order by legalcase.officerIncharge ,");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
@@ -231,21 +326,37 @@ public class TimeSeriesReportService {
     }
 
     private void getAggregateQueryByStandingCounsel(final TimeSeriesReportResult timeSeriesReportResults,
-            final StringBuilder queryStr) {
-        queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as count,advocate.name as aggregatedBy,");
+            final StringBuilder queryStr, final Boolean clickOnCount) {
+        if (!clickOnCount)
+            queryStr.append(" SELECT COUNT(DISTINCT legalcase.id) as count ");
+        else
+            queryStr.append("select distinct legalcase  as  legalCase ");
+        queryStr.append(",advocate.name as aggregatedBy,");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
             queryStr.append(" to_char(legalcase.caseDate,'Mon') as month,");
         queryStr.append(" extract(year from legalcase.caseDate) as year ");
-        queryStr.append(" from LegalCase legalcase ,LegalCaseAdvocate legalCaseAdvocates ,AdvocateMaster advocate where legalcase.id=legalCaseAdvocates.legalCase ");
+        queryStr.append(" from LegalCase legalcase ,LegalCaseAdvocate legalCaseAdvocates ,AdvocateMaster advocate ");
+
+        queryStr.append("where legalcase.id=legalCaseAdvocates.legalCase ");
         queryStr.append(" and advocate.isActive='true' and ");
+        if (clickOnCount) {
+            queryStr.append(" advocate.name=:aggreagatedByValue ");
+            if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
+                queryStr.append(" and to_char(legalcase.caseDate,'Mon')=:month ");
+            queryStr.append(" and extract(year from legalcase.caseDate)=:year ");
+
+        }
         getAppendQuery(timeSeriesReportResults, queryStr);
         queryStr.append(" group by advocate.name,");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
             queryStr.append(" to_char(legalcase.caseDate,'Mon'), ");
+        if (clickOnCount)
+            queryStr.append(" legalcase,");
         queryStr.append(" extract(year from legalcase.caseDate) ");
         queryStr.append(" order by advocate.name ,");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
             queryStr.append(" to_char(legalcase.caseDate,'Mon'), ");
         queryStr.append(" extract(year from legalcase.caseDate) ");
     }
+
 }

@@ -43,20 +43,11 @@ import java.util.Date;
 
 import org.egov.lcms.transactions.entity.LegalCase;
 
-public class TimeSeriesReportResult {
-
-    private String aggregatedBy;
-    private String period;
-    private Date fromDate;
-    private Date toDate;
-    private Integer year;
-    private String month;
-    private Long count;
-    private LegalCase legalCase;
-    
+public class DrillDownReportsResults {
     private String caseNumber;
     private String lcNumber;
     private Date caseFromDate;
+    private LegalCase legalCase;
     private Date caseToDate;
     private String standingCouncil;
     private Integer casecategory;
@@ -72,16 +63,68 @@ public class TimeSeriesReportResult {
     private String caseStatus;
     private Integer statusId;
     private String assignDept;
-    private String aggregatedByValue;
+    private String aggregatedBy;
+    private String period;
+    private Date fromDate;
+    private Date toDate;
+    private Integer year;
+    private String month;
+    private Long count;
 
-   
-
-    public String getAggregatedByValue() {
-        return aggregatedByValue;
+    public String getAggregatedBy() {
+        return aggregatedBy;
     }
 
-    public void setAggregatedByValue(String aggregatedByValue) {
-        this.aggregatedByValue = aggregatedByValue;
+    public void setAggregatedBy(String aggregatedBy) {
+        this.aggregatedBy = aggregatedBy;
+    }
+
+    public String getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(String period) {
+        this.period = period;
+    }
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
+    }
+
+    public Long getCount() {
+        return count;
+    }
+
+    public void setCount(Long count) {
+        this.count = count;
     }
 
     public String getStandingCouncil() {
@@ -105,28 +148,26 @@ public class TimeSeriesReportResult {
     }
 
     public Date getCaseFromDate() {
-                return caseFromDate;
-        }
+        return caseFromDate;
+    }
 
-        public void setCaseFromDate(Date caseFromDate) {
-                this.caseFromDate = caseFromDate;
-        }
+    public void setCaseFromDate(final Date caseFromDate) {
+        this.caseFromDate = caseFromDate;
+    }
 
-        public Date getCaseToDate() {
-                return caseToDate;
-        }
+    public Date getCaseToDate() {
+        return caseToDate;
+    }
 
-        public void setCaseToDate(Date caseToDate) {
-                this.caseToDate = caseToDate;
-        }
+    public void setCaseToDate(final Date caseToDate) {
+        this.caseToDate = caseToDate;
+    }
 
-        public void setLcNumber(final String lcNumber) {
+    public void setLcNumber(final String lcNumber) {
         this.lcNumber = lcNumber;
     }
 
-    
-
-        public String getPetitionType() {
+    public String getPetitionType() {
         return petitionType;
     }
 
@@ -134,43 +175,39 @@ public class TimeSeriesReportResult {
         this.petitionType = petitionType;
     }
 
-    
-
     public Integer getCasecategory() {
-                return casecategory;
-        }
+        return casecategory;
+    }
 
-        public void setCasecategory(Integer casecategory) {
-                this.casecategory = casecategory;
-        }
+    public void setCasecategory(final Integer casecategory) {
+        this.casecategory = casecategory;
+    }
 
-        public Integer getCourtType() {
-                return courtType;
-        }
+    public Integer getCourtType() {
+        return courtType;
+    }
 
-        public void setCourtType(Integer courtType) {
-                this.courtType = courtType;
-        }
+    public void setCourtType(final Integer courtType) {
+        this.courtType = courtType;
+    }
 
-        
+    public String getCourtName() {
+        return courtName;
+    }
 
-        public String getCourtName() {
-                return courtName;
-        }
+    public void setCourtName(final String courtName) {
+        this.courtName = courtName;
+    }
 
-        public void setCourtName(String courtName) {
-                this.courtName = courtName;
-        }
+    public Integer getCourtId() {
+        return courtId;
+    }
 
-        public Integer getCourtId() {
-                return courtId;
-        }
+    public void setCourtId(final Integer courtId) {
+        this.courtId = courtId;
+    }
 
-        public void setCourtId(Integer courtId) {
-                this.courtId = courtId;
-        }
-
-        public String getGovtDept() {
+    public String getGovtDept() {
         return govtDept;
     }
 
@@ -194,7 +231,6 @@ public class TimeSeriesReportResult {
         this.caseStatus = caseStatus;
     }
 
-
     public String getCaseTitle() {
         return caseTitle;
     }
@@ -211,91 +247,32 @@ public class TimeSeriesReportResult {
         this.assignDept = assignDept;
     }
 
-        public Integer getStatusId() {
-                return statusId;
-        }
-
-        public void setStatusId(Integer statusId) {
-                this.statusId = statusId;
-        }
-
-        public Integer getPetitionTypeId() {
-                return petitionTypeId;
-        }
-
-        public void setPetitionTypeId(Integer petitionTypeId) {
-                this.petitionTypeId = petitionTypeId;
-        }
-
-        public String getResName() {
-                return resName;
-        }
-
-        public void setResName(String resName) {
-                this.resName = resName;
-        }
-
-     
-    
-
-    public Long getCount() {
-        return count;
+    public Integer getStatusId() {
+        return statusId;
     }
 
-    public void setCount(final Long count) {
-        this.count = count;
+    public void setStatusId(final Integer statusId) {
+        this.statusId = statusId;
     }
 
-    public String getAggregatedBy() {
-        return aggregatedBy;
+    public Integer getPetitionTypeId() {
+        return petitionTypeId;
     }
 
-    public void setAggregatedBy(final String aggregatedBy) {
-        this.aggregatedBy = aggregatedBy;
+    public void setPetitionTypeId(final Integer petitionTypeId) {
+        this.petitionTypeId = petitionTypeId;
     }
 
-    public String getPeriod() {
-        return period;
+    public String getResName() {
+        return resName;
     }
 
-    public void setPeriod(final String period) {
-        this.period = period;
-    }
-
-    public Date getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(final Date fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public Date getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(final Date toDate) {
-        this.toDate = toDate;
-    }
-
-    public String getMonth() {
-        return month;
-    }
-
-    public void setMonth(final String month) {
-        this.month = month;
+    public void setResName(final String resName) {
+        this.resName = resName;
     }
 
     public LegalCase getLegalCase() {
         return legalCase;
-    }
-
-    public Integer getYear() {
-        return year;
-    }
-
-    public void setYear(final Integer year) {
-        this.year = year;
     }
 
     public void setLegalCase(final LegalCase legalCase) {

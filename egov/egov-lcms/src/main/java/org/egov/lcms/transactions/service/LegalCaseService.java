@@ -341,15 +341,18 @@ public class LegalCaseService {
 
     public void setLegalCaseReportStatus(final LegalCase legalCase, final List<Pwr> pwr) {
         final String caseStatus = legalCase.getStatus().getCode();
-        final ReportStatus reportStatus = null;
+        ReportStatus reportStatus = null;
         if (caseStatus.equalsIgnoreCase(LcmsConstants.LEGALCASE_STATUS_CREATED))
             if (reportStatus == null && pwr != null && !pwr.isEmpty())
-                if (pwr.get(0).getCaFilingDate() != null)
-                    legalCase.setReportStatus(getReportStatusByCode(LcmsConstants.CODE_REPORTSTATUS_COUNTERFILED));
+                 if (pwr.get(0).getCaFilingDate() != null)
+                    reportStatus = getReportStatusByCode(LcmsConstants.CODE_REPORTSTATUS_COUNTERFILED);
                 else if (pwr.get(0).getPwrApprovalDate() == null)
                     legalCase.setReportStatus(getReportStatusByCode(LcmsConstants.CODE_REPORTSTATUS_PWRPENDING));
                 else
-                    legalCase.setReportStatus(getReportStatusByCode(LcmsConstants.CODE_REPORTSTATUS_DCAPENDING));
+                    reportStatus=getReportStatusByCode(LcmsConstants.CODE_REPORTSTATUS_DCAPENDING);
+        
+         if (reportStatus !=null )
+            legalCase.setReportStatus(reportStatus);
 
     }
 
