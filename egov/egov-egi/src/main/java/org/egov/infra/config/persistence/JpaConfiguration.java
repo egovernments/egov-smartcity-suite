@@ -91,7 +91,7 @@ public class JpaConfiguration {
         entityManagerFactory.setJtaDataSource(dataSource);
         entityManagerFactory.setPersistenceUnitName("EgovPersistenceUnit");
         entityManagerFactory.setPackagesToScan(new String[]{"org.egov.**.entity"});
-        entityManagerFactory.setJpaVendorAdapter(jpaVendorAdaper());
+        entityManagerFactory.setJpaVendorAdapter(jpaVendorAdapter());
         entityManagerFactory.setJpaPropertyMap(additionalProperties());
         entityManagerFactory.setValidationMode(ValidationMode.NONE);
         entityManagerFactory.setSharedCacheMode(SharedCacheMode.DISABLE_SELECTIVE);
@@ -103,7 +103,7 @@ public class JpaConfiguration {
     }
 
     @Bean
-    public JpaVendorAdapter jpaVendorAdaper() {
+    public JpaVendorAdapter jpaVendorAdapter() {
         final HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setDatabase(env.getProperty("jpa.database", Database.class));
         vendorAdapter.setShowSql(applicationProperties.getProperty("jpa.showSql", Boolean.class));
