@@ -146,17 +146,6 @@ function submitForm() {
 		oTable.column(8).visible(false);
 	}
 	
-	function updateSerialNo()
-	{
-		$( "#timeSeriesReportsResult-table tbody tr" ).each(function(index) {
-			if($(this).find('td').length>1)
-			{
-				oDataTable.fnUpdate(''+(index+1), index, 0);
-			}
-		});
-		
-	}
-	
 
 }
 
@@ -315,16 +304,6 @@ function callAjaxBydrillDownReport(aggregatedByValues,monthh,yearr) {
 				});
 	}
 	
-	function updateSerialNo()
-	{
-		$( "#timeSeriesReportsResult-table tbody tr" ).each(function(index) {
-			if($(this).find('td').length>1)
-			{
-				oDataTable.fnUpdate(''+(index+1), index, 0);
-			}
-		});
-		
-	}
 	
 
 function openLegalCase(lcNumber) {

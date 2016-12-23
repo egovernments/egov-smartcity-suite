@@ -344,14 +344,14 @@ public class LegalCaseService {
         ReportStatus reportStatus = null;
         if (caseStatus.equalsIgnoreCase(LcmsConstants.LEGALCASE_STATUS_CREATED))
             if (reportStatus == null && pwr != null && !pwr.isEmpty())
-                 if (pwr.get(0).getCaFilingDate() != null)
+                if (pwr.get(0).getCaFilingDate() != null)
                     reportStatus = getReportStatusByCode(LcmsConstants.CODE_REPORTSTATUS_COUNTERFILED);
                 else if (pwr.get(0).getPwrApprovalDate() == null)
                     legalCase.setReportStatus(getReportStatusByCode(LcmsConstants.CODE_REPORTSTATUS_PWRPENDING));
                 else
-                    reportStatus=getReportStatusByCode(LcmsConstants.CODE_REPORTSTATUS_DCAPENDING);
-        
-         if (reportStatus !=null )
+                    reportStatus = getReportStatusByCode(LcmsConstants.CODE_REPORTSTATUS_DCAPENDING);
+
+        if (reportStatus != null)
             legalCase.setReportStatus(reportStatus);
 
     }

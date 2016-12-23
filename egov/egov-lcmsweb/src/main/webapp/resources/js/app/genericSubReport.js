@@ -171,17 +171,6 @@ function submitForm() {
 			oTable.column(8).visible(false);
 		}
 		
-		function updateSerialNo()
-		{
-			$( "#genericSubReport-table tbody tr" ).each(function(index) {
-				if($(this).find('td').length>1)
-				{
-					oDataTable.fnUpdate(''+(index+1), index, 0);
-				}
-			});
-			
-		}
-		
 
 	}
 
@@ -286,11 +275,6 @@ function callAjaxBydrillDownReport(aggregatedByValues) {
 							"sTitle" : "Standing Council",
 							"className" : "text-left"
 						},
-						/*{
-							"data" : "casestatus",
-							"sTitle" : "Case Status",
-							"className" : "text-left"
-						},*/
 						{
 							"data" : "statusDesc",
 							"sTitle" : "Case Status",
@@ -319,16 +303,6 @@ function callAjaxBydrillDownReport(aggregatedByValues) {
 				});
 	}
 	
-	function updateSerialNo()
-	{
-		$( "#genericSubReport-table tbody tr" ).each(function(index) {
-			if($(this).find('td').length>1)
-			{
-				oDataTable.fnUpdate(''+(index+1), index, 0);
-			}
-		});
-		
-	}
 	
 
 function openLegalCase(lcNumber) {
@@ -452,17 +426,6 @@ function submitSubReportStatusForm() {
 					                }
 					            }	
 					});
-			
-		}
-		
-		function updateSerialNo()
-		{
-			$( "#genericSubReport-table tbody tr" ).each(function(index) {
-				if($(this).find('td').length>1)
-				{
-					oDataTable.fnUpdate(''+(index+1), index, 0);
-				}
-			});
 			
 		}
 		
