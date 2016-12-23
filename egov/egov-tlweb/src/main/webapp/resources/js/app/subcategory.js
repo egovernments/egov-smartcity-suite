@@ -39,30 +39,40 @@
  */
 
 $(document).ready(function () {
-	
-	$('#categories').change(function(){
-		$.ajax({
-			url: "/tl/licensesubcategory/subcategories-by-category",    
-			type: "GET",
-			data: {
-				categoryId : $('#categories').val()   
-			},
-			dataType: "json",
-			success: function (response) {
-				console.log("success"+response);
-				var subCategory = $('#licenseSubCategories')
-				subCategory.find("option:gt(0)").remove();
-				$.each(response, function(index, value) {
-					subCategory.append($('<option>').text(value.name).attr('value', value.code));
-				});
-				
-			}, 
-			error: function (response) {
-				console.log("failed");
-			}
-		})
+	$('#subCategory').select2({
+		placeholder: "Select",
+		width:'100%'
 	});
-	$('#subcat').on('change', 'select', function(){
+	
+	$('#categories').change(function() {
+	    var val = $(this).val();
+	    var results = [];
+	    $.ajax({
+	        type: "GET",
+	        url: '/tl/licensesubcategory/subcategories-by-category?name=&categoryId=' + val,
+	        dataType: "json",
+	        success: function(data) {
+	            $.each(data, function(i) {
+	                var obj = {};
+	                obj['id'] = data[i]['code'];
+	                obj['text'] = data[i]['name'];
+	                results.push(obj);
+	            });
+	            $("#subCategory").empty();
+            	$("#subCategory").append("<option value=''>Select</option>");
+	            $("#subCategory").select2({
+	            	placeholder: "Select",
+	            	width:'100%',
+	                data: results
+	            });
+	        },
+	        error: function() {
+	        	bootbox.alert('something went wrong on server');
+	        }
+	    });
+	});
+	
+$('#subcat').on('change', 'select', function(){
 	    var obj = $("[id$='feeType']:visible");
 	    for (var i=0 ;i < $("[id$='feeType']:visible").length - 1; i++) {
 	    	for (var j=i+1 ;j <= $("[id$='feeType']:visible").length - 1; j++) {
@@ -73,7 +83,7 @@ $(document).ready(function () {
 	    	}
 	    }
 	});
-
+	
 $('#addrow').click(function(){
 	var count = $("#subcat tbody  tr").length - 1;
 	var $tableBody = $('#subcat').find("tbody"),
@@ -115,6 +125,14 @@ $(document).on('click','#deleterow',function(){
 		
 	}
 		
+});
+
+$('#btnsubmit').click(function(e){
+	if($('form').valid()){
+		
+	}else{
+		e.preventDefault();
+	}
 })
 
 });

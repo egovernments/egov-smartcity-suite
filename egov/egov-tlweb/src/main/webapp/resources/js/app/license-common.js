@@ -213,25 +213,36 @@ function lessThanOrEqualToCurrentDate(dt) {
 
 
 jQuery(document).ready(function () {
-    jQuery('#category').change(function () {
-        jQuery.ajax({
-            url: "/tl/licensesubcategory/subcategories-by-category",
-            type: "GET",
-            data: {
-                categoryId: jQuery('#category').val()
-            },
-            dataType: "json",
-            success: function (response) {
-                var subCategory = jQuery('#subCategory');
-                subCategory.find("option:gt(0)").remove();
-                jQuery.each(response, function (index, value) {
-                    subCategory.append(jQuery('<option>').text(value.name).attr('value', value.id));
-                });
-            },
-            error: function (response) {
-                console.log("failed");
-            }
-
-        });
-    });
+	
+	jQuery('#subCategory').select2({
+		placeholder: "Select",
+		width:'100%'
+	});
+	jQuery('#category').change(function() {
+	    var val = jQuery(this).val();
+	    var results = [];
+	    jQuery.ajax({
+	        type: "GET",
+	        url: '../licensesubcategory/subcategories-by-category?name=&categoryId=' + val,
+	        dataType: "json",
+	        success: function(data) {
+	        	jQuery.each(data, function(i) {
+	                var obj = {};
+	                obj['id'] = data[i]['id']
+	                obj['text'] = data[i]['name'];
+	                results.push(obj);
+	            });
+	            jQuery("#subCategory").empty();
+            	jQuery("#subCategory").append("<option value=''>Select</option>");
+	            jQuery("#subCategory").select2({
+	                placeholder: "Select",
+	                width:'100%',
+	                data: results
+	            });
+	        },
+	        error: function() {
+	        	bootbox.alert('something went wrong on server');
+	        }
+	    });
+	});
 });

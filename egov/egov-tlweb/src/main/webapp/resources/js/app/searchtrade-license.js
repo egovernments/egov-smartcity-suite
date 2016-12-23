@@ -281,26 +281,41 @@ $(document).ready(function() {
 	}).on('typeahead:selected', function(){            
 		
  });
-	$('#category').change(function(){
-		$.ajax({
-			url: "/tl/licensesubcategory/subcategories-by-category",    
-			type: "GET",
-			data: {
-				categoryId : $('#category').val()   
-			},
-			dataType: "json",
-			success: function (response) {
-				var subCategory = $('#subCategory')
-				subCategory.find("option:gt(0)").remove();
-				$.each(response, function(index, value) {
-					subCategory.append($('<option>').text(value.name).attr('value', value.id));
-				});
-				
-			}, 
-			
-		})
-	});
+	
+	$('#subCategory').select2({
+			placeholder: "Select",
+			width:'100%'
+		});
 
+	$('#category').change(function() {
+		    var val = $(this).val();
+		    var results = [];
+		    $.ajax({
+		        type: "GET",
+		        url: '../licensesubcategory/subcategories-by-category?name=&categoryId=' + val,
+		        dataType: "json",
+		        success: function(data) {
+		            $.each(data, function(i) {
+		                var obj = {};
+		                obj['id'] = data[i]['id']
+		                obj['text'] = data[i]['name'];
+		                results.push(obj);
+		            });
+		            $("#subCategory").empty();
+	            	$("#subCategory").append("<option value=''>Select</option>");
+		            $("#subCategory").select2({
+		                allowClear: true,
+		                placeholder: "Select",
+		                width:'100%',
+		                data: results
+		            });
+		        },
+		        error: function() {
+		        	bootbox.alert('something went wrong on server');
+		        }
+		    });
+		});
+		
 
 $("#btnsearch").click(
 		function() {

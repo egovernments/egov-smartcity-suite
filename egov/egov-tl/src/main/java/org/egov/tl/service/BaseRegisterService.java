@@ -39,9 +39,9 @@ public class BaseRegisterService {
                 "AS \"arrearlicensefee\", cast(arrearpenaltyfee as bigint) AS \"arrearpenaltyfee\", cast(curlicensefee as bigint) " +
                 "AS \"curlicensefee\", cast(curpenaltyfee as bigint) AS \"curpenaltyfee\",\"unitofmeasure\",\"tradewt\",\"rateval\"  from egtl_mv_baseregister_view where 1=1 ");
         if (baseRegisterForm.getCategoryId() != null)
-            whereQry = whereQry.append(" and category = :categoryId");
+            whereQry = whereQry.append(" and cat = :categoryId");
         if (baseRegisterForm.getSubCategoryId() != null)
-            whereQry = whereQry.append(" and subcategory = :subCategoryId");
+            whereQry = whereQry.append(" and subcat = :subCategoryId");
         if (baseRegisterForm.getStatusId() != null)
             whereQry = whereQry.append(" and status = :statusId");
         else

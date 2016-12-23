@@ -66,13 +66,10 @@
 					  </div>
 	                   <label class="col-sm-4 control-label text-right"><spring:message code="lbl.subcategory" /> <span class="mandatory"></span> </label>
 	                  <div class="col-sm-3 add-margin">
-	                      <form:select path="code" id="licenseSubCategories" cssClass="form-control"   required="required" cssErrorClass="form-control error">
-	                           <form:option value="">
-	                               <spring:message code="lbl.category.select" />
-	                          </form:option>
-	                         <form:options items="${licenseSubCategories}" itemValue="code" itemLabel="name" />
-	                     </form:select>
-	                 </div>
+						       <select id="subCategory" name="code" class="form-control" required>
+						         </select> 
+						        <label id="subCategory-error" class="error display-hide" for="subCategory">Required</label>
+					  </div>
                 </div>
             </div>
       <div class="form-group">
