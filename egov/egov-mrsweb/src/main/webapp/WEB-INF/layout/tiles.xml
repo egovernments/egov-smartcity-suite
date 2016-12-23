@@ -417,4 +417,10 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/handicapped-marriage-report.jsp" />
 	</definition>
+	<definition name="report-monthwisefundcollection" extends="base_layout">
+		<put-attribute name="page-title" value="title.registration"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/reports/collection-report.jsp" />
+	</definition>
 </tiles-definitions>
