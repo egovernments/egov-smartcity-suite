@@ -66,12 +66,12 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="field-1" class="col-sm-2 control-label text-right"><spring:message code="lbl.name" /> <span id="mandatory" class="mandatory"></span></label>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.name" /> <span id="mandatory" class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="name" id="name" cssClass="form-control is_valid_alphabet"	cssErrorClass="form-control error" required="required" maxLength="64" />
+							<form:input path="name" id="name" cssClass="form-control patternvalidation" data-pattern="alphanumericwithspace"	cssErrorClass="form-control error" required="required" maxLength="64" />
 							<form:errors path="name" cssClass="error-msg" />
 						</div>
-						<label for="field-1" class="col-sm-2 control-label text-right"><spring:message code="lbl.code" /> <span id="mandatory" class="mandatory"></span></label>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.code" /> <span id="mandatory" class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="code" id="code" cssClass="form-control is_valid_alphabet"	cssErrorClass="form-control error" readonly="true" required="required" maxLength="32" />
 							<form:errors path="code" cssClass="error-msg" />
@@ -178,7 +178,7 @@
 </div>
 	<div class="form-group">
 	   <div class="text-center">
-			<button type="submit" class="btn btn-primary""><spring:message code="lbl.save"/></button>
+			<button type="submit" class="btn btn-primary"><spring:message code="lbl.save"/></button>
 			<button type="reset" class="btn btn-default" onclick="window.location.reload()" ><spring:message code="lbl.reset" /></button>
 			<button type="button" class="btn btn-primary" onclick="redirect('/tl/licensesubcategory/update')"><spring:message code="lbl.back"/></button>			
 			<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()"><spring:message code="lbl.close" /></button>

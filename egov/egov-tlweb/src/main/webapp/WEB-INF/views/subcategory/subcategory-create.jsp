@@ -66,12 +66,12 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="field-1" class="col-sm-2 control-label text-right"><spring:message code="lbl.name" /> <span id="mandatory" class="mandatory"></span></label>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.name" /> <span id="mandatory" class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="name" id="name" cssClass="form-control is_valid_alphabet"	cssErrorClass="form-control error" required="required" maxLength="64" />
+							<form:input path="name" id="name" cssClass="form-control patternvalidation" data-pattern="alphanumericwithspace" cssErrorClass="form-control error" required="required" maxLength="64" />
 							<form:errors path="name" cssClass="error-msg" />
 						</div>
-						<label for="field-1" class="col-sm-2 control-label text-right"><spring:message code="lbl.code" /> <span id="mandatory" class="mandatory"></span></label>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.code" /> <span id="mandatory" class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="code" id="code" cssClass="form-control is_valid_alphabet"	cssErrorClass="form-control error" required="required" maxLength="32" />
 							<form:errors path="code" cssClass="error-msg" />
