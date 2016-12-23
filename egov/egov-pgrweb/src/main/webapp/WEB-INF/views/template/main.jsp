@@ -64,7 +64,7 @@
 		<script src="<cdn:url  value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
 		<script src="<cdn:url  value='/resources/global/js/bootstrap-tour/bootstrap-tour.js' context='/egi'/>"></script>
 		<script src="<cdn:url  value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-		<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>4
+		<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 		<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 		<script src="<cdn:url  value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
 		<script src="<cdn:url  value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script>
