@@ -312,13 +312,11 @@ public class DigitalSignatureWorkflowController {
             final Assignment wfInitiator = getWorkflowInitiator(vacancyRemission, vacancyRemission.getBasicProperty());
             final Position pos = wfInitiator.getPosition();
             final VacancyRemissionApproval vacancyRemissionApproval = vacancyRemission.getVacancyRemissionApproval().get(0);
-            final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(vacancyRemissionApproval.getStateType(), null,
-                    null, null, vacancyRemissionApproval.getCurrentState().getValue(), null);
             vacancyRemissionApproval.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                    .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
+                    .withStateValue(WF_STATE_DIGITALLY_SIGNED).withDateInfo(currentDate.toDate())
                     .withOwner(vacancyRemission.getCurrentState().getInitiatorPosition() != null
                             ? vacancyRemission.getCurrentState().getInitiatorPosition() : pos)
-                    .withNextAction(wfmatrix.getNextAction());
+                    .withNextAction(WF_STATE_NOTICE_PRINT_PENDING);
         }
     }
 

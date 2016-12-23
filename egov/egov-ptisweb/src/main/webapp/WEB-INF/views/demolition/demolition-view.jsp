@@ -150,7 +150,7 @@ body
 					</div>
 				</div>
 			</div>
-			 <c:choose>
+		    <c:choose>
             <c:when test="${currentDesignation != 'Commissioner'}">
 			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 			</c:when>

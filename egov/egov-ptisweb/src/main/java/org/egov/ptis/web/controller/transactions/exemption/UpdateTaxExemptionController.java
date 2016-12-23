@@ -155,7 +155,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
         final String currentDesignation = taxExemptionService.getLoggedInUserDesignation(
                 property.getCurrentState().getOwnerPosition().getId(),
                 securityUtils.getCurrentUser());
-        if (!currState.endsWith(STATUS_REJECTED))
+        if (!(currState.endsWith(STATUS_REJECTED) || currState.endsWith(WFLOW_ACTION_NEW)))
             model.addAttribute("currentDesignation", currentDesignation);
 
         taxExemptionService.addModelAttributes(model, property.getBasicProperty());

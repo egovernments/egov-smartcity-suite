@@ -1362,6 +1362,8 @@ public interface PropertyTaxConstants {
     public static final String VR_STATUS_NOTICE_GENERATED = "Specialnotice Generated";
     public static final String VR_CURR_STATUS = "VacancyRemission:Assistant Approved";
     public static final String NOTICE_TYPE_VRPROCEEDINGS = "VR Proceedings";
+    public static final String VR_STATUS_ASSISTANT_FORWARDED = "Assistant Forwarded";
+    public static final String VR_STATUS_COMMISSIONER_FORWARD_PENDING = "Commissioner Forward Pending";
     
     public static final String VACANTLAND_PROPERTY_CATEGORY = "VACANTLAND";
     public static final String MEESEVA_OPERATOR_ROLE = "MeeSeva Operator";

@@ -47,12 +47,22 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
 <script type="text/javascript" src="<cdn:url value='/resources/javascript/dateValidation.js'/>"></script>
+<script type="text/javascript">
+$(document).ready(function()
+{	
+	if($("#currentDesignation").val() == 'Commissioner') {
+		$('#Forward').hide();
+	}
+  
+}); 
+</script>
 
 <form:form id="editVacancyRemissionApprovalForm" method="post"
 	class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemissionApproval">
 	<div class="page-container" id="page-container">
 			<jsp:include page="../common/commonPropertyDetailsView.jsp"></jsp:include>
 				<form:hidden path="" name="propertyByEmployee" id="propertyByEmployee" value="${propertyByEmployee}" />
+				 <input type="hidden" id="currentDesignation" name="currentDesignation" value="${currentDesignation}"/>
 				<div class="row">
 					<div class="col-md-12">
 						<div class="panel panel-primary" data-collapsed="0">
@@ -102,24 +112,25 @@
 										</c:forEach>
 									</c:when>
 								</c:choose>
-							
 						</div>
 						</div>
 					</div>
 				</div>
 				
 			</div> <!-- end of main-content -->
-			<c:if test="${fn:containsIgnoreCase(userDesignationList, designation)}">
+			 <c:choose>
+            <c:when test="${currentDesignation == 'Commissioner'}">
 		     <div class="row">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.comments"/></label>
 					<div class="col-sm-8 add-margin">
 						<form:textarea class="form-control" path=""  id="approvalComent" name="approvalComent" />
 					</div>
 				</div>
-		   </c:if>	
-		   <c:if test="${!fn:containsIgnoreCase(userDesignationList, commissionerDesignation) && !fn:containsIgnoreCase(userDesignationList, revenueClerkDesignation)}">
+		   </c:when>
+		   <c:otherwise>
 		   <jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-		  </c:if>
+		 </c:otherwise>
+		 </c:choose>
 				<div class="buttonbottom" align="center">
 					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 			</div>
