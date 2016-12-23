@@ -43,7 +43,6 @@
 <script>
 jQuery(document).ready(function(){
 	 jQuery('#boundary').change(function() {
-		console.log("came jursidiction"+jQuery('#boundary').val());
 		getZoneWard();
 	});
 	<s:if test="%{hasErrors() || mode=='view' || mode=='edit'}">
@@ -54,6 +53,8 @@ jQuery(document).ready(function(){
 });
 
 function getZoneWard(){
+    jQuery('#wardName').val("");
+    jQuery('#parentBoundary').val("");
 	jQuery.ajax({
 		url: "/egi/boundary/ajaxBoundary-blockByLocality.action",
 		type: "GET",
@@ -63,8 +64,6 @@ function getZoneWard(){
 		cache: false,
 		dataType: "json",
 		success: function (response) {
-			jQuery('#wardName').html("");
-			jQuery('#parentBoundary').html("");
 			jQuery.each(response.results.boundaries, function (j, boundary) {
 				if (boundary.wardId) {
 					jQuery('#wardName').val(boundary.wardName);
@@ -73,9 +72,6 @@ function getZoneWard(){
 			});
 		}, 
 		error: function (response) {
-			console.log("failed");
-			jQuery('#wardName').val('');
-			jQuery('#parentBoundary').val('');
 			bootbox.alert("No boundary details mapped for locality")
 		}
 	});
