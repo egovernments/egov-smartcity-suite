@@ -72,11 +72,17 @@
 	
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox apartmentRow" width="25%"><s:text name="apartcomplex.name"></s:text> :</td>
-		<td class="greybox apartmentRow" width=""><s:select headerKey=""
+		<td class="greybox" width="25%">
+		  <div class="apartmentRow"><s:text name="apartcomplex.name"></s:text> :</div></td>
+		<td class="greybox" width="">		
+		   <div class="apartmentRow">
+		     <s:select headerKey=""
 				headerValue="%{getText('default.select')}" 	name="propertyDetail.apartment" id="apartment"
 				listKey="id" listValue="name" value="%{propertyDetail.apartment.id}"
-				list="dropdownData.apartments" cssClass="selectnew"  title="In Which property belongs to"/></td>
+				list="dropdownData.apartments" cssClass="selectnew"  title="In Which property belongs to"/>
+		   </div>
+		   		
+		</td>
 		<td class="greybox" width="25%"><s:text name="exemptioncategory"/> :</td>
 		<td class="greybox">
 		<s:select name="taxExemptionId" id="taxExemptionId" headerValue="select"
@@ -137,9 +143,13 @@
 		<td class="greybox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="mutationId"
 				id="mutationId" listKey="id" listValue="mutationName" list="dropdownData.MutationList" value="%{mutationId}"
 				cssClass="selectnew" onchange="makeMandatory();" /></td>
-		<td class="greybox parentIndexText"><s:text name="prntPropAssessmentNum" /> <span
-			class="mandatory1" id="prntMandatory">*</span> :</td>
-		<td class="greybox parentIndexText"><s:textfield name="parentIndex" id="parentIndex" size="12" maxlength="10" onblur="validNumber(this);checkZero(this,'Parent Index');"></s:textfield></td>
+		<td class="greybox"><div class="parentIndexText"><s:text name="prntPropAssessmentNum" /> <span
+			class="mandatory1" id="prntMandatory">*</span> :</div></td>
+		<td class="greybox">
+		  <div class="parentIndexText">
+		  <s:textfield name="parentIndex" id="parentIndex" size="12" maxlength="10" onblur="validNumber(this);checkZero(this,'Parent Index');"></s:textfield>
+		  </div>
+		  </td>
 
 	</tr>
 
