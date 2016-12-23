@@ -99,6 +99,9 @@
                                 <resource>
                                     <directory>../egov-stms/src/main/resources/db/migration</directory>
                                 </resource>
+                                 <resource>
+                                    <directory>../egov-mrs/src/main/resources/db/migration</directory>
+                                </resource>
                             </resources>
                         </configuration>
                     </execution>

@@ -110,5 +110,29 @@
 		<put-attribute name="body" value="/WEB-INF/views/uom/uom-search.jsp"/>
 	</definition>
 
+	<definition name="nationality-new" extends="base_layout">
+		<put-attribute name="page-title" value="title.nationality.new" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/nationality/nationality-new.jsp"/>
+	</definition>
+	
+	<definition name="nationality-result" extends="base_layout">
+		<put-attribute name="page-title" value="title.nationality.result" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/nationality/nationality-result.jsp"/>
+	</definition>
 
+	<definition name="nationality-search" extends="base_layout">
+		<put-attribute name="page-title" value="title.nationality.edit" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/nationality/nationality-search.jsp"/>
+	</definition>
+	
+		<definition name="nationality-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.nationality.view" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/nationality/nationality-view.jsp"/>
+	</definition>
+	
+	<definition name="nationality-edit" extends="base_layout">
+		<put-attribute name="page-title" value="title.nationality.edit" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/nationality/nationality-edit.jsp"/>
+	</definition>
+	
 </tiles-definitions>

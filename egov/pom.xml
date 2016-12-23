@@ -279,6 +279,8 @@
              <module>egov-inventoryweb</module> -->
         <module>egov-stms</module>
         <module>egov-stmsweb</module>
+	     <module>egov-mrs</module>
+        <module>egov-mrsweb</module>
     </modules>
 
     <dependencyManagement>
