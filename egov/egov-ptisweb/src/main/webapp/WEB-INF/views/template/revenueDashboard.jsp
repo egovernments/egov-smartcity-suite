@@ -57,16 +57,16 @@
 		<title><tiles:insertAttribute name="title"/></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
        
-        <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css?rnd=${app_release_no}' context='/egi'/>">
-        <link rel="stylesheet" href="<cdn:url value='/resources/css/global.css?rnd=${app_release_no}' context='/dashboard'/>">
-        <link rel="stylesheet" href="<cdn:url value='/resources/css/jquery.loadmask.css?rnd=${app_release_no}' context='/dashboard'/>">
-        <link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css?rnd=${app_release_no}' context='/egi'/>">
-        <link rel="stylesheet" href="<cdn:url value='/resources/js/jquery/plugins/jquery-ui/jquery-ui.min.css?rnd=${app_release_no}' context='/dashboard'/>" />
-        <link rel="stylesheet" href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/dataTables.bootstrap.css?rnd=${app_release_no}' context='/egi'/>">
-        <link rel="stylesheet" href="<cdn:url value='/resources/js/jquery/plugins/datatable/extensions/responsive/css/dataTables.responsive.css?rnd=${app_release_no}' context='/dashboard'/>">
-		<link rel="stylesheet" href="<cdn:url value='/resources/js/jquery/plugins/bootstrap-switch/bootstrap-switch.min.css?rnd=${app_release_no}' context='/dashboard'/>" con>
+        <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+        <link rel="stylesheet" href="<cdn:url value='/resources/css/global.css' context='/dashboard'/>">
+        <link rel="stylesheet" href="<cdn:url value='/resources/css/jquery.loadmask.css' context='/dashboard'/>">
+        <link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+        <link rel="stylesheet" href="<cdn:url value='/resources/js/jquery/plugins/jquery-ui/jquery-ui.min.css' context='/dashboard'/>" />
+        <link rel="stylesheet" href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/dataTables.bootstrap.css' context='/egi'/>">
+        <link rel="stylesheet" href="<cdn:url value='/resources/js/jquery/plugins/datatable/extensions/responsive/css/dataTables.responsive.css' context='/dashboard'/>">
+		<link rel="stylesheet" href="<cdn:url value='/resources/js/jquery/plugins/bootstrap-switch/bootstrap-switch.min.css' context='/dashboard'/>" con>
 		
-	    <script src="<cdn:url value='/resources/global/js/jquery/jquery.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	    <script src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
 	    	
     	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -143,23 +143,23 @@
 		   <div style="margin-top: 20px;padding: 5px 19px;font-size: 12px;background: #F1F2F3;">Powered by <a href="http://egovernments.org/" target="_blank">eGovernments Foundation</a></div>
 		</footer>
 	</body>
-	<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js?rnd=${app_release_no}' context='/egi'/>"></script>
-	<script src="<cdn:url value='/resources/js/highchart/highstock.js?rnd=${app_release_no}' context='/dashboard'/>"></script>
-	<script src="<cdn:url value='/resources/js/highchart/modules/exporting.js?rnd=${app_release_no}' context='/dashboard'/>"></script>
-	<script src="<cdn:url value='/resources/js/highchart/highcharts-more.js?rnd=${app_release_no}' context='/dashboard'/>"></script>
-	<script src="<cdn:url value='/resources/js/highchart/modules/data.js?rnd=${app_release_no}' context='/dashboard'/>"></script>
-	<script src="<cdn:url value='/resources/js/highchart/modules/drilldown.js?rnd=${app_release_no}' context='/dashboard'/>"></script>
-	<script src="<cdn:url value='/resources/js/geoxml3.js?rnd=${app_release_no}' context='/dashboard'/>"></script>
+	<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+	<script src="<cdn:url value='/resources/js/highchart/highstock.js' context='/dashboard'/>"></script>
+	<script src="<cdn:url value='/resources/js/highchart/modules/exporting.js' context='/dashboard'/>"></script>
+	<script src="<cdn:url value='/resources/js/highchart/highcharts-more.js' context='/dashboard'/>"></script>
+	<script src="<cdn:url value='/resources/js/highchart/modules/data.js' context='/dashboard'/>"></script>
+	<script src="<cdn:url value='/resources/js/highchart/modules/drilldown.js' context='/dashboard'/>"></script>
+	<script src="<cdn:url value='/resources/js/geoxml3.js' context='/dashboard'/>"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true&libraries=places"></script>
-	<script src="<cdn:url value='/resources/js/date.js?rnd=${app_release_no}' context='/dashboard'/>"></script>
-	<script src='<cdn:url value='/resources/js/jquery/plugins/jquery.loadmask.min.js?rnd=${app_release_no}' context='/dashboard'/>'></script>
-	<script src="<cdn:url value='/resources/js/jquery/plugins/jquery-ui/jquery-ui.min.js?rnd=${app_release_no}' context='/dashboard'/>"></script>
-	<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css?rnd=${app_release_no}' context='/egi'/>"/>
-	<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css?rnd=${app_release_no}' context='/egi'/>">
-	<script src="<cdn:url value='/resources/js/jquery/plugins/datatable/js/jquery.dataTables.min.js?rnd=${app_release_no}' context='/dashboard'/>"></script>
-	<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js?rnd=${app_release_no}' context='/egi'/>"></script>
-	<script src="<cdn:url value='/resources/js/jquery/plugins/datatable/extensions/responsive/js/dataTables.responsive.min.js?rnd=${app_release_no}' context='/dashboard'/>"></script>
-	<script src='<cdn:url value='/resources/js/jquery/plugins/bootstrap-switch/bootstrap-switch.min.js?rnd=${app_release_no}' context='/dashboard'/>'></script>
+	<script src="<cdn:url value='/resources/js/date.js' context='/dashboard'/>"></script>
+	<script src='<cdn:url value='/resources/js/jquery/plugins/jquery.loadmask.min.js' context='/dashboard'/>'></script>
+	<script src="<cdn:url value='/resources/js/jquery/plugins/jquery-ui/jquery-ui.min.js' context='/dashboard'/>"></script>
+	<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+	<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+	<script src="<cdn:url value='/resources/js/jquery/plugins/datatable/js/jquery.dataTables.min.js' context='/dashboard'/>"></script>
+	<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+	<script src="<cdn:url value='/resources/js/jquery/plugins/datatable/extensions/responsive/js/dataTables.responsive.min.js' context='/dashboard'/>"></script>
+	<script src='<cdn:url value='/resources/js/jquery/plugins/bootstrap-switch/bootstrap-switch.min.js' context='/dashboard'/>'></script>
 <script src="<cdn:url value='/resources/js/global.js?rnd=${app_release_no}' context='/dashboard'/>"></script>
 	<script src='../resources/js/app/revenueDashboard.js'></script>
 </html>

@@ -102,5 +102,5 @@ $('#submit').click(function(e){
 		return false;
 	});
 </script>
-<script src="<cdn:url value='/resources/global/js/jquery/plugins/exif.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/app/js/legacyAdvertisement.js?rnd=${app_release_no}'/>"></script>

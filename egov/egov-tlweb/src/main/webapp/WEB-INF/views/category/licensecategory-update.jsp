@@ -62,11 +62,13 @@
 						</label>
 						<div class="col-sm-3">
 							<form:input path="name" id="name" type="text" class="form-control low-width" required="required" />
+							<form:errors path="name" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label"> <spring:message code="lbl.code" /><span class="mandatory"></span>
 						</label>
 						<div class="col-sm-3">
 							<form:input path="code" id="code" disabled="true" type="text" class="form-control low-width" required="required" />
+							<form:errors path="code" cssClass="error-msg" />
 						</div>
 					</div>
 				</div>
@@ -74,7 +76,7 @@
 			<div class="row">
 				<div class="text-center">
 					<button type="submit" class="btn btn-primary"><spring:message code="lbl.update" /></button>
-					<button type="reset" class="btn btn-default"><spring:message code="lbl.reset" /></button>
+					<button type="reset" class="btn btn-default" onclick="window.location.reload()" ><spring:message code="lbl.reset" /></button>
 					<button type="button" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></button>
 				</div>
 			</div>

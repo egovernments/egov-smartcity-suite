@@ -324,7 +324,7 @@ public class WaterTaxUtils {
         } else {
         }
         final Designation desgnObj = designationService.getDesignationByName(commissionerDesgn);
-        if (commissionerDesgn.equals("Commissioner")) {
+        if ("Commissioner".equals(commissionerDesgn)) {
             final Department deptObj = departmentService
                     .getDepartmentByName(WaterTaxConstants.ROLE_COMMISSIONERDEPARTEMNT);
             List<Assignment> assignlist = null;

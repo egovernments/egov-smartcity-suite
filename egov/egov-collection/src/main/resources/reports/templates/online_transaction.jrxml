@@ -39,8 +39,8 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-11-22T17:41:36 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2016-12-19T15:12:57 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="online_transaction" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6c32d2bb-93b0-4b77-9de8-d1cb8d0afd9f">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Postgresql"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -168,7 +168,7 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Service:]]></text>
@@ -182,7 +182,7 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[To Date:]]></text>
@@ -224,7 +224,7 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[From Date:]]></text>
@@ -238,7 +238,7 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Department:]]></text>
@@ -280,7 +280,7 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Status:]]></text>
@@ -573,7 +573,7 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[From Date:]]></text>
@@ -587,7 +587,7 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Department:]]></text>
@@ -629,7 +629,7 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Status:]]></text>
@@ -657,7 +657,7 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[To Date:]]></text>
@@ -685,7 +685,7 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Service:]]></text>

@@ -55,10 +55,7 @@
 		
 		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css?rnd=${app_release_no}' context='/egi'/>">
 		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css?rnd=${app_release_no}' context='/egi'/>">
-        <link rel="stylesheet"
-              href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
-		
-		
+        <link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>

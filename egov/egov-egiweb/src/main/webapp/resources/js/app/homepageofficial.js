@@ -117,7 +117,7 @@ $(document).ready(function()
 		$('.history-inbox').modal('show');
 		historyTableContainer = $("#historyTable"); 
 		historyTableContainer.dataTable({
-			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
 			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 			"autoWidth": false,
 			"paging": false,
@@ -416,7 +416,7 @@ function clearnow(){
 function worklist(){
 	tableContainer1 = $("#official_inbox"); 
 	tableContainer1.dataTable({
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
 		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 		"bDestroy": true,
 		"autoWidth": false,
@@ -481,7 +481,7 @@ function worklist(){
 function drafts(){
 	tableContainer1 = $("#official_drafts"); 
 	tableContainer1.dataTable({
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
 		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 		"bDestroy": true,
 		/* Disable initial sort */
@@ -511,7 +511,7 @@ function drafts(){
 function notifications(){
 	tableContainer1 = $("#official_notify");
 	tableContainer1.dataTable({
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
 		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 		"bDestroy": true,
 		/* Disable initial sort */
@@ -525,7 +525,7 @@ function worklistwrtnow(json){
 	//$("#official_inbox").empty();
 	tableContainer1 = $("#official_inbox"); 
 	tableContainer1.dataTable({
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
 		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 		"bDestroy": true,
 		/* Disable initial sort */

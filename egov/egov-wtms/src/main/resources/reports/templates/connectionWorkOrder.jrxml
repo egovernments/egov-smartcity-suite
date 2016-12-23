@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-12-15T22:19:26 -->
+<!-- 2016-12-22T13:36:19 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="connectionWorkOrder" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -16,8 +16,8 @@
 	<parameter name="doorno" class="java.lang.String"/>
 	<parameter name="purpose" class="java.lang.String"/>
 	<parameter name="address" class="java.lang.String"/>
-	<parameter name="workorderNo" class="java.lang.String"/>
-	<parameter name="workorderDate" class="java.lang.String"/>
+	<parameter name="workOrderNo" class="java.lang.String"/>
+	<parameter name="workOrderDate" class="java.lang.String"/>
 	<parameter name="applicationDate" class="java.lang.String"/>
 	<parameter name="consumerNumber" class="java.lang.String"/>
 	<parameter name="userId" class="java.lang.Long"/>
@@ -80,11 +80,11 @@
 				<subreportParameter name="address">
 					<subreportParameterExpression><![CDATA[$P{address}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="workorderNo">
-					<subreportParameterExpression><![CDATA[$P{workorderNo}]]></subreportParameterExpression>
+				<subreportParameter name="workOrderNo">
+					<subreportParameterExpression><![CDATA[$P{workOrderNo}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="workorderDate">
-					<subreportParameterExpression><![CDATA[$P{workorderDate}]]></subreportParameterExpression>
+				<subreportParameter name="workOrderDate">
+					<subreportParameterExpression><![CDATA[$P{workOrderDate}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="applicationDate">
 					<subreportParameterExpression><![CDATA[$P{applicationDate}]]></subreportParameterExpression>
@@ -159,11 +159,11 @@
 				<subreportParameter name="address">
 					<subreportParameterExpression><![CDATA[$P{address}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="workorderNo">
-					<subreportParameterExpression><![CDATA[$P{workorderNo}]]></subreportParameterExpression>
+				<subreportParameter name="workOrderNo">
+					<subreportParameterExpression><![CDATA[$P{workOrderNo}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="workorderDate">
-					<subreportParameterExpression><![CDATA[$P{workorderDate}]]></subreportParameterExpression>
+				<subreportParameter name="workOrderDate">
+					<subreportParameterExpression><![CDATA[$P{workOrderDate}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="applicationDate">
 					<subreportParameterExpression><![CDATA[$P{applicationDate}]]></subreportParameterExpression>

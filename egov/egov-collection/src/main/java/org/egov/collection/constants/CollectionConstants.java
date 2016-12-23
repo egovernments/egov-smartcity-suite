@@ -589,6 +589,7 @@ public final class CollectionConstants {
     public static final String COLLECTION_INDEX_NAME = "receipts";
     public static final BigDecimal BIGDECIMAL_100 = BigDecimal.valueOf(100);
     public static final String DISTINCT_SERVICE_DETAILS="DISTINCT_SERVICE_DETAILS";
+    public static final String DASHBOARD_OTHERS = "OTHERS";
     
     
 }

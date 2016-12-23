@@ -1,46 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-12-16T11:55:22 -->
+<!-- 2016-12-19T15:12:08 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="chequeCollectionReport" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="edf8ecb0-894a-4bde-87bd-9e2e05b2dc29">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="184"/>
@@ -191,6 +151,7 @@ WHERE
 	</background>
 	<title>
 		<band height="172" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
 			<staticText>
 				<reportElement x="233" y="10" width="373" height="35" uuid="60eaef20-ce62-4908-b1fd-003625ff5296"/>
 				<box leftPadding="5" rightPadding="5"/>
@@ -200,7 +161,7 @@ WHERE
 				<text><![CDATA[Cheque/DD Collection Report]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="89" y="104" width="131" height="20" uuid="201daeef-f7c6-4937-8aa6-c5b0d4888d73"/>
+				<reportElement positionType="FixRelativeToBottom" x="96" y="104" width="131" height="20" uuid="201daeef-f7c6-4937-8aa6-c5b0d4888d73"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
@@ -216,12 +177,12 @@ WHERE
 				<textFieldExpression><![CDATA[($P{EGOV_COUNTER_ID} == null || $P{EGOV_COUNTER_ID} == -1) ? "All Counters" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_LOCATION WHERE ID = " + $P{EGOV_COUNTER_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="540" y="104" width="120" height="20" uuid="f7bef181-8d61-408d-b7d1-370f48397aa1"/>
+				<reportElement x="532" y="104" width="120" height="20" uuid="f7bef181-8d61-408d-b7d1-370f48397aa1"/>
 				<box leftPadding="5" rightPadding="5"/>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[Counter:]]></text>
+				<text><![CDATA[   Counter:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
 				<reportElement x="660" y="124" width="131" height="20" uuid="597cccad-77f5-4a76-826d-7210765ea59d"/>
@@ -248,25 +209,25 @@ WHERE
 				<textFieldExpression><![CDATA[$P{EGOV_TO_DATE}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="10" y="124" width="80" height="20" uuid="65a015b0-1f64-48b7-874e-c2c622809e31"/>
+				<reportElement x="-4" y="124" width="80" height="20" uuid="65a015b0-1f64-48b7-874e-c2c622809e31"/>
 				<box leftPadding="5" rightPadding="5"/>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[To Date:]]></text>
+				<text><![CDATA[    To Date:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="10" y="104" width="80" height="20" uuid="8979072f-7dc9-40f0-a58e-074553856cda"/>
 				<box leftPadding="5" rightPadding="5"/>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[From Date:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="10" y="144" width="80" height="20" uuid="a3d355ab-b51f-4234-9f1b-000a9f12719d"/>
+				<reportElement x="-16" y="144" width="80" height="20" uuid="a3d355ab-b51f-4234-9f1b-000a9f12719d"/>
 				<box leftPadding="5" rightPadding="5"/>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Zone:]]></text>
@@ -697,7 +658,7 @@ WHERE
 			<staticText>
 				<reportElement x="2" y="70" width="80" height="20" uuid="19ef8a8a-e3e4-4938-b3b0-38e8cc9917d8"/>
 				<box leftPadding="5" rightPadding="5"/>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[To Date:]]></text>
@@ -705,7 +666,7 @@ WHERE
 			<staticText>
 				<reportElement x="2" y="50" width="80" height="20" uuid="d7bb2bcf-adad-4489-b34b-929db0ac04af"/>
 				<box leftPadding="5" rightPadding="5"/>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[From Date:]]></text>
@@ -713,15 +674,15 @@ WHERE
 			<staticText>
 				<reportElement x="540" y="70" width="120" height="20" uuid="bb39529b-3396-4239-9ac2-3ac5e54c99e9"/>
 				<box leftPadding="5" rightPadding="5"/>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Operator:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="540" y="50" width="120" height="20" uuid="ec0aceca-ff75-4b9a-94e8-d2e3705ea640"/>
+				<reportElement x="539" y="50" width="120" height="20" uuid="ec0aceca-ff75-4b9a-94e8-d2e3705ea640"/>
 				<box leftPadding="5" rightPadding="5"/>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Counter:]]></text>
@@ -737,7 +698,7 @@ WHERE
 			<staticText>
 				<reportElement x="2" y="90" width="80" height="20" uuid="02228ecb-7f3d-4408-84b6-a9a3c25d64f7"/>
 				<box leftPadding="5" rightPadding="5"/>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Zone:]]></text>

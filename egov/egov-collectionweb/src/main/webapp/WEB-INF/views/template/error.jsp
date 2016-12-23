@@ -61,7 +61,6 @@
 			<script src="/egi/resources/global/js/ie8/respond.min.js"></script>
 		<![endif]-->
 		
-		
 	</head>
 	<body  class="page-body">
 		<div class="page-container">	

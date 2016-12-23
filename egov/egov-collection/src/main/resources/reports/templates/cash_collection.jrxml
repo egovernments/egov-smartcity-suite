@@ -40,8 +40,9 @@
   -->
 
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2016-12-19T15:06:31 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cash_collection" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="575" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" isSummaryNewPage="true" isFloatColumnFooter="true" uuid="83cd3eec-a13e-40e2-ab9e-a64ab5ca3d02">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Postgresql"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="192"/>
@@ -225,7 +226,7 @@ WHERE
 	<title>
 		<band height="183" splitType="Stretch">
 			<staticText>
-				<reportElement x="304" y="111" width="120" height="20" uuid="6e33a779-c1d0-487a-abf5-9548b36db65c"/>
+				<reportElement x="296" y="111" width="120" height="20" uuid="6e33a779-c1d0-487a-abf5-9548b36db65c"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -233,10 +234,10 @@ WHERE
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
 				</textElement>
-				<text><![CDATA[Counter:]]></text>
+				<text><![CDATA[   Counter:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="304" y="131" width="120" height="20" uuid="349598d9-ae71-4e1d-9ec7-0589ce2a230c"/>
@@ -247,10 +248,10 @@ WHERE
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
 				</textElement>
-				<text><![CDATA[Username]]></text>
+				<text><![CDATA[Username:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
 				<reportElement x="424" y="131" width="131" height="20" uuid="37df1cff-1951-436f-aec9-e4078d0e5565"/>
@@ -309,7 +310,7 @@ WHERE
 				<textFieldExpression><![CDATA[$P{EGOV_FROM_DATE} == null ? "NA" : $P{EGOV_FROM_DATE}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="13" y="131" width="80" height="20" uuid="30fbf97e-b643-4f9b-8a08-c9ae86cd0ad1"/>
+				<reportElement x="0" y="131" width="80" height="20" uuid="30fbf97e-b643-4f9b-8a08-c9ae86cd0ad1"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -317,10 +318,10 @@ WHERE
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
 				</textElement>
-				<text><![CDATA[To Date:]]></text>
+				<text><![CDATA[    To Date:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="13" y="111" width="80" height="20" uuid="1f4f728b-a5e3-44b6-95d0-065439ab7b0a"/>
@@ -331,7 +332,7 @@ WHERE
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[From Date:]]></text>
@@ -344,16 +345,16 @@ WHERE
 				<text><![CDATA[Cash Collection Report]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="13" y="151" width="80" height="20" uuid="0df8a8db-1759-4e39-9f59-a2be878b49ef"/>
+				<reportElement x="-4" y="151" width="80" height="20" uuid="0df8a8db-1759-4e39-9f59-a2be878b49ef"/>
 				<box leftPadding="5" rightPadding="5"/>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
 				</textElement>
-				<text><![CDATA[Zone:]]></text>
+				<text><![CDATA[      Zone:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="92" y="151" width="131" height="20" uuid="7dfc0fbd-a188-4b37-aeac-198eb43c957a"/>
-				<box leftPadding="5" rightPadding="5"/>
+				<reportElement x="48" y="151" width="131" height="20" uuid="7dfc0fbd-a188-4b37-aeac-198eb43c957a"/>
+				<box leftPadding="50" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
 				</textElement>
@@ -1255,7 +1256,7 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman"/>
 				</textElement>
-				<text><![CDATA[Name of Assistant/Shroff:]]></text>
+				<text><![CDATA[Username:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="Title" x="103" y="0" width="368" height="33" uuid="d141912b-03f8-4466-ac39-f247311c1008"/>

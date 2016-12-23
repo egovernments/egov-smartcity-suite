@@ -305,5 +305,5 @@
 <script src="<cdn:url  value='/resources/js/transactions/estimatedetails.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url  value='/resources/js/transactions/documentsupload.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url  value='/resources/javascript/helper.js?rnd=${app_release_no}'/>"></script>
-<script	src="<cdn:url  value='/resources/global/js/bootstrap/bootstrap-datepicker.js?rnd=${app_release_no}' context='/egi'/>"
+<script	src="<cdn:url  value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>

@@ -188,37 +188,7 @@ $(document).ready(function(){
 		}
 	}
 	
-	function validatePrimaryPosition(index)
-	{		
-		$.ajax({
-			url: '/eis/employee/ajax/primaryPosition',
-			type: "GET",
-			data: {
-				positionId : $("#positionId").val(),
-				assignmentId : $("#editassignIds").val(), 
-				code : $("#code").val(),
-				fromDate : $("#fromDate").val(),
-				toDate : $("#toDate").val()
-			},
-			dataType : 'json',
-			success: function (response) {
-				if(response != ""){
-					response = response.substring(0,response.length-1);
-					bootbox.alert("Assignment overlaps with existing primary assignment of employee "+response);
-					edit=false;
-				}
-				else{
-					deleteRow.remove();
-					addRow(editedRowIndex);		
-					edit=false;
-				}
-				resetAssignmentValues();
-
-			},error: function (response) {
-				console.log("failed");
-			}
-		});
-	}
+	
 	
 	//Position auto-complete
 	
@@ -277,23 +247,68 @@ $(document).ready(function(){
 
 		if(validateAssignment() && validateDateRange()) {
 			if(!edit){
+				if(primary==true){
+					validatePrimaryPosition(edit);
+				}
+				else{
 				rowCount = $("#assignmentTable tr").length;
 				addRow(rowCount);
 				rowCount++;
+				resetAssignmentValues();
+				}
 			}
 			else{		
 				if(primary==true ){	
-					 validatePrimaryPosition(editedRowIndex);
+					 validatePrimaryPosition(edit);
+					 edit=false;
 				}
 				else{
 					deleteRow.remove();
 					addRow(editedRowIndex);		
 					edit=false;
+					resetAssignmentValues();
 				}
 			}
-			resetAssignmentValues();
+			
 		}	
 	});
+	
+	function validatePrimaryPosition(edit)
+	{		
+		$.ajax({
+			url: '/eis/employee/ajax/primaryPosition',
+			type: "GET",
+			data: {
+				positionId : $("#positionId").val(),
+				assignmentId : $("#editassignIds").val(), 
+				code : $("#code").val(),
+				fromDate : $("#fromDate").val(),
+				toDate : $("#toDate").val()
+			},
+			dataType : 'json',
+			success: function (response) {
+				if(response != ""){
+					response = response.substring(0,response.length-1);
+					bootbox.alert("Assignment overlaps with existing primary assignment of employee "+response);
+					edit=false;
+				}
+				else if(edit){	
+					deleteRow.remove();
+					addRow(editedRowIndex);		
+					edit=false;
+				}
+				else{
+					rowCount = $("#assignmentTable tr").length;
+					addRow(rowCount);
+					rowCount++;
+				}
+				resetAssignmentValues();
+
+			},error: function (response) {
+				console.log("failed");
+			}
+		});
+	}
 	
 	function resetAssignmentValues() {
 		if(!edit) {

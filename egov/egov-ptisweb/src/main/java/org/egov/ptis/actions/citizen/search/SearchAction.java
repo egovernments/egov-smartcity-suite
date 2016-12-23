@@ -90,6 +90,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     private final Logger LOGGER = Logger.getLogger(getClass());
 
     private String assessmentNum;
+    private String oldMuncipalNum;
     private String doorNo;
     private String ownerName;
     private String mode;
@@ -141,7 +142,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     public String srchByAssessmentAndOwnerDetail() {
         try {
             final List<PropertyMaterlizeView> propertyList = propertyService
-                    .getPropertyByAssessmentAndOwnerDetails(assessmentNum, ownerName, doorNo);
+                    .getPropertyByAssessmentAndOwnerDetails(assessmentNum, oldMuncipalNum, ownerName, doorNo);
             for (final PropertyMaterlizeView propMatview : propertyList) {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("srchByAssessmentAndOwner : Property : " + propMatview);
@@ -151,6 +152,8 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
                 setSearchValue("Assessment Number : " + assessmentNum);
 
             setSearchCreteria("Search By Assessment and Owner detail");
+            if (oldMuncipalNum != null && !oldMuncipalNum.equals(""))
+                setSearchValue("Old Assesement Number:" + oldMuncipalNum);
             if (ownerName != null && !ownerName.equals(""))
                 setSearchValue("Owner name :" + ownerName);
             if (doorNo != null && !doorNo.equals(""))
@@ -352,6 +355,14 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
 
     public void setSearchUrl(String searchUrl) {
         this.searchUrl = searchUrl;
+    }
+
+    public String getOldMuncipalNum() {
+        return oldMuncipalNum;
+    }
+
+    public void setOldMuncipalNum(final String oldMuncipalNum) {
+        this.oldMuncipalNum = oldMuncipalNum;
     }
 
 }

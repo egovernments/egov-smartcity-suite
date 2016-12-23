@@ -45,8 +45,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js?rnd=${app_release_no}'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/javascript/dateValidation.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/javascript/dateValidation.js'/>"></script>
 
 <form:form id="editVacancyRemissionApprovalForm" method="post"
 	class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemissionApproval">

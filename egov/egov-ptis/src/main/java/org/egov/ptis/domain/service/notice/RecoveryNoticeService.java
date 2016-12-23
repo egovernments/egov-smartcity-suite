@@ -42,7 +42,12 @@ package org.egov.ptis.domain.service.notice;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLIENT_SPECIFIC_DMD_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_DISTRESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_ESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_INVENTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_INVENTORY_NOTICE_CORPORATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_INVENTORY_NOTICE_MUNICIPALITY;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -50,8 +55,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
@@ -60,6 +67,7 @@ import javax.persistence.Query;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.Installment;
 import org.egov.demand.model.EgBill;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.City;
@@ -76,10 +84,12 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.DemandBill.DemandBillService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,6 +102,22 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RecoveryNoticeService {
+
+    private static final String SECTION_ACT = "sectionAct";
+    private static final String BILL_NUMBER = "billNumber";
+    private static final String BILL_DATE = "billDate";
+    private static final String ESD_NOTICE_DATE = "eSDNoticeDate";
+    private static final String ESD_NOTICE_NUMBER = "eSDNoticeNumber";
+    private static final String FUTURE_DATE = "futureDate";
+    private static final String FIN_YEAR = "finYear";
+    private static final String DOOR_NO = "doorNo";
+    private static final String CITY_NAME = "cityName";
+    private static final String INST_MON_YEAR = "instMonYear";
+    private static final String INST_LAST_DATE = "instLastDate";
+    private static final String TOTAL_TAX_DUE = "totalTaxDue";
+    private static final String REPORT_MON_YEAR = "reportMonYear";
+    private static final String REPORT_DATE = "reportDate";
+    private static final String OWNER_NAME = "ownerName";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -119,6 +145,12 @@ public class RecoveryNoticeService {
 
     @Autowired
     private PropertyService propertyService;
+    
+    @Autowired
+    private BasicPropertyDAO basicPropertyDAO;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -140,9 +172,29 @@ public class RecoveryNoticeService {
 
         return billExists;
     }
+    
+    public List<String> validateESDNotice(String assessmentNo) {
+        List<String> errorList = new ArrayList<String>();
+        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        boolean billExists = false;
+        if (basicProperty == null)
+            errorList.add("property.invalid");
+        else {
+            final BigDecimal totalDue = getTotalPropertyTaxDue(basicProperty);
+            if (totalDue.compareTo(BigDecimal.ZERO) == 0)
+                errorList.add("no.propertytax.due");
+            else {
+                billExists = getDemandBillByAssessmentNo(basicProperty);
+                if (!billExists)
+                    errorList.add("demandbill.not.exists");
+            }
+        }
+        return errorList;
+    }
 
-    public ResponseEntity<byte[]> generateESDNotice(final BasicProperty basicProperty) {
+    public ResponseEntity<byte[]> generateESDNotice(final String assessmentNo) {
         ReportOutput reportOutput = new ReportOutput();
+        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         final PtNotice notice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner(PropertyTaxConstants.NOTICE_TYPE_ESD,
                 basicProperty.getUpicNo());
         final Map<String, Object> reportParams = new HashMap<String, Object>();
@@ -154,18 +206,17 @@ public class RecoveryNoticeService {
             queryString.append("from City");
             final Query query = entityManager.createQuery(queryString.toString());
             final City city = (City) query.getSingleResult();
-            reportParams.put("cityName", city.getPreferences().getMunicipalityName());
             final Address ownerAddress = basicProperty.getAddress();
-            reportParams.put("doorNo",
+            populateReportParams(reportParams,city,basicProperty);
+            reportParams.put(DOOR_NO,
                     StringUtils.isNotBlank(ownerAddress.getHouseNoBldgApt()) ? ownerAddress.getHouseNoBldgApt() : "N/A");
-            reportParams.put("totalTaxDue", getTotalPropertyTaxDue(basicProperty));
-            reportParams.put("finYear", formatter.format(new Date()));
-            reportParams.put("ownerName", basicProperty.getFullOwnerName());
+            reportParams.put(FIN_YEAR, formatter.format(new Date()));
             final DateTime noticeDate = new DateTime(new Date());
-            reportParams.put("futureDate", DateUtils.getDefaultFormattedDate(noticeDate.plusDays(2).toDate()));
+            reportParams.put("totalTaxDue", getTotalPropertyTaxDue(basicProperty));
+            reportParams.put(FUTURE_DATE, DateUtils.getDefaultFormattedDate(noticeDate.plusDays(2).toDate()));
             final String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(PropertyTaxConstants.NOTICE_TYPE_ESD);
-            reportParams.put("eSDNoticeNumber", noticeNo);
-            reportParams.put("eSDNoticeDate", DateUtils.getDefaultFormattedDate(new Date()));
+            reportParams.put(ESD_NOTICE_NUMBER, noticeNo);
+            reportParams.put(ESD_NOTICE_DATE, DateUtils.getDefaultFormattedDate(new Date()));
             final AppConfigValues appConfigValues = appConfigValuesService.getAppConfigValueByDate(PTMODULENAME,
                     APPCONFIG_CLIENT_SPECIFIC_DMD_BILL, new Date());
             final String value = appConfigValues != null ? appConfigValues.getValue() : "";
@@ -174,17 +225,17 @@ public class RecoveryNoticeService {
                 reportParams.putAll(demandBillService.getDemandBillDetails(basicProperty));
             } else {
                 final EgBill egBill = getBillByAssessmentNumber(basicProperty);
-                reportParams.put("billDate", DateUtils.getDefaultFormattedDate(egBill.getCreateDate()));
-                reportParams.put("billNumber", egBill.getBillNo());
+                reportParams.put(BILL_DATE, DateUtils.getDefaultFormattedDate(egBill.getCreateDate()));
+                reportParams.put(BILL_NUMBER, egBill.getBillNo());
             }
             final String cityGrade = city.getGrade();
             if (cityGrade != null && cityGrade != ""
                     && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
-                reportParams.put("sectionAct", PropertyTaxConstants.CORPORATION_ESD_NOTICE_SECTION_ACT);
+                reportParams.put(SECTION_ACT, PropertyTaxConstants.CORPORATION_ESD_NOTICE_SECTION_ACT);
                 reportInput = new ReportRequest(PropertyTaxConstants.REPORT_ESD_NOTICE_CORPORATION, reportParams,
                         reportParams);
             } else {
-                reportParams.put("sectionAct", PropertyTaxConstants.MUNICIPALITY_ESD_NOTICE_SECTION_ACT);
+                reportParams.put(SECTION_ACT, PropertyTaxConstants.MUNICIPALITY_ESD_NOTICE_SECTION_ACT);
                 reportInput = new ReportRequest(PropertyTaxConstants.REPORT_ESD_NOTICE_MUNICIPALITY, reportParams,
                         reportParams);
             }
@@ -194,19 +245,10 @@ public class RecoveryNoticeService {
             if (reportOutput != null && reportOutput.getReportOutputData() != null)
                 noticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
             noticeService.saveNotice(basicProperty.getPropertyForBasicProperty().getApplicationNo(),
-                    noticeNo, PropertyTaxConstants.NOTICE_TYPE_ESD, basicProperty, noticePDF);
+                    noticeNo, NOTICE_TYPE_ESD, basicProperty, noticePDF);
 
         } else {
-            final FileStoreMapper fsm = notice.getFileStore();
-            final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
-            byte[] bFile;
-            try {
-                bFile = FileUtils.readFileToByteArray(file);
-            } catch (final IOException e) {
-                throw new ApplicationRuntimeException("Exception while retrieving ESD Notice: " + e);
-            }
-            reportOutput.setReportOutputData(bFile);
-            reportOutput.setReportFormat(FileFormat.PDF);
+            reportOutput = getNotice(notice,NOTICE_TYPE_ESD);
         }
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
@@ -229,6 +271,204 @@ public class RecoveryNoticeService {
 
     public BigDecimal getTotalPropertyTaxDue(final BasicProperty basicProperty) {
         return propertyService.getTotalPropertyTaxDue(basicProperty);
+    }
+    
+    private Map<String, Object> populateReportParams(Map<String, Object> reportParams ,City city ,BasicProperty basicProperty) {
+        reportParams.put(CITY_NAME, city.getPreferences().getMunicipalityName());
+        reportParams.put(OWNER_NAME, basicProperty.getFullOwnerName());
+        return reportParams;
+    }
+    
+    public List<String> validateInventoryNotice(String assessmentNo) {
+        List<String> errorList = new ArrayList<String>();
+        boolean billExists = false;
+        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        if (basicProperty == null)
+            errorList.add("property.invalid");
+        else {
+            final BigDecimal totalDue = getTotalPropertyTaxDue(basicProperty);
+            if (totalDue.compareTo(BigDecimal.ZERO) == 0)
+                errorList.add("invntry.no.propertytax.due");
+            else {
+                billExists = getDemandBillByAssessmentNo(basicProperty);
+                if (!billExists)
+                    errorList.add("invntry.demandbill.not.exists");
+            }
+            PtNotice notice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner(NOTICE_TYPE_DISTRESS,
+                    basicProperty.getUpicNo());
+            if (notice != null) {
+                DateTime noticeDate = new DateTime(notice.getNoticeDate());
+                DateTime currDate = new DateTime();
+                if (!currDate.isAfter(noticeDate.plusDays(16))) {
+                    errorList.add("invntry.distress.notice.not.exists");
+                }
+            } else {
+                errorList.add("invntry.distress.notice.not.exists");
+            }
+        }
+        return errorList;
+    }
+    
+    public ResponseEntity<byte[]> generateInventoryNotice(final String assessmentNo) {
+        ReportOutput reportOutput = new ReportOutput();
+        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner(NOTICE_TYPE_INVENTORY,
+                basicProperty.getUpicNo());
+        if (notice == null) {
+            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            InputStream noticePDF = null;
+            ReportRequest reportInput = null;
+            final Map<String, Object> reportParams = new HashMap<String, Object>();
+            Installment currentInstall = propertyTaxCommonUtils.getCurrentPeriodInstallment();
+            DateTime dateTime = new DateTime();
+            DateTime currInstToDate = new DateTime(currentInstall.getToDate());
+            final StringBuilder queryString = new StringBuilder();
+            queryString.append("from City");
+            final Query query = entityManager.createQuery(queryString.toString());
+            final City city = (City) query.getSingleResult();
+            populateReportParams(reportParams,city,basicProperty);
+            reportParams.put(TOTAL_TAX_DUE, String.valueOf(getTotalPropertyTaxDue(basicProperty)));
+            reportParams.put(REPORT_DATE, propertyTaxCommonUtils.getDateWithSufix(dateTime.getDayOfMonth()));
+            reportParams.put(REPORT_MON_YEAR, dateTime.monthOfYear().getAsShortText() + "," + dateTime.getYear());
+            final String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(NOTICE_TYPE_INVENTORY);
+            final String cityGrade = city.getGrade();
+            if (StringUtils.isNotBlank(cityGrade)
+                    && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
+                reportParams.put(INST_LAST_DATE, propertyTaxCommonUtils.getDateWithSufix(currInstToDate.getDayOfMonth()));
+                reportParams.put(INST_MON_YEAR,
+                        currInstToDate.monthOfYear().getAsShortText() + "," + currInstToDate.getYear());
+                reportInput = new ReportRequest(REPORT_INVENTORY_NOTICE_CORPORATION, reportParams, reportParams);
+            } else {
+                reportParams.put(INST_LAST_DATE, formatter.format(currentInstall.getToDate()));
+                reportInput = new ReportRequest(REPORT_INVENTORY_NOTICE_MUNICIPALITY, reportParams, reportParams);
+            }
+            reportInput.setPrintDialogOnOpenReport(true);
+            reportInput.setReportFormat(FileFormat.PDF);
+            reportOutput = reportService.createReport(reportInput);
+            if (reportOutput != null && reportOutput.getReportOutputData() != null)
+                noticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
+            noticeService.saveNotice(basicProperty.getPropertyForBasicProperty().getApplicationNo(),
+                    noticeNo, NOTICE_TYPE_INVENTORY, basicProperty, noticePDF);
+        } else {
+            reportOutput = getNotice(notice,NOTICE_TYPE_INVENTORY);
+        }
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=InventoryNotice_" + basicProperty.getUpicNo() + ".pdf");
+        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+    }
+    
+    private ReportOutput getNotice(PtNotice notice , String noticeType) {
+        ReportOutput reportOutput = new ReportOutput();
+        final FileStoreMapper fsm = notice.getFileStore();
+        final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
+        byte[] bFile;
+        try {
+            bFile = FileUtils.readFileToByteArray(file);
+        } catch (final IOException e) {
+            throw new ApplicationRuntimeException("Exception while retrieving "+ noticeType +" : " + e);
+        }
+        reportOutput.setReportOutputData(bFile);
+        reportOutput.setReportFormat(FileFormat.PDF);
+        return reportOutput;
+    }
+    
+    @SuppressWarnings("unused")
+	public ArrayList<String> validateDistressNotice(final BasicProperty basicProperty)
+    {
+		ArrayList<String> errors = new ArrayList<String>();
+		final PtNotice esdNotice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner("ESD Notice",
+				basicProperty.getUpicNo());
+		final BigDecimal totalDue = getTotalPropertyTaxDueIncludingPenalty(basicProperty);
+		if (basicProperty == null)
+			errors.add("property.invalid");
+		else {
+			if (totalDue.compareTo(BigDecimal.ZERO) == 0)
+				errors.add("invalid.no.due");
+			else if (basicProperty.getProperty().getIsExemptedFromTax()) {
+				final String exemptedReason = basicProperty.getProperty().getTaxExemptedReason().getName();
+				errors.add("invalid.exempted");
+			} else {
+				if (esdNotice == null)
+					errors.add("invalid.esd.not.generated");
+				else if ((DateUtils.noOfDays(esdNotice.getNoticeDate(), new Date())) < 15)
+					errors.add("invalid.time.not.lapsed");
+			}
+		}
+		return errors;
+
+	}
+
+    public BigDecimal getTotalPropertyTaxDueIncludingPenalty(final BasicProperty basicProperty) {
+        return propertyService.getTotalPropertyTaxDueIncludingPenalty(basicProperty);
+    }
+
+    public ResponseEntity<byte[]> generateDistressNotice(final String assessmentNo) {
+	 	BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        ReportOutput reportOutput = new ReportOutput();
+        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner(PropertyTaxConstants.NOTICE_TYPE_DISTRESS,
+                basicProperty.getUpicNo());
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        
+        if (notice == null) {
+            InputStream noticePDF = null;
+            ReportRequest reportInput = null;
+            final StringBuilder queryString = new StringBuilder();
+            queryString.append("from City");
+            final Query query = entityManager.createQuery(queryString.toString());
+            final City city = (City) query.getSingleResult();
+            populateReportParams(reportParams,city,basicProperty);
+            reportParams.put("totalTaxDue", getTotalPropertyTaxDueIncludingPenalty(basicProperty));
+            DateTime noticeDate = new DateTime();
+            reportParams.put("noticeDay",  propertyTaxCommonUtils.getDateWithSufix(noticeDate.getDayOfMonth()));
+            reportParams.put("noticeMonth", noticeDate.monthOfYear().getAsShortText());
+            reportParams.put("noticeYear", noticeDate.getYear());
+            if(noticeDate.getMonthOfYear()>=4 && noticeDate.getMonthOfYear()<=10)
+            {
+            	reportParams.put("FinHalfStratMonth", "April");
+            }
+            else{
+            	reportParams.put("FinHalfStratMonth", "October");
+            }
+            final String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(PropertyTaxConstants.NOTICE_TYPE_DISTRESS);
+            reportParams.put("distressNoticeNumber", noticeNo);
+            reportParams.put("distressNoticeDate", DateUtils.getDefaultFormattedDate(new Date()));
+            
+          
+            final String cityGrade = city.getGrade();
+            if (cityGrade != null && cityGrade != ""
+                    && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
+                reportParams.put("sectionAct", PropertyTaxConstants.CORPORATION_ESD_NOTICE_SECTION_ACT);
+                reportInput = new ReportRequest(PropertyTaxConstants.REPORT_DISTRESS_CORPORATION, reportParams,
+                        reportParams);
+            } else {
+                reportParams.put("sectionAct", PropertyTaxConstants.MUNICIPALITY_DISTRESS_NOTICE_SECTION_ACT);
+                reportInput = new ReportRequest(PropertyTaxConstants.REPORT_DISTRESS_MUNICIPALITY, reportParams,
+                        reportParams);
+            }
+            reportInput.setReportFormat(FileFormat.PDF);
+            reportOutput = reportService.createReport(reportInput);
+            if (reportOutput != null && reportOutput.getReportOutputData() != null)
+                noticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
+            noticeService.saveNotice(basicProperty.getPropertyForBasicProperty().getApplicationNo(),
+                    noticeNo, PropertyTaxConstants.NOTICE_TYPE_DISTRESS, basicProperty, noticePDF);
+
+        } else {
+            final FileStoreMapper fsm = notice.getFileStore();
+            final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
+            byte[] bFile;
+            try {
+                bFile = FileUtils.readFileToByteArray(file);
+            } catch (final IOException e) {
+                throw new ApplicationRuntimeException("Exception while retrieving Distress Warrant Notice: " + e);
+            }
+            reportOutput.setReportOutputData(bFile);            
+            reportOutput.setReportFormat(FileFormat.PDF);
+        }
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=DistressNotice_" + basicProperty.getUpicNo() + ".pdf");
+        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
 }

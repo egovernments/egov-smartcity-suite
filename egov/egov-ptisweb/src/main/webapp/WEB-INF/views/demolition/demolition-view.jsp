@@ -45,7 +45,15 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
+<script type="text/javascript">
+$(document).ready(function()
+{	
+	if($("#currentDesignation").val() == 'Commissioner') {
+		$('#Forward').hide();
+	}
+}); 
+</script>
 <style>
 body
 {
@@ -60,7 +68,7 @@ body
 			
 				<jsp:include page="../common/commonPropertyDetailsView.jsp"></jsp:include>
 				<jsp:include page="../common/ownerDetailsView.jsp"></jsp:include>
-
+           <input type="hidden" id="currentDesignation" name="currentDesignation" value="${currentDesignation}"/>
 			<div class="row">
 				<div class="col-md-12">
 					<div class="panel panel-primary" data-collapsed="0">
@@ -143,7 +151,7 @@ body
 				</div>
 			</div>
 			 <c:choose>
-            <c:when test="${!fn:containsIgnoreCase(userDesignationList, designation)}">
+            <c:when test="${currentDesignation != 'Commissioner'}">
 			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 			</c:when>
 			<c:otherwise>
@@ -160,6 +168,5 @@ body
 	</div>
 </form:form>
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
-
 
 

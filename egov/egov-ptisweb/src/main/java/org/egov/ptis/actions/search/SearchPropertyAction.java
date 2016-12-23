@@ -190,6 +190,7 @@ public class SearchPropertyAction extends BaseFormAction {
     private String houseNumArea;
     private String ownerName;
     private String oldHouseNum;
+    private String oldMuncipalNum;
     private String mode;
     private String searchUri;
     private String searchCriteria;
@@ -249,6 +250,7 @@ public class SearchPropertyAction extends BaseFormAction {
     @Action(value = "/search/searchProperty-searchForm")
     public String searchForm() {
         setAssessmentNum("");
+        setOldMuncipalNum("");
         setDoorNo("");
         setMobileNumber("");
         return NEW;
@@ -453,6 +455,35 @@ public class SearchPropertyAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exit from srchByAssessment method ");
         return TARGET;
+    }
+
+    @ValidationErrorPage(value = "new")
+    @Action(value = "/search/searchProperty-srchByOldMuncipalNumber")
+    public String srcByOldAssesementNum() {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into srcByOldAssesementNum  method. Old Assessment Number : " + oldMuncipalNum);
+        if (oldMuncipalNum!=null)
+            try {
+                final List<PropertyMaterlizeView> propertyList = propertyService.getPropertyByOldMunicipalNo(oldMuncipalNum);
+                for (final PropertyMaterlizeView propMatview : propertyList) {
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("srchByBndry : Property : " + propMatview);
+                    setSearchResultList(getResultsFromMv(propMatview));
+                }
+                if (oldMuncipalNum != null && !oldMuncipalNum.equals(""))
+                    setSearchValue("Assessment Number : " + oldMuncipalNum);
+                setSearchUri("../search/searchProperty-srchByOldMuncipalNumber.action");
+                setSearchCriteria("Search By Old Muncipal Number");
+                setSearchValue("Old Muncipal number :" + oldMuncipalNum);
+
+            } catch (final Exception e) {
+                LOGGER.error("Exception in Search Property By OldMuncipal Number ", e);
+                throw new ApplicationRuntimeException("Exception : ", e);
+            }
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from srcByOldAssesementNum method ");
+        return TARGET;
+        
     }
 
     @ValidationErrorPage(value = "new")
@@ -696,6 +727,10 @@ public class SearchPropertyAction extends BaseFormAction {
             if (org.apache.commons.lang.StringUtils.isEmpty(assessmentNum)
                     || org.apache.commons.lang.StringUtils.isBlank(assessmentNum))
                 addActionError(getText("mandatory.assessmentNo"));
+        } else if (StringUtils.equals(mode, "oldAssessment")) {
+            if (org.apache.commons.lang.StringUtils.isEmpty(oldMuncipalNum)
+                    || org.apache.commons.lang.StringUtils.isBlank(oldMuncipalNum))
+                addActionError(getText("mandatory.oldMuncipleNum"));
         } else if (StringUtils.equals(mode, "bndry")) {
             if ((zoneId == null || zoneId == -1) && (wardId == null || wardId == -1))
                 addActionError(getText("mandatory.zoneorward"));
@@ -941,7 +976,7 @@ public class SearchPropertyAction extends BaseFormAction {
         setApplicationType(APPLICATION_TYPE_BIFURCATE_ASSESSENT);
         return commonForm();
     }
-    
+
     @Action(value = "/search/searchproperty-taxexemption")
     public String taxExemption() {
         setApplicationType(APPLICATION_TYPE_TAX_EXEMTION);
@@ -1042,6 +1077,14 @@ public class SearchPropertyAction extends BaseFormAction {
 
     public void setWardId(final Long wardId) {
         this.wardId = wardId;
+    }
+
+    public String getOldMuncipalNum() {
+        return oldMuncipalNum;
+    }
+
+    public void setOldMuncipalNum(final String oldMuncipalNum) {
+        this.oldMuncipalNum = oldMuncipalNum;
     }
 
     public String getOldHouseNum() {

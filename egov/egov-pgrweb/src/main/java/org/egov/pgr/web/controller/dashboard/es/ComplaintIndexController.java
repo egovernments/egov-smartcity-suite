@@ -53,6 +53,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeCategory;
 import org.egov.pgr.entity.es.ComplaintDashBoardRequest;
+import org.egov.pgr.entity.es.ComplaintIndex;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.service.es.ComplaintIndexService;
@@ -62,6 +63,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -165,24 +167,29 @@ public class ComplaintIndexController {
     public List<String> getSourceNameList() throws JsonProcessingException {
         return complaintIndexService.getSourceNameList();
     }
-    
+
     @RequestMapping(value = "/grievance/allfunctionaries", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> getAllFunctionaryResponse(@RequestBody ComplaintDashBoardRequest complaintRequest){
+    public Map<String, Object> getAllFunctionaryResponse(@RequestBody final ComplaintDashBoardRequest complaintRequest) {
         return complaintIndexService.getAllFunctionaryResponse(complaintRequest);
     }
-    
+
     @RequestMapping(value = "/grievance/allulb", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> getAllUlbResponse(@RequestBody ComplaintDashBoardRequest complaintRequest){
+    public Map<String, Object> getAllUlbResponse(@RequestBody final ComplaintDashBoardRequest complaintRequest) {
         return complaintIndexService.getAllUlbResponse(complaintRequest);
     }
-    
+
     @RequestMapping(value = "/grievance/allwards", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> getAllWardsResponse(@RequestBody ComplaintDashBoardRequest complaintRequest){
+    public Map<String, Object> getAllWardsResponse(@RequestBody final ComplaintDashBoardRequest complaintRequest) {
         return complaintIndexService.getAllWardResponse(complaintRequest);
     }
-    
+
     @RequestMapping(value = "/grievance/alllocalities", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> getAllLocalitiesResponse(@RequestBody ComplaintDashBoardRequest complaintRequest){
+    public Map<String, Object> getAllLocalitiesResponse(@RequestBody final ComplaintDashBoardRequest complaintRequest) {
         return complaintIndexService.getAllLocalityResponse(complaintRequest);
+    }
+
+    @RequestMapping(value = "/functionaryWiseComplaints", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ComplaintIndex> getFunctionaryWiseComplaints(@RequestParam final String functionaryName) {
+        return complaintIndexService.getFunctionaryWiseComplaints(functionaryName);
     }
 }

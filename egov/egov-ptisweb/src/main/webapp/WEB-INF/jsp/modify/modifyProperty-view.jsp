@@ -56,10 +56,10 @@
 	         </s:elseif>
 		</title>
 		<link
-			href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css?rnd=${app_release_no}' context='/egi'/>"
+			href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
 			rel="stylesheet" type="text/css" />
 		<script
-			src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js?rnd=${app_release_no}' context='/egi'/>"></script>
+			src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 		<script type="text/javascript">
 			jQuery.noConflict();
 			jQuery("#loadingMask").remove();
@@ -295,7 +295,7 @@
 
 </script>
         <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script src="<cdn:url value='/resources/javascript/helper.js?rnd=${app_release_no}' context='/ptis'/>"></script>
+<script src="<cdn:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
 	</head>
 	<body onload="loadOnStartUp();">
 		<div align="left" class="errortext">
@@ -356,7 +356,8 @@
 						<tr>					
 					</s:if> 
 					<s:if test="%{(currentDesignation != null && !@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(currentDesignation.toUpperCase())) ||
-					   model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REJECTED)}">
+					   model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REJECTED) ||
+					   model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NEW)}">
 						<tr>
 							 <%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 						</tr>

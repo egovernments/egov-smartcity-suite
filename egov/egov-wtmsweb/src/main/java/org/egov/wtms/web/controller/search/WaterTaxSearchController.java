@@ -290,7 +290,7 @@ public class WaterTaxSearchController {
             final ConnectionSearchRequest customerObj = new ConnectionSearchRequest();
             customerObj.setApplicantName(waterChargeIndex.getConsumerName());
             customerObj.setConsumerCode(waterChargeIndex.getConsumerCode());
-            customerObj.setOldConsumerCode(waterChargeIndex.getOldConsumerCode());
+            customerObj.setOldConsumerNumber(waterChargeIndex.getOldConsumerCode());
             customerObj.setAddress(waterChargeIndex.getLocality());
             customerObj.setApplicationcode(waterChargeIndex.getApplicationCode());
             customerObj.setUsage(waterChargeIndex.getUsage());
@@ -313,8 +313,8 @@ public class WaterTaxSearchController {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerName", searchRequest.getApplicantName()));
         if (StringUtils.isNotBlank(searchRequest.getConsumerCode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerCode", searchRequest.getConsumerCode()));
-        if (StringUtils.isNotBlank(searchRequest.getConsumerCode()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("oldConsumerCode", searchRequest.getOldConsumerCode()));
+        if (StringUtils.isNotBlank(searchRequest.getOldConsumerNumber()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("oldConsumerCode", searchRequest.getOldConsumerNumber()));
         if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("revenueWard", searchRequest.getRevenueWard()));
         if (StringUtils.isNotBlank(searchRequest.getMobileNumber()))

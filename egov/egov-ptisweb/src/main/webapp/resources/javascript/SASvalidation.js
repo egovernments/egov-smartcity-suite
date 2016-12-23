@@ -1365,7 +1365,7 @@ function delFloor(obj)
 			       },
 			      'name': function(_, name) {
 			    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
-			      },
+			      }
 			   });
 			   
 			   if(jQuery(this).data('calculate'))

@@ -634,6 +634,8 @@ public interface PropertyTaxConstants {
     public static final String WF_STATE_ZONAL_COMMISSIONER_APPROVED = "Zonal Commissioner Approved";
     public static final String WF_STATE_DEPUTY_COMMISSIONER_APPROVED = "Deputy Commissioner Approved";
     public static final String WF_STATE_ADDITIONAL_COMMISSIONER_APPROVED = "Additional Commissioner Approved";
+    public static final String WF_STATE_TRANSFER_NOTICE_PRINT_PENDING = "Transfer Notice Print Pending";
+    
 
     public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
 
@@ -1003,8 +1005,7 @@ public interface PropertyTaxConstants {
     public static final String NOTICE_TYPE_DEMAND_BILL = "Demand Bill";
     public static final String NOTICE_TYPE_RPPROCEEDINGS = "RP Proceedings";
     public static final String NOTICE_TYPE_RPHEARINGS = "RP Hearing Notice";
-    public static final String NOTICE_TYPE_ESD = "ESD Notice";
-
+    
     public static final String CREATE_AUDIT_ACTION = "Create Property";
     public static final String MODIFY_AUDIT_ACTION = "Modify Property";
     public static final String AMALG_AUDIT_ACTION = "Amalgamate Property";
@@ -1116,6 +1117,8 @@ public interface PropertyTaxConstants {
     public static final String REPORT_TEMPLATENAME_RP_SPECIAL_NOTICE = "mainRPSpecialNotice";
     public static final String REPORT_ESD_NOTICE_CORPORATION = "ESDNotice_Corporation";
     public static final String REPORT_ESD_NOTICE_MUNICIPALITY = "ESDNotice_Municipality";
+    public static final String REPORT_DISTRESS_CORPORATION = "DistressWarrant_Corporation";
+    public static final String REPORT_DISTRESS_MUNICIPALITY = "DistressWarrant_Municipality";
 
     // Property Transfer related constants
     public static final String TRANSFER_FEE_COLLECTED = "Transfer Fee Collected";
@@ -1517,27 +1520,27 @@ public interface PropertyTaxConstants {
     public String WTMS_CONNECT_DTLS_RESTURL = "%s/wtms/rest/watertax/connectiondetails/byptno/%s";
 
 
-	public static final String TRANSACTION_TYPE_CREATE = "Create";
-	public static final String TRANSACTION_TYPE_DEMOLITION = "Demolition";
-	
-	public static final String PROPERTY_MODE_CREATE = "create";
-	public static final String PROPERTY_MODE_MODIFY = "modify";
-	
-	public static final String PAYMENT_TYPE_PARTIALLY = "Partially";
-	public static final String PAYMENT_TYPE_FULLY = "Fully";
-	public static final String PAYMENT_TYPE_ADVANCE = "Advance";
-	
-	public static final String COLLECION_BILLING_SERVICE_PT = "Property Tax";
-	public static final String COLLECION_BILLING_SERVICE_VLT = "Property Tax (On Land)";
-	public static final String COLLECION_BILLING_SERVICE_WTMS = "Water Tax";
-	
-	public static final String PROPERTY_TAX_INDEX_NAME = "propertytax";
-	public static final String COLLECTION_INDEX_NAME = "receipts";
-	public static final String WATER_TAX_INDEX_NAME = "waterchargeconsumer";
-	public static final String BILL_COLLECTOR_INDEX_NAME = "billcollector";
-	
-	public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
-	public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
+    public static final String TRANSACTION_TYPE_CREATE = "Create";
+    public static final String TRANSACTION_TYPE_DEMOLITION = "Demolition";
+
+    public static final String PROPERTY_MODE_CREATE = "create";
+    public static final String PROPERTY_MODE_MODIFY = "modify";
+
+    public static final String PAYMENT_TYPE_PARTIALLY = "Partially";
+    public static final String PAYMENT_TYPE_FULLY = "Fully";
+    public static final String PAYMENT_TYPE_ADVANCE = "Advance";
+
+    public static final String COLLECION_BILLING_SERVICE_PT = "Property Tax";
+    public static final String COLLECION_BILLING_SERVICE_VLT = "Property Tax (On Land)";
+    public static final String COLLECION_BILLING_SERVICE_WTMS = "Water Tax";
+
+    public static final String PROPERTY_TAX_INDEX_NAME = "propertytax";
+    public static final String COLLECTION_INDEX_NAME = "receipts";
+    public static final String WATER_TAX_INDEX_NAME = "waterchargeconsumer";
+    public static final String BILL_COLLECTOR_INDEX_NAME = "billcollector";
+
+    public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
+    public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
 	
     public static final String DASHBOARD_GROUPING_DISTRICTWISE = "district";
     public static final String DASHBOARD_GROUPING_ULBWISE = "ulb";
@@ -1560,8 +1563,15 @@ public interface PropertyTaxConstants {
         }
     };
     
+    //Recovery notices 
+    public static final String NOTICE_TYPE_ESD = "ESD Notice";
+    public static final String REPORT_INVENTORY_NOTICE_CORPORATION = "InventoryNotice_Corporation";
+    public static final String REPORT_INVENTORY_NOTICE_MUNICIPALITY = "InventoryNotice_Municipality";
+    public static final String NOTICE_TYPE_INVENTORY = "Inventory Notice";
+    public static final String NOTICE_TYPE_DISTRESS = "Distress Notice";
+    //esd notice section act and distress section act for corporation use the same constant
     public static final String CORPORATION_ESD_NOTICE_SECTION_ACT = "(Issued under Section 269(2) of Municipal Corporations Act,1955 (formerly GHMC Act, 1955)";
     
     public static final String MUNICIPALITY_ESD_NOTICE_SECTION_ACT = "(Issued under Section 91 of A.P. Municipalities Act 1965)";
-    
+    public static final String MUNICIPALITY_DISTRESS_NOTICE_SECTION_ACT = "(Issued under Rule 30(3) of Taxation & Finance Rules appended to the A.P. Municipalities Act, 1965)";
 }

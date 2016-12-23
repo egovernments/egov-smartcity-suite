@@ -186,7 +186,7 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     List<Assignment> findByDepartmentDesignationsAndGivenDate(@Param("deptId") Long deptId,
             @Param("desigIds") final List<Long> desigIds, @Param("givenDate") Date givenDate);
 
-    @Query(" select A.position from Assignment A where upper(A.position.name) like upper(:positionName) ")
+    @Query(" select distinct A.position from Assignment A where upper(A.position.name) like upper(:positionName) ")
     List<Position> findEmployeePositions(@Param("positionName") final String positionName);
 
     @Query(" select A from Assignment A, HeadOfDepartments hod where hod.hod.id=:deptId and A.id = hod.assignment.id  and "
@@ -210,7 +210,8 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
             + " (A.fromDate>=:fromDate and A.toDate<=:toDate)) and A.primary=true")
     List<Assignment> getPrimaryAssignmentForPositionAndDateRange(@Param("posId") Long posId,
             @Param("fromDate") Date fromDate, @Param("toDate") Date toDate);
-    
+
     @Query(" from Assignment A where A.position.id=:posId and A.employee.id = :userId and A.fromDate<=:givenDate and A.toDate>=:givenDate ")
-    List<Assignment> findByPositionAndEmployee(@Param("posId") Long posId,@Param ("userId") Long userId,@Param("givenDate") Date givenDate);
+    List<Assignment> findByPositionAndEmployee(@Param("posId") Long posId, @Param("userId") Long userId,
+            @Param("givenDate") Date givenDate);
 }

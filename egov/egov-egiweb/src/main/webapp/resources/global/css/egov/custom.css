@@ -490,7 +490,7 @@ label.error {
 .page-container.horizontal-menu header.navbar.navbar-fixed-top {
   position: fixed;
   min-height: 63px;
-  z-index: 10000;
+  z-index: 999;
 }
 .page-container.horizontal-menu header.navbar.navbar-fixed-top.border-header {
   border-bottom: 1px solid #5a3e1b;

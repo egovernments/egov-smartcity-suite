@@ -46,7 +46,7 @@
 <head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/recovery.js"></script>
 		<title><s:text name="recovery"></s:text></title>
-		<link href="<cdn:url value='/resources/css/headertab.css?rnd=${app_release_no}'/>" rel="stylesheet" type="text/css" />
+		<link href="<cdn:url value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
 	</head>
 	<body class="yui-skin-sam">
 	<s:form action="recovery" method="post" name="recoveryForm" theme="simple">

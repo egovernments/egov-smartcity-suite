@@ -50,7 +50,7 @@ body
   font-size:14px;
 }
 </style>
-<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 
 <div class="row" id="page-content">
 	<div class="col-md-12">

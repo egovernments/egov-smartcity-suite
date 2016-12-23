@@ -56,12 +56,15 @@
 	    <link rel="stylesheet" href="<cdn:url  value='/resources/global/css/bootstrap/bootstrap.css'/>">
 	    <link rel="stylesheet" href="<cdn:url  value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css'/>">
 		<link rel="stylesheet" href="<cdn:url  value='/resources/global/css/bootstrap/typeahead.css'/>">
-		<link rel="stylesheet" href="<cdn:url  value='/resources/global/css/egov/custom.css?rnd=${app_release_no}'/>">
 		<link rel="stylesheet" href="<cdn:url  value='/resources/global/css/bootstrap/bootstrap-datepicker.css'/>" />
+		<link rel="stylesheet" href="<cdn:url  value='/resources/global/css/egov/custom.css?rnd=${app_release_no}'/>">
 		
 		<script src="<cdn:url  value='/resources/global/js/jquery/jquery.js'/>"></script>
 		<script src="<cdn:url  value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
 		<script src="<cdn:url  value='/resources/global/js/bootstrap/bootbox.min.js'/>"></script>
+		<script src="<cdn:url  value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
+		<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
+		<script src="<cdn:url  value='/resources/global/js/bootstrap/bootstrap-datepicker.js'/>"></script>
 		<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.validate.min.js'/>"></script>
 		<script src="<cdn:url  value='/resources/global/js/egov/custom.js?rnd=${app_release_no}'/>"></script>
 	    

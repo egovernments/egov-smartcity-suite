@@ -77,7 +77,7 @@ public class MutationFeeCollection extends TaxCollection {
 
     @Autowired
     private EgBillDao egBillDAO;
-    
+
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyMutation> transferWorkflowService;
@@ -92,12 +92,12 @@ public class MutationFeeCollection extends TaxCollection {
         String nextAction = null;
         final WorkFlowMatrix wFMatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
                 null, null, propertyMutation.getType(), propertyMutation.getCurrentState().getValue(), null);
-        nextAction=wFMatrix.getNextAction();
-        if(propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
+        nextAction = wFMatrix.getNextAction();
+        if (propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
             propertyMutation.transition(true).withSenderName(propertyMutation.getState().getSenderName()).withDateInfo(new Date())
-                .withOwner(propertyMutation.getState().getOwnerPosition())
-                .withStateValue(TRANSFER_FEE_COLLECTED)
-                .withNextAction(nextAction);
+                    .withOwner(propertyMutation.getState().getOwnerPosition())
+                    .withStateValue(TRANSFER_FEE_COLLECTED)
+                    .withNextAction(nextAction);
         propertyMutationService.persist(propertyMutation);
         propertyMutationService.getSession().flush();
     }

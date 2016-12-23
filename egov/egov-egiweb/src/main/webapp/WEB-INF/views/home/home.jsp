@@ -78,7 +78,7 @@
 		<style>
 		body{padding:0;}
 		footer {
-			background-color:#f3f4f5;bottom: 0;clear:both;position: fixed;width:100%;z-index: 9999;
+			background-color:#f3f4f5;bottom: 0;clear:both;position: fixed;width:100%;z-index: 999;
 		}
 		
 		footer a{

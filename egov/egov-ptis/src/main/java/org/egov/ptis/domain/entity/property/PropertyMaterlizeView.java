@@ -54,6 +54,7 @@ public class PropertyMaterlizeView implements Serializable {
     private static final long serialVersionUID = -6146352214041057969L;
     private Integer basicPropertyID;
     private String propertyId;
+    private String oldMuncipalNum;
     private String ownerName;
     private String houseNo;
     private String propertyAddress;
@@ -494,13 +495,13 @@ public class PropertyMaterlizeView implements Serializable {
         this.lastUpdated = lastUpdated;
     }
 
-	public String getSurveyNo() {
-		return surveyNo;
-	}
+        public String getSurveyNo() {
+                return surveyNo;
+        }
 
-	public void setSurveyNo(String surveyNo) {
-		this.surveyNo = surveyNo;
-	}
+        public void setSurveyNo(String surveyNo) {
+                this.surveyNo = surveyNo;
+        }
 
     public String getDuePeriod() {
         return duePeriod;
@@ -517,6 +518,12 @@ public class PropertyMaterlizeView implements Serializable {
     public void setAdvance(BigDecimal advance) {
         this.advance = advance;
     }
-    
-    
+    public String getOldMuncipalNum() {
+        return oldMuncipalNum;
+    }
+
+    public void setOldMuncipalNum(String oldMuncipalNum) {
+        this.oldMuncipalNum = oldMuncipalNum;
+    }
+      
 }
