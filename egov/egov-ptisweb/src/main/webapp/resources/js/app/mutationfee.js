@@ -53,15 +53,6 @@ jQuery(document).ready(function() {
 			jQuery('#flatAmount').removeAttr('disabled');
 	});
 
-	jQuery('#highLimit').change(function() {
-		if (this.value != "" || this.value.length > 0) {
-			jQuery('#recursiveFactor').val("").attr('disabled', 'disabled');
-			jQuery('#recursiveAmount').val("").attr('disabled', 'disabled');
-		} else {
-			jQuery('#recursiveFactor,#recursiveAmount').removeAttr('disabled');
-		}
-	});
-
 	$("#fromDate,#toDate").datepicker({
 		format : "dd/mm/yyyy",
 		autoclose : true
@@ -108,11 +99,15 @@ jQuery(document).ready(function() {
 function validate() {
 	var low = jQuery('#lowLimit').val();
 	var high = jQuery('#highLimit').val();
-	if (Number(high) <= Number(low)) {
-		jQuery('#highlimiterror').show();	
-		jQuery('#highLimit').val("");
-	} else {
+	if ((high.value != "" || high.length > 0) && (Number(high) > Number(low))) {
 		jQuery('#highlimiterror').hide();
+		jQuery('#recursiveFactor').val("").attr('disabled', 'disabled');
+		jQuery('#recursiveAmount').val("").attr('disabled', 'disabled');
+	} else {
+		jQuery('#highLimit').val("");
+		jQuery('#highlimiterror').show();
+		jQuery('#recursiveFactor,#recursiveAmount').removeAttr('disabled');
+
 	}
 
 }

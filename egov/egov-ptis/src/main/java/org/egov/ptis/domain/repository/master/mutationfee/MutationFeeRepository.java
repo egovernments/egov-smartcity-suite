@@ -38,7 +38,7 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.ptis.domain.repository.master.addmutationfee;
+package org.egov.ptis.domain.repository.master.mutationfee;
 
 import java.math.BigDecimal;
 
@@ -51,9 +51,9 @@ import org.springframework.stereotype.Repository;
 public interface MutationFeeRepository extends JpaRepository<MutationFeeDetails, Long> {
 
     @Query("select max(highLimit) from MutationFeeDetails")
-    public BigDecimal maxByHighLimit();
+    BigDecimal maxByHighLimit();
 
     @Query("select lowLimit from MutationFeeDetails where highLimit is null")
-    public BigDecimal findLowLimitForHighLimitNullValue();
+    BigDecimal findLowLimitForHighLimitNullValue();
 
 }

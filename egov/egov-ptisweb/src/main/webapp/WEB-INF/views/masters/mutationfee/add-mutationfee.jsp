@@ -84,12 +84,10 @@
 						<div class="col-sm-6">
 							<form:input path="highLimit" id="highLimit" type="text"
 								class="form-control low-width" placeholder="ABOVE"
-								autocomplete="off" />
+								autocomplete="off" onblur="return validate();" />
 
 							<form:errors path="highLimit" cssClass="add-margin error-msg" />
-							<div id="highlimiterror" class="error-msg display-hide">
-							<label class="col-sm-3 control-label"><spring:message
-								code="lbl.fromVal>" /></span</label>To
+							<div id="highlimiterror" class="error-msg display-hide">To
 								Value should greater than from value</div>
 						</div>
 					</div>
@@ -159,8 +157,7 @@
 				</div>
 			</div>
 			<div class="text-center">
-				<button type="submit" class="btn btn-primary" id="submit"
-					onclick="return validate();">
+				<button type="submit" class="btn btn-primary" id="submit">
 					<spring:message code="lbl.submit" />
 				</button>
 				<button type="button" class="btn btn-default" data-dismiss="modal"

@@ -38,13 +38,13 @@
   ~  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 
 */
-package org.egov.ptis.web.controller.masters;
+package org.egov.ptis.web.controller.masters.mutationfee;
 
 import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 import org.egov.ptis.domain.model.MutationFeeDetails;
-import org.egov.ptis.master.service.AddMutationFeeService;
+import org.egov.ptis.master.service.MutationFeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,10 +59,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class AddMutationFeeController {
     private static final String MUTATION_FORM = "add-mutation-fee-form";
 
-    private final AddMutationFeeService addMutationFeeService;
+    private final MutationFeeService addMutationFeeService;
 
     @Autowired
-    public AddMutationFeeController(final AddMutationFeeService addMutationFeeService) {
+    public AddMutationFeeController(final MutationFeeService addMutationFeeService) {
         this.addMutationFeeService = addMutationFeeService;
     }
 

@@ -42,18 +42,18 @@ package org.egov.ptis.master.service;
 import java.math.BigDecimal;
 
 import org.egov.ptis.domain.model.MutationFeeDetails;
-import org.egov.ptis.domain.repository.master.addmutationfee.MutationFeeRepository;
+import org.egov.ptis.domain.repository.master.mutationfee.MutationFeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class AddMutationFeeService {
+public class MutationFeeService {
     private final MutationFeeRepository mutationFeeRepository;
 
     @Autowired
-    public AddMutationFeeService(final MutationFeeRepository mutationFeeRepository) {
+    public MutationFeeService(final MutationFeeRepository mutationFeeRepository) {
         this.mutationFeeRepository = mutationFeeRepository;
     }
 
