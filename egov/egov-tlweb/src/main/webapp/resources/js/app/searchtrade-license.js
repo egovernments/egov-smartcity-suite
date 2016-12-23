@@ -326,7 +326,6 @@ $("#btnsearch").click(
     			var tradeOwnerName=$('#tradeOwnerName').val();
     			var propertyAssessmentNo=$('#propertyAssessmentNo').val();
     			var mobileNo=$('#mobileNo').val();
-    			var isCancelled	= $('#isCancelled').is(":checked");
     	    	var ownerName = $('#ownerName').val();
     	    	var status = $('#status').val();
                 var expiryYear=$('#expiryYear').val();
@@ -345,7 +344,6 @@ $("#btnsearch").click(
     								tradeOwnerName : tradeOwnerName ,
     								propertyAssessmentNo : propertyAssessmentNo ,
     								mobileNo : mobileNo ,
-    								isCancelled : isCancelled,
     								ownerName : ownerName,
     								statusId : status,
     								expiryYear : expiryYear

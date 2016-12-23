@@ -40,13 +40,13 @@
 
 package org.egov.tl.entity.dto;
 
+import org.egov.tl.entity.License;
+import org.egov.tl.utils.Constants;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import org.egov.tl.entity.License;
-import org.egov.tl.utils.Constants;
 
 public class SearchForm {
     private Long licenseId;
@@ -65,7 +65,6 @@ public class SearchForm {
     private Long categoryId;
     private Long subCategoryId;
     private Long statusId;
-    private Boolean isCancelled;
     private Date dateOfExpiry;
     private List<String> actions;
 
@@ -267,14 +266,6 @@ public class SearchForm {
 
     public void setSubCategoryId(final Long subCategoryId) {
         this.subCategoryId = subCategoryId;
-    }
-
-    public Boolean getIsCancelled() {
-        return isCancelled;
-    }
-
-    public void setIsCancelled(final Boolean isCancelled) {
-        this.isCancelled = isCancelled;
     }
 
     public Date getDateOfExpiry() {
