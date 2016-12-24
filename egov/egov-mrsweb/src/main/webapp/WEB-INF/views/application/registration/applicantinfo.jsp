@@ -382,7 +382,7 @@
 				<c:when test="${empty registration.husband.id}">
 					<c:forEach items="${nationalitylist}" var="auc" varStatus="status">
 						<c:choose>
-							<c:when test="${auc.name eq 'Indians'}">
+							<c:when test="${auc.name eq 'Indian'}">
 								<option value="${auc.id}" selected="true">${auc.name}</option>
 							</c:when>
 							<c:otherwise>
