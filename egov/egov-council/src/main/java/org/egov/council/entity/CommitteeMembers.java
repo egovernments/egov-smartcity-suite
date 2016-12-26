@@ -13,11 +13,17 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 @Entity
 @Unique(id = "id", tableName = "egcncl_committee_members", enableDfltMsg = true)
 @Table(name = "egcncl_committee_members")
 @SequenceGenerator(name = CommitteeMembers.SEQ_COMMITTEE_MEMBERS, sequenceName = CommitteeMembers.SEQ_COMMITTEE_MEMBERS, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class CommitteeMembers extends AbstractAuditable {
 
     /**
@@ -34,11 +40,13 @@ public class CommitteeMembers extends AbstractAuditable {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "committeeType", nullable = false)
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private CommitteeType committeeType;
     
     @NotNull
     @ManyToOne
     @JoinColumn(name = "councilMember", nullable = false)
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private CouncilMember councilMember;
     
     @Transient

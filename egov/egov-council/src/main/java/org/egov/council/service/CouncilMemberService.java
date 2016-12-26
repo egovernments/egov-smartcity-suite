@@ -46,10 +46,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.council.entity.CouncilMember;
+import org.egov.council.entity.CouncilMemberStatus;
 import org.egov.council.repository.CouncilMemberRepository;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -64,12 +66,13 @@ public class CouncilMemberService {
     @PersistenceContext
     private EntityManager entityManager;
     
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
     @Autowired
     public CouncilMemberService(final CouncilMemberRepository councilMemberRepository) {
         this.councilMemberRepository = councilMemberRepository;
+    }
+    
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
     }
 
     @Transactional
@@ -85,12 +88,15 @@ public class CouncilMemberService {
     public List<CouncilMember> findAll() {
         return councilMemberRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
+    
+    
 
     public CouncilMember findOne(Long id) {
         return councilMemberRepository.findById(id);
     }
     
-	public List<CouncilMember> search(CouncilMember councilMember) {
+	@SuppressWarnings("unchecked")
+    public List<CouncilMember> search(CouncilMember councilMember) {
 		final Criteria criteria = getCurrentSession().createCriteria(
 				CouncilMember.class);
 		if (null != councilMember.getElectionWard())
@@ -106,5 +112,12 @@ public class CouncilMemberService {
 			criteria.add(Restrictions.ilike("name", councilMember.getName(), MatchMode.ANYWHERE));
 		return criteria.list();
 	}
-    
+	@SuppressWarnings("unchecked")
+    public List<CouncilMember> findAllByActive() {
+            final Criteria criteria = getCurrentSession().createCriteria(
+                            CouncilMember.class);
+            criteria.add(Restrictions.eq("status",CouncilMemberStatus.ACTIVE));
+            criteria.addOrder(Order.asc("name"));
+            return criteria.list();
+	}
 }

@@ -1,12 +1,8 @@
 package org.egov.council.entity;
 
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.entity.enums.Gender;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.validator.constraints.Length;
-import org.springframework.web.multipart.MultipartFile;
+import static org.egov.council.entity.CouncilMember.SEQ_COUNCILMEMBER;
+
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -21,9 +17,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 
-import static org.egov.council.entity.CouncilMember.SEQ_COUNCILMEMBER;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.enums.Gender;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Unique(fields = {"name"}, enableDfltMsg = true)
@@ -100,8 +101,11 @@ public class CouncilMember extends AbstractAuditable {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "filestoreid")
     private FileStoreMapper photo;
-
-
+    
+    private String category;
+    
+    private Date dateOfJoining;
+    
     public FileStoreMapper getPhoto() {
         return photo;
     }
@@ -247,5 +251,22 @@ public class CouncilMember extends AbstractAuditable {
         this.checked = checked;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public Date getDateOfJoining() {
+        return dateOfJoining;
+    }
+
+    public void setDateOfJoining(Date dateOfJoining) {
+        this.dateOfJoining = dateOfJoining;
+    }
+
+    
     
 }

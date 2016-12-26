@@ -161,15 +161,15 @@
 											<tr>
 												<td>${counter.index+1}</td>
 												<td><c:out
-														value="${meetingAttend.committeeMembers.councilMember.name}" /></td>
+														value="${meetingAttend.councilMember.name}" /></td>
 												<td><c:out
-														value="${meetingAttend.committeeMembers.councilMember.electionWard.name}" /></td>
+														value="${meetingAttend.councilMember.electionWard.name}" /></td>
 												<td><c:out
-														value="${meetingAttend.committeeMembers.councilMember.designation.name}" /></td>
+														value="${meetingAttend.councilMember.designation.name}" /></td>
 												<td><c:out
-														value="${meetingAttend.committeeMembers.councilMember.qualification.name}" /></td>
+														value="${meetingAttend.councilMember.qualification.name}" /></td>
 												<td><c:out
-														value="${meetingAttend.committeeMembers.councilMember.partyAffiliation.name}" /></td>
+														value="${meetingAttend.councilMember.partyAffiliation.name}" /></td>
 												<td><c:out
 														value="${meetingAttend.attendedMeeting?'Yes':'No'}" /></td>
 											</tr>

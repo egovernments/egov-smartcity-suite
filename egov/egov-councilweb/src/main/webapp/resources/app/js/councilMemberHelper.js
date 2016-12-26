@@ -91,8 +91,17 @@ function callAjaxSearch() {
 				columns : [ { 
 "data" : "electionWard", "sClass" : "text-left"} ,{ 
 "data" : "designation", "sClass" : "text-left"} ,{ 
-"data" : "partyAffiliation", "sClass" : "text-left"} ,{ 
-"data" : "name", "sClass" : "text-left"}
+"data" : null,
+"render": function ( data, type, full, meta ) {
+	if(data.designation=='Co-Option'){
+		return data.category;
+	}else{
+		return data.partyAffiliation;
+	}
+},
+"sClass" : "text-left"} ,{ 
+"data" : "name", "sClass" : "text-left"},{ 
+"data" : "status", "sClass" : "text-left"}
 ,{ "data" : null, "target":-1,
 	
     sortable: false,
@@ -110,17 +119,27 @@ function callAjaxSearch() {
 			}
 
 $("#resultTable").on('click','tbody tr td  .view',function(event) {
-	var id = reportdatatable.fnGetData($(this).parent().parent(),5);
+	var id = reportdatatable.fnGetData($(this).parent().parent(),6);
 	window.open('/council/councilmember/'+ $('#mode').val() +'/'+id,'','width=800, height=600,scrollbars=yes');
 	
 });
 
 $("#resultTable").on('click','tbody tr td  .edit',function(event) {
-	var id = reportdatatable.fnGetData($(this).parent().parent(),5);
+	var id = reportdatatable.fnGetData($(this).parent().parent(),6);
 	window.open('/council/councilmember/'+ $('#mode').val() +'/'+id,'','width=800, height=600,scrollbars=yes');
 	
 });
 $(document).ready(function() {
+	$( "#category" ).hide();
+	$( "#dateofjoining" ).hide();
+	
+	showFieldsByDesignation($("#designation option:selected").text());
+	
+	$( "#designation" ).change(function() {
+		var design = $( "#designation option:selected" ).text();
+		showFieldsByDesignation(design);
+	});
+	
 	
 	jQuery( ".dateval" ).datepicker({ 
    	 format: 'dd/mm/yyyy',
@@ -203,6 +222,40 @@ var fileformatsinclude = ['pdf','jpeg','jpg','png','gif'];
 	}
 	
 });
+
+function showFieldsByDesignation(design)
+{
+	if(design == 'Co-Option'){
+		$('.hide-input-fields').show();
+		$('#dateofjoining').hide();
+		$('#category').show();
+		$('#party').hide();
+		$('#dateOfJoining').hide();
+		$('.toggle-madatory').find("span").removeClass( "mandatory" );
+		$('.toggle-madatory-caste').find("span").addClass( "mandatory" );
+		$('.addremoverequired').removeAttr( "required" );
+		$('#category').attr("required","true");
+		$('#caste').attr("required","true");
+		
+	} else if(design == 'Special Officer'){
+		$( '#dateofjoining' ).show();
+		$('#party').show();
+		$('.hide-input-fields').hide();
+		$('.date-toggle-mandatory').find("span").addClass( "mandatory" );
+		$('.toggle-madatory').find("span").removeClass( "mandatory" );
+		$('.toggle-madatory-caste').find("span").removeClass( "mandatory" );
+		$('.addremoverequired').removeAttr( "required" );
+		$('#caste').removeAttr( "required" );
+	} else {
+		$('.hide-input-fields').show();
+		$('#dateofjoining').hide();
+		$( "#party" ).show();
+		$( "#category" ).hide();
+		$('.toggle-madatory').find("span").addClass( "mandatory" );
+		$('.addremoverequired').attr("required","true");
+	}
+}
+
 
 jQuery('#emailId').blur(function(e) {
 	var emailId = jQuery('#emailId').val();

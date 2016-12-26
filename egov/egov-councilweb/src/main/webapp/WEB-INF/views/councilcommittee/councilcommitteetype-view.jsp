@@ -71,6 +71,7 @@
 										<th>Designation</th>
 										<th>Qualification</th>
 										<th>Party Affiliation</th>
+										<th>Status</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -81,7 +82,8 @@
 										<td><c:out value="${committeemem.councilMember.electionWard.name}" /></td>
 										<td><c:out value="${committeemem.councilMember.designation.name}" /></td>
 										<td><c:out value="${committeemem.councilMember.qualification.name}" /></td>	
-										<td><c:out value="${committeemem.councilMember.partyAffiliation.name}" /></td>					
+										<td><c:out value="${committeemem.councilMember.partyAffiliation.name}" /></td>
+										<td><c:out value="${committeemem.councilMember.status}" /></td>					
 									</tr>
 									</c:forEach>
 								</tbody>

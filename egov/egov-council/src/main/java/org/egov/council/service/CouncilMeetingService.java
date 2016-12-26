@@ -158,5 +158,8 @@ public class CouncilMeetingService {
         }
         return criteria;
     }
-
+    @Transactional
+    public void deleteAttendance(final List<MeetingAttendence> meetingAttendences) {
+        meetingAttendanceRepository.deleteInBatch(meetingAttendences);
+    }
 }
