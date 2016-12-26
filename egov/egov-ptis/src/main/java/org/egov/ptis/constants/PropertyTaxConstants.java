@@ -814,6 +814,7 @@ public interface PropertyTaxConstants {
         }
     };
     // List for GLCodes for Arrear Taxes
+    @SuppressWarnings("serial")
     public static final List<String> GLCODES_FOR_ARREARTAX = new ArrayList<String>() {
         {
             for (final Map.Entry<String, String> glCode : GLCODEMAP_FOR_ARREARTAX.entrySet())
@@ -822,6 +823,7 @@ public interface PropertyTaxConstants {
     };
 
     // HashMap map b/n Demand reason string and code
+    @SuppressWarnings("serial")
     public static final LinkedHashMap<String, String> BUILTUP_PROPERTY_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
         {
             put(DEMANDRSN_STR_GENERAL_TAX, DEMANDRSN_CODE_GENERAL_TAX);
@@ -831,6 +833,7 @@ public interface PropertyTaxConstants {
         }
     };
 
+    @SuppressWarnings("serial")
     public static final LinkedHashMap<String, String> VACANT_PROPERTY_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
         {
             put(DEMANDRSN_STR_VACANT_TAX, DEMANDRSN_CODE_VACANT_TAX);
@@ -868,6 +871,7 @@ public interface PropertyTaxConstants {
     public static final String DOCS_ADDRESS_CHANGE_PROPERTY = "PROPERTY ADDRESS CHANGE";
     public static final String DOCS_DEACTIVATE_PROPERTY = "DEACTIVATE";
 
+    @SuppressWarnings("serial")
     public static final Map<String, String> FLOOR_TYPES = new HashMap<String, String>() {
         {
             put("Varandah", "Varandah");
@@ -887,6 +891,7 @@ public interface PropertyTaxConstants {
 
     public static final Integer OPEN_PLOT_UNIT_FLOORNUMBER = -3;
 
+    @SuppressWarnings("serial")
     public static final Map<Integer, String> MONTHS_MAP = new TreeMap<Integer, String>() {
         {
             put(JANUARY, "Jan");
@@ -922,6 +927,7 @@ public interface PropertyTaxConstants {
     public static final String GLCODE_FOR_BIG_RESIDENTIAL_BLDG_TAX_CURRENT = "4311004";
     public static final String GLCODE_FOR_MUTATION_FEE = "4311002";
 
+    @SuppressWarnings("serial")
     public static final List<String> EDU_EGS_CESS_GLCODE_LIST = new ArrayList<String>() {
         {
             add("4312001");
@@ -936,6 +942,7 @@ public interface PropertyTaxConstants {
 
     public static final String REPORT_START_DATE = "01/04/2012";
 
+    @SuppressWarnings("serial")
     public static final List<String> FLOORNO_WITH_DIFF_MULFACTOR_RESD = new ArrayList<String>() {
         {
             add("-5");
@@ -946,6 +953,7 @@ public interface PropertyTaxConstants {
         }
     };
 
+    @SuppressWarnings("serial")
     public static final List<String> FLOORNO_WITH_DIFF_MULFACTOR_NONRESD = new ArrayList<String>() {
         {
             add("-5");
@@ -978,6 +986,7 @@ public interface PropertyTaxConstants {
     public static final String AMP_ENCODED_STR = "&amp;";
     public static final String AMP_ACTUAL_STR = "&";
 
+    @SuppressWarnings("serial")
     public static final List<String> DEMAND_RSNS_LIST = new ArrayList<String>() {
         {
             add(DEMANDRSN_CODE_GENERAL_TAX);
@@ -989,6 +998,7 @@ public interface PropertyTaxConstants {
         }
     };
 
+    @SuppressWarnings("serial")
     public static final Map<String, String> waterRates = new HashMap<String, String>() {
         {
             put("WATER_METER", "Water Meter");
@@ -1070,6 +1080,7 @@ public interface PropertyTaxConstants {
     public static final String MUTATIONRS_SALES_DEED = "Sale Deed";
     public static final String MUTATIONRS_COURT_ORDER = "Court Deed";
 
+    @SuppressWarnings("serial")
     public static final Map<String, String> SALUTATION = new HashMap<String, String>() {
         {
             put("-1", "Select");
@@ -1251,6 +1262,7 @@ public interface PropertyTaxConstants {
     public final static String PAID_BY = "paidBy";
 
     // Collection modes List
+    @SuppressWarnings("serial")
     public static final Map<Character, String> COLL_MODES_MAP = new HashMap<Character, String>() {
         {
             put(COLLECTION_TYPE_COUNTER, "Counter");
@@ -1258,6 +1270,8 @@ public interface PropertyTaxConstants {
             put(COLLECTION_TYPE_ONLINECOLLECTION, "Online");
         }
     };
+    
+    @SuppressWarnings("serial")
     public static final LinkedHashMap<String, String> HEARING_TIMINGS = new LinkedHashMap<String, String>() {
         {
             put("9.00 AM", "9.00 AM");
@@ -1407,6 +1421,7 @@ public interface PropertyTaxConstants {
 
     // Tax Rates
 
+    @SuppressWarnings("serial")
     public static final Map<String, String> TAX_RATES = new HashMap<String, String>() {
 
         {
@@ -1418,6 +1433,7 @@ public interface PropertyTaxConstants {
         }
     };
 
+    @SuppressWarnings("serial")
     public static final List<String> TAX_RATES_TEMP = new ArrayList<String>() {
         {
             add("PRIMARY_SER_CHRG");
@@ -1448,6 +1464,7 @@ public interface PropertyTaxConstants {
     public static final String WRITEOFF_REASON_NOT_TRACED = "Not traced";
     public static final String WRITEOFF_REASON_OTHER_REASONS = "Other reasons";
 
+    @SuppressWarnings("serial")
     public static final List<String> WRITEOFF_REASONS = new ArrayList<String>() {
         {
             add(WRITEOFF_REASON_DEMOLITION);
@@ -1557,6 +1574,7 @@ public interface PropertyTaxConstants {
     public static final String DASHBOARD_PROPERTY_TYPE_STATE_GOVT = "State Government";
     public static final String DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT = "CENTRAL_GOVT";
     
+    @SuppressWarnings("serial")
     public static final List<String> DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST = new ArrayList<String>() {
         {
             add("Central Government 33.5%");
@@ -1576,4 +1594,13 @@ public interface PropertyTaxConstants {
     
     public static final String MUNICIPALITY_ESD_NOTICE_SECTION_ACT = "(Issued under Section 91 of A.P. Municipalities Act 1965)";
     public static final String MUNICIPALITY_DISTRESS_NOTICE_SECTION_ACT = "(Issued under Rule 30(3) of Taxation & Finance Rules appended to the A.P. Municipalities Act, 1965)";
+    
+    @SuppressWarnings("serial")
+    public static final List<String> RECOVERY_NOTICETYPES = new ArrayList<String>() {
+        {
+            add(NOTICE_TYPE_ESD);
+            add(NOTICE_TYPE_INVENTORY);
+            add(NOTICE_TYPE_DISTRESS);
+        }
+    };
 }

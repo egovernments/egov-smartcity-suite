@@ -67,7 +67,9 @@ import javax.persistence.Query;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.demand.model.EgBill;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.City;
@@ -82,10 +84,13 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.DateUtils;
+import org.egov.ptis.bean.NoticeRequest;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.entity.notice.RecoveryNoticesInfo;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.repository.notice.RecoveryNoticesInfoRepository;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.DemandBill.DemandBillService;
@@ -157,6 +162,12 @@ public class RecoveryNoticeService {
 
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+
+    @Autowired
+    private RecoveryNoticesInfoRepository recoveryNoticesInfoRepository;
+
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -379,5 +390,72 @@ public class RecoveryNoticeService {
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=ESDNotice_" + basicProperty.getUpicNo() + ".pdf");
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> generateRecoveryNotices(final NoticeRequest noticeRequest) {
+        final StringBuffer query = new StringBuffer();
+        final Map<String, Object> params = new HashMap<String, Object>();
+        query.append("select mv.propertyId from PropertyMaterlizeView mv where mv.propertyId is not null ");
+        if (!(noticeRequest.getWard() == null || noticeRequest.getWard().equals(-1l))) {
+            query.append(" and mv.ward.id = :wardId");
+            params.put("wardId", noticeRequest.getWard());
+        }
+        if (!(noticeRequest.getBlock() == null || noticeRequest.getBlock().equals(-1l))) {
+            query.append(" and mv.block.id = :blockId");
+            params.put("blockId", noticeRequest.getBlock());
+        }
+        if (!(noticeRequest.getBillCollector() == null || noticeRequest.getBillCollector().equals(-1l))) {
+        }
+        if (!(noticeRequest.getPropertyType() == null || noticeRequest.getPropertyType().equals(-1l))) {
+            query.append(" and mv.propTypeMstrID.id = :propertyType");
+            params.put("propertyType", noticeRequest.getPropertyType());
+        }
+        if (!(noticeRequest.getCategoryType() == null || noticeRequest.getCategoryType().equals("-1"))) {
+            query.append(" and mv.categoryType = :categoryType");
+            params.put("categoryType", noticeRequest.getCategoryType());
+        }
+        if (StringUtils.isNotEmpty(noticeRequest.getPropertyId())) {
+            query.append(" and mv.propertyId = :propertyId");
+            params.put("propertyId", noticeRequest.getPropertyId());
+        }
+        final CFinancialYear currFinYear = financialYearDAO.getFinancialYearByDate(new Date());
+        query.append(
+                " and mv.propertyId not in (select propertyId from RecoveryNoticesInfo where noticeType = :noticeType and createdDate between :startDate and :endDate )");
+        params.put("noticeType", noticeRequest.getNoticeType());
+        params.put("startDate", currFinYear.getStartingDate());
+        params.put("endDate", currFinYear.getEndingDate());
+        final Query qry = entityManager.createQuery(query.toString());
+        for (final String param : params.keySet())
+            qry.setParameter(param, params.get(param));
+        final List<String> properties = qry.getResultList();
+        final List<RecoveryNoticesInfo> noticesInfos = new ArrayList<RecoveryNoticesInfo>();
+
+        Long jobNumber = getLatestJobNumber();
+        if (jobNumber == null)
+            jobNumber = 0l;
+        jobNumber = jobNumber + 1;
+        for (final String propertyId : properties) {
+            final RecoveryNoticesInfo info = new RecoveryNoticesInfo();
+            info.setPropertyId(propertyId);
+            info.setNoticeType(noticeRequest.getNoticeType());
+            info.setGenerated(Boolean.FALSE);
+            info.setJobNumber(jobNumber);
+            noticesInfos.add(info);
+        }
+        recoveryNoticesInfoRepository.save(noticesInfos);
+        return properties;
+    }
+
+    public Long getLatestJobNumber() {
+        return recoveryNoticesInfoRepository.getLatestJobNumber();
+    }
+
+    public RecoveryNoticesInfo getRecoveryNoticeInfoByAssessmentAndNoticeType(final String propertyId, final String noticeType) {
+        return recoveryNoticesInfoRepository.findByPropertyIdAndNoticeType(propertyId, noticeType);
+    }
+
+    public void saveRecoveryNoticeInfo(final RecoveryNoticesInfo noticeInfo) {
+        recoveryNoticesInfoRepository.save(noticeInfo);
     }
 }

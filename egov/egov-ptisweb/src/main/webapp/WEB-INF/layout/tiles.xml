@@ -399,5 +399,15 @@
 		<put-attribute name="page-title" value="lbl.hdr.addMutation" cascade="true" />
 		<put-attribute name="body" value="/WEB-INF/views/masters/mutationfee/add-mutationfee.jsp" />
 	</definition>
+	
+	<definition name="recovery-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.title.recovery.notices" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/notice/recoveryNotices-form.jsp"/>
+    </definition>
+
+	<definition name="recovery-ack" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.title.recovery.notices" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/notice/recoveryNotices-ack.jsp"/>
+    </definition>
     
 </tiles-definitions> 
