@@ -39,44 +39,24 @@
  */
 package org.egov.wtms.application.entity;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import org.egov.commons.Installment;
 
-@Entity
-@Table(name = "egwtr_mv_inst_dem_coll")
-public class InstDmdCollResponse implements Serializable {
+
+public class InstDmdCollResponse {
 
     
-    @ManyToOne(cascade = CascadeType.ALL)
-    @Valid
-    @NotNull
-    @JoinColumn(name = "connectiondetailsid")
     private WaterChargeMaterlizeView waterChargeMaterlizeView;
     
-    private static final long serialVersionUID = -8679117166285878366L;
-    @EmbeddedId
-    private WaterChargeViewEmbedded id;
-    @ManyToOne
-    @JoinColumn(name = "id_installment")
+ 
     private Installment installment;
-    @Column(name = "watercharge")
+    
     private BigDecimal waterCharge;
-    @Column(name = "waterchargecoll")
+  
     private BigDecimal waterchargecoll;
-    @Column(name = "createddate")
+ 
     private Date createdDate;
 
     public Date getCreatedDate() {
@@ -95,13 +75,7 @@ public class InstDmdCollResponse implements Serializable {
         this.waterchargecoll = waterchargecoll;
     }
 
-    public WaterChargeViewEmbedded getId() {
-        return id;
-    }
-
-    public void setId(final WaterChargeViewEmbedded id) {
-        this.id = id;
-    }
+   
 
     public BigDecimal getWaterCharge() {
         return waterCharge;
@@ -127,8 +101,5 @@ public class InstDmdCollResponse implements Serializable {
         this.waterChargeMaterlizeView = waterChargeMaterlizeView;
     }
 
-    public static long getSerialversionuid() {
-        return serialVersionUID;
-    }
 
 }

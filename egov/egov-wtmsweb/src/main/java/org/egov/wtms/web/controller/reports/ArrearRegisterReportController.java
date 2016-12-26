@@ -154,9 +154,8 @@ public class ArrearRegisterReportController {
         reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
         reportParams.put("district", session.getAttribute("districtName"));
 
-        final List<WaterChargeMaterlizeView> propertyViewList = arrearRegisterReportService.prepareQueryforArrearRegisterReport(
-                Long.valueOf(wardId),
-                Long.valueOf(localityId));
+        final List<WaterChargeMaterlizeView> propertyViewList = new ArrayList<>();
+                //arrearRegisterReportService.prepareQueryforArrearRegisterReport( Long.valueOf(wardId),Long.valueOf(localityId));
 
         for (final WaterChargeMaterlizeView propMatView : propertyViewList)
             // If there is only one Arrear Installment
