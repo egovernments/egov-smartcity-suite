@@ -164,8 +164,8 @@
 	    			<th>certificateType</th>
 	    			<th>Registration Date</th>
 	    			<th>Marriage Date</th>
-	    			<th>Husband Name</th>
-	    			<th>Wife Name</th>
+	    			<th>Bridegroom Name</th>
+	    			<th>Bride Name</th>
 	    			<th>Remarks</th>
 	    	</thead>
 	    	<tbody>

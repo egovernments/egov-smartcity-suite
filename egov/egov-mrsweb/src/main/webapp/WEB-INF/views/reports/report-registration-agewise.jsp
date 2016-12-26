@@ -120,8 +120,8 @@
 	    		<tr>
 	    			<th>S.No</th>
 	    			<th>Age Range</th>
-	    			<th>Husband</th>
-	    			<th>Wife</th>
+	    			<th>Bridegroom</th>
+	    			<th>Bride</th>
 	    		
 	    		</tr>
 	    	</thead>

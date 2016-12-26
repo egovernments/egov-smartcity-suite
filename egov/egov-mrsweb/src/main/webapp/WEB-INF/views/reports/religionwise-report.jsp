@@ -182,10 +182,10 @@
 				<tr>
 					<th>Application No.</th>
 					<th>Registration No.</th>
-					<th>Husband Name</th>
-					<th>Husband Religion</th>
-					<th>Wife Name</th>
-					<th>Wife Religion
+					<th>Bridegroom Name</th>
+					<th>Bridegroom Religion</th>
+					<th>Bride Name</th>
+					<th>Bride Religion
 					<th>Registration Date</th>
 					<th>Marriage Date</th>
 					<th>Marriage Fee</th>

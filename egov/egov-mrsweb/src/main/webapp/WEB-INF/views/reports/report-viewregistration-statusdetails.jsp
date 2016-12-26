@@ -57,8 +57,8 @@
 	    		<tr>
 	    			<th>S.No</th>
 	    			<th>Registration No</th>
-	    			<th>Husband Name</th>
-	    			<th>Wife Name</th>
+	    			<th>Bridegroom Name</th>
+	    			<th>Bride Name</th>
 	    			<th>Registration Date</th>
 	    			<th>Marriage Date</th>
 	    			<th>Application Type</th>

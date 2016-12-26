@@ -58,8 +58,8 @@
 	    			<th>Application No</th>
 	    			<th>Application Date</th>
 	    			<th>Marriage Date</th>
-	    			<th>Husband Name</th>
-	    			<th>Wife Name</th>
+	    			<th>Bridegroom Name</th>
+	    			<th>Bride Name</th>
 	    			<th>Marriage Fee</th>
 	    			<th>Status</th>
 	    			<th>Registration Unit</th>

@@ -50,12 +50,12 @@
 <div class="panel-heading">
 	<div class="panel-title">
 	<c:if test="${witness.applicantType=='Husband' && loop.index==0}">
-		<div>Husband Side witness</div>
+		<div>Bridegroom Side witness</div>
 		
 		</c:if>
 		<%-- Information Of Witness #<c:out value="${loop.index+1}"></c:out> --%>
 		<c:if test="${witness.applicantType=='Wife' && loop.index==2}">
-		<div>Wife Side witness</div>
+		<div>Bride Side witness</div>
 		
 		</c:if>
 		Information Of Witness #<c:out value="${loop.index+1}"></c:out>
