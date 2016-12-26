@@ -352,6 +352,7 @@
 					</br>
 				</table>
 				<s:hidden name="cutOffDate" id="cutOffDate" />
+				<s:hidden name="bankBalanceCheck" id="bankBalanceCheck" value="%{bankBalanceCheck}" />
 				<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
 			</div>
 			<div align="center">
@@ -410,6 +411,9 @@ function onLoadTask_new()
 		}
 		if(document.getElementById('approverDepartment'))
 			document.getElementById('approverDepartment').value = "-1";
+		if (jQuery("#bankBalanceCheck") == null || jQuery("#bankBalanceCheck").val() == "") {
+			disableForm();
+		}
 }
 
 function populateAccNum(branch){
@@ -426,6 +430,9 @@ function populateAccNum(branch){
 function onSubmit()
 {
 	enableAll();
+	var balanceCheckMandatory='<s:text name="payment.mandatory"/>';
+	var balanceCheckWarning='<s:text name="payment.warning"/>';
+	var noBalanceCheck='<s:text name="payment.none"/>';
 	if (!validateForm_directBankPayment()) {
 		undoLoadingMask();
 		return false;
@@ -434,18 +441,26 @@ function onSubmit()
 		undoLoadingMask();
 		return false;
 	}
-	else if(!balanceCheck()){
-		 var msg = confirm("Insufficient Bank Balance. Do you want to process ?");
-		 if (msg == true) {
-		   	document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
-			return true;
-		 } else {
-		   	return false;
-		  } 
-	}else{
+	else if(jQuery("#bankBalanceCheck").val()==noBalanceCheck)
+		{
 		document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
 		return true;
 		}
+	else if(!balanceCheck() && jQuery("#bankBalanceCheck").val()==balanceCheckMandatory){
+			 bootbox.alert("Insufficient Bank Balance.");
+			 return false;
+			}
+	else if(!balanceCheck() && jQuery("#bankBalanceCheck").val()==balanceCheckWarning){
+		 bootbox.confirm("Insufficient Bank Balance. Do you want to process ?", function(result) {
+				if(result)
+					{
+				document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
+				document.dbpform.submit();
+					}
+			}); 
+		 return false;
+		}
+		
 }
 
 function validateCutOff()

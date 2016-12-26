@@ -46,6 +46,8 @@
 <link rel="stylesheet"
 	href="/EGF/resources/css/tabber.css?rnd=${app_release_no}"
 	TYPE="text/css">
+	<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
@@ -55,7 +57,7 @@
 
 </script>
 </head>
-<body>
+<body onload="onLoad();">
 	<br>
 	<s:form action="payment" theme="simple">
 		<s:token />
@@ -515,6 +517,8 @@
 					</tr>
 				</table>
 				<s:hidden name="cutOffDate" id="cutOffDate" />
+				<s:hidden name="bankBalanceCheck" id="bankBalanceCheck" value="%{bankBalanceCheck}" />
+			 
 				<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
 				<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
 			</div>
@@ -624,10 +628,19 @@
 				}
 			}
 			return true;
+		} 
+			
+		function onLoad(){
+			if (jQuery("#bankBalanceCheck") == null || jQuery("#bankBalanceCheck").val() == "") {
+				disableForm();
+			}
 		}
 		function onSubmit()
 		{
 			doLoadingMask();
+			var balanceCheckMandatory='<s:text name="payment.mandatory"/>';
+			var balanceCheckWarning='<s:text name="payment.warning"/>';
+			var noBalanceCheck='<s:text name="payment.none"/>';
 			if(dom.get('department').value=='-1')
 			{
 				bootbox.alert("Please Select the Department!!");
@@ -688,21 +701,51 @@
 					}
 				}
 			</s:if>
-			if(!balanceCheck()){
-				 var msg = confirm("Insufficient Bank Balance. Do you want to process ?");
-				 if (msg == true) {
-					 document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
-					return true;
-				 } else {
-					 undoLoadingMask();
-				   	return false;
-				}
-			}else{
-				document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
+			var balanceCheckMandatory='<s:text name="payment.mandatory"/>';
+			var balanceCheckWarning='<s:text name="payment.warning"/>';
+			var noBalanceCheck='<s:text name="payment.none"/>';
+			if(jQuery("#bankBalanceCheck").val()==noBalanceCheck)
+				{
+				 document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
 				return true;
 				}
-		}
-
+			else if(!balanceCheck() && jQuery("#bankBalanceCheck").val()==balanceCheckMandatory){
+					 bootbox.alert("Insufficient Bank Balance.");
+					 undoLoadingMask();
+					 return false;
+					}
+			else if(!balanceCheck() && jQuery("#bankBalanceCheck").val()==balanceCheckWarning){
+				 bootbox.confirm("Insufficient Bank Balance. Do you want to process ?", function(result) {
+						if(result)
+							{
+							 document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
+						document.forms[0].submit();
+							}
+					}); 
+				 undoLoadingMask();
+				 return false;
+				}
+			else if(jQuery("#bankBalanceCheck").val()==noBalanceCheck)
+			{
+			document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
+			return true;
+			}
+		else if(!balanceCheck() && jQuery("#bankBalanceCheck").val()==balanceCheckMandatory){
+				 bootbox.alert("Insufficient Bank Balance.");
+				 return false;
+				}
+		else if(!balanceCheck() && jQuery("#bankBalanceCheck").val()==balanceCheckWarning){
+			 bootbox.confirm("Insufficient Bank Balance. Do you want to process ?", function(result) {
+					if(result)
+						{
+					document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
+					document.dbpform.submit();
+						}
+				}); 
+			 return false;
+			}
+		}  
+		
 		function validateCutOff()
 		{
 		var cutOffDatePart=document.getElementById("cutOffDate").value.split("/");

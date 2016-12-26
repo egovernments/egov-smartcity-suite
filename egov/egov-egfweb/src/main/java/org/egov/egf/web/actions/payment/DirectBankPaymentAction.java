@@ -73,7 +73,6 @@ import org.egov.commons.CFunction;
 import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CGeneralLedgerDetail;
 import org.egov.commons.CVoucherHeader;
-import org.egov.commons.Relation;
 import org.egov.commons.Vouchermis;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
@@ -120,11 +119,12 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  */
 @ParentPackage("egov")
 @Results({
-        @Result(name = DirectBankPaymentAction.NEW, location = "directBankPayment-" + DirectBankPaymentAction.NEW + ".jsp"),
-        @Result(name = DirectBankPaymentAction.EDIT, location = "directBankPayment-" + DirectBankPaymentAction.EDIT + ".jsp"),
+        @Result(name = DirectBankPaymentAction.NEW, location = "directBankPayment-" + DirectBankPaymentAction.NEW
+                + ".jsp"),
+        @Result(name = DirectBankPaymentAction.EDIT, location = "directBankPayment-" + DirectBankPaymentAction.EDIT
+                + ".jsp"),
         @Result(name = "reverse", location = "directBankPayment-reverse.jsp"),
-        @Result(name = "view", location = "directBankPayment-view.jsp")
-})
+        @Result(name = "view", location = "directBankPayment-view.jsp") })
 public class DirectBankPaymentAction extends BasePaymentAction {
     private final static String FORWARD = "Forward";
     private static final String FAILED_WHILE_REVERSING = "Failed while Reversing";
@@ -148,7 +148,6 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     private static final String MDP_CASH = FinancialConstants.MODEOFPAYMENT_CASH;
     private String button;
     private VoucherService voucherService;
-    private SimpleWorkflowService<Paymentheader> paymentWorkflowService;
     private static final Logger LOGGER = Logger.getLogger(DirectBankPaymentAction.class);
     public static final String ZERO = "0";
     private static final String VIEW = "view";
@@ -159,8 +158,6 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     private List<VoucherDetails> subLedgerlist;
     boolean showChequeNumber;
     private CommonBean commonBean;
-    private EgovCommon egovCommon;
-
     private Paymentheader paymentheader = new Paymentheader();
     public boolean showApprove = false;
 
@@ -207,7 +204,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 
         addDropdownData("designationList", Collections.EMPTY_LIST);
         addDropdownData("userList", Collections.EMPTY_LIST);
-        typeOfAccount = FinancialConstants.TYPEOFACCOUNT_PAYMENTS + "," + FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS;
+        typeOfAccount = FinancialConstants.TYPEOFACCOUNT_PAYMENTS + ","
+                + FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS;
     }
 
     public void prepareNewform() {
@@ -222,17 +220,15 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     public String newform() {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Resetting all........................... ");
-        List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+        final List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                 "DataEntryCutOffDate");
         if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
-        {
             try {
                 date = df.parse(cutOffDateconfigValue.get(0).getValue());
                 cutOffDate = formatter.format(date);
-            } catch (ParseException e) {
+            } catch (final ParseException e) {
 
             }
-        }
         voucherHeader.reset();
         commonBean.reset();
         commonBean.setModeOfPayment(MDP_CHEQUE);
@@ -244,6 +240,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         subLedgerlist.add(new VoucherDetails());
         loadDefalutDates();
         // loadApproverUser(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
+        if (getBankBalanceCheck() == null || "".equals(getBankBalanceCheck()))
+            addActionMessage(getText("payment.bankbalance.controltype"));
         return NEW;
     }
 
@@ -265,7 +263,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         loadAjaxedDropDowns();
         removeEmptyRowsAccoutDetail(billDetailslist);
         removeEmptyRowsSubledger(subLedgerlist);
-        String voucherDate = formatter1.format(voucherHeader.getVoucherDate());
+        final String voucherDate = formatter1.format(voucherHeader.getVoucherDate());
         String cutOffDate1 = null;
         try {
             if (!validateDBPData(billDetailslist, subLedgerlist)) {
@@ -277,59 +275,46 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 
                 if (showMode != null && showMode.equalsIgnoreCase("nonbillPayment"))
                     if (voucherHeader.getId() != null)
-                        billVhId = (CVoucherHeader) persistenceService.getSession().load(CVoucherHeader.class,
+                        billVhId = persistenceService.getSession().load(CVoucherHeader.class,
                                 voucherHeader.getId());
                 voucherHeader.setId(null);
                 populateWorkflowBean();
-                paymentheader = paymentActionHelper.createDirectBankPayment(paymentheader, voucherHeader, billVhId, commonBean,
-                        billDetailslist, subLedgerlist, workflowBean);
+                paymentheader = paymentActionHelper.createDirectBankPayment(paymentheader, voucherHeader, billVhId,
+                        commonBean, billDetailslist, subLedgerlist, workflowBean);
                 showMode = "create";
 
                 if (!cutOffDate.isEmpty() && cutOffDate != null)
-                {
                     try {
                         date = sdf.parse(cutOffDate);
                         cutOffDate1 = formatter1.format(date);
-                    } catch (ParseException e) {
+                    } catch (final ParseException e) {
 
                     }
-                }
                 if (cutOffDate1 != null && voucherDate.compareTo(cutOffDate1) <= 0
-                        && FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-                {
+                        && FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
                     if (paymentheader.getVoucherheader().getVouchermis().getBudgetaryAppnumber() == null)
-                    {
                         addActionMessage(getText("directbankpayment.transaction.success")
                                 + paymentheader.getVoucherheader().getVoucherNumber());
-                    } else {
+                    else
                         addActionMessage(getText("directbankpayment.transaction.success")
-                                + paymentheader.getVoucherheader().getVoucherNumber()
-                                + " and "
-                                + getText("budget.recheck.sucessful", new String[] { paymentheader.getVoucherheader()
-                                        .getVouchermis()
-                                        .getBudgetaryAppnumber() }));
-                    }
-                }
-                else
-                {
+                                + paymentheader.getVoucherheader().getVoucherNumber() + " and "
+                                + getText("budget.recheck.sucessful", new String[] {
+                                        paymentheader.getVoucherheader().getVouchermis().getBudgetaryAppnumber() }));
+                } else {
                     if (paymentheader.getVoucherheader().getVouchermis().getBudgetaryAppnumber() == null)
-                    {
                         addActionMessage(getText("directbankpayment.transaction.success")
                                 + paymentheader.getVoucherheader().getVoucherNumber());
-                    } else {
+                    else
                         addActionMessage(getText("directbankpayment.transaction.success")
-                                + paymentheader.getVoucherheader().getVoucherNumber()
-                                + " and "
-                                + getText("budget.recheck.sucessful", new String[] { paymentheader.getVoucherheader()
-                                        .getVouchermis()
-                                        .getBudgetaryAppnumber() }));
-                    }
+                                + paymentheader.getVoucherheader().getVoucherNumber() + " and "
+                                + getText("budget.recheck.sucessful", new String[] {
+                                        paymentheader.getVoucherheader().getVouchermis().getBudgetaryAppnumber() }));
                     addActionMessage(getText("payment.voucher.approved", new String[] { paymentService
                             .getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
                 }
-            }
-            else
-                throw new ValidationException(Arrays.asList(new ValidationError("engine.validation.failed", "Validation Faild")));
+            } else
+                throw new ValidationException(
+                        Arrays.asList(new ValidationError("engine.validation.failed", "Validation Faild")));
 
         } catch (final ValidationException e) {
             LOGGER.error(e.getMessage(), e);
@@ -353,8 +338,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 
     // @ValidationErrorPage(value="/error/error,jsp")
 
-    public void prepareNonBillPayment()
-    {
+    public void prepareNonBillPayment() {
         addDropdownData("bankList", Collections.EMPTY_LIST);
         addDropdownData("accNumList", Collections.EMPTY_LIST);
         commonBean.setModeOfPayment(MDP_CHEQUE);
@@ -362,9 +346,9 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 
     @ValidationErrorPage(value = NEW)
     @SkipValidation
-    public String nonBillPayment()
-    {
-        voucherHeader = (CVoucherHeader) persistenceService.getSession().load(CVoucherHeader.class, voucherHeader.getId());
+    public String nonBillPayment() {
+        voucherHeader = persistenceService.getSession().load(CVoucherHeader.class,
+                voucherHeader.getId());
         final String vName = voucherHeader.getName();
         String appconfigKey = "";
         if (vName.equalsIgnoreCase(FinancialConstants.JOURNALVOUCHER_NAME_CONTRACTORJOURNAL))
@@ -373,13 +357,15 @@ public class DirectBankPaymentAction extends BasePaymentAction {
             appconfigKey = "purchaseBillPurposeIds";
         else if (vName.equalsIgnoreCase(FinancialConstants.JOURNALVOUCHER_NAME_SALARYJOURNAL))
             appconfigKey = "salaryBillPurposeIds";
-        final AppConfigValues appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(
-                FinancialConstants.MODULE_NAME_APPCONFIG, appconfigKey).get(0);
+        final AppConfigValues appConfigValues = appConfigValuesService
+                .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, appconfigKey).get(0);
         final String purposeValue = appConfigValues.getValue();
         final CGeneralLedger netPay = (CGeneralLedger) persistenceService.find(
-                "from CGeneralLedger where voucherHeaderId.id=? and glcodeId.purposeId=?", voucherHeader.getId(), purposeValue);
+                "from CGeneralLedger where voucherHeaderId.id=? and glcodeId.purposeId=?", voucherHeader.getId(),
+                purposeValue);
         if (netPay == null)
-            throw new ValidationException(Arrays.asList(new ValidationError("net.payable.not.selected.or.selected.wrongly",
+            throw new ValidationException(Arrays.asList(new ValidationError(
+                    "net.payable.not.selected.or.selected.wrongly",
                     "Either Net payable code is not selected or wrongly selected in voucher .Payment creation Failed")));
         billDetailslist = new ArrayList<VoucherDetails>();
         subLedgerlist = new ArrayList<VoucherDetails>();
@@ -388,10 +374,9 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         vd.setGlcodeIdDetail(netPay.getGlcodeId().getId());
         vd.setAccounthead(netPay.getGlcodeId().getName());
         vd.setDebitAmountDetail(BigDecimal.valueOf(netPay.getCreditAmount()));
-        if (netPay.getFunctionId() != null)
-        {
+        if (netPay.getFunctionId() != null) {
             vd.setFunctionIdDetail(Long.valueOf(netPay.getFunctionId()));
-            CFunction function = (CFunction) persistenceService.getSession().load(CFunction.class,
+            final CFunction function = persistenceService.getSession().load(CFunction.class,
                     Long.valueOf(netPay.getFunctionId()));
             vd.setFunctionDetail(function.getId().toString());
         }
@@ -399,8 +384,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         billDetailslist.add(vd);
         final Set<CGeneralLedgerDetail> generalLedgerDetails = netPay.getGeneralLedgerDetails();
         final int i = 0;
-        for (final CGeneralLedgerDetail gldetail : generalLedgerDetails)
-        {
+        for (final CGeneralLedgerDetail gldetail : generalLedgerDetails) {
             final VoucherDetails vdetails = new VoucherDetails();
             vdetails.setSubledgerCode(netPay.getGlcode());
             vdetails.setAmount(gldetail.getAmount());
@@ -409,9 +393,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
             vdetails.setGlcode(netPay.getGlcodeId());
             vdetails.setSubledgerCode(netPay.getGlcode());
             vdetails.setAccounthead(netPay.getGlcodeId().getName());
-            final Accountdetailtype detailType = (Accountdetailtype) persistenceService.getSession().load(
-                    Accountdetailtype.class,
-                    gldetail.getDetailTypeId());
+            final Accountdetailtype detailType = persistenceService.getSession()
+                    .load(Accountdetailtype.class, gldetail.getDetailTypeId());
             vdetails.setDetailTypeName(detailType.getName());
             vdetails.setDetailType(detailType);
             vdetails.setDetailKey(gldetail.getDetailKeyId().toString());
@@ -423,13 +406,14 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                 service = Class.forName(table);
             } catch (final ClassNotFoundException e1) {
                 LOGGER.error(e1.getMessage(), e1);
-                throw new ValidationException(Arrays.asList(new ValidationError("application.error", "application.error")));
+                throw new ValidationException(
+                        Arrays.asList(new ValidationError("application.error", "application.error")));
             }
             String simpleName = service.getSimpleName();
             // simpleName=simpleName.toLowerCase()+"Service";
             simpleName = simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1) + "Service";
-            final WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(ServletActionContext
-                    .getServletContext());
+            final WebApplicationContext wac = WebApplicationContextUtils
+                    .getWebApplicationContext(ServletActionContext.getServletContext());
             final PersistenceService entityPersistenceService = (PersistenceService) wac.getBean(simpleName);
             String dataType = "";
             try {
@@ -463,7 +447,6 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         {
             EntityType entity = null;
             final List<ValidationError> errors = new ArrayList<ValidationError>();
-            Relation rel = null;
             String type = null;
             // handle null
             if (subLedgerlist != null && !subLedgerlist.isEmpty())
@@ -477,36 +460,36 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                                     "There is no entity defined for" + voucherDetail.getDetailCode(),
                                     new String[] { voucherDetail.getDetailCode() })));
                     } catch (final ApplicationException e) {
-                        throw new ValidationException(Arrays.asList(new ValidationError("Exception to get EntityType  ", e
-                                .getMessage())));
+                        throw new ValidationException(
+                                Arrays.asList(new ValidationError("Exception to get EntityType  ", e.getMessage())));
                     }
-                    voucherDetail.setDetailType((Accountdetailtype) persistenceService.getSession().load(
-                            Accountdetailtype.class, voucherDetail.getDetailType()
-                                    .getId()));
+                    voucherDetail.setDetailType(persistenceService.getSession()
+                            .load(Accountdetailtype.class, voucherDetail.getDetailType().getId()));
 
                     // type will be null in case of DBP
-                    if (type.equalsIgnoreCase("Contractor")
-                            && (StringUtils.isBlank(entity.getPanno()) || StringUtils.isBlank(entity.getBankname())
-                                    || StringUtils.isBlank(entity.getBankaccount()) || StringUtils.isBlank(entity.getIfsccode()))) {
-                        LOGGER.error("BankAccount,IFSC Code, Pan number is mandatory for RTGS Payment for " + entity.getName());
+                    if (type.equalsIgnoreCase("Contractor") && (StringUtils.isBlank(entity.getPanno())
+                            || StringUtils.isBlank(entity.getBankname()) || StringUtils.isBlank(entity.getBankaccount())
+                            || StringUtils.isBlank(entity.getIfsccode()))) {
+                        LOGGER.error("BankAccount,IFSC Code, Pan number is mandatory for RTGS Payment for "
+                                + entity.getName());
                         errors.add(new ValidationError("paymentMode",
                                 "BankName, BankAccount,IFSC Code, Pan number is mandatory for RTGS Payment for "
                                         + entity.getName()));
                         throw new ValidationException(errors);
 
-                    }
-                    else if (type.equalsIgnoreCase("Supplier")
-                            && (StringUtils.isBlank(entity.getTinno()) || StringUtils.isBlank(entity.getBankname())
-                                    || StringUtils.isBlank(entity.getBankaccount()) || StringUtils.isBlank(entity.getIfsccode()))) {
-                        LOGGER.error("BankAccount,IFSC Code, Tin number is mandatory for RTGS Payment for " + entity.getName());
+                    } else if (type.equalsIgnoreCase("Supplier") && (StringUtils.isBlank(entity.getTinno())
+                            || StringUtils.isBlank(entity.getBankname()) || StringUtils.isBlank(entity.getBankaccount())
+                            || StringUtils.isBlank(entity.getIfsccode()))) {
+                        LOGGER.error("BankAccount,IFSC Code, Tin number is mandatory for RTGS Payment for "
+                                + entity.getName());
                         errors.add(new ValidationError("paymentMode",
                                 "BankName, BankAccount,IFSC Code, Tin number is mandatory for RTGS Payment for "
                                         + entity.getName()));
                         throw new ValidationException(errors);
                     }
 
-                    else if (StringUtils.isBlank(entity.getBankname())
-                            || StringUtils.isBlank(entity.getBankaccount()) || StringUtils.isBlank(entity.getIfsccode())) {
+                    else if (StringUtils.isBlank(entity.getBankname()) || StringUtils.isBlank(entity.getBankaccount())
+                            || StringUtils.isBlank(entity.getIfsccode())) {
                         LOGGER.error("BankAccount,IFSC Code is mandatory for RTGS Payment for " + entity.getName());
                         errors.add(new ValidationError("paymentMode",
                                 "BankName, BankAccount,IFSC Code is mandatory for RTGS Payment for type " + type
@@ -515,16 +498,16 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                     }
                 }
             else
-                throw new ValidationException(Arrays.asList(new ValidationError("no.subledger.cannot.create.rtgs.payment",
-                        "There is no subledger selected cannot create RTGS Payment")));
+                throw new ValidationException(
+                        Arrays.asList(new ValidationError("no.subledger.cannot.create.rtgs.payment",
+                                "There is no subledger selected cannot create RTGS Payment")));
         }
 
     }
 
     private void updateMiscBillDetail(final CVoucherHeader billVhId) {
-        final Miscbilldetail miscbillDetail = (Miscbilldetail) persistenceService.find(
-                " from Miscbilldetail where payVoucherHeader=?",
-                voucherHeader);
+        final Miscbilldetail miscbillDetail = (Miscbilldetail) persistenceService
+                .find(" from Miscbilldetail where payVoucherHeader=?", voucherHeader);
         miscbillDetail.setBillnumber(commonBean.getDocumentNumber());
         miscbillDetail.setBilldate(commonBean.getDocumentDate());
         miscbillDetail.setBillVoucherHeader(billVhId);
@@ -541,7 +524,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     @Action(value = "/payment/directBankPayment-beforeView")
     public String beforeView() {
         prepareForViewModifyReverse();
-        wfitemstate = "END"; // requird to hide the approver drop down when view is form source
+        wfitemstate = "END"; // requird to hide the approver drop down when view
+                             // is form source
         return VIEW;
     }
 
@@ -562,11 +546,13 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     @SuppressWarnings("unchecked")
     private void prepareForViewModifyReverse() {
         final StringBuffer instrumentQuery = new StringBuffer(100);
-        instrumentQuery.append(
-                "select  distinct ih from InstrumentHeader ih join ih.instrumentVouchers iv where iv.voucherHeaderId.id=?")
+        instrumentQuery
+                .append("select  distinct ih from InstrumentHeader ih join ih.instrumentVouchers iv where iv.voucherHeaderId.id=?")
                 .append(" order by ih.id");
-        voucherHeader = (CVoucherHeader) persistenceService.getSession().load(CVoucherHeader.class, voucherHeader.getId());
-        paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?", voucherHeader);
+        voucherHeader = persistenceService.getSession().load(CVoucherHeader.class,
+                voucherHeader.getId());
+        paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?",
+                voucherHeader);
         commonBean.setAmount(paymentheader.getPaymentAmount());
         commonBean.setAccountNumberId(paymentheader.getBankaccount().getId().toString());
         commonBean.setAccnumnar(paymentheader.getBankaccount().getNarration());
@@ -575,14 +561,12 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                 + paymentheader.getBankaccount().getBankbranch().getId();
         commonBean.setBankId(bankBranchId);
         commonBean.setModeOfPayment(paymentheader.getType());
-        final Miscbilldetail miscbillDetail = (Miscbilldetail) persistenceService.find(
-                " from Miscbilldetail where payVoucherHeader=?",
-                voucherHeader);
+        final Miscbilldetail miscbillDetail = (Miscbilldetail) persistenceService
+                .find(" from Miscbilldetail where payVoucherHeader=?", voucherHeader);
         commonBean.setDocumentNumber(miscbillDetail.getBillnumber());
         commonBean.setDocumentDate(miscbillDetail.getBilldate());
         commonBean.setPaidTo(miscbillDetail.getPaidto());
-        if (miscbillDetail.getBillVoucherHeader() != null)
-        {
+        if (miscbillDetail.getBillVoucherHeader() != null) {
             commonBean.setDocumentId(miscbillDetail.getBillVoucherHeader().getId());
             commonBean.setLinkReferenceNumber(miscbillDetail.getBillVoucherHeader().getVoucherNumber());
         }
@@ -603,13 +587,12 @@ public class DirectBankPaymentAction extends BasePaymentAction {
             billDetailslist.remove(bankdetail);
         loadAjaxedDropDowns();
         // find it last so that rest of the data loaded
-        if ("view".equalsIgnoreCase(showMode))
-        {
+        if ("view".equalsIgnoreCase(showMode)) {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("fetching cheque detail ------------------------");
 
-            instrumentHeaderList = getPersistenceService()
-                    .findAllBy(instrumentQuery.toString(), paymentheader.getVoucherheader().getId());
+            instrumentHeaderList = getPersistenceService().findAllBy(instrumentQuery.toString(),
+                    paymentheader.getVoucherheader().getId());
         }
     }
 
@@ -636,19 +619,20 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                     validateRTGS();
 
                 reCreateLedger();
-                paymentheader = (Paymentheader) persistenceService
-                        .find("from Paymentheader where voucherheader=?", voucherHeader);
+                paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?",
+                        voucherHeader);
                 paymentService.updatePaymentHeader(paymentheader, voucherHeader,
-                        Integer.valueOf(commonBean.getAccountNumberId()), commonBean
-                                .getModeOfPayment(), commonBean.getAmount());
+                        Integer.valueOf(commonBean.getAccountNumberId()), commonBean.getModeOfPayment(),
+                        commonBean.getAmount());
                 if (commonBean.getDocumentId() != null)
-                    billVhId = (CVoucherHeader) persistenceService.getSession().load(CVoucherHeader.class,
+                    billVhId = persistenceService.getSession().load(CVoucherHeader.class,
                             commonBean.getDocumentId());
                 updateMiscBillDetail(billVhId);
                 sendForApproval();
                 addActionMessage(getText("directbankpayment.transaction.success") + voucherHeader.getVoucherNumber());
             } else
-                throw new ValidationException(Arrays.asList(new ValidationError("engine.validation.failed", "Validation Faild")));
+                throw new ValidationException(
+                        Arrays.asList(new ValidationError("engine.validation.failed", "Validation Faild")));
         } catch (final NumberFormatException e) {
             LOGGER.error(e.getMessage(), e);
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
@@ -675,8 +659,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         try {
             reversalVoucherMap.put("Reversal voucher date", sdf.parse(getReversalVoucherDate()));
         } catch (final ParseException e1) {
-            throw new ValidationException(Arrays.asList(new ValidationError("reversalVocuherDate",
-                    "reversalVocuherDate.notinproperformat")));
+            throw new ValidationException(
+                    Arrays.asList(new ValidationError("reversalVocuherDate", "reversalVocuherDate.notinproperformat")));
         }
         reversalVoucherMap.put("Reversal voucher number", getReversalVoucherNumber());
         final List<HashMap<String, Object>> reversalList = new ArrayList<HashMap<String, Object>>();
@@ -685,11 +669,12 @@ public class DirectBankPaymentAction extends BasePaymentAction {
             reversalVoucher = createVoucher.reverseVoucher(reversalList);
         } catch (final ApplicationRuntimeException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new ValidationException(Arrays.asList(new ValidationError(FAILED_WHILE_REVERSING, FAILED_WHILE_REVERSING)));
+            throw new ValidationException(
+                    Arrays.asList(new ValidationError(FAILED_WHILE_REVERSING, FAILED_WHILE_REVERSING)));
         } catch (final ParseException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new ValidationException(Arrays.asList(new ValidationError("Date is not in proper Format",
-                    "Date is not in proper Format")));
+            throw new ValidationException(
+                    Arrays.asList(new ValidationError("Date is not in proper Format", "Date is not in proper Format")));
         }
         loadAjaxedDropDowns();
         addActionMessage(getText("directbankpayment.reverse.transaction.success") + reversalVoucher.getVoucherNumber());
@@ -716,10 +701,11 @@ public class DirectBankPaymentAction extends BasePaymentAction {
              */
             detailMap.put(VoucherConstant.CREDITAMOUNT, commonBean.getAmount().toString());
             detailMap.put(VoucherConstant.DEBITAMOUNT, "0");
-            final Bankaccount account = (Bankaccount) persistenceService.getSession().load(Bankaccount.class,
+            final Bankaccount account = persistenceService.getSession().load(Bankaccount.class,
                     Integer.valueOf(commonBean.getAccountNumberId()));
             detailMap.put(VoucherConstant.GLCODE, account.getChartofaccounts().getGlcode());
-            // Addind this line since function code is made mandatory for all transaction
+            // Addind this line since function code is made mandatory for all
+            // transaction
             if (voucherHeader.getVouchermis().getFunction() != null)
                 detailMap.put(VoucherConstant.FUNCTIONCODE, voucherHeader.getVouchermis().getFunction().getCode());
             accountdetails.add(detailMap);
@@ -728,7 +714,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
             for (final VoucherDetails voucherDetail : billDetailslist) {
                 detailMap = new HashMap<String, Object>();
                 if (voucherDetail.getFunctionIdDetail() != null) {
-                    final CFunction function = (CFunction) persistenceService.getSession().load(CFunction.class,
+                    final CFunction function = persistenceService.getSession().load(CFunction.class,
                             voucherDetail.getFunctionIdDetail());
                     detailMap.put(VoucherConstant.FUNCTIONCODE, function.getCode());
                 }
@@ -742,8 +728,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                     detailMap.put(VoucherConstant.GLCODE, voucherDetail.getGlcodeDetail());
                     accountdetails.add(detailMap);
                     glcodeMap.put(voucherDetail.getGlcodeDetail(), VoucherConstant.DEBIT);
-                }
-                else {
+                } else {
                     detailMap.put(VoucherConstant.CREDITAMOUNT, voucherDetail.getCreditAmountDetail().toString());
                     detailMap.put(VoucherConstant.DEBITAMOUNT, ZERO);
                     detailMap.put(VoucherConstant.GLCODE, voucherDetail.getGlcodeDetail());
@@ -754,8 +739,10 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 
             for (final VoucherDetails voucherDetail : subLedgerlist) {
                 subledgertDetailMap = new HashMap<String, Object>();
-                final String amountType = glcodeMap.get(voucherDetail.getSubledgerCode()) != null ? glcodeMap.get(
-                        voucherDetail.getSubledgerCode()).toString() : null; // Debit or Credit.
+                final String amountType = glcodeMap.get(voucherDetail.getSubledgerCode()) != null
+                        ? glcodeMap.get(voucherDetail.getSubledgerCode()).toString() : null; // Debit
+                                                                                             // or
+                                                                                             // Credit.
                 if (null != amountType && amountType.equalsIgnoreCase(VoucherConstant.DEBIT))
                     subledgertDetailMap.put(VoucherConstant.DEBITAMOUNT, voucherDetail.getAmount());
                 else if (null != amountType)
@@ -767,16 +754,16 @@ public class DirectBankPaymentAction extends BasePaymentAction {
             }
 
             // createVoucher.validateFunction(accountdetails,subledgerDetails);
-            final List<Transaxtion> transactions = createVoucher.createTransaction(null, accountdetails, subledgerDetails,
-                    voucherHeader);
+            final List<Transaxtion> transactions = createVoucher.createTransaction(null, accountdetails,
+                    subledgerDetails, voucherHeader);
             persistenceService.getSession().flush();
 
             Transaxtion txnList[] = new Transaxtion[transactions.size()];
             txnList = transactions.toArray(txnList);
             final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
             if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(voucherHeader.getVoucherDate())))
-                throw new ValidationException(Arrays.asList(new ValidationError("Exception While Saving Data",
-                        "Transaction Failed")));
+                throw new ValidationException(
+                        Arrays.asList(new ValidationError("Exception While Saving Data", "Transaction Failed")));
         } catch (final HibernateException e) {
             LOGGER.error(e.getMessage(), e);
             throw new ValidationException(Arrays.asList(new ValidationError(EXCEPTION_WHILE_SAVING_DATA, FAILED)));
@@ -802,7 +789,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 
     }
 
-    protected boolean validateDBPData(final List<VoucherDetails> billDetailslist, final List<VoucherDetails> subLedgerList) {
+    protected boolean validateDBPData(final List<VoucherDetails> billDetailslist,
+            final List<VoucherDetails> subLedgerList) {
         BigDecimal totalDrAmt = BigDecimal.ZERO;
         BigDecimal totalCrAmt = BigDecimal.ZERO;
         totalCrAmt = totalCrAmt.add(commonBean.getAmount());
@@ -819,20 +807,19 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 
                 addActionError(getText("journalvoucher.accdetail.emptyaccrow", new String[] { "" + index }));
                 isValFailed = true;
-            }
-            else if (voucherDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) == 0
+            } else if (voucherDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) == 0
                     && voucherDetails.getCreditAmountDetail().compareTo(BigDecimal.ZERO) == 0
                     && voucherDetails.getGlcodeDetail().trim().length() != 0) {
-                addActionError(getText("journalvoucher.accdetail.amountZero", new String[] { voucherDetails.getGlcodeDetail() }));
+                addActionError(getText("journalvoucher.accdetail.amountZero",
+                        new String[] { voucherDetails.getGlcodeDetail() }));
                 isValFailed = true;
-            }
-            else if (voucherDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) > 0
+            } else if (voucherDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) > 0
                     && voucherDetails.getCreditAmountDetail().compareTo(BigDecimal.ZERO) > 0) {
-                addActionError(getText("journalvoucher.accdetail.amount", new String[] { voucherDetails.getGlcodeDetail() }));
+                addActionError(
+                        getText("journalvoucher.accdetail.amount", new String[] { voucherDetails.getGlcodeDetail() }));
                 isValFailed = true;
-            }
-            else if ((voucherDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) > 0 || voucherDetails
-                    .getCreditAmountDetail().compareTo(BigDecimal.ZERO) > 0)
+            } else if ((voucherDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) > 0
+                    || voucherDetails.getCreditAmountDetail().compareTo(BigDecimal.ZERO) > 0)
                     && voucherDetails.getGlcodeDetail().trim().length() == 0) {
                 addActionError(getText("journalvoucher.accdetail.accmissing", new String[] { "" + index }));
                 isValFailed = true;
@@ -854,8 +841,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
      * private boolean validateOnlyRTGS() { boolean isValFailed = false; final String paymentRestrictionDateForCJV =
      * paymentService.getAppConfDateValForCJVPaymentModeRTGS(); Date rtgsModeRestrictionDateForCJV = null; try {
      * rtgsModeRestrictionDateForCJV = formatter.parse(paymentRestrictionDateForCJV); } catch (final ParseException e) { // TODO
-     * Auto-generated catch block  } if (voucherHeader.getVoucherDate().after(rtgsModeRestrictionDateForCJV)
-     * && !commonBean.getModeOfPayment().equalsIgnoreCase(MDP_RTGS)) { EntityType entity = null; new ArrayList<ValidationError>();
+     * Auto-generated catch block } if (voucherHeader.getVoucherDate().after(rtgsModeRestrictionDateForCJV) &&
+     * !commonBean.getModeOfPayment().equalsIgnoreCase(MDP_RTGS)) { EntityType entity = null; new ArrayList<ValidationError>();
      * Relation rel = null; String type = null; if (subLedgerlist != null && !subLedgerlist.isEmpty()) for (final VoucherDetails
      * voucherDetail : subLedgerlist) { try { type = voucherDetail.getDetailTypeName(); entity =
      * paymentService.getEntity(voucherDetail.getDetailType().getId(), voucherDetail.getDetailKeyId()); if (entity == null) throw
@@ -867,9 +854,9 @@ public class DirectBankPaymentAction extends BasePaymentAction {
      * (Relation) entity; type = rel.getRelationtype().getName(); } if (type.equalsIgnoreCase("Supplier") ||
      * type.equalsIgnoreCase("Contractor")) { isValFailed = true; throw new ValidationException( Arrays.asList(new
      * ValidationError(
-     * "Payment Mode of any bill having Contractor/Supplier subledger should  RTGS For Bill Date Greater than 01-Oct-2013",
-     * "Payment Mode of any bill having Contractor/Supplier subledger should  RTGS For Bill Date Greater than 01-Oct-2013"))); } }
-     * } return isValFailed; }
+     * "Payment Mode of any bill having Contractor/Supplier subledger should  RTGS For Bill Date Greater than 01-Oct-2013" ,
+     * "Payment Mode of any bill having Contractor/Supplier subledger should  RTGS For Bill Date Greater than 01-Oct-2013" ))); }
+     * } } return isValFailed; }
      */
 
     @ValidationErrorPage(value = VIEW)
@@ -897,21 +884,19 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         paymentheader = paymentActionHelper.sendForApproval(paymentheader, workflowBean);
 
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-            addActionMessage(getText("payment.voucher.rejected",
-                    new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState()
-                            .getOwnerPosition()) }));
+            addActionMessage(getText("payment.voucher.rejected", new String[] {
+                    paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
         if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-            addActionMessage(getText("payment.voucher.approved", new String[] { paymentService
-                    .getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
+            addActionMessage(getText("payment.voucher.approved", new String[] {
+                    paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
         if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(getText("payment.voucher.cancelled"));
         else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             if ("Closed".equals(paymentheader.getState().getValue()))
                 addActionMessage(getText("payment.voucher.final.approval"));
             else
-                addActionMessage(getText("payment.voucher.approved",
-                        new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState()
-                                .getOwnerPosition()) }));
+                addActionMessage(getText("payment.voucher.approved", new String[] {
+                        paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
             setAction(workflowBean.getWorkFlowAction());
 
         }
@@ -919,56 +904,44 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         return viewInboxItem();
     }
 
+    @Override
     public List<String> getValidActions() {
         List<String> validActions = Collections.emptyList();
-        List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+        final List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                 "DataEntryCutOffDate");
-        if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
-        {
+        if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty()) {
             if (null == paymentheader || null == paymentheader.getId()
-                    || paymentheader.getCurrentState().getValue().endsWith("NEW")) {
+                    || paymentheader.getCurrentState().getValue().endsWith("NEW"))
                 validActions = Arrays.asList(FORWARD, FinancialConstants.CREATEANDAPPROVE);
-            } else {
-                if (paymentheader.getCurrentState() != null) {
-                    validActions = this.customizedWorkFlowService.getNextValidActions(paymentheader
-                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
-                            getAdditionalRule(), paymentheader.getCurrentState().getValue(),
-                            getPendingActions(), paymentheader.getCreatedDate());
-                }
-            }
-        }
-        else
-        {
-            if (null == paymentheader || null == paymentheader.getId()
-                    || paymentheader.getCurrentState().getValue().endsWith("NEW")) {
-                validActions = Arrays.asList(FORWARD);
-            } else {
-                if (paymentheader.getCurrentState() != null) {
-                    validActions = this.customizedWorkFlowService.getNextValidActions(paymentheader
-                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
-                            getAdditionalRule(), paymentheader.getCurrentState().getValue(),
-                            getPendingActions(), paymentheader.getCreatedDate());
-                }
-            }
-        }
+            else if (paymentheader.getCurrentState() != null)
+                validActions = customizedWorkFlowService.getNextValidActions(paymentheader.getStateType(),
+                        getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
+                        paymentheader.getCurrentState().getValue(), getPendingActions(),
+                        paymentheader.getCreatedDate());
+        } else if (null == paymentheader || null == paymentheader.getId()
+                || paymentheader.getCurrentState().getValue().endsWith("NEW"))
+            validActions = Arrays.asList(FORWARD);
+        else if (paymentheader.getCurrentState() != null)
+            validActions = customizedWorkFlowService.getNextValidActions(paymentheader.getStateType(),
+                    getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
+                    paymentheader.getCurrentState().getValue(), getPendingActions(),
+                    paymentheader.getCreatedDate());
         return validActions;
     }
 
+    @Override
     public String getNextAction() {
         WorkFlowMatrix wfMatrix = null;
-        if (paymentheader.getId() != null) {
-            if (paymentheader.getCurrentState() != null) {
-                wfMatrix = this.customizedWorkFlowService.getWfMatrix(paymentheader.getStateType(),
-                        getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), paymentheader
-                                .getCurrentState().getValue(), getPendingActions(), paymentheader
-                                .getCreatedDate());
-            } else {
-                wfMatrix = this.customizedWorkFlowService.getWfMatrix(paymentheader.getStateType(),
+        if (paymentheader.getId() != null)
+            if (paymentheader.getCurrentState() != null)
+                wfMatrix = customizedWorkFlowService.getWfMatrix(paymentheader.getStateType(),
                         getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
-                        State.DEFAULT_STATE_VALUE_CREATED, getPendingActions(), paymentheader
-                                .getCreatedDate());
-            }
-        }
+                        paymentheader.getCurrentState().getValue(), getPendingActions(),
+                        paymentheader.getCreatedDate());
+            else
+                wfMatrix = customizedWorkFlowService.getWfMatrix(paymentheader.getStateType(),
+                        getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
+                        State.DEFAULT_STATE_VALUE_CREATED, getPendingActions(), paymentheader.getCreatedDate());
         return wfMatrix == null ? "" : wfMatrix.getNextAction();
     }
 
@@ -985,10 +958,11 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 
     @ValidationErrorPage(value = "beforeEdit")
     @SkipValidation
-    public String cancelPayment()
-    {
-        voucherHeader = (CVoucherHeader) persistenceService.getSession().load(CVoucherHeader.class, voucherHeader.getId());
-        paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?", voucherHeader);
+    public String cancelPayment() {
+        voucherHeader = persistenceService.getSession().load(CVoucherHeader.class,
+                voucherHeader.getId());
+        paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?",
+                voucherHeader);
         voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
         // persistenceService.setType(CVoucherHeader.class);
         paymentheader.transition(true).end();
@@ -1070,11 +1044,9 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     }
 
     public void setPaymentWorkflowService(final SimpleWorkflowService<Paymentheader> paymentWorkflowService) {
-        this.paymentWorkflowService = paymentWorkflowService;
     }
 
     public void setEgovCommon(final EgovCommon egovCommon) {
-        this.egovCommon = egovCommon;
     }
 
     public Integer getDepartmentId() {
@@ -1094,8 +1066,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     }
 
     public String getComments() {
-        return getText("payment.comments", new String[] { paymentheader.getPaymentAmount()
-                .setScale(2, BigDecimal.ROUND_HALF_EVEN).toPlainString() });
+        return getText("payment.comments", new String[] {
+                paymentheader.getPaymentAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toPlainString() });
     }
 
     public String getTypeOfAccount() {
@@ -1126,7 +1098,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         return chartOfAccounts;
     }
 
-    public void setChartOfAccounts(ChartOfAccounts chartOfAccounts) {
+    public void setChartOfAccounts(final ChartOfAccounts chartOfAccounts) {
         this.chartOfAccounts = chartOfAccounts;
     }
 
@@ -1134,10 +1106,11 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         return workflowBean;
     }
 
-    public void setWorkflowBean(WorkflowBean workflowBean) {
+    public void setWorkflowBean(final WorkflowBean workflowBean) {
         this.workflowBean = workflowBean;
     }
 
+    @Override
     public String getCurrentState() {
         return paymentheader.getState().getValue();
     }
@@ -1146,7 +1119,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         return cutOffDate;
     }
 
-    public void setCutOffDate(String cutOffDate) {
+    public void setCutOffDate(final String cutOffDate) {
         this.cutOffDate = cutOffDate;
     }
 }

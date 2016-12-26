@@ -361,5 +361,8 @@ public interface FinancialConstants {
     public static final String VOUCHER_TYPE_CONTINGENT = "contingentjv";
     public static final String VOUCHER_TYPE_FIXEDASSET = "fixedassetjv";
     public static final String VOUCHER_TYPE_PENSION = "pensionjv";
-
+    public static final String BALANCE_CHECK_CONTROL_TYPE = "Balance Check Control Type";
+    public static final String MANDATORY = "mandatory";
+    public static final String WARNING = "warning";
+    public static final String NONE = "none";
 }
