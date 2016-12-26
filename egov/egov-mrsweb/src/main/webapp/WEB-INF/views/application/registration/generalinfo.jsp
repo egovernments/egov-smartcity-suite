@@ -134,7 +134,7 @@
 	</div>
 
 	<div class="form-group">
-		<label class="col-sm-3 control-label"> <spring:message
+	<%-- 	<label class="col-sm-3 control-label"> <spring:message
 				code="lbl.fee.criteria" /><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
@@ -147,22 +147,20 @@
 				<form:options items="${feesList}" itemValue="id"
 					itemLabel="criteria" />
 			</form:select>
-			<%--  <form:hidden path="feeCriteria.criteria" name="feeCriteria" id="txt_feecriteria"/> --%>
+			 <form:hidden path="feeCriteria.criteria" name="feeCriteria" id="txt_feecriteria"/>
 			<form:errors path="feeCriteria" cssClass="add-margin error-msg" />
-		</div>
-		<label class="col-sm-2 control-label"> <spring:message
+		</div> --%>
+		<label class="col-sm-3 control-label"> <spring:message
 				code="lbl.marriage.fee" /><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
-			<form:input path="feePaid" id="txt-feepaid" type="text"
+			<form:input path="feePaid" id="txt-feepaid" type="text" readonly="true"
 				class="form-control low-width patternvalidation"
 				data-pattern="decimalvalue" placeholder="" autocomplete="off"
 				required="required" />
 			<form:errors path="feePaid" cssClass="add-margin error-msg" />
 		</div>
-	</div>
-	<div class="form-group">
-		<label class="col-sm-3 control-label"> <spring:message
+		<label class="col-sm-2 control-label"> <spring:message
 				code="lbl.marriage.venue" /><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
@@ -176,7 +174,9 @@
 			<%-- <form:input path="placeOfMarriage" id="txt-placeOfMarriage" type="text" class="form-control low-width is_valid_alphabet" placeholder="" autocomplete="off" required="required"/> --%>
 			<form:errors path="venue" cssClass="add-margin error-msg" />
 		</div>
-		<label class="col-sm-2 control-label" id="txt-venuelabel"
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label" id="txt-venuelabel"
 			required="required"> <spring:message
 				code="lbl.place.of.marriage" /><span class="mandatory"></span>
 		</label>
@@ -188,25 +188,7 @@
 
 			<form:errors path="placeOfMarriage" cssClass="add-margin error-msg" />
 		</div>
-
-	</div>
-
-	<div class="form-group">
-	<%--	<label class="col-sm-3 control-label"> <spring:message
-				code="lbl.law" /><span class="mandatory"></span>
-		</label>
-	 	<div class="col-sm-3">
-			<form:select path="marriageAct" id="select-marriageAct"
-				cssClass="form-control" cssErrorClass="form-control error"
-				required="required">
-				<form:option value="">
-					<spring:message code="lbl.default.option" />
-				</form:option>
-				<form:options items="${acts}" itemValue="id" itemLabel="name" />
-			</form:select>
-			<form:errors path="marriageAct" cssClass="add-margin error-msg" />
-		</div> --%>
-		<label class="col-sm-3 text-right"> <spring:message
+		<label class="col-sm-2 text-right"> <spring:message
 				code="lbl.marriage.photo" /><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 setimage">
@@ -231,6 +213,25 @@
 				</c:otherwise>
 			</c:choose>
 		</div>
+
+	</div>
+
+	<div class="form-group">
+	<%--	<label class="col-sm-3 control-label"> <spring:message
+				code="lbl.law" /><span class="mandatory"></span>
+		</label>
+	 	<div class="col-sm-3">
+			<form:select path="marriageAct" id="select-marriageAct"
+				cssClass="form-control" cssErrorClass="form-control error"
+				required="required">
+				<form:option value="">
+					<spring:message code="lbl.default.option" />
+				</form:option>
+				<form:options items="${acts}" itemValue="id" itemLabel="name" />
+			</form:select>
+			<form:errors path="marriageAct" cssClass="add-margin error-msg" />
+		</div> --%>
+		
 	</div>
 
 	<c:set value="husband" var="applicant" scope="request"></c:set>

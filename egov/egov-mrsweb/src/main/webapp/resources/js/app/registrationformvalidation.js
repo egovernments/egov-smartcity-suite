@@ -66,6 +66,29 @@ $('.mobileno-field').blur( function () {
 })*/
 
 
+
+$('#txt-dateOfMarriage').datepicker()
+    .on('changeDate', function(e) {
+    	
+    	var str=$('#txt-dateOfMarriage').val().toString(); 
+    	
+    	if(str.match(/(^(((0[1-9]|1[0-9]|2[0-8])[\/](0[1-9]|1[012]))|((29|30|31)[\/](0[13578]|1[02]))|((29|30)[\/](0[4,6,9]|11)))[\/](19|[2-9][0-9])\d\d$)|(^29[\/]02[\/](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)/g))
+    	{
+    		showMarriageFee();
+    	}
+    	else{
+    		Bootbox.show('Invalid date!');
+    	}
+});
+
+$('.month-field').blur( function () {
+	var month = parseInt( $(this).val() );
+	if (month != null && month != undefined && (month < 0 || month > 12)) {
+		bootbox.alert("Invalid month(s)..!!");
+		$(this).val('');
+	}
+})
+
 $('.month-field').blur( function () {
 	var month = parseInt( $(this).val() );
 	if (month != null && month != undefined && (month < 0 || month > 12)) {
@@ -99,16 +122,57 @@ $('a[id^="signature"]').click( function () {
 		link.click();		
 })
 
-$('#select-marriagefees').change( function () {
-		showFee();
-	})
-	
 	$('#select-registrationunit').change( function () {
 		showRegistrationUnit();
 	})
 	
 	
-	function showFee()
+/*	function showMarriageFeeCriteria()
+{
+			$.ajax({
+				type: "GET",
+				url: "/mrs/registration/calculatemrfee",
+				cache: true,
+				dataType: "json",
+				data:{
+					'dateOfMarriage' : $('#txt-dateOfMarriage').val()
+					}
+			}).done(function(value) {
+				$("#select-marriagefees option").prop('selected', false).filter(function() {
+				    return $(this).text() == value;
+				}).prop('selected', true);
+			});
+		}*/
+	
+function showMarriageFee()
+{
+			$.ajax({
+				type: "GET",
+				url: "/mrs/registration/calculatemarriagefee",
+				cache: true,
+				dataType: "json",
+				data:{
+					'dateOfMarriage' : $('#txt-dateOfMarriage').val()
+					},
+				success : function(value) {
+						if(value==1){
+							bootbox.alert("Application will not be accepted");
+							$('#txt-dateOfMarriage').val('')
+							$('#txt-feepaid').val('');
+						}
+						else
+							$('#txt-feepaid').val(value);
+							
+					},
+				error:function(value) {
+							bootbox.alert("Application will not be accepted beyond 90 days from the date of marriage");
+							$('#txt-dateOfMarriage').val('')
+							$('#txt-feepaid').val('');
+						}
+					});
+	
+}
+	/*function showFee()
 	   {
 	    if ($('#select-marriagefees').val() === '') {
 	    	$('#txt-feepaid').val('');
@@ -137,7 +201,7 @@ $('#select-marriagefees').change( function () {
 			}
 		
 	   }
-	
+	*/
 	function showRegistrationUnit()
 	{
 	 if ($('#select-registrationunit').val() === '') {

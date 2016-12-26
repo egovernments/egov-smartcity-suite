@@ -105,10 +105,10 @@ public class MarriageRegistrationIndexService {
                     ? registration.getMarriageAct().getDescription() : "");
             registrationSearch.setPlaceOfMarriage(
                     registration.getPlaceOfMarriage() != null ? registration.getPlaceOfMarriage() : "");
-            registrationSearch.setMarriageFeeCriteria(registration.getFeeCriteria().getCriteria() != null
+            registrationSearch.setMarriageFeeCriteria(registration.getFeeCriteria()!=null && registration.getFeeCriteria().getCriteria() != null
                     ? registration.getFeeCriteria().getCriteria() : "");
-            registrationSearch.setMarriageFeeAmount(registration.getFeeCriteria().getFees() != null
-                    ? BigDecimal.valueOf(registration.getFeeCriteria().getFees()) : BigDecimal.ZERO);
+            registrationSearch.setMarriageFeeAmount(registration.getFeePaid() != null
+                    ? BigDecimal.valueOf(registration.getFeePaid()) : BigDecimal.ZERO);
 
             if (registration.getHusband() != null) {
                 registrationSearch.setHusbandName(registration.getHusband().getFullName());
