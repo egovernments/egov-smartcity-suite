@@ -415,14 +415,10 @@ public class WaterChargeCollectionDocService {
                 .multiply(BigDecimal.valueOf(noOfMonths));
         if (proportionalDemand.compareTo(BigDecimal.ZERO) > 0)
             collectionIndexDetails.setCurrentYearTillDateDmd(proportionalDemand.setScale(0, BigDecimal.ROUND_HALF_UP));
-        // performance = (current year tilldate collection * 100)/(proportional
-        // demand)
         if (proportionalDemand.compareTo(BigDecimal.ZERO) > 0)
             collectionIndexDetails.setPerformance(
                     collectionIndexDetails.getCurrentYearTillDateColl().multiply(WaterTaxConstants.BIGDECIMAL_100)
                             .divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
-        // variance = ((currentYearCollection -
-        // lastYearCollection)*100)/lastYearCollection
         BigDecimal variation;
         if (collectionIndexDetails.getLastYearTillDateColl().compareTo(BigDecimal.ZERO) == 0)
             variation = WaterTaxConstants.BIGDECIMAL_100;
@@ -1654,10 +1650,8 @@ public class WaterChargeCollectionDocService {
             final List<WaterChargeDashBoardResponse> collDetails = new ArrayList<>();
             if (wardReceiptDetails.get(billCollIndex.getRevenueWard()) != null
                     && StringUtils.isNotBlank(billCollIndex.getRevenueWard()))
-                if (billCollectorWiseMap.isEmpty()) {
-                    collDetails.add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
-                    billCollectorWiseMap.put(billCollIndex.getBillCollector(), collDetails);
-                } else if (!billCollectorWiseMap.containsKey(billCollIndex.getBillCollector())) {
+                if (billCollectorWiseMap.isEmpty() || !billCollectorWiseMap.isEmpty()
+                        && !billCollectorWiseMap.containsKey(billCollIndex.getBillCollector())) {
                     collDetails.add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
                     billCollectorWiseMap.put(billCollIndex.getBillCollector(), collDetails);
                 } else
