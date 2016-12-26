@@ -37,8 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
-package org.egov.wtms.web.controller.reports;
+package org.egov.wtms.web.reports.entity;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -47,39 +46,28 @@ import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 
-public class DCBReportHelperAdaptor implements JsonSerializer<DCBReportResult> {
+public class WaterConnectionHelperAdaptor implements JsonSerializer<WaterConnectionReportResult> {
 
     @Override
-    public JsonElement serialize(final DCBReportResult dCBReportObj, final Type type, final JsonSerializationContext jsc) {
+    public JsonElement serialize(final WaterConnectionReportResult drillDownReportObject, final Type type,
+            final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
-        if (dCBReportObj != null) {
-            jsonObject.addProperty("boundaryName", dCBReportObj.getBoundaryName());
-            jsonObject.addProperty("id", dCBReportObj.getId());
-            jsonObject.addProperty("boundaryId", dCBReportObj.getBoundaryId());
-            jsonObject.addProperty("propertyid", dCBReportObj.getPropertyid());
-            jsonObject.addProperty("address", dCBReportObj.getAddress());
-            jsonObject.addProperty("hscno", dCBReportObj.getHscno());
-            jsonObject.addProperty("username", dCBReportObj.getUsername());
-            jsonObject.addProperty("zoneid", dCBReportObj.getZoneid());
-            jsonObject.addProperty("wardid", dCBReportObj.getWardid());
-            jsonObject.addProperty("block", dCBReportObj.getBlock());
-            jsonObject.addProperty("locality", dCBReportObj.getLocality());
-            jsonObject.addProperty("street", dCBReportObj.getStreet());
-            jsonObject.addProperty("connectiontype", dCBReportObj.getConnectiontype());
+        if (drillDownReportObject != null) {
 
-            jsonObject.addProperty("curr_demand", dCBReportObj.getCurr_demand());
-            jsonObject.addProperty("arr_demand", dCBReportObj.getArr_demand());
-            jsonObject.addProperty("no_of_users", dCBReportObj.getCountofconsumerno());
-            jsonObject.addProperty("total_demand", dCBReportObj.getTotal_demand());
-
-            jsonObject.addProperty("curr_coll", dCBReportObj.getCurr_coll());
-            jsonObject.addProperty("arr_coll", dCBReportObj.getArr_coll());
-            jsonObject.addProperty("total_coll", dCBReportObj.getTotal_coll());
-
-            jsonObject.addProperty("curr_balance", dCBReportObj.getCurr_balance());
-            jsonObject.addProperty("arr_balance", dCBReportObj.getArr_balance());
-            jsonObject.addProperty("total_balance", dCBReportObj.getTotal_balance());
-
+            jsonObject.addProperty("name", null != drillDownReportObject.getName() ? drillDownReportObject.getName()
+                    .toString() : "Not Available");
+            jsonObject.addProperty("changeofusage", null != drillDownReportObject.getChangeofusage() ? drillDownReportObject
+                    .getChangeofusage().toString() : "0");
+            jsonObject.addProperty("addconnection", null != drillDownReportObject.getAddconnection() ? drillDownReportObject
+                    .getAddconnection().toString() : "0");
+            jsonObject.addProperty("newconnection", null != drillDownReportObject.getNewconnection() ? drillDownReportObject
+                    .getNewconnection().toString() : "0");
+            jsonObject.addProperty("closeconnection", null != drillDownReportObject.getCloseconnection() ? drillDownReportObject
+                    .getCloseconnection().toString() : "0");
+            jsonObject.addProperty("reconnection", null != drillDownReportObject.getReconnection() ? drillDownReportObject
+                    .getReconnection().toString() : "0");
+            jsonObject.addProperty("total", null != drillDownReportObject.getTotal() ? drillDownReportObject.getTotal()
+                    .toString() : "0");
         }
         return jsonObject;
     }

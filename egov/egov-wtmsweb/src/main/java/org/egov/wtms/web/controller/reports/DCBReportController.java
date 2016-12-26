@@ -47,6 +47,8 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.web.reports.entity.DCBReportHelperAdaptor;
+import org.egov.wtms.web.reports.entity.DCBReportResult;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -183,7 +185,7 @@ public class DCBReportController {
         String result = null;
         result = new StringBuilder("{ \"data\":").append(toJSON(resultList, DCBReportResult.class, DCBReportHelperAdaptor.class)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(result, response.getWriter());
+        IOUtils.write(result, response.getWriter());    
     }
 
     private SQLQuery prepareQuery(final String paramList, final String connectionType, final String mode,

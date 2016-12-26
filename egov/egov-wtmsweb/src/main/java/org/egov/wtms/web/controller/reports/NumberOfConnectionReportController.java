@@ -43,7 +43,11 @@ import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.wtms.application.entity.WaterChargeMaterlizeView;
+import org.egov.wtms.application.service.ArrearRegisterReportService;
 import org.egov.wtms.masters.service.BoundaryWiseReportService;
+import org.egov.wtms.web.reports.entity.WaterConnectionHelperAdaptor;
+import org.egov.wtms.web.reports.entity.WaterConnectionReportResult;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +82,8 @@ public class NumberOfConnectionReportController {
     @Autowired
     private BoundaryService boundaryService;
 
+    @Autowired
+    private ArrearRegisterReportService arrearRegisterReportService;
 
     @Autowired
     public NumberOfConnectionReportController(final BoundaryWiseReportService drillDownReportService) {
@@ -114,13 +120,12 @@ public class NumberOfConnectionReportController {
     public @ResponseBody void springPaginationDataTablesUpdate(@RequestParam final String ward,
             @RequestParam final String block, final HttpServletRequest request, final HttpServletResponse response)
             throws IOException {
-
-        SQLQuery drillDownreportQuery = null;
-        String result = null;
-        drillDownreportQuery = boundaryWiseReportService.getDrillDownReportQuery(ward, block);
+        final List<WaterChargeMaterlizeView> propertyViewList = arrearRegisterReportService.prepareQueryforArrearRegisterReport(0l,
+               0l);
+        SQLQuery   drillDownreportQuery = boundaryWiseReportService.getDrillDownReportQuery(ward, block);
         drillDownreportQuery.setResultTransformer(Transformers.aliasToBean(WaterConnectionReportResult.class));
         final List<WaterConnectionReportResult> drillDownresult = drillDownreportQuery.list();
-        result = new StringBuilder("{ \"data\":").append(toJSON(drillDownresult, WaterConnectionReportResult.class,
+        String  result = new StringBuilder("{ \"data\":").append(toJSON(drillDownresult, WaterConnectionReportResult.class,
                 WaterConnectionHelperAdaptor.class)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());

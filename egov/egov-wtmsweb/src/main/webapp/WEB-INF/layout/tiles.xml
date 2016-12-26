@@ -363,4 +363,9 @@
         <put-attribute name="body" value="/WEB-INF/views/mobile/mobilepayment-form.jsp"/> 
     </definition>
     
+     <definition name="arrearRegister-report" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.connectionreport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/arrearRegister-report.jsp"/>
+    </definition>
+    
 </tiles-definitions>

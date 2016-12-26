@@ -37,31 +37,33 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.web.controller.reports;
+package org.egov.wtms.web.reports.entity;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-import org.egov.wtms.application.entity.GenerateConnectionBill;
+import org.egov.wtms.application.entity.DefaultersReport;
 
 import java.lang.reflect.Type;
 
-public class GenerateConnectionBillAdaptor implements JsonSerializer<GenerateConnectionBill> {
+public class DefaultersReportAdaptor implements JsonSerializer<DefaultersReport> {
 
     @Override
-    public JsonElement serialize(final GenerateConnectionBill generateConnectionBill, final Type typeOfSrc,
+    public JsonElement serialize(final DefaultersReport defaultersReport, final Type typeOfSrc,
             final JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("hscNo", generateConnectionBill.getHscNo());
-        jsonObject.addProperty("ownerName", generateConnectionBill.getOwnerName());
-        jsonObject.addProperty("propertyId", generateConnectionBill.getAssessmentNo());
-        jsonObject.addProperty("connectionType", generateConnectionBill.getConnectionType());
-        jsonObject.addProperty("houseNo", generateConnectionBill.getHouseNumber());
-        jsonObject.addProperty("locality", generateConnectionBill.getLocality());
-        jsonObject.addProperty("billNo", generateConnectionBill.getBillNo());
-        jsonObject.addProperty("billDate", generateConnectionBill.getBillDate().toString());
+        jsonObject.addProperty("hscNo", defaultersReport.getHscNo());
+        jsonObject.addProperty("ownerName", defaultersReport.getOwnerName());
+        jsonObject.addProperty("wardName", defaultersReport.getWardName());
+        jsonObject.addProperty("houseNo", defaultersReport.getHouseNo());
+        jsonObject.addProperty("locality", defaultersReport.getLocality());
+        jsonObject.addProperty("mobileNumber", defaultersReport.getMobileNumber());
+        jsonObject.addProperty("duePeriodFrom", defaultersReport.getDuePeriodFrom());
+        jsonObject.addProperty("arrearsDue", defaultersReport.getArrearsDue());
+        jsonObject.addProperty("currentDue", defaultersReport.getCurrentDue());
+        jsonObject.addProperty("totalDue", defaultersReport.getArrearsDue() + defaultersReport.getCurrentDue());
         return jsonObject;
     }
 

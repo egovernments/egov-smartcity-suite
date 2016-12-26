@@ -647,7 +647,6 @@ public class WaterConnectionDetailsService {
                     approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
                             waterConnectionDetails);
             else if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_APPROVED)
-                    || waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED)
                     || WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN
                             .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                     || !"".equals(workFlowAction) && workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)

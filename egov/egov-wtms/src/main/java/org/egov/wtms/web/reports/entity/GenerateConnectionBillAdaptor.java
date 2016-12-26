@@ -37,38 +37,31 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.web.controller.reports;
+package org.egov.wtms.web.reports.entity;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import org.egov.wtms.application.entity.GenerateConnectionBill;
+
 import java.lang.reflect.Type;
 
-public class WaterConnectionHelperAdaptor implements JsonSerializer<WaterConnectionReportResult> {
+public class GenerateConnectionBillAdaptor implements JsonSerializer<GenerateConnectionBill> {
 
     @Override
-    public JsonElement serialize(final WaterConnectionReportResult drillDownReportObject, final Type type,
-            final JsonSerializationContext jsc) {
+    public JsonElement serialize(final GenerateConnectionBill generateConnectionBill, final Type typeOfSrc,
+            final JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();
-        if (drillDownReportObject != null) {
-
-            jsonObject.addProperty("name", null != drillDownReportObject.getName() ? drillDownReportObject.getName()
-                    .toString() : "Not Available");
-            jsonObject.addProperty("changeofusage", null != drillDownReportObject.getChangeofusage() ? drillDownReportObject
-                    .getChangeofusage().toString() : "0");
-            jsonObject.addProperty("addconnection", null != drillDownReportObject.getAddconnection() ? drillDownReportObject
-                    .getAddconnection().toString() : "0");
-            jsonObject.addProperty("newconnection", null != drillDownReportObject.getNewconnection() ? drillDownReportObject
-                    .getNewconnection().toString() : "0");
-            jsonObject.addProperty("closeconnection", null != drillDownReportObject.getCloseconnection() ? drillDownReportObject
-                    .getCloseconnection().toString() : "0");
-            jsonObject.addProperty("reconnection", null != drillDownReportObject.getReconnection() ? drillDownReportObject
-                    .getReconnection().toString() : "0");
-            jsonObject.addProperty("total", null != drillDownReportObject.getTotal() ? drillDownReportObject.getTotal()
-                    .toString() : "0");
-        }
+        jsonObject.addProperty("hscNo", generateConnectionBill.getHscNo());
+        jsonObject.addProperty("ownerName", generateConnectionBill.getOwnerName());
+        jsonObject.addProperty("propertyId", generateConnectionBill.getAssessmentNo());
+        jsonObject.addProperty("connectionType", generateConnectionBill.getConnectionType());
+        jsonObject.addProperty("houseNo", generateConnectionBill.getHouseNumber());
+        jsonObject.addProperty("locality", generateConnectionBill.getLocality());
+        jsonObject.addProperty("billNo", generateConnectionBill.getBillNo());
+        jsonObject.addProperty("billDate", generateConnectionBill.getBillDate().toString());
         return jsonObject;
     }
 

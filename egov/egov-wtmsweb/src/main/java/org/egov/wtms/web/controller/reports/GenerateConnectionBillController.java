@@ -82,6 +82,7 @@ import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.masters.service.PropertyTypeService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.egov.wtms.web.reports.entity.GenerateConnectionBillAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;

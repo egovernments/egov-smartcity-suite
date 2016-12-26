@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.web.controller.reports;
+package org.egov.wtms.web.reports.entity;
 
 import java.lang.reflect.Type;
 
