@@ -38,7 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.wtms.web.reports.entity;
+package org.egov.wtms.reports.entity;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
