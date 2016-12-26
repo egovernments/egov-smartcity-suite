@@ -157,7 +157,7 @@ public class ArrearRegisterReportController {
         final List<WaterChargeMaterlizeView> propertyViewList = new ArrayList<>();
                 //arrearRegisterReportService.prepareQueryforArrearRegisterReport( Long.valueOf(wardId),Long.valueOf(localityId));
 
-        for (final WaterChargeMaterlizeView propMatView : propertyViewList)
+      /*  for (final WaterChargeMaterlizeView propMatView : propertyViewList)
             // If there is only one Arrear Installment
             if (propMatView.getInstDmdCollResponseList().size() == 1) {
                 final InstDmdCollResponse currIDCMatView = propMatView.getInstDmdCollResponseList()
@@ -195,7 +195,7 @@ public class ArrearRegisterReportController {
                         propertyWiseInfoList.add(propertyWiseInfoTotal);
                 }
             }
-
+*/
         arrearreportInfo.setZoneNo(strZoneNum);
         arrearreportInfo.setWardNo(strWardNum);
         arrearreportInfo.setBlockNo(strBlockNum);

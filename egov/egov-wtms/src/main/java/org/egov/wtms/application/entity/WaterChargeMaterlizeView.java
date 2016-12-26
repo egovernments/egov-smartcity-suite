@@ -41,7 +41,6 @@ package org.egov.wtms.application.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -50,7 +49,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.egov.demand.model.EgDemand;
@@ -122,8 +120,6 @@ public class WaterChargeMaterlizeView {
     @Column(name = "arr_balance")
     private BigDecimal arrearbalance;
 
-    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
-    List<InstDmdCollResponse> instDmdCollResponseList;
 
     public String getAddress() {
         return address;
@@ -301,14 +297,7 @@ public class WaterChargeMaterlizeView {
         this.approvalnumber = approvalnumber;
     }
 
-    public List<InstDmdCollResponse> getInstDmdCollResponseList() {
-        return instDmdCollResponseList;
-    }
-
-    public void setInstDmdCollResponseList(final List<InstDmdCollResponse> instDmdCollResponseList) {
-        this.instDmdCollResponseList = instDmdCollResponseList;
-    }
-
+  
     public Boundary getWardid() {
         return wardid;
     }
