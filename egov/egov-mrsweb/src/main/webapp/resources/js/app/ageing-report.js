@@ -55,6 +55,7 @@ $(document)
 					function callAjaxSearch() {
 						$('.report-section').removeClass('display-hide');
 						var year = $('#year').val();
+						
 						var reportdatatable = $("#ageingreport_table")
 								.dataTable(
 										{

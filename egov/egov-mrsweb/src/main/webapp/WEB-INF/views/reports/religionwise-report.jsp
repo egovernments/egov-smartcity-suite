@@ -110,9 +110,41 @@
 											<form:options items="${yearlist}" />
 										</form:select>
 									</div>
+															<label for="field-1" class="col-sm-2 control-label"><spring:message code="lbl.registrationunit" />
+						</label>
+						<div class="col-sm-3 add-margin">
+									<form:select path="marriageRegistrationUnit.id"
+										id="select-registrationunit" cssClass="form-control"
+										cssErrorClass="form-control error" >
+										<form:option value="">
+											<spring:message code="lbl.default.option" />
+										</form:option>
+										<form:options items="${marriageRegistrationUnit}"
+											itemValue="id" itemLabel="name" />
+									</form:select>
+									<form:errors path="marriageRegistrationUnit.id" cssClass="add-margin error-msg"/>
+						</div>
 								</div>
+								
 								</div>
 						</div>
+						<div class="row">	
+					<div class="form-group">
+					
+					<label class="col-sm-2 control-label">
+			<spring:message code="lbl.zone"/>
+		</label>
+		<div class="col-sm-3 add-margin">	
+			<form:select path="zone.id" id="select-zones" cssClass="form-control" 
+						cssErrorClass="form-control error">
+                 <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
+                 <form:options items="${zones}" itemValue="id" itemLabel="name"/>
+             </form:select>
+            <form:errors path="zone.id" cssClass="add-margin error-msg"/>
+					
+			</div>
+			</div>
+			</div>
 					</div>
 			
 			

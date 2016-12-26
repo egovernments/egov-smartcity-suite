@@ -64,6 +64,9 @@
 							<th><spring:message code="lbl.date.of.marriage" /></th>
 							<th><spring:message code="lbl.act" /></th>
 							<th><spring:message code="lbl.place.of.marriage" /></th>
+							<th><spring:message code="lbl.registrationunit" /></th>
+							<th><spring:message code="lbl.zone" /></th>
+							
 						</tr>
 					</thead>
 					<tbody>
@@ -78,6 +81,8 @@
 								<td><c:out value="${reg.dateOfMarriage}" /></td>
 								<td><c:out value="${reg.marriageAct.name}" /></td>
 								<td><c:out value="${reg.placeOfMarriage}" /></td>
+								<td><c:out value="${reg.marriageRegistrationUnit.name}" /></td>
+								<td><c:out value="${reg.zone.name}" /></td>
 							</tr>
 						</c:forEach>
 					</tbody>

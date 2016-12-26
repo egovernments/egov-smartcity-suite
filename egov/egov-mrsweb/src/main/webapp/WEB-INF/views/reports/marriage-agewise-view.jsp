@@ -62,9 +62,11 @@
 							<th><spring:message code="lbl.applicant.name" /></th>
 							<th><spring:message code="lbl.age" /></th>
 							<th><spring:message code="lbl.date.of.marriage" /></th>
-						<%-- 	<th><spring:message code="lbl.act" /></th> --%>
+							<%----<th><spring:message code="lbl.act" /></th>--%>
 							<th><spring:message code="lbl.place.of.marriage" /></th>
 							<th><spring:message code="lbl.residence.address" /></th>
+							<th>Registration Unit</th>
+							<th>zone</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -102,6 +104,8 @@
 											<c:out value="${reg.wife.contactInfo.residenceAddress}" />
 										</c:otherwise>
 									</c:choose></td>
+										<td><c:out value="${reg.marriageRegistrationUnit.name}" /></td>
+								<td><c:out value="${reg.zone.name}" /></td>
 							</tr>
 						</c:forEach>
 					</tbody>

@@ -48,6 +48,7 @@
 	<input type="hidden" name="month" id="hdnMonth" value="${month}">
 	<input type="hidden" name="registrationUnit" id="hdnRegistrationUnit" value="${registrationUnit}">
 	<input type="hidden" name="applicationType" id="hdnApplicationType" value="${applicationType}">
+
 <br />
 <br />
 <div class="row display-hide report-section" id="regs_container">

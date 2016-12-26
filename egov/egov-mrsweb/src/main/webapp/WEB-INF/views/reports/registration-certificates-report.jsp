@@ -115,6 +115,21 @@
             				<form:errors path="toDate" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
+					<div class="form-group">
+											<label for="field-1" class="col-sm-2 control-label"><spring:message code="lbl.registrationunit" />
+						</label>
+						<div class="col-sm-3 add-margin">
+									<form:select path="registration.marriageRegistrationUnit"
+										id="select-registrationunit" cssClass="form-control"
+										cssErrorClass="form-control error" >
+										<form:option value="">
+											<spring:message code="lbl.default.option" />
+										</form:option>
+										<form:options items="${marriageRegistrationUnit}"
+											itemValue="id" itemLabel="name" />
+									</form:select>
+									<form:errors path="registration.marriageRegistrationUnit" cssClass="add-margin error-msg"/>
+						</div>
 				</div>
 			</div>
 		
@@ -157,8 +172,8 @@
 	    	</tbody>
 		</table>
 	</div>
+</div>
 </div> 
-
 	
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">	

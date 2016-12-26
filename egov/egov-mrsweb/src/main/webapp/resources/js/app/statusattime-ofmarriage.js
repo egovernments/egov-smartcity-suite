@@ -59,7 +59,8 @@ function callAjaxSearch() {
 	var month = currentDate.getMonth() + 1;
 	var year = currentDate.getFullYear();
 	var currentDate = day + "-" + month + "-" + year;
-
+	var zone = $('#zones').val();
+	var regunit = $('#registrationunit').val();
 	var from = $('#fromDate').val();
 	var to = $('#toDate').val();
 
@@ -123,6 +124,10 @@ function callAjaxSearch() {
 												+ 'fromDate='+from
 												+ '&'
 												+ 'toDate='+to
+												+ '&'
+												+ 'regunit='+regunit
+												+ '&'
+												+ 'zone='+zone
 												+ '\')" href="javascript:void(0);">'
 												+ row.married + '</a>':row.married;
 									},
@@ -140,6 +145,10 @@ function callAjaxSearch() {
 												+ 'fromDate='+from
 												+ '&'
 												+ 'toDate='+to
+												+ '&'
+												+ 'regunit='+regunit
+												+ '&'
+												+ 'zone='+zone
 												+ '\')" href="javascript:void(0);">'
 												+ row.unmarried + '</a>':row.unmarried;
 									},
@@ -157,6 +166,9 @@ function callAjaxSearch() {
 												+ 'fromDate='+from
 												+ '&'
 												+ 'toDate='+to
+												+ 'regunit='+regunit
+												+ '&'
+												+ 'zone='+zone
 												+ '\')" href="javascript:void(0);">'
 												+ row.divorced + '</a>':row.divorced;
 									},
@@ -174,6 +186,10 @@ function callAjaxSearch() {
 												+ 'fromDate='+from
 												+ '&'
 												+ 'toDate='+to
+												+ '&'
+												+ 'regunit='+regunit
+												+ '&'
+												+ 'zone='+zone
 												+ '\')" href="javascript:void(0);">'
 												+ row.widower + '</a>':row.widower;
 									},

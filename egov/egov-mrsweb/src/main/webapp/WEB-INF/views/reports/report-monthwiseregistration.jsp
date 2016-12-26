@@ -88,6 +88,23 @@
 										cssClass="add-margin error-msg" />
 								</div>
 							</div>
+							<div class="row">	
+					<div class="form-group">
+					
+					<label class="col-sm-2 control-label">
+			<spring:message code="lbl.zone"/>
+		</label>
+		<div class="col-sm-3 add-margin">	
+			<form:select path="zone.id" id="zones" cssClass="form-control" 
+						cssErrorClass="form-control error">
+                 <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
+                 <form:options items="${zones}" itemValue="id" itemLabel="name"/>
+             </form:select>
+            <form:errors path="zone.id" cssClass="add-margin error-msg"/>
+					
+			</div>
+			</div>
+			</div>
 							<%-- <div class="form-group">
 
 								<label class="col-sm-2 control-label"> <spring:message
@@ -165,18 +182,18 @@
 
 
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css?rnd=${app_release_no}' context='/egi'/>" />
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css?rnd=${app_release_no}' context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/monthlyregistration-report.js?rnd=${app_release_no}'/> "></script>

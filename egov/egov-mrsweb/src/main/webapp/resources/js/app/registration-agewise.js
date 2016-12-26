@@ -55,6 +55,9 @@ $(document)
 					function callAjaxSearch() {
 						$('.report-section').removeClass('display-hide');
 						var year = $('#year').val();
+						var zone = $('#zones').val();
+						var regunit = $('#registrationunit').val();
+						
 						var reportdatatable = $("#regagewisetable_table")
 								.dataTable(
 										{
@@ -106,13 +109,16 @@ $(document)
 														render : function(data,
 																type, row, meta) {
 															if(row.husbandcount!=0){
-															var applicant = 'husband';
-															return '<a onclick="openPopup(\'/mrs/report/age-wise/view/'
-																	+ year
-																	+ '/'
-																	+ applicant
-																	+ '/'
-																	+ row.age
+															return '<a onclick="openPopup(\'/mrs/report/age-wise/view?'
+																	+ 'year='+year
+																	+ '&'
+																	+ 'applicantType=husband'
+																	+ '&'
+																	+ 'agerange='+row.age
+																	+ '&'
+																	+ 'regunit='+regunit
+																	+ '&'
+																	+ 'zone='+zone
 																	+ '\')" href="javascript:void(0);">'
 																	+ row.husbandcount
 																	+ '</a>';
@@ -127,17 +133,20 @@ $(document)
 														render : function(data,
 																type, row, meta) {
 															if(row.wifecount!=0){
-															var applicant = 'wife';
-															return '<a onclick="openPopup(\'/mrs/report/age-wise/view/'
-																	+ year
-																	+ '/'
-																	+ applicant
-																	+ '/'
-																	+ row.age
-																	+ '\')" href="javascript:void(0);">'
-																	+ row.wifecount
-																	+ '</a>';
-															}
+																return '<a onclick="openPopup(\'/mrs/report/age-wise/view?'
+																		+ 'year='+year
+																		+ '&'
+																		+ 'applicantType=wife'
+																		+ '&'
+																		+ 'agerange='+row.age
+																		+ '&'
+																		+ 'regunit='+regunit
+																		+ '&'
+																		+ 'zone='+zone
+																		+ '\')" href="javascript:void(0);">'
+																		+ row.wifecount
+																		+ '</a>';
+																}
 															else
 																return row.wifecount;
 														},
@@ -153,6 +162,7 @@ $(document)
 														if (data.length > 0) {
 															updateTotalFooter(2, api);
 															updateTotalFooter(3, api);
+															
 														}
 													},
 													"aoColumnDefs" : [ {
