@@ -65,7 +65,6 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
@@ -158,9 +157,6 @@ public class LineEstimateService {
 
     @Autowired
     private LineEstimateDetailService lineEstimateDetailService;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private EstimateService estimateService;
@@ -400,8 +396,8 @@ public class LineEstimateService {
             result.setEstimateAmount(led.getEstimateAmount());
             result.setEstimateNumber(led.getEstimateNumber());
             result.setNameOfWork(led.getNameOfWork());
-            if (led.getLineEstimate().getAdminSanctionBy() != null)
-                result.setAdminSanctionBy(led.getLineEstimate().getAdminSanctionBy().getName());
+            if (!led.getLineEstimate().getAdminSanctionBy().isEmpty())
+                result.setAdminSanctionBy(led.getLineEstimate().getAdminSanctionBy());
             result.setActualEstimateAmount(led.getActualEstimateAmount());
             result.setWorkIdentificationNumber(led.getProjectCode().getCode());
             lineEstimateForLoaSearchResults.add(result);
@@ -556,7 +552,7 @@ public class LineEstimateService {
 
     private void setAdminSanctionByAndDate(final LineEstimate lineEstimate) {
         lineEstimate.setAdminSanctionDate(new Date());
-        lineEstimate.setAdminSanctionBy(securityUtils.getCurrentUser());
+        lineEstimate.setAdminSanctionBy(securityUtils.getCurrentUser().getName());
     }
 
     private void setTechnicalSanctionBy(final LineEstimate lineEstimate) {
@@ -779,15 +775,6 @@ public class LineEstimateService {
         lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                 LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
         lineEstimate.setSpillOverFlag(true);
-
-        final List<Assignment> assignments = assignmentService
-                .findPrimaryAssignmentForDesignationName(WorksConstants.DESIGNATION_COMMISSIONER);
-
-        // TODO: check with BA if it is correct to get commissioner by current date
-        if (assignments != null && !assignments.isEmpty()) {
-            final User adminUser = userService.getUserById(assignments.get(0).getEmployee().getId());
-            lineEstimate.setAdminSanctionBy(adminUser);
-        }
 
         if (lineEstimate.getLineEstimateNumber() == null || lineEstimate.getLineEstimateNumber().isEmpty()) {
 

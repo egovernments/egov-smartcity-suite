@@ -152,9 +152,7 @@ public class LineEstimate extends StateAware {
     @Temporal(TemporalType.DATE)
     private Date adminSanctionDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "adminSanctionBy")
-    private User adminSanctionBy;
+    private String adminSanctionBy;
 
     @OrderBy("id")
     @OneToMany(mappedBy = "lineEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = LineEstimateDetails.class)
@@ -381,14 +379,6 @@ public class LineEstimate extends StateAware {
         this.adminSanctionDate = adminSanctionDate;
     }
 
-    public User getAdminSanctionBy() {
-        return adminSanctionBy;
-    }
-
-    public void setAdminSanctionBy(final User adminSanctionBy) {
-        this.adminSanctionBy = adminSanctionBy;
-    }
-
     public Beneficiary getBeneficiary() {
         return beneficiary;
     }
@@ -555,5 +545,13 @@ public class LineEstimate extends StateAware {
 
     public void setTempLineEstimateDetails(final List<LineEstimateDetails> tempLineEstimateDetails) {
         this.tempLineEstimateDetails = tempLineEstimateDetails;
+    }
+
+    public String getAdminSanctionBy() {
+        return adminSanctionBy;
+    }
+
+    public void setAdminSanctionBy(final String adminSanctionBy) {
+        this.adminSanctionBy = adminSanctionBy;
     }
 }

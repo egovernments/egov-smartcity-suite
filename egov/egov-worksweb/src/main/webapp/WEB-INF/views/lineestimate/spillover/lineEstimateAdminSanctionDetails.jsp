@@ -58,7 +58,7 @@
 					<th><spring:message code="lbl.councilresolutiondate"/></th>
 					<th><spring:message code="lbl.administrativesanctionnumber"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.adminsanctiondate"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.admin.authority"/></th>			
+					<th><spring:message code="lbl.admin.authority"/><span class="mandatory"></span></th></th>		
 				</tr>
 			</thead>
 			<tbody >
@@ -80,7 +80,8 @@
 						<form:errors path="adminSanctionDate" cssClass="add-margin error-msg" />
 					</td>
 					<td>
-						<spring:message code="lbl.commissioner"/>
+						<form:input path="adminSanctionBy" id="adminSanctionBy" class="form-control table-input text-left is_valid_alphabet" maxlength="100" required="required"/>
+						<form:errors path="adminSanctionBy" cssClass="add-margin error-msg" />
 					</td>
 				</tr>
 			</tbody>

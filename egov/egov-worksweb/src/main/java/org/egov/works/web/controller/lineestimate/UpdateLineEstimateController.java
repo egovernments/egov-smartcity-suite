@@ -160,7 +160,6 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         lineEstimate.setTempLineEstimateDetails(lineEstimate.getLineEstimateDetails());
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString()))
             setDropDownValues(model);
-        model.addAttribute("adminsanctionbydesignation", worksUtils.getUserDesignation(lineEstimate.getAdminSanctionBy()));
         return loadViewData(model, request, lineEstimate);
     }
 
@@ -171,7 +170,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         final LineEstimate lineEstimate = getLineEstimate(lineEstimateId);
 
         final String responsePage = loadViewData(model, request, lineEstimate);
-        model.addAttribute("adminsanctionbydesignation", worksUtils.getUserDesignation(lineEstimate.getAdminSanctionBy()));
+        model.addAttribute("adminsanctionbydesignation", lineEstimate.getAdminSanctionBy());
         model.addAttribute("technicalsanctionbydesignation",
                 worksUtils.getUserDesignation(lineEstimate.getTechnicalSanctionBy()));
         model.addAttribute("createdbybydesignation", worksUtils.getUserDesignation(lineEstimate.getCreatedBy()));
