@@ -130,11 +130,11 @@ public class CollectionDocumentElasticSearchService {
 
         final ValueCount aggr = collCountAggr.get("services_count");
         searchQueryColl = new NativeSearchQueryBuilder()
-                .withIndices(COLLECTION_INDEX_NAME)
-                .withFields(BILLING_SERVICE)
-                .withPageable(
-                        new PageRequest(0, Long.valueOf(aggr.getValue()).intValue() == 0 ? 1 : Long.valueOf(
-                                aggr.getValue()).intValue())).build();
+        .withIndices(COLLECTION_INDEX_NAME)
+        .withFields(BILLING_SERVICE)
+        .withPageable(
+                new PageRequest(0, Long.valueOf(aggr.getValue()).intValue() == 0 ? 1 : Long.valueOf(
+                        aggr.getValue()).intValue())).build();
         final List<CollectionDocument> list = elasticsearchTemplate.queryForList(searchQueryColl,
                 CollectionDocument.class);
         final Set<String> services = new TreeSet<>();
@@ -151,12 +151,13 @@ public class CollectionDocumentElasticSearchService {
      * @param serviceDetails
      * @return BigDecimal
      */
-    public BigDecimal getConsolidatedCollForYears(final Date fromDate, final Date toDate, List<String> serviceDetails) {
+    public BigDecimal getConsolidatedCollForYears(final Date fromDate, final Date toDate,
+            final List<String> serviceDetails) {
         BoolQueryBuilder boolQuery = QueryBuilders
                 .boolQuery()
                 .must(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                         .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
-                .mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
+                        .mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
         if (!serviceDetails.isEmpty())
             boolQuery = boolQuery.must(QueryBuilders.termsQuery(BILLING_SERVICE, serviceDetails));
         final SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME)
@@ -177,7 +178,7 @@ public class CollectionDocumentElasticSearchService {
      * @param serviceDetails
      * @return Map
      */
-    public Map<String, BigDecimal> getFinYearsCollByService(List<String> serviceDetails) {
+    public Map<String, BigDecimal> getFinYearsCollByService(final List<String> serviceDetails) {
         /**
          * As per Elastic Search functionality, to get the total collections
          * between 2 dates, add a day to the endDate and fetch the results
@@ -218,7 +219,7 @@ public class CollectionDocumentElasticSearchService {
                     collectionDashBoardRequest.getDistrictName()));
         if (StringUtils.isNotBlank(collectionDashBoardRequest.getUlbGrade()))
             boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery(CITY_GRADE, collectionDashBoardRequest.getUlbGrade()));
+            .filter(QueryBuilders.matchQuery(CITY_GRADE, collectionDashBoardRequest.getUlbGrade()));
         if (StringUtils.isNotBlank(collectionDashBoardRequest.getUlbCode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_CODE, collectionDashBoardRequest.getUlbCode()));
 
@@ -238,7 +239,7 @@ public class CollectionDocumentElasticSearchService {
         Date toDate;
         BigDecimal todayColl;
         BigDecimal tillDateColl;
-        BigDecimal variance = BigDecimal.ZERO;
+        BigDecimal variance;
         final Long startTime = System.currentTimeMillis();
         final CollectionDocumentDetails collectionDocumentDetails = new CollectionDocumentDetails();
         /**
@@ -294,8 +295,8 @@ public class CollectionDocumentElasticSearchService {
             variance = CollectionConstants.BIGDECIMAL_100;
         else
             variance = collectionDocumentDetails.getCytdColl().subtract(collectionDocumentDetails.getLytdColl())
-                    .multiply(CollectionConstants.BIGDECIMAL_100)
-                    .divide(collectionDocumentDetails.getLytdColl(), 1, BigDecimal.ROUND_HALF_UP);
+            .multiply(CollectionConstants.BIGDECIMAL_100)
+            .divide(collectionDocumentDetails.getLytdColl(), 1, BigDecimal.ROUND_HALF_UP);
         collectionDocumentDetails.setLyVar(variance);
         final Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
@@ -320,8 +321,8 @@ public class CollectionDocumentElasticSearchService {
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDashBoardRequest);
         boolQuery = boolQuery.filter(
                 QueryBuilders.rangeQuery(RECEIPT_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
-                        .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false)).mustNot(
-                QueryBuilders.matchQuery(STATUS, CANCELLED));
+                .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false)).mustNot(
+                        QueryBuilders.matchQuery(STATUS, CANCELLED));
         if (StringUtils.isNotBlank(cityName))
             if (!isWard)
                 boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_NAME, cityName));
@@ -400,25 +401,6 @@ public class CollectionDocumentElasticSearchService {
         // total
         final Map<String, BigDecimal> totalCollMap = getCollectionAndDemandValues(collectionDashBoardRequest, fromDate,
                 toDate, TOTAL_AMOUNT, aggregationField, serviceDetail);
-        /**
-         * For collection and demand between the date ranges if dates are sent
-         * in the request, consider fromDate and toDate+1 , else calculate from
-         * current year start date till current date+1 day
-         */
-        if (StringUtils.isNotBlank(collectionDashBoardRequest.getFromDate())
-                && StringUtils.isNotBlank(collectionDashBoardRequest.getToDate())) {
-            fromDate = DateUtils.getDate(collectionDashBoardRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
-            toDate = org.apache.commons.lang3.time.DateUtils.addDays(
-                    DateUtils.getDate(collectionDashBoardRequest.getToDate(), DATE_FORMAT_YYYYMMDD), 1);
-        } else {
-            fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
-            toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
-        }
-        /**
-         * For current year's till date collection, if property type is given,
-         * fetch the sum of totalCollection from the Property Tax index, else
-         * sum of totalAmount from Collection index
-         */
         Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken by getCollectionAndDemandValues() is : " + timeTaken + MILLISECS);
@@ -470,8 +452,8 @@ public class CollectionDocumentElasticSearchService {
 
         boolQuery = boolQuery.filter(
                 QueryBuilders.rangeQuery(RECEIPT_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
-                        .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false)).mustNot(
-                QueryBuilders.matchQuery(STATUS, CANCELLED));
+                .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false)).mustNot(
+                        QueryBuilders.matchQuery(STATUS, CANCELLED));
 
         final AggregationBuilder aggregation = AggregationBuilders.terms(BY_CITY).field(aggregationField).size(120)
                 .subAggregation(AggregationBuilders.sum("total").field(fieldName));
@@ -547,7 +529,7 @@ public class CollectionDocumentElasticSearchService {
                 // to respective financial year, add values to the map
                 if (DateUtils.between(dateForMonth, finYearStartDate, finYearEndDate)
                         && BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
-                                .compareTo(BigDecimal.ZERO) > 0)
+                        .compareTo(BigDecimal.ZERO) > 0)
                     monthwiseColl.put(monthName,
                             BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
             }
@@ -622,8 +604,8 @@ public class CollectionDocumentElasticSearchService {
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDashBoardRequest);
         boolQuery = boolQuery.filter(
                 QueryBuilders.rangeQuery(RECEIPT_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
-                        .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false)).mustNot(
-                QueryBuilders.matchQuery(STATUS, CANCELLED));
+                .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false)).mustNot(
+                        QueryBuilders.matchQuery(STATUS, CANCELLED));
         if (serviceDetail.isEmpty())
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(BILLING_SERVICE, serviceDetail));
 
@@ -634,16 +616,16 @@ public class CollectionDocumentElasticSearchService {
         final SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME)
                 .withQuery(boolQuery).addAggregation(monthAggregation).build();
 
-        final Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl,
-                response -> response.getAggregations());
-        return collAggr;
+        return elasticsearchTemplate.query(searchQueryColl, response -> response.getAggregations());
     }
 
     public List<TaxPayerDashBoardDetails> returnUlbWiseAggregationResults(
             final CollectionDashBoardRequest collectionDashBoardRequest, final String indexName, final Boolean order,
-            final String orderingAggregationName, final int size, final List<String> serviceDetail) {
+            final String orderingAggregationName, final int size, final List<String> serviceDetails) {
         final List<TaxPayerDashBoardDetails> taxPayers = new ArrayList<>();
-        final BoolQueryBuilder boolQuery = prepareWhereClause(collectionDashBoardRequest);
+        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDashBoardRequest);
+        if (!serviceDetails.isEmpty())
+            boolQuery = boolQuery.filter(QueryBuilders.termsQuery(BILLING_SERVICE, serviceDetails));
         String groupingField;
         if (StringUtils.isNotBlank(collectionDashBoardRequest.getUlbCode())
                 || StringUtils.isNotBlank(collectionDashBoardRequest.getType())
@@ -691,14 +673,14 @@ public class CollectionDocumentElasticSearchService {
                     BigDecimal.ROUND_HALF_UP);
             taxDetail.setCytdColl(totalCollections);
             final BigDecimal lastYearCollection = getCollectionBetweenDates(collectionDashBoardRequest,
-                    lastYearFromDate, lastYearToDate, fieldName, serviceDetail, isWard);
+                    lastYearFromDate, lastYearToDate, fieldName, serviceDetails, isWard);
             taxDetail.setLytdColl(lastYearCollection);
             BigDecimal variation;
             if (lastYearCollection.compareTo(BigDecimal.ZERO) == 0)
                 variation = CollectionConstants.BIGDECIMAL_100;
             else
                 variation = totalCollections.subtract(lastYearCollection).multiply(CollectionConstants.BIGDECIMAL_100)
-                        .divide(lastYearCollection, 1, BigDecimal.ROUND_HALF_UP);
+                .divide(lastYearCollection, 1, BigDecimal.ROUND_HALF_UP);
             taxDetail.setLyVar(variation);
             taxPayers.add(taxDetail);
         }

@@ -121,7 +121,6 @@ public class TaxPayerDashBoardDetails implements Comparable<TaxPayerDashBoardDet
 
     @Override
     public int compareTo(TaxPayerDashBoardDetails object) {
-        // TODO Auto-generated method stub
         return cytdColl.compareTo(object.getCytdColl());
     }
 
