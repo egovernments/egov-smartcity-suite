@@ -37,16 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-function validatePan(panField) {
-	var panValue =panField.value;	  
-	var regex1=/^[A-Z]{5}\d{4}[A-Z]{1}$/;
-	
-	if(!regex1.test(panValue)) {
-		bootbox.alert('Please enter a valid PAN');
-	  panField.value = "";
-	  return false;
-	}
-}
+
 function numbersonly(myfield, e) {
 	var key;
 	var keychar;
@@ -77,11 +68,6 @@ function setupAjaxDivision(elem) {
 		zoneId : zone_id
 	});
 }
-function setupAjaxArea(elem) {
-	// will be uncommented once area is loaded
-	// wardid=elem.options[elem.selectedIndex].value;
-	// populatearea({divisionId:wardid});
-}
 
 function setupLicenseeAjaxDivision(elem) {
 	zone_id = elem.options[elem.selectedIndex].value;
@@ -89,81 +75,6 @@ function setupLicenseeAjaxDivision(elem) {
 		zoneId : zone_id
 	});
 }
-function setupLicenseeAjaxArea(elem) {
-	// will be uncommented once area is loaded
-	// wardid=elem.options[elem.selectedIndex].value;
-	// populatearea({divisionId:wardid});
-}
-
-function waterMarkTextIn(styleId, value) {
-	var txt = document.getElementById(styleId).value;
-	if (txt == value) {
-		document.getElementById(styleId).value = '';
-		document.getElementById(styleId).style.color = '';
-	}
-}
-
-function waterMarkTextOut(styleId, value) {
-	var txt = document.getElementById(styleId).value;
-	if (txt == '') {
-		document.getElementById(styleId).value = value;
-		document.getElementById(styleId).style.color = 'DarkGray';
-	}
-}
-
-function waterMarkInitialize(styleId, value) {
-	if (document.getElementById(styleId).value == '') {
-		document.getElementById(styleId).value = value;
-		document.getElementById(styleId).style.color = 'DarkGray';
-	}
-}
-
-function chkNum(obj, checkAssessee) {
-	obj.value = obj.value.replace(/[^0-9]/g, '') // numbers only
-	if (checkAssessee) {
-		checkAssesseeExists();
-	}
-}
-function chkNum(obj) {
-	obj.value = obj.value.replace(/[^0-9]/g, '') // numbers only
-}
-function chkDecimal(obj) {
-	obj.value = obj.value.replace(/[^0-9.]/g, '') // numbers only
-	obj.value = obj.value.replace(/[.]+/g, '.')
-}
-
-function showDocumentManager() {
-	var docNum = document.getElementById("docNumber").value;
-	showDocumentManagerView(docNum);
-}
-
-function showDocumentManagerForDoc(docId) {
-	var docNum = document.getElementById(docId).value;
-	showDocumentManagerView(docNum);
-}
-
-function showDocumentManagerView(docNumber) {
-	var url;
-	if (docNumber == null || docNumber == '' || docNumber == 'To be assigned' || docNumber == 'null') {
-		url = "/egtradelicense/citizen/uploaddocument/uploadDocumentLicense.action?moduleName=egtradelicense";
-	} else {
-		url = "/egtradelicense/citizen/uploaddocument/uploadDocumentLicense-editDocument.action?docNumber="+ docNumber + "&moduleName=egtradelicense";
-	}
-	window.open(url, 'docupload', 'width=1000,height=400');
-}
-
-var currentDocId = null;
-function docNumberUpdater(docNumber) {
-	if (currentDocId != null) {
-		document.getElementById(currentDocId).value = docNumber;
-		currentDocId=null;
-    }
-}
-
-function updateCurrentDocId(docId) {
-	currentDocId = docId;
-}
-
 function refreshInbox() {		
 	if(opener && opener.top.document.getElementById('inboxframe')) {
 		opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
@@ -195,20 +106,6 @@ function numbersforamount(myfield, e)
 		return true;
 	else
 		return false;
-}
-
-function lessThanOrEqualToCurrentDate(dt) {
-	if(dt.value == "") {
-		return;
-	}
-	var selectedDate = dt.value.split("/");
-	var currentDate = new Date();
-	var date = new Date(selectedDate[2],eval(selectedDate[1]-1),selectedDate[0],currentDate.getHours(),currentDate.getMinutes(),currentDate.getSeconds() ,currentDate.getMilliseconds())
-	if(date >  currentDate ) {
-		bootbox.alert("Application Date should be less than or equal to today!");
-		dt.value = "";
-		return false;
-	}
 }
 
 

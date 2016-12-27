@@ -361,49 +361,6 @@
 				document.registrationForm.submit();
   			}
 
-			// Calls propertytax REST api to retrieve property details for an assessment no
-			// url : contextpath/ptis/rest/property/assessmentno (ex: contextpath/ptis/rest/property/1085000001)
-    		function callPropertyTaxRest(){
-               	var propertyNo = jQuery("#propertyNo").val();
-            	if(propertyNo!="" && propertyNo!=null){
-					jQuery.ajax({
-						url: "/ptis/rest/property/" + propertyNo,
-						type:"GET",
-						contentType:"application/x-www-form-urlencoded",
-						success:function(data){
-							if(data.errorDetails.errorCode != null && data.errorDetails.errorCode != ''){
-								bootbox.alert(data.errorDetails.errorMessage);
-								jQuery('#propertyNo').val('');
-								jQuery('#boundary, #address').prop("disabled", false);
-							} else{
-								if(data.boundaryDetails!=null){
-									jQuery("#boundary").val(data.boundaryDetails.localityId);
-									jQuery("#zoneName").val(data.boundaryDetails.zoneName);
-									jQuery("#wardName").val(data.boundaryDetails.wardName);
-									jQuery('#parentBoundary').val(data.boundaryDetails.wardId);
-									jQuery("#address").val(data.propertyAddress);
-								}
-							}
-						},
-						error:function(e){
-							document.getElementById("propertyNo").value="";
-							resetOnPropertyNumChange();
-							bootbox.alert("Error getting property details");
-						}
-					});
-            	}
-            }
-
-    		function showHideAgreement(){
-				if(document.getElementById("showAgreementDtl").checked){
-					document.getElementById("agreementSec").style.display="";
-				} else {
-					document.getElementById("agreementSec").style.display="none";
-					document.getElementById("agreementDate").value="";
-					document.getElementById("agreementDocNo").value="";
-				}
-            } 
-
  		</script>
     </body>
 </html>
