@@ -82,4 +82,14 @@ public class AjaxTypeOfWorkController {
         final String json = gson.toJson(object);
         return json;
     }
+
+    @RequestMapping(value = "/ajaxsearch-viewsubtypeofwork", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String ajaxSearchSubTypeOfWorkToView(final Model model,
+            @ModelAttribute final TypeOfWorkSearchRequest typeOfWorkSearchRequest) {
+        final List<EgwTypeOfWork> searchResultList = typeOfWorkService
+                .searchSubTypeOfWorkToView(typeOfWorkSearchRequest);
+        final String result = new StringBuilder("{ \"data\":").append(toSearchTypeOfWorkResultJson(searchResultList))
+                .append("}").toString();
+        return result;
+    }
 }

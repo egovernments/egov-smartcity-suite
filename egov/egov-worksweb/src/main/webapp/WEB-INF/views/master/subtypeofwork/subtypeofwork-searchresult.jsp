@@ -39,22 +39,23 @@
   --%>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
-<div class="page-container" id="page-container">
-		<div class="new-page-header" id="successMessage">
-			${success}
-		</div>
-			<jsp:include page="subtypeofwork-commonview.jsp" />
-		<div class="col-sm-12 text-center">
-			<div class="row">		
-				<c:if test="${ mode != 'view' }">		
-					<input type="submit" name="create" Class="btn btn-primary" value="Create New Sub Type of Work" id="CREATE" name="button" onclick="createNewSubTypeOfWork();" />
-				</c:if>
-				<input type="submit" name="closeButton" id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
-			</div>
-		</div>
-		
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<div class="row display-hide report-section">
+	<div class="col-md-12 table-header text-left">
+		<spring:message code="title.searchresult" />
+	</div>
+	<div class="col-md-12 form-group report-table-container">
+		<table class="table table-bordered table-hover"
+			id="resultTable">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.slno" /></th>
+					<th><spring:message code="lbl.code" /></th>
+					<th><spring:message code="lbl.name" /></th>
+					<th><spring:message code="lbl.description" /></th>
+					<th><spring:message code="lbl.typeofwork" /></th>
+				</tr>
+			</thead>
+		</table>
+	</div>
 </div>
-<script
-	src="<cdn:url value='/resources/js/master/typeofwork.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url value='/resources/js/common/commondisablebackspace.js?rnd=${app_release_no}'/>"></script>

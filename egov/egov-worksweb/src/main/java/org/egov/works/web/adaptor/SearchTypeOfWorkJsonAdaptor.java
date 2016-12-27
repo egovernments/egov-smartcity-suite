@@ -63,6 +63,9 @@ public class SearchTypeOfWorkJsonAdaptor implements JsonSerializer<EgwTypeOfWork
                 jsonObject.addProperty("description", typeOfWork.getDescription());
             else
                 jsonObject.addProperty("description", "NA");
+            if (typeOfWork.getParentid() != null)
+                jsonObject.addProperty("parentid",
+                        typeOfWork.getParentid().getCode() + "-" + typeOfWork.getParentid().getName());
 
             jsonObject.addProperty("id", typeOfWork.getId());
         }

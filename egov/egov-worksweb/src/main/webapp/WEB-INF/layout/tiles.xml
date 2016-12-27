@@ -545,4 +545,9 @@
         <put-attribute name="page-title" value="lbl.viewsubtypeofwork" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/master/subtypeofwork/subtypeofwork-success.jsp"/>
     </definition>
+    
+    <definition name="subtypeofwork-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.searchsubtypeofwork" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/subtypeofwork/subtypeofwork-search.jsp"/>
+    </definition>
 </tiles-definitions>

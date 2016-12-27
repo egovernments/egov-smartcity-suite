@@ -76,4 +76,20 @@ public class SearchTypeOfWorkController {
         return "typeofwork-success";
     }
 
+    @RequestMapping(value = "/subtypeofwork-search", method = RequestMethod.GET)
+    public String searchSubTypeOfWork(
+            @ModelAttribute("subTypeOfWorkSearchRequest") final TypeOfWorkSearchRequest subTypeOfWorkSearchRequest,
+            final Model model) throws ApplicationException {
+        model.addAttribute("typeofwork",
+                typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
+        return "subtypeofwork-search";
+    }
+
+    @RequestMapping(value = "/viewsubtypeofwork/{id}", method = RequestMethod.GET)
+    public String viewSubTypeOfWork(@PathVariable final String id, final Model model) throws ApplicationException {
+        final EgwTypeOfWork newSubTypeOfWork = typeOfWorkService.getTypeOfWorkById(Long.parseLong(id));
+        model.addAttribute("subtypeofwork", newSubTypeOfWork);
+        model.addAttribute("mode", "view");
+        return "subtypeofwork-success";
+    }
 }

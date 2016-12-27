@@ -44,6 +44,8 @@ public class TypeOfWorkSearchRequest {
     private String typeOfWorkCode;
     private String typeOfWorkName;
 
+    private Long typeOfWorkParentId;
+
     public String getTypeOfWorkCode() {
         return typeOfWorkCode;
     }
@@ -58,6 +60,14 @@ public class TypeOfWorkSearchRequest {
 
     public void setTypeOfWorkName(final String typeOfWorkName) {
         this.typeOfWorkName = typeOfWorkName;
+    }
+
+    public Long getTypeOfWorkParentId() {
+        return typeOfWorkParentId;
+    }
+
+    public void setTypeOfWorkParentId(final Long typeOfWorkParentId) {
+        this.typeOfWorkParentId = typeOfWorkParentId;
     }
 
 }

@@ -96,6 +96,7 @@ public class TypeOfWorkService {
                 criteria.add(Restrictions.eq("code", searchRequestTypeOfWork.getTypeOfWorkCode()));
             if (searchRequestTypeOfWork.getTypeOfWorkName() != null)
                 criteria.add(Restrictions.eq("name", searchRequestTypeOfWork.getTypeOfWorkName()));
+            criteria.add(Restrictions.isNull("parentid.id"));
         }
 
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
@@ -109,6 +110,23 @@ public class TypeOfWorkService {
 
     public List<EgwTypeOfWork> getByParentidAndEgPartytype(final Long parentId, final String partyTypeCode) {
         return typeOfWorkRepository.findByParentidAndEgPartytype(parentId, partyTypeCode.toUpperCase());
+    }
+
+    public List<EgwTypeOfWork> searchSubTypeOfWorkToView(final TypeOfWorkSearchRequest typeOfWorkSearchRequest) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(EgwTypeOfWork.class)
+                .addOrder(Order.asc("createdDate"));
+        if (typeOfWorkSearchRequest != null) {
+            if (typeOfWorkSearchRequest.getTypeOfWorkParentId() != null)
+                criteria.add(Restrictions.eq("parentid.id", typeOfWorkSearchRequest.getTypeOfWorkParentId()));
+            if (typeOfWorkSearchRequest.getTypeOfWorkCode() != null)
+                criteria.add(Restrictions.eq("code", typeOfWorkSearchRequest.getTypeOfWorkCode()));
+            if (typeOfWorkSearchRequest.getTypeOfWorkName() != null)
+                criteria.add(Restrictions.eq("name", typeOfWorkSearchRequest.getTypeOfWorkName()));
+            criteria.add(Restrictions.isNotNull("parentid.id"));
+        }
+
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
     }
 
 }
