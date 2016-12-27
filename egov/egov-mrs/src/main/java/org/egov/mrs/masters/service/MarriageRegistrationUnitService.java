@@ -47,6 +47,7 @@ import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
 import org.egov.mrs.masters.repository.MrRegistrationUnitRepository;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,78 +58,78 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class MarriageRegistrationUnitService {
 
-	@Autowired
-	private MrRegistrationUnitRepository MrregistrationUnitRepository;
+    @Autowired
+    private MrRegistrationUnitRepository MrregistrationUnitRepository;
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	public Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	@Transactional
-	public void createMrRegistrationUnit(
-			final MarriageRegistrationUnit marriageRegistrationUnit) {
-		MrregistrationUnitRepository.save(marriageRegistrationUnit);
-	}
+    @Transactional
+    public void createMrRegistrationUnit(
+            final MarriageRegistrationUnit marriageRegistrationUnit) {
+        MrregistrationUnitRepository.save(marriageRegistrationUnit);
+    }
 
-	@Transactional
-	public MarriageRegistrationUnit updateMrRegistrationUnit(
-			final MarriageRegistrationUnit marriageRegistrationUnit) {
-		return MrregistrationUnitRepository
-				.saveAndFlush(marriageRegistrationUnit);
-	}
-	
-	public List<MarriageRegistrationUnit> getActiveRegistrationunit() {
-		return MrregistrationUnitRepository.findByisActive(true);
-	}
-	
-	public MarriageRegistrationUnit findById(final Long id) {
-		return MrregistrationUnitRepository.findById(id);
-	}
+    @Transactional
+    public MarriageRegistrationUnit updateMrRegistrationUnit(
+            final MarriageRegistrationUnit marriageRegistrationUnit) {
+        return MrregistrationUnitRepository
+                .saveAndFlush(marriageRegistrationUnit);
+    }
 
-	public MarriageRegistrationUnit getMarriageRegistrationUnit(
-			final String name) {
-		return MrregistrationUnitRepository.findByName(name);
-	}
+    public List<MarriageRegistrationUnit> getActiveRegistrationunit() {
+        return MrregistrationUnitRepository.findByisActiveTrueOrderByNameAsc();
+    }
 
-	public List<MarriageRegistrationUnit> getMarriageRegistrationUnits() {
-		return MrregistrationUnitRepository.findAll();
-	}
+    public MarriageRegistrationUnit findById(final Long id) {
+        return MrregistrationUnitRepository.findById(id);
+    }
 
-	public MarriageRegistrationUnit getbyId(final Long id) {
-		return MrregistrationUnitRepository.getOne(id);
-	}
+    public MarriageRegistrationUnit getMarriageRegistrationUnit(
+            final String name) {
+        return MrregistrationUnitRepository.findByName(name);
+    }
 
-	public List<MarriageRegistrationUnit> findAll() {
-		return MrregistrationUnitRepository.findAll();
-	}
+    public List<MarriageRegistrationUnit> getMarriageRegistrationUnits() {
+        return MrregistrationUnitRepository.findAll();
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<MarriageRegistrationUnit> searchMarriageRegistrationUnit(
-			MarriageRegistrationUnit marriageRegistrationUnit) {
-		final Criteria criteria = getCurrentSession().createCriteria(
-				MarriageRegistrationUnit.class);
-		if (null != marriageRegistrationUnit.getName())
-			criteria.add(Restrictions.ilike("name",
-					marriageRegistrationUnit.getName(), MatchMode.ANYWHERE));
-		if (null != marriageRegistrationUnit.getAddress())
-			criteria.add(Restrictions.ilike("address",
-					marriageRegistrationUnit.getAddress(), MatchMode.ANYWHERE));
-		if (null != marriageRegistrationUnit.getIsActive() && marriageRegistrationUnit.getIsActive() == true)
-			criteria.add(Restrictions.eq("isActive",
-					marriageRegistrationUnit.getIsActive()));
-		if (null != marriageRegistrationUnit.getIsMainRegistrationUnit()
-				&& marriageRegistrationUnit.getIsMainRegistrationUnit() == true) 
-			criteria.add(Restrictions.eq("isMainRegistrationUnit",
-					marriageRegistrationUnit.getIsMainRegistrationUnit()));
-		if (marriageRegistrationUnit.getZone().getId() != null)
-			criteria.add(Restrictions.eq("zone.id", marriageRegistrationUnit
-					.getZone().getId()));
+    public MarriageRegistrationUnit getbyId(final Long id) {
+        return MrregistrationUnitRepository.getOne(id);
+    }
 
-		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		return criteria.list();
-	}
+    public List<MarriageRegistrationUnit> findAll() {
+        return MrregistrationUnitRepository.findAll();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<MarriageRegistrationUnit> searchMarriageRegistrationUnit(
+            final MarriageRegistrationUnit marriageRegistrationUnit) {
+        final Criteria criteria = getCurrentSession().createCriteria(
+                MarriageRegistrationUnit.class);
+        if (null != marriageRegistrationUnit.getName())
+            criteria.add(Restrictions.ilike("name",
+                    marriageRegistrationUnit.getName(), MatchMode.ANYWHERE));
+        if (null != marriageRegistrationUnit.getAddress())
+            criteria.add(Restrictions.ilike("address",
+                    marriageRegistrationUnit.getAddress(), MatchMode.ANYWHERE));
+        if (null != marriageRegistrationUnit.getIsActive() && marriageRegistrationUnit.getIsActive() == true)
+            criteria.add(Restrictions.eq("isActive",
+                    marriageRegistrationUnit.getIsActive()));
+        if (null != marriageRegistrationUnit.getIsMainRegistrationUnit()
+                && marriageRegistrationUnit.getIsMainRegistrationUnit() == true)
+            criteria.add(Restrictions.eq("isMainRegistrationUnit",
+                    marriageRegistrationUnit.getIsMainRegistrationUnit()));
+        if (marriageRegistrationUnit.getZone().getId() != null)
+            criteria.add(Restrictions.eq("zone.id", marriageRegistrationUnit
+                    .getZone().getId()));
+
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
 
 }

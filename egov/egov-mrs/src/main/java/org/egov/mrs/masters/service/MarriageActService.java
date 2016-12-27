@@ -51,25 +51,26 @@ import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class MarriageActService {
-	@Autowired
-	private  MarriageActRepository marriageActRepository;
-    
+    @Autowired
+    private MarriageActRepository marriageActRepository;
+
     @PersistenceContext
-	private EntityManager entityManager;
- 
+    private EntityManager entityManager;
+
     public Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+        return entityManager.unwrap(Session.class);
+    }
 
     @Transactional
     public void create(final MarriageAct act) {
-    	marriageActRepository.save(act);
+        marriageActRepository.save(act);
     }
 
     @Transactional
@@ -82,19 +83,19 @@ public class MarriageActService {
     }
 
     public List<MarriageAct> getActs() {
-        return marriageActRepository.findAll();
+        return marriageActRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
-    
+
     public MarriageAct getProxy(final Long id) {
         return marriageActRepository.getOne(id);
     }
-    
+
     @SuppressWarnings("unchecked")
-   	public List<MarriageAct> searchActs(MarriageAct act) {
-   		final Criteria criteria = getCurrentSession().createCriteria(
-   				MarriageAct.class);
-   		if (null != act.getName())
-   			criteria.add(Restrictions.ilike("name",act.getName(),MatchMode.ANYWHERE));
-   		return criteria.list();
-   	}
+    public List<MarriageAct> searchActs(final MarriageAct act) {
+        final Criteria criteria = getCurrentSession().createCriteria(
+                MarriageAct.class);
+        if (null != act.getName())
+            criteria.add(Restrictions.ilike("name", act.getName(), MatchMode.ANYWHERE));
+        return criteria.list();
+    }
 }

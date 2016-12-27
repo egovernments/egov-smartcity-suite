@@ -45,11 +45,11 @@ import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MrRegistrationUnitRepository extends
-		JpaRepository<MarriageRegistrationUnit, Long> {
-	MarriageRegistrationUnit findById(Long id);
+        JpaRepository<MarriageRegistrationUnit, Long> {
+    MarriageRegistrationUnit findById(Long id);
 
-	MarriageRegistrationUnit findByName(String name);
-	
-	public List<MarriageRegistrationUnit> findByisActive(Boolean isActive);
+    MarriageRegistrationUnit findByName(String name);
+
+    public List<MarriageRegistrationUnit> findByisActiveTrueOrderByNameAsc();
 
 }

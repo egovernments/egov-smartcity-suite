@@ -51,6 +51,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,13 +60,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReligionService {
 
     private final ReligionRepository religionRepository;
-    
-    @PersistenceContext
-	private EntityManager entityManager;
 
-	public Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
     @Autowired
     public ReligionService(final ReligionRepository religionRepository) {
         this.religionRepository = religionRepository;
@@ -90,23 +92,23 @@ public class ReligionService {
     }
 
     public List<MarriageReligion> getReligions() {
-        return religionRepository.findAll();
+        return religionRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 
     public MarriageReligion getProxy(final Long id) {
         return religionRepository.getOne(id);
     }
-    
+
     public List<MarriageReligion> findAll() {
         return religionRepository.findAll();
     }
-    
+
     @SuppressWarnings("unchecked")
-	public List<MarriageReligion> searchReligions(MarriageReligion religion) {
-		final Criteria criteria = getCurrentSession().createCriteria(
-				MarriageReligion.class);
-		if (null != religion.getName())
-			criteria.add(Restrictions.ilike("name", religion.getName(),MatchMode.ANYWHERE));
-		return criteria.list();
-	}
+    public List<MarriageReligion> searchReligions(final MarriageReligion religion) {
+        final Criteria criteria = getCurrentSession().createCriteria(
+                MarriageReligion.class);
+        if (null != religion.getName())
+            criteria.add(Restrictions.ilike("name", religion.getName(), MatchMode.ANYWHERE));
+        return criteria.list();
+    }
 }
