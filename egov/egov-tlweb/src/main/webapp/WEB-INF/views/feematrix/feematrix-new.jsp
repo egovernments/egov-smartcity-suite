@@ -95,9 +95,14 @@
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.subcategory" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
-							<select id="subCategory" class="form-control" required>
-							</select> <label id="subCategory-error" class="error display-hide"
-								for="subCategory">Required</label>
+							<form:select path="subCategory" id="subCategory"
+										 cssClass="form-control" required="required"
+										 cssErrorClass="form-control error">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+							</form:select>
+							<label id="subCategory-error" class="error display-hide" for="subCategory">Required</label>
 						</div>
 					</div>
 
