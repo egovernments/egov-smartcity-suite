@@ -141,8 +141,8 @@ public class RecoveryNoticesController {
 
     @RequestMapping(value = "/form", method = RequestMethod.POST)
     public String generateNotices(@Valid @ModelAttribute final NoticeRequest noticeRequest, final Model model,
-            BindingResult errors) {
-        errors = validate(noticeRequest, errors);
+            final BindingResult errors) {
+        validate(noticeRequest, errors);
         if (errors.hasErrors()) {
             model.addAttribute("noticeRequest", noticeRequest);
             populateDropdowns(model, noticeRequest);
@@ -166,8 +166,8 @@ public class RecoveryNoticesController {
                 jobDetail.setName(PTIS_RECOVERY_NOTICES_JOB.concat(jobNumber.toString()));
                 final StringBuffer assessmentNoStr = new StringBuffer();
                 for (final String assessmentNo : assessmentNumbers)
-                    assessmentNoStr.append(assessmentNo).append(",");
-                assessmentNoStr.deleteCharAt(assessmentNoStr.lastIndexOf(","));
+                    assessmentNoStr.append(assessmentNo).append(", ");
+                assessmentNoStr.deleteCharAt(assessmentNoStr.lastIndexOf(", "));
                 jobDetail.getJobDataMap().remove(ASSESSMENT_NUMBERS);
                 jobDetail.getJobDataMap().remove(NOTICE_TYPE);
                 jobDetail.getJobDataMap().put(ASSESSMENT_NUMBERS, assessmentNoStr.toString());
@@ -187,12 +187,21 @@ public class RecoveryNoticesController {
         if (org.apache.commons.lang.StringUtils.isEmpty(noticeRequest.getNoticeType())
                 || noticeRequest.getNoticeType().equals("-1"))
             errors.reject("mandatory.noticetype", "mandatory.noticetype");
-        else if ((noticeRequest.getWard() == null || noticeRequest.getWard().equals(-1l))
-                && (noticeRequest.getBlock() == null || noticeRequest.getBlock().equals(-1l))
-                && (noticeRequest.getBillCollector() == null || noticeRequest.getBillCollector().equals(-1l))
-                && (noticeRequest.getPropertyType() == null || noticeRequest.getPropertyType().equals(-1l))
-                && (noticeRequest.getCategoryType() == null || noticeRequest.getCategoryType().equals("-1"))
-                && org.apache.commons.lang.StringUtils.isEmpty(noticeRequest.getPropertyId()))
+        Boolean isSelected = Boolean.FALSE;
+        if (noticeRequest.getWard() != null && !noticeRequest.getWard().equals(-1l))
+            isSelected = Boolean.TRUE;
+        else if (noticeRequest.getBlock() != null && !noticeRequest.getBlock().equals(-1l))
+            isSelected = Boolean.TRUE;
+        else if (noticeRequest.getBillCollector() != null && !noticeRequest.getBillCollector().equals(-1l))
+            isSelected = Boolean.TRUE;
+        else if (noticeRequest.getPropertyType() != null && !noticeRequest.getPropertyType().equals(-1l))
+            isSelected = Boolean.TRUE;
+        else if (noticeRequest.getCategoryType() != null && !noticeRequest.getCategoryType().equals("-1"))
+            isSelected = Boolean.TRUE;
+        else if (org.apache.commons.lang.StringUtils.isNotEmpty(noticeRequest.getPropertyId()))
+            isSelected = Boolean.TRUE;
+
+        if (!isSelected)
             errors.reject("mandatory.anyone", "mandatory.anyone");
         return errors;
     }

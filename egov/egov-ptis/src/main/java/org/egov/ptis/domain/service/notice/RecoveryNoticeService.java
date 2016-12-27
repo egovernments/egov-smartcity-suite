@@ -196,7 +196,7 @@ public class RecoveryNoticeService {
         if (basicProperty == null)
             errors.add("property.invalid");
         else if (NOTICE_TYPE_ESD.equals(noticeType))
-            validateDemandBill(basicProperty);
+            validateDemandBill(basicProperty, errors);
         else if (NOTICE_TYPE_DISTRESS.equals(noticeType)) {
             final BigDecimal totalDue = getTotalPropertyTaxDueIncludingPenalty(basicProperty);
             if (totalDue.compareTo(BigDecimal.ZERO) == 0)
@@ -212,7 +212,7 @@ public class RecoveryNoticeService {
                     errors.add("invalid.time.not.lapsed");
             }
         } else if (NOTICE_TYPE_INVENTORY.equals(noticeType)) {
-            validateDemandBill(basicProperty);
+            validateDemandBill(basicProperty, errors);
             final PtNotice distressNotice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner(NOTICE_TYPE_DISTRESS,
                     basicProperty.getUpicNo());
             if (distressNotice != null) {
@@ -226,8 +226,7 @@ public class RecoveryNoticeService {
         return errors;
     }
 
-    private List<String> validateDemandBill(final BasicProperty basicProperty) {
-        final List<String> errors = new ArrayList<String>();
+    private List<String> validateDemandBill(final BasicProperty basicProperty, List<String> errors) {
         final BigDecimal totalDue = getTotalPropertyTaxDue(basicProperty);
         if (totalDue.compareTo(BigDecimal.ZERO) == 0)
             errors.add("common.no.property.due");
@@ -289,101 +288,7 @@ public class RecoveryNoticeService {
         final PtNotice notice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner(noticeType,
                 basicProperty.getUpicNo());
         if (notice == null) {
-            final Map<String, Object> reportParams = new HashMap<String, Object>();
-            InputStream noticePDF = null;
-            ReportRequest reportInput = null;
-            final StringBuilder queryString = new StringBuilder();
-            queryString.append("from City");
-            final Query query = entityManager.createQuery(queryString.toString());
-            final City city = (City) query.getSingleResult();
-            populateReportParams(reportParams, city, basicProperty);
-            final String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(noticeType);
-            final SimpleDateFormat formatter = new SimpleDateFormat("MMM yyyy");
-            if (NOTICE_TYPE_ESD.equals(noticeType)) {
-                final Address ownerAddress = basicProperty.getAddress();
-                reportParams.put(DOOR_NO, StringUtils.isNotBlank(ownerAddress.getHouseNoBldgApt())
-                        ? ownerAddress.getHouseNoBldgApt() : "N/A");
-                reportParams.put(FIN_YEAR, formatter.format(new Date()));
-                final DateTime noticeDate = new DateTime(new Date());
-                reportParams.put(TOTAL_TAX_DUE, getTotalPropertyTaxDue(basicProperty));
-                reportParams.put(FUTURE_DATE, DateUtils.getDefaultFormattedDate(noticeDate.plusDays(2).toDate()));
-                reportParams.put(ESD_NOTICE_NUMBER, noticeNo);
-                reportParams.put(ESD_NOTICE_DATE, DateUtils.getDefaultFormattedDate(new Date()));
-                final AppConfigValues appConfigValues = appConfigValuesService.getAppConfigValueByDate(PTMODULENAME,
-                        APPCONFIG_CLIENT_SPECIFIC_DMD_BILL, new Date());
-                final String value = appConfigValues != null ? appConfigValues.getValue() : "";
-                if ("Y".equalsIgnoreCase(value)) {
-                    final DemandBillService demandBillService = (DemandBillService) beanProvider
-                            .getBean("demandBillService");
-                    reportParams.putAll(demandBillService.getDemandBillDetails(basicProperty));
-                } else {
-                    final EgBill egBill = getBillByAssessmentNumber(basicProperty);
-                    reportParams.put(BILL_DATE, DateUtils.getDefaultFormattedDate(egBill.getCreateDate()));
-                    reportParams.put(BILL_NUMBER, egBill.getBillNo());
-                }
-                final String cityGrade = city.getGrade();
-                if (cityGrade != null && cityGrade != ""
-                        && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
-                    reportParams.put(SECTION_ACT, PropertyTaxConstants.CORPORATION_ESD_NOTICE_SECTION_ACT);
-                    reportInput = new ReportRequest(PropertyTaxConstants.REPORT_ESD_NOTICE_CORPORATION, reportParams,
-                            reportParams);
-                } else {
-                    reportParams.put(SECTION_ACT, PropertyTaxConstants.MUNICIPALITY_ESD_NOTICE_SECTION_ACT);
-                    reportInput = new ReportRequest(PropertyTaxConstants.REPORT_ESD_NOTICE_MUNICIPALITY, reportParams,
-                            reportParams);
-                }
-            } else if (NOTICE_TYPE_INVENTORY.equals(noticeType)) {
-                final Installment currentInstall = propertyTaxCommonUtils.getCurrentPeriodInstallment();
-                final DateTime dateTime = new DateTime();
-                final DateTime currInstToDate = new DateTime(currentInstall.getToDate());
-                reportParams.put(TOTAL_TAX_DUE, String.valueOf(getTotalPropertyTaxDue(basicProperty)));
-                reportParams.put(REPORT_DATE, propertyTaxCommonUtils.getDateWithSufix(dateTime.getDayOfMonth()));
-                reportParams.put(REPORT_MON_YEAR, dateTime.monthOfYear().getAsShortText() + "," + dateTime.getYear());
-
-                final String cityGrade = city.getGrade();
-                if (StringUtils.isNotBlank(cityGrade)
-                        && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
-                    reportParams.put(INST_LAST_DATE,
-                            propertyTaxCommonUtils.getDateWithSufix(currInstToDate.getDayOfMonth()));
-                    reportParams.put(INST_MON_YEAR,
-                            currInstToDate.monthOfYear().getAsShortText() + "," + currInstToDate.getYear());
-                    reportInput = new ReportRequest(REPORT_INVENTORY_NOTICE_CORPORATION, reportParams, reportParams);
-                } else {
-                    reportParams.put(INST_LAST_DATE, formatter.format(currentInstall.getToDate()));
-                    reportInput = new ReportRequest(REPORT_INVENTORY_NOTICE_MUNICIPALITY, reportParams, reportParams);
-                }
-
-            } else if (NOTICE_TYPE_DISTRESS.equals(noticeType)) {
-                reportParams.put(TOTAL_TAX_DUE, getTotalPropertyTaxDueIncludingPenalty(basicProperty));
-                final DateTime noticeDate = new DateTime();
-                reportParams.put(NOTICE_DAY, propertyTaxCommonUtils.getDateWithSufix(noticeDate.getDayOfMonth()));
-                reportParams.put(NOTICE_MONTH, noticeDate.monthOfYear().getAsShortText());
-                reportParams.put(NOTICE_YEAR, noticeDate.getYear());
-                if (noticeDate.getMonthOfYear() >= 4 && noticeDate.getMonthOfYear() <= 10)
-                    reportParams.put(FIN_HALF_STRAT_MONTH, "April");
-                else
-                    reportParams.put(FIN_HALF_STRAT_MONTH, "October");
-                reportParams.put(DISTRESS_NOTICE_NUMBER, noticeNo);
-                reportParams.put(DISTRESS_NOTICE_DATE, DateUtils.getDefaultFormattedDate(new Date()));
-                final String cityGrade = city.getGrade();
-                if (cityGrade != null && cityGrade != ""
-                        && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
-                    reportParams.put(SECTION_ACT, PropertyTaxConstants.CORPORATION_ESD_NOTICE_SECTION_ACT);
-                    reportInput = new ReportRequest(PropertyTaxConstants.REPORT_DISTRESS_CORPORATION, reportParams,
-                            reportParams);
-                } else {
-                    reportParams.put(SECTION_ACT, PropertyTaxConstants.MUNICIPALITY_DISTRESS_NOTICE_SECTION_ACT);
-                    reportInput = new ReportRequest(PropertyTaxConstants.REPORT_DISTRESS_MUNICIPALITY, reportParams,
-                            reportParams);
-                }
-            }
-            reportInput.setPrintDialogOnOpenReport(true);
-            reportInput.setReportFormat(FileFormat.PDF);
-            reportOutput = reportService.createReport(reportInput);
-            if (reportOutput != null && reportOutput.getReportOutputData() != null)
-                noticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
-            noticeService.saveNotice(basicProperty.getPropertyForBasicProperty().getApplicationNo(), noticeNo,
-                    noticeType, basicProperty, noticePDF);
+            reportOutput = generateNotice(noticeType, basicProperty);
         } else
             reportOutput = getNotice(notice, noticeType);
         final HttpHeaders headers = new HttpHeaders();
@@ -392,11 +297,111 @@ public class RecoveryNoticeService {
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
+    public ReportOutput generateNotice(final String noticeType, final BasicProperty basicProperty) {
+        ReportOutput reportOutput;
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        InputStream noticePDF = null;
+        ReportRequest reportInput = null;
+        final StringBuilder queryString = new StringBuilder();
+        queryString.append("from City");
+        final Query query = entityManager.createQuery(queryString.toString());
+        final City city = (City) query.getSingleResult();
+        populateReportParams(reportParams, city, basicProperty);
+        final String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(noticeType);
+        final SimpleDateFormat formatter = new SimpleDateFormat("MMM yyyy");
+        if (NOTICE_TYPE_ESD.equals(noticeType)) {
+            final Address ownerAddress = basicProperty.getAddress();
+            reportParams.put(DOOR_NO, StringUtils.isNotBlank(ownerAddress.getHouseNoBldgApt())
+                    ? ownerAddress.getHouseNoBldgApt() : "N/A");
+            reportParams.put(FIN_YEAR, formatter.format(new Date()));
+            final DateTime noticeDate = new DateTime(new Date());
+            reportParams.put(TOTAL_TAX_DUE, getTotalPropertyTaxDue(basicProperty));
+            reportParams.put(FUTURE_DATE, DateUtils.getDefaultFormattedDate(noticeDate.plusDays(2).toDate()));
+            reportParams.put(ESD_NOTICE_NUMBER, noticeNo);
+            reportParams.put(ESD_NOTICE_DATE, DateUtils.getDefaultFormattedDate(new Date()));
+            final AppConfigValues appConfigValues = appConfigValuesService.getAppConfigValueByDate(PTMODULENAME,
+                    APPCONFIG_CLIENT_SPECIFIC_DMD_BILL, new Date());
+            final String value = appConfigValues != null ? appConfigValues.getValue() : "";
+            if ("Y".equalsIgnoreCase(value)) {
+                final DemandBillService demandBillService = (DemandBillService) beanProvider
+                        .getBean("demandBillService");
+                reportParams.putAll(demandBillService.getDemandBillDetails(basicProperty));
+            } else {
+                final EgBill egBill = getBillByAssessmentNumber(basicProperty);
+                reportParams.put(BILL_DATE, DateUtils.getDefaultFormattedDate(egBill.getCreateDate()));
+                reportParams.put(BILL_NUMBER, egBill.getBillNo());
+            }
+            final String cityGrade = city.getGrade();
+            if (cityGrade != null && cityGrade != ""
+                    && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
+                reportParams.put(SECTION_ACT, PropertyTaxConstants.CORPORATION_ESD_NOTICE_SECTION_ACT);
+                reportInput = new ReportRequest(PropertyTaxConstants.REPORT_ESD_NOTICE_CORPORATION, reportParams,
+                        reportParams);
+            } else {
+                reportParams.put(SECTION_ACT, PropertyTaxConstants.MUNICIPALITY_ESD_NOTICE_SECTION_ACT);
+                reportInput = new ReportRequest(PropertyTaxConstants.REPORT_ESD_NOTICE_MUNICIPALITY, reportParams,
+                        reportParams);
+            }
+        } else if (NOTICE_TYPE_INVENTORY.equals(noticeType)) {
+            final Installment currentInstall = propertyTaxCommonUtils.getCurrentPeriodInstallment();
+            final DateTime dateTime = new DateTime();
+            final DateTime currInstToDate = new DateTime(currentInstall.getToDate());
+            reportParams.put(TOTAL_TAX_DUE, String.valueOf(getTotalPropertyTaxDue(basicProperty)));
+            reportParams.put(REPORT_DATE, propertyTaxCommonUtils.getDateWithSufix(dateTime.getDayOfMonth()));
+            reportParams.put(REPORT_MON_YEAR, dateTime.monthOfYear().getAsShortText() + "," + dateTime.getYear());
+
+            final String cityGrade = city.getGrade();
+            if (StringUtils.isNotBlank(cityGrade)
+                    && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
+                reportParams.put(INST_LAST_DATE,
+                        propertyTaxCommonUtils.getDateWithSufix(currInstToDate.getDayOfMonth()));
+                reportParams.put(INST_MON_YEAR,
+                        currInstToDate.monthOfYear().getAsShortText() + "," + currInstToDate.getYear());
+                reportInput = new ReportRequest(REPORT_INVENTORY_NOTICE_CORPORATION, reportParams, reportParams);
+            } else {
+                reportParams.put(INST_LAST_DATE, formatter.format(currentInstall.getToDate()));
+                reportInput = new ReportRequest(REPORT_INVENTORY_NOTICE_MUNICIPALITY, reportParams, reportParams);
+            }
+
+        } else if (NOTICE_TYPE_DISTRESS.equals(noticeType)) {
+            reportParams.put(TOTAL_TAX_DUE, getTotalPropertyTaxDueIncludingPenalty(basicProperty));
+            final DateTime noticeDate = new DateTime();
+            reportParams.put(NOTICE_DAY, propertyTaxCommonUtils.getDateWithSufix(noticeDate.getDayOfMonth()));
+            reportParams.put(NOTICE_MONTH, noticeDate.monthOfYear().getAsShortText());
+            reportParams.put(NOTICE_YEAR, noticeDate.getYear());
+            if (noticeDate.getMonthOfYear() >= 4 && noticeDate.getMonthOfYear() <= 10)
+                reportParams.put(FIN_HALF_STRAT_MONTH, "April");
+            else
+                reportParams.put(FIN_HALF_STRAT_MONTH, "October");
+            reportParams.put(DISTRESS_NOTICE_NUMBER, noticeNo);
+            reportParams.put(DISTRESS_NOTICE_DATE, DateUtils.getDefaultFormattedDate(new Date()));
+            final String cityGrade = city.getGrade();
+            if (cityGrade != null && cityGrade != ""
+                    && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
+                reportParams.put(SECTION_ACT, PropertyTaxConstants.CORPORATION_ESD_NOTICE_SECTION_ACT);
+                reportInput = new ReportRequest(PropertyTaxConstants.REPORT_DISTRESS_CORPORATION, reportParams,
+                        reportParams);
+            } else {
+                reportParams.put(SECTION_ACT, PropertyTaxConstants.MUNICIPALITY_DISTRESS_NOTICE_SECTION_ACT);
+                reportInput = new ReportRequest(PropertyTaxConstants.REPORT_DISTRESS_MUNICIPALITY, reportParams,
+                        reportParams);
+            }
+        }
+        reportInput.setPrintDialogOnOpenReport(true);
+        reportInput.setReportFormat(FileFormat.PDF);
+        reportOutput = reportService.createReport(reportInput);
+        if (reportOutput != null && reportOutput.getReportOutputData() != null)
+            noticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
+        noticeService.saveNotice(basicProperty.getPropertyForBasicProperty().getApplicationNo(), noticeNo,
+                noticeType, basicProperty, noticePDF);
+        return reportOutput;
+    }
+
     @SuppressWarnings("unchecked")
     public List<String> generateRecoveryNotices(final NoticeRequest noticeRequest) {
-        final StringBuffer query = new StringBuffer();
+        final StringBuffer query = new StringBuffer(
+                "select mv.propertyId from PropertyMaterlizeView mv where mv.propertyId is not null ");
         final Map<String, Object> params = new HashMap<String, Object>();
-        query.append("select mv.propertyId from PropertyMaterlizeView mv where mv.propertyId is not null ");
         if (!(noticeRequest.getWard() == null || noticeRequest.getWard().equals(-1l))) {
             query.append(" and mv.ward.id = :wardId");
             params.put("wardId", noticeRequest.getWard());
@@ -405,8 +410,9 @@ public class RecoveryNoticeService {
             query.append(" and mv.block.id = :blockId");
             params.put("blockId", noticeRequest.getBlock());
         }
-        if (!(noticeRequest.getBillCollector() == null || noticeRequest.getBillCollector().equals(-1l))) {
-        }
+        /*
+         * if (!(noticeRequest.getBillCollector() == null || noticeRequest.getBillCollector().equals(-1l))) { }
+         */
         if (!(noticeRequest.getPropertyType() == null || noticeRequest.getPropertyType().equals(-1l))) {
             query.append(" and mv.propTypeMstrID.id = :propertyType");
             params.put("propertyType", noticeRequest.getPropertyType());

@@ -43,14 +43,21 @@ package org.egov.ptis.scheduler;
 import java.util.Arrays;
 import java.util.List;
 
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.notice.RecoveryNoticesInfo;
+import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.notice.RecoveryNoticeService;
+import org.egov.ptis.notice.PtNotice;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -67,13 +74,23 @@ public class RecoveryNoticesJob extends QuartzJobBean {
     @Autowired
     private TransactionTemplate transactionTemplate;
 
+    @Autowired
+    private BasicPropertyDAO basicPropertyDAO;
+
+    @Autowired
+    private NoticeService noticeService;
+
+    @Autowired
+    private SecurityUtils securityUtils;
+
     @Override
     protected void executeInternal(final JobExecutionContext context) throws JobExecutionException {
+        ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
         final String assessmentNumbers = (String) context.getJobDetail().getJobDataMap().get("assessmentNumbers");
         final String noticeType = (String) context.getJobDetail().getJobDataMap().get("noticeType");
-        final List<String> assessments = Arrays.asList(assessmentNumbers.split(","));
+        final List<String> assessments = Arrays.asList(assessmentNumbers.split(", "));
+        final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
         for (final String assessmentNo : assessments) {
-            final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
             txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
             try {
                 txTemplate.execute(result -> {
@@ -82,9 +99,14 @@ public class RecoveryNoticesJob extends QuartzJobBean {
                     final RecoveryNoticesInfo noticeInfo = recoveryNoticesService
                             .getRecoveryNoticeInfoByAssessmentAndNoticeType(assessmentNo, noticeType);
                     if (errors.isEmpty()) {
-                        recoveryNoticesService.generateNotice(assessmentNo, noticeType);
-                        noticeInfo.setGenerated(Boolean.TRUE);
-                        recoveryNoticesService.saveRecoveryNoticeInfo(noticeInfo);
+                        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+                        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner(noticeType,
+                                basicProperty.getUpicNo());
+                        if (notice == null) {
+                            recoveryNoticesService.generateNotice(noticeType, basicProperty);
+                            noticeInfo.setGenerated(Boolean.TRUE);
+                            recoveryNoticesService.saveRecoveryNoticeInfo(noticeInfo);
+                        }
                         return Boolean.TRUE;
                     } else {
                         final String error = errors.get(0);
@@ -93,7 +115,7 @@ public class RecoveryNoticesJob extends QuartzJobBean {
                         return Boolean.FALSE;
                     }
                 });
-            } catch (final Exception e) {
+            } catch (final TransactionException e) {
                 txTemplate.execute(result -> {
                     return Boolean.FALSE;
                 });
