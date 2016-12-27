@@ -62,6 +62,10 @@ public class BankAccountJsonAdaptor implements JsonSerializer<Bankaccount> {
                 jsonObject.addProperty("fund", bankaccount.getFund().getName());
             else
                 jsonObject.addProperty("fund", "");
+            if (bankaccount.getBankbranch() != null && bankaccount.getBankbranch().getBank() != null)
+                jsonObject.addProperty("bank", bankaccount.getBankbranch().getBank().getName());
+            else
+                jsonObject.addProperty("bank", "");
             if (bankaccount.getBankbranch() != null && bankaccount.getBankbranch().getBranchname() != null)
                 jsonObject.addProperty("bankbranch", bankaccount.getBankbranch().getBranchname());
             else

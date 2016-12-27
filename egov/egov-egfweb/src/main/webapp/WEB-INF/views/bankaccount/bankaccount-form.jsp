@@ -52,7 +52,10 @@
 					<div class="col-sm-3 add-margin">
 						<form:select path="bankbranch" data-first-option="false" id="bankbranch" class="form-control" required="required">
 							<form:option value=""><spring:message code="lbl.select" /></form:option>
-							<form:options items="${bankbranches}" itemValue="id" itemLabel="branchname" />
+							<c:forEach var="branch" items="${bankbranches}">
+							<form:option  value="${branch.id}" ><c:out value="${branch.bank.name} - ${branch.branchname}"/>
+							</form:option>
+							</c:forEach>
 						</form:select>
 						<form:errors path="bankbranch" cssClass="error-msg" />
 					</div>

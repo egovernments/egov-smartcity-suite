@@ -162,6 +162,11 @@ public class CreateBankAccountService {
 
         if (bankaccount.getFund() != null && bankaccount.getFund().getId() != null)
             predicates.add(cb.equal(bankaccounts.get("fund").get("id"), bankaccount.getFund().getId()));
+        
+
+        if (bankaccount.getBankbranch() != null && bankaccount.getBankbranch().getBank() != null)
+            predicates.add(cb.equal(bankaccounts.get("bankbranch").get("bank").get("id"), bankaccount.getBankbranch().getBank().getId()));
+
 
         if (bankaccount.getBankbranch() != null && bankaccount.getBankbranch().getId() != null)
             predicates.add(cb.equal(bankaccounts.get("bankbranch").get("id"), bankaccount.getBankbranch().getId()));
@@ -176,7 +181,7 @@ public class CreateBankAccountService {
             predicates.add(cb.equal(bankaccounts.get("payTo"), bankaccount.getPayTo()));
 
         if (bankaccount.getType() != null)
-            predicates.add(cb.equal(bankaccounts.get("type"), bankaccount.getType().toString()));
+            predicates.add(cb.equal(bankaccounts.get("type"), bankaccount.getType()));
 
         if (bankaccount.getNarration() != null)
             predicates.add(cb.equal(bankaccounts.get("narration"), bankaccount.getNarration()));

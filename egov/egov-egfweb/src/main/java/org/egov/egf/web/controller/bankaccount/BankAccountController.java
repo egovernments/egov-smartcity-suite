@@ -50,6 +50,7 @@ import org.egov.commons.CGeneralLedger;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.commons.service.FundService;
 import org.egov.commons.utils.BankAccountType;
+import org.egov.egf.commons.bank.service.CreateBankService;
 import org.egov.egf.commons.bankaccount.service.CreateBankAccountService;
 import org.egov.egf.commons.bankbranch.service.CreateBankBranchService;
 import org.egov.egf.utils.FinancialUtils;
@@ -107,7 +108,11 @@ public class BankAccountController {
     @Autowired
     private MessageSource messageSource;
 
+    @Autowired
+    private CreateBankService createBankService;
+    
     private void setDropDownValues(final Model model) {
+        model.addAttribute("banks", createBankService.getByIsActive(true));
         model.addAttribute("bankbranches", createBankBranchService.getByIsActive(true));
         model.addAttribute("funds", fundService.getByIsActive(true));
         model.addAttribute("usagetypes", BankAccountType.values());

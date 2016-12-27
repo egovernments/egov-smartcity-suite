@@ -53,6 +53,23 @@
 				</div>
 				<div class="panel-body">
 					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.bank" />  </label>
+						<div class="col-sm-3 add-margin">
+						<form:select path="bankbranch.bank" data-first-option="false" id="bank" class="form-control" >
+							<form:option value=""><spring:message code="lbl.select" /></form:option>
+							<form:options items="${banks}" itemValue="id" itemLabel="name" />
+						</form:select>
+						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.bankbranch" />  </label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="bankbranch" id="bankbranch" class="form-control">
+								<form:option value=""><spring:message code="lbl.select" /></form:option>
+								<form:options items="${bankbranches}" itemValue="id" itemLabel="branchname" />
+							</form:select>
+							<form:errors path="bankbranch" cssClass="error-msg" />
+						</div>
+					</div>
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.accountnumber" />  </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="accountnumber" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50"/>
@@ -141,6 +158,7 @@
 				<tr>
 					<th><spring:message code="lbl.accountnumber" /></th>
 					<th><spring:message code="lbl.fund" /></th>
+					<th><spring:message code="lbl.bank" /></th>
 					<th><spring:message code="lbl.bankbranch" /></th>
 					<th><spring:message code="lbl.gl.code" /></th>
 					<th><spring:message code="lbl.accounttype" /></th>
