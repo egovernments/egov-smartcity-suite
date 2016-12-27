@@ -396,7 +396,7 @@ public class LineEstimateService {
             result.setEstimateAmount(led.getEstimateAmount());
             result.setEstimateNumber(led.getEstimateNumber());
             result.setNameOfWork(led.getNameOfWork());
-            if (!led.getLineEstimate().getAdminSanctionBy().isEmpty())
+            if (led.getLineEstimate().getAdminSanctionBy() != null)
                 result.setAdminSanctionBy(led.getLineEstimate().getAdminSanctionBy());
             result.setActualEstimateAmount(led.getActualEstimateAmount());
             result.setWorkIdentificationNumber(led.getProjectCode().getCode());
