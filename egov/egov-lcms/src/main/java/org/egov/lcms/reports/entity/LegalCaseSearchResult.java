@@ -64,14 +64,14 @@ public class LegalCaseSearchResult {
     private String caseStatus;
     private Integer statusId;
     private String assignDept;
-    private String reportStatus;
+    private Integer reportStatusId;
 
-    public String getReportStatus() {
-        return reportStatus;
+    public Integer getReportStatusId() {
+        return reportStatusId;
     }
 
-    public void setReportStatus(final String reportStatus) {
-        this.reportStatus = reportStatus;
+    public void setReportStatusId(Integer reportStatusId) {
+        this.reportStatusId = reportStatusId;
     }
 
     public String getStandingCouncil() {
