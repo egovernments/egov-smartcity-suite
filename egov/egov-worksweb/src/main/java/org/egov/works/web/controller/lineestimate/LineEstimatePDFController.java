@@ -122,7 +122,7 @@ public class LineEstimatePDFController {
             reportParams.put("zonalCommissioner",
                     lineEstimate.getAdminSanctionBy() != null ? lineEstimate.getAdminSanctionBy() : "");
             reportParams.put("zonalCommissionerCapital",
-                    !lineEstimate.getAdminSanctionBy().isEmpty() ? lineEstimate.getAdminSanctionBy() : "");
+                    lineEstimate.getAdminSanctionBy() != null ? lineEstimate.getAdminSanctionBy() : "");
             reportParams.put("beneficiary",
                     lineEstimate.getBeneficiary() != null ? lineEstimate.getBeneficiary().toString() : "");
 
