@@ -77,7 +77,7 @@ $('#txt-dateOfMarriage').datepicker()
     		showMarriageFee();
     	}
     	else{
-    		Bootbox.show('Invalid date!');
+    		bootbox.alert('Invalid date!');
     	}
 });
 
