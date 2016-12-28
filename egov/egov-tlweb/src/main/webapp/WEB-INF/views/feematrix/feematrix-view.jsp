@@ -70,8 +70,12 @@
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.subcategory" /></label>
 						<div class="col-sm-3 add-margin">
-							<select id="subCategory" class="form-control">
-							</select>
+							<form:select path="subCategory" id="subCategory"
+										 cssClass="form-control" cssErrorClass="form-control error">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+							</form:select>
 						</div>
 					</div>
 					<div class="form-group">
