@@ -61,12 +61,16 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
@@ -120,7 +124,6 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     @Autowired
     private NatureOfWorkService natureOfWorkService;
 
-
     @Autowired
     protected AssignmentService assignmentService;
 
@@ -148,9 +151,16 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private LineEstimateAppropriationService lineEstimateAppropriationService;
-    
+
     @Autowired
     private TypeOfWorkService typeOfWorkService;
+
+    @Autowired
+    private CityService cityService;
+
+    @Autowired
+    @Qualifier("workflowService")
+    private SimpleWorkflowService<LineEstimate> lineEstimateWorkflowService;
 
     @ModelAttribute
     public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
@@ -196,6 +206,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         String mode = "";
         String workFlowAction = "";
         LineEstimate newLineEstimate = null;
+        String additionalRule = "";
 
         validateBudgetHead(lineEstimate, errors);
 
@@ -204,6 +215,8 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
+        if (request.getParameter("additionalRule") != null)
+            additionalRule = request.getParameter("additionalRule");
 
         Long approvalPosition = 0l;
         String approvalComment = "";
@@ -217,7 +230,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         // For Get Configured ApprovalPosition from workflow history
         if (approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
             approvalPosition = lineEstimateService.getApprovalPositionByMatrixDesignation(
-                    lineEstimate, approvalPosition, null,
+                    lineEstimate, approvalPosition, additionalRule,
                     mode, workFlowAction);
 
         if ((approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
@@ -225,17 +238,14 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                 && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())
-                && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString())) {
+        if (workFlowAction.equalsIgnoreCase(WorksConstants.APPROVE_ACTION.toString())) {
             validateAdminSanctionDetail(lineEstimate, errors);
-            lineEstimateService.validateWorkFlowFields(lineEstimate, errors);
-        }
-
-        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CHECKED.toString())
-                && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString()))
+            lineEstimateService.validateAdminSanctionFields(lineEstimate, errors);
             if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                     .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
                 validateBudgetAmount(lineEstimate, errors);
+        }
+
         if (workFlowAction.equals(WorksConstants.FORWARD_ACTION))
             lineEstimateService.validateLineEstimateDetails(lineEstimate, errors);
 
@@ -248,7 +258,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                 try {
                     final CFinancialYear financialYear = worksUtils.getFinancialYearByDate(lineEstimate.getLineEstimateDate());
                     newLineEstimate = lineEstimateService.updateLineEstimateDetails(lineEstimate, approvalPosition,
-                            approvalComment, null, workFlowAction,
+                            approvalComment, additionalRule, workFlowAction,
                             mode, null, removedLineEstimateDetailsIds, files, financialYear);
                 } catch (final ValidationException e) {
                     final List<Long> budgetheadid = new ArrayList<Long>();
@@ -346,11 +356,6 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     }
 
     private void validateAdminSanctionDetail(final LineEstimate lineEstimate, final BindingResult errors) {
-        /*
-         * if (lineEstimate.getCouncilResolutionDate() != null &&
-         * lineEstimate.getCouncilResolutionDate().before(lineEstimate.getLineEstimateDate()))
-         * errors.rejectValue("councilResolutionDate", "error.councilresolutiondate");
-         */
         if (StringUtils.isBlank(lineEstimate.getAdminSanctionNumber()))
             errors.rejectValue("adminSanctionNumber", "error.adminsanctionnumber.notnull");
         if (lineEstimate.getAdminSanctionNumber() != null) {
@@ -379,9 +384,10 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
     private String loadViewData(final Model model, final HttpServletRequest request,
             final LineEstimate lineEstimate) {
-
+        WorkFlowMatrix wfmatrix = null;
         model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
         model.addAttribute("amountRule", lineEstimate.getTotalEstimateAmount());
+        model.addAttribute("additionalRule", cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
 
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         if (lineEstimate.getCurrentState() != null)
@@ -417,6 +423,13 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                             lineEstimate.getLineEstimateDetails().get(0).getEstimateNumber());
             model.addAttribute("budgetAppropriationDate", lineEstimateAppropriation.getBudgetUsage().getUpdatedTime());
         }
+        wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null,
+                lineEstimate.getTotalEstimateAmount(),
+                (String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY),
+                lineEstimate.getCurrentState().getValue(),
+                lineEstimate.getCurrentState().getNextAction());
+        if (wfmatrix != null)
+            model.addAttribute("nextState", wfmatrix.getNextState());
 
         lineEstimateService.loadModelValues(lineEstimate, model);
         return "newLineEstimate-edit";

@@ -71,11 +71,9 @@
 					<jsp:include page="../common/uploaddocuments.jsp"/>
 				</div>
 			</div>
-		<c:if test="${(lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED')}" >
+		<c:if test="${nextState == 'Admin sanctioned'}" >
 			<jsp:include page="lineestimateadminsanctiondetails.jsp"></jsp:include>
-		</c:if>
-		<c:if test="${lineEstimate.status.code == 'BUDGET_SANCTIONED' && mode != 'readOnly'}">
-		   <jsp:include page="lineestimate-workflowfields.jsp"></jsp:include>
+			<jsp:include page="lineestimate-workflowfields.jsp"></jsp:include>
 		</c:if>
 		<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
 			<jsp:include page="lineestimatetechnicalsanctiondetails.jsp"/>

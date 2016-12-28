@@ -60,9 +60,11 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
@@ -146,6 +148,9 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     @Autowired
     private TypeOfWorkService typeOfWorkService;
 
+    @Autowired
+    private CityService cityService;
+
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
             final Model model) throws ApplicationException {
@@ -160,6 +165,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
         model.addAttribute("documentDetails", lineEstimate.getDocumentDetails());
         lineEstimate.setTempLineEstimateDetails(lineEstimate.getLineEstimateDetails());
+        model.addAttribute("additionalRule", cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
 
         prepareWorkflow(model, lineEstimate, new WorkflowContainer());
 
@@ -186,6 +192,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             model.addAttribute("mode", null);
             model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
+            model.addAttribute("additionalRule", cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
             return "newLineEstimate-form";
         } else {
 
@@ -195,15 +202,18 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
             Long approvalPosition = 0l;
             String approvalComment = "";
+            String additionalRule = "";
             if (request.getParameter("approvalComment") != null)
                 approvalComment = request.getParameter("approvalComent");
             if (request.getParameter("workFlowAction") != null)
                 workFlowAction = request.getParameter("workFlowAction");
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+            if (request.getParameter("additionalRule") != null)
+                additionalRule = request.getParameter("additionalRule");
 
             final LineEstimate newLineEstimate = lineEstimateService.create(lineEstimate, files, approvalPosition,
-                    approvalComment, null, workFlowAction);
+                    approvalComment, additionalRule, workFlowAction);
             model.addAttribute("lineEstimate", newLineEstimate);
 
             final String pathVars = worksUtils.getPathVars(newLineEstimate.getStatus(), newLineEstimate.getState(),

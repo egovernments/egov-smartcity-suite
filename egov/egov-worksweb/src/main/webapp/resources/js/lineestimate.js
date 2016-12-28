@@ -81,6 +81,7 @@ $(document).ready(function(){
 		$('#wardInput').val($("#boundaryNumber").val());
 	
 	$('#estimateTotal').text(roundTo($('#estimateTotal').text()));
+	$('#amountRule').val(roundTo($('#estimateTotal').text()));
 
 	var functionId = $('#functionId').val();
 	if (functionId != "") {
@@ -335,6 +336,9 @@ function calculateEstimatedAmountTotal(){
 			$(this).val("");
 	});
 	$('#estimateTotal').html(estimateTotal);
+	$('#amountRule').val(estimateTotal);
+	$('#approvalDepartment').val('');
+	$('#approvalDepartment').trigger('change');
 }
 
 function calculateActualEstimatedAmountTotal() {

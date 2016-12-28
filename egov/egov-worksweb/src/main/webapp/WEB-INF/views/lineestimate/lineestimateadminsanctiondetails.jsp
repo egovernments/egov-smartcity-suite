@@ -55,7 +55,7 @@
 		<table class="table table-bordered" id="tblestimate">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.administrativesanctionnumber"/><c:if test="${mode != 'readOnly' && lineEstimate.status.code == 'BUDGET_SANCTIONED' }"><span class="mandatory"></span></c:if></th>
+					<th><spring:message code="lbl.administrativesanctionnumber"/><c:if test="${mode != 'readOnly' && nextState == 'Admin sanctioned' }"><span class="mandatory"></span></c:if></th>
 					<c:if test="${mode == 'readOnly' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
 					<th><spring:message code="lbl.adminsanctiondate"/></th>	
 					<th><spring:message code="lbl.adminsanctionauthority"/></th>
@@ -65,7 +65,7 @@
 			<tbody >
 			</c:if>
 				<tr>
-					<c:if test="${mode != 'readOnly' && lineEstimate.status.code != 'ADMINISTRATIVE_SANCTIONED' }">
+					<c:if test="${mode != 'readOnly' && nextState == 'Admin sanctioned' }">
 						<td>
 							<form:input path="adminSanctionNumber" id="adminSanctionNumber" class="form-control table-input text-left" maxlength="32" required="required" onclick="validateadminSanctionNumber();"/>
 							<form:errors path="adminSanctionNumber" cssClass="add-margin error-msg" />

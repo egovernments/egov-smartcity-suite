@@ -173,9 +173,6 @@ public class LineEstimateService {
     private CityService cityService;
 
     @Autowired
-    private LineEstimateAppropriationService lineEstimateAppropriationService;
-
-    @Autowired
     private AppConfigValueService appConfigValuesService;
 
     public Session getCurrentSession() {
@@ -510,7 +507,8 @@ public class LineEstimateService {
 
     public Long getApprovalPositionByMatrixDesignation(final LineEstimate lineEstimate, Long approvalPosition,
             final String additionalRule, final String mode, final String workFlowAction) {
-        final WorkFlowMatrix wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null, null,
+        final WorkFlowMatrix wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null,
+                lineEstimate.getTotalEstimateAmount(),
                 additionalRule, lineEstimate.getCurrentState().getValue(), null);
         if (lineEstimate.getStatus() != null && lineEstimate.getStatus().getCode() != null)
             if ((lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CREATED.toString()) ||
@@ -525,7 +523,8 @@ public class LineEstimateService {
             approvalPosition = worksUtils.getApproverPosition(wfmatrix.getNextDesignation(), lineEstimate.getState(),
                     lineEstimate.getCreatedBy().getId());
         if (workFlowAction.equals(WorksConstants.CANCEL_ACTION)
-                && wfmatrix.getNextState().equals(WorksConstants.WF_STATE_CREATED))
+                && wfmatrix.getNextState().equals(WorksConstants.WF_STATE_CREATED)
+                || workFlowAction.equals(WorksConstants.APPROVE_ACTION))
             approvalPosition = null;
 
         return approvalPosition;
@@ -548,29 +547,16 @@ public class LineEstimateService {
             }
         } else
             try {
-                if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())
-                        && workFlowAction.equals(WorksConstants.REJECT_ACTION))
+                if (workFlowAction.equals(WorksConstants.REJECT_ACTION))
                     resetAdminSanctionDetails(lineEstimate);
-                else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())
-                        && !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
+                else if (workFlowAction.equals(WorksConstants.APPROVE_ACTION)) {
+                    if (!BudgetControlType.BudgetCheckOption.NONE.toString()
+                            .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
+                        doBudgetoryAppropriation(lineEstimate);
                     setAdminSanctionByAndDate(lineEstimate);
                     for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
                         lineEstimateDetailService.setProjectCode(led);
                 }
-
-                if (lineEstimate.getStatus().getCode()
-                        .equals(LineEstimateStatus.TECHNICALLY_APPROVED.toString())
-                        && !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
-
-                    if (!BudgetControlType.BudgetCheckOption.NONE.toString()
-                            .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
-                        doBudgetoryAppropriation(lineEstimate);
-                } else if (workFlowAction.equals(WorksConstants.REJECT_ACTION) && lineEstimate.getStatus().getCode()
-                        .equals(LineEstimateStatus.BUDGET_SANCTIONED.toString()))
-                    if (!BudgetControlType.BudgetCheckOption.NONE.toString()
-                            .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
-                        for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
-                            releaseBudgetOnReject(led, null, null);
 
                 lineEstimateStatusChange(lineEstimate, workFlowAction, mode);
             } catch (final ValidationException e) {
@@ -620,55 +606,23 @@ public class LineEstimateService {
 
     public void lineEstimateStatusChange(final LineEstimate lineEstimate, final String workFlowAction,
             final String mode) throws ValidationException {
-        if (null != lineEstimate && null != lineEstimate.getStatus() && null != lineEstimate.getStatus().getCode())
-            if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CREATED.toString()) &&
-                    !lineEstimate.getState().getNextAction()
-                            .equals(WorksConstants.LINEESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_APPROVE)
-                    && lineEstimate.getState() != null && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
-                lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
-                        LineEstimateStatus.CHECKED.toString()));
-            else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.RESUBMITTED.toString())
-                    && lineEstimate.getState() != null && workFlowAction.equals(WorksConstants.SUBMIT_ACTION) &&
-                    !lineEstimate.getState().getNextAction()
-                            .equals(WorksConstants.LINEESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_APPROVE))
-                lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
-                        LineEstimateStatus.CHECKED.toString()));
-            else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.TECHNICALLY_APPROVED.toString())
-                    && !workFlowAction.equals(WorksConstants.REJECT_ACTION))
-                lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
-                        LineEstimateStatus.BUDGET_SANCTIONED.toString()));
-            else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CHECKED.toString())
-                    && !workFlowAction.equals(WorksConstants.REJECT_ACTION)
-                    && lineEstimate.getState().getNextAction()
-                            .equals(WorksConstants.LINEESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_APPROVE)
-                    ||
-                    lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CREATED.toString())
-                            && !workFlowAction.equals(WorksConstants.REJECT_ACTION)
-                            && lineEstimate.getState().getNextAction()
-                                    .equals(WorksConstants.LINEESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_APPROVE)
-                    ||
-                    lineEstimate.getStatus().getCode().equals(LineEstimateStatus.RESUBMITTED.toString())
-                            && !workFlowAction.equals(WorksConstants.REJECT_ACTION)
-                            && lineEstimate.getState().getNextAction()
-                                    .equals(WorksConstants.LINEESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_APPROVE))
-                lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
-                        LineEstimateStatus.TECHNICALLY_APPROVED.toString()));
-            else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())
-                    && !workFlowAction.equals(WorksConstants.REJECT_ACTION))
-                lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
-                        LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()));
-            else if (workFlowAction.equals(WorksConstants.REJECT_ACTION))
-                lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
-                        LineEstimateStatus.REJECTED.toString()));
-            else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString())
-                    && workFlowAction.equals(WorksConstants.CANCEL_ACTION))
-                lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
-                        LineEstimateStatus.CANCELLED.toString()));
-            else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString())
-                    && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
-                lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
-                        LineEstimateStatus.RESUBMITTED.toString()));
-
+        WorkFlowMatrix wfmatrix = null;
+        if (LineEstimateStatus.REJECTED.toString().equals(lineEstimate.getStatus().getCode())
+                && WorksConstants.CANCEL_ACTION.equals(workFlowAction))
+            lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
+                    LineEstimateStatus.CANCELLED.toString()));
+        else if (WorksConstants.APPROVE_ACTION.equals(workFlowAction))
+            lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
+                    LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()));
+        else if (null != lineEstimate.getState()) {
+            wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null,
+                    lineEstimate.getTotalEstimateAmount(),
+                    (String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY),
+                    lineEstimate.getCurrentState().getValue(),
+                    lineEstimate.getCurrentState().getNextAction());
+            lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
+                    wfmatrix.getNextState().toUpperCase()));
+        }
     }
 
     public List<User> getLineEstimateCreatedByUsers() {
@@ -1070,86 +1024,16 @@ public class LineEstimateService {
                         "cityGrade", cityGrade));
     }
 
-    public void validateWorkFlowFields(final LineEstimate lineEstimate, final BindingResult errors) {
-        final Map<String, Object> requiredFieldsMap = getWorkFlowLevelFields(lineEstimate);
-        final LineEstimateAppropriation lineEstimateAppropriation = lineEstimateAppropriationService
-                .findLatestByLineEstimateDetails_EstimateNumber(
-                        lineEstimate.getLineEstimateDetails().get(0).getEstimateNumber());
-        final DateTime budgetAppropriationDateWithTimeStamp = new DateTime(
-                lineEstimateAppropriation.getBudgetUsage().getUpdatedTime());
-        final Date budgetAppropriationDate = budgetAppropriationDateWithTimeStamp.toLocalDate().toDate();
-        if (requiredFieldsMap != null) {
-            if (requiredFieldsMap.get(WorksConstants.WORKFLOW_COUNCIL_RESOLUTION_DETAILS_REQUIRED) != null
-                    && requiredFieldsMap.get(WorksConstants.WORKFLOW_COUNCIL_RESOLUTION_DETAILS_REQUIRED)
-                            .equals(true)) {
-                if (StringUtils.isBlank(lineEstimate.getCouncilResolutionNumber()))
-                    errors.rejectValue("councilResolutionNumber", "error.councilResolutionNumber.required");
-                else {
-                    final LineEstimate LEByCouncilResolutionNumber = getLineEstimateByCouncilResolutionNumber(
-                            lineEstimate.getCouncilResolutionNumber());
-                    if (LEByCouncilResolutionNumber != null)
-                        errors.rejectValue("councilResolutionNumber", "error.councilresolutionnumber.unique");
-                }
-                if (lineEstimate.getCouncilResolutionDate() == null)
-                    errors.rejectValue("councilResolutionDate", "error.councilResolutionDate.required");
-                else if (lineEstimate.getCouncilResolutionDate().before(budgetAppropriationDate))
-                    errors.rejectValue("councilResolutionDate",
-                            "error.councilResolutiondate.lessthan.budgetappropriation");
-            }
-            if (requiredFieldsMap.get(WorksConstants.WORKFLOW_CONTRACT_COMMITTEE_DETAILS_REQUIRED) != null
-                    && requiredFieldsMap.get(WorksConstants.WORKFLOW_CONTRACT_COMMITTEE_DETAILS_REQUIRED)
-                            .equals(true)) {
-                if (StringUtils.isBlank(lineEstimate.getContractCommitteeApprovalNumber()))
-                    errors.rejectValue("contractCommitteeApprovalNumber",
-                            "error.contractCommitteeApprovalNumber.required");
-                else {
-                    final LineEstimate LEByContractCommiiteeApprovalNumber = getLineEstimateByContractCommitteeApprovalNumber(
-                            lineEstimate.getContractCommitteeApprovalNumber());
-                    if (LEByContractCommiiteeApprovalNumber != null)
-                        errors.rejectValue("contractCommitteeApprovalNumber",
-                                "error.contractCommitteeApprovalNumber.unique");
-                }
-                if (lineEstimate.getContractCommitteeApprovalDate() == null)
-                    errors.rejectValue("contractCommitteeApprovalDate", "error.contractCommitteeApprovalDate.required");
-                else if (lineEstimate.getContractCommitteeApprovalDate().before(budgetAppropriationDate))
-                    errors.rejectValue("contractCommitteeApprovalDate",
-                            "error.contractCommitteeApprovalDate.lessthan.budgetappropriation");
-            }
-            if (requiredFieldsMap.get(WorksConstants.WORKFLOW_STANDING_COMMITEE_DETAILS_REQUIRED) != null
-                    && requiredFieldsMap.get(WorksConstants.WORKFLOW_STANDING_COMMITEE_DETAILS_REQUIRED).equals(true)) {
-                if (StringUtils.isBlank(lineEstimate.getStandingCommitteeApprovalNumber()))
-                    errors.rejectValue("standingCommitteeApprovalNumber",
-                            "error.standingCommitteeApprovalNumber.required");
-                else {
-                    final LineEstimate LEByStandingCommiteeApprovalNumber = getLineEstimateByStandingCommitteeApprovalNumber(
-                            lineEstimate.getStandingCommitteeApprovalNumber());
-                    if (LEByStandingCommiteeApprovalNumber != null)
-                        errors.rejectValue("standingCommitteeApprovalNumber",
-                                "error.standingCommitteeApprovalNumber.unique");
-                }
-                if (lineEstimate.getStandingCommitteeApprovalDate() == null)
-                    errors.rejectValue("standingCommitteeApprovalDate", "error.standingCommitteeApprovalDate.required");
-                else if (lineEstimate.getStandingCommitteeApprovalDate().before(budgetAppropriationDate))
-                    errors.rejectValue("standingCommitteeApprovalDate",
-                            "error.standingCommitteeApprovalDate.lessthan.budgetappropriation");
-            }
-            if (requiredFieldsMap.get(WorksConstants.WORKFLOW_GOVERNMENT_APPROVAL_DETAILS_REQUIRED) != null
-                    && requiredFieldsMap.get(WorksConstants.WORKFLOW_GOVERNMENT_APPROVAL_DETAILS_REQUIRED)
-                            .equals(true)) {
-                if (StringUtils.isBlank(lineEstimate.getGovernmentApprovalNumber()))
-                    errors.rejectValue("governmentApprovalNumber", "error.governmentApprovalNumber.required");
-                else {
-                    final LineEstimate LEByGovernmentApprovalNumber = getLineEstimateByGovernmentApprovalNumber(
-                            lineEstimate.getGovernmentApprovalNumber());
-                    if (LEByGovernmentApprovalNumber != null)
-                        errors.rejectValue("governmentApprovalNumber", "error.governmentApprovalNumber.unique");
-                }
-                if (lineEstimate.getGovernmentApprovalDate() == null)
-                    errors.rejectValue("governmentApprovalDate", "error.governmentApprovalDate.required");
-                else if (lineEstimate.getGovernmentApprovalDate().before(budgetAppropriationDate))
-                    errors.rejectValue("governmentApprovalDate",
-                            "error.governmentApprovalDate.lessthan.budgetappropriation");
-            }
+    public void validateAdminSanctionFields(final LineEstimate lineEstimate, final BindingResult errors) {
+        if (StringUtils.isBlank(lineEstimate.getCouncilResolutionNumber()))
+            errors.rejectValue("councilResolutionNumber", "error.councilResolutionNumber.required");
+        else {
+            final LineEstimate LEByCouncilResolutionNumber = getLineEstimateByCouncilResolutionNumber(
+                    lineEstimate.getCouncilResolutionNumber());
+            if (LEByCouncilResolutionNumber != null)
+                errors.rejectValue("councilResolutionNumber", "error.councilresolutionnumber.unique");
+            if (lineEstimate.getCouncilResolutionDate() == null)
+                errors.rejectValue("councilResolutionDate", "error.councilResolutionDate.required");
         }
     }
 

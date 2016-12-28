@@ -42,70 +42,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
-<c:if test="${fieldsRequiredMap.contractCommitteeDetailsRequired == true}">
-<div class="panel panel-primary contractcommittee" data-collapsed="0">
-	<div class="panel-heading">
-		<div class="panel-title">
-			<spring:message  code="lbl.contractcomittee.details"/>
-		</div>
-	</div>
-	<div class="panel-body">
-		<table class="table table-bordered" id="tblestimate">
-			<thead>
-				<tr>
-					<th><spring:message code="lbl.contractcomitteeNumber"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.contractcomitteeDate"/><span class="mandatory"></span></th>
-				</tr>
-			</thead>
-			<tbody >
-			<tr>
-					<td>
-						<form:input path="contractCommitteeApprovalNumber"  id="contractCommitteeApprovalNumber" name="contractCommitteeApprovalNumber" required="required" value="${contractCommitteeApprovalNumber}"  onclick="validateNumber('contractCommitteeApprovalNumber');" class="form-control table-input text-left" maxlength="32"/>
-						<form:errors path="contractCommitteeApprovalNumber" cssClass="add-margin error-msg" />
-					</td>
-					<td>
-						<form:input path="contractCommitteeApprovalDate" id="contractCommitteeApprovalDate" name="contractCommitteeApprovalDate" required="required" value="${councilResolutionDate}"  class="form-control datepicker"  maxlength="10"  data-date-end-date="0d" />
-						<form:errors path="contractCommitteeApprovalDate" cssClass="add-margin error-msg" />
-					</td>
-					</tr>
-			</tbody>
-			</table>
-			</div>
-	</div>
-	</c:if>
-	<c:if test="${fieldsRequiredMap.standingCommitteeDetailsRequired == true}">
-	<div class="panel panel-primary standingcommittee" data-collapsed="0">
-	<div class="panel-heading">
-		<div class="panel-title">
-			<spring:message  code="lbl.standingcommittee.details"/>
-		</div>
-	</div>
-	<div class="panel-body">
-		<table class="table table-bordered" id="tblestimate">
-			<thead>
-				<tr>
-					<th><spring:message code="lbl.standingcommitteenumber"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.standingcommitteedate"/><span class="mandatory"></span></th>
-				</tr>
-			</thead>
-			<tbody >
-			<tr>
-					<td>
-						<form:input path="standingCommitteeApprovalNumber"  id="standingCommitteeApprovalNumber" name="standingCommitteeApprovalNumber" required="required" value="${standingCommitteeApprovalNumber}" onclick="validateNumber('standingCommitteeApprovalNumber');" class="form-control table-input text-left" maxlength="32"/>
-						<form:errors path="standingCommitteeApprovalNumber" cssClass="add-margin error-msg" />
-					</td>
-					<td>
-						<form:input path="standingCommitteeApprovalDate" id="standingCommitteeApprovalDate" name="standingCommitteeApprovalDate" required="required" value="${standingCommitteeApprovalDate}"  class="form-control datepicker"  maxlength="10"  data-date-end-date="0d" />
-						<form:errors path="standingCommitteeApprovalDate" cssClass="add-margin error-msg" />
-					</td>
-					</tr>
-			</tbody>
-			</table>
-			</div>
-	</div>
-	</c:if>
-<c:if test="${fieldsRequiredMap.councilResolutionDetailsRequired == true}">
 <div class="panel panel-primary councilresolution" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
@@ -135,35 +71,3 @@
 		</table>
 		</div>
 </div>
-</c:if>
-<c:if test="${fieldsRequiredMap.governmentApprovalRequired == true}">
-<div class="panel panel-primary governmentapproval" data-collapsed="0">
-	<div class="panel-heading">
-		<div class="panel-title">
-			<spring:message  code="lbl.governmentapproval.details"/>
-	</div>
-</div>
-<div class="panel-body governmentapproval">
-	<table class="table table-bordered" id="tblgovernmentapproval">
-		<thead>
-			<tr>
-				<th><spring:message code="lbl.governmentapprovalnumber"/><span class="mandatory"></span></th>
-				<th><spring:message code="lbl.governmentapprovaldate"/><span class="mandatory"></span></th>
-			</tr>
-		</thead>
-		<tbody >
-		<tr>
-				<td>
-					<form:input path="governmentApprovalNumber"  id="governmentApprovalNumber" name="governmentApprovalNumber" value="${governmentApprovalNumber}" required="required" class="form-control table-input text-left" onclick="validateNumber('governmentApprovalNumber');" maxlength="32"/>
-					<form:errors path="governmentApprovalNumber" cssClass="add-margin error-msg" />
-				</td>
-				<td>
-					<form:input path="governmentApprovalDate" id="governmentApprovalDate" name="governmentApprovalDate" value="${governmentApprovalDate}" required="required" class="form-control datepicker"  maxlength="10"  data-date-end-date="0d" />
-					<form:errors path="governmentApprovalDate" cssClass="add-margin error-msg" />
-				</td>
-				</tr>
-		</tbody>
-		</table>
-		</div>
-</div>
-</c:if>
