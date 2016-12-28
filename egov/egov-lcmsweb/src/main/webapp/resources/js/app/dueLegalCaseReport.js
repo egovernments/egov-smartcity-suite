@@ -70,38 +70,46 @@ jQuery(document).ready(function($) {
 		});
 	
 });
+
+var oDataTable;
 		
 function submitForm(redirectUrl,oTable) {
 	if($('form').valid()){
 		var today = getdate();
-		$('#dailyBoardReportResult-header').show();
+		//$('#dailyBoardReportResult-header').show();
 		$('#reportgeneration-header').show();
-		var oDataTable=oTable.dataTable({
-			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-			"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
+		oDataTable=oTable.DataTable({
+			dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
 			"autoWidth": false,
 			"bDestroy": true,
 			"processing": true,
-			"oTableTools" : {
-				"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-				"aButtons" : [ 
-					               {
-							             "sExtends": "pdf",
-		                                 "sPdfMessage": "Report generated on "+today+"",
-		                                 "sTitle": "LegalCase Due Report",
-		                                 "sPdfOrientation": "landscape"
-						                },
-						                {
-								             "sExtends": "xls",
-			                                 "sPdfMessage": "Due Report",
-			                                 "sTitle": "LegalCase Due Report"
-							             },
-							             {
-								             "sExtends": "print",
-			                                 "sPdfMessage": "Due Report",
-			                                 "sTitle": "LegalCase Due Report"
-							             }],
-				},
+			buttons: [
+						{
+						    extend: 'excel',
+						    title: 'LegalCase Due Report',
+						    filename: 'LegalCase Due Report',
+						    exportOptions: {
+						        columns: ':visible'
+						    }
+						},
+					  {
+					    extend: 'pdf',
+					    message: "Report generated on "+today+"",
+					    title: 'LegalCase Due Report',
+					    filename: 'LegalCase Due Report',
+					    exportOptions: {
+					        columns: ':visible'
+					    }
+					},
+					{
+					    extend: 'print',
+					    title: 'LegalCase Due Report',
+					    filename: 'LegalCase Due Report',
+					    exportOptions: {
+					        columns: ':visible'
+					    }
+					}
+					],
 				ajax : {
 					
 					url : redirectUrl+$('#dueReportResultForm').serialize(),
@@ -119,21 +127,21 @@ function submitForm(redirectUrl,oTable) {
 						  ],
 							"fnRowCallback" : function(row, data, index) {
 								$('td:eq(1)',row).html('<a href="javascript:void(0);" onclick="openLegalCase(\''+ data.legalcaseno +'\')">' + data.caseNumber + '</a>');
-							},
-
-				           "fnDrawCallback": function ( oSettings) {
-				                if ( oSettings.bSorted || oSettings.bFiltered )
-				                {
-				                    for ( var i=0, iLen=oSettings.aiDisplay.length ; i<iLen ; i++ )
-				                    {
-				                        $('td:eq(0)', oSettings.aoData[ oSettings.aiDisplay[i] ].nTr ).html( i+1 );
-				                    }
-				                }
-				            }	
+							}
 				});
+		 //s.no auto generation(will work in exported documents too..)
+		oDataTable.on( 'order.dt search.dt', function () {
+			oDataTable.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                cell.innerHTML = i+1;
+                oDataTable.cell(cell).invalidate('dom'); 
+            } );
+        } ).draw();
+		
+
 	}
-	
-}
+		
+
+	}
 function openLegalCase(lcNumber) {
 	window.open("/lcms/application/view/?lcNumber="+ lcNumber , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 }

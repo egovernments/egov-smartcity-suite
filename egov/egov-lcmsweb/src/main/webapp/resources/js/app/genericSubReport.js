@@ -87,8 +87,6 @@ function submitForm() {
 	if ($('form').valid()) {
 
 		var today = getdate();
-
-		//oTable = $('#genericSubReport-table');
 		$('#genericSubReport-header').show();
 		$('#reportgeneration-header').show();
 		oDataTable=oTable.DataTable({
@@ -99,7 +97,6 @@ function submitForm() {
 			buttons: [
 						{
 						    extend: 'excel',
-						    Message: "Report generated on "+today+"",
 						    filename: 'LegalCase Generic SubReport',
 						    exportOptions: {
 						        columns: ':visible'
@@ -107,6 +104,7 @@ function submitForm() {
 						},
 					  {
 					    extend: 'pdf',
+					    message: "Report generated on "+today+"",
 					    title: 'LegalCase Generic SubReport',
 					    filename: 'Generic SubReport',
 					    exportOptions: {
@@ -206,7 +204,6 @@ function callAjaxBydrillDownReport(aggregatedByValues) {
 		buttons: [
 					{
 					    extend: 'excel',
-					    Message: "Report generated on "+today+"",
 					    filename: 'LegalCase Drill Down Report',
 					    exportOptions: {
 					        columns: ':visible'
@@ -214,6 +211,7 @@ function callAjaxBydrillDownReport(aggregatedByValues) {
 					},
 				  {
 				    extend: 'pdf',
+				    message: "Report generated on "+today+"",
 				    title: 'LegalCase Drill Down Report',
 				    filename: 'Drill Down Report',
 				    exportOptions: {
@@ -225,7 +223,7 @@ function callAjaxBydrillDownReport(aggregatedByValues) {
 				    title: 'LegalCase Drill Down Report',
 				    filename: 'Generic SubReport',
 				    exportOptions: {
-				        columns: ':Drill Down Report'
+				    	columns: ':visible'
 				    }
 				}],
 
@@ -338,7 +336,6 @@ function submitSubReportStatusForm() {
 			buttons: [
 						{
 						    extend: 'excel',
-						    Message: "Report generated on "+today+"",
 						    filename: 'LegalCase Generic SubReport Status',
 						    exportOptions: {
 						        columns: ':visible'
@@ -346,6 +343,7 @@ function submitSubReportStatusForm() {
 						},
 					  {
 					    extend: 'pdf',
+					    message: "Report generated on "+today+"",
 					    title: 'LegalCase Generic SubReport Status',
 					    filename: 'Generic SubReport Status',
 					    exportOptions: {

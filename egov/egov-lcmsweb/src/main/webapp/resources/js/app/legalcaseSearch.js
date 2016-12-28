@@ -37,17 +37,18 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-var tableContainer;
-var reportdatatable;
+/*var tableContainer;
+var reportdatatable;*/
 jQuery(document).ready(
 		function($) {
-			
+			$('#legalCaseSearchResult-header').hide();
+			$('#reportgeneration-header').hide();
 			loadsubreportstatus();
 			$('#statusId').change(function(){
 				loadsubreportstatus();
 			});
 			
-			tableContainer = $('#legalCaseResults');
+			/*tableContainer = $('#legalCaseResults');
 			var judgment = $('#judgment').val();
 			document.onkeydown = function(evt) {
 				var keyCode = evt ? (evt.which ? evt.which : evt.keyCode)
@@ -55,56 +56,64 @@ jQuery(document).ready(
 				if (keyCode == 13) {
 					submitForm();
 				}
-			}
+			}*/
 			$('#legalcaseReportSearch').click(function() {
 				submitForm();
 			});
 			
 		});
-$('#searchapp').keyup(function(){
+/*$('#searchapp').keyup(function(){
 	tableContainer.fnFilter(this.value);
-	});
+	});*/
+
+var oTable = $('#legalCaseResults-table');
+var oDataTable;
 
 function submitForm() {
 
 	var caseNumber = $("#caseNumber").val();
 	var lcNumber = $("#lcNumber").val();
 
-	$('.report-section').removeClass('display-hide');
-	$('#report-footer').show();
+	$('#legalCaseSearchResult-header').show();
+	$('#reportgeneration-header').show();
 	var isCancelled = jQuery('#isStatusExcluded').is(":checked");
-	reportdatatable = tableContainer
-			.dataTable({
-				ajax : {
-					url : "/lcms/search/legalsearchResult?"+$('#searchlegalcaseForm').serialize(),
-					
-				},
-				"autoWidth" : false,
-				"bDestroy" : true,
-				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
-				"oTableTools" : {
-					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [{
-			             "sExtends": "pdf",
-			             "mColumns": [0, 1, 2, 3, 4,5,6,7],
-			             "sPdfMessage": "",
-                         "sTitle": "Search LegalCase Report",
-                         "sPdfOrientation": "landscape"
-		                },
-		                {
-				             "sExtends": "xls",
-				             "mColumns": [ 0,1,2,3,4,5,6,7],
-                             "sPdfMessage": "Search LegalCase Report",
-                             "sTitle": "Search LegalCase Report"
-			             },
-			             {
-				             "sExtends": "print",
-				             "mColumns": [ 0,1,2,3,4,5,6,7],
-                             "sPdfMessage": "Search LegalCase Report",
-                             "sTitle": "Search LegalCase Report"
-			             }],
-				},
+				$('#reportgeneration-header').show();
+				oDataTable=oTable.DataTable({
+					dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
+					"autoWidth": false,
+					"bDestroy": true,
+					"processing": true,
+					buttons: [
+								{
+								    extend: 'excel',
+								    title: 'Search Legal Case',
+								    filename: 'Search Legal Case',
+								exportOptions : {
+											columns : [0,1, 2, 3, 4, 5, 6,7]
+										}
+								},
+							  {
+							    extend: 'pdf',
+							    title: 'Search Legal Case',
+							    filename: 'Search Legal Case',
+							    	exportOptions : {
+										columns : [0,1, 2, 3, 4, 5, 6,7]
+									}
+							},
+							{
+							    extend: 'print',
+							    title: 'Search Legal Case',
+							    filename: 'Search Legal Case',
+							    	exportOptions : {
+										columns : [0,1, 2, 3, 4, 5, 6,7]
+									}
+							}
+							],
+
+							ajax : {
+
+								url : "/lcms/search/legalsearchResult?"+$('#searchlegalcaseForm').serialize(),
+							},
 				columns : [
 						{
 							"data" : "legalcaseno",
@@ -167,16 +176,7 @@ function submitForm() {
 									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="12">Edit Judgment Implementation</option><option value="8">Close Case</option></select>');
 								}
 							}
-						} ],
-				"footerCallback" : function(row, data, start, end, display) {
-					var api = this.api(), data;
-					if (data.length == 0) {
-						$('#report-footer').hide();
-					} else {
-						$('#report-footer').show();
-					}
-
-				},
+						} ]
 
 			});
 	$('.loader-class').modal('hide');
