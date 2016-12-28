@@ -239,15 +239,20 @@ function onSubmit()
 			 return false;
 			}
 	else if(!balanceCheck() && jQuery("#bankBalanceCheck").val()==balanceCheckWarning){
-		 bootbox.confirm("Insufficient Bank Balance. Do you want to process ?", function(result) {
-				if(result)
-					{
-					document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
-				document.remittanceForm.submit();
-					}
-			}); 
-		 return false;
+		 var msg = confirm("Insufficient Bank Balance. Do you want to process ?");
+		 if (msg == true) {
+			 document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
+			 document.remittanceForm.submit();
+			return true;
+		 } else {
+			 undoLoadingMask();
+		   	return false;
+			}
 		}
+	else{
+		document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
+	 	document.remittanceForm.submit();
+	}
 			
 	}
 		return false;

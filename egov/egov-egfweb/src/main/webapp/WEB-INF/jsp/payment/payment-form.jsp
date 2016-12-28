@@ -705,44 +705,29 @@
 			var balanceCheckWarning='<s:text name="payment.warning"/>';
 			var noBalanceCheck='<s:text name="payment.none"/>';
 			if(jQuery("#bankBalanceCheck").val()==noBalanceCheck)
-				{
-				 document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
-				return true;
-				}
+			{
+			 document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
+			 return true;
+			}
 			else if(!balanceCheck() && jQuery("#bankBalanceCheck").val()==balanceCheckMandatory){
 					 bootbox.alert("Insufficient Bank Balance.");
 					 undoLoadingMask();
 					 return false;
 					}
 			else if(!balanceCheck() && jQuery("#bankBalanceCheck").val()==balanceCheckWarning){
-				 bootbox.confirm("Insufficient Bank Balance. Do you want to process ?", function(result) {
-						if(result)
-							{
-							 document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
-						document.forms[0].submit();
-							}
-					}); 
-				 undoLoadingMask();
-				 return false;
-				}
-			else if(jQuery("#bankBalanceCheck").val()==noBalanceCheck)
-			{
-			document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
-			return true;
-			}
-		else if(!balanceCheck() && jQuery("#bankBalanceCheck").val()==balanceCheckMandatory){
-				 bootbox.alert("Insufficient Bank Balance.");
-				 return false;
-				}
-		else if(!balanceCheck() && jQuery("#bankBalanceCheck").val()==balanceCheckWarning){
-			 bootbox.confirm("Insufficient Bank Balance. Do you want to process ?", function(result) {
-					if(result)
-						{
-					document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
-					document.dbpform.submit();
+					 var msg = confirm("Insufficient Bank Balance. Do you want to process ?");
+					 if (msg == true) {
+						 document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
+						return true;
+					 } else {
+						 undoLoadingMask();
+					   	return false;
 						}
-				}); 
-			 return false;
+				}
+			else
+			{
+				document.forms[0].action = '${pageContext.request.contextPath}/payment/payment-create.action';
+				return true;
 			}
 		}  
 		

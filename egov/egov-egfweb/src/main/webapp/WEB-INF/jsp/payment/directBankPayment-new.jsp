@@ -451,15 +451,20 @@ function onSubmit()
 			 return false;
 			}
 	else if(!balanceCheck() && jQuery("#bankBalanceCheck").val()==balanceCheckWarning){
-		 bootbox.confirm("Insufficient Bank Balance. Do you want to process ?", function(result) {
-				if(result)
-					{
-				document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
-				document.dbpform.submit();
-					}
-			}); 
-		 return false;
+		 var msg = confirm("Insufficient Bank Balance. Do you want to process ?");
+		 if (msg == true) {
+			 document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
+			 document.dbpform.submit();
+			return true;
+		 } else {
+			 undoLoadingMask();
+		   	return false;
+			}
 		}
+	else{
+		document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
+		document.dbpform.submit();
+	}
 		
 }
 
