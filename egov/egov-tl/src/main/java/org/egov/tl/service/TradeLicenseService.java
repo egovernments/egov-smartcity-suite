@@ -173,9 +173,11 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         }
         if (BUTTONREJECT.equals(workFlowAction))
             if (license.getLicenseAppType() != null
-                    && license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
-                license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_ACTIVE));
-            else if (wfInitiator.equals(userAssignment.getPosition())) {
+                    && license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
+                license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_REJECTED));
+                license = (TradeLicense) licenseUtils.applicationStatusChange(license,
+                        Constants.APPLICATION_STATUS_REJECTED);
+            } else if (wfInitiator.equals(userAssignment.getPosition())) {
                 license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_CANCELLED));
                 license = (TradeLicense) licenseUtils.applicationStatusChange(license,
                         Constants.APPLICATION_STATUS_CANCELLED);
