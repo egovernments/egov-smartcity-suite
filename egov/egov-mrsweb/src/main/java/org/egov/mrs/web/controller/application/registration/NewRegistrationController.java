@@ -216,13 +216,13 @@ public class NewRegistrationController extends MarriageRegistrationController {
             if (allowValidation.getValue().equalsIgnoreCase("NO")) {
                 final List<MarriageFee> fee = marriageFeeService.getActiveGeneralTypeFeeses();
                 for (final MarriageFee marriageFee : fee)
-                    if (days > marriageFee.getFromDays() && (marriageFee.getToDays() == null || days < marriageFee.getToDays()))
+                    if (days >= marriageFee.getFromDays() && (marriageFee.getToDays() == null || days <= marriageFee.getToDays()))
                         return marriageFee.getFees();
             }
-            else if (allowValidation.getValue().equalsIgnoreCase("YES") && days < 90) {
+            else if (allowValidation.getValue().equalsIgnoreCase("YES") && days <= 90) {
                 final List<MarriageFee> fee = marriageFeeService.getActiveGeneralTypeFeeses();
                 for (final MarriageFee marriageFee : fee)
-                    if (days > marriageFee.getFromDays() && (marriageFee.getToDays() == null || days < marriageFee.getToDays()))
+                    if (days >= marriageFee.getFromDays() && (marriageFee.getToDays() == null || days <= marriageFee.getToDays()))
                         return marriageFee.getFees();
             }
         return null;
