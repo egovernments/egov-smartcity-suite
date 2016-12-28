@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
 <!--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -38,10 +39,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-
-
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-12-22T11:54:36 -->
+<!-- 2016-12-22T16:15:41 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_dishonored_cheque_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="749560f5-966f-4c9c-9c04-ed0be706f118">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -496,7 +494,7 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 					<font fontName="Times New Roman" size="8" isBold="false" isItalic="true" isUnderline="true" pdfFontName="Times-Italic"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{RECEIPT_NUMBER}]]></textFieldExpression>
-				<hyperlinkReferenceExpression><![CDATA[$P{EGOV_HOSTNAME}+"collection/receipts/receipt!viewReceipts.action?selectedReceipts=" +$F{selectedReceipts}]]></hyperlinkReferenceExpression>
+				<hyperlinkReferenceExpression><![CDATA["receipts/receipt-viewReceipts.action?selectedReceipts=" +$F{selectedReceipts}]]></hyperlinkReferenceExpression>
 				<hyperlinkTooltipExpression><![CDATA[$F{selectedReceipts}]]></hyperlinkTooltipExpression>
 			</textField>
 			<textField>
