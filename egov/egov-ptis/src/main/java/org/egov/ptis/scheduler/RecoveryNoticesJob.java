@@ -93,7 +93,8 @@ public class RecoveryNoticesJob extends QuartzJobBean {
         final List<String> assessments = Arrays.asList(assessmentNumbers.split(", "));
         final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
         for (final String assessmentNo : assessments) {
-            LOGGER.debug("Generating " + noticeType + " for assessment : " + assessmentNo);
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("Generating " + noticeType + " for assessment : " + assessmentNo);
             try {
                 txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
                 txTemplate.execute(result -> {
@@ -117,8 +118,10 @@ public class RecoveryNoticesJob extends QuartzJobBean {
                     }
                 });
             } catch (final Exception e) {
-                LOGGER.error("Exception in Generating " + noticeType + " for assessment : " + assessmentNo);
-                LOGGER.error(e.getMessage());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.error("Exception in Generating " + noticeType + " for assessment : " + assessmentNo);
+                    LOGGER.error(e.getMessage());
+                }
                 txTemplate.execute(result -> {
                     return Boolean.FALSE;
                 });
