@@ -43,6 +43,7 @@ package org.egov.ptis.scheduler;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -57,7 +58,6 @@ import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -67,6 +67,8 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 @DisallowConcurrentExecution
 public class RecoveryNoticesJob extends QuartzJobBean {
+
+    private static final Logger LOGGER = Logger.getLogger(RecoveryNoticesJob.class);
 
     @Autowired
     private RecoveryNoticeService recoveryNoticesService;
@@ -91,11 +93,11 @@ public class RecoveryNoticesJob extends QuartzJobBean {
         final List<String> assessments = Arrays.asList(assessmentNumbers.split(", "));
         final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
         for (final String assessmentNo : assessments) {
-            txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+            LOGGER.debug("Generating " + noticeType + " for assessment : " + assessmentNo);
             try {
+                txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
                 txTemplate.execute(result -> {
-                    List<String> errors = null;
-                    errors = recoveryNoticesService.validateRecoveryNotices(assessmentNo, noticeType);
+                    final List<String> errors = recoveryNoticesService.validateRecoveryNotices(assessmentNo, noticeType);
                     final RecoveryNoticesInfo noticeInfo = recoveryNoticesService
                             .getRecoveryNoticeInfoByAssessmentAndNoticeType(assessmentNo, noticeType);
                     if (errors.isEmpty()) {
@@ -109,13 +111,14 @@ public class RecoveryNoticesJob extends QuartzJobBean {
                         }
                         return Boolean.TRUE;
                     } else {
-                        final String error = errors.get(0);
-                        noticeInfo.setError(error);
+                        noticeInfo.setError(errors.get(0));
                         recoveryNoticesService.saveRecoveryNoticeInfo(noticeInfo);
                         return Boolean.FALSE;
                     }
                 });
-            } catch (final TransactionException e) {
+            } catch (final Exception e) {
+                LOGGER.error("Exception in Generating " + noticeType + " for assessment : " + assessmentNo);
+                LOGGER.error(e.getMessage());
                 txTemplate.execute(result -> {
                     return Boolean.FALSE;
                 });
