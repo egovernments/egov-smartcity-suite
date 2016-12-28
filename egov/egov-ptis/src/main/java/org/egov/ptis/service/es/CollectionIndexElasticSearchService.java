@@ -107,6 +107,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class CollectionIndexElasticSearchService {
 
+    private static final String INTEREST_AMOUNT = "interestAmount";
+    private static final String CURRENT_CESS = "currentCess";
+    private static final String ARREAR_CESS = "arrearCess";
+    private static final String CURRENT_AMOUNT = "currentAmount";
+    private static final String ARREAR_AMOUNT = "arrearAmount";
     private static final String CONSUMER_CODE = "consumerCode";
     private static final String RECEIPT_COUNT = "receipt_count";
     private static final String DATE_AGG = "date_agg";
@@ -218,7 +223,7 @@ public class CollectionIndexElasticSearchService {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_GRADE, collectionDetailsRequest.getUlbGrade()));
         if (StringUtils.isNotBlank(collectionDetailsRequest.getUlbCode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_CODE, collectionDetailsRequest.getUlbCode()));
-        if (StringUtils.isNotBlank(collectionDetailsRequest.getPropertyType())){
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getPropertyType())) {
             if (DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT.equalsIgnoreCase(collectionDetailsRequest.getPropertyType()))
                 boolQuery = boolQuery
                         .filter(QueryBuilders.termsQuery("consumerType", DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST));
@@ -398,9 +403,9 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(new Date(), 1);
         }
         int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
-        
+
         Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate, toDate,
-                    COLLECTION_INDEX_NAME, TOTAL_AMOUNT, aggregationField);
+                COLLECTION_INDEX_NAME, TOTAL_AMOUNT, aggregationField);
         // For total demand
         Map<String, BigDecimal> totalDemandMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
                 toDate, PROPERTY_TAX_INDEX_NAME, TOTAL_DEMAND, aggregationField);
@@ -411,6 +416,39 @@ public class CollectionIndexElasticSearchService {
         Map<String, BigDecimal> lytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest,
                 DateUtils.addYears(fromDate, -1), DateUtils.addYears(toDate, -1), COLLECTION_INDEX_NAME, TOTAL_AMOUNT,
                 aggregationField);
+        // For fetching individual collections
+        StringTerms individualCollDetails = getIndividualCollections(collectionDetailsRequest, fromDate, toDate,
+                COLLECTION_INDEX_NAME, aggregationField);
+        Map<String, Map<String, BigDecimal>> collectionDivisionMap = new HashMap<>();
+        Map<String, BigDecimal> individualCollMap;
+        Sum arrearAmt;
+        Sum currentAmt;
+        Sum arrearCess;
+        Sum currentCess;
+        Sum interestAmt;
+        if (individualCollDetails != null) {
+            for (Terms.Bucket entry : individualCollDetails.getBuckets()) {
+                individualCollMap = new HashMap<>();
+                arrearAmt = entry.getAggregations().get("arrear_amount");
+                currentAmt = entry.getAggregations().get("curr_amount");
+                arrearCess = entry.getAggregations().get("arrear_cess");
+                currentCess = entry.getAggregations().get("curr_cess");
+                interestAmt = entry.getAggregations().get("interest");
+
+                individualCollMap.put(ARREAR_AMOUNT,
+                        BigDecimal.valueOf(arrearAmt.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                individualCollMap.put(CURRENT_AMOUNT,
+                        BigDecimal.valueOf(currentAmt.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                individualCollMap.put(ARREAR_CESS,
+                        BigDecimal.valueOf(arrearCess.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                individualCollMap.put(CURRENT_CESS,
+                        BigDecimal.valueOf(currentCess.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                individualCollMap.put(INTEREST_AMOUNT,
+                        BigDecimal.valueOf(interestAmt.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+
+                collectionDivisionMap.put(String.valueOf(entry.getKey()), individualCollMap);
+            }
+        }
 
         // Fetch ward wise Bill Collector details for ward based grouping
         if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
@@ -447,6 +485,18 @@ public class CollectionIndexElasticSearchService {
             }
             collIndData.setTodayColl(todayCollMap.get(name) == null ? BigDecimal.ZERO : todayCollMap.get(name));
             collIndData.setCytdColl(entry.getValue());
+            if (!collectionDivisionMap.isEmpty()) {
+                collIndData.setArrearColl((collectionDivisionMap.get(name).get(ARREAR_AMOUNT) == null ? BigDecimal.ZERO
+                        : collectionDivisionMap.get(name).get(ARREAR_AMOUNT))
+                                .add(collectionDivisionMap.get(name).get(ARREAR_CESS) == null ? BigDecimal.ZERO
+                                        : collectionDivisionMap.get(name).get(ARREAR_CESS)));
+                collIndData.setCurrentColl((collectionDivisionMap.get(name).get(CURRENT_AMOUNT) == null ? BigDecimal.ZERO
+                        : collectionDivisionMap.get(name).get(CURRENT_AMOUNT))
+                                .add(collectionDivisionMap.get(name).get(CURRENT_CESS) == null ? BigDecimal.ZERO
+                                        : collectionDivisionMap.get(name).get(CURRENT_CESS)));
+                collIndData.setInterest(collectionDivisionMap.get(name).get(INTEREST_AMOUNT) == null ? BigDecimal.ZERO
+                        : collectionDivisionMap.get(name).get(INTEREST_AMOUNT));
+            }
             // Proportional Demand = (totalDemand/12)*noOfmonths
             BigDecimal currentYearTotalDemand = (currYrTotalDemandMap.get(name) == null ? BigDecimal.valueOf(0)
                     : currYrTotalDemandMap.get(name));
@@ -523,6 +573,47 @@ public class CollectionIndexElasticSearchService {
                     BigDecimal.valueOf(aggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
         }
         return cytdCollMap;
+    }
+
+    /**
+     * Provides collection break-up of total amount
+     * @param collectionDetailsRequest
+     * @param fromDate
+     * @param toDate
+     * @param indexName
+     * @param aggregationField
+     * @return StringTerms
+     */
+    public StringTerms getIndividualCollections(CollectionDetailsRequest collectionDetailsRequest,
+            Date fromDate, Date toDate, String indexName, String aggregationField) {
+        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, indexName);
+        if (indexName.equals(COLLECTION_INDEX_NAME))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
+                            .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
+                    .mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
+        else
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("isActive", true))
+                    .filter(QueryBuilders.matchQuery("isExempted", false));
+
+        AggregationBuilder aggregation = AggregationBuilders.terms(BY_CITY).field(aggregationField).size(120)
+                .subAggregation(AggregationBuilders.sum("arrear_amount").field(ARREAR_AMOUNT))
+                .subAggregation(AggregationBuilders.sum("curr_amount").field(CURRENT_AMOUNT))
+                .subAggregation(AggregationBuilders.sum("arrear_cess").field(ARREAR_CESS))
+                .subAggregation(AggregationBuilders.sum("curr_cess").field(CURRENT_CESS))
+                .subAggregation(AggregationBuilders.sum("interest").field("latePaymentCharges"));
+
+        SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName).withQuery(boolQuery)
+                .addAggregation(aggregation).build();
+
+        Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl, new ResultsExtractor<Aggregations>() {
+            @Override
+            public Aggregations extract(SearchResponse response) {
+                return response.getAggregations();
+            }
+        });
+
+        return collAggr.get(BY_CITY);
     }
 
     /**

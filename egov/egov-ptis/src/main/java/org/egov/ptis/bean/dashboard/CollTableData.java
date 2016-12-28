@@ -60,6 +60,9 @@ public class CollTableData {
     private BigDecimal performance = BigDecimal.ZERO;
     private BigDecimal cytdBalDmd = BigDecimal.ZERO;
     private BigDecimal lytdColl = BigDecimal.ZERO;
+    private BigDecimal arrearColl = BigDecimal.ZERO;
+    private BigDecimal currentColl = BigDecimal.ZERO;
+    private BigDecimal interest = BigDecimal.ZERO;
     private BigDecimal lyVar = BigDecimal.ZERO;
 
     public String getRegionName() {
@@ -180,5 +183,29 @@ public class CollTableData {
 
     public void setMobileNumber(String mobileNumber) {
         this.mobileNumber = mobileNumber;
+    }
+
+    public BigDecimal getArrearColl() {
+        return arrearColl;
+    }
+
+    public void setArrearColl(BigDecimal arrearColl) {
+        this.arrearColl = arrearColl;
+    }
+
+    public BigDecimal getCurrentColl() {
+        return currentColl;
+    }
+
+    public void setCurrentColl(BigDecimal currentColl) {
+        this.currentColl = currentColl;
+    }
+
+    public BigDecimal getInterest() {
+        return interest;
+    }
+
+    public void setInterest(BigDecimal interest) {
+        this.interest = interest;
     }
 }
