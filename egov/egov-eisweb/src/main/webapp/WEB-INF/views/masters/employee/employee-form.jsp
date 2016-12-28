@@ -130,7 +130,7 @@
 											<label>Female</label>
 										</div>
 										<div class="col-sm-2 col-xs-12 add-margin">
-											<form:radiobutton path="gender" id="gender" value="TRANSGENDER"/>
+											<form:radiobutton path="gender" id="gender" value="OTHERS"/>
 											<label>Transgender</label>
 										</div>
 									</div>

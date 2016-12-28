@@ -552,16 +552,26 @@ $(document).ready(function(){
 		$('.boundaryTypeerror').hide();
 		$('.boundaryerror').hide();
 		$('.duplicatejurisdictionerror').hide();
-		if(($("#jurisdictionTable tr").length-1)>=1){
-			for(var i=0;i<$("#jurisdictionTable tr").length-1;i++) {
-				if(($('#table_boundaryType'+i).val()).localeCompare($("#boundaryTypeId").find('option:selected').text())==0){
-					if(($('#table_boundary'+i).val()).localeCompare($("#boundarySelect").find('option:selected').text())==0){
-						$('.duplicatejurisdictionerror').html('Already this jurisdiction combination exist').show();
-						return false;
+		
+		var i=1;
+		var length = $("#jurisdictionTable tr").length;
+		if($("#mode").val()=="update")
+		{
+		i=0;
+		length = length-1;
+		}
+
+			if(($("#jurisdictionTable tr").length-1)>=1){		
+				for(i;i<length;i++) {
+					if(($('#table_boundaryType'+i).val()).localeCompare($("#boundaryTypeId").find('option:selected').text())==0){
+						if(($('#table_boundary'+i).val()).localeCompare($("#boundarySelect").find('option:selected').text())==0){
+							$('.duplicatejurisdictionerror').html('Already this jurisdiction combination exist').show();
+							return false;
+						}
 					}
 				}
 			}
-		}
+		
 		$('.boundaryTypeerror').hide();
 		$('.boundaryerror').hide();
 		var boundaryTypeId = $("#boundaryTypeId").val();
