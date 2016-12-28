@@ -1,5 +1,7 @@
 package org.egov.council.web.controller;
 
+import static org.egov.infra.web.utils.WebUtils.toJSON;
+
 import java.util.List;
 
 import javax.validation.Valid;
@@ -21,33 +23,26 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 @Controller
 @RequestMapping("/councildesignation")
 public class CouncilDesignationController {
-    private final static String COUNCILDESIGNATION_NEW = "councildesignation-new";
-    private final static String COUNCILDESIGNATION_RESULT = "councildesignation-result";
-    private final static String COUNCILDESIGNATION_EDIT = "councildesignation-edit";
-    private final static String COUNCILDESIGNATION_VIEW = "councildesignation-view";
-    private final static String COUNCILDESIGNATION_SEARCH = "councildesignation-search";
+    private static final String COUNCIL_DESIGNATION = "councilDesignation";
+    private static final String COUNCILDESIGNATION_NEW = "councildesignation-new";
+    private static final String COUNCILDESIGNATION_RESULT = "councildesignation-result";
+    private static final String COUNCILDESIGNATION_EDIT = "councildesignation-edit";
+    private static final String COUNCILDESIGNATION_VIEW = "councildesignation-view";
+    private static final String COUNCILDESIGNATION_SEARCH = "councildesignation-search";
     @Autowired
     private CouncilDesignationService councilDesignationService;
     @Autowired
     private MessageSource messageSource;
 
-    private void prepareNewForm(Model model) {
-    }
-
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
-        prepareNewForm(model);
         CouncilDesignation councilDesignation = new CouncilDesignation();
-        if (councilDesignation != null && councilDesignation.getCode() == null)
-            councilDesignation.setCode(RandomStringUtils.random(4, Boolean.TRUE, Boolean.TRUE).toUpperCase());
+        councilDesignation.setCode(RandomStringUtils.random(4, Boolean.TRUE, Boolean.TRUE).toUpperCase());
 
-        model.addAttribute("councilDesignation", councilDesignation);
+        model.addAttribute(COUNCIL_DESIGNATION, councilDesignation);
 
         return COUNCILDESIGNATION_NEW;
     }
@@ -55,15 +50,14 @@ public class CouncilDesignationController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final CouncilDesignation councilDesignation,
             final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs) {
-       
-        if(councilDesignation!=null && councilDesignation.getCode()==null)
+
+        if (councilDesignation != null && councilDesignation.getCode() == null)
             councilDesignation.setCode(RandomStringUtils.random(4, Boolean.TRUE, Boolean.TRUE).toUpperCase());
-      
+
         if (errors.hasErrors()) {
-            prepareNewForm(model);
             return COUNCILDESIGNATION_NEW;
         }
-       
+
         councilDesignationService.create(councilDesignation);
         redirectAttrs.addFlashAttribute("message",
                 messageSource.getMessage("msg.councilDesignation.success", null, null));
@@ -73,8 +67,7 @@ public class CouncilDesignationController {
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, Model model) {
         CouncilDesignation councilDesignation = councilDesignationService.findOne(id);
-        prepareNewForm(model);
-        model.addAttribute("councilDesignation", councilDesignation);
+        model.addAttribute(COUNCIL_DESIGNATION, councilDesignation);
         return COUNCILDESIGNATION_EDIT;
     }
 
@@ -82,7 +75,6 @@ public class CouncilDesignationController {
     public String update(@Valid @ModelAttribute final CouncilDesignation councilDesignation,
             final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
-            prepareNewForm(model);
             return COUNCILDESIGNATION_EDIT;
         }
         councilDesignationService.update(councilDesignation);
@@ -94,41 +86,33 @@ public class CouncilDesignationController {
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String view(@PathVariable("id") final Long id, Model model) {
         CouncilDesignation councilDesignation = councilDesignationService.findOne(id);
-        prepareNewForm(model);
-        model.addAttribute("councilDesignation", councilDesignation);
+        model.addAttribute(COUNCIL_DESIGNATION, councilDesignation);
         return COUNCILDESIGNATION_VIEW;
     }
 
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
     public String result(@PathVariable("id") final Long id, Model model) {
         CouncilDesignation councilDesignation = councilDesignationService.findOne(id);
-        model.addAttribute("councilDesignation", councilDesignation);
+        model.addAttribute(COUNCIL_DESIGNATION, councilDesignation);
         return COUNCILDESIGNATION_RESULT;
     }
 
     @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
     public String search(@PathVariable("mode") final String mode, Model model) {
         CouncilDesignation councilDesignation = new CouncilDesignation();
-        prepareNewForm(model);
-        model.addAttribute("councilDesignation", councilDesignation);
+        model.addAttribute(COUNCIL_DESIGNATION, councilDesignation);
         return COUNCILDESIGNATION_SEARCH;
 
     }
 
     @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, Model model,
+    @ResponseBody
+    public String ajaxsearch(@PathVariable("mode") final String mode, Model model,
             @ModelAttribute final CouncilDesignation councilDesignation) {
         List<CouncilDesignation> searchResultList = councilDesignationService.search(councilDesignation);
-        String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
+        return new StringBuilder("{ \"data\":")
+                .append(toJSON(searchResultList, CouncilDesignation.class, CouncilDesignationJsonAdaptor.class)).append("}")
                 .toString();
-        return result;
     }
 
-    public Object toSearchResultJson(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder
-                .registerTypeAdapter(CouncilDesignation.class, new CouncilDesignationJsonAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
-    }
 }

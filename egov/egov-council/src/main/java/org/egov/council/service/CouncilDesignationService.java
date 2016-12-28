@@ -60,57 +60,58 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CouncilDesignationService {
 
-	private final CouncilDesignationRepository councilDesignationRepository;
-	@PersistenceContext
-	private EntityManager entityManager;
+    private final CouncilDesignationRepository councilDesignationRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	public Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    @Autowired
+    public CouncilDesignationService(
+            final CouncilDesignationRepository councilDesignationRepository) {
+        this.councilDesignationRepository = councilDesignationRepository;
+    }
 
-	@Autowired
-	public CouncilDesignationService(
-			final CouncilDesignationRepository councilDesignationRepository) {
-		this.councilDesignationRepository = councilDesignationRepository;
-	}
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	@Transactional
-	public CouncilDesignation create(final CouncilDesignation councilDesignation) {
-		return councilDesignationRepository.save(councilDesignation);
-	}
+    @Transactional
+    public CouncilDesignation create(final CouncilDesignation councilDesignation) {
+        return councilDesignationRepository.save(councilDesignation);
+    }
 
-	@Transactional
-	public CouncilDesignation update(final CouncilDesignation councilDesignation) {
-		return councilDesignationRepository.save(councilDesignation);
-	}
+    @Transactional
+    public CouncilDesignation update(final CouncilDesignation councilDesignation) {
+        return councilDesignationRepository.save(councilDesignation);
+    }
 
-	public List<CouncilDesignation> findAll() {
-		return councilDesignationRepository.findAll(new Sort(
-				Sort.Direction.ASC, "name"));
-	}
+    public List<CouncilDesignation> findAll() {
+        return councilDesignationRepository.findAll(new Sort(
+                Sort.Direction.ASC, "name"));
+    }
 
-	public CouncilDesignation findByName(String name) {
-		return councilDesignationRepository.findByName(name);
-	}
+    public CouncilDesignation findByName(String name) {
+        return councilDesignationRepository.findByName(name);
+    }
 
-	public CouncilDesignation findOne(Long id) {
-		return councilDesignationRepository.findOne(id);
-	}
+    public CouncilDesignation findOne(Long id) {
+        return councilDesignationRepository.findOne(id);
+    }
 
-	public List<CouncilDesignation> getActiveDesignations() {
-		return councilDesignationRepository.findByisActive(true);
-	}
-	
-	public List<CouncilDesignation> search(CouncilDesignation councilDesignation) {
-		final Criteria criteria = getCurrentSession().createCriteria(
-				CouncilDesignation.class);
-		if (null != councilDesignation.getName())
-			criteria.add(Restrictions.ilike("name", councilDesignation.getName(),MatchMode.ANYWHERE));
-		if (councilDesignation.getIsActive() != null
-				&& councilDesignation.getIsActive() == true)
-			criteria.add(Restrictions.eq("isActive",
-					councilDesignation.getIsActive()));
-		return criteria.list();
-	}
+    public List<CouncilDesignation> getActiveDesignations() {
+        return councilDesignationRepository.findByisActive(true);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<CouncilDesignation> search(CouncilDesignation councilDesignation) {
+        final Criteria criteria = getCurrentSession().createCriteria(
+                CouncilDesignation.class);
+        if (null != councilDesignation.getName())
+            criteria.add(Restrictions.ilike("name", councilDesignation.getName(), MatchMode.ANYWHERE));
+        if (councilDesignation.getIsActive() != null
+                && councilDesignation.getIsActive())
+            criteria.add(Restrictions.eq("isActive",
+                    councilDesignation.getIsActive()));
+        return criteria.list();
+    }
 
 }

@@ -58,60 +58,66 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class CouncilThirdPartyService {
+    private static final String DEPARTMENT = "department";
     @Autowired
     private EisCommonService eisCommonService;
 
     public List<Hashtable<String, Object>> getHistory(final CouncilPreamble councilPreamble) {
-        User userObject = null;
-        final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
+        User userObject;
+        final List<Hashtable<String, Object>> historyTable = new ArrayList<>();
         final State workflowState = councilPreamble.getState();
-        final Hashtable<String, Object> workFlowHistory = new Hashtable<String, Object>(0);
+        final Hashtable<String, Object> workFlowHistory = new Hashtable<>(0);
         if (null != workflowState) {
-            if (null !=councilPreamble.getStateHistory()  && !councilPreamble.getStateHistory().isEmpty() )
+            if (null != councilPreamble.getStateHistory() && !councilPreamble.getStateHistory().isEmpty())
                 Collections.reverse(councilPreamble.getStateHistory());
-            
+
             for (final StateHistory stateHistory : councilPreamble.getStateHistory()) {
-                final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
-                HistoryMap.put("date", stateHistory.getDateInfo());
-                HistoryMap.put("comments", stateHistory.getComments());
-                HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
+                final Hashtable<String, Object> historyMap = new Hashtable<>(0);
+                historyMap.put("date", stateHistory.getDateInfo());
+                historyMap.put("comments", stateHistory.getComments());
+                historyMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
                         + stateHistory.getLastModifiedBy().getName());
-                HistoryMap.put("status", stateHistory.getValue());
+                historyMap.put("status", stateHistory.getValue());
                 final Position owner = stateHistory.getOwnerPosition();
                 userObject = stateHistory.getOwnerUser();
                 if (null != userObject) {
-                    HistoryMap.put("user", userObject.getUsername() + "::" + userObject.getName());
-                    HistoryMap.put("department",
+                    historyMap.put("user", userObject.getUsername() + "::" + userObject.getName());
+                    historyMap.put(DEPARTMENT,
                             null != eisCommonService.getDepartmentForUser(userObject.getId()) ? eisCommonService
                                     .getDepartmentForUser(userObject.getId()).getName() : "");
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     userObject = eisCommonService.getUserForPosition(owner.getId(), new Date());
-                    HistoryMap
-                            .put("user", null != userObject.getUsername() ? userObject.getUsername() + "::" + userObject.getName() : "");
-                    HistoryMap.put("department", null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
+                    historyMap
+                            .put("user", null != userObject.getUsername() ? userObject.getUsername() + "::" + userObject.getName()
+                                    : "");
+                    historyMap.put(DEPARTMENT, null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
                             .getDepartment().getName() : "");
                 }
-                historyTable.add(HistoryMap);
+                historyTable.add(historyMap);
             }
 
             workFlowHistory.put("date", workflowState.getDateInfo());
             workFlowHistory.put("comments", workflowState.getComments() != null ? workflowState.getComments() : "");
-            workFlowHistory.put("updatedBy", workflowState.getLastModifiedBy().getUsername() + "::" + workflowState.getLastModifiedBy().getName());
+            workFlowHistory.put("updatedBy",
+                    workflowState.getLastModifiedBy().getUsername() + "::" + workflowState.getLastModifiedBy().getName());
             workFlowHistory.put("status", workflowState.getValue());
             final Position ownerPosition = workflowState.getOwnerPosition();
             userObject = workflowState.getOwnerUser();
             if (null != userObject) {
                 workFlowHistory.put("user", userObject.getUsername() + "::" + userObject.getName());
-                workFlowHistory.put("department", null != eisCommonService.getDepartmentForUser(userObject.getId()) ? eisCommonService
-                        .getDepartmentForUser(userObject.getId()).getName() : "");
+                workFlowHistory.put(DEPARTMENT,
+                        null != eisCommonService.getDepartmentForUser(userObject.getId()) ? eisCommonService
+                                .getDepartmentForUser(userObject.getId()).getName() : "");
             } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
                 userObject = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
-                workFlowHistory.put("user", null != userObject.getUsername() ? userObject.getUsername() + "::" + userObject.getName() : "");
-                workFlowHistory.put("department", null != ownerPosition.getDeptDesig().getDepartment() ? ownerPosition
+                workFlowHistory.put("user",
+                        null != userObject.getUsername() ? userObject.getUsername() + "::" + userObject.getName() : "");
+                workFlowHistory.put(DEPARTMENT, null != ownerPosition.getDeptDesig().getDepartment() ? ownerPosition
                         .getDeptDesig().getDepartment().getName() : "");
             }
             historyTable.add(workFlowHistory);
         }
         return historyTable;
     }
+
 }

@@ -39,8 +39,6 @@
  */
 package org.egov.council.service;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,10 +61,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CouncilReportService {
 
-    private final String AGENDA = "agenda";
-    private final String MEETINGMOM = "meetingMom";
-    private final String subReportPath = "agendaDetails.jasper";
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
+    private static final String AGENDA = "agenda";
+    private static final String MEETINGMOM = "meetingMom";
+    private final Map<String, Object> reportParams = new HashMap<>();
     private ReportRequest reportInput = null;
 
     @Autowired
@@ -74,17 +71,10 @@ public class CouncilReportService {
 
     public byte[] generatePDFForAgendaDetails(CouncilMeeting councilMeeting, String logoPath) {
         if (councilMeeting != null) {
-            final Map<String, Object> agendaDetails = new HashMap<String, Object>();
+            final Map<String, Object> agendaDetails = new HashMap<>();
             List<CouncilAgendaDetails> agendaDetailsList = councilMeeting.getMeetingMOMs().get(0).getAgenda()
                     .getAgendaDetails();
-
-            Collections.sort(agendaDetailsList, new Comparator<CouncilAgendaDetails>() {
-                @Override
-                public int compare(CouncilAgendaDetails f1, CouncilAgendaDetails f2) {
-                    return f1.getItemNumber().compareTo(f2.getItemNumber());
-                }
-            });
-
+            agendaDetailsList.sort((CouncilAgendaDetails f1, CouncilAgendaDetails f2)->f1.getItemNumber().compareTo(f2.getItemNumber()));
             agendaDetails.put("agendaList", agendaDetailsList);
             reportInput = new ReportRequest(AGENDA, agendaDetails, buildReportParameters(councilMeeting, logoPath));
         }
@@ -95,18 +85,10 @@ public class CouncilReportService {
     }
     public byte[] generatePDFForMom(CouncilMeeting councilMeeting, String logoPath) {
         if (councilMeeting != null) {
-            final Map<String, Object> momDetails = new HashMap<String, Object>();
+            final Map<String, Object> momDetails = new HashMap<>();
             List<MeetingMOM> meetingMomList = councilMeeting.getMeetingMOMs();
-
-            Collections.sort(meetingMomList, new Comparator<MeetingMOM>() {
-                @Override
-                public int compare(MeetingMOM f1, MeetingMOM f2) {
-                    return f1.getItemNumber().compareTo(f2.getItemNumber());
-                }
-            });
-
+            meetingMomList.sort((MeetingMOM f1, MeetingMOM f2)->f1.getItemNumber().compareTo(f2.getItemNumber()));
             momDetails.put("meetingMOMList", meetingMomList);
-            //momDetails.put("meetingAttendenceList", councilMeeting.getMeetingAttendence());
             reportInput = new ReportRequest(MEETINGMOM, momDetails, buildReportParameters(councilMeeting, logoPath));
         }
         reportInput.setReportFormat(ReportConstants.FileFormat.PDF);
@@ -118,11 +100,11 @@ public class CouncilReportService {
 
     private Map<String, Object> buildReportParameters(CouncilMeeting councilMeeting, String logoPath) {
 
-        StringBuffer meetingDateTimeLocation = new StringBuffer();
+        StringBuilder meetingDateTimeLocation = new StringBuilder();
 
         reportParams.put("logoPath", logoPath);
-        reportParams.put("commiteeType", WordUtils.capitalize(councilMeeting.getCommitteeType().getName()).toString());
-        reportParams.put("meetingNumber", WordUtils.capitalize(councilMeeting.getMeetingNumber()).toString());
+        reportParams.put("commiteeType", WordUtils.capitalize(councilMeeting.getCommitteeType().getName()));
+        reportParams.put("meetingNumber", WordUtils.capitalize(councilMeeting.getMeetingNumber()));
         meetingDateTimeLocation.append(DateUtils.getDefaultFormattedDate(councilMeeting.getMeetingDate()));
         if (null != councilMeeting.getMeetingTime()) {
             meetingDateTimeLocation.append(' ');
@@ -137,7 +119,6 @@ public class CouncilReportService {
         reportParams.put("meetingPlace", councilMeeting.getMeetingLocation() != null ? councilMeeting.getMeetingLocation():" ");
         reportParams.put("meetingDateTimePlace", meetingDateTimeLocation.toString());
         reportParams.put("cityName", ReportUtil.getCityName());
-        //reportParams.put("agendaSubReportPath", ReportUtil.getTemplateAsStream(subReportPath));
         return reportParams;
     }
 

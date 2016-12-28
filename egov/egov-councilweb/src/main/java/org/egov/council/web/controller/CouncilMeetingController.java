@@ -54,8 +54,6 @@ import static org.egov.infra.web.utils.WebUtils.toJSON;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -110,8 +108,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/councilmeeting")
 public class CouncilMeetingController {
-        
-         
+
+    private static final String APPLICATION_PDF = "application/pdf";
+    private static final String DATA = "{ \"data\":";
     private static final String MSG_ATTENDANCE_ALREADY_FINALIZD = "msg.attendance.already.finalizd";
     private static final String CITYLOGO = "citylogo";
     private static final String COUNCIL_MEETING = "councilMeeting";
@@ -128,66 +127,68 @@ public class CouncilMeetingController {
     private static final String COUNCILMEETING_SEND_SMS_EMAIL = "councilmeetingsearch-tosendsms-email";
     private static final String COUNCILMEETING_EDIT_ATTENDANCE = "councilmeeting-attend-form";
     private static final String COUNCILMEETING_ATTENDANCE_RESULT = "councilmeeting-attend-result";
-        
-        @Autowired
-        private CouncilMeetingService councilMeetingService;
-        @Autowired
-        private EgwStatusHibernateDAO egwStatusHibernateDAO;
-        @Autowired
-        private CouncilAgendaService councilAgendaService;
-        @Autowired
-        private AutonumberServiceBeanResolver autonumberServiceBeanResolver;
-        @Autowired
-        private MessageSource messageSource;
-        @Autowired
-        private CommitteeTypeService committeeTypeService;
-        @Autowired
-        private DepartmentService departmentService;
-        @Autowired
-        private CouncilSmsAndEmailService councilSmsAndEmailService;
-        @Autowired  
-        private CouncilReportService councilReportService;
-        @Autowired 
-        protected FileStoreUtils fileStoreUtils;  
-        @Qualifier("fileStoreService")
-        @Autowired 
-        private FileStoreService fileStoreService;
-        @Autowired
-        private CouncilCommitteeMemberService committeeMemberService;
-       
 
-        @ModelAttribute("committeeType") public List<CommitteeType> getCommitteTypeList() {
-                return committeeTypeService.getActiveCommiteeType();
+    @Autowired
+    private CouncilMeetingService councilMeetingService;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @Autowired
+    private CouncilAgendaService councilAgendaService;
+    @Autowired
+    private AutonumberServiceBeanResolver autonumberServiceBeanResolver;
+    @Autowired
+    private MessageSource messageSource;
+    @Autowired
+    private CommitteeTypeService committeeTypeService;
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private CouncilSmsAndEmailService councilSmsAndEmailService;
+    @Autowired
+    private CouncilReportService councilReportService;
+    @Autowired
+    protected FileStoreUtils fileStoreUtils;
+    @Qualifier("fileStoreService")
+    @Autowired
+    private FileStoreService fileStoreService;
+    @Autowired
+    private CouncilCommitteeMemberService committeeMemberService;
+
+    @ModelAttribute("committeeType")
+    public List<CommitteeType> getCommitteTypeList() {
+        return committeeTypeService.getActiveCommiteeType();
+    }
+
+    @ModelAttribute("meetingTimingMap")
+    public Map<String, String> getMeetingTimingList() {
+        return MEETING_TIMINGS;
+    }
+
+    @ModelAttribute("departments")
+    public List<Department> getDepartmentList() {
+        return departmentService.getAllDepartments();
+    }
+
+    @RequestMapping(value = "/new/{id}", method = RequestMethod.GET)
+    public String newForm(@ModelAttribute final CouncilMeeting councilMeeting, @PathVariable("id") final Long id,
+            final Model model) {
+
+        CouncilAgenda councilAgenda = councilAgendaService.findOne(id);
+        model.addAttribute(COUNCIL_MEETING, councilMeeting);
+        if (councilAgenda != null && AGENDAUSEDINMEETING.equals(councilAgenda.getStatus().getCode())) {
+            model.addAttribute(MESSAGE, "msg.agenda.exist");
+            return COMMONERRORPAGE;
+        } else if (councilAgenda != null) {
+            councilMeeting.setCommitteeType(councilAgenda.getCommitteeType());
+            buildMeetingMomByUsingAgendaDetails(councilMeeting, councilAgenda);
+            return COUNCILMEETING_NEW;
+
+        } else {
+            model.addAttribute(MESSAGE, "msg.invalid.agenda.details");
+            return COMMONERRORPAGE;
         }
 
-        @ModelAttribute("meetingTimingMap") public  Map<String, String> getMeetingTimingList() {
-                return MEETING_TIMINGS;
-        }
-        
-        @ModelAttribute("departments") public List<Department> getDepartmentList() {
-                return departmentService.getAllDepartments();
-        }
-        
-        @RequestMapping(value = "/new/{id}", method = RequestMethod.GET)
-        public String newForm(@ModelAttribute final CouncilMeeting councilMeeting, @PathVariable("id") final Long id,
-                        final Model model) {
-
-                CouncilAgenda councilAgenda = councilAgendaService.findOne(id);
-                model.addAttribute(COUNCIL_MEETING, councilMeeting);
-                if(councilAgenda != null && AGENDAUSEDINMEETING.equals(councilAgenda.getStatus().getCode())){
-                        model.addAttribute(MESSAGE, "msg.agenda.exist");
-                        return COMMONERRORPAGE;
-                } else if (councilAgenda != null) {
-                        councilMeeting.setCommitteeType(councilAgenda.getCommitteeType());
-                        buildMeetingMomByUsingAgendaDetails(councilMeeting, councilAgenda);
-                        return COUNCILMEETING_NEW;
-
-                } else {
-                        model.addAttribute(MESSAGE, "msg.invalid.agenda.details");
-                        return COMMONERRORPAGE;
-                }
-
-        }
+    }
 
     private void buildMeetingMomByUsingAgendaDetails(final CouncilMeeting councilMeeting, CouncilAgenda councilAgenda) {
         Long itemNumber = Long.valueOf(1);
@@ -204,14 +205,14 @@ public class CouncilMeetingController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final CouncilMeeting councilMeeting, final BindingResult errors,
-            final Model model, final RedirectAttributes redirectAttrs) {
+            final Model model, final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
         if (councilMeeting.getStatus() == null)
             councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCILMEETING, APPROVED));
 
         if (errors.hasErrors()) {
             return COUNCILMEETING_NEW;
         }
-        CouncilMeetingNumberGenerator meetingNumberGenerator = autonumberServiceBeanResolver    
+        CouncilMeetingNumberGenerator meetingNumberGenerator = autonumberServiceBeanResolver
                 .getAutoNumberServiceFor(CouncilMeetingNumberGenerator.class);
         councilMeeting.setMeetingNumber(meetingNumberGenerator.getNextNumber(councilMeeting));
 
@@ -221,7 +222,13 @@ public class CouncilMeetingController {
                     .setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(AGENDA_MODULENAME, AGENDAUSEDINMEETING));
         }
 
-        councilMeetingService.create(councilMeeting); 
+        councilMeetingService.create(councilMeeting);
+        councilSmsAndEmailService.sendSms(councilMeeting, null);
+        final String url = WebUtils.extractRequestDomainURL(request, false);
+        String logoPath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH).concat(
+                (String) request.getSession().getAttribute(CITYLOGO));
+        councilSmsAndEmailService.sendEmail(councilMeeting, null,
+                councilReportService.generatePDFForAgendaDetails(councilMeeting, logoPath));
         redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.councilMeeting.success", null, null));
         return "redirect:/councilmeeting/result/" + councilMeeting.getId();
     }
@@ -232,7 +239,7 @@ public class CouncilMeetingController {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
         sortMeetingMomByItemNumber(councilMeeting);
         model.addAttribute(COUNCIL_MEETING, councilMeeting);
-        
+
         return COUNCILMEETING_EDIT;
     }
 
@@ -256,12 +263,7 @@ public class CouncilMeetingController {
     }
 
     private void sortMeetingMomByItemNumber(CouncilMeeting councilMeeting) {
-        Collections.sort(councilMeeting.getMeetingMOMs(), new Comparator<MeetingMOM>() {
-                @Override
-                public int compare(MeetingMOM f1, MeetingMOM f2) {
-                    return f1.getItemNumber().compareTo(f2.getItemNumber());
-                }
-            });
+        councilMeeting.getMeetingMOMs().sort((MeetingMOM f1, MeetingMOM f2) -> f1.getItemNumber().compareTo(f2.getItemNumber()));
     }
 
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
@@ -288,7 +290,8 @@ public class CouncilMeetingController {
     }
 
     @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody public String ajaxsearch(@PathVariable("mode") final String mode, Model model,
+    @ResponseBody
+    public String ajaxsearch(@PathVariable("mode") final String mode, Model model,
             @ModelAttribute final CouncilMeeting councilMeeting) {
         if (null != mode && !"".equals(mode)) {
             List<CouncilMeeting> searchResultList;
@@ -298,21 +301,23 @@ public class CouncilMeetingController {
             } else {
                 searchResultList = councilMeetingService.searchMeeting(councilMeeting);
             }
-            return new StringBuilder("{ \"data\":")
+            return new StringBuilder(DATA)
                     .append(toJSON(searchResultList, CouncilMeeting.class, CouncilMeetingJsonAdaptor.class))
                     .append("}").toString();
         }
-      return null;
+        return null;
     }
-    
+
     @RequestMapping(value = "/searchmeeting-tocreatemom", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody public String searchMeetingAndToCreateMOM( Model model,
+    @ResponseBody
+    public String searchMeetingAndToCreateMOM(Model model,
             @ModelAttribute final CouncilMeeting councilMeeting) {
         List<CouncilMeeting> searchResultList = councilMeetingService.searchMeetingToCreateMOM(councilMeeting);
-        return new StringBuilder("{ \"data\":").append(toJSON(searchResultList,CouncilMeeting.class,  CouncilMeetingJsonAdaptor.class)).append("}")
+        return new StringBuilder(DATA).append(toJSON(searchResultList, CouncilMeeting.class, CouncilMeetingJsonAdaptor.class))
+                .append("}")
                 .toString();
     }
-    
+
     @RequestMapping(value = "/viewsmsemail", method = RequestMethod.GET)
     public String retrieveSmsAndEmailDetailsForCouncilMeeting(final Model model) {
         CouncilMeeting councilMeeting = new CouncilMeeting();
@@ -320,9 +325,10 @@ public class CouncilMeetingController {
         model.addAttribute("mode", "view");
         return COUNCILMEETING_SEND_SMS_EMAIL;
     }
-    
+
     @RequestMapping(value = "/sendsmsemail", method = RequestMethod.GET)
-    @ResponseBody public String sendSmsAndEmailDetailsForCouncilMeeting(@RequestParam("id") Long id,
+    @ResponseBody
+    public String sendSmsAndEmailDetailsForCouncilMeeting(@RequestParam("id") Long id,
             @RequestParam("msg") String msg, final Model model, final HttpServletRequest request) {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
         councilSmsAndEmailService.sendSms(councilMeeting, msg);
@@ -333,26 +339,26 @@ public class CouncilMeetingController {
                 councilReportService.generatePDFForAgendaDetails(councilMeeting, logoPath));
         return new StringBuilder("{ \"success\":true }").toString();
     }
-    
 
     @RequestMapping(value = "/generateresolution/{id}", method = RequestMethod.GET)
-    @ResponseBody public ResponseEntity<byte[]> viewDemandNoticeReport(@PathVariable final Long id,
-            final HttpSession session,HttpServletRequest request) {
-     
+    @ResponseBody
+    public ResponseEntity<byte[]> viewDemandNoticeReport(@PathVariable final Long id,
+            final HttpSession session, HttpServletRequest request) {
+
         byte[] reportOutput;
-        CouncilMeeting councilMeeting =councilMeetingService.findOne(id);
+        CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
         final String url = WebUtils.extractRequestDomainURL(request, false);
-        
+
         String logoPath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH).concat(
                 (String) request.getSession().getAttribute(CITYLOGO));
-        reportOutput= councilReportService.generatePDFForMom(councilMeeting, logoPath);
-        
+        reportOutput = councilReportService.generatePDFForMom(councilMeeting, logoPath);
+
         final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.setContentType(MediaType.parseMediaType(APPLICATION_PDF));
         headers.add("content-disposition", "inline;filename=Resolution.pdf");
         return new ResponseEntity<byte[]>(reportOutput, headers, HttpStatus.CREATED);
     }
-    
+
     @RequestMapping(value = "/attendance/search", method = RequestMethod.GET)
     public String getSearchAttendance(final Model model) {
         CouncilMeeting councilMeeting = new CouncilMeeting();
@@ -368,73 +374,71 @@ public class CouncilMeetingController {
         model.addAttribute("mode", "view");
         return COUNCILMEETING_ATTENDANCE_SEARCH;
     }
-    
+
     @RequestMapping(value = "/attendance/search/view/{id}", method = RequestMethod.GET)
     public String viewAttendanceDetails(@PathVariable("id") final CouncilMeeting councilMeeting, Model model) {
         model.addAttribute("id", councilMeeting.getId());
         model.addAttribute("currDate", new Date());
         return COUNCILMEETING_ATTENDANCE_VIEW;
     }
-    
+
     @RequestMapping(value = "/attendance/result/{id}", method = RequestMethod.GET)
     public String showAttendanceResult(@PathVariable("id") final CouncilMeeting councilMeeting, Model model) {
         model.addAttribute("id", councilMeeting.getId());
         model.addAttribute("currDate", new Date());
         return COUNCILMEETING_ATTENDANCE_RESULT;
     }
-    
-    
+
     @RequestMapping(value = "/attend/search/edit/{id}", method = RequestMethod.GET)
     public String editAttendance(@PathVariable("id") final CouncilMeeting councilMeeting1, Model model) {
-         CouncilMeeting councilMeeting = councilMeetingService.findOne(councilMeeting1.getId());
-         
-         if(councilMeeting != null && councilMeeting.getCommitteeType().getCommiteemembers().isEmpty()){
-                 model.addAttribute(MESSAGE, "msg.committee.members.not.added");
-                        return COMMONERRORPAGE;
-         }
-         if ( councilMeeting != null && councilMeeting.getStatus() != null){
-                        if( ATTENDANCEFINALIZED.equals(councilMeeting.getStatus().getCode())) {
-                        model.addAttribute(MESSAGE, MSG_ATTENDANCE_ALREADY_FINALIZD);
-                        return COMMONERRORPAGE;
-                        }
-         }
-         
-         if ( councilMeeting != null && councilMeeting.getCommitteeType() != null) {
-                                List<MeetingAttendence> attendencesList = new ArrayList<>();
-                                List<Long> attendenceIdList=new ArrayList<>();
-                                
-                                for(MeetingAttendence meetingAttendance:councilMeeting.getMeetingAttendence())
-                                {
-                                    if(meetingAttendance.getAttendedMeeting())
-                                    attendenceIdList.add(meetingAttendance.getCouncilMember().getId());
-                                }
-                                for (CommitteeMembers committeeMembers: committeeMemberService
-                                                .findAllByCommitteTypeMemberIsActive(councilMeeting.getCommitteeType()))
-                                {
-                                    MeetingAttendence attendence = new MeetingAttendence();
-                                    attendence.setCouncilMember(committeeMembers.getCouncilMember());
-                                    if(attendenceIdList.indexOf(committeeMembers.getCouncilMember().getId())>-1)
-                                    {
-                                        attendence.setAttendedMeeting(true);
-                                    }
-                                    attendencesList.add(attendence);
-                                }
-                                councilMeeting.setUpdateMeetingAttendance(attendencesList);
-                        }
-         sortMeetingMomByItemNumber(councilMeeting);
-         model.addAttribute(COUNCIL_MEETING, councilMeeting);
+        CouncilMeeting councilMeeting = councilMeetingService.findOne(councilMeeting1.getId());
+
+        if (councilMeeting != null && councilMeeting.getCommitteeType().getCommiteemembers().isEmpty()) {
+            model.addAttribute(MESSAGE, "msg.committee.members.not.added");
+            return COMMONERRORPAGE;
+        }
+        if (councilMeeting != null && councilMeeting.getStatus() != null
+                && ATTENDANCEFINALIZED.equals(councilMeeting.getStatus().getCode())) {
+            model.addAttribute(MESSAGE, MSG_ATTENDANCE_ALREADY_FINALIZD);
+            return COMMONERRORPAGE;
+        }
+
+        buildAttendanceDetails(councilMeeting);
+        sortMeetingMomByItemNumber(councilMeeting);
+        model.addAttribute(COUNCIL_MEETING, councilMeeting);
         return COUNCILMEETING_EDIT_ATTENDANCE;
     }
-    
+
+    private void buildAttendanceDetails(CouncilMeeting councilMeeting) {
+        if (councilMeeting != null && councilMeeting.getCommitteeType() != null) {
+            List<MeetingAttendence> attendencesList = new ArrayList<>();
+            List<Long> attendenceIdList = new ArrayList<>();
+
+            for (MeetingAttendence meetingAttendance : councilMeeting.getMeetingAttendence()) {
+                if (meetingAttendance.getAttendedMeeting())
+                    attendenceIdList.add(meetingAttendance.getCouncilMember().getId());
+            }
+            for (CommitteeMembers committeeMembers : committeeMemberService
+                    .findAllByCommitteTypeMemberIsActive(councilMeeting.getCommitteeType())) {
+                MeetingAttendence attendence = new MeetingAttendence();
+                attendence.setCouncilMember(committeeMembers.getCouncilMember());
+                if (attendenceIdList.indexOf(committeeMembers.getCouncilMember().getId()) > -1) {
+                    attendence.setAttendedMeeting(true);
+                }
+                attendencesList.add(attendence);
+            }
+            councilMeeting.setUpdateMeetingAttendance(attendencesList);
+        }
+    }
+
     @RequestMapping(value = "/attendance/update", method = RequestMethod.POST)
     public String updateAttendance(@Valid @ModelAttribute final CouncilMeeting councilMeeting, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
 
-        if (councilMeeting != null && councilMeeting.getStatus() != null) {
-            if (ATTENDANCEFINALIZED.equals(councilMeeting.getStatus().getCode())) {
-                model.addAttribute(MESSAGE, MSG_ATTENDANCE_ALREADY_FINALIZD);
-                return COMMONERRORPAGE;
-            }
+        if (councilMeeting != null && councilMeeting.getStatus() != null
+                && ATTENDANCEFINALIZED.equals(councilMeeting.getStatus().getCode())) {
+            model.addAttribute(MESSAGE, MSG_ATTENDANCE_ALREADY_FINALIZD);
+            return COMMONERRORPAGE;
         }
         deleteAtteandance(councilMeeting);
         setAttendanceDetails(councilMeeting);
@@ -456,18 +460,18 @@ public class CouncilMeetingController {
     }
 
     @RequestMapping(value = "/attendance/finalizeattendance", method = RequestMethod.POST)
-    public String updateFinalizedAttendance(@Valid @ModelAttribute final CouncilMeeting councilMeeting, final BindingResult errors,
+    public String updateFinalizedAttendance(@Valid @ModelAttribute final CouncilMeeting councilMeeting,
+            final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
 
-        if (councilMeeting != null && councilMeeting.getStatus() != null) {
-            if (ATTENDANCEFINALIZED.equals(councilMeeting.getStatus().getCode())) {
-                model.addAttribute(MESSAGE, MSG_ATTENDANCE_ALREADY_FINALIZD);
-                return COMMONERRORPAGE;
-            }
+        if (councilMeeting != null && councilMeeting.getStatus() != null
+                && ATTENDANCEFINALIZED.equals(councilMeeting.getStatus().getCode())) {
+            model.addAttribute(MESSAGE, MSG_ATTENDANCE_ALREADY_FINALIZD);
+            return COMMONERRORPAGE;
         }
         deleteAtteandance(councilMeeting);
-        if(councilMeeting != null && councilMeeting.getUpdateMeetingAttendance()!=null){
-        setAttendanceDetails(councilMeeting);
+        if (councilMeeting != null && councilMeeting.getUpdateMeetingAttendance() != null) {
+            setAttendanceDetails(councilMeeting);
         }
         if (errors.hasErrors()) {
             return "redirect:councilmeeting/attend/search/edit/" + councilMeeting.getId();
@@ -478,80 +482,83 @@ public class CouncilMeetingController {
         redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.councilMeeting.attendance.success", null, null));
         return "redirect:result/" + councilMeeting.getId();
     }
-    
+
     private void buildAttendanceDetailsForMeeting(final CouncilMeeting councilMeeting) {
-                for (MeetingAttendence attendence : councilMeeting
-                                .getMeetingAttendence()) {
-                        if (attendence.getChecked()!= null &&attendence.getChecked()) {
-                                attendence.setAttendedMeeting(true);
-                        } else {
-                                attendence.setAttendedMeeting(false);
-                        }
+        for (MeetingAttendence attendence : councilMeeting
+                .getMeetingAttendence()) {
+            if (attendence.getChecked() != null && attendence.getChecked()) {
+                attendence.setAttendedMeeting(true);
+            } else {
+                attendence.setAttendedMeeting(false);
+            }
+        }
+    }
+
+    @RequestMapping(value = "/downloadfile/{id}")
+    public void download(@PathVariable("id") final Long id, final HttpServletResponse response,
+            final HttpServletRequest request) throws IOException {
+        CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
+        if (null != councilMeeting) {
+            if (councilMeeting.getFilestore() != null) {
+                fetchMeetingResolutionByFileStoreId(response, councilMeeting);
+            } else {
+                if (MOM_FINALISED.equals(councilMeeting.getStatus().getCode())) {
+                    byte[] reportOutput = generatePdfByPassingMeetingObject(request, councilMeeting);
+
+                    if (reportOutput != null) {
+                        councilMeeting.setFilestore(fileStoreService.store(new ByteArrayInputStream(reportOutput),
+                                MEETINGRESOLUTIONFILENAME, APPLICATION_PDF, MODULE_NAME));
+                        councilMeetingService.update(councilMeeting);
+                    }
+
+                    if (councilMeeting.getFilestore() != null) {
+                        fetchMeetingResolutionByFileStoreId(response, councilMeeting);
+                    }
                 }
-        }
-    
-        @RequestMapping(value = "/downloadfile/{id}")
-        public void download(@PathVariable("id") final Long id, final HttpServletResponse response,
-                        final HttpServletRequest request) throws IOException {
-                CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
-                if (null != councilMeeting) {
-                        if (councilMeeting.getFilestore() != null) {
-                                fetchMeetingResolutionByFileStoreId(response, councilMeeting);
-                        } else {
-                                if (MOM_FINALISED.equals(councilMeeting.getStatus().getCode())) {
-                                        byte[] reportOutput = generatePdfByPassingMeetingObject(request, councilMeeting);
-
-                                        if (reportOutput != null ) {
-                                                councilMeeting.setFilestore(fileStoreService.store(new ByteArrayInputStream(reportOutput),
-                                                                MEETINGRESOLUTIONFILENAME, "application/pdf", MODULE_NAME));
-                                                councilMeetingService.update(councilMeeting);
-                                        }
-
-                                        if (councilMeeting.getFilestore() != null) {
-                                                fetchMeetingResolutionByFileStoreId(response, councilMeeting);
-                                        }
-                                }
-                        }
-                }
-                
-
+            }
         }
 
-        private byte[] generatePdfByPassingMeetingObject(final HttpServletRequest request, CouncilMeeting councilMeeting) {
-                byte[] reportOutput;
-                final String url = WebUtils.extractRequestDomainURL(request, false);
-                String logoPath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
-                                .concat((String) request.getSession().getAttribute(CITYLOGO));
-                reportOutput = councilReportService.generatePDFForMom(councilMeeting, logoPath);
-                return reportOutput;
-        }
+    }
 
-        private void fetchMeetingResolutionByFileStoreId(final HttpServletResponse response, CouncilMeeting councilMeeting)
-                        throws IOException {
-                fileStoreUtils.fetchFileAndWriteToStream(councilMeeting.getFilestore().getFileStoreId(),
-                                CouncilConstants.MODULE_NAME, false, response);
-        }
-    
+    private byte[] generatePdfByPassingMeetingObject(final HttpServletRequest request, CouncilMeeting councilMeeting) {
+        byte[] reportOutput;
+        final String url = WebUtils.extractRequestDomainURL(request, false);
+        String logoPath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
+                .concat((String) request.getSession().getAttribute(CITYLOGO));
+        reportOutput = councilReportService.generatePDFForMom(councilMeeting, logoPath);
+        return reportOutput;
+    }
+
+    private void fetchMeetingResolutionByFileStoreId(final HttpServletResponse response, CouncilMeeting councilMeeting)
+            throws IOException {
+        fileStoreUtils.fetchFileAndWriteToStream(councilMeeting.getFilestore().getFileStoreId(),
+                CouncilConstants.MODULE_NAME, false, response);
+    }
+
     @RequestMapping(value = "/attendance/ajaxsearch/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody public String ajaxsearc(@PathVariable("id") final CouncilMeeting id, Model model) {
+    @ResponseBody
+    public String ajaxsearc(@PathVariable("id") final CouncilMeeting id, Model model) {
         List<MeetingAttendence> searchResultList = councilMeetingService.findListOfAttendance(id);
-        return new StringBuilder("{ \"data\":").append(toJSON(searchResultList,MeetingAttendence.class,  MeetingAttendanceJsonAdaptor.class)).append("}")
+        return new StringBuilder(DATA)
+                .append(toJSON(searchResultList, MeetingAttendence.class, MeetingAttendanceJsonAdaptor.class)).append("}")
                 .toString();
     }
-    
+
     @RequestMapping(value = "/generateagenda/{id}", method = RequestMethod.GET)
-    @ResponseBody public ResponseEntity<byte[]> printAgendaDetails(@PathVariable("id") final Long id,final Model model, final HttpServletRequest request){
+    @ResponseBody
+    public ResponseEntity<byte[]> printAgendaDetails(@PathVariable("id") final Long id, final Model model,
+            final HttpServletRequest request) {
         byte[] reportOutput;
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
         final String url = WebUtils.extractRequestDomainURL(request, false);
         String logoPath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH).concat(
                 (String) request.getSession().getAttribute(CITYLOGO));
         reportOutput = councilReportService.generatePDFForAgendaDetails(councilMeeting, logoPath);
-        
+
         final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.setContentType(MediaType.parseMediaType(APPLICATION_PDF));
         headers.add("content-disposition", "inline;filename=AgendaNotice.pdf");
         return new ResponseEntity<byte[]>(reportOutput, headers, HttpStatus.CREATED);
-        
-    } 
+
+    }
 }

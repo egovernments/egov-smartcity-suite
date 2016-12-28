@@ -60,8 +60,6 @@ import static org.egov.infra.web.utils.WebUtils.toJSON;
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Type;
 import java.text.ParseException;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -94,7 +92,6 @@ import org.egov.infra.web.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -113,278 +110,284 @@ import com.google.gson.reflect.TypeToken;
 @RequestMapping("/councilmom")
 public class CouncilMomController {
 
-	private static final String COUNCIL_MEETING = "councilMeeting";
-	private static final  String COUNCIL_MOM_MEETING_SEARCH = "councilmomMeeting-search";
-	private static final  String COUNCILMOM_NEW = "councilMom-new";
-	private static final  String COUNCILMEETING_EDIT = "councilmeeting-edit";
-	private static final  String COUNCILMOM_RESULT = "councilmom-result";
-	private static final  String COUNCILMOM_SEARCH = "councilmom-search";
-	private static final  String COUNCILMOM_VIEW = "councilmom-view";
-	private static final  String COMMONERRORPAGE = "common-error-page";
+    private static final String MESSAGE = "message";
+    private static final String COUNCIL_MEETING = "councilMeeting";
+    private static final String COUNCIL_MOM_MEETING_SEARCH = "councilmomMeeting-search";
+    private static final String COUNCILMOM_NEW = "councilMom-new";
+    private static final String COUNCILMEETING_EDIT = "councilmeeting-edit";
+    private static final String COUNCILMOM_RESULT = "councilmom-result";
+    private static final String COUNCILMOM_SEARCH = "councilmom-search";
+    private static final String COUNCILMOM_VIEW = "councilmom-view";
+    private static final String COMMONERRORPAGE = "common-error-page";
 
-	@Autowired
-	private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
-	@Autowired
-	private MessageSource messageSource;
+    @Autowired
+    private MessageSource messageSource;
 
-	@Autowired
-	private CommitteeTypeService committeeTypeService;
+    @Autowired
+    private CommitteeTypeService committeeTypeService;
 
-	@Autowired
-	private CouncilMeetingService councilMeetingService;
+    @Autowired
+    private CouncilMeetingService councilMeetingService;
 
-	@Autowired
-	private DepartmentService departmentService;
+    @Autowired
+    private DepartmentService departmentService;
 
-	@Autowired
-	private BoundaryService boundaryService;
+    @Autowired
+    private BoundaryService boundaryService;
 
-	@Autowired
-	private AutonumberServiceBeanResolver autonumberServiceBeanResolver;
+    @Autowired
+    private AutonumberServiceBeanResolver autonumberServiceBeanResolver;
 
-	@Autowired
-	private CouncilPreambleService councilPreambleService;
-	
-	@Autowired  private CouncilReportService councilReportService;
-	
+    @Autowired
+    private CouncilPreambleService councilPreambleService;
 
-	@Autowired
-	private CouncilSmsAndEmailService councilSmsAndEmailService;
-	
-	@Autowired
-	private CouncilMeetingIndexService  councilMeetingIndexService;
-	@Qualifier("fileStoreService")
-	 @Autowired private FileStoreService fileStoreService;
-	
-	@Autowired
-	@ModelAttribute("committeeType") public  List<CommitteeType> getCommitteTypeList() {
-		return committeeTypeService.getActiveCommiteeType();
-	}
+    @Autowired
+    private CouncilReportService councilReportService;
 
-	@ModelAttribute("meetingTimingMap") public Map<String, String> getMeetingTimingList() {
-		return MEETING_TIMINGS;
-	}
+    @Autowired
+    private CouncilSmsAndEmailService councilSmsAndEmailService;
 
-	@ModelAttribute("resolutionStatus") public List<EgwStatus> getResolutionStatusList() {
-		return egwStatusHibernateDAO.getStatusByModule(COUNCIL_RESOLUTION);
-	}
+    @Autowired
+    private CouncilMeetingIndexService councilMeetingIndexService;
+    @Qualifier("fileStoreService")
+    @Autowired
+    private FileStoreService fileStoreService;
 
-	@RequestMapping(value = "/new/{id}", method = RequestMethod.GET)
-	public String newForm(@PathVariable("id") final Long id, Model model) {
-		CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
+    @Autowired
+    @ModelAttribute("committeeType")
+    public List<CommitteeType> getCommitteTypeList() {
+        return committeeTypeService.getActiveCommiteeType();
+    }
 
-		if (null != councilMeeting && null != councilMeeting.getStatus()) {
-			if (APPROVED.equals(councilMeeting.getStatus().getCode())) {
-				model.addAttribute("message", "msg.attendance.not.finalizd");
-				return COMMONERRORPAGE;
-			} 
-			if (MOM_FINALISED.equals(councilMeeting.getStatus().getCode())) {
-				model.addAttribute("message", "msg.mom.alreadyfinalized");
-				return COMMONERRORPAGE;
-			}
+    @ModelAttribute("meetingTimingMap")
+    public Map<String, String> getMeetingTimingList() {
+        return MEETING_TIMINGS;
+    }
 
-		}
-		sortMeetingMomByItemNumber(councilMeeting);
-		model.addAttribute(COUNCIL_MEETING, councilMeeting);
+    @ModelAttribute("resolutionStatus")
+    public List<EgwStatus> getResolutionStatusList() {
+        return egwStatusHibernateDAO.getStatusByModule(COUNCIL_RESOLUTION);
+    }
 
-		return COUNCILMOM_NEW;
-	}
-		
-	
-	 private void sortMeetingMomByItemNumber(CouncilMeeting councilMeeting) {
-	        Collections.sort(councilMeeting.getMeetingMOMs(), new Comparator<MeetingMOM>() {
-	                @Override
-	                public int compare(MeetingMOM f1, MeetingMOM f2) {
-	                    return f1.getItemNumber().compareTo(f2.getItemNumber());
-	                }
-	            });
-	    }
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public String update(
-			@Valid @ModelAttribute final CouncilMeeting councilMeeting,
-			final BindingResult errors, final Model model,
-			final RedirectAttributes redirectAttrs) {
-		if (errors.hasErrors()) {
-			return COUNCILMEETING_EDIT;
-		}
-		EgwStatus preambleApprovedStatus  =egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,	PREAMBLE_STATUS_APPROVED);
-		    Long itemNumber = Long.valueOf(councilMeeting.getMeetingMOMs().size()); 
-		for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
-			if (meetingMOM.getPreamble().getId() == null) {
-				meetingMOM
-						.setPreamble(councilPreambleService
-								.buildSumotoPreamble(meetingMOM,
-										preambleApprovedStatus));
-				meetingMOM.setMeeting(councilMeeting);
-				meetingMOM.setItemNumber(itemNumber.toString());
-				itemNumber++;
-			}
-		}
-		councilMeeting
-				.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
-						MEETING_MODULENAME, MEETINGUSEDINRMOM));
-		councilMeetingService.update(councilMeeting);
+    @RequestMapping(value = "/new/{id}", method = RequestMethod.GET)
+    public String newForm(@PathVariable("id") final Long id, Model model) {
+        CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
 
-		redirectAttrs.addFlashAttribute("message", messageSource.getMessage(
-				"msg.councilMeeting.success", null, null));
-		return "redirect:/councilmom/result/" + councilMeeting.getId();
-	}
+        if (null != councilMeeting && null != councilMeeting.getStatus()) {
+            if (APPROVED.equals(councilMeeting.getStatus().getCode())) {
+                model.addAttribute(MESSAGE, "msg.attendance.not.finalizd");
+                return COMMONERRORPAGE;
+            }
+            if (MOM_FINALISED.equals(councilMeeting.getStatus().getCode())) {
+                model.addAttribute(MESSAGE, "msg.mom.alreadyfinalized");
+                return COMMONERRORPAGE;
+            }
 
-	@RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
-	public String result(@PathVariable("id") final Long id, Model model) {
-		CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
-		sortMeetingMomByItemNumber(councilMeeting);
-		model.addAttribute(COUNCIL_MEETING, councilMeeting);
-		return COUNCILMOM_RESULT;
-	}
+        }
+        sortMeetingMomByItemNumber(councilMeeting);
+        model.addAttribute(COUNCIL_MEETING, councilMeeting);
 
-	@RequestMapping(value = "/meetingsearch/{mode}", method = RequestMethod.GET)
-	public String searchMeeting(@PathVariable("mode") final String mode,
-			Model model) {
-		model.addAttribute(COUNCIL_MEETING, new CouncilMeeting());
-		return COUNCIL_MOM_MEETING_SEARCH;
+        return COUNCILMOM_NEW;
+    }
 
-	}
+    private void sortMeetingMomByItemNumber(CouncilMeeting councilMeeting) {
+        councilMeeting.getMeetingMOMs().sort((MeetingMOM f1, MeetingMOM f2) -> f1.getItemNumber().compareTo(f2.getItemNumber()));
 
-	@RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-	public String view(@PathVariable("id") final Long id, Model model) {
-		CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
-		sortMeetingMomByItemNumber(councilMeeting);
-		model.addAttribute(COUNCIL_MEETING, councilMeeting);
+    }
 
-		return COUNCILMOM_VIEW;
-	}
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public String update(
+            @Valid @ModelAttribute final CouncilMeeting councilMeeting,
+            final BindingResult errors, final Model model,
+            final RedirectAttributes redirectAttrs) {
+        if (errors.hasErrors()) {
+            return COUNCILMEETING_EDIT;
+        }
+        EgwStatus preambleApprovedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,
+                PREAMBLE_STATUS_APPROVED);
+        Long itemNumber = Long.valueOf(councilMeeting.getMeetingMOMs().size());
+        for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
+            if (meetingMOM.getPreamble().getId() == null) {
+                meetingMOM
+                        .setPreamble(councilPreambleService
+                                .buildSumotoPreamble(meetingMOM,
+                                        preambleApprovedStatus));
+                meetingMOM.setMeeting(councilMeeting);
+                meetingMOM.setItemNumber(itemNumber.toString());
+                itemNumber++;
+            }
+        }
+        councilMeeting
+                .setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
+                        MEETING_MODULENAME, MEETINGUSEDINRMOM));
+        councilMeetingService.update(councilMeeting);
 
-	@RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
-	public String search(@PathVariable("mode") final String mode, Model model) {
-		CouncilMeeting councilMeeting = new CouncilMeeting();
-		model.addAttribute(COUNCIL_MEETING, councilMeeting);
-		return COUNCILMOM_SEARCH;
+        redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage(
+                "msg.councilMeeting.success", null, null));
+        return "redirect:/councilmom/result/" + councilMeeting.getId();
+    }
 
-	}
+    @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
+    public String result(@PathVariable("id") final Long id, Model model) {
+        CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
+        sortMeetingMomByItemNumber(councilMeeting);
+        model.addAttribute(COUNCIL_MEETING, councilMeeting);
+        return COUNCILMOM_RESULT;
+    }
 
-	@RequestMapping(value = "/searchcreated-mom/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-	@ResponseBody public String searchCreatedMOM(
-			@PathVariable("mode") final String mode, Model model,
-			@ModelAttribute final CouncilMeeting councilMeeting) {
-	    
-	    if (null != mode && !"".equals(mode)) {
-	        List<CouncilMeeting> searchResultList;
+    @RequestMapping(value = "/meetingsearch/{mode}", method = RequestMethod.GET)
+    public String searchMeeting(@PathVariable("mode") final String mode,
+            Model model) {
+        model.addAttribute(COUNCIL_MEETING, new CouncilMeeting());
+        return COUNCIL_MOM_MEETING_SEARCH;
 
-	            if ("edit".equalsIgnoreCase(mode)) {
-	                searchResultList = councilMeetingService.searchMeetingWithMomCreatedStatus(councilMeeting);
-	            } else {
-	                searchResultList = councilMeetingService.searchMeeting(councilMeeting);
-	            }
-	            return  new StringBuilder("{ \"data\":")
+    }
+
+    @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
+    public String view(@PathVariable("id") final Long id, Model model) {
+        CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
+        sortMeetingMomByItemNumber(councilMeeting);
+        model.addAttribute(COUNCIL_MEETING, councilMeeting);
+
+        return COUNCILMOM_VIEW;
+    }
+
+    @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
+    public String search(@PathVariable("mode") final String mode, Model model) {
+        CouncilMeeting councilMeeting = new CouncilMeeting();
+        model.addAttribute(COUNCIL_MEETING, councilMeeting);
+        return COUNCILMOM_SEARCH;
+
+    }
+
+    @RequestMapping(value = "/searchcreated-mom/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String searchCreatedMOM(
+            @PathVariable("mode") final String mode, Model model,
+            @ModelAttribute final CouncilMeeting councilMeeting) {
+
+        if (null != mode && !"".equals(mode)) {
+            List<CouncilMeeting> searchResultList;
+
+            if ("edit".equalsIgnoreCase(mode)) {
+                searchResultList = councilMeetingService.searchMeetingWithMomCreatedStatus(councilMeeting);
+            } else {
+                searchResultList = councilMeetingService.searchMeeting(councilMeeting);
+            }
+            return new StringBuilder("{ \"data\":")
                     .append(toJSON(searchResultList, CouncilMeeting.class,
-                                    CouncilMeetingJsonAdaptor.class)).append("}")
+                            CouncilMeetingJsonAdaptor.class))
+                    .append("}")
                     .toString();
-	    }
-	
-		
-		return null;
-	}
+        }
 
-	@RequestMapping(value = "/departmentlist", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-	@ResponseBody public String ajaxsearch(final String mode, Model model,
-			@ModelAttribute final CouncilMeeting councilMeeting) {
-		List<Department> departmentList = departmentService.getAllDepartments();
-		return new StringBuilder("{ \"departmentLists\":")
-                        .append(toJSON(departmentList, Department.class,
-                                CouncilDepartmentJsonAdaptor.class)).append("}")
+        return null;
+    }
+
+    @RequestMapping(value = "/departmentlist", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String ajaxsearch(final String mode, Model model,
+            @ModelAttribute final CouncilMeeting councilMeeting) {
+        List<Department> departmentList = departmentService.getAllDepartments();
+        return new StringBuilder("{ \"departmentLists\":")
+                .append(toJSON(departmentList, Department.class,
+                        CouncilDepartmentJsonAdaptor.class))
+                .append("}")
                 .toString();
-	}
+    }
 
-	@RequestMapping(value = "/resolutionlist", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-	@ResponseBody public String ajaxsearchResolutionlist(final String mode,
-			Model model, @ModelAttribute final CouncilMeeting councilMeeting) {
-		List<EgwStatus> resolutionList = egwStatusHibernateDAO
-				.getStatusByModule(COUNCIL_RESOLUTION);
-		Gson gson = new Gson();
-		Type type = new TypeToken<List<EgwStatus>>() {
-		}.getType();
-		String json = gson.toJson(resolutionList, type);
-		return new StringBuilder("{ \"resolutionLists\":")
-                        .append(json).append("}").toString();
-	}
+    @RequestMapping(value = "/resolutionlist", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String ajaxsearchResolutionlist(final String mode,
+            Model model, @ModelAttribute final CouncilMeeting councilMeeting) {
+        List<EgwStatus> resolutionList = egwStatusHibernateDAO
+                .getStatusByModule(COUNCIL_RESOLUTION);
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<EgwStatus>>() {
+        }.getType();
+        String json = gson.toJson(resolutionList, type);
+        return new StringBuilder("{ \"resolutionLists\":")
+                .append(json).append("}").toString();
+    }
 
-	@RequestMapping(value = "/wardlist", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-	@ResponseBody  public String ajaxsearchWardlist(final String mode,
-			Model model, @ModelAttribute final CouncilMeeting councilMeeting) {
-		List<Boundary> wardList = boundaryService
-				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD,
-						REVENUE_HIERARCHY_TYPE);
-		return new StringBuilder("{ \"wardLists\":")
-                        .append(toJSON(wardList, Boundary.class, BoundaryAdapter.class))
-                        .append("}").toString();
-	}
+    @RequestMapping(value = "/wardlist", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String ajaxsearchWardlist(final String mode,
+            Model model, @ModelAttribute final CouncilMeeting councilMeeting) {
+        List<Boundary> wardList = boundaryService
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD,
+                        REVENUE_HIERARCHY_TYPE);
+        return new StringBuilder("{ \"wardLists\":")
+                .append(toJSON(wardList, Boundary.class, BoundaryAdapter.class))
+                .append("}").toString();
+    }
 
-	@RequestMapping(value = "/generateresolution", method = RequestMethod.GET)
-	public String generateResolutionnumber(
-			@Valid @ModelAttribute final CouncilMeeting councilMeeting,
-			final BindingResult errors, final Model model,
-			final RedirectAttributes redirectAttrs, final HttpServletRequest request) throws ParseException {
-		byte[] reportOutput;
-		EgwStatus preambleApprovedStatus  = egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,	PREAMBLE_STATUS_APPROVED);
-		EgwStatus resoulutionApprovedStatus  =egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCIL_RESOLUTION,RESOLUTION_STATUS_APPROVED);
-		EgwStatus resoulutionAdjurnedStatus  =	egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCIL_RESOLUTION,RESOLUTION_STATUS_ADJURNED);
-		EgwStatus preambleAdjurnedStatus  = egwStatusHibernateDAO.getStatusByModuleAndCode(	PREAMBLE_MODULENAME,PREAMBLE_STATUS_ADJOURNED);
-		EgwStatus resolutionApprovedStatus  = egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,RESOLUTION_APPROVED_PREAMBLE);
-	
-		Long itemNumber = Long.valueOf(councilMeeting.getMeetingMOMs().size());
-		for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
-			if (meetingMOM.getPreamble().getId() == null) {
-			        meetingMOM.setItemNumber(itemNumber.toString());
-			        itemNumber++;
-				meetingMOM.setPreamble(councilPreambleService
-						.buildSumotoPreamble(meetingMOM,preambleApprovedStatus));
-				meetingMOM.setMeeting(councilMeeting);
-			}
-		}
-		
-		for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
-			// if mom status is approved, generate resolution number 
-			if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionApprovedStatus.getCode())) {
-				MOMResolutionNumberGenerator momResolutionNumberGenerator = autonumberServiceBeanResolver
-						.getAutoNumberServiceFor(MOMResolutionNumberGenerator.class);
-				meetingMOM.setResolutionNumber(momResolutionNumberGenerator
-						.getNextNumber(meetingMOM));
-				meetingMOM.getPreamble().setStatus(resolutionApprovedStatus);
-			   //	if mom status adjourned, update preamble status to adjurned. These record will be used in next meeting.
-			} else if(meetingMOM.getResolutionStatus().getCode().equals(resoulutionAdjurnedStatus.getCode())) {
-				meetingMOM.getPreamble()
-						.setStatus(preambleAdjurnedStatus);
-			}
-		}
-		
-		reportOutput = generateMomPdfByPassingMeeting(councilMeeting, request);
-		if (reportOutput != null) {
-			councilMeeting.setFilestore(fileStoreService.store(new ByteArrayInputStream(reportOutput), MEETINGRESOLUTIONFILENAME,
-					"application/pdf", MODULE_NAME));
-		}
-		councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MEETING_MODULENAME, MOM_FINALISED));
-		String defaultmsg= messageSource.getMessage("msg.resolution.sms",
-				new String[] { String.valueOf(councilMeeting.getCommitteeType().getName())},
-		LocaleContextHolder.getLocale());
-		String defaultemail= messageSource.getMessage("email.resolution.mail",new String[] { String.valueOf(councilMeeting.getCommitteeType().getName())},
-				LocaleContextHolder.getLocale());
-		councilSmsAndEmailService.sendSms(councilMeeting,defaultmsg);
-                councilSmsAndEmailService.sendEmail(councilMeeting, defaultemail,reportOutput);
-                councilMeetingService.update(councilMeeting);
-                councilMeetingIndexService.createCouncilMeetingIndex(councilMeeting);
-		
-		return "redirect:/councilmeeting/generateresolution/" + councilMeeting.getId();
-	}
+    @RequestMapping(value = "/generateresolution", method = RequestMethod.GET)
+    public String generateResolutionnumber(
+            @Valid @ModelAttribute final CouncilMeeting councilMeeting,
+            final BindingResult errors, final Model model,
+            final RedirectAttributes redirectAttrs, final HttpServletRequest request) throws ParseException {
+        byte[] reportOutput;
+        EgwStatus preambleApprovedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,
+                PREAMBLE_STATUS_APPROVED);
+        EgwStatus resoulutionApprovedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCIL_RESOLUTION,
+                RESOLUTION_STATUS_APPROVED);
+        EgwStatus resoulutionAdjurnedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCIL_RESOLUTION,
+                RESOLUTION_STATUS_ADJURNED);
+        EgwStatus preambleAdjurnedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,
+                PREAMBLE_STATUS_ADJOURNED);
+        EgwStatus resolutionApprovedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,
+                RESOLUTION_APPROVED_PREAMBLE);
 
-	private byte[] generateMomPdfByPassingMeeting(final CouncilMeeting councilMeeting,
-			final HttpServletRequest request) {
-		byte[] reportOutput;
-		final String url = WebUtils.extractRequestDomainURL(request, false);
-		String logoPath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
-				.concat((String) request.getSession().getAttribute("citylogo"));
-		reportOutput = councilReportService.generatePDFForMom(councilMeeting, logoPath);
-		return reportOutput;
-	}
+        Long itemNumber = Long.valueOf(councilMeeting.getMeetingMOMs().size());
+        for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
+            if (meetingMOM.getPreamble().getId() == null) {
+                meetingMOM.setItemNumber(itemNumber.toString());
+                itemNumber++;
+                meetingMOM.setPreamble(councilPreambleService
+                        .buildSumotoPreamble(meetingMOM, preambleApprovedStatus));
+                meetingMOM.setMeeting(councilMeeting);
+            }
+        }
+
+        for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
+            // if mom status is approved, generate resolution number
+            if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionApprovedStatus.getCode())) {
+                MOMResolutionNumberGenerator momResolutionNumberGenerator = autonumberServiceBeanResolver
+                        .getAutoNumberServiceFor(MOMResolutionNumberGenerator.class);
+                meetingMOM.setResolutionNumber(momResolutionNumberGenerator
+                        .getNextNumber(meetingMOM));
+                meetingMOM.getPreamble().setStatus(resolutionApprovedStatus);
+                // if mom status adjourned, update preamble status to adjurned. These record will be used in next meeting.
+            } else if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionAdjurnedStatus.getCode())) {
+                meetingMOM.getPreamble()
+                        .setStatus(preambleAdjurnedStatus);
+            }
+        }
+
+        reportOutput = generateMomPdfByPassingMeeting(councilMeeting, request);
+        if (reportOutput != null) {
+            councilMeeting.setFilestore(fileStoreService.store(new ByteArrayInputStream(reportOutput), MEETINGRESOLUTIONFILENAME,
+                    "application/pdf", MODULE_NAME));
+        }
+        councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MEETING_MODULENAME, MOM_FINALISED));
+        councilMeetingService.update(councilMeeting);
+        councilMeetingIndexService.createCouncilMeetingIndex(councilMeeting);
+        councilSmsAndEmailService.sendSms(councilMeeting, null);
+        councilSmsAndEmailService.sendEmail(councilMeeting, null, reportOutput);
+        return "redirect:/councilmeeting/generateresolution/" + councilMeeting.getId();
+    }
+
+    private byte[] generateMomPdfByPassingMeeting(final CouncilMeeting councilMeeting,
+            final HttpServletRequest request) {
+        byte[] reportOutput;
+        final String url = WebUtils.extractRequestDomainURL(request, false);
+        String logoPath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
+                .concat((String) request.getSession().getAttribute("citylogo"));
+        reportOutput = councilReportService.generatePDFForMom(councilMeeting, logoPath);
+        return reportOutput;
+    }
 }
