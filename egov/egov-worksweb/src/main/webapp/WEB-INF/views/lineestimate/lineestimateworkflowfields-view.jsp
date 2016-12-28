@@ -43,66 +43,6 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<c:if test="${fieldsRequiredMap.contractCommitteeDetailsRequired == true}">
-<div class="panel panel-primary contractcommittee" data-collapsed="0">
-	<div class="panel-heading">
-		<div class="panel-title">
-			<spring:message  code="lbl.contractcomittee.details"/>
-		</div>
-	</div>
-	<div class="panel-body">
-		<table class="table table-bordered" id="tblestimate">
-			<thead>
-				<tr>
-					<th><spring:message code="lbl.contractcomitteeNumber"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.contractcomitteeDate"/><span class="mandatory"></span></th>
-				</tr>
-			</thead>
-			<tbody >
-			<tr>
-					<td>
-						<c:out value="${lineEstimate.contractCommitteeApprovalNumber }"></c:out>
-					</td>
-					<td>
-						<fmt:formatDate value="${lineEstimate.contractCommitteeApprovalDate }" pattern="dd/MM/yyyy"/>
-					</td>
-					</tr>
-			</tbody>
-			</table>
-			</div>
-	</div>
-</c:if>
-<c:if test="${fieldsRequiredMap.standingCommitteeDetailsRequired == true}">
-	<div class="panel panel-primary standingcommittee" data-collapsed="0">
-	<div class="panel-heading">
-		<div class="panel-title">
-			<spring:message  code="lbl.standingcommittee.details"/>
-		</div>
-	</div>
-	<div class="panel-body">
-		<table class="table table-bordered" id="tblestimate">
-			<thead>
-				<tr>
-					<th><spring:message code="lbl.standingcommitteenumber"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.standingcommitteedate"/><span class="mandatory"></span></th>
-				</tr>
-			</thead>
-			<tbody >
-			<tr>
-				<td>
-					<c:out value="${lineEstimate.standingCommitteeApprovalNumber }"></c:out>
-				</td>
-				<td>
-					<fmt:formatDate value="${lineEstimate.standingCommitteeApprovalDate }" pattern="dd/MM/yyyy"/>
-				</td>
-				</tr>
-			</tbody>
-			</table>
-			</div>
-	</div>
-</c:if>
-
-<c:if test="${fieldsRequiredMap.councilResolutionDetailsRequired == true}">
 <div class="panel panel-primary councilresolution" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
@@ -117,7 +57,7 @@
 				<th><spring:message code="lbl.councilresolutiondate"/><span class="mandatory"></span></th>
 			</tr>
 		</thead>
-		<tbody >
+		<tbody>
 		<tr>
 			<td>
 				<c:out value="${lineEstimate.councilResolutionNumber }"></c:out>
@@ -130,33 +70,3 @@
 		</table>
 		</div>
 </div>
-</c:if>
-<c:if test="${fieldsRequiredMap.governmentApprovalRequired == true}">
-<div class="panel panel-primary governmentapproval" data-collapsed="0">
-	<div class="panel-heading">
-		<div class="panel-title">
-			<spring:message  code="lbl.governmentapproval.details"/>
-	</div>
-</div>
-<div class="panel-body governmentapproval">
-	<table class="table table-bordered" id="tblgovernmentapproval">
-		<thead>
-			<tr>
-				<th><spring:message code="lbl.governmentapprovalnumber"/><span class="mandatory"></span></th>
-				<th><spring:message code="lbl.governmentapprovaldate"/><span class="mandatory"></span></th>
-			</tr>
-		</thead>
-		<tbody >
-		<tr>
-			<td>
-				<c:out value="${lineEstimate.governmentApprovalNumber }"></c:out>
-			</td>
-			<td>
-				<fmt:formatDate value="${lineEstimate.governmentApprovalDate }" pattern="dd/MM/yyyy"/>
-			</td>
-				</tr>
-		</tbody>
-		</table>
-		</div>
-</div>
-</c:if>

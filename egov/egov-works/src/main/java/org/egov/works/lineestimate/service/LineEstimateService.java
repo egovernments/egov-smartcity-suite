@@ -611,6 +611,9 @@ public class LineEstimateService {
                 && WorksConstants.CANCEL_ACTION.equals(workFlowAction))
             lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                     LineEstimateStatus.CANCELLED.toString()));
+        else if (WorksConstants.REJECT_ACTION.equals(workFlowAction))
+            lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
+                    LineEstimateStatus.REJECTED.toString()));
         else if (WorksConstants.APPROVE_ACTION.equals(workFlowAction))
             lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                     LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()));
