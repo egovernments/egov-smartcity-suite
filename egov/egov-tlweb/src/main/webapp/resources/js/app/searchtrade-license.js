@@ -444,8 +444,6 @@ function goToAction(obj, id){
 		window.open("/tl/integration/licenseBillCollect.action?licenseId="+id, 'cf'+id, 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Print Certificate' || obj.options[obj.selectedIndex].innerHTML=='Print Provisional Certificate')
 		window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id="+id,  'gc'+id, 'scrollbars=yes,width=1000,height=700,status=yes');
-	else if(obj.options[obj.selectedIndex].innerHTML=='Renewal Notice')
-		window.open("../renew/tradeRenewalNotice-renewalNotice.action?model.id="+id,  'rn'+id, 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Renew License')
 		window.open("../newtradelicense/newTradeLicense-beforeRenew.action?model.id="+id,  'rl'+id, 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand Notice')

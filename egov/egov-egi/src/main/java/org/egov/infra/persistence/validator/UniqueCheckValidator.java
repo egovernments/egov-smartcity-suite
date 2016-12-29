@@ -88,7 +88,7 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
 
     private boolean checkUnique(final Object arg0, final Number id, final String fieldName) throws IllegalAccessException {
         final Criteria criteria = entityManager.unwrap(Session.class)
-                .createCriteria(unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass());
+                .createCriteria(unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass()).setReadOnly(true);
         final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
         if (fieldValue instanceof String)
             criteria.add(Restrictions.eq(fieldName, fieldValue).ignoreCase());

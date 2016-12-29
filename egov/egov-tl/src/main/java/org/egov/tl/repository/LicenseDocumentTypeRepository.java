@@ -39,16 +39,16 @@
  */
 package org.egov.tl.repository;
 
-import java.util.List;
-
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.enums.ApplicationType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface LicenseDocumentTypeRepository extends JpaRepository<LicenseDocumentType, Long> {
-    
+
     LicenseDocumentType findById(Long id);
 
     List<LicenseDocumentType> findByNameAndApplicationType(String name, ApplicationType applicationType);
@@ -56,5 +56,7 @@ public interface LicenseDocumentTypeRepository extends JpaRepository<LicenseDocu
     List<LicenseDocumentType> findByName(String name);
 
     List<LicenseDocumentType> findByApplicationType(ApplicationType applicationType);
+
+    List<LicenseDocumentType> findByApplicationTypeAndEnabledTrue(ApplicationType applicationType);
 
 }

@@ -45,7 +45,9 @@ import org.hibernate.envers.RelationTargetAuditMode;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.text.SimpleDateFormat;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 
 @Entity
 @Table(name = "egtl_trade_license")
@@ -54,20 +56,20 @@ public class TradeLicense extends License {
 
     @Override
     public String getStateDetails() {
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        final StringBuffer details = new StringBuffer();
-        if (getLicenseNumber() != null && !getLicenseNumber().isEmpty())
+        StringBuilder details = new StringBuilder();
+        if (isNotBlank(getLicenseNumber()))
             details.append("Trade License Number ").append(getLicenseNumber()).append(" and ");
-        details.append("App No. ").append(applicationNumber).append(" dated ").append(formatter.format(applicationDate));
-        details.append("<br/> Remarks : ").append(this.getState().getComments());
+        details.append("App No. ").append(applicationNumber).append(" dated ").append(toDefaultDateFormat(applicationDate));
+        if (isNotBlank(this.getState().getComments()))
+            details.append("<br/> Remarks : ").append(this.getState().getComments());
         return details.toString();
     }
 
     @Override
-    public  String myLinkId() {
+    public String myLinkId() {
         if ("Closure License".equals(this.getState().getNatureOfTask()))
-            return "/tl/viewtradelicense/viewTradeLicense-closure.action?model.id="+this.id;
+            return "/tl/viewtradelicense/viewTradeLicense-closure.action?model.id=" + this.id;
         else
-            return "/tl/newtradelicense/newTradeLicense-showForApproval.action?model.id="+this.id;
+            return "/tl/newtradelicense/newTradeLicense-showForApproval.action?model.id=" + this.id;
     }
 }

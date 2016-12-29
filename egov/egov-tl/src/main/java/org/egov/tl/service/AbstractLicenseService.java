@@ -278,8 +278,7 @@ public abstract class AbstractLicenseService<T extends License> {
     @Transactional
     public void createLegacyLicense(final T license, final Map<Integer, Integer> legacyInstallmentwiseFees,
                                     final Map<Integer, Boolean> legacyFeePayStatus) {
-        if (!licenseRepository.findByOldLicenseNumber(license.getOldLicenseNumber())
-                .isEmpty())
+        if (licenseRepository.findByOldLicenseNumber(license.getOldLicenseNumber()) != null)
             throw new ValidationException("TL-001", "TL-001", license.getOldLicenseNumber());
         this.addLegacyDemand(legacyInstallmentwiseFees, legacyFeePayStatus, license);
         processAndStoreDocument(license.getDocuments(), license);
@@ -688,5 +687,9 @@ public abstract class AbstractLicenseService<T extends License> {
 
         this.licenseRepository.save(license);
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
+    }
+
+    public boolean checkOldLicenseNumberIsDuplicated(T t) {
+        return licenseRepository.findByOldLicenseNumberAndIdIsNot(t.getOldLicenseNumber(), t.getId()) != null;
     }
 }

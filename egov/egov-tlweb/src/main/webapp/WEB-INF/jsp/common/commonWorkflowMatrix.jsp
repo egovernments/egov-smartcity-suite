@@ -45,45 +45,47 @@
 <script>
 
 function getUsersByDesignationAndDept() {
-	populateapproverPositionId({approverDepartmentId:document.getElementById('approverDepartment').value,designationId:document.getElementById('approverDesignation').value});
+	populateapproverPositionId(
+	    {
+	        approverDepartmentId:jQuery('#approverDepartment').val(),
+            designationId:jQuery('#approverDesignation').val()
+	    });
 }
 
 function callAlertForDepartment() {
-    var value=document.getElementById("approverDepartment").value;
+    var value=jQuery('#approverDepartment').val();
 	if(value=="-1") {
-		bootbox.alert("Please select the Approver Department");
-		document.getElementById("approverDepartment").focus();
+		bootbox.alert("Please select an Approver Department");
+        jQuery('#approverDepartment').focus();
 		return false;
 	}
 }
 
 function callAlertForDesignation() {
-	var value=document.getElementById("approverDesignation").value;
+	var value=jQuery('#approverDesignation');
 	if(value=="-1") {
-		bootbox.alert("Please select the approver designation");
-		document.getElementById("approverDesignation").focus();
+		bootbox.alert("Please select an Approver Designation");
+        jQuery('#approverDesignation').focus();
 		return false;
 	}
 }
 	
 function loadDesignationByDeptAndType(typeValue,departmentValue,currentStateValue,amountRuleValue,additionalRuleValue,pendingActionsValue) {
-	  var designationObj =document.getElementById('approverDesignation');
-	  designationObj.options.length = 0;
-	  designationObj.options[0] = new Option("----Choose----","-1");
-	  var approverObj = document.getElementById('approverPositionId');
-	  approverObj.options.length = 0;
-	  approverObj.options[0] = new Option("----Choose----","-1");
-	  populateapproverDesignation({departmentRule:departmentValue,type:typeValue,amountRule:amountRuleValue,additionalRule:additionalRuleValue,
+
+    jQuery("#approverDesignation").empty();
+    jQuery("#approverDesignation").append("<option value='-1'>----Choose----</option>");
+    jQuery("#approverPositionId").empty();
+    jQuery("#approverPositionId").append("<option value='-1'>----Choose----</option>");
+	populateapproverDesignation({departmentRule:departmentValue,type:typeValue,amountRule:amountRuleValue,additionalRule:additionalRuleValue,
 	  													currentState:currentStateValue,pendingAction:pendingActionsValue});
 }
 
 function loadDesignationFromMatrix() {
-	var e = document.getElementById('approverDepartment');
-	var dept = e.options[e.selectedIndex].text;
-	var currentState = document.getElementById('currentState').value;
-	var amountRule = document.getElementById('amountRule').value;
-	var additionalRule = document.getElementById('additionalRule').value;
-	var pendingAction = document.getElementById('pendingActions').value;
+	var dept = jQuery("#approverDepartment option:selected").text();
+	var currentState = jQuery('#currentState').val();
+	var amountRule = jQuery('#amountRule').val();
+	var additionalRule = jQuery('#additionalRule').val();
+	var pendingAction = jQuery('#pendingActions').val();
 	var stateType = '<s:property value="%{stateType}"/>';
 	loadDesignationByDeptAndType(stateType,dept,currentState,amountRule,additionalRule,pendingAction); 
 }
@@ -107,15 +109,6 @@ function populateApprover() {
 <s:hidden id="pendingActions" name="pendingActions" value="%{pendingActions}"/>
 <s:hidden id="approverName" name="approverName" />
 
-<%-- <s:if test="%{#request.approverOddTextCss==null}">
-      <c:set var="approverOddTextCss" value="greybox" scope="request"/>
-       <c:set var="approverOddCSS" value="greybox" scope="request"/>
-</s:if>
-
-<s:if test="%{#request.approverEvenTextCSS==null}">
-   <c:set var="approverEvenTextCSS" value="bluebox" scope="request"/>
-     <c:set var="approverEvenCSS" value="bluebox" scope="request"/>
-</s:if> --%>
 		<s:if test="%{getNextAction()!='Second level collection pending'}">
 		<div class="panel-heading custom_form_panel_heading">
 		    <div class="panel-title">
