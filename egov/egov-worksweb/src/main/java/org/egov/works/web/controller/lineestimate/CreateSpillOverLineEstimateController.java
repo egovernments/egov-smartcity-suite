@@ -255,6 +255,8 @@ public class CreateSpillOverLineEstimateController {
             errors.rejectValue("councilResolutionDate", "error.councilresolutiondate");
         if (StringUtils.isBlank(lineEstimate.getAdminSanctionNumber()))
             errors.rejectValue("adminSanctionNumber", "error.adminsanctionnumber.notnull");
+        if (StringUtils.isBlank(lineEstimate.getAdminSanctionBy()))
+            errors.rejectValue("adminSanctionBy", "error.adminsanctionby.notnull");
         if (lineEstimate.getAdminSanctionNumber() != null) {
             final LineEstimate checkLineEstimate = lineEstimateService.getLineEstimateByAdminSanctionNumber(lineEstimate
                     .getAdminSanctionNumber());
