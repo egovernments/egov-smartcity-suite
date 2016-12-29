@@ -111,20 +111,6 @@
 									}
 								}).data('datepicker');
 						doLoadingMask();
-						jQuery('#currentRow tbody tr').each(
-								function() {
-									if (jQuery(this).find(
-											'input[name="selectedReceipts"]')
-											.val() == "true") {
-										jQuery(this).find(
-												'input[type="checkbox"]').prop(
-												'checked', true);
-									} else {
-										jQuery(this).find(
-												'input[type="checkbox"]').prop(
-												'checked', false);
-									}
-								});
 					});
 
 	jQuery(window).load(function() {
@@ -159,7 +145,6 @@
 						.getElementsByName('totalOnlineAmountTempArray')[i].value;
 				document.getElementsByName('receiptDateArray')[i].value = document
 						.getElementsByName('receiptDateTempArray')[i].value;
-				document.getElementsByName('selectedReceipts')[j].value = true;
 			} else if (isSelected[i].checked == false) {
 				document.bankRemittanceForm.serviceNameArray[i].value = "";
 				document.bankRemittanceForm.fundCodeArray[i].value = "";
@@ -169,7 +154,6 @@
 				document.bankRemittanceForm.totalCardAmountArray[i].value = "";
 				document.bankRemittanceForm.totalOnlineAmountArray[i].value = "";
 				document.bankRemittanceForm.receiptDateArray[i].value = "";
-				document.getElementsByName('selectedReceipts')[j].value = false;
 			}
 			j++;
 		}
@@ -253,25 +237,47 @@
 				&& dom.get("remittanceDate").value == "") {
 			bootbox.alert("Please Enter Date of Remittance");
 			return false;
+		} else {
+			var remittanceDate = dom.get("remittanceDate").value;
+			var receiptDate;
+			isSelected = document.getElementsByName('receiptIds');
+			for (i = 0; i < isSelected.length; i++) {
+				if (isSelected[i].checked == true) {
+					date = new Date(document.getElementsByName('receiptDateTempArray')[i].value);
+					var dd=date.getDate();
+					if(dd<10)dd='0'+dd;
+					var mm=date.getMonth()+1;
+					if(mm<10)mm='0'+mm;
+					receiptDate = dd + '/' + mm + '/' +  date.getFullYear();
+					if (receiptDate != null && receiptDate != '' && remittanceDate!= null && remittanceDate != '') {
+						if (processDate(receiptDate) > processDate(remittanceDate)) {
+							document.getElementById("error_area").style.display="block";
+							document.getElementById("error_area").innerHTML = '<s:text name="bankremittance.before.receiptdate" />'+ '<br>';
+							window.scroll(0, 0);
+							return false;
+						}
+					}
+				}
+			}
 		}
 		</s:if>
+		
 		if (!isChecked(document.getElementsByName('receiptIds'))) {
 			dom.get("selectremittanceerror").style.display = "block";
+			window.scroll(0, 0);
 			return false;
 		} else {
 			doLoadingMask('#loadingMask');
 			jQuery('#finYearId').prop("disabled", false);
-			var j = 0;
-			for (i = 0; i < isSelected.length; i++) {
-				if (isSelected[i].checked == true) {
-					document.getElementsByName('selectedReceipts')[j].value = true;
-				}
-				j++;
-			}
 			document.bankRemittanceForm.action = "bankRemittance-create.action";
 			return true;
 		}
 
+	}
+
+	function processDate(date) {
+		var parts = date.split("/");
+		return new Date(parts[2], parts[1] - 1, parts[0]);
 	}
 
 	function onChangeBankAccount(branchId) {
@@ -305,9 +311,6 @@
 		}
 		jQuery('#finYearId').prop("disabled", false);
 		jQuery('#remittanceAmount').val("");
-		jQuery('#currentRow tbody tr').each(function() {
-			jQuery(this).find('input[name="selectedReceipts"]').val("");
-		});
 		document.bankRemittanceForm.action = "bankRemittance-listData.action";
 		return true;
 	}
@@ -388,6 +391,7 @@
 </script>
 </head>
 <body>
+	<div class="errorstyle" id="error_area" style="display: none;"></div>
 	<span align="center" style="display: none" id="selectremittanceerror">
 		<li><font size="2" color="red"><b><s:text
 						name="bankremittance.error.norecordselected" /> </b></font></li>
@@ -491,12 +495,8 @@
 								class="blueborderfortd"
 								title="Select<input type='checkbox' name='selectAllReceipts' value='on' onClick='setCheckboxStatuses(this.checked);handleReceiptSelectionEvent(this.checked);'/>"
 								style="width:5%; text-align: center">
-								<input name="receiptIds" type="checkbox" id="receiptIds"
-									value="${currentRow.id}"
-									onClick="handleReceiptSelectionEvent()" />
-								<input type="hidden" name="selectedReceipts"
-									id="selectedReceipts"
-									value="${selectedReceipts[currentRow_rowNum-1]}" />
+								<s:checkbox name="receiptIds" id="receiptIds"
+									value="#currentRow.id" onClick="handleReceiptSelectionEvent()" />
 								<input type="hidden" name="serviceNameTempArray"
 									disabled="disabled" id="serviceNameTempArray"
 									value="${currentRow.SERVICENAME}" />
@@ -647,7 +647,7 @@
 				</div>
 				<div class="buttonbottom">
 					<input name="button32" type="submit" class="buttonsubmit"
-						id="button32" value="Remit to Bank" onclick="return validate()" />
+						id="button32" value="Remit to Bank" onclick="return validate();" />
 					&nbsp; <input name="buttonClose" type="button" class="button"
 						id="button" value="Close" onclick="window.close()" />
 				</div>
