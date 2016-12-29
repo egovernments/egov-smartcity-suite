@@ -37,6 +37,11 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+var $bankBranchId = 0;
+
+$(document).ready(function(){
+	$bankBranchId = $('#bankbranchname').val();
+});
 
 jQuery('#btnsearch').click(function(e) {
 
@@ -54,6 +59,38 @@ function getFormData($form) {
 	return indexed_array;
 }
 
+$('#bank').change(function () {
+	$bankBranchId = "";
+	$('#bankbranchname').empty();
+	$('#bankbranchname').append($('<option>').text('Select from below').attr('value', ''));
+	if($('#bank').val()!="")
+		loadBankBranches($('#bank').val());
+	else
+		loadBankBranches(0);
+});
+
+function loadBankBranches(bankId){
+		$.ajax({
+			method : "GET",
+			url : "/EGF/common/getbankbranchesbybankid",
+			data : {
+				bankId : bankId
+			},
+			async : true
+		}).done(
+				function(response) {
+					$('#bankbranchname').empty();
+					$('#bankbranchname').append($("<option value=''>Select from below</option>"));
+					$.each(response, function(index, value) {
+						var selected="";
+						if($bankBranchId && $bankBranchId==value.id)
+						{
+								selected="selected";
+						}
+						$('#bankbranchname').append($('<option '+ selected +'>').text(value.branchname).attr('itemValue', value.id));
+					});
+				});
+}
 function callAjaxSearch() {
 	drillDowntableContainer = jQuery("#resultTable");
 	jQuery('.report-section').removeClass('display-hide');

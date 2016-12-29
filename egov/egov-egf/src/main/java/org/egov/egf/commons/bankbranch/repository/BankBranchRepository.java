@@ -54,6 +54,8 @@ import org.springframework.stereotype.Repository;
 public interface BankBranchRepository extends JpaRepository<Bankbranch, Integer> {
 
     List<Bankbranch> findByIsactive(Boolean isActive);
-    
+
     List<Bankbranch> findByBank_Id(Integer id);
+
+    List<Bankbranch> findByIsactiveTrueOrderByBranchnameAsc();
 }

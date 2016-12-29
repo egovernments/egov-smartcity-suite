@@ -61,17 +61,17 @@
 							</form:select>
 							<form:errors path="bank" cssClass="error-msg" />
 						</div>
-						<label class="col-sm-2 control-label text-right"></label>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.bankbranch" />  </label>
 						<div class="col-sm-3 add-margin">
+							<form:select path="id" id="bankbranchname" class="form-control">
+								<form:option value=""><spring:message code="lbl.select" /></form:option>
+								<form:options items="${bankbranches}" itemValue="id" itemLabel="branchname" />
+							</form:select>
+							<form:errors path="id" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.name" />  </label>
-						<div class="col-sm-3 add-margin">
-							<form:input path="branchname" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50"  />
-							<form:errors path="branchname" cssClass="error-msg" />
-						</div>
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.code" />  </label>
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.code" />  </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="branchcode" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50"  />
 							<form:errors path="branchcode" cssClass="error-msg" />
@@ -133,7 +133,7 @@
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.bank" /></th>
-					<th><spring:message code="lbl.name" /></th>
+					<th><spring:message code="lbl.bankbranch" /></th>
 					<th><spring:message code="lbl.code" /></th>
 					<th><spring:message code="lbl.branchmicr" /></th>
 					<th><spring:message code="lbl.address" /></th>

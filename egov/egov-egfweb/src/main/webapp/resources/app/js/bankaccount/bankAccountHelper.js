@@ -53,7 +53,10 @@ $('#bank').change(function () {
 	$bankBranchId = "";
 	$('#bankbranch').empty();
 	$('#bankbranch').append($('<option>').text('Select from below').attr('value', ''));
-	loadBankBranches($('#bank').val());
+	if($('#bank').val()!="")
+		loadBankBranches($('#bank').val());
+	else
+		loadBankBranches(0);	
 });
 
 function getFormData($form) {
@@ -68,12 +71,6 @@ function getFormData($form) {
 }
 
 function loadBankBranches(bankId){
-	if (!bankId) {
-		$('#bankbranch').empty();
-		$('#bankbranch').append($('<option>').text('Select from below').attr('value', ''));
-		return;
-	} else {
-		
 		$.ajax({
 			method : "GET",
 			url : "/EGF/common/getbankbranchesbybankid",
@@ -94,9 +91,9 @@ function loadBankBranches(bankId){
 						$('#bankbranch').append($('<option '+ selected +'>').text(value.branchname).attr('value', value.id));
 					});
 				});
-
-	}
 }
+
+
 function callAjaxSearch() {
 	drillDowntableContainer = jQuery("#resultTable");
 	jQuery('.report-section').removeClass('display-hide');

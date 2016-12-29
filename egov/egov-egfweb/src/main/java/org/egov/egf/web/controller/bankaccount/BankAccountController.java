@@ -112,8 +112,8 @@ public class BankAccountController {
     private CreateBankService createBankService;
     
     private void setDropDownValues(final Model model) {
-        model.addAttribute("banks", createBankService.getByIsActive(true));
-        model.addAttribute("bankbranches", createBankBranchService.getByIsActive(true));
+        model.addAttribute("banks", createBankService.getByIsActiveTrueOrderByName());
+        model.addAttribute("bankbranches", createBankBranchService.getByIsActiveTrueOrderByBranchname());
         model.addAttribute("funds", fundService.getByIsActive(true));
         model.addAttribute("usagetypes", BankAccountType.values());
         model.addAttribute("accounttypes", chartOfAccountsService.getAccountTypes());

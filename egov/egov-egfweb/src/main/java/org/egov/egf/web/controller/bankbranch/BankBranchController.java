@@ -85,7 +85,8 @@ public class BankBranchController {
     private MessageSource messageSource;
 
     private void setDropDownValues(final Model model) {
-        model.addAttribute("banks", createBankService.getByIsActive(true));
+        model.addAttribute("banks", createBankService.getByIsActiveTrueOrderByName());
+        model.addAttribute("bankbranches", createBankBranchService.getByIsActiveTrueOrderByBranchname());
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)

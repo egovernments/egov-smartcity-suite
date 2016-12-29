@@ -62,7 +62,7 @@
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.bankbranch" />  </label>
 						<div class="col-sm-3 add-margin">
-							<form:select path="bankbranch" id="bankbranch" class="form-control">
+							<form:select path="bankbranch" id="bankbranch" class="form-control" data-first-option="false">
 								<form:option value=""><spring:message code="lbl.select" /></form:option>
 								<form:options items="${bankbranches}" itemValue="id" itemLabel="branchname" />
 							</form:select>
