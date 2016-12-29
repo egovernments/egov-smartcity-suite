@@ -69,14 +69,14 @@
 				<c:choose>
 					<c:when test="${milestone.activities.size() == 0}">
 						<tr id="milestoneRow">
-							<td><form:input path="activities[0].stageOrderNo"
+							<td width="10%"><form:input path="activities[0].stageOrderNo"
 									id="stageOrderNo" name="activities[0].stageOrderNo" value="1"
 									data-errormsg="Stage Order Number is mandatory!" data-idx="0"
 									data-optional="0" class="form-control table-input stageOrderNo readonlyfields"
 									maxlength="5" /> <form:errors
 									path="activities[0].stageOrderNo"
 									cssClass="add-margin error-msg" /></td>
-							<td><form:input path="activities[0].description"
+							<td width="40%"><form:input path="activities[0].description"
 									name="activities[0].description" id="description" value=""
 									data-errormsg="Stage Description is mandatory!" data-idx="0"
 									data-optional="0" class="form-control table-input description readonlyfields"
