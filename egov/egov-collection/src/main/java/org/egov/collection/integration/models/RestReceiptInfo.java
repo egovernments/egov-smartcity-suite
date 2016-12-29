@@ -39,38 +39,41 @@
  */
 package org.egov.collection.integration.models;
 
+import java.math.BigDecimal;
+
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.utils.CollectionsUtil;
 
-import java.math.BigDecimal;
-
-
 public class RestReceiptInfo {
-    private String transactionId="";
-    private String receiptNo="";
-    private String referenceNo="";
-    private BigDecimal amount=BigDecimal.ZERO;
-    private String txnDate=""; 
+    private String transactionId = "";
+    private String receiptNo = "";
+    private String referenceNo = "";
+    private BigDecimal amount = BigDecimal.ZERO;
+    private String txnDate = "";
     private String paymentPeriod;
     private String paymentType;
-    
+    private String serviceName;
+    private String payeeName;
+
+    public RestReceiptInfo() {
+        super();
+    }
+
     public RestReceiptInfo(final ReceiptHeader receiptHeader) {
-        this.transactionId = receiptHeader.getManualreceiptnumber();
-        this.receiptNo = receiptHeader.getReceiptnumber();
-        this.referenceNo = receiptHeader.getConsumerCode();
-        this.amount = receiptHeader.getTotalAmount();
-        this.txnDate=CollectionsUtil.CHEQUE_DATE_FORMAT.format(receiptHeader.getReceiptdate());
+        transactionId = receiptHeader.getManualreceiptnumber();
+        receiptNo = receiptHeader.getReceiptnumber();
+        referenceNo = receiptHeader.getConsumerCode();
+        amount = receiptHeader.getTotalAmount();
+        txnDate = CollectionsUtil.CHEQUE_DATE_FORMAT.format(receiptHeader.getReceiptdate());
+        serviceName = receiptHeader.getService().getName();
+        payeeName = receiptHeader.getPayeeName();
     }
 
     public String getTransactionId() {
         return transactionId;
     }
 
-    public RestReceiptInfo() {
-        super();
-    }
-
-    public void setTransactionId(String transactionId) {
+    public void setTransactionId(final String transactionId) {
         this.transactionId = transactionId;
     }
 
@@ -78,7 +81,7 @@ public class RestReceiptInfo {
         return receiptNo;
     }
 
-    public void setReceiptNo(String receiptNo) {
+    public void setReceiptNo(final String receiptNo) {
         this.receiptNo = receiptNo;
     }
 
@@ -86,7 +89,7 @@ public class RestReceiptInfo {
         return referenceNo;
     }
 
-    public void setReferenceNo(String referenceNo) {
+    public void setReferenceNo(final String referenceNo) {
         this.referenceNo = referenceNo;
     }
 
@@ -94,7 +97,7 @@ public class RestReceiptInfo {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(final BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -102,7 +105,7 @@ public class RestReceiptInfo {
         return paymentPeriod;
     }
 
-    public void setPaymentPeriod(String paymentPeriod) {
+    public void setPaymentPeriod(final String paymentPeriod) {
         this.paymentPeriod = paymentPeriod;
     }
 
@@ -110,8 +113,31 @@ public class RestReceiptInfo {
         return paymentType;
     }
 
-    public void setPaymentType(String paymentType) {
+    public void setPaymentType(final String paymentType) {
         this.paymentType = paymentType;
     }
 
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(final String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public String getTxnDate() {
+        return txnDate;
+    }
+
+    public void setTxnDate(String txnDate) {
+        this.txnDate = txnDate;
+    }
+
+    public String getPayeeName() {
+        return payeeName;
+    }
+
+    public void setPayeeName(String payeeName) {
+        this.payeeName = payeeName;
+    }
 }

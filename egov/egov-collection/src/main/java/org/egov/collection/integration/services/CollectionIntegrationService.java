@@ -48,6 +48,7 @@ import org.egov.collection.integration.models.BillInfo;
 import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.PaymentInfo;
+import org.egov.collection.integration.models.PaymentInfoRequest;
 import org.egov.collection.integration.models.PaymentInfoSearchRequest;
 import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
@@ -185,12 +186,18 @@ public interface CollectionIntegrationService {
      * @return List of <code>ReceiptDetail</code>
      */
     public List<ReceiptDetail> getReceiptDetailListByReceiptNumber(String receiptNumber);
-    
+
     /**
      * This method returns Payment Request to process payments through mobile
      * @param billInfo
      * @return PaymentRequest
      */
-    public PaymentRequest processMobilePayments(BillInfoImpl billInfo) throws ValidationException;
+    public PaymentRequest processMobilePayments(BillInfoImpl billInfo);
+
+    /**
+     * @param paymentInfoRequest
+     * @return
+     */
+    public List<RestReceiptInfo> getDetailsByUserServiceAndConsumerCode( PaymentInfoRequest paymentInfoRequest);
 
 }
