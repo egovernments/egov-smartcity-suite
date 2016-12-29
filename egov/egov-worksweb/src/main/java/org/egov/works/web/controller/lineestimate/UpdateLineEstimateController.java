@@ -429,7 +429,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                 lineEstimate.getCurrentState().getValue(),
                 lineEstimate.getCurrentState().getNextAction());
         if (wfmatrix != null)
-            model.addAttribute("nextState", wfmatrix.getNextState());
+            model.addAttribute("nextStatus", wfmatrix.getNextStatus().toUpperCase());
 
         lineEstimateService.loadModelValues(lineEstimate, model);
         return "newLineEstimate-edit";

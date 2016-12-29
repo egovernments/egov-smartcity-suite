@@ -71,7 +71,7 @@
 					<jsp:include page="../common/uploaddocuments.jsp"/>
 				</div>
 			</div>
-		<c:if test="${nextState == 'Admin sanctioned'}" >
+		<c:if test="${nextStatus == 'ADMINISTRATIVE_SANCTIONED'}" >
 			<jsp:include page="lineestimateadminsanctiondetails.jsp"></jsp:include>
 			<jsp:include page="lineestimate-workflowfields.jsp"></jsp:include>
 		</c:if>

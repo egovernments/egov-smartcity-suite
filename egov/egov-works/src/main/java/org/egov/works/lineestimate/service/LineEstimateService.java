@@ -614,9 +614,6 @@ public class LineEstimateService {
         else if (WorksConstants.REJECT_ACTION.equals(workFlowAction))
             lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                     LineEstimateStatus.REJECTED.toString()));
-        else if (WorksConstants.APPROVE_ACTION.equals(workFlowAction))
-            lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
-                    LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()));
         else if (null != lineEstimate.getState()) {
             wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null,
                     lineEstimate.getTotalEstimateAmount(),
@@ -624,7 +621,7 @@ public class LineEstimateService {
                     lineEstimate.getCurrentState().getValue(),
                     lineEstimate.getCurrentState().getNextAction());
             lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
-                    wfmatrix.getNextState().toUpperCase()));
+                    wfmatrix.getNextStatus().toUpperCase()));
         }
     }
 
