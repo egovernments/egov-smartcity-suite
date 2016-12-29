@@ -257,5 +257,24 @@
     </bean>
      
     <!-- END DemandActivationJob -->
+    
+    <bean name="recoveryNoticesJobScheduler" id="recoveryNoticesJobScheduler" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+		<property name="group" value="PTIS_RECOVERY_NOTICES_JOB_GROUP"/>
+		<property name="name" value="PTISRecoveryNoticesJob"/>
+		<property name="durability" value="true" />
+		<property name="jobClass" value="org.egov.ptis.scheduler.RecoveryNoticesJob"/>
+        <property name="requestsRecovery" value="false"/>
+		<property name="jobDataAsMap">
+            <map>
+                <entry key="jobBeanName" value="recoveryNoticesJob"/>
+				<entry key="userName" value="egovernments" />
+				<entry key="cityDataRequired"  value="true" />
+				<entry key="moduleName" value="ptis"/>
+            </map>
+        </property>   	
+	</bean>
+	
+	<bean id="recoveryNoticesJob" class="org.egov.ptis.scheduler.RecoveryNoticesJob" lazy-init="true" scope="prototype">
+    </bean>
 </beans>
 

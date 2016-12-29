@@ -49,6 +49,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -108,9 +109,16 @@ public class WaterChargeDashboardService {
         final List<WaterChargeDashBoardResponse> collectionTrends = waterChargeCollDocService
                 .getMonthwiseCollectionDetails(waterChargeDashBoardRequest);
 
-        final List<WaterChargeDashBoardResponse> collIndexData = waterChargeCollDocService
-                .getResponseTableData(waterChargeDashBoardRequest);
-
+        final List<WaterChargeDashBoardResponse> collIndexData; /*= waterChargeCollDocService
+                .getResponseTableData(waterChargeDashBoardRequest);*/
+        if (StringUtils.isNotBlank(waterChargeDashBoardRequest.getType()) && waterChargeDashBoardRequest.getType()
+                .equalsIgnoreCase(PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE))
+         collIndexData = waterChargeCollDocService
+                .getResponseTableDataForBillCollector(waterChargeDashBoardRequest);
+        else
+            collIndexData = waterChargeCollDocService
+            .getResponseTableData(waterChargeDashBoardRequest);
+        
         responsemap.put("collectionWtTotal", collectionTotalResponseList);
         responsemap.put("collTrends", collectionTrends);
         responsemap.put("responseDetails", collIndexData);

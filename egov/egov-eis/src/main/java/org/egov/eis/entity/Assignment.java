@@ -39,14 +39,11 @@
  */
 package org.egov.eis.entity;
 
-import org.egov.commons.CFunction;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.pims.commons.Designation;
-import org.egov.pims.commons.Position;
-import org.egov.pims.model.GradeMaster;
+import static org.egov.eis.entity.Assignment.SEQ_ASSIGNMENT;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -62,59 +59,80 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
-import static org.egov.eis.entity.Assignment.SEQ_ASSIGNMENT;
+import org.egov.commons.CFunction;
+import org.egov.commons.Functionary;
+import org.egov.commons.Fund;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.pims.commons.Designation;
+import org.egov.pims.commons.Position;
+import org.egov.pims.model.GradeMaster;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 @Entity
 @Table(name = "egeis_assignment")
 @SequenceGenerator(name = SEQ_ASSIGNMENT, sequenceName = SEQ_ASSIGNMENT, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class Assignment extends AbstractAuditable {
 
     public static final String SEQ_ASSIGNMENT = "SEQ_EGEIS_ASSIGNMENT";
     private static final long serialVersionUID = -2720951718725134740L;
     @Id
     @GeneratedValue(generator = SEQ_ASSIGNMENT, strategy = GenerationType.SEQUENCE)
+    @Audited
     private Long id;
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "position")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Position position;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "functionary")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Functionary functionary;
     @ManyToOne(fetch = FetchType.LAZY)
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @JoinColumn(name = "fund")
     private Fund fund;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "function")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private CFunction function;
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "designation")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Designation designation;
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Department department;
     @Column(name = "isprimary")
+    @Audited
     private boolean primary;
     @NotNull
+    @Audited
     private Date fromDate;
     @NotNull
+    @Audited
     private Date toDate;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "grade")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private GradeMaster grade;
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Employee employee;
-
     @OneToMany(mappedBy = "assignment", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<HeadOfDepartments> deptSet = new ArrayList<HeadOfDepartments>(0);
+    private final List<HeadOfDepartments> deptSet = new ArrayList<>(0);
 
     @Transient
     private List<HeadOfDepartments> hodList = new ArrayList<>(0);

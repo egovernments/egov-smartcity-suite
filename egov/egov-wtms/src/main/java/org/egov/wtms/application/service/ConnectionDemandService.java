@@ -185,15 +185,13 @@ public class ConnectionDemandService {
         final FieldInspectionDetails fieldInspectionDetails = waterConnectionDetails.getFieldInspectionDetails();
         EgDemand egDemand = null;
         if (null != fieldInspectionDetails) {
-            feeDetails.put(WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE,
-                    fieldInspectionDetails.getEstimationCharges());
             feeDetails.put(WaterTaxConstants.WATERTAX_SECURITY_CHARGE, fieldInspectionDetails.getSecurityDeposit());
             feeDetails.put(WaterTaxConstants.WATERTAX_ROADCUTTING_CHARGE,
                     fieldInspectionDetails.getRoadCuttingCharges());
             feeDetails.put(WaterTaxConstants.WATERTAX_SUPERVISION_CHARGE,
                     fieldInspectionDetails.getSupervisionCharges());
         }
-        // iffe
+        
         // (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getCode()))
         if (!WaterTaxConstants.CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
             donationDetails = getDonationDetails(waterConnectionDetails);

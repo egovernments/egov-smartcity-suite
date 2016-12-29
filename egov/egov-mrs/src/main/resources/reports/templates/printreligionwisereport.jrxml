@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2016-12-19T15:24:19 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="printreligionwisereport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="daf86ea0-50c3-4720-834c-9a53386daab8">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="76"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<import value="net.sf.jasperreports.engine.util.JRStringUtil"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="year" class="java.lang.Integer"/>
+	<parameter name="searchResponse" class="java.util.List"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="174" splitType="Stretch">
+			<textField>
+				<reportElement x="50" y="0" width="460" height="30" uuid="e662f8ff-54b4-4c09-b52c-72e3c2a0628c"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="60" width="555" height="26" uuid="5b13d1b5-e91a-4930-8b38-2e3358ded0a7"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["[See Rule 19 (vi) of Andhra Pradesh Compulsory Registration of Marriage Act, 2002 & Rules 2003]"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="34" width="555" height="26" uuid="7d756011-0139-4673-a66b-348f2cb0dfb7"/>
+				<textElement textAlignment="Center">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Form - F"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="175" y="128" width="204" height="19" uuid="952bab55-b082-43cd-89d7-28e84371dbc1"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["For The Year "+$P{year}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="95" width="555" height="20" uuid="a58619a7-e3cb-4447-b35c-d719107c8a91"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Annual Consolidated Return to be furnished by the Registrar General to the State\n"+"Government at State Level."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="176" y="154" width="210" height="20" uuid="4144eec3-d78f-4c0f-8888-28f7e99762c8"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Number of Registrations"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="56" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="56" uuid="a75ac24b-8e8f-4e74-9102-6f37bb58fc16"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{searchResponse}, false)]]></dataSourceExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("printreligionwisesubreport.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="63" splitType="Stretch">
+			<textField>
+				<reportElement x="250" y="22" width="305" height="19" uuid="345d3de1-ce41-4898-9885-5b443f986ee6"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Signature of the Registrar General of Marriages,"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="250" y="46" width="305" height="13" uuid="d25b91a0-a108-4f3b-a845-be2d5da8a52c"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Andhra Pradesh, Amaravathi."]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="50"/>
+	</detail>
+</jasperReport>

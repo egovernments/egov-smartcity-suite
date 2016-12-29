@@ -145,8 +145,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                     license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
             }
             license.setActive(true);
-            if (license.getCurrentDemand().getBaseDemand().compareTo(license.getCurrentDemand().getAmtCollected()) == -1
-                    || license.getCurrentDemand().getBaseDemand().compareTo(license.getCurrentDemand().getAmtCollected()) == 0)
+            if (license.getCurrentDemand().getBaseDemand().compareTo(license.getCurrentDemand().getAmtCollected()) <= 0)
                 license = (TradeLicense) licenseUtils.applicationStatusChange(license,
                         Constants.APPLICATION_STATUS_APPROVED_CODE);
             else
@@ -173,10 +172,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                     Constants.APPLICATION_STATUS_GENECERT_CODE);
         }
         if (BUTTONREJECT.equals(workFlowAction))
-            if (license.getLicenseAppType() != null
-                    && license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
-                license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_ACTIVE));
-            else if (wfInitiator.equals(userAssignment.getPosition())) {
+            if (license.getLicenseAppType() != null && wfInitiator.equals(userAssignment.getPosition())) {
                 license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_CANCELLED));
                 license = (TradeLicense) licenseUtils.applicationStatusChange(license,
                         Constants.APPLICATION_STATUS_CANCELLED);
@@ -187,7 +183,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             }
         if (null != license && null != license.getState()
                 && license.getState().getValue().contains(Constants.WF_REVENUECLERK_APPROVED)
-                && recalDemandAmount.compareTo(currentDemandAmount) == 1)
+                && recalDemandAmount.compareTo(currentDemandAmount) > 0)
             updateDemandForChangeTradeArea(license);
     }
 
@@ -288,8 +284,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             searchCriteria.add(Restrictions.eq("licc.mobilePhoneNumber", searchForm.getMobileNo()));
         if (searchForm.getStatusId() != null)
             searchCriteria.add(Restrictions.eq("status.id", searchForm.getStatusId()));
-        if (searchForm.getIsCancelled() != null && searchForm.getIsCancelled().equals(Boolean.TRUE))
-            searchCriteria.add(Restrictions.eq("licstatus.statusCode", StringUtils.upperCase("CAN")));
         else
             searchCriteria.add(Restrictions.ne("licstatus.statusCode", StringUtils.upperCase("CAN")));
         searchCriteria.add(Restrictions.isNotNull("applicationNumber"));

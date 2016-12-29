@@ -79,6 +79,9 @@ public class CouncilMeeting  extends StateAware {
     @JoinColumn(name = "filestore")
     private FileStoreMapper filestore;
     
+    @Transient
+    private List<MeetingAttendence> updateMeetingAttendance = new ArrayList<MeetingAttendence>(0);
+    
     public Long getId() {
         return id;
     }
@@ -185,19 +188,26 @@ public class CouncilMeeting  extends StateAware {
 		return filestore;
 	}
 
-	public List<CouncilSmsDetails> getSmsDetails() {
-		return smsDetails;
-	}
+    public List<CouncilSmsDetails> getSmsDetails() {
+        return smsDetails;
+    }
 
-	public void setSmsDetails(List<CouncilSmsDetails> smsDetails) {
-		this.smsDetails = smsDetails;
-	}
-	
-	public void addSmsDetails(CouncilSmsDetails councilSmsDetails) {
-		this.smsDetails.add(councilSmsDetails);
-	}
+    public void setSmsDetails(List<CouncilSmsDetails> smsDetails) {
+        this.smsDetails = smsDetails;
+    }
 
-	
+    public void addSmsDetails(CouncilSmsDetails councilSmsDetails) {
+        this.smsDetails.add(councilSmsDetails);
+    }
+
+    public List<MeetingAttendence> getUpdateMeetingAttendance() {
+        return updateMeetingAttendance;
+    }
+
+    public void setUpdateMeetingAttendance(List<MeetingAttendence> updateMeetingAttendance) {
+        this.updateMeetingAttendance = updateMeetingAttendance;
+    }
+
 	
     
 }

@@ -43,6 +43,7 @@ import java.util.List;
 
 import org.egov.commons.EgwStatus;
 import org.egov.lcms.transactions.entity.LegalCaseDisposal;
+import org.egov.lcms.transactions.entity.ReportStatus;
 import org.egov.lcms.transactions.repository.LegalCaseDisposalRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
@@ -67,6 +68,8 @@ public class LegalCaseDisposalService {
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_CLOSED);
         legalCaseDisposal.getLegalCase().setStatus(statusObj);
+        final ReportStatus reportStatus=null;
+        legalCaseDisposal.getLegalCase().setReportStatus(reportStatus);
         return legalCaseDisposalRepository.save(legalCaseDisposal);
     }
 

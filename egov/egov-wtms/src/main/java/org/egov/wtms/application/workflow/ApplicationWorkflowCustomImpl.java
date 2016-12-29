@@ -115,11 +115,6 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
-    @Autowired
-    public ApplicationWorkflowCustomImpl() {
-
-    }
-
     @Override
     public void createCommonWorkflowTransition(final WaterConnectionDetails waterConnectionDetails,
             final Long approvalPosition, final String approvalComent, final String additionalRule,

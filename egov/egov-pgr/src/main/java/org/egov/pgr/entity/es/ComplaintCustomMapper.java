@@ -2,12 +2,12 @@ package org.egov.pgr.entity.es;
 
 import java.util.Objects;
 
-import ma.glasnost.orika.CustomMapper;
-import ma.glasnost.orika.MappingContext;
-
 import org.egov.pgr.entity.Complaint;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.stereotype.Component;
+
+import ma.glasnost.orika.CustomMapper;
+import ma.glasnost.orika.MappingContext;
 
 @Component
 public class ComplaintCustomMapper extends CustomMapper<Complaint, ComplaintIndex> {
@@ -19,6 +19,8 @@ public class ComplaintCustomMapper extends CustomMapper<Complaint, ComplaintInde
         complaintIndex.setComplainantEmail(complaint.getComplainant().getEmail());
         complaintIndex.setComplaintTypeName(complaint.getComplaintType().getName());
         complaintIndex.setComplaintTypeCode(complaint.getComplaintType().getCode());
+        complaintIndex.setCategoryId(complaint.getComplaintType().getCategory().getId().toString());
+        complaintIndex.setCategoryName(complaint.getComplaintType().getCategory().getName());
         complaintIndex.setComplaintStatusName(complaint.getStatus().getName());
         complaintIndex.setAssigneeId(complaint.getAssignee().getId());
         complaintIndex.setAssigneeName(complaint.getAssignee().getName());

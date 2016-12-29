@@ -40,6 +40,8 @@
 
 package org.egov.collection.bean.dashboard;
 
+import java.util.List;
+
 public class CollectionDashBoardRequest {
 
     private String regionName;
@@ -49,6 +51,8 @@ public class CollectionDashBoardRequest {
     private String fromDate;
     private String toDate;
     private String type;
+    private List<String> includeServices;
+    private List<String> excludeServices;
 
     public String getRegionName() {
         return regionName;
@@ -106,4 +110,19 @@ public class CollectionDashBoardRequest {
         this.type = type;
     }
 
+    public List<String> getIncludeServices() {
+        return includeServices;
+    }
+
+    public void setIncludeServices(List<String> includeServices) {
+        this.includeServices = includeServices;
+    }
+
+    public List<String> getExcludeServices() {
+        return excludeServices;
+    }
+
+    public void setExcludeServices(List<String> excludeServices) {
+        this.excludeServices = excludeServices;
+    }
 }

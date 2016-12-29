@@ -91,6 +91,7 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
@@ -177,6 +178,9 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 
     @Autowired
     private ReportViewerUtil reportViewerUtil;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     public PropertyTaxNoticeAction() {
     }
@@ -401,9 +405,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             final PropertyNoticeInfo propertyNotice) {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         ReportRequest reportInput = null;
-        final List<User> users = eisCommonService.getAllActiveUsersByGivenDesig(designationService
-                .getDesignationByName(COMMISSIONER_DESGN).getId());
-        reportParams.put("userSignature", (!users.isEmpty() && users.get(0).getSignature() != null) ? new ByteArrayInputStream(users.get(0).getSignature()) : null);
+        reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null ? securityUtils.getCurrentUser().getSignature() != null : "");
         if (NOTICE_TYPE_SPECIAL_NOTICE.equals(noticeType)) {
             final HttpServletRequest request = ServletActionContext.getRequest();
             final String url = WebUtils.extractRequestDomainURL(request, false);

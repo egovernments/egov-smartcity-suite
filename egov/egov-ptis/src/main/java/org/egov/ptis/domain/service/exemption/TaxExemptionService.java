@@ -41,8 +41,11 @@
 package org.egov.ptis.domain.service.exemption;
 
 import static java.lang.Boolean.FALSE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
@@ -52,21 +55,30 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TAX_EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
+import static org.egov.ptis.constants.PropertyTaxConstants.UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -74,6 +86,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -116,7 +129,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaxExemptionService.class);
 
     @Autowired
-    private PropertyService propService;
+    private PropertyService propertyService;
 
     @Autowired
     private PropertyPersistenceService propertyPerService;
@@ -133,7 +146,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
-    
+
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
@@ -151,14 +164,17 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
     @Autowired
     private MessagingService messagingService;
-    
+
+    @Autowired
+    private AssignmentService assignmentService;
+
     Property property = null;
 
     public TaxExemptionService() {
         super(PropertyImpl.class);
     }
 
-    public TaxExemptionService(Class<PropertyImpl> type) {
+    public TaxExemptionService(final Class<PropertyImpl> type) {
         super(type);
     }
 
@@ -167,42 +183,37 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             final String approvalComment, final String workFlowAction, final Long approvalPosition,
             final String taxExemptedReason, final Boolean propertyByEmployee, final String additionalRule) {
 
-        Date propCompletionDate = null;
         final BasicProperty basicProperty = oldProperty.getBasicProperty();
         final PropertyDetail propertyDetail = oldProperty.getPropertyDetail();
-        propCompletionDate = propertyDetail.getDateOfCompletion();
+        propertyDetail.getDateOfCompletion();
         propertyModel = (PropertyImpl) newProperty;
         propertyModel.setStatus(status);
         if (propertyModel.getApplicationNo() == null)
             propertyModel.setApplicationNo(applicationNumberGenerator.generate());
 
-        Map<String,Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
-        Installment installmentFirstHalf = yearwiseInstMap.get(CURRENTYEAR_FIRST_HALF);
-        Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
+        final Map<String, Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+        final Installment installmentFirstHalf = yearwiseInstMap.get(CURRENTYEAR_FIRST_HALF);
+        final Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
         Date effectiveDate = null;
         /*
-         * While converting an exempted property to non-exempted property,
-         * effective date will be the installment from date of the current installment.
-         * Else, effective date will be the starting date of the next installment
+         * While converting an exempted property to non-exempted property, effective date will be the installment from date of the
+         * current installment. Else, effective date will be the starting date of the next installment
          */
-        if(DateUtils.between(new Date(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate())){
-                if (StringUtils.isNotBlank(taxExemptedReason) && !taxExemptedReason.equals("-1"))
-                        effectiveDate = installmentSecondHalf.getFromDate();
-                else
-                        effectiveDate = installmentFirstHalf.getFromDate();
-        }
-        else{
-                if (StringUtils.isNotBlank(taxExemptedReason) && !taxExemptedReason.equals("-1"))
-                        effectiveDate = DateUtils.addYears(installmentFirstHalf.getFromDate(), 1);
-                else
-                        effectiveDate = installmentSecondHalf.getFromDate();
-        }
+        if (DateUtils.between(new Date(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate())) {
+            if (StringUtils.isNotBlank(taxExemptedReason) && !taxExemptedReason.equals("-1"))
+                effectiveDate = installmentSecondHalf.getFromDate();
+            else
+                effectiveDate = installmentFirstHalf.getFromDate();
+        } else if (StringUtils.isNotBlank(taxExemptedReason) && !taxExemptedReason.equals("-1"))
+            effectiveDate = org.apache.commons.lang3.time.DateUtils.addYears(installmentFirstHalf.getFromDate(), 1);
+        else
+            effectiveDate = installmentSecondHalf.getFromDate();
 
         if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
                 .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
-            propCompletionDate = propService.getLowestDtOfCompFloorWise(propertyDetail.getFloorDetails());
+            propertyService.getLowestDtOfCompFloorWise(propertyDetail.getFloorDetails());
         else
-            propCompletionDate = propertyDetail.getDateOfCompletion();
+            propertyDetail.getDateOfCompletion();
         for (final Floor floor : propertyModel.getPropertyDetail().getFloorDetails()) {
             propertyPerService.applyAuditing(floor);
             floor.setPropertyDetail(propertyModel.getPropertyDetail());
@@ -218,32 +229,25 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         }
         propertyModel.setEffectiveDate(effectiveDate);
         basicProperty.setUnderWorkflow(Boolean.TRUE);
-        Set<Ptdemand> newPtdemandSet = propertyModel.getPtDemandSet();
-        Set<EgDemandDetails> demandDetailSet = new HashSet<EgDemandDetails>();
+        final Set<Ptdemand> newPtdemandSet = propertyModel.getPtDemandSet();
+        final Set<EgDemandDetails> demandDetailSet = new HashSet<EgDemandDetails>();
 
         if (StringUtils.isNotBlank(taxExemptedReason) && !taxExemptedReason.equals("-1")) {
             // Do not do anything
-        } else {
-            // Remove all the previous demands until the current installment
-            if (StringUtils.isNotBlank(workFlowAction) && !workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
-                for (Ptdemand ptdemand : newPtdemandSet) {
-                    if (ptdemand.getEgInstallmentMaster().equals(installmentFirstHalf)) {
-                        for (EgDemandDetails demandDetails : ptdemand.getEgDemandDetails()) {
-                            if (demandDetails.getInstallmentStartDate().equals(effectiveDate)
-                                    || demandDetails.getInstallmentStartDate().after(effectiveDate)) {
-                                demandDetailSet.add(demandDetails);
-                            }
-                        }
-                        ptdemand.getEgDemandDetails().clear();
-                        ptdemand.getEgDemandDetails().addAll(demandDetailSet);
-                    }
+        } else // Remove all the previous demands until the current installment
+        if (StringUtils.isNotBlank(workFlowAction) && !workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))
+            for (final Ptdemand ptdemand : newPtdemandSet)
+                if (ptdemand.getEgInstallmentMaster().equals(installmentFirstHalf)) {
+                    for (final EgDemandDetails demandDetails : ptdemand.getEgDemandDetails())
+                        if (demandDetails.getInstallmentStartDate().equals(effectiveDate)
+                                || demandDetails.getInstallmentStartDate().after(effectiveDate))
+                            demandDetailSet.add(demandDetails);
+                    ptdemand.getEgDemandDetails().clear();
+                    ptdemand.getEgDemandDetails().addAll(demandDetailSet);
                 }
-            }
-        }
 
-        for (Ptdemand ptdemand : newPtdemandSet) {
-                propertyPerService.applyAuditing(ptdemand.getDmdCalculations());
-            }
+        for (final Ptdemand ptdemand : newPtdemandSet)
+            propertyPerService.applyAuditing(ptdemand.getDmdCalculations());
 
         propertyModel.setBasicProperty(basicProperty);
         basicProperty.addProperty(propertyModel);
@@ -272,17 +276,53 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         Position pos = null;
         String currentState = "";
         Assignment wfInitiator = null;
+        Assignment assignment = null;
+        String approverDesignation = "";
+        String nextAction = "";
 
         if (!propertyByEmployee) {
             currentState = "Created";
-            final Assignment assignment = propService.getUserPositionByZone(property.getBasicProperty(), false);
+            assignment = propertyService.getUserPositionByZone(property.getBasicProperty(), false);
             if (null != assignment)
                 approverPosition = assignment.getPosition().getId();
-        } else
+        } else {
             currentState = null;
-        if (property.getId() != null && (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT) || workFlowAction
-                .equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)))
-            wfInitiator = propService.getWorkflowInitiator(property);
+            if (null != approverPosition && approverPosition != 0) {
+                assignment = assignmentService.getAssignmentsForPosition(approverPosition, new Date())
+                        .get(0);
+                assignment.getEmployee().getName().concat("~")
+                        .concat(assignment.getPosition().getName());
+                approverDesignation = assignment.getDesignation().getName();
+            }
+        }
+
+        String loggedInUserDesignation = "";
+        if (property.getState() != null)
+            loggedInUserDesignation = getLoggedInUserDesignation(property.getCurrentState().getOwnerPosition().getId(),
+                    securityUtils.getCurrentUser());
+
+        if (loggedInUserDesignation.equals(JUNIOR_ASSISTANT) || loggedInUserDesignation.equals(SENIOR_ASSISTANT))
+            loggedInUserDesignation = null;
+
+        if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)
+                && (approverDesignation.equalsIgnoreCase(ASSISTANT_COMMISSIONER_DESIGN) ||
+                        approverDesignation.equalsIgnoreCase(DEPUTY_COMMISSIONER_DESIGN)
+                        || approverDesignation.equalsIgnoreCase(ADDITIONAL_COMMISSIONER_DESIGN)
+                        || approverDesignation.equalsIgnoreCase(ZONAL_COMMISSIONER_DESIGN) ||
+                        approverDesignation.equalsIgnoreCase(COMMISSIONER_DESGN)))
+            if (property.getCurrentState().getNextAction().equalsIgnoreCase(WF_STATE_DIGITAL_SIGNATURE_PENDING))
+                nextAction = WF_STATE_DIGITAL_SIGNATURE_PENDING;
+            else {
+                final String designation = approverDesignation.split(" ")[0];
+                if (designation.equalsIgnoreCase(COMMISSIONER_DESGN))
+                    nextAction = WF_STATE_COMMISSIONER_APPROVAL_PENDING;
+                else
+                    nextAction = new StringBuilder().append(designation).append(" ")
+                            .append(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
+                            .toString();
+            }
+        if (property.getId() != null && property.getState() != null)
+            wfInitiator = propertyService.getWorkflowInitiator(property);
         else
             wfInitiator = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(user.getId());
 
@@ -293,18 +333,24 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                 property.setStatus(STATUS_CANCELLED);
                 property.getBasicProperty().setUnderWorkflow(FALSE);
             } else {
+                final Assignment assignmentOnreject = getUserAssignmentOnReject(loggedInUserDesignation, property);
+                if (assignmentOnreject != null) {
+                    nextAction = UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
+                    wfInitiator = assignmentOnreject;
+                } else
+                    nextAction = WF_STATE_ASSISTANT_APPROVAL_PENDING;
                 final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
                 property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvarComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_ASSISTANT_APPROVAL_PENDING);
+                        .withOwner(wfInitiator.getPosition()).withNextAction(nextAction);
                 buildSMS(property, workFlowAction);
             }
 
         } else {
-            if (null != approverPosition && approverPosition != -1 && !approverPosition.equals(Long.valueOf(0)))
+            if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
+                pos = property.getCurrentState().getOwnerPosition();
+            else if (null != approverPosition && approverPosition != -1 && !approverPosition.equals(Long.valueOf(0)))
                 pos = positionMasterService.getPositionById(approverPosition);
-            else if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
-                pos = wfInitiator.getPosition();
             WorkFlowMatrix wfmatrix = null;
             if (null == property.getState()) {
                 wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null, additionalRule,
@@ -314,31 +360,29 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                         .withDateInfo(new Date()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(NATURE_TAX_EXEMPTION)
                         .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
-                //to be enabled once acknowledgement feature is developed
-                //buildSMS(property, workFlowAction);
-            } else {
+                // to be enabled once acknowledgement feature is developed
+                // buildSMS(property, workFlowAction);
+            } else if (property.getCurrentState().getNextAction().equalsIgnoreCase("END"))
+                property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvarComments).withDateInfo(currentDate.toDate());
+            else {
                 wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null, additionalRule,
-                        property.getCurrentState().getValue(), null);
+                        property.getCurrentState().getValue(), property.getCurrentState().getNextAction(), null,
+                        loggedInUserDesignation);
+                property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvarComments).withStateValue(wfmatrix.getNextState())
+                        .withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction(StringUtils.isNotBlank(nextAction) ? nextAction : wfmatrix.getNextAction());
 
-                if (wfmatrix != null)
-                    if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
-                        property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                                .withComments(approvarComments).withDateInfo(currentDate.toDate());
-                    else
-                        property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                                .withComments(approvarComments).withStateValue(wfmatrix.getNextState())
-                                .withDateInfo(currentDate.toDate()).withOwner(pos)
-                                .withNextAction(wfmatrix.getNextAction());
-                
-                        if(workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE))
-                                buildSMS(property, workFlowAction);
+                if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE))
+                    buildSMS(property, workFlowAction);
             }
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" WorkFlow Transition Completed for Demolition ...");
     }
 
-        public void addModelAttributes(final Model model, final BasicProperty basicProperty) {
+    public void addModelAttributes(final Model model, final BasicProperty basicProperty) {
         if (null != basicProperty.getWFProperty())
             property = basicProperty.getWFProperty();
         else
@@ -348,47 +392,50 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             model.addAttribute("ARV", ptDemand.getDmdCalculations().getAlv());
         else
             model.addAttribute("ARV", BigDecimal.ZERO);
-        model.addAttribute("propertyByEmployee", propService.isEmployee(securityUtils.getCurrentUser()));
+        model.addAttribute("propertyByEmployee", propertyService.isEmployee(securityUtils.getCurrentUser()));
         if (!property.getIsExemptedFromTax()) {
             Map<String, Map<String, BigDecimal>> demandCollMap;
             try {
                 demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
                         propertyTaxCommonUtils.getCurrentInstallment());
-           
-            Map<String, BigDecimal> currentTaxDetails = propService.getCurrentTaxDetails(demandCollMap, new Date());
-            model.addAttribute("currTax", currentTaxDetails.get(CURR_DMD_STR));
-            model.addAttribute("eduCess", currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-            model.addAttribute("currTaxDue", currentTaxDetails.get(CURR_DMD_STR).subtract(currentTaxDetails.get(CURR_COLL_STR)));
-            model.addAttribute("libraryCess", currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS));
-            model.addAttribute("totalArrDue", currentTaxDetails.get(ARR_DMD_STR).subtract(currentTaxDetails.get(ARR_COLL_STR)));
-            BigDecimal propertyTax = BigDecimal.ZERO;
-            if (null != currentTaxDetails.get(DEMANDRSN_STR_GENERAL_TAX))
-                propertyTax = currentTaxDetails.get(DEMANDRSN_STR_GENERAL_TAX);
-            else
-                propertyTax = currentTaxDetails.get(DEMANDRSN_STR_VACANT_TAX);
-            final BigDecimal totalTax = propertyTax
-                    .add(currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS))
-                    .add(currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-            model.addAttribute("propertyTax", propertyTax);
-            if (currentTaxDetails.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)!=null) {
-                model.addAttribute("unauthorisedPenalty", currentTaxDetails.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
-                model.addAttribute("totalTax", totalTax.add(currentTaxDetails.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
-                model.addAttribute("showUnauthorisedPenalty", "yes");
-            } else {
-                model.addAttribute("totalTax", totalTax);
-                model.addAttribute("showUnauthorisedPenalty", "no");
+
+                final Map<String, BigDecimal> currentTaxDetails = propertyService.getCurrentTaxDetails(demandCollMap, new Date());
+                model.addAttribute("currTax", currentTaxDetails.get(CURR_DMD_STR));
+                model.addAttribute("eduCess", currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+                model.addAttribute("currTaxDue",
+                        currentTaxDetails.get(CURR_DMD_STR).subtract(currentTaxDetails.get(CURR_COLL_STR)));
+                model.addAttribute("libraryCess", currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS));
+                model.addAttribute("totalArrDue",
+                        currentTaxDetails.get(ARR_DMD_STR).subtract(currentTaxDetails.get(ARR_COLL_STR)));
+                BigDecimal propertyTax = BigDecimal.ZERO;
+                if (null != currentTaxDetails.get(DEMANDRSN_STR_GENERAL_TAX))
+                    propertyTax = currentTaxDetails.get(DEMANDRSN_STR_GENERAL_TAX);
+                else
+                    propertyTax = currentTaxDetails.get(DEMANDRSN_STR_VACANT_TAX);
+                final BigDecimal totalTax = propertyTax
+                        .add(currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO
+                                : currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS))
+                        .add(currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO
+                                : currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+                model.addAttribute("propertyTax", propertyTax);
+                if (currentTaxDetails.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null) {
+                    model.addAttribute("unauthorisedPenalty", currentTaxDetails.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
+                    model.addAttribute("totalTax", totalTax.add(currentTaxDetails.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
+                    model.addAttribute("showUnauthorisedPenalty", "yes");
+                } else {
+                    model.addAttribute("totalTax", totalTax);
+                    model.addAttribute("showUnauthorisedPenalty", "no");
+                }
+            } catch (final Exception e) {
+
+                throw new ApplicationRuntimeException("Exception in addModelAttributes : " + e);
             }
         }
-        catch (Exception e) {
 
-            throw new ApplicationRuntimeException("Exception in addModelAttributes : " + e);
-        }
-        }
-        
     }
 
     public Boolean isPropertyByEmployee(final Property property) {
-        return propService.isEmployee(property.getCreatedBy());
+        return propertyService.isEmployee(property.getCreatedBy());
     }
 
     public BasicProperty saveProperty(final Property newProperty, final Property oldProperty, final Character status,
@@ -400,38 +447,60 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
     }
 
-    public void buildSMS(Property property, String workFlowAction) {
-        for (PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfo()) {
-            if (StringUtils.isNotBlank(ownerInfo.getOwner().getMobileNumber())) {
+    public void buildSMS(final Property property, final String workFlowAction) {
+        for (final PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfo())
+            if (StringUtils.isNotBlank(ownerInfo.getOwner().getMobileNumber()))
                 buildSms(property, ownerInfo.getOwner(), workFlowAction);
-            }
-        }
     }
 
-    private void buildSms(Property property, User user, String workFlowAction) {
+    private void buildSms(final Property property, final User user, final String workFlowAction) {
         final String assessmentNo = property.getBasicProperty().getUpicNo();
         final String mobileNumber = user.getMobileNumber();
         final String applicantName = user.getName();
         String smsMsg = "";
         if (workFlowAction.equals(WFLOW_ACTION_STEP_FORWARD)) {
-                //to be enabled once acknowledgement feature is developed
-                /*smsMsg = messageSource.getMessage("msg.initiateexemption.sms",
-                    new String[] { applicantName, assessmentNo }, null);*/
-        } else if (workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)) {
+            // to be enabled once acknowledgement feature is developed
+            /*
+             * smsMsg = messageSource.getMessage("msg.initiateexemption.sms", new String[] { applicantName, assessmentNo }, null);
+             */
+        } else if (workFlowAction.equals(WFLOW_ACTION_STEP_REJECT))
             smsMsg = ptisMessageSource.getMessage("msg.rejectexemption.sms", new String[] { applicantName, assessmentNo,
                     ApplicationThreadLocals.getMunicipalityName() }, null);
-        } else if (workFlowAction.equals(WFLOW_ACTION_STEP_APPROVE)) {
-            Installment installment = propertyTaxUtil.getInstallmentListByStartDate(new Date()).get(0);
-            Date effectiveDate = DateUtils.addDays(installment.getToDate(), 1);
+        else if (workFlowAction.equals(WFLOW_ACTION_STEP_APPROVE)) {
+            final Installment installment = propertyTaxUtil.getInstallmentListByStartDate(new Date()).get(0);
+            final Date effectiveDate = org.apache.commons.lang3.time.DateUtils.addDays(installment.getToDate(), 1);
             smsMsg = ptisMessageSource.getMessage("msg.approveexemption.sms", new String[] { applicantName, assessmentNo,
                     new SimpleDateFormat("dd/MM/yyyy").format(effectiveDate), ApplicationThreadLocals.getMunicipalityName() },
                     null);
         }
 
-        if (StringUtils.isNotBlank(mobileNumber)) {
+        if (StringUtils.isNotBlank(mobileNumber))
             messagingService.sendSMS(mobileNumber, smsMsg);
-        }
 
+    }
+
+    public String getLoggedInUserDesignation(final Long posId, final User user) {
+        final List<Assignment> loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                posId, user.getId(), new Date());
+        return !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName() : null;
+    }
+
+    public Assignment getUserAssignmentOnReject(final String loggedInUserDesignation, final PropertyImpl property) {
+        Assignment assignmentOnreject = null;
+        if (loggedInUserDesignation.equalsIgnoreCase(REVENUE_OFFICER_DESGN)
+                || loggedInUserDesignation.equalsIgnoreCase(ASSISTANT_COMMISSIONER_DESIGN) ||
+                loggedInUserDesignation.equalsIgnoreCase(ADDITIONAL_COMMISSIONER_DESIGN)
+                || loggedInUserDesignation.equalsIgnoreCase(DEPUTY_COMMISSIONER_DESIGN) ||
+                loggedInUserDesignation.equalsIgnoreCase(COMMISSIONER_DESGN) ||
+                loggedInUserDesignation.equalsIgnoreCase(ZONAL_COMMISSIONER_DESIGN))
+            assignmentOnreject = propertyService.getUserOnRejection(property);
+
+        return assignmentOnreject;
+
+    }
+
+    public Assignment getWfInitiator(final PropertyImpl property) {
+        return propertyService.getWorkflowInitiator(property);
     }
 
 }

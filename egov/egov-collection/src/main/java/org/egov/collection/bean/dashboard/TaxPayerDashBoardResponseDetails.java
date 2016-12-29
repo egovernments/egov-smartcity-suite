@@ -44,7 +44,7 @@ import java.util.List;
 public class TaxPayerDashBoardResponseDetails {
 
     private List<TaxPayerDashBoardDetails> producers;
-    private List<TaxPayerDashBoardDetails> achievers;
+    private String serviceName;
 
     public List<TaxPayerDashBoardDetails> getProducers() {
         return producers;
@@ -54,11 +54,11 @@ public class TaxPayerDashBoardResponseDetails {
         this.producers = producers;
     }
 
-    public List<TaxPayerDashBoardDetails> getAchievers() {
-        return achievers;
+    public String getServiceName() {
+        return serviceName;
     }
 
-    public void setAchievers(final List<TaxPayerDashBoardDetails> achievers) {
-        this.achievers = achievers;
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 }

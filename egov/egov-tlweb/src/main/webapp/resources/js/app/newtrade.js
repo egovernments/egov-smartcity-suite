@@ -39,57 +39,86 @@
  */
 
 jQuery.noConflict();
-jQuery(document).ready(function(){
-    
-	jQuery('.add-attachment').click(function(){
-       console.log('came');
-       jQuery(this).parent().before('<div class="col-sm-3 add-margin"> <input type="file" class="form-control" required> </div>');
+jQuery(document).ready(function () {
+
+    jQuery('.add-attachment').click(function () {
+        jQuery(this).parent().before('<div class="col-sm-3 add-margin"> <input type="file" class="form-control" required> </div>');
     });
-    
-	jQuery('.motorcheck').click(function(){
-    	jQuery('.motorpart').toggle();
+
+    jQuery('.motorcheck').click(function () {
+        jQuery('.motorpart').toggle();
     });
-    
 });
 
-
-
-function resetOnPropertyNumChange(){
-	var propertyNo = jQuery("#propertyNo").val();
-   	if(propertyNo!="" && propertyNo!=null){
-		document.getElementById("address").disabled="true";
-    	document.getElementById("boundary").disabled="true"; 
-	} else {
-        document.getElementById("address").disabled=false;
-    	document.getElementById("boundary").disabled=false;  
+function showHideAgreement(){
+    if(document.getElementById("showAgreementDtl").checked){
+        document.getElementById("agreementSec").style.display="";
+    } else {
+        document.getElementById("agreementSec").style.display="none";
+        document.getElementById("agreementDate").value="";
+        document.getElementById("agreementDocNo").value="";
     }
-	document.getElementById("boundary").value='-1';
-	document.getElementById("wardName").value="";
-	document.getElementById("address").value="";
 }
 
-function detailchange(){
-	document.getElementById("detailChanged").value = 'true';
-}
-	
-function checkLength(obj,val){
-	if(obj.value.length>val) {
-		bootbox.alert('Max '+val+' digits allowed')
-		obj.value = obj.value.substring(0,val);
-	}
-}	
 
-function checkMinLength(obj,val){ 
-	if(obj.value.length<val) {  
-		bootbox.alert('Cannot be less than '+val+' digits')
-		obj.value = "";
-	}   
-}  
+
+// Calls propertytax REST api to retrieve property details for an assessment no
+function callPropertyTaxRest() {
+    var propertyNo = jQuery("#propertyNo").val();
+    if (propertyNo != "" && propertyNo != null) {
+        jQuery.ajax({
+            url: "/ptis/rest/property/" + propertyNo,
+            type: "GET",
+            contentType: "application/x-www-form-urlencoded",
+            success: function (data) {
+                if (data.errorDetails.errorCode != null && data.errorDetails.errorCode != '') {
+                    bootbox.alert(data.errorDetails.errorMessage);
+                    jQuery('#propertyNo').val('');
+                    jQuery("#address").attr("readonly", false);
+                    jQuery("#boundary").attr("readonly", false);
+                } else {
+                    if (data.boundaryDetails != null) {
+                        jQuery("#boundary").val(data.boundaryDetails.localityId);
+                        jQuery("#wardName").val(data.boundaryDetails.wardName);
+                        jQuery('#parentBoundary').val(data.boundaryDetails.wardId);
+                        jQuery("#address").val(data.propertyAddress);
+                    }
+                }
+            },
+            error: function (e) {
+                jQuery("#propertyNo").val("");
+                resetOnPropertyNumChange();
+                bootbox.alert("Error getting property details");
+            }
+        });
+    }
+}
+
+function resetOnPropertyNumChange() {
+    var propertyNo = jQuery("#propertyNo").val();
+    if (propertyNo != "" && propertyNo != null) {
+        jQuery("#address").attr("readonly", true);
+        jQuery("#boundary").attr("readonly", true);
+    } else {
+        jQuery("#address").attr("readonly", false);
+        jQuery("#boundary").attr("readonly", false);
+    }
+    jQuery("#boundary").val(-1);
+    jQuery("#wardName").val("");
+    jQuery("#address").val("");
+}
+
+function checkLength(obj, val) {
+    if (obj.value.length > val) {
+        bootbox.alert('Max ' + val + ' digits allowed')
+        obj.value = obj.value.substring(0, val);
+    }
+}
 
 function formatCurrency(obj) {
-		if(obj.value=="") {
-		return;
-	} else {
-		obj.value=(parseFloat(obj.value)).toFixed(2);
-		}
+    if (obj.value == "") {
+        return;
+    } else {
+        obj.value = (parseFloat(obj.value)).toFixed(2);
+    }
 }

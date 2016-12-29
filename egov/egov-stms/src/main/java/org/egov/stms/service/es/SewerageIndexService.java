@@ -49,7 +49,6 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.GROUPBYFIELD;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -57,10 +56,10 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.collection.entity.es.CollectionDocument;
+import org.egov.collection.repository.es.CollectionDocumentRepository;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.stms.elasticSearch.entity.DailySTCollectionReportSearch;
@@ -101,6 +100,9 @@ public class SewerageIndexService {
 
     @Autowired
     private SewerageIndexRepository sewerageIndexRepository;
+
+    @Autowired
+    private CollectionDocumentRepository collectionDocumentRepository;
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
@@ -210,7 +212,7 @@ public class SewerageIndexService {
     }
 
     public List<SewerageIndex> getSearchResultByBoolQuery(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort) {
-        List<SewerageIndex> resultList = new ArrayList<>();
+        List<SewerageIndex> resultList;
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
                 .withSort(sort).build();
         resultList = elasticsearchTemplate.queryForList(searchQuery, SewerageIndex.class);
@@ -236,7 +238,7 @@ public class SewerageIndexService {
     }
 
     public List<SewerageIndex> getCollectSearchResult(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort) {
-        List<SewerageIndex> resultList = new ArrayList<>();
+        List<SewerageIndex> resultList;
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
                 .withSort(sort).build();
 
@@ -248,20 +250,12 @@ public class SewerageIndexService {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final SimpleDateFormat newFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 
-        final Date fromDate = formatter.parse(searchRequest.getFromDate());
-        final String formattedFromDate = newFormat.format(fromDate);
-
-        final Date toDate = formatter.parse(searchRequest.getToDate());
-        final String formattedToDate = newFormat.format(toDate);
-
-        // setting toDate time to 23:59:59
-        final DateTime dateTime = DateUtils.endOfGivenDate(new DateTime(formattedToDate));
-        final Date formatToDate = dateTime.toDate();
-
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.matchQuery("cityName", searchRequest.getUlbName()));
         if (StringUtils.isNotBlank(searchRequest.getFromDate()))
-            boolQuery = boolQuery.filter(QueryBuilders.rangeQuery("receiptDate").gte(formattedFromDate).lte(formatToDate));
+            boolQuery = boolQuery.filter(QueryBuilders.rangeQuery("receiptDate")
+                    .gte(newFormat.format(formatter.parse(searchRequest.getFromDate())))
+                    .lte(new DateTime(newFormat.format(formatter.parse(searchRequest.getToDate()))).plusDays(1).toDate()));
         if (StringUtils.isNotBlank(searchRequest.getCollectionMode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("channel", searchRequest.getCollectionMode()));
         if (StringUtils.isNotBlank(searchRequest.getCollectionOperator()))
@@ -280,17 +274,15 @@ public class SewerageIndexService {
     }
 
     public List<DailySTCollectionReportSearch> getDCRSewerageReportResult(final DailySTCollectionReportSearch searchRequest,
-            final BoolQueryBuilder boolQuery,
-            final FieldSortBuilder fieldSortBuilder) throws ParseException {
-        List<CollectionDocument> collectionResultList;
+            final BoolQueryBuilder boolQuery) throws ParseException {
+        final List<CollectionDocument> collectionResultList = new ArrayList<>();
         final List<DailySTCollectionReportSearch> dcrCollectionList = new ArrayList<>();
         final List<DailySTCollectionReportSearch> resultList = new ArrayList<>();
-        List<SewerageIndex> sewerageResultList;
+        final List<SewerageIndex> sewerageResultList = new ArrayList<>();
         DailySTCollectionReportSearch dcrReportObject;
-        final SearchQuery receiptSearchQuery = new NativeSearchQueryBuilder().withIndices("receipts")
-                .withQuery(boolQuery).withSort(new FieldSortBuilder("receiptDate").order(SortOrder.DESC)).build();
-        collectionResultList = elasticsearchTemplate.queryForList(receiptSearchQuery, CollectionDocument.class);
-
+        final Iterable<CollectionDocument> receiptResultList = collectionDocumentRepository.search(boolQuery);
+        for (final CollectionDocument document : receiptResultList)
+            collectionResultList.add(document);
         for (final CollectionDocument collectionObject : collectionResultList) {
             dcrReportObject = new DailySTCollectionReportSearch();
             dcrReportObject.setConsumerNumber(collectionObject.getConsumerCode());
@@ -298,8 +290,7 @@ public class SewerageIndexService {
 
             final SimpleDateFormat dateFormat = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
             final SimpleDateFormat myFormat = new SimpleDateFormat("dd/MM/yyyy");
-            final Date receiptDate = dateFormat.parse(collectionObject.getReceiptDate().toString());
-            dcrReportObject.setReceiptDate(myFormat.format(receiptDate));
+            dcrReportObject.setReceiptDate(myFormat.format(dateFormat.parse(collectionObject.getReceiptDate().toString())));
             dcrReportObject.setPaidAt(collectionObject.getChannel());
             dcrReportObject.setPaymentMode(collectionObject.getPaymentMode());
             dcrReportObject.setStatus(collectionObject.getStatus());
@@ -314,9 +305,9 @@ public class SewerageIndexService {
         }
 
         final BoolQueryBuilder sewerageBoolQuery = getDCRSewerageSearchResult(searchRequest);
-        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage")
-                .withQuery(sewerageBoolQuery).withSort(fieldSortBuilder).build();
-        sewerageResultList = elasticsearchTemplate.queryForList(searchQuery, SewerageIndex.class);
+        final Iterable<SewerageIndex> iterableResultList = sewerageIndexRepository.search(sewerageBoolQuery);
+        for (final SewerageIndex index : iterableResultList)
+            sewerageResultList.add(index);
         for (final SewerageIndex sewerageIndex : sewerageResultList)
             for (final DailySTCollectionReportSearch dcrReportObj : dcrCollectionList)
                 if (dcrReportObj.getConsumerNumber().equals(sewerageIndex.getConsumerNumber())) {
@@ -344,18 +335,20 @@ public class SewerageIndexService {
                 boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery("closureNoticeDate")
                         .from(searchRequest.getNoticeGeneratedFrom())
                         .to(searchRequest.getNoticeGeneratedTo()));
-        if (StringUtils.isNotBlank(searchRequest.getUlbName()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ulbName", searchRequest.getUlbName()));
-        if (StringUtils.isNotBlank(searchRequest.getShscNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("shscNumber", searchRequest.getShscNumber()));
-        if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerName", searchRequest.getApplicantName()));
-        if (StringUtils.isNotBlank(searchRequest.getMobileNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("mobileNumber", searchRequest.getMobileNumber()));
-        if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ward", searchRequest.getRevenueWard()));
-        if (StringUtils.isNotBlank(searchRequest.getDoorNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("doorNo", searchRequest.getDoorNumber()));
+        if (boolQuery != null) {
+            if (StringUtils.isNotBlank(searchRequest.getUlbName()))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ulbName", searchRequest.getUlbName()));
+            if (StringUtils.isNotBlank(searchRequest.getShscNumber()))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("shscNumber", searchRequest.getShscNumber()));
+            if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerName", searchRequest.getApplicantName()));
+            if (StringUtils.isNotBlank(searchRequest.getMobileNumber()))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("mobileNumber", searchRequest.getMobileNumber()));
+            if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ward", searchRequest.getRevenueWard()));
+            if (StringUtils.isNotBlank(searchRequest.getDoorNumber()))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("doorNo", searchRequest.getDoorNumber()));
+        }
         return boolQuery;
     }
 

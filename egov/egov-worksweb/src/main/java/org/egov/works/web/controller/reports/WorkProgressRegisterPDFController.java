@@ -213,9 +213,8 @@ public class WorkProgressRegisterPDFController {
                 else
                     pdf.setSubTypeOfWork("");
                 if (wpr.getAdminSanctionBy() != null)
-                    pdf.setAdminSanctionAuthorityDate(worksUtils.getUserDesignation(wpr.getAdminSanctionBy()) + " - "
-                            + wpr.getAdminSanctionBy().getName() + ", "
-                            + DateUtils.getFormattedDate(wpr.getAdminSanctionDate(), "dd/MM/yyyy"));
+                    pdf.setAdminSanctionAuthorityDate(wpr.getAdminSanctionBy() + " , "
+                            + DateUtils.getFormattedDate(wpr.getAdminSanctionDate(),"dd/MM/yyyy"));
                 else
                     pdf.setAdminSanctionAuthorityDate("");
                 if (wpr.getAdminSanctionAmount() != null)

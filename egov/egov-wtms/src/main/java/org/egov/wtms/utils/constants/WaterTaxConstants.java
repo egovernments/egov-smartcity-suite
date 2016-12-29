@@ -340,9 +340,11 @@ public class WaterTaxConstants {
     public static final String REVENUEWARDAGGREGATIONFIELD = "revenueWard";
     public static final String CITYCODEAGGREGATIONFIELD = "cityCode";
     
-    public static final String RESIDENTIALCONNECTIONTYPEFORDASHBOARD = "Residential";
+    public static final String RESIDENTIALCONNECTIONTYPEFORDASHBOARD = "RESIDENTIAL";
     
-    public static final String COMMERCIALCONNECTIONTYPEFORDASHBOARD = "Commercial";
+    
+    
+    public static final String COMMERCIALCONNECTIONTYPEFORDASHBOARD = "COMMERCIAL";
 
 
     

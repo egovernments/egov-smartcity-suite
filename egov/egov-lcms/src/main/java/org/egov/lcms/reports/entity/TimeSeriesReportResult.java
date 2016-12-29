@@ -54,6 +54,178 @@ public class TimeSeriesReportResult {
     private Long count;
     private LegalCase legalCase;
 
+    private String caseNumber;
+    private String lcNumber;
+    private Date caseFromDate;
+    private Date caseToDate;
+    private String standingCouncil;
+    private Integer casecategory;
+    private String petitionType;
+    private Integer petitionTypeId;
+    private Integer courtType;
+    private String courtName;
+    private Integer courtId;
+    private String govtDept;
+    private String caseTitle;
+    private String petName;
+    private String resName;
+    private String caseStatus;
+    private Integer statusId;
+    private String assignDept;
+    private String aggregatedByValue;
+
+    public String getAggregatedByValue() {
+        return aggregatedByValue;
+    }
+
+    public void setAggregatedByValue(final String aggregatedByValue) {
+        this.aggregatedByValue = aggregatedByValue;
+    }
+
+    public String getStandingCouncil() {
+        return standingCouncil;
+    }
+
+    public void setStandingCouncil(final String standingCouncil) {
+        this.standingCouncil = standingCouncil;
+    }
+
+    public String getCaseNumber() {
+        return caseNumber;
+    }
+
+    public void setCaseNumber(final String caseNumber) {
+        this.caseNumber = caseNumber;
+    }
+
+    public String getLcNumber() {
+        return lcNumber;
+    }
+
+    public Date getCaseFromDate() {
+        return caseFromDate;
+    }
+
+    public void setCaseFromDate(final Date caseFromDate) {
+        this.caseFromDate = caseFromDate;
+    }
+
+    public Date getCaseToDate() {
+        return caseToDate;
+    }
+
+    public void setCaseToDate(final Date caseToDate) {
+        this.caseToDate = caseToDate;
+    }
+
+    public void setLcNumber(final String lcNumber) {
+        this.lcNumber = lcNumber;
+    }
+
+    public String getPetitionType() {
+        return petitionType;
+    }
+
+    public void setPetitionType(final String petitionType) {
+        this.petitionType = petitionType;
+    }
+
+    public Integer getCasecategory() {
+        return casecategory;
+    }
+
+    public void setCasecategory(final Integer casecategory) {
+        this.casecategory = casecategory;
+    }
+
+    public Integer getCourtType() {
+        return courtType;
+    }
+
+    public void setCourtType(final Integer courtType) {
+        this.courtType = courtType;
+    }
+
+    public String getCourtName() {
+        return courtName;
+    }
+
+    public void setCourtName(final String courtName) {
+        this.courtName = courtName;
+    }
+
+    public Integer getCourtId() {
+        return courtId;
+    }
+
+    public void setCourtId(final Integer courtId) {
+        this.courtId = courtId;
+    }
+
+    public String getGovtDept() {
+        return govtDept;
+    }
+
+    public void setGovtDept(final String govtDept) {
+        this.govtDept = govtDept;
+    }
+
+    public String getPetName() {
+        return petName;
+    }
+
+    public void setPetName(final String petName) {
+        this.petName = petName;
+    }
+
+    public String getCaseStatus() {
+        return caseStatus;
+    }
+
+    public void setCaseStatus(final String caseStatus) {
+        this.caseStatus = caseStatus;
+    }
+
+    public String getCaseTitle() {
+        return caseTitle;
+    }
+
+    public void setCaseTitle(final String caseTitle) {
+        this.caseTitle = caseTitle;
+    }
+
+    public String getAssignDept() {
+        return assignDept;
+    }
+
+    public void setAssignDept(final String assignDept) {
+        this.assignDept = assignDept;
+    }
+
+    public Integer getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(final Integer statusId) {
+        this.statusId = statusId;
+    }
+
+    public Integer getPetitionTypeId() {
+        return petitionTypeId;
+    }
+
+    public void setPetitionTypeId(final Integer petitionTypeId) {
+        this.petitionTypeId = petitionTypeId;
+    }
+
+    public String getResName() {
+        return resName;
+    }
+
+    public void setResName(final String resName) {
+        this.resName = resName;
+    }
+
     public Long getCount() {
         return count;
     }

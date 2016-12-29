@@ -47,6 +47,7 @@ import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
 import org.egov.commons.Accountdetailtype;
+import org.egov.commons.Bankbranch;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFunction;
 import org.egov.commons.Fundsource;
@@ -59,6 +60,7 @@ import org.egov.commons.service.FunctionService;
 import org.egov.commons.service.FundsourceService;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.billsubtype.service.EgBillSubTypeService;
+import org.egov.egf.commons.bankbranch.service.CreateBankBranchService;
 import org.egov.egf.web.adaptor.ChartOfAccountsAdaptor;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -97,6 +99,9 @@ public class AjaxCommonController {
     @Autowired
     @Qualifier("subSchemeService")
     private SubSchemeService subSchemeService;
+
+    @Autowired
+    private CreateBankBranchService createBankBranchService;
 
     @Autowired
     private FundsourceService fundsourceService;
@@ -239,6 +244,13 @@ public class AjaxCommonController {
     public List<Accountdetailtype> getAccountDetailTypesByGlcodeId(@RequestParam("glcodeId") final String glcodeId)
             throws ApplicationException {
         return accountdetailtypeService.findByGlcodeId(Long.parseLong(glcodeId));
+    }
+
+    @RequestMapping(value = "/getbankbranchesbybankid", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Bankbranch> getBankbranchesByBankId(@RequestParam("bankId") final String bankId)
+            throws ApplicationException {
+        return createBankBranchService.getByBankId(Integer.parseInt(bankId));
     }
 
     public static <T> String toJSON(final Collection<T> objects, final Class<? extends T> objectClazz,

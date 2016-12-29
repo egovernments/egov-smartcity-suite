@@ -38,11 +38,9 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<!-- HTTP 1.1 -->
-<meta http-equiv="Cache-Control" content="no-store"/>
-<!-- HTTP 1.0 -->
-<meta http-equiv="Pragma" content="no-cache"/>
-<!-- Prevents caching at the Proxy Server -->
-<meta http-equiv="Expires" content="0"/>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="description" content="eGov System" />
+<meta name="author" content="eGovernments Foundation" />
 <link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">

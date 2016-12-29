@@ -68,38 +68,38 @@
 								</thead>
 								
 								<tbody>
-								<c:forEach items="${councilMeeting.meetingAttendence}" var="attend" varStatus="counter">
+								<c:forEach items="${councilMeeting.updateMeetingAttendance}" var="attend" varStatus="counter">
 								<c:choose>
 									<c:when test="${attend.attendedMeeting}">
 										<tr>
 											<td>
-												<input type="checkbox" name="meetingAttendence[${counter.index}].committeeMembers" class="councilcommitmem" data-change-to="meetingAttendence[${counter.index}].checked"  id="${attend.committeeMembers.id}" checked  value="${attend.committeeMembers.id}"/>
-												<input type="hidden"   name="meetingAttendence[${counter.index}].checked"  id="councilcommitmemchk" class="councilcommitmemchk" value="true"/>
-												<input type="hidden"   name="meetingAttendence[${counter.index}].checked"  value="${attend.committeeMembers.id}"/>
-												<input type="hidden"   name="meetingAttendence[${counter.index}].committeeMembers"  value="${attend.committeeMembers.id}"/>
-												<input type="hidden"   name="meetingAttendence[${counter.index}].meeting" value="${councilMeeting.id}" />
+												<input type="checkbox" name="updateMeetingAttendance[${counter.index}].councilMember" class="councilcommitmem" data-change-to="updateMeetingAttendance[${counter.index}].checked"  id="${attend.councilMember.id}" checked  value="${attend.councilMember.id}"/>
+												<input type="hidden"   name="updateMeetingAttendance[${counter.index}].checked"  id="councilcommitmemchk" class="councilcommitmemchk" value="true"/>
+												<input type="hidden"   name="updateMeetingAttendance[${counter.index}].checked"  value="${attend.councilMember.id}"/>
+												<input type="hidden"   name="updateMeetingAttendance[${counter.index}].councilMember"  value="${attend.councilMember.id}"/>
+												<input type="hidden"   name="updateMeetingAttendance[${counter.index}].meeting" value="${councilMeeting.id}" />
 											</td>
-											<td><c:out value="${attend.committeeMembers.councilMember.name}" /></td>
-											<td><c:out value="${attend.committeeMembers.councilMember.electionWard.name}" /></td>
-											<td><c:out value="${attend.committeeMembers.councilMember.designation.name}" /></td>
-											<td><c:out value="${attend.committeeMembers.councilMember.qualification.name}" /></td>	
-											<td><c:out value="${attend.committeeMembers.councilMember.partyAffiliation.name}" /></td>
+											<td><c:out value="${attend.councilMember.name}" /></td>
+											<td><c:out value="${attend.councilMember.electionWard.name}" /></td>
+											<td><c:out value="${attend.councilMember.designation.name}" /></td>
+											<td><c:out value="${attend.councilMember.qualification.name}" /></td>	
+											<td><c:out value="${attend.councilMember.partyAffiliation.name}" /></td>
 									   </tr>
 								</c:when>
 								<c:otherwise>
 								<tr>
 											<td>
-												<input type="checkbox" name="meetingAttendence[${counter.index}].committeeMembers" class="councilcommitmem" data-change-to="meetingAttendence[${counter.index}].checked"  id="${attend.committeeMembers.id}"  value="${attend.committeeMembers.id}"/>
-												<input type="hidden"   name="meetingAttendence[${counter.index}].checked"  id="councilcommitmemchk" class="councilcommitmemchk" value="false"/>
-												<input type="hidden"   name="meetingAttendence[${counter.index}].checked"  value="${attend.committeeMembers.id}"/>
-												<input type="hidden"   name="meetingAttendence[${counter.index}].committeeMembers"  value="${attend.committeeMembers.id}"/>
-												<input type="hidden"   name="meetingAttendence[${counter.index}].meeting" value="${councilMeeting.id}" />
+												<input type="checkbox" name="updateMeetingAttendance[${counter.index}].councilMember" class="councilcommitmem" data-change-to="updateMeetingAttendance[${counter.index}].checked"  id="${attend.councilMember.id}"  value="${attend.councilMember.id}"/>
+												<input type="hidden"   name="updateMeetingAttendance[${counter.index}].checked"  id="councilcommitmemchk" class="councilcommitmemchk" value="false"/>
+												<input type="hidden"   name="updateMeetingAttendance[${counter.index}].checked"  value="${attend.councilMember.id}"/>
+												<input type="hidden"   name="updateMeetingAttendance[${counter.index}].councilMember"  value="${attend.councilMember.id}"/>
+												<input type="hidden"   name="updateMeetingAttendance[${counter.index}].meeting" value="${councilMeeting.id}" />
 											</td>
-											<td><c:out value="${attend.committeeMembers.councilMember.name}" /></td>
-											<td><c:out value="${attend.committeeMembers.councilMember.electionWard.name}" /></td>
-											<td><c:out value="${attend.committeeMembers.councilMember.designation.name}" /></td>
-											<td><c:out value="${attend.committeeMembers.councilMember.qualification.name}" /></td>	
-											<td><c:out value="${attend.committeeMembers.councilMember.partyAffiliation.name}" /></td>
+											<td><c:out value="${attend.councilMember.name}" /></td>
+											<td><c:out value="${attend.councilMember.electionWard.name}" /></td>
+											<td><c:out value="${attend.councilMember.designation.name}" /></td>
+											<td><c:out value="${attend.councilMember.qualification.name}" /></td>	
+											<td><c:out value="${attend.councilMember.partyAffiliation.name}" /></td>
 									   </tr>	
 									</c:otherwise>
 								</c:choose>

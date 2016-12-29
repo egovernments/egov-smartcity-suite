@@ -41,23 +41,23 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<script>
+<script type="text/javascript">
 
+function validateWorkFlowApprover(name) {
+	document.getElementById("workFlowAction").value=name;
+    var approverPosId = document.getElementById("approvalPosition");
+	var rejectbutton=document.getElementById("workFlowAction").value;
+	if(rejectbutton!=null && rejectbutton=='Reject')
+		{
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		$('#approvalComent').attr('required', 'required');	
+		} 
+   document.forms[0].submit;
+   return true;
+}
 
-	function validateWorkFlowApprover(name) {
-		document.getElementById("workFlowAction").value=name;
-	    var approverPosId = document.getElementById("approvalPosition");
-		var rejectbutton=document.getElementById("workFlowAction").value;
-		if(rejectbutton!=null && rejectbutton=='Reject')
-			{
-			$('#approvalDepartment').removeAttr('required');
-			$('#approvalDesignation').removeAttr('required');
-			$('#approvalPosition').removeAttr('required');
-			$('#approvalComent').attr('required', 'required');	
-			} 
-	   document.forms[0].submit;
-	   return true;
-	}
 </script>
 
 <div class="buttonbottom" align="center">

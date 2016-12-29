@@ -42,9 +42,6 @@
  */
 package org.egov.egf.web.actions.payment;
 
-import com.exilant.eGov.src.transactions.VoucherTypeForULB;
-import com.opensymphony.xwork2.validator.annotations.Validations;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -53,6 +50,8 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.egf.web.actions.voucher.BaseVoucherAction;
 import org.egov.eis.service.EisCommonService;
+import org.egov.infra.admin.master.entity.AppConfig;
+import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.model.advance.EgAdvanceRequisition;
@@ -61,32 +60,26 @@ import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.exilant.eGov.src.transactions.VoucherTypeForULB;
+import com.opensymphony.xwork2.validator.annotations.Validations;
+
 /**
  * @author mani
  */
 @ParentPackage("egov")
 @Validations
 @Results({
-        @Result(name = "billpayment", type = "redirectAction", location = "payment-view", params = { "namespace", "/payment",
-                "paymentid", "${paymentid}"
-        }),
-        @Result(name = "advancepayment", type = "redirectAction", location = "payment-advanceView", params = { "namespace",
-                "/payment", "paymentid", "${paymentid}"
-        }),
+        @Result(name = "billpayment", type = "redirectAction", location = "payment-view", params = { "namespace",
+                "/payment", "paymentid", "${paymentid}" }),
+        @Result(name = "advancepayment", type = "redirectAction", location = "payment-advanceView", params = {
+                "namespace", "/payment", "paymentid", "${paymentid}" }),
         @Result(name = "directbankpayment", type = "redirectAction", location = "directBankPayment-viewInboxItem", params = {
-                "namespace", "/payment", "paymentid", "${paymentid}"
-        }),
+                "namespace", "/payment", "paymentid", "${paymentid}" }),
         @Result(name = "remitRecovery", type = "redirectAction", location = "remitRecovery-viewInboxItem", params = {
-                "namespace", "/deduction", "paymentid", "${paymentid}"
-        }),
+                "namespace", "/deduction", "paymentid", "${paymentid}" }),
         @Result(name = "contractoradvancepayment", type = "redirectAction", location = "advancePayment-viewInboxItem", params = {
-                "namespace", "/payment", "paymentid", "${paymentid}"
-        })
-})
+                "namespace", "/payment", "paymentid", "${paymentid}" }) })
 public class BasePaymentAction extends BaseVoucherAction {
-    /**
-     *
-     */
     private static final long serialVersionUID = 8589393885303282831L;
     EisCommonService eisCommonService;
     private static Logger LOGGER = Logger.getLogger(BasePaymentAction.class);
@@ -95,14 +88,22 @@ public class BasePaymentAction extends BaseVoucherAction {
     private SimpleWorkflowService<Paymentheader> paymentHeaderWorkflowService;
     @Autowired
     private VoucherTypeForULB voucherTypeForULB;
+    @Autowired
+    AppConfigService appConfigService;
 
     public void setEisCommonService(final EisCommonService eisCommonService) {
         this.eisCommonService = eisCommonService;
     }
 
-    public BasePaymentAction()
-    {
+    public BasePaymentAction() {
         super();
+    }
+
+    @Override
+    public void prepare() {
+
+        super.prepare();
+        bankBalanceValidation();
     }
 
     protected String action = "";
@@ -111,6 +112,7 @@ public class BasePaymentAction extends BaseVoucherAction {
     private final String DIRECTBANKPAYMENT = "directbankpayment";
     private final String REMITTANCEPAYMENT = "remitRecovery";
     public static final String ARF_TYPE = "Contractor";
+    private String bankBalanceCheck = "";
 
     protected static final String ACTIONNAME = "actionname";
     protected boolean canCheckBalance = false;
@@ -140,7 +142,8 @@ public class BasePaymentAction extends BaseVoucherAction {
         if (!validateOwner(paymentheader.getState()))
             return INVALIDPAGE;
         getSession().put("paymentid", paymentid);
-        if (paymentheader.getVoucherheader().getName().equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_ADVANCE)) {
+        if (paymentheader.getVoucherheader().getName()
+                .equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_ADVANCE)) {
             final EgAdvanceRequisition arf = (EgAdvanceRequisition) persistenceService.find(
                     "from EgAdvanceRequisition where arftype = ? and egAdvanceReqMises.voucherheader = ?", ARF_TYPE,
                     paymentheader.getVoucherheader());
@@ -148,14 +151,18 @@ public class BasePaymentAction extends BaseVoucherAction {
                 result = "contractoradvancepayment";
             else
                 result = "advancepayment";
-        }
-        else if (paymentheader.getVoucherheader().getName().equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_BILL) ||
-                FinancialConstants.PAYMENTVOUCHER_NAME_SALARY.equalsIgnoreCase(paymentheader.getVoucherheader().getName()) ||
-                FinancialConstants.PAYMENTVOUCHER_NAME_PENSION.equalsIgnoreCase(paymentheader.getVoucherheader().getName()))
+        } else if (paymentheader.getVoucherheader().getName()
+                .equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_BILL)
+                || FinancialConstants.PAYMENTVOUCHER_NAME_SALARY
+                        .equalsIgnoreCase(paymentheader.getVoucherheader().getName())
+                || FinancialConstants.PAYMENTVOUCHER_NAME_PENSION
+                        .equalsIgnoreCase(paymentheader.getVoucherheader().getName()))
             result = BILLPAYMENT;
-        else if (paymentheader.getVoucherheader().getName().equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_DIRECTBANK))
+        else if (paymentheader.getVoucherheader().getName()
+                .equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_DIRECTBANK))
             result = DIRECTBANKPAYMENT;
-        else if (paymentheader.getVoucherheader().getName().equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE))
+        else if (paymentheader.getVoucherheader().getName()
+                .equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE))
             result = REMITTANCEPAYMENT;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed viewInboxItems..... ");
@@ -163,8 +170,7 @@ public class BasePaymentAction extends BaseVoucherAction {
     }
 
     // used only in create
-    public boolean shouldshowVoucherNumber()
-    {
+    public boolean shouldshowVoucherNumber() {
         String vNumGenMode = "Manual";
         vNumGenMode = voucherTypeForULB.readVoucherTypes(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
         if (!"Auto".equalsIgnoreCase(vNumGenMode)) {
@@ -173,10 +179,24 @@ public class BasePaymentAction extends BaseVoucherAction {
         } else
             return false;
     }
+    /*
+     * This api is to check bank balance and allow to create bill based on appconfig values like mandatory, warning, none.
+     */
 
-  
+    public void bankBalanceValidation() {
+        final AppConfig appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(
+                FinancialConstants.MODULE_NAME_APPCONFIG, FinancialConstants.BALANCE_CHECK_CONTROL_TYPE);
+        if (appConfig != null && !appConfig.getConfValues().isEmpty()) {
+            final String appValue = appConfig.getConfValues().get(0).getValue();
+            if (FinancialConstants.MANDATORY.equalsIgnoreCase(appValue))
+                bankBalanceCheck = appValue.toLowerCase();
+            else if (FinancialConstants.WARNING.equalsIgnoreCase(appValue))
+                bankBalanceCheck = appValue.toLowerCase();
+            else if (NONE.equalsIgnoreCase(appValue))
+                bankBalanceCheck = appValue.toLowerCase();
+        }
+    }
 
-    
     public String getAction() {
         return action;
     }
@@ -213,7 +233,15 @@ public class BasePaymentAction extends BaseVoucherAction {
         return paymentHeaderWorkflowService;
     }
 
-    public void setPaymentHeaderWorkflowService(SimpleWorkflowService<Paymentheader> paymentHeaderWorkflowService) {
+    public void setPaymentHeaderWorkflowService(final SimpleWorkflowService<Paymentheader> paymentHeaderWorkflowService) {
         this.paymentHeaderWorkflowService = paymentHeaderWorkflowService;
+    }
+
+    public String getBankBalanceCheck() {
+        return bankBalanceCheck;
+    }
+
+    public void setBankBalanceCheck(final String bankBalanceCheck) {
+        this.bankBalanceCheck = bankBalanceCheck;
     }
 }

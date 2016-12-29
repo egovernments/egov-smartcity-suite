@@ -188,37 +188,7 @@ $(document).ready(function(){
 		}
 	}
 	
-	function validatePrimaryPosition(index)
-	{		
-		$.ajax({
-			url: '/eis/employee/ajax/primaryPosition',
-			type: "GET",
-			data: {
-				positionId : $("#positionId").val(),
-				assignmentId : $("#editassignIds").val(), 
-				code : $("#code").val(),
-				fromDate : $("#fromDate").val(),
-				toDate : $("#toDate").val()
-			},
-			dataType : 'json',
-			success: function (response) {
-				if(response != ""){
-					response = response.substring(0,response.length-1);
-					bootbox.alert("Assignment overlaps with existing primary assignment of employee "+response);
-					edit=false;
-				}
-				else{
-					deleteRow.remove();
-					addRow(editedRowIndex);		
-					edit=false;
-				}
-				resetAssignmentValues();
-
-			},error: function (response) {
-				console.log("failed");
-			}
-		});
-	}
+	
 	
 	//Position auto-complete
 	
@@ -277,23 +247,68 @@ $(document).ready(function(){
 
 		if(validateAssignment() && validateDateRange()) {
 			if(!edit){
+				if(primary==true){
+					validatePrimaryPosition(edit);
+				}
+				else{
 				rowCount = $("#assignmentTable tr").length;
 				addRow(rowCount);
 				rowCount++;
+				resetAssignmentValues();
+				}
 			}
 			else{		
 				if(primary==true ){	
-					 validatePrimaryPosition(editedRowIndex);
+					 validatePrimaryPosition(edit);
+					 edit=false;
 				}
 				else{
 					deleteRow.remove();
 					addRow(editedRowIndex);		
 					edit=false;
+					resetAssignmentValues();
 				}
 			}
-			resetAssignmentValues();
+			
 		}	
 	});
+	
+	function validatePrimaryPosition(edit)
+	{		
+		$.ajax({
+			url: '/eis/employee/ajax/primaryPosition',
+			type: "GET",
+			data: {
+				positionId : $("#positionId").val(),
+				assignmentId : $("#editassignIds").val(), 
+				code : $("#code").val(),
+				fromDate : $("#fromDate").val(),
+				toDate : $("#toDate").val()
+			},
+			dataType : 'json',
+			success: function (response) {
+				if(response != ""){
+					response = response.substring(0,response.length-1);
+					bootbox.alert("Assignment overlaps with existing primary assignment of employee "+response);
+					edit=false;
+				}
+				else if(edit){	
+					deleteRow.remove();
+					addRow(editedRowIndex);		
+					edit=false;
+				}
+				else{
+					rowCount = $("#assignmentTable tr").length;
+					addRow(rowCount);
+					rowCount++;
+				}
+				resetAssignmentValues();
+
+			},error: function (response) {
+				console.log("failed");
+			}
+		});
+	}
 	
 	function resetAssignmentValues() {
 		if(!edit) {
@@ -537,16 +552,26 @@ $(document).ready(function(){
 		$('.boundaryTypeerror').hide();
 		$('.boundaryerror').hide();
 		$('.duplicatejurisdictionerror').hide();
-		if(($("#jurisdictionTable tr").length-1)>=1){
-			for(var i=0;i<$("#jurisdictionTable tr").length-1;i++) {
-				if(($('#table_boundaryType'+i).val()).localeCompare($("#boundaryTypeId").find('option:selected').text())==0){
-					if(($('#table_boundary'+i).val()).localeCompare($("#boundarySelect").find('option:selected').text())==0){
-						$('.duplicatejurisdictionerror').html('Already this jurisdiction combination exist').show();
-						return false;
+		
+		var i=1;
+		var length = $("#jurisdictionTable tr").length;
+		if($("#mode").val()=="update")
+		{
+		i=0;
+		length = length-1;
+		}
+
+			if(($("#jurisdictionTable tr").length-1)>=1){		
+				for(i;i<length;i++) {
+					if(($('#table_boundaryType'+i).val()).localeCompare($("#boundaryTypeId").find('option:selected').text())==0){
+						if(($('#table_boundary'+i).val()).localeCompare($("#boundarySelect").find('option:selected').text())==0){
+							$('.duplicatejurisdictionerror').html('Already this jurisdiction combination exist').show();
+							return false;
+						}
 					}
 				}
 			}
-		}
+		
 		$('.boundaryTypeerror').hide();
 		$('.boundaryerror').hide();
 		var boundaryTypeId = $("#boundaryTypeId").val();

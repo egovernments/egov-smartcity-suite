@@ -49,6 +49,7 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.lcms.transactions.entity.Judgment;
 import org.egov.lcms.transactions.entity.JudgmentDocuments;
+import org.egov.lcms.transactions.entity.ReportStatus;
 import org.egov.lcms.transactions.repository.JudgmentDocumentsRepository;
 import org.egov.lcms.transactions.repository.JudgmentRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
@@ -85,6 +86,8 @@ public class JudgmentService {
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_JUDGMENT);
         judgment.getLegalCase().setStatus(statusObj);
+        final ReportStatus reportStatus=null;
+        judgment.getLegalCase().setReportStatus(reportStatus);
         final Judgment savedjudgment = judgmentRepository.save(judgment);
         final List<JudgmentDocuments> documentDetails = getDocumentDetails(savedjudgment, files);
         if (!documentDetails.isEmpty()) {

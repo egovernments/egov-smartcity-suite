@@ -47,10 +47,10 @@ public class GenericSubReportResult {
     private String aggregatedBy;
     private LegalCase legalCase;
     private Long noOfCase;
-    private Integer caseCategory;
+    private String caseCategory;
     private String standingCounsel;
-    private String courtType;
-    private Integer courtName;
+    private Integer courtType;
+    private String courtName;
     private String judgmentType;
     private String petitionType;
     private Integer petitionTypeId;
@@ -59,6 +59,64 @@ public class GenericSubReportResult {
     private String officerIncharge;
     private Date fromDate;
     private Date toDate;
+    private String aggregatedByValue;
+    private String reportStatus;
+    private Integer reportStatusId;
+    private Integer casecategoryId;
+    private Integer courtId;
+    private Integer judgmentTypeId;
+   
+
+   
+
+    public Integer getCourtId() {
+        return courtId;
+    }
+
+    public void setCourtId(Integer courtId) {
+        this.courtId = courtId;
+    }
+
+    public Integer getJudgmentTypeId() {
+        return judgmentTypeId;
+    }
+
+    public void setJudgmentTypeId(Integer judgmentTypeId) {
+        this.judgmentTypeId = judgmentTypeId;
+    }
+
+  
+    public Integer getCasecategoryId() {
+        return casecategoryId;
+    }
+
+    public void setCasecategoryId(Integer casecategoryId) {
+        this.casecategoryId = casecategoryId;
+    }
+
+    public String getReportStatus() {
+        return reportStatus;
+    }
+
+    public void setReportStatus(final String reportStatus) {
+        this.reportStatus = reportStatus;
+    }
+
+    public Integer getReportStatusId() {
+        return reportStatusId;
+    }
+
+    public void setReportStatusId(final Integer reportStatusId) {
+        this.reportStatusId = reportStatusId;
+    }
+
+    public String getAggregatedByValue() {
+        return aggregatedByValue;
+    }
+
+    public void setAggregatedByValue(final String aggregatedByValue) {
+        this.aggregatedByValue = aggregatedByValue;
+    }
 
     public Integer getPetitionTypeId() {
         return petitionTypeId;
@@ -108,20 +166,14 @@ public class GenericSubReportResult {
         this.toDate = toDate;
     }
 
-    public String getCourtType() {
+   
+
+    public Integer getCourtType() {
         return courtType;
     }
 
-    public void setCourtType(final String courtType) {
+    public void setCourtType(Integer courtType) {
         this.courtType = courtType;
-    }
-
-    public Integer getCourtName() {
-        return courtName;
-    }
-
-    public void setCourtName(final Integer courtName) {
-        this.courtName = courtName;
     }
 
     public String getJudgmentType() {
@@ -140,12 +192,21 @@ public class GenericSubReportResult {
         this.petitionType = petitionType;
     }
 
-    public Integer getCaseCategory() {
+   
+    public String getCaseCategory() {
         return caseCategory;
     }
 
-    public void setCaseCategory(final Integer caseCategory) {
+    public void setCaseCategory(String caseCategory) {
         this.caseCategory = caseCategory;
+    }
+
+    public String getCourtName() {
+        return courtName;
+    }
+
+    public void setCourtName(String courtName) {
+        this.courtName = courtName;
     }
 
     public String getStandingCounsel() {

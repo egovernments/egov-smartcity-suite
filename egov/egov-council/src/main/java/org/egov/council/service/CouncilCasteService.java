@@ -46,7 +46,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.council.entity.CouncilCaste;
-import org.egov.council.entity.CouncilDesignation;
 import org.egov.council.repository.CouncilCasteRepository;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -61,55 +60,57 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CouncilCasteService {
 
-	private final CouncilCasteRepository councilCasteRepository;
-	@PersistenceContext
-	private EntityManager entityManager;
+    private final CouncilCasteRepository councilCasteRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	public Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    @Autowired
+    public CouncilCasteService(
+            final CouncilCasteRepository councilCasteRepository) {
+        this.councilCasteRepository = councilCasteRepository;
+    }
 
-	@Autowired
-	public CouncilCasteService(
-			final CouncilCasteRepository councilCasteRepository) {
-		this.councilCasteRepository = councilCasteRepository;
-	}
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	@Transactional
-	public CouncilCaste create(final CouncilCaste councilCaste) {
-		return councilCasteRepository.save(councilCaste);
-	}
+    @Transactional
+    public CouncilCaste create(final CouncilCaste councilCaste) {
+        return councilCasteRepository.save(councilCaste);
+    }
 
-	@Transactional
-	public CouncilCaste update(final CouncilCaste councilCaste) {
-		return councilCasteRepository.save(councilCaste);
-	}
+    @Transactional
+    public CouncilCaste update(final CouncilCaste councilCaste) {
+        return councilCasteRepository.save(councilCaste);
+    }
 
-	public List<CouncilCaste> findAll() {
-		return councilCasteRepository.findAll(new Sort(Sort.Direction.ASC,
-				"name"));
-	}
+    public List<CouncilCaste> findAll() {
+        return councilCasteRepository.findAll(new Sort(Sort.Direction.ASC,
+                "name"));
+    }
 
-	public CouncilCaste findByName(String name) {
-		return councilCasteRepository.findByName(name);
-	}
+    public CouncilCaste findByName(String name) {
+        return councilCasteRepository.findByName(name);
+    }
 
-	public CouncilCaste findOne(Long id) {
-		return councilCasteRepository.findOne(id);
-	}
+    public CouncilCaste findOne(Long id) {
+        return councilCasteRepository.findOne(id);
+    }
 
-	public List<CouncilCaste> getActiveCastes() {
-		return councilCasteRepository.findByisActive(true);
-	}
-	public List<CouncilCaste> search(CouncilCaste councilCaste) {
-		final Criteria criteria = getCurrentSession().createCriteria(
-				CouncilCaste.class);
-		if (null != councilCaste.getName())
-			criteria.add(Restrictions.ilike("name", councilCaste.getName(),MatchMode.ANYWHERE));
-		if (councilCaste.getIsActive() != null
-				&& councilCaste.getIsActive() == true)
-			criteria.add(Restrictions.eq("isActive", councilCaste.getIsActive()));
-		return criteria.list();
-	}
+    public List<CouncilCaste> getActiveCastes() {
+        return councilCasteRepository.findByisActive(true);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<CouncilCaste> search(CouncilCaste councilCaste) {
+        final Criteria criteria = getCurrentSession().createCriteria(
+                CouncilCaste.class);
+        if (null != councilCaste.getName())
+            criteria.add(Restrictions.ilike("name", councilCaste.getName(), MatchMode.ANYWHERE));
+        if (councilCaste.getIsActive() != null
+                && councilCaste.getIsActive())
+            criteria.add(Restrictions.eq("isActive", councilCaste.getIsActive()));
+        return criteria.list();
+    }
 
 }

@@ -77,7 +77,6 @@ import org.joda.time.DateTime;
 @Entity
 @Table(name = "egeis_employee")
 @Unique(fields = { "code" }, enableDfltMsg = true)
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 @AuditOverrides({
         @AuditOverride(forClass = User.class, name = "name"),
         @AuditOverride(forClass = User.class, name = "mobileNumber"),
@@ -90,24 +89,24 @@ public class Employee extends User implements EntityType {
     @SafeHtml
     @Column(name = "code", unique = true)
     @Pattern(regexp = Constants.ALPHANUMERIC)
-    @NotAudited
+    @Audited
     private String code;
 
     @Temporal(value = TemporalType.DATE)
-    @NotAudited
+    @Audited
     private Date dateOfAppointment;
 
     @Temporal(value = TemporalType.DATE)
-    @NotAudited
+    @Audited
     private Date dateOfRetirement;
 
     @Enumerated(EnumType.STRING)
-    @NotAudited
+    @Audited
     private EmployeeStatus employeeStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employeetype")
-    @NotAudited
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private EmployeeType employeeType;
 
     @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

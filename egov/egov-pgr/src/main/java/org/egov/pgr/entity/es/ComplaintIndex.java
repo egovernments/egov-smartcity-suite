@@ -1,7 +1,7 @@
 package org.egov.pgr.entity.es;
 
-import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 import static org.egov.infra.utils.ApplicationConstant.DEFAULT_TIMEZONE;
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_NAME;
 import static org.springframework.data.elasticsearch.annotations.DateFormat.date_optional_time;
 import static org.springframework.data.elasticsearch.annotations.FieldIndex.not_analyzed;
@@ -55,7 +55,7 @@ public class ComplaintIndex {
 
     @Field(type = FieldType.Long)
     private Long assigneeId;
-    
+
     @Field(type = FieldType.String, index = not_analyzed)
     private String assigneeName;
 
@@ -101,7 +101,7 @@ public class ComplaintIndex {
     @Field(type = FieldType.Long)
     private long complaintAgeingdaysFromDue;
 
-    //ComplaintIndex additional fields
+    // ComplaintIndex additional fields
     @Field(type = FieldType.String, index = not_analyzed)
     private String cityCode;
 
@@ -174,7 +174,7 @@ public class ComplaintIndex {
 
     @Field(type = FieldType.Integer)
     private int currentFunctionaryIfSLA;
-    
+
     @Field(type = FieldType.String, index = not_analyzed)
     private String currentFunctionaryMobileNumber;
 
@@ -282,11 +282,19 @@ public class ComplaintIndex {
     @Field(type = FieldType.Integer)
     private int reOpened;
 
+    @Field(type = FieldType.String, index = not_analyzed)
+    private String categoryId;
+
+    @Field(type = FieldType.String, index = not_analyzed)
+    private String categoryName;
+
+    private String url;
+
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = ApplicationThreadLocals.getCityCode().concat("_").concat(id);
     }
 
@@ -294,7 +302,7 @@ public class ComplaintIndex {
         return crn;
     }
 
-    public void setCrn(String crn) {
+    public void setCrn(final String crn) {
         this.crn = crn;
     }
 
@@ -302,7 +310,7 @@ public class ComplaintIndex {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(final Date createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -310,7 +318,7 @@ public class ComplaintIndex {
         return escalationDate;
     }
 
-    public void setEscalationDate(Date escalationDate) {
+    public void setEscalationDate(final Date escalationDate) {
         this.escalationDate = escalationDate;
     }
 
@@ -318,7 +326,7 @@ public class ComplaintIndex {
         return complaintStatusName;
     }
 
-    public void setComplaintStatusName(String complaintStatusName) {
+    public void setComplaintStatusName(final String complaintStatusName) {
         this.complaintStatusName = complaintStatusName;
     }
 
@@ -326,7 +334,7 @@ public class ComplaintIndex {
         return complainantName;
     }
 
-    public void setComplainantName(String complainantName) {
+    public void setComplainantName(final String complainantName) {
         this.complainantName = complainantName;
     }
 
@@ -334,7 +342,7 @@ public class ComplaintIndex {
         return complainantMobile;
     }
 
-    public void setComplainantMobile(String complainantMobile) {
+    public void setComplainantMobile(final String complainantMobile) {
         this.complainantMobile = complainantMobile;
     }
 
@@ -342,7 +350,7 @@ public class ComplaintIndex {
         return complainantEmail;
     }
 
-    public void setComplainantEmail(String complainantEmail) {
+    public void setComplainantEmail(final String complainantEmail) {
         this.complainantEmail = complainantEmail;
     }
 
@@ -350,7 +358,7 @@ public class ComplaintIndex {
         return complaintTypeName;
     }
 
-    public void setComplaintTypeName(String complaintTypeName) {
+    public void setComplaintTypeName(final String complaintTypeName) {
         this.complaintTypeName = complaintTypeName;
     }
 
@@ -358,7 +366,7 @@ public class ComplaintIndex {
         return complaintTypeCode;
     }
 
-    public void setComplaintTypeCode(String complaintTypeCode) {
+    public void setComplaintTypeCode(final String complaintTypeCode) {
         this.complaintTypeCode = complaintTypeCode;
     }
 
@@ -366,7 +374,7 @@ public class ComplaintIndex {
         return assigneeName;
     }
 
-    public void setAssigneeName(String assigneeName) {
+    public void setAssigneeName(final String assigneeName) {
         this.assigneeName = assigneeName;
     }
 
@@ -374,7 +382,7 @@ public class ComplaintIndex {
         return details;
     }
 
-    public void setDetails(String details) {
+    public void setDetails(final String details) {
         this.details = details;
     }
 
@@ -382,7 +390,7 @@ public class ComplaintIndex {
         return landmarkDetails;
     }
 
-    public void setLandmarkDetails(String landmarkDetails) {
+    public void setLandmarkDetails(final String landmarkDetails) {
         this.landmarkDetails = landmarkDetails;
     }
 
@@ -390,7 +398,7 @@ public class ComplaintIndex {
         return receivingMode;
     }
 
-    public void setReceivingMode(String receivingMode) {
+    public void setReceivingMode(final String receivingMode) {
         this.receivingMode = receivingMode;
     }
 
@@ -398,7 +406,7 @@ public class ComplaintIndex {
         return departmentName;
     }
 
-    public void setDepartmentName(String departmentName) {
+    public void setDepartmentName(final String departmentName) {
         this.departmentName = departmentName;
     }
 
@@ -406,7 +414,7 @@ public class ComplaintIndex {
         return departmentCode;
     }
 
-    public void setDepartmentCode(String departmentCode) {
+    public void setDepartmentCode(final String departmentCode) {
         this.departmentCode = departmentCode;
     }
 
@@ -414,7 +422,7 @@ public class ComplaintIndex {
         return wardName;
     }
 
-    public void setWardName(String wardName) {
+    public void setWardName(final String wardName) {
         this.wardName = wardName;
     }
 
@@ -422,7 +430,7 @@ public class ComplaintIndex {
         return wardNo;
     }
 
-    public void setWardNo(String wardNo) {
+    public void setWardNo(final String wardNo) {
         this.wardNo = wardNo;
     }
 
@@ -430,7 +438,7 @@ public class ComplaintIndex {
         return wardGeo;
     }
 
-    public void setWardGeo(GeoPoint wardGeo) {
+    public void setWardGeo(final GeoPoint wardGeo) {
         this.wardGeo = wardGeo;
     }
 
@@ -438,7 +446,7 @@ public class ComplaintIndex {
         return localityName;
     }
 
-    public void setLocalityName(String localityName) {
+    public void setLocalityName(final String localityName) {
         this.localityName = localityName;
     }
 
@@ -446,7 +454,7 @@ public class ComplaintIndex {
         return localityNo;
     }
 
-    public void setLocalityNo(String localityNo) {
+    public void setLocalityNo(final String localityNo) {
         this.localityNo = localityNo;
     }
 
@@ -454,7 +462,7 @@ public class ComplaintIndex {
         return localityGeo;
     }
 
-    public void setLocalityGeo(GeoPoint localityGeo) {
+    public void setLocalityGeo(final GeoPoint localityGeo) {
         this.localityGeo = localityGeo;
     }
 
@@ -462,7 +470,7 @@ public class ComplaintIndex {
         return complaintGeo;
     }
 
-    public void setComplaintGeo(GeoPoint complaintGeo) {
+    public void setComplaintGeo(final GeoPoint complaintGeo) {
         this.complaintGeo = complaintGeo;
     }
 
@@ -470,7 +478,7 @@ public class ComplaintIndex {
         return satisfactionIndex;
     }
 
-    public void setSatisfactionIndex(double satisfactionIndex) {
+    public void setSatisfactionIndex(final double satisfactionIndex) {
         this.satisfactionIndex = satisfactionIndex;
     }
 
@@ -478,7 +486,7 @@ public class ComplaintIndex {
         return complaintAgeingdaysFromDue;
     }
 
-    public void setComplaintAgeingdaysFromDue(long complaintAgeingdaysFromDue) {
+    public void setComplaintAgeingdaysFromDue(final long complaintAgeingdaysFromDue) {
         this.complaintAgeingdaysFromDue = complaintAgeingdaysFromDue;
     }
 
@@ -486,7 +494,7 @@ public class ComplaintIndex {
         return cityCode;
     }
 
-    public void setCityCode(String cityCode) {
+    public void setCityCode(final String cityCode) {
         this.cityCode = cityCode;
     }
 
@@ -494,7 +502,7 @@ public class ComplaintIndex {
         return cityDistrictCode;
     }
 
-    public void setCityDistrictCode(String cityDistrictCode) {
+    public void setCityDistrictCode(final String cityDistrictCode) {
         this.cityDistrictCode = cityDistrictCode;
     }
 
@@ -502,7 +510,7 @@ public class ComplaintIndex {
         return cityDistrictName;
     }
 
-    public void setCityDistrictName(String cityDistrictName) {
+    public void setCityDistrictName(final String cityDistrictName) {
         this.cityDistrictName = cityDistrictName;
     }
 
@@ -510,7 +518,7 @@ public class ComplaintIndex {
         return cityGrade;
     }
 
-    public void setCityGrade(String cityGrade) {
+    public void setCityGrade(final String cityGrade) {
         this.cityGrade = cityGrade;
     }
 
@@ -518,7 +526,7 @@ public class ComplaintIndex {
         return cityRegionName;
     }
 
-    public void setCityRegionName(String cityRegionName) {
+    public void setCityRegionName(final String cityRegionName) {
         this.cityRegionName = cityRegionName;
     }
 
@@ -526,7 +534,7 @@ public class ComplaintIndex {
         return cityName;
     }
 
-    public void setCityName(String cityName) {
+    public void setCityName(final String cityName) {
         this.cityName = cityName;
     }
 
@@ -534,7 +542,7 @@ public class ComplaintIndex {
         return cityDomainUrl;
     }
 
-    public void setCityDomainUrl(String cityDomainUrl) {
+    public void setCityDomainUrl(final String cityDomainUrl) {
         this.cityDomainUrl = cityDomainUrl;
     }
 
@@ -542,7 +550,7 @@ public class ComplaintIndex {
         return complaintDuration;
     }
 
-    public void setComplaintDuration(double complaintDuration) {
+    public void setComplaintDuration(final double complaintDuration) {
         this.complaintDuration = complaintDuration;
     }
 
@@ -550,7 +558,7 @@ public class ComplaintIndex {
         return closed;
     }
 
-    public void setClosed(boolean closed) {
+    public void setClosed(final boolean closed) {
         this.closed = closed;
     }
 
@@ -558,7 +566,7 @@ public class ComplaintIndex {
         return complaintIsClosed;
     }
 
-    public void setComplaintIsClosed(String complaintIsClosed) {
+    public void setComplaintIsClosed(final String complaintIsClosed) {
         this.complaintIsClosed = complaintIsClosed;
     }
 
@@ -566,7 +574,7 @@ public class ComplaintIndex {
         return ifClosed;
     }
 
-    public void setIfClosed(int ifClosed) {
+    public void setIfClosed(final int ifClosed) {
         this.ifClosed = ifClosed;
     }
 
@@ -574,7 +582,7 @@ public class ComplaintIndex {
         return durationRange;
     }
 
-    public void setDurationRange(String durationRange) {
+    public void setDurationRange(final String durationRange) {
         this.durationRange = durationRange;
     }
 
@@ -582,7 +590,7 @@ public class ComplaintIndex {
         return source;
     }
 
-    public void setSource(String source) {
+    public void setSource(final String source) {
         this.source = source;
     }
 
@@ -590,7 +598,7 @@ public class ComplaintIndex {
         return complaintPeriod;
     }
 
-    public void setComplaintPeriod(double complaintPeriod) {
+    public void setComplaintPeriod(final double complaintPeriod) {
         this.complaintPeriod = complaintPeriod;
     }
 
@@ -598,7 +606,7 @@ public class ComplaintIndex {
         return complaintSLADays;
     }
 
-    public void setComplaintSLADays(long complaintSLADays) {
+    public void setComplaintSLADays(final long complaintSLADays) {
         this.complaintSLADays = complaintSLADays;
     }
 
@@ -606,7 +614,7 @@ public class ComplaintIndex {
         return complaintAgeingFromDue;
     }
 
-    public void setComplaintAgeingFromDue(double complaintAgeingFromDue) {
+    public void setComplaintAgeingFromDue(final double complaintAgeingFromDue) {
         this.complaintAgeingFromDue = complaintAgeingFromDue;
     }
 
@@ -614,7 +622,7 @@ public class ComplaintIndex {
         return isSLA;
     }
 
-    public void setIsSLA(String isSLA) {
+    public void setIsSLA(final String isSLA) {
         this.isSLA = isSLA;
     }
 
@@ -622,7 +630,7 @@ public class ComplaintIndex {
         return ifSLA;
     }
 
-    public void setIfSLA(int ifSLA) {
+    public void setIfSLA(final int ifSLA) {
         this.ifSLA = ifSLA;
     }
 
@@ -630,7 +638,7 @@ public class ComplaintIndex {
         return currentFunctionaryName;
     }
 
-    public void setCurrentFunctionaryName(String currentFunctionaryName) {
+    public void setCurrentFunctionaryName(final String currentFunctionaryName) {
         this.currentFunctionaryName = currentFunctionaryName;
     }
 
@@ -639,7 +647,7 @@ public class ComplaintIndex {
     }
 
     public void setCurrentFunctionaryAssigneddate(
-            Date currentFunctionaryAssigneddate) {
+            final Date currentFunctionaryAssigneddate) {
         this.currentFunctionaryAssigneddate = currentFunctionaryAssigneddate;
     }
 
@@ -647,7 +655,7 @@ public class ComplaintIndex {
         return currentFunctionarySLADays;
     }
 
-    public void setCurrentFunctionarySLADays(long currentFunctionarySLADays) {
+    public void setCurrentFunctionarySLADays(final long currentFunctionarySLADays) {
         this.currentFunctionarySLADays = currentFunctionarySLADays;
     }
 
@@ -656,7 +664,7 @@ public class ComplaintIndex {
     }
 
     public void setCurrentFunctionaryAgeingFromDue(
-            double currentFunctionaryAgeingFromDue) {
+            final double currentFunctionaryAgeingFromDue) {
         this.currentFunctionaryAgeingFromDue = currentFunctionaryAgeingFromDue;
     }
 
@@ -664,7 +672,7 @@ public class ComplaintIndex {
         return currentFunctionaryIsSLA;
     }
 
-    public void setCurrentFunctionaryIsSLA(String currentFunctionaryIsSLA) {
+    public void setCurrentFunctionaryIsSLA(final String currentFunctionaryIsSLA) {
         this.currentFunctionaryIsSLA = currentFunctionaryIsSLA;
     }
 
@@ -672,7 +680,7 @@ public class ComplaintIndex {
         return currentFunctionaryIfSLA;
     }
 
-    public void setCurrentFunctionaryIfSLA(int currentFunctionaryIfSLA) {
+    public void setCurrentFunctionaryIfSLA(final int currentFunctionaryIfSLA) {
         this.currentFunctionaryIfSLA = currentFunctionaryIfSLA;
     }
 
@@ -680,7 +688,7 @@ public class ComplaintIndex {
         return closedByFunctionaryName;
     }
 
-    public void setClosedByFunctionaryName(String closedByFunctionaryName) {
+    public void setClosedByFunctionaryName(final String closedByFunctionaryName) {
         this.closedByFunctionaryName = closedByFunctionaryName;
     }
 
@@ -688,7 +696,7 @@ public class ComplaintIndex {
         return initialFunctionaryName;
     }
 
-    public void setInitialFunctionaryName(String initialFunctionaryName) {
+    public void setInitialFunctionaryName(final String initialFunctionaryName) {
         this.initialFunctionaryName = initialFunctionaryName;
     }
 
@@ -696,8 +704,24 @@ public class ComplaintIndex {
         return initialFunctionaryAssigneddate;
     }
 
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(final String categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(final String categoryName) {
+        this.categoryName = categoryName;
+    }
+
     public void setInitialFunctionaryAssigneddate(
-            Date initialFunctionaryAssigneddate) {
+            final Date initialFunctionaryAssigneddate) {
         this.initialFunctionaryAssigneddate = initialFunctionaryAssigneddate;
     }
 
@@ -705,7 +729,7 @@ public class ComplaintIndex {
         return initialFunctionarySLADays;
     }
 
-    public void setInitialFunctionarySLADays(long initialFunctionarySLADays) {
+    public void setInitialFunctionarySLADays(final long initialFunctionarySLADays) {
         this.initialFunctionarySLADays = initialFunctionarySLADays;
     }
 
@@ -714,7 +738,7 @@ public class ComplaintIndex {
     }
 
     public void setInitialFunctionaryAgeingFromDue(
-            double initialFunctionaryAgeingFromDue) {
+            final double initialFunctionaryAgeingFromDue) {
         this.initialFunctionaryAgeingFromDue = initialFunctionaryAgeingFromDue;
     }
 
@@ -722,7 +746,7 @@ public class ComplaintIndex {
         return initialFunctionaryIsSLA;
     }
 
-    public void setInitialFunctionaryIsSLA(String initialFunctionaryIsSLA) {
+    public void setInitialFunctionaryIsSLA(final String initialFunctionaryIsSLA) {
         this.initialFunctionaryIsSLA = initialFunctionaryIsSLA;
     }
 
@@ -730,7 +754,7 @@ public class ComplaintIndex {
         return initialFunctionaryIfSLA;
     }
 
-    public void setInitialFunctionaryIfSLA(int initialFunctionaryIfSLA) {
+    public void setInitialFunctionaryIfSLA(final int initialFunctionaryIfSLA) {
         this.initialFunctionaryIfSLA = initialFunctionaryIfSLA;
     }
 
@@ -738,7 +762,7 @@ public class ComplaintIndex {
         return escalation1FunctionaryName;
     }
 
-    public void setEscalation1FunctionaryName(String escalation1FunctionaryName) {
+    public void setEscalation1FunctionaryName(final String escalation1FunctionaryName) {
         this.escalation1FunctionaryName = escalation1FunctionaryName;
     }
 
@@ -747,7 +771,7 @@ public class ComplaintIndex {
     }
 
     public void setEscalation1FunctionaryAssigneddate(
-            Date escalation1FunctionaryAssigneddate) {
+            final Date escalation1FunctionaryAssigneddate) {
         this.escalation1FunctionaryAssigneddate = escalation1FunctionaryAssigneddate;
     }
 
@@ -755,7 +779,7 @@ public class ComplaintIndex {
         return escalation1FunctionarySLADays;
     }
 
-    public void setEscalation1FunctionarySLADays(long escalation1FunctionarySLADays) {
+    public void setEscalation1FunctionarySLADays(final long escalation1FunctionarySLADays) {
         this.escalation1FunctionarySLADays = escalation1FunctionarySLADays;
     }
 
@@ -764,7 +788,7 @@ public class ComplaintIndex {
     }
 
     public void setEscalation1FunctionaryAgeingFromDue(
-            double escalation1FunctionaryAgeingFromDue) {
+            final double escalation1FunctionaryAgeingFromDue) {
         this.escalation1FunctionaryAgeingFromDue = escalation1FunctionaryAgeingFromDue;
     }
 
@@ -772,7 +796,7 @@ public class ComplaintIndex {
         return escalation1FunctionaryIsSLA;
     }
 
-    public void setEscalation1FunctionaryIsSLA(String escalation1FunctionaryIsSLA) {
+    public void setEscalation1FunctionaryIsSLA(final String escalation1FunctionaryIsSLA) {
         this.escalation1FunctionaryIsSLA = escalation1FunctionaryIsSLA;
     }
 
@@ -780,7 +804,7 @@ public class ComplaintIndex {
         return escalation1FunctionaryIfSLA;
     }
 
-    public void setEscalation1FunctionaryIfSLA(int escalation1FunctionaryIfSLA) {
+    public void setEscalation1FunctionaryIfSLA(final int escalation1FunctionaryIfSLA) {
         this.escalation1FunctionaryIfSLA = escalation1FunctionaryIfSLA;
     }
 
@@ -788,7 +812,7 @@ public class ComplaintIndex {
         return escalation2FunctionaryName;
     }
 
-    public void setEscalation2FunctionaryName(String escalation2FunctionaryName) {
+    public void setEscalation2FunctionaryName(final String escalation2FunctionaryName) {
         this.escalation2FunctionaryName = escalation2FunctionaryName;
     }
 
@@ -797,7 +821,7 @@ public class ComplaintIndex {
     }
 
     public void setEscalation2FunctionaryAssigneddate(
-            Date escalation2FunctionaryAssigneddate) {
+            final Date escalation2FunctionaryAssigneddate) {
         this.escalation2FunctionaryAssigneddate = escalation2FunctionaryAssigneddate;
     }
 
@@ -805,7 +829,7 @@ public class ComplaintIndex {
         return escalation2FunctionarySLADays;
     }
 
-    public void setEscalation2FunctionarySLADays(long escalation2FunctionarySLADays) {
+    public void setEscalation2FunctionarySLADays(final long escalation2FunctionarySLADays) {
         this.escalation2FunctionarySLADays = escalation2FunctionarySLADays;
     }
 
@@ -814,7 +838,7 @@ public class ComplaintIndex {
     }
 
     public void setEscalation2FunctionaryAgeingFromDue(
-            double escalation2FunctionaryAgeingFromDue) {
+            final double escalation2FunctionaryAgeingFromDue) {
         this.escalation2FunctionaryAgeingFromDue = escalation2FunctionaryAgeingFromDue;
     }
 
@@ -822,7 +846,7 @@ public class ComplaintIndex {
         return escalation2FunctionaryIsSLA;
     }
 
-    public void setEscalation2FunctionaryIsSLA(String escalation2FunctionaryIsSLA) {
+    public void setEscalation2FunctionaryIsSLA(final String escalation2FunctionaryIsSLA) {
         this.escalation2FunctionaryIsSLA = escalation2FunctionaryIsSLA;
     }
 
@@ -830,7 +854,7 @@ public class ComplaintIndex {
         return escalation2FunctionaryIfSLA;
     }
 
-    public void setEscalation2FunctionaryIfSLA(int escalation2FunctionaryIfSLA) {
+    public void setEscalation2FunctionaryIfSLA(final int escalation2FunctionaryIfSLA) {
         this.escalation2FunctionaryIfSLA = escalation2FunctionaryIfSLA;
     }
 
@@ -838,7 +862,7 @@ public class ComplaintIndex {
         return escalation3FunctionaryName;
     }
 
-    public void setEscalation3FunctionaryName(String escalation3FunctionaryName) {
+    public void setEscalation3FunctionaryName(final String escalation3FunctionaryName) {
         this.escalation3FunctionaryName = escalation3FunctionaryName;
     }
 
@@ -847,7 +871,7 @@ public class ComplaintIndex {
     }
 
     public void setEscalation3FunctionaryAssigneddate(
-            Date escalation3FunctionaryAssigneddate) {
+            final Date escalation3FunctionaryAssigneddate) {
         this.escalation3FunctionaryAssigneddate = escalation3FunctionaryAssigneddate;
     }
 
@@ -855,7 +879,7 @@ public class ComplaintIndex {
         return escalation3FunctionarySLADays;
     }
 
-    public void setEscalation3FunctionarySLADays(long escalation3FunctionarySLADays) {
+    public void setEscalation3FunctionarySLADays(final long escalation3FunctionarySLADays) {
         this.escalation3FunctionarySLADays = escalation3FunctionarySLADays;
     }
 
@@ -864,7 +888,7 @@ public class ComplaintIndex {
     }
 
     public void setEscalation3FunctionaryAgeingFromDue(
-            double escalation3FunctionaryAgeingFromDue) {
+            final double escalation3FunctionaryAgeingFromDue) {
         this.escalation3FunctionaryAgeingFromDue = escalation3FunctionaryAgeingFromDue;
     }
 
@@ -872,7 +896,7 @@ public class ComplaintIndex {
         return escalation3FunctionaryIsSLA;
     }
 
-    public void setEscalation3FunctionaryIsSLA(String escalation3FunctionaryIsSLA) {
+    public void setEscalation3FunctionaryIsSLA(final String escalation3FunctionaryIsSLA) {
         this.escalation3FunctionaryIsSLA = escalation3FunctionaryIsSLA;
     }
 
@@ -880,7 +904,7 @@ public class ComplaintIndex {
         return escalation3FunctionaryIfSLA;
     }
 
-    public void setEscalation3FunctionaryIfSLA(int escalation3FunctionaryIfSLA) {
+    public void setEscalation3FunctionaryIfSLA(final int escalation3FunctionaryIfSLA) {
         this.escalation3FunctionaryIfSLA = escalation3FunctionaryIfSLA;
     }
 
@@ -888,7 +912,7 @@ public class ComplaintIndex {
         return escalationLevel;
     }
 
-    public void setEscalationLevel(int escalationLevel) {
+    public void setEscalationLevel(final int escalationLevel) {
         this.escalationLevel = escalationLevel;
     }
 
@@ -896,7 +920,7 @@ public class ComplaintIndex {
         return complaintReOpenedDate;
     }
 
-    public void setComplaintReOpenedDate(Date complaintReOpenedDate) {
+    public void setComplaintReOpenedDate(final Date complaintReOpenedDate) {
         this.complaintReOpenedDate = complaintReOpenedDate;
     }
 
@@ -904,7 +928,7 @@ public class ComplaintIndex {
         return reasonForRejection;
     }
 
-    public void setReasonForRejection(String reasonForRejection) {
+    public void setReasonForRejection(final String reasonForRejection) {
         this.reasonForRejection = reasonForRejection;
     }
 
@@ -912,7 +936,7 @@ public class ComplaintIndex {
         return registered;
     }
 
-    public void setRegistered(int registered) {
+    public void setRegistered(final int registered) {
         this.registered = registered;
     }
 
@@ -920,7 +944,7 @@ public class ComplaintIndex {
         return inProcess;
     }
 
-    public void setInProcess(int inProcess) {
+    public void setInProcess(final int inProcess) {
         this.inProcess = inProcess;
     }
 
@@ -928,7 +952,7 @@ public class ComplaintIndex {
         return addressed;
     }
 
-    public void setAddressed(int addressed) {
+    public void setAddressed(final int addressed) {
         this.addressed = addressed;
     }
 
@@ -936,7 +960,7 @@ public class ComplaintIndex {
         return rejected;
     }
 
-    public void setRejected(int rejected) {
+    public void setRejected(final int rejected) {
         this.rejected = rejected;
     }
 
@@ -944,7 +968,7 @@ public class ComplaintIndex {
         return reOpened;
     }
 
-    public void setReOpened(int reOpened) {
+    public void setReOpened(final int reOpened) {
         this.reOpened = reOpened;
     }
 
@@ -952,7 +976,7 @@ public class ComplaintIndex {
         return currentFunctionaryMobileNumber;
     }
 
-    public void setCurrentFunctionaryMobileNumber(String currentFunctionaryMobileNumber) {
+    public void setCurrentFunctionaryMobileNumber(final String currentFunctionaryMobileNumber) {
         this.currentFunctionaryMobileNumber = currentFunctionaryMobileNumber;
     }
 
@@ -960,7 +984,15 @@ public class ComplaintIndex {
         return assigneeId;
     }
 
-    public void setAssigneeId(Long assigneeId) {
+    public void setAssigneeId(final Long assigneeId) {
         this.assigneeId = assigneeId;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(final String url) {
+        this.url = url;
     }
 }

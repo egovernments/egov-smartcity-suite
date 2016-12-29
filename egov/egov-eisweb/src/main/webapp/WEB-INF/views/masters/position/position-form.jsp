@@ -43,7 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<script src="<cdn:url value='/resources/js/app/positionsearch.js?rnd=${app_release_no}' context='/eis'/>"></script>
+<script src="<cdn:url value='/resources/js/app/positionsearch.js' context='/eis'/>"></script>
 	<script>
 
 		$(document).ready(function(){

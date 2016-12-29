@@ -47,18 +47,14 @@
 <title><s:if test="mode=='create' || mode=='edit'">
 		<s:text name='NewProp.title' />
 	</s:if></title>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css?rnd=${app_release_no}' context='/egi'/>">
-<script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js?rnd=${app_release_no}' context='/egi'/>"
-	type="text/javascript"></script>
 <link
-	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css?rnd=${app_release_no}' context='/egi'/>"
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
 	rel="stylesheet" type="text/css" />
 <script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js?rnd=${app_release_no}' context='/egi'/>"
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
 <script
-	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js?rnd=${app_release_no}' context='/egi'/>"
+	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"
 	type="text/javascript"></script>
 </head>
 

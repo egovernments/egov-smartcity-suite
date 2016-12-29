@@ -64,25 +64,25 @@ public class CommitteeTypeService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
-
     @Autowired
     public CommitteeTypeService(final CommitteeTypeRepository committeeTypeRepository) {
         this.committeeTypeRepository = committeeTypeRepository;
+    }
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
     }
 
     @Transactional
     public CommitteeType create(final CommitteeType committeeType) {
         return committeeTypeRepository.save(committeeType);
     }
-    
+
     @Transactional
     public void delete(final CommitteeType committeeType) {
-         committeeTypeRepository.delete(committeeType);
+        committeeTypeRepository.delete(committeeType);
     }
-    
+
     @Transactional
     public CommitteeType update(final CommitteeType committeeType) {
         return committeeTypeRepository.save(committeeType);
@@ -104,11 +104,12 @@ public class CommitteeTypeService {
         return committeeTypeRepository.findByisActive(true);
     }
 
+    @SuppressWarnings("unchecked")
     public List<CommitteeType> search(CommitteeType committeeType) {
         final Criteria criteria = getCurrentSession().createCriteria(CommitteeType.class);
         if (null != committeeType.getName())
             criteria.add(Restrictions.ilike("name", committeeType.getName(), MatchMode.ANYWHERE));
-        if (committeeType.getIsActive() != null && committeeType.getIsActive() == true)
+        if (committeeType.getIsActive() != null && committeeType.getIsActive())
             criteria.add(Restrictions.eq("isActive", committeeType.getIsActive()));
         return criteria.list();
     }

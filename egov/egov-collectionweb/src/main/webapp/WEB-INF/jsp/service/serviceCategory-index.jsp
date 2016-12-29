@@ -59,17 +59,17 @@ function onSubmit(obj){
 	  	<table width="80%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
 		        <tr>  
 		            <th class="bluebgheadtd" width="18%" style="display:none">ID</th>  
+		            <th class="bluebgheadtd" width="15%"><s:text name="masters.serviceCategory.servicCategoryeCode"/></th>
 					<th class="bluebgheadtd" width="15%"><s:text name="masters.serviceCategory.serviceCategoryName"/></th>
-					<th class="bluebgheadtd" width="15%"><s:text name="masters.serviceCategory.servicCategoryeCode"/></th>
 				    <th class="bluebgheadtd" width="15%"><s:text name="masters.serviceCategory.serviceCategoryeEnabled" /></th>
 					<th class="bluebgheadtd" width="15%"><s:text name="masters.edit"/></th>
 				</tr>  
 				<s:iterator var="p" value="serviceCategoryList">  
 	            <tr>  
-					<s:if test="name != null">								
+					<s:if test="code != null">								
 					<td class="blueborderfortd">
 					<div align="center">  
-					<s:property value="%{name}" /> 
+					<s:property value="%{code}" /> 
 					</div>
 					</td>
 					</s:if>
@@ -80,10 +80,10 @@ function onSubmit(obj){
 					</td>
 					</s:else>
 			
-					<s:if test="code!= null">								
+					<s:if test="name!= null">								
 					<td class="blueborderfortd">
 					<div align="center">  
-					<s:property value="%{code}" /> 
+					<s:property value="%{name}" /> 
 					</td>
 					</div>
 					</s:if>

@@ -37,11 +37,6 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <footer class="main">
     Powered by <a href="http://egovernments.org/" target="_blank">eGovernments Foundation</a>
 </footer>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js?rnd=${app_release_no}' context='/egi'/>"></script>

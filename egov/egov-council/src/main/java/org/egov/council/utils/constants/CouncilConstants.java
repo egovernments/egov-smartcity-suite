@@ -39,7 +39,10 @@
  */
 package org.egov.council.utils.constants; 
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 public class CouncilConstants {
 	
@@ -47,33 +50,33 @@ public class CouncilConstants {
     public static final String MODULE_NAME = "COUNCIL";
     public static final String MODULE_FULLNAME ="Council Management";
     public static final String COUNCILMEETING="COUNCILMEETING";
-    public final static String PREAMBLE_STATUS_CREATED="CREATED";
-    public final static String PREAMBLE_STATUS_APPROVED="APPROVED";
-    public final static String PREAMBLE_STATUS_ADJOURNED="ADJOURNED";
-    public final static String PREAMBLE_MODULENAME = "COUNCILPREAMBLE";
-    public final static String AGENDA_STATUS_APPROVED ="APPROVED";
-    public final static String AGENDA_STATUS_INWORKFLOW ="INWORKFLOW";
-    public final static String COUNCIL_RESOLUTION ="COUNCILRESOLUTION";	
-    public final static String MOM_FINALISED="MOM FINALISED";
+    public static final String PREAMBLE_STATUS_CREATED="CREATED";
+    public static final String PREAMBLE_STATUS_APPROVED="APPROVED";
+    public static final String PREAMBLE_STATUS_ADJOURNED="ADJOURNED";
+    public static final String PREAMBLE_MODULENAME = "COUNCILPREAMBLE";
+    public static final String AGENDA_STATUS_APPROVED ="APPROVED";
+    public static final String AGENDA_STATUS_INWORKFLOW ="INWORKFLOW";
+    public static final String COUNCIL_RESOLUTION ="COUNCILRESOLUTION";	
+    public static final String MOM_FINALISED="MOM FINALISED";
     public static final String REVENUE_HIERARCHY_TYPE = "ADMINISTRATION";
     public static final String WARD = "Ward";
     
-    public final static String AGENDA_MODULENAME = "COUNCILAGENDA";
-    public final static String MEETING_MODULENAME = "COUNCILMEETING";
+    public static final String AGENDA_MODULENAME = "COUNCILAGENDA";
+    public static final String MEETING_MODULENAME = "COUNCILMEETING";
     public static final String PREAMBLEUSEDINAGENDA = "PREAMBLE USED IN AGENDA";
     public static final String AGENDAUSEDINMEETING = "AGENDA USED IN MEETING";
     public static final String MEETINGUSEDINRMOM = "MOM CREATED";
     public static final String MOM_STATUS_APPROVED ="APPROVED";
     public static final String RESOLUTION_STATUS_APPROVED ="APPROVED";
     public static final String RESOLUTION_STATUS_ADJURNED ="ADJOURNED";
-    public final static String APPROVED ="APPROVED";
-    public final static String REJECTED ="REJECTED";
-    public final static String ADJOURNED ="ADJOURNED";
-    public final static String ATTENDANCEFINALIZED ="ATTENDANCE FINALIZED";
-    public final static String RESOLUTION_APPROVED_PREAMBLE="Resolution Approved";
-    public final static String IMPLEMENTATIONSTATUS = "IMPLEMENTATIONSTATUS";
-    public final static String IMPLEMENTATION_STATUS_WORKINPROGRESS="Work In Progress";
-    public final static String IMPLEMENTATION_STATUS_FINISHED="Finished";
+    public static final String APPROVED ="APPROVED";
+    public static final String REJECTED ="REJECTED";
+    public static final String ADJOURNED ="ADJOURNED";
+    public static final String ATTENDANCEFINALIZED ="ATTENDANCE FINALIZED";
+    public static final String RESOLUTION_APPROVED_PREAMBLE="Resolution Approved";
+    public static final String IMPLEMENTATIONSTATUS = "IMPLEMENTATIONSTATUS";
+    public static final String IMPLEMENTATION_STATUS_WORKINPROGRESS="Work In Progress";
+    public static final String IMPLEMENTATION_STATUS_FINISHED="Finished";
     
     public static final LinkedHashMap<String, String> MEETING_TIMINGS = new LinkedHashMap<String, String>() {
         /**
@@ -117,10 +120,12 @@ public class CouncilConstants {
     public static final String PREAMBLE_MODULE_TYPE = "COUNCILPREAMBLE";
     public static final String WF_APPROVE_BUTTON = "Approve";
     public static final String MEETINGSTATUSCREATED = "CREATED";
-    public final static String MEETINGSTATUSAPPROVED ="APPROVED";
-    public final static String MEETINGRESOLUTIONFILENAME = "MeetingResolution";
-    public final static String WF_FORWARD_BUTTON = "Forward";
-    public final static String WF_PROVIDE_INFO_BUTTON ="Provide more info";
-    public final static String CHECK_BUDGET= "budgetcheckurl";
+    public static final String MEETINGSTATUSAPPROVED ="APPROVED";
+    public static final String MEETINGRESOLUTIONFILENAME = "MeetingResolution";
+    public static final String WF_FORWARD_BUTTON = "Forward";
+    public static final String WF_PROVIDE_INFO_BUTTON ="Provide more info";
+    public static final String CHECK_BUDGET= "budgetcheckurl";
    
+    public static final List<String> CATEGORY = Collections.unmodifiableList(
+            Arrays.asList("Special knowledge", "Minority"));
 }

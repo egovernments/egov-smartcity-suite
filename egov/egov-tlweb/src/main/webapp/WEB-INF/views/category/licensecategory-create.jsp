@@ -53,13 +53,13 @@
 			</div>
 				<div class="panel-body">
 					<div class="form-group">
-						<label for="field-1" class="col-sm-2 control-label text-right"><spring:message code="lbl.name" /> 
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.name" />
 						<span id="mandatory" class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="name" id="name" cssClass="form-control is_valid_alphabet" cssErrorClass="form-control error" required="required" maxLength="64" />
 							<form:errors path="name" cssClass="error-msg" />
          				</div>
-						<label for="field-1" class="col-sm-2 control-label text-right"><spring:message code="lbl.code" /> 
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.code" />
 						<span id="mandatory" class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="code" id="code" cssClass="form-control is_valid_alphabet" cssErrorClass="form-control error" required="required" maxLength="32" />
@@ -73,7 +73,7 @@
 	<div class="form-group">
 		<div class="text-center">
 			<button type='submit' class='btn btn-primary' id="buttonSubmit"><spring:message code='lbl.save' /></button>
-			<button type="reset" class="btn btn-default"><spring:message code="lbl.reset" /></button>
+			<button type="reset" class="btn btn-default" onclick="window.location.reload()" ><spring:message code="lbl.reset" /></button>
 			<a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>
 	</div>

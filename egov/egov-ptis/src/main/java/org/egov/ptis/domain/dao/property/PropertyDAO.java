@@ -154,6 +154,8 @@ public interface PropertyDAO {
 
 	public List getDmdCollAmtInstWise(EgDemand egDemand);
 	
+	public List getTotalDemandDetailsIncludingPenalty(EgDemand egDemand);
+	
 	public List getPenaltyDmdCollAmtInstWise(EgDemand egDemand);
 	
 	/**

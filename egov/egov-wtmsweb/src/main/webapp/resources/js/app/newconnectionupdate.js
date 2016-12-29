@@ -174,7 +174,7 @@ $(document).ready(function()
 				 $('#approvalComent').removeAttr('required');	
 	    		 if($('form').valid())	{
  					var estimationCharge = $('#estimationCharges').val();
- 			    	if(estimationCharge <= 0) {
+ 			    	if(estimationCharge < 0) {
  			    		bootbox.alert("Please enter the value greater than ZERO for Estimation charges!");
  			    		$('#estimationCharges').focus();
  			    		return false;

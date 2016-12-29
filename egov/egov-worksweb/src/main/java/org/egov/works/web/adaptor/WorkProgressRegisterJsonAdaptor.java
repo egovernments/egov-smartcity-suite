@@ -120,10 +120,10 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
             else
                 jsonObject.addProperty("subTypeOfWork", "");
             if (workProgressRegister.getAdminSanctionBy() != null)
-                jsonObject.addProperty("adminSanctionAuthorityDate",
-                        worksUtils.getUserDesignation(workProgressRegister.getAdminSanctionBy()) + " - "
-                                + workProgressRegister.getAdminSanctionBy().getName() + ", " + DateUtils
-                                        .getFormattedDate(workProgressRegister.getAdminSanctionDate(), "dd/MM/yyyy"));
+                jsonObject.addProperty(
+                        "adminSanctionAuthorityDate",
+                        workProgressRegister.getAdminSanctionBy() + " , "
+                                + DateUtils.getFormattedDate(workProgressRegister.getAdminSanctionDate(), "dd/MM/yyyy"));
             else
                 jsonObject.addProperty("adminSanctionAuthorityDate", "");
             if (workProgressRegister.getAdminSanctionAmount() != null)
@@ -147,8 +147,9 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
             else
                 jsonObject.addProperty("modeOfAllotment", "");
             if (workProgressRegister.getAgreementNumber() != null)
-                jsonObject.addProperty("agreementNumberDate", workProgressRegister.getAgreementNumber() + " - "
-                        + DateUtils.getFormattedDate(workProgressRegister.getAgreementDate(), "dd/MM/yyyy"));
+                jsonObject.addProperty("agreementNumberDate",
+                        workProgressRegister.getAgreementNumber() + " - "
+                                + DateUtils.getFormattedDate(workProgressRegister.getAgreementDate(), "dd/MM/yyyy"));
             else
                 jsonObject.addProperty("agreementNumberDate", "NA");
             if (workProgressRegister.getContractor() != null)
@@ -160,9 +161,10 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
                 jsonObject.addProperty("agreementAmount", workProgressRegister.getAgreementAmount());
             else
                 jsonObject.addProperty("agreementAmount", "");
-            if (workProgressRegister.getLatestMbNumber() != null && workProgressRegister.getLatestMbDate() != null)
-                jsonObject.addProperty("latestMbNumberDate", workProgressRegister.getLatestMbNumber() + ", "
-                        + DateUtils.getFormattedDate(workProgressRegister.getLatestMbDate(), "dd/MM/yyyy"));
+            if (workProgressRegister.getLatestBillNumber() != null && workProgressRegister.getLatestBillDate() != null)
+                jsonObject.addProperty("latestMbNumberDate",
+                        workProgressRegister.getLatestMbNumber() + ", "
+                                + DateUtils.getFormattedDate(workProgressRegister.getLatestMbDate(), "dd/MM/yyyy"));
             else
                 jsonObject.addProperty("latestMbNumberDate", "NA");
             if (workProgressRegister.getLatestBillNumber() != null)

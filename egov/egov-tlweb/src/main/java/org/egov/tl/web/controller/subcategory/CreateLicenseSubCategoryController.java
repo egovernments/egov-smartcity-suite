@@ -94,7 +94,7 @@ public class CreateLicenseSubCategoryController {
 
     @ModelAttribute(value = "licenseUomTypes")
     public List<UnitOfMeasurement> getAllUom() {
-        return unitOfMeasurementService.findAll();
+        return unitOfMeasurementService.findAllActiveUOM();
     }
 
     @ModelAttribute(value = "licenseFeeTypes")

@@ -63,42 +63,43 @@ public class MeetingAttendanceJsonAdaptor implements JsonSerializer<MeetingAtten
                 jsonObject.addProperty("meetingDate", attendence.getMeeting().getMeetingDate().toString());
             else
                 jsonObject.addProperty("meetingDate", StringUtils.EMPTY);
+
+            if (attendence.getCouncilMember() != null && attendence.getCouncilMember().getElectionWard() != null)
+                jsonObject.addProperty("electionWard", attendence.getCouncilMember().getElectionWard().getName());
+            else
+                jsonObject.addProperty("electionWard", StringUtils.EMPTY);
             
-                if (attendence.getCommitteeMembers().getCouncilMember().getElectionWard() != null)
-                    jsonObject.addProperty("electionWard", attendence.getCommitteeMembers().getCouncilMember().getElectionWard().getName());
-                else
-                    jsonObject.addProperty("electionWard",  StringUtils.EMPTY);
-                if (attendence.getCommitteeMembers().getCouncilMember().getDesignation() != null)
-                    jsonObject.addProperty("designation", attendence.getCommitteeMembers().getCouncilMember().getDesignation().getName());
-                else
-                    jsonObject.addProperty("designation", StringUtils.EMPTY);
-                if (attendence.getCommitteeMembers().getCouncilMember().getQualification() != null)
-                    jsonObject.addProperty("qualification", attendence.getCommitteeMembers().getCouncilMember().getQualification().getName());
-                else
-                    jsonObject.addProperty("qualification", StringUtils.EMPTY);
-                if (attendence.getCommitteeMembers().getCouncilMember().getPartyAffiliation() != null)
-                    jsonObject.addProperty("partyAffiliation", attendence.getCommitteeMembers().getCouncilMember().getPartyAffiliation().getName());
-                else
-                    jsonObject.addProperty("partyAffiliation", StringUtils.EMPTY);
-                if (attendence.getCommitteeMembers().getCouncilMember().getName() != null)
-                    jsonObject.addProperty("name", attendence.getCommitteeMembers().getCouncilMember().getName());
-                else
-                    jsonObject.addProperty("name", StringUtils.EMPTY);
-                if (attendence.getCommitteeMembers().getCouncilMember().getMobileNumber() != null)
-                    jsonObject.addProperty("mobileNumber", attendence.getCommitteeMembers().getCouncilMember().getMobileNumber());
-                else
-                    jsonObject.addProperty("mobileNumber", StringUtils.EMPTY);
-                if (attendence.getCommitteeMembers().getCouncilMember().getResidentialAddress() != null)
-                    jsonObject.addProperty("address", attendence.getCommitteeMembers().getCouncilMember().getResidentialAddress());
-                else
-                    jsonObject.addProperty("address", StringUtils.EMPTY);
-                if (attendence.getAttendedMeeting() != null)
-                    jsonObject.addProperty("attendance", attendence.getAttendedMeeting()?"Present":"Absent");
-                else
-                    jsonObject.addProperty("attendance", StringUtils.EMPTY);
-               
+            if (attendence.getCouncilMember() != null && attendence.getCouncilMember().getDesignation() != null)
+                jsonObject.addProperty("designation", attendence.getCouncilMember().getDesignation().getName());
+            else
+                jsonObject.addProperty("designation", StringUtils.EMPTY);
+            if (attendence.getCouncilMember() != null && attendence.getCouncilMember().getQualification() != null)
+                jsonObject.addProperty("qualification", attendence.getCouncilMember().getQualification().getName());
+            else
+                jsonObject.addProperty("qualification", StringUtils.EMPTY);
+            if (attendence.getCouncilMember() != null && attendence.getCouncilMember().getPartyAffiliation() != null)
+                jsonObject.addProperty("partyAffiliation", attendence.getCouncilMember().getPartyAffiliation().getName());
+            else
+                jsonObject.addProperty("partyAffiliation", StringUtils.EMPTY);
+            if (attendence.getCouncilMember() != null && attendence.getCouncilMember().getName() != null)
+                jsonObject.addProperty("name", attendence.getCouncilMember().getName());
+            else
+                jsonObject.addProperty("name", StringUtils.EMPTY);
+            if (attendence.getCouncilMember() != null && attendence.getCouncilMember().getMobileNumber() != null)
+                jsonObject.addProperty("mobileNumber", attendence.getCouncilMember().getMobileNumber());
+            else
+                jsonObject.addProperty("mobileNumber", StringUtils.EMPTY);
+            if (attendence.getCouncilMember() != null && attendence.getCouncilMember().getResidentialAddress() != null)
+                jsonObject.addProperty("address", attendence.getCouncilMember().getResidentialAddress());
+            else
+                jsonObject.addProperty("address", StringUtils.EMPTY);
+            if (attendence.getAttendedMeeting() != null)
+                jsonObject.addProperty("attendance", attendence.getAttendedMeeting() ? "Present" : "Absent");
+            else
+                jsonObject.addProperty("attendance", StringUtils.EMPTY);
+
             jsonObject.addProperty("id", attendence.getMeeting().getId());
         }
         return jsonObject;
-        }
+    }
 }

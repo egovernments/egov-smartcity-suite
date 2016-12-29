@@ -66,17 +66,13 @@
                             <form:options items="${categories}" itemValue="id" itemLabel="name"/>
                         </form:select>
                     </div>
-                    <label class="col-sm-2 control-label text-right"> <spring:message
-                            code='search.license.subCategory'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <form:select path="subCategoryId" id="subCategory" cssClass="form-control"
-                                     cssErrorClass="form-control error">
-                            <form:option value="">
-                                <spring:message code="lbl.category.select"/>
-                            </form:option>
-                            <form:options items="${subcategories}" itemValue="id" itemLabel="name"/>
-                        </form:select>
-                    </div>
+                   <label class="col-sm-2 control-label text-right"> <spring:message
+							code='search.license.subCategory' /></label>
+					<div class="col-sm-3 add-margin">
+						<select id="subCategory" name="subCategoryId" class="form-control"
+							required>
+						</select>
+					</div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-3 control-label text-right"> <spring:message
@@ -152,22 +148,28 @@
     </div>
 </div>
 <link rel="stylesheet"
-      href="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
 <link rel="stylesheet"
-      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet"
-      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
-<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
-        type="text/javascript"></script>
-<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
-        type="text/javascript"></script>
-<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"
-        type="text/javascript"></script>
-<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"
-        type="text/javascript"></script>
-<script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
-
-<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
-        type="text/javascript"></script>
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<script type="text/javascript"
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.bootstrap.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.flash.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/jszip.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/pdfmake.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/vfs_fonts.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.html5.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
         src="<cdn:url value='/resources/js/app/baseregister.js?rnd=${app_release_no}'/>"></script>

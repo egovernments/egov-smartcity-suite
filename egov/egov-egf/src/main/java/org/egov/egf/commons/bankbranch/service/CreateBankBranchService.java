@@ -88,6 +88,10 @@ public class CreateBankBranchService {
         return bankBranchRepository.findOne(id);
     }
 
+    public List<Bankbranch> getByBankId(final Integer bankId) {
+        return bankBranchRepository.findByBank_Id(bankId);
+    }
+
     public List<Bankbranch> getByIsActive(final Boolean isActive) {
         return bankBranchRepository.findByIsactive(isActive);
     }

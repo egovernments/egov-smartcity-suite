@@ -62,7 +62,7 @@
 				</div>
 				<label class="col-sm-2 control-label text-right"><spring:message
 						code="lbl.designation" /> <span class="mandatory"></span> </label>
-				<div class="col-sm-2 add-margin">
+				<div class="col-sm-3 add-margin">
 					<form:select path="designation" id="designation"
 						cssClass="form-control" required="required"
 						cssErrorClass="form-control error">
@@ -91,11 +91,11 @@
 					</form:select>
 					<form:errors path="qualification" cssClass="error-msg" />
 				</div>
-				<label class="col-sm-2 control-label text-right"><spring:message
-						code="lbl.caste" /> <span class="mandatory"></span></label>
+				<label class="col-sm-2 control-label text-right toggle-madatory-caste"><spring:message
+						code="lbl.caste" /><span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
-					<form:select path="caste" id="caste" required="required"
-						cssClass="form-control" cssErrorClass="form-control error">
+					<form:select path="caste" id="caste"
+						cssClass="form-control" cssErrorClass="form-control error" required="required">
 						<form:option value="">
 							<spring:message code="lbl.select" />
 						</form:option>
@@ -154,7 +154,7 @@
 				<div class="col-sm-3 add-margin">
 					<form:input type="text" cssClass="form-control patternvalidation"
 						data-pattern="regexp_alphabetspecialcharacters" path="emailId"
-						id="emailId" maxlength="32" />
+						id="emailId" maxlength="32" required="required" />
 					<form:errors path="emailId" cssClass="error-msg" />
 				</div>
 				<label class="col-sm-2 control-label text-right"><spring:message
@@ -168,7 +168,32 @@
 					<form:errors path="residentialAddress" cssClass="error-msg" />
 				</div>
 			</div>
-
+			<div class="dateofjoining" id="dateofjoining">
+				<div class="form-group">
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.date.of.joining" /> </label>
+					<div class="col-sm-3 add-margin">
+						<form:input type="text" cssClass="form-control dateval"
+							path="dateOfJoining"  id="txt-dateOfJoining" data-date-end-date="0d" />
+						<form:errors path="dateOfJoining" cssClass="error-msg" />
+					</div>
+				</div>
+			</div>
+			<c:if test="${state != 'NEW'}">
+				<div class="form-group">
+						<label class="col-sm-2 control-label text-right date-toggle-mandatory"><spring:message
+								code="lbl.status" /></label>
+						<div class="col-sm-3 add-margin">
+						 <label class="radio-inline">
+						<form:radiobutton path="status" value="ACTIVE" /> Active
+						 </label>
+    					<label class="radio-inline">
+						<form:radiobutton path="status" value="INACTIVE" />In Active
+						</label>
+							<form:errors path="status" cssClass="error-msg" />
+						</div>
+				</div>
+			</c:if>	
 			<input type="hidden" name="councilMember" value="${councilMember.id}" />
 			<form:hidden path="status" id="status"
 				value="${councilMember.status}" />
@@ -183,30 +208,31 @@
 <div class="col-md-12">
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-body">
-			<div class="form-group">
-				<label class="col-sm-2 control-label text-right"><spring:message
+			<div class="form-group hide-input-fields">
+				<label class="col-sm-2 control-label text-right toggle-madatory"><spring:message
 						code="lbl.electiondate" /> <span class="mandatory"></span> </label>
 				<div class="col-sm-3 add-margin">
-					<form:input type="text" cssClass="form-control dateval"
-						path="electionDate" id="electionDate" data-date-end-date="0d"
-						required="required" />
+					<form:input type="text" cssClass="form-control dateval addremoverequired"
+						path="electionDate"  id="electionDate" data-date-end-date="0d"
+						required="true" />
 					<form:errors path="electionDate" cssClass="error-msg" />
 				</div>
-				<label class="col-sm-2 control-label text-right"><spring:message
+				<label class="col-sm-2 control-label text-right toggle-madatory"><spring:message
 						code="lbl.oathdate" /> <span class="mandatory"></span> </label>
 				<div class="col-sm-3 add-margin">
-					<form:input type="text" cssClass="form-control dateval"
+					<form:input type="text" cssClass="form-control dateval addremoverequired"
 						path="oathDate" id="oathDate" data-date-end-date="0d"
-						required="required" />
+						required="true" />
 					<form:errors path="oathDate" cssClass="error-msg" />
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label text-right"><spring:message
+			<div class="party hide-input-fields" id="party">
+				<label class="col-sm-2 control-label text-right toggle-madatory"><spring:message
 						code="lbl.partyaffiliation" /> <span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
 					<form:select path="partyAffiliation" id="partyAffiliation"
-						required="required" cssClass="form-control"
+						required="true" cssClass="form-control addremoverequired"
 						cssErrorClass="form-control error">
 						<form:option value="">
 							<spring:message code="lbl.select" />
@@ -216,6 +242,22 @@
 					</form:select>
 					<form:errors path="partyAffiliation" cssClass="error-msg" />
 				</div>
+			</div>
+			<div class="category hide-input-fields" id="category">
+				<label class="col-sm-2 control-label text-right"><spring:message
+						code="lbl.category" /> <span class="mandatory"></span></label>
+				<div class="col-sm-3 add-margin">
+					<form:select path="category" id="category"
+						 cssClass="form-control" required="true"
+						cssErrorClass="form-control error">
+						<form:option value="">
+							<spring:message code="lbl.select" />
+						</form:option>
+						<form:options items="${category}"/>
+					</form:select>
+					<form:errors path="category" cssClass="error-msg" />
+				</div>
+			</div>
 				<label class="col-sm-2 control-label text-right"><spring:message
 						code="lbl.photo" /></label>
 				<div class="col-sm-3 add-margin">

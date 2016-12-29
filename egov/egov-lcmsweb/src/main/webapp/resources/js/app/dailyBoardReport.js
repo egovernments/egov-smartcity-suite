@@ -48,48 +48,53 @@ jQuery(document).ready(function($) {
 		});
 });
 
-
+var oTable = $('#dailyBoardReportResult-table');
+var oDataTable;
 		
 function submitForm() {
 	if($('form').valid()){
 		var caseType = $("#caseCategory").val();
 		var caseNumber = $("#caseNumber").val();
 		var lcNumber = $("#lcNumber").val();
-
 		var today = getdate();
-		
-		oTable= $('#dailyBoardReportResult-table');
 		$('#dailyBoardReportResult-header').show();
 		$('#reportgeneration-header').show();
-		var oDataTable=oTable.dataTable({
-			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-			"aLengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+		oDataTable=oTable.DataTable({
+			dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
 			"autoWidth": false,
 			"bDestroy": true,
 			"processing": true,
-			"oTableTools" : {
-				"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-				"aButtons" : [ 
-					               {
-							             "sExtends": "pdf",
-							             "mColumns": [ 1, 2, 3, 4,5,6,7,8,9,10],
-		                                 "sPdfMessage": "Report generated on "+today+"",
-		                                 "sTitle": "LegalCase Daily Board Report",
-		                                 "sPdfOrientation": "landscape"
-						                },
-						                {
-								             "sExtends": "xls",
-								             "mColumns": [ 1,2,3,4,5,6,7,8,9,10],
-			                                 "sPdfMessage": "Daily Board Report",
-			                                 "sTitle": "LegalCase Daily Board Report"
-							             },
-							             {
-								             "sExtends": "print",
-								             "mColumns": [ 1,2,3,4,5,6,7,8,9,10],
-			                                 "sPdfMessage": "Daily Board Report",
-			                                 "sTitle": "LegalCase Daily Board Report"
-							             }],
-				},
+			buttons: [
+						{
+						    extend: 'excel',
+						    filename: 'LegalCase Daily Board Report',
+							message : "Report generated on "+today+"",
+							exportOptions : {
+								columns : [0,1, 2, 3, 4, 5, 6, 7, 8,9,10]
+							}
+						},
+					  {
+					    extend: 'pdf',
+					    title: 'LegalCase Daily Board Report',
+					    filename: 'Daily Board Report',
+					    message : "Report generated on "+today+"",
+					    pageSize : 'A3',
+					    orientation : 'landscape',
+						exportOptions : {
+							columns : [0,1, 2, 3, 4, 5, 6, 7, 8,9,10]
+						}
+					},
+					{
+					    extend: 'print',
+					    header : true,
+					    title: 'LegalCase Daily Board Report',
+					    filename: 'Daily Board Report',
+						exportOptions : {
+							columns : [0,1, 2, 3, 4, 5, 6, 7, 8,9,10]
+						}
+					}
+					],
+
 				ajax : {
 					
 					url : "/lcms/reports/dailyBoardReportresults",
@@ -115,31 +120,20 @@ function submitForm() {
 						  ],
 						  "fnRowCallback" : function(row, data, index) {
 								$('td:eq(3)',row).html('<a href="javascript:void(0);" onclick="openLegalCase(\''+ data.lcNumber +'\')">' + data.caseNumber + '</a>');
-							},
-				           "fnDrawCallback": function ( oSettings ) {
-				                if ( oSettings.bSorted || oSettings.bFiltered )
-				                {
-				                    for ( var i=0, iLen=oSettings.aiDisplay.length ; i<iLen ; i++ )
-				                    {
-				                        $('td:eq(0)', oSettings.aoData[ oSettings.aiDisplay[i] ].nTr ).html( i+1 );
-				                    }
-				                }
-				            }	
+							}
+				          
 				});
-	}
-	
-	function updateSerialNo()
-	{
-		$( "#dailyBoardReportsResults-table tbody tr" ).each(function(index) {
-			if($(this).find('td').length>1)
-			{
-				oDataTable.fnUpdate(''+(index+1), index, 0);
-			}
-		});
-		
-	}
-	
 
+		 //s.no auto generation(will work in exported documents too..)
+		oDataTable.on( 'order.dt search.dt', function () {
+			oDataTable.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+               cell.innerHTML = i+1;
+               oDataTable.cell(cell).invalidate('dom'); 
+           } );
+       } ).draw();
+		
+
+	}
 }
 
 function onchnageofDate() {

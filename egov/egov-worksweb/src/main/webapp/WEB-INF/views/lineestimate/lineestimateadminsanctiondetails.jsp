@@ -74,7 +74,7 @@
 						<c:if test="${mode == 'readOnly' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
 							<td><c:out default="N/A" value="${lineEstimate.adminSanctionNumber }"></c:out></td>
 								<td><fmt:formatDate value="${lineEstimate.adminSanctionDate}" pattern="dd/MM/yyyy" /></td>
-								<td><c:out default="N/A" value="${adminsanctionbydesignation} - ${lineEstimate.adminSanctionBy.name }"></c:out></td>
+								<td><c:out default="N/A" value="${lineEstimate.adminSanctionBy }"></c:out></td>							
 						</c:if>
 					</tr>
 			</tbody>

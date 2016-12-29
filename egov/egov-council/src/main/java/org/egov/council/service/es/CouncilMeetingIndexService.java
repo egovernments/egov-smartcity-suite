@@ -107,7 +107,7 @@ public class CouncilMeetingIndexService {
             meetingIndex.setMeetingNumber(councilMeeting.getMeetingNumber() != null ?councilMeeting.getMeetingNumber():"");
             meetingIndex.setMeetingTime(councilMeeting.getMeetingTime() != null ?councilMeeting.getMeetingTime():"");
             meetingIndex.setStatus(councilMeeting.getStatus() != null ?councilMeeting.getStatus().getCode():"");
-            meetingIndex.setTotalNoOfCommitteMembers(councilMeeting.getCommitteeType() != null && councilMeeting.getCommitteeType().getCommiteemembers()!= null ?councilMeeting.getCommitteeType().getCommiteemembers().size():0);
+            meetingIndex.setTotalNoOfCommitteMembers(councilMeeting != null && councilMeeting.getMeetingAttendence()!= null ?councilMeeting.getMeetingAttendence().size():0);
             if(councilMeeting.getMeetingAttendence() != null){
                 for (MeetingAttendence attendence : councilMeeting.getMeetingAttendence()) {
                     if(attendence.getAttendedMeeting()) {

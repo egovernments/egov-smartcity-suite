@@ -46,8 +46,8 @@
 <html>
 <head> 
 	<title><s:text name='arrearRegReport.search' /></title>
-	<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js?rnd=${app_release_no}' context='/egi'/>"></script>
-	<script src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+	<script src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 	<script type="text/javascript">
 	function validateFormAndSubmit(){
 		 document.arrearRegForm.action='${pageContext.request.contextPath}/reports/arrearRegisterReport-generateArrearReport.action';

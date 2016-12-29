@@ -39,6 +39,8 @@
  */
 package org.egov.council.web.controller;
 
+import static org.egov.infra.web.utils.WebUtils.toJSON;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,88 +67,85 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 @Controller
 @RequestMapping("/committeetype")
 public class CouncilCommitteeTypeController {
 
-    private final static String COUNCILCOMMITTEETYPE_NEW = "councilcommittetype-new";
-    private final static String COUNCILCOMMITTEETYPE_RESULT = "councilcommitteetype-result";
-    private final static String COUNCILCOMMITTEETYPE_EDIT = "councilcommitteetype-edit";
-    private final static String COUNCILCOMMITTEETYPE_VIEW = "councilcommitteetype-view";
-    private final static String COUNCILCOMMITTEETYPE_SEARCH = "councilcommitteetype-search";
+    private static final String IS_SELECTED_ALL = "isSelectedAll";
+    private static final String COUNCIL_MEMBERS = "councilMembers";
+    private static final String COMMITTEE_TYPE = "committeeType";
+    private static final String COUNCILCOMMITTEETYPE_NEW = "councilcommittetype-new";
+    private static final String COUNCILCOMMITTEETYPE_RESULT = "councilcommitteetype-result";
+    private static final String COUNCILCOMMITTEETYPE_EDIT = "councilcommitteetype-edit";
+    private static final String COUNCILCOMMITTEETYPE_VIEW = "councilcommitteetype-view";
+    private static final String COUNCILCOMMITTEETYPE_SEARCH = "councilcommitteetype-search";
 
     @Autowired
     private CommitteeTypeService committeeTypeService;
 
     @Autowired
     private MessageSource messageSource;
-    
+
     @Autowired
     private CouncilMemberService councilMemberService;
-    
+
     @Autowired
     private CouncilCommitteeMemberService councilCommitteeMemberService;
-
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
 
         CommitteeType committeeType = new CommitteeType();
 
-        if (committeeType != null && committeeType.getCode() == null)
-            committeeType.setCode(RandomStringUtils.random(4, Boolean.TRUE, Boolean.TRUE).toUpperCase());
-        model.addAttribute("councilMembers",councilMemberService.findAll());
-        model.addAttribute("committeeType", committeeType);
+        committeeType.setCode(RandomStringUtils.random(4, Boolean.TRUE, Boolean.TRUE).toUpperCase());
+        model.addAttribute(COUNCIL_MEMBERS, councilMemberService.findAllByActive());
+        model.addAttribute(COMMITTEE_TYPE, committeeType);
         return COUNCILCOMMITTEETYPE_NEW;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final CommitteeType committeeType, final BindingResult errors,
-			final Model model, final RedirectAttributes redirectAttrs) {
+            final Model model, final RedirectAttributes redirectAttrs) {
 
-		List<CommitteeMembers> committeeMembersList = new ArrayList<CommitteeMembers>();
-		if (errors.hasErrors()) {
+        List<CommitteeMembers> committeeMembersList = new ArrayList<>();
+        if (errors.hasErrors()) {
 
-			int unselectedCount = 0;
+            int unselectedCount = 0;
 
-			List<CouncilMember> councilMembers = new ArrayList<CouncilMember>();
-			for (CommitteeMembers committeeMembers : committeeType.getCommiteemembers()) {
-				CouncilMember councilMember = committeeMembers.getCouncilMember();
-				if (!councilMember.getChecked()) {
-					unselectedCount++;
-				}
-				councilMembers.add(committeeMembers.getCouncilMember());
-			}
+            List<CouncilMember> councilMembers = new ArrayList<>();
+            for (CommitteeMembers committeeMembers : committeeType.getCommiteemembers()) {
+                CouncilMember councilMember = committeeMembers.getCouncilMember();
+                if (!councilMember.getChecked()) {
+                    unselectedCount++;
+                }
+                councilMembers.add(committeeMembers.getCouncilMember());
+            }
 
-			model.addAttribute("isSelectedAll", (unselectedCount == 0));
-			model.addAttribute("councilMembers", councilMembers);
-			model.addAttribute("committeeType", committeeType);
-			return COUNCILCOMMITTEETYPE_NEW;
-		}
-		for (CommitteeMembers committeeMembers : committeeType.getCommiteemembers()) {
-			if (committeeMembers != null && committeeMembers.getCouncilMember() != null
-					&& committeeMembers.getCouncilMember().getChecked()) {
-				committeeMembers.setCouncilMember(committeeMembers.getCouncilMember());
-				committeeMembers.setCommitteeType(committeeType);
-				committeeMembersList.add(committeeMembers);
-			}
+            model.addAttribute(IS_SELECTED_ALL, unselectedCount == 0);
+            model.addAttribute(COUNCIL_MEMBERS, councilMembers);
+            model.addAttribute(COMMITTEE_TYPE, committeeType);
+            return COUNCILCOMMITTEETYPE_NEW;
+        }
+        for (CommitteeMembers committeeMembers : committeeType.getCommiteemembers()) {
+            if (committeeMembers != null && committeeMembers.getCouncilMember() != null
+                    && committeeMembers.getCouncilMember().getChecked()) {
+                committeeMembers.setCouncilMember(committeeMembers.getCouncilMember());
+                setCommitteeTypeAndMembers(committeeType, committeeMembersList, committeeMembers);
+            }
 
-		}
-		committeeType.getCommiteemembers().clear();
-		committeeType.setCommiteemembers(committeeMembersList);
-		committeeTypeService.create(committeeType);
-		redirectAttrs.addFlashAttribute("message",
-				messageSource.getMessage("msg.councilCommitteeType.success", null, null));
-		return "redirect:/committeetype/result/" + committeeType.getId();
-	}
+        }
+        committeeType.getCommiteemembers().clear();
+        committeeType.setCommiteemembers(committeeMembersList);
+        committeeTypeService.create(committeeType);
+        redirectAttrs.addFlashAttribute("message",
+                messageSource.getMessage("msg.councilCommitteeType.success", null, null));
+        return "redirect:/committeetype/result/" + committeeType.getId();
+    }
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String view(@PathVariable("id") final Long id, Model model) {
         CommitteeType committeeType = committeeTypeService.findOne(id);
-        model.addAttribute("committeeType", committeeType);
+        model.addAttribute(COMMITTEE_TYPE, committeeType);
         model.addAttribute("committeeMembers", councilCommitteeMemberService.findAllByCommitteType(committeeType));
         return COUNCILCOMMITTEETYPE_VIEW;
     }
@@ -159,86 +158,92 @@ public class CouncilCommitteeTypeController {
         committeeType1.setCode(committeeType.getCode());
         committeeType1.setName(committeeType.getName());
         committeeType1.setIsActive(committeeType.getIsActive());
-        List<CouncilMember> councilMembers=councilMemberService.findAll();
-        int unselectedCount=0;
-        if(committeeType1.getCommiteemembers().isEmpty()){
+        List<CouncilMember> councilMembers = councilMemberService.findAll();
+        int unselectedCount = 0;
+        if (committeeType1.getCommiteemembers().isEmpty()) {
             for (CouncilMember councilMember : councilMembers) {
-            	
-                for(CommitteeMembers committeeMembers :committeeType.getCommiteemembers()){
-                    if(committeeMembers.getCouncilMember().getId().equals(councilMember.getId())){
+
+                for (CommitteeMembers committeeMembers : committeeType.getCommiteemembers()) {
+                    if (committeeMembers.getCouncilMember().getId().equals(councilMember.getId())) {
                         councilMember.setChecked(true);
                         break;
-                    } 
+                    }
                 }
-                
-                if(councilMember.getChecked()==null)
-            	{
-            		unselectedCount++;
-            	}
+
+                if (councilMember.getChecked() == null) {
+                    unselectedCount++;
+                }
             }
         }
-        
-        model.addAttribute("isSelectedAll",(unselectedCount==0));
-        model.addAttribute("councilMembers", councilMembers);
-        model.addAttribute("committeeType", committeeType1);
-        
+
+        model.addAttribute(IS_SELECTED_ALL, unselectedCount == 0);
+        model.addAttribute(COUNCIL_MEMBERS, councilMembers);
+        model.addAttribute(COMMITTEE_TYPE, committeeType1);
+
         return COUNCILCOMMITTEETYPE_EDIT;
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final CommitteeType committeeType, final BindingResult errors,
-			final Model model, final RedirectAttributes redirectAttrs) {
-		List<CommitteeMembers> existingCommitteeMembersList = councilCommitteeMemberService
-				.findAllByCommitteType(committeeType);
-		if (errors.hasErrors()) {
-			int unselectedCount = 0;
+            final Model model, final RedirectAttributes redirectAttrs) {
+        List<CommitteeMembers> existingCommitteeMembersList = councilCommitteeMemberService
+                .findAllByCommitteTypeMemberIsActive(committeeType);
+        if (errors.hasErrors()) {
+            int unselectedCount = 0;
+            List<CouncilMember> councilMembers = new ArrayList<>();
+            for (CommitteeMembers committeeMembers : committeeType.getCommiteemembers()) {
+                CouncilMember councilMember = committeeMembers.getCouncilMember();
+                if (!councilMember.getChecked()) {
+                    unselectedCount++;
+                }
+                councilMembers.add(committeeMembers.getCouncilMember());
+            }
 
-			List<CouncilMember> councilMembers = new ArrayList<CouncilMember>();
-			for (CommitteeMembers committeeMembers : committeeType.getCommiteemembers()) {
-				CouncilMember councilMember = committeeMembers.getCouncilMember();
-				if (!councilMember.getChecked()) {
-					unselectedCount++;
-				}
-				councilMembers.add(committeeMembers.getCouncilMember());
-			}
+            model.addAttribute(IS_SELECTED_ALL, unselectedCount == 0);
+            model.addAttribute(COUNCIL_MEMBERS, councilMembers);
+            model.addAttribute(COMMITTEE_TYPE, committeeType);
+            return COUNCILCOMMITTEETYPE_EDIT;
+        }
 
-			model.addAttribute("isSelectedAll", (unselectedCount == 0));
-			model.addAttribute("councilMembers", councilMembers);
-			model.addAttribute("committeeType", committeeType);
-			return COUNCILCOMMITTEETYPE_EDIT;
-		}
+        List<CommitteeMembers> committeeMembersList = new ArrayList<>();
+        List<CommitteeMembers> deleteCommitteeMembersList = new ArrayList<>();
+        setCommitteeMembers(committeeType, committeeMembersList);
+        committeeType.setCommiteemembers(committeeMembersList);
+        for (CommitteeMembers committeeMembers : existingCommitteeMembersList) {
+            if (!committeeType.getCommiteemembers().contains(committeeMembers)) {
+                deleteCommitteeMembersList.add(committeeMembers);
+            }
+        }
+        councilCommitteeMemberService.delete(deleteCommitteeMembersList);
+        committeeTypeService.update(committeeType);
+        redirectAttrs.addFlashAttribute("message",
+                messageSource.getMessage("msg.councilCommitteeType.success", null, null));
+        return "redirect:/committeetype/result/" + committeeType.getId();
+    }
 
-		List<CommitteeMembers> committeeMembersList = new ArrayList<CommitteeMembers>();
-		List<CommitteeMembers> deleteCommitteeMembersList = new ArrayList<CommitteeMembers>();
-		for (CommitteeMembers committeeMembers : committeeType.getCommiteemembers()) {
-			if (committeeMembers.getChecked() != null && committeeMembers.getChecked()
-					&& committeeMembers.getId() != null) {
-				committeeMembers.setCommitteeType(committeeType);
-				committeeMembersList.add(committeeMembers);
-			} else if (committeeMembers.getCouncilMember().getChecked() != null
-					&& committeeMembers.getCouncilMember().getChecked()
-					&& committeeMembers.getCouncilMember().getId() != null) {
-				committeeMembers.setCommitteeType(committeeType);
-				committeeMembersList.add(committeeMembers);
-			}
-		}
-		committeeType.setCommiteemembers(committeeMembersList);
-		for (CommitteeMembers committeeMembers : existingCommitteeMembersList) {
-			if (!committeeType.getCommiteemembers().contains(committeeMembers)) {
-				deleteCommitteeMembersList.add(committeeMembers);
-			}
-		}
-		councilCommitteeMemberService.delete(deleteCommitteeMembersList);
-		committeeTypeService.update(committeeType);
-		redirectAttrs.addFlashAttribute("message",
-				messageSource.getMessage("msg.councilCommitteeType.success", null, null));
-		return "redirect:/committeetype/result/" + committeeType.getId();
-	}
+    private void setCommitteeMembers(final CommitteeType committeeType, List<CommitteeMembers> committeeMembersList) {
+        for (CommitteeMembers committeeMembers : committeeType.getCommiteemembers()) {
+            if (committeeMembers.getChecked() != null && committeeMembers.getChecked()
+                    && committeeMembers.getId() != null) {
+                setCommitteeTypeAndMembers(committeeType, committeeMembersList, committeeMembers);
+            } else if (committeeMembers.getCouncilMember().getChecked() != null
+                    && committeeMembers.getCouncilMember().getChecked()
+                    && committeeMembers.getCouncilMember().getId() != null) {
+                setCommitteeTypeAndMembers(committeeType, committeeMembersList, committeeMembers);
+            }
+        }
+    }
+
+    private void setCommitteeTypeAndMembers(final CommitteeType committeeType, List<CommitteeMembers> committeeMembersList,
+            CommitteeMembers committeeMembers) {
+        committeeMembers.setCommitteeType(committeeType);
+        committeeMembersList.add(committeeMembers);
+    }
 
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
     public String result(@PathVariable("id") final Long id, Model model) {
         CommitteeType committeeType = committeeTypeService.findOne(id);
-        model.addAttribute("committeeType", committeeType);
+        model.addAttribute(COMMITTEE_TYPE, committeeType);
         model.addAttribute("committeeMembers", councilCommitteeMemberService.findAllByCommitteType(committeeType));
         return COUNCILCOMMITTEETYPE_RESULT;
     }
@@ -246,25 +251,19 @@ public class CouncilCommitteeTypeController {
     @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
     public String search(@PathVariable("mode") final String mode, Model model) {
         CommitteeType committeeType = new CommitteeType();
-        model.addAttribute("committeeType", committeeType);
+        model.addAttribute(COMMITTEE_TYPE, committeeType);
         return COUNCILCOMMITTEETYPE_SEARCH;
 
     }
 
     @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, Model model,
+    @ResponseBody
+    public String ajaxsearch(@PathVariable("mode") final String mode, Model model,
             @ModelAttribute final CommitteeType committeeType) {
         List<CommitteeType> searchResultList = committeeTypeService.search(committeeType);
-        String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
+        return new StringBuilder("{ \"data\":")
+                .append(toJSON(searchResultList, CommitteeType.class, CouncilCommitteeTypeJsonAdaptor.class)).append("}")
                 .toString();
-        return result;
     }
 
-    public Object toSearchResultJson(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(CommitteeType.class, new CouncilCommitteeTypeJsonAdaptor())
-                .create();
-        final String json = gson.toJson(object);
-        return json;
-    }
 }

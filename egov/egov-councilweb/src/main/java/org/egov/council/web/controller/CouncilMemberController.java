@@ -17,6 +17,7 @@ import org.egov.council.service.CouncilMemberService;
 import org.egov.council.service.CouncilPartyService;
 import org.egov.council.service.CouncilQualificationService;
 import org.egov.council.service.es.CouncilMemberIndexService;
+import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.council.web.adaptor.CouncilMemberJsonAdaptor;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -77,11 +78,13 @@ public class CouncilMemberController {
         model.addAttribute("councilQualifications", councilQualificationService.getActiveQualifications());
         model.addAttribute("councilCastes", councilCasteService.getActiveCastes());
         model.addAttribute("councilPartys", councilPartyService.getActiveParties());
+        model.addAttribute("category", CouncilConstants.CATEGORY);
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
         prepareNewForm(model);
+        model.addAttribute("state", "NEW");
         model.addAttribute(COUNCIL_MEMBER, new CouncilMember());
         return COUNCILMEMBER_NEW;
     }

@@ -133,9 +133,7 @@ public class WorkProgressRegister extends AbstractAuditable {
     @Temporal(TemporalType.DATE)
     private Date adminSanctionDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "adminSanctionBy")
-    private User adminSanctionBy;
+    private String adminSanctionBy;
 
     private BigDecimal adminSanctionAmount;
 
@@ -359,14 +357,6 @@ public class WorkProgressRegister extends AbstractAuditable {
 
     public void setAdminSanctionDate(final Date adminSanctionDate) {
         this.adminSanctionDate = adminSanctionDate;
-    }
-
-    public User getAdminSanctionBy() {
-        return adminSanctionBy;
-    }
-
-    public void setAdminSanctionBy(final User adminSanctionBy) {
-        this.adminSanctionBy = adminSanctionBy;
     }
 
     public BigDecimal getAdminSanctionAmount() {
@@ -703,6 +693,14 @@ public class WorkProgressRegister extends AbstractAuditable {
 
     public void setBOQExists(final boolean bOQExists) {
         this.bOQExists = bOQExists;
+    }
+    
+    public String getAdminSanctionBy() {
+        return adminSanctionBy;
+    }
+
+    public void setAdminSanctionBy(final String adminSanctionBy) {
+        this.adminSanctionBy = adminSanctionBy;
     }
 
 }

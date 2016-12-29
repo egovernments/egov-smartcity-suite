@@ -157,7 +157,7 @@ public class ReportGenerationService {
             reportParams.put("applicantName", WordUtils.capitalize(ownerName));
             reportParams.put("address", propAddress);
             reportParams.put("doorno", doorno != null ? doorno[0] : "");
-            reportParams.put("usersignature", securityUtils.getCurrentUser().getSignature() != null
+            reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null
                     ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : null);
             reportParams.put("applicationDate", formatter.format(connectionDetails.getApplicationDate()));
             reportParams.put("donationCharges", connectionDetails.getDonationCharges());

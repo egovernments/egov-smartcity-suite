@@ -64,9 +64,9 @@
    	    <link rel="stylesheet" href="<cdn:url  value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
 		<link href="<cdn:url  value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 		<link href="<cdn:url  value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>" rel="stylesheet" type="text/css" />
-		
+		<link rel="stylesheet" href="<cdn:url  value='/resources/global/css/jquery/plugins/select2/4.0.3/select2.min.css' context='/egi'/>">
+
 		<script src="<cdn:url  value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
-		
 		<script type="text/javascript" src="<cdn:url  value='/resources/js/app/validations.js'/>"></script>
 		<script type="text/javascript" src="<cdn:url  value='/resources/js/app/SASvalidation.js'/>"></script>
 		<script type="text/javascript" src="<cdn:url  value='/resources/js/app/dateValidation.js'/>"></script>
@@ -76,6 +76,7 @@
 	    <script type="text/javascript" src="<cdn:url  value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 	    <script src="<cdn:url  value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
         <script src="<cdn:url  value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+        <script src="<cdn:url  value='/resources/global/js/jquery/plugins/select2/4.0.3/select2.min.js' context='/egi'/>"></script>
         <script src="<cdn:url  value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
         
     	<decorator:head/>

@@ -106,19 +106,16 @@ public class EditDemandForDataEntryController {
     public String newForm(final Model model, @PathVariable final String consumerCode,
             @ModelAttribute final WaterConnectionDetails waterConnectionDetails, final HttpServletRequest request) {
 
-        return loadViewData(model, request, waterConnectionDetails);
+        return loadViewData(model, waterConnectionDetails);
 
     }
 
-    private String loadViewData(final Model model, final HttpServletRequest request,
-            final WaterConnectionDetails waterConnectionDetails) {
+    private String loadViewData(final Model model, final WaterConnectionDetails waterConnectionDetails) {
         final List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>();
         final Set<DemandDetail> tempDemandDetail = new LinkedHashSet<DemandDetail>();
         List<Installment> allInstallments = new ArrayList<Installment>();
         final DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
         try {
-            // allInstallments =
-            // waterTaxUtils.getInstallmentListByStartDate(dateFormat.parse("01/04/1963"));
             allInstallments = waterTaxUtils.getInstallmentsForCurrYear(
                     dateFormat.parse(dateFormat.format(waterConnectionDetails.getExecutionDate())));
         } catch (final ParseException e) {
@@ -152,7 +149,7 @@ public class EditDemandForDataEntryController {
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
         model.addAttribute("demandDetailBeanList", demandDetailBeanList);
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
-        model.addAttribute("current1HalfInstallment", !demandDetailBeanList.isEmpty() && demandDetailBeanList.size()>1 
+        model.addAttribute("current1HalfInstallment", !demandDetailBeanList.isEmpty() && demandDetailBeanList.size() > 1
                 ? demandDetailBeanList.get(demandDetailBeanList.size() - 2).getInstallment() : null);
         model.addAttribute("current2HalfInstallment", !demandDetailBeanList.isEmpty()
                 ? demandDetailBeanList.get(demandDetailBeanList.size() - 1).getInstallment() : null);

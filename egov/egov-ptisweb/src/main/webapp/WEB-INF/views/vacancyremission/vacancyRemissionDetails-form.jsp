@@ -44,8 +44,8 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js?rnd=${app_release_no}'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/javascript/dateValidation.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/javascript/dateValidation.js'/>"></script>
 
 <form:form id="vacancyRemissionDetailsForm" method="post"
 	class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemission" enctype="multipart/form-data">

@@ -100,7 +100,7 @@ function enableFieldsForPropType() {
 			jQuery('tr.bpddetailsheader').hide();
 			jQuery('tr.bpddetails').hide();
 			jQuery("#apartment").prop('selectedIndex', 0);
-			jQuery('td.apartmentRow').hide();
+			jQuery('div.apartmentRow').hide();
 			jQuery('#houseNoSpan').hide();
 		} else {
 			jQuery('tr.floordetails').show();
@@ -117,7 +117,7 @@ function enableFieldsForPropType() {
 			jQuery('tr.appurtenant').show();
 			//jQuery('tr.superStructureRow').show();
 			jQuery('tr.bpddetailsheader').show();
-			jQuery('td.apartmentRow').show();
+			jQuery('div.apartmentRow').show();
 			jQuery('#houseNoSpan').show();
 		}
 	}
@@ -432,22 +432,21 @@ function openWindow(fileName) {
 	window.open(filePath, '_blank',
 			'location=no,resizable=no,scrollbars=yes,left=600px,top=0px');
 }
-
 function makeMandatory() {
 	var reason = document.forms[0].mutationId.options[document.forms[0].mutationId.selectedIndex].text;
 	if (reason == "BIFURCATION") {
-		jQuery('td.parentIndexText').show();
+		jQuery('div.parentIndexText').show();
 	} else {
 		jQuery('#parentIndex').val("");
-		jQuery('td.parentIndexText').hide();
+		jQuery('div.parentIndexText').hide();
 	}
 }
 
 function showMutationFields(mutationReason) {
 	if (mutationReason == "BIFURCATION") {
-		jQuery('td.parentIndexText').show();
+		jQuery('div.parentIndexText').show();
 	} else {
-		jQuery('td.parentIndexText').hide();
+		jQuery('div.parentIndexText').hide();
 	}
 }
 
@@ -1150,7 +1149,7 @@ function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 			//jQuery('tr.bpddetailsheader').hide();
 			//jQuery('tr.bpddetails').hide();
 			jQuery("#apartment").prop('selectedIndex', 0);
-			jQuery('td.apartmentRow').hide();
+			jQuery('div.apartmentRow').hide();
 		} else {
 			jQuery('tr.floordetails').show();
 			jQuery('tr.vacantlanddetaills').hide();
@@ -1162,7 +1161,7 @@ function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 			//jQuery('tr.superStructureRow').show();
 			//jQuery('tr.bpddetailsheader').show();
 			//jQuery('tr.bpddetails').show();
-			jQuery('td.apartmentRow').show();
+			jQuery('div.apartmentRow').show();
 			if (appurtenantLandChecked == 'true') {
 				jQuery('tr.vacantlanddetaills').show();
 				jQuery('tr.extentSite').hide();

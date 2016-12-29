@@ -107,16 +107,13 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
 @Validation
-@Results({
-        @Result(name = "search", location = "payment-search.jsp"),
+@Results({ @Result(name = "search", location = "payment-search.jsp"),
         @Result(name = "searchbills", location = "payment-searchbills.jsp"),
         @Result(name = "tnebSearch", location = "payment-tnebSearch.jsp"),
         @Result(name = "balance", location = "payment-balance.jsp"),
         @Result(name = "modify", location = "payment-modify.jsp"),
-        @Result(name = "form", location = "payment-form.jsp"),
-        @Result(name = "view", location = "payment-view.jsp"),
-        @Result(name = "list", location = "payment-list.jsp")
-})
+        @Result(name = "form", location = "payment-form.jsp"), @Result(name = "view", location = "payment-view.jsp"),
+        @Result(name = "list", location = "payment-list.jsp") })
 public class PaymentAction extends BasePaymentAction {
     private final static String FORWARD = "Forward";
     private static final long serialVersionUID = 1L;
@@ -190,7 +187,6 @@ public class PaymentAction extends BasePaymentAction {
     private Map<Long, BigDecimal> deductionAmtMap = new HashMap<Long, BigDecimal>();
     private Map<Long, BigDecimal> paidAmtMap = new HashMap<Long, BigDecimal>();
     private List<EgAdvanceRequisition> advanceRequisitionList = new ArrayList<EgAdvanceRequisition>();
-    private VoucherHelper voucherHelper;
     private CFunction cFunctionobj;
     private String rtgsDefaultMode;
     private Date rtgsModeRestrictionDateForCJV;
@@ -242,14 +238,11 @@ public class PaymentAction extends BasePaymentAction {
         if (parameters.get("fundId") != null && !parameters.get("fundId")[0].equals("-1")) {
             final Fund fund = (Fund) persistenceService.find("from Fund where id=?",
                     Integer.parseInt(parameters.get("fundId")[0]));
-            addDropdownData(
-                    "bankbranchList",
-                    persistenceService
-                            .findAllBy(
-                                    "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and type in ('RECEIPTS_PAYMENTS','PAYMENTS') ) and br.isactive=true order by br.bank.name asc",
-                                    fund));
-        }
-        else
+            addDropdownData("bankbranchList",
+                    persistenceService.findAllBy(
+                            "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and type in ('RECEIPTS_PAYMENTS','PAYMENTS') ) and br.isactive=true order by br.bank.name asc",
+                            fund));
+        } else
             addDropdownData("bankbranchList", Collections.EMPTY_LIST);
 
         if (parameters.get("functionSel") != null && !parameters.get("functionSel")[0].equals("-1")
@@ -258,24 +251,22 @@ public class PaymentAction extends BasePaymentAction {
                     Long.valueOf(parameters.get("functionSel")[0]));
 
         if (getBankbranch() != null)
-            addDropdownData("bankaccountList",
-                    persistenceService.findAllBy(" from Bankaccount where bankbranch.id=? and isactive=true ", getBankbranch()));
+            addDropdownData("bankaccountList", persistenceService
+                    .findAllBy(" from Bankaccount where bankbranch.id=? and isactive=true ", getBankbranch()));
         else if (parameters.get("paymentheader.bankaccount.bankbranch.id") != null
                 && !parameters.get("paymentheader.bankaccount.bankbranch.id")[0].equals("-1"))
-            addDropdownData(
-                    "bankaccountList",
+            addDropdownData("bankaccountList",
                     persistenceService.findAllBy(" from Bankaccount where bankbranch.id=? and isactive=true ",
                             Integer.valueOf(parameters.get("paymentheader.bankaccount.bankbranch.id")[0])));
         else
             addDropdownData("bankaccountList", Collections.EMPTY_LIST);
         if (getBillregister() != null && getBillregister().getId() != null) {
-            billregister = (EgBillregister) persistenceService.find(" from EgBillregister where id=?", getBillregister().getId());
-            addDropdownData(
-                    "bankbranchList",
-                    persistenceService
-                            .findAllBy(
-                                    "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? ) and br.isactive=true order by br.bank.name asc",
-                                    billregister.getEgBillregistermis().getFund()));
+            billregister = (EgBillregister) persistenceService.find(" from EgBillregister where id=?",
+                    getBillregister().getId());
+            addDropdownData("bankbranchList",
+                    persistenceService.findAllBy(
+                            "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? ) and br.isactive=true order by br.bank.name asc",
+                            billregister.getEgBillregistermis().getFund()));
         }
 
         addDropdownData("designationList", Collections.EMPTY_LIST);
@@ -283,7 +274,8 @@ public class PaymentAction extends BasePaymentAction {
         addDropdownData("regionsList", VoucherHelper.TNEB_REGIONS);
         addDropdownData("financialYearsList", financialYearDAO.getAllActiveFinancialYearList());
         monthMap = DateUtils.getAllMonthsWithFullNames();
-        typeOfAccount = FinancialConstants.TYPEOFACCOUNT_PAYMENTS + "," + FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS;
+        typeOfAccount = FinancialConstants.TYPEOFACCOUNT_PAYMENTS + ","
+                + FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed prepare.");
     }
@@ -292,47 +284,38 @@ public class PaymentAction extends BasePaymentAction {
         if (typeOfAccount != null && !typeOfAccount.equals("")) {
             if (typeOfAccount.indexOf(",") != -1) {
                 final String[] strArray = typeOfAccount.split(",");
-                addDropdownData(
-                        "bankbranchList",
-                        persistenceService
-                                .findAllBy(
-                                        "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and isactive = true and type in (?,?) ) and br.isactive=true and br.bank.isactive = true order by br.bank.name asc",
-                                        fund, BankAccountType.valueOf(strArray[0]),
-                                        BankAccountType.valueOf(strArray[1])));
+                addDropdownData("bankbranchList",
+                        persistenceService.findAllBy(
+                                "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and isactive = true and type in (?,?) ) and br.isactive=true and br.bank.isactive = true order by br.bank.name asc",
+                                fund, BankAccountType.valueOf(strArray[0]), BankAccountType.valueOf(strArray[1])));
             } else
-                addDropdownData(
-                        "bankbranchList",
-                        persistenceService
-                                .findAllBy(
-                                        "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and isactive = true and type in (?) ) and br.isactive=true and br.bank.isactive = true order by br.bank.name asc",
-                                        fund, typeOfAccount));
+                addDropdownData("bankbranchList",
+                        persistenceService.findAllBy(
+                                "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and isactive = true and type in (?) ) and br.isactive=true and br.bank.isactive = true order by br.bank.name asc",
+                                fund, typeOfAccount));
         } else
-            addDropdownData(
-                    "bankbranchList",
-                    persistenceService
-                            .findAllBy(
-                                    "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and isactive = true) and br.isactive=true and br.bank.isactive = true order by br.bank.name asc",
-                                    fund));
+            addDropdownData("bankbranchList",
+                    persistenceService.findAllBy(
+                            "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and isactive = true) and br.isactive=true and br.bank.isactive = true order by br.bank.name asc",
+                            fund));
         String bankCode = null;
 
         if (billSubType != null && !billSubType.equalsIgnoreCase("")) {
 
             try {
-                final List<AppConfigValues> configValues = appConfigValuesService.
-                        getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
-                                FinancialConstants.EB_VOUCHER_PROPERTY_BANK);
+                final List<AppConfigValues> configValues = appConfigValuesService.getConfigValuesByModuleAndKey(
+                        FinancialConstants.MODULE_NAME_APPCONFIG, FinancialConstants.EB_VOUCHER_PROPERTY_BANK);
 
                 for (final AppConfigValues appConfigVal : configValues)
                     bankCode = appConfigVal.getValue();
             } catch (final Exception e) {
-                throw new ApplicationRuntimeException("Appconfig value for EB Voucher propartys is not defined in the system");
+                throw new ApplicationRuntimeException(
+                        "Appconfig value for EB Voucher propartys is not defined in the system");
             }
-            addDropdownData(
-                    "bankbranchList",
-                    persistenceService
-                            .findAllBy(
-                                    "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and type in ('RECEIPTS_PAYMENTS','PAYMENTS') ) and br.isactive=true and br.bank.code = ? order by br.bank.name asc",
-                                    fund, bankCode));
+            addDropdownData("bankbranchList",
+                    persistenceService.findAllBy(
+                            "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and type in ('RECEIPTS_PAYMENTS','PAYMENTS') ) and br.isactive=true and br.bank.code = ? order by br.bank.name asc",
+                            fund, bankCode));
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed loadbankBranch.");
@@ -377,15 +360,16 @@ public class PaymentAction extends BasePaymentAction {
         for (final String key : propartyAppConfigKeysList) {
             String value = null;
             try {
-                final List<AppConfigValues> configValues = appConfigValuesService.
-                        getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, key);
+                final List<AppConfigValues> configValues = appConfigValuesService
+                        .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, key);
 
                 for (final AppConfigValues appConfigVal : configValues) {
                     value = appConfigVal.getValue();
                     propartyAppConfigResultList.put(key, value);
                 }
             } catch (final Exception e) {
-                throw new ApplicationRuntimeException("Appconfig value for EB Voucher propartys is not defined in the system");
+                throw new ApplicationRuntimeException(
+                        "Appconfig value for EB Voucher propartys is not defined in the system");
             }
         }
         for (final String key : propartyAppConfigResultList.keySet()) {
@@ -394,14 +378,11 @@ public class PaymentAction extends BasePaymentAction {
                 voucherHeader.setFundId((Fund) persistenceService.find("from Fund where code = ?",
                         propartyAppConfigResultList.get(key)));
             if (key.equals("EB Voucher Property-Function"))
-                voucherHeader.getVouchermis()
-                        .setFunction(
-                                (CFunction) persistenceService.find("from CFunction where code = ?",
-                                        propartyAppConfigResultList.get(key)));
+                voucherHeader.getVouchermis().setFunction((CFunction) persistenceService
+                        .find("from CFunction where code = ?", propartyAppConfigResultList.get(key)));
             if (key.equals("EB Voucher Property-Department"))
-                voucherHeader.getVouchermis().setDepartmentid(
-                        (Department) persistenceService.find("from Department where deptCode = ?",
-                                propartyAppConfigResultList.get(key)));
+                voucherHeader.getVouchermis().setDepartmentid((Department) persistenceService
+                        .find("from Department where deptCode = ?", propartyAppConfigResultList.get(key)));
             if (key.equals("EB Voucher Property-BankBranch"))
                 bank_branch = propartyAppConfigResultList.get(key);
             if (key.equals("EB Voucher Property-BankAccount")) {
@@ -433,18 +414,23 @@ public class PaymentAction extends BasePaymentAction {
         if (voucherHeader.getFundId() != null)
             sql.append(" and bill.egBillregistermis.fund.id=" + voucherHeader.getFundId().getId());
         if (voucherHeader.getVouchermis().getFundsource() != null)
-            sql.append(" and bill.egBillregistermis.fundsource.id=" + voucherHeader.getVouchermis().getFundsource().getId());
+            sql.append(" and bill.egBillregistermis.fundsource.id="
+                    + voucherHeader.getVouchermis().getFundsource().getId());
         if (voucherHeader.getVouchermis().getDepartmentid() != null)
-            sql.append(" and bill.egBillregistermis.egDepartment.id=" + voucherHeader.getVouchermis().getDepartmentid().getId());
+            sql.append(" and bill.egBillregistermis.egDepartment.id="
+                    + voucherHeader.getVouchermis().getDepartmentid().getId());
         if (voucherHeader.getVouchermis().getSchemeid() != null)
             sql.append(" and bill.egBillregistermis.scheme.id=" + voucherHeader.getVouchermis().getSchemeid().getId());
         if (voucherHeader.getVouchermis().getSubschemeid() != null)
-            sql.append(" and bill.egBillregistermis.subScheme.id=" + voucherHeader.getVouchermis().getSubschemeid().getId());
+            sql.append(" and bill.egBillregistermis.subScheme.id="
+                    + voucherHeader.getVouchermis().getSubschemeid().getId());
         if (voucherHeader.getVouchermis().getFunctionary() != null)
-            sql.append(" and bill.egBillregistermis.functionaryid.id=" + voucherHeader.getVouchermis().getFunctionary().getId());
+            sql.append(" and bill.egBillregistermis.functionaryid.id="
+                    + voucherHeader.getVouchermis().getFunctionary().getId());
         if (voucherHeader.getVouchermis().getDivisionid() != null)
             sql.append(" and bill.egBillregistermis.fieldid=" + voucherHeader.getVouchermis().getDivisionid().getId());
-        // function field is intruduced later as mandatory , so we getting for the vocuhermis table
+        // function field is intruduced later as mandatory , so we getting for
+        // the vocuhermis table
         if (voucherHeader.getVouchermis().getFunction() != null)
             sql.append(" and bill.egBillregistermis.function=" + voucherHeader.getVouchermis().getFunction().getId());
 
@@ -457,17 +443,14 @@ public class PaymentAction extends BasePaymentAction {
          * + " (select voucherHeader from EgBillregistermis where egBillregister.id = bill.id ) and (payVoucherHeader is null or "
          * + " payVoucherHeader.status not in (1,2,4) )    group by billVoucherHeader)) " +
          * "  or(select count(*) from Miscbilldetail where payVoucherHeader.status!=4 and billVoucherHeader in " +
-         * " (select voucherHeader from EgBillregistermis where egBillregister.id = bill.id ) )=0 ) ";
+         * " (select voucherHeader from EgBillregistermis where egBillregister.id = bill.id ) )=0 ) " ;
          */
         final String mainquery = "from EgBillregister bill where bill.expendituretype=? and bill.egBillregistermis.voucherHeader.status=0 "
-                +
-                " and bill.passedamount > (select SUM(misc.paidamount) from Miscbilldetail misc where misc.billVoucherHeader = bill.egBillregistermis.voucherHeader "
-                +
-                " and misc.payVoucherHeader.status in (0,5))";
+                + " and bill.passedamount > (select SUM(misc.paidamount) from Miscbilldetail misc where misc.billVoucherHeader = bill.egBillregistermis.voucherHeader "
+                + " and misc.payVoucherHeader.status in (0,5))";
 
         final String mainquery1 = "from EgBillregister bill where bill.expendituretype=? and bill.egBillregistermis.voucherHeader.status=0 "
-                +
-                " and bill.egBillregistermis.voucherHeader NOT IN (select misc.billVoucherHeader from Miscbilldetail misc where misc.billVoucherHeader is not null and misc.payVoucherHeader.status <> 4)";
+                + " and bill.egBillregistermis.voucherHeader NOT IN (select misc.billVoucherHeader from Miscbilldetail misc where misc.billVoucherHeader is not null and misc.payVoucherHeader.status <> 4)";
 
         if (disableExpenditureType == true && enablePensionType == false
                 || expType != null && !expType.equals("-1") && expType.equals("Salary"))
@@ -477,24 +460,21 @@ public class PaymentAction extends BasePaymentAction {
             return pensionBills(sql, mainquery, mainquery1);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("start purchase bill");
-        if (expType == null || expType.equals("-1") || expType.equals("Purchase"))
-        {
+        if (expType == null || expType.equals("-1") || expType.equals("Purchase")) {
             egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("SBILL", "Approved");
             final EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("PURCHBILL", "Passed");
             String statusCheck = "";
             if (egwStatus == null)
-            {
                 statusCheck = " and bill.status in (" + egwStatus1.getId() + ") ";
-            } else
+            else
                 statusCheck = " and bill.status in (" + egwStatus.getId() + "," + egwStatus1.getId() + ") ";
 
-            final String supplierBillSql = mainquery + statusCheck + sql.toString()
-                    + " order by bill.billdate desc";
-            final String supplierBillSql1 = mainquery1 + statusCheck + sql.toString()
-                    + " order by bill.billdate desc";
+            final String supplierBillSql = mainquery + statusCheck + sql.toString() + " order by bill.billdate desc";
+            final String supplierBillSql1 = mainquery1 + statusCheck + sql.toString() + " order by bill.billdate desc";
             supplierBillList = getPersistenceService().findPageBy(supplierBillSql, 1, 500, "Purchase").getList();
             if (supplierBillList != null)
-                supplierBillList.addAll(getPersistenceService().findPageBy(supplierBillSql1, 1, 500, "Purchase").getList());
+                supplierBillList
+                        .addAll(getPersistenceService().findPageBy(supplierBillSql1, 1, 500, "Purchase").getList());
             else
                 supplierBillList = getPersistenceService()
                         .findPageBy(supplierBillSql1, 1, 500, "Purchase", egwStatus, egwStatus1).getList();
@@ -508,28 +488,26 @@ public class PaymentAction extends BasePaymentAction {
             LOGGER.debug("end purchase bill");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("start works bill");
-        if (expType == null || expType.equals("-1") || expType.equals("Works"))
-        {
-            // right not we dont know, the EGW-Status for works bill, passed from external system
+        if (expType == null || expType.equals("-1") || expType.equals("Works")) {
+            // right not we dont know, the EGW-Status for works bill, passed
+            // from external system
             egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("WORKSBILL", "Passed");
-            EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("CONTRACTORBILL", "APPROVED"); // for
+            final EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("CONTRACTORBILL", "APPROVED"); // for
             // external
             // systems
             String statusCheck = "";
             if (egwStatus1 == null)
-            {
                 statusCheck = " and bill.status in (" + egwStatus.getId() + ") ";
-            } else
+            else
                 statusCheck = " and bill.status in (" + egwStatus.getId() + "," + egwStatus1.getId() + ") ";
 
-            final String contractorBillSql = mainquery + statusCheck + sql.toString()
-                    + " order by bill.billdate desc";
+            final String contractorBillSql = mainquery + statusCheck + sql.toString() + " order by bill.billdate desc";
             final String contractorBillSql1 = mainquery1 + statusCheck + sql.toString()
                     + " order by bill.billdate desc";
-            contractorBillList = getPersistenceService().findPageBy(contractorBillSql, 1, 500, "Works")
-                    .getList();
+            contractorBillList = getPersistenceService().findPageBy(contractorBillSql, 1, 500, "Works").getList();
             if (contractorBillList != null)
-                contractorBillList.addAll(getPersistenceService().findPageBy(contractorBillSql1, 1, 500, "Works").getList());
+                contractorBillList
+                        .addAll(getPersistenceService().findPageBy(contractorBillSql1, 1, 500, "Works").getList());
             else
                 contractorBillList = getPersistenceService().findPageBy(contractorBillSql1, 1, 500, "Works").getList();
             final Set<EgBillregister> tempBillList = new LinkedHashSet<EgBillregister>(contractorBillList);
@@ -543,30 +521,31 @@ public class PaymentAction extends BasePaymentAction {
             LOGGER.debug("end works bill");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("start contingent bill");
-        if (expType == null || expType.equals("-1") || expType.equals(FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT))
-        {
+        if (expType == null || expType.equals("-1")
+                || expType.equals(FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT)) {
 
             final String cBillmainquery = "from EgBillregister bill left join fetch bill.egBillregistermis.egBillSubType egBillSubType where (egBillSubType is null or egBillSubType.name not in ('"
                     + FinancialConstants.BILLSUBTYPE_TNEBBILL
                     + "')) and bill.expendituretype=? and bill.egBillregistermis.voucherHeader.status=0 "
-                    +
-                    " and bill.passedamount > (select SUM(misc.paidamount) from Miscbilldetail misc where misc.billVoucherHeader = bill.egBillregistermis.voucherHeader "
-                    +
-                    " and misc.payVoucherHeader.status in (0,5))";
+                    + " and bill.passedamount > (select SUM(misc.paidamount) from Miscbilldetail misc where misc.billVoucherHeader = bill.egBillregistermis.voucherHeader "
+                    + " and misc.payVoucherHeader.status in (0,5))";
 
             final String cBillmainquery1 = "from EgBillregister bill left join fetch bill.egBillregistermis.egBillSubType egBillSubType where (egBillSubType is null or egBillSubType.name not in ('"
                     + FinancialConstants.BILLSUBTYPE_TNEBBILL
                     + "')) and bill.expendituretype=? and bill.egBillregistermis.voucherHeader.status=0 "
-                    +
-                    " and bill.egBillregistermis.voucherHeader NOT IN (select misc.billVoucherHeader from Miscbilldetail misc where misc.billVoucherHeader is not null and misc.payVoucherHeader.status <> 4)";
+                    + " and bill.egBillregistermis.voucherHeader NOT IN (select misc.billVoucherHeader from Miscbilldetail misc where misc.billVoucherHeader is not null and misc.payVoucherHeader.status <> 4)";
 
-            egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("EXPENSEBILL", "Approved"); // for financial expense bills
+            egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("EXPENSEBILL", "Approved"); // for
+                                                                                                   // financial
+                                                                                                   // expense
+                                                                                                   // bills
             final String cBillSql = cBillmainquery + " and bill.status in (?) " + sql.toString()
                     + " order by bill.billdate desc";
             final String cBillSql1 = cBillmainquery1 + " and bill.status in (?) " + sql.toString()
                     + " order by bill.billdate desc";
-            contingentBillList = getPersistenceService().findPageBy(cBillSql, 1, 500,
-                    FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus).getList();
+            contingentBillList = getPersistenceService()
+                    .findPageBy(cBillSql, 1, 500, FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus)
+                    .getList();
             if (contingentBillList != null)
                 contingentBillList.addAll(getPersistenceService().findPageBy(cBillSql1, 1, 500,
                         FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, egwStatus).getList());
@@ -641,19 +620,25 @@ public class PaymentAction extends BasePaymentAction {
     private String salaryBills(final StringBuffer sql, final String mainquery, final String mainquery1) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting salaryBills...");
-        final EgwStatus egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("SALBILL", "Approved"); // for financial salary
+        final EgwStatus egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("SALBILL", "Approved"); // for
+                                                                                                           // financial
+                                                                                                           // salary
         // bills
-        final EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("SBILL", "Approved"); // for external systems
-        final String sBillSql = mainquery + " and bill.status in (?,?) " + sql.toString() + " order by bill.billdate desc";
-        final String sBillSql1 = mainquery1 + " and bill.status in (?,?) " + sql.toString() + " order by bill.billdate desc";
+        final EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("SBILL", "Approved"); // for
+                                                                                                          // external
+                                                                                                          // systems
+        final String sBillSql = mainquery + " and bill.status in (?,?) " + sql.toString()
+                + " order by bill.billdate desc";
+        final String sBillSql1 = mainquery1 + " and bill.status in (?,?) " + sql.toString()
+                + " order by bill.billdate desc";
         salaryBillList = getPersistenceService().findAllBy(sBillSql, FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY,
                 egwStatus, egwStatus1);
         if (salaryBillList != null)
             salaryBillList.addAll(getPersistenceService().findAllBy(sBillSql1,
                     FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY, egwStatus, egwStatus1));
         else
-            salaryBillList = getPersistenceService().findAllBy(sBillSql1, FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY,
-                    egwStatus, egwStatus1);
+            salaryBillList = getPersistenceService().findAllBy(sBillSql1,
+                    FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY, egwStatus, egwStatus1);
         final Set<EgBillregister> tempBillList = new LinkedHashSet<EgBillregister>(salaryBillList);
         salaryBillList.clear();
         salaryBillList.addAll(tempBillList);
@@ -674,24 +659,28 @@ public class PaymentAction extends BasePaymentAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting pensionBills...");
         final EgwStatus egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("PENSIONBILL", "Approved");
-        final String pBillSql = mainquery + " and bill.status in (?) " + sql.toString() + " order by bill.billdate desc";
-        final String pBillSql1 = mainquery1 + " and bill.status in (?) " + sql.toString() + " order by bill.billdate desc";
-        pensionBillList = getPersistenceService().findAllBy(pBillSql, FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION,
-                egwStatus);
+        final String pBillSql = mainquery + " and bill.status in (?) " + sql.toString()
+                + " order by bill.billdate desc";
+        final String pBillSql1 = mainquery1 + " and bill.status in (?) " + sql.toString()
+                + " order by bill.billdate desc";
+        pensionBillList = getPersistenceService().findAllBy(pBillSql,
+                FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION, egwStatus);
         if (pensionBillList != null)
             pensionBillList.addAll(getPersistenceService().findAllBy(pBillSql1,
                     FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION, egwStatus));
         else
-            pensionBillList = getPersistenceService().findAllBy(pBillSql1, FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION,
-                    egwStatus);
+            pensionBillList = getPersistenceService().findAllBy(pBillSql1,
+                    FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION, egwStatus);
         final Set<EgBillregister> tempBillList = new LinkedHashSet<EgBillregister>(pensionBillList);
         pensionBillList.clear();
         pensionBillList.addAll(tempBillList);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("pBillSql  ===> " + pBillSql);
         paymentService.getGlcodeIds();
-        deductionAmtMap = paymentService.getDeductionAmt(pensionBillList, FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION);
-        paidAmtMap = paymentService.getEarlierPaymentAmt(pensionBillList, FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION);
+        deductionAmtMap = paymentService.getDeductionAmt(pensionBillList,
+                FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION);
+        paidAmtMap = paymentService.getEarlierPaymentAmt(pensionBillList,
+                FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION);
         pensionList = paymentService.getCSList(pensionBillList, deductionAmtMap, paidAmtMap);
         setMode("search");
         paymentMode = FinancialConstants.MODEOFPAYMENT_CASH;
@@ -712,19 +701,17 @@ public class PaymentAction extends BasePaymentAction {
         if (voucherHeader.getFundId() != null)
             sql.append(" and bill.egBillregistermis.fund.id=" + voucherHeader.getFundId().getId());
         if (voucherHeader.getVouchermis().getDepartmentid() != null)
-            sql.append(" and bill.egBillregistermis.egDepartment.id=" + voucherHeader.getVouchermis().getDepartmentid().getId());
+            sql.append(" and bill.egBillregistermis.egDepartment.id="
+                    + voucherHeader.getVouchermis().getDepartmentid().getId());
         if (voucherHeader.getVouchermis().getFunction() != null)
             sql.append(" and bill.egBillregistermis.function=" + voucherHeader.getVouchermis().getFunction().getId());
 
         final String tnebSqlMainquery = "select bill from EgBillregister bill , EBDetails ebd   where  bill.id = ebd.egBillregister.id and bill.expendituretype=? and bill.egBillregistermis.voucherHeader.status=0 "
-                +
-                " and bill.passedamount > (select SUM(misc.paidamount) from Miscbilldetail misc where misc.billVoucherHeader = bill.egBillregistermis.voucherHeader "
-                +
-                " and misc.payVoucherHeader.status in (0,5))";
+                + " and bill.passedamount > (select SUM(misc.paidamount) from Miscbilldetail misc where misc.billVoucherHeader = bill.egBillregistermis.voucherHeader "
+                + " and misc.payVoucherHeader.status in (0,5))";
 
         final String tnebSqlMainquery1 = "select bill from EgBillregister bill , EBDetails ebd  where  bill.id = ebd.egBillregister.id and bill.expendituretype=? and bill.egBillregistermis.voucherHeader.status=0 "
-                +
-                " and bill.egBillregistermis.voucherHeader NOT IN (select misc.billVoucherHeader from Miscbilldetail misc where misc.billVoucherHeader is not null and misc.payVoucherHeader.status <> 4)";
+                + " and bill.egBillregistermis.voucherHeader NOT IN (select misc.billVoucherHeader from Miscbilldetail misc where misc.billVoucherHeader is not null and misc.payVoucherHeader.status <> 4)";
         if (billSubType != null && !billSubType.equalsIgnoreCase(""))
             sql.append(" and bill.egBillregistermis.egBillSubType.name='" + billSubType + "'");
         if (region != null && !region.equalsIgnoreCase(""))
@@ -733,10 +720,13 @@ public class PaymentAction extends BasePaymentAction {
             sql.append(" and ebd.month=" + month + "");
         if (year != null && !year.equalsIgnoreCase(""))
             sql.append(" and ebd.financialyear.id=" + year + "");
-        final EgwStatus egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("EXPENSEBILL", "Approved"); // for financial
+        final EgwStatus egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode("EXPENSEBILL", "Approved"); // for
+                                                                                                               // financial
         // expense
         // bills
-        final EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("CBILL", "APPROVED"); // for external systems
+        final EgwStatus egwStatus1 = egwStatusHibernateDAO.getStatusByModuleAndCode("CBILL", "APPROVED"); // for
+                                                                                                          // external
+                                                                                                          // systems
         final String tnebBillSql = tnebSqlMainquery + " and bill.status in (?,?) " + sql.toString()
                 + " order by bill.billdate desc";
         final String tnebBillSql1 = tnebSqlMainquery1 + " and bill.status in (?,?) " + sql.toString()
@@ -779,17 +769,15 @@ public class PaymentAction extends BasePaymentAction {
     @Action(value = "/payment/payment-save")
     public String save() throws ValidationException {
         final List<PaymentBean> paymentList = new ArrayList<PaymentBean>();
-        List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+        final List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                 "DataEntryCutOffDate");
         if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
-        {
             try {
                 date = df.parse(cutOffDateconfigValue.get(0).getValue());
                 cutOffDate = formatter.format(date);
-            } catch (ParseException e) {
+            } catch (final ParseException e) {
 
             }
-        }
         try {
             final String paymentMd = parameters.get("paymentMode")[0];
             if (LOGGER.isDebugEnabled())
@@ -810,10 +798,9 @@ public class PaymentAction extends BasePaymentAction {
 
             if (rtgsDefaultMode != null && rtgsDefaultMode.equalsIgnoreCase("Y") && !paymentMd.equalsIgnoreCase("rtgs"))
                 if (paymentService.CheckForContractorSubledgerCodes(paymentList, rtgsModeRestrictionDateForCJV))
-                    throw new ValidationException(
-                            Arrays.asList(new ValidationError(
-                                    "Payment Mode of any bill having Contractor/Supplier subledger should  RTGS For Bill Date Greater than 01-Oct-2013",
-                                    "Payment Mode of any bill having Contractor/Supplier subledger should  RTGS For Bill Date Greater than 01-Oct-2013")));
+                    throw new ValidationException(Arrays.asList(new ValidationError(
+                            "Payment Mode of any bill having Contractor/Supplier subledger should  RTGS For Bill Date Greater than 01-Oct-2013",
+                            "Payment Mode of any bill having Contractor/Supplier subledger should  RTGS For Bill Date Greater than 01-Oct-2013")));
             billList = new ArrayList<PaymentBean>();
             contractorIds = contractorIds + populateBillListFor(contractorList, contractorIds);
             supplierIds = supplierIds + populateBillListFor(supplierList, supplierIds);
@@ -838,7 +825,8 @@ public class PaymentAction extends BasePaymentAction {
                 paymentService.validateForRTGSPayment(contractorList, "Contractor");
                 paymentService.validateForRTGSPayment(supplierList, "Supplier");
                 if (billSubType == null || billSubType.equalsIgnoreCase(""))
-                    paymentService.validateForRTGSPayment(contingentList, FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
+                    paymentService.validateForRTGSPayment(contingentList,
+                            FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
             }
 
             if (!"Auto".equalsIgnoreCase(voucherTypeForULB.readVoucherTypes("Payment"))) {
@@ -851,7 +839,7 @@ public class PaymentAction extends BasePaymentAction {
         } catch (final ValidationException e) {
             try {
                 search();
-            } catch (Exception e1) {
+            } catch (final Exception e1) {
                 LOGGER.error(e.getMessage(), e1);
                 final List<ValidationError> errors = new ArrayList<ValidationError>();
                 errors.add(new ValidationError("exception", e1.getMessage()));
@@ -862,7 +850,7 @@ public class PaymentAction extends BasePaymentAction {
         } catch (final ApplicationException e) {
             try {
                 search();
-            } catch (Exception e1) {
+            } catch (final Exception e1) {
                 LOGGER.error(e.getMessage(), e1);
                 final List<ValidationError> errors = new ArrayList<ValidationError>();
                 errors.add(new ValidationError("exception", e1.getMessage()));
@@ -875,6 +863,8 @@ public class PaymentAction extends BasePaymentAction {
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed generatePayment.");
+        if (getBankBalanceCheck() == null || "".equals(getBankBalanceCheck()))
+            addActionMessage(getText("payment.bankbalance.controltype"));
         return "form";
 
     }
@@ -902,8 +892,7 @@ public class PaymentAction extends BasePaymentAction {
                      * attributes = fundNameStr + "-" + functionNameStr + "-" + deptNameStr + "-" + fundSourceNameStr + "-" +
                      * schemeStr + "-" + subSchemeStr;
                      */
-                    attributes = fundNameStr + "-" + fundSourceNameStr + "-"
-                            + schemeStr + "-" + subSchemeStr;
+                    attributes = fundNameStr + "-" + fundSourceNameStr + "-" + schemeStr + "-" + subSchemeStr;
                 }
                 /*
                  * tempAttributes = (bean.getFundName() == null ? "" : bean.getFundName()) + "-" + (bean.getFunctionName() == null
@@ -918,12 +907,11 @@ public class PaymentAction extends BasePaymentAction {
                 if (attributes.equalsIgnoreCase(tempAttributes)) {
                     billList.add(bean);
                     ids = ids + bean.getBillId() + ",";
-                }
-                else {
+                } else {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("Validation Error mismatch in attributes ");
-                    throw new ValidationException(Arrays.asList(new ValidationError("Mismatch in attributes",
-                            "Mismatch in attributes!!")));
+                    throw new ValidationException(
+                            Arrays.asList(new ValidationError("Mismatch in attributes", "Mismatch in attributes!!")));
                 }
             }
             // else
@@ -941,9 +929,9 @@ public class PaymentAction extends BasePaymentAction {
     @Action(value = "/payment/payment-create")
     public String create() {
         try {
-            String vdate = parameters.get("voucherdate")[0];
-            Date date1 = sdf1.parse(vdate);
-            String voucherDate = formatter1.format(date1);
+            final String vdate = parameters.get("voucherdate")[0];
+            final Date date1 = sdf1.parse(vdate);
+            final String voucherDate = formatter1.format(date1);
             String cutOffDate1 = null;
             // billregister.getEgBillregistermis().setFunction(functionSel);
             paymentActionHelper.setbillRegisterFunction(billregister, cFunctionobj);
@@ -954,36 +942,30 @@ public class PaymentAction extends BasePaymentAction {
                 billregister.getEgBillregistermis().setEgDepartment(
                         departmentService.getDepartmentById(Long.valueOf(parameters.get("department")[0].toString())));
             if (parameters.get("function") != null)
-                billregister.getEgBillregistermis().setFunction(
-                        functionService.findOne(Long.valueOf(parameters.get("function")[0].toString())));
+                billregister.getEgBillregistermis()
+                        .setFunction(functionService.findOne(Long.valueOf(parameters.get("function")[0].toString())));
             paymentheader = paymentService.createPayment(parameters, billList, billregister, workflowBean);
             miscBillList = paymentActionHelper.getPaymentBills(paymentheader);
-            // sendForApproval();// this should not be called here as it is public method which is called from jsp submit
+            // sendForApproval();// this should not be called here as it is
+            // public method which is called from jsp submit
 
             if (!cutOffDate.isEmpty() && cutOffDate != null)
-            {
                 try {
                     date = sdf1.parse(cutOffDate);
                     cutOffDate1 = formatter1.format(date);
-                } catch (ParseException e) {
-                  //
+                } catch (final ParseException e) {
+                    //
                 }
-            }
             if (cutOffDate1 != null && voucherDate.compareTo(cutOffDate1) <= 0
                     && FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-            {
-
-                addActionMessage(getMessage("payment.transaction.success", new String[] { paymentheader.getVoucherheader()
-                        .getVoucherNumber() }));
-            }
-            else
-            {
-                addActionMessage(getMessage("payment.transaction.success", new String[] { paymentheader.getVoucherheader()
-                        .getVoucherNumber() }));
+                addActionMessage(getMessage("payment.transaction.success",
+                        new String[] { paymentheader.getVoucherheader().getVoucherNumber() }));
+            else {
+                addActionMessage(getMessage("payment.transaction.success",
+                        new String[] { paymentheader.getVoucherheader().getVoucherNumber() }));
                 if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-                    addActionMessage(getMessage("payment.voucher.approved",
-                            new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState()
-                                    .getOwnerPosition()) }));
+                    addActionMessage(getMessage("payment.voucher.approved", new String[] { paymentService
+                            .getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
 
             }
 
@@ -1014,8 +996,7 @@ public class PaymentAction extends BasePaymentAction {
     @ValidationErrorPage(value = VIEW)
     @SkipValidation
     @Action(value = "/payment/payment-sendForApproval")
-    public String sendForApproval()
-    {
+    public String sendForApproval() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting sendForApproval...");
         if (paymentheader.getId() == null)
@@ -1025,20 +1006,19 @@ public class PaymentAction extends BasePaymentAction {
         paymentheader = paymentActionHelper.sendForApproval(paymentheader, workflowBean);
         paymentActionHelper.getPaymentBills(paymentheader);
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-            addActionMessage(getText("payment.voucher.rejected",
-                    new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
+            addActionMessage(getText("payment.voucher.rejected", new String[] {
+                    paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
         if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-            addActionMessage(getMessage("payment.voucher.approved",
-                    new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
+            addActionMessage(getMessage("payment.voucher.approved", new String[] {
+                    paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
         if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(getText("payment.voucher.cancelled"));
-        else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+        else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             if ("Closed".equals(paymentheader.getState().getValue()))
                 addActionMessage(getMessage("payment.voucher.final.approval"));
             else
-                addActionMessage(getMessage("payment.voucher.approved",
-                        new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
-        }
+                addActionMessage(getMessage("payment.voucher.approved", new String[] {
+                        paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
         if (Constants.ADVANCE_PAYMENT.equalsIgnoreCase(paymentheader.getVoucherheader().getName())) {
             advanceRequisitionList.addAll(paymentActionHelper.getAdvanceRequisitionDetails(paymentheader));
             return "advancePaymentView";
@@ -1052,26 +1032,26 @@ public class PaymentAction extends BasePaymentAction {
     public String getComments() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside getComments...");
-        return getText("payment.comments", new String[] { paymentheader.getPaymentAmount()
-                .setScale(2, BigDecimal.ROUND_HALF_EVEN).toPlainString() });
+        return getText("payment.comments", new String[] {
+                paymentheader.getPaymentAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toPlainString() });
     }
 
     @SkipValidation
     @Action(value = "/payment/payment-view")
-    public String view()
-    {
+    public String view() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting view...");
         paymentheader = getPayment();
         /*
          * if (paymentheader.getState().getValue() != null && !paymentheader.getState().getValue().isEmpty() &&
-         * paymentheader.getState().getValue().contains("Rejected")) { if (LOGGER.isDebugEnabled())
-         * LOGGER.debug("Completed view."); return modify(); }
+         * paymentheader.getState().getValue().contains("Rejected")) { if (LOGGER.isDebugEnabled()) LOGGER.debug("Completed view."
+         * ); return modify(); }
          */
         miscBillList = paymentActionHelper.getPaymentBills(paymentheader);
         getChequeInfo(paymentheader);
         if (null != parameters.get("showMode") && parameters.get("showMode")[0].equalsIgnoreCase("view"))
-            // if user is drilling down form source , parameter showMode is passed with value view, in this case we do not show
+            // if user is drilling down form source , parameter showMode is
+            // passed with value view, in this case we do not show
             // the
             mode = parameters.get("showMode")[0];
         if (LOGGER.isInfoEnabled())
@@ -1099,42 +1079,39 @@ public class PaymentAction extends BasePaymentAction {
         return "advancePaymentView";
     }
 
-    public void getChequeInfo(Paymentheader paymentheader)
-    {
+    public void getChequeInfo(Paymentheader paymentheader) {
         // if(LOGGER.isInfoEnabled()) LOGGER.info("Inside getChequeInfo");
         paymentheader = getPayment();
-        instrumentHeaderList = getPersistenceService()
-                .findAllBy(
-                        " from InstrumentHeader ih where ih.id in (select iv.instrumentHeaderId.id from InstrumentVoucher iv where iv.voucherHeaderId.id=?) order by instrumentNumber",
-                        paymentheader.getVoucherheader().getId());
+        instrumentHeaderList = getPersistenceService().findAllBy(
+                " from InstrumentHeader ih where ih.id in (select iv.instrumentHeaderId.id from InstrumentVoucher iv where iv.voucherHeaderId.id=?) order by instrumentNumber",
+                paymentheader.getVoucherheader().getId());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Retrived cheque info details for the paymentheader");
     }
 
     @SkipValidation
-    public boolean validateUser(final String purpose) throws ParseException
-    {
+    public boolean validateUser(final String purpose) throws ParseException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("------------------Starting validateUser...");
         if (LOGGER.isInfoEnabled())
-            LOGGER.info("-------------------------------------------------------------------------------------------------");
+            LOGGER.info(
+                    "-------------------------------------------------------------------------------------------------");
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Calling Validate User " + purpose);
         if (LOGGER.isInfoEnabled())
-            LOGGER.info("-------------------------------------------------------------------------------------------------");
-        final Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME,
-                "Paymentheader.show.bankbalance").get(0);
+            LOGGER.info(
+                    "-------------------------------------------------------------------------------------------------");
+        final Script validScript = (Script) getPersistenceService()
+                .findAllByNamedQuery(Script.BY_NAME, "Paymentheader.show.bankbalance").get(0);
         final List<String> list = (List<String>) scriptService.executeScript(validScript,
                 ScriptService.createContext("persistenceService", paymentService, "purpose", purpose));
-        if (list.get(0).equals("true"))
-        {
-            if (purpose.equals("balancecheck"))
-            {
+        if (list.get(0).equals("true")) {
+            if (purpose.equals("balancecheck")) {
                 paymentheader = getPayment();
                 try {
                     getBankBalance(paymentheader.getBankaccount().getId().toString(), formatter.format(new Date()),
-                            paymentheader.getPaymentAmount(), paymentheader.getId(), paymentheader.getBankaccount()
-                                    .getChartofaccounts().getId());
+                            paymentheader.getPaymentAmount(), paymentheader.getId(),
+                            paymentheader.getBankaccount().getChartofaccounts().getId());
                 } catch (final ValidationException e) {
                     LOGGER.error("Error" + e.getMessage(), e);
                     balance = BigDecimal.valueOf(-1);
@@ -1143,8 +1120,7 @@ public class PaymentAction extends BasePaymentAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Completed validateUser.");
             return true;
-        }
-        else {
+        } else {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Completed validateUser.");
             return false;
@@ -1152,16 +1128,15 @@ public class PaymentAction extends BasePaymentAction {
     }
 
     @SkipValidation
-    public String ajaxLoadBankAccounts()
-    {
+    public String ajaxLoadBankAccounts() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBankAccounts...");
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Bankbranch id = " + parameters.get("bankbranch")[0]);
         final Bankbranch bankbranch = (Bankbranch) persistenceService.find("from Bankbranch where id = ?",
                 Integer.parseInt(parameters.get("bankbranch")[0]));
-        bankaccountList = getPersistenceService()
-                .findAllBy(" FROM Bankaccount where bankbranch=? and isactive=true ", bankbranch);
+        bankaccountList = getPersistenceService().findAllBy(" FROM Bankaccount where bankbranch=? and isactive=true ",
+                bankbranch);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBankAccounts.");
         return "bankaccount";
@@ -1169,8 +1144,7 @@ public class PaymentAction extends BasePaymentAction {
 
     @SkipValidation
     @Action(value = "/payment/payment-ajaxGetAccountBalance")
-    public String ajaxGetAccountBalance() throws ParseException
-    {
+    public String ajaxGetAccountBalance() throws ParseException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside ajaxGetAccountBalance.");
         getBankBalance(parameters.get("bankaccount")[0], parameters.get("voucherDate")[0], null, null, null);
@@ -1180,10 +1154,8 @@ public class PaymentAction extends BasePaymentAction {
     }
 
     @SkipValidation
-    public void getBankBalance(final String accountId, final String vdate, final BigDecimal amount, final Long paymentId,
-            final Long bankGlcodeId)
-            throws ParseException
-    {
+    public void getBankBalance(final String accountId, final String vdate, final BigDecimal amount,
+            final Long paymentId, final Long bankGlcodeId) throws ParseException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside getBankBalance.");
 
@@ -1198,8 +1170,7 @@ public class PaymentAction extends BasePaymentAction {
 
     @SkipValidation
     @Action(value = "/payment/payment-beforeModify")
-    public String beforeModify() throws Exception
-    {
+    public String beforeModify() throws Exception {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting beforeModify.");
         // if(validateUser("deptcheck"))
@@ -1211,8 +1182,7 @@ public class PaymentAction extends BasePaymentAction {
     }
 
     @ValidationErrorPage(value = LIST)
-    public String list() throws Exception
-    {
+    public String list() throws Exception {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting list...");
         final List<String> descriptionList = new ArrayList<String>();
@@ -1239,7 +1209,8 @@ public class PaymentAction extends BasePaymentAction {
             sql.append(" and ph.voucherheader.vouchermis.departmentid.id="
                     + voucherHeader.getVouchermis().getDepartmentid().getId());
         if (voucherHeader.getVouchermis().getSchemeid() != null)
-            sql.append(" and ph.voucherheader.vouchermis.schemeid.id=" + voucherHeader.getVouchermis().getSchemeid().getId());
+            sql.append(" and ph.voucherheader.vouchermis.schemeid.id="
+                    + voucherHeader.getVouchermis().getSchemeid().getId());
         if (voucherHeader.getVouchermis().getSubschemeid() != null)
             sql.append(" and ph.voucherheader.vouchermis.subschemeid.id="
                     + voucherHeader.getVouchermis().getSubschemeid().getId());
@@ -1247,15 +1218,14 @@ public class PaymentAction extends BasePaymentAction {
             sql.append(" and ph.voucherheader.vouchermis.functionary.id="
                     + voucherHeader.getVouchermis().getFunctionary().getId());
         if (voucherHeader.getVouchermis().getDivisionid() != null)
-            sql.append(" and ph.voucherheader.vouchermis.divisionid.id=" + voucherHeader.getVouchermis().getDivisionid().getId());
+            sql.append(" and ph.voucherheader.vouchermis.divisionid.id="
+                    + voucherHeader.getVouchermis().getDivisionid().getId());
 
-        paymentheaderList = getPersistenceService()
-                .findAllBy(
-                        " from Paymentheader ph where ph.voucherheader.status=0 and (ph.voucherheader.isConfirmed=null or ph.voucherheader.isConfirmed=0) "
-                                + sql.toString()
-                                +
-                                "  and ph.voucherheader.id not in (select iv.voucherHeaderId.id from InstrumentVoucher iv where iv.instrumentHeaderId in (from InstrumentHeader ih where ih.statusId.id in ("
-                                + statusId + ") ))");
+        paymentheaderList = getPersistenceService().findAllBy(
+                " from Paymentheader ph where ph.voucherheader.status=0 and (ph.voucherheader.isConfirmed=null or ph.voucherheader.isConfirmed=0) "
+                        + sql.toString()
+                        + "  and ph.voucherheader.id not in (select iv.voucherHeaderId.id from InstrumentVoucher iv where iv.instrumentHeaderId in (from InstrumentHeader ih where ih.statusId.id in ("
+                        + statusId + ") ))");
         action = LIST;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed list...");
@@ -1265,39 +1235,37 @@ public class PaymentAction extends BasePaymentAction {
     @ValidationErrorPage(value = LIST)
     @SkipValidation
     @Action(value = "/payment/payment-modify")
-    public String modify()
-    {
+    public String modify() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting modify...");
         paymentheader = getPayment();
         final String vNumGenMode = voucherTypeForULB.readVoucherTypes("Payment");
-        if (!"Auto".equalsIgnoreCase(vNumGenMode))
-        {
-            voucherNumberPrefix = paymentheader.getVoucherheader().getVoucherNumber()
-                    .substring(0, Integer.valueOf(FinancialConstants.VOUCHERNO_TYPE_LENGTH));
-            voucherNumberSuffix = paymentheader
-                    .getVoucherheader()
-                    .getVoucherNumber()
-                    .substring(
-                            Integer.valueOf(FinancialConstants.VOUCHERNO_TYPE_LENGTH, paymentheader.getVoucherheader()
-                                    .getVoucherNumber().length()));
+        if (!"Auto".equalsIgnoreCase(vNumGenMode)) {
+            voucherNumberPrefix = paymentheader.getVoucherheader().getVoucherNumber().substring(0,
+                    Integer.valueOf(FinancialConstants.VOUCHERNO_TYPE_LENGTH));
+            voucherNumberSuffix = paymentheader.getVoucherheader().getVoucherNumber()
+                    .substring(Integer.valueOf(FinancialConstants.VOUCHERNO_TYPE_LENGTH,
+                            paymentheader.getVoucherheader().getVoucherNumber().length()));
         }
-        addDropdownData(
-                "bankaccountList",
-                persistenceService.findAllBy(" from Bankaccount where bankbranch.id=? and isactive=true ", paymentheader
-                        .getBankaccount().getBankbranch().getId()));
+        addDropdownData("bankaccountList",
+                persistenceService.findAllBy(" from Bankaccount where bankbranch.id=? and isactive=true ",
+                        paymentheader.getBankaccount().getBankbranch().getId()));
         // addDropdownData("bankbranchList",
-        // persistenceService.findAllBy("from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? ) and br.isactive=true order by br.bank.name asc",paymentheader.getVoucherheader().getFundId()));
+        // persistenceService.findAllBy("from Bankbranch br where br.id in
+        // (select bankbranch.id from Bankaccount where fund=? ) and
+        // br.isactive=true order by br.bank.name
+        // asc",paymentheader.getVoucherheader().getFundId()));
         loadbankBranch(paymentheader.getVoucherheader().getFundId());
         billList = paymentService.getMiscBillList(paymentheader);
         if (FinancialConstants.PAYMENTVOUCHER_NAME_SALARY.equalsIgnoreCase(paymentheader.getVoucherheader().getName()))
             disableExpenditureType = true;
-        // commented by msahoo to avoid account balance check for the bill creator.
+        // commented by msahoo to avoid account balance check for the bill
+        // creator.
         /*
-         * try { balance = paymentService.getAccountBalance(paymentheader.getBankaccount().getId().toString(),
+         * try { balance = paymentService.getAccountBalance(paymentheader.getBankaccount().getId ().toString(),
          * formatter.format(new Date()),paymentheader.getPaymentAmount(),paymentheader.getId()); } catch (ParseException e) {
-         * throw new ValidationException(Arrays.asList(new
-         * ValidationError("Error While formatting date","Error While formatting date"))); }
+         * throw new ValidationException(Arrays.asList(new ValidationError( "Error While formatting date",
+         * "Error While formatting date"))); }
          */
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed modify.");
@@ -1310,31 +1278,30 @@ public class PaymentAction extends BasePaymentAction {
     public String modifyAdvancePayment() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting modifyAdvancePayment...");
-        paymentheader = (Paymentheader) persistenceService.find(" from Paymentheader where id=? ", paymentheader.getId());
-        addDropdownData("bankaccountList", persistenceService.findAllBy(
-                " from Bankaccount where bankbranch.id=? and isactive=true and fund.id=?", paymentheader.getBankaccount()
-                        .getBankbranch().getId(), paymentheader.getBankaccount().getFund().getId()));
+        paymentheader = (Paymentheader) persistenceService.find(" from Paymentheader where id=? ",
+                paymentheader.getId());
+        addDropdownData("bankaccountList",
+                persistenceService.findAllBy(" from Bankaccount where bankbranch.id=? and isactive=true and fund.id=?",
+                        paymentheader.getBankaccount().getBankbranch().getId(),
+                        paymentheader.getBankaccount().getFund().getId()));
         loadbankBranch(paymentheader.getVoucherheader().getFundId());
         advanceRequisitionList.addAll(paymentActionHelper.getAdvanceRequisitionDetails(paymentheader));
         final String vNumGenMode = voucherTypeForULB.readVoucherTypes("Payment");
         if (!"Auto".equalsIgnoreCase(vNumGenMode)) {
-            voucherNumberPrefix = paymentheader.getVoucherheader().getVoucherNumber()
-                    .substring(0, Integer.valueOf(FinancialConstants.VOUCHERNO_TYPE_LENGTH));
-            voucherNumberSuffix = paymentheader
-                    .getVoucherheader()
-                    .getVoucherNumber()
-                    .substring(
-                            Integer.valueOf(FinancialConstants.VOUCHERNO_TYPE_LENGTH, paymentheader.getVoucherheader()
-                                    .getVoucherNumber().length()));
+            voucherNumberPrefix = paymentheader.getVoucherheader().getVoucherNumber().substring(0,
+                    Integer.valueOf(FinancialConstants.VOUCHERNO_TYPE_LENGTH));
+            voucherNumberSuffix = paymentheader.getVoucherheader().getVoucherNumber()
+                    .substring(Integer.valueOf(FinancialConstants.VOUCHERNO_TYPE_LENGTH,
+                            paymentheader.getVoucherheader().getVoucherNumber().length()));
         }
         try {
             balance = paymentService.getAccountBalance(paymentheader.getBankaccount().getId().toString(),
-                    formatter.format(new Date()), paymentheader.getPaymentAmount(), paymentheader.getId(), paymentheader
-                            .getBankaccount().getChartofaccounts().getId());
+                    formatter.format(new Date()), paymentheader.getPaymentAmount(), paymentheader.getId(),
+                    paymentheader.getBankaccount().getChartofaccounts().getId());
         } catch (final ParseException e) {
             LOGGER.error("Error" + e.getMessage(), e);
-            throw new ValidationException(Arrays.asList(new ValidationError("Error While formatting date",
-                    "Error While formatting date")));
+            throw new ValidationException(
+                    Arrays.asList(new ValidationError("Error While formatting date", "Error While formatting date")));
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed modifyAdvancePayment...");
@@ -1344,11 +1311,11 @@ public class PaymentAction extends BasePaymentAction {
     @ValidationErrorPage(value = MODIFY)
     @SkipValidation
     @Action(value = "/payment/payment-cancel")
-    public String cancelPayment()
-    {
+    public String cancelPayment() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting cancelPayment...");
-        paymentheader = (Paymentheader) persistenceService.find(" from Paymentheader where id=? ", paymentheader.getId());
+        paymentheader = (Paymentheader) persistenceService.find(" from Paymentheader where id=? ",
+                paymentheader.getId());
         voucherHeader = paymentheader.getVoucherheader();
         voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
         // persistenceService.setType(CVoucherHeader.class);
@@ -1364,44 +1331,35 @@ public class PaymentAction extends BasePaymentAction {
     @ValidationErrorPage(value = MODIFY)
     @SkipValidation
     @Action(value = "/payment/payment-edit")
-    public String edit() throws Exception
-    {
+    public String edit() throws Exception {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting update...");
-        try
-        {
+        try {
             validateForUpdate();
-            if (getFieldErrors().isEmpty())
-            {
+            if (getFieldErrors().isEmpty()) {
                 paymentheader = paymentService.updatePayment(parameters, billList, paymentheader);
                 miscBillList = paymentActionHelper.getPaymentBills(paymentheader);
                 sendForApproval();
-                addActionMessage(getMessage("payment.transaction.success", new String[] { paymentheader.getVoucherheader()
-                        .getVoucherNumber() }));
-            }
-            else {
+                addActionMessage(getMessage("payment.transaction.success",
+                        new String[] { paymentheader.getVoucherheader().getVoucherNumber() }));
+            } else {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Completed update...");
                 return MODIFY;
             }
-        } catch (final ValidationException e)
-        {
+        } catch (final ValidationException e) {
             LOGGER.error("Error" + e.getMessage(), e);
-            addDropdownData(
-                    "bankbranchList",
-                    persistenceService
-                            .findAllBy(
-                                    "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? ) and br.isactive=true order by br.bank.name asc",
-                                    paymentheader.getVoucherheader().getFundId()));
+            addDropdownData("bankbranchList",
+                    persistenceService.findAllBy(
+                            "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? ) and br.isactive=true order by br.bank.name asc",
+                            paymentheader.getVoucherheader().getFundId()));
             throw new ValidationException(e.getErrors());
-        } catch (final ApplicationRuntimeException e)
-        {
+        } catch (final ApplicationRuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exception", e.getMessage()));
             throw new ValidationException(errors);
-        } catch (final Exception e)
-        {
+        } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exception", e.getMessage()));
@@ -1425,22 +1383,24 @@ public class PaymentAction extends BasePaymentAction {
             validateAdvancePayment();
             paymentheader.setBankaccount((Bankaccount) persistenceService.find("from Bankaccount where id=?",
                     Integer.valueOf(parameters.get("paymentheader.bankaccount.id")[0])));
-            addDropdownData("bankaccountList", persistenceService.findAllBy(
-                    " from Bankaccount where bankbranch.id=? and isactive=true and fund.id=?", paymentheader.getBankaccount()
-                            .getBankbranch().getId(), paymentheader.getBankaccount().getFund().getId()));
+            addDropdownData("bankaccountList",
+                    persistenceService.findAllBy(
+                            " from Bankaccount where bankbranch.id=? and isactive=true and fund.id=?",
+                            paymentheader.getBankaccount().getBankbranch().getId(),
+                            paymentheader.getBankaccount().getFund().getId()));
             loadbankBranch(paymentheader.getBankaccount().getFund());
             if (getFieldErrors().isEmpty()) {
-                Integer userId = null;
-                if (null != parameters.get("approverUserId") && Integer.valueOf(parameters.get("approverUserId")[0]) != -1)
-                    userId = Integer.valueOf(parameters.get("approverUserId")[0]);
+                if (null != parameters.get("approverUserId")
+                        && Integer.valueOf(parameters.get("approverUserId")[0]) != -1)
+                    Integer.valueOf(parameters.get("approverUserId")[0]);
                 else
-                    userId = ApplicationThreadLocals.getUserId().intValue();
+                    ApplicationThreadLocals.getUserId().intValue();
                 /*
-                 * paymentWorkflowService.transition(getValidActions().get(0).getName() + "|" + userId, paymentheader,
+                 * paymentWorkflowService.transition(getValidActions().get(0). getName() + "|" + userId, paymentheader,
                  * paymentheader.getVoucherheader().getDescription());
                  */
-                addActionMessage(getMessage("payment.voucher.approved",
-                        new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
+                addActionMessage(getMessage("payment.voucher.approved", new String[] {
+                        paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
             } else {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Completed updateAdvancePayment.");
@@ -1448,15 +1408,19 @@ public class PaymentAction extends BasePaymentAction {
             }
         } catch (final ValidationException e) {
             LOGGER.error("Error" + e.getMessage(), e);
-            addDropdownData("bankaccountList", persistenceService.findAllBy(
-                    " from Bankaccount where bankbranch.id=? and isactive=true and fund.id=?", paymentheader.getBankaccount()
-                            .getBankbranch().getId(), paymentheader.getBankaccount().getFund().getId()));
+            addDropdownData("bankaccountList",
+                    persistenceService.findAllBy(
+                            " from Bankaccount where bankbranch.id=? and isactive=true and fund.id=?",
+                            paymentheader.getBankaccount().getBankbranch().getId(),
+                            paymentheader.getBankaccount().getFund().getId()));
             loadbankBranch(paymentheader.getBankaccount().getFund());
             throw new ValidationException(e.getErrors());
         } catch (final Exception e) {
-            addDropdownData("bankaccountList", persistenceService.findAllBy(
-                    " from Bankaccount where bankbranch.id=? and isactive=true and fund.id=?", paymentheader.getBankaccount()
-                            .getBankbranch().getId(), paymentheader.getBankaccount().getFund().getId()));
+            addDropdownData("bankaccountList",
+                    persistenceService.findAllBy(
+                            " from Bankaccount where bankbranch.id=? and isactive=true and fund.id=?",
+                            paymentheader.getBankaccount().getBankbranch().getId(),
+                            paymentheader.getBankaccount().getFund().getId()));
             loadbankBranch(paymentheader.getBankaccount().getFund());
             LOGGER.error(e.getMessage(), e);
             final List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -1473,12 +1437,12 @@ public class PaymentAction extends BasePaymentAction {
             LOGGER.debug("Starting validateAdvancePayment...");
         if (paymentheader.getVoucherheader().getVoucherDate() == null
                 || paymentheader.getVoucherheader().getVoucherDate().equals(""))
-            throw new ValidationException(Arrays.asList(new ValidationError("payment.voucherdate.empty",
-                    "payment.voucherdate.empty")));
+            throw new ValidationException(
+                    Arrays.asList(new ValidationError("payment.voucherdate.empty", "payment.voucherdate.empty")));
         final String vNumGenMode = voucherTypeForULB.readVoucherTypes("Payment");
         if (!"Auto".equalsIgnoreCase(vNumGenMode) && (voucherNumberSuffix == null || voucherNumberSuffix.equals("")))
-            throw new ValidationException(Arrays.asList(new ValidationError("payment.vouchernumber.empty",
-                    "payment.vouchernumber.empty")));
+            throw new ValidationException(
+                    Arrays.asList(new ValidationError("payment.vouchernumber.empty", "payment.vouchernumber.empty")));
         if (parameters.get("paymentheader.bankaccount.bankbranch.id")[0].equals("-1"))
             throw new ValidationException(Arrays.asList(new ValidationError("bankbranch.empty", "bankbranch.empty")));
         if (parameters.get("paymentheader.bankaccount.id")[0].equals("-1"))
@@ -1487,8 +1451,7 @@ public class PaymentAction extends BasePaymentAction {
             LOGGER.debug("Completed validateAdvancePayment...");
     }
 
-    private void validateForUpdate() throws ValidationException, ApplicationException, ParseException
-    {
+    private void validateForUpdate() throws ValidationException, ApplicationException, ParseException {
         List<PaymentBean> tempBillList = new ArrayList<PaymentBean>();
         final List<String> expenseTypeList = new ArrayList<String>();
         if (LOGGER.isDebugEnabled())
@@ -1508,18 +1471,16 @@ public class PaymentAction extends BasePaymentAction {
 
         /*
          * if(!parameters.get("paymentheader.bankaccount.id")[0].equals("-1") &&
-         * paymentheader.getVoucherheader().getVoucherDate()!=null) { balance =
-         * paymentService.getAccountBalance(parameters.get("paymentheader.bankaccount.id")[0],
-         * formatter.format(paymentheader.getVoucherheader
-         * ().getVoucherDate()),paymentheader.getPaymentAmount(),paymentheader.getId());
-         * if(BigDecimal.valueOf(Long.valueOf(parameters.get("grandTotal")[0])).compareTo(balance)==1)
+         * paymentheader.getVoucherheader().getVoucherDate()!=null) { balance = paymentService.getAccountBalance(parameters.get(
+         * "paymentheader.bankaccount.id")[0], formatter.format(paymentheader.getVoucherheader
+         * ().getVoucherDate()),paymentheader.getPaymentAmount(),paymentheader. getId());
+         * if(BigDecimal.valueOf(Long.valueOf(parameters.get("grandTotal")[0])). compareTo(balance)==1)
          * addFieldError("balance",getMessage("insufficient.bank.balance")); }
          */
         int i = 0;
 
         boolean selectedContractorPay = false;
-        for (final PaymentBean bean : billList)
-        {
+        for (final PaymentBean bean : billList) {
             tempBillList = new ArrayList<PaymentBean>();
             tempBillList.add(bean);
             if (expenseTypeList.size() != 0 && expenseTypeList.contains(bean.getExpType()))
@@ -1546,9 +1507,9 @@ public class PaymentAction extends BasePaymentAction {
                     // if(expenseTypeList.get(j).equalsIgnoreCase(FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS))
                     paymentService.validateRTGSPaymentForModify(tempBillList);
             /*
-             * if(expenseTypeList.get(j).equalsIgnoreCase(FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE))
+             * if(expenseTypeList.get(j).equalsIgnoreCase(FinancialConstants. STANDARD_EXPENDITURETYPE_PURCHASE))
              * paymentService.validateRTGSPaymentForModify(tempBillList);
-             * if(expenseTypeList.get(j).equalsIgnoreCase(FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT))
+             * if(expenseTypeList.get(j).equalsIgnoreCase(FinancialConstants. STANDARD_EXPENDITURETYPE_CONTINGENT))
              * paymentService.validateRTGSPaymentForModify(tempBillList);
              */
         } catch (final ValidationException e) {
@@ -1559,8 +1520,10 @@ public class PaymentAction extends BasePaymentAction {
         if (selectedContractorPay)
             addFieldError("contractor.bills.only.rtgs.payment", getMessage("contractor.bills.only.rtgs.payment"));
         // throw new ValidationException(Arrays.asList(new
-        // ValidationError("Mode of payment for contractor bills should only be RTGS For Bill Date Greater than 01-Oct-2013",
-        // "Mode of payment for contractor bills should only be RTGS For Bill Date Greater than 01-Oct-2013")));
+        // ValidationError("Mode of payment for contractor bills should only be
+        // RTGS For Bill Date Greater than 01-Oct-2013",
+        // "Mode of payment for contractor bills should only be RTGS For Bill
+        // Date Greater than 01-Oct-2013")));
         if (i == 0)
             addFieldError("paymentheader.bankaccount.id", getMessage("bill.details.empty"));
 
@@ -1574,8 +1537,7 @@ public class PaymentAction extends BasePaymentAction {
     }
 
     @Override
-    public void validate()
-    {
+    public void validate() {
         checkMandatory("fundId", Constants.FUND, voucherHeader.getFundId(), "voucher.fund.mandatory");
         checkMandatory("vouchermis.departmentid", Constants.DEPARTMENT, voucherHeader.getVouchermis().getDepartmentid(),
                 "voucher.department.mandatory");
@@ -1595,64 +1557,52 @@ public class PaymentAction extends BasePaymentAction {
             LOGGER.debug("Completed validate.");
     }
 
-    private void checkMandatory(final String objectName, final String fieldName, final Object value, final String errorKey)
-    {
+    private void checkMandatory(final String objectName, final String fieldName, final Object value,
+            final String errorKey) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside checkMandatory.");
         if (mandatoryFields.contains(fieldName) && value == null)
             addFieldError(objectName, getMessage(errorKey));
     }
 
+    @Override
     public List<String> getValidActions() {
         List<String> validActions = Collections.emptyList();
-        List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+        final List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                 "DataEntryCutOffDate");
-        if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
-        {
+        if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty()) {
             if (null == paymentheader || null == paymentheader.getId()
-                    || paymentheader.getCurrentState().getValue().endsWith("NEW")) {
+                    || paymentheader.getCurrentState().getValue().endsWith("NEW"))
                 validActions = Arrays.asList(FORWARD, FinancialConstants.CREATEANDAPPROVE);
-            } else {
-                if (paymentheader.getCurrentState() != null) {
-                    validActions = this.customizedWorkFlowService.getNextValidActions(paymentheader
-                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
-                            getAdditionalRule(), paymentheader.getCurrentState().getValue(),
-                            getPendingActions(), paymentheader.getCreatedDate());
-                }
-            }
-        }
-        else
-        {
-            if (null == paymentheader || null == paymentheader.getId()
-                    || paymentheader.getCurrentState().getValue().endsWith("NEW")) {
-                validActions = Arrays.asList(FORWARD);
-            } else {
-                if (paymentheader.getCurrentState() != null) {
-                    validActions = this.customizedWorkFlowService.getNextValidActions(paymentheader
-                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
-                            getAdditionalRule(), paymentheader.getCurrentState().getValue(),
-                            getPendingActions(), paymentheader.getCreatedDate());
-                }
-            }
-        }
+            else if (paymentheader.getCurrentState() != null)
+                validActions = customizedWorkFlowService.getNextValidActions(paymentheader.getStateType(),
+                        getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
+                        paymentheader.getCurrentState().getValue(), getPendingActions(),
+                        paymentheader.getCreatedDate());
+        } else if (null == paymentheader || null == paymentheader.getId()
+                || paymentheader.getCurrentState().getValue().endsWith("NEW"))
+            validActions = Arrays.asList(FORWARD);
+        else if (paymentheader.getCurrentState() != null)
+            validActions = customizedWorkFlowService.getNextValidActions(paymentheader.getStateType(),
+                    getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
+                    paymentheader.getCurrentState().getValue(), getPendingActions(),
+                    paymentheader.getCreatedDate());
         return validActions;
     }
 
+    @Override
     public String getNextAction() {
         WorkFlowMatrix wfMatrix = null;
-        if (paymentheader.getId() != null) {
-            if (paymentheader.getCurrentState() != null) {
-                wfMatrix = this.customizedWorkFlowService.getWfMatrix(paymentheader.getStateType(),
-                        getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), paymentheader
-                                .getCurrentState().getValue(), getPendingActions(), paymentheader
-                                .getCreatedDate());
-            } else {
-                wfMatrix = this.customizedWorkFlowService.getWfMatrix(paymentheader.getStateType(),
+        if (paymentheader.getId() != null)
+            if (paymentheader.getCurrentState() != null)
+                wfMatrix = customizedWorkFlowService.getWfMatrix(paymentheader.getStateType(),
                         getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
-                        State.DEFAULT_STATE_VALUE_CREATED, getPendingActions(), paymentheader
-                                .getCreatedDate());
-            }
-        }
+                        paymentheader.getCurrentState().getValue(), getPendingActions(),
+                        paymentheader.getCreatedDate());
+            else
+                wfMatrix = customizedWorkFlowService.getWfMatrix(paymentheader.getStateType(),
+                        getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
+                        State.DEFAULT_STATE_VALUE_CREATED, getPendingActions(), paymentheader.getCreatedDate());
         return wfMatrix == null ? "" : wfMatrix.getNextAction();
     }
 
@@ -2052,7 +2002,6 @@ public class PaymentAction extends BasePaymentAction {
     }
 
     public void setVoucherHelper(final VoucherHelper voucherHelper) {
-        this.voucherHelper = voucherHelper;
     }
 
     public boolean isChangePartyName() {
@@ -2211,10 +2160,11 @@ public class PaymentAction extends BasePaymentAction {
         return workflowBean;
     }
 
-    public void setWorkflowBean(WorkflowBean workflowBean) {
+    public void setWorkflowBean(final WorkflowBean workflowBean) {
         this.workflowBean = workflowBean;
     }
 
+    @Override
     public String getCurrentState() {
         return paymentheader.getState().getValue();
     }
@@ -2223,7 +2173,7 @@ public class PaymentAction extends BasePaymentAction {
         return cutOffDate;
     }
 
-    public void setCutOffDate(String cutOffDate) {
+    public void setCutOffDate(final String cutOffDate) {
         this.cutOffDate = cutOffDate;
     }
 

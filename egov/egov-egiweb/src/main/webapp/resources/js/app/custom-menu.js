@@ -45,6 +45,7 @@ $(document).ready(function () {
 	$('#menu').multilevelpushmenu({
 		menuWidth: '250px',
 		mode: 'cover',
+		swipe : 'touchscreen',
 		menu:menuItems,
 		onItemClick: function (event) {
 			event.preventDefault();

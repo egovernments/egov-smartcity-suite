@@ -97,7 +97,12 @@ $('#subCategory').change(function(){
 		
 	})
 });
+$('#subCategory').select2({
+	placeholder: "Select",
+	width:'100%'
+});
 $('#licenseCategory').change(function(){
+	var results = [];
 	$('#feeType').empty();
 	$('#feeType').append($("<option value=''>Select</option>"));
 	$('#unitOfMeasurement').empty();
@@ -110,15 +115,24 @@ $('#licenseCategory').change(function(){
 			categoryId : $('#licenseCategory').val()   
 		},
 		dataType: "json",
-		success: function (response) {
-			var subCategory = $('#subCategory')
-			subCategory.find("option:gt(0)").remove();
-			$.each(response, function(index, value) {
-				subCategory.append($('<option>').text(value.name).attr('value', value.id));
-			});
-			
-		}, 
-	
+		 success: function(data) {
+	            $.each(data, function(i) {
+	                var obj = {};
+	                obj['id'] = data[i]['id']
+	                obj['text'] = data[i]['name'];
+	                results.push(obj);
+	            });
+	            $("#subCategory").empty();
+	            $("#subCategory").append("<option value=''>Select</option>");
+	            $("#subCategory").select2({
+	                placeholder: "Select",
+	                width:'100%',
+	                data: results
+	            });
+	        },
+	        error: function() {
+	        	bootbox.alert('something went wrong on server');
+	        } 
 	})
 });
 

@@ -65,7 +65,8 @@ import org.egov.model.instrument.InstrumentHeader;
 
 public class BillReceiptInfoImpl implements BillReceiptInfo {
     /**
-     * The private receipt header object. This is used by the getters to provide bill receipt information
+     * The private receipt header object. This is used by the getters to provide
+     * bill receipt information
      */
     private final ReceiptHeader receiptHeader;
 
@@ -74,14 +75,15 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
      */
     private String event;
 
-    private final Set<ReceiptAccountInfo> accountDetails = new HashSet<ReceiptAccountInfo>(0);
-    private final Set<ReceiptInstrumentInfo> instrumentDetails = new HashSet<ReceiptInstrumentInfo>(0);
+    private final Set<ReceiptAccountInfo> accountDetails = new HashSet<>(0);
+    private final Set<ReceiptInstrumentInfo> instrumentDetails = new HashSet<>(0);
 
     /**
-     * Set of bounced instruments of this receipt - Will be created only if event is InstrumentBounced
+     * Set of bounced instruments of this receipt - Will be created only if
+     * event is InstrumentBounced
      */
-    private final Set<ReceiptInstrumentInfo> bouncedInstruments = new HashSet<ReceiptInstrumentInfo>(0);
-    private final Set<ChallanInfo> challanDetails = new HashSet<ChallanInfo>(0);
+    private final Set<ReceiptInstrumentInfo> bouncedInstruments = new HashSet<>(0);
+    private final Set<ChallanInfo> challanDetails = new HashSet<>(0);
     private ChallanInfo challan = null;
     /**
      * Billing system invokes this URL to view the receipt
@@ -91,14 +93,16 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
     private final String additionalInfo;
 
     /**
-     * Creates bill receipt information object for given receipt header and bounced instrument(if any)
+     * Creates bill receipt information object for given receipt header and
+     * bounced instrument(if any)
      *
-     * @param receiptHeader the receipt header object
-     * @param chartOfAccountsHibernateDAO TODO
+     * @param receiptHeader
+     *            the receipt header object
+     * @param chartOfAccountsHibernateDAO
      */
     public BillReceiptInfoImpl(final ReceiptHeader receiptHeader,
-            final ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO,
-            final PersistenceService persistenceService, final InstrumentHeader bouncedInstrumentInfo) {
+            final ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO, final PersistenceService persistenceService,
+            final InstrumentHeader bouncedInstrumentInfo) {
         this.receiptHeader = receiptHeader;
         receiptURL = CollectionConstants.RECEIPT_VIEW_SOURCEPATH + receiptHeader.getId();
         additionalInfo = null;
@@ -106,14 +110,15 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
         // Populate set of account info objects using receipt details
         for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
-            accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail, chartOfAccountsHibernateDAO, persistenceService));
+            accountDetails
+                    .add(new ReceiptAccountInfoImpl(receiptDetail, chartOfAccountsHibernateDAO, persistenceService));
 
         // Populate set of instrument headers that belong to this receipt
-        if (!CollectionConstants.RECEIPT_STATUS_CODE_INSTRUMENT_BOUNCED.equals(receiptStatus))
+        if (bouncedInstrumentInfo != null)
+            instrumentDetails.add(new ReceiptInstrumentInfoImpl(bouncedInstrumentInfo));
+        else
             for (final InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument())
                 instrumentDetails.add(new ReceiptInstrumentInfoImpl(instrumentHeader));
-        else if (bouncedInstrumentInfo != null)
-            instrumentDetails.add(new ReceiptInstrumentInfoImpl(bouncedInstrumentInfo));
 
         if (CollectionConstants.RECEIPT_STATUS_CODE_INSTRUMENT_BOUNCED.equals(receiptStatus)) {
             event = BillingIntegrationService.EVENT_INSTRUMENT_BOUNCED;
@@ -130,20 +135,24 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
     }
 
     /**
-     * Creates bill receipt information object for given receipt header and additional message
+     * Creates bill receipt information object for given receipt header and
+     * additional message
      *
-     * @param receiptHeader the receipt header object
-     * @param chartOfAccountsHibernateDAO TODO
+     * @param receiptHeader
+     *            the receipt header object
+     * @param chartOfAccountsHibernateDAO
      */
     public BillReceiptInfoImpl(final ReceiptHeader receiptHeader, final String additionalInfo,
-            final ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO, final PersistenceService persistenceService) {
+            final ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO,
+            final PersistenceService persistenceService) {
         this.receiptHeader = receiptHeader;
         receiptURL = CollectionConstants.RECEIPT_VIEW_SOURCEPATH + receiptHeader.getId();
         this.additionalInfo = additionalInfo;
 
         // Populate set of account info objects using receipt details
         for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
-            accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail, chartOfAccountsHibernateDAO, persistenceService));
+            accountDetails
+                    .add(new ReceiptAccountInfoImpl(receiptDetail, chartOfAccountsHibernateDAO, persistenceService));
 
         // Populate set of instrument headers that belong to this receipt
         for (final InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument())
@@ -171,12 +180,12 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
         additionalInfo = null;
         // Populate set of account info objects using receipt details
         for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
-            accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail, chartOfAccountsHibernateDAO, persistenceService));
+            accountDetails
+                    .add(new ReceiptAccountInfoImpl(receiptDetail, chartOfAccountsHibernateDAO, persistenceService));
 
         // Populate set of instrument headers that belong to this receipt
         for (final InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument())
             instrumentDetails.add(new ReceiptInstrumentInfoImpl(instrumentHeader));
-        // String receiptStatus = receiptHeader.getEgwStatus().getCode();
         if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_CHALLAN) {
             challan = new ChallanInfo(receiptHeader, egovCommon, receiptHeaderRefObj, chartOfAccountsHibernateDAO,
                     persistenceService);
@@ -193,7 +202,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo# getBillReferenceNum()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getBillReferenceNum()
      */
     @Override
     public String getBillReferenceNum() {
@@ -202,7 +212,9 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getEvent ()
+     * @see
+     * org.egov.infstr.collections.integration.models.IBillReceiptInfo#getEvent
+     * ()
      */
     @Override
     public String getEvent() {
@@ -211,7 +223,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getReceiptNum ()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getReceiptNum ()
      */
     @Override
     public String getReceiptNum() {
@@ -220,7 +233,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo# getReceiptDate()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getReceiptDate()
      */
     @Override
     public Date getReceiptDate() {
@@ -229,7 +243,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo# getReceiptLocation()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getReceiptLocation()
      */
     @Override
     public Location getReceiptLocation() {
@@ -238,7 +253,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo# getReceiptStatus()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getReceiptStatus()
      */
     @Override
     public EgwStatus getReceiptStatus() {
@@ -247,7 +263,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getPayeeName ()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getPayeeName ()
      */
     @Override
     public String getPayeeName() {
@@ -256,7 +273,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo# getPayeeAddress()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getPayeeAddress()
      */
     @Override
     public String getPayeeAddress() {
@@ -265,7 +283,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo# getAccountDetails()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getAccountDetails()
      */
     @Override
     public Set<ReceiptAccountInfo> getAccountDetails() {
@@ -274,7 +293,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo# getInstrumentDetails()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getInstrumentDetails()
      */
     @Override
     public Set<ReceiptInstrumentInfo> getInstrumentDetails() {
@@ -283,7 +303,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo# getBouncedInstruments()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getBouncedInstruments()
      */
     @Override
     public Set<ReceiptInstrumentInfo> getBouncedInstruments() {
@@ -292,7 +313,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo# getServiceName()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getServiceName()
      */
     @Override
     public String getServiceName() {
@@ -301,7 +323,9 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getPaidBy ()
+     * @see
+     * org.egov.infstr.collections.integration.models.IBillReceiptInfo#getPaidBy
+     * ()
      */
     @Override
     public String getPaidBy() {
@@ -310,7 +334,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo# getDescription()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getDescription()
      */
     @Override
     public String getDescription() {
@@ -319,7 +344,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo# getTotalAmount()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getTotalAmount()
      */
     @Override
     public BigDecimal getTotalAmount() {
@@ -328,7 +354,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getCreatedBy ()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getCreatedBy ()
      */
     @Override
     public User getCreatedBy() {
@@ -337,7 +364,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getModifiedBy ()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getModifiedBy ()
      */
     @Override
     public User getModifiedBy() {
@@ -345,8 +373,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
     }
 
     /**
-     * Finds all instruments of this receipt that are in bounced (dishonored) status and adds them to the set of bounced
-     * instruments.
+     * Finds all instruments of this receipt that are in bounced (dishonored)
+     * status and adds them to the set of bounced instruments.
      */
     private void findBouncedInstrument() {
         for (final ReceiptInstrumentInfo instrumentInfo : instrumentDetails)
@@ -356,7 +384,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo# getReceiptMisc()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getReceiptMisc()
      */
     public ReceiptMisc getReceiptMisc() {
         return receiptHeader.getReceiptMisc();
@@ -364,7 +393,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo# getChallanDetails()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getChallanDetails()
      */
     public Set<ChallanInfo> getChallanDetails() {
         return challanDetails;
@@ -372,7 +402,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getChallan ()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getChallan ()
      */
     public ChallanInfo getChallan() {
         return challan;
@@ -380,7 +411,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getReceiptURL ()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getReceiptURL ()
      */
     @Override
     public String getReceiptURL() {
@@ -389,7 +421,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo# getCollectionType()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getCollectionType()
      */
     @Override
     public String getCollectionType() {
@@ -402,7 +435,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getManualReceiptNumber()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getManualReceiptNumber()
      */
     @Override
     public String getManualReceiptNumber() {
@@ -411,7 +445,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getManualReceiptDate()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getManualReceiptDate()
      */
     @Override
     public Date getManualReceiptDate() {
@@ -420,15 +455,17 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getLegacy()
+     * @see
+     * org.egov.infstr.collections.integration.models.IBillReceiptInfo#getLegacy
+     * ()
      */
     @Override
     public Boolean getLegacy() {
         Boolean legacy = Boolean.FALSE;
         for (final ReceiptAccountInfo receiptAccountInfo : getAccountDetails())
             if (receiptAccountInfo.getDescription() != null && !"".equals(receiptAccountInfo.getDescription())
-            && (!receiptAccountInfo.getDescription().contains("#") ||
-                    receiptAccountInfo.getDescription().contains(CollectionConstants.ESTIMATION_CHARGES_WATERTAX_MODULE))) {
+                    && (!receiptAccountInfo.getDescription().contains("#") || receiptAccountInfo.getDescription()
+                            .contains(CollectionConstants.ESTIMATION_CHARGES_WATERTAX_MODULE))) {
                 legacy = Boolean.TRUE;
                 break;
             }
@@ -437,7 +474,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getAdditionalInfo()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getAdditionalInfo()
      */
     @Override
     public String getAdditionalInfo() {
@@ -446,7 +484,9 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getSource()
+     * @see
+     * org.egov.infstr.collections.integration.models.IBillReceiptInfo#getSource
+     * ()
      */
     @Override
     public String getSource() {
@@ -455,14 +495,15 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getReceiptInstrumentType()
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#
+     * getReceiptInstrumentType()
      */
     @Override
     public String getReceiptInstrumentType() {
         String instrumentType = "";
         for (final ReceiptInstrumentInfo instrumentInfo : instrumentDetails)
-            if (instrumentInfo.getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE) ||
-                    instrumentInfo.getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
+            if (instrumentInfo.getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
+                    || instrumentInfo.getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
                 instrumentType = CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD;
                 break;
             } else

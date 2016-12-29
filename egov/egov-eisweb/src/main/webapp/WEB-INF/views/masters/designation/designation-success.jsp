@@ -41,7 +41,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<script src="<cdn:url value='/resources/js/app/designation.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/app/designation.js'/>"></script>
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">

@@ -53,6 +53,7 @@
 	function onSubmit() {
 
 		if (jQuery("#assessmentNum").val() == ''
+				&& jQuery("#oldMuncipalNum").val() == ''
 				&& jQuery("#ownerName").val() == ''
 				&& jQuery("#doorNo").val() == '') {
 			bootbox.alert("Any one value is mandatory");
@@ -61,8 +62,9 @@
 			document.assessmentform.action = '${pageContext.request.contextPath}/citizen/search/search-srchByAssessmentAndOwnerDetail.action';
 			document.assessmentform.submit();
 			return true;
-		}
+		}		
 	}
+	
 </script>
 <title><s:text name="citizen.search.welcome"></s:text></title>
 </head>
@@ -93,6 +95,16 @@
 							maxlength="10" /></td>
 					<td class="bluebox">&nbsp;</td>
 				</tr>
+			
+				<tr>
+					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox"><s:text name="Old.assessmentno" /> :</td>
+
+					<td class="bluebox"><s:textfield name="oldMuncipalNum"
+							id="oldMuncipalNum" value="%{oldMuncipalNum}" maxlength="10" /></td>
+					<td class="bluebox">&nbsp;</td>
+				</tr>
+							
 				<tr>
 					<td class="bluebox">&nbsp;</td>
 					<td class="bluebox"><s:text name="citizen.prop.owner" /> :</td>

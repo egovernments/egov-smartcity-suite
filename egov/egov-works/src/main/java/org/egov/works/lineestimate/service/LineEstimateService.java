@@ -155,9 +155,6 @@ public class LineEstimateService {
     private LineEstimateDetailService lineEstimateDetailService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private EstimateService estimateService;
 
     @Autowired
@@ -497,7 +494,7 @@ public class LineEstimateService {
             result.setEstimateNumber(led.getEstimateNumber());
             result.setNameOfWork(led.getNameOfWork());
             if (led.getLineEstimate().getAdminSanctionBy() != null)
-                result.setAdminSanctionBy(led.getLineEstimate().getAdminSanctionBy().getName());
+                result.setAdminSanctionBy(led.getLineEstimate().getAdminSanctionBy());
             result.setActualEstimateAmount(led.getActualEstimateAmount());
             result.setWorkIdentificationNumber(led.getProjectCode().getCode());
             lineEstimatesForAbstractEstimates.add(result);
@@ -580,7 +577,7 @@ public class LineEstimateService {
 
     private void setAdminSanctionByAndDate(final LineEstimate lineEstimate) {
         lineEstimate.setAdminSanctionDate(new Date());
-        lineEstimate.setAdminSanctionBy(securityUtils.getCurrentUser());
+        lineEstimate.setAdminSanctionBy(securityUtils.getCurrentUser().getName());
     }
 
     private void doBudgetoryAppropriation(final LineEstimate lineEstimate) {
@@ -779,16 +776,6 @@ public class LineEstimateService {
         lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                 LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()));
         lineEstimate.setSpillOverFlag(true);
-
-        final List<Assignment> assignments = assignmentService
-                .findPrimaryAssignmentForDesignationName(WorksConstants.DESIGNATION_COMMISSIONER);
-
-        // TODO: check with BA if it is correct to get commissioner by current
-        // date
-        if (assignments != null && !assignments.isEmpty()) {
-            final User adminUser = userService.getUserById(assignments.get(0).getEmployee().getId());
-            lineEstimate.setAdminSanctionBy(adminUser);
-        }
 
         if (lineEstimate.getLineEstimateNumber() == null || lineEstimate.getLineEstimateNumber().isEmpty()) {
 

@@ -1,49 +1,46 @@
-
 /* eGov suite of products aim to improve the internal efficiency,transparency,
-*    accountability and the service delivery of the government  organizations.
-*
-*     Copyright (C) <2015>  eGovernments Foundation
-*
-*     The updated version of eGov suite of products as by eGovernments Foundation
-*     is available at http://www.egovernments.org
-*
-*     This program is free software: you can redistribute it and/or modify
-*     it under the terms of the GNU General Public License as published by
-*     the Free Software Foundation, either version 3 of the License, or
-*     any later version.
-*
-*     This program is distributed in the hope that it will be useful,
-*     but WITHOUT ANY WARRANTY; without even the implied warranty of
-*     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*     GNU General Public License for more details.
-*
-*     You should have received a copy of the GNU General Public License
-*     along with this program. If not, see http://www.gnu.org/licenses/ or
-*     http://www.gnu.org/licenses/gpl.html .
-*
-*     In addition to the terms of the GPL license to be adhered to in using this
-*     program, the following additional terms are to be complied with:
-*
-*         1) All versions of this program, verbatim or modified must carry this
-*            Legal Notice.
-*
-*         2) Any misrepresentation of the origin of the material is prohibited. It
-*            is required that all modified versions of this material be marked in
-*            reasonable ways as different from the original version.
-*
-*         3) This license does not grant any rights to any user of the program
-*            with regards to rights under trademark law for use of the trade names
-*            or trademarks of eGovernments Foundation.
-*
-*   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-*/
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 
 package org.egov.collection.web.controller.dashboard;
 
 import java.io.IOException;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.egov.collection.bean.dashboard.CollectionDashBoardRequest;
 import org.egov.collection.bean.dashboard.TaxPayerDashBoardResponseDetails;
@@ -67,6 +64,12 @@ public class CollectionDashboardController {
     @Autowired
     private CollectionDashboardService collectionDashboardService;
     private static final String MILLISECS = " (millisecs) ";
+    private static final String ULBGRADE = " ulbGrade ";
+    private static final String DISTRICTNAME = " districtName ";
+    private static final String ULBCODE = " ulbCode ";
+    private static final String FROMDATE = " fromDate ";
+    private static final String TODATE = " toDate ";
+    private static final String TYPE = "  type ";
 
     /**
      * Provides State-wise Collection Statistics for Property Tax, Water Charges
@@ -76,11 +79,11 @@ public class CollectionDashboardController {
      * @throws IOException
      */
     @RequestMapping(value = "/otherrevenuecollectionstats", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public TotalCollectionDashBoardStats getConsolidatedCollDetails(final HttpServletRequest request)
-            throws IOException {
+    public TotalCollectionDashBoardStats getConsolidatedCollDetails(
+            @RequestBody final CollectionDashBoardRequest collectionDashBoardRequest) throws IOException {
         final Long startTime = System.currentTimeMillis();
         final TotalCollectionDashBoardStats consolidatedCollectionDetails = collectionDashboardService
-                .getTotalCollectionStats(request);
+                .getTotalCollectionStats(collectionDashBoardRequest);
         final Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken to serve collectionstats is : " + timeTaken + MILLISECS);
@@ -96,16 +99,18 @@ public class CollectionDashboardController {
      */
     @RequestMapping(value = "/otherrevenuecollectiondashboard", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TotalCollectionStatistics> getCollectionDetails(
-            @RequestBody final CollectionDashBoardRequest collectionDetailsRequest) throws IOException {
+            @RequestBody final CollectionDashBoardRequest collectionDashBoardRequest) throws IOException {
         final Long startTime = System.currentTimeMillis();
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("CollectionDashBoardRequest input : regionName = " + collectionDetailsRequest.getRegionName()
-                    + ", districtName = " + collectionDetailsRequest.getDistrictName() + ", ulbGrade = "
-                    + collectionDetailsRequest.getUlbGrade() + ", ulbCode = " + collectionDetailsRequest.getUlbCode()
-                    + ", fromDate = " + collectionDetailsRequest.getFromDate() + ", toDate = "
-                    + collectionDetailsRequest.getToDate() + ", type = " + collectionDetailsRequest.getType());
+            LOGGER.debug("CollectionDashBoardRequest input for otherrevenuecollectiondashboard : regionName = "
+                    + collectionDashBoardRequest.getRegionName() + "," + DISTRICTNAME + " = "
+                    + collectionDashBoardRequest.getDistrictName() + "," + ULBGRADE + "= "
+                    + collectionDashBoardRequest.getUlbGrade() + "," + ULBCODE + "= "
+                    + collectionDashBoardRequest.getUlbCode() + "," + FROMDATE + "= "
+                    + collectionDashBoardRequest.getFromDate() + "," + TODATE + "= "
+                    + collectionDashBoardRequest.getToDate() + "," + TYPE + "= " + collectionDashBoardRequest.getType());
         final List<TotalCollectionStatistics> collectionDetails = collectionDashboardService
-                .getCollectionIndexDetails(collectionDetailsRequest);
+                .getCollectionIndexDetails(collectionDashBoardRequest);
         final Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken to serve collectiondashboard is : " + timeTaken + MILLISECS);
@@ -120,17 +125,18 @@ public class CollectionDashboardController {
      * @throws IOException
      */
     @RequestMapping(value = "/otherrevenuetoptencollection", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public TaxPayerDashBoardResponseDetails getTopTenTaxProducers(
+    public List<TaxPayerDashBoardResponseDetails> getTopTenTaxProducers(
             @RequestBody final CollectionDashBoardRequest collectionDashBoardRequest) throws IOException {
         final Long startTime = System.currentTimeMillis();
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("CollectionDetailsRequest input : regionName = " + collectionDashBoardRequest.getRegionName()
-                    + ", districtName = " + collectionDashBoardRequest.getDistrictName() + ", ulbGrade = "
-                    + collectionDashBoardRequest.getUlbGrade() + ", ulbCode = "
-                    + collectionDashBoardRequest.getUlbCode() + ", fromDate = "
-                    + collectionDashBoardRequest.getFromDate() + ", toDate = " + collectionDashBoardRequest.getToDate()
-                    + ", type = " + collectionDashBoardRequest.getType());
-        final TaxPayerDashBoardResponseDetails taxPayerDetails = collectionDashboardService
+            LOGGER.debug("CollectionDashBoardRequest input for otherrevenuetoptencollection : regionName = "
+                    + collectionDashBoardRequest.getRegionName() + "," + DISTRICTNAME + " = "
+                    + collectionDashBoardRequest.getDistrictName() + "," + ULBGRADE + "= "
+                    + collectionDashBoardRequest.getUlbGrade() + "," + ULBCODE + "= "
+                    + collectionDashBoardRequest.getUlbCode() + "," + FROMDATE + "= "
+                    + collectionDashBoardRequest.getFromDate() + "," + TODATE + "= "
+                    + collectionDashBoardRequest.getToDate() + "," + TYPE + "= " + collectionDashBoardRequest.getType());
+        final List<TaxPayerDashBoardResponseDetails> taxPayerDetails = collectionDashboardService
                 .getTopTenTaxProducers(collectionDashBoardRequest);
         final Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
@@ -146,17 +152,18 @@ public class CollectionDashboardController {
      * @throws IOException
      */
     @RequestMapping(value = "/otherrevenuebottomtencollection", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public TaxPayerDashBoardResponseDetails getBottomTenTaxProducers(
+    public List<TaxPayerDashBoardResponseDetails> getBottomTenTaxProducers(
             @RequestBody final CollectionDashBoardRequest collectionDashBoardRequest) throws IOException {
         final Long startTime = System.currentTimeMillis();
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("CollectionDetailsRequest input : regionName = " + collectionDashBoardRequest.getRegionName()
-                    + ", districtName = " + collectionDashBoardRequest.getDistrictName() + ", ulbGrade = "
-                    + collectionDashBoardRequest.getUlbGrade() + ", ulbCode = "
-                    + collectionDashBoardRequest.getUlbCode() + ", fromDate = "
-                    + collectionDashBoardRequest.getFromDate() + ", toDate = " + collectionDashBoardRequest.getToDate()
-                    + ", type = " + collectionDashBoardRequest.getType());
-        final TaxPayerDashBoardResponseDetails taxPayerDetails = collectionDashboardService
+            LOGGER.debug("CollectionDashBoardRequest input for otherrevenuebottomtencollection : regionName = "
+                    + collectionDashBoardRequest.getRegionName() + "," + DISTRICTNAME + " = "
+                    + collectionDashBoardRequest.getDistrictName() + "," + ULBGRADE + "= "
+                    + collectionDashBoardRequest.getUlbGrade() + "," + ULBCODE + "= "
+                    + collectionDashBoardRequest.getUlbCode() + "," + FROMDATE + "= "
+                    + collectionDashBoardRequest.getFromDate() + "," + TODATE + "= "
+                    + collectionDashBoardRequest.getToDate() + "," + TYPE + "= " + collectionDashBoardRequest.getType());
+        final List<TaxPayerDashBoardResponseDetails> taxPayerDetails = collectionDashboardService
                 .getBottomTenTaxProducers(collectionDashBoardRequest);
         final Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())

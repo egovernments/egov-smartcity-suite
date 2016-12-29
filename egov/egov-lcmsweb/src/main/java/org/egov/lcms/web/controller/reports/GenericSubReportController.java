@@ -53,18 +53,23 @@ import org.egov.infra.web.utils.WebUtils;
 import org.egov.lcms.masters.entity.JudgmentType;
 import org.egov.lcms.masters.service.JudgmentTypeService;
 import org.egov.lcms.reports.entity.GenericSubReportResult;
+import org.egov.lcms.transactions.entity.ReportStatus;
 import org.egov.lcms.transactions.service.GenericSubReportService;
+import org.egov.lcms.transactions.service.SearchLegalCaseService;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
-import org.egov.lcms.web.adaptor.GenericSubReportAdaptor;
+import org.egov.lcms.web.adaptor.GenericSubDrillDownReportJsonAdaptor;
+import org.egov.lcms.web.adaptor.GenericSubReportJsonAdaptor;
 import org.egov.lcms.web.controller.transactions.GenericLegalCaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -76,6 +81,9 @@ public class GenericSubReportController extends GenericLegalCaseController {
 
     @Autowired
     private JudgmentTypeService judgmentTypeService;
+
+    @Autowired
+    private SearchLegalCaseService searchLegalCaseService;
 
     @Autowired
     private LegalCaseUtil legalCaseUtil;
@@ -94,6 +102,10 @@ public class GenericSubReportController extends GenericLegalCaseController {
         return legalCaseUtil.getStatusForModule();
     }
 
+    public @ModelAttribute("reportStatusList") List<ReportStatus> getReportStatusList() {
+        return searchLegalCaseService.getReportStatus();
+    }
+
     public @ModelAttribute("aggregatedByList") List<String> defaultersList() {
         final List<String> aggregatedByList = new ArrayList<String>();
         aggregatedByList.add(LcmsConstants.COURTNAME);
@@ -102,11 +114,13 @@ public class GenericSubReportController extends GenericLegalCaseController {
         aggregatedByList.add(LcmsConstants.CASESTATUS);
         aggregatedByList.add(LcmsConstants.OFFICERINCHRGE);
         aggregatedByList.add(LcmsConstants.JUDGEMENTOUTCOME);
+        aggregatedByList.add(LcmsConstants.CASECATEGORY);
         return aggregatedByList;
     }
 
     @RequestMapping(value = "/genericSubReport", method = RequestMethod.GET)
-    public String searchForm(final Model model,final @ModelAttribute("genericSubReportResult") GenericSubReportResult genericSubReportResult) {
+    public String searchForm(final Model model,
+            final @ModelAttribute("genericSubReportResult") GenericSubReportResult genericSubReportResult) {
         model.addAttribute("currDate", new Date());
         model.addAttribute("genericSubReportResult", genericSubReportResult);
         return "genericsub-form";
@@ -114,16 +128,34 @@ public class GenericSubReportController extends GenericLegalCaseController {
 
     @RequestMapping(value = "/genericSubResult", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String getGenerivSubReportResult(final HttpServletRequest request,
-            final HttpServletResponse response,final @ModelAttribute("genericSubReportResult") GenericSubReportResult genericSubReportResult) throws IOException, ParseException {
-
-        List<GenericSubReportResult> genericSubResultList = new ArrayList<GenericSubReportResult>();
-       genericSubResultList = genericSubReportService.getGenericSubReport(genericSubReportResult);
-
+            final HttpServletResponse response,
+            final @ModelAttribute("genericSubReportResult") GenericSubReportResult genericSubReportResult)
+            throws IOException, ParseException {
+        final Boolean clickOnCount = Boolean.FALSE;
+        final List<GenericSubReportResult> genericSubResultList = genericSubReportService
+                .getGenericSubReport(genericSubReportResult, clickOnCount);
         final String result = new StringBuilder("{ \"data\":").append(
-                WebUtils.toJSON(genericSubResultList, GenericSubReportResult.class, GenericSubReportAdaptor.class))
+                WebUtils.toJSON(genericSubResultList, GenericSubReportResult.class, GenericSubReportJsonAdaptor.class))
                 .append("}").toString();
         return result;
 
+    }
+
+    @ExceptionHandler(Exception.class)
+    @RequestMapping(value = "/genericdrilldownreportresults", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String getDrillDownReportResult(@RequestParam final String aggregatedBy,
+            @RequestParam final String aggregatedByValue, final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException {
+
+        final GenericSubReportResult genericSubReportObj = new GenericSubReportResult();
+        genericSubReportObj.setAggregatedBy(aggregatedBy);
+        genericSubReportObj.setAggregatedByValue(aggregatedByValue);
+        final Boolean clickOnCount = Boolean.TRUE;
+        final List<GenericSubReportResult> genericSubResultList = genericSubReportService
+                .getGenericSubReport(genericSubReportObj, clickOnCount);
+        final String result = new StringBuilder("{ \"data\":").append(WebUtils.toJSON(genericSubResultList,
+                GenericSubReportResult.class, GenericSubDrillDownReportJsonAdaptor.class)).append("}").toString();
+        return result;
     }
 
 }

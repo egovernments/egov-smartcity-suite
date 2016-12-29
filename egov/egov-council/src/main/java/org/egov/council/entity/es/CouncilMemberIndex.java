@@ -82,6 +82,13 @@ public class CouncilMemberIndex {
     @JsonFormat (shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
     @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date createdDate;
+    
+    @JsonFormat (shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
+    private Date dateOfJoining;
+    
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String category;
    
     public String getId() {
         return id;
@@ -251,4 +258,21 @@ public class CouncilMemberIndex {
         this.createdDate = createdDate;
     }
 
+    public Date getDateOfJoining() {
+        return dateOfJoining;
+    }
+
+    public void setDateOfJoining(Date dateOfJoining) {
+        this.dateOfJoining = dateOfJoining;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+    
+    
 }

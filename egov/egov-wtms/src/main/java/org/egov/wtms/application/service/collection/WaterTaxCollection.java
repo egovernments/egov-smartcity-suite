@@ -678,8 +678,7 @@ public class WaterTaxCollection extends TaxCollection {
                 }
 
             }
-            if (egBill.getEgBillDetails().size() > 1)
-                if (billDet.getCrAmount().compareTo(BigDecimal.ZERO) == 1
+            if (egBill.getEgBillDetails().size() > 1 && billDet.getCrAmount().compareTo(BigDecimal.ZERO) == 1
                 && reciptDetailList.get(0).getOrdernumber().equals(Long.valueOf(billDet.getOrderNo()))) {
                     receiptAmountInfo.setInstallmentTo(formatter.format(billDet.getEgDemandReason()
                             .getEgInstallmentMaster().getToDate()));

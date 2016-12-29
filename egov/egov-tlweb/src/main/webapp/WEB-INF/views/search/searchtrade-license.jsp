@@ -63,9 +63,14 @@
 						<input type="text" id="applicationNumber" class="form-control typeahead" placeholder="" autocomplete="off"/>
 						<form:hidden path="applicationNumber" id="applicationNumber"/>						
 					</div>
-					<label class="col-sm-2 control-label text-right"> <spring:message code='search.license.cancelled' /></label>
+					<label class="col-sm-2 control-label text-right"> <spring:message code='search.license.status' /></label>
 					<div class="col-sm-3 add-margin">
-						<form:checkbox path="isCancelled" id="isCancelled" />
+						<form:select path="statusId" id="status" cssClass="form-control" cssErrorClass="form-control error">
+							<form:option value="">
+								<spring:message code="lbl.category.select" />
+							</form:option>
+							<form:options items="${statusList}" itemValue="id" itemLabel="name" />
+						</form:select>
 					</div>
 				</div>
 				<div class="form-group">
@@ -92,12 +97,9 @@
 					</div>
 					<label class="col-sm-2 control-label text-right"> <spring:message code='search.license.subCategory' /></label>
 					<div class="col-sm-3 add-margin">
-						<form:select path="subCategoryId" id="subCategory" cssClass="form-control" cssErrorClass="form-control error">
-							<form:option value="">
-								<spring:message code="lbl.category.select" />
-							</form:option>
-							<form:options items="${subCategoryList}" itemValue="id"	itemLabel="name" />
-						</form:select>
+						<select id="subCategory" class="form-control" required>
+						</select> <label id="subCategory-error" class="error display-hide"
+							for="subCategory">Required</label>
 					</div>
 				</div>
 				<div class="form-group">
@@ -123,17 +125,6 @@
 						<input type="text" id="mobileNo" class="form-control patternvalidation typeahead" placeholder="" autocomplete="off" maxlength="10" data-pattern="number" />
 						<form:hidden path="mobileNo" id="mobileNo"/>				
 			       </div>
-				</div>
-				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"> <spring:message code='search.license.status' /></label>
-					<div class="col-sm-3 add-margin">
-						<form:select path="statusId" id="status" cssClass="form-control" cssErrorClass="form-control error">
-							<form:option value="">
-								<spring:message code="lbl.category.select" />
-							</form:option>
-							<form:options items="${statusList}" itemValue="id" itemLabel="name" />
-						</form:select>
-					</div>
 				</div>
 			</div>
 			<div class="row">
@@ -191,7 +182,4 @@
 	src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url  value='/resources/js/app/searchtrade-license.js?rnd=${app_release_no}'/>"></script>
-
-
-
 

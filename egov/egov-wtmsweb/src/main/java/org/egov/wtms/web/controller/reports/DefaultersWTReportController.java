@@ -63,6 +63,7 @@ import org.egov.wtms.application.entity.DefaultersReport;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.DefaultersWTReportService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.reports.entity.DefaultersReportAdaptor;
 import org.egov.wtms.utils.DemandComparatorByInstallmentOrder;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;

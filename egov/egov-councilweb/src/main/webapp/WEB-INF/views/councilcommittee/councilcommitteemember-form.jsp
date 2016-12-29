@@ -62,6 +62,7 @@
 										<th>Designation</th>
 										<th>Qualification</th>
 										<th>Party Affiliation</th>
+										<th>Status</th>
 									</tr>
 								</thead>
 								
@@ -89,7 +90,8 @@
 											<td><c:out value="${councilmem.electionWard.name}" /></td>
 											<td><c:out value="${councilmem.designation.name}" /></td>
 											<td><c:out value="${councilmem.qualification.name}" /></td>	
-											<td><c:out value="${councilmem.partyAffiliation.name}" /></td>	
+											<td><c:out value="${councilmem.partyAffiliation.name}" /></td>
+											<td><c:out value="${councilmem.status}" /></td>	
 										</tr>
 									
 									<c:set var="index" value="${index+1}"/>

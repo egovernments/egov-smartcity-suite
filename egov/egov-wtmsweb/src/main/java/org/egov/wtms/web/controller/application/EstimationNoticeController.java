@@ -123,10 +123,9 @@ public class EstimationNoticeController {
             reportParams.put("district", session.getAttribute("districtName"));
             reportParams.put("estimationDate",
                     formatter.format(waterConnectionDetails.getFieldInspectionDetails().getCreatedDate()));
-            reportParams.put("estimationCharges", waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges());
             reportParams.put("estimationNumber", waterConnectionDetails.getEstimationNumber());
             reportParams.put("donationCharges", waterConnectionDetails.getDonationCharges());
-            totalCharges = waterConnectionDetails.getDonationCharges()+ waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges()+waterConnectionDetails.getFieldInspectionDetails().getSupervisionCharges()+
+            totalCharges = waterConnectionDetails.getDonationCharges()+waterConnectionDetails.getFieldInspectionDetails().getSupervisionCharges()+
                     waterConnectionDetails.getFieldInspectionDetails().getRoadCuttingCharges()+waterConnectionDetails.getFieldInspectionDetails().getSecurityDeposit();
             reportParams.put("totalCharges",totalCharges);
             reportParams.put("applicationDate", formatter.format(waterConnectionDetails.getApplicationDate()));

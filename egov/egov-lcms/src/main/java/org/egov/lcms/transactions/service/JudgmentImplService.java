@@ -51,6 +51,7 @@ import org.egov.lcms.transactions.entity.Appeal;
 import org.egov.lcms.transactions.entity.AppealDocuments;
 import org.egov.lcms.transactions.entity.Contempt;
 import org.egov.lcms.transactions.entity.JudgmentImpl;
+import org.egov.lcms.transactions.entity.ReportStatus;
 import org.egov.lcms.transactions.repository.AppealDocumentsRepository;
 import org.egov.lcms.transactions.repository.JudgmentImplRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
@@ -109,6 +110,8 @@ public class JudgmentImplService {
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_JUDGMENT_IMPLIMENTED);
         judgmentImpl.getJudgment().getLegalCase().setStatus(statusObj);
+        final ReportStatus reportStatus=null;
+        judgmentImpl.getJudgment().getLegalCase().setReportStatus(reportStatus);
         judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getDateOfCompliance());
         legalCaseService.save(judgmentImpl.getJudgment().getLegalCase());
 

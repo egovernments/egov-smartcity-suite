@@ -62,57 +62,74 @@ public class GenericSubReportService {
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
+
     }
 
-    public List<GenericSubReportResult> getGenericSubReport(final GenericSubReportResult genericSubReportResult) {
+    public List<GenericSubReportResult> getGenericSubReport(final GenericSubReportResult genericSubReportResult,
+            final Boolean clickOnCount) {
 
         final StringBuilder queryStr = new StringBuilder();
-        if (genericSubReportResult.getAggregatedBy().equals(LcmsConstants.COURTNAME))
-            getAggregateQueryByCourtName(genericSubReportResult, queryStr);
-        if (genericSubReportResult.getAggregatedBy().equals(LcmsConstants.COURTTYPE))
-            getAggregateQueryByCourtType(genericSubReportResult, queryStr);
-        if (genericSubReportResult.getAggregatedBy().equals(LcmsConstants.PETITIONTYPE))
-            getAggregateQueryByPetitionType(genericSubReportResult, queryStr);
-        if (genericSubReportResult.getAggregatedBy().equals(LcmsConstants.CASESTATUS))
-            getAggregateQueryByCaseStatus(genericSubReportResult, queryStr);
-        if (genericSubReportResult.getAggregatedBy().equals(LcmsConstants.OFFICERINCHRGE))
-            getAggregateQueryByOfficerIncharge(genericSubReportResult, queryStr);
-        if (genericSubReportResult.getAggregatedBy().equals(LcmsConstants.JUDGEMENTOUTCOME))
-            getAggregateQueryByJudgementOutcome(genericSubReportResult, queryStr);
+        if (genericSubReportResult.getAggregatedBy() != null) {
+
+            if (genericSubReportResult.getAggregatedBy().equals(LcmsConstants.COURTNAME))
+                getAggregateQueryByCourtName(genericSubReportResult, queryStr, clickOnCount);
+            if (genericSubReportResult.getAggregatedBy().equals(LcmsConstants.COURTTYPE))
+                getAggregateQueryByCourtType(genericSubReportResult, queryStr, clickOnCount);
+            if (genericSubReportResult.getAggregatedBy().equals(LcmsConstants.PETITIONTYPE))
+                getAggregateQueryByPetitionType(genericSubReportResult, queryStr, clickOnCount);
+            if (genericSubReportResult.getAggregatedBy().equals(LcmsConstants.CASESTATUS))
+                getAggregateQueryByCaseStatus(genericSubReportResult, queryStr, clickOnCount);
+            if (genericSubReportResult.getAggregatedBy().equals(LcmsConstants.OFFICERINCHRGE))
+                getAggregateQueryByOfficerIncharge(genericSubReportResult, queryStr, clickOnCount);
+            if (genericSubReportResult.getAggregatedBy().equals(LcmsConstants.JUDGEMENTOUTCOME))
+                getAggregateQueryByJudgementOutcome(genericSubReportResult, queryStr, clickOnCount);
+            if (genericSubReportResult.getAggregatedBy().equals(LcmsConstants.CASECATEGORY))
+                getAggregateQueryByCaseCategory(genericSubReportResult, queryStr, clickOnCount);
+
+        } else {
+            getLegalCaseSubReportStatus(genericSubReportResult, queryStr, clickOnCount);
+            getAppendQuery(genericSubReportResult, queryStr);
+        }
 
         Query queryResult = getCurrentSession().createQuery(queryStr.toString());
-        queryResult = setParameterToQuery(genericSubReportResult, queryResult);
+        queryResult = setParameterToQuery(genericSubReportResult, queryResult, clickOnCount);
         final List<GenericSubReportResult> genericSubReportResultList = queryResult.list();
         return genericSubReportResultList;
 
     }
 
-    private Query setParameterToQuery(final GenericSubReportResult genericSubReportResultObj, final Query queryResult) {
-        if (genericSubReportResultObj.getAggregatedBy().equals(LcmsConstants.CASESTATUS))
-            queryResult.setString("moduleType", LcmsConstants.MODULE_TYPE_LEGALCASE);
+    private Query setParameterToQuery(final GenericSubReportResult genericSubReportResultObj, final Query queryResult,
+            final Boolean clickOnCount) {
+
+        if (clickOnCount)
+            queryResult.setString("aggreagatedByValue", genericSubReportResultObj.getAggregatedByValue());
+
+        queryResult.setString("moduleType", LcmsConstants.MODULE_TYPE_LEGALCASE);
 
         if (genericSubReportResultObj.getFromDate() != null)
             queryResult.setDate("fromDate", genericSubReportResultObj.getFromDate());
         if (genericSubReportResultObj.getToDate() != null)
             queryResult.setDate("toDate", genericSubReportResultObj.getToDate());
-        if (genericSubReportResultObj.getCourtName() != null)
-            queryResult.setInteger("courtName", genericSubReportResultObj.getCourtName());
+        if (genericSubReportResultObj.getCourtId() != null)
+            queryResult.setInteger("courtName", genericSubReportResultObj.getCourtId());
         if (genericSubReportResultObj.getCourtType() != null)
-            queryResult.setString("courtType", genericSubReportResultObj.getCourtType());
+            queryResult.setInteger("courtType", genericSubReportResultObj.getCourtType());
         if (genericSubReportResultObj.getPetitionTypeId() != null)
             queryResult.setInteger("petitionType", genericSubReportResultObj.getPetitionTypeId());
-        if (genericSubReportResultObj.getStatusId() != null)
-            queryResult.setInteger("caseStatus", genericSubReportResultObj.getStatusId());
+        if (genericSubReportResultObj.getCaseStatus() != null)
+            queryResult.setString("status", genericSubReportResultObj.getCaseStatus());
         if (genericSubReportResultObj.getOfficerIncharge() != null)
             queryResult.setString("officerIncharge", genericSubReportResultObj.getOfficerIncharge());
-        if (genericSubReportResultObj.getJudgmentType() != null)
-            queryResult.setString("judgmentType", genericSubReportResultObj.getJudgmentType());
-        if (genericSubReportResultObj.getCaseCategory() != null)
-            queryResult.setInteger("casetype", genericSubReportResultObj.getCaseCategory());
+        if (genericSubReportResultObj.getJudgmentTypeId() != null)
+            queryResult.setInteger("judgmentType", genericSubReportResultObj.getJudgmentTypeId());
         if (StringUtils.isNotBlank(genericSubReportResultObj.getStandingCounsel()))
             queryResult.setString("standingCouncil", genericSubReportResultObj.getStandingCounsel());
         if (genericSubReportResultObj.getOfficerIncharge() != null)
             queryResult.setString("officerIncharge", genericSubReportResultObj.getOfficerIncharge());
+        if (genericSubReportResultObj.getCasecategoryId() != null)
+            queryResult.setInteger("caseType", genericSubReportResultObj.getCasecategoryId());
+        if (genericSubReportResultObj.getReportStatusId() != null)
+            queryResult.setInteger("casesubStatus", genericSubReportResultObj.getReportStatusId());
 
         queryResult.setResultTransformer(new AliasToBeanResultTransformer(GenericSubReportResult.class));
         return queryResult;
@@ -121,84 +138,258 @@ public class GenericSubReportService {
     private void getAppendQuery(final GenericSubReportResult genericSubReportResult, final StringBuilder queryStr) {
 
         if (genericSubReportResult.getFromDate() != null)
-            queryStr.append(" legalcase.caseDate >=:fromDate  and");
+            queryStr.append("  and legalcase.caseDate >=:fromDate  ");
+
         if (genericSubReportResult.getToDate() != null)
-            queryStr.append(" legalcase.caseReceivingDate <=:toDate ");
-        if (genericSubReportResult.getCourtName() != null)
-            queryStr.append(" and legalcase.courtMaster =:courtName ");
-        if (genericSubReportResult.getCaseCategory() != null)
-            queryStr.append(" and legalcase.caseTypeMaster =:casetype ");
+            queryStr.append(" and legalcase.caseDate <=:toDate ");
+
         if (StringUtils.isNotBlank(genericSubReportResult.getStandingCounsel()))
-            queryStr.append(" and legalcase.oppPartyAdvocate like :standingCouncil ");
+            queryStr.append(" and legalcase.oppPartyAdvocate =:standingCouncil ");
         if (genericSubReportResult.getOfficerIncharge() != null)
-            queryStr.append(" and legalcase.officerIncharge like :officerIncharge ");
-        if (genericSubReportResult.getStatusId()!= null)
-            queryStr.append(" and egwStatus.id =:caseStatus ");
+            queryStr.append(" and legalcase.officerIncharge =:officerIncharge ");
+        if (genericSubReportResult.getCaseStatus() != null)
+            queryStr.append(" and egwStatus.code =:status ");
         if (genericSubReportResult.getCourtType() != null)
-            queryStr.append(" and courtmaster.courtType.courtType like :courtType ");
-        if (genericSubReportResult.getJudgmentType() != null)
-            queryStr.append(" and judgment.judgmentType.name like :judgmentType ");
-        if (genericSubReportResult.getPetitionType() != null)
-            queryStr.append(" and legalcase.petitionTypeMaster =:petitionType ");
+            queryStr.append(" and courtmaster.courtType.id =:courtType ");
+        if (genericSubReportResult.getJudgmentTypeId() != null)
+            queryStr.append(" and judgment.judgmentType.id =:judgmentType ");
+        if (genericSubReportResult.getPetitionTypeId() != null)
+            queryStr.append(" and petmaster.id =:petitionType ");
+        if (genericSubReportResult.getCasecategoryId() != null)
+            queryStr.append(" and casetypemaster.id =:caseType ");
+        if (genericSubReportResult.getCourtId() != null)
+            queryStr.append(" and courtmaster.id =:courtName ");
+        if (genericSubReportResult.getReportStatusId() != null)
+            queryStr.append(" and reportStatus.id =:casesubStatus ");
     }
 
     private void getAggregateQueryByCourtName(final GenericSubReportResult genericSubReportResult,
-            final StringBuilder queryStr) {
-        queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as noOfCase,courtmaster.name  as aggregatedBy ");
+            final StringBuilder queryStr, final Boolean clickOnCount) {
+        if (!clickOnCount)
+            queryStr.append(" SELECT COUNT(DISTINCT legalcase.id) as noOfCase ");
+        else
+            queryStr.append(" select distinct legalcase  as  legalCase ");
+        queryStr.append(",courtmaster.name  as aggregatedBy ");
+        queryStr.append(" from LegalCase legalcase,CourtMaster courtmaster  ");
+        queryStr.append(" ,CaseTypeMaster casetypemaster , PetitionTypeMaster petmaster,EgwStatus egwStatus ");
+        if (genericSubReportResult.getJudgmentTypeId() != null)
+            queryStr.append(" ,Judgment judgment ");
+        if (genericSubReportResult.getReportStatusId() != null)
+            queryStr.append(" ,ReportStatus reportStatus ");
+        queryStr.append(" where legalcase.courtMaster.id=courtmaster.id and ");
         queryStr.append(
-                "from LegalCase legalcase,CourtMaster courtmaster where legalcase.courtMaster.id=courtmaster.id and ");
+                "  legalcase.caseTypeMaster.id=casetypemaster.id and legalcase.petitionTypeMaster.id=petmaster.id ");
+        queryStr.append(" and legalcase.status.id=egwStatus.id and egwStatus.moduletype =:moduleType  ");
+        if (genericSubReportResult.getJudgmentTypeId() != null)
+            queryStr.append(" and legalcase.id = judgment.legalCase ");
+        if (genericSubReportResult.getReportStatusId() != null)
+            queryStr.append(" and legalcase.reportStatus.id=reportStatus.id ");
+        if (clickOnCount)
+            queryStr.append(" and legalcase.courtMaster.name=:aggreagatedByValue ");
         getAppendQuery(genericSubReportResult, queryStr);
         queryStr.append("group by courtmaster.name");
+        if (clickOnCount)
+            queryStr.append(" ,legalcase");
         queryStr.append(" order by courtmaster.name");
     }
 
     private void getAggregateQueryByPetitionType(final GenericSubReportResult genericSubReportResult,
-            final StringBuilder queryStr) {
-        queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as noOfCase,petmaster.petitionType as aggregatedBy ");
-        queryStr.append("from LegalCase legalcase,PetitionTypeMaster petmaster where legalcase.petitionTypeMaster.id=petmaster.id and ");
+            final StringBuilder queryStr, final Boolean clickOnCount) {
+        if (!clickOnCount)
+            queryStr.append(" SELECT COUNT(DISTINCT legalcase.id) as noOfCase ");
+        else
+            queryStr.append("select distinct legalcase  as  legalCase ");
+        queryStr.append(",petmaster.petitionType as aggregatedBy ");
+        queryStr.append("from LegalCase legalcase,CourtMaster courtmaster  ");
+        queryStr.append(" , CaseTypeMaster casetypemaster , PetitionTypeMaster petmaster,EgwStatus egwStatus ");
+        if (genericSubReportResult.getJudgmentTypeId() != null)
+            queryStr.append(" ,Judgment judgment ");
+        if (genericSubReportResult.getReportStatusId() != null)
+            queryStr.append(" ,ReportStatus reportStatus ");
+        queryStr.append(" where legalcase.petitionTypeMaster.id=petmaster.id  and ");
+        queryStr.append(
+                "  legalcase.caseTypeMaster.id=casetypemaster.id  and legalcase.courtMaster.id=courtmaster.id ");
+        queryStr.append(" and legalcase.status.id=egwStatus.id and egwStatus.moduletype =:moduleType  ");
+        if (genericSubReportResult.getJudgmentTypeId() != null)
+            queryStr.append(" and legalcase.id = judgment.legalCase ");
+        if (genericSubReportResult.getReportStatusId() != null)
+            queryStr.append(" and legalcase.reportStatus.id=reportStatus.id ");
+        if (clickOnCount)
+            queryStr.append("and legalcase.petitionTypeMaster.petitionType=:aggreagatedByValue ");
         getAppendQuery(genericSubReportResult, queryStr);
         queryStr.append("group by petmaster.petitionType");
+        if (clickOnCount)
+            queryStr.append(" ,legalcase");
         queryStr.append(" order by petmaster.petitionType");
     }
 
     private void getAggregateQueryByCourtType(final GenericSubReportResult genericSubReportResult,
-            final StringBuilder queryStr) {
+            final StringBuilder queryStr, final Boolean clickOnCount) {
+        if (!clickOnCount)
+            queryStr.append(" SELECT COUNT(DISTINCT legalcase.id) as noOfCase ");
+        else
+            queryStr.append("select distinct legalcase  as  legalCase ");
+        queryStr.append(",courtmaster.courtType.courtType  as aggregatedBy ");
+        queryStr.append("from LegalCase legalcase,CourtMaster courtmaster ");
+        queryStr.append(" , CaseTypeMaster casetypemaster , PetitionTypeMaster petmaster,EgwStatus egwStatus ");
+        if (genericSubReportResult.getJudgmentTypeId() != null)
+            queryStr.append(" ,Judgment judgment ");
+        if (genericSubReportResult.getReportStatusId() != null)
+            queryStr.append(" ,ReportStatus reportStatus ");
         queryStr.append(
-                "SELECT COUNT(DISTINCT legalcase.id) as noOfCase,courtmaster.courtType.courtType  as aggregatedBy ");
-        queryStr.append(
-                "from LegalCase legalcase,CourtMaster courtmaster where legalcase.courtMaster.id=courtmaster.id and ");
+                " where legalcase.courtMaster.id=courtmaster.id and legalcase.petitionTypeMaster.id=petmaster.id  ");
+        queryStr.append(" and legalcase.caseTypeMaster.id=casetypemaster.id  ");
+        queryStr.append(" and legalcase.status.id=egwStatus.id and egwStatus.moduletype =:moduleType ");
+        if (genericSubReportResult.getJudgmentTypeId() != null)
+            queryStr.append("  and legalcase.id = judgment.legalCase ");
+        if (genericSubReportResult.getReportStatusId() != null)
+            queryStr.append(" and legalcase.reportStatus.id=reportStatus.id ");
+        if (clickOnCount)
+            queryStr.append(" and legalcase.courtMaster.courtType.courtType=:aggreagatedByValue ");
         getAppendQuery(genericSubReportResult, queryStr);
         queryStr.append("group by courtmaster.courtType.courtType");
+        if (clickOnCount)
+            queryStr.append(" ,legalcase");
         queryStr.append(" order by courtmaster.courtType.courtType");
     }
 
     private void getAggregateQueryByCaseStatus(final GenericSubReportResult genericSubReportResult,
-            final StringBuilder queryStr) {
-        queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as noOfCase,egwStatus.description  as aggregatedBy ");
+            final StringBuilder queryStr, final Boolean clickOnCount) {
+        if (!clickOnCount)
+            queryStr.append(" SELECT COUNT(DISTINCT legalcase.id) as noOfCase ");
+        else
+            queryStr.append("select distinct legalcase  as  legalCase ");
+        queryStr.append(",egwStatus.description  as aggregatedBy ");
+        queryStr.append("from LegalCase legalcase,EgwStatus egwStatus ");
+        queryStr.append(" ,CourtMaster courtmaster ,CaseTypeMaster casetypemaster , PetitionTypeMaster petmaster ");
+        if (genericSubReportResult.getJudgmentTypeId() != null)
+            queryStr.append(" ,Judgment judgment ");
+        if (genericSubReportResult.getReportStatusId() != null)
+            queryStr.append(" ,ReportStatus reportStatus ");
         queryStr.append(
-                "from LegalCase legalcase,EgwStatus egwStatus where legalcase.status.id=egwStatus.id and egwStatus.moduletype =:moduleType and ");
+                " where legalcase.courtMaster.id=courtmaster.id and legalcase.petitionTypeMaster.id=petmaster.id ");
+        queryStr.append(" and legalcase.caseTypeMaster.id=casetypemaster.id ");
+        queryStr.append(" and  legalcase.status.id=egwStatus.id and egwStatus.moduletype =:moduleType ");
+        if (genericSubReportResult.getJudgmentTypeId() != null)
+            queryStr.append(" and legalcase.id = judgment.legalCase ");
+        if (genericSubReportResult.getReportStatusId() != null)
+            queryStr.append(" and legalcase.reportStatus.id=reportStatus.id ");
+        if (clickOnCount)
+            queryStr.append(" and egwStatus.description=:aggreagatedByValue ");
         getAppendQuery(genericSubReportResult, queryStr);
         queryStr.append("group by egwStatus.description");
+        if (clickOnCount)
+            queryStr.append(" ,legalcase");
         queryStr.append(" order by egwStatus.description");
     }
 
     private void getAggregateQueryByOfficerIncharge(final GenericSubReportResult genericSubReportResult,
-            final StringBuilder queryStr) {
-        queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as noOfCase,legalcase.officerIncharge as aggregatedBy ");
+            final StringBuilder queryStr, final Boolean clickOnCount) {
+        if (!clickOnCount)
+            queryStr.append(" SELECT COUNT(DISTINCT legalcase.id) as noOfCase ");
+        else
+            queryStr.append("select distinct legalcase  as  legalCase ");
+        queryStr.append(",legalcase.officerIncharge as aggregatedBy ");
+        queryStr.append("from LegalCase legalcase,EgwStatus egwStatus ");
+        queryStr.append(" ,CourtMaster courtmaster ,CaseTypeMaster casetypemaster , PetitionTypeMaster petmaster ");
+        if (genericSubReportResult.getJudgmentTypeId() != null)
+            queryStr.append(" ,Judgment judgment ");
+        if (genericSubReportResult.getReportStatusId() != null)
+            queryStr.append(" ,ReportStatus reportStatus ");
         queryStr.append(
-                "from LegalCase legalcase where ");
+                " where legalcase.courtMaster.id=courtmaster.id and legalcase.petitionTypeMaster.id=petmaster.id ");
+        queryStr.append("  and legalcase.caseTypeMaster.id=casetypemaster.id  ");
+        queryStr.append(" and  legalcase.status.id=egwStatus.id and egwStatus.moduletype =:moduleType ");
+        if (genericSubReportResult.getJudgmentTypeId() != null)
+            queryStr.append(" and legalcase.id = judgment.legalCase ");
+        if (genericSubReportResult.getReportStatusId() != null)
+            queryStr.append(" and legalcase.reportStatus.id=reportStatus.id ");
+        if (clickOnCount)
+            queryStr.append("and  legalcase.officerIncharge=:aggreagatedByValue ");
         getAppendQuery(genericSubReportResult, queryStr);
         queryStr.append("group by legalcase.officerIncharge");
+        if (clickOnCount)
+            queryStr.append(" ,legalcase");
         queryStr.append(" order by legalcase.officerIncharge");
     }
 
     private void getAggregateQueryByJudgementOutcome(final GenericSubReportResult genericSubReportResult,
-            final StringBuilder queryStr) {
-        queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as noOfCase,judgment.judgmentType.name  as aggregatedBy ");
+            final StringBuilder queryStr, final Boolean clickOnCount) {
+        if (!clickOnCount)
+            queryStr.append(" SELECT COUNT(DISTINCT legalcase.id) as noOfCase ");
+        else
+            queryStr.append("select distinct legalcase  as  legalCase ");
+        queryStr.append(",judgment.judgmentType.name  as aggregatedBy ");
+        queryStr.append(" from LegalCase legalcase,Judgment judgment  ");
+
         queryStr.append(
-                "from LegalCase legalcase,Judgment judgment  where legalcase.id = judgment.legalCase and ");
+                " ,CourtMaster courtmaster ,CaseTypeMaster casetypemaster , PetitionTypeMaster petmaster,EgwStatus egwStatus ");
+        if (genericSubReportResult.getReportStatusId() != null)
+            queryStr.append(" ,ReportStatus reportStatus ");
+        queryStr.append(" where legalcase.id = judgment.legalCase and ");
+        queryStr.append("  legalcase.courtMaster.id=courtmaster.id and legalcase.petitionTypeMaster.id=petmaster.id ");
+        queryStr.append(" and  legalcase.caseTypeMaster.id=casetypemaster.id ");
+        queryStr.append(" and legalcase.status.id=egwStatus.id and egwStatus.moduletype =:moduleType ");
+        if (genericSubReportResult.getReportStatusId() != null)
+            queryStr.append(" and legalcase.reportStatus.id=reportStatus.id ");
+        if (clickOnCount)
+            queryStr.append(" and judgment.judgmentType.name=:aggreagatedByValue ");
         getAppendQuery(genericSubReportResult, queryStr);
         queryStr.append("group by judgment.judgmentType.name");
+        if (clickOnCount)
+            queryStr.append(" ,legalcase");
         queryStr.append(" order by judgment.judgmentType.name");
     }
+
+    private void getAggregateQueryByCaseCategory(final GenericSubReportResult genericSubReportResult,
+            final StringBuilder queryStr, final Boolean clickOnCount) {
+        if (!clickOnCount)
+            queryStr.append(" SELECT COUNT(DISTINCT legalcase.id) as noOfCase ");
+        else
+            queryStr.append("select distinct legalcase  as  legalCase ");
+        queryStr.append(",casetypemaster.caseType as aggregatedBy ");
+        queryStr.append("from LegalCase legalcase,CaseTypeMaster casetypemaster ");
+        queryStr.append(" ,CourtMaster courtmaster , PetitionTypeMaster petmaster,EgwStatus egwStatus ");
+        if (genericSubReportResult.getJudgmentTypeId() != null)
+            queryStr.append(" ,Judgment judgment ");
+        if (genericSubReportResult.getReportStatusId() != null)
+            queryStr.append(" ,ReportStatus reportStatus ");
+        queryStr.append(" where legalcase.caseTypeMaster.id=casetypemaster.id ");
+        queryStr.append(
+                " and legalcase.courtMaster.id=courtmaster.id and legalcase.petitionTypeMaster.id=petmaster.id ");
+        queryStr.append(" and legalcase.status.id=egwStatus.id and egwStatus.moduletype =:moduleType ");
+        if (genericSubReportResult.getJudgmentTypeId() != null)
+            queryStr.append(" and legalcase.id = judgment.legalCase ");
+        if (genericSubReportResult.getReportStatusId() != null)
+            queryStr.append(" and legalcase.reportStatus.id=reportStatus.id ");
+        if (clickOnCount)
+            queryStr.append(" and legalcase.caseTypeMaster.caseType=:aggreagatedByValue ");
+        getAppendQuery(genericSubReportResult, queryStr);
+        queryStr.append("group by casetypemaster.caseType");
+        if (clickOnCount)
+            queryStr.append(" ,legalcase");
+        queryStr.append(" order by casetypemaster.caseType");
+
+    }
+
+    public void getLegalCaseSubReportStatus(final GenericSubReportResult genericSubReportResult,
+            final StringBuilder queryStr, final Boolean clickOnCount) {
+
+        queryStr.append("select distinct legalcase  as  legalCase ,courtmaster.name  as  courtName ,");
+        queryStr.append(" egwStatus.code  as  caseStatus ");
+        queryStr.append(" from LegalCase legalcase,CourtMaster courtmaster,CaseTypeMaster casetypemaster,");
+        queryStr.append(" PetitionTypeMaster petmaster,EgwStatus egwStatus,ReportStatus reportStatus");
+        if (genericSubReportResult.getJudgmentTypeId() != null)
+            queryStr.append(" ,Judgment judgment ");
+        queryStr.append(" where legalcase.courtMaster.id=courtmaster.id and ");
+        queryStr.append(
+                " legalcase.caseTypeMaster.id=casetypemaster.id and legalcase.petitionTypeMaster.id=petmaster.id and ");
+        queryStr.append(" legalcase.status.id=egwStatus.id and egwStatus.moduletype =:moduleType  ");
+        if (genericSubReportResult.getReportStatusId() != null)
+            queryStr.append("  and legalcase.reportStatus.id = reportStatus.id ");
+        if (genericSubReportResult.getJudgmentTypeId() != null)
+            queryStr.append(" and legalcase.id = judgment.legalCase ");
+
+    }
+
 }

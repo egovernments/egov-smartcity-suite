@@ -49,8 +49,8 @@
 		<title>
 			<s:text name='ptis.collectionReport.title' />
 		</title>
-		<link href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css?rnd=${app_release_no}' context='/egi'/>" rel="stylesheet" type="text/css" />
-        <script type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js?rnd=${app_release_no}' context='/egi'/>"></script>
+		<link href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
         <script type="text/javascript">
 
         jQuery(function ($) {

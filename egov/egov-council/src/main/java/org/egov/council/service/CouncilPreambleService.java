@@ -73,52 +73,55 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CouncilPreambleService {
 
-    private final CouncilPreambleRepository CouncilPreambleRepository;
+    private final CouncilPreambleRepository councilPreambleRepository;
     @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
     private PreambleWorkflowCustomImpl preambleWorkflowCustomImpl;
-    
+
     @Autowired
     protected AutonumberServiceBeanResolver autonumberServiceBeanResolver;
-    
+
+    @Autowired
+    public CouncilPreambleService(final CouncilPreambleRepository councilPreambleRepository) {
+        this.councilPreambleRepository = councilPreambleRepository;
+    }
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
-    @Autowired
-    public CouncilPreambleService(final CouncilPreambleRepository CouncilPreambleRepository) {
-        this.CouncilPreambleRepository = CouncilPreambleRepository;
-    }
-
     @Transactional
-    public CouncilPreamble create(final CouncilPreamble councilPreamble, Long approvalPosition, String approvalComment, String workFlowAction) {
-       
+    public CouncilPreamble create(final CouncilPreamble councilPreamble, Long approvalPosition, String approvalComment,
+            String workFlowAction) {
+
         if (approvalPosition != null && approvalPosition > 0 && StringUtils.isNotEmpty(workFlowAction))
             preambleWorkflowCustomImpl.createCommonWorkflowTransition(councilPreamble,
-                    approvalPosition, approvalComment,workFlowAction);
-        
-         CouncilPreambleRepository.save(councilPreamble);
-         return councilPreamble;
+                    approvalPosition, approvalComment, workFlowAction);
+
+        councilPreambleRepository.save(councilPreamble);
+        return councilPreamble;
     }
 
     @Transactional
     public CouncilPreamble update(final CouncilPreamble councilPreamble, Long approvalPosition, String approvalComment,
             String workFlowAction) {
         if (approvalPosition != null && StringUtils.isNotEmpty(workFlowAction))
-            preambleWorkflowCustomImpl.createCommonWorkflowTransition(councilPreamble, approvalPosition,approvalComment, workFlowAction);
-        CouncilPreambleRepository.save(councilPreamble);
+            preambleWorkflowCustomImpl.createCommonWorkflowTransition(councilPreamble, approvalPosition, approvalComment,
+                    workFlowAction);
+        councilPreambleRepository.save(councilPreamble);
         return councilPreamble;
     }
-    
+
     @Transactional
     public CouncilPreamble updateImplementationStatus(final CouncilPreamble councilPreamble) {
-        CouncilPreambleRepository.save(councilPreamble);
+        councilPreambleRepository.save(councilPreamble);
         return councilPreamble;
     }
+
     public CouncilPreamble findOne(Long id) {
-        return CouncilPreambleRepository.findById(id);
+        return councilPreambleRepository.findById(id);
     }
 
     @SuppressWarnings("unchecked")
@@ -127,7 +130,7 @@ public class CouncilPreambleService {
         criteria.add(Restrictions.in("status.code", new String[] { APPROVED, ADJOURNED }));
         return criteria.list();
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<CouncilPreamble> searchPreambleForWardwiseReport(CouncilPreamble councilPreamble) {
         final Criteria criteria = buildSearchCriteria(councilPreamble);
@@ -139,69 +142,68 @@ public class CouncilPreambleService {
         final Criteria criteria = buildSearchCriteria(councilPreamble);
         return criteria.list();
     }
-    
+
     @SuppressWarnings({ "unchecked", "deprecation" })
-	public List<CouncilPreamble> searchFinalizedPreamble(
-			CouncilPreamble councilPreamble) {
-		final Criteria criteria = buildSearchCriteria(councilPreamble);
-		criteria.createAlias("councilPreamble.implementationStatus",
-				"implementationStatus", CriteriaSpecification.LEFT_JOIN)
-				.add(Restrictions.or(Restrictions
-						.isNull("implementationStatus.code"), Restrictions.ne(
-						"implementationStatus.code",
-						IMPLEMENTATION_STATUS_FINISHED)))
-				.add(Restrictions.and(Restrictions.in("status.code",
-						new String[] { RESOLUTION_APPROVED_PREAMBLE })));
-		return criteria.list();
-	}
-    
-    
-	public CouncilPreamble buildSumotoPreamble(MeetingMOM meetingMOM,
-			EgwStatus preambleStatus) {
-		CouncilPreamble councilPreamble = new CouncilPreamble();
-		SumotoNumberGenerator sumotoResolutionNumberGenerator = autonumberServiceBeanResolver
-				.getAutoNumberServiceFor(SumotoNumberGenerator.class);
-		councilPreamble.setPreambleNumber(sumotoResolutionNumberGenerator
-				.getNextNumber(councilPreamble));
-		councilPreamble.setStatus(preambleStatus);
-		councilPreamble.setDepartment(meetingMOM.getPreamble().getDepartment());
-		councilPreamble.setGistOfPreamble(meetingMOM.getPreamble()
-				.getGistOfPreamble());
-		councilPreamble.setSanctionAmount(meetingMOM.getPreamble()
-				.getSanctionAmount());
-		councilPreamble.setType(PreambleType.SUMOTO);
+    public List<CouncilPreamble> searchFinalizedPreamble(
+            CouncilPreamble councilPreamble) {
+        final Criteria criteria = buildSearchCriteria(councilPreamble);
+        criteria.createAlias("councilPreamble.implementationStatus",
+                "implementationStatus", CriteriaSpecification.LEFT_JOIN)
+                .add(Restrictions.or(Restrictions
+                        .isNull("implementationStatus.code"), Restrictions.ne(
+                                "implementationStatus.code",
+                                IMPLEMENTATION_STATUS_FINISHED)))
+                .add(Restrictions.and(Restrictions.in("status.code",
+                        new String[] { RESOLUTION_APPROVED_PREAMBLE })));
+        return criteria.list();
+    }
 
-		return councilPreamble;
+    public CouncilPreamble buildSumotoPreamble(MeetingMOM meetingMOM,
+            EgwStatus preambleStatus) {
+        CouncilPreamble councilPreamble = new CouncilPreamble();
+        SumotoNumberGenerator sumotoResolutionNumberGenerator = autonumberServiceBeanResolver
+                .getAutoNumberServiceFor(SumotoNumberGenerator.class);
+        councilPreamble.setPreambleNumber(sumotoResolutionNumberGenerator
+                .getNextNumber(councilPreamble));
+        councilPreamble.setStatus(preambleStatus);
+        councilPreamble.setDepartment(meetingMOM.getPreamble().getDepartment());
+        councilPreamble.setGistOfPreamble(meetingMOM.getPreamble()
+                .getGistOfPreamble());
+        councilPreamble.setSanctionAmount(meetingMOM.getPreamble()
+                .getSanctionAmount());
+        councilPreamble.setType(PreambleType.SUMOTO);
 
-	}
-    
-	public Criteria buildSearchCriteria(CouncilPreamble councilPreamble) {
-		final Criteria criteria = getCurrentSession().createCriteria(CouncilPreamble.class, "councilPreamble")
-				.createAlias("councilPreamble.status", "status");
+        return councilPreamble;
 
-		if ( councilPreamble.getDepartment() != null)
-			criteria.add(Restrictions.eq("councilPreamble.department", councilPreamble.getDepartment()));
+    }
 
-		if (councilPreamble.getFromDate() != null && councilPreamble.getToDate() != null) {
-			criteria.add(Restrictions.between("councilPreamble.createdDate", councilPreamble.getFromDate(),
-					DateUtils.addDays(councilPreamble.getToDate(), 1)));
-		}
-		if (councilPreamble.getPreambleNumber() != null)
-			criteria.add(Restrictions.ilike("councilPreamble.preambleNumber", councilPreamble.getPreambleNumber(),
-					MatchMode.ANYWHERE));
+    public Criteria buildSearchCriteria(CouncilPreamble councilPreamble) {
+        final Criteria criteria = getCurrentSession().createCriteria(CouncilPreamble.class, "councilPreamble")
+                .createAlias("councilPreamble.status", "status");
 
-		if (councilPreamble.getWards() != null && councilPreamble.getWards().size() > 0) {
-			ArrayList<Long> boundaryid = new ArrayList<Long>();
-			for (Boundary bndry : councilPreamble.getWards()) {
-				boundaryid.add(bndry.getId());
-			}
-			if (!boundaryid.isEmpty())
-				criteria.createAlias("councilPreamble.wards", "wards").add(Restrictions.in("wards.id", boundaryid));
-			
-		}
-		
-		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		return criteria;
-	}
+        if (councilPreamble.getDepartment() != null)
+            criteria.add(Restrictions.eq("councilPreamble.department", councilPreamble.getDepartment()));
+
+        if (councilPreamble.getFromDate() != null && councilPreamble.getToDate() != null) {
+            criteria.add(Restrictions.between("councilPreamble.createdDate", councilPreamble.getFromDate(),
+                    DateUtils.addDays(councilPreamble.getToDate(), 1)));
+        }
+        if (councilPreamble.getPreambleNumber() != null)
+            criteria.add(Restrictions.ilike("councilPreamble.preambleNumber", councilPreamble.getPreambleNumber(),
+                    MatchMode.ANYWHERE));
+
+        if (councilPreamble.getWards() != null && !councilPreamble.getWards().isEmpty()) {
+            ArrayList<Long> boundaryid = new ArrayList<>();
+            for (Boundary bndry : councilPreamble.getWards()) {
+                boundaryid.add(bndry.getId());
+            }
+            if (!boundaryid.isEmpty())
+                criteria.createAlias("councilPreamble.wards", "wards").add(Restrictions.in("wards.id", boundaryid));
+
+        }
+
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return criteria;
+    }
 
 }

@@ -47,8 +47,11 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.council.entity.CommitteeMembers;
 import org.egov.council.entity.CommitteeType;
+import org.egov.council.entity.CouncilMemberStatus;
 import org.egov.council.repository.CouncilCommitteeMemberRepository;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -62,40 +65,48 @@ public class CouncilCommitteeMemberService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
-
     @Autowired
     public CouncilCommitteeMemberService(final CouncilCommitteeMemberRepository councilCommitteeMemberRepository) {
         this.councilCommitteeMemberRepository = councilCommitteeMemberRepository;
     }
-
-    @Transactional
-    public CommitteeMembers create(final CommitteeMembers CommitteeMembers) {
-        return councilCommitteeMemberRepository.save(CommitteeMembers);
+    
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
     }
 
     @Transactional
-    public CommitteeMembers update(final CommitteeMembers CommitteeMembers) {
-        return councilCommitteeMemberRepository.save(CommitteeMembers);
+    public CommitteeMembers create(final CommitteeMembers committeeMember) {
+        return councilCommitteeMemberRepository.save(committeeMember);
+    }
+
+    @Transactional
+    public CommitteeMembers update(final CommitteeMembers committeeMember) {
+        return councilCommitteeMemberRepository.save(committeeMember);
     }
 
     public List<CommitteeMembers> findAll() {
         return councilCommitteeMemberRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
     
+    @SuppressWarnings("unchecked")
+    public List<CommitteeMembers> findAllByCommitteTypeMemberIsActive(CommitteeType committeeType) {
+        final Criteria criteria = getCurrentSession().createCriteria(CommitteeMembers.class, "committeeMembers")
+                .createAlias("committeeMembers.councilMember", "member");
+        criteria.add(Restrictions.eq("committeeType", committeeType));
+        criteria.add(Restrictions.eq("member.status", CouncilMemberStatus.ACTIVE));
+        return criteria.list();
+    }
+    
     public List<CommitteeMembers> findAllByCommitteType(CommitteeType committeeType) {
         return councilCommitteeMemberRepository.findByCommitteeType(committeeType);
     }
-
     public CommitteeMembers findOne(Long id) {
         return councilCommitteeMemberRepository.findOne(id);
     }
     
     @Transactional
     public void delete(final List<CommitteeMembers> committeeMembers) {
-        councilCommitteeMemberRepository.delete(committeeMembers);
+        councilCommitteeMemberRepository.deleteInBatch(committeeMembers);
     }
     
 

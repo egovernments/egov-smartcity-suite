@@ -43,7 +43,6 @@
 <script>
 jQuery(document).ready(function(){
 	 jQuery('#boundary').change(function() {
-		console.log("came jursidiction"+jQuery('#boundary').val());
 		getZoneWard();
 	});
 	<s:if test="%{hasErrors() || mode=='view' || mode=='edit'}">
@@ -54,6 +53,8 @@ jQuery(document).ready(function(){
 });
 
 function getZoneWard(){
+    jQuery('#wardName').val("");
+    jQuery('#parentBoundary').val("");
 	jQuery.ajax({
 		url: "/egi/boundary/ajaxBoundary-blockByLocality.action",
 		type: "GET",
@@ -63,8 +64,6 @@ function getZoneWard(){
 		cache: false,
 		dataType: "json",
 		success: function (response) {
-			jQuery('#wardName').html("");
-			jQuery('#parentBoundary').html("");
 			jQuery.each(response.results.boundaries, function (j, boundary) {
 				if (boundary.wardId) {
 					jQuery('#wardName').val(boundary.wardName);
@@ -73,9 +72,6 @@ function getZoneWard(){
 			});
 		}, 
 		error: function (response) {
-			console.log("failed");
-			jQuery('#wardName').val('');
-			jQuery('#parentBoundary').val('');
 			bootbox.alert("No boundary details mapped for locality")
 		}
 	});
@@ -88,23 +84,19 @@ function getZoneWard(){
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.propertyNo.lbl' /></label>
     <div class="col-sm-3 add-margin">
-        <!-- <div class="input-group"> -->
-         	<s:textfield name="assessmentNo" id="propertyNo" value="%{assessmentNo}" maxlength="15" onKeyPress="return numbersonly(this, event)" onBlur="checkLength(this,15);callPropertyTaxRest();" onChange="resetOnPropertyNumChange();" class="form-control"/>
-            <!-- <span id="searchImg" class="input-group-addon" onclick="callPropertyTaxRest();"> <i class="fa fa-search specific"></i></span> -->
-       <!--  </div> -->
+        <s:textfield name="assessmentNo" id="propertyNo" value="%{assessmentNo}" maxlength="15" onkeypress="return numbersonly(this, event)" onblur="checkLength(this,15);callPropertyTaxRest();" onchange="resetOnPropertyNumChange();" class="form-control"/>
     </div>
   
     <label class="col-sm-2 control-label text-right"><s:text name='license.locality.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:select name="boundary" id="boundary" list="dropdownData.localityList"
 	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{boundary.id}" class="form-control" />
-        <s:hidden name="boundary" id="boundaryId"/>
     </div>
 </div>
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.division' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <s:textfield name="ward" id="wardName" value="%{parentBoundary.name}"  readOnly="true" class="form-control"/>
+        <s:textfield name="ward" id="wardName" value="%{parentBoundary.name}"  readonly="true" class="form-control"/>
         <s:hidden name="parentBoundary" id="parentBoundary" value="%{parentBoundary.id}"/>
     </div>
 </div>
@@ -117,7 +109,12 @@ function getZoneWard(){
     </div>
     <label class="col-sm-2 control-label text-right"><s:text name='license.address' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-         <s:textarea name="address" id="address" maxlength="250" onBlur="checkLength(this,250)" class="form-control"  />
-        <s:hidden name="address" id="addressOnAssessment"/>
+         <s:textarea name="address" id="address" maxlength="250" onblur="checkLength(this,250)" class="form-control"  />
     </div>
 </div>
+<script>
+    if(jQuery("#propertyNo") && jQuery("#propertyNo").val() !== "") {
+        resetOnPropertyNumChange();
+        callPropertyTaxRest();
+    }
+</script>

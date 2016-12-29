@@ -161,7 +161,7 @@ public class ApplicationSewerageSearchController {
             searchResultObject.setShscNumber(sewerageIndexObject.getShscNumber());
             searchResultObject.setApplicantName(sewerageIndexObject.getConsumerName());
             searchResultObject.setApplicationType(sewerageIndexObject.getApplicationType());
-            searchResultObject.setPropertyType(sewerageIndexObject.getPropertyType());
+            searchResultObject.setPropertyType(sewerageIndexObject.getPropertyType().replace("_", " "));
             searchResultObject.setRevenueWard(sewerageIndexObject.getWard());
             searchResultObject.setAddress(sewerageIndexObject.getAddress());
             searchResultObject.setApplicationStatus(sewerageIndexObject.getApplicationStatus());

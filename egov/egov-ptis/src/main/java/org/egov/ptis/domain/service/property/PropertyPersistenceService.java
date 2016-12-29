@@ -83,7 +83,7 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         super(BasicProperty.class);
     }
 
-    public PropertyPersistenceService(Class<BasicProperty> type) {
+    public PropertyPersistenceService(final Class<BasicProperty> type) {
         super(type);
     }
 
@@ -102,7 +102,7 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                 else
                     user = (User) find("From User where name = ? and mobileNumber = ? and gender = ? ", ownerInfo
                             .getOwner().getName(), ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner()
-                            .getGender());
+                                    .getGender());
                 if (user == null) {
                     final Citizen newOwner = new Citizen();
                     newOwner.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
@@ -137,15 +137,15 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         }
     }
 
-    public BasicProperty persistUponPaymentResponse(BasicProperty basicProperty) {
+    public BasicProperty persistUponPaymentResponse(final BasicProperty basicProperty) {
         return basicProperty;
     }
 
-    public BasicProperty createBasicProperty(BasicProperty basicProperty, HashMap meesevaParams) {
+    public BasicProperty createBasicProperty(final BasicProperty basicProperty, final HashMap meesevaParams) {
         return persist(basicProperty);
     }
 
-    public ReportOutput propertyAcknowledgement(PropertyImpl property, String cityLogo, String cityName) {
+    public ReportOutput propertyAcknowledgement(final PropertyImpl property, final String cityLogo, final String cityName) {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         final PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
         ackBean.setOwnerName(property.getBasicProperty().getFullOwnerName());
@@ -164,24 +164,24 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         return reportService.createReport(reportInput);
     }
 
-    public String updateOwners(Property property, BasicProperty basicProperty, String doorNumber,
+    public String updateOwners(final Property property, final BasicProperty basicProperty, final String doorNumber,
             final BindingResult errors) {
         LOGGER.debug("Update Owner and door number for property: " + property + ", basicProperty: " + basicProperty
                 + ", doorNumber: " + doorNumber);
         basicProperty.getAddress().setHouseNoBldgApt(doorNumber);
-        StringBuilder errorMesg = new StringBuilder();
-        for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo()) {
+        final StringBuilder errorMesg = new StringBuilder();
+        for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo())
             if (ownerInfo != null) {
                 User user = null;
-                for (Address address : ownerInfo.getOwner().getAddress()) {
+                for (final Address address : ownerInfo.getOwner().getAddress())
                     address.setHouseNoBldgApt(doorNumber);
-                }
                 if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
                     user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
-                if (user == null || user.getId().equals(ownerInfo.getOwner().getId())) {
+                if (user == null || user.getId().equals(ownerInfo.getOwner().getId()))
                     userService.updateUser(ownerInfo.getOwner());
-                } else {
-                    BasicProperty basicProp = find("select basicProperty from PropertyOwnerInfo where owner = ?",user.getId());
+                else {
+                    final BasicProperty basicProp = find("select basicProperty from PropertyOwnerInfo where owner = ?",
+                            user.getId());
                     errorMesg.append("With entered aadhar number - ").append(ownerInfo.getOwner().getAadhaarNumber())
                             .append(" there is already owner present with owner name: ")
                             .append(user.getName()).append(" for assessment number : ")
@@ -189,23 +189,22 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                     break;
                 }
             }
-        }
         persist(basicProperty);
         LOGGER.debug("Exit from updateOwners");
         return errorMesg.toString();
     }
-    
+
     /**
      * Update the owners for a property
      * @param property
      * @param basicProp
      * @param ownerAddress
      */
-    public void updateOwners(Property property, BasicProperty basicProp, Address ownerAddress) {
-		int orderNo = 0;
-		basicProp.getPropertyOwnerInfo().clear();
+    public void updateOwners(final Property property, final BasicProperty basicProp, final Address ownerAddress) {
+        int orderNo = 0;
+        basicProp.getPropertyOwnerInfo().clear();
         for (final PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfoProxy()) {
-            
+
             if (ownerInfo != null) {
                 User user = null;
                 if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
@@ -213,9 +212,9 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                 else
                     user = (User) find("From User where name = ? and mobileNumber = ? and gender = ? ", ownerInfo
                             .getOwner().getName(), ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner()
-                            .getGender());
+                                    .getGender());
                 if (user == null) {
-                	orderNo++;
+                    orderNo++;
                     final Citizen newOwner = new Citizen();
                     newOwner.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
                     newOwner.setMobileNumber(ownerInfo.getOwner().getMobileNumber());
@@ -235,10 +234,10 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                     ownerInfo.getOwner().addAddress(ownerAddress);
                 } else {
                     // If existing user, then update the address
-                	user.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
-                	user.setMobileNumber(ownerInfo.getOwner().getMobileNumber());
-                	user.setName(ownerInfo.getOwner().getName());
-                	user.setGender(ownerInfo.getOwner().getGender());
+                    user.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
+                    user.setMobileNumber(ownerInfo.getOwner().getMobileNumber());
+                    user.setName(ownerInfo.getOwner().getName());
+                    user.setGender(ownerInfo.getOwner().getGender());
                     user.setEmailId(ownerInfo.getOwner().getEmailId());
                     user.setGuardian(ownerInfo.getOwner().getGuardian());
                     user.setGuardianRelation(ownerInfo.getOwner().getGuardianRelation());
@@ -248,8 +247,9 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
             }
             basicProp.addPropertyOwners(ownerInfo);
         }
-	}
-    public BasicProperty updateBasicProperty(BasicProperty basicProperty, HashMap<String, String> meesevaParams) {
+    }
+
+    public BasicProperty updateBasicProperty(final BasicProperty basicProperty, final HashMap<String, String> meesevaParams) {
         return update(basicProperty);
     }
 }

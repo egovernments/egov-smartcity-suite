@@ -38,50 +38,45 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ include file="/includes/taglibs.jsp" %>
-<html>  
-<head> 
+<%@ include file="/includes/taglibs.jsp"%>
+<html>
+<head>
 
-     <title><s:text name="add.title.serviceCategory"/></title>  
-<script>
-function onSubmit(obj){
-	document.forms[0].action=obj;
-	document.forms[0].submit;
-   return true;
-}
+<title><s:text name="add.title.serviceCategory" /></title>
 
-function resetValues()
-{
-	jQuery(":text").val("");
-}
+</head>
+<body>
+	<div class="errorstyle" id="error_area" style="display: none;"></div>
 
-</script>
-</head>  
-	<body>  
-		
-		<span>
-		<font  style='color: red ; font-weight:bold ' size="2">
-                               <s:actionerror/>  
-                               <s:fielderror />
-                               </font>
-          </span>
-		
-		<s:form action="serviceCategory.action" theme="simple" >  
-		
-		   <div class="subheadnew"><s:text name="add.title.serviceCategory"/></div>
-		
-			<%@ include file='serviceCategory-form.jsp'%>
-				
-			<div align="left" class="mandatory1"> &nbsp;&nbsp;&nbsp;&nbsp;* Mandatory Fields</div>
-	 		
-	 		<div class="buttonbottom">
-	 			<s:submit name="button1" cssClass="buttonsubmit" id="button32" onclick="return onSubmit('serviceCategory-create.action');"  value="Save"/>
-	 			<s:submit name="button2" cssClass="buttonsubmit" id="button32" onclick="return onSubmit('serviceCategory-list.action');"  value="List"/>
-				<input type="button3" class="button" value="Reset"
-						id="resetbutton" name="reset" onclick="resetValues();">
-				<input name="button4" type="button" class="button" id="button" onclick="window.close()" value="Close"/>
-			</div>
+	<span id="remerror"> <font style='color: red; font-weight: bold'
+		size="2"> <s:actionerror /> <s:fielderror />
+	</font>
+	</span>
 
- 		</s:form>  
-	    </body>  
+	<s:form action="serviceCategory.action" theme="simple">
+
+		<div class="subheadnew">
+			<s:text name="add.title.serviceCategory" />
+		</div>
+
+		<%@ include file='serviceCategory-form.jsp'%>
+
+		<div align="left" class="mandatory1">&nbsp;&nbsp;&nbsp;&nbsp;*
+			Mandatory Fields</div>
+
+		<div class="buttonbottom">
+			<s:submit name="button1" cssClass="buttonsubmit" id="button32"
+				onclick="return onSubmit('serviceCategory-create.action');"
+				value="Save" />
+			<s:submit name="button2" cssClass="buttonsubmit" id="button32"
+				onclick="return onSubmit('serviceCategory-list.action');"
+				value="List" />
+			<input type="button" class="button" value="Reset" id="resetbutton"
+				name="reset" onclick="return resetValues()"> <input
+				name="button4" type="button" class="button" id="button"
+				onclick="window.close()" value="Close" />
+		</div>
+
+	</s:form>
+</body>
 </html>

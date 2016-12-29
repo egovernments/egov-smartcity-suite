@@ -136,7 +136,6 @@ public class BankRemittanceAction extends BaseFormAction {
     private Date toDate;
     private Integer pageSize;
     private String remittanceAmount;
-    private Boolean[] selectedReceipts;
     private static final String REMITTANCE_LIST = "REMITTANCE_LIST";
 
     /**
@@ -676,13 +675,4 @@ public class BankRemittanceAction extends BaseFormAction {
     public void setRemittanceAmount(String remittanceAmount) {
         this.remittanceAmount = remittanceAmount;
     }
-
-    public Boolean[] getSelectedReceipts() {
-        return selectedReceipts;
-    }
-
-    public void setSelectedReceipts(Boolean[] selectedReceipts) {
-        this.selectedReceipts = selectedReceipts;
-    }
-
 }
