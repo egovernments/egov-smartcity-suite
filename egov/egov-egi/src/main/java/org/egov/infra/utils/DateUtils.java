@@ -63,10 +63,12 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     public static final String DFT_DATE_FORMAT = "dd/MM/yyyy";
     public static final DateTimeFormatter FORMAT_DATE_TO_YEAR = DateTimeFormat.forPattern("yyyy");
     public static final DateTimeFormatter TO_DEFAULT_DATE_FORMAT = DateTimeFormat.forPattern(DFT_DATE_FORMAT);
-    private static final String[] DATE_IN_WORDS = {"First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth",
-            "Tenth", "Eleventh", "Twelfth", "Thirteenth", "Fourteenth", "Fifteenth", "Sixteenth", "Seventeenth", "Eighteenth",
-            "Nineteenth", "Twentieth", "Twenty first", "Twenty second", "Twenty third", "Twenty fourth", "Twenty fifth",
-            "Twenty sixth", "Twenty seventh", "Twenty eighth", "Twenty ninth", "Thirtieth", "Thirty first"};
+    private static final String[] DATE_IN_WORDS = {
+            "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth", "Tenth", "Eleventh",
+            "Twelfth", "Thirteenth", "Fourteenth", "Fifteenth", "Sixteenth", "Seventeenth", "Eighteenth", "Nineteenth",
+            "Twentieth", "Twenty first", "Twenty second", "Twenty third", "Twenty fourth", "Twenty fifth", "Twenty sixth",
+            "Twenty seventh", "Twenty eighth", "Twenty ninth", "Thirtieth", "Thirty first"
+    };
 
     private DateUtils() {
         //Should not be initialized
@@ -389,8 +391,8 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         final Calendar cal = Calendar.getInstance();
         cal.setTime(dateToConvert);
         final StringBuilder dateInWord = new StringBuilder();
-        dateInWord.append(DATE_IN_WORDS[cal.get(Calendar.DATE) - 1]).append(" ");
-        dateInWord.append(getDateFormatter("dd-MMMMM-yyyy").format(dateToConvert).split("-")[1]).append(" ");
+        dateInWord.append(DATE_IN_WORDS[cal.get(Calendar.DATE) - 1]).append(' ');
+        dateInWord.append(getDateFormatter("dd-MMMMM-yyyy").format(dateToConvert).split("-")[1]).append(' ');
         dateInWord.append(NumberToWord.translateToWord(String.valueOf(cal.get(Calendar.YEAR))));
         return dateInWord.toString();
     }
