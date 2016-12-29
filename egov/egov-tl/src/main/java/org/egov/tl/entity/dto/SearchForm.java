@@ -44,7 +44,6 @@ import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -94,42 +93,30 @@ public class SearchForm {
         final List<String> licenseActions = new ArrayList<>();
         licenseActions.add("View Trade");
         licenseActions.add("Generate Demand Notice");
-        if (license.getStatus() != null) {
-            if (userRoles.contains(Constants.ROLE_BILLCOLLECTOR) && license.canCollectFee())
-                licenseActions.add("Collect Fees");
-            else if (userRoles.contains(Constants.TL_CREATOR_ROLENAME) || userRoles.contains(Constants.TL_APPROVER_ROLENAME)) {
-                if (license.isStatusActive())
-                    licenseActions.add("Print Certificate");
-                if (license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
-                    licenseActions.add("Print Provisional Certificate");
-                if (!license.isPaid() && !license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)
-                        && license.isStatusActive())
-                    licenseActions.add("Renew License");
-            }
-            if (license.getStatus().getStatusCode().equals(Constants.STATUS_ACTIVE))
-                licenseActions.add("Closure");
-
-        }
-
         if (license.isLegacy() && !license.hasState())
             licenseActions.add("Modify Legacy License");
-
-        if (userRoles.contains(Constants.TL_APPROVER_ROLENAME) && license.getDateOfExpiry() != null
-                && checkForRenewalNotice(license.getDateOfExpiry()))
-            licenseActions.add("Renewal Notice");
+        if (license.getStatus() != null) {
+            addRoleSpecificActions(license, userRoles, licenseActions);
+            if (license.isStatusActive())
+                licenseActions.add("Closure");
+        }
         setActions(licenseActions);
     }
 
-    public boolean checkForRenewalNotice(final Date dateOfExpiry) {
-        boolean readyForRenewal = false;
-        final Calendar currentDate = Calendar.getInstance();
-        final Calendar renewalDate = Calendar.getInstance();
-        renewalDate.setTime(dateOfExpiry);
-        renewalDate.add(Calendar.DATE, Constants.RENEWALTIMEPERIOD);
+    private void addRoleSpecificActions(License license, String userRoles, List<String> licenseActions) {
 
-        if (renewalDate.before(currentDate) || renewalDate.equals(currentDate))
-            readyForRenewal = true;
-        return readyForRenewal;
+        if (userRoles.contains(Constants.ROLE_BILLCOLLECTOR) && license.canCollectFee())
+            licenseActions.add("Collect Fees");
+        else if (userRoles.contains(Constants.TL_CREATOR_ROLENAME) || userRoles.contains(Constants.TL_APPROVER_ROLENAME)) {
+            if (license.isStatusActive())
+                licenseActions.add("Print Certificate");
+            if (license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
+                licenseActions.add("Print Provisional Certificate");
+            if (!license.isPaid() && !license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)
+                    && license.isStatusActive())
+                licenseActions.add("Renew License");
+        }
+
     }
 
     public String getApplicationNumber() {
