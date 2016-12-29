@@ -836,7 +836,7 @@ public class CollectionsUtil {
         String approver = null;
         final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId());
         for (final Assignment assignment : assignments)
-            if (assignment.getDesignation().equals(getDesignationForApprover()))
+            if (assignment.getPrimary())
                 approver = assignment.getEmployee().getName().concat("~").concat(assignment.getEmployee().getCode())
                         .concat("~").concat(assignment.getPosition().getName());
         return approver;
