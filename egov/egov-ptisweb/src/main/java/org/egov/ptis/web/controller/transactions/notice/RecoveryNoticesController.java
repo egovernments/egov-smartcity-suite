@@ -63,6 +63,7 @@ import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.service.notice.RecoveryNoticeService;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import org.quartz.SimpleTrigger;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.triggers.SimpleTriggerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +84,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/recoveryNotices")
 public class RecoveryNoticesController {
 
+    private static final String NOTICE_REQUEST = "noticeRequest";
     private static final String NOTICE_TYPE = "noticeType";
     private static final String ASSESSMENT_NUMBERS = "assessmentNumbers";
     private static final String PTIS_RECOVERY_NOTICES_JOB = "PTISRecoveryNoticesJob";
@@ -107,7 +109,7 @@ public class RecoveryNoticesController {
     @RequestMapping(value = "/form", method = RequestMethod.GET)
     public String form(final Model model) {
         final NoticeRequest noticeRequest = new NoticeRequest();
-        model.addAttribute("noticeRequest", noticeRequest);
+        model.addAttribute(NOTICE_REQUEST, noticeRequest);
         populateDropdowns(model, noticeRequest);
         return RECOVERY_FORM;
     }
@@ -122,12 +124,12 @@ public class RecoveryNoticesController {
             final List<Boundary> blocks = boundaryService.getActiveChildBoundariesByBoundaryId(noticeRequest.getWard());
             model.addAttribute(BLOCKS, blocks);
         } else
-            model.addAttribute(BLOCKS, Collections.EMPTY_LIST);
-        model.addAttribute(BILL_COLLECTORS, Collections.EMPTY_LIST);
+            model.addAttribute(BLOCKS, Collections.emptyList());
+        model.addAttribute(BILL_COLLECTORS, Collections.emptyList());
         model.addAttribute(PROPERTY_TYPES, propertyTypes);
         final Long propertyType = noticeRequest.getPropertyType();
         if (!(propertyType == null || propertyType.equals(-1l))) {
-            final Map<String, String> propTypeCategoryMap = new TreeMap<String, String>();
+            final Map<String, String> propTypeCategoryMap = new TreeMap<>();
             final PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO.findById(propertyType.intValue(),
                     false);
             if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
@@ -136,7 +138,7 @@ public class RecoveryNoticesController {
                 propTypeCategoryMap.putAll(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
             model.addAttribute(CATEGORY_TYPES, propTypeCategoryMap);
         } else
-            model.addAttribute(CATEGORY_TYPES, Collections.EMPTY_MAP);
+            model.addAttribute(CATEGORY_TYPES, Collections.emptyList());
     }
 
     @RequestMapping(value = "/form", method = RequestMethod.POST)
@@ -144,17 +146,15 @@ public class RecoveryNoticesController {
             final BindingResult errors) {
         validate(noticeRequest, errors);
         if (errors.hasErrors()) {
-            model.addAttribute("noticeRequest", noticeRequest);
+            model.addAttribute(NOTICE_REQUEST, noticeRequest);
             populateDropdowns(model, noticeRequest);
             return RECOVERY_FORM;
         } else {
             Long jobNumber = recoveryNoticeService.getLatestJobNumber();
-            if (jobNumber == null)
-                jobNumber = 0l;
-            jobNumber = jobNumber + 1;
+            jobNumber = jobNumber == null ? 0l : jobNumber + 1;
             final List<String> assessmentNumbers = recoveryNoticeService.generateRecoveryNotices(noticeRequest);
             if (assessmentNumbers.isEmpty()) {
-                model.addAttribute("noticeRequest", noticeRequest);
+                model.addAttribute(NOTICE_REQUEST, noticeRequest);
                 populateDropdowns(model, noticeRequest);
                 errors.reject("record.not.found", "record.not.found");
                 return RECOVERY_FORM;
@@ -164,7 +164,7 @@ public class RecoveryNoticesController {
             final Scheduler scheduler = (Scheduler) beanProvider.getBean("ptisSchedular");
             try {
                 jobDetail.setName(PTIS_RECOVERY_NOTICES_JOB.concat(jobNumber.toString()));
-                final StringBuffer assessmentNoStr = new StringBuffer();
+                final StringBuilder assessmentNoStr = new StringBuilder();
                 for (final String assessmentNo : assessmentNumbers)
                     assessmentNoStr.append(assessmentNo).append(", ");
                 assessmentNoStr.deleteCharAt(assessmentNoStr.lastIndexOf(", "));
@@ -175,6 +175,7 @@ public class RecoveryNoticesController {
                 final SimpleTriggerImpl trigger = new SimpleTriggerImpl();
                 trigger.setName(RECOVERY_NOTICES_TRIGGER.concat(jobNumber.toString()));
                 trigger.setStartTime(new Date(System.currentTimeMillis() + 100000));
+                trigger.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
                 scheduler.scheduleJob(jobDetail, trigger);
             } catch (final SchedulerException e) {
                 throw new ApplicationRuntimeException(e.getMessage(), e);
@@ -183,26 +184,39 @@ public class RecoveryNoticesController {
         return RECOVERY_ACK;
     }
 
-    private BindingResult validate(final NoticeRequest noticeRequest, final BindingResult errors) {
+    private void validate(final NoticeRequest noticeRequest, final BindingResult errors) {
         if (org.apache.commons.lang.StringUtils.isEmpty(noticeRequest.getNoticeType())
-                || noticeRequest.getNoticeType().equals("-1"))
+                || "-1".equals(noticeRequest.getNoticeType()))
             errors.reject("mandatory.noticetype", "mandatory.noticetype");
         Boolean isSelected = Boolean.FALSE;
-        if (noticeRequest.getWard() != null && !noticeRequest.getWard().equals(-1l))
+        if (isWardSelected(noticeRequest) || isBillCollectorSelected(noticeRequest) || isPropertyTypeSelected(noticeRequest)
+                || isPropertyIdEntered(noticeRequest))
             isSelected = Boolean.TRUE;
-        else if (noticeRequest.getBlock() != null && !noticeRequest.getBlock().equals(-1l))
-            isSelected = Boolean.TRUE;
-        else if (noticeRequest.getBillCollector() != null && !noticeRequest.getBillCollector().equals(-1l))
-            isSelected = Boolean.TRUE;
-        else if (noticeRequest.getPropertyType() != null && !noticeRequest.getPropertyType().equals(-1l))
-            isSelected = Boolean.TRUE;
-        else if (noticeRequest.getCategoryType() != null && !noticeRequest.getCategoryType().equals("-1"))
-            isSelected = Boolean.TRUE;
-        else if (org.apache.commons.lang.StringUtils.isNotEmpty(noticeRequest.getPropertyId()))
-            isSelected = Boolean.TRUE;
-
         if (!isSelected)
             errors.reject("mandatory.anyone", "mandatory.anyone");
-        return errors;
+    }
+
+    private Boolean isPropertyIdEntered(final NoticeRequest noticeRequest) {
+        if (org.apache.commons.lang.StringUtils.isNotEmpty(noticeRequest.getPropertyId()))
+            return Boolean.TRUE;
+        return Boolean.FALSE;
+    }
+
+    private Boolean isPropertyTypeSelected(final NoticeRequest noticeRequest) {
+        if (noticeRequest.getPropertyType() != null && !noticeRequest.getPropertyType().equals(-1l))
+            return Boolean.TRUE;
+        return Boolean.FALSE;
+    }
+
+    private Boolean isBillCollectorSelected(final NoticeRequest noticeRequest) {
+        if (noticeRequest.getBillCollector() != null && !noticeRequest.getBillCollector().equals(-1l))
+            return Boolean.TRUE;
+        return Boolean.FALSE;
+    }
+
+    private Boolean isWardSelected(final NoticeRequest noticeRequest) {
+        if (noticeRequest.getWard() != null && !noticeRequest.getWard().equals(-1l))
+            return Boolean.TRUE;
+        return Boolean.FALSE;
     }
 }
