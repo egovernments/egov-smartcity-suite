@@ -63,6 +63,14 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     public static final String DFT_DATE_FORMAT = "dd/MM/yyyy";
     public static final DateTimeFormatter FORMAT_DATE_TO_YEAR = DateTimeFormat.forPattern("yyyy");
     public static final DateTimeFormatter TO_DEFAULT_DATE_FORMAT = DateTimeFormat.forPattern(DFT_DATE_FORMAT);
+    private static final String[] DATE_IN_WORDS = {"First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth",
+            "Tenth", "Eleventh", "Twelfth", "Thirteenth", "Fourteenth", "Fifteenth", "Sixteenth", "Seventeenth", "Eighteenth",
+            "Nineteenth", "Twentieth", "Twenty first", "Twenty second", "Twenty third", "Twenty fourth", "Twenty fifth",
+            "Twenty sixth", "Twenty seventh", "Twenty eighth", "Twenty ninth", "Thirtieth", "Thirty first"};
+
+    private DateUtils() {
+        //Should not be initialized
+    }
 
     public static String currentDateToYearFormat() {
         return toYearFormat(new LocalDate());
@@ -82,6 +90,10 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
     public static String toDefaultDateFormat(final LocalDate date) {
         return TO_DEFAULT_DATE_FORMAT.print(date);
+    }
+
+    public static String toDefaultDateFormat(final Date date) {
+        return toDefaultDateFormat(new LocalDate(date));
     }
 
     public static Date endOfDay(final Date date) {
@@ -105,7 +117,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     public static Date[] getStartAndEndOfDay(final Date startDate, final Date endDate) {
-        return new Date[] { startOfDay(startDate), endOfDay(endDate) };
+        return new Date[]{startOfDay(startDate), endOfDay(endDate)};
     }
 
     public static int getNumberOfYearPassesed(final Date startDate, final Date endDate) {
@@ -120,12 +132,12 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     public static int noOfDays(final Date startDate, final Date endDate) {
-        return (int)( (endDate.getTime() - startDate.getTime())
-                / (1000 * 60 * 60 * 24) );
+        return (int) ((endDate.getTime() - startDate.getTime())
+                / (1000 * 60 * 60 * 24));
     }
-    
-    public static int noOfYears(final Date startDate, final Date endDate){
-    	final DateTime sDate = new DateTime(startDate);
+
+    public static int noOfYears(final Date startDate, final Date endDate) {
+        final DateTime sDate = new DateTime(startDate);
         final DateTime eDate = new DateTime(endDate);
         Years years = Years.yearsBetween(sDate, eDate);
         return years.getYears();
@@ -139,11 +151,11 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      *            Input date
      * @param addType
      *            type to be added
-     *            (Calendar.DAY_OF_MONTH/Calendar.MONTH/Calendar.YEAR)
+     *                  (Calendar.DAY_OF_MONTH/Calendar.MONTH/Calendar.YEAR)
      * @param addAmount
      *            Number of days/months/years to be added to the input date
      * @return Date after adding given number of days/months/years to the input
-     *         date
+     * date
      */
     public static Date add(final Date inputDate, final int addType, final int addAmount) {
         final Calendar calendar = Calendar.getInstance();
@@ -177,7 +189,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      *            Date
      * @param toDate
      *            Date. return Date[] converted Date String values of From Date
-     *            and To Date
+     *                 and To Date
      * @return the java.util. date[]
      */
     public static Date[] constructDateRange(final Date fromDate, final Date toDate) {
@@ -210,7 +222,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      *            String
      * @param toDate
      *            String. return Date[] converted Date String values of From
-     *            Date and To Date
+     *                 Date and To Date
      * @return the java.util. date[]
      * @throws ParseException
      *             the parse exception
@@ -241,7 +253,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      * @return the all months
      */
     public static Map<Integer, String> getAllMonths() {
-        final Map<Integer, String> monthMap = new HashMap<Integer, String>();
+        final Map<Integer, String> monthMap = new HashMap<>();
         monthMap.put(1, "Jan");
         monthMap.put(2, "Feb");
         monthMap.put(3, "Mar");
@@ -263,7 +275,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      * @return all months
      */
     public static Map<Integer, String> getAllMonthsWithFullNames() {
-        final Map<Integer, String> monthMap = new HashMap<Integer, String>();
+        final Map<Integer, String> monthMap = new HashMap<>();
         monthMap.put(1, "January");
         monthMap.put(2, "Feburary");
         monthMap.put(3, "March");
@@ -319,27 +331,6 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     /**
-     * Gets the second year.
-     *
-     * @param date
-     *            the date
-     * @return the second year
-     */
-    private static int getSecondYear(final java.sql.Date date) {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        final int currenty = calendar.get(Calendar.YEAR);
-        int Year2 = 0;
-        final int currentm = calendar.get(Calendar.MONTH);
-        final int lstmonth = Calendar.APRIL;
-        if (currentm >= lstmonth)
-            Year2 = currenty + 1;
-        else
-            Year2 = currenty - 1;
-        return Year2;
-    }
-
-    /**
      * Will format the given Date by given pattern.
      *
      * @param date
@@ -382,7 +373,6 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return calendar.getTime();
     }
 
-
     /**
      * Converts the given Date to word representation <br/>
      * eg: for 08/12/2008 date converted in to Eighth December Two Thousand
@@ -395,14 +385,11 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      */
     public static String convertToWords(final Date dateToConvert) {
         /** Word representation for dates */
-        final String[] DATE_WORD = { "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth",
-                "Tenth", "Eleventh", "Twelfth", "Thirteenth", "Fourteenth", "Fifteenth", "Sixteenth", "Seventeenth", "Eighteenth",
-                "Nineteenth", "Twentieth", "Twenty first", "Twenty second", "Twenty third", "Twenty fourth", "Twenty fifth",
-                "Twenty sixth", "Twenty seventh", "Twenty eighth", "Twenty ninth", "Thirtieth", "Thirty first" };
+
         final Calendar cal = Calendar.getInstance();
         cal.setTime(dateToConvert);
         final StringBuilder dateInWord = new StringBuilder();
-        dateInWord.append(DATE_WORD[cal.get(Calendar.DATE) - 1]).append(" ");
+        dateInWord.append(DATE_IN_WORDS[cal.get(Calendar.DATE) - 1]).append(" ");
         dateInWord.append(getDateFormatter("dd-MMMMM-yyyy").format(dateToConvert).split("-")[1]).append(" ");
         dateInWord.append(NumberToWord.translateToWord(String.valueOf(cal.get(Calendar.YEAR))));
         return dateInWord.toString();
@@ -418,7 +405,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     public static SimpleDateFormat getDateFormatter(final String pattern) {
         return new SimpleDateFormat(pattern, Locale.getDefault());
     }
-    
+
     /**
      * Checks if the given date is between the 2 dates
      * @param date
@@ -429,14 +416,14 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     public static boolean between(final Date date, final Date fromDate, final Date toDate) {
         return (date.after(fromDate) || date.equals(fromDate)) && date.before(toDate) || date.equals(toDate);
     }
-    
+
     /**
      * Gets all months for a financial year with full names.
      *
      * @return all months
      */
     public static Map<Integer, String> getAllFinancialYearMonthsWithFullNames() {
-        final Map<Integer, String> monthMap = new HashMap<Integer, String>();
+        final Map<Integer, String> monthMap = new HashMap<>();
         monthMap.put(1, "April");
         monthMap.put(2, "May");
         monthMap.put(3, "June");
