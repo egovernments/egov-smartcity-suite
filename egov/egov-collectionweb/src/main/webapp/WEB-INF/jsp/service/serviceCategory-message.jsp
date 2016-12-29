@@ -41,42 +41,31 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <html>
 <head>
+<title> <s:text name="service.master.search.header"></s:text> </title>
 
-<title><s:text name="add.title.serviceCategory" /></title>
+<script>
+function onSubmit(obj){
+	document.forms[0].action=obj;
+	document.forms[0].submit;
+   return true;
+}
 
+</script>
 </head>
+
 <body>
-	<div class="errorstyle" id="error_area" style="display: none;"></div>
+<s:if test="%{hasErrors()}">
+			<div class="errorstyle">
+				<s:actionerror />
+				<s:fielderror />
+			</div>
+		</s:if>
+		<s:if test="%{hasActionMessages()}">
+			<font  style='color: green ; font-weight:bold '> 
+     					<s:actionmessage/>
+   				</font>
+		</s:if>
 
-	<span id="remerror"> <font style='color: red; font-weight: bold'
-		size="2"> <s:actionerror /> <s:fielderror />
-	</font>
-	</span>
-
-	<s:form action="serviceCategory.action" theme="simple">
-
-		<div class="subheadnew">
-			<s:text name="add.title.serviceCategory" />
-		</div>
-
-		<%@ include file='serviceCategory-form.jsp'%>
-
-		<div align="left" class="mandatory1">&nbsp;&nbsp;&nbsp;&nbsp;*
-			Mandatory Fields</div>
-
-		<div class="buttonbottom">
-			<s:submit name="button1" cssClass="buttonsubmit" id="button32"
-				onclick="return onSubmit('serviceCategory-create.action');"
-				value="Save" />
-			<s:submit name="button2" cssClass="buttonsubmit" id="button32"
-				onclick="return onSubmit('serviceCategory-list.action');"
-				value="List" />
-			<input type="button" class="button" value="Reset" id="resetbutton"
-				name="reset" onclick="return resetValues()"> <input
-				name="button4" type="button" class="button" id="button"
-				onclick="window.close()" value="Close" />
-		</div>
-
-	</s:form>
+    
 </body>
 </html>
