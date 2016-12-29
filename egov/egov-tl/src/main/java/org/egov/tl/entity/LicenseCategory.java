@@ -68,7 +68,7 @@ public class LicenseCategory extends AbstractAuditable {
     private String name;
 
     @NotEmpty(message = "tradelic.master.tradecategorycode.null")
-    @Length(max = 32, message = "tradelic.masters.tradecategorycode.length")
+    @Length(max = 256, message = "tradelic.masters.tradecategorycode.length")
     private String code;
 
     public String getName() {
@@ -87,10 +87,12 @@ public class LicenseCategory extends AbstractAuditable {
         this.code = code;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
