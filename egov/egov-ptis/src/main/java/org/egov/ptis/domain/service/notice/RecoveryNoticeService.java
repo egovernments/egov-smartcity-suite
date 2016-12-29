@@ -198,12 +198,130 @@ public class RecoveryNoticeService {
             errors.add("property.invalid");
         else if (NOTICE_TYPE_ESD.equals(noticeType))
             validateDemandBill(basicProperty, errors);
-        else if (NOTICE_TYPE_DISTRESS.equals(noticeType)) {
+        else if (NOTICE_TYPE_DISTRESS.equals(noticeType))
             validateDistressNotice(errors, basicProperty);
-        } else if (NOTICE_TYPE_INVENTORY.equals(noticeType)) {
+        else if (NOTICE_TYPE_INVENTORY.equals(noticeType))
             validateInventoryNotice(errors, basicProperty);
-        }
         return errors;
+    }
+
+    public EgBill getBillByAssessmentNumber(final BasicProperty basicProperty) {
+        final StringBuilder queryStr = new StringBuilder(200);
+        queryStr.append(
+                "FROM EgBill WHERE module =:module AND egBillType.code =:billType AND consumerId =:assessmentNo AND is_history = 'N'");
+        final Query qry = entityManager.createQuery(queryStr.toString());
+        qry.setParameter("module", moduleDao.getModuleByName(PTMODULENAME));
+        qry.setParameter("billType", BILLTYPE_MANUAL);
+        qry.setParameter("assessmentNo", basicProperty.getUpicNo());
+        return qry.getResultList() != null && !qry.getResultList().isEmpty() ? (EgBill) qry.getResultList().get(0)
+                : null;
+    }
+
+    public BigDecimal getTotalPropertyTaxDue(final BasicProperty basicProperty) {
+        return propertyService.getTotalPropertyTaxDue(basicProperty);
+    }
+
+    public BigDecimal getTotalPropertyTaxDueIncludingPenalty(final BasicProperty basicProperty) {
+        return propertyService.getTotalPropertyTaxDueIncludingPenalty(basicProperty);
+    }
+
+    public ResponseEntity<byte[]> generateNotice(final String assessmentNo, final String noticeType) {
+        ReportOutput reportOutput;
+        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner(noticeType,
+                basicProperty.getUpicNo());
+        if (notice == null)
+            reportOutput = generateNotice(noticeType, basicProperty);
+        else
+            reportOutput = getNotice(notice, noticeType);
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=ESDNotice_" + basicProperty.getUpicNo() + ".pdf");
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+    }
+
+    public ReportOutput generateNotice(final String noticeType, final BasicProperty basicProperty) {
+        ReportOutput reportOutput;
+        final Map<String, Object> reportParams = new HashMap<>();
+        InputStream noticePDF = null;
+        ReportRequest reportInput;
+        final StringBuilder queryString = new StringBuilder();
+        queryString.append("from City");
+        final Query query = entityManager.createQuery(queryString.toString());
+        final City city = (City) query.getSingleResult();
+        populateReportParams(reportParams, city, basicProperty);
+        final String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(noticeType);
+        final SimpleDateFormat formatter = new SimpleDateFormat("MMM yyyy");
+        if (NOTICE_TYPE_ESD.equals(noticeType))
+            reportInput = generateEsdNotice(basicProperty, reportParams, city, noticeNo, formatter);
+        else if (NOTICE_TYPE_INVENTORY.equals(noticeType))
+            reportInput = generateInventoryNotice(basicProperty, reportParams, city, formatter);
+        else
+            reportInput = generateDistressNotice(basicProperty, reportParams, city, noticeNo);
+        reportInput.setPrintDialogOnOpenReport(true);
+        reportInput.setReportFormat(FileFormat.PDF);
+        reportOutput = reportService.createReport(reportInput);
+        if (reportOutput != null && reportOutput.getReportOutputData() != null)
+            noticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
+        noticeService.saveNotice(basicProperty.getPropertyForBasicProperty().getApplicationNo(), noticeNo,
+                noticeType, basicProperty, noticePDF);
+        return reportOutput;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> generateRecoveryNotices(final NoticeRequest noticeRequest) {
+        final Query qry = getSearchQuery(noticeRequest);
+        final List<String> properties = qry.getResultList();
+        final List<RecoveryNoticesInfo> noticesInfos = new ArrayList<>();
+
+        Long jobNumber = getLatestJobNumber();
+        if (jobNumber == null)
+            jobNumber = 0l;
+        jobNumber = jobNumber + 1;
+        for (final String propertyId : properties) {
+            final RecoveryNoticesInfo info = new RecoveryNoticesInfo();
+            info.setPropertyId(propertyId);
+            info.setNoticeType(noticeRequest.getNoticeType());
+            info.setGenerated(Boolean.FALSE);
+            info.setJobNumber(jobNumber);
+            noticesInfos.add(info);
+        }
+        recoveryNoticesInfoRepository.save(noticesInfos);
+        return properties;
+    }
+
+    public Long getLatestJobNumber() {
+        return recoveryNoticesInfoRepository.getLatestJobNumber();
+    }
+
+    public RecoveryNoticesInfo getRecoveryNoticeInfoByAssessmentAndNoticeType(final String propertyId, final String noticeType) {
+        return recoveryNoticesInfoRepository.findByPropertyIdAndNoticeType(propertyId, noticeType);
+    }
+
+    public void saveRecoveryNoticeInfo(final RecoveryNoticesInfo noticeInfo) {
+        recoveryNoticesInfoRepository.save(noticeInfo);
+    }
+
+    private Map<String, Object> populateReportParams(final Map<String, Object> reportParams, final City city,
+            final BasicProperty basicProperty) {
+        reportParams.put(CITY_NAME, city.getPreferences().getMunicipalityName());
+        reportParams.put(OWNER_NAME, basicProperty.getFullOwnerName());
+        return reportParams;
+    }
+
+    private ReportOutput getNotice(final PtNotice notice, final String noticeType) {
+        final ReportOutput reportOutput = new ReportOutput();
+        final FileStoreMapper fsm = notice.getFileStore();
+        final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
+        byte[] bFile;
+        try {
+            bFile = FileUtils.readFileToByteArray(file);
+        } catch (final IOException e) {
+            throw new ApplicationRuntimeException("Exception while retrieving " + noticeType + " : " + e);
+        }
+        reportOutput.setReportOutputData(bFile);
+        reportOutput.setReportFormat(FileFormat.PDF);
+        return reportOutput;
     }
 
     private void validateInventoryNotice(final List<String> errors, final BasicProperty basicProperty) {
@@ -235,102 +353,16 @@ public class RecoveryNoticeService {
         }
     }
 
-    private List<String> validateDemandBill(final BasicProperty basicProperty, List<String> errors) {
+    private List<String> validateDemandBill(final BasicProperty basicProperty, final List<String> errors) {
         final BigDecimal totalDue = getTotalPropertyTaxDue(basicProperty);
         if (totalDue.compareTo(BigDecimal.ZERO) == 0)
             errors.add("common.no.property.due");
         else {
-            boolean billExists = getDemandBillByAssessmentNo(basicProperty);
+            final boolean billExists = getDemandBillByAssessmentNo(basicProperty);
             if (!billExists)
                 errors.add("common.demandbill.not.exists");
         }
         return errors;
-    }
-
-    public EgBill getBillByAssessmentNumber(final BasicProperty basicProperty) {
-        final StringBuilder queryStr = new StringBuilder();
-        queryStr.append(
-                "FROM EgBill WHERE module =:module AND egBillType.code =:billType AND consumerId =:assessmentNo AND is_history = 'N'");
-        final Query qry = entityManager.createQuery(queryStr.toString());
-        qry.setParameter("module", moduleDao.getModuleByName(PTMODULENAME));
-        qry.setParameter("billType", BILLTYPE_MANUAL);
-        qry.setParameter("assessmentNo", basicProperty.getUpicNo());
-        return qry.getResultList() != null && !qry.getResultList().isEmpty() ? (EgBill) qry.getResultList().get(0)
-                : null;
-    }
-
-    public BigDecimal getTotalPropertyTaxDue(final BasicProperty basicProperty) {
-        return propertyService.getTotalPropertyTaxDue(basicProperty);
-    }
-
-    private Map<String, Object> populateReportParams(final Map<String, Object> reportParams, final City city,
-            final BasicProperty basicProperty) {
-        reportParams.put(CITY_NAME, city.getPreferences().getMunicipalityName());
-        reportParams.put(OWNER_NAME, basicProperty.getFullOwnerName());
-        return reportParams;
-    }
-
-    private ReportOutput getNotice(final PtNotice notice, final String noticeType) {
-        final ReportOutput reportOutput = new ReportOutput();
-        final FileStoreMapper fsm = notice.getFileStore();
-        final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
-        byte[] bFile;
-        try {
-            bFile = FileUtils.readFileToByteArray(file);
-        } catch (final IOException e) {
-            throw new ApplicationRuntimeException("Exception while retrieving " + noticeType + " : " + e);
-        }
-        reportOutput.setReportOutputData(bFile);
-        reportOutput.setReportFormat(FileFormat.PDF);
-        return reportOutput;
-    }
-
-    public BigDecimal getTotalPropertyTaxDueIncludingPenalty(final BasicProperty basicProperty) {
-        return propertyService.getTotalPropertyTaxDueIncludingPenalty(basicProperty);
-    }
-
-    public ResponseEntity<byte[]> generateNotice(final String assessmentNo, final String noticeType) {
-        ReportOutput reportOutput;
-        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner(noticeType,
-                basicProperty.getUpicNo());
-        if (notice == null) {
-            reportOutput = generateNotice(noticeType, basicProperty);
-        } else
-            reportOutput = getNotice(notice, noticeType);
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=ESDNotice_" + basicProperty.getUpicNo() + ".pdf");
-        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
-    }
-
-    public ReportOutput generateNotice(final String noticeType, final BasicProperty basicProperty) {
-        ReportOutput reportOutput;
-        final Map<String, Object> reportParams = new HashMap<>();
-        InputStream noticePDF = null;
-        ReportRequest reportInput;
-        final StringBuilder queryString = new StringBuilder();
-        queryString.append("from City");
-        final Query query = entityManager.createQuery(queryString.toString());
-        final City city = (City) query.getSingleResult();
-        populateReportParams(reportParams, city, basicProperty);
-        final String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(noticeType);
-        final SimpleDateFormat formatter = new SimpleDateFormat("MMM yyyy");
-        if (NOTICE_TYPE_ESD.equals(noticeType)) {
-            reportInput = generateEsdNotice(basicProperty, reportParams, city, noticeNo, formatter);
-        } else if (NOTICE_TYPE_INVENTORY.equals(noticeType)) {
-            reportInput = generateInventoryNotice(basicProperty, reportParams, city, formatter);
-        } else {
-            reportInput = generateDistressNotice(basicProperty, reportParams, city, noticeNo);
-        }
-        reportInput.setPrintDialogOnOpenReport(true);
-        reportInput.setReportFormat(FileFormat.PDF);
-        reportOutput = reportService.createReport(reportInput);
-        if (reportOutput != null && reportOutput.getReportOutputData() != null)
-            noticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
-        noticeService.saveNotice(basicProperty.getPropertyForBasicProperty().getApplicationNo(), noticeNo,
-                noticeType, basicProperty, noticePDF);
-        return reportOutput;
     }
 
     private ReportRequest generateDistressNotice(final BasicProperty basicProperty, final Map<String, Object> reportParams,
@@ -348,7 +380,7 @@ public class RecoveryNoticeService {
         reportParams.put(DISTRESS_NOTICE_NUMBER, noticeNo);
         reportParams.put(DISTRESS_NOTICE_DATE, DateUtils.getDefaultFormattedDate(new Date()));
         final String cityGrade = city.getGrade();
-        if (cityGrade != null && cityGrade != ""
+        if (org.apache.commons.lang.StringUtils.isNotEmpty(cityGrade)
                 && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
             reportParams.put(SECTION_ACT, PropertyTaxConstants.CORPORATION_ESD_NOTICE_SECTION_ACT);
             reportInput = new ReportRequest(PropertyTaxConstants.REPORT_DISTRESS_CORPORATION, reportParams,
@@ -389,27 +421,7 @@ public class RecoveryNoticeService {
     private ReportRequest generateEsdNotice(final BasicProperty basicProperty, final Map<String, Object> reportParams,
             final City city, final String noticeNo, final SimpleDateFormat formatter) {
         ReportRequest reportInput;
-        final Address ownerAddress = basicProperty.getAddress();
-        reportParams.put(DOOR_NO, StringUtils.isNotBlank(ownerAddress.getHouseNoBldgApt())
-                ? ownerAddress.getHouseNoBldgApt() : "N/A");
-        reportParams.put(FIN_YEAR, formatter.format(new Date()));
-        final DateTime noticeDate = new DateTime(new Date());
-        reportParams.put(TOTAL_TAX_DUE, getTotalPropertyTaxDue(basicProperty));
-        reportParams.put(FUTURE_DATE, DateUtils.getDefaultFormattedDate(noticeDate.plusDays(2).toDate()));
-        reportParams.put(ESD_NOTICE_NUMBER, noticeNo);
-        reportParams.put(ESD_NOTICE_DATE, DateUtils.getDefaultFormattedDate(new Date()));
-        final AppConfigValues appConfigValues = appConfigValuesService.getAppConfigValueByDate(PTMODULENAME,
-                APPCONFIG_CLIENT_SPECIFIC_DMD_BILL, new Date());
-        final String value = appConfigValues != null ? appConfigValues.getValue() : "";
-        if ("Y".equalsIgnoreCase(value)) {
-            final DemandBillService demandBillService = (DemandBillService) beanProvider
-                    .getBean("demandBillService");
-            reportParams.putAll(demandBillService.getDemandBillDetails(basicProperty));
-        } else {
-            final EgBill egBill = getBillByAssessmentNumber(basicProperty);
-            reportParams.put(BILL_DATE, DateUtils.getDefaultFormattedDate(egBill.getCreateDate()));
-            reportParams.put(BILL_NUMBER, egBill.getBillNo());
-        }
+        prepareEsdReportParams(basicProperty, reportParams, noticeNo, formatter);
         final String cityGrade = city.getGrade();
         if (cityGrade != null && cityGrade != ""
                 && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
@@ -424,59 +436,91 @@ public class RecoveryNoticeService {
         return reportInput;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<String> generateRecoveryNotices(final NoticeRequest noticeRequest) {
-        final Query qry = getSearchQuery(noticeRequest);
-        final List<String> properties = qry.getResultList();
-        final List<RecoveryNoticesInfo> noticesInfos = new ArrayList<>();
-
-        Long jobNumber = getLatestJobNumber();
-        if (jobNumber == null)
-            jobNumber = 0l;
-        jobNumber = jobNumber + 1;
-        for (final String propertyId : properties) {
-            final RecoveryNoticesInfo info = new RecoveryNoticesInfo();
-            info.setPropertyId(propertyId);
-            info.setNoticeType(noticeRequest.getNoticeType());
-            info.setGenerated(Boolean.FALSE);
-            info.setJobNumber(jobNumber);
-            noticesInfos.add(info);
+    private void prepareEsdReportParams(final BasicProperty basicProperty, final Map<String, Object> reportParams,
+            final String noticeNo, final SimpleDateFormat formatter) {
+        final Address ownerAddress = basicProperty.getAddress();
+        final DateTime noticeDate = new DateTime(new Date());
+        final AppConfigValues appConfigValues = appConfigValuesService.getAppConfigValueByDate(PTMODULENAME,
+                APPCONFIG_CLIENT_SPECIFIC_DMD_BILL, new Date());
+        reportParams.put(DOOR_NO, StringUtils.isNotBlank(ownerAddress.getHouseNoBldgApt())
+                ? ownerAddress.getHouseNoBldgApt() : "N/A");
+        reportParams.put(FIN_YEAR, formatter.format(new Date()));
+        reportParams.put(TOTAL_TAX_DUE, getTotalPropertyTaxDue(basicProperty));
+        reportParams.put(FUTURE_DATE, DateUtils.getDefaultFormattedDate(noticeDate.plusDays(2).toDate()));
+        reportParams.put(ESD_NOTICE_NUMBER, noticeNo);
+        reportParams.put(ESD_NOTICE_DATE, DateUtils.getDefaultFormattedDate(new Date()));
+        final String value = appConfigValues != null ? appConfigValues.getValue() : "";
+        if ("Y".equalsIgnoreCase(value)) {
+            final DemandBillService demandBillService = (DemandBillService) beanProvider
+                    .getBean("demandBillService");
+            reportParams.putAll(demandBillService.getDemandBillDetails(basicProperty));
+        } else {
+            final EgBill egBill = getBillByAssessmentNumber(basicProperty);
+            reportParams.put(BILL_DATE, DateUtils.getDefaultFormattedDate(egBill.getCreateDate()));
+            reportParams.put(BILL_NUMBER, egBill.getBillNo());
         }
-        recoveryNoticesInfoRepository.save(noticesInfos);
-        return properties;
     }
 
     private Query getSearchQuery(final NoticeRequest noticeRequest) {
         final Map<String, Object> params = new HashMap<>();
-        final StringBuilder query = new StringBuilder(
+        final StringBuilder query = new StringBuilder(500);
+        query.append(
                 "select mv.propertyId from PropertyMaterlizeView mv where mv.propertyId is not null ");
-        if (!(noticeRequest.getWard() == null || noticeRequest.getWard().equals(-1l))) {
-            query.append(" and mv.ward.id = :wardId");
-            params.put("wardId", noticeRequest.getWard());
-        }
-        if (!(noticeRequest.getBlock() == null || noticeRequest.getBlock().equals(-1l))) {
-            query.append(" and mv.block.id = :blockId");
-            params.put("blockId", noticeRequest.getBlock());
-        }
-        if (!(noticeRequest.getPropertyType() == null || noticeRequest.getPropertyType().equals(-1l))) {
-            query.append(" and mv.propTypeMstrID.id = :propertyType");
-            params.put("propertyType", noticeRequest.getPropertyType());
-        }
-        if (!(noticeRequest.getCategoryType() == null || "-1".equals(noticeRequest.getCategoryType()))) {
-            query.append(" and mv.categoryType = :categoryType");
-            params.put("categoryType", noticeRequest.getCategoryType());
-        }
-        if (StringUtils.isNotEmpty(noticeRequest.getPropertyId())) {
-            query.append(" and mv.propertyId = :propertyId");
-            params.put("propertyId", noticeRequest.getPropertyId());
-        }
+        appendWard(noticeRequest, params, query);
+        appendBlock(noticeRequest, params, query);
+        appendPropertyType(noticeRequest, params, query);
+        appendCategoryType(noticeRequest, params, query);
+        appendPropertyId(noticeRequest, params, query);
+        appendFinancialYear(noticeRequest, params, query);
+        return getQuery(params, query);
+    }
+
+    private void appendFinancialYear(final NoticeRequest noticeRequest, final Map<String, Object> params,
+            final StringBuilder query) {
         final CFinancialYear currFinYear = financialYearDAO.getFinancialYearByDate(new Date());
         query.append(
                 " and mv.propertyId not in (select propertyId from RecoveryNoticesInfo where noticeType = :noticeType and createdDate between :startDate and :endDate )");
         params.put("noticeType", noticeRequest.getNoticeType());
         params.put("startDate", currFinYear.getStartingDate());
         params.put("endDate", currFinYear.getEndingDate());
-        return getQuery(params, query);
+    }
+
+    private void appendPropertyId(final NoticeRequest noticeRequest, final Map<String, Object> params,
+            final StringBuilder query) {
+        if (StringUtils.isNotEmpty(noticeRequest.getPropertyId())) {
+            query.append(" and mv.propertyId = :propertyId");
+            params.put("propertyId", noticeRequest.getPropertyId());
+        }
+    }
+
+    private void appendCategoryType(final NoticeRequest noticeRequest, final Map<String, Object> params,
+            final StringBuilder query) {
+        if (!(noticeRequest.getCategoryType() == null || "-1".equals(noticeRequest.getCategoryType()))) {
+            query.append(" and mv.categoryType = :categoryType");
+            params.put("categoryType", noticeRequest.getCategoryType());
+        }
+    }
+
+    private void appendPropertyType(final NoticeRequest noticeRequest, final Map<String, Object> params,
+            final StringBuilder query) {
+        if (!(noticeRequest.getPropertyType() == null || noticeRequest.getPropertyType().equals(-1l))) {
+            query.append(" and mv.propTypeMstrID.id = :propertyType");
+            params.put("propertyType", noticeRequest.getPropertyType());
+        }
+    }
+
+    private void appendBlock(final NoticeRequest noticeRequest, final Map<String, Object> params, final StringBuilder query) {
+        if (!(noticeRequest.getBlock() == null || noticeRequest.getBlock().equals(-1l))) {
+            query.append(" and mv.block.id = :blockId");
+            params.put("blockId", noticeRequest.getBlock());
+        }
+    }
+
+    private void appendWard(final NoticeRequest noticeRequest, final Map<String, Object> params, final StringBuilder query) {
+        if (!(noticeRequest.getWard() == null || noticeRequest.getWard().equals(-1l))) {
+            query.append(" and mv.ward.id = :wardId");
+            params.put("wardId", noticeRequest.getWard());
+        }
     }
 
     private Query getQuery(final Map<String, Object> params, final StringBuilder query) {
@@ -486,15 +530,4 @@ public class RecoveryNoticeService {
         return qry;
     }
 
-    public Long getLatestJobNumber() {
-        return recoveryNoticesInfoRepository.getLatestJobNumber();
-    }
-
-    public RecoveryNoticesInfo getRecoveryNoticeInfoByAssessmentAndNoticeType(final String propertyId, final String noticeType) {
-        return recoveryNoticesInfoRepository.findByPropertyIdAndNoticeType(propertyId, noticeType);
-    }
-
-    public void saveRecoveryNoticeInfo(final RecoveryNoticesInfo noticeInfo) {
-        recoveryNoticesInfoRepository.save(noticeInfo);
-    }
 }
