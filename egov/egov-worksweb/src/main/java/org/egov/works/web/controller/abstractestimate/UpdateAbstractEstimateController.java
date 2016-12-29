@@ -52,8 +52,10 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
@@ -106,6 +108,9 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
     @Autowired
     private MeasurementSheetService measurementSheetService;
 
+    @Autowired
+    private CityService cityService;
+
     @ModelAttribute
     public AbstractEstimate getAbstractEstimate(@PathVariable final String abstractEstimateId) {
         final AbstractEstimate abstractEstimate = estimateService.getAbstractEstimateById(Long.parseLong(abstractEstimateId));
@@ -145,6 +150,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         String mode = "";
         String workFlowAction = "";
         AbstractEstimate updatedAbstractEstimate = null;
+        String additionalRule = "";
 
         if (request.getParameter("mode") != null)
             mode = request.getParameter("mode");
@@ -160,6 +166,9 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
 
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+
+        if (request.getParameter("additionalRule") != null)
+            additionalRule = request.getParameter("additionalRule");
 
         // For Get Configured ApprovalPosition from workflow history
         if (approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
@@ -199,7 +208,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         } else {
             if (null != workFlowAction)
                 updatedAbstractEstimate = estimateService.updateAbstractEstimateDetails(abstractEstimate, approvalPosition,
-                        approvalComment, null, workFlowAction, files, removedActivityIds);
+                        approvalComment, additionalRule, workFlowAction, files, removedActivityIds);
             redirectAttributes.addFlashAttribute("abstractEstimate", updatedAbstractEstimate);
 
             if (updatedAbstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()))
@@ -227,6 +236,8 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         }
 
         final WorkflowContainer workflowContainer = new WorkflowContainer();
+        workflowContainer.setAdditionalRule((String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+        model.addAttribute("additionalRule", cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
         workflowContainer.setAmountRule(abstractEstimate.getEstimateValue());
         workflowContainer.setPendingActions(abstractEstimate.getState().getNextAction());
         prepareWorkflow(model, abstractEstimate, workflowContainer);
@@ -274,6 +285,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             return "newAbstractEstimate-form";
         } else {
             model.addAttribute("mode", "workflowView");
+            model.addAttribute("amountRule", abstractEstimate.getEstimateValue());
             return "abstractestimate-view";
         }
     }

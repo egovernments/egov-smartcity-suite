@@ -688,7 +688,8 @@ public class EstimateService {
         createAbstractEstimateWorkflowTransition(updatedAbstractEstimate, approvalPosition, approvalComent,
                 additionalRule, workFlowAction);
 
-        if (WorksConstants.ACTION_APPROVE.equalsIgnoreCase(workFlowAction)) {
+        if (WorksConstants.ACTION_APPROVE.equalsIgnoreCase(workFlowAction)
+                || WorksConstants.CREATE_AND_APPROVE.equalsIgnoreCase(workFlowAction)) {
             saveTechnicalSanctionDetails(updatedAbstractEstimate);
             saveAdminSanctionDetails(updatedAbstractEstimate);
         }
@@ -738,12 +739,12 @@ public class EstimateService {
         return activityList;
     }
 
-    private void saveAdminSanctionDetails(final AbstractEstimate abstractEstimate) {
+    public void saveAdminSanctionDetails(final AbstractEstimate abstractEstimate) {
         abstractEstimate.setApprovedBy(securityUtils.getCurrentUser());
         abstractEstimate.setApprovedDate(new Date());
     }
 
-    private void saveTechnicalSanctionDetails(final AbstractEstimate abstractEstimate) {
+    public void saveTechnicalSanctionDetails(final AbstractEstimate abstractEstimate) {
         final EstimateTechnicalSanction estimateTechnicalSanction = new EstimateTechnicalSanction();
         estimateTechnicalSanction.setAbstractEstimate(abstractEstimate);
         estimateTechnicalSanction.setTechnicalSanctionBy(securityUtils.getCurrentUser());
@@ -761,7 +762,9 @@ public class EstimateService {
             if (workFlowAction.equals(WorksConstants.SAVE_ACTION))
                 abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                         EstimateStatus.NEW.toString()));
-            else if (EstimateStatus.NEW.toString().equalsIgnoreCase(abstractEstimate.getEgwStatus().getCode()))
+            else if (EstimateStatus.NEW.toString().equalsIgnoreCase(abstractEstimate.getEgwStatus().getCode())
+                    && !(workFlowAction.equalsIgnoreCase(WorksConstants.CREATE_AND_APPROVE)
+                            || workFlowAction.equals(WorksConstants.CANCEL_ACTION)))
                 abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                         EstimateStatus.CREATED.toString()));
 
@@ -779,7 +782,8 @@ public class EstimateService {
                         EstimateStatus.RESUBMITTED.toString()));
 
             else if (abstractEstimate.getState() != null
-                    && workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE))
+                    && (workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE)
+                            || workFlowAction.equalsIgnoreCase(WorksConstants.CREATE_AND_APPROVE)))
                 abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                         EstimateStatus.APPROVED.toString()));
 

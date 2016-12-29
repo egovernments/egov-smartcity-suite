@@ -53,6 +53,8 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.pims.commons.Designation;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
@@ -111,6 +113,9 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
+    @Autowired
+    private CityService cityService;
+
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String showAbstractEstimateForm(@ModelAttribute("abstractEstimate") final AbstractEstimate abstractEstimate,
             @RequestParam final Long lineEstimateDetailId, final Model model) {
@@ -141,6 +146,8 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
 
             final WorkflowContainer workflowContainer = new WorkflowContainer();
             workflowContainer.setAmountRule(abstractEstimate.getEstimateValue());
+            workflowContainer
+                    .setAdditionalRule((String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
             prepareWorkflow(model, abstractEstimate, workflowContainer);
             List<String> validActions = Collections.emptyList();
             validActions = customizedWorkFlowService.getNextValidActions(abstractEstimate.getStateType(),
@@ -151,6 +158,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
                 model.addAttribute("nextAction", abstractEstimate.getState().getNextAction());
                 model.addAttribute("pendingActions", abstractEstimate.getState().getNextAction());
             }
+            model.addAttribute("additionalRule", cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
             model.addAttribute("validActionList", validActions);
             model.addAttribute("mode", null);
             model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
@@ -166,12 +174,15 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
 
         Long approvalPosition = 0l;
         String approvalComment = "";
+        String additionalRule = "";
         if (request.getParameter("approvalComment") != null)
             approvalComment = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+        if (request.getParameter("additionalRule") != null)
+            additionalRule = request.getParameter("additionalRule");
         estimateService.validateMultiYearEstimates(abstractEstimate, bindErrors);
         estimateService.validateMandatory(abstractEstimate, bindErrors);
         estimateService.validateAssetDetails(abstractEstimate, bindErrors);
@@ -206,17 +217,24 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             model.addAttribute("designation", request.getParameter("designation"));
             model.addAttribute("technicalSanctionBy", request.getParameter("estimateTechnicalSanctions[0].technicalSanctionBy"));
             model.addAttribute("approvedByValue", request.getParameter("approvedBy"));
+            model.addAttribute("additionalRule", cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
             return "newAbstractEstimate-form";
         } else {
             if (abstractEstimate.getState() == null)
                 if (WorksConstants.FORWARD_ACTION.equals(workFlowAction))
                     abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
                             WorksConstants.ABSTRACTESTIMATE, EstimateStatus.CREATED.toString()));
-                else
+                else if (WorksConstants.CREATE_AND_APPROVE.equalsIgnoreCase(workFlowAction)) {
+                    abstractEstimate.setEgwStatus(egwStatusHibernateDAO
+                            .getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE, EstimateStatus.APPROVED.toString()));
+                    estimateService.saveTechnicalSanctionDetails(abstractEstimate);
+                    estimateService.saveAdminSanctionDetails(abstractEstimate);
+                } else
                     abstractEstimate.setEgwStatus(egwStatusHibernateDAO
                             .getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE, EstimateStatus.NEW.toString()));
+
             final AbstractEstimate savedAbstractEstimate = estimateService.createAbstractEstimate(abstractEstimate,
-                    files, approvalPosition, approvalComment, null, workFlowAction);
+                    files, approvalPosition, approvalComment, additionalRule, workFlowAction);
 
             if (EstimateStatus.NEW.toString().equals(savedAbstractEstimate.getEgwStatus().getCode()))
                 return "redirect:/abstractestimate/update/" + savedAbstractEstimate.getId() + "?mode=save";

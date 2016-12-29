@@ -427,6 +427,8 @@ public class WorksConstants {
     public static final String CONTRACTOR_ADVANCE_VIEW_URL = "/egworks/contractoradvance/view/";
 
     public static final String ALPHANUMERICWITHHYPHENSLASH = "[a-zA-Z0-9/-]+";
-    
+
     public static final String PARTY_TYPE_CONTRACTOR = "Contractor";
+
+    public static final String CREATE_AND_APPROVE = "Create And Approve";
 }
