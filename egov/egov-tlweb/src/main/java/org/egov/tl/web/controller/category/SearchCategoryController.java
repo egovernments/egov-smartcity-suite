@@ -40,20 +40,16 @@
 
 package org.egov.tl.web.controller.category;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.tl.entity.LicenseCategory;
-import org.egov.tl.service.masters.LicenseCategoryService;
+import org.egov.tl.service.LicenseCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/licensecategory")
@@ -73,30 +69,28 @@ public class SearchCategoryController {
 
     @ModelAttribute(value = "licenseCategories")
     public List<LicenseCategory> getAllCategories() {
-        return licenseCategoryService.findAll();
+        return licenseCategoryService.getCategories();
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.GET)
-    public String updateLicenseCategory(final Model model) {
+    public String updateLicenseCategory() {
         return "licensecategory-search-update";
     }
 
     @RequestMapping(value = "/view", method = RequestMethod.GET)
-    public String viewLicenseCategory(final Model model) {
+    public String viewLicenseCategory() {
         return "licensecategory-search-view";
     }
 
     @RequestMapping(value = "/view", method = RequestMethod.POST)
-    public String searchView(@ModelAttribute final LicenseCategory licenseCategory, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
+    public String searchView(@ModelAttribute LicenseCategory licenseCategory, BindingResult errors) {
         if (errors.hasErrors())
             return "licensecategory-search-view";
         return "redirect:/licensecategory/view/" + licenseCategory.getCode();
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String searchUpdate(@ModelAttribute final LicenseCategory licenseCategory, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
+    public String searchUpdate(@ModelAttribute LicenseCategory licenseCategory, BindingResult errors) {
         if (errors.hasErrors())
             return "licensecategory-search-update";
         return "redirect:/licensecategory/update/" + licenseCategory.getCode();

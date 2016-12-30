@@ -1,4 +1,3 @@
-
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
@@ -41,12 +40,10 @@
 
 package org.egov.tl.web.controller.subcategory;
 
-import javax.validation.Valid;
-
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.service.FeeTypeService;
-import org.egov.tl.service.masters.LicenseCategoryService;
-import org.egov.tl.service.masters.LicenseSubCategoryService;
+import org.egov.tl.service.LicenseCategoryService;
+import org.egov.tl.service.LicenseSubCategoryService;
 import org.egov.tl.service.masters.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -57,6 +54,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/licensesubcategory")
@@ -79,34 +78,32 @@ public class UpdateSubCategoryController {
     }
 
     @ModelAttribute
-    public LicenseSubCategory licenseSubCategoryModel(@PathVariable final String code) {
-        return licenseSubCategoryService.findSubCategoryByCode(code);
+    public LicenseSubCategory licenseSubCategory(@PathVariable String code) {
+        return licenseSubCategoryService.getSubCategoryByCode(code);
     }
 
     @RequestMapping(value = "/update/{code}", method = RequestMethod.GET)
-    public String subCategoryUpdateForm(@ModelAttribute @Valid final LicenseSubCategory licenseSubCategory,
-            final Model model) {
+    public String subCategoryUpdateForm(Model model) {
         populateDropdownData(model);
         return "subcategory-update";
     }
 
     @RequestMapping(value = "/update/{code}", method = RequestMethod.POST)
-    public String updateSubCategory(@ModelAttribute @Valid final LicenseSubCategory licenseSubCategory,
-            final BindingResult errors,
-            final RedirectAttributes additionalAttr, final Model model) {
+    public String updateSubCategory(@ModelAttribute @Valid LicenseSubCategory licenseSubCategory,
+                                    BindingResult errors, RedirectAttributes additionalAttr, Model model) {
 
         if (errors.hasErrors()) {
             populateDropdownData(model);
             return "subcategory-update";
         }
 
-        licenseSubCategoryService.updateLicenseSubCategory(licenseSubCategory);
+        licenseSubCategoryService.updateSubCategory(licenseSubCategory);
         additionalAttr.addFlashAttribute("message", "msg.success.subcategory.update");
         return "redirect:/licensesubcategory/view/" + licenseSubCategory.getCode();
     }
 
     private void populateDropdownData(final Model model) {
-        model.addAttribute("licenseCategories", licenseCategoryService.findAll());
+        model.addAttribute("licenseCategories", licenseCategoryService.getCategories());
         model.addAttribute("licenseFeeTypes", feeTypeService.findAll());
         model.addAttribute("licenseUomTypes", unitOfMeasurementService.findAll());
     }

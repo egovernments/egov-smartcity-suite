@@ -42,7 +42,7 @@ package org.egov.tl.web.controller;
 import org.egov.tl.entity.Validity;
 import org.egov.tl.service.NatureOfBusinessService;
 import org.egov.tl.service.ValidityService;
-import org.egov.tl.service.masters.LicenseCategoryService;
+import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.web.response.adaptor.ValidityResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -83,7 +83,7 @@ public class ValidityController {
 
     private void prepareNewForm(Model model) {
         model.addAttribute("natureOfBusinesss", natureOfBusinessService.findAll());
-        model.addAttribute("licenseCategorys", licenseCategoryService.findAll());
+        model.addAttribute("licenseCategorys", licenseCategoryService.getCategories());
     }
 
     @RequestMapping(value = "/new", method = GET)

@@ -41,7 +41,7 @@
 package org.egov.tl.web.controller.category;
 
 import org.egov.tl.entity.LicenseCategory;
-import org.egov.tl.service.masters.LicenseCategoryService;
+import org.egov.tl.service.LicenseCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -61,12 +61,12 @@ public class ViewCategoryController {
     }
 
     @ModelAttribute
-    public LicenseCategory licenseCategoryModel(@PathVariable final String code) {
-        return licenseCategoryService.findCategoryByCode(code);
+    public LicenseCategory licenseCategoryModel(@PathVariable String code) {
+        return licenseCategoryService.getCategoryByCode(code);
     }
 
     @RequestMapping(value = "/view/{code}", method = RequestMethod.GET)
-    public String categoryView(@ModelAttribute final LicenseCategory licenseCategory) {
+    public String categoryView(@ModelAttribute LicenseCategory licenseCategory) {
         return "licensecategory-view";
     }
 }

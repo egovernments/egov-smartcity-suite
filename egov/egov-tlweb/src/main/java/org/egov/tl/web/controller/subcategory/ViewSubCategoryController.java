@@ -42,8 +42,8 @@ package org.egov.tl.web.controller.subcategory;
 
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.service.FeeTypeService;
-import org.egov.tl.service.masters.LicenseCategoryService;
-import org.egov.tl.service.masters.LicenseSubCategoryService;
+import org.egov.tl.service.LicenseCategoryService;
+import org.egov.tl.service.LicenseSubCategoryService;
 import org.egov.tl.service.masters.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -74,13 +74,13 @@ public class ViewSubCategoryController {
     }
 
     @ModelAttribute
-    public LicenseSubCategory licenseCategoryModel(@PathVariable final String code) {
-        return licenseSubCategoryService.findSubCategoryByCode(code);
+    public LicenseSubCategory licenseCategoryModel(@PathVariable String code) {
+        return licenseSubCategoryService.getSubCategoryByCode(code);
     }
 
     @RequestMapping(value = "/view/{code}", method = RequestMethod.GET)
-    public String categoryView(final Model model) {
-        model.addAttribute("licenseCategories", licenseCategoryService.findAll());
+    public String categoryView(Model model) {
+        model.addAttribute("licenseCategories", licenseCategoryService.getCategories());
         model.addAttribute("licenseFeeTypes", feeTypeService.findAll());
         model.addAttribute("licenseUomTypes", unitOfMeasurementService.findAll());
         return "subcategory-view";

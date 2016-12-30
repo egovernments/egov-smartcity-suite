@@ -44,6 +44,11 @@ jQuery(document).ready(function(){
 	
 });
 
+//Add class to input field "patternvalidation" and add custom data attribute(eg: data-pattern="alphabets")
+
+//This will allow you to enter only alphabets with or without space. (eg: data-pattern="alphabets")
+var regexp_alphabets = /[^a-zA-Z]/g;
+
 //Add class to input field "patternvalidation" and add custom data attribute(eg: data-pattern="alphabetwithspace") 
 
 //This will allow you to enter only alphabets with or without space. (eg: data-pattern="alphabetwithspace")
@@ -104,6 +109,12 @@ function patternvalidation(){
 
 	});
 	
+}
+
+function alphabets(obj){
+    if(jQuery(obj).val().match(regexp_alphabets)){
+        jQuery(obj).val( jQuery(obj).val().replace(regexp_alphabets,'') );
+    }
 }
 
 function alphabetwithspace(obj){
