@@ -431,4 +431,6 @@ public class WorksConstants {
     public static final String PARTY_TYPE_CONTRACTOR = "Contractor";
 
     public static final String CREATE_AND_APPROVE = "Create And Approve";
+
+    public static final String ADDITIONAL_RULE = "additionalRule";
 }

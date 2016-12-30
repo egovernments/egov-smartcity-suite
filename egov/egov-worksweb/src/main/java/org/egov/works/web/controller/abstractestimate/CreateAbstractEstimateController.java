@@ -158,7 +158,8 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
                 model.addAttribute("nextAction", abstractEstimate.getState().getNextAction());
                 model.addAttribute("pendingActions", abstractEstimate.getState().getNextAction());
             }
-            model.addAttribute("additionalRule", cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+            model.addAttribute(WorksConstants.ADDITIONAL_RULE,
+                    cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
             model.addAttribute("validActionList", validActions);
             model.addAttribute("mode", null);
             model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
@@ -181,8 +182,8 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             workFlowAction = request.getParameter("workFlowAction");
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-        if (request.getParameter("additionalRule") != null)
-            additionalRule = request.getParameter("additionalRule");
+        if (request.getParameter(WorksConstants.ADDITIONAL_RULE) != null)
+            additionalRule = request.getParameter(WorksConstants.ADDITIONAL_RULE);
         estimateService.validateMultiYearEstimates(abstractEstimate, bindErrors);
         estimateService.validateMandatory(abstractEstimate, bindErrors);
         estimateService.validateAssetDetails(abstractEstimate, bindErrors);
@@ -217,7 +218,8 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             model.addAttribute("designation", request.getParameter("designation"));
             model.addAttribute("technicalSanctionBy", request.getParameter("estimateTechnicalSanctions[0].technicalSanctionBy"));
             model.addAttribute("approvedByValue", request.getParameter("approvedBy"));
-            model.addAttribute("additionalRule", cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+            model.addAttribute(WorksConstants.ADDITIONAL_RULE,
+                    cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
             return "newAbstractEstimate-form";
         } else {
             if (abstractEstimate.getState() == null)
