@@ -27,9 +27,9 @@ FAQ related to various deployment and development issues are discussed [here][FA
 * Install [maven v3.2.x][Maven]
 * Install [PostgreSQL v9.4][PostgreSQL]
 * Install [Elastic Search v2.4.x][Elastic Search]
-* Install [Jboss Wildfly v10.0.x][Wildfly Customized]
+* Install [Jboss Wildfly v10.x][Wildfly Customized]
 * Install [Git 2.8.3][Git]
-* Install [JDK 8 update 92 or higher][JDK8 build]
+* Install [JDK 8 update 112 or higher][JDK8 build]
 
 #### Database Setup
 Create a database and user in postgres
@@ -212,9 +212,9 @@ This section gives more details regarding developing and contributing to eGov su
 * Install [maven >= v3.2.x][Maven]
 * Install [PostgreSQL >= v9.4 ][PostgreSQL]
 * Install [Elastic Search >= v2.4.x][Elastic Search]
-* Install [Jboss Wildfly v10.0.x][Wildfly Customized]
+* Install [Jboss Wildfly v10.x][Wildfly Customized]
 * Install [Git 2.8.3][Git]
-* Install [JDK 8 update 92 or later][JDK8 build]
+* Install [JDK 8 update 112 or later][JDK8 build]
 
 __Note__: Please check in [eGov Tools Repository] for any of the above software installables before downloading from internet.
 
@@ -270,7 +270,7 @@ Browser:-
 [Git]: https://git-scm.com/downloads
 [JDK8 build]: http://www.oracle.com/technetwork/java/javase/downloads
 [eGov Opensource JIRA]: http://issues.egovernments.org/browse/PHOENIX
-[Wildfly Customized]: http://downloads.egovernments.org/wildfly-10.0.0.Final.zip
+[Wildfly Customized]: http://devops.egovernments.org/downloads/wildfly/wildfly-latest.zip
 [Eclipse Mars]: https://eclipse.org/downloads/packages/release/Mars/M1
 [Elastic Search]: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-2.4.1.zip
 [Spring Profiles]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-environment
