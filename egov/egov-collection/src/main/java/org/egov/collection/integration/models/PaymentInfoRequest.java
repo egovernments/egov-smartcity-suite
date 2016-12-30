@@ -37,21 +37,46 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.collection.integration.models;
 
-package org.egov.tl.repository;
+import javax.validation.constraints.NotNull;
 
-import org.egov.tl.entity.License;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+public class PaymentInfoRequest {
+    private String ulbCode;
+    @NotNull
+    private String userName;
+    private String serviceName;
+    private String consumerCode;
+    
+    public String getUserName() {
+        return userName;
+    }
 
-@Repository
-public interface LicenseRepository extends JpaRepository<License, Long> {
+    public void setUserName(final String userName) {
+        this.userName = userName;
+    }
 
-    License findByOldLicenseNumber(String oldLicenseNumber);
+    public String getServiceName() {
+        return serviceName;
+    }
 
-    License findByOldLicenseNumberAndIdIsNot(String oldLicenseNumber, Long id);
+    public void setServiceName(final String serviceName) {
+        this.serviceName = serviceName;
+    }
 
-    License findByLicenseNumber(String licenseNumber);
+    public String getConsumerCode() {
+        return consumerCode;
+    }
 
-    License findByApplicationNumber(String applicationNumber);
+    public void setConsumerCode(final String consumerCode) {
+        this.consumerCode = consumerCode;
+    }
+
+    public String getUlbCode() {
+        return ulbCode;
+    }
+
+    public void setUlbCode(String ulbCode) {
+        this.ulbCode = ulbCode;
+    }
 }

@@ -184,6 +184,6 @@
 </div>
 <div class="panel-body">
 		<div class="row add-border">
-			<%@ include file="../common/documentView.jsp" %>
+			<%@ include file="supportdocs-view.jsp" %>
 		</div> 
 </div>

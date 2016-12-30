@@ -61,6 +61,7 @@ import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -119,10 +120,8 @@ public class LineEstimatePDFController {
                     + lineEstimate.getBeneficiary().toString().replaceAll("_C", "/C").replace("_", " "));
             reportParams.put("present",
                     lineEstimate.getAdminSanctionBy() != null ? lineEstimate.getAdminSanctionBy() : "");
-            reportParams.put("zonalCommissioner",
-                    lineEstimate.getAdminSanctionBy() != null ? lineEstimate.getAdminSanctionBy() : "");
-            reportParams.put("zonalCommissionerCapital",
-                    lineEstimate.getAdminSanctionBy() != null ? lineEstimate.getAdminSanctionBy() : "");
+            reportParams.put("zonalCommissioner", WorksConstants.DESIGNATION_COMMISSIONER);
+            reportParams.put("zonalCommissionerCapital", WorksConstants.DESIGNATION_COMMISSIONER.toUpperCase());
             reportParams.put("beneficiary",
                     lineEstimate.getBeneficiary() != null ? lineEstimate.getBeneficiary().toString() : "");
 

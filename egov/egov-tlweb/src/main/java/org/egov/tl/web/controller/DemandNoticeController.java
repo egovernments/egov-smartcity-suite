@@ -39,14 +39,6 @@
  */
 package org.egov.tl.web.controller;
 
-import java.math.BigDecimal;
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -57,17 +49,24 @@ import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.AbstractLicenseService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.LicenseUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
+import static org.egov.infra.utils.DateUtils.toYearFormat;
 
 @Controller
 @RequestMapping("/demandnotice")
@@ -83,42 +82,31 @@ public class DemandNoticeController {
     private ReportService reportService;
 
     @RequestMapping(value = "/report", method = RequestMethod.GET)
-    public
     @ResponseBody
-    ResponseEntity<byte[]> generateDemandNotice(@RequestParam final Long licenseId, final Model model) {
+    public ResponseEntity<byte[]> generateDemandNotice(@RequestParam Long licenseId) {
         final TradeLicense license = tradeLicenseService.getLicenseById(licenseId);
         return generateReport(license);
     }
 
-    private ResponseEntity<byte[]> generateReport(final TradeLicense license) {
-
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        final Format formatterYear = new SimpleDateFormat("YYYY");
-        final Installment currentInstallment = licenseUtils.getCurrInstallment(licenseUtils.getModule("Trade License"));
-        final Calendar prevYear = Calendar.getInstance();
-        prevYear.add(Calendar.YEAR, -1);
-        final Installment previousYear = installmentDao
-                .getInsatllmentByModuleForGivenDate(licenseUtils.getModule("Trade License"), prevYear.getTime());
-        final String curstartYear = formatterYear.format(currentInstallment.getFromDate());
-        final String curendYear = formatterYear.format(currentInstallment.getToDate());
-        final String curinstallmentYear = curstartYear + "-" + curendYear;
-        final String lastYear = formatterYear.format(previousYear.getToDate());
-        if (null != license) {
-            reportParams.put("cityName", "MUNICIPAL CORPORATION, " + ApplicationThreadLocals.getCityName());
+    private ResponseEntity<byte[]> generateReport(TradeLicense license) {
+        if (license != null) {
+            Installment currentInstallment = licenseUtils.getCurrInstallment(licenseUtils.getModule("Trade License"));
+            reportParams.put("cityName", ApplicationThreadLocals.getMunicipalityName());
             reportParams.put("licenseNumber", license.getLicenseNumber());
             reportParams.put("ownerName", license.getLicensee().getApplicantName());
             reportParams.put("tradeNature", license.getTradeName().getName());
             reportParams.put("tradeName", license.getNameOfEstablishment());
             reportParams.put("tradeAddress", license.getAddress());
             reportParams.put("cityUrl", ApplicationThreadLocals.getDomainURL());
-            reportParams.put("installmentYear", curinstallmentYear);
-            reportParams.put("currentDate", formatter.format(new Date()));
-
-            reportParams.put("lastyear", lastYear);
+            reportParams.put("installmentYear", toYearFormat(currentInstallment.getFromDate()) + "-" +
+                    toYearFormat(currentInstallment.getToDate()));
+            reportParams.put("currentDate", currentDateToDefaultDateFormat());
+            reportParams.put("lastyear", toYearFormat(installmentDao.getInsatllmentByModuleForGivenDate(
+                    licenseUtils.getModule("Trade License"), new DateTime().minusYears(1).toDate()).getToDate()));
             BigDecimal currLicenseFee;
             BigDecimal arrLicenseFee;
-            final Map<String, Map<String, BigDecimal>> map = tradeLicenseService.getOutstandingFee(license);
-            final Map<String, BigDecimal> licenseFees = map.get("License Fee");
+            Map<String, Map<String, BigDecimal>> map = tradeLicenseService.getOutstandingFee(license);
+            Map<String, BigDecimal> licenseFees = map.get("License Fee");
             if (licenseFees != null) {
                 currLicenseFee = licenseFees.get("current") == null ? BigDecimal.ZERO : licenseFees.get("current");
                 arrLicenseFee = licenseFees.get("arrear") == null ? BigDecimal.ZERO : licenseFees.get("arrear");
@@ -127,15 +115,15 @@ public class DemandNoticeController {
                 arrLicenseFee = BigDecimal.ZERO;
             }
 
-            final BigDecimal totalAmount = currLicenseFee.add(arrLicenseFee);
-            final BigDecimal licensewithIniPenalty = totalAmount
+            BigDecimal totalAmount = currLicenseFee.add(arrLicenseFee);
+            BigDecimal licensewithIniPenalty = totalAmount
                     .add(AbstractLicenseService.percentage(totalAmount, BigDecimal.valueOf(25)));
-            final BigDecimal licenseFeeWithSecLvlPenalty = totalAmount
+            BigDecimal licenseFeeWithSecLvlPenalty = totalAmount
                     .add(AbstractLicenseService.percentage(totalAmount, BigDecimal.valueOf(50)));
             reportParams.put("licenseFee", currLicenseFee);
             reportParams.put("arrearLicenseFee", arrLicenseFee);
             reportParams.put("totalLicenseFee", totalAmount);
-            reportParams.put("currentYear", curstartYear);
+            reportParams.put("currentYear", toYearFormat(currentInstallment.getFromDate()));
             reportParams.put("licensewithIniPenalty", licensewithIniPenalty);
             reportParams.put("licenseFeeWithSecLvlPenalty", licenseFeeWithSecLvlPenalty);
         }

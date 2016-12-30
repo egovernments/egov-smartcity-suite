@@ -145,7 +145,7 @@
 											</div>
                                     	</div>
 	                                    <div class="tab-pane fade" id="tradeattachments">
-											<%@include file="../common/documentUpload.jsp" %>
+											<%@include file="../common/supportdocs-new.jsp" %>
 	                                    </div>
                             		</div>
                             	</div>

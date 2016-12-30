@@ -91,7 +91,12 @@ public class BankAccountJsonAdaptor implements JsonSerializer<Bankaccount> {
             else
                 jsonObject.addProperty("narration", "");
             if (bankaccount.getIsactive() != null)
-                jsonObject.addProperty("isactive", bankaccount.getIsactive());
+            {
+                if(bankaccount.getIsactive())
+                    jsonObject.addProperty("isactive", "Y");
+                else
+                    jsonObject.addProperty("isactive", "N");
+            }
             else
                 jsonObject.addProperty("isactive", "");
             jsonObject.addProperty("id", bankaccount.getId());

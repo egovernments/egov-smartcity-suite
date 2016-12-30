@@ -77,22 +77,12 @@ function initializeDatePicker()
 		autoclose:true
 	}).on('changeDate', function (ev) {
 		$(this).datepicker('hide');
-		if(!validateScheduleEndDate())
-		{
-			$(this).val('');
-			console.log('failure!');
-		}
 	});
 	$('.scheduleStartDate').datepicker({
 		format: "dd/mm/yyyy",
 		autoclose:true
 	}).on('changeDate', function (ev) {
 		$(this).datepicker('hide');
-		if(!validateScheduleStartDate())
-		{
-			$(this).val('');
-			console.log('failure!');
-		}
 	});
 	$('.datepicker').datepicker('update');
 	try { $(".datepicker").inputmask(); }catch(e){}	

@@ -38,42 +38,45 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 
-<html>  
+<html>
 <head>
 
-     <title><s:text name="serviceCategory.edit.title"/></title> 
-<script>
-function onSubmit(obj){
-	document.forms[0].action=obj;
-	document.forms[0].submit;
-   return true;
-}
-</script> 
-</head>  
-	<body>  
-		<span>
-		              <font  style='color: red ; font-weight:bold ' size="2">
-                               <s:actionerror/>  
-                               <s:fielderror />
-                               </font>
-          </span>
-		
-		<s:form action="serviceCategory" theme="simple" >  
-		   		<div class="subheadnew"><s:text name="serviceCategory.edit.title"/></div>
-		   		<s:push value="model">
-		   <s:hidden name="id" id="id" value="%{id}"/> 
+<title><s:text name="serviceCategory.edit.title" /></title>
+
+</head>
+<body>
+	<div class="errorstyle" id="error_area" style="display: none;"></div>
+	<span id="remerror"> <font style='color: red; font-weight: bold'
+		size="2"> <s:actionerror /> <s:fielderror />
+	</font>
+	</span>
+
+
+
+	<s:form action="serviceCategory" theme="simple">
+		<div class="subheadnew">
+			<s:text name="serviceCategory.edit.title" />
+		</div>
+		<s:push value="model">
+			<s:hidden name="id" id="id" value="%{id}" />
 			<%@ include file='serviceCategory-form.jsp'%>
-			<div align="left" class="mandatory1"> &nbsp;&nbsp;&nbsp;&nbsp;* Mandatory Fields</div>
-	 		
-	 		<div class="buttonbottom">
-	 			<s:submit name="button1" cssClass="buttonsubmit" id="button32" onclick="return onSubmit('serviceCategory-save.action');" value="Save"/>
-				<input name="button2" type="submit" class="buttonsubmit" id="button" onclick="return onSubmit('serviceCategory-list.action');" value="List"/>
-				<s:reset name="button3" cssClass="button" id="button" value="Reset"/>
-				<input name="button4" type="button" class="button" id="button" onclick="window.close()" value="Close"/>
+			<div align="left" class="mandatory1">&nbsp;&nbsp;&nbsp;&nbsp;*
+				Mandatory Fields</div>
+
+			<div class="buttonbottom">
+				<s:submit name="button1" cssClass="buttonsubmit" id="button32"
+					onclick="return onSubmit('serviceCategory-save.action');"
+					value="Save" />
+				<input name="button2" type="submit" class="buttonsubmit" id="button"
+					onclick="return onSubmit('serviceCategory-list.action');"
+					value="List" /> <input type="button" class="button" value="Reset"
+					id="resetbutton" name="reset" onclick="return resetValues()">
+				<input name="button4" type="button" class="button" id="button"
+					onclick="window.close()" value="Close" />
 			</div>
-			</s:push>
- 		</s:form>  
-    </body>  
+		</s:push>
+	</s:form>
+</body>
 </html>

@@ -39,14 +39,14 @@
  */
 package org.egov.tl.service;
 
-import java.util.List;
-
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.repository.LicenseDocumentTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -62,21 +62,24 @@ public class DocumentTypeService {
     public LicenseDocumentType create(final LicenseDocumentType documenttype) {
         return licenseDocumentTypeRepository.save(documenttype);
     }
+
     public LicenseDocumentType getDocumentTypeById(final Long id) {
         return licenseDocumentTypeRepository.findById(id);
-    } 
+    }
+
     @Transactional
     public LicenseDocumentType update(final LicenseDocumentType documenttype) {
-    	if(!documenttype.isEnabled())
-    		documenttype.setMandatory(false);
+        if (!documenttype.isEnabled())
+            documenttype.setMandatory(false);
         return licenseDocumentTypeRepository.save(documenttype);
     }
 
     public List<LicenseDocumentType> findAll() {
         return licenseDocumentTypeRepository.findAll();
     }
+
     public List<LicenseDocumentType> getDocumentTypesByApplicationType(ApplicationType applicationType) {
-        return licenseDocumentTypeRepository.findByApplicationType(applicationType);
+        return licenseDocumentTypeRepository.findByApplicationTypeAndEnabledTrue(applicationType);
     }
 
     public List<LicenseDocumentType> search(final String name, final ApplicationType applicationType) {

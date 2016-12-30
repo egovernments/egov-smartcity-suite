@@ -42,6 +42,7 @@ package org.egov.collection.integration.services;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +63,7 @@ import org.egov.collection.integration.models.PaymentInfo;
 import org.egov.collection.integration.models.PaymentInfoBank;
 import org.egov.collection.integration.models.PaymentInfoCash;
 import org.egov.collection.integration.models.PaymentInfoChequeDD;
+import org.egov.collection.integration.models.PaymentInfoRequest;
 import org.egov.collection.integration.models.PaymentInfoSearchRequest;
 import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
@@ -95,8 +97,8 @@ import org.springframework.transaction.annotation.Transactional;
  * collections module.
  */
 @Transactional(readOnly = true)
-public class CollectionIntegrationServiceImpl extends PersistenceService<ReceiptHeader, Long>
-        implements CollectionIntegrationService {
+public class CollectionIntegrationServiceImpl extends PersistenceService<ReceiptHeader, Long> implements
+CollectionIntegrationService {
 
     private static final Logger LOGGER = Logger.getLogger(CollectionIntegrationServiceImpl.class);
 
@@ -111,7 +113,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
     @Autowired
     private EgwStatusHibernateDAO statusDAO;
 
-    private final List<ValidationError> errors = new ArrayList<ValidationError>(0);
+    private final List<ValidationError> errors = new ArrayList<>(0);
 
     private CollectionCommon collectionCommon;
 
@@ -123,7 +125,6 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
     @Autowired
     private ApplicationContext beanProvider;
-
 
     public CollectionIntegrationServiceImpl() {
         super(ReceiptHeader.class);
@@ -144,13 +145,13 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
      */
     @Override
     public List<BillReceiptInfo> getBillReceiptInfo(final String serviceCode, final String refNum) {
-        final ArrayList<BillReceiptInfo> receipts = new ArrayList<BillReceiptInfo>(0);
+        final ArrayList<BillReceiptInfo> receipts = new ArrayList<>(0);
 
         // Get all receipt headers for given reference number
         final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
                 CollectionConstants.QUERY_RECEIPTS_BY_REFNUM_AND_SERVICECODE, refNum, serviceCode);
         if (receiptHeaders == null || receiptHeaders.isEmpty())
-            return null;
+            return Collections.emptyList();
 
         for (final ReceiptHeader receiptHeader : receiptHeaders)
             receipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService, null));
@@ -164,7 +165,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
      */
     @Override
     public Map<String, List<BillReceiptInfo>> getBillReceiptInfo(final String serviceCode, final Set<String> refNums) {
-        final HashMap<String, List<BillReceiptInfo>> receipts = new HashMap<String, List<BillReceiptInfo>>(0);
+        final HashMap<String, List<BillReceiptInfo>> receipts = new HashMap<>(0);
 
         for (final String refNum : refNums)
             receipts.put(refNum, getBillReceiptInfo(serviceCode, refNum));
@@ -179,12 +180,12 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
      */
     @Override
     public List<BillReceiptInfo> getInstrumentReceiptInfo(final String serviceCode, final String instrumentNum) {
-        final ArrayList<BillReceiptInfo> receipts = new ArrayList<BillReceiptInfo>(0);
+        final ArrayList<BillReceiptInfo> receipts = new ArrayList<>(0);
 
         final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
                 CollectionConstants.QUERY_RECEIPTS_BY_INSTRUMENTNO_AND_SERVICECODE, instrumentNum, serviceCode);
         if (receiptHeaders == null || receiptHeaders.isEmpty())
-            return null;
+            return Collections.emptyList();
 
         for (final ReceiptHeader receiptHeader : receiptHeaders)
             receipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService, null));
@@ -199,7 +200,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
     @Override
     public Map<String, List<BillReceiptInfo>> getInstrumentReceiptInfo(final String serviceCode,
             final Set<String> instrumentNums) {
-        final HashMap<String, List<BillReceiptInfo>> receipts = new HashMap<String, List<BillReceiptInfo>>(0);
+        final HashMap<String, List<BillReceiptInfo>> receipts = new HashMap<>(0);
 
         for (final String instrumentNum : instrumentNums)
             receipts.put(instrumentNum, getInstrumentReceiptInfo(serviceCode, instrumentNum));
@@ -219,13 +220,9 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
                 CollectionConstants.QUERY_RECEIPT_BY_RECEIPTNUM_AND_SERVICECODE, serviceCode, receiptNum, receiptNum);
         if (receiptHeader == null)
             return null;
-        else {
+        else
             // Create bill receipt info
-            final BillReceiptInfoImpl receiptInfo = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
-                    persistenceService, null);
-
-            return receiptInfo;
-        }
+            return new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService, null);
     }
 
     @Override
@@ -234,9 +231,9 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
         final ReceiptHeader header = find("from ReceiptHeader r where r.manualreceiptnumber=? and r.source=? ",
                 paymentInfoSearchRequest.getTransactionId(), paymentInfoSearchRequest.getSource());
         if (header == null)
-            throw new RuntimeException("No data found");
-        RestReceiptInfo restReceiptInfo = new RestReceiptInfo(header);
-        PaymentInfoService paymentInfoService = (PaymentInfoService) beanProvider.getBean("paymentInfoService");
+            throw new ApplicationRuntimeException("No data found");
+        final RestReceiptInfo restReceiptInfo = new RestReceiptInfo(header);
+        final PaymentInfoService paymentInfoService = (PaymentInfoService) beanProvider.getBean("paymentInfoService");
         paymentInfoService.setPaymentInfo(restReceiptInfo, header);
         return restReceiptInfo;
 
@@ -250,7 +247,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
      */
     @Override
     public Map<String, BillReceiptInfo> getReceiptInfo(final String serviceCode, final Set<String> receiptNums) {
-        final HashMap<String, BillReceiptInfo> receipts = new HashMap<String, BillReceiptInfo>(0);
+        final HashMap<String, BillReceiptInfo> receipts = new HashMap<>(0);
 
         for (final String receiptNum : receiptNums)
             receipts.put(receiptNum, getReceiptInfo(serviceCode, receiptNum));
@@ -270,12 +267,12 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
         if (fund == null)
             throw new ApplicationRuntimeException("Fund not present for the fund code [" + bill.getFundCode() + "].");
 
-        final Department dept = (Department) persistenceService
-                .findByNamedQuery(CollectionConstants.QUERY_DEPARTMENT_BY_CODE, bill.getDepartmentCode());
+        final Department dept = (Department) persistenceService.findByNamedQuery(
+                CollectionConstants.QUERY_DEPARTMENT_BY_CODE, bill.getDepartmentCode());
 
         if (dept == null)
-            throw new ApplicationRuntimeException(
-                    "Department not present for the department code [" + bill.getDepartmentCode() + "].");
+            throw new ApplicationRuntimeException("Department not present for the department code ["
+                    + bill.getDepartmentCode() + "].");
         final ReceiptHeader receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(bill, fund, dept);
 
         receiptHeader.setCreatedDate(new Date());
@@ -286,8 +283,8 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
         receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_FIELDCOLLECTION);
         receiptHeader.setSource(bill.getSource() != null ? bill.getSource() : "");
 
-        receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER,
-                CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));
+        receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
+                CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));
 
         receiptHeader.setPaidBy(bill.getPaidBy());
 
@@ -296,22 +293,13 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             receiptHeader.setCreatedBy(user);
             receiptHeader.setLastModifiedBy(user);
             receiptHeader.setLastModifiedDate(new Date());
-            // TODO: Uncomment following lines once LocationId is added to
-            // ThreadLocals
-            /*
-             * if (ApplicationThreadLocals.getLocationId() != null) { final
-             * Location location =
-             * collectionsUtil.getLocationById(ApplicationThreadLocals
-             * .getLocationId()); if (location != null)
-             * receiptHeader.setLocation(location); }
-             */
         }
 
         BigDecimal chequeDDInstrumenttotal = BigDecimal.ZERO;
         BigDecimal otherInstrumenttotal = BigDecimal.ZERO;
 
         // populate instrument details
-        final List<InstrumentHeader> instrumentHeaderList = new ArrayList<InstrumentHeader>(0);
+        final List<InstrumentHeader> instrumentHeaderList = new ArrayList<>(0);
 
         for (final PaymentInfo paytInfo : paymentInfoList) {
             final String instrType = paytInfo.getInstrumentType().toString();
@@ -322,15 +310,6 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
                 instrumentHeaderList.add(collectionCommon.validateAndConstructCashInstrument(paytInfoCash));
                 otherInstrumenttotal = paytInfo.getInstrumentAmount();
             }
-
-            /*
-             * if(CollectionConstants.INSTRUMENTTYPE_CARD.equals(instrType)){
-             * PaymentInfoCard paytInfoCard = (PaymentInfoCard)paytInfo;
-             * instrumentHeaderList.add(
-             * collectionCommon.validateAndConstructCardInstrument(
-             * paytInfoCard,receiptHeader)); otherInstrumenttotal =
-             * paytInfoCard.getInstrumentAmount(); }
-             */
 
             if (CollectionConstants.INSTRUMENTTYPE_BANK.equals(instrType)) {
                 final PaymentInfoBank paytInfoBank = (PaymentInfoBank) paytInfo;
@@ -349,15 +328,6 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
                 chequeDDInstrumenttotal = chequeDDInstrumenttotal.add(paytInfoChequeDD.getInstrumentAmount());
             }
-
-            /*
-             * if(CollectionConstants.INSTRUMENTTYPE_ATM.equals(instrType)){
-             * PaymentInfoATM paytInfoATM = (PaymentInfoATM)paytInfo;
-             * instrumentHeaderList.add(
-             * collectionCommon.validateAndConstructATMInstrument(
-             * paytInfoATM)); otherInstrumenttotal =
-             * paytInfoATM.getInstrumentAmount(); }
-             */
         }
         BigDecimal debitAmount = BigDecimal.ZERO;
 
@@ -381,16 +351,16 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
      */
     @Override
     public List<BillReceiptInfo> getOnlinePendingReceipts(final String serviceCode, final String consumerCode) {
-        final ArrayList<BillReceiptInfo> receipts = new ArrayList<BillReceiptInfo>(0);
+        final ArrayList<BillReceiptInfo> receipts = new ArrayList<>(0);
         final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
                 CollectionConstants.QUERY_ONLINE_PENDING_RECEIPTS_BY_CONSUMERCODE_AND_SERVICECODE, serviceCode,
                 consumerCode, CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
         if (receiptHeaders == null || receiptHeaders.isEmpty())
-            return null;
+            return Collections.emptyList();
         else {
             for (final ReceiptHeader receiptHeader : receiptHeaders)
-                receipts.add(
-                        new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService, null));
+                receipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService,
+                        null));
             return receipts;
         }
 
@@ -409,12 +379,12 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
         if (fund == null)
             throw new ApplicationRuntimeException("Fund not present for the fund code [" + bill.getFundCode() + "].");
 
-        final Department dept = (Department) persistenceService
-                .findByNamedQuery(CollectionConstants.QUERY_DEPARTMENT_BY_CODE, bill.getDepartmentCode());
+        final Department dept = (Department) persistenceService.findByNamedQuery(
+                CollectionConstants.QUERY_DEPARTMENT_BY_CODE, bill.getDepartmentCode());
 
         if (dept == null)
-            throw new ApplicationRuntimeException(
-                    "Department not present for the department code [" + bill.getDepartmentCode() + "].");
+            throw new ApplicationRuntimeException("Department not present for the department code ["
+                    + bill.getDepartmentCode() + "].");
 
         final ReceiptHeader receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(bill, fund, dept);
 
@@ -424,21 +394,13 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
         receiptHeader.setIsReconciled(Boolean.TRUE);
         receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_COUNTER);
 
-        receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER,
-                CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));
+        receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
+                CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));
 
         receiptHeader.setPaidBy(bill.getPaidBy());
 
         if (ApplicationThreadLocals.getUserId() != null)
             receiptHeader.setCreatedBy(collectionsUtil.getUserById(ApplicationThreadLocals.getUserId()));
-        // TODO: Uncomment following lines once LocationId is added to
-        // ThreadLocals
-        /*
-         * if (ApplicationThreadLocals.getLocationId() != null) { final Location
-         * location =
-         * collectionsUtil.getLocationById(ApplicationThreadLocals.getLocationId
-         * ()); if (location != null) receiptHeader.setLocation(location); }
-         */
 
         final BigDecimal chequeDDInstrumenttotal = BigDecimal.ZERO;
         final BigDecimal otherInstrumenttotal = BigDecimal.ZERO;
@@ -495,11 +457,11 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             errors.add(new ValidationError(
                     "Miscellaneous Receipt creation transaction rolled back as update to financial system failed.",
                     "Miscellaneous Receipt creation transaction rolled back as update to financial system failed."));
-            LOGGER.error("Update to financial systems failed");
+            LOGGER.error("Update to financial systems failed" + ex);
         }
 
         // Create Vouchers
-        final List<CVoucherHeader> voucherHeaderList = new ArrayList<CVoucherHeader>();
+        final List<CVoucherHeader> voucherHeaderList = new ArrayList<>();
 
         LOGGER.info("Receipt Voucher created with vouchernumber:        " + receiptHeader.getVoucherNum());
 
@@ -523,10 +485,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
     @Override
     public List<RestAggregatePaymentInfo> getAggregateReceiptTotal(final PaymentInfoSearchRequest aggrReq) {
 
-        final List<RestAggregatePaymentInfo> listAggregatePaymentInfo = new ArrayList<RestAggregatePaymentInfo>(0);
-
-        // final SimpleDateFormat formatter = new
-        // SimpleDateFormat("dd-MMM-yyyy");
+        final List<RestAggregatePaymentInfo> listAggregatePaymentInfo = new ArrayList<>(0);
         final StringBuilder queryBuilder = new StringBuilder(
                 "select  sum(recordcount) as records,ulb, sum(total) as total,service  from public.receipt_aggr_view "
                         + " where receipt_date>=:fromDate and receipt_date<=:toDate and service=:serviceCode "
@@ -551,7 +510,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             aggregatePaymentInfo.setServiceCode(objectArray[3].toString());
             listAggregatePaymentInfo.add(aggregatePaymentInfo);
         }
-        if (listAggregatePaymentInfo.size() == 0)
+        if (listAggregatePaymentInfo.isEmpty())
             listAggregatePaymentInfo.add(new RestAggregatePaymentInfo());
         return listAggregatePaymentInfo;
     }
@@ -564,9 +523,9 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
      */
     @Override
     public List<RestReceiptInfo> getReceiptDetailsByDateAndService(final PaymentInfoSearchRequest aggrReq) {
-        final ArrayList<RestReceiptInfo> receipts = new ArrayList<RestReceiptInfo>(0);
+        final ArrayList<RestReceiptInfo> receipts = new ArrayList<>(0);
         RestReceiptInfo restReceiptInfo;
-        PaymentInfoService paymentInfoService = (PaymentInfoService) beanProvider.getBean("paymentInfoService");
+        final PaymentInfoService paymentInfoService = (PaymentInfoService) beanProvider.getBean("paymentInfoService");
         final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
                 CollectionConstants.QUERY_RECEIPTS_BY_DATE_AND_SERVICECODE, aggrReq.getFromdate(), aggrReq.getTodate(),
                 aggrReq.getServicecode(), aggrReq.getSource());
@@ -585,18 +544,19 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
     @Override
     public String cancelReceipt(final PaymentInfoSearchRequest cancelReq) {
-        String statusMessage = null;
+        String statusMessage;
         String instrumentType = "";
         boolean isInstrumentDeposited = false;
-        final ReceiptHeader receiptHeaderToBeCancelled = (ReceiptHeader) persistenceService
-                .findByNamedQuery(CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM, cancelReq.getReceiptNo());
+        final ReceiptHeader receiptHeaderToBeCancelled = (ReceiptHeader) persistenceService.findByNamedQuery(
+                CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM, cancelReq.getReceiptNo());
         if (receiptHeaderToBeCancelled == null)
-            throw new RuntimeException("Invalid receiptNumber:" + cancelReq.getReceiptNo());
+            throw new ApplicationRuntimeException("Invalid receiptNumber:" + cancelReq.getReceiptNo());
         else if (!cancelReq.getTransactionId().equals(receiptHeaderToBeCancelled.getManualreceiptnumber()))
-            throw new RuntimeException("transactionId doesnot match with receiptNo  " + cancelReq.getReceiptNo());
-        else if (CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED
-                .equalsIgnoreCase(receiptHeaderToBeCancelled.getStatus().getCode()))
-            throw new RuntimeException("Receipt is already Cancelled  " + cancelReq.getReceiptNo());
+            throw new ApplicationRuntimeException("transactionId doesnot match with receiptNo  "
+                    + cancelReq.getReceiptNo());
+        else if (CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED.equalsIgnoreCase(receiptHeaderToBeCancelled
+                .getStatus().getCode()))
+            throw new ApplicationRuntimeException("Receipt is already Cancelled  " + cancelReq.getReceiptNo());
 
         LOGGER.info("Receipt Header to be Cancelled : " + receiptHeaderToBeCancelled.getReceiptnumber());
 
@@ -625,9 +585,9 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             receiptHeaderToBeCancelled.setReasonForCancellation(CollectionConstants.RECEIPT_CANCELLED_REASON);
 
             for (final InstrumentHeader instrumentHeader : receiptHeaderToBeCancelled.getReceiptInstrument()) {
-                instrumentHeader.setStatusId(
-                        statusDAO.getStatusByModuleAndCode(CollectionConstants.MODULE_NAME_INSTRUMENTHEADER,
-                                CollectionConstants.INSTRUMENTHEADER_STATUS_CANCELLED));
+                instrumentHeader.setStatusId(statusDAO.getStatusByModuleAndCode(
+                        CollectionConstants.MODULE_NAME_INSTRUMENTHEADER,
+                        CollectionConstants.INSTRUMENTHEADER_STATUS_CANCELLED));
                 instrumentType = instrumentHeader.getInstrumentType().getType();
 
             }
@@ -654,16 +614,16 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
     @Override
     public List<ReceiptDetail> getReceiptDetailListByReceiptNumber(final String receiptNumber) {
-        final List<ReceiptDetail> receiptDetList = persistenceService
-                .findAllByNamedQuery(CollectionConstants.QUERY_RECEIPTDETAIL_BY_RECEIPTNUMBER, receiptNumber);
+        final List<ReceiptDetail> receiptDetList = persistenceService.findAllByNamedQuery(
+                CollectionConstants.QUERY_RECEIPTDETAIL_BY_RECEIPTNUMBER, receiptNumber);
 
         return receiptDetList;
     }
 
     @Override
     @Transactional
-    public PaymentRequest processMobilePayments(final BillInfoImpl billInfo) throws ValidationException {
-        ReceiptHeader receiptHeader = new ReceiptHeader();
+    public PaymentRequest processMobilePayments(final BillInfoImpl billInfo) {
+        ReceiptHeader receiptHeader;
         BigDecimal totalAmountToBeCollected = BigDecimal.ZERO;
 
         final Fund fund = fundDAO.fundByCode(billInfo.getFundCode());
@@ -672,8 +632,8 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             throw new ValidationException(Arrays.asList(new ValidationError("billreceipt.improperbilldata.missingfund",
                     "billreceipt.improperbilldata.missingfund")));
 
-        final Department dept = (Department) persistenceService
-                .findByNamedQuery(CollectionConstants.QUERY_DEPARTMENT_BY_CODE, billInfo.getDepartmentCode());
+        final Department dept = (Department) persistenceService.findByNamedQuery(
+                CollectionConstants.QUERY_DEPARTMENT_BY_CODE, billInfo.getDepartmentCode());
 
         if (dept == null)
             throw new ValidationException(
@@ -687,14 +647,14 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
         if (totalAmountToBeCollected.compareTo(BigDecimal.ZERO) == -1) {
             LOGGER.info("Amount to be collected is less than zero, hence cannot proceed.");
-            throw new ValidationException(Arrays.asList(new ValidationError("billreceipt.totalamountlessthanzero.error",
-                    "billreceipt.totalamountlessthanzero.error")));
+            throw new ValidationException(Arrays.asList(new ValidationError(
+                    "billreceipt.totalamountlessthanzero.error", "billreceipt.totalamountlessthanzero.error")));
         } else
-            receiptHeader.setTotalAmount(totalAmountToBeCollected.setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT,
-                    BigDecimal.ROUND_UP));
+            receiptHeader.setTotalAmount(totalAmountToBeCollected.setScale(
+                    CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP));
 
-        final ServiceDetails paymentService = (ServiceDetails) persistenceService
-                .findByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICECODE_AXIS);
+        final ServiceDetails paymentService = (ServiceDetails) persistenceService.findByNamedQuery(
+                CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICECODE_AXIS);
 
         if (receiptHeader.getStatus() == null) {
             receiptHeader.setReceiptdate(new Date());
@@ -706,8 +666,8 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             // created on successful online transaction
             receiptHeader.setIsReconciled(Boolean.TRUE);
             receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION);
-            receiptHeader.setStatus(
-                    collectionsUtil.getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_PENDING));
+            receiptHeader.setStatus(collectionsUtil
+                    .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_PENDING));
             receiptHeader.setSource(Source.MOBILE.toString());
             BigDecimal debitAmount = BigDecimal.ZERO;
             // TODO: Clarification
@@ -726,9 +686,9 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             // Add Online Payment Details
             final OnlinePayment onlinePayment = new OnlinePayment();
 
-            onlinePayment
-                    .setStatus(collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
-                            CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING));
+            onlinePayment.setStatus(collectionsUtil.getStatusForModuleAndCode(
+                    CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
+                    CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING));
             onlinePayment.setReceiptHeader(receiptHeader);
             onlinePayment.setService(paymentService);
 
@@ -738,6 +698,39 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
         return collectionCommon.createPaymentRequest(paymentService, receiptHeader);
     }// end of method
+
+    @Override
+    public List<RestReceiptInfo> getDetailsByUserServiceAndConsumerCode(final PaymentInfoRequest paymentInfoRequest) {
+        final ArrayList<RestReceiptInfo> receipts = new ArrayList<>(0);
+        RestReceiptInfo restReceiptInfo;
+        final List<ReceiptHeader> receiptHeaders;
+
+        final StringBuilder queryString = new StringBuilder("from ReceiptHeader rh where 1=1 ");
+        if (!paymentInfoRequest.getUserName().isEmpty())
+            queryString.append(" and upper(rh.createdBy.username) = :userName");
+        if (!paymentInfoRequest.getServiceName().isEmpty())
+            queryString.append(" and rh.service.name = :serviceName");
+        if (!paymentInfoRequest.getConsumerCode().isEmpty())
+            queryString.append(" and rh.consumerCode = :consumerCode");
+        final Query listQuery = getSession().createQuery(queryString.toString());
+        if (!paymentInfoRequest.getUserName().isEmpty())
+            listQuery.setString("userName", paymentInfoRequest.getUserName().toUpperCase());
+        if (!paymentInfoRequest.getServiceName().isEmpty())
+            listQuery.setString("serviceName", paymentInfoRequest.getServiceName());
+        if (!paymentInfoRequest.getConsumerCode().isEmpty())
+            listQuery.setString("consumerCode", paymentInfoRequest.getConsumerCode());
+        receiptHeaders = listQuery.list();
+        if (receiptHeaders == null || receiptHeaders.isEmpty()) {
+            receipts.add(new RestReceiptInfo());
+            return receipts;
+        } else {
+            for (final ReceiptHeader receiptHeader : receiptHeaders) {
+                restReceiptInfo = new RestReceiptInfo(receiptHeader);
+                receipts.add(restReceiptInfo);
+            }
+            return receipts;
+        }
+    }
 
     public void setCollectionCommon(final CollectionCommon collectionCommon) {
         this.collectionCommon = collectionCommon;

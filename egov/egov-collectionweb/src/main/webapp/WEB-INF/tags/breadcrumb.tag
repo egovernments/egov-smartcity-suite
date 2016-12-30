@@ -1,6 +1,6 @@
 <%@ tag body-content="empty"  isELIgnored="false" pageEncoding="UTF-8" description="To show Bread Crumb for each and every Screen" %>
-<%@tag import="java.util.Date"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
@@ -47,10 +47,12 @@
 		<div class="container-fluid">
 			<div class="navbar-header col-md-10 col-xs-10">
 				<a class="navbar-brand" href="javascript:void(0);">
-					<img src="<c:url value='${sessionScope.citylogo}' context='/egi'/>" height="60">
+					<c:if test="${not empty sessionScope.logopath || not empty sessionScope.citylogo}">
+						<img src="<c:url value='${sessionScope.logopath == null ? sessionScope.citylogo : sessionScope.logopath}' context='/egi'/>" height="60">
+					</c:if>
 					<div>
 						<span class="title2">
-						  COLLECTIONS
+						  Collections
 						</span>
 						
 					</div>
@@ -61,7 +63,7 @@
 				<ul class="hr-menu text-right">
 					<li class="ico-menu">
 						<a href="http://www.egovernments.org" target="_blank">
-							<img src="<c:url value='/resources/global/images/logo@2x.png' context='/egi'/>" title="Powered by eGovernments" height="20px">
+							<img src="<cdn:url value='/resources/global/images/logo@2x.png' context='/egi'/>" title="Powered by eGovernments" height="20px">
 						</a>
 					</li>
 					
@@ -71,14 +73,5 @@
 		</div>
 	</nav>
 </header>
-
-<%="<!--div class='commontopyellowbg'>Property Tax</div>"%>
-<%="<div class='commontopbluebg'><div class='commontopdate'>Today is: <span class='bold' style='color:black'>"%>
-<%=new java.text.SimpleDateFormat("dd/MM/yyyy").format(new Date())%>
-<%="</span></div>Welcome <span class='bold' style='color:#cccccc'>"%>
-<%=session.getAttribute("username")%><%="</span></div>"%>
-<%="<div class='commontopbreadc' id='breadcrumb'>"%>&nbsp;<%="</div-->"%>
-
-
 	
  

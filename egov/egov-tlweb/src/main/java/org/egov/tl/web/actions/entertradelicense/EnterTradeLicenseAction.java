@@ -93,7 +93,7 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     @Autowired
     @Qualifier("tradeLicenseService")
-    private TradeLicenseService tradeLicenseService;
+    private transient TradeLicenseService tradeLicenseService;
 
     public EnterTradeLicenseAction() {
         tradeLicense.setLicensee(new Licensee());
@@ -131,6 +131,8 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Action(value = "/entertradelicense/update")
     @ValidationErrorPageExt(action = "update", makeCall = true, toMethod = "prepareFeeDetails")
     public String update() {
+        if (tradeLicenseService.checkOldLicenseNumberIsDuplicated(tradeLicense))
+            throw new ValidationException("TL-001", "TL-001", tradeLicense.getOldLicenseNumber());
         tradeLicenseService.updateLegacyLicense(tradeLicense, legacyInstallmentwiseFees, legacyFeePayStatus);
         return "viewlicense";
     }

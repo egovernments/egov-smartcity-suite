@@ -95,7 +95,7 @@
 												</tr>
 												<tr>
 													<td colspan="5">
-														<%@ include file='../common/documentView.jsp'%>
+														<%@ include file='../common/supportdocs-view.jsp'%>
 													</td>
 												</tr>											
 											</table>

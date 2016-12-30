@@ -250,7 +250,10 @@ public class AjaxCommonController {
     @ResponseBody
     public List<Bankbranch> getBankbranchesByBankId(@RequestParam("bankId") final String bankId)
             throws ApplicationException {
-        return createBankBranchService.getByBankId(Integer.parseInt(bankId));
+        if (!"0".equals(bankId))
+            return createBankBranchService.getByBankId(Integer.parseInt(bankId));
+        else
+            return createBankBranchService.getByIsActiveTrueOrderByBranchname();
     }
 
     public static <T> String toJSON(final Collection<T> objects, final Class<? extends T> objectClazz,

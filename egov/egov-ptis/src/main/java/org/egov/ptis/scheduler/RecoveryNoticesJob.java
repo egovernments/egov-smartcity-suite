@@ -101,32 +101,40 @@ public class RecoveryNoticesJob extends QuartzJobBean {
                     final List<String> errors = recoveryNoticesService.validateRecoveryNotices(assessmentNo, noticeType);
                     final RecoveryNoticesInfo noticeInfo = recoveryNoticesService
                             .getRecoveryNoticeInfoByAssessmentAndNoticeType(assessmentNo, noticeType);
-                    if (errors.isEmpty()) {
-                        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-                        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner(noticeType,
-                                basicProperty.getUpicNo());
-                        if (notice == null) {
-                            recoveryNoticesService.generateNotice(noticeType, basicProperty);
-                            noticeInfo.setGenerated(Boolean.TRUE);
-                            recoveryNoticesService.saveRecoveryNoticeInfo(noticeInfo);
-                        }
-                        return Boolean.TRUE;
-                    } else {
-                        noticeInfo.setError(errors.get(0));
-                        recoveryNoticesService.saveRecoveryNoticeInfo(noticeInfo);
+                    if (errors.isEmpty())
+                        return generateNotice(noticeType, assessmentNo, noticeInfo);
+                    else {
+                        updateNoticeInfo(errors, noticeInfo);
                         return Boolean.FALSE;
                     }
                 });
             } catch (final Exception e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.error("Exception in Generating " + noticeType + " for assessment : " + assessmentNo);
-                    LOGGER.error(e.getMessage());
-                }
                 txTemplate.execute(result -> {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.error("Exception in Generating " + noticeType + " for assessment : " + assessmentNo);
+                        LOGGER.error(e);
+                    }
                     return Boolean.FALSE;
                 });
             }
         }
+    }
+
+    private void updateNoticeInfo(final List<String> errors, final RecoveryNoticesInfo noticeInfo) {
+        noticeInfo.setError(errors.get(0));
+        recoveryNoticesService.saveRecoveryNoticeInfo(noticeInfo);
+    }
+
+    private Boolean generateNotice(final String noticeType, final String assessmentNo, final RecoveryNoticesInfo noticeInfo) {
+        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner(noticeType,
+                basicProperty.getUpicNo());
+        if (notice == null) {
+            recoveryNoticesService.generateNotice(noticeType, basicProperty);
+            noticeInfo.setGenerated(Boolean.TRUE);
+            recoveryNoticesService.saveRecoveryNoticeInfo(noticeInfo);
+        }
+        return Boolean.TRUE;
     }
 
 }

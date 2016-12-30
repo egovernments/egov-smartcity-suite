@@ -84,7 +84,7 @@ public class CompositeUniqueCheckValidator implements ConstraintValidator<Compos
 
     private boolean checkCompositeUniqueKey(final Object arg0, final Number id) throws IllegalAccessException {
         final Criteria criteria = entityManager.unwrap(Session.class)
-                .createCriteria(unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass());
+                .createCriteria(unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass()).setReadOnly(true);
         final Conjunction conjunction = Restrictions.conjunction();
         for (final String fieldName : unique.fields()) {
             final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
