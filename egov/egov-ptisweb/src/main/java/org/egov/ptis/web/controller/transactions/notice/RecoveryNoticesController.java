@@ -176,6 +176,7 @@ public class RecoveryNoticesController {
                 trigger.setName(RECOVERY_NOTICES_TRIGGER.concat(jobNumber.toString()));
                 trigger.setStartTime(new Date(System.currentTimeMillis() + 100000));
                 trigger.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
+                scheduler.start();
                 scheduler.scheduleJob(jobDetail, trigger);
             } catch (final SchedulerException e) {
                 throw new ApplicationRuntimeException(e.getMessage(), e);
