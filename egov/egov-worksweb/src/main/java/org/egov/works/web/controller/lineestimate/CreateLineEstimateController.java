@@ -339,7 +339,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         final String message = getMessageByStatus(lineEstimate, approverName, nextDesign);
 
         model.addAttribute("message", message);
-        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())
+        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString())
                 && !BudgetControlType.BudgetCheckOption.NONE.toString()
                         .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
             final List<String> basMessages = new ArrayList<String>();
