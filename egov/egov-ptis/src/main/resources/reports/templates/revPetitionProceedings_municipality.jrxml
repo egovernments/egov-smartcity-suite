@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-12-13T17:03:40 -->
+<!-- 2016-12-28T23:22:57 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="revPetitionProceedings_municipality" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -64,69 +64,85 @@
 	<parameter name="copyType" class="java.lang.String"/>
 	<parameter name="userSignature" class="java.lang.Object"/>
 	<parameter name="commName" class="java.lang.String"/>
+	<parameter name="natureOfWork" class="java.lang.String"/>
 	<field name="buildingClassification" class="java.lang.String"/>
 	<field name="natureOfUsage" class="java.lang.String"/>
 	<field name="plinthArea" class="java.math.BigDecimal"/>
 	<field name="yearlyRentalValue" class="java.math.BigDecimal"/>
 	<field name="bldngFloorNo" class="java.lang.String"/>
 	<title>
-		<band height="376" splitType="Stretch">
+		<band height="380" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="44" y="50" width="158" height="11" isPrintWhenDetailOverflows="true" uuid="b90e4a9e-3262-4a87-a97d-ff498a62c2dd"/>
+				<reportElement x="44" y="41" width="158" height="11" isPrintWhenDetailOverflows="true" uuid="b90e4a9e-3262-4a87-a97d-ff498a62c2dd"/>
 				<textElement markup="styled">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA["No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+($P{noticeNo}!=null?$P{noticeNo}:"")+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="85" y="12" width="407" height="12" isRemoveLineWhenBlank="true" uuid="d86d2b1b-ba2f-4e05-b014-8542efbdbe8d"/>
+				<reportElement x="85" y="8" width="407" height="12" isRemoveLineWhenBlank="true" uuid="d86d2b1b-ba2f-4e05-b014-8542efbdbe8d"/>
 				<textElement textAlignment="Left" markup="none">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["PROCEEDINGS OF COMMISSIONER, "+$P{cityName}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="2" width="88" height="10" isPrintWhenDetailOverflows="true" uuid="3dc6fd3e-b10a-477f-9022-d2dcf5b02ad8"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="1" width="88" height="10" isPrintWhenDetailOverflows="true" uuid="3dc6fd3e-b10a-477f-9022-d2dcf5b02ad8"/>
 				<textElement textAlignment="Left" markup="styled">
 					<font size="8" isItalic="true" isUnderline="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{copyType}=="citizen"?"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Party's Copy:-</style>":"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Office Copy:-</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="175" y="25" width="220" height="15" isRemoveLineWhenBlank="true" uuid="4966c7b0-dee1-470a-ae73-85fd8fb7dede"/>
+				<reportElement x="175" y="20" width="220" height="15" isRemoveLineWhenBlank="true" uuid="4966c7b0-dee1-470a-ae73-85fd8fb7dede"/>
 				<textElement textAlignment="Left" markup="none">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" Present: Sri/Smt."+$P{ownerInfo}.getApproverName()+"\n\tCommissioner"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="44" y="70" width="456" height="30" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="008832cd-63e3-485a-a98f-07bad1bc762a"/>
-				<textElement textAlignment="Left" markup="styled">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA["\n\tSub:  <style forecolor=\"#000000\" isBold=\"true\"> Property Tax-Revision Petiton-Disposal of Revision Petition-Orders-issued </style>\n\n\tRead: 1) RevisionPetition dt :<style forecolor=\"#000000\" isBold=\"true\"> "+$P{ownerInfo}.getApplicationDate()+"</style> from Sri/Smt. <style forecolor=\"#000000\" isBold=\"true\"> "+$P{ownerInfo}.getOwnerName()+"</style> R/O  <style forecolor=\"#000000\" isBold=\"true\"> "+$P{cityName}+"</style>\n\t           2) The office hearing notice dt :<style forecolor=\"#000000\" isBold=\"true\"> "+$P{ownerInfo}.getHearingDate()+"</style> \n\n\t\t\t\t\t <style forecolor=\"#000000\" isBold=\"true\" size=\"14\"> *  *  * </style>"]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="45" y="102" width="70" height="10" isPrintWhenDetailOverflows="true" uuid="e2fa4a76-b27e-4b7a-827d-f6c6a2353493"/>
+				<reportElement positionType="Float" x="45" y="116" width="70" height="10" isPrintWhenDetailOverflows="true" uuid="e2fa4a76-b27e-4b7a-827d-f6c6a2353493"/>
 				<textElement markup="styled">
 					<font size="8" isBold="true" isUnderline="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["ORDER:"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="45" y="113" width="448" height="191" uuid="a9696e7d-f07e-43a6-9b21-4582a267e556"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="45" y="132" width="448" height="229" uuid="a9696e7d-f07e-43a6-9b21-4582a267e556"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
 				<textElement textAlignment="Justified" markup="styled">
 					<font size="8" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\tIn the reference 1st read above a Revision Petition has been filled by the owner of the premises bearing Door No:<style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getDoorNo()+"</style>, Assessment Number <style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getAssessmentNo()+"</style> , Locality<style forecolor=\"#000000\" isBold=\"true\"> "+$P{ownerInfo}.getLocalityName()+"</style> for reduction of Property Tax. \n\n\t On the receipt of the same, in the reference 2nd read above, a hearing notice is issued to the owner of the premises requesting him/her to appear in person or by authorized agent on <style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getHearingDate()+"</style> to represent the case. Sri <style forecolor=\"#000000\" isBold=\"true\"> "+$P{ownerInfo}.getOwnerName()+"</style> has attended on the date of hearing. A statement is recorded from him/her regarding the submissions made by him/her for reduction of Property Tax. \n\n\tAfter careful examination of the above statement, the information available in the Municipal Office records, and also after due consideration of the location, actual plinth area, usage of the Building, nature of construction, age of the Building and the annual rental value fixed per sq.mtr. of plinth area and other parameters into consideration, the Annual Rental Value/Half Yearly Property Tax fixed earlier on the building in question, is reduced/confirmed as detailed below, in terms of  rule-14 of Taxation and Finance Rules issued under Schedule II of A.P. Municipalities Act, 1965. \n\n\t You are therefore directed to pay the Property Tax now fixed, within(15) days from the date of receipt of these orders.\n\n\tIf You are not satisfied on these orders, you may prefer an appeal to the concerned Regional Director-cum-Appellate Commissioner within (15) days from the date of receipt of this order duly paying the Property Tax as specified above."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["\tIn the reference 1st read above a "+$P{natureOfWork}+" has been filled by the owner of the premises bearing Door No:<style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getDoorNo()+"</style>, Assessment Number <style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getAssessmentNo()+"</style> , Locality<style forecolor=\"#000000\" isBold=\"true\"> "+$P{ownerInfo}.getLocalityName()+"</style> for reduction of Property Tax. \n\n\t On the receipt of the same, in the reference 2nd read above, a hearing notice is issued to the owner of the premises requesting him/her to appear in person or by authorized agent on <style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getHearingDate()+"</style> to represent the case. Sri <style forecolor=\"#000000\" isBold=\"true\"> "+$P{ownerInfo}.getOwnerName()+"</style> has attended on the date of hearing. A statement is recorded from him/her regarding the submissions made by him/her for reduction of Property Tax. \n\n\tAfter careful examination of the above statement, the information available in the Municipal Office records, and also after due consideration of the location, actual plinth area, usage of the Building, nature of construction, age of the Building and the annual rental value fixed per sq.mtr. of plinth area and other parameters into consideration, the Annual Rental Value/Half Yearly Property Tax fixed earlier on the building in question, is reduced/confirmed as detailed below, in terms of  rule-14 of Taxation and Finance Rules issued under Schedule II of A.P. Municipalities Act, 1965. \n\n\t You are therefore directed to pay the Property Tax now fixed, within(15) days from the date of receipt of these orders.\n\n\tIf You are not satisfied on these orders, you may prefer an appeal to the concerned Regional Director-cum-Appellate Commissioner within (15) days from the date of receipt of this order duly paying the Property Tax as specified above."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="381" y="50" width="112" height="11" isPrintWhenDetailOverflows="true" uuid="18f6f9d1-387a-4abc-a31c-46ff862d5bb0"/>
+				<reportElement x="381" y="41" width="112" height="11" isPrintWhenDetailOverflows="true" uuid="18f6f9d1-387a-4abc-a31c-46ff862d5bb0"/>
 				<textElement markup="styled">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Date : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+DateUtils.getDefaultFormattedDate(new Date())+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="47" y="54" width="451" height="16" uuid="2ada0e83-01d9-4503-a23a-498a0cbd71e3"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["\tSub: Property Tax- "+$P{natureOfWork}+" -Disposal of "+$P{natureOfWork}+" -Orders-issued."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="212" y="102" width="103" height="21" uuid="4f1b96f1-04d0-4570-abbe-0a57d2153ffb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[*  *  *]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="47" y="70" width="451" height="32" uuid="2d283fe5-36ed-4a99-aee2-6f90156b96be"/>
+				<textElement markup="styled">
+					<font size="8"/>
+					<paragraph lineSpacingSize="1.8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["\tRead: 1) <style forecolor=\"#000000\" isBold=\"true\">"+$P{natureOfWork} +" dt :"+$P{ownerInfo}.getApplicationDate()+" </style>from Sri/Smt. <style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getOwnerName()+"R/O  "+$P{cityName}+"</style>\n\t           2) The office hearing notice dt :<style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getHearingDate()+"</style>"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

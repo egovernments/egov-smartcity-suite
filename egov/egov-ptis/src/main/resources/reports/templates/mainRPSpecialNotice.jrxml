@@ -3,7 +3,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2016>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -39,8 +39,8 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-11-04T11:22:00 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainRPSpecialNotice" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="120" bottomMargin="80" isSummaryNewPage="true" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
+<!-- 2016-12-27T18:30:13 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainRPSpecialNotice" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="80" bottomMargin="80" isSummaryNewPage="true" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -50,6 +50,7 @@
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="isCorporation" class="java.lang.Boolean"/>
 	<parameter name="userSignature" class="java.lang.Object"/>
+	<parameter name="natureOfWork" class="java.lang.String"/>
 	<field name="noticeNo" class="java.lang.String"/>
 	<field name="ownerInfo" class="org.egov.ptis.report.bean.PropertyAckNoticeInfo"/>
 	<field name="floorDetailsForNotice" class="java.util.List"/>
@@ -68,6 +69,9 @@
 				</subreportParameter>
 				<subreportParameter name="userSignature">
 					<subreportParameterExpression><![CDATA[$P{userSignature}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="natureOfWork">
+					<subreportParameterExpression><![CDATA[$P{natureOfWork}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="ownerInfo">
 					<subreportParameterExpression><![CDATA[$F{ownerInfo}]]></subreportParameterExpression>
@@ -92,6 +96,9 @@
 				</subreportParameter>
 				<subreportParameter name="userSignature">
 					<subreportParameterExpression><![CDATA[$P{userSignature}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="natureOfWork">
+					<subreportParameterExpression><![CDATA[$P{natureOfWork}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="ownerInfo">
 					<subreportParameterExpression><![CDATA[$F{ownerInfo}]]></subreportParameterExpression>
