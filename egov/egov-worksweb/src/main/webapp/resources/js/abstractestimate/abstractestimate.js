@@ -388,10 +388,6 @@ $(document).ready(function(){
 	
 });
 
-additionalRule = $('#additionalRule').val();
-if(additionalRule == "III" || additionalRule == "NP")
-	$('#actionButtons').prepend("<input type='submit' value='Create And Approve' class='btn btn-primary' id='createandapprove' name='Create and Approve' ></input>");
-
 $overheadRowCount = 0;
 $('#addOverheadRow').click(function() { 
 	addRow('overheadTable','overheadRow');
@@ -990,33 +986,12 @@ function calculateEstimateValue() {
 	if($isEstimateDeductionGrid == 'true') {
 		var deductionTotal = $('#deductionTotalAmount').html();
 		estimateValue = parseFloat(parseFloat(workValue) + parseFloat(overheadTotal) + parseFloat(deductionTotal)).toFixed(2);
-	} 
+	}
 	$('#estimateValue').val(estimateValue);
 	$('#workValue').val(workValue);
 	$('#estimateValueTotal').html(estimateValue);
-	if(!isNaN(estimateValue)) {
-		$('#amountRule').val(estimateValue);
-	}
-	amountRule = $('#amountRule').val();
-	additionalRule = $('#additionalRule').val();
-	if(!isNaN(amountRule) && (additionalRule == "III" || additionalRule == "NP") && parseFloat(amountRule) <= 25000.1 ) {
-		$('#approverDetailHeading').hide();
-		$('#approvalDepartment').removeAttr('required');
-		$('#approvalDesignation').removeAttr('required');
-		$('#approvalPosition').removeAttr('required');
-		$('#createandapprove').show();
-		$('#Forward').hide();
-	} 
-	if(!isNaN(amountRule) && (additionalRule == "III" || additionalRule == "NP") && parseFloat(amountRule) > 25000.1 ) {
-		$('#approvalDepartment').attr('required', 'required');
-		$('#approvalDesignation').attr('required', 'required');
-		$('#approvalPosition').attr('required', 'required');
-		$('#approverDetailHeading').show();
-		$('#Forward').show();
-		$('#createandapprove').hide();
-	}
-	
 	$('#workValueTotal').html(workValue);
+	showHideAppravalDetails();
 }
 
 
@@ -2284,8 +2259,8 @@ function validateWorkFlowApprover(name) {
 		var resultLengthForDeductionTable = jQuery('#deductionTable tr').length - 1;
 		for (var i = 0; i < resultLengthForDeductionTable; i++) {
 			var indexForDeduction=i;
-			var accountCode = document.getElementById('tempDeductionValues[' + indexForDeduction + '].accountCode').value;
-			var deductionAmount = document.getElementById('tempDeductionValues[' + indexForDeduction + '].amount').value;
+			var accountCode = $('#tempDeductionValues\\[' + indexForDeduction + '\\]\\.accountCode').val();
+			var deductionAmount = $('#tempDeductionValues\\[' + indexForDeduction + '\\]\\.amount').val();
 			if((accountCode == '' ) && (parseFloat(deductionAmount) != 0 && deductionAmount != '')){
 				bootbox.alert($('#msgAccountCode').val());
 				return false;				
@@ -2346,7 +2321,7 @@ function validateWorkFlowApprover(name) {
 		deleteHiddenRows();
 		var resultLengthForDeductionTable = jQuery('#deductionTable tr').length - 1;
 		var deleteDeductionTable=$('#deductionTable tr:last');
-		var accountCode = document.getElementById('tempDeductionValues[0].accountCode').value;
+		var accountCode = $('#tempDeductionValues\\[0\\]\\.accountCode').val();
 		if(resultLengthForDeductionTable<=1 && accountCode == "") {
 			var i=0;
 			deleteDeductionTable.remove();
@@ -3623,7 +3598,53 @@ $('#searchEstimates').click(function() {
 	window.open("/egworks/abstractestimate/searchestimateform?typeOfWork="+typeOfWork,'', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 });
 
-$('#createandapprove').click(function() {
-	$('#workFlowAction').val($('#createandapprove').val());
-	return validateWorkFlowApprover($('#createandapprove').val());
-});
+function showHideAppravalDetails() {
+	var sorTotal = $('#sorTotal').html();
+	var nonSorTotal = $('#nonSorTotal').html();
+	var overheadTotal = $('#overheadTotalAmount').html();
+	if(sorTotal == '')
+		sorTotal = 0.0;
+	if(nonSorTotal == '')
+		nonSorTotal = 0.0;
+	var workValue = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal));
+	var estimateValue = parseFloat(parseFloat(workValue) + parseFloat(overheadTotal)).toFixed(2);
+	$('#estimateValue').val(estimateValue);
+	if($isEstimateDeductionGrid == 'true') {
+		var deductionTotal = $('#deductionTotalAmount').html();
+		estimateValue = parseFloat(parseFloat(workValue) + parseFloat(overheadTotal) + parseFloat(deductionTotal)).toFixed(2);
+	}
+	if(!isNaN(estimateValue)) {
+		$('#amountRule').val(estimateValue);
+	}
+
+	$.ajax({
+		url: "/egworks/abstractestimate/ajax-showhideappravaldetails",     
+		type: "GET",
+		data: {
+			amountRule : estimateValue,
+			additionalRule : $('#additionalRule').val()
+		},
+		dataType: "json",
+		success: function (response) {
+			if(response) {
+				$('#approverDetailHeading').hide();
+				$('#approvalDepartment').removeAttr('required');
+				$('#approvalDesignation').removeAttr('required');
+				$('#approvalPosition').removeAttr('required');
+				$('#Create\\ And\\ Approve').show();
+				$('#Forward').hide();
+			} else {
+				$('#approvalDepartment').attr('required', 'required');
+				$('#approvalDesignation').attr('required', 'required');
+				$('#approvalPosition').attr('required', 'required');
+				$('#approverDetailHeading').show();
+				$('#Forward').show();
+				$('#Create\\ And\\ Approve').hide();
+			}
+			
+		}, 
+		error: function (response) {
+			console.log("failed");
+		}
+	});
+};

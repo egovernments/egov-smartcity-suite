@@ -40,6 +40,7 @@
 package org.egov.works.web.controller.abstractestimate;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -145,7 +146,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         } else {
 
             final WorkflowContainer workflowContainer = new WorkflowContainer();
-            workflowContainer.setAmountRule(abstractEstimate.getEstimateValue());
+            workflowContainer.setAmountRule(abstractEstimate.getEstimateValue()!= null ? abstractEstimate.getEstimateValue() : BigDecimal.ZERO);
             workflowContainer
                     .setAdditionalRule((String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
             prepareWorkflow(model, abstractEstimate, workflowContainer);

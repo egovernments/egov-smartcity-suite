@@ -40,9 +40,11 @@
 package org.egov.works.web.controller.abstractestimate;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +59,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.web.support.json.adapter.UserAdaptor;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForCopyEstimate;
@@ -140,6 +143,9 @@ public class AjaxAbstractEstimateController {
 
     @Autowired
     private EstimateTemplateJsonAdaptor estimateTemplateJsonAdaptor;
+
+    @Autowired
+    private ScriptService scriptService;
 
     public Object toSearchAbstractEstimateForLOAResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
@@ -377,4 +383,17 @@ public class AjaxAbstractEstimateController {
         final String json = gson.toJson(object);
         return json;
     }
+
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/ajax-showhideappravaldetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody boolean findWorkFlowMatrix(
+            @RequestParam final BigDecimal amountRule, @RequestParam final String additionalRule) {
+        final Map<String, Object> map = new HashMap<String, Object>();
+
+        map.putAll((Map<String, Object>) scriptService.executeScript(WorksConstants.ABSTRACTESTIMATE_APPROVALRULES,
+                ScriptService.createContext("estimateValue", amountRule,
+                        "cityGrade", additionalRule)));
+        return (boolean) map.get("createAndApproveFieldsRequired");
+    }
+
 }

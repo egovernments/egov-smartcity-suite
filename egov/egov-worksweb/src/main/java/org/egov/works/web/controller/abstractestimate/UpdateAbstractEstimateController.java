@@ -167,8 +167,8 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-        if (request.getParameter("additionalRule") != null)
-            additionalRule = request.getParameter("additionalRule");
+        if (request.getParameter(WorksConstants.ADDITIONAL_RULE) != null)
+            additionalRule = request.getParameter(WorksConstants.ADDITIONAL_RULE);
 
         // For Get Configured ApprovalPosition from workflow history
         if (approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
@@ -237,7 +237,8 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
 
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         workflowContainer.setAdditionalRule((String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
-        model.addAttribute("additionalRule", cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+        model.addAttribute(WorksConstants.ADDITIONAL_RULE,
+                cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
         workflowContainer.setAmountRule(abstractEstimate.getEstimateValue());
         workflowContainer.setPendingActions(abstractEstimate.getState().getNextAction());
         prepareWorkflow(model, abstractEstimate, workflowContainer);

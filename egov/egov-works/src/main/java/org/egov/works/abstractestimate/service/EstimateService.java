@@ -626,7 +626,7 @@ public class EstimateService {
     public Long getApprovalPositionByMatrixDesignation(final AbstractEstimate abstractEstimate, Long approvalPosition,
             final String additionalRule, final String mode, final String workFlowAction) {
         final WorkFlowMatrix wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(),
-                null, null, additionalRule, abstractEstimate.getCurrentState().getValue(), null);
+                null, abstractEstimate.getEstimateValue(), additionalRule, abstractEstimate.getCurrentState().getValue(), null);
         if (abstractEstimate.getEgwStatus() != null && abstractEstimate.getEgwStatus().getCode() != null)
             if ((abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString())
                     || abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.RESUBMITTED.toString()))

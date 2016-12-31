@@ -433,4 +433,7 @@ public class WorksConstants {
     public static final String CREATE_AND_APPROVE = "Create And Approve";
 
     public static final String ADDITIONAL_RULE = "additionalRule";
+
+    public static final String ABSTRACTESTIMATE_APPROVALRULES = "ABSTRACTESTIMATE-APPROVALRULES";
+
 }
