@@ -41,15 +41,25 @@ package org.egov.ptis.domain.service.revisionPetition;
 
 import static java.lang.String.format;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_GENERAL_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_RP;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.domain.service.property.PropertyService.APPLICATION_VIEW_URL;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.struts2.ServletActionContext;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.entity.Source;
@@ -61,16 +71,23 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
@@ -112,6 +129,12 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     
     @Autowired
     private PropertyService propertyService;
+    
+    @Autowired
+    private ReportService reportService;
+    
+    @Autowired
+    private PtDemandDao ptDemandDAO;
     
     public RevisionPetitionService() {
         super(RevisionPetition.class);
@@ -346,5 +369,118 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                     .getId());
         }
         return wfInitiator;
+    }
+    
+    public RevisionPetition getExistingObjections(BasicProperty basicProperty){
+            return find("from RevisionPetition rp where rp.basicProperty = ?" ,basicProperty);
+    }
+    
+
+    /**
+     * @param reportOutput
+     * @param objection
+     * @return ReportOutput
+     */
+    public ReportOutput createHearingNoticeReport(ReportOutput reportOutput, final RevisionPetition objection,
+            final String noticeNo) {
+        reportOutput.setReportFormat(FileFormat.PDF);
+        final HashMap<String, Object> reportParams = new HashMap<>();
+        final SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
+        String natureOfWork;
+        ReportRequest reportRequest;
+        if (objection != null) {
+            final HttpServletRequest request = ServletActionContext.getRequest();
+            final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
+            final String cityGrade = request.getSession().getAttribute("cityGrade") != null
+                    ? request.getSession().getAttribute("cityGrade").toString() : null;
+            Boolean isCorporation;
+            if (cityGrade != null && cityGrade != ""
+                    && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
+                isCorporation = true;
+            } else
+                isCorporation = false;
+            if (NATURE_OF_WORK_RP.equalsIgnoreCase(objection.getType())) {
+                natureOfWork = NATURE_REVISION_PETITION;
+
+            } else
+                natureOfWork = NATURE_GENERAL_REVISION_PETITION;
+            reportParams.put("isCorporation", isCorporation);
+            reportParams.put("cityName", cityName);
+            reportParams.put("recievedBy", objection.getBasicProperty().getFullOwnerName());
+            reportParams.put("natureOfWork", natureOfWork);
+
+            if (objection.getHearings() != null && !objection.getHearings().isEmpty()
+                    && objection.getHearings().get(objection.getHearings().size() - 1).getPlannedHearingDt() != null)
+                reportParams.put("hearingNoticeDate", dateformat
+                        .format(objection.getHearings().get(objection.getHearings().size() - 1).getPlannedHearingDt()));
+            else
+                reportParams.put("hearingNoticeDate", "");
+            reportParams.put("currentDate", dateformat.format(new Date()));
+            reportParams.put("recievedOn", dateformat.format(objection.getRecievedOn()));
+            reportParams.put("docNumberObjection", noticeNo);
+            reportParams.put("houseNo", objection.getBasicProperty().getAddress().getHouseNoBldgApt());
+            reportParams.put("locality", objection.getBasicProperty().getPropertyID().getLocality().getName());
+            reportParams.put("assessmentNo", objection.getBasicProperty().getUpicNo());
+            reportParams.put("hearingTime",
+                    objection.getHearings().get(objection.getHearings().size() - 1).getHearingTime());
+            reportParams.put("hearingVenue",
+                    objection.getHearings().get(objection.getHearings().size() - 1).getHearingVenue());
+            reportRequest = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_REVISIONPETITION_HEARINGNOTICE,
+                    objection, reportParams);
+            reportOutput = reportService.createReport(reportRequest);
+        }
+        return reportOutput;
+    }
+    
+    /**
+     * @param reportOutput
+     * @param objection
+     * @return
+     */
+    public ReportOutput createEndoresement(ReportOutput reportOutput, final RevisionPetition objection) {
+
+        reportOutput.setReportFormat(FileFormat.PDF);
+        final HashMap<String, Object> reportParams = new HashMap<>();
+        final SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
+        String natureOfWork;
+        ReportRequest reportRequest;
+        if (objection != null) {
+            final Map<String, BigDecimal> currentDemand = ptDemandDAO.getDemandCollMap(objection.getProperty());
+            final Map<String, BigDecimal> earlierDemand = ptDemandDAO
+                    .getDemandCollMap(objection.getBasicProperty().getProperty());
+            final HttpServletRequest request = ServletActionContext.getRequest();
+            final String url = WebUtils.extractRequestDomainURL(request, false);
+            final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH)
+                    .concat((String) request.getSession().getAttribute("citylogo"));
+            final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
+            if (NATURE_OF_WORK_RP.equalsIgnoreCase(objection.getType())) {
+                natureOfWork = NATURE_REVISION_PETITION;
+
+            } else
+                natureOfWork = NATURE_GENERAL_REVISION_PETITION;
+            reportParams.put("logoPath", cityLogo);
+            reportParams.put("cityName", cityName);
+            reportParams.put("natureOfWork", natureOfWork);
+            reportParams.put("recievedBy", objection.getBasicProperty().getFullOwnerName());
+            reportParams.put("docNumberObjection", objection.getObjectionNumber());
+            reportParams.put("currentDate", dateformat.format(new Date()));
+            reportParams.put("receivedOn", dateformat.format(objection.getRecievedOn()));
+            reportParams.put("HouseNo", objection.getBasicProperty().getUpicNo());
+            reportParams.put("wardNumber", objection.getBasicProperty().getBoundary() != null
+                    ? objection.getBasicProperty().getBoundary().getName() : "");
+            reportParams.put("HalfYearPropertyTaxTo",
+                    currentDemand.get(CURR_SECONDHALF_DMD_STR).divide(BigDecimal.valueOf(2)).setScale(2));
+            reportParams.put("HalfYearPropertyTaxFrom",
+                    earlierDemand.get(CURR_SECONDHALF_DMD_STR).divide(BigDecimal.valueOf(2)).setScale(2));
+            reportParams.put("AnnualPropertyTaxTo", currentDemand.get(CURR_SECONDHALF_DMD_STR).setScale(2).toString());
+            reportParams.put("AnnualPropertyTaxFrom",
+                    earlierDemand.get(CURR_SECONDHALF_DMD_STR).setScale(2).toString());
+
+            reportRequest = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_REVISIONPETITION_ENDORSEMENT,
+                    objection, reportParams);
+            reportOutput = reportService.createReport(reportRequest);
+        }
+        return reportOutput;
+
     }
 }

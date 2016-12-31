@@ -58,6 +58,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXE
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITALLY_SIGNED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_PRINT_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_TRANSFER_NOTICE_PRINT_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PRINT_NOTICE;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -194,8 +195,8 @@ public class DigitalSignatureWorkflowController {
                         .setParameter("applicationNo", applicationNumber).uniqueResult();
                 if (revisionPetition != null) {
                     transitionWorkFlow(revisionPetition);
-                    propertyService.updateIndexes(revisionPetition,
-                            PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION);
+                    propertyService.updateIndexes(revisionPetition, "RP".equalsIgnoreCase(revisionPetition.getType())
+                            ? PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION : APPLICATION_TYPE_GRP);
                     revisionPetitionService.updateRevisionPetition(revisionPetition);
                 } else {
                     final PropertyMutation propertyMutation = (PropertyMutation) getCurrentSession()
@@ -276,13 +277,12 @@ public class DigitalSignatureWorkflowController {
         } else {
             final User user = securityUtils.getCurrentUser();
             final Assignment wfInitiator = getWorkflowInitiator(revPetition, revPetition.getBasicProperty());
-            final WorkFlowMatrix wfmatrix = revisionPetitionWorkFlowService.getWfMatrix(revPetition.getStateType(),
-                    null, null, null, revPetition.getCurrentState().getValue(), null);
-            revPetition.transition(true).withStateValue(wfmatrix.getNextState())
+            revPetition.transition(true)
+                    .withStateValue(revPetition.getType().concat(":").concat(WF_STATE_DIGITALLY_SIGNED))
                     .withOwner(revPetition.getCurrentState().getInitiatorPosition() != null
                             ? revPetition.getCurrentState().getInitiatorPosition() : wfInitiator.getPosition())
                     .withSenderName(user.getUsername() + "::" + user.getName()).withDateInfo(new DateTime().toDate())
-                    .withNextAction(wfmatrix.getNextAction());
+                    .withNextAction(WFLOW_ACTION_STEP_PRINT_NOTICE);
         }
     }
 

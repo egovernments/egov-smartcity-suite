@@ -44,8 +44,15 @@
 
 <html>
 	<head>
-		<script src="<cdn:url value='/resources/javascript/objection.js' context='/ptis'/>"></script>
-		<title><s:text name="recordObjection.title"></s:text></title>
+		<script src="<cdn:url value='/resources/javascript/objection.js?rnd=${app_release_no}' context='/ptis'/>"></script>
+		<title>
+		<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+					<s:text name="recordGRP.title"></s:text>
+			    </s:if>
+			    <s:else>
+		<s:text name="recordObjection.title"></s:text>
+		</s:else>
+		</title>
 		<script type="text/javascript">
 			jQuery.noConflict();
 			jQuery("#loadingMask").remove();
@@ -98,7 +105,13 @@
             <td><div id="header">
 				<ul id="Tabs">
 					<li id="propertyHeaderTab" class="First Active"><a id="header_1" href="javascript:void(0);" onclick="showPropertyHeaderTab();"><s:text name="propDet"></s:text></a></li>
-					<li id="objectionDetailTab" class=""><a id="header_2" href="javascript:void(0);" onclick="showObjectionHeaderTab();"><s:text name="objection.details.heading"></s:text></a></li>
+					<li id="objectionDetailTab" class=""><a id="header_2" href="javascript:void(0);" onclick="showObjectionHeaderTab();">
+					<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+					<s:text name="objection.grp.details.heading"></s:text>
+			    </s:if>
+			    <s:else><s:text name="objection.details.heading"></s:text></s:else>
+					
+					</a></li>
 		<%-- 			<li id="approvalTab" class="Last"><a id="header_3" href="javascript:void(0);" onclick="showApprovalTab();"><s:text name="approval.details.title"></s:text></a></li>
  --%>				</ul>
             </div></td>
@@ -147,7 +160,7 @@
 		</table> --%></div>
 		<s:hidden name="model.id" id="model.id"/>    
 		<s:hidden name="egwStatus.code" id="egwStatuscode" value="%{egwStatus.code}"/>      
-		
+		<s:hidden name="wfType" id="wfType" value="%{wfType}" />
 		</s:push>
 	</s:form>
 </body>

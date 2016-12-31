@@ -128,8 +128,6 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = SearchPropertyAction.COMMON_FORM, location = "searchProperty-commonForm.jsp"),
         @Result(name = APPLICATION_TYPE_ALTER_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
                 "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "ADD_OR_ALTER", "applicationType", "${applicationType}" }),
-        @Result(name = APPLICATION_TYPE_GRP, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
-                "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "GRP", "applicationType", "${applicationType}" }),
         @Result(name = APPLICATION_TYPE_BIFURCATE_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
                 "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "BIFURCATE", "applicationType", "${applicationType}" }),
         @Result(name = APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "redirect", params = {
@@ -139,7 +137,9 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
                 "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "applicationType",
                 "${applicationType}" }),
         @Result(name = APPLICATION_TYPE_REVISION_PETITION, type = "redirectAction", location = "revPetition-newForm", params = {
-                "namespace", "/revPetition", "propertyId", "${assessmentNum}" }),
+                "namespace", "/revPetition", "propertyId", "${assessmentNum}","wfType","RP" }),
+        @Result(name = APPLICATION_TYPE_GRP, type = "redirectAction", location = "genRevPetition-newForm", params = {
+                "namespace", "/revPetition", "propertyId", "${assessmentNum}","wfType","GRP" }),
         @Result(name = "meesevaerror", location = "/WEB-INF/jsp/common/meeseva-errorPage.jsp"),
         @Result(name = APPLICATION_TYPE_COLLECT_TAX, type = "redirectAction", location = "searchProperty-searchOwnerDetails", params = {
                 "namespace", "/search", "assessmentNum", "${assessmentNum}" }),
@@ -159,12 +159,12 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = SearchPropertyAction.USER_DETAILS, location = "searchProperty-ownerDetails.jsp"),
         @Result(name = APPLICATION_TYPE_MODIFY_DATA_ENTRY, type = "redirectAction", location = "createProperty-editDataEntryForm", params = {
                 "namespace", "/create", "indexNumber", "${assessmentNum}", "modifyRsn", "EDIT_DATA_ENTRY", "modelId", "${activePropertyId}" }),
-        @Result(name = APPLICATION_TYPE_MEESEVA_GRP, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
-                "namespace", "/modify", "indexNumber", "${assessmentNum}", "meesevaApplicationNumber",
-                "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "modifyRsn", "GRP", "applicationType", "${applicationType}" }),
+        @Result(name = APPLICATION_TYPE_MEESEVA_GRP, type = "redirectAction", location = "genRevPetition-newForm", params = {
+                "namespace", "/revPetition", "indexNumber", "${assessmentNum}", "meesevaApplicationNumber",
+                "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "wfType", "GRP", "applicationType", "${applicationType}" }),
         @Result(name = APPLICATION_TYPE_MEESEVA_RP, type = "redirectAction", location = "revPetition-newForm", params = {
                 "namespace", "/revPetition", "propertyId", "${assessmentNum}", "meesevaApplicationNumber",
-                "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "applicationType", "${applicationType}" })})
+                "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "applicationType", "${applicationType}" ,"wfType","RP"})})
 public class SearchPropertyAction extends BaseFormAction {
     /**
      *

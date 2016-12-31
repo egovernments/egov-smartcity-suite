@@ -45,7 +45,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title><s:text name='objection.record.message.title' /></title>
+<title>
+<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+					<s:text name="objection.GRPView.title"></s:text>
+			    </s:if>
+			    <s:else>
+<s:text name='objection.record.message.title' />
+</s:else>
+</title>
 </head>
 
 <body onload="refreshInbox()">

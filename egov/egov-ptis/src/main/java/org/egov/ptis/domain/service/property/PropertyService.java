@@ -1991,8 +1991,7 @@ public class PropertyService {
             user = assignmentService.getAssignmentsForPosition(position.getId(), new Date()).get(0).getEmployee();
 		if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
 				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT)
-				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
-				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP))) {
+				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT))) {
             final PropertyImpl property = (PropertyImpl) stateAwareObject;
             ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getApplicationNo());
@@ -2027,7 +2026,7 @@ public class PropertyService {
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
-        } else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)) {
+        } else if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION) || applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP))) {
             final RevisionPetition property = (RevisionPetition) stateAwareObject;
             ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getObjectionNumber());
