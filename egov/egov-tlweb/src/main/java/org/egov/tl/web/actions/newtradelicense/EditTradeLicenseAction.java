@@ -133,7 +133,7 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
         this.addDropdownData("localityList", localityList);
         this.addDropdownData("tradeTypeList", this.tradeLicenseService.getAllNatureOfBusinesses());
         this.addDropdownData("categoryList", this.licenseCategoryService.getCategories());
-        this.addDropdownData("uomList", this.unitOfMeasurementService.findAllActiveUOM());
+        this.addDropdownData("uomList", this.unitOfMeasurementService.getAllActiveUOM());
         addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList() :
                 licenseSubCategoryService.getSubCategoriesByCategory(tradeLicense.getCategory().getId()));
 

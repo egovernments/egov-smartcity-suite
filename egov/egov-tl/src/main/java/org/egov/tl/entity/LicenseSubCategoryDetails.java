@@ -88,10 +88,12 @@ public class LicenseSubCategoryDetails extends AbstractPersistable<Long> {
     @Transient
     private boolean markedForRemoval;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -138,8 +140,10 @@ public class LicenseSubCategoryDetails extends AbstractPersistable<Long> {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         final LicenseSubCategoryDetails that = (LicenseSubCategoryDetails) o;
 

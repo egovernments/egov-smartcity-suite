@@ -41,33 +41,57 @@
 package org.egov.tl.web.controller.uom;
 
 import org.egov.tl.entity.UnitOfMeasurement;
-import org.egov.tl.service.masters.UnitOfMeasurementService;
+import org.egov.tl.service.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/licenseunitofmeasurement")
-public class ViewUomController {
-
-    private final UnitOfMeasurementService unitOfMeasurementService;
+public class SearchUnitOfMeasurementController {
 
     @Autowired
-    public ViewUomController(final UnitOfMeasurementService unitOfMeasurementService) {
-        this.unitOfMeasurementService = unitOfMeasurementService;
-    }
+    private UnitOfMeasurementService unitOfMeasurementService;
 
     @ModelAttribute
-    public UnitOfMeasurement licenseUomModel(@PathVariable final String code) {
-        return unitOfMeasurementService.findUOMByCode(code);
+    public UnitOfMeasurement unitOfMeasurement() {
+        return new UnitOfMeasurement();
     }
 
-    @RequestMapping(value = "/view/{code}", method = RequestMethod.GET)
-    public String uomView(@ModelAttribute final UnitOfMeasurement unitOfMeasurement) {
+    @ModelAttribute(value = "licenseUom")
+    public List<UnitOfMeasurement> getAllUom() {
+        return unitOfMeasurementService.getAllUOM();
+    }
 
-        return "uom-view";
+    @RequestMapping(value = "/update", method = GET)
+    public String updateLicenseUom() {
+        return "uom-search-update";
+    }
+
+    @RequestMapping(value = "/view", method = GET)
+    public String viewLicenseUom() {
+        return "uom-search-view";
+    }
+
+    @RequestMapping(value = "/view", method = POST)
+    public String searchViewUom(@ModelAttribute UnitOfMeasurement unitOfMeasurement, BindingResult errors) {
+        if (errors.hasErrors())
+            return "uom-search-view";
+        return "redirect:/licenseunitofmeasurement/view/" + unitOfMeasurement.getCode();
+    }
+
+    @RequestMapping(value = "/update", method = POST)
+    public String searchUpdateUom(@ModelAttribute UnitOfMeasurement unitOfMeasurement, BindingResult errors) {
+        if (errors.hasErrors())
+            return "uom-search-update";
+        return "redirect:/licenseunitofmeasurement/update/" + unitOfMeasurement.getCode();
+
     }
 }

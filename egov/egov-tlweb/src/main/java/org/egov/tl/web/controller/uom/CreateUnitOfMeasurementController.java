@@ -40,44 +40,44 @@
 
 package org.egov.tl.web.controller.uom;
 
-import javax.validation.Valid;
-
 import org.egov.tl.entity.UnitOfMeasurement;
-import org.egov.tl.service.masters.UnitOfMeasurementService;
+import org.egov.tl.service.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/licenseunitofmeasurement")
-public class CreateLicenseUomController {
+public class CreateUnitOfMeasurementController {
 
     @Autowired
     private UnitOfMeasurementService unitOfMeasurementService;
 
     @ModelAttribute
-    public UnitOfMeasurement unitOfMeasurementModel() {
+    public UnitOfMeasurement unitOfMeasurement() {
         return new UnitOfMeasurement();
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
+    @RequestMapping(value = "/create", method = GET)
     public String createUomForm() {
         return "uom-create";
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String createUom(@Valid @ModelAttribute final UnitOfMeasurement unitOfMeasurement, final BindingResult errors,
-            final RedirectAttributes additionalAttr) {
-
+    @RequestMapping(value = "/create", method = POST)
+    public String createUom(@Valid @ModelAttribute UnitOfMeasurement unitOfMeasurement, BindingResult errors,
+                            RedirectAttributes additionalAttr) {
         if (errors.hasErrors())
             return "uom-create";
-        unitOfMeasurementService.persistUnitOfMeasurement(unitOfMeasurement);
+        unitOfMeasurementService.save(unitOfMeasurement);
         additionalAttr.addFlashAttribute("message", "msg.uom.save.success");
-
         return "redirect:/licenseunitofmeasurement/view/" + unitOfMeasurement.getCode();
     }
 }

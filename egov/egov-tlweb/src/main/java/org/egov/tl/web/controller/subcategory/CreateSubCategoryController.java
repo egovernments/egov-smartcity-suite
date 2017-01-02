@@ -48,7 +48,7 @@ import org.egov.tl.entity.enums.RateTypeEnum;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseSubCategoryService;
-import org.egov.tl.service.masters.UnitOfMeasurementService;
+import org.egov.tl.service.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -93,7 +93,7 @@ public class CreateSubCategoryController {
 
     @ModelAttribute(value = "licenseUomTypes")
     public List<UnitOfMeasurement> getAllUom() {
-        return unitOfMeasurementService.findAllActiveUOM();
+        return unitOfMeasurementService.getAllActiveUOM();
     }
 
     @ModelAttribute(value = "licenseFeeTypes")

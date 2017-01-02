@@ -44,7 +44,7 @@ import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseSubCategoryService;
-import org.egov.tl.service.masters.UnitOfMeasurementService;
+import org.egov.tl.service.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -105,7 +105,7 @@ public class UpdateSubCategoryController {
     private void populateDropdownData(final Model model) {
         model.addAttribute("licenseCategories", licenseCategoryService.getCategories());
         model.addAttribute("licenseFeeTypes", feeTypeService.findAll());
-        model.addAttribute("licenseUomTypes", unitOfMeasurementService.findAll());
+        model.addAttribute("licenseUomTypes", unitOfMeasurementService.getAllUOM());
     }
 
 }
