@@ -99,5 +99,13 @@
 	</div>
 </form:form>
 <jsp:include page="subtypeofwork-searchresult.jsp" />
-<script src="<cdn:url value='/resources/js/master/viewsubtypeofwork.js?rnd=${app_release_no}'/>"></script>
-
+<c:choose>
+	<c:when test="${mode != 'view'}">
+		<script
+			src="<cdn:url value='/resources/js/master/subtypeofwork.js?rnd=${app_release_no}'/>"></script>
+	</c:when>
+	<c:otherwise>
+		<script
+			src="<cdn:url value='/resources/js/master/searchsubtypeofwork.js?rnd=${app_release_no}'/>"></script>
+	</c:otherwise>
+</c:choose>

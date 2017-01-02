@@ -84,7 +84,7 @@
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.isactive" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:checkbox path="active" id="isactive"  value="${subtypeofwork.active }"/>
+				<form:checkbox path="active" id="isactive" />
 				<form:errors path="active" cssClass="add-margin error-msg" />
 			</div>
 		</div>

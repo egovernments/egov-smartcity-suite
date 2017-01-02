@@ -37,28 +37,43 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">
-		<spring:message code="title.searchresult" />
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading">
+		<div class="panel-title" style="text-align:center;"><spring:message code="lbl.modifysubtypeofwork" /></div>
 	</div>
-	<div class="col-md-12 form-group report-table-container">
-		<table class="table table-bordered table-hover"
-			id="resultTable">
-			<thead>
-				<tr>
-					<th><spring:message code="lbl.slno" /></th>
-					<th><spring:message code="lbl.code" /></th>
-					<th><spring:message code="lbl.name" /></th>
-					<th><spring:message code="lbl.description" /></th>
-					<th><spring:message code="lbl.typeofwork" /></th>
-					<c:if test="${mode != 'view'}"> 
-						<th><spring:message code="lbl.modify" /></th>
-					</c:if>
-				</tr>
-			</thead>
-		</table>
+	<input type="hidden" value="${egwTypeOfWork.id }"  name="egwTypeOfWork" />
+	<div class="panel-body">
+		<div class="form-group">
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.typeofwork" /></label>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out value = "${typeOfWork.code} - ${typeOfWork.name}" /></span>
+			</div>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.subtypeofworkcode" /></label>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out value = "${egwTypeOfWork.code }" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.subtypeofworkname" /></span></label>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out value = "${egwTypeOfWork.name }" />
+			</div>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.description" /></label>
+			<div class="col-sm-3 add-margin">
+				<form:textarea path="description" value = "${description }" id = "description" class="form-control  patternvalidation" data-pattern="alphanumericwithallspecialcharacters" maxlength = "1024" />
+				<form:errors path="description" cssClass="add-margin error-msg" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.isactive" /></label>
+			<div class="col-sm-3 add-margin">
+				<form:checkbox path="active" id="isactive"  value="${active }"/>
+				<form:errors path="active" cssClass="add-margin error-msg" />
+			</div>
+		</div>
 	</div>
 </div>

@@ -73,4 +73,4 @@
 	</div>
 </form:form>
 <script
-	src="<cdn:url value='/resources/js/master/typeofwork.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/master/subtypeofwork.js?rnd=${app_release_no}'/>"></script>
