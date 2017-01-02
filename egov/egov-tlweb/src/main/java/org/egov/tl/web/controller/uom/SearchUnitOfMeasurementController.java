@@ -44,7 +44,6 @@ import org.egov.tl.entity.UnitOfMeasurement;
 import org.egov.tl.service.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -66,32 +65,27 @@ public class SearchUnitOfMeasurementController {
     }
 
     @ModelAttribute(value = "licenseUom")
-    public List<UnitOfMeasurement> getAllUom() {
+    public List<UnitOfMeasurement> unitOfMeasurements() {
         return unitOfMeasurementService.getAllUOM();
     }
 
     @RequestMapping(value = "/update", method = GET)
-    public String updateLicenseUom() {
+    public String showUpdateUomSearchForm() {
         return "uom-search-update";
     }
 
     @RequestMapping(value = "/view", method = GET)
-    public String viewLicenseUom() {
+    public String showViewUomSearchForm() {
         return "uom-search-view";
     }
 
     @RequestMapping(value = "/view", method = POST)
-    public String searchViewUom(@ModelAttribute UnitOfMeasurement unitOfMeasurement, BindingResult errors) {
-        if (errors.hasErrors())
-            return "uom-search-view";
+    public String showViewUomForm(@ModelAttribute UnitOfMeasurement unitOfMeasurement) {
         return "redirect:/licenseunitofmeasurement/view/" + unitOfMeasurement.getCode();
     }
 
     @RequestMapping(value = "/update", method = POST)
-    public String searchUpdateUom(@ModelAttribute UnitOfMeasurement unitOfMeasurement, BindingResult errors) {
-        if (errors.hasErrors())
-            return "uom-search-update";
+    public String showUpdateUomForm(@ModelAttribute UnitOfMeasurement unitOfMeasurement) {
         return "redirect:/licenseunitofmeasurement/update/" + unitOfMeasurement.getCode();
-
     }
 }

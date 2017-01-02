@@ -55,17 +55,20 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 @Controller
 @RequestMapping("/licensesubcategory")
 public class CreateSubCategoryController {
 
-    private final LicenseSubCategoryService licenseSubCategoryService;
+    @Autowired
+    private LicenseSubCategoryService licenseSubCategoryService;
 
     @Autowired
     private LicenseCategoryService licenseCategoryService;
@@ -76,44 +79,39 @@ public class CreateSubCategoryController {
     @Autowired
     private FeeTypeService feeTypeService;
 
-    @Autowired
-    public CreateSubCategoryController(final LicenseSubCategoryService licenseSubCategoryService) {
-        this.licenseSubCategoryService = licenseSubCategoryService;
-    }
-
     @ModelAttribute
-    public LicenseSubCategory licenseSubCategoryModel() {
+    public LicenseSubCategory licenseSubCategory() {
         return new LicenseSubCategory();
     }
 
     @ModelAttribute(value = "licenseCategories")
-    public List<LicenseCategory> getAllCategories() {
+    public List<LicenseCategory> licenseCategories() {
         return licenseCategoryService.getCategories();
     }
 
     @ModelAttribute(value = "licenseUomTypes")
-    public List<UnitOfMeasurement> getAllUom() {
+    public List<UnitOfMeasurement> activeUOMs() {
         return unitOfMeasurementService.getAllActiveUOM();
     }
 
     @ModelAttribute(value = "licenseFeeTypes")
-    public List<FeeType> getAllFeeType() {
+    public List<FeeType> feeTypes() {
         return feeTypeService.findAll();
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String createSubCategoryForm(Model model) {
+    @RequestMapping(value = "/create", method = GET)
+    public String showCreateSubCategoryForm(Model model) {
         model.addAttribute("rateTypes", RateTypeEnum.values());
         return "subcategory-create";
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(value = "/create", method = POST)
     public String createSubCategory(@ModelAttribute @Valid LicenseSubCategory licenseSubCategory,
-                                    BindingResult errors, RedirectAttributes additionalAttr) {
-        if (errors.hasErrors())
+                                    BindingResult bindingResult, RedirectAttributes responseAttrbs) {
+        if (bindingResult.hasErrors())
             return "subcategory-create";
         licenseSubCategoryService.createSubCategory(licenseSubCategory);
-        additionalAttr.addFlashAttribute("message", "msg.subcategory.save.success");
+        responseAttrbs.addFlashAttribute("message", "msg.subcategory.save.success");
         return "redirect:/licensesubcategory/view/" + licenseSubCategory.getCode();
     }
 }

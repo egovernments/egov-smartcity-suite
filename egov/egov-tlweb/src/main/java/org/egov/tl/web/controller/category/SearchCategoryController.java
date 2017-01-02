@@ -44,56 +44,48 @@ import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.service.LicenseCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/licensecategory")
 public class SearchCategoryController {
 
-    private final LicenseCategoryService licenseCategoryService;
-
     @Autowired
-    public SearchCategoryController(final LicenseCategoryService licenseCategoryService) {
-        this.licenseCategoryService = licenseCategoryService;
-    }
+    private LicenseCategoryService licenseCategoryService;
 
     @ModelAttribute
-    public LicenseCategory licenseCategoryModel() {
+    public LicenseCategory licenseCategory() {
         return new LicenseCategory();
     }
 
     @ModelAttribute(value = "licenseCategories")
-    public List<LicenseCategory> getAllCategories() {
+    public List<LicenseCategory> categories() {
         return licenseCategoryService.getCategories();
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.GET)
-    public String updateLicenseCategory() {
+    @RequestMapping(value = "/update", method = GET)
+    public String showUpdateCategorySearchForm() {
         return "licensecategory-search-update";
     }
 
-    @RequestMapping(value = "/view", method = RequestMethod.GET)
-    public String viewLicenseCategory() {
+    @RequestMapping(value = "/view", method = GET)
+    public String showViewCategorySearchForm() {
         return "licensecategory-search-view";
     }
 
-    @RequestMapping(value = "/view", method = RequestMethod.POST)
-    public String searchView(@ModelAttribute LicenseCategory licenseCategory, BindingResult errors) {
-        if (errors.hasErrors())
-            return "licensecategory-search-view";
+    @RequestMapping(value = "/view", method = POST)
+    public String showViewCategoryForm(@ModelAttribute LicenseCategory licenseCategory) {
         return "redirect:/licensecategory/view/" + licenseCategory.getCode();
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String searchUpdate(@ModelAttribute LicenseCategory licenseCategory, BindingResult errors) {
-        if (errors.hasErrors())
-            return "licensecategory-search-update";
+    @RequestMapping(value = "/update", method = POST)
+    public String showUpdateCategoryForm(@ModelAttribute LicenseCategory licenseCategory) {
         return "redirect:/licensecategory/update/" + licenseCategory.getCode();
-
     }
 }

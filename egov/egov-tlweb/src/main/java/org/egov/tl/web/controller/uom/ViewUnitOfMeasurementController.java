@@ -58,12 +58,12 @@ public class ViewUnitOfMeasurementController {
     private UnitOfMeasurementService unitOfMeasurementService;
 
     @ModelAttribute
-    public UnitOfMeasurement licenseUomModel(@PathVariable String code) {
+    public UnitOfMeasurement unitOfMeasurement(@PathVariable String code) {
         return unitOfMeasurementService.getUnitOfMeasurementByCode(code);
     }
 
     @RequestMapping(value = "/view/{code}", method = GET)
-    public String uomView() {
+    public String viewUom() {
         return "uom-view";
     }
 }

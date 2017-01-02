@@ -63,23 +63,22 @@ public class UpdateUnitOfMeasurementController {
     private UnitOfMeasurementService unitOfMeasurementService;
 
     @ModelAttribute
-    public UnitOfMeasurement unitOfMeasurementModel(@PathVariable String code) {
+    public UnitOfMeasurement unitOfMeasurement(@PathVariable String code) {
         return unitOfMeasurementService.getUnitOfMeasurementByCode(code);
     }
 
     @RequestMapping(value = "/update/{code}", method = GET)
-    public String categoryUpdateForm() {
+    public String showUpdateUomForm() {
         return "uom-update";
     }
 
     @RequestMapping(value = "/update/{code}", method = POST)
-    public String updateCategory(@ModelAttribute @Valid UnitOfMeasurement unitOfMeasurement, BindingResult errors,
-                                 RedirectAttributes additionalAttr) {
-        if (errors.hasErrors())
+    public String updateUom(@ModelAttribute @Valid UnitOfMeasurement unitOfMeasurement, BindingResult bindingResult,
+                            RedirectAttributes responseAttrbs) {
+        if (bindingResult.hasErrors())
             return "uom-update";
         unitOfMeasurementService.save(unitOfMeasurement);
-        additionalAttr.addFlashAttribute("message", "msg.success.uom.update");
+        responseAttrbs.addFlashAttribute("message", "msg.success.uom.update");
         return "redirect:/licenseunitofmeasurement/view/" + unitOfMeasurement.getCode();
     }
-
 }

@@ -47,26 +47,23 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping("/licensecategory")
 public class ViewCategoryController {
 
-    private final LicenseCategoryService licenseCategoryService;
-
     @Autowired
-    public ViewCategoryController(final LicenseCategoryService licenseCategoryService) {
-        this.licenseCategoryService = licenseCategoryService;
-    }
+    private LicenseCategoryService licenseCategoryService;
 
     @ModelAttribute
-    public LicenseCategory licenseCategoryModel(@PathVariable String code) {
+    public LicenseCategory licenseCategory(@PathVariable String code) {
         return licenseCategoryService.getCategoryByCode(code);
     }
 
-    @RequestMapping(value = "/view/{code}", method = RequestMethod.GET)
-    public String categoryView(@ModelAttribute LicenseCategory licenseCategory) {
+    @RequestMapping(value = "/view/{code}", method = GET)
+    public String viewCategory(@ModelAttribute LicenseCategory licenseCategory) {
         return "licensecategory-view";
     }
 }

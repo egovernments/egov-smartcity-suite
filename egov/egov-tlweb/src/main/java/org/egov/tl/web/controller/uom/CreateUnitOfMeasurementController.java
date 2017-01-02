@@ -67,17 +67,17 @@ public class CreateUnitOfMeasurementController {
     }
 
     @RequestMapping(value = "/create", method = GET)
-    public String createUomForm() {
+    public String showCreateUomForm() {
         return "uom-create";
     }
 
     @RequestMapping(value = "/create", method = POST)
-    public String createUom(@Valid @ModelAttribute UnitOfMeasurement unitOfMeasurement, BindingResult errors,
-                            RedirectAttributes additionalAttr) {
-        if (errors.hasErrors())
+    public String createUom(@Valid @ModelAttribute UnitOfMeasurement unitOfMeasurement, BindingResult bindingResult,
+                            RedirectAttributes responseAttrbs) {
+        if (bindingResult.hasErrors())
             return "uom-create";
         unitOfMeasurementService.save(unitOfMeasurement);
-        additionalAttr.addFlashAttribute("message", "msg.uom.save.success");
+        responseAttrbs.addFlashAttribute("message", "msg.uom.save.success");
         return "redirect:/licenseunitofmeasurement/view/" + unitOfMeasurement.getCode();
     }
 }

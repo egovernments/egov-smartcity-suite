@@ -41,48 +41,29 @@
 package org.egov.tl.web.controller.subcategory;
 
 import org.egov.tl.entity.LicenseSubCategory;
-import org.egov.tl.service.FeeTypeService;
-import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseSubCategoryService;
-import org.egov.tl.service.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping("/licensesubcategory")
 public class ViewSubCategoryController {
 
-    private final LicenseSubCategoryService licenseSubCategoryService;
-
     @Autowired
-    private LicenseCategoryService licenseCategoryService;
-
-    @Autowired
-    private UnitOfMeasurementService unitOfMeasurementService;
-
-    @Autowired
-    private FeeTypeService feeTypeService;
-
-    @Autowired
-    public ViewSubCategoryController(final LicenseSubCategoryService licenseSubCategoryService) {
-        this.licenseSubCategoryService = licenseSubCategoryService;
-    }
+    private LicenseSubCategoryService licenseSubCategoryService;
 
     @ModelAttribute
-    public LicenseSubCategory licenseCategoryModel(@PathVariable String code) {
+    public LicenseSubCategory licenseSubCategory(@PathVariable String code) {
         return licenseSubCategoryService.getSubCategoryByCode(code);
     }
 
-    @RequestMapping(value = "/view/{code}", method = RequestMethod.GET)
-    public String categoryView(Model model) {
-        model.addAttribute("licenseCategories", licenseCategoryService.getCategories());
-        model.addAttribute("licenseFeeTypes", feeTypeService.findAll());
-        model.addAttribute("licenseUomTypes", unitOfMeasurementService.getAllUOM());
+    @RequestMapping(value = "/view/{code}", method = GET)
+    public String viewSubCategory() {
         return "subcategory-view";
     }
 }

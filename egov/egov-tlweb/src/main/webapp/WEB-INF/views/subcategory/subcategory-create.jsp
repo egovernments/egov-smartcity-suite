@@ -79,7 +79,8 @@
                         <spring:message code="lbl.code"/><span id="mandatory" class="mandatory"></span>
                     </label>
                     <div class="col-sm-3 add-margin">
-                        <form:input path="code" id="code" cssClass="form-control patternvalidation" data-pattern="alphabets" cssErrorClass="form-control error" required="required" maxLength="32"/>
+                        <form:input path="code" id="code" cssClass="form-control patternvalidation" data-pattern="alphabets"
+                                    cssErrorClass="form-control patternvalidation error" required="required" maxLength="32"/>
                         <form:errors path="code" cssClass="error-msg"/>
                     </div>
                 </div>

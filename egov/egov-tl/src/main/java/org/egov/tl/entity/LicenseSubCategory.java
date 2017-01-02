@@ -104,10 +104,12 @@ public class LicenseSubCategory extends AbstractAuditable {
     @Valid
     private List<LicenseSubCategoryDetails> licenseSubCategoryDetails = new ArrayList<>();
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -174,12 +176,15 @@ public class LicenseSubCategory extends AbstractAuditable {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         final LicenseSubCategory that = (LicenseSubCategory) o;
 
-        if (getCode() != null ? !getCode().equals(that.getCode()) : that.getCode() != null) return false;
+        if (getCode() != null ? !getCode().equals(that.getCode()) : that.getCode() != null)
+            return false;
         return getName() != null ? getName().equals(that.getName()) : that.getName() == null;
 
     }

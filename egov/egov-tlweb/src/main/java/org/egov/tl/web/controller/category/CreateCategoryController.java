@@ -47,40 +47,37 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/licensecategory")
 public class CreateCategoryController {
 
-    private final LicenseCategoryService licenseCategoryService;
-
     @Autowired
-    public CreateCategoryController(final LicenseCategoryService licenseCategoryService) {
-        this.licenseCategoryService = licenseCategoryService;
-    }
+    private LicenseCategoryService licenseCategoryService;
 
     @ModelAttribute
-    public LicenseCategory licenseCategoryModel() {
+    public LicenseCategory licenseCategory() {
         return new LicenseCategory();
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String createCategoryForm() {
+    @RequestMapping(value = "/create", method = GET)
+    public String showCreateCategoryForm() {
         return "licensecategory-create";
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String createCategory(@ModelAttribute @Valid LicenseCategory licenseCategory, BindingResult errors,
-                                 RedirectAttributes additionalAttr) {
-        if (errors.hasErrors())
+    @RequestMapping(value = "/create", method = POST)
+    public String createCategory(@ModelAttribute @Valid LicenseCategory licenseCategory, BindingResult bindingResult,
+                                 RedirectAttributes responseAttrbs) {
+        if (bindingResult.hasErrors())
             return "licensecategory-create";
-
         licenseCategoryService.saveCategory(licenseCategory);
-        additionalAttr.addFlashAttribute("message", "msg.create.category.success");
+        responseAttrbs.addFlashAttribute("message", "msg.create.category.success");
 
         return "redirect:/licensecategory/view/" + licenseCategory.getCode();
     }

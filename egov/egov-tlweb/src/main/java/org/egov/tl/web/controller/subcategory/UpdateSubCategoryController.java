@@ -52,16 +52,19 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/licensesubcategory")
 public class UpdateSubCategoryController {
 
-    private final LicenseSubCategoryService licenseSubCategoryService;
+    @Autowired
+    private LicenseSubCategoryService licenseSubCategoryService;
 
     @Autowired
     private LicenseCategoryService licenseCategoryService;
@@ -72,40 +75,32 @@ public class UpdateSubCategoryController {
     @Autowired
     private FeeTypeService feeTypeService;
 
-    @Autowired
-    public UpdateSubCategoryController(final LicenseSubCategoryService licenseSubCategoryService) {
-        this.licenseSubCategoryService = licenseSubCategoryService;
-    }
-
     @ModelAttribute
     public LicenseSubCategory licenseSubCategory(@PathVariable String code) {
         return licenseSubCategoryService.getSubCategoryByCode(code);
     }
 
-    @RequestMapping(value = "/update/{code}", method = RequestMethod.GET)
-    public String subCategoryUpdateForm(Model model) {
-        populateDropdownData(model);
+    @RequestMapping(value = "/update/{code}", method = GET)
+    public String showSubCategoryUpdateForm(Model model) {
+        prepareSubCategoryAssociations(model);
         return "subcategory-update";
     }
 
-    @RequestMapping(value = "/update/{code}", method = RequestMethod.POST)
+    @RequestMapping(value = "/update/{code}", method = POST)
     public String updateSubCategory(@ModelAttribute @Valid LicenseSubCategory licenseSubCategory,
-                                    BindingResult errors, RedirectAttributes additionalAttr, Model model) {
-
-        if (errors.hasErrors()) {
-            populateDropdownData(model);
+                                    BindingResult bindingResult, RedirectAttributes responseAttrbs, Model model) {
+        if (bindingResult.hasErrors()) {
+            prepareSubCategoryAssociations(model);
             return "subcategory-update";
         }
-
         licenseSubCategoryService.updateSubCategory(licenseSubCategory);
-        additionalAttr.addFlashAttribute("message", "msg.success.subcategory.update");
+        responseAttrbs.addFlashAttribute("message", "msg.success.subcategory.update");
         return "redirect:/licensesubcategory/view/" + licenseSubCategory.getCode();
     }
 
-    private void populateDropdownData(final Model model) {
+    private void prepareSubCategoryAssociations(Model model) {
         model.addAttribute("licenseCategories", licenseCategoryService.getCategories());
         model.addAttribute("licenseFeeTypes", feeTypeService.findAll());
         model.addAttribute("licenseUomTypes", unitOfMeasurementService.getAllUOM());
     }
-
 }

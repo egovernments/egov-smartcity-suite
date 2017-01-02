@@ -63,12 +63,7 @@
                         <spring:message code="licenseCategory.category.lbl"/><span class="mandatory"></span>
                     </label>
                     <div class="col-sm-3 add-margin">
-                        <form:select path="category" cssClass="form-control" cssErrorClass="form-control error" disabled="true" required="required">
-                            <form:option value="">
-                                <spring:message code="lbl.category.select"/>
-                            </form:option>
-                            <form:options items="${licenseCategories}" itemValue="id" itemLabel="name"/>
-                        </form:select>
+                        <form:input path="category.name" cssClass="form-control" cssErrorClass="form-control error" disabled="true"/>
                     </div>
                 </div>
                 <div class="form-group">
@@ -76,14 +71,14 @@
                         <spring:message code="lbl.name"/><span id="mandatory" class="mandatory"></span>
                     </label>
                     <div class="col-sm-3 add-margin">
-                        <form:input path="name" id="name" cssClass="form-control" cssErrorClass="form-control error" disabled="true" required="required"/>
+                        <form:input path="name" id="name" cssClass="form-control" cssErrorClass="form-control error" disabled="true"/>
                         <form:errors path="name" cssClass="error-msg"/>
                     </div>
                     <label for="code" class="col-sm-2 control-label text-right">
                         <spring:message code="lbl.code"/><span id="mandatory" class="mandatory"></span>
                     </label>
                     <div class="col-sm-3 add-margin">
-                        <form:input path="code" id="code" cssClass="form-control" cssErrorClass="form-control error" disabled="true" required="required"/>
+                        <form:input path="code" id="code" cssClass="form-control" cssErrorClass="form-control error" disabled="true"/>
                         <form:errors path="code" cssClass="error-msg"/>
                     </div>
                 </div>
@@ -104,74 +99,19 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <c:choose>
-                            <c:when test="${not empty licenseSubCategory.licenseSubCategoryDetails}">
-                                <c:forEach items="${licenseSubCategory.licenseSubCategoryDetails}" var="licenseSubCategoryDetail" varStatus="item">
-                                    <tr>
-                                        <td>
-                                            <form:select path="licenseSubCategoryDetails[${item.index}].feeType" id="licenseSubCategoryDetails[${item.index}].feeType"
-                                                         value="${licenseSubCategoryDetail.feeType}" cssClass="form-control feeType" disabled="true" required="required">
-                                                <form:option value="">
-                                                    <spring:message code="lbl.select"/>
-                                                </form:option>
-                                                <form:options items="${licenseFeeTypes}" itemValue="id" itemLabel="name"/>
-                                            </form:select>
-                                        </td>
-                                        <td>
-                                            <form:select path="licenseSubCategoryDetails[${item.index}].rateType" cssClass="form-control rateType" disabled="true" required="required">
-                                                <form:option value="">
-                                                    <spring:message code="lbl.select"/>
-                                                </form:option>
-                                                <form:options items="${rateTypes}"/>
-                                            </form:select>
-                                        </td>
-                                        <td>
-                                            <form:select path="licenseSubCategoryDetails[${item.index}].uom" id="licenseSubCategoryDetails[${item.index}].uom"
-                                                         value="${licenseSubCategoryDetail.feeType}" cssClass="form-control uom" disabled="true" required="required">
-                                                <form:option value="">
-                                                    <spring:message code="lbl.select"/>
-                                                </form:option>
-                                                <form:options items="${licenseUomTypes}" itemValue="id" itemLabel="name"/>
-                                            </form:select>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </c:when>
-                            <c:otherwise>
-                                <tr>
-                                    <td>
-                                        <form:select path="licenseSubCategoryDetails[0].feeType" id="licenseSubCategoryDetails[0].feeType"
-                                                     cssClass="form-control feeType" disabled="true" required="required">
-                                            <form:option value="">
-                                                <spring:message code="lbl.select"/>
-                                            </form:option>
-                                            <form:options items="${licenseFeeTypes}" itemValue="id" itemLabel="name"/>
-                                        </form:select>
-                                        <form:errors path="licenseSubCategoryDetails[0].feeType"
-                                                     cssClass="add-margin error-msg"/>
-                                    </td>
-                                    <td>
-                                        <form:select path="licenseSubCategoryDetails[0].rateType" id="licenseSubCategoryDetails[0].rateType"
-                                                     cssClass="form-control rateType" disabled="true" required="required">
-                                            <form:option value="">
-                                                <spring:message code="lbl.select"/>
-                                            </form:option>
-                                            <form:options items="${rateTypes}"/>
-                                        </form:select>
-                                        <form:errors path="licenseSubCategoryDetails[0].rateType" cssClass="add-margin error-msg"/>
-                                    </td>
-                                    <td>
-                                        <form:select path="licenseSubCategoryDetails[0].uom" id="licenseSubCategoryDetails[0].uom" cssClass="form-control uom" disabled="true" required="required">
-                                            <form:option value="">
-                                                <spring:message code="lbl.select"/>
-                                            </form:option>
-                                            <form:options items="${licenseUomTypes}" itemValue="id" itemLabel="name"/>
-                                        </form:select>
-                                        <form:errors path="licenseSubCategoryDetails[0].uom" cssClass="add-margin error-msg"/>
-                                    </td>
-                                </tr>
-                            </c:otherwise>
-                        </c:choose>
+                        <c:forEach items="${licenseSubCategory.licenseSubCategoryDetails}" var="licenseSubCategoryDetail" varStatus="item">
+                            <tr>
+                                <td>
+                                    <form:input path="licenseSubCategoryDetails[${item.index}].feeType.name" cssClass="form-control feeType" disabled="true"/>
+                                </td>
+                                <td>
+                                    <form:input path="licenseSubCategoryDetails[${item.index}].rateType" cssClass="form-control rateType" disabled="true"/>
+                                </td>
+                                <td>
+                                    <form:input path="licenseSubCategoryDetails[${item.index}].uom.name" cssClass="form-control uom" disabled="true"/>
+                                </td>
+                            </tr>
+                        </c:forEach>
                         </tbody>
                     </table>
                 </div>

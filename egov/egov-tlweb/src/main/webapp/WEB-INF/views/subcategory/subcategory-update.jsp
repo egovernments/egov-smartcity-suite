@@ -181,7 +181,7 @@
     </div>
     <div class="form-group">
         <div class="text-center">
-            <button type="submit" class="btn btn-primary"><spring:message code="lbl.save"/></button>
+            <button type="submit" class="btn btn-primary"><spring:message code="lbl.update"/></button>
             <button type="reset" class="btn btn-default" onclick="window.location.reload()"><spring:message code="lbl.reset"/></button>
             <button type="button" class="btn btn-primary" onclick="redirect('/tl/licensesubcategory/update')"><spring:message code="lbl.back"/></button>
             <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()"><spring:message code="lbl.close"/></button>
