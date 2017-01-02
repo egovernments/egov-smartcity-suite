@@ -39,7 +39,7 @@
 
 package org.egov.mrs.web.controller.reports;
 
-import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.mrs.application.MarriageConstants.BOUNDARY_TYPE;
 import static org.egov.mrs.application.MarriageConstants.REVENUE_HIERARCHY_TYPE;
 

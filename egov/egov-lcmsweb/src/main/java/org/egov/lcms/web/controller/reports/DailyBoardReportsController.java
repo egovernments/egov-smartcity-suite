@@ -46,7 +46,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.utils.JsonUtils;
 import org.egov.lcms.reports.entity.DailyBoardReportResults;
 import org.egov.lcms.transactions.service.DailyBoardReportService;
 import org.egov.lcms.web.adaptor.DailyBoardReportJsonAdapter;
@@ -90,7 +90,7 @@ public class DailyBoardReportsController extends GenericLegalCaseController {
         final List<DailyBoardReportResults> dailyBoardReportList = dailyBoardReportService
                 .getDailyBoardReports(dailyBoardReportObj);
         final String result = new StringBuilder("{ \"data\":").append(
-                WebUtils.toJSON(dailyBoardReportList, DailyBoardReportResults.class, DailyBoardReportJsonAdapter.class))
+                JsonUtils.toJSON(dailyBoardReportList, DailyBoardReportResults.class, DailyBoardReportJsonAdapter.class))
                 .append("}").toString();
         return result;
     }

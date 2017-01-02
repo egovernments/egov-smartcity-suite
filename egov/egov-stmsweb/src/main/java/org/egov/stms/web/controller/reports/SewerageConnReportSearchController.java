@@ -40,7 +40,7 @@
 
 package org.egov.stms.web.controller.reports;
 
-import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.BOUNDARYTYPE_LOCALITY;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.BOUNDARYTYPE_WARD;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.HIERARCHYTYPE_LOCATION;

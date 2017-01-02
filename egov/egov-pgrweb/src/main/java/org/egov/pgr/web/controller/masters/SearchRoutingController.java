@@ -60,7 +60,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller

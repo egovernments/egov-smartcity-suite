@@ -39,7 +39,7 @@ In case of any queries, you can reach eGovernments Foundation at contact@egovern
 
 package org.egov.mrs.web.controller.masters;
 
-import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 
 import java.util.List;
 

@@ -43,7 +43,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.utils.JsonUtils;
 import org.egov.lcms.reports.entity.DueReportResult;
 import org.egov.lcms.transactions.service.DueLegalCaseReportService;
 import org.egov.lcms.utils.constants.LcmsConstants;
@@ -72,7 +72,7 @@ public class PwrDueReportController extends GenericLegalCaseController {
         final List<DueReportResult> pwrDueSearchList = dueLegalCaseReportService.getLegalCaseReport(dueReportResult,
                 LcmsConstants.DUEPWRREPORT);
         final String result = new StringBuilder("{ \"data\":")
-                .append(WebUtils.toJSON(pwrDueSearchList, DueReportResult.class, DueReportResultJsonAdaptor.class))
+                .append(JsonUtils.toJSON(pwrDueSearchList, DueReportResult.class, DueReportResultJsonAdaptor.class))
                 .append("}").toString();
         return result;
     }

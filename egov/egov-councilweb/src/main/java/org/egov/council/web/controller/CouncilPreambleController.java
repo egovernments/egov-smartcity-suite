@@ -6,7 +6,7 @@ import static org.egov.council.utils.constants.CouncilConstants.IMPLEMENTATION_S
 import static org.egov.council.utils.constants.CouncilConstants.MODULE_FULLNAME;
 import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.council.utils.constants.CouncilConstants.WARD;
-import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 
 import java.io.IOException;
 import java.util.List;

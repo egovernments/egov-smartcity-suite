@@ -48,7 +48,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EmployeeService;
 import org.egov.eis.web.adaptor.EmployeeAssignmentSearchJson;
-import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.utils.JsonUtils;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,7 +96,7 @@ public class AjaxEmployeeAssignmentReportController {
     @RequestMapping(value = "/employeeassignments/search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchEmployeeAssignments(@ModelAttribute final EmployeeAssignmentSearch employeeAssignmentSearch) {
         List<Employee> employeeList = assignmentService.searchEmployeeAssignments(employeeAssignmentSearch);
-        final String result = new StringBuilder("{ \"data\":").append(WebUtils.toJSON(employeeList, Employee.class, EmployeeAssignmentSearchJson.class)).append("}").toString();
+        final String result = new StringBuilder("{ \"data\":").append(JsonUtils.toJSON(employeeList, Employee.class, EmployeeAssignmentSearchJson.class)).append("}").toString();
         return result;
     } 
     

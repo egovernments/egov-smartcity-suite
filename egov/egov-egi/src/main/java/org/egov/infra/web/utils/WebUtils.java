@@ -40,16 +40,10 @@
 
 package org.egov.infra.web.utils;
 
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSerializer;
-import org.egov.infra.exception.ApplicationRuntimeException;
-
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter.FACTORY;
 
 public class WebUtils {
 
@@ -61,8 +55,8 @@ public class WebUtils {
      * This will return only domain name from http request <br/>
      * eg: http://www.domain.com/cxt/xyz will return www.domain.com http://somehost:8090/cxt/xyz will return somehost
      **/
-    public static String extractRequestedDomainName(final HttpServletRequest httpRequest) {
-        final String requestURL = httpRequest.getRequestURL().toString();
+    public static String extractRequestedDomainName(HttpServletRequest httpRequest) {
+        String requestURL = httpRequest.getRequestURL().toString();
         return extractRequestedDomainName(requestURL);
     }
 
@@ -70,7 +64,7 @@ public class WebUtils {
      * This will return only domain name from given requestUrl <br/>
      * eg: http://www.domain.com/cxt/xyz will return www.domain.com http://somehost:8090/cxt/xyz will return somehost
      **/
-    public static String extractRequestedDomainName(final String requestURL) {
+    public static String extractRequestedDomainName(String requestURL) {
         int domainNameStartIndex = requestURL.indexOf("://") + 3;
         int domainNameEndIndex = requestURL.indexOf('/', domainNameStartIndex);
         String domainName = requestURL.substring(domainNameStartIndex,
@@ -85,42 +79,22 @@ public class WebUtils {
      * http://www.domain.com/cxt/xyz withContext value as true will return http://www.domain.com/cxt/ <br/>
      * http://www.domain.com/cxt/xyz withContext value as false will return http://www.domain.com
      **/
-    public static String extractRequestDomainURL(final HttpServletRequest httpRequest, final boolean withContext) {
-        final StringBuilder url = new StringBuilder(httpRequest.getRequestURL());
-        final String uri = httpRequest.getRequestURI();
+    public static String extractRequestDomainURL(HttpServletRequest httpRequest, boolean withContext) {
+        StringBuilder url = new StringBuilder(httpRequest.getRequestURL());
+        String uri = httpRequest.getRequestURI();
         return withContext ? url.substring(0, url.length() - uri.length() + httpRequest.getContextPath().length()) + "/"
                 : url.substring(0, url.length() - uri.length());
     }
 
-    public static String extractQueryParamsFromUrl(final String url) {
+    public static String extractQueryParamsFromUrl(String url) {
         return url.substring(url.indexOf('?') + 1, url.length());
     }
 
-    public static String extractURLWithoutQueryParams(final String url) {
+    public static String extractURLWithoutQueryParams(String url) {
         return url.substring(0, url.indexOf('?'));
     }
 
-    public static String currentContextPath(final ServletRequest request) {
+    public static String currentContextPath(ServletRequest request) {
         return request.getServletContext().getContextPath().toUpperCase().replace("/", EMPTY);
-    }
-
-    public static <T> String toJSON(Collection<T> objects, Class<? extends T> objectClazz, Class<? extends JsonSerializer<T>> adptorClazz) {
-        try {
-            return new GsonBuilder().
-                    registerTypeAdapterFactory(FACTORY).
-                    registerTypeAdapter(objectClazz, adptorClazz.newInstance()).create().toJson(objects);
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new ApplicationRuntimeException("Could not convert object list to json string", e);
-        }
-    }
-
-    public static <T> String toJSON(T object, Class<? extends JsonSerializer<T>> adptorClazz) {
-        try {
-            return new GsonBuilder().
-                    registerTypeAdapterFactory(FACTORY).
-                    registerTypeAdapter(object.getClass(), adptorClazz.newInstance()).create().toJson(object);
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new ApplicationRuntimeException("Could not convert object to json string", e);
-        }
     }
 }

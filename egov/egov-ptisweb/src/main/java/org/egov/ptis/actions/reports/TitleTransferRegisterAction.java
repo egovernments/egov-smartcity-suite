@@ -72,7 +72,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 
 @SuppressWarnings("serial")

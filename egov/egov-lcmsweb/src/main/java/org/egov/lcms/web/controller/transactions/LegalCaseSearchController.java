@@ -45,7 +45,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.commons.EgwStatus;
-import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.utils.JsonUtils;
 import org.egov.lcms.reports.entity.LegalCaseSearchResult;
 import org.egov.lcms.transactions.entity.ReportStatus;
 import org.egov.lcms.transactions.service.SearchLegalCaseService;
@@ -95,7 +95,7 @@ public class LegalCaseSearchController extends GenericLegalCaseController {
         final List<LegalCaseSearchResult> legalcaseSearchList = searchLegalCaseService
                 .getLegalCaseReport(legalCaseSearchResult);
         final String result = new StringBuilder("{ \"data\":").append(
-                WebUtils.toJSON(legalcaseSearchList, LegalCaseSearchResult.class, LegalCaseSearchJsonAdaptor.class))
+                JsonUtils.toJSON(legalcaseSearchList, LegalCaseSearchResult.class, LegalCaseSearchJsonAdaptor.class))
                 .append("}").toString();
         return result;
     }

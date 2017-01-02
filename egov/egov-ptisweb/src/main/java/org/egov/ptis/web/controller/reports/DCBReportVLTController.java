@@ -1,6 +1,6 @@
 package org.egov.ptis.web.controller.reports;
 
-import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 
 import java.io.IOException;
 import java.util.ArrayList;

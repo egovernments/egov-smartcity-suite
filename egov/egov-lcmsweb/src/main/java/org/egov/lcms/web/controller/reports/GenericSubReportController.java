@@ -49,7 +49,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.egov.commons.EgwStatus;
-import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.utils.JsonUtils;
 import org.egov.lcms.masters.entity.JudgmentType;
 import org.egov.lcms.masters.service.JudgmentTypeService;
 import org.egov.lcms.reports.entity.GenericSubReportResult;
@@ -135,7 +135,7 @@ public class GenericSubReportController extends GenericLegalCaseController {
         final List<GenericSubReportResult> genericSubResultList = genericSubReportService
                 .getGenericSubReport(genericSubReportResult, clickOnCount);
         final String result = new StringBuilder("{ \"data\":").append(
-                WebUtils.toJSON(genericSubResultList, GenericSubReportResult.class, GenericSubReportJsonAdaptor.class))
+                JsonUtils.toJSON(genericSubResultList, GenericSubReportResult.class, GenericSubReportJsonAdaptor.class))
                 .append("}").toString();
         return result;
 
@@ -153,7 +153,7 @@ public class GenericSubReportController extends GenericLegalCaseController {
         final Boolean clickOnCount = Boolean.TRUE;
         final List<GenericSubReportResult> genericSubResultList = genericSubReportService
                 .getGenericSubReport(genericSubReportObj, clickOnCount);
-        final String result = new StringBuilder("{ \"data\":").append(WebUtils.toJSON(genericSubResultList,
+        final String result = new StringBuilder("{ \"data\":").append(JsonUtils.toJSON(genericSubResultList,
                 GenericSubReportResult.class, GenericSubDrillDownReportJsonAdaptor.class)).append("}").toString();
         return result;
     }
