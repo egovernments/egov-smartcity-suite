@@ -732,6 +732,13 @@ CollectionIntegrationService {
         }
     }
 
+    @Override
+    public byte[] downloadReceiptByReceiptAndConsumerNo(final String receiptNumber, final String consumerCode) {
+        final ReceiptHeader receiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
+                CollectionConstants.QUERY_RECEIPT_BY_SERVICE_RECEIPTNUMBER_CONSUMERCODE, receiptNumber,receiptNumber, consumerCode);
+        return collectionsUtil.createReport(receiptHeaderService.getReportRequest(receiptHeader)).getReportOutputData();
+    }
+
     public void setCollectionCommon(final CollectionCommon collectionCommon) {
         this.collectionCommon = collectionCommon;
     }

@@ -54,6 +54,7 @@ import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
 import org.egov.collection.integration.pgi.PaymentRequest;
 import org.egov.infra.validation.exception.ValidationException;
+import org.springframework.http.HttpStatus;
 
 /**
  * Interface exposed by collections system to other systems (typically billing systems)
@@ -199,5 +200,8 @@ public interface CollectionIntegrationService {
      * @return
      */
     public List<RestReceiptInfo> getDetailsByUserServiceAndConsumerCode( PaymentInfoRequest paymentInfoRequest);
+
+    
+    public byte[] downloadReceiptByReceiptAndConsumerNo(String receiptNumber, String consumerCode);
 
 }

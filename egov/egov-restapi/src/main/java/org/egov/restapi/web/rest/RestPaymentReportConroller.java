@@ -69,7 +69,10 @@ import org.egov.restapi.model.RestResponse;
 import org.egov.restapi.util.JsonConvertor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -145,6 +148,7 @@ public class RestPaymentReportConroller {
                 restResponse.setServiceName(restReceipt.getServiceName());
                 restResponse.setTxnDate(restReceipt.getTxnDate());
                 restResponse.setPayeeName(restReceipt.getPayeeName());
+                restResponse.setReceiptStatus(restReceipt.getReceiptStatus());
                 err.setErrorMessage(RestApiConstants.THIRD_PARTY_ACTION_SUCCESS);
                 err.setErrorCode(RestApiConstants.THIRD_PARTY_ACTION_SUCCESS);
                 restResponse.getErrorDetails().add(err);
@@ -248,6 +252,26 @@ public class RestPaymentReportConroller {
 
     }
 
+    @RequestMapping(value = "/downloadReceipt", method = RequestMethod.POST)
+    public ResponseEntity<byte[]> downloadReceiptByReceiptAndConsumerNo(
+            @RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest) {
+        ResponseEntity<byte[]> receipt = null;
+        byte[] receiptPdf = null;
+
+        if (paymentInfoSearchRequest.getReceiptNo() != null && !paymentInfoSearchRequest.getReceiptNo().isEmpty()
+                && paymentInfoSearchRequest.getReferenceNo() != null
+                && !paymentInfoSearchRequest.getReferenceNo().isEmpty()) {
+            receiptPdf = collectionService.downloadReceiptByReceiptAndConsumerNo(paymentInfoSearchRequest.getReceiptNo(),
+                    paymentInfoSearchRequest.getReferenceNo());
+            final HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("application/pdf"));
+            headers.add("content-disposition", "inline;filename=Receipt.pdf");
+            receipt = new ResponseEntity<byte[]>(receiptPdf, headers, HttpStatus.CREATED);
+        } else if (receipt == null)
+            receipt = new ResponseEntity("File Not Found", HttpStatus.OK);
+        return receipt;
+    }
+
     @RequestMapping(value = "/services", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String services() throws JsonGenerationException, JsonMappingException, IOException {
 
@@ -270,23 +294,4 @@ public class RestPaymentReportConroller {
         return JsonConvertor.convert(serviceCategory);
 
     }
-
-    /**
-     * This method is used to prepare jSON response.
-     *
-     * @param obj
-     *            - a POJO object
-     * @return jsonResponse - JSON response string
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
-     * @throws IOException
-     */
-    /*
-     * private String getJSONResponse(final Object obj) throws
-     * JsonGenerationException, JsonMappingException, IOException { final Gson
-     * jsonCreator = new
-     * GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter
-     * .FACTORY) .disableHtmlEscaping().create(); return jsonCreator.toJson(obj,
-     * new TypeToken<Collection<Document>>() { }.getType()); }
-     */
 }

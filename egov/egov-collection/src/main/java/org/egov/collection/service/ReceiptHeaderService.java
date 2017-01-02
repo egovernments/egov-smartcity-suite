@@ -47,7 +47,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -297,7 +296,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         headerdetails.put(VoucherConstant.SOURCEPATH,
                 CollectionConstants.RECEIPT_VIEW_SOURCEPATH + receiptHeader.getId());
 
-        Set<ReceiptDetail> receiptDetailSet = new LinkedHashSet<>(0);
+        Set<ReceiptDetail> receiptDetailSet;
 
         /**
          * Aggregate Amount in case of bill based receipt for account codes
@@ -607,7 +606,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      */
     public void endReceiptWorkFlowOnCancellation(final ReceiptHeader receiptHeaderToBeCancelled) {
         // End work-flow for the cancelled receipt
-        Position position = null;
+        Position position;
         if (!collectionsUtil.isEmployee(receiptHeaderToBeCancelled.getCreatedBy()))
             position = collectionsUtil.getPositionByDeptDesgAndBoundary(receiptHeaderToBeCancelled.getReceiptMisc()
                     .getBoundary());
@@ -1031,7 +1030,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     public Set<InstrumentHeader> createOnlineInstrument(final Date transactionDate, final String transactionId,
             final BigDecimal transactionAmt) {
         final InstrumentHeader onlineInstrumentHeader = new InstrumentHeader();
-        Set<InstrumentHeader> instrumentHeaderSet = new HashSet<>(0);
+        Set<InstrumentHeader> instrumentHeaderSet;
         onlineInstrumentHeader.setInstrumentType(financialsUtil
                 .getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_ONLINE));
         onlineInstrumentHeader.setTransactionDate(transactionDate);
@@ -1099,7 +1098,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             startWorkflow(receiptHeader);
             LOGGER.info("Workflow started for newly created receipts");
             final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            Date cutOffDate = getDataEntryCutOffDate(sdf);
+            final Date cutOffDate = getDataEntryCutOffDate(sdf);
             if (!receiptHeader.getService().getServiceType().equalsIgnoreCase(CollectionConstants.SERVICE_TYPE_BILLING))
                 if (cutOffDate != null && receiptHeader.getReceiptdate().before(cutOffDate))
                     performWorkflow(CollectionConstants.WF_ACTION_APPROVE, receiptHeader,
@@ -1187,8 +1186,12 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     private void pushMail(final ReceiptHeader receiptHeader) {
-        String additionalMessage;
+        collectionsUtil.emailReceiptAsAttachment(receiptHeader,
+                collectionsUtil.createReport(getReportRequest(receiptHeader)).getReportOutputData());
+    }
 
+    public ReportRequest getReportRequest(final ReceiptHeader receiptHeader) {
+        String additionalMessage;
         final List<BillReceiptInfo> receiptList = new ArrayList<>(0);
         final Map<String, Object> reportParams = new HashMap<>(0);
         final String serviceCode = receiptHeader.getService().getCode();
@@ -1209,8 +1212,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         final ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
         reportInput.setReportFormat(ReportConstants.FileFormat.PDF);
         reportInput.setPrintDialogOnOpenReport(false);
-        collectionsUtil.emailReceiptAsAttachment(receiptHeader, collectionsUtil.createReport(reportInput)
-                .getReportOutputData());
+        return reportInput;
     }
 
     /**
