@@ -42,7 +42,12 @@
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <div class="page-container" id="page-container">
 		<div class="new-page-header" id="successMessage">
-			${success}
+			<c:if test="${ mode != 'view' && mode != 'edit'}">
+				${createSuccess }
+			</c:if>
+			<c:if test = "${ mode == 'edit'}">
+				${modifySuccess }
+			</c:if>
 		</div>
 			<jsp:include page="typeofwork-commonview.jsp" />
 		<div class="col-sm-12 text-center">

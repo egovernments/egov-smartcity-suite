@@ -132,9 +132,7 @@ public class UpdateTypeOfWorkController {
     private void validateTypeOfWork(final EgwTypeOfWork typeOfWork, final BindingResult resultBinder) {
         final EgwTypeOfWork existingTypeOfWork = typeOfWorkService.getTypeOfWorkByCode(typeOfWork.getCode());
 
-        if (existingTypeOfWork != null && !existingTypeOfWork.getId().equals(typeOfWork.getId()))
-            resultBinder.reject("error.typeofwork.exists", new String[] { typeOfWork.getCode() },
-                    "error.typeofwork.exists");
+        checkExistingTypeOfWork(typeOfWork, resultBinder, existingTypeOfWork);
 
         if (typeOfWork.getCode() == null)
             resultBinder.reject("error.typeofwork.code", "error.typeofwork.code");
@@ -158,5 +156,12 @@ public class UpdateTypeOfWorkController {
         validateTypeOfWork(subTypeOfWork, resultBinder);
         if (subTypeOfWork.getParentid() == null)
             resultBinder.reject("error.typeofwork.select", "error.typeofwork.select");
+    }
+
+    private void checkExistingTypeOfWork(final EgwTypeOfWork typeOfWork, final BindingResult resultBinder,
+            final EgwTypeOfWork existingTypeOfWork) {
+        if (existingTypeOfWork != null && !existingTypeOfWork.getId().equals(typeOfWork.getId()))
+            resultBinder.reject("error.typeofwork.exists", new String[] { typeOfWork.getCode() },
+                    "error.typeofwork.exists");
     }
 }

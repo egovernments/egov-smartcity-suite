@@ -106,10 +106,10 @@ public class CreateTypeOfWorkController {
         model.addAttribute("typeofwork", newTypeOfWork);
         if (mode != null && mode.equalsIgnoreCase(WorksConstants.EDIT)) {
             model.addAttribute(WorksConstants.MODE, mode);
-            model.addAttribute("success", messageSource.getMessage("msg.typeofwork.modify.success",
+            model.addAttribute("modifySuccess", messageSource.getMessage("msg.typeofwork.modify.success",
                     new String[] { newTypeOfWork.getName() }, null));
         } else
-            model.addAttribute("success", messageSource.getMessage("msg.typeofwork.create.success",
+            model.addAttribute("createSuccess", messageSource.getMessage("msg.typeofwork.create.success",
                     new String[] { newTypeOfWork.getName() }, null));
 
         return "typeofwork-success";
@@ -176,14 +176,14 @@ public class CreateTypeOfWorkController {
         model.addAttribute("subtypeofwork", newSubTypeOfWork);
         if (mode != null && mode.equalsIgnoreCase(WorksConstants.EDIT)) {
             model.addAttribute(WorksConstants.MODE, mode);
-            model.addAttribute("success",
+            model.addAttribute("modifySuccess",
                     messageSource
                             .getMessage("msg.subtypeofwork.modify.success",
                                     new String[] { newSubTypeOfWork.getName(), typeOfWorkService
                                             .getTypeOfWorkById(newSubTypeOfWork.getParentid().getId()).getName() },
                                     null));
         } else
-            model.addAttribute("success",
+            model.addAttribute("createSuccess",
                     messageSource
                             .getMessage("msg.subtypeofwork.create.success",
                                     new String[] { newSubTypeOfWork.getName(), typeOfWorkService
