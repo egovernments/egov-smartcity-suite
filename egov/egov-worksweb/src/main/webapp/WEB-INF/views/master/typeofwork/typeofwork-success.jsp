@@ -47,7 +47,7 @@
 			<jsp:include page="typeofwork-commonview.jsp" />
 		<div class="col-sm-12 text-center">
 			<div class="row">
-				<c:if test="${ mode != 'view' }">
+				<c:if test="${ mode != 'view' && mode != 'edit'}">
 					<input type="submit" name="create" Class="btn btn-primary" value="Create New Type of Work" id="CREATE" name="button" onclick="createNewTypeOfWork();" />
 				</c:if>
 				<input type="submit" name="closeButton" id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />

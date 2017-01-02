@@ -67,7 +67,7 @@ public class AjaxTypeOfWorkController {
     @Autowired
     private SearchTypeOfWorkJsonAdaptor searchTypeOfWorkJsonAdaptor;
 
-    @RequestMapping(value = "/ajaxsearch-viewtypeofwork", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/ajaxsearch-typeofwork", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxSearchTypeOfWorkToView(final Model model,
             @ModelAttribute final TypeOfWorkSearchRequest searchRequestTypeOfWork) {
         final List<EgwTypeOfWork> searchResultList = typeOfWorkService.searchTypeOfWorkToView(searchRequestTypeOfWork);
@@ -83,7 +83,7 @@ public class AjaxTypeOfWorkController {
         return json;
     }
 
-    @RequestMapping(value = "/ajaxsearch-viewsubtypeofwork", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/ajaxsearch-subtypeofwork", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxSearchSubTypeOfWorkToView(final Model model,
             @ModelAttribute final TypeOfWorkSearchRequest typeOfWorkSearchRequest) {
         final List<EgwTypeOfWork> searchResultList = typeOfWorkService

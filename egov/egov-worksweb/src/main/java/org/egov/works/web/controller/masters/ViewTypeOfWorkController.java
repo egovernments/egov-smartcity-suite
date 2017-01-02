@@ -37,56 +37,39 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-$('#btnsearch').click(function(e) {
-	callAjaxSearch();
-});
+package org.egov.works.web.controller.masters;
 
-function callAjaxSearch() {
-	drillDowntableContainer = jQuery("#resultTable");
-	jQuery('.report-section').removeClass('display-hide');
-	reportdatatable = drillDowntableContainer
-			.dataTable({
-				ajax : {
-					url : "/egworks/masters/ajaxsearch-viewtypeofwork",
-					type : "POST",
-					"data" : getFormData(jQuery('form'))
-				},
-				"bDestroy" : true,
-				'bAutoWidth' : false,
-				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
-				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
-				"oTableTools" : {
-					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : []
-				},
-				"fnRowCallback" : function(row, data, index) {
-					$('td:eq(0)', row).html(index + 1);
-					$(row).on(
-							'click',
-							function() {
-								console.log(data.id);
-								window.open('/egworks/masters/typeofwork-view/'
-										+ data.id, '',
-										'width=800, height=600');
-							});
-					return row;
-				},
-				aaSorting : [],
-				columns : [ {
-					"data" : ""}, {
-					"data" : "code"}, {
-					"data" : "name"}, {
-					"data" : "description"	}]
-			});
-}
+import org.egov.commons.EgwTypeOfWork;
+import org.egov.commons.service.TypeOfWorkService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.works.utils.WorksConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-function getFormData($form){
-    var unindexed_array = $form.serializeArray();
-    var indexed_array = {};
+@Controller
+@RequestMapping(value = "/masters")
+public class ViewTypeOfWorkController {
 
-    $.map(unindexed_array, function(n, i){
-        indexed_array[n['name']] = n['value'];
-    });
+    @Autowired
+    private TypeOfWorkService typeOfWorkService;
 
-    return indexed_array;
+    @RequestMapping(value = "/typeofwork-view/{id}", method = RequestMethod.GET)
+    public String viewTypeOfWork(@PathVariable final String id, final Model model) throws ApplicationException {
+        final EgwTypeOfWork typeOfWork = typeOfWorkService.getTypeOfWorkById(Long.parseLong(id));
+        model.addAttribute("typeofwork", typeOfWork);
+        model.addAttribute(WorksConstants.MODE, "view");
+        return "typeofwork-success";
+    }
+
+    @RequestMapping(value = "/viewsubtypeofwork/{id}", method = RequestMethod.GET)
+    public String viewSubTypeOfWork(@PathVariable final String id, final Model model) throws ApplicationException {
+        final EgwTypeOfWork subTypeOfWork = typeOfWorkService.getTypeOfWorkById(Long.parseLong(id));
+        model.addAttribute("subtypeofwork", subTypeOfWork);
+        model.addAttribute(WorksConstants.MODE, "view");
+        return "subtypeofwork-success";
+    }
 }

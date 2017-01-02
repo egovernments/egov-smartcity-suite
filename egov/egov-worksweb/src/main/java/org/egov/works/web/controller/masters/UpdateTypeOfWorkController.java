@@ -42,7 +42,6 @@ package org.egov.works.web.controller.masters;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.egov.commons.EgPartytype;
 import org.egov.commons.EgwTypeOfWork;
@@ -52,67 +51,81 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping(value = "/masters")
-public class CreateTypeOfWorkController {
+public class UpdateTypeOfWorkController {
 
     @Autowired
     private TypeOfWorkService typeOfWorkService;
 
     @Autowired
-    @Qualifier("messageSource")
-    private MessageSource messageSource;
-
-    @Autowired
     private EgPartytypeHibernateDAO egPartytypeHibernateDAO;
 
-    @RequestMapping(value = "/typeofwork-newform", method = RequestMethod.GET)
-    public String showTypeOfWorkForm(final Model model) {
-        final EgwTypeOfWork typeOfWork = new EgwTypeOfWork();
+    @RequestMapping(value = "/typeofwork-update/{typeOfWorkId}", method = RequestMethod.GET)
+    public String showTypeOfWorkFormToModify(final Model model, @PathVariable final Long typeOfWorkId)
+            throws ApplicationException {
+        final EgwTypeOfWork typeOfWork = typeOfWorkService.getTypeOfWorkById(typeOfWorkId);
         model.addAttribute("egwTypeOfWork", typeOfWork);
-        return "typeofwork-form";
+        model.addAttribute(WorksConstants.MODE, WorksConstants.EDIT);
+        return "typeofwork-modify";
     }
 
-    @RequestMapping(value = "/typeofwork-save", method = RequestMethod.POST)
-    public String createTypeOfWork(@Valid @ModelAttribute final EgwTypeOfWork egwTypeOfWork,
-            final BindingResult resultBinder, final Model model) throws ApplicationException, IOException {
+    @RequestMapping(value = "/subtypeofwork-update/{subTypeOfWorkId}", method = RequestMethod.GET)
+    public String showSubTypeOfWorkFormToModify(final Model model, @PathVariable final Long subTypeOfWorkId)
+            throws ApplicationException {
+        final EgwTypeOfWork typeOfWork = typeOfWorkService.getTypeOfWorkById(subTypeOfWorkId);
+        model.addAttribute("typeOfWork", typeOfWork.getParentid());
+        model.addAttribute("egwTypeOfWork", typeOfWork);
+        model.addAttribute(WorksConstants.MODE, WorksConstants.EDIT);
+        return "subtypeofwork-modify";
+    }
+
+    @RequestMapping(value = "/modifytypeofwork", method = RequestMethod.POST)
+    public String modifyTypeOfWork(@ModelAttribute final EgwTypeOfWork egwTypeOfWork, final BindingResult resultBinder,
+            final Model model, final HttpServletRequest request) throws ApplicationException {
+        final String mode = request.getParameter(WorksConstants.MODE);
+        if (mode.equalsIgnoreCase(WorksConstants.EDIT) && egwTypeOfWork.getId() != null)
+            model.addAttribute(WorksConstants.MODE, mode);
         validateTypeOfWork(egwTypeOfWork, resultBinder);
         if (resultBinder.hasErrors()) {
             model.addAttribute("typeofwork", egwTypeOfWork);
-            return "typeofwork-form";
+            return "typeofwork-modify";
         }
         final EgPartytype egPartytype = egPartytypeHibernateDAO
                 .getPartytypeByCode(WorksConstants.PARTY_TYPE_CONTRACTOR);
         egwTypeOfWork.setEgPartytype(egPartytype);
-        typeOfWorkService.create(egwTypeOfWork);
+        typeOfWorkService.update(egwTypeOfWork);
         return "redirect:/masters/typeofwork-success?typeOfWorkId=" + egwTypeOfWork.getId();
 
     }
 
-    @RequestMapping(value = "/typeofwork-success", method = RequestMethod.GET)
-    public String successView(final Model model, final HttpServletRequest request) {
-        final Long typeOfWorkId = Long.valueOf(request.getParameter("typeOfWorkId"));
-        final EgwTypeOfWork newTypeOfWork = typeOfWorkService.getTypeOfWorkById(typeOfWorkId);
+    @RequestMapping(value = "/modifysubtypeofwork", method = RequestMethod.POST)
+    public String modifySubTypeOfWork(@ModelAttribute final EgwTypeOfWork egwTypeOfWork,
+            final BindingResult resultBinder, final Model model, final HttpServletRequest request)
+            throws ApplicationException, IOException {
         final String mode = request.getParameter(WorksConstants.MODE);
-        model.addAttribute("typeofwork", newTypeOfWork);
-        if (mode != null && mode.equalsIgnoreCase(WorksConstants.EDIT)) {
+        if (mode.equalsIgnoreCase(WorksConstants.EDIT) && egwTypeOfWork.getId() != null)
             model.addAttribute(WorksConstants.MODE, mode);
-            model.addAttribute("success", messageSource.getMessage("msg.typeofwork.modify.success",
-                    new String[] { newTypeOfWork.getName() }, null));
-        } else
-            model.addAttribute("success", messageSource.getMessage("msg.typeofwork.create.success",
-                    new String[] { newTypeOfWork.getName() }, null));
-
-        return "typeofwork-success";
+        validateSubTypeOfWork(egwTypeOfWork, resultBinder);
+        if (resultBinder.hasErrors()) {
+            model.addAttribute("typeofwork",
+                    typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
+            model.addAttribute("subtypeofwork", egwTypeOfWork);
+            return "subtypeofwork-modify";
+        }
+        final EgPartytype egPartytype = egPartytypeHibernateDAO
+                .getPartytypeByCode(WorksConstants.PARTY_TYPE_CONTRACTOR);
+        egwTypeOfWork.setEgPartytype(egPartytype);
+        typeOfWorkService.update(egwTypeOfWork);
+        return "redirect:/masters/subtypeofwork-success?subTypeOfWorkId=" + egwTypeOfWork.getId();
 
     }
 
@@ -141,63 +154,9 @@ public class CreateTypeOfWorkController {
 
     }
 
-    @RequestMapping(value = "/subtypeofwork-newform", method = RequestMethod.GET)
-    public String showSubTypeOfWorkForm(final Model model) {
-        final EgwTypeOfWork subTypeOfWork = new EgwTypeOfWork();
-        model.addAttribute("typeofwork",
-                typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
-        model.addAttribute("egwTypeOfWork", subTypeOfWork);
-        return "subtypeofwork-form";
-    }
-
-    @RequestMapping(value = "/subtypeofwork-save", method = RequestMethod.POST)
-    public String createSubTypeOfWork(@Valid @ModelAttribute final EgwTypeOfWork egwTypeOfWork,
-            final BindingResult resultBinder, final Model model) throws ApplicationException {
-        validateSubTypeOfWork(egwTypeOfWork, resultBinder);
-        if (resultBinder.hasErrors()) {
-            model.addAttribute("typeofwork",
-                    typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
-            model.addAttribute("subtypeofwork", egwTypeOfWork);
-            return "subtypeofwork-form";
-        }
-        final EgPartytype egPartytype = egPartytypeHibernateDAO
-                .getPartytypeByCode(WorksConstants.PARTY_TYPE_CONTRACTOR);
-        egwTypeOfWork.setEgPartytype(egPartytype);
-        typeOfWorkService.create(egwTypeOfWork);
-        return "redirect:/masters/subtypeofwork-success?subTypeOfWorkId=" + egwTypeOfWork.getId();
-
-    }
-
-    @RequestMapping(value = "/subtypeofwork-success", method = RequestMethod.GET)
-    public String subTypeOfWorkSuccessView(final Model model, final HttpServletRequest request) {
-        final Long subTypeOfWorkId = Long.valueOf(request.getParameter("subTypeOfWorkId"));
-        final EgwTypeOfWork newSubTypeOfWork = typeOfWorkService.getTypeOfWorkById(subTypeOfWorkId);
-        final String mode = request.getParameter(WorksConstants.MODE);
-        model.addAttribute("subtypeofwork", newSubTypeOfWork);
-        if (mode != null && mode.equalsIgnoreCase(WorksConstants.EDIT)) {
-            model.addAttribute(WorksConstants.MODE, mode);
-            model.addAttribute("success",
-                    messageSource
-                            .getMessage("msg.subtypeofwork.modify.success",
-                                    new String[] { newSubTypeOfWork.getName(), typeOfWorkService
-                                            .getTypeOfWorkById(newSubTypeOfWork.getParentid().getId()).getName() },
-                                    null));
-        } else
-            model.addAttribute("success",
-                    messageSource
-                            .getMessage("msg.subtypeofwork.create.success",
-                                    new String[] { newSubTypeOfWork.getName(), typeOfWorkService
-                                            .getTypeOfWorkById(newSubTypeOfWork.getParentid().getId()).getName() },
-                                    null));
-
-        return "subtypeofwork-success";
-
-    }
-
     private void validateSubTypeOfWork(final EgwTypeOfWork subTypeOfWork, final BindingResult resultBinder) {
         validateTypeOfWork(subTypeOfWork, resultBinder);
         if (subTypeOfWork.getParentid() == null)
             resultBinder.reject("error.typeofwork.select", "error.typeofwork.select");
     }
-
 }

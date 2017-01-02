@@ -128,5 +128,9 @@ public class TypeOfWorkService {
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
-
+    
+    @Transactional
+    public EgwTypeOfWork update(final EgwTypeOfWork typeOfWork) {
+        return typeOfWorkRepository.save(typeOfWork);
+    }
 }

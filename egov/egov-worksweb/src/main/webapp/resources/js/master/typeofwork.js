@@ -42,10 +42,6 @@ function createNewTypeOfWork() {
 	window.location = "/egworks/masters/typeofwork-newform";
 }
 
-function createNewSubTypeOfWork() {
-	window.location = "/egworks/masters/subtypeofwork-newform";
-}
-
 $(document).ready(function(){
 	var parentId = $('#parentId').val();
 	if (parentId != "") {
@@ -56,3 +52,69 @@ $(document).ready(function(){
 	}
 
 });
+
+jQuery('#btnsearch').click(function(e) {
+	callAjaxSearch();
+});
+
+function callAjaxSearch() {
+	drillDowntableContainer = jQuery("#resultTable");
+	jQuery('.report-section').removeClass('display-hide');
+	reportdatatable = drillDowntableContainer
+			.dataTable({
+				ajax : {
+					url : "/egworks/masters/ajaxsearch-typeofwork",
+					type : "POST",
+					"data" : getFormData(jQuery('form'))
+				},
+				"bDestroy" : true,
+				'bAutoWidth' : false,
+				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
+				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
+				"oTableTools" : {
+					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+					"aButtons" : []
+				},
+				"fnRowCallback" : function(row, data, index) {
+					$('td:eq(0)', row).html(index + 1);
+					$('td:eq(4)', row).html(
+							'<a href="javascript:void(0);" onclick="openTypeOfWork(\''
+									+ data.id + '\')">Modify</a>');
+					return row;
+					
+				},
+				aaSorting : [],
+				columns : [ {
+					"data" : "",
+					"sClass" : "text-center","sWidth": "1%"
+				}, {
+					"data" : "code",
+					"sWidth": "10%"
+				}, {
+					"data" : "name",
+					"sWidth" : "10%"
+				}, {
+					"data" : "description",
+					"sWidth": "20%"
+				}, {
+					"data" : "",
+					"sClass" : "text-center","sWidth": "10%"
+				}
+			] });
+}
+
+function getFormData($form){
+    var unindexed_array = $form.serializeArray();
+    var indexed_array = {};
+
+    $.map(unindexed_array, function(n, i){
+        indexed_array[n['name']] = n['value'];
+    });
+
+    return indexed_array;
+}
+
+
+function openTypeOfWork(typeOfWorkId) {
+	window.location = "/egworks/masters/typeofwork-update/"+typeOfWorkId;
+}

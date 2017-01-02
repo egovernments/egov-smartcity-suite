@@ -550,4 +550,14 @@
         <put-attribute name="page-title" value="lbl.searchsubtypeofwork" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/master/subtypeofwork/subtypeofwork-search.jsp"/>
     </definition>
+    
+    <definition name="typeofwork-modify" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.modifytypeofwork" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/typeofwork/typeofwork-modify.jsp"/>
+    </definition>
+    
+    <definition name="subtypeofwork-modify" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.modifysubtypeofwork" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/subtypeofwork/subtypeofwork-modify.jsp"/>
+    </definition>
 </tiles-definitions>

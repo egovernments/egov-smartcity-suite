@@ -1,0 +1,1 @@
+UPDATE egw_typeofwork SET code = replace(code, ' ', '');

@@ -37,30 +37,6 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-$('#typeofwork').blur(function(){
- if ($('#typeofwork').val() === '') {
-	   $('.typeofworkparams').empty();
-	   $('.typeofworkparams').append($('<option>').text('Select from below').attr('value', ''));
-		return;
-		} else {
-		$.ajax({
-			type: "GET",
-			url: "/egworks/lineestimate/getsubtypeofwork",
-			cache: true,
-			dataType: "json",
-			data:{'id' : $('#typeofwork').val()}
-		}).done(function(value) {
-			console.log(value);
-			$('.typeofworkparams').empty();
-			$('.typeofworkparams').append($("<option value=''>Select from below</option>"));
-			$.each(value, function(index, val) {
-				var selected="";
-			    $('#subtypeOfWorkName').append($('<option '+ selected +'>').text(val.name).attr('value', val.name));
-			    $('#subtypeOfWorkCode').append($('<option '+ selected +'>').text(val.code).attr('value', val.code));
-			});
-		});
-	}
-});
 $('#btnsearch').click(function(e) {
 	callAjaxSearch();
 });
@@ -69,9 +45,9 @@ function callAjaxSearch() {
 	drillDowntableContainer = jQuery("#resultTable");
 	jQuery('.report-section').removeClass('display-hide');
 	reportdatatable = drillDowntableContainer
-			.DataTable({
+			.dataTable({
 				ajax : {
-					url : "/egworks/masters/ajaxsearch-viewsubtypeofwork",
+					url : "/egworks/masters/ajaxsearch-typeofwork",
 					type : "POST",
 					"data" : getFormData(jQuery('form'))
 				},
@@ -89,20 +65,18 @@ function callAjaxSearch() {
 							'click',
 							function() {
 								console.log(data.id);
-								window.open('/egworks/masters/viewsubtypeofwork/'
+								window.open('/egworks/masters/typeofwork-view/'
 										+ data.id, '',
 										'width=800, height=600');
 							});
 					return row;
 				},
 				aaSorting : [],
-				columns : [{
-					"data" : ""},{
-					"data" : "code"},{
-					"data" : "name"},{
-					"data" : "description"},{
-					"data" : "parentid"
-					}],
+				columns : [ {
+					"data" : ""}, {
+					"data" : "code"}, {
+					"data" : "name"}, {
+					"data" : "description"	}]
 			});
 }
 

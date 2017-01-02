@@ -39,7 +39,8 @@
  */
 package org.egov.works.web.controller.masters;
 
-import org.egov.commons.EgwTypeOfWork;
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.commons.TypeOfWorkSearchRequest;
 import org.egov.commons.service.TypeOfWorkService;
 import org.egov.infra.exception.ApplicationException;
@@ -48,7 +49,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -62,34 +62,21 @@ public class SearchTypeOfWorkController {
     @RequestMapping(value = "/typeofwork-search", method = RequestMethod.GET)
     public String searchTypeOfWork(
             @ModelAttribute("searchRequestTypeOfWork") final TypeOfWorkSearchRequest searchRequestTypeOfWork,
-            final Model model) throws ApplicationException {
+            final Model model, final HttpServletRequest request) throws ApplicationException {
+        model.addAttribute(WorksConstants.MODE, request.getParameter(WorksConstants.MODE));
         model.addAttribute("typeOfWork",
                 typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
         return "typeofwork-search";
     }
 
-    @RequestMapping(value = "/typeofwork-view/{id}", method = RequestMethod.GET)
-    public String viewTypeOfWork(@PathVariable final String id, final Model model) throws ApplicationException {
-        final EgwTypeOfWork newTypeOfWork = typeOfWorkService.getTypeOfWorkById(Long.parseLong(id));
-        model.addAttribute("typeofwork", newTypeOfWork);
-        model.addAttribute("mode", "view");
-        return "typeofwork-success";
-    }
-
     @RequestMapping(value = "/subtypeofwork-search", method = RequestMethod.GET)
     public String searchSubTypeOfWork(
             @ModelAttribute("subTypeOfWorkSearchRequest") final TypeOfWorkSearchRequest subTypeOfWorkSearchRequest,
-            final Model model) throws ApplicationException {
+            final Model model, final HttpServletRequest request) throws ApplicationException {
+        model.addAttribute(WorksConstants.MODE, request.getParameter(WorksConstants.MODE));
         model.addAttribute("typeofwork",
                 typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
         return "subtypeofwork-search";
     }
 
-    @RequestMapping(value = "/viewsubtypeofwork/{id}", method = RequestMethod.GET)
-    public String viewSubTypeOfWork(@PathVariable final String id, final Model model) throws ApplicationException {
-        final EgwTypeOfWork newSubTypeOfWork = typeOfWorkService.getTypeOfWorkById(Long.parseLong(id));
-        model.addAttribute("subtypeofwork", newSubTypeOfWork);
-        model.addAttribute("mode", "view");
-        return "subtypeofwork-success";
-    }
 }

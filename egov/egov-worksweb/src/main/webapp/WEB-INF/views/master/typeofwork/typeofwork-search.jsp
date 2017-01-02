@@ -76,6 +76,7 @@
 			</div>
 		</div>
 	</div>
+	<input type="hidden" value="${mode }" id="mode" name="mode" />
 	<div class="row">
 		<div class="col-sm-12 text-center">
 			<button type='button' class='btn btn-primary' id="btnsearch">
@@ -87,5 +88,13 @@
 	</div>
 </form:form>
 <jsp:include page="typeofwork-searchresult.jsp" />
-<script src="<cdn:url value='/resources/js/master/viewtypeofwork.js?rnd=${app_release_no}'/>"></script>
-
+<c:choose>
+	<c:when test="${mode != 'view'}">
+		<script
+			src="<cdn:url value='/resources/js/master/typeofwork.js?rnd=${app_release_no}'/>"></script>
+	</c:when>
+	<c:otherwise>
+		<script
+			src="<cdn:url value='/resources/js/master/searchtypeofwork.js?rnd=${app_release_no}'/>"></script>
+	</c:otherwise>
+</c:choose>

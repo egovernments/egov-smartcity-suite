@@ -38,26 +38,39 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">
-		<spring:message code="title.searchresult" />
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
+
+<form:form name="typeofworkForm" id="typeofworkForm" role="form"
+	action="/egworks/masters/modifytypeofwork" modelAttribute="egwTypeOfWork"
+	class="form-horizontal form-groups-bordered">			
+	<input type="hidden" name="mode" value="${mode}" />
+	<spring:hasBindErrors name="egwTypeOfWork">
+		<div class="alert alert-danger col-md-12">
+			<form:errors cssClass="add-margin" />
+			<br />
+		</div>
+	</spring:hasBindErrors>
+	<div class="row">
+		<div class="col-md-12">
+			<jsp:include page="typeofwork-modifyheader.jsp" />
+		</div>
 	</div>
-	<div class="col-md-12 form-group report-table-container">
-		<table class="table table-bordered table-hover"
-			id="resultTable">
-			<thead>
-				<tr>
-					<th><spring:message code="lbl.slno" /></th>
-					<th><spring:message code="lbl.code" /></th>
-					<th><spring:message code="lbl.name" /></th>
-					<th><spring:message code="lbl.description" /></th>
-					<c:if test="${mode != 'view'}"> 
-						<th><spring:message code="lbl.modify" /></th>
-					</c:if>
-				</tr>
-			</thead>
-		</table>
+	<div class="row">
+		<div class="col-sm-12 text-center">
+			<button type="submit" name="submit" id="save"
+				class="btn btn-primary" value="Modify">
+				<spring:message code="lbl.modify" />
+			</button>
+			<button type="button" class="btn btn-default" id="button2"
+				onclick="window.close();">
+				<spring:message code="lbl.close" />
+			</button>
+		</div>
 	</div>
-</div>
+</form:form>
+<script
+	src="<cdn:url value='/resources/js/master/typeofwork.js?rnd=${app_release_no}'/>"></script>
