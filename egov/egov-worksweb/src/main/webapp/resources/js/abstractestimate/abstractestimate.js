@@ -3608,11 +3608,11 @@ function showHideAppravalDetails() {
 		nonSorTotal = 0.0;
 	var workValue = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal));
 	var estimateValue = parseFloat(parseFloat(workValue) + parseFloat(overheadTotal)).toFixed(2);
-	$('#estimateValue').val(estimateValue);
 	if($isEstimateDeductionGrid == 'true') {
 		var deductionTotal = $('#deductionTotalAmount').html();
 		estimateValue = parseFloat(parseFloat(workValue) + parseFloat(overheadTotal) + parseFloat(deductionTotal)).toFixed(2);
 	}
+	$('#estimateValue').val(estimateValue);
 	if(!isNaN(estimateValue)) {
 		$('#amountRule').val(estimateValue);
 	}
