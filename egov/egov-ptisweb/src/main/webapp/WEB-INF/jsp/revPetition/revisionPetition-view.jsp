@@ -375,9 +375,6 @@
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
 					<td><div id="header">
-					<s:property value="%{objection.id}"/>
-						<s:property value="%{currentDesignation}"/>
-						<s:property value="%{egwStatus.code}" />
 							<ul id="Tabs">
 								<li id="propertyHeaderTab" class="First Active"><a
 									id="header_1" href="#" onclick="showPropertyHeaderTab();"><s:text

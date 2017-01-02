@@ -669,8 +669,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if(WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)){
             addActionMessage(NATURE_OF_WORK_RP.equalsIgnoreCase(wfType)? getText("objection.forward.success") : getText("objection.grp.forward.success"));
             
-        }else
+        } else {
         sendEmailandSms(objection, REVISION_PETITION_ENDORESEMENTGENERATED);
+        }
         if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction)) {
             addActionMessage(NATURE_OF_WORK_RP.equalsIgnoreCase(wfType) ? getText("objection.outcome.success")
                     : getText("objection.grp.outcome.success"));
@@ -1263,7 +1264,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if (approverPositionId != null && approverPositionId != -1) {
             position = positionMasterService.getPositionById(approverPositionId);
         }
-        if ("Approve".equalsIgnoreCase(workFlowAction) && loggedInUserDesignation.endsWith("Commissioner")) {
+        if ("Approve".equalsIgnoreCase(workFlowAction) && loggedInUserDesignation!=null && loggedInUserDesignation.endsWith("Commissioner")) {
             pendingAction = new StringBuilder().append(loggedInUserDesignation).append(" ").append("Approval Pending")
                     .toString();
         }
@@ -2027,10 +2028,12 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         this.wfType = wfType;
     }
 
+    @Override
     public String getApplicationType() {
         return applicationType;
     }
 
+    @Override
     public void setApplicationType(String applicationType) {
         this.applicationType = applicationType;
     }
