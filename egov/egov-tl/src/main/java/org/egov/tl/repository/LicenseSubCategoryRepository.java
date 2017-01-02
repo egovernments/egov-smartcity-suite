@@ -53,7 +53,7 @@ public interface LicenseSubCategoryRepository extends JpaRepository<LicenseSubCa
 
     LicenseSubCategory findByCode(String code);
 
-    List<LicenseSubCategory> findByCategoryId(Long id);
+    List<LicenseSubCategory> findByCategoryIdOrderByNameAsc(Long id);
 
     List<LicenseSubCategory> findByLicenseTypeName(String licenseTypeName);
 

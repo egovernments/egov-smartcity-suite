@@ -78,7 +78,7 @@ public class LicenseSubCategoryService {
     }
 
     public List<LicenseSubCategory> getSubCategoriesByCategory(final Long categoryId) {
-        return licenseSubCategoryRepository.findByCategoryId(categoryId);
+        return licenseSubCategoryRepository.findByCategoryIdOrderByNameAsc(categoryId);
     }
 
     public LicenseSubCategory getSubCategoryByCode(final String code) {
