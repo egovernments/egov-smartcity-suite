@@ -55,6 +55,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -103,6 +106,9 @@ public class WaterChargeElasticSearchService {
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
+    
+    @Autowired
+    private CFinancialYearService cFinancialYearService;
 
     @Autowired
     private WaterChargeCollectionDocService waterChargeCollDocService;
@@ -339,6 +345,7 @@ public class WaterChargeElasticSearchService {
         Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
         final BoolQueryBuilder boolQuery = waterChargeCollDocService.prepareWhereClause(waterChargedashBoardRequest,
                 null);
+        CFinancialYear currFinYear = cFinancialYearService.getFinancialYearByDate(new Date());
 
         // orderingAggregationName is the aggregation name by which we have to
         // order the results
@@ -384,7 +391,7 @@ public class WaterChargeElasticSearchService {
             LOGGER.debug("Time taken by ulbWiseAggregations is (millisecs) : " + timeTaken);
         WaterTaxPayerDetails taxDetail;
         startTime = System.currentTimeMillis();
-        final Date fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+        final Date fromDate =DateUtils.startOfDay(currFinYear.getStartingDate());
         final Date toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
         final Date lastYearFromDate = org.apache.commons.lang3.time.DateUtils.addYears(fromDate, -1);
         final Date lastYearToDate = org.apache.commons.lang3.time.DateUtils.addYears(toDate, -1);

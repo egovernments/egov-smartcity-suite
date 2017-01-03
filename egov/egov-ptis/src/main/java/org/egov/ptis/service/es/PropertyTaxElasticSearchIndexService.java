@@ -63,7 +63,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
-import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.bean.dashboard.CollectionDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
@@ -120,7 +120,7 @@ public class PropertyTaxElasticSearchIndexService {
     private PropertyTaxIndexRepository propertyTaxIndexRepository;
     
     @Autowired
-    private FinancialYearDAO financialYearDAO;
+    private CFinancialYearService cFinancialYearService;
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
@@ -170,7 +170,7 @@ public class PropertyTaxElasticSearchIndexService {
             CollectionDetails collectionIndexDetails) {
         Date fromDate;
         Date toDate;
-        final CFinancialYear financialyear = financialYearDAO.getFinancialYearByDate(new Date());
+        CFinancialYear currFinYear = cFinancialYearService.getFinancialYearByDate(new Date());
 
         /**
          * For fetching total demand between the date ranges if dates are sent in the request, consider fromDate and toDate+1 ,
@@ -181,7 +181,7 @@ public class PropertyTaxElasticSearchIndexService {
             fromDate = DateUtils.getDate(collectionDetailsRequest.getFromDate(), "yyyy-MM-dd");
             toDate = DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), "yyyy-MM-dd"), 1);
         } else {
-            fromDate =DateUtils.startOfDay(financialyear.getStartingDate());
+            fromDate =DateUtils.startOfDay(currFinYear.getStartingDate());
             toDate = DateUtils.addDays(new Date(), 1);
         }
         Long startTime = System.currentTimeMillis();
@@ -354,6 +354,7 @@ public class PropertyTaxElasticSearchIndexService {
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest)
                 .filter(QueryBuilders.matchQuery(IS_ACTIVE, true))
                 .filter(QueryBuilders.matchQuery(IS_EXEMPTED, false));
+        CFinancialYear currFinYear = cFinancialYearService.getFinancialYearByDate(new Date());
 
         // orderingAggregationName is the aggregation name by which we have to
         // order the results
@@ -404,7 +405,7 @@ public class PropertyTaxElasticSearchIndexService {
 
         TaxPayerDetails taxDetail;
         startTime = System.currentTimeMillis();
-        Date fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+        final Date fromDate = DateUtils.startOfDay(currFinYear.getStartingDate());
         Date toDate = DateUtils.addDays(new Date(), 1);
         Date lastYearFromDate = DateUtils.addYears(fromDate, -1);
         Date lastYearToDate = DateUtils.addYears(toDate, -1);
