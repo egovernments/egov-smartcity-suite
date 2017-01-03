@@ -42,11 +42,13 @@ package org.egov.ptis.service.collection;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER_FEE_COLLECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
@@ -55,11 +57,13 @@ import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,23 +85,51 @@ public class MutationFeeCollection extends TaxCollection {
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyMutation> transferWorkflowService;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    
+    private static final Logger LOGGER = Logger.getLogger(MutationFeeCollection.class);
 
     @Override
     @Transactional
     public void updateDemandDetails(final BillReceiptInfo bri) {
         final PropertyMutation propertyMutation = propertyTransferService.getPropertyMutationByApplicationNo(getEgBill(
                 bri.getBillReferenceNum()).getConsumerId());
-        propertyMutation.setReceiptDate(bri.getReceiptDate());
-        propertyMutation.setReceiptNum(bri.getReceiptNum());
+        if (bri.getEvent().equals(EVENT_RECEIPT_CREATED)) {
+            if (propertyMutation != null && propertyMutation.getReceiptDate() == null
+                    && propertyMutation.getReceiptNum() == null) {
+                propertyMutation.setReceiptDate(bri.getReceiptDate());
+                propertyMutation.setReceiptNum(bri.getReceiptNum());
+            } else if (propertyMutation != null && propertyMutation.getReceiptDate() != null
+                    && !propertyMutation.getReceiptNum().isEmpty()
+                    && propertyTaxCommonUtils.isReceiptCanceled(propertyMutation.getReceiptNum())) {
+                propertyMutation.setReceiptDate(bri.getReceiptDate());
+                propertyMutation.setReceiptNum(bri.getReceiptNum());
+            } else {
+                LOGGER.error(
+                        "Mutation fee is already paid with  receipt : " + propertyMutation.getReceiptNum() + " for assessment : "
+                                + propertyMutation.getBasicProperty().getUpicNo());
+                throw new ValidationException();
+            }
+        }
         String nextAction = null;
-        final WorkFlowMatrix wFMatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
-                null, null, propertyMutation.getType(), propertyMutation.getCurrentState().getValue(), null);
-        nextAction = wFMatrix.getNextAction();
-        if (propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
-            propertyMutation.transition(true).withSenderName(propertyMutation.getState().getSenderName()).withDateInfo(new Date())
-                    .withOwner(propertyMutation.getState().getOwnerPosition())
-                    .withStateValue(TRANSFER_FEE_COLLECTED)
-                    .withNextAction(nextAction);
+        if (!WF_STATE_CLOSED.equalsIgnoreCase(propertyMutation.getCurrentState().getValue())) {
+            final WorkFlowMatrix wFMatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
+                    null, null, propertyMutation.getType(), propertyMutation.getCurrentState().getValue(), null);
+            nextAction = wFMatrix.getNextAction();
+            if (propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
+                propertyMutation.transition(true).withSenderName(propertyMutation.getState().getSenderName())
+                        .withDateInfo(new Date())
+                        .withOwner(propertyMutation.getState().getOwnerPosition())
+                        .withStateValue(TRANSFER_FEE_COLLECTED)
+                        .withNextAction(nextAction);
+        } else {
+            LOGGER.error("Mutation workflow is already closed for the receipt : " + propertyMutation.getReceiptNum()
+                    + " payed for assessment : "
+                    + propertyMutation.getBasicProperty().getUpicNo());
+            throw new ValidationException();
+        }
         propertyMutationService.persist(propertyMutation);
         propertyMutationService.getSession().flush();
     }
