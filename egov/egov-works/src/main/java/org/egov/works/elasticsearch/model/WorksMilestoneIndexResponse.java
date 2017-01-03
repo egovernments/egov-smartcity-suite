@@ -262,8 +262,8 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getJan01to15variance() {
-        if (jan01to15actual != null && !jan01to15actual.isNaN() && jan01to15actual != null && !jan01to15actual.isNaN())
-            return jan01to15actual - jan01to15actual;
+        if (jan01to15actual != null && !jan01to15actual.isNaN() && jan01to15target != null && !jan01to15target.isNaN())
+            return jan01to15actual - jan01to15target;
         else
             return null;
     }

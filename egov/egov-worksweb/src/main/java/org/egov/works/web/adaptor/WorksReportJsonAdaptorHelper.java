@@ -192,7 +192,7 @@ public class WorksReportJsonAdaptorHelper {
             jsonObject.addProperty(TOTAL_OF_BALANCE_WORK, "0.00");
     }
 
-    public void showNocemberData(final WorksMilestoneIndexResponse response, final JsonObject jsonObject,
+    public void showNovemberData(final WorksMilestoneIndexResponse response, final JsonObject jsonObject,
             final DateTime currentDate) {
         prepareAugustData(jsonObject, response);
         prepareSeptemberData(jsonObject, response);
