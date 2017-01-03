@@ -371,7 +371,7 @@ $(document).ready(function(){
 	
 	if($isEstimateDeductionGrid == 'true') {
 		deductionAccountCodeAndHead_initialize();
-		getDeductionAmountByPercentage();
+		calculateDeductionTotalAmount();
 	}
 	
 	$('.slide-copy-estimate-menu').click(function(){
