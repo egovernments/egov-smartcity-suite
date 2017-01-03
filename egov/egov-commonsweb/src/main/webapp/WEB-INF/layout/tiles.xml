@@ -134,5 +134,28 @@
 		<put-attribute name="page-title" value="title.nationality.edit" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/nationality/nationality-edit.jsp"/>
 	</definition>
+	<definition name="qualification-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.qualification.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/qualification/qualification-new.jsp"/>
+	</definition>
 	
+	<definition name="qualification-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.qualification.view" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/qualification/qualification-view.jsp"/>
+	</definition>
+	
+	<definition name="qualification-edit" extends="base_layout">
+		<put-attribute name="page-title" value="title.qualification.edit" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/qualification/qualification-edit.jsp"/>
+	</definition>
+	
+	<definition name="qualification-result" extends="base_layout">
+		<put-attribute name="page-title" value="title.qualification.result" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/qualification/qualification-result.jsp"/>
+	</definition>
+	
+	<definition name="qualification-search" extends="base_layout">
+		<put-attribute name="page-title" value="title.qualification.search" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/qualification/qualification-search.jsp"/>
+	</definition>
 </tiles-definitions>

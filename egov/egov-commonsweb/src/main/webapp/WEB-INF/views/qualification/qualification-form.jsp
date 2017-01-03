@@ -2,7 +2,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2017>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -37,30 +37,48 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ include file="/includes/taglibs.jsp"%>
-<form:form role="form" action="../update"
-	modelAttribute="councilQualification" id="councilQualificationform"
-	cssClass="form-horizontal form-groups-bordered"
-	enctype="multipart/form-data">
-	<%@ include file="councilqualification-form.jsp"%>
-	<input type="hidden" name="councilQualification"
-		value="${councilQualification.id}" />
-	<div class="form-group">
-		<div class="text-center">
-			<button type='submit' class='btn btn-primary' id="buttonSubmit">
-				<spring:message code='lbl.update' />
-			</button>
-			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+
+<div class="main-content">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">Educational Qualification</div>
+				</div>
+				<div class="panel-body">
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.name" /> <span class="mandatory"></span> </label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="name"
+								class="form-control text-left patternvalidation"
+								data-pattern="alphanumeric" maxlength="100" required="required" />
+							<form:errors path="name" cssClass="error-msg" />
+						</div>
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.description" /> <span class="mandatory"></span> </label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="description"
+								class="form-control text-left patternvalidation"
+								data-pattern="alphanumeric" maxlength="100" />
+							<form:errors path="description" cssClass="error-msg" />
+						</div>
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.isactive" /> <span class="mandatory"></span> </label>
+						<div class="col-sm-3 add-margin">
+							<form:checkbox path="isActive" />
+							<form:errors path="isActive" cssClass="error-msg" />
+						</div>
+					</div>
+					<input type="hidden" name="educationalQualification"
+						value="${educationalQualification.id}" />
+					<form:hidden path="code" id="code"
+						value="${educationalQualification.code}" />
+				</div>
+			</div>
 		</div>
 	</div>
-</form:form>
-<script>
-	$('#buttonSubmit').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
-	});
-</script>
+</div>

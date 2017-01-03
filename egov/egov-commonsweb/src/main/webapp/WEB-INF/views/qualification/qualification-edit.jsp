@@ -2,7 +2,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2017>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -39,6 +39,28 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<div class="alert alert-success" role="alert">
-	<strong>${message}</strong>
-</div><%@ include file="councilqualification-view.jsp"%>
+<form:form role="form" action="/common/qualification/update"
+	modelAttribute="educationalQualification" id="educationalQualificationform"
+	cssClass="form-horizontal form-groups-bordered"
+	enctype="multipart/form-data">
+	<%@ include file="qualification-form.jsp"%>
+	<input type="hidden" name="educationalQualification"
+		value="${qualification.id}" />
+	<div class="form-group">
+		<div class="text-center">
+			<button type='submit' class='btn btn-primary' id="buttonSubmit">
+				<spring:message code='lbl.update' />
+			</button>
+			<a href='javascript:void(0)' class='btn btn-default'
+				onclick='self.close()'><spring:message code='lbl.close' /></a>
+		</div>
+	</div>
+</form:form>
+<script>
+	$('#buttonSubmit').click(function(e) {
+		if ($('form').valid()) {
+		} else {
+			e.preventDefault();
+		}
+	});
+</script>

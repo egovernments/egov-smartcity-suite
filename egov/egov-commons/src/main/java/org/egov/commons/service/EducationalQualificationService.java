@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -38,15 +38,15 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.council.service;
+package org.egov.commons.service;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.council.entity.CouncilQualification;
-import org.egov.council.repository.CouncilQualificationRepository;
+import org.egov.common.entity.EducationalQualification;
+import org.egov.commons.repository.EducationalQualificationRepository;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
@@ -58,58 +58,60 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class CouncilQualificationService {
+public class EducationalQualificationService {
 
-	private final CouncilQualificationRepository councilQualificationRepository;
-	@PersistenceContext
-	private EntityManager entityManager;
+    private final EducationalQualificationRepository qualificationRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	public Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    @Autowired
+    public EducationalQualificationService(
+            final EducationalQualificationRepository qualificationRepository) {
+        this.qualificationRepository = qualificationRepository;
+    }
 
-	@Autowired
-	public CouncilQualificationService(
-			final CouncilQualificationRepository councilQualificationRepository) {
-		this.councilQualificationRepository = councilQualificationRepository;
-	}
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	@Transactional
-	public CouncilQualification create(
-			final CouncilQualification councilQualification) {
-		return councilQualificationRepository.save(councilQualification);
-	}
+    @Transactional
+    public EducationalQualification create(
+            final EducationalQualification qualification) {
+        return qualificationRepository.save(qualification);
+    }
 
-	@Transactional
-	public CouncilQualification update(
-			final CouncilQualification councilQualification) {
-		return councilQualificationRepository.save(councilQualification);
-	}
+    @Transactional
+    public EducationalQualification update(
+            final EducationalQualification qualification) {
+        return qualificationRepository.save(qualification);
+    }
 
-	public List<CouncilQualification> findAll() {
-		return councilQualificationRepository.findAll(new Sort(
-				Sort.Direction.ASC, "name"));
-	}
+    public List<EducationalQualification> findAll() {
+        return qualificationRepository.findAll(new Sort(
+                Sort.Direction.ASC, "name"));
+    }
 
-	public CouncilQualification findOne(Long id) {
-		return councilQualificationRepository.findOne(id);
-	}
+    public EducationalQualification findOne(Long id) {
+        return qualificationRepository.findOne(id);
+    }
 
-	public List<CouncilQualification> getActiveQualifications() {
-		return councilQualificationRepository.findByisActive(true);
-	}
-	public List<CouncilQualification> search(
-			CouncilQualification councilQualification) {
-		final Criteria criteria = getCurrentSession().createCriteria(
-				CouncilQualification.class);
-		if (null != councilQualification.getName())
-			criteria.add(Restrictions
-					.ilike("name", councilQualification.getName(), MatchMode.ANYWHERE));
-		if (councilQualification.getIsActive() != null
-				&& councilQualification.getIsActive() == true)
-			criteria.add(Restrictions.eq("isActive",
-					councilQualification.getIsActive()));
-		return criteria.list();
+    public List<EducationalQualification> getActiveQualifications() {
+        return qualificationRepository.findByisActive(true);
+    }
 
-	}
+    @SuppressWarnings("unchecked")
+    public List<EducationalQualification> search(
+            EducationalQualification qualification) {
+        final Criteria criteria = getCurrentSession().createCriteria(
+                EducationalQualification.class);
+        if (null != qualification.getName())
+            criteria.add(Restrictions
+                    .ilike("name", qualification.getName(), MatchMode.ANYWHERE));
+        if (qualification.getIsActive() != null
+                && qualification.getIsActive())
+            criteria.add(Restrictions.eq("isActive",
+                    qualification.getIsActive()));
+        return criteria.list();
+
+    }
 }
