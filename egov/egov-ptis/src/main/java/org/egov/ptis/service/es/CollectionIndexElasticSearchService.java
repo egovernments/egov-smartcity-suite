@@ -93,7 +93,6 @@ import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -246,6 +245,7 @@ public class CollectionIndexElasticSearchService {
         Date toDate;
         BigDecimal todayColl;
         BigDecimal tillDateColl;
+        final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
         Long startTime = System.currentTimeMillis();
         /**
          * As per Elastic Search functionality, to get the total collections between 2 dates, add a day to the endDate and fetch
@@ -258,7 +258,7 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
                     1);
         } else {
-            fromDate = new Date();
+            fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
             toDate = DateUtils.addDays(fromDate, 1);
         }
         // Today’s collection
@@ -280,7 +280,7 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
                     1);
         } else {
-            fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+            fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
             toDate = DateUtils.addDays(new Date(), 1);
         }
         // Current Year till today collection
@@ -350,6 +350,7 @@ public class CollectionIndexElasticSearchService {
         BigDecimal variance = BigDecimal.ZERO;
         String aggregationField = REGION_NAME;
         Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
+        final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
 
         /**
          * Select the grouping based on the type parameter, by default the grouping is done based on Regions. If type is region,
@@ -380,7 +381,7 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
                     1);
         } else {
-            fromDate = new Date();
+            fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
             toDate = DateUtils.addDays(fromDate, 1);
         }
 
@@ -399,7 +400,7 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
                     1);
         } else {
-            fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+            fromDate =DateUtils.startOfDay(financialYear.getStartingDate());
             toDate = DateUtils.addDays(new Date(), 1);
         }
         int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
@@ -648,7 +649,7 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
                     1);
         } else {
-            fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+            fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
             toDate = DateUtils.addDays(new Date(), 1);
         }
         Long startTime = System.currentTimeMillis();
@@ -768,6 +769,8 @@ public class CollectionIndexElasticSearchService {
             CollReceiptDetails receiptDetails) {
         Date fromDate;
         Date toDate;
+        CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
+
         /**
          * As per Elastic Search functionality, to get the total collections between 2 dates, add a day to the endDate and fetch
          * the results For Current day's collection if dates are sent in the request, consider the dates as toDate and toDate+1,
@@ -779,7 +782,7 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
                     1);
         } else {
-            fromDate = new Date();
+            fromDate =DateUtils.startOfDay(financialYear.getStartingDate());
             toDate = DateUtils.addDays(fromDate, 1);
         }
         Long startTime = System.currentTimeMillis();
@@ -797,7 +800,7 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
                     1);
         } else {
-            fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+            fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
             toDate = DateUtils.addDays(new Date(), 1);
         }
         // Current Year till today receipt count
@@ -875,7 +878,7 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
                     1);
         } else {
-            fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+            fromDate =DateUtils.startOfDay(financialYear.getStartingDate());
             toDate = DateUtils.addDays(new Date(), 1);
         }
 
@@ -999,6 +1002,8 @@ public class CollectionIndexElasticSearchService {
         String name;
         BigDecimal variance = BigDecimal.ZERO;
         String aggregationField = REGION_NAME;
+        final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
+
         /**
          * Select the grouping based on the type parameter, by default the grouping is done based on Regions. If type is region,
          * group by Region, if type is district, group by District, if type is ulb, group by ULB
@@ -1021,11 +1026,11 @@ public class CollectionIndexElasticSearchService {
          */
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
-            fromDate = DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD);
+            fromDate = DateUtils.getDate(collectionDetailsRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
             toDate = DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
                     1);
         } else {
-            fromDate = new Date();
+            fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
             toDate = DateUtils.addDays(fromDate, 1);
         }
         Long startTime = System.currentTimeMillis();
@@ -1041,7 +1046,7 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
                     1);
         } else {
-            fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+            fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
             toDate = DateUtils.addDays(new Date(), 1);
         }
         Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandCountResults(collectionDetailsRequest, fromDate,

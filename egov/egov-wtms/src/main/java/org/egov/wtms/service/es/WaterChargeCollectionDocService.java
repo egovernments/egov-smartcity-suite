@@ -290,7 +290,7 @@ public class WaterChargeCollectionDocService {
             toDate = org.apache.commons.lang3.time.DateUtils
                     .addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD), 1);
         } else {
-            fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+            fromDate = DateUtils.startOfDay(financialyear.getStartingDate());
             toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
         }
         // Current Year till today collection
@@ -316,7 +316,7 @@ public class WaterChargeCollectionDocService {
             toDate = org.apache.commons.lang3.time.DateUtils
                     .addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), "yyyy-MM-dd"), 1);
         } else {
-            fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+            fromDate =DateUtils.startOfDay(financialyear.getStartingDate());
             toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
         }
         // starts from
@@ -344,6 +344,8 @@ public class WaterChargeCollectionDocService {
         BigDecimal todayColl;// need to test
         BigDecimal tillDateColl;// need to test
         final Long startTime = System.currentTimeMillis();
+        final CFinancialYear financialyear = cFinancialYearService.getFinancialYearByDate(new Date());
+
         /**
          * As per Elastic Search functionality, to get the total collections
          * between 2 dates, add a day to the endDate and fetch the results For
@@ -356,7 +358,7 @@ public class WaterChargeCollectionDocService {
             toDate = org.apache.commons.lang3.time.DateUtils
                     .addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD), 1);
         } else {
-            fromDate = new Date();
+            fromDate =DateUtils.startOfDay(financialyear.getStartingDate());
             toDate = org.apache.commons.lang3.time.DateUtils.addDays(fromDate, 1);
         }
         // Today’s collection
@@ -380,7 +382,7 @@ public class WaterChargeCollectionDocService {
             toDate = org.apache.commons.lang3.time.DateUtils
                     .addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD), 1);
         } else {
-            fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+            fromDate = DateUtils.startOfDay(financialyear.getStartingDate());
             toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
         }
         // Current Year till today collection
@@ -393,6 +395,7 @@ public class WaterChargeCollectionDocService {
                 org.apache.commons.lang3.time.DateUtils.addYears(toDate, -1), null);
         collectionIndexDetails.setLastYearTillDateColl(tillDateColl);
         final Long timeTaken = System.currentTimeMillis() - startTime;
+
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken by getCompleteCollectionIndexDetails() is (millisecs) : " + timeTaken);
         /**
@@ -406,7 +409,7 @@ public class WaterChargeCollectionDocService {
             toDate = org.apache.commons.lang3.time.DateUtils
                     .addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), "yyyy-MM-dd"), 1);
         } else {
-            fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+            fromDate = DateUtils.startOfDay(financialyear.getStartingDate());
             toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
         }
         // starts from
@@ -523,7 +526,7 @@ public class WaterChargeCollectionDocService {
         BigDecimal variance;
         String aggregationField = WaterTaxConstants.REGIONNAMEAGGREGATIONFIELD;
         Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
-
+        final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
         /**
          * Select the grouping based on the type parameter, by default the
          * grouping is done based on Regions. If type is region, group by
@@ -556,7 +559,7 @@ public class WaterChargeCollectionDocService {
             toDate = org.apache.commons.lang3.time.DateUtils
                     .addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD), 1);
         } else {
-            fromDate = new Date();
+            fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
             toDate = org.apache.commons.lang3.time.DateUtils.addDays(fromDate, 1);
         }
 
@@ -576,7 +579,7 @@ public class WaterChargeCollectionDocService {
             toDate = org.apache.commons.lang3.time.DateUtils
                     .addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD), 1);
         } else {
-            fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+            fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
             toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
         }
         final int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
@@ -738,7 +741,7 @@ public class WaterChargeCollectionDocService {
             toDate = org.apache.commons.lang3.time.DateUtils
                     .addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD), 1);
         } else {
-            fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+            fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
             toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
         }
         Long startTime = System.currentTimeMillis();
@@ -1054,6 +1057,8 @@ public class WaterChargeCollectionDocService {
             final WaterChargeDashBoardRequest collectionDetailsRequest) {
         Date fromDate;
         Date toDate;
+        final CFinancialYear financialyear = cFinancialYearService.getFinancialYearByDate(new Date());
+
         final List<WaterChargeDashBoardResponse> receiptDetailsList = new ArrayList<>();
         final WaterChargeDashBoardResponse receiptDetails = new WaterChargeDashBoardResponse();
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
@@ -1064,7 +1069,7 @@ public class WaterChargeCollectionDocService {
             toDate = org.apache.commons.lang3.time.DateUtils
                     .addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD), 1);
         } else {
-            fromDate = new Date();
+            fromDate = DateUtils.startOfDay(financialyear.getStartingDate());
             toDate = org.apache.commons.lang3.time.DateUtils.addDays(fromDate, 1);
         }
         final Long startTime = System.currentTimeMillis(); // Today’s receipts
@@ -1081,7 +1086,7 @@ public class WaterChargeCollectionDocService {
             toDate = org.apache.commons.lang3.time.DateUtils
                     .addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD), 1);
         } else {
-            fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+            fromDate = DateUtils.startOfDay(financialyear.getStartingDate());
             toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
         } // Current Year till today
         receiptsCount = getTotalReceiptCountsForDates(collectionDetailsRequest, fromDate, toDate);
@@ -1296,6 +1301,8 @@ public class WaterChargeCollectionDocService {
          * by ULB
          */
         final String aggregationField = getaggregationFiledByType(collectionDetailsRequest);
+        final CFinancialYear financialyear = cFinancialYearService.getFinancialYearByDate(new Date());
+
         /**
          * For Current day's collection if dates are sent in the request,
          * consider the toDate, else take date range between current date +1 day
@@ -1306,7 +1313,7 @@ public class WaterChargeCollectionDocService {
             toDate = org.apache.commons.lang3.time.DateUtils
                     .addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD), 1);
         } else {
-            fromDate = new Date();
+            fromDate =DateUtils.startOfDay(financialyear.getStartingDate());
             toDate = org.apache.commons.lang3.time.DateUtils.addDays(fromDate, 1);
         }
         Long startTime = System.currentTimeMillis();
@@ -1324,7 +1331,7 @@ public class WaterChargeCollectionDocService {
             toDate = org.apache.commons.lang3.time.DateUtils
                     .addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD), 1);
         } else {
-            fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+            fromDate =DateUtils.startOfDay(financialyear.getStartingDate());
             toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
         }
         final Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandCountResults(collectionDetailsRequest,
