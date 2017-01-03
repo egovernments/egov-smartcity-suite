@@ -112,4 +112,7 @@ public interface ContractorBillRegisterRepository extends JpaRepository<Contract
             @Param("workOrderEstimateId") final Long workOrderEstimateId, @Param("status") final String status,
             @Param("billtype") final String billtype);
 
+    @Query("select COALESCE(sum(billdetail.creditamount),0) from EgBilldetails billdetail where billdetail.egBillregister.billstatus != :billStatus and billdetail.glcodeid in :coaIds and exists (select cbr from ContractorBillRegister cbr where billdetail.egBillregister.id = cbr.id and cbr.workOrderEstimate.id =:woeId and cbr.billstatus != :billStatus) and (billdetail.egBillregister.createdDate < (select createdDate from ContractorBillRegister where id = :contractorBillId) or (select count(*) from ContractorBillRegister where id = :contractorBillId) = 0 )")
+    Double getAdvanceAdjustedSoFar(@Param("woeId") final Long woeId, @Param("contractorBillId") final Long contractorBillId,
+            @Param("coaIds") final List<BigDecimal> coaIds, @Param("billStatus") final String billStatus);
 }

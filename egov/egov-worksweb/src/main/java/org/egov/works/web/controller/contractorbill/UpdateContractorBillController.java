@@ -51,6 +51,7 @@ import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -61,6 +62,8 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.pims.commons.Position;
+import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus;
+import org.egov.works.contractoradvance.service.ContractorAdvanceService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
@@ -114,7 +117,10 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
     private OfflineStatusService offlineStatusService;
 
     @Autowired
-    private MBHeaderService mBHeaderService;
+    private ContractorAdvanceService contractorAdvanceService;
+
+    @Autowired
+    private ChartOfAccountsService chartOfAccountsService;
 
     @ModelAttribute
     public ContractorBillRegister getContractorBillRegister(@PathVariable final String contractorBillRegisterId) {
@@ -345,21 +351,54 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                 resultBinder.rejectValue("workOrderEstimate.workCompletionDate", "error.workcompletiondate.billdate");
         }
 
-        final MBHeader mBHeader = mBHeaderService.getLatestMBHeaderToValidateBillDate(
+        final MBHeader mBHeader = mbHeaderService.getLatestMBHeaderToValidateBillDate(
                 contractorBillRegister.getWorkOrderEstimate().getId(), contractorBillRegister.getBilldate());
         if (mBHeader != null && contractorBillRegister.getBilldate().before(mBHeader.getMbDate()))
             resultBinder.rejectValue("mbHeader.mbDate", "error.billdate.mbdate");
+
+        final List<CChartOfAccounts> contractorAdvanceAccountCodes = chartOfAccountsService
+                .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_ADVANCE_PURPOSE);
+        for (final EgBilldetails billdetails : contractorBillRegister.getAdvanceAdjustmentDetails())
+            if (contractorAdvanceAccountCodes != null && !contractorAdvanceAccountCodes.isEmpty()
+                    && contractorAdvanceAccountCodes
+                            .contains(chartOfAccountsService.findById(billdetails.getGlcodeid().longValue(), false))) {
+                final Double advancePaidSoFar = contractorAdvanceService.getTotalAdvancePaid(null,
+                        workOrderEstimate.getId(),
+                        ContractorAdvanceRequisitionStatus.APPROVED.toString());
+                final Double advanceAdjustedSoFar = contractorBillRegisterService.getAdvanceAdjustedSoFar(
+                        workOrderEstimate.getId(),
+                        contractorBillRegister.getId(), contractorAdvanceAccountCodes);
+                if (billdetails.getCreditamount().compareTo(BigDecimal.valueOf(advancePaidSoFar)) == 1)
+                    resultBinder.reject("error.advance.greater.paid", "error.advance.greater.paid");
+                if (billdetails.getCreditamount().compareTo(contractorBillRegister.getBillamount()) == 1)
+                    resultBinder.reject("error.advance.greater.billamount", "error.advance.greater.billamount");
+                if (billdetails.getCreditamount().add(BigDecimal.valueOf(advanceAdjustedSoFar))
+                        .compareTo(BigDecimal.valueOf(advancePaidSoFar)) == 1)
+                    resultBinder.reject("error.adjusted.greater.paid", "error.adjusted.greater.paid");
+                if (contractorBillRegister.getBilltype().equalsIgnoreCase(WorksConstants.FINAL_BILL) && advancePaidSoFar > 0
+                        && advanceAdjustedSoFar == 0)
+                    resultBinder.reject("error.finalbill.adjusted.zero", new String[] { advancePaidSoFar.toString() },
+                            "error.finalbill.adjusted.zero");
+                if (contractorBillRegister.getBilltype().equalsIgnoreCase(WorksConstants.FINAL_BILL) && advancePaidSoFar > 0
+                        && billdetails.getCreditamount().add(BigDecimal.valueOf(advanceAdjustedSoFar))
+                                .compareTo(BigDecimal.valueOf(advancePaidSoFar)) != 0) {
+                    final Double balance = advancePaidSoFar - advanceAdjustedSoFar;
+                    resultBinder.reject("error.finalbill.adjust.remaining",
+                            new String[] { advancePaidSoFar.toString(), advanceAdjustedSoFar.toString(), balance.toString() },
+                            "error.finalbill.adjust.remaining");
+                }
+            }
     }
 
     private void setDropDownValues(final Model model) {
-        final List<CChartOfAccounts> contractorPayableAccountList = chartOfAccountsHibernateDAO
+        final List<CChartOfAccounts> contractorPayableAccountList = chartOfAccountsService
                 .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
         final List<CChartOfAccounts> contractorRefundAccountList = chartOfAccountsHibernateDAO
                 .getAccountCodeByListOfPurposeName(WorksConstants.CONTRACTOR_REFUND_PURPOSE);
         model.addAttribute("netPayableAccounCodes", contractorPayableAccountList);
         model.addAttribute("statutoryDeductionAccounCodes",
-                chartOfAccountsHibernateDAO.getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_DEDUCTIONS_PURPOSE));
-        model.addAttribute("retentionMoneyDeductionAccounCodes", chartOfAccountsHibernateDAO
+                chartOfAccountsService.getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_DEDUCTIONS_PURPOSE));
+        model.addAttribute("retentionMoneyDeductionAccounCodes", chartOfAccountsService
                 .getAccountCodeByPurposeName(WorksConstants.RETENTION_MONEY_DEDUCTIONS_PURPOSE));
         model.addAttribute("refundAccounCodes", contractorRefundAccountList);
         model.addAttribute("billTypes", BillTypes.values());
@@ -416,6 +455,19 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                         WorksConstants.APPCONFIG_KEY_RETENTION_MONEY_PER_FOR_FINAL_BILL);
         model.addAttribute("retentionMoneyPerForPartBill", retentionMoneyPerForPartBillApp.get(0).getValue());
         model.addAttribute("retentionMoneyPerForFinalBill", retentionMoneyPerForFinalBillApp.get(0).getValue());
+
+        final Double advancePaidTillNow = contractorAdvanceService.getTotalAdvancePaid(null,
+                contractorBillRegister.getWorkOrderEstimate().getId(),
+                ContractorAdvanceRequisitionStatus.APPROVED.toString());
+        model.addAttribute("advancePaidTillNow", advancePaidTillNow);
+
+        final List<CChartOfAccounts> contractorAdvanceAccountCodes = chartOfAccountsService
+                .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_ADVANCE_PURPOSE);
+        final Double advanceAdjustedSoFar = contractorBillRegisterService.getAdvanceAdjustedSoFar(
+                contractorBillRegister.getWorkOrderEstimate().getId(),
+                contractorBillRegister.getId(), contractorAdvanceAccountCodes);
+        model.addAttribute("contractorAdvanceAccountCodes", contractorAdvanceAccountCodes);
+        model.addAttribute("advanceAdjustedSoFar", advanceAdjustedSoFar);
 
         final ContractorBillRegister newcontractorBillRegister = getContractorBillDocuments(contractorBillRegister);
         if (newcontractorBillRegister.getAssetDetailsList() != null

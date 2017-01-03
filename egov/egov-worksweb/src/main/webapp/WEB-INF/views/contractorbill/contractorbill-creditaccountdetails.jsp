@@ -46,6 +46,11 @@
 
 <form:hidden path="" name="retentionMoneyPerForPartBill" id="retentionMoneyPerForPartBill" value="${retentionMoneyPerForPartBill }" class="form-control table-input hidden-input"/>
 <form:hidden path="" name="retentionMoneyPerForFinalBill" id="retentionMoneyPerForFinalBill" value="${retentionMoneyPerForFinalBill }" class="form-control table-input hidden-input"/>
+<input id="erroradvancegreaterpaid" type="hidden" value="<spring:message code="error.advance.greater.paid" />" />
+<input id="erroradvancegreaterbillamount" type="hidden" value="<spring:message code="error.advance.greater.billamount" />" />
+<input id="erroradjustedgreaterpaid" type="hidden" value="<spring:message code="error.adjusted.greater.paid" />" />
+<input id="errorfinaladjustedzero" type="hidden" value="<spring:message code="error.finalbill.adjusted.zero" />" />
+<input id="errorfinaladjustremaining" type="hidden" value="<spring:message code="error.finalbill.adjust.remaining" />" />
 
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
@@ -70,19 +75,23 @@
 			</thead>
 			<tbody>
 				<c:choose>
-					<c:when test="${billDetailsMap != null && billDetailsMap.size() >= 2}">					
+					<c:when test="${billDetailsMap != null && billDetailsMap.size() >= 2}">			
 						<c:set var="isStatutaryDeductionsPresent" value="${false}" scope="session" />
 						<c:set var="isOtherDeductionsPresent" value="${false}" scope="session" />
 						<c:set var="isRetentionMoneyDeductionsPresent" value="${false}" scope="session" />
+						<c:set var="isContractorAdvanceDeductionPresent" value="${false}" scope="session" />
 						<c:forEach items="${billDetailsMap}" var="billDetail" varStatus="item" >	
-							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isRetentionMoneyDeduction && billDetail.isStatutoryDeduction}">
+							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isRetentionMoneyDeduction && billDetail.isStatutoryDeduction && !billDetail.isContractorAdvanceDeduction}">
 								<c:set var="isStatutaryDeductionsPresent" value="${true}" scope="session" />
 							</c:if>	
-							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isRetentionMoneyDeduction && !billDetail.isStatutoryDeduction}">
+							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isRetentionMoneyDeduction && !billDetail.isStatutoryDeduction && !billDetail.isContractorAdvanceDeduction}">
 								<c:set var="isOtherDeductionsPresent" value="${true}" scope="session" />
 							</c:if>	
-							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && billDetail.isRetentionMoneyDeduction && !billDetail.isStatutoryDeduction}">
+							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && billDetail.isRetentionMoneyDeduction && !billDetail.isStatutoryDeduction && !billDetail.isContractorAdvanceDeduction}">
 								<c:set var="isRetentionMoneyDeductionsPresent" value="${true}" scope="session" />
+							</c:if>
+							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isRetentionMoneyDeduction && !billDetail.isStatutoryDeduction && billDetail.isContractorAdvanceDeduction}">
+								<c:set var="isContractorAdvanceDeductionPresent" value="${true}" scope="session" />
 							</c:if>	
 						</c:forEach>	
 					</c:when>
@@ -289,6 +298,97 @@
 				</c:choose>
 			</tbody>
 		</table>
+		
+<div class="panel-heading custom_form_panel_heading">
+	<div class="panel-title">
+		<spring:message code="lbl.advance.adjustments" />
+	</div>
+</div>
+<div>
+	<table class="table table-bordered" id="advanceDetails">
+		<thead>
+			<tr>
+				<th><spring:message code="lbl.advance.paid" /></th>
+				<th><spring:message code="lbl.advance.adjusted" /></th>
+				<th><spring:message code="lbl.balance.adjusted" /></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr id="advancedetailsrow">
+				<td align="right" id="advancePaid"><fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
+								minFractionDigits="2" value="${advancePaidTillNow }" /></td>
+				<td align="right" id="advanceAdjusted"><fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
+								minFractionDigits="2" value="${advanceAdjustedSoFar }" /></td>
+				<td align="right"><fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
+								minFractionDigits="2" value="${advancePaidTillNow - advanceAdjustedSoFar }" /></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<table class="table table-bordered" id="tbladvanceadjustments">
+	<thead>
+		<tr>
+			<th><spring:message code="lbl.account.code"/></th>
+			<th><spring:message code="lbl.credit.amount"/></th>
+		</tr>
+	</thead>
+	<tbody>
+		<c:choose>
+			<c:when test="${billDetailsMap == null || !isContractorAdvanceDeductionPresent}">
+				<tr id="advanceadjustmentsrow">
+					<td> <form:select path="advanceAdjustmentDetails[0].glcodeid" name="advanceAdjustmentDetails[0].glcodeid" id="advanceAdjustmentDetails[0].glcodeid"  data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0"  class="form-control table-input creditGlcode"  onchange="calculateNetPayableAmount();">
+							<form:option value=""> <spring:message code="lbl.select" /> </form:option>
+								<c:forEach var="coa" items="${contractorAdvanceAccountCodes}">
+									<form:option value="${coa.id}">
+										<c:out value="${coa.glcode} - ${coa.name}" />
+									</form:option>
+								</c:forEach>
+						</form:select>
+						<form:hidden path="advanceAdjustmentDetails[0].glcodeid"  name="advanceAdjustmentDetails[0].glcodeid" id="retentionMoneyDeductionDetailes[0].glcodeid" value="${egBilldetailes.glcodeid}" class="form-control table-input hidden-input contractoradvanceglcodeid"/> 
+						<form:errors path="advanceAdjustmentDetails[0].glcodeid" cssClass="add-margin error-msg" /> 
+					</td>
+					<td>
+						<form:input path="advanceAdjustmentDetails[0].creditamount" id="advanceAmount" name="advanceAdjustmentDetails[0].creditamount" data-errormsg="Advance Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount validateZero" onblur="calculateNetPayableAmount();"  maxlength="12"  />
+						<form:errors path="advanceAdjustmentDetails[0].creditamount" cssClass="add-margin error-msg" /> 
+					</td> 
+				</tr>
+			</c:when>
+			<c:otherwise>					
+				<c:set var="rowIndex" value="${0}" scope="session" />
+				<c:forEach items="${billDetailsMap }" var="billDetail" varStatus="item" >
+					<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isOtherDeductionsPresent && !billDetail.isStatutoryDeduction && !billDetail.isRetentionMoneyDeduction && billDetail.isContractorAdvanceDeduction}">
+						<tr id="advanceadjustmentsrow">
+							<td>
+								<form:select path="advanceAdjustmentDetails[${rowIndex }].glcodeid" data-first-option="false" name="advanceAdjustmentDetails[${rowIndex }].glcodeid" id="advanceAdjustmentDetails[${rowIndex }].glcodeid"  class="form-control table-input" onchange="calculateNetPayableAmount();">
+									<form:option value=""> <spring:message code="lbl.select" /> </form:option>
+									<c:forEach var="coa" items="${contractorAdvanceAccountCodes}">
+										<c:if test="${billDetail.glcodeId == coa.id }">
+											<form:option value="${coa.id}" selected="selected">
+												<c:out value="${coa.glcode} - ${coa.name}" />
+											</form:option>
+										</c:if>
+										<c:if test="${billDetail.glcodeId != coa.id }">
+											<form:option value="${coa.id}">
+												<c:out value="${coa.glcode} - ${coa.name}" />
+											</form:option>
+										</c:if>
+									</c:forEach>
+								</form:select> 
+								<form:hidden path="advanceAdjustmentDetails[${rowIndex }].glcodeid" name="advanceAdjustmentDetails[${rowIndex }].glcodeid" value="${billDetail.glcodeId}" id="advanceAdjustmentDetails[${rowIndex }].glcodeid" class="form-control table-input hidden-input contractoradvanceglcodeid"/> 
+								<form:errors path="advanceAdjustmentDetails[${rowIndex }].glcodeid" cssClass="add-margin error-msg" /> 
+							</td>
+							<td>
+								<form:input path="advanceAdjustmentDetails[${rowIndex }].creditamount" id="advanceAmount" name="advanceAdjustmentDetails[${rowIndex }].creditamount" value="${billDetail.amount }" data-errormsg="Advance Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount validateZero" onblur="calculateNetPayableAmount();"  maxlength="12"  />
+								<form:errors path="advanceAdjustmentDetails[${rowIndex }].creditamount" cssClass="add-margin error-msg" /> 
+							</td> 
+						</tr>
+						<c:set var="rowIndex" value="${rowIndex+1}" scope="session" />
+					</c:if>							
+				</c:forEach>
+			</c:otherwise>
+		</c:choose>
+	</tbody>
+</table>
 
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">

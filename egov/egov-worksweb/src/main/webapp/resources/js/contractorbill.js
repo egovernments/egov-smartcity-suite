@@ -186,6 +186,8 @@ $(document).ready(function(){
 				return false;
 			if(!validateRefundAmount())
 				return false;
+			if(!validateContractorAdvanceDetails())
+				return false;
 			if(button != 'createandapprove')
 			   return validateWorkFlowApprover(button);
 			else {
@@ -433,8 +435,8 @@ function validateMBPageNumbers() {
 }
 
 function validateNetPayableAmount() {
-	if($('#debitamount').val() != '' && $('#netPayableAmount').val() <= 0) {
-		bootbox.alert("Net Payable amount should be greater than zero!");
+	if($('#debitamount').val() != '' && $('#netPayableAmount').val() < 0) {
+		bootbox.alert("Net Payable amount should not be less than zero!");
 		return false;
 	}
 	return true;
@@ -677,7 +679,6 @@ function calculateRetentionMoneyDeductionAmount(obj)
 }
 
 function validateDeductionGrids(){
-	var flag = true;
 	//Validating statutory deduction grid
 	var statutoryDeductionTblLength = $('#tblstatutorydeductioncreditdetails tr').length - 1;
 	var index;
@@ -738,7 +739,7 @@ function validateDeductionGrids(){
 		
 	}
 	
-	return true;
+	return validateContractorAdvanceDetails();
 }
 
 $('#billtype').change(function() {
@@ -1046,3 +1047,42 @@ $(document).on('keyup','.validateZero', function(){
         this.value = val.substring(0, val.length - 1);
     }
 });
+
+function validateContractorAdvanceDetails() {
+	var advancePaid = $('#advancePaid').html().trim();
+	var advanceAdjusted = $('#advanceAdjusted').html().trim();
+	var advanceAmount = $('#advanceAmount').val();
+	var billAmount = $('#billamount').val();
+	var billtype = $('#billtype').val();
+	
+	if (parseFloat(advanceAmount) > parseFloat(advancePaid)) {
+		bootbox.alert($('#erroradvancegreaterpaid').val());
+		return false;
+	}
+	if (parseFloat(advanceAmount) > parseFloat(billAmount)) {
+		bootbox.alert($('#erroradvancegreaterbillamount').val());
+		return false;
+	}
+	if (parseFloat(parseFloat(advanceAdjusted) + parseFloat(advanceAmount)) > parseFloat(advancePaid)) {
+		bootbox.alert($('#erroradjustedgreaterpaid').val());
+		return false;
+	}
+	if (billtype == "Final Bill" && parseFloat(advancePaid) > 0) {
+		var message = "";
+		if (parseFloat(advanceAdjusted) == 0) {
+			message = $('#errorfinaladjustedzero').val();
+			message = message.replace('{0}', advancePaid);
+			bootbox.alert(message);
+			return false;
+		}
+		if (parseFloat(advancePaid) != parseFloat(parseFloat(advanceAdjusted) + parseFloat(advanceAmount))) {
+			message = $('#errorfinaladjustremaining').val();
+			message = message.replace('{0}', advancePaid);
+			message = message.replace('{1}', advanceAdjusted);
+			message = message.replace('{2}', parseFloat(parseFloat(advancePaid) - parseFloat(advanceAdjusted)));
+			bootbox.alert(message);
+			return false;
+		}
+	}
+	return true;
+}

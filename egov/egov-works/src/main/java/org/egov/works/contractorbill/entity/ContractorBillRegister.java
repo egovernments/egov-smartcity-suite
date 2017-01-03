@@ -120,6 +120,9 @@ public class ContractorBillRegister extends EgBillregister {
     private List<EgBilldetails> retentionMoneyDeductionDetailes = new ArrayList<EgBilldetails>(0);
 
     @Transient
+    private List<EgBilldetails> advanceAdjustmentDetails = new ArrayList<EgBilldetails>(0);
+
+    @Transient
     private Long approvalDepartment;
 
     @Transient
@@ -197,6 +200,14 @@ public class ContractorBillRegister extends EgBillregister {
 
     public List<StatutoryDeductionsForBill> getStatutoryDeductionsList() {
         return statutoryDeductionsList;
+    }
+
+    public List<EgBilldetails> getAdvanceAdjustmentDetails() {
+        return advanceAdjustmentDetails;
+    }
+
+    public void setAdvanceAdjustmentDetails(final List<EgBilldetails> advanceAdjustmentDetails) {
+        this.advanceAdjustmentDetails = advanceAdjustmentDetails;
     }
 
     public void setStatutoryDeductionsList(final List<StatutoryDeductionsForBill> statutoryDeductionsList) {

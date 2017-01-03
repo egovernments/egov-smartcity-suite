@@ -60,6 +60,7 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
@@ -78,6 +79,7 @@ import org.egov.pims.commons.Position;
 import org.egov.services.voucher.VoucherService;
 import org.egov.works.contractorbill.entity.ContractorBillCertificateInfo;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.egov.works.contractorbill.entity.ContractorBillRegister.BillStatus;
 import org.egov.works.contractorbill.entity.SearchRequestContractorBill;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.repository.ContractorBillRegisterRepository;
@@ -167,6 +169,9 @@ public class ContractorBillRegisterService {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
+
+    @Autowired
+    private ChartOfAccountsService chartOfAccountsService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -686,6 +691,9 @@ public class ContractorBillRegisterService {
         for (final EgBilldetails billDetails : contractorBillRegister.getRetentionMoneyDeductionDetailes())
             if (billDetails.getId() == null)
                 contractorBillRegister.getBillDetailes().add(billDetails);
+        for (final EgBilldetails billDetails : contractorBillRegister.getAdvanceAdjustmentDetails())
+            if (billDetails.getId() == null)
+                contractorBillRegister.getBillDetailes().add(billDetails);
     }
 
     public Date getLastPartBillDateForContractorBill(final Date billCreatedDate, final Long workOrderEstimateId) {
@@ -750,14 +758,16 @@ public class ContractorBillRegisterService {
 
         final List<CChartOfAccounts> contractorRefundAccountList = chartOfAccountsHibernateDAO
                 .getAccountCodeByListOfPurposeName(WorksConstants.CONTRACTOR_REFUND_PURPOSE);
-        final List<CChartOfAccounts> contractorNetPayableAccountList = chartOfAccountsHibernateDAO
+        final List<CChartOfAccounts> contractorNetPayableAccountList = chartOfAccountsService
                 .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
-        final List<CChartOfAccounts> contractorDeductionAccountList = chartOfAccountsHibernateDAO
+        final List<CChartOfAccounts> contractorDeductionAccountList = chartOfAccountsService
                 .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_DEDUCTIONS_PURPOSE);
-        final List<CChartOfAccounts> retentionMoneyDeductionAccountList = chartOfAccountsHibernateDAO
+        final List<CChartOfAccounts> retentionMoneyDeductionAccountList = chartOfAccountsService
                 .getAccountCodeByPurposeName(WorksConstants.RETENTION_MONEY_DEDUCTIONS_PURPOSE);
+        final List<CChartOfAccounts> contractorAdvanceDeductionList = chartOfAccountsService
+                .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_ADVANCE_PURPOSE);
         for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes()) {
-            final CChartOfAccounts coa = chartOfAccountsHibernateDAO
+            final CChartOfAccounts coa = chartOfAccountsService
                     .findById(egBilldetails.getGlcodeid().longValue(), false);
             if (egBilldetails.getDebitamount() != null) {
                 billDetails = new HashMap<String, Object>();
@@ -805,6 +815,11 @@ public class ContractorBillRegisterService {
                     billDetails.put("isRetentionMoneyDeduction", true);
                 else
                     billDetails.put("isRetentionMoneyDeduction", false);
+                if (contractorAdvanceDeductionList != null && !contractorAdvanceDeductionList.isEmpty()
+                        && contractorAdvanceDeductionList.contains(coa))
+                    billDetails.put("isContractorAdvanceDeduction", true);
+                else
+                    billDetails.put("isContractorAdvanceDeduction", false);
 
             }
             billDetailsList.add(billDetails);
@@ -859,7 +874,7 @@ public class ContractorBillRegisterService {
             if (egBillDetail.getDebitamount() != null && egBillDetail.getGlcodeid() == null)
                 resultBinder.rejectValue("refundBillDetails[" + index + "].glcodeid", "error.refundaccountcode.required");
             if (egBillDetail.getGlcodeid() != null && egBillDetail.getDebitamount() != null) {
-                final CChartOfAccounts coa = chartOfAccountsHibernateDAO
+                final CChartOfAccounts coa = chartOfAccountsService
                         .findById(egBillDetail.getGlcodeid().longValue(), false);
                 final String amounts = getTotalDebitAndCreditAmountByAccountCode(
                         contractorBillRegister.getWorkOrderEstimate().getId(), new BigDecimal(coa.getId()),
@@ -901,7 +916,7 @@ public class ContractorBillRegisterService {
         boolean isDebit = false;
         CChartOfAccounts coa = null;
         if (!(BigDecimal.ZERO.compareTo(egBilldetails.getGlcodeid()) == 0))
-            coa = chartOfAccountsHibernateDAO.findById(egBilldetails.getGlcodeid().longValue(), false);
+            coa = chartOfAccountsService.findById(egBilldetails.getGlcodeid().longValue(), false);
         if (coa != null && coa.getId() != null)
             egBilldetails.setGlcodeid(BigDecimal.valueOf(coa.getId()));
         if (egBilldetails.getDebitamount() != null
@@ -997,6 +1012,15 @@ public class ContractorBillRegisterService {
     public Double getTotalPartBillsAmount(final Long workOrderEstimateId, final String billStatus, final String billtype) {
         return contractorBillRegisterRepository.findSumOfBillAmountByWorkOrderEstimateAndStatusAndBilltype(workOrderEstimateId,
                 billStatus, billtype);
+    }
+
+    public Double getAdvanceAdjustedSoFar(final Long woeId, final Long contractorBillId,
+            final List<CChartOfAccounts> contractorAdvanceAccountCodes) {
+        final List<BigDecimal> coaIds = new ArrayList<>();
+        for (final CChartOfAccounts accounts : contractorAdvanceAccountCodes)
+            coaIds.add(BigDecimal.valueOf(accounts.getId()));
+        return contractorBillRegisterRepository.getAdvanceAdjustedSoFar(woeId, contractorBillId, coaIds,
+                BillStatus.CANCELLED.toString());
     }
 
 }

@@ -148,7 +148,7 @@
 			</thead>
 			<tbody>
 			<c:forEach items="${billDetailsMap}" var="creditBillDetails" varStatus="item">
-				<c:if test="${!creditBillDetails.isDebit && !creditBillDetails.isNetPayable && creditBillDetails.isStatutoryDeduction && !creditBillDetails.isRetentionMoneyDeduction}"> 
+				<c:if test="${!creditBillDetails.isDebit && !creditBillDetails.isNetPayable && creditBillDetails.isStatutoryDeduction && !creditBillDetails.isRetentionMoneyDeduction && !creditBillDetails.isContractorAdvanceDeduction}"> 
 					<tr id="deductionRow">
 						<td>
 							<c:out value="${creditBillDetails.glcode}" /> 
@@ -183,7 +183,7 @@
 			</thead>
 			<tbody>
 			<c:forEach items="${billDetailsMap}" var="creditBillDetails" varStatus="item">
-				<c:if test="${!creditBillDetails.isDebit && !creditBillDetails.isNetPayable && !creditBillDetails.isStatutoryDeduction && !creditBillDetails.isRetentionMoneyDeduction}"> 
+				<c:if test="${!creditBillDetails.isDebit && !creditBillDetails.isNetPayable && !creditBillDetails.isStatutoryDeduction && !creditBillDetails.isRetentionMoneyDeduction && !creditBillDetails.isContractorAdvanceDeduction}"> 
 					<tr id="deductionRow">
 						<td>
 							<c:out value="${creditBillDetails.glcode}" /> 
@@ -218,7 +218,7 @@
 			</thead>
 			<tbody>
 			<c:forEach items="${billDetailsMap}" var="creditBillDetails" varStatus="item">
-				<c:if test="${!creditBillDetails.isDebit && !creditBillDetails.isNetPayable && !creditBillDetails.isStatutoryDeduction && creditBillDetails.isRetentionMoneyDeduction}"> 
+				<c:if test="${!creditBillDetails.isDebit && !creditBillDetails.isNetPayable && !creditBillDetails.isStatutoryDeduction && creditBillDetails.isRetentionMoneyDeduction && !creditBillDetails.isContractorAdvanceDeduction}"> 
 					<tr id="deductionRow">
 						<td>
 							<c:out value="${creditBillDetails.glcode}" /> 
@@ -234,6 +234,61 @@
 			</c:forEach>
 			</tbody>
 		</table>
+</div>
+
+<div class="panel-heading custom_form_panel_heading">
+	<div class="panel-title">
+			<spring:message  code="lbl.advance.adjustments"/>
+	</div>
+</div>
+<div style="padding: 0 15px;">
+	<table class="table table-bordered" id="advanceDetails">
+		<thead>
+			<tr>
+				<th><spring:message code="lbl.advance.paid" /></th>
+				<th><spring:message code="lbl.advance.adjusted" /></th>
+				<th><spring:message code="lbl.balance.adjusted" /></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr id="advancedetailsrow">
+				<td align="right" id="advancePaid"><fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
+								minFractionDigits="2" value="${advancePaidTillNow }" /></td>
+				<td align="right" id="advanceAdjusted"><fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
+								minFractionDigits="2" value="${advanceAdjustedSoFar }" /></td>
+				<td align="right"><fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
+								minFractionDigits="2" value="${advancePaidTillNow - advanceAdjustedSoFar }" /></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<div style="padding: 0 15px;">
+	<table class="table table-bordered" id="tblcreditdetails-view">
+		<thead>
+			<tr>
+				<th><spring:message code="lbl.account.code"/></th>
+				<th><spring:message code="lbl.account.head"/></th>
+				<th><spring:message code="lbl.credit.amount"/></th>
+			</tr>
+		</thead>
+		<tbody>
+		<c:forEach items="${billDetailsMap}" var="creditBillDetails" varStatus="item">
+			<c:if test="${!creditBillDetails.isDebit && !creditBillDetails.isNetPayable && !creditBillDetails.isStatutoryDeduction && !creditBillDetails.isRetentionMoneyDeduction && creditBillDetails.isContractorAdvanceDeduction}"> 
+				<tr id="deductionRow">
+					<td>
+						<c:out value="${creditBillDetails.glcode}" /> 
+					</td>
+					<td>
+						<c:out value="${creditBillDetails.accountHead}" /> 
+					</td>
+					<td class="text-right">
+						<fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${creditBillDetails.amount}" />
+					</td>					
+				</tr>
+			</c:if>
+		</c:forEach>
+		</tbody>
+	</table>
 </div>
 
 

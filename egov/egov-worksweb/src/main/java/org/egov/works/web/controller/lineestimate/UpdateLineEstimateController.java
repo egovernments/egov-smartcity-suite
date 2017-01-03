@@ -396,6 +396,13 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             model.addAttribute("nextAction", lineEstimate.getState().getNextAction());
             model.addAttribute("pendingActions", lineEstimate.getState().getNextAction());
             workflowContainer.setPendingActions(lineEstimate.getCurrentState().getNextAction());
+            wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null,
+                    lineEstimate.getTotalEstimateAmount(),
+                    (String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY),
+                    lineEstimate.getCurrentState().getValue(),
+                    lineEstimate.getCurrentState().getNextAction());
+            if (wfmatrix != null)
+                model.addAttribute("nextStatus", wfmatrix.getNextStatus().toUpperCase());
         }
         workflowContainer.setAmountRule(lineEstimate.getTotalEstimateAmount());
         prepareWorkflow(model, lineEstimate, workflowContainer);
@@ -423,13 +430,6 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                             lineEstimate.getLineEstimateDetails().get(0).getEstimateNumber());
             model.addAttribute("budgetAppropriationDate", lineEstimateAppropriation.getBudgetUsage().getUpdatedTime());
         }
-        wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null,
-                lineEstimate.getTotalEstimateAmount(),
-                (String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY),
-                lineEstimate.getCurrentState().getValue(),
-                lineEstimate.getCurrentState().getNextAction());
-        if (wfmatrix != null)
-            model.addAttribute("nextStatus", wfmatrix.getNextStatus().toUpperCase());
 
         lineEstimateService.loadModelValues(lineEstimate, model);
         return "newLineEstimate-edit";

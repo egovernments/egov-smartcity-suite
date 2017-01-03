@@ -61,7 +61,7 @@ public interface ContractorAdvanceRepository extends JpaRepository<ContractorAdv
 
     ContractorAdvanceRequisition findByAdvanceRequisitionNumber(final String arfNumber);
 
-    @Query("select sum(advanceRequisitionAmount) from ContractorAdvanceRequisition where (createdDate < (select createdDate from ContractorAdvanceRequisition where id = :contractorAdvanceId) or (select count(*) from ContractorAdvanceRequisition where id = :contractorAdvanceId) = 0) and status.code = :statusCode and workOrderEstimate.id = :workOrderEstimateId")
+    @Query("select COALESCE(sum(advanceRequisitionAmount),0) from ContractorAdvanceRequisition where (createdDate < (select createdDate from ContractorAdvanceRequisition where id = :contractorAdvanceId) or (select count(*) from ContractorAdvanceRequisition where id = :contractorAdvanceId) = 0) and status.code = :statusCode and workOrderEstimate.id = :workOrderEstimateId")
     Double getTotalAdvancePaid(@Param("contractorAdvanceId") final Long contractorAdvanceId,
             @Param("workOrderEstimateId") final Long workOrderEstimateId, @Param("statusCode") final String statusCode);
 
