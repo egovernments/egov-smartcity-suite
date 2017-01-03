@@ -1468,9 +1468,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                         final String newDesignation = nextDesignation.split(" ")[0];
                         nextState = new StringBuilder().append(wfType).append(":").append(loggedInUserDesignation)
                                 .append(" ").append("Forwarded").toString();
-                        nextAction = new StringBuilder()
-                                .append(nextDesignation.equalsIgnoreCase(COMMISSIONER_DESGN) ? "" : newDesignation)
-                                .append(" ").append(WF_STATE_COMMISSIONER_APPROVAL_PENDING).toString();
+                        nextAction = nextDesignation.equalsIgnoreCase(COMMISSIONER_DESGN)
+                                ? WF_STATE_COMMISSIONER_APPROVAL_PENDING
+                                : new StringBuilder().append(newDesignation).append(" ")
+                                        .append(WF_STATE_COMMISSIONER_APPROVAL_PENDING).toString();
                     }
                 }
             }
