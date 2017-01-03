@@ -1,10 +1,16 @@
 package org.egov.mrs.web.controller.application.registration;
 
+import static org.egov.mrs.application.MarriageConstants.CF_STAMP;
+import static org.egov.mrs.application.MarriageConstants.MOM;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
+import org.egov.mrs.domain.service.MarriageDocumentService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -31,8 +37,11 @@ public class MarriageFormValidator implements Validator {
     private Pattern pattern;
     private Matcher matcher;
 
+    @Autowired
+    private MarriageDocumentService marriageDocumentService;
+
     @Override
-    public boolean supports(Class<?> clazz) {
+    public boolean supports(final Class<?> clazz) {
         return MarriageRegistration.class.equals(clazz);
     }
     
@@ -67,8 +76,8 @@ public class MarriageFormValidator implements Validator {
     }
     
 
-    public void validate(Object target, Errors errors, String type) {
-        MarriageRegistration registration = (MarriageRegistration) target;
+    public void validate(final Object target, final Errors errors, final String type) {
+        final MarriageRegistration registration = (MarriageRegistration) target;
         if (type != null && "DATAENTRY".equals(type)) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicationNo", "Notempty.mrg.appln.no");
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "registrationNo", "Notempty.mrg.reg.no");
@@ -145,109 +154,96 @@ public class MarriageFormValidator implements Validator {
             validateDocumentAttachments(errors, registration);
 
             if (registration.getStatus() != null && "CREATED".equals(registration.getStatus().getCode())
-                    && !registration.isFeeCollected()) {
+                    && !registration.isFeeCollected())
                 errors.reject("validate.collect.marriageFee", null);
-            }
 
-            if (registration.getStatus() != null && "APPROVED".equals(registration.getStatus().getCode())) {
+            if (registration.getStatus() != null && "APPROVED".equals(registration.getStatus().getCode()))
                 validateSerialAndPageNo(errors);
+
+        }
+
+    }
+
+    private void validateDocumentAttachments(final Errors errors, final MarriageRegistration registration) {
+        if (registration.getId() == null)
+            for (final MarriageDocument marriageDocument : registration.getDocuments()) {
+                final MarriageDocument Document = marriageDocumentService.get(marriageDocument.getId());
+                if (Document.getCode().equals(MOM) && marriageDocument.getFile().getSize() == 0)
+                    errors.rejectValue("memorandumOfMarriage", "validate.memorendum");
+                if (Document.getCode().equals(CF_STAMP) && marriageDocument.getFile().getSize() == 0)
+                    errors.rejectValue("courtFeeStamp", "validate.courtfeettamp");
             }
-
-        }
-
     }
 
-    private void validateDocumentAttachments(Errors errors, MarriageRegistration registration) {
-        if (registration.getMarriagePhotoFile() != null && registration.getStatus() != null
-                && !"CREATED".equals(registration.getStatus().getCode())
-                && registration.getMarriagePhotoFile().getSize() == 0) {
-            errors.rejectValue("marriagePhotoFile", "Notempty.mrg.marriage.photo");
-        }
-        if (!registration.getMemorandumOfMarriage()) {
-            errors.rejectValue("memorandumOfMarriage", "validate.memorendum");
-        }
-        if (!registration.getMemorandumOfMarriage()) {
-            errors.rejectValue("courtFeeStamp", "validate.courtfeettamp");
-        }
-    }
-
-    private void validateSerialAndPageNo(Errors errors) {
+    private void validateSerialAndPageNo(final Errors errors) {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "serialNo", "Notempty.mrg.serial.no");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "pageNo", "Notempty.mrg.page.no");
     }
 
-    private void validateBrideGroomInformation(Errors errors, MarriageRegistration registration) {
+    private void validateBrideGroomInformation(final Errors errors, final MarriageRegistration registration) {
         if (registration.getHusband() != null && registration.getWife().getAgeInYearsAsOnMarriage() != null
-                && registration.getWife().getAgeInYearsAsOnMarriage() < 18) {
+                && registration.getWife().getAgeInYearsAsOnMarriage() < 18)
             errors.rejectValue("wife.ageInYearsAsOnMarriage", "Validdata.mrg.ageinyears");
-        }
         if (registration.getHusband() != null && registration.getWife().getAgeInMonthsAsOnMarriage() != null
-                && registration.getWife().getAgeInMonthsAsOnMarriage() > 12) {
+                && registration.getWife().getAgeInMonthsAsOnMarriage() > 12)
             errors.rejectValue("wife.ageInMonthsAsOnMarriage", "Validdata.mrg.ageinmonths");
-        }
         validateBrideGroomMobileNo(errors, registration);
         validateBrideGroomEmail(errors, registration);
     }
 
-    private void validateBrideGroomEmail(Errors errors, MarriageRegistration registration) {
+    private void validateBrideGroomEmail(final Errors errors, final MarriageRegistration registration) {
         if (registration.getWife() != null && registration.getWife().getContactInfo() != null
                 && registration.getWife().getContactInfo().getEmail() != null) {
             pattern = Pattern.compile(EMAIL_PATTERN);
             matcher = pattern.matcher(registration.getWife().getContactInfo().getEmail());
-            if (!matcher.matches()) {
+            if (!matcher.matches())
                 errors.rejectValue("wife.contactInfo.email", "validate.email");
-            }
         }
     }
 
-    private void validateBrideGroomMobileNo(Errors errors, MarriageRegistration registration) {
+    private void validateBrideGroomMobileNo(final Errors errors, final MarriageRegistration registration) {
         if (registration.getWife() != null && registration.getWife().getContactInfo() != null
                 && registration.getWife().getContactInfo().getMobileNo() != null) {
             pattern = Pattern.compile(MOBILE_PATTERN);
             matcher = pattern.matcher(registration.getWife().getContactInfo().getMobileNo());
-            if (!matcher.matches()) {
+            if (!matcher.matches())
                 errors.rejectValue("wife.contactInfo.mobileNo", "validate.mobile.no");
-            }
         }
     }
 
-    private void validateBrideInformation(Errors errors, MarriageRegistration registration) {
+    private void validateBrideInformation(final Errors errors, final MarriageRegistration registration) {
         if (registration.getHusband() != null && registration.getHusband().getAgeInYearsAsOnMarriage() != null
-                && registration.getHusband().getAgeInYearsAsOnMarriage() < 18) {
+                && registration.getHusband().getAgeInYearsAsOnMarriage() < 18)
             errors.rejectValue("husband.ageInYearsAsOnMarriage", "Validdata.mrg.ageinyears");
-        }
         if (registration.getHusband() != null && registration.getHusband().getAgeInMonthsAsOnMarriage() != null
-                && registration.getHusband().getAgeInMonthsAsOnMarriage() > 12) {
+                && registration.getHusband().getAgeInMonthsAsOnMarriage() > 12)
             errors.rejectValue("husband.ageInMonthsAsOnMarriage", "Validdata.mrg.ageinmonths");
-        }
         validateBrideMobileNo(errors, registration);
         validateBrideEmail(errors, registration);
     }
 
-    private void validateBrideEmail(Errors errors, MarriageRegistration registration) {
+    private void validateBrideEmail(final Errors errors, final MarriageRegistration registration) {
         if (registration.getHusband() != null && registration.getHusband().getContactInfo() != null
                 && registration.getHusband().getContactInfo().getEmail() != null) {
             pattern = Pattern.compile(EMAIL_PATTERN);
             matcher = pattern.matcher(registration.getHusband().getContactInfo().getEmail());
-            if (!matcher.matches()) {
+            if (!matcher.matches())
                 errors.rejectValue("husband.contactInfo.email", "validate.email");
-            }
         }
     }
 
-    private void validateBrideMobileNo(Errors errors, MarriageRegistration registration) {
+    private void validateBrideMobileNo(final Errors errors, final MarriageRegistration registration) {
         if (registration.getHusband() != null && registration.getHusband().getContactInfo() != null
                 && registration.getHusband().getContactInfo().getMobileNo() != null) {
             pattern = Pattern.compile(MOBILE_PATTERN);
             matcher = pattern.matcher(registration.getHusband().getContactInfo().getMobileNo());
-            if (!matcher.matches()) {
+            if (!matcher.matches())
                 errors.rejectValue("husband.contactInfo.mobileNo", "validate.mobile.no");
-            }
         }
     }
 
     @Override
-    public void validate(Object target, Errors errors) {
+    public void validate(final Object target, final Errors errors) {
         // we passing additional parameter application type(Registration and Data entry),
         // this same validator class which can be used both for application type.Thats why we are not using this method.
     }

@@ -39,9 +39,10 @@
 package org.egov.mrs.domain.entity;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -100,7 +101,7 @@ public class MrApplicant extends AbstractAuditable {
     @JoinColumn(name = "religion")
     private MarriageReligion religion;
 
-    /*@NotNull*/
+    /* @NotNull */
     @Enumerated(EnumType.STRING)
     private ReligionPractice religionPractice;
 
@@ -151,7 +152,7 @@ public class MrApplicant extends AbstractAuditable {
     @NotNull
     @Valid
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "applicant")
-    private List<MrApplicantDocument> applicantDocuments = new ArrayList<MrApplicantDocument>();
+    private Set<MrApplicantDocument> applicantDocuments = new HashSet<MrApplicantDocument>();
 
     @NotNull
     @Length(max = 20)
@@ -212,7 +213,7 @@ public class MrApplicant extends AbstractAuditable {
     }
 
     public boolean isCopyFilesToByteArray() {
-        return ((photoFile!=null && photoFile.getSize() > 0) || (signatureFile!=null && signatureFile.getSize() > 0));
+        return photoFile != null && photoFile.getSize() > 0 || signatureFile != null && signatureFile.getSize() > 0;
     }
 
     @Override
@@ -337,14 +338,6 @@ public class MrApplicant extends AbstractAuditable {
         this.documents = documents;
     }
 
-    public List<MrApplicantDocument> getApplicantDocuments() {
-        return applicantDocuments;
-    }
-
-    public void setApplicantDocuments(final List<MrApplicantDocument> applicantDocuments) {
-        this.applicantDocuments = applicantDocuments;
-    }
-
     public void addApplicantDocument(final MrApplicantDocument applicantDocument) {
         applicantDocument.setApplicant(this);
         getApplicantDocuments().add(applicantDocument);
@@ -456,6 +449,14 @@ public class MrApplicant extends AbstractAuditable {
 
     public void setQualification(final MREducationQualification qualification) {
         this.qualification = qualification;
+    }
+
+    public Set<MrApplicantDocument> getApplicantDocuments() {
+        return applicantDocuments;
+    }
+
+    public void setApplicantDocuments(final Set<MrApplicantDocument> applicantDocuments) {
+        this.applicantDocuments = applicantDocuments;
     }
 
 }

@@ -39,6 +39,11 @@
 
 package org.egov.mrs.domain.service;
 
+import static org.egov.mrs.application.MarriageConstants.AFFIDAVIT;
+import static org.egov.mrs.application.MarriageConstants.CF_STAMP;
+import static org.egov.mrs.application.MarriageConstants.MIC;
+import static org.egov.mrs.application.MarriageConstants.MOM;
+
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -67,8 +72,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.StringUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.mrs.application.MarriageConstants;
@@ -107,6 +110,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class MarriageRegistrationService {
 
     private static final Logger LOG = Logger.getLogger(MarriageRegistrationService.class);
+    @Autowired
+    protected MarriageRegistrationService marriageRegistrationService;
+
     @Autowired
     private final MarriageRegistrationRepository registrationRepository;
     @PersistenceContext
@@ -155,13 +161,12 @@ public class MarriageRegistrationService {
     @Autowired
     private EisCommonService eisCommonService;
 
-
     @Autowired
     private MarriageRegistrationUpdateIndexesService marriageRegistrationUpdateIndexesService;
 
     @Autowired
     private MarriageRegistrationReportsService marriageRegistrationReportsService;
-    
+
     @Autowired
     public MarriageRegistrationService(final MarriageRegistrationRepository registrationRepository) {
         this.registrationRepository = registrationRepository;
@@ -208,18 +213,20 @@ public class MarriageRegistrationService {
         }
         registration.getWitnesses().forEach(witness -> {
             try {
-                witness.setPhoto(FileCopyUtils.copyToByteArray(witness.getPhotoFile().getInputStream()));
-                witness.setPhotoFileStore(addToFileStore(witness.getPhotoFile()));
+                if (witness.getPhotoFile().getSize() != 0) {
+                    witness.setPhoto(FileCopyUtils.copyToByteArray(witness.getPhotoFile().getInputStream()));
+                    witness.setPhotoFileStore(addToFileStore(witness.getPhotoFile()));
+                }
             } catch (final Exception e) {
                 LOG.error("Error while copying Multipart file bytes", e);
             }
         });
         try {
             registration.setMarriagePhotoFileStore(addToFileStore(registration.getMarriagePhotoFile()));
-            registration.getWife().setPhotoFileStore(addToFileStore(registration.getWife().getPhotoFile()));
-            registration.getWife().setSignatureFileStore(addToFileStore(registration.getWife().getSignatureFile()));
-            registration.getHusband().setPhotoFileStore(addToFileStore(registration.getHusband().getPhotoFile()));
-            registration.getHusband().setSignatureFileStore(addToFileStore(registration.getHusband().getSignatureFile()));
+            if (registration.getWife().getPhotoFile().getSize() != 0)
+                registration.getWife().setPhotoFileStore(addToFileStore(registration.getWife().getPhotoFile()));
+            if (registration.getHusband().getPhotoFile().getSize() != 0)
+                registration.getHusband().setPhotoFileStore(addToFileStore(registration.getHusband().getPhotoFile()));
         } catch (final Exception e) {
             LOG.error("Error while saving documents!!!!!", e);
         }
@@ -239,7 +246,7 @@ public class MarriageRegistrationService {
 
     @Transactional
     public String createRegistration(final MarriageRegistration registration, final WorkflowContainer workflowContainer) {
-        if (StringUtils.isBlank(registration.getApplicationNo()))
+        if (org.apache.commons.lang.StringUtils.isBlank(registration.getApplicationNo()))
             registration.setApplicationNo(marriageRegistrationApplicationNumberGenerator
                     .getNextApplicationNumberForMarriageRegistration(registration));
         setMarriageRegData(registration);
@@ -335,18 +342,35 @@ public class MarriageRegistrationService {
             final Map<Long, MarriageDocument> documentAndId) {
         final List<MarriageDocument> documents = registration.getDocuments();
         documents.stream()
-        .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
-        .map(document -> {
-            final RegistrationDocument registrationDocument = new RegistrationDocument();
-            registrationDocument.setRegistration(registration);
-            registrationDocument.setDocument(documentAndId.get(document.getId()));
-            registrationDocument.setFileStoreMapper(addToFileStore(document.getFile()));
-            return registrationDocument;
-        }).collect(Collectors.toList())
-        .forEach(doc -> registration.addRegistrationDocument(doc));
+                .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
+                .map(document -> {
+                    final RegistrationDocument registrationDocument = new RegistrationDocument();
+                    setCommonDocumentsFalg(registration, document);
+                    registrationDocument.setRegistration(registration);
+                    registrationDocument.setDocument(documentAndId.get(document.getId()));
+                    registrationDocument.setFileStoreMapper(addToFileStore(document.getFile()));
+                    return registrationDocument;
+                }).collect(Collectors.toList())
+                .forEach(doc -> registration.addRegistrationDocument(doc));
+    }
+
+    private void setCommonDocumentsFalg(final MarriageRegistration registration, final MarriageDocument document) {
+        final MarriageDocument marriageDocument = marriageDocumentService.get(document.getId());
+        if (marriageDocument.getCode().equals(MOM))
+            registration.setMemorandumOfMarriage(true);
+        if (marriageDocument.getCode().equals(CF_STAMP))
+            registration.setCourtFeeStamp(true);
+        if (marriageDocument.getCode().equals(MIC))
+            registration.setMarriageCard(true);
+        if (marriageDocument.getCode().equals(AFFIDAVIT))
+            registration.setAffidavit(true);
     }
 
     private void updateDocuments(final MarriageRegistration registration) {
+        final MarriageRegistration marriageRegistration = marriageRegistrationService.get(registration.getId());
+        marriageApplicantService.deleteDocuments(marriageRegistration.getHusband(), registration.getHusband());
+        marriageApplicantService.deleteDocuments(marriageRegistration.getWife(), registration.getWife());
+        deleteDocuments(marriageRegistration, registration);
         final Map<Long, MarriageDocument> generalDocumentAndId = new HashMap<Long, MarriageDocument>();
         marriageDocumentService.getGeneralDocuments().forEach(document -> generalDocumentAndId.put(document.getId(), document));
 
@@ -415,7 +439,6 @@ public class MarriageRegistrationService {
         return registrationRepository.findAll();
     }
 
-
     private FileStoreMapper addToFileStore(final MultipartFile file) {
         FileStoreMapper fileStoreMapper = null;
         try {
@@ -431,17 +454,19 @@ public class MarriageRegistrationService {
         final List<RegistrationDocument> toDelete = new ArrayList<RegistrationDocument>();
         final Map<Long, RegistrationDocument> documentIdAndRegistrationDoc = new HashMap<Long, RegistrationDocument>();
         registration.getRegistrationDocuments()
-        .forEach(regDoc -> documentIdAndRegistrationDoc.put(regDoc.getDocument().getId(), regDoc));
+                .forEach(regDoc -> documentIdAndRegistrationDoc.put(regDoc.getDocument().getId(), regDoc));
 
         regModel.getDocuments()
                 .stream()
-        .filter(doc -> doc.getFile().getSize() > 0)
-        .map(doc -> {
-            final RegistrationDocument regDoc = documentIdAndRegistrationDoc.get(doc.getId());
-            fileStoreService.delete(regDoc.getFileStoreMapper().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE);
-            return regDoc;
-        }).collect(Collectors.toList())
-        .forEach(regDoc -> toDelete.add(regDoc));
+                .filter(doc -> doc.getFile().getSize() > 0)
+                .map(doc -> {
+                    final RegistrationDocument regDoc = documentIdAndRegistrationDoc.get(doc.getId());
+                    if (null != regDoc)
+                        fileStoreService.delete(regDoc.getFileStoreMapper().getFileStoreId(),
+                                MarriageConstants.FILESTORE_MODULECODE);
+                    return regDoc;
+                }).collect(Collectors.toList())
+                .forEach(regDoc -> toDelete.add(regDoc));
 
         registrationDocumentService.delete(toDelete);
     }
@@ -452,8 +477,8 @@ public class MarriageRegistrationService {
                         MarriageConstants.MODULE_NAME)
                 : marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.REJECTED.toString(),
                         MarriageConstants.MODULE_NAME);
-                return registrationRepository.findByCreatedDateAfterAndCreatedDateBeforeAndStatus(searchModel.getFromDate(),
-                        searchModel.getToDate(), status);
+        return registrationRepository.findByCreatedDateAfterAndCreatedDateBeforeAndStatus(searchModel.getFromDate(),
+                searchModel.getToDate(), status);
     }
 
     public void prepareDocumentsForView(final MarriageRegistration registration) {
@@ -483,7 +508,8 @@ public class MarriageRegistrationService {
         final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class, "marriageRegistration")
                 .createAlias("marriageRegistration.status", "status");
         buildMarriageRegistrationSearchCriteria(registration, criteria);
-        criteria.add(Restrictions.in("status.code", new String[] { MarriageRegistration.RegistrationStatus.CREATED.toString(),MarriageRegistration.RegistrationStatus.APPROVED.toString() }));
+        criteria.add(Restrictions.in("status.code", new String[] { MarriageRegistration.RegistrationStatus.CREATED.toString(),
+                MarriageRegistration.RegistrationStatus.APPROVED.toString() }));
         return criteria.list();
     }
 
@@ -493,7 +519,8 @@ public class MarriageRegistrationService {
         final Criteria criteria = getCurrentSession().createCriteria(ReIssue.class, "reIssue")
                 .createAlias("reIssue.status", "status");
         buildReIssueSearchCriteria(mrSearchFilter, criteria);
-         criteria.add(Restrictions.in("status.code", new String[] {ReIssue.ReIssueStatus.CREATED.toString(), ReIssue.ReIssueStatus.APPROVED.toString() }));
+        criteria.add(Restrictions.in("status.code", new String[] { ReIssue.ReIssueStatus.CREATED.toString(),
+                ReIssue.ReIssueStatus.APPROVED.toString() }));
         return criteria.list();
     }
 
@@ -512,11 +539,11 @@ public class MarriageRegistrationService {
                     Restrictions.ilike("wife.name.fullname", mrSearchFilter.getWifeName(), MatchMode.ANYWHERE));
         if (mrSearchFilter.getApplicationDate() != null)
             criteria.add(Restrictions.between("reIssue.applicationDate", sdf.parse(mrSearchFilter.getApplicationDate()),
-                    DateUtils.addDays(sdf.parse(mrSearchFilter.getApplicationDate()), 1)));
+                    org.apache.commons.lang3.time.DateUtils.addDays(sdf.parse(mrSearchFilter.getApplicationDate()), 1)));
         if (mrSearchFilter.getDateOfMarriage() != null)
             criteria.createAlias("reIssue.registration", "registration").add(
                     Restrictions.between("registration.dateOfMarriage", sdf.parse(mrSearchFilter.getDateOfMarriage()),
-                           DateUtils.addDays(sdf.parse(mrSearchFilter.getDateOfMarriage()), 0)));
+                            org.apache.commons.lang3.time.DateUtils.addDays(sdf.parse(mrSearchFilter.getDateOfMarriage()), 0)));
     }
 
     private void buildMarriageRegistrationSearchCriteria(final MarriageRegistration registration, final Criteria criteria)
@@ -527,26 +554,28 @@ public class MarriageRegistrationService {
         if (registration.getApplicationNo() != null)
             criteria.add(Restrictions.ilike("marriageRegistration.applicationNo", registration.getApplicationNo(),
                     MatchMode.ANYWHERE));
-        if (registration.getHusband() != null && registration.getHusband().getName() != null 
-               && !"null".equals(registration.getHusband().getFullName()) && registration.getHusband().getFullName() != null)
+        if (registration.getHusband() != null && registration.getHusband().getName() != null
+                && !"null".equals(registration.getHusband().getFullName()) && registration.getHusband().getFullName() != null)
             criteria.createAlias("marriageRegistration.husband", "husband").add(
                     Restrictions.ilike("husband.name.fullname", registration.getHusband().getFullName(),
-                                    MatchMode.ANYWHERE));
-        if (registration.getWife() != null && registration.getWife().getName() != null 
-               && !"null".equals(registration.getWife().getFullName()) && registration.getWife().getFullName() != null)
+                            MatchMode.ANYWHERE));
+        if (registration.getWife() != null && registration.getWife().getName() != null
+                && !"null".equals(registration.getWife().getFullName()) && registration.getWife().getFullName() != null)
             criteria.createAlias("marriageRegistration.wife", "wife").add(
                     Restrictions.ilike("wife.name.fullname", registration.getWife().getFullName(),
                             MatchMode.ANYWHERE));
         if (registration.getApplicationDate() != null)
             criteria.add(Restrictions.between("marriageRegistration.applicationDate", registration.getApplicationDate(),
-                    DateUtils.addDays(registration.getApplicationDate(), 1)));
+                    org.apache.commons.lang3.time.DateUtils.addDays(registration.getApplicationDate(), 1)));
         if (registration.getDateOfMarriage() != null)
             criteria.add(Restrictions.between("marriageRegistration.dateOfMarriage", registration.getDateOfMarriage(),
-                    DateUtils.addDays(registration.getDateOfMarriage(), 0)));
+                    org.apache.commons.lang3.time.DateUtils.addDays(registration.getDateOfMarriage(), 0)));
         if (registration.getFromDate() != null)
-            criteria.add(Restrictions.ge("marriageRegistration.applicationDate",marriageRegistrationReportsService.resetFromDateTimeStamp(registration.getFromDate())));
+            criteria.add(Restrictions.ge("marriageRegistration.applicationDate",
+                    marriageRegistrationReportsService.resetFromDateTimeStamp(registration.getFromDate())));
         if (registration.getToDate() != null)
-            criteria.add(Restrictions.le("marriageRegistration.applicationDate",marriageRegistrationReportsService.resetToDateTimeStamp(registration.getToDate())));
+            criteria.add(Restrictions.le("marriageRegistration.applicationDate",
+                    marriageRegistrationReportsService.resetToDateTimeStamp(registration.getToDate())));
         if (null != registration.getMarriageRegistrationUnit() && registration.getMarriageRegistrationUnit().getId() != null)
             criteria.add(Restrictions.eq("marriageRegistrationUnit.id", registration.getMarriageRegistrationUnit().getId()));
     }
@@ -581,7 +610,7 @@ public class MarriageRegistrationService {
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     user = eisCommonService.getUserForPosition(owner.getId(), new Date());
                     HistoryMap
-                    .put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+                            .put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
                     HistoryMap.put("department", null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
                             .getDepartment().getName() : "");
                 }
@@ -621,7 +650,7 @@ public class MarriageRegistrationService {
         return criteria.list();
 
     }
-    
+
     public MarriageRegistration findBySerialNo(final String serialNo) {
         return registrationRepository.findBySerialNo(serialNo);
     }

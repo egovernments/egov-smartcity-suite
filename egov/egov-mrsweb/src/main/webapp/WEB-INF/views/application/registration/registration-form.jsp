@@ -133,9 +133,9 @@
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="checklist.jsp"></jsp:include>
 					</div>
-					<div class="panel panel-primary" data-collapsed="0">
+					<%-- <div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="documentdetails.jsp"></jsp:include>
-					</div>
+					</div> --%>
 				</div>
 			</div>
 			<%-- <c:if test="${registration.rejectionReason != null}">
