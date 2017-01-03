@@ -259,7 +259,7 @@ public class CollectionIndexElasticSearchService {
                     1);
         } else {
             fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
-            toDate = DateUtils.addDays(fromDate, 1);
+            toDate = DateUtils.addDays(new Date(), 1);
         }
         // Today’s collection
         todayColl = getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null);
@@ -382,7 +382,7 @@ public class CollectionIndexElasticSearchService {
                     1);
         } else {
             fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
-            toDate = DateUtils.addDays(fromDate, 1);
+            toDate = DateUtils.addDays(new Date(), 1);
         }
 
         Long startTime = System.currentTimeMillis();
@@ -783,7 +783,7 @@ public class CollectionIndexElasticSearchService {
                     1);
         } else {
             fromDate =DateUtils.startOfDay(financialYear.getStartingDate());
-            toDate = DateUtils.addDays(fromDate, 1);
+            toDate = DateUtils.addDays(new Date(), 1);
         }
         Long startTime = System.currentTimeMillis();
         // Today’s receipts count
@@ -1031,7 +1031,7 @@ public class CollectionIndexElasticSearchService {
                     1);
         } else {
             fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
-            toDate = DateUtils.addDays(fromDate, 1);
+            toDate = DateUtils.addDays(new Date(), 1);
         }
         Long startTime = System.currentTimeMillis();
         Map<String, BigDecimal> currDayCollMap = getCollectionAndDemandCountResults(collectionDetailsRequest, fromDate,

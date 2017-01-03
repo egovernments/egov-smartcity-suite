@@ -359,7 +359,7 @@ public class WaterChargeCollectionDocService {
                     .addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD), 1);
         } else {
             fromDate =DateUtils.startOfDay(financialyear.getStartingDate());
-            toDate = org.apache.commons.lang3.time.DateUtils.addDays(fromDate, 1);
+            toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
         }
         // Today’s collection
         todayColl = getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null);
@@ -560,7 +560,7 @@ public class WaterChargeCollectionDocService {
                     .addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD), 1);
         } else {
             fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
-            toDate = org.apache.commons.lang3.time.DateUtils.addDays(fromDate, 1);
+            toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
         }
 
         Long startTime = System.currentTimeMillis();
@@ -1070,7 +1070,7 @@ public class WaterChargeCollectionDocService {
                     .addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD), 1);
         } else {
             fromDate = DateUtils.startOfDay(financialyear.getStartingDate());
-            toDate = org.apache.commons.lang3.time.DateUtils.addDays(fromDate, 1);
+            toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
         }
         final Long startTime = System.currentTimeMillis(); // Today’s receipts
                                                            // count Long
@@ -1314,7 +1314,7 @@ public class WaterChargeCollectionDocService {
                     .addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD), 1);
         } else {
             fromDate =DateUtils.startOfDay(financialyear.getStartingDate());
-            toDate = org.apache.commons.lang3.time.DateUtils.addDays(fromDate, 1);
+            toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
         }
         Long startTime = System.currentTimeMillis();
         final Map<String, BigDecimal> currDayCollMap = getCollectionAndDemandCountResults(collectionDetailsRequest,
