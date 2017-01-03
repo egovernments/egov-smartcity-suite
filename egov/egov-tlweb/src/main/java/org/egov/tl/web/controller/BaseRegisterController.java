@@ -44,7 +44,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.tl.entity.dto.BaseRegisterForm;
 import org.egov.tl.service.BaseRegisterService;
 import org.egov.tl.service.LicenseStatusService;
-import org.egov.tl.service.masters.LicenseCategoryService;
+import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.response.adaptor.BaseRegisterResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +59,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.io.IOException;
 import java.util.Collections;
 
-import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 
@@ -88,7 +88,7 @@ public class BaseRegisterController {
 
     @RequestMapping(value = "/search-form", method = RequestMethod.GET)
     public String searchBaseRegister(Model model) {
-        model.addAttribute("categories", licenseCategoryService.findAllOrderByName());
+        model.addAttribute("categories", licenseCategoryService.getCategoriesOrderByName());
         model.addAttribute("subcategories", Collections.emptyList());
         model.addAttribute("statusList", licenseStatusService.findAll());
         boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(

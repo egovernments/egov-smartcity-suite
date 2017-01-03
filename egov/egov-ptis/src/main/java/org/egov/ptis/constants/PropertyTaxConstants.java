@@ -147,7 +147,35 @@ public interface PropertyTaxConstants {
     public static final String OBJECTION_RECORD_OBJECTIONOUTCOME = "RECORD OBJECTION OUTCOME";
     public static final String OBJECTION_RECORD_SAVED = "OBJECTION RECORD";
     public static final String OBJECTION_HEARINGDATE_SAVED = "HEARING DATE";
+    public static final String OBJECTION_PRINT_ENDORSEMENT = "Print Endoresement";
 
+    public static final String NOTICE_TYPE_GRPPROCEEDINGS = "GRP Proceedings";
+    public static final String NOTICE_TYPE_GRPHEARINGS = "GRP Hearing Notice";
+    public static final String GRP_RP_CREATED = "CREATED";
+    public static final String GRP_RP_INSP_VRFD = "verified";
+    public static final String GRP_RP_HEARING_DATE_FIXED = "fixed";
+    public static final String PROPERTY_MODIFY_REASON_REVISION_PETITION = "RP";
+    public static final String REVISION_PETITION = "REVISION PETITION";
+    
+    //New RP Changes
+    public static final String RP_HEARINGCOMPLETED = "RP:Hearing completed";
+    public static final String RP_INSPECTIONVERIFIED = "RP:Inspection verified";
+    public static final String RP_INSPECTION_COMPLETE = "RP:Inspection completed";
+    public static final String RP_REGISTRATION = "RP:Registration";
+    public static final String RP_WF_REGISTERED = "RP:Registered";
+    public static final String RP_CREATED = "RP:CREATED";
+    
+    //New  GRP Changes
+    public static final String GRP_HEARINGCOMPLETED = "GRP:Hearing completed";
+    public static final String GRP_INSPECTIONVERIFIED = "GRP:Inspection verified";
+    public static final String GRP_INSPECTION_COMPLETE = "GRP:Inspection completed";
+    public static final String GRP_REGISTRATION = "GRP:Registration";
+    public static final String GRP_WF_REGISTERED = "GRP:Registered";
+    public static final String GRP_CREATED = "GRP:CREATED";
+    public static final String NATURE_OF_WORK_GRP = "GRP";
+    public static final String NATURE_OF_WORK_RP = "RP";
+    public static final String GRP_STATUS_CODE = "GRP";
+    
     public static final String RECOVERY_MODULE = "PTRecovery";
     public static final String RECOVERY_NOTICE155CREATED = "NOTICE155CREATED";
     public static final String RECOVERY_NOTICE155GENERATIONPENDING = "NOTICE155GENERATIONPENDING";

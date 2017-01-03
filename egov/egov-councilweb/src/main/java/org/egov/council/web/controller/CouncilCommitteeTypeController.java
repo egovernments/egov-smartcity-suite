@@ -39,7 +39,7 @@
  */
 package org.egov.council.web.controller;
 
-import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 
 import java.util.ArrayList;
 import java.util.List;

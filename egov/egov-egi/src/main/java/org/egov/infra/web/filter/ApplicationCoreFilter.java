@@ -76,33 +76,29 @@ public class ApplicationCoreFilter implements Filter {
         final HttpServletRequest request = (HttpServletRequest) req;
         final HttpSession session = request.getSession();
         try {
-            prepareCityPreferences(session);
-            prepareThreadLocal(session);
-            prepareSessionVariable(session);
+            prepareUserSession(session);
+            prepareApplicationThreadLocal(session);
             chain.doFilter(request, resp);
         } finally {
             ApplicationThreadLocals.clearValues();
         }
     }
 
-    private void prepareCityPreferences(final HttpSession session) {
+    private void prepareUserSession(final HttpSession session) {
         if (session.getAttribute(CITY_CODE_KEY) == null)
             cityService.cityDataAsMap().forEach(session::setAttribute);
+        if (session.getAttribute(APP_RELEASE_ATTRIB_NAME) == null)
+            session.setAttribute(APP_RELEASE_ATTRIB_NAME, applicationProperties.applicationReleaseNo());
+        if (session.getServletContext().getAttribute(CDN_ATTRIB_NAME) == null)
+            session.getServletContext().setAttribute(CDN_ATTRIB_NAME, applicationProperties.cdnURL());
     }
 
-    private void prepareThreadLocal(final HttpSession session) {
+    private void prepareApplicationThreadLocal(final HttpSession session) {
         ApplicationThreadLocals.setCityCode((String) session.getAttribute(CITY_CODE_KEY));
         ApplicationThreadLocals.setCityName((String) session.getAttribute(CITY_NAME_KEY));
         ApplicationThreadLocals.setMunicipalityName((String) session.getAttribute(CITY_CORP_NAME_KEY));
         if (session.getAttribute(USERID_KEY) != null)
             ApplicationThreadLocals.setUserId((Long) session.getAttribute(USERID_KEY));
-    }
-
-    private void prepareSessionVariable(HttpSession session) {
-        if (session.getAttribute(APP_RELEASE_ATTRIB_NAME) == null)
-            session.setAttribute(APP_RELEASE_ATTRIB_NAME, applicationProperties.applicationReleaseNo());
-        if (session.getServletContext().getAttribute(CDN_ATTRIB_NAME) == null)
-            session.getServletContext().setAttribute(CDN_ATTRIB_NAME, applicationProperties.cdnURL());
     }
 
     @Override

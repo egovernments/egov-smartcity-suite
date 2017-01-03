@@ -55,7 +55,7 @@ import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_STATU
 import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_STATUS_APPROVED;
 import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.council.utils.constants.CouncilConstants.WARD;
-import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Type;

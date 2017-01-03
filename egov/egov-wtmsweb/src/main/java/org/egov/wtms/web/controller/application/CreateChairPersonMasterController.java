@@ -40,7 +40,7 @@
 
 package org.egov.wtms.web.controller.application;
 
-import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.io.IOException;

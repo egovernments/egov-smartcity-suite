@@ -3,7 +3,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2016>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -38,9 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-
-<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2015-11-14T21:18:56 -->
+<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
+<!-- 2016-12-29T14:00:29 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="revPetitionEndorsement" language="groovy" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bfa584a8-aba2-402c-aa8b-d9cf2f66bfb3">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -49,6 +48,7 @@
 	<parameter name="docNumberObjection" class="java.lang.String"/>
 	<parameter name="receivedOn" class="java.lang.String"/>
 	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="natureOfWork" class="java.lang.String"/>
 	<parameter name="currentDate" class="java.lang.String"/>
 	<parameter name="HouseNo" class="java.lang.String"/>
 	<parameter name="wardNumber" class="java.lang.String"/>
@@ -65,14 +65,6 @@
 			<rectangle>
 				<reportElement x="0" y="0" width="572" height="64" uuid="9425e47a-a019-45b7-b3a9-820febb8fb76"/>
 			</rectangle>
-			<staticText>
-				<reportElement x="103" y="32" width="367" height="32" uuid="bccf3998-ed33-41bf-aa2a-9e192a0cb77d"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="14" isBold="true"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<text><![CDATA[Revision Petition Endorsement]]></text>
-			</staticText>
 			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
 				<reportElement x="32" y="3" width="60" height="57" uuid="c5473d80-13d2-44c8-8350-92be64567d8c"/>
 				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
@@ -83,6 +75,13 @@
 					<font fontName="Serif" size="20" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="141" y="36" width="316" height="26" uuid="54eeeb43-a26c-4b39-a480-f221542b33ff"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{natureOfWork}.toUpperCase() + " ENDORSEMENT"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -121,7 +120,7 @@
 					<font isBold="true"/>
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Taxes "+ $P{cityName}+" - Revision petition endoresement"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Taxes "+ $P{cityName}+" - "+$P{natureOfWork}+" endorsement"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="14" y="75" width="57" height="24" uuid="e40c0ee2-fd11-4214-8aab-70f173d25e5b"/>
@@ -134,7 +133,7 @@
 					<font isBold="true"/>
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Revision Petition dated on  "+ $P{receivedOn}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{natureOfWork}+" dated on  "+ $P{receivedOn}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -148,7 +147,7 @@
 				<textElement verticalAlignment="Top" markup="styled">
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Property enquiry have been done on your revision petition on assessment No. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "  +$P{HouseNo} +" </style> with property tax reduced from Rs. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{AnnualPropertyTaxFrom}+"</style> to Rs.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> " +$P{AnnualPropertyTaxTo}+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Property enquiry have been done on your "+$P{natureOfWork}+" on assessment No. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "  +$P{HouseNo} +" </style> with property tax reduced from Rs. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{AnnualPropertyTaxFrom}+"</style> to Rs.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> " +$P{AnnualPropertyTaxTo}+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="5" y="114" width="567" height="36" uuid="bfdc75b0-7b9c-4295-88e7-329807b4b01f"/>

@@ -70,6 +70,8 @@ public class NoticeNumberGeneratorImpl implements NoticeNumberGenerator {
                 noticeTypeCode = "ESD";
             else if (PropertyTaxConstants.NOTICE_TYPE_RPPROCEEDINGS.equalsIgnoreCase(noticeType))
                 noticeTypeCode = "RP";
+            else if (PropertyTaxConstants.NOTICE_TYPE_GRPPROCEEDINGS.equalsIgnoreCase(noticeType))
+                noticeTypeCode = "GRP";
             else if (PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE.equalsIgnoreCase(noticeType))
                 noticeTypeCode = "HN";
             else if (PropertyTaxConstants.NOTICE_TYPE_VRPROCEEDINGS.equalsIgnoreCase(noticeType))

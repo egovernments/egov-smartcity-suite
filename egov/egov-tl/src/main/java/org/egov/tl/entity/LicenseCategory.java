@@ -44,6 +44,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -65,10 +66,12 @@ public class LicenseCategory extends AbstractAuditable {
 
     @NotEmpty(message = "tradelic.master.tradecategoryname.null")
     @Length(max = 256, message = "tradelic.masters.tradecategoryname.length")
+    @SafeHtml
     private String name;
 
     @NotEmpty(message = "tradelic.master.tradecategorycode.null")
     @Length(max = 256, message = "tradelic.masters.tradecategorycode.length")
+    @SafeHtml
     private String code;
 
     public String getName() {

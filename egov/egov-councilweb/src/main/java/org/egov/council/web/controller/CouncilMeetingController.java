@@ -49,7 +49,7 @@ import static org.egov.council.utils.constants.CouncilConstants.MEETING_MODULENA
 import static org.egov.council.utils.constants.CouncilConstants.MEETING_TIMINGS;
 import static org.egov.council.utils.constants.CouncilConstants.MODULE_NAME;
 import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
-import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

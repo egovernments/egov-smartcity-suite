@@ -54,6 +54,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.integration.models.PaymentInfoRequest;
 import org.egov.collection.integration.models.PaymentInfoSearchRequest;
+import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.Bank;
@@ -69,7 +70,10 @@ import org.egov.restapi.model.RestResponse;
 import org.egov.restapi.util.JsonConvertor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -145,6 +149,7 @@ public class RestPaymentReportConroller {
                 restResponse.setServiceName(restReceipt.getServiceName());
                 restResponse.setTxnDate(restReceipt.getTxnDate());
                 restResponse.setPayeeName(restReceipt.getPayeeName());
+                restResponse.setReceiptStatus(restReceipt.getReceiptStatus());
                 err.setErrorMessage(RestApiConstants.THIRD_PARTY_ACTION_SUCCESS);
                 err.setErrorCode(RestApiConstants.THIRD_PARTY_ACTION_SUCCESS);
                 restResponse.getErrorDetails().add(err);
@@ -162,33 +167,27 @@ public class RestPaymentReportConroller {
         return JsonConvertor.convert(restResponseList);
     }
 
-    /*
-     * @RequestMapping(value = "/reconciliation/paymentaggregate", method =
-     * RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE) public
-     * String searchAggregatePaymentsByDate(@RequestBody final
-     * PaymentInfoSearchRequest paymentInfoSearchRequest, final
-     * HttpServletRequest request) throws JsonGenerationException,
-     * JsonMappingException, IOException {
-     * LOGGER.info(request.getSession().getAttribute("source"));
-     * paymentInfoSearchRequest
-     * .setSource(request.getSession().getAttribute("source") != null ?
-     * request.getSession() .getAttribute("source").toString() : ""); final
-     * List<RestAggregatePaymentInfo> listAggregatePaymentInfo =
-     * collectionService .getAggregateReceiptTotal(paymentInfoSearchRequest);
-     * return getJSONResponse(listAggregatePaymentInfo); }
-     * @RequestMapping(value = "/reconciliation/paymentdetails", method =
-     * RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE) public
-     * String searchPaymentDetailsByServiceAndDate(@RequestBody final
-     * PaymentInfoSearchRequest paymentInfoSearchRequest, final
-     * HttpServletRequest request) throws JsonGenerationException,
-     * JsonMappingException, IOException {
-     * paymentInfoSearchRequest.setSource(request
-     * .getSession().getAttribute("source") != null ? request.getSession()
-     * .getAttribute("source").toString() : ""); final List<RestReceiptInfo>
-     * receiptInfoList = collectionService
-     * .getReceiptDetailsByDateAndService(paymentInfoSearchRequest); return
-     * getJSONResponse(receiptInfoList); }
-     */
+    @RequestMapping(value = "/reconciliation/paymentaggregate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String searchAggregatePaymentsByDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,
+            final HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException {
+        LOGGER.info(request.getSession().getAttribute("source"));
+        paymentInfoSearchRequest.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
+                .getAttribute("source").toString() : "");
+        final List<RestAggregatePaymentInfo> listAggregatePaymentInfo = collectionService
+                .getAggregateReceiptTotal(paymentInfoSearchRequest);
+        return JsonConvertor.convert(listAggregatePaymentInfo);
+    }
+
+    @RequestMapping(value = "/reconciliation/paymentdetails", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String searchPaymentDetailsByServiceAndDate(
+            @RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest, final HttpServletRequest request)
+            throws JsonGenerationException, JsonMappingException, IOException {
+        paymentInfoSearchRequest.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
+                .getAttribute("source").toString() : "");
+        final List<RestReceiptInfo> receiptInfoList = collectionService
+                .getReceiptDetailsByDateAndService(paymentInfoSearchRequest);
+        return JsonConvertor.convert(receiptInfoList);
+    }
 
     @RequestMapping(value = "/cancelReceipt", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public String cancelReceipt(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,
@@ -248,6 +247,26 @@ public class RestPaymentReportConroller {
 
     }
 
+    @RequestMapping(value = "/downloadReceipt", method = RequestMethod.POST)
+    public ResponseEntity<byte[]> downloadReceiptByReceiptAndConsumerNo(
+            @RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest) {
+        ResponseEntity<byte[]> receipt = null;
+        byte[] receiptPdf = null;
+
+        if (paymentInfoSearchRequest.getReceiptNo() != null && !paymentInfoSearchRequest.getReceiptNo().isEmpty()
+                && paymentInfoSearchRequest.getReferenceNo() != null
+                && !paymentInfoSearchRequest.getReferenceNo().isEmpty()) {
+            receiptPdf = collectionService.downloadReceiptByReceiptAndConsumerNo(
+                    paymentInfoSearchRequest.getReceiptNo(), paymentInfoSearchRequest.getReferenceNo());
+            final HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("application/pdf"));
+            headers.add("content-disposition", "inline;filename=Receipt.pdf");
+            receipt = new ResponseEntity<byte[]>(receiptPdf, headers, HttpStatus.CREATED);
+        } else if (receipt == null)
+            receipt = new ResponseEntity("File Not Found", HttpStatus.OK);
+        return receipt;
+    }
+
     @RequestMapping(value = "/services", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String services() throws JsonGenerationException, JsonMappingException, IOException {
 
@@ -270,23 +289,4 @@ public class RestPaymentReportConroller {
         return JsonConvertor.convert(serviceCategory);
 
     }
-
-    /**
-     * This method is used to prepare jSON response.
-     *
-     * @param obj
-     *            - a POJO object
-     * @return jsonResponse - JSON response string
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
-     * @throws IOException
-     */
-    /*
-     * private String getJSONResponse(final Object obj) throws
-     * JsonGenerationException, JsonMappingException, IOException { final Gson
-     * jsonCreator = new
-     * GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter
-     * .FACTORY) .disableHtmlEscaping().create(); return jsonCreator.toJson(obj,
-     * new TypeToken<Collection<Document>>() { }.getType()); }
-     */
 }

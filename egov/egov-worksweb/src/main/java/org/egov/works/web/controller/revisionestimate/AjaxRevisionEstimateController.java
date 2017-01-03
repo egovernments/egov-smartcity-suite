@@ -49,7 +49,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.SearchRevisionEstimate;
@@ -73,6 +72,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+
+import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
 @RequestMapping(value = "/revisionestimate")
@@ -102,7 +103,7 @@ public class AjaxRevisionEstimateController {
         final List<SearchRevisionEstimate> searchRevisionEstimates = revisionEstimateService
                 .searchRevisionEstimates(searchRevisionEstimate);
         final String result = new StringBuilder("{ \"data\":")
-                .append(WebUtils.toJSON(searchRevisionEstimates, SearchRevisionEstimate.class, RevisionEstimateJsonAdaptor.class))
+                .append(toJSON(searchRevisionEstimates, SearchRevisionEstimate.class, RevisionEstimateJsonAdaptor.class))
                 .append("}")
                 .toString();
         return result;
@@ -179,7 +180,7 @@ public class AjaxRevisionEstimateController {
         final List<SearchRevisionEstimate> revisionEstimates = revisionEstimateService
                 .searchRevisionEstimatesToCancel(searchRevisionEstimate);
         final String result = new StringBuilder("{ \"data\":")
-                .append(WebUtils.toJSON(revisionEstimates, SearchRevisionEstimate.class, RevisionEstimateJsonAdaptor.class))
+                .append(toJSON(revisionEstimates, SearchRevisionEstimate.class, RevisionEstimateJsonAdaptor.class))
                 .append("}").toString();
         return result;
     }

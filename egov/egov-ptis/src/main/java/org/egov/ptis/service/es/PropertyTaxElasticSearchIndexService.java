@@ -62,6 +62,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.bean.dashboard.CollectionDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
@@ -116,6 +118,9 @@ public class PropertyTaxElasticSearchIndexService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PropertyTaxElasticSearchIndexService.class);
 
     private PropertyTaxIndexRepository propertyTaxIndexRepository;
+    
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
@@ -165,6 +170,8 @@ public class PropertyTaxElasticSearchIndexService {
             CollectionDetails collectionIndexDetails) {
         Date fromDate;
         Date toDate;
+        final CFinancialYear financialyear = financialYearDAO.getFinancialYearByDate(new Date());
+
         /**
          * For fetching total demand between the date ranges if dates are sent in the request, consider fromDate and toDate+1 ,
          * else calculate from current year start date till current date+1 day
@@ -174,7 +181,7 @@ public class PropertyTaxElasticSearchIndexService {
             fromDate = DateUtils.getDate(collectionDetailsRequest.getFromDate(), "yyyy-MM-dd");
             toDate = DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), "yyyy-MM-dd"), 1);
         } else {
-            fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+            fromDate =DateUtils.startOfDay(financialyear.getStartingDate());
             toDate = DateUtils.addDays(new Date(), 1);
         }
         Long startTime = System.currentTimeMillis();

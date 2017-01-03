@@ -40,50 +40,45 @@
 
 package org.egov.tl.web.controller.category;
 
-import javax.validation.Valid;
-
 import org.egov.tl.entity.LicenseCategory;
-import org.egov.tl.service.masters.LicenseCategoryService;
+import org.egov.tl.service.LicenseCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/licensecategory")
 public class UpdateCategoryController {
 
-    private final LicenseCategoryService licenseCategoryService;
-
     @Autowired
-    public UpdateCategoryController(final LicenseCategoryService licenseCategoryService) {
-        this.licenseCategoryService = licenseCategoryService;
-    }
+    private LicenseCategoryService licenseCategoryService;
 
     @ModelAttribute
-    public LicenseCategory licenseCategoryModel(@PathVariable final String code) {
-        return licenseCategoryService.findCategoryByCode(code);
+    public LicenseCategory licenseCategory(@PathVariable String code) {
+        return licenseCategoryService.getCategoryByCode(code);
     }
 
-    @RequestMapping(value = "/update/{code}", method = RequestMethod.GET)
-    public String categoryUpdateForm(@ModelAttribute @Valid final LicenseCategory licenseCategory, final Model model) {
+    @RequestMapping(value = "/update/{code}", method = GET)
+    public String showUpdateCategoryForm() {
         return "licensecategory-update";
     }
 
-    @RequestMapping(value = "/update/{code}", method = RequestMethod.POST)
-    public String updateCategory(@ModelAttribute @Valid final LicenseCategory licenseCategory, final BindingResult errors,
-            final RedirectAttributes additionalAttr) {
-
-        if (errors.hasErrors())
+    @RequestMapping(value = "/update/{code}", method = POST)
+    public String updateCategory(@ModelAttribute @Valid LicenseCategory licenseCategory, BindingResult bindingResult,
+                                 RedirectAttributes responseAttrbs) {
+        if (bindingResult.hasErrors())
             return "licensecategory-update";
-
-        licenseCategoryService.persistCategory(licenseCategory);
-        additionalAttr.addFlashAttribute("message", "msg.success.category.update");
+        licenseCategoryService.saveCategory(licenseCategory);
+        responseAttrbs.addFlashAttribute("message", "msg.success.category.update");
         return "redirect:/licensecategory/view/" + licenseCategory.getCode();
     }
 

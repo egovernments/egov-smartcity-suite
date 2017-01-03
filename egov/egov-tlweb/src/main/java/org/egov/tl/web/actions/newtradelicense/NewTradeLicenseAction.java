@@ -95,7 +95,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private String renewAppType;
     @Autowired
     @Qualifier("tradeLicenseService")
-    private TradeLicenseService tradeLicenseService;
+    private transient TradeLicenseService tradeLicenseService;
 
 
     public NewTradeLicenseAction() {
@@ -221,10 +221,10 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                 LOCALITY, LOCATION_HIERARCHY_TYPE);
         addDropdownData("localityList", localityList);
         addDropdownData("tradeTypeList", tradeLicenseService.getAllNatureOfBusinesses());
-        addDropdownData("categoryList", licenseCategoryService.findAll());
-        addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
+        addDropdownData("categoryList", licenseCategoryService.getCategories());
+        addDropdownData("uomList", unitOfMeasurementService.getAllActiveUOM());
         addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList()
-                : licenseSubCategoryService.findAllSubCategoryByCategory(tradeLicense.getCategory().getId()));
+                : licenseSubCategoryService.getSubCategoriesByCategory(tradeLicense.getCategory().getId()));
         if (license() != null && license().getAgreementDate() != null)
             setShowAgreementDtl(true);
     }

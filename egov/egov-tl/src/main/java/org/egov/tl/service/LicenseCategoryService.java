@@ -38,46 +38,37 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.web.controller.admin.masters.boundary;
+package org.egov.tl.service;
 
-import org.apache.commons.io.IOUtils;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.web.support.json.adapter.BoundaryAdapter;
+import org.egov.tl.entity.LicenseCategory;
+import org.egov.tl.repository.LicenseCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
-@Controller
-public class PageViewBoundaryController {
-
-    private final BoundaryService boundaryService;
+@Service
+@Transactional(readOnly = true)
+public class LicenseCategoryService {
 
     @Autowired
-    public PageViewBoundaryController(final BoundaryService boundaryService) {
-        this.boundaryService = boundaryService;
+    private LicenseCategoryRepository licenseCategoryRepository;
+
+    @Transactional
+    public LicenseCategory saveCategory(final LicenseCategory licenseCategory) {
+        return licenseCategoryRepository.save(licenseCategory);
     }
 
-    @RequestMapping(value = "/list-boundaries", method = RequestMethod.GET)
-    public @ResponseBody void springPaginationDataTables(final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException {
+    public LicenseCategory getCategoryByCode(String code) {
+        return licenseCategoryRepository.findByCodeIgnoreCase(code);
+    }
 
-        final Long boundaryTypeId = Long.valueOf(request.getParameter("boundaryTypeId"));
+    public List<LicenseCategory> getCategories() {
+        return licenseCategoryRepository.findAll();
+    }
 
-        final List<Boundary> pageOfBoundaries = boundaryService.getPageOfBoundaries(boundaryTypeId);
-        final StringBuilder boundaryJSONData = new StringBuilder("{\"data\":").append(toJSON(pageOfBoundaries, Boundary.class, BoundaryAdapter.class))
-                .append("}");
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(boundaryJSONData, response.getWriter());
+    public List<LicenseCategory> getCategoriesOrderByName() {
+        return licenseCategoryRepository.findAllByOrderByNameAsc();
     }
 }

@@ -38,53 +38,80 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.web.controller.uom;
+package org.egov.tl.web.controller.subcategory;
 
-import javax.validation.Valid;
-
+import org.egov.tl.entity.FeeType;
+import org.egov.tl.entity.LicenseCategory;
+import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.UnitOfMeasurement;
-import org.egov.tl.service.masters.UnitOfMeasurementService;
+import org.egov.tl.entity.enums.RateTypeEnum;
+import org.egov.tl.service.FeeTypeService;
+import org.egov.tl.service.LicenseCategoryService;
+import org.egov.tl.service.LicenseSubCategoryService;
+import org.egov.tl.service.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@Controller
-@RequestMapping("/licenseunitofmeasurement")
-public class UpdateLicenseUomController {
+import javax.validation.Valid;
+import java.util.List;
 
-    private final UnitOfMeasurementService unitOfMeasurementService;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+@Controller
+@RequestMapping("/licensesubcategory")
+public class CreateSubCategoryController {
 
     @Autowired
-    public UpdateLicenseUomController(final UnitOfMeasurementService unitOfMeasurementService) {
-        this.unitOfMeasurementService = unitOfMeasurementService;
-    }
+    private LicenseSubCategoryService licenseSubCategoryService;
+
+    @Autowired
+    private LicenseCategoryService licenseCategoryService;
+
+    @Autowired
+    private UnitOfMeasurementService unitOfMeasurementService;
+
+    @Autowired
+    private FeeTypeService feeTypeService;
 
     @ModelAttribute
-    public UnitOfMeasurement unitOfMeasurementModel(@PathVariable final String code) {
-        return unitOfMeasurementService.findUOMByCode(code);
+    public LicenseSubCategory licenseSubCategory() {
+        return new LicenseSubCategory();
     }
 
-    @RequestMapping(value = "/update/{code}", method = RequestMethod.GET)
-    public String categoryUpdateForm(@ModelAttribute @Valid final UnitOfMeasurement unitOfMeasurement, final Model model) {
-        return "uom-update";
+    @ModelAttribute(value = "licenseCategories")
+    public List<LicenseCategory> licenseCategories() {
+        return licenseCategoryService.getCategories();
     }
 
-    @RequestMapping(value = "/update/{code}", method = RequestMethod.POST)
-    public String updateCategory(@ModelAttribute @Valid final UnitOfMeasurement unitOfMeasurement, final BindingResult errors,
-            final RedirectAttributes additionalAttr) {
-
-        if (errors.hasErrors())
-            return "uom-update";
-
-        unitOfMeasurementService.persistUnitOfMeasurement(unitOfMeasurement);
-        additionalAttr.addFlashAttribute("message", "msg.success.uom.update");
-        return "redirect:/licenseunitofmeasurement/view/" + unitOfMeasurement.getCode();
+    @ModelAttribute(value = "licenseUomTypes")
+    public List<UnitOfMeasurement> activeUOMs() {
+        return unitOfMeasurementService.getAllActiveUOM();
     }
 
+    @ModelAttribute(value = "licenseFeeTypes")
+    public List<FeeType> feeTypes() {
+        return feeTypeService.findAll();
+    }
+
+    @RequestMapping(value = "/create", method = GET)
+    public String showCreateSubCategoryForm(Model model) {
+        model.addAttribute("rateTypes", RateTypeEnum.values());
+        return "subcategory-create";
+    }
+
+    @RequestMapping(value = "/create", method = POST)
+    public String createSubCategory(@ModelAttribute @Valid LicenseSubCategory licenseSubCategory,
+                                    BindingResult bindingResult, RedirectAttributes responseAttrbs) {
+        if (bindingResult.hasErrors())
+            return "subcategory-create";
+        licenseSubCategoryService.createSubCategory(licenseSubCategory);
+        responseAttrbs.addFlashAttribute("message", "msg.subcategory.save.success");
+        return "redirect:/licensesubcategory/view/" + licenseSubCategory.getCode();
+    }
 }

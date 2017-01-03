@@ -41,7 +41,6 @@
 package org.egov.tl.web.actions.newtradelicense;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -49,7 +48,6 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
-import org.egov.tl.entity.FeeMatrixDetail;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseDocumentType;
@@ -65,7 +63,6 @@ import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -74,7 +71,6 @@ import java.util.Map;
 
 import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
 
 @ParentPackage("egov")
 @Results({
@@ -136,10 +132,10 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
                 LOCALITY, LOCATION_HIERARCHY_TYPE);
         this.addDropdownData("localityList", localityList);
         this.addDropdownData("tradeTypeList", this.tradeLicenseService.getAllNatureOfBusinesses());
-        this.addDropdownData("categoryList", this.licenseCategoryService.findAll());
-        this.addDropdownData("uomList", this.unitOfMeasurementService.findAllActiveUOM());
+        this.addDropdownData("categoryList", this.licenseCategoryService.getCategories());
+        this.addDropdownData("uomList", this.unitOfMeasurementService.getAllActiveUOM());
         addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList() :
-                licenseSubCategoryService.findAllSubCategoryByCategory(tradeLicense.getCategory().getId()));
+                licenseSubCategoryService.getSubCategoriesByCategory(tradeLicense.getCategory().getId()));
 
     }
 

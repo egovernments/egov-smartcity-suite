@@ -71,7 +71,7 @@ import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.service.LicenseStatusService;
-import org.egov.tl.service.masters.LicenseSubCategoryService;
+import org.egov.tl.service.LicenseSubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -122,7 +122,7 @@ public class LicenseUtils {
     }
 
     public List<LicenseSubCategory> getAllTradeNames(final String simpleName) {
-        return licenseSubCategoryService.getLicenseSubCategoriesByLicenseTypeName(simpleName);
+        return licenseSubCategoryService.getSubCategoriesByLicenseTypeName(simpleName);
     }
 
     public List<Department> getAllDepartments() {

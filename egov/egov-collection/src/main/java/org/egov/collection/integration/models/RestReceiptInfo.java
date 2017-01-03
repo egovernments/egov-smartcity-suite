@@ -54,6 +54,7 @@ public class RestReceiptInfo {
     private String paymentType;
     private String serviceName;
     private String payeeName;
+    private String receiptStatus;
 
     public RestReceiptInfo() {
         super();
@@ -67,6 +68,7 @@ public class RestReceiptInfo {
         txnDate = CollectionsUtil.CHEQUE_DATE_FORMAT.format(receiptHeader.getReceiptdate());
         serviceName = receiptHeader.getService().getName();
         payeeName = receiptHeader.getPayeeName();
+        receiptStatus = receiptHeader.getStatus().getDescription();
     }
 
     public String getTransactionId() {
@@ -139,5 +141,13 @@ public class RestReceiptInfo {
 
     public void setPayeeName(String payeeName) {
         this.payeeName = payeeName;
+    }
+
+    public String getReceiptStatus() {
+        return receiptStatus;
+    }
+
+    public void setReceiptStatus(String receiptStatus) {
+        this.receiptStatus = receiptStatus;
     }
 }

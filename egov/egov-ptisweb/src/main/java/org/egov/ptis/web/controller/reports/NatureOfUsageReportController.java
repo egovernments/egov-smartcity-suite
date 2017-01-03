@@ -66,7 +66,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.ptis.constants.PropertyTaxConstants.BLOCK;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 

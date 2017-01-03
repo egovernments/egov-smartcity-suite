@@ -40,44 +40,30 @@
 
 package org.egov.tl.web.controller.uom;
 
-import javax.validation.Valid;
-
 import org.egov.tl.entity.UnitOfMeasurement;
-import org.egov.tl.service.masters.UnitOfMeasurementService;
+import org.egov.tl.service.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping("/licenseunitofmeasurement")
-public class CreateLicenseUomController {
+public class ViewUnitOfMeasurementController {
 
     @Autowired
     private UnitOfMeasurementService unitOfMeasurementService;
 
     @ModelAttribute
-    public UnitOfMeasurement unitOfMeasurementModel() {
-        return new UnitOfMeasurement();
+    public UnitOfMeasurement unitOfMeasurement(@PathVariable String code) {
+        return unitOfMeasurementService.getUnitOfMeasurementByCode(code);
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String createUomForm() {
-        return "uom-create";
-    }
-
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String createUom(@Valid @ModelAttribute final UnitOfMeasurement unitOfMeasurement, final BindingResult errors,
-            final RedirectAttributes additionalAttr) {
-
-        if (errors.hasErrors())
-            return "uom-create";
-        unitOfMeasurementService.persistUnitOfMeasurement(unitOfMeasurement);
-        additionalAttr.addFlashAttribute("message", "msg.uom.save.success");
-
-        return "redirect:/licenseunitofmeasurement/view/" + unitOfMeasurement.getCode();
+    @RequestMapping(value = "/view/{code}", method = GET)
+    public String viewUom() {
+        return "uom-view";
     }
 }

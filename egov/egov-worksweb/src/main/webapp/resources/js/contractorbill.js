@@ -137,7 +137,7 @@ $(document).ready(function(){
 					return false;
 				}
 				
-				if(workCompletionDate > currentDate) {
+				if(workCompletionDate > new Date()) {
 					bootbox.alert($('#errorWorkCompletionDateFutureDate').val());
 					$('#workCompletionDate').val(""); 
 					return false;

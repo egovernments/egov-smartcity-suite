@@ -38,46 +38,47 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.service.masters;
+package org.egov.tl.web.controller.uom;
 
 import org.egov.tl.entity.UnitOfMeasurement;
-import org.egov.tl.repository.UnitOfMeasurementRepository;
+import org.egov.tl.service.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
+import javax.validation.Valid;
 
-@Service
-@Transactional(readOnly = true)
-public class UnitOfMeasurementService{
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+@Controller
+@RequestMapping("/licenseunitofmeasurement")
+public class UpdateUnitOfMeasurementController {
 
     @Autowired
-    private UnitOfMeasurementRepository unitOfMeasurementRepository;
-    
-    @Transactional
-    public UnitOfMeasurement persistUnitOfMeasurement(UnitOfMeasurement unitOfMeasurement){
-        return  unitOfMeasurementRepository.save(unitOfMeasurement);
+    private UnitOfMeasurementService unitOfMeasurementService;
+
+    @ModelAttribute
+    public UnitOfMeasurement unitOfMeasurement(@PathVariable String code) {
+        return unitOfMeasurementService.getUnitOfMeasurementByCode(code);
     }
 
-    public UnitOfMeasurement findUOMByName(final String name) {
-        return  unitOfMeasurementRepository.findByNameIgnoreCase(name);
+    @RequestMapping(value = "/update/{code}", method = GET)
+    public String showUpdateUomForm() {
+        return "uom-update";
     }
 
-    public UnitOfMeasurement findUOMByCode(final String code) {
-        return  unitOfMeasurementRepository.findByCodeIgnoreCase(code);
+    @RequestMapping(value = "/update/{code}", method = POST)
+    public String updateUom(@ModelAttribute @Valid UnitOfMeasurement unitOfMeasurement, BindingResult bindingResult,
+                            RedirectAttributes responseAttrbs) {
+        if (bindingResult.hasErrors())
+            return "uom-update";
+        unitOfMeasurementService.save(unitOfMeasurement);
+        responseAttrbs.addFlashAttribute("message", "msg.success.uom.update");
+        return "redirect:/licenseunitofmeasurement/view/" + unitOfMeasurement.getCode();
     }
-
-    public List<UnitOfMeasurement> findAllActiveUOM() {
-        return unitOfMeasurementRepository.findAllByActiveTrue();
-    }
-    
-    public UnitOfMeasurement findById(Long uomId){
-        return unitOfMeasurementRepository.findOne(uomId);
-    }
-    
-    public List<UnitOfMeasurement> findAll(){
-        return unitOfMeasurementRepository.findAll();
-    }
-
 }

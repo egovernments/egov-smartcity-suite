@@ -48,7 +48,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.utils.JsonUtils;
 import org.egov.lcms.reports.entity.TimeSeriesReportResult;
 import org.egov.lcms.transactions.service.TimeSeriesReportService;
 import org.egov.lcms.utils.constants.LcmsConstants;
@@ -114,7 +114,7 @@ public class TimeSeriesReportController {
         final List<TimeSeriesReportResult> timeSeriesReportList = timeSeriesReportService
                 .getTimeSeriesReports(timeSeriesReportObj, clickOnCount);
         final String result = new StringBuilder("{ \"data\":").append(
-                WebUtils.toJSON(timeSeriesReportList, TimeSeriesReportResult.class, TimeSeriesReportJsonAdaptor.class))
+                JsonUtils.toJSON(timeSeriesReportList, TimeSeriesReportResult.class, TimeSeriesReportJsonAdaptor.class))
                 .append("}").toString();
         return result;
     }
@@ -136,7 +136,7 @@ public class TimeSeriesReportController {
         final List<TimeSeriesReportResult> timeSeriesReportList = timeSeriesReportService
                 .getTimeSeriesReports(timeSeriesReportObj, clickOnCount);
         final String result = new StringBuilder("{ \"data\":").append(
-                WebUtils.toJSON(timeSeriesReportList, TimeSeriesReportResult.class, DrillDownReportJsonAdaptor.class))
+                JsonUtils.toJSON(timeSeriesReportList, TimeSeriesReportResult.class, DrillDownReportJsonAdaptor.class))
                 .append("}").toString();
         return result;
     }

@@ -55,9 +55,29 @@
 	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/javascript/objection.js' context='/ptis'/>"></script>
-<title><s:text name="objectionView.title" /></title>
+<title>
+<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+<s:text name="objection.GRPView.title" />
+</s:if>
+<s:else>
+<s:text name="objectionView.title" />
+</s:else>
+</title>
 <script type="text/javascript">
+
+
 	jQuery.noConflict();
+	jQuery(document).ready(function()
+			{	
+		var designation = '<s:property value="%{currentDesignation}"/>';
+		var state =  '<s:property value="%{objection.egwStatus.code}"/>';
+		var value= '<s:property value="%{objection.currentState.nextAction}"/>'
+		if(designation == 'Commissioner' && state!='CREATED') {
+			jQuery('#Forward').hide();
+		}else if(value=='Print Endoresement'){
+			jQuery('#Forward').hide();
+		}
+					}); 
 	jQuery("#loadingMask").remove();
 	jQuery(function($) {
 		try {
@@ -83,8 +103,18 @@
 			showHideFirmName();
 			showHideLengthBreadth();
 		</s:if>
+		
 		loadDesignationFromMatrix();
+		
 	}
+	function loadDesignationFromMatrix() {
+  		var e = dom.get('approverDepartment');
+  		var dept = e.options[e.selectedIndex].text;
+  			var currentState = dom.get('currentState').value;
+  			var amountRule="";
+  		var pendingAction=document.getElementById('pendingActions').value;
+  		loadDesignationByDeptAndType('RevisionPetition',dept,currentState,amountRule,"",pendingAction); 
+  	}
 	function enableAppartnaumtLandDetailsView() {
 		if (document.forms[0].appurtenantLandChecked != null && document.forms[0].appurtenantLandChecked.checked == true) {
 			jQuery('tr.vacantlanddetaills').show();
@@ -120,7 +150,8 @@
 		if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_FORWARD}"/>') {
 
 			if (statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED}"/>') {
-				if (state == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@REVISIONPETITION_CREATED}"/>') {
+				if (state == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@RP_CREATED}"/>'
+						|| state == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@GRP_CREATED}"/>') {
 					if (validateRecordObjections()) {
 						action = 'revPetition.action';
 					} else
@@ -152,7 +183,10 @@
 				/* } else
 					return false;
  				*/
+			}else if(statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_ACCEPTED}"/>'){
+				action = 'revPetition-recordObjectionOutcome.action';				
 			}
+			
 		} else if (actionName == 'Print HearingNotice') {
 			url = "/ptis/revPetition/revPetition-printHearingNotice.action?objectionId="
 					+ document.getElementById("model.id").value;
@@ -191,7 +225,7 @@
 			action = 'revPetition-rejectInspectionDetails.action';
 		} else if (actionName == 'Reject') {
 			action = 'revPetition-reject.action';
-		} else if (actionName == 'Approve') {
+		} else if (actionName == 'Approve' || actionName == 'Forward') {
 			if (statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY}"/>') {
 				//if (validateObjectionOutcome()) {
 					/*  if(document.getElementById('approverPositionId').value=="-1") {
@@ -346,8 +380,15 @@
 									id="header_1" href="#" onclick="showPropertyHeaderTab();"><s:text
 											name="propDet"></s:text></a></li>
 								<li id="objectionDetailTab" class=""><a id="header_2"
-									href="#" onclick="showObjectionHeaderTab();"><s:text
-											name="objection.details.heading"></s:text></a></li>
+									href="#" onclick="showObjectionHeaderTab();">
+									<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+									<s:text	name="objection.grp.details.heading"></s:text>
+											</s:if>
+											<s:else>
+									<s:text
+											name="objection.details.heading"></s:text>
+											</s:else>
+											</a></li>
 								<%-- 				<li id="approvalTab" class="Last"><a id="header_3" href="#" onclick="showApprovalTab();"><s:text name="approval.details.title"></s:text></a></li>
  --%>
 							</ul>
@@ -388,7 +429,7 @@
 
 							<s:if
 								test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED) &&
-        		state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@REVISIONPETITION_CREATED)">
+        		state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@GRP_RP_CREATED)">
 								<jsp:include page="recordRevisionPetition.jsp" />
         		</s:if>
 							<s:elseif
@@ -454,9 +495,21 @@
 								</s:elseif>
 								<s:elseif
 									test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED)
-							&& state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@REVISIONPETITION_CREATED)">
+							&& state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@GRP_RP_CREATED)">
 									<%-- <jsp:include page="../workflow/revisionPetition-workflow.jsp"/> --%>
 									<jsp:include page="../workflow/commonWorkflowMatrix.jsp" />
+								</s:elseif>
+								<s:elseif test="%{egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY) && currentDesignation != null && !@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(currentDesignation.toUpperCase())}">
+					   <jsp:include page="../workflow/commonWorkflowMatrix.jsp" />
+					   </s:elseif>
+								<s:elseif
+									test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_ACCEPTED) && currentDesignation != null && !@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(currentDesignation.toUpperCase())">
+									<s:if
+										test="objection.currentState.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_PRINT_ENDORSEMENT) || objection.currentState.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_PRINT_NOTICE)">
+									</s:if>
+									<s:else>
+										<jsp:include page="../workflow/commonWorkflowMatrix.jsp" />
+									</s:else>
 								</s:elseif>
 								<s:else>
 									<div align="center">
@@ -470,8 +523,9 @@
 					</tr>	
        			 		
        			 		<s:hidden name="workflowBean.actionName" id="workflowBean.actionName"/>
-       			 		</table>
+       			 		</table>        
        			 --%>
+       			                    <%-- <jsp:include page="../workflow/commonWorkflowMatrix.jsp" /> --%>
 									</div>
 								</s:else>
 							</div>
@@ -490,7 +544,7 @@
 				value="%{egwStatus.code}" />
 			<%-- 	<s:hidden name="model.property" id="model.property"/>
 		 --%>
-		</s:push>
+		 <s:hidden name="wfType" id="wfType" value="%{wfType}" />		</s:push>
 	</s:form>
 
 </body>

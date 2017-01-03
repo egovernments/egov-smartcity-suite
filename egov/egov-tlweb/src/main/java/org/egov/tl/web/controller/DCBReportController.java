@@ -54,7 +54,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 

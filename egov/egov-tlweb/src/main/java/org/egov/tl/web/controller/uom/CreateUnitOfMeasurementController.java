@@ -41,33 +41,43 @@
 package org.egov.tl.web.controller.uom;
 
 import org.egov.tl.entity.UnitOfMeasurement;
-import org.egov.tl.service.masters.UnitOfMeasurementService;
+import org.egov.tl.service.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/licenseunitofmeasurement")
-public class ViewUomController {
-
-    private final UnitOfMeasurementService unitOfMeasurementService;
+public class CreateUnitOfMeasurementController {
 
     @Autowired
-    public ViewUomController(final UnitOfMeasurementService unitOfMeasurementService) {
-        this.unitOfMeasurementService = unitOfMeasurementService;
-    }
+    private UnitOfMeasurementService unitOfMeasurementService;
 
     @ModelAttribute
-    public UnitOfMeasurement licenseUomModel(@PathVariable final String code) {
-        return unitOfMeasurementService.findUOMByCode(code);
+    public UnitOfMeasurement unitOfMeasurement() {
+        return new UnitOfMeasurement();
     }
 
-    @RequestMapping(value = "/view/{code}", method = RequestMethod.GET)
-    public String uomView(@ModelAttribute final UnitOfMeasurement unitOfMeasurement) {
+    @RequestMapping(value = "/create", method = GET)
+    public String showCreateUomForm() {
+        return "uom-create";
+    }
 
-        return "uom-view";
+    @RequestMapping(value = "/create", method = POST)
+    public String createUom(@Valid @ModelAttribute UnitOfMeasurement unitOfMeasurement, BindingResult bindingResult,
+                            RedirectAttributes responseAttrbs) {
+        if (bindingResult.hasErrors())
+            return "uom-create";
+        unitOfMeasurementService.save(unitOfMeasurement);
+        responseAttrbs.addFlashAttribute("message", "msg.uom.save.success");
+        return "redirect:/licenseunitofmeasurement/view/" + unitOfMeasurement.getCode();
     }
 }

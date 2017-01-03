@@ -50,7 +50,7 @@ import org.egov.tl.entity.FeeType;
 import org.egov.tl.entity.UnitOfMeasurement;
 import org.egov.tl.service.FeeMatrixDetailService;
 import org.egov.tl.service.FeeMatrixService;
-import org.egov.tl.service.masters.LicenseCategoryService;
+import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.web.response.adaptor.FeeMatrixResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -68,7 +68,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
-import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -103,7 +103,7 @@ public class FeeMatrixController {
 
         new ArrayList<UnitOfMeasurement>();
         new ArrayList<FeeType>();
-        model.addAttribute("licenseCategorys", licenseCategoryService.findAllOrderByName());
+        model.addAttribute("licenseCategorys", licenseCategoryService.getCategoriesOrderByName());
         model.addAttribute("natureOfBusinesss",
                 persistenceService.findAllBy("select n from org.egov.tl.entity.NatureOfBusiness n order by name asc"));
         model.addAttribute("financialYears", financialYearDAO.getAllActiveFinancialYearList());
@@ -172,7 +172,7 @@ public class FeeMatrixController {
     public String viewForm(Model model) {
         model.addAttribute(FEE_MATRIX_MODEL_ATTRIB_NAME, new FeeMatrix());
         model.addAttribute("financialYears", financialYearDAO.getAllActiveFinancialYearList());
-        model.addAttribute("licenseCategorys", licenseCategoryService.findAllOrderByName());
+        model.addAttribute("licenseCategorys", licenseCategoryService.getCategoriesOrderByName());
         model.addAttribute("subCategorys", emptyList());
         return "feematrix-view";
     }

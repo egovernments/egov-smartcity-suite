@@ -73,7 +73,6 @@ import java.util.TreeMap;
 
 import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
 
 @ParentPackage("egov")
 @Results({
@@ -172,9 +171,9 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         addDropdownData("localityList", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 LOCALITY, LOCATION_HIERARCHY_TYPE));
         addDropdownData("tradeTypeList", tradeLicenseService.getAllNatureOfBusinesses());
-        addDropdownData("categoryList", licenseCategoryService.findAll());
+        addDropdownData("categoryList", licenseCategoryService.getCategories());
         addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList()
-                : licenseSubCategoryService.findAllSubCategoryByCategory(tradeLicense.getCategory().getId()));
+                : licenseSubCategoryService.getSubCategoriesByCategory(tradeLicense.getCategory().getId()));
         if (license().getAgreementDate() != null)
             setShowAgreementDtl(true);
     }

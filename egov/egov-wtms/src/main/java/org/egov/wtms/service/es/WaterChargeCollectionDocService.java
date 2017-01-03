@@ -60,6 +60,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -117,6 +118,9 @@ public class WaterChargeCollectionDocService {
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
+    
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
 
     /**
      * Gives the consolidated collection for the dates and billing service
@@ -254,14 +258,16 @@ public class WaterChargeCollectionDocService {
          * Current day's collection if dates are sent in the request, consider
          * the toDate, else take date range between current date +1 day
          */
+        final CFinancialYear financialyear = financialYearDAO.getFinancialYearByDate(new Date());
+
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
             fromDate = DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD);
             toDate = org.apache.commons.lang3.time.DateUtils
                     .addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD), 1);
         } else {
-            fromDate = new Date();
-            toDate = org.apache.commons.lang3.time.DateUtils.addDays(fromDate, 1);
+            fromDate=DateUtils.startOfDay(financialyear.getStartingDate());
+            toDate = DateUtils.addDays(new Date(), 1);
         }
         // Today’s collection
         todayColl = getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null);

@@ -39,10 +39,9 @@
  */
 package org.egov.tl.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.tl.entity.enums.RateTypeEnum;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -85,14 +84,16 @@ public class LicenseSubCategoryDetails extends AbstractPersistable<Long> {
     @Enumerated(EnumType.STRING)
     @Column(name = "RATETYPE")
     private RateTypeEnum rateType;
-    
+
     @Transient
     private boolean markedForRemoval;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -128,7 +129,7 @@ public class LicenseSubCategoryDetails extends AbstractPersistable<Long> {
     public void setFeeType(FeeType feeType) {
         this.feeType = feeType;
     }
-    
+
     public boolean isMarkedForRemoval() {
         return markedForRemoval;
     }
@@ -139,8 +140,10 @@ public class LicenseSubCategoryDetails extends AbstractPersistable<Long> {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         final LicenseSubCategoryDetails that = (LicenseSubCategoryDetails) o;
 

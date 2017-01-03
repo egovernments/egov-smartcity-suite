@@ -1,4 +1,3 @@
-
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
@@ -41,88 +40,66 @@
 
 package org.egov.tl.web.controller.subcategory;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import org.egov.tl.entity.LicenseCategory;
+import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.service.LicenseCategoryService;
+import org.egov.tl.service.LicenseSubCategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.egov.tl.entity.LicenseCategory;
-import org.egov.tl.entity.LicenseSubCategory;
-import org.egov.tl.service.masters.LicenseCategoryService;
-import org.egov.tl.service.masters.LicenseSubCategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/licensesubcategory")
 public class SearchSubCategoryController {
 
     @Autowired
-    private LicenseCategoryService licenseCategoryService;
-
-    private final LicenseSubCategoryService licenseSubCategoryService;
+    private LicenseSubCategoryService licenseSubCategoryService;
 
     @Autowired
-    public SearchSubCategoryController(final LicenseSubCategoryService licenseSubCategoryService) {
-        this.licenseSubCategoryService = licenseSubCategoryService;
-    }
+    private LicenseCategoryService licenseCategoryService;
 
     @ModelAttribute
-    public LicenseCategory licenseCategoryModel() {
-        return new LicenseCategory();
+    public LicenseSubCategory licenseSubCategory() {
+        return new LicenseSubCategory();
     }
 
     @ModelAttribute(value = "licenseCategories")
-    public List<LicenseCategory> getAllCategories() {
-        return licenseCategoryService.findAll();
-    }
-
-    @ModelAttribute(value = "licenseSubCategories")
-    public List<LicenseSubCategory> getAllSubCategoryByCategory(final Long categoryId) {
-        return licenseSubCategoryService.findAllSubCategoryByCategory(categoryId);
+    public List<LicenseCategory> categories() {
+        return licenseCategoryService.getCategories();
     }
 
     @RequestMapping(value = "/subcategories-by-category", method = GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody List<LicenseSubCategory> getSubcategories(@RequestParam final Long categoryId) {
-        return licenseSubCategoryService.findAllSubCategoryByCategory(categoryId);
-
+    @ResponseBody
+    public List<LicenseSubCategory> getSubCategories(@RequestParam Long categoryId) {
+        return licenseSubCategoryService.getSubCategoriesByCategory(categoryId);
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.GET)
-    public String updateLicenseSubCategory(@ModelAttribute final LicenseSubCategory licenseSubCategory,
-            final Model model) {
+    @RequestMapping(value = "/update", method = GET)
+    public String showUpdateSubCategorySearchForm() {
         return "subcategory-search-update";
     }
 
-    @RequestMapping(value = "/view", method = RequestMethod.GET)
-    public String viewLicenseCategory(@ModelAttribute final LicenseSubCategory licenseSubCategory, final Model model) {
+    @RequestMapping(value = "/view", method = GET)
+    public String showViewSubCategorySearchForm() {
         return "subcategory-search-view";
     }
 
-    @RequestMapping(value = "/view", method = RequestMethod.POST)
-    public String searchView(@ModelAttribute final LicenseSubCategory licenseSubCategory, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
-        if (errors.hasErrors())
-            return "subcategory-search-view";
+    @RequestMapping(value = "/view", method = POST)
+    public String showViewSubCategoryForm(@ModelAttribute LicenseSubCategory licenseSubCategory) {
         return "redirect:/licensesubcategory/view/" + licenseSubCategory.getCode();
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String searchUpdate(@ModelAttribute final LicenseSubCategory licenseSubCategory, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
-        if (errors.hasErrors())
-            return "subcategory-search-update";
+    @RequestMapping(value = "/update", method = POST)
+    public String showUpdateSubCategoryForm(@ModelAttribute LicenseSubCategory licenseSubCategory) {
         return "redirect:/licensesubcategory/update/" + licenseSubCategory.getCode();
-
     }
 }

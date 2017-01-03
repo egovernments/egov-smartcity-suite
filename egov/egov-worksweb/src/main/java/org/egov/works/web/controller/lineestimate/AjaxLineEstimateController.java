@@ -39,8 +39,6 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
-import static org.egov.infra.web.utils.WebUtils.toJSON;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -103,6 +101,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+
+import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
