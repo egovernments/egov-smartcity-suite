@@ -79,7 +79,7 @@
 		</div>
 		<div class="col-sm-2">
 			<c:set value="false" var="isDocFound"></c:set>
-			<c:forEach items="${registration.registrationDocuments}" var="regdoc" varStatus="loopStatus">
+			<c:forEach items="${marriageRegistration.registrationDocuments}" var="regdoc" varStatus="loopStatus">
 				<c:if test="${regdoc.document.id == doc.id}">
 					<c:set value="true" var="isDocFound"></c:set>
 					<input type="hidden" id="registrationfile${status.index}" value="${regdoc.fileStoreMapper.fileName}|${regdoc.fileStoreMapper.contentType}|${regdoc.base64EncodedFile}">
@@ -123,7 +123,7 @@
 			<form:errors path="husband.documents[${status.index}].file" cssClass="add-margin error-msg" />
 			&nbsp;&nbsp;
 			<c:set value="false" var="isDocFound"></c:set>
-			<c:forEach items="${registration.husband.applicantDocuments}" var="appdoc" varStatus="loopStatus">
+			<c:forEach items="${marriageRegistration.husband.applicantDocuments}" var="appdoc" varStatus="loopStatus">
 				<c:if test="${appdoc.document.id == doc.id}">
 					<c:set value="true" var="isDocFound"></c:set>
 					<input type="hidden" id="husbandfile${status.index}" value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
@@ -140,7 +140,7 @@
 			<form:errors path="wife.documents[${status.index}].file" cssClass="add-margin error-msg" />
 			
 			<c:set value="false" var="isDocFound"></c:set>
-			<c:forEach items="${registration.wife.applicantDocuments}" var="appdoc" varStatus="loopStatus">
+			<c:forEach items="${marriageRegistration.wife.applicantDocuments}" var="appdoc" varStatus="loopStatus">
 				<c:if test="${appdoc.document.id == doc.id}">
 					<c:set value="true" var="isDocFound"></c:set>
 					<input type="hidden" id="wifefile${status.index}" value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">

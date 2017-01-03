@@ -50,17 +50,17 @@
 	<div class="col-md-12">
 		<div class="text-right error-msg" style="font-size: 14px;"></div>
 		<c:set value="/mrs/registration/register" var="actionUrl" />
-		<c:if test="${registration.status == 'Rejected'}">
-			<c:set value="/mrs/registration/workflow?id=${registration.id}"
+		<c:if test="${marriageRegistration.status == 'Rejected'}">
+			<c:set value="/mrs/registration/workflow?id=${marriageRegistration.id}"
 				var="actionUrl" />
 		</c:if>
-		<c:if test="${registration.status == 'Approved'}">
+		<c:if test="${marriageRegistration.status == 'Approved'}">
 			<c:set
-				value="/mrs/registration/certificate?registrationId=${registration.id}"
+				value="/mrs/registration/certificate?registrationId=${marriageRegistration.id}"
 				var="actionUrl"></c:set>
 		</c:if>
 		<form:form role="form" action="${actionUrl}" method="POST"
-			modelAttribute="registration" id="form-registration"
+			modelAttribute="marriageRegistration" id="form-registration"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 
@@ -73,9 +73,9 @@
 				</spring:hasBindErrors>
 				<br />
 			</div>
-			<input type="hidden" id="registrationId" value="${registration.id}" />
+			<input type="hidden" id="registrationId" value="${marriageRegistration.id}" />
 			<input type="hidden" id="registrationStatus"
-				value="${registration.status}" />
+				value="${marriageRegistration.status}" />
 			<input type="hidden" id="allowDaysValidation"
 				value="${allowDaysValidation}" />
 			<ul class="nav nav-tabs" id="settingstab">
