@@ -48,7 +48,11 @@ import org.hibernate.criterion.Restrictions;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Date;
+
+import javax.persistence.criteria.*;
+
+import java.util.ArrayList;
+
 import java.util.List;
 
 public class FeeMatrixDetailRepositoryImpl implements FeeMatrixDetailRepositoryCustom {
@@ -56,20 +60,21 @@ public class FeeMatrixDetailRepositoryImpl implements FeeMatrixDetailRepositoryC
     private EntityManager entityManager;
 
     @Override
-    public FeeMatrixDetail findFeeDetailList(final FeeMatrix feeMatrix, final Integer uom, final Date appdate,
-            final long financialYearId) {
+    public FeeMatrixDetail findFeeDetailList(final FeeMatrix feeMatrix, final Integer uom) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<FeeMatrixDetail> cq = cb
+                .createQuery(FeeMatrixDetail.class);
 
-        FeeMatrixDetail fmd = null;
-        final String qlString = "select fd from  FeeMatrixDetail fd  where fd.feeMatrix=:feeMatrix and :uom >=uomFrom and :uom <=uomTo and fd.feeMatrix.financialYear.id=:financialYearId "
-                + " order by fd.id desc";
-        final List l = entityManager.createQuery(qlString).setParameter("feeMatrix", feeMatrix)
-                .setParameter("uom", uom).setParameter("financialYearId", financialYearId).getResultList();
-
-        if (!l.isEmpty())
-            fmd = (FeeMatrixDetail) l.get(0);
-
-        return fmd;
-
+        Root<FeeMatrixDetail> feeMatrixDetailRoot = cq.from(FeeMatrixDetail.class);
+        List<Predicate> predicates = new ArrayList<>();
+        if (feeMatrix != null)
+            predicates.add(cb.equal(feeMatrixDetailRoot.get("feeMatrix"), feeMatrix));
+        if (uom != null) {
+            predicates.add(cb.lessThan(feeMatrixDetailRoot.get("uomFrom"), uom));
+            predicates.add(cb.greaterThanOrEqualTo(feeMatrixDetailRoot.get("uomTo"), uom));
+        }
+        cq.select(feeMatrixDetailRoot).where(predicates.toArray(new Predicate[]{}));
+        return entityManager.createQuery(cq).getSingleResult();
     }
 
     @Override
