@@ -160,7 +160,7 @@ public class RecoveryNoticesController {
                 return RECOVERY_FORM;
             }
 
-            final JobDetailImpl jobDetail = (JobDetailImpl) beanProvider.getBean("recoveryNoticesJobScheduler");
+            final JobDetailImpl jobDetail = (JobDetailImpl) beanProvider.getBean("recoveryNoticesJobDetails");
             final Scheduler scheduler = (Scheduler) beanProvider.getBean("ptisSchedular");
             try {
                 jobDetail.setName(PTIS_RECOVERY_NOTICES_JOB.concat(jobNumber.toString()));
