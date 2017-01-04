@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-12-19T13:40:14 -->
+<!-- 2017-01-04T17:15:47 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="abstractEstimatePDF" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" isSummaryWithPageHeaderAndFooter="true" isFloatColumnFooter="true" uuid="21febbd0-09ca-473a-b5e5-726fffd82711">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -53,6 +53,7 @@
 	<parameter name="workflowdetails" class="java.util.List"/>
 	<parameter name="currDate" class="java.lang.String"/>
 	<parameter name="measurementExists" class="java.lang.Boolean"/>
+	<parameter name="spillOverFlag" class="java.lang.Boolean"/>
 	<parameter name="cityLogo" class="java.lang.String"/>
 	<parameter name="totalEstimateOverheadAmount" class="java.lang.String"/>
 	<parameter name="totalEstimateDeductionAmount" class="java.lang.String"/>
@@ -418,7 +419,9 @@
 		</band>
 		<band height="31" splitType="Stretch">
 			<subreport>
-				<reportElement x="1" y="1" width="479" height="29" uuid="0ca56e34-2c40-4ce8-9389-a8d19f940a4e"/>
+				<reportElement x="1" y="1" width="479" height="29" isPrintWhenDetailOverflows="true" uuid="0ca56e34-2c40-4ce8-9389-a8d19f940a4e">
+					<printWhenExpression><![CDATA[$P{spillOverFlag} != true]]></printWhenExpression>
+				</reportElement>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{workflowdetails}, false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("abstractEstimate_workflowdetails.jasper")]]></subreportExpression>
 			</subreport>

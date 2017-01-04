@@ -137,10 +137,12 @@ public class AbstractEstimatePDFController {
             reportParams.put("totalEstimateDeductionAmount", df.format(totalEstimateDeductionAmount));
             activities.addAll(abstractEstimate.getSORActivities());
             activities.addAll(abstractEstimate.getNonSORActivities());
-            if (abstractEstimate.getState() != null)
+            if (abstractEstimate.getState() != null) {
                 reportParams.put("workflowdetails",
                         worksUtils.getWorkFlowHistory(abstractEstimate.getState(), abstractEstimate.getStateHistory()));
-
+                reportParams.put("spillOverFlag", Boolean.FALSE);
+            } else
+                reportParams.put("spillOverFlag", Boolean.TRUE);
             final List<MeasurementSheet> measurementSheets = measurementSheetService
                     .findMeasurementForEstimateActivities(abstractEstimate.getId());
             if (measurementSheets != null && !measurementSheets.isEmpty()) {
