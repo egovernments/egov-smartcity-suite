@@ -44,6 +44,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
@@ -69,6 +70,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping(value = "/letterofacceptance")
 public class CancelLetterOfAcceptanceController extends GenericWorkFlowController {
+
+    private static final String ERROR_MESSAGE = "errorMessage";
+    private static final String LETTEROFACCEPTANCE_SUCCESS = "letterofacceptance-success";
+
     @Autowired
     private LineEstimateService lineEstimateService;
 
@@ -119,35 +124,38 @@ public class CancelLetterOfAcceptanceController extends GenericWorkFlowControlle
         final WorkOrderEstimate workOrderEstimate = workOrder.getWorkOrderEstimates().get(0);
         if (workOrderEstimate.getWorkOrderActivities().isEmpty()) {
             final String billNumbers = letterOfAcceptanceService.checkIfBillsCreated(workOrder.getId());
-            if (!billNumbers.equals("")) {
-                final String message = messageSource.getMessage("error.loa.bills.created", new String[] { billNumbers },
-                        null);
-                model.addAttribute("errorMessage", message);
-                return "letterofacceptance-success";
+            if (!billNumbers.equals(StringUtils.EMPTY)) {
+                model.addAttribute(ERROR_MESSAGE,
+                        messageSource.getMessage("error.loa.bills.created", new String[] { billNumbers },
+                                null));
+                return LETTEROFACCEPTANCE_SUCCESS;
             }
         } else {
             final String mbRefNumbers = letterOfAcceptanceService.checkIfMBCreatedForLOA(workOrderEstimate);
-            if (!mbRefNumbers.equals("")) {
-                final String message = messageSource.getMessage("error.loa.mb.created", new String[] { mbRefNumbers },
-                        null);
-                model.addAttribute("errorMessage", message);
-                return "letterofacceptance-success";
+            final String arfNumbers = letterOfAcceptanceService.checkIfARFCreatedForLOA(workOrderEstimate);
+            if (!mbRefNumbers.equals(StringUtils.EMPTY)) {
+                model.addAttribute(ERROR_MESSAGE, messageSource.getMessage("error.loa.mb.created", new String[] { mbRefNumbers },
+                        null));
+                return LETTEROFACCEPTANCE_SUCCESS;
+            } else if (!arfNumbers.equals(StringUtils.EMPTY)) {
+                model.addAttribute(ERROR_MESSAGE,
+                        messageSource.getMessage("error.loa.arf.created", new String[] { arfNumbers }, null));
+                return LETTEROFACCEPTANCE_SUCCESS;
             } else if (!workOrderEstimate.getWorkOrderActivities().isEmpty()) {
                 final String revisionEstimates = revisionWorkOrderService.getRevisionEstimatesForWorkOrder(workOrder.getId());
-                if (!revisionEstimates.equals("")) {
-                    final String message = messageSource.getMessage("error.revisionestimates.created",
-                            new String[] { revisionEstimates }, null);
-                    model.addAttribute("errorMessage", message);
-                    return "letterofacceptance-success";
+                if (!revisionEstimates.equals(StringUtils.EMPTY)) {
+                    model.addAttribute(ERROR_MESSAGE, messageSource.getMessage("error.revisionestimates.created",
+                            new String[] { revisionEstimates }, null));
+                    return LETTEROFACCEPTANCE_SUCCESS;
                 }
             }
 
         }
 
         if (letterOfAcceptanceService.checkIfMileStonesCreated(workOrder)) {
-            model.addAttribute("errorMessage",
+            model.addAttribute(ERROR_MESSAGE,
                     messageSource.getMessage("error.loa.milestone.created", new String[] {}, null));
-            return "letterofacceptance-success";
+            return LETTEROFACCEPTANCE_SUCCESS;
         }
 
         workOrder.setCancellationReason(cancellationReason);
@@ -155,6 +163,6 @@ public class CancelLetterOfAcceptanceController extends GenericWorkFlowControlle
         workOrder = letterOfAcceptanceService.cancel(workOrder);
         model.addAttribute("workOrder", workOrder);
         model.addAttribute("mode", "cancel");
-        return "letterofacceptance-success";
+        return LETTEROFACCEPTANCE_SUCCESS;
     }
 }

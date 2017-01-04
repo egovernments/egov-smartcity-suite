@@ -76,6 +76,8 @@ import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.AssetsForEstimate;
 import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
+import org.egov.works.contractoradvance.service.ContractorAdvanceService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.ContractorBillRegister.BillStatus;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
@@ -191,6 +193,9 @@ public class LetterOfAcceptanceService {
     @Autowired
     @Qualifier("parentMessageSource")
     private MessageSource messageSource;
+
+    @Autowired
+    private ContractorAdvanceService contractorAdvanceService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -368,9 +373,8 @@ public class LetterOfAcceptanceService {
     }
 
     /*
-     * This method will create work order activities Populate work order
-     * activities for Percentage Tender. The Item Rate tender logic will be
-     * implemented later when we take up Item Rate use case.
+     * This method will create work order activities Populate work order activities for Percentage Tender. The Item Rate tender
+     * logic will be implemented later when we take up Item Rate use case.
      */
     private WorkOrder createWorkOrderActivities(final WorkOrder workOrder) {
         WorkOrderActivity workOrderActivity = null;
@@ -511,8 +515,7 @@ public class LetterOfAcceptanceService {
         List<WorkOrderEstimate> workOrderEstimateList = new ArrayList<WorkOrderEstimate>();
         StringBuilder queryStr = new StringBuilder(500);
         /*
-         * This block will get LOA's where BOQ is created and final bill is not
-         * created
+         * This block will get LOA's where BOQ is created and final bill is not created
          */
         getWorkOrdersWhereBoqIsCreated(searchRequestLetterOfAcceptance, queryStr);
         Query query = setParameterForLetterOfAcceptanceForContractorBill(searchRequestLetterOfAcceptance, queryStr);
@@ -521,8 +524,7 @@ public class LetterOfAcceptanceService {
         workOrderEstimateList = query.getResultList();
 
         /*
-         * This block will get LOA's where BOQ is not created and final bill is
-         * not created
+         * This block will get LOA's where BOQ is not created and final bill is not created
          */
         if (searchRequestLetterOfAcceptance.getMbRefNumber() == null
                 || searchRequestLetterOfAcceptance.getMbRefNumber().isEmpty()) {
@@ -1143,6 +1145,18 @@ public class LetterOfAcceptanceService {
             return "";
         else
             return mbrefNumbres;
+    }
+
+    public String checkIfARFCreatedForLOA(final WorkOrderEstimate workOrderEstimate) {
+        String arfNumbers = StringUtils.EMPTY;
+        final List<ContractorAdvanceRequisition> advanceRequisitions = contractorAdvanceService
+                .getContractorAdvancesToCancelLOA(workOrderEstimate);
+        for (final ContractorAdvanceRequisition advanceRequisition : advanceRequisitions)
+            arfNumbers += advanceRequisition.getAdvanceRequisitionNumber() + ", ";
+        if (arfNumbers.equals(StringUtils.EMPTY))
+            return StringUtils.EMPTY;
+        else
+            return arfNumbers;
     }
 
     public List<String> getApprovedEstimateNumbersForModfyLOA(final String estimateNumber) {

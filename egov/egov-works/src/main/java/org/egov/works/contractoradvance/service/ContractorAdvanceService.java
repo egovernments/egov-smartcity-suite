@@ -85,6 +85,7 @@ import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -750,5 +751,10 @@ public class ContractorAdvanceService {
                 errorMessages.add(messageSource.getMessage("msg.advance.bill.subledger.amtnotmatchinng",
                         new String[] { details.getChartOfAccounts().getGlcode() }, null));
         }
+    }
+
+    public List<ContractorAdvanceRequisition> getContractorAdvancesToCancelLOA(final WorkOrderEstimate workOrderEstimate) {
+        return contractorAdvanceRepository.findByWorkOrderEstimate_IdAndStatus_CodeNot(workOrderEstimate.getId(),
+                WorksConstants.CANCELLED_STATUS);
     }
 }

@@ -42,6 +42,7 @@ package org.egov.works.web.controller.letterofacceptance;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptanceForRE;
@@ -332,15 +333,18 @@ public class AjaxLetterOfAcceptanceController {
         String message = "";
         if (workOrderEstimate.getWorkOrderActivities().isEmpty()) {
             final String billNumbers = letterOfAcceptanceService.checkIfBillsCreated(id);
-            if (!billNumbers.equals(""))
+            if (!billNumbers.equals(StringUtils.EMPTY))
                 message = messageSource.getMessage("error.loa.bills.created", new String[] { billNumbers }, null);
         } else {
             final String mbRefNumbers = letterOfAcceptanceService.checkIfMBCreatedForLOA(workOrderEstimate);
-            if (!mbRefNumbers.equals(""))
+            final String arfNumbers = letterOfAcceptanceService.checkIfARFCreatedForLOA(workOrderEstimate);
+            if (!mbRefNumbers.equals(StringUtils.EMPTY))
                 message = messageSource.getMessage("error.loa.mb.created", new String[] { mbRefNumbers }, null);
+            else if (!arfNumbers.equals(StringUtils.EMPTY))
+                message = messageSource.getMessage("error.loa.arf.created", new String[] { arfNumbers }, null);
             else if (!workOrderEstimate.getWorkOrderActivities().isEmpty()) {
                 final String revisionEstimates = revisionWorkOrderService.getRevisionEstimatesForWorkOrder(workOrder.getId());
-                if (!revisionEstimates.equals(""))
+                if (!revisionEstimates.equals(StringUtils.EMPTY))
                     message = messageSource.getMessage("error.revisionestimates.created", new String[] { revisionEstimates },
                             null);
             }
