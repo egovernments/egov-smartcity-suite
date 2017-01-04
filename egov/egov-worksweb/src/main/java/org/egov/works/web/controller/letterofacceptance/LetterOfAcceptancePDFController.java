@@ -88,9 +88,6 @@ public class LetterOfAcceptancePDFController {
     private LetterOfAcceptanceService letterOfAcceptanceService;
 
     public static final String LETTEROFACCEPTANCEPDF = "letterOfAcceptancePDF";
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
 
     @Autowired
     @Qualifier("fileStoreService")
@@ -105,6 +102,10 @@ public class LetterOfAcceptancePDFController {
 
     private ResponseEntity<byte[]> generateReport(final WorkOrder workOrder, final HttpServletRequest request,
             final HttpSession session) {
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput = null;
+
         if (workOrder != null) {
             final AbstractEstimate estimate = workOrder.getWorkOrderEstimates().get(0).getEstimate();
             final List<WorkOrderActivity> workOrderActivities = workOrder.getWorkOrderEstimates().get(0)

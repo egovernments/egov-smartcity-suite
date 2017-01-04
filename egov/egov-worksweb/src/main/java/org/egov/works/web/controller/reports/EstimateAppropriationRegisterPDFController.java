@@ -112,9 +112,6 @@ public class EstimateAppropriationRegisterPDFController {
     private BudgetGroupService budgetGroupService;
 
     public static final String BUDGETFOLIOPDF = "BudgetFolio";
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
 
     @Autowired
     @Qualifier("fileStoreService")
@@ -130,6 +127,7 @@ public class EstimateAppropriationRegisterPDFController {
             @RequestParam("budgetHead") final Long budgetHead,
             @RequestParam("contentType") final String contentType,
             final HttpSession session) throws IOException {
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
         final EstimateAppropriationRegisterSearchRequest searchRequest = new EstimateAppropriationRegisterSearchRequest();
         searchRequest.setAsOnDate(asOnDate);
         searchRequest.setBudgetHead(budgetHead);
@@ -192,13 +190,16 @@ public class EstimateAppropriationRegisterPDFController {
             bfd.setCumulativeExpensesIncurred(latestCumulative);
             bfd.setActualBalanceAvailable(latestBalance.doubleValue());
         }
-        return generateReport(approvedBudgetFolioDetails, request, session, contentType);
+        return generateReport(approvedBudgetFolioDetails, request, session, contentType, reportParams);
 
     }
 
     private ResponseEntity<byte[]> generateReport(final List<BudgetFolioDetail> budgetFolioDetails,
-            final HttpServletRequest request, final HttpSession session, final String contentType) {
+            final HttpServletRequest request, final HttpSession session, final String contentType,
+            final Map<String, Object> reportParams) {
 
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput = null;
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
 
         reportParams.put("heading", WorksConstants.HEADING_ESTIMATE_APPROPRIATION_REGISTER_REPORT);

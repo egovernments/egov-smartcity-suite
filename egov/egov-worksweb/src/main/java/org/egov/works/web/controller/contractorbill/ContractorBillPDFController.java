@@ -99,9 +99,6 @@ public class ContractorBillPDFController {
     private MBHeaderService mbHeaderService;
 
     public static final String CONTRACTORBILLPDF = "ContractorBillPDF";
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
 
     @Autowired
     @Qualifier("fileStoreService")
@@ -117,6 +114,9 @@ public class ContractorBillPDFController {
     private ResponseEntity<byte[]> generateReport(final ContractorBillRegister contractorBillRegister,
             final HttpServletRequest request,
             final HttpSession session) {
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput = null;
         if (contractorBillRegister != null) {
 
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");

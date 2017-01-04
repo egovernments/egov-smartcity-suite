@@ -81,9 +81,6 @@ public class ContractCertificatePDFController {
     private ContractorBillRegisterService contractorBillRegisterService;
 
     public static final String CONTRACTCERTIFICATEPDF = "ContractCertificatePDF";
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
 
     @RequestMapping(value = "/contractcertificatePDF/{contractorBillId}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateContractorBillPDF(final HttpServletRequest request,
@@ -94,6 +91,10 @@ public class ContractCertificatePDFController {
 
     private ResponseEntity<byte[]> generateReport(final ContractorBillRegister contractorBillRegister,
             final HttpServletRequest request, final HttpSession session) {
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput = null;
+
         if (contractorBillRegister != null) {
             final String url = WebUtils.extractRequestDomainURL(request, false);
             reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)

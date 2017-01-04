@@ -88,9 +88,6 @@ public class MeasurementBookPDFController {
     private MBMeasurementSheetService mBMeasurementSheetService;
 
     public static final String MEASUREMENTBOOKPDF = "MeasurementBookPDF";
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
 
     @RequestMapping(value = "/measurementbookPDF/{mbheaderId}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateContractorBillPDF(final HttpServletRequest request,
@@ -102,6 +99,10 @@ public class MeasurementBookPDFController {
     private ResponseEntity<byte[]> generateReport(final MBHeader mBHeader, final HttpServletRequest request,
             final HttpSession session) {
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput = null;
+
         if (mBHeader != null) {
             reportParams.put("workflowdetails",
                     worksUtils.getWorkFlowHistory(mBHeader.getState(), mBHeader.getStateHistory()));

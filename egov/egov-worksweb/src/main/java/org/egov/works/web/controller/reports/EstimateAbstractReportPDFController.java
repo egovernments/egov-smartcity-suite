@@ -110,10 +110,6 @@ public class EstimateAbstractReportPDFController {
     @Autowired
     private TypeOfWorkService typeOfWorkService;
 
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
-
     @RequestMapping(value = "/departmentwise/pdf", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generatePDFDepartmentWise(final HttpServletRequest request,
             @RequestParam("adminSanctionFromDate") final Date adminSanctionFromDate,
@@ -125,6 +121,8 @@ public class EstimateAbstractReportPDFController {
             @RequestParam("spillOverFlag") final boolean spillOverFlag,
             @RequestParam("contentType") final String contentType, final HttpSession session) throws IOException {
         final EstimateAbstractReport searchRequest = new EstimateAbstractReport();
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
+
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         searchRequest.setAdminSanctionFromDate(adminSanctionFromDate);
         searchRequest.setAdminSanctionToDate(adminSanctionToDate);
@@ -184,15 +182,17 @@ public class EstimateAbstractReportPDFController {
 
         reportParams.put("queryParameters", queryParameters);
 
-        return generateReportDepartmentWise(estimateAbstractReports, request, session, contentType, searchRequest);
+        return generateReportDepartmentWise(estimateAbstractReports, request, session, contentType, searchRequest, reportParams);
     }
 
     private ResponseEntity<byte[]> generateReportDepartmentWise(
             final List<EstimateAbstractReport> estimateAbstractReports, final HttpServletRequest request,
-            final HttpSession session, final String contentType, final EstimateAbstractReport searchRequest) {
+            final HttpSession session, final String contentType, final EstimateAbstractReport searchRequest,
+            final Map<String, Object> reportParams) {
         final List<EstimateAbstractReport> estimateAbstractReportPdfList = new ArrayList<EstimateAbstractReport>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
-
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput = null;
         String dataRunDate = "";
 
         if (estimateAbstractReports != null && !estimateAbstractReports.isEmpty())
@@ -354,6 +354,7 @@ public class EstimateAbstractReportPDFController {
             @RequestParam("spillOverFlag") final boolean spillOverFlag,
             @RequestParam("contentType") final String contentType, final HttpSession session) throws IOException {
         final EstimateAbstractReport searchRequest = new EstimateAbstractReport();
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         searchRequest.setAdminSanctionFromDate(adminSanctionFromDate);
         searchRequest.setAdminSanctionToDate(adminSanctionToDate);
@@ -430,17 +431,19 @@ public class EstimateAbstractReportPDFController {
 
         reportParams.put("queryParameters", queryParameters);
 
-        return generateReportTypeOfWorkWise(estimateAbstractReports, request, session, contentType, searchRequest);
+        return generateReportTypeOfWorkWise(estimateAbstractReports, request, session, contentType, searchRequest, reportParams);
     }
 
     private ResponseEntity<byte[]> generateReportTypeOfWorkWise(
             final List<EstimateAbstractReport> estimateAbstractReports, final HttpServletRequest request,
-            final HttpSession session, final String contentType, final EstimateAbstractReport searchRequest) {
+            final HttpSession session, final String contentType, final EstimateAbstractReport searchRequest,
+            final Map<String, Object> reportParams) {
         final List<EstimateAbstractReport> estimateAbstractReportPdfList = new ArrayList<EstimateAbstractReport>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
 
         String dataRunDate = "";
-
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput = null;
         if (estimateAbstractReports != null && !estimateAbstractReports.isEmpty())
             for (final EstimateAbstractReport eadwr : estimateAbstractReports) {
                 final EstimateAbstractReport pdf = new EstimateAbstractReport();

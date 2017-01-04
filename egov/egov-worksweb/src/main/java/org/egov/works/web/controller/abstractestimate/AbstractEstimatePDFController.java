@@ -95,9 +95,6 @@ public class AbstractEstimatePDFController {
     private MeasurementSheetService measurementSheetService;
 
     public static final String ABSTRACTESTIMATEPDF = "abstractEstimatePDF";
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
 
     @RequestMapping(value = "/abstractEstimatePDF/{estimateId}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateAbstractEstimatePDF(final HttpServletRequest request,
@@ -108,6 +105,10 @@ public class AbstractEstimatePDFController {
 
     private ResponseEntity<byte[]> generateReport(final AbstractEstimate abstractEstimate,
             final HttpServletRequest request, final HttpSession session) {
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput = null;
+
         final List<Activity> activities = new ArrayList<Activity>();
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");

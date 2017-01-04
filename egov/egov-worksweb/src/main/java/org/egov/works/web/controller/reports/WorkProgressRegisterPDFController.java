@@ -95,9 +95,6 @@ public class WorkProgressRegisterPDFController {
     private DepartmentService departmentService;
 
     public static final String WORKPROGRESSREGISTERPDF = "workProgressRegisterPdf";
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
 
     @Autowired
     @Qualifier("fileStoreService")
@@ -114,6 +111,7 @@ public class WorkProgressRegisterPDFController {
             @RequestParam("contentType") final String contentType,
             @RequestParam("workStatus") final String workStatus,
             final HttpSession session) throws IOException {
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
         final WorkProgressRegisterSearchRequest searchRequest = new WorkProgressRegisterSearchRequest();
         searchRequest.setAdminSanctionFromDate(adminSanctionFromDate);
         searchRequest.setAdminSanctionToDate(adminSanctionToDate);
@@ -155,15 +153,16 @@ public class WorkProgressRegisterPDFController {
 
         reportParams.put("queryParameters", queryParameters);
 
-        return generateReport(workProgressRegisters, request, session, contentType);
+        return generateReport(workProgressRegisters, request, session, contentType, reportParams);
     }
 
     private ResponseEntity<byte[]> generateReport(final List<WorkProgressRegister> workProgressRegisters,
             final HttpServletRequest request,
-            final HttpSession session, final String contentType) {
+            final HttpSession session, final String contentType, final Map<String, Object> reportParams) {
         final List<WorkProgressRegisterPdf> workProgressRegisterPdfList = new ArrayList<WorkProgressRegisterPdf>();
         final DecimalFormat df = new DecimalFormat("#.##");
-
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput = null;
         String dataRunDate = "";
 
         if (workProgressRegisters != null && !workProgressRegisters.isEmpty())
@@ -214,7 +213,7 @@ public class WorkProgressRegisterPDFController {
                     pdf.setSubTypeOfWork("");
                 if (wpr.getAdminSanctionBy() != null)
                     pdf.setAdminSanctionAuthorityDate(wpr.getAdminSanctionBy() + " , "
-                            + DateUtils.getFormattedDate(wpr.getAdminSanctionDate(),"dd/MM/yyyy"));
+                            + DateUtils.getFormattedDate(wpr.getAdminSanctionDate(), "dd/MM/yyyy"));
                 else
                     pdf.setAdminSanctionAuthorityDate("");
                 if (wpr.getAdminSanctionAmount() != null)
