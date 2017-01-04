@@ -102,6 +102,11 @@
 		<put-attribute name="body" value="/WEB-INF/views/masters/employee/employee-success.jsp"/>
 	</definition>
 	
+	<definition name="employeedetails-form" extends="base_layout">
+		<put-attribute name="page-title" value="title.empdetails" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/masters/employee/employeedetails-form.jsp"/>
+	</definition>
+	
     <definition name="employeesearch-form" extends="base_layout">
 		<put-attribute name="page-title" value="title.searchemployee" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/masters/employee/employeesearch-form.jsp"/>

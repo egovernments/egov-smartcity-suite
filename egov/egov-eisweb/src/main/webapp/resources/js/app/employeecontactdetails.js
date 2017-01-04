@@ -38,54 +38,14 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-$(document).ready(function(){
-	tableContainer1 = $("#employee-table"); 
-	$("#searchbtn").click(function (){
-		tableContainer1.dataTable({
-			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-			"aLengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "All"]],
-			"bDestroy": true,
-			"autoWidth": false,
-			"ajax": "ajaxemployees?"+$("#searchEmployeeForm").serialize(),
-			"columns": [
-			            { "data": "slno","width": "5%" },
-						{ "data": "name","width": "10%" },
-						  {
-					        
-                            "data" : function(row, type, set, meta){
-	                     	return { name:row.code, id:row.id };
-                         },
-                            "render" : function(data, type, row) {
-	                         return '<a href="javascript:void(0);" onclick="goToView(this);" data-hiddenele="code" data-eleval="'
-			                + data.name + '">' + data.name + '</a>';
-                           },
-                    },
-						{ "data": "department","width": "15%" },
-						{ "data": "designation","width": "15%" },
-						{ "data": "position","width": "15%" },
-						{ "data": "daterange","width": "20%" }
-			]
-		});
-	
-});
-	
-	
-	$('#searchemployee').keyup(function(){
-		tableContainer1.fnFilter(this.value);
+$(document).ready(function()
+{
+	$("#submit").click(function () {
+		var mobileno = $("#mobileNumber").val();
+		var altcontact = $("#altcontact").val();
+		if (mobileno.charAt(0)=="0" || (altcontact!="" && altcontact.charAt(0)=="0")){
+			bootbox.alert("Mobile Number should not start with 0");
+			return false;
+		}
 	});
-
-
 });
-
-function goToView(obj) {
-	var mode = $('#mode').val();
-	var url = "/eis/employee/view/";
-	if(mode=="update")
-		url = "/eis/employee/update/";
-	else if (mode=="updatecontact")
-		url = "/eis/employee/updatecontact/";
-	jQuery('input[name=' + jQuery(obj).data('hiddenele') + ']')
-	.val(jQuery(obj).data('eleval'));   
-	window.open(url+jQuery(obj).data('eleval'), '', 'scrollbars=yes,width=1000,height=700,status=yes');
-} 
-
