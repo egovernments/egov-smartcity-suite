@@ -87,16 +87,31 @@
 	</form:form>
 </div>
 <br>
+<div class="row display-hide report-section"
+	id="regstatustable_container">
 <div class="row">
 	<div class="col-md-6 col-xs-6 table-header"><spring:message code='lbl.searchresult'/></div>
 	<div class="col-md-12 add-margin text-center error-msg display-hide" id="search-exceed-msg">Result contains more than 1000 records, please refine your search criteria.</div>
 	<div class="col-md-12" id="searchResultDiv">	
-	<table class="table table-bordered datatable dt-responsive"
+<table class="table table-bordered table-hover multiheadertbl"
 		id="handicappedSearchResults">
+		<thead>
+				<th>Serial No.</th>
+				<th>Application No.</th>
+				<th>Registration No.</th>
+				<th>Registration Date</th>
+				<th>Zone</th>
+				<th>status</th>
+				<th>Marriage Date</th>
+				<th>Husband Name</th>
+				<th>Wife Name</th>
+			</thead>
+			<tbody>
+			</tbody>
 	</table>
 	</div>
 </div>
-
+</div>
 
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />

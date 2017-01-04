@@ -38,57 +38,146 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-var tableContainer;
-jQuery(document).ready(function($) {
-	$('.table-header').hide();
-	tableContainer = $("#handicappedSearchResults");
-	document.onkeydown=function(evt){
-		var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
-		if(keyCode == 13){
-			submitButton();	
-		}
-	}
-});
-	  
-$("#btn_handicapped_search").click(function(event){
-	submitButton();
-});
+$(document)
+		.ready(
+				function() {
+					$('#btn_handicapped_search').click(function() {
 
-function submitButton(){
-		tableContainer = $("#handicappedSearchResults");
-		var applicantType=$('#applicantType').val();
-		//alert(applicantType);
-		$('#searchResultDiv').show();
-		$.post("/mrs/report/handicapped-report-search",jQuery.param({applicantType:applicantType}))
-		.done(function(searchResult) {
-		console.log(JSON.stringify(searchResult));
-		tableContainer.dataTable({ 
-		destroy : true,
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 hidden col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-		"aLengthMenu" : [[10,25,50,-1 ],[10,25,50,"All" ] ],
-		"autoWidth" : false,
-		data : searchResult,
-		columns : [{title : 'Application No',class : 'row-detail', data : 'applicationNumber',
-		        	   "render": function ( data, type, row, meta ) {
-		        		   return '<a target="_blank" href="">'+data+'</a>';} },
-		           {title : 'Registration Number',data : "registrationNumber"},
-		           {title : 'Registration Date',data : "registrationDate"},
-		          /* {title : 'Registration Unit',data :  "doorNumber"},*/
-		           {title : 'Zone',data : "zone"},
-		           {title : 'Application Status',data : "status"},
-		           {title : 'Marriage Date',data : "marriageDate"},
-		           {title : 'Husband Name',data : "husbandName"},
-		           {title : 'Wife Name',data : "wifeName"}],
-		           "aaSorting": [[2, 'asc']]
-		});
-		
-		$('.table-header').show();
-		if(tableContainer.fnGetData().length > 1000) {
-			$('#searchResultDiv').hide();
-			$('#search-exceed-msg').show();
-		} else {
-			$('#search-exceed-msg').hide();
-			$('#searchResultDiv').show();
-		}
-		});
+						callAjaxSearch();
+						return false;
+
+					});
+					function callAjaxSearch() {
+						var currentDate = new Date();
+						var day = currentDate.getDate();
+						var month = currentDate.getMonth() + 1;
+						var year = currentDate.getFullYear();
+						var currentDate = day + "-" + month + "-" + year;
+						$('.report-section').removeClass('display-hide');
+						var reportdatatable = $("#handicappedSearchResults")
+								.dataTable(
+										{
+											ajax : {
+												url : "/mrs/report/handicapped-report-search",
+												type : "POST",
+												beforeSend : function() {
+													$('.loader-class')
+															.modal(
+																	'show',
+																	{
+																		backdrop : 'static'
+																	});
+												},
+												"data" : getFormData($('form')),
+												complete : function() {
+													$('.loader-class').modal(
+															'hide');
+												}
+											},
+											"bDestroy" : true,
+											"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
+											"aLengthMenu" : [
+													[ 10, 25, 50, -1 ],
+													[ 10, 25, 50, "All" ] ],
+											"oTableTools" : {
+												"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+												"aButtons" : [
+														{
+															"sExtends" : "pdf",
+															"sPdfMessage" : "Report Generated On "
+																	+ currentDate
+																	+ "",
+															"sTitle" : "Marriage Registration Status Report",
+															"sPdfOrientation" : "landscape"
+														},
+														{
+															"sExtends" : "xls",
+															"sPdfMessage" : "Marriage Registration Status Report",
+															"sTitle" : "Marriage Registration Status Report"
+														},
+														{
+															"sExtends" : "print",
+															"sTitle" : "Marriage Registration Status Report"
+														} ]
+											},
+											aaSorting : [],
+											columns : [
+													{
+														"data" : null,
+														render : function(data,
+																type, row, meta) {
+															return meta.row
+																	+ meta.settings._iDisplayStart
+																	+ 1;
+														},
+														"sClass" : "text-center",
+														"orderable" : false,
+														"targets" : 'no-sort',
+													},
+													{
+														"data" : "applicationNo",
+														"sClass" : "text-center"
+													},
+													{
+														"data" : "registrationNo",
+														render : function(data,
+																type, row, meta) {
+															if (row.registrationNo == 'undefined'
+																	|| row.registrationNo == '') {
+																return "N/A";
+															} else {
+																return row.registrationNo;
+															}
+														},
+
+														"sClass" : "text-center"
+													},
+													{
+														"data" : "registrationDate",
+														"sClass" : "text-center"
+													},
+
+													{
+														"data" : "zone",
+														"sClass" : "text-center"
+													},
+													{
+														"data" : "status",
+														"sClass" : "text-center"
+													},
+													{
+														"data" : "marriageDate",
+														"sClass" : "text-center"
+													},
+
+													{
+														"data" : "husbandName",
+														"sClass" : "text-center"
+													},
+													{
+														"data" : "wifeName",
+														"title" : 'Wife Name',
+														"sClass" : "text-center"
+													}
+
+											],
+										});
+					}
+
+				});
+
+function getFormData($form) {
+	var unindexed_array = $form.serializeArray();
+	var indexed_array = {};
+
+	$.map(unindexed_array, function(n, i) {
+		indexed_array[n['name']] = n['value'];
+	});
+
+	return indexed_array;
+}
+function openPopup(url) {
+	window.open(url, 'window',
+			'scrollbars=1,resizable=yes,height=600,width=800,status=yes');
+
 }

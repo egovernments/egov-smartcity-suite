@@ -179,10 +179,10 @@ public class MarriageRegistrationIndex {
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String wifeReligionPractice;
-    
+
     @Field(type = FieldType.Double)
     private Double wifeAgeInYearsAsOnMarriage;
-    
+
     @Field(type = FieldType.Double)
     private Double wifeAgeInMonthsAsOnMarriage;
 
@@ -294,13 +294,15 @@ public class MarriageRegistrationIndex {
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String ulbCode;
-    
+
     @Field(type = FieldType.Boolean)
     private boolean husbandHandicapped;
-    
+
     @Field(type = FieldType.Boolean)
     private boolean wifeHandicapped;
 
+    public MarriageRegistrationIndex() {
+    }
 
     public MarriageRegistrationIndex(final String applicationNo, final String ulbName, final String ulbCode,
             final Date createdDate, final String districtName, final String regionName, final String ulbGrade) {
@@ -312,15 +314,15 @@ public class MarriageRegistrationIndex {
         this.ulbGrade = ulbGrade;
         this.ulbCode = ulbCode;
     }
-    
-    public void setId(String id) {
+
+    public void setId(final String id) {
         this.id = id;
     }
-    
+
     public String getId() {
         return id;
     }
-    
+
     public String getConsumerNumber() {
         return consumerNumber;
     }
@@ -917,7 +919,7 @@ public class MarriageRegistrationIndex {
         return husbandHandicapped;
     }
 
-    public void setHusbandHandicapped(boolean husbandHandicapped) {
+    public void setHusbandHandicapped(final boolean husbandHandicapped) {
         this.husbandHandicapped = husbandHandicapped;
     }
 
@@ -925,7 +927,7 @@ public class MarriageRegistrationIndex {
         return wifeHandicapped;
     }
 
-    public void setWifeHandicapped(boolean wifeHandicapped) {
+    public void setWifeHandicapped(final boolean wifeHandicapped) {
         this.wifeHandicapped = wifeHandicapped;
     }
 }
