@@ -2,7 +2,7 @@
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
-#     Copyright (C) <2015>  eGovernments Foundation
+#     Copyright (C) <2017>  eGovernments Foundation
 # 
 #     The updated version of eGov suite of products as by eGovernments Foundation 
 #     is available at http://www.egovernments.org
@@ -37,18 +37,15 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
-$(document).ready(function(){
-	
-	$('a[id*="doc"]').click( function () {
-		var val = $( $(this).siblings('input[type="hidden"]') ).val().split('|');
+$(document).ready(function() {
+
+	$('a[id*="doc"]').click(function() {
+		var val = $($(this).siblings('input[type="hidden"]')).val().split('|');
 		var fileName = val[0];
 		var contentType = val[1]
 		var content = val[2];
-		var value = "data:"+contentType+";base64," + content;
-		$(this).attr({
-		    href:value, 
-		    download:fileName
-		});	
+		var value = "data:" + contentType + ";base64," + content;
+		window.open(value);
 	})
-	
+
 });
