@@ -45,6 +45,7 @@ import static org.egov.tl.utils.Constants.DELIMITER_HYPEN;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
@@ -168,11 +169,11 @@ public class FeeMatrixService<T extends License> {
                                         + DELIMITER_HYPEN + financialYearByDate.getId());
                         if (feeMatrix == null)
                             throw new ValidationException("TL-002", "TL-002");
-                        final FeeMatrixDetail feeMatrixDetail = feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,
+                        final Optional<FeeMatrixDetail> feeMatrixDetail = feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,
                                 license.getTradeArea_weight());
-                        if (feeMatrixDetail == null)
+                        if (!feeMatrixDetail.isPresent())
                             throw new ValidationException("TL-003", "TL-003");
-                        feeMatrixDetailList.add(feeMatrixDetail);
+                        feeMatrixDetailList.add(feeMatrixDetail.get());
                         break switchLoop;
 
                 }

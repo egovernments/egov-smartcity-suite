@@ -392,10 +392,6 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
                 result = GENERATE_CERTIFICATE;
             else result = APPROVE_PAGE;
 
-        } else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_RENEWLICENSE)) {
-            if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
-                result = GENERATE_CERTIFICATE;
-            else result = "approveRenew";
         }
         return result;
     }

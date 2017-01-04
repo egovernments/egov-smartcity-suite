@@ -44,10 +44,11 @@ import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.FeeMatrixDetail;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FeeMatrixDetailRepositoryCustom {
 
-    FeeMatrixDetail findFeeDetailList(FeeMatrix feeMatrix, Integer uom);
+    Optional<FeeMatrixDetail> findFeeDetailList(FeeMatrix feeMatrix, Integer uom);
 
     List<FeeMatrixDetail> findByParams(Long licenseCategory, Long subCategory, Long financialYear);
 }

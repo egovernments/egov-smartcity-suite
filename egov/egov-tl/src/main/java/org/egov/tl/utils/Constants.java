@@ -50,14 +50,11 @@ public class Constants {
         public static final String EDIT = "edit";
         public static final String VIEW = "view";
         public static final String ROLE_BILLCOLLECTOR = "Collection Operator";
-        public static final String WF_STATE_COLLECTION_PENDING = "Create License:Commissioner Approved";
         public static final String WF_STATE_INSPECTION_APPROVED_STR="Sanitary inspector Approved";
         public static final String WF_STATE_COMMISSIONER_APPROVED_STR="Commissioner approved";
         public static final String WF_STATE_GENERATE_CERTIFICATE="Create License:generate Certificate";
-        public static final String WF_STATE_RENEWAL_COMM_APPROVED="Renewal License:Commissioner Approved";
+
         public static final String WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING = "Sanitary inspector Approve pending";
-        public static final String WF_STATE_DIGITAL_SIGN_NEWTL="Create License:Collection Done";
-        public static final String WF_STATE_DIGITAL_SIGN_RENEWAL="Renewal License:Collection Done";
         public static final String WF_STATE_DIGISIGN_STR="Collection Done";
         public static final String BUILDINGTYPE_RENTAL_AGREEMANT = "Rental";
         public static final String BUILDINGTYPE_OWN_BUILDING = "Own Building";
@@ -83,16 +80,12 @@ public class Constants {
         public static final String BUTTONREJECT = "Reject";
         public static final String BUTTONSUBMIT = "Submit";
         public static final String BUTTONGENERATEDCERTIFICATE = "GeneratedCertificate";
-        public static final String BUTTONPRINTCOMPLETED = "PrintCompleted";
         public static final String WORKFLOW_STATE_NEW = "NEW";
         public static final String WORKFLOW_STATE_REJECTED = "Rejected";
         public static final String WORKFLOW_STATE_COLLECTED = "Fee Collected";
         public static final String WORKFLOW_STATE_GENERATECERTIFICATE = "Generate Certificate";
-        public static final String WORKFLOW_STATE_GENERATENOC = "Generate NOC";
         public static final String WORKFLOW_STATE_TYPE_CREATENEWLICENSE = "Create License:";
         public static final String WORKFLOW_STATE_TYPE_RENEWLICENSE = "Renew License:";
-        public static final String WORKFLOW_STATE_TYPE_TRANSFERLICENSE = "Transfer License:";
-        public static final String WORKFLOW_STATE_GENERATEREJCERTIFICATE = "Generate Rejection Certificate";
         public static final String ACKNOWLEDGEMENT = "acknowledgement";
         public static final String LICENSE_STATUS_ACKNOWLEDGED = "Acknowledged";
         public static final String LICENSE_STATUS_ACTIVE = "Active";
@@ -104,7 +97,6 @@ public class Constants {
         public static final String STATUS_ACKNOLEDGED = "ACK";
         public static final String STATUS_UNDERWORKFLOW = "UWF";
         public static final String STATUS_REJECTED = "REJ";
-        public static final int RENEWALTIMEPERIOD = -90;
         public static final String TRADELICENSE = "TradeLicense";
         public static final String TRADELICENSEMODULE = "TRADELICENSE";
         public static final String CANCELLED = "CANCELLED";
@@ -139,7 +131,6 @@ public class Constants {
         public static final Character DMD_STATUS_CHEQUE_BOUNCED = 'B';
         public static final String DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY = "CHQ_BUNC_PENALTY";
         public static final String DEMANDRSN_REBATE = "REBATE";
-        public static final String TRANSACTIONTYPE_CREATE_LICENSE = "Create License";
         public static final String OWNERSHIP_TYPE_OWN = "Own";
         public static final String OWNERSHIP_TYPE_RENTED = "Rented";
         public static final String OWNERSHIP_TYPE_STATEGOVERNMENT = "State Government";

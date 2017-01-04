@@ -40,6 +40,7 @@
 
 package org.egov.tl.repository;
 
+import org.apache.log4j.Logger;
 import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.FeeMatrixDetail;
 import org.hibernate.Criteria;
@@ -47,6 +48,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -57,27 +59,36 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 
 import java.util.List;
+import java.util.Optional;
 
 public class FeeMatrixDetailRepositoryImpl implements FeeMatrixDetailRepositoryCustom {
+    private static final Logger LOGGER = Logger.getLogger(FeeMatrixDetailRepositoryImpl.class);
+
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public FeeMatrixDetail findFeeDetailList(final FeeMatrix feeMatrix, final Integer uom) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<FeeMatrixDetail> cq = cb
-                .createQuery(FeeMatrixDetail.class);
+    public Optional<FeeMatrixDetail> findFeeDetailList(final FeeMatrix feeMatrix, final Integer uom) {
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<FeeMatrixDetail> cq = cb
+                    .createQuery(FeeMatrixDetail.class);
 
-        Root<FeeMatrixDetail> feeMatrixDetailRoot = cq.from(FeeMatrixDetail.class);
-        List<Predicate> predicates = new ArrayList<>();
-        if (feeMatrix != null)
-            predicates.add(cb.equal(feeMatrixDetailRoot.get("feeMatrix"), feeMatrix));
-        if (uom != null) {
-            predicates.add(cb.lessThan(feeMatrixDetailRoot.get("uomFrom"), uom));
-            predicates.add(cb.greaterThanOrEqualTo(feeMatrixDetailRoot.get("uomTo"), uom));
+            Root<FeeMatrixDetail> feeMatrixDetailRoot = cq.from(FeeMatrixDetail.class);
+            List<Predicate> predicates = new ArrayList<>();
+            if (feeMatrix != null)
+                predicates.add(cb.equal(feeMatrixDetailRoot.get("feeMatrix"), feeMatrix));
+            if (uom != null) {
+                predicates.add(cb.lessThan(feeMatrixDetailRoot.get("uomFrom"), uom));
+                predicates.add(cb.greaterThanOrEqualTo(feeMatrixDetailRoot.get("uomTo"), uom));
+            }
+            cq.select(feeMatrixDetailRoot).where(predicates.toArray(new Predicate[]{}));
+            return Optional.ofNullable(entityManager.createQuery(cq).getSingleResult());
+        } catch (NoResultException e) {
+            LOGGER.error("No records found for the given feematrix obj and uom", e);
+            return Optional.empty();
+
         }
-        cq.select(feeMatrixDetailRoot).where(predicates.toArray(new Predicate[]{}));
-        return entityManager.createQuery(cq).getSingleResult();
     }
 
     @Override
