@@ -115,6 +115,8 @@ public class UpdateExpenseBillController extends BaseBillController {
         model.addAttribute("stateType", egBillregister.getClass().getSimpleName());
         if (egBillregister.getState() != null)
             model.addAttribute("currentState", egBillregister.getState().getValue());
+        model.addAttribute("workflowHistory",
+                financialUtils.getHistory(egBillregister.getState(), egBillregister.getStateHistory()));
 
         prepareWorkflow(model, egBillregister, new WorkflowContainer());
         egBillregister.getBillDetails().addAll(egBillregister.getEgBilldetailes());
