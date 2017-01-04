@@ -130,11 +130,11 @@ public class FeeMatrixService<T extends License> {
 
         final List<AppConfigValues> newRenewAppconfigList = appConfigValueService.getConfigValuesByModuleAndKey("Trade License",
                 "Is Fee For New and Renew Same");
-        final boolean isNewRenewFeeSame = newRenewAppconfigList.get(0).getValue().equals('Y');
+        final boolean isNewRenewFeeSame = "Y".equalsIgnoreCase(newRenewAppconfigList.get(0).getValue());
 
         final List<AppConfigValues> permTempAppconfigList = appConfigValueService.getConfigValuesByModuleAndKey("Trade License",
                 "Is Fee For Permanent and Temporary Same");
-        final boolean isPermanentTemporaryfeeSame = permTempAppconfigList.get(0).getValue().equals('Y');
+        final boolean isPermanentTemporaryfeeSame = "Y".equalsIgnoreCase(permTempAppconfigList.get(0).getValue());
 
         final LicenseAppType newapp = (LicenseAppType) this.persistenceService.find("from  LicenseAppType where name='New' ");
         final NatureOfBusiness permanent = (NatureOfBusiness) persistenceService
