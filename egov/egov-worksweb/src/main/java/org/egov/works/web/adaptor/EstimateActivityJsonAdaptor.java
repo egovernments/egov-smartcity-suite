@@ -83,7 +83,7 @@ public class EstimateActivityJsonAdaptor implements JsonSerializer<Activity> {
                 jsonObject.addProperty("nonSorDescription", nonSor.getDescription());
                 jsonObject.addProperty("nonSorUomId", activity.getUom().getId());
                 jsonObject.addProperty("nonSorUom", activity.getUom().getUom());
-                jsonObject.addProperty("nonSorRate", activity.getRate());
+                jsonObject.addProperty("nonSorRate", activity.getEstimateRate());
                 jsonObject.addProperty("nonSorQuantity", activity.getQuantity());
             }
 
