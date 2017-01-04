@@ -258,7 +258,7 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
                     1);
         } else {
-            fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
+            fromDate =new Date();
             toDate = DateUtils.addDays(new Date(), 1);
         }
         // Today’s collection
@@ -782,7 +782,7 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
                     1);
         } else {
-            fromDate =DateUtils.startOfDay(financialYear.getStartingDate());
+            fromDate =new Date();
             toDate = DateUtils.addDays(new Date(), 1);
         }
         Long startTime = System.currentTimeMillis();
