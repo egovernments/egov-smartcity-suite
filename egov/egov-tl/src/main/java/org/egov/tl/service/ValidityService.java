@@ -126,13 +126,13 @@ public class ValidityService {
                 else
                     nextExpiryDate = new LocalDate(license.getDateOfExpiry());
                 if (validity.getYear() != null && validity.getYear() > 0)
-                    nextExpiryDate.plusYears(validity.getYear());
+                    nextExpiryDate = nextExpiryDate.plusYears(validity.getYear());
                 if (validity.getMonth() != null && validity.getMonth() > 0)
-                    nextExpiryDate.plusMonths(validity.getMonth());
+                    nextExpiryDate = nextExpiryDate.plusMonths(validity.getMonth());
                 if (validity.getWeek() != null && validity.getWeek() > 0)
-                    nextExpiryDate.plusWeeks(validity.getWeek());
+                    nextExpiryDate = nextExpiryDate.plusWeeks(validity.getWeek());
                 if (validity.getDay() != null && validity.getDay() > 0)
-                    nextExpiryDate.plusDays(validity.getDay());
+                    nextExpiryDate = nextExpiryDate.plusDays(validity.getDay());
                 license.setDateOfExpiry(nextExpiryDate.toDate());
             }
         }
