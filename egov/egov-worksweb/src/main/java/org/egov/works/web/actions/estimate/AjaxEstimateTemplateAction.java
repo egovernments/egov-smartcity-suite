@@ -76,7 +76,7 @@ public class AjaxEstimateTemplateAction extends BaseFormAction {
     private String mode;
 
     @Autowired
-    TypeOfWorkService typeOfWorkService;
+    private TypeOfWorkService typeOfWorkService;
 
     public List getSubCategories() {
         return subCategories;
