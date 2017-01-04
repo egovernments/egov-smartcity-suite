@@ -555,11 +555,11 @@ public class WaterChargeCollectionDocService {
          */
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
-            fromDate = DateUtils.getDate(collectionDetailsRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
+            fromDate = DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD);
             toDate = org.apache.commons.lang3.time.DateUtils
                     .addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD), 1);
         } else {
-            fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
+            fromDate = new Date();
             toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
         }
 
@@ -1313,7 +1313,7 @@ public class WaterChargeCollectionDocService {
             toDate = org.apache.commons.lang3.time.DateUtils
                     .addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD), 1);
         } else {
-            fromDate =DateUtils.startOfDay(financialyear.getStartingDate());
+            fromDate =new Date();
             toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
         }
         Long startTime = System.currentTimeMillis();
