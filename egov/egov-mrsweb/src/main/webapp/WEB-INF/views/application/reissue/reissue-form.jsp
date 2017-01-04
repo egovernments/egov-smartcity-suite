@@ -58,6 +58,15 @@
 				cssClass="form-horizontal form-groups-bordered"
 				enctype="multipart/form-data" method="POST">
 				
+				<div>
+				<spring:hasBindErrors name="reIssue">
+					<div class="alert alert-danger col-md-12 col-md-offset-0">
+						<form:errors path="*" />
+						<br />
+					</div>
+				</spring:hasBindErrors>
+				<br />
+				</div>
 				<input type="hidden" name="reIssue" id="reIssue" value="${reIssue.id}" /> 
 				<input type="hidden" id="reIssueId" value="${reIssue.id}" />
 				<input type="hidden" id="reIssueStatus" value="${reIssue.status.code}" />

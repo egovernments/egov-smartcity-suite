@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.egov.mrs.domain.entity.MarriageRegistration;
+import org.egov.mrs.domain.entity.ReIssue;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -19,6 +20,7 @@ public class MarriageFormValidator implements Validator {
     private static final String NOTEMPTY_MRG_WITNESS_AGE = "Notempty.mrg.witness.age";
     private static final String NOTEMPTY_MRG_WITNESS_PARENT = "Notempty.mrg.witness.parent";
     private static final String NOTEMPTY_MRG_RESIDENCE_ADDRESS = "Notempty.mrg.residence.address";
+    private static final String NOTEMPTY_MRG_OFFICE_ADDRESS = "Notempty.mrg.office.address";
     private static final String NOTEMPTY_MRG_FIRST_NAME = "Notempty.mrg.first.name";
     private static final String NOTEMPTY_MRG_CITY = "Notempty.mrg.city";
     private static final String NOTEMPTY_MRG_LOCALITY = "Notempty.mrg.locality";
@@ -33,6 +35,37 @@ public class MarriageFormValidator implements Validator {
     public boolean supports(Class<?> clazz) {
         return MarriageRegistration.class.equals(clazz);
     }
+    
+    public void validateReIssue(Object target, Errors errors) {
+        ReIssue reIssue = (ReIssue) target;
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "marriageRegistrationUnit", "Notempty.regUnit.name");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicant.name.firstName", NOTEMPTY_MRG_FIRST_NAME);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicant.contactInfo.residenceAddress", NOTEMPTY_MRG_RESIDENCE_ADDRESS);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicant.contactInfo.officeAddress", NOTEMPTY_MRG_OFFICE_ADDRESS);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicant.contactInfo.mobileNo", "Notempty.mrg.mobile.no");
+        
+        if(reIssue.getFeePaid()==null)
+            errors.reject("Notempty.reissue.fee", null);
+       // ValidationUtils.rejectIfEmptyOrWhitespace(errors, "feePaid", "Notempty.reissue.fee");
+        if (reIssue.getApplicant() != null && reIssue.getApplicant().getContactInfo() != null
+                && reIssue.getApplicant().getContactInfo().getMobileNo() != null) {
+            pattern = Pattern.compile(MOBILE_PATTERN);
+            matcher = pattern.matcher(reIssue.getApplicant().getContactInfo().getMobileNo());
+            if (!matcher.matches()) {
+                errors.rejectValue("applicant.contactInfo.mobileNo", "validate.mobile.no");
+            }
+        }
+        
+        if (reIssue.getApplicant() != null && reIssue.getApplicant().getContactInfo() != null
+                && reIssue.getApplicant().getContactInfo().getEmail() != null) {
+            pattern = Pattern.compile(EMAIL_PATTERN);
+            matcher = pattern.matcher(reIssue.getApplicant().getContactInfo().getEmail());
+            if (!matcher.matches()) {
+                errors.rejectValue("applicant.contactInfo.email", "validate.email");
+            }
+        }
+    }
+    
 
     public void validate(Object target, Errors errors, String type) {
         MarriageRegistration registration = (MarriageRegistration) target;
