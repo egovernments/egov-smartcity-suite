@@ -42,6 +42,7 @@ package org.egov.collection.service.dashboard;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +60,8 @@ import org.egov.collection.bean.dashboard.TotalCollectionDashBoardStats;
 import org.egov.collection.bean.dashboard.TotalCollectionStatistics;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.service.elasticsearch.CollectionDocumentElasticSearchService;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.service.CFinancialYearService;
 import org.egov.infstr.models.ServiceDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +81,9 @@ public class CollectionDashboardService {
     private EntityManager entityManager;
 
     @Autowired
+    private CFinancialYearService cFinancialYearService;
+
+    @Autowired
     private CollectionDocumentElasticSearchService collectionDocumentElasticSearchService;
     private static final String MILLISECS = " (millisecs) ";
 
@@ -87,29 +93,21 @@ public class CollectionDashboardService {
      *
      * @return CollectionStats
      */
-    @SuppressWarnings("unchecked")
     public TotalCollectionDashBoardStats getTotalCollectionStats(
             final CollectionDashBoardRequest collectionDashBoardRequest) {
         final TotalCollectionDashBoardStats consolidatedCollectionDetails = new TotalCollectionDashBoardStats();
         final List<CollectionDashBoardStats> totalStatistics = new ArrayList<>();
         final List<String> toBeExcluded = new ArrayList<>();
+        final CFinancialYear currFinYear = cFinancialYearService.getFinancialYearByDate(new Date());
         for (final String service : collectionDashBoardRequest.getIncludeServices()) {
             if (!service.equalsIgnoreCase(CollectionConstants.DASHBOARD_OTHERS))
-                setConsolidatedData(totalStatistics, new ArrayList<String>(Arrays.asList(service)), service);
+                setConsolidatedData(totalStatistics, new ArrayList<String>(Arrays.asList(service)), service,
+                        currFinYear);
             toBeExcluded.add(service);
         }
-        final List<String> serviceList = new ArrayList<>();
-        if (!collectionDashBoardRequest.getExcludeServices().contains(CollectionConstants.DASHBOARD_OTHERS)) {
-            final Query qry = entityManager.createNamedQuery(CollectionConstants.DISTINCT_SERVICE_DETAILS,
-                    ServiceDetails.class);
-            final List<ServiceDetails> serviceDetails = qry.getResultList();
-            for (final ServiceDetails sd : serviceDetails)
-                serviceList.add(sd.getName());
-            serviceList.removeAll(toBeExcluded);
-            serviceList.removeAll(collectionDashBoardRequest.getExcludeServices());
-        }
+        final List<String> serviceList = getServiceList(collectionDashBoardRequest.getExcludeServices(), toBeExcluded);
         if (!serviceList.isEmpty())
-            setConsolidatedData(totalStatistics, serviceList, CollectionConstants.DASHBOARD_OTHERS);
+            setConsolidatedData(totalStatistics, serviceList, CollectionConstants.DASHBOARD_OTHERS, currFinYear);
         consolidatedCollectionDetails.setCollection(totalStatistics);
         BigDecimal currColl = BigDecimal.ZERO;
         BigDecimal lastColl = BigDecimal.ZERO;
@@ -124,12 +122,12 @@ public class CollectionDashboardService {
     }
 
     private void setConsolidatedData(final List<CollectionDashBoardStats> totalStatistics,
-            final List<String> serviceList, final String service) {
+            final List<String> serviceList, final String service, final CFinancialYear financialYear) {
         Long startTime = System.currentTimeMillis();
         BigDecimal variance;
         final CollectionDashBoardStats consolidatedData = new CollectionDashBoardStats();
         final Map<String, BigDecimal> consolidatedColl = collectionDocumentElasticSearchService
-                .getFinYearsCollByService(serviceList);
+                .getFinYearsCollByService(serviceList, financialYear);
         Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken by getFinYearsCollByService() for Property Tax is : " + timeTaken + MILLISECS);
@@ -159,43 +157,35 @@ public class CollectionDashboardService {
      * @param collectionDashBoardRequest
      * @return CollectionIndexDetails
      */
-    @SuppressWarnings("unchecked")
     public List<TotalCollectionStatistics> getCollectionIndexDetails(
             final CollectionDashBoardRequest collectionDashBoardRequest) {
         final List<TotalCollectionStatistics> totalStats = new ArrayList<>();
         final List<String> toBeExcluded = new ArrayList<>();
+        final CFinancialYear currFinYear = cFinancialYearService.getFinancialYearByDate(new Date());
         for (final String service : collectionDashBoardRequest.getIncludeServices()) {
             if (!service.equalsIgnoreCase(CollectionConstants.DASHBOARD_OTHERS))
                 setCollectionIndexStats(collectionDashBoardRequest, totalStats,
-                        new ArrayList<String>(Arrays.asList(service)), service);
+                        new ArrayList<String>(Arrays.asList(service)), service, currFinYear);
             toBeExcluded.add(service);
         }
-        final List<String> serviceList = new ArrayList<>();
-        if (!collectionDashBoardRequest.getExcludeServices().contains(CollectionConstants.DASHBOARD_OTHERS)) {
-            final Query qry = entityManager.createNamedQuery(CollectionConstants.DISTINCT_SERVICE_DETAILS,
-                    ServiceDetails.class);
-            final List<ServiceDetails> serviceDetails = qry.getResultList();
-            for (final ServiceDetails sd : serviceDetails)
-                serviceList.add(sd.getName());
-            serviceList.removeAll(toBeExcluded);
-            serviceList.removeAll(collectionDashBoardRequest.getExcludeServices());
-        }
+        final List<String> serviceList = getServiceList(collectionDashBoardRequest.getExcludeServices(), toBeExcluded);
         if (!serviceList.isEmpty())
             setCollectionIndexStats(collectionDashBoardRequest, totalStats, serviceList,
-                    CollectionConstants.DASHBOARD_OTHERS);
+                    CollectionConstants.DASHBOARD_OTHERS, currFinYear);
         return totalStats;
     }
 
     private void setCollectionIndexStats(final CollectionDashBoardRequest collectionDashBoardRequest,
-            final List<TotalCollectionStatistics> totalStats, final List<String> serviceList, final String service) {
+            final List<TotalCollectionStatistics> totalStats, final List<String> serviceList, final String service,
+            final CFinancialYear financialYear) {
         final List<CollectionDocumentDetails> collectionDocumentDetails = new ArrayList<>();
         final TotalCollectionStatistics totalCollStat = new TotalCollectionStatistics();
         final CollectionDocumentDetails collectionDocDetails = collectionDocumentElasticSearchService
-                .getCompleteCollectionIndexDetails(collectionDashBoardRequest, serviceList);
+                .getCompleteCollectionIndexDetails(collectionDashBoardRequest, serviceList, financialYear);
         final List<CollectionDashBoardTrend> collectionTrends = collectionDocumentElasticSearchService
-                .getMonthwiseCollectionDetails(collectionDashBoardRequest, serviceList);
+                .getMonthwiseCollectionDetails(collectionDashBoardRequest, serviceList, financialYear);
         final List<CollectionTableData> collTableData = collectionDocumentElasticSearchService.getResponseTableData(
-                collectionDashBoardRequest, serviceList);
+                collectionDashBoardRequest, serviceList, financialYear);
         collectionDocDetails.setCollTrends(collectionTrends);
         collectionDocDetails.setResponseDetails(collTableData);
         collectionDocDetails.setServiceName(service);
@@ -210,7 +200,6 @@ public class CollectionDashboardService {
      * @param collectionDashBoardRequest
      * @return
      */
-    @SuppressWarnings("unchecked")
     public List<TaxPayerDashBoardResponseDetails> getTopTenTaxProducers(
             final CollectionDashBoardRequest collectionDashBoardRequest) {
         final List<TaxPayerDashBoardResponseDetails> topTenCollectionsList = new ArrayList<>();
@@ -225,16 +214,7 @@ public class CollectionDashboardService {
             }
             toBeExcluded.add(service);
         }
-        final List<String> serviceList = new ArrayList<>();
-        if (!collectionDashBoardRequest.getExcludeServices().contains(CollectionConstants.DASHBOARD_OTHERS)) {
-            final Query qry = entityManager.createNamedQuery(CollectionConstants.DISTINCT_SERVICE_DETAILS,
-                    ServiceDetails.class);
-            final List<ServiceDetails> serviceDetails = qry.getResultList();
-            for (final ServiceDetails sd : serviceDetails)
-                serviceList.add(sd.getName());
-            serviceList.removeAll(toBeExcluded);
-            serviceList.removeAll(collectionDashBoardRequest.getExcludeServices());
-        }
+        final List<String> serviceList = getServiceList(collectionDashBoardRequest.getExcludeServices(), toBeExcluded);
         if (!serviceList.isEmpty()) {
             topTenResponse = collectionDocumentElasticSearchService.getTopTenTaxPerformers(collectionDashBoardRequest,
                     serviceList);
@@ -250,7 +230,6 @@ public class CollectionDashboardService {
      * @param collectionDashBoardRequest
      * @return
      */
-    @SuppressWarnings("unchecked")
     public List<TaxPayerDashBoardResponseDetails> getBottomTenTaxProducers(
             final CollectionDashBoardRequest collectionDashBoardRequest) {
         final List<TaxPayerDashBoardResponseDetails> bottomTenCollectionsList = new ArrayList<>();
@@ -265,16 +244,7 @@ public class CollectionDashboardService {
             }
             toBeExcluded.add(service);
         }
-        final List<String> serviceList = new ArrayList<>();
-        if (!collectionDashBoardRequest.getExcludeServices().contains(CollectionConstants.DASHBOARD_OTHERS)) {
-            final Query qry = entityManager.createNamedQuery(CollectionConstants.DISTINCT_SERVICE_DETAILS,
-                    ServiceDetails.class);
-            final List<ServiceDetails> serviceDetails = qry.getResultList();
-            for (final ServiceDetails sd : serviceDetails)
-                serviceList.add(sd.getName());
-            serviceList.removeAll(toBeExcluded);
-            serviceList.removeAll(collectionDashBoardRequest.getExcludeServices());
-        }
+        final List<String> serviceList = getServiceList(collectionDashBoardRequest.getExcludeServices(), toBeExcluded);
         if (!serviceList.isEmpty()) {
             bottomTenResponse = collectionDocumentElasticSearchService.getBottomTenTaxPerformers(
                     collectionDashBoardRequest, serviceList);
@@ -282,6 +252,21 @@ public class CollectionDashboardService {
             bottomTenCollectionsList.add(bottomTenResponse);
         }
         return bottomTenCollectionsList;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<String> getServiceList(final List<String> excludeServices, final List<String> toBeExcluded) {
+        final List<String> serviceList = new ArrayList<>();
+        if (!excludeServices.contains(CollectionConstants.DASHBOARD_OTHERS)) {
+            final Query qry = entityManager.createNamedQuery(CollectionConstants.DISTINCT_SERVICE_DETAILS,
+                    ServiceDetails.class);
+            final List<ServiceDetails> serviceDetails = qry.getResultList();
+            for (final ServiceDetails sd : serviceDetails)
+                serviceList.add(sd.getName());
+            serviceList.removeAll(toBeExcluded);
+            serviceList.removeAll(excludeServices);
+        }
+        return serviceList;
     }
 
 }
