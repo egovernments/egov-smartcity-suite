@@ -330,18 +330,15 @@ public class AjaxLetterOfAcceptanceController {
     public @ResponseBody String checkIfBillsCreated(@RequestParam final Long id) {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(id);
         final WorkOrderEstimate workOrderEstimate = workOrder.getWorkOrderEstimates().get(0);
-        String message = "";
+        String message = StringUtils.EMPTY;
         if (workOrderEstimate.getWorkOrderActivities().isEmpty()) {
             final String billNumbers = letterOfAcceptanceService.checkIfBillsCreated(id);
             if (!billNumbers.equals(StringUtils.EMPTY))
                 message = messageSource.getMessage("error.loa.bills.created", new String[] { billNumbers }, null);
         } else {
             final String mbRefNumbers = letterOfAcceptanceService.checkIfMBCreatedForLOA(workOrderEstimate);
-            final String arfNumbers = letterOfAcceptanceService.checkIfARFCreatedForLOA(workOrderEstimate);
             if (!mbRefNumbers.equals(StringUtils.EMPTY))
                 message = messageSource.getMessage("error.loa.mb.created", new String[] { mbRefNumbers }, null);
-            else if (!arfNumbers.equals(StringUtils.EMPTY))
-                message = messageSource.getMessage("error.loa.arf.created", new String[] { arfNumbers }, null);
             else if (!workOrderEstimate.getWorkOrderActivities().isEmpty()) {
                 final String revisionEstimates = revisionWorkOrderService.getRevisionEstimatesForWorkOrder(workOrder.getId());
                 if (!revisionEstimates.equals(StringUtils.EMPTY))
@@ -349,6 +346,10 @@ public class AjaxLetterOfAcceptanceController {
                             null);
             }
         }
+        final String arfNumbers = letterOfAcceptanceService.checkIfARFCreatedForLOA(workOrderEstimate);
+        if (!arfNumbers.equals(StringUtils.EMPTY))
+            message = messageSource.getMessage("error.loa.arf.created", new String[] { arfNumbers }, null);
+
         return message;
     }
 

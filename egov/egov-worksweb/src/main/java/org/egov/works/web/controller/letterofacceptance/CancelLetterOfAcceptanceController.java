@@ -132,14 +132,9 @@ public class CancelLetterOfAcceptanceController extends GenericWorkFlowControlle
             }
         } else {
             final String mbRefNumbers = letterOfAcceptanceService.checkIfMBCreatedForLOA(workOrderEstimate);
-            final String arfNumbers = letterOfAcceptanceService.checkIfARFCreatedForLOA(workOrderEstimate);
             if (!mbRefNumbers.equals(StringUtils.EMPTY)) {
                 model.addAttribute(ERROR_MESSAGE, messageSource.getMessage("error.loa.mb.created", new String[] { mbRefNumbers },
                         null));
-                return LETTEROFACCEPTANCE_SUCCESS;
-            } else if (!arfNumbers.equals(StringUtils.EMPTY)) {
-                model.addAttribute(ERROR_MESSAGE,
-                        messageSource.getMessage("error.loa.arf.created", new String[] { arfNumbers }, null));
                 return LETTEROFACCEPTANCE_SUCCESS;
             } else if (!workOrderEstimate.getWorkOrderActivities().isEmpty()) {
                 final String revisionEstimates = revisionWorkOrderService.getRevisionEstimatesForWorkOrder(workOrder.getId());
@@ -155,6 +150,13 @@ public class CancelLetterOfAcceptanceController extends GenericWorkFlowControlle
         if (letterOfAcceptanceService.checkIfMileStonesCreated(workOrder)) {
             model.addAttribute(ERROR_MESSAGE,
                     messageSource.getMessage("error.loa.milestone.created", new String[] {}, null));
+            return LETTEROFACCEPTANCE_SUCCESS;
+        }
+
+        final String arfNumbers = letterOfAcceptanceService.checkIfARFCreatedForLOA(workOrderEstimate);
+        if (!arfNumbers.equals(StringUtils.EMPTY)) {
+            model.addAttribute(ERROR_MESSAGE,
+                    messageSource.getMessage("error.loa.arf.created", new String[] { arfNumbers }, null));
             return LETTEROFACCEPTANCE_SUCCESS;
         }
 
