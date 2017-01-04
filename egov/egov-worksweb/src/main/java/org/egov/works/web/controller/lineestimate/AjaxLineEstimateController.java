@@ -39,6 +39,8 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -101,8 +103,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
@@ -195,7 +195,8 @@ public class AjaxLineEstimateController {
 
     @RequestMapping(value = "/getsubtypeofwork", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<EgwTypeOfWork> getSubTypeOfWork(@RequestParam("id") final Long id) {
-        return typeOfWorkService.getByParentidAndEgPartytype(id,WorksConstants.PARTY_TYPE_CONTRACTOR);
+        return typeOfWorkService.getActiveSubTypeOfWorksByParentIdAndPartyType(id,
+                WorksConstants.PARTY_TYPE_CONTRACTOR);
     }
 
     @RequestMapping(value = "/ajax-getward", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

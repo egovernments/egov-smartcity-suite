@@ -42,7 +42,8 @@
 function setupSubTypes(elem) {
 	categoryId = elem.options[elem.selectedIndex].value;
 	populatesubType({
-		category : categoryId
+		category : categoryId,
+		mode : jQuery('#mode').val()
 	});
 }
 

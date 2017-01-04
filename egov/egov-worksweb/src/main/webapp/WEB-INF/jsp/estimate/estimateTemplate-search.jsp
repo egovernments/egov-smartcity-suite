@@ -42,8 +42,11 @@
 <script>
 
 function setupSubTypes(elem){
-    categoryId=elem.options[elem.selectedIndex].value;
-    populatesubType({category:categoryId});
+	categoryId = elem.options[elem.selectedIndex].value;
+	populatesubType({
+		category : categoryId,
+		mode : jQuery('#mode').val()
+	});
 }
 
 loadSubType= function(req, res){

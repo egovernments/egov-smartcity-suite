@@ -375,7 +375,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("beneficiary", Beneficiary.values());
         model.addAttribute("modeOfAllotment", modeOfAllotmentService.findAll());
         model.addAttribute("lineEstimateUOMs", lineEstimateUOMService.findAll());
-        model.addAttribute("typeOfWork", typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
+        model.addAttribute("typeOfWork", typeOfWorkService.getActiveTypeOfWorksByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         model.addAttribute("workCategory", WorkCategory.values());
         model.addAttribute("locations", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(

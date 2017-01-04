@@ -62,9 +62,9 @@ public class SearchEstimateTemplateController {
         model.addAttribute("typeOfWorkId", typeOfWorkId);
         model.addAttribute("subTypeOfWorkId", subTypeOfWorkId);
         model.addAttribute("typeOfWork",
-                typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
-        model.addAttribute("subTypeOfWork",
-                typeOfWorkService.getByParentidAndEgPartytype(typeOfWorkId, WorksConstants.PARTY_TYPE_CONTRACTOR));
+                typeOfWorkService.getActiveTypeOfWorksByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
+        model.addAttribute("subTypeOfWork", typeOfWorkService
+                .getActiveSubTypeOfWorksByParentIdAndPartyType(typeOfWorkId, WorksConstants.PARTY_TYPE_CONTRACTOR));
         model.addAttribute("estimateTemplateSearchRequest", new EstimateTemplateSearchRequest());
         return "estimatetemplate-searchform";
     }

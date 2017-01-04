@@ -42,18 +42,21 @@ package org.egov.works.web.actions.estimate;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.egov.commons.service.TypeOfWorkService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.works.masters.entity.EstimateTemplate;
 import org.egov.works.masters.entity.SORRate;
+import org.egov.works.utils.WorksConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({
         @Result(name = AjaxEstimateTemplateAction.SEARCH_RESULTS, location = "ajaxEstimateTemplate-searchResults.jsp"),
         @Result(name = AjaxEstimateTemplateAction.SUBCATEGORIES, location = "ajaxEstimate-subcategories.jsp"),
-        @Result(name = AjaxEstimateTemplateAction.ACTIVITIES, location = "ajaxEstimateTemplate-activities.jsp")
-})
+        @Result(name = AjaxEstimateTemplateAction.ACTIVITIES, location = "ajaxEstimateTemplate-activities.jsp") })
 public class AjaxEstimateTemplateAction extends BaseFormAction {
 
     private static final long serialVersionUID = 4779374304829178146L;
@@ -70,6 +73,10 @@ public class AjaxEstimateTemplateAction extends BaseFormAction {
     private String query;
     private List<EstimateTemplate> estimateTemplateList;
     private Long category;
+    private String mode;
+
+    @Autowired
+    TypeOfWorkService typeOfWorkService;
 
     public List getSubCategories() {
         return subCategories;
@@ -210,9 +217,22 @@ public class AjaxEstimateTemplateAction extends BaseFormAction {
         return estimateTemplateList;
     }
 
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(final String mode) {
+        this.mode = mode;
+    }
+
     @Action(value = "/estimate/ajaxEstimate-subcategories")
     public String subcategories() {
-        subCategories = getPersistenceService().findAllBy("from EgwTypeOfWork where parentid.id=?", category);
+        if (!StringUtils.isBlank(mode) && mode.equals(WorksConstants.VIEW))
+            subCategories = typeOfWorkService.getByParentidAndEgPartytype(category,
+                    WorksConstants.PARTY_TYPE_CONTRACTOR);
+        else
+            subCategories = typeOfWorkService.getActiveSubTypeOfWorksByParentIdAndPartyType(category,
+                    WorksConstants.PARTY_TYPE_CONTRACTOR);
         return SUBCATEGORIES;
     }
 }

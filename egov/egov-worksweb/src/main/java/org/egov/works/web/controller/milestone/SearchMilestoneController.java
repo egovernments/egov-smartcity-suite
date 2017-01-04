@@ -74,15 +74,14 @@ public class SearchMilestoneController {
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
-    
+
     @Autowired
     private TypeOfWorkService typeOfWorkService;
 
     @RequestMapping(value = "/search-form", method = RequestMethod.GET)
-    public String showSearchMilestoneForm(
-            @ModelAttribute final SearchRequestMilestone searchRequestMilestone,
+    public String showSearchMilestoneForm(@ModelAttribute final SearchRequestMilestone searchRequestMilestone,
             final Model model) throws ApplicationException {
-        setDropDownValues(model);
+        setDropDownValuesToTrackMilestone(model);
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             searchRequestMilestone.setDepartment(departments.get(0).getId());
@@ -91,24 +90,24 @@ public class SearchMilestoneController {
         return "searchmilestone-form";
     }
 
-    private void setDropDownValues(final Model model) {
+    private void setDropDownValuesToTrackMilestone(final Model model) {
         model.addAttribute("departments", departmentService.getAllDepartments());
-        model.addAttribute("typeOfWork", typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
+        model.addAttribute("typeOfWork",
+                typeOfWorkService.getActiveTypeOfWorksByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
     }
 
     @RequestMapping(value = "/searchmilestonetemplate", method = RequestMethod.GET)
-    public String showSearchMilestoneTemplate(
-            @ModelAttribute final MilestoneTemplate milestoneTemplate,
+    public String showSearchMilestoneTemplate(@ModelAttribute final MilestoneTemplate milestoneTemplate,
             final Model model) throws ApplicationException {
-        model.addAttribute("typeOfWork", typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
+        model.addAttribute("typeOfWork",
+                typeOfWorkService.getActiveTypeOfWorksByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
         return "milestoneTemplate-search";
     }
 
     @RequestMapping(value = "/searchtoview-form", method = RequestMethod.GET)
-    public String searchMilestoneForm(
-            @ModelAttribute final SearchRequestMilestone searchRequestMilestone,
+    public String searchMilestoneForm(@ModelAttribute final SearchRequestMilestone searchRequestMilestone,
             final Model model) throws ApplicationException {
-        setDropDownValues(model);
+        setDropDownValuesToSearchMilestone(model);
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             searchRequestMilestone.setDepartment(departments.get(0).getId());
@@ -118,16 +117,22 @@ public class SearchMilestoneController {
     }
 
     @RequestMapping(value = "/searchtracked-form", method = RequestMethod.GET)
-    public String searchTrackedMilestoneForm(
-            @ModelAttribute final SearchRequestMilestone searchRequestMilestone,
+    public String searchTrackedMilestoneForm(@ModelAttribute final SearchRequestMilestone searchRequestMilestone,
             final Model model) throws ApplicationException {
-        setDropDownValues(model);
+        setDropDownValuesToSearchMilestone(model);
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             searchRequestMilestone.setDepartment(departments.get(0).getId());
         model.addAttribute("searchRequestMilestone", searchRequestMilestone);
         model.addAttribute("egwStatus", egwStatusDAO.getStatusByModule(WorksConstants.MILESTONE_MODULE_KEY));
         return "searchTrackMilestone-form";
+    }
+
+    private void setDropDownValuesToSearchMilestone(final Model model) {
+        model.addAttribute("departments", departmentService.getAllDepartments());
+        model.addAttribute("typeOfWork",
+                typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
+
     }
 
 }

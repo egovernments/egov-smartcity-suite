@@ -192,7 +192,8 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             model.addAttribute("mode", null);
             model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
-            model.addAttribute("additionalRule", cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+            model.addAttribute("additionalRule",
+                    cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
             return "newLineEstimate-form";
         } else {
 
@@ -247,7 +248,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("modeOfAllotment", modeOfAllotmentService.findAll());
         model.addAttribute("lineEstimateUOMs", lineEstimateUOMService.findAll());
         model.addAttribute("typeOfWork",
-                typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
+                typeOfWorkService.getActiveTypeOfWorksByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         model.addAttribute("locations", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 WorksConstants.LOCATION_BOUNDARYTYPE, WorksConstants.LOCATION_HIERARCHYTYPE));

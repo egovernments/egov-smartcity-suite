@@ -128,9 +128,20 @@ public class TypeOfWorkService {
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
-    
+
     @Transactional
     public EgwTypeOfWork update(final EgwTypeOfWork typeOfWork) {
         return typeOfWorkRepository.save(typeOfWork);
+    }
+
+    public List<EgwTypeOfWork> getActiveTypeOfWorksByPartyType(final String partyTypeCode) {
+        return typeOfWorkRepository
+                .findByParentid_idIsNullAndEgPartytype_codeContainingIgnoreCaseAndActiveTrueOrderByName(partyTypeCode);
+    }
+
+    public List<EgwTypeOfWork> getActiveSubTypeOfWorksByParentIdAndPartyType(final Long parentid,
+            final String partyTypeCode) {
+        return typeOfWorkRepository.findByParentid_idAndEgPartytype_codeContainingIgnoreCaseAndActiveTrueOrderByName(
+                parentid, partyTypeCode);
     }
 }

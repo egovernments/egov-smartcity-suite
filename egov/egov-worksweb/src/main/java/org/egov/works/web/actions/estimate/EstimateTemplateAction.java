@@ -64,12 +64,10 @@ import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Results({
-        @Result(name = EstimateTemplateAction.NEW, location = "estimateTemplate-new.jsp"),
+@Results({ @Result(name = EstimateTemplateAction.NEW, location = "estimateTemplate-new.jsp"),
         @Result(name = EstimateTemplateAction.SEARCH, location = "estimateTemplate-search.jsp"),
         @Result(name = EstimateTemplateAction.SUCCESS, location = "estimateTemplate-success.jsp"),
-        @Result(name = EstimateTemplateAction.EDIT, location = "estimateTemplate-edit.jsp")
-})
+        @Result(name = EstimateTemplateAction.EDIT, location = "estimateTemplate-edit.jsp") })
 public class EstimateTemplateAction extends SearchFormAction {
 
     private static final long serialVersionUID = 3610026596221473556L;
@@ -91,7 +89,7 @@ public class EstimateTemplateAction extends SearchFormAction {
 
     @Autowired
     private UOMService uomService;
-    
+
     @Autowired
     private TypeOfWorkService typeOfWorkService;
 
@@ -127,8 +125,12 @@ public class EstimateTemplateAction extends SearchFormAction {
             estimateTemplate = estimateTemplateService.getEstimateTemplateById(id);
         super.prepare();
         setupDropdownDataExcluding("workType", "subType");
-        addDropdownData("parentCategoryList",
-                typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
+        if (!StringUtils.isBlank(mode) && mode.equals(WorksConstants.VIEW))
+            addDropdownData("parentCategoryList",
+                    typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
+        else
+            addDropdownData("parentCategoryList",
+                    typeOfWorkService.getActiveTypeOfWorksByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
         addDropdownData("uomList", uomService.findAll());
         addDropdownData("scheduleCategoryList",
                 getPersistenceService().findAllBy("from ScheduleCategory order by upper(code)"));
@@ -159,7 +161,8 @@ public class EstimateTemplateAction extends SearchFormAction {
         else
             setMode("edit");
         if (estimateTemplate != null) {
-            final EstimateTemplate template = estimateTemplateService.getEstimateTemplateByCode(estimateTemplate.getCode());
+            final EstimateTemplate template = estimateTemplateService
+                    .getEstimateTemplateByCode(estimateTemplate.getCode());
             if (template != null && estimateTemplate.getId() != template.getId()) {
                 addActionMessage(getText("estimateTemplate.code.isunique"));
                 return NEW;
@@ -223,8 +226,8 @@ public class EstimateTemplateAction extends SearchFormAction {
 
     protected void populateCategoryList(final boolean categoryPopulated) {
         if (categoryPopulated)
-            addDropdownData("categoryList",
-                    typeOfWorkService.getByParentidAndEgPartytype(estimateTemplate.getWorkType().getId(),WorksConstants.PARTY_TYPE_CONTRACTOR));
+            addDropdownData("categoryList", typeOfWorkService.getActiveSubTypeOfWorksByParentIdAndPartyType(
+                    estimateTemplate.getWorkType().getId(), WorksConstants.PARTY_TYPE_CONTRACTOR));
         else
             addDropdownData("categoryList", Collections.emptyList());
     }

@@ -47,7 +47,7 @@ $(document).ready(function(){
 				} else {
 				$.ajax({
 					type: "GET",
-					url: "/egworks/lineestimate/getsubtypeofwork",
+					url: "/egworks/masters/ajaxsearch-getsubtypeofwork",
 					cache: true,
 					dataType: "json",
 					data:{'id' : $('#typeofwork').val()}

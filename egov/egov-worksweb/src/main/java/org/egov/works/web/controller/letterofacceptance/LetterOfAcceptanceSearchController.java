@@ -80,14 +80,14 @@ public class LetterOfAcceptanceSearchController {
 
     @Autowired
     private LetterOfAcceptanceService letterOfAcceptanceService;
-    
+
     @Autowired
     private TypeOfWorkService typeOfWorkService;
 
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String showSearchLineEstimateForm(
-            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
-            final Model model) throws ApplicationException {
+            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final Model model)
+            throws ApplicationException {
         setDropDownValues(model);
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
         final List<EgwStatus> egwStatuses = egwStatusHibernateDAO.getStatusByModule(WorksConstants.WORKORDER);
@@ -107,13 +107,13 @@ public class LetterOfAcceptanceSearchController {
     private void setDropDownValues(final Model model) {
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("egwStatus", egwStatusHibernateDAO.getStatusByModule(WorksConstants.WORKORDER));
-        model.addAttribute("typeOfWork", typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
+        model.addAttribute("typeOfWork",
+                typeOfWorkService.getActiveTypeOfWorksByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
 
     }
 
     @RequestMapping(value = "/searchloa-milestone", method = RequestMethod.GET)
-    public String searchMilestone(
-            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
+    public String searchMilestone(@ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
@@ -125,8 +125,8 @@ public class LetterOfAcceptanceSearchController {
 
     @RequestMapping(value = "/searchformloa-contractorbill", method = RequestMethod.GET)
     public String showSearchLOAForContractorBill(
-            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
-            final Model model) throws ApplicationException {
+            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final Model model)
+            throws ApplicationException {
         setDropDownValues(model);
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
@@ -138,8 +138,8 @@ public class LetterOfAcceptanceSearchController {
 
     @RequestMapping(value = "/searchmodifyform", method = RequestMethod.GET)
     public String showSearchLOAModifyForm(
-            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
-            final Model model) throws ApplicationException {
+            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final Model model)
+            throws ApplicationException {
         setDropDownValues(model);
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
         return "letterofacceptancetomodify-search";
@@ -147,15 +147,15 @@ public class LetterOfAcceptanceSearchController {
 
     @RequestMapping(value = "/setloaofflinestatus", method = RequestMethod.GET)
     public String showLOAToSetOfflineStatus(
-            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
-            final Model model) throws ApplicationException {
+            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final Model model)
+            throws ApplicationException {
         final List<EgwStatus> egwStatuses = egwStatusHibernateDAO.getStatusByModule(WorksConstants.WORKORDER);
         setDropDownValues(model);
         final List<EgwStatus> newEgwStatuses = new ArrayList<EgwStatus>();
         for (final EgwStatus egwStatus : egwStatuses)
-            if (!egwStatus.getCode().equalsIgnoreCase(WorksConstants.CREATED_STATUS) &&
-                    !egwStatus.getCode().equalsIgnoreCase(WorksConstants.REJECTED) &&
-                    !egwStatus.getCode().equalsIgnoreCase(WorksConstants.CANCELLED))
+            if (!egwStatus.getCode().equalsIgnoreCase(WorksConstants.CREATED_STATUS)
+                    && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.REJECTED)
+                    && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.CANCELLED))
                 newEgwStatuses.add(egwStatus);
         model.addAttribute("egwStatus", newEgwStatuses);
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
@@ -173,8 +173,8 @@ public class LetterOfAcceptanceSearchController {
 
     @RequestMapping(value = "/searchloacr-form", method = RequestMethod.GET)
     public String searchLOAForContractorRequisition(
-            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
-            final Model model) throws ApplicationException {
+            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final Model model)
+            throws ApplicationException {
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
         model.addAttribute("workAssignedUsers", letterOfAcceptanceService.getWorkAssignedUsers());
         return "loatocreatecr-search";

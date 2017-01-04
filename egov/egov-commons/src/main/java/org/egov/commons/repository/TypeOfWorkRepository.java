@@ -54,11 +54,16 @@ public interface TypeOfWorkRepository extends JpaRepository<EgwTypeOfWork, Long>
 
     List<EgwTypeOfWork> findByNameContainingIgnoreCase(final String name);
 
-    @Query("select tw from EgwTypeOfWork as tw where tw.parentid is null and upper(tw.egPartytype.code) = :partyTypeCode order by upper(tw.name)")
+    @Query("select tw from EgwTypeOfWork as tw where tw.parentid is null and upper(tw.egPartytype.code) = :partyTypeCode order by upper(tw.name) asc")
     List<EgwTypeOfWork> findByPartyType(@Param("partyTypeCode") final String partyTypeCode);
 
-    @Query("select tw from EgwTypeOfWork as tw where tw.parentid.id =:parentId and upper(tw.egPartytype.code) = :partyTypeCode order by upper(tw.name)")
+    @Query("select tw from EgwTypeOfWork as tw where tw.parentid.id =:parentId and upper(tw.egPartytype.code) = :partyTypeCode order by upper(tw.name) asc")
     List<EgwTypeOfWork> findByParentidAndEgPartytype(@Param("parentId") final Long parentId,
             @Param("partyTypeCode") final String partyTypeCode);
 
+    List<EgwTypeOfWork> findByParentid_idIsNullAndEgPartytype_codeContainingIgnoreCaseAndActiveTrueOrderByName(
+            final String partyTypeCode);
+
+    List<EgwTypeOfWork> findByParentid_idAndEgPartytype_codeContainingIgnoreCaseAndActiveTrueOrderByName(
+            final Long parentid, final String partyTypeCode);
 }

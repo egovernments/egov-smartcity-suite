@@ -44,6 +44,7 @@ import java.util.List;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.TypeOfWorkSearchRequest;
 import org.egov.commons.service.TypeOfWorkService;
+import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.adaptor.SearchTypeOfWorkJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -52,6 +53,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
@@ -91,5 +93,10 @@ public class AjaxTypeOfWorkController {
         final String result = new StringBuilder("{ \"data\":").append(toSearchTypeOfWorkResultJson(searchResultList))
                 .append("}").toString();
         return result;
+    }
+
+    @RequestMapping(value = "/ajaxsearch-getsubtypeofwork", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<EgwTypeOfWork> getSubTypeOfWork(@RequestParam("id") final Long id) {
+        return typeOfWorkService.getByParentidAndEgPartytype(id, WorksConstants.PARTY_TYPE_CONTRACTOR);
     }
 }

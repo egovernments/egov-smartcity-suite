@@ -64,8 +64,7 @@ import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
-@Results({
-        @Result(name = MilestoneTemplateAction.NEW, location = "milestonetemplate-new.jsp"),
+@Results({ @Result(name = MilestoneTemplateAction.NEW, location = "milestonetemplate-new.jsp"),
         @Result(name = MilestoneTemplateAction.SEARCH, location = "milestonetemplate-search.jsp"),
         @Result(name = MilestoneTemplateAction.SUCCESS, location = "milestonetemplate-success.jsp"),
         @Result(name = MilestoneTemplateAction.EDIT, location = "milestonetemplate-edit.jsp"),
@@ -108,8 +107,12 @@ public class MilestoneTemplateAction extends SearchFormAction {
             template = milestoneTemplateService.getMilestoneTemplateById(id);
         super.prepare();
         setupDropdownDataExcluding("typeOfWork", "subTypeOfWork");
-        addDropdownData("parentCategoryList",
-                typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
+        if (!StringUtils.isBlank(mode) && mode.equals(WorksConstants.VIEW))
+            addDropdownData("parentCategoryList",
+                    typeOfWorkService.getTypeOfWorkByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
+        else
+            addDropdownData("parentCategoryList",
+                    typeOfWorkService.getActiveTypeOfWorksByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
         populateCategoryList(template.getTypeOfWork() != null);
     }
 
@@ -203,7 +206,8 @@ public class MilestoneTemplateAction extends SearchFormAction {
         Double percentage = 0.0;
         for (final MilestoneTemplateActivity templateActivities : template.getMilestoneTemplateActivities()) {
             if (templateActivities.getPercentage() == null || templateActivities.getPercentage() == 0) {
-                addFieldError("milestoneTemplateActivity.percentage.null", getText("milestoneTemplateActivity.percentage.null"));
+                addFieldError("milestoneTemplateActivity.percentage.null",
+                        getText("milestoneTemplateActivity.percentage.null"));
                 break;
             }
             if (templateActivities.getPercentage() != null)
@@ -215,8 +219,8 @@ public class MilestoneTemplateAction extends SearchFormAction {
 
     protected void populateCategoryList(final boolean categoryPopulated) {
         if (categoryPopulated)
-            addDropdownData("categoryList",
-                    typeOfWorkService.getByParentidAndEgPartytype(template.getTypeOfWork().getId(),WorksConstants.PARTY_TYPE_CONTRACTOR));
+            addDropdownData("categoryList", typeOfWorkService.getActiveSubTypeOfWorksByParentIdAndPartyType(
+                    template.getTypeOfWork().getId(), WorksConstants.PARTY_TYPE_CONTRACTOR));
         else
             addDropdownData("categoryList", Collections.emptyList());
     }
@@ -301,8 +305,7 @@ public class MilestoneTemplateAction extends SearchFormAction {
         this.worksService = worksService;
     }
 
-    public void setTemplateActivities(
-            final List<MilestoneTemplateActivity> templateActivities) {
+    public void setTemplateActivities(final List<MilestoneTemplateActivity> templateActivities) {
         this.templateActivities = templateActivities;
     }
 
