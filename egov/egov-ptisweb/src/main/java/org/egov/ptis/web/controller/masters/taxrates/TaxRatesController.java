@@ -61,7 +61,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/taxrates")
-public class ViewTaxRatesController {
+public class TaxRatesController {
 
     private final TaxRatesService taxRatesService;
     private static final String TAXRATE_VIEW = "taxRates-view";
@@ -77,7 +77,7 @@ public class ViewTaxRatesController {
     private static final String TAX_RATES_FORM = "taxRatesForm";
 
     @Autowired
-    public ViewTaxRatesController(final TaxRatesService taxRatesService) {
+    public TaxRatesController(final TaxRatesService taxRatesService) {
         this.taxRatesService = taxRatesService;
     }
 
@@ -85,7 +85,7 @@ public class ViewTaxRatesController {
     public AppConfigValues taxRatesModel() {
         return new AppConfigValues();
     }
-    
+
     @RequestMapping(value = "/appconfig/view", method = RequestMethod.GET)
     public String showAppConfigTaxRates(final Model model) {
         final Map<String, Double> taxRatesMap = taxRatesService.getTaxDetails();
@@ -101,8 +101,8 @@ public class ViewTaxRatesController {
     }
 
     @RequestMapping(value = "/appconfig/edit", method = RequestMethod.POST)
-    public String saveAppConfigTaxRates(@ModelAttribute final DemandReasonDetailsBean taxRatesForm, final Model model, final HttpServletRequest request,
-            final RedirectAttributes redirectAttributes) {
+    public String saveAppConfigTaxRates(@ModelAttribute final DemandReasonDetailsBean taxRatesForm, final Model model,
+            final HttpServletRequest request, final RedirectAttributes redirectAttributes) {
         final String resTaxValue = request.getParameter("General Tax Residential-value");
         final String nonResTaxValue = request.getParameter("General Tax Non Residential-value");
         final String eduTax = request.getParameter("Education Cess-value");
@@ -135,7 +135,7 @@ public class ViewTaxRatesController {
             return REDIRECT_URL;
         }
     }
-    
+
     @RequestMapping(value = "/view", method = RequestMethod.GET)
     public String showTaxRates(final Model model) {
         DemandReasonDetailsBean taxRatesForm = new DemandReasonDetailsBean();
@@ -143,7 +143,7 @@ public class ViewTaxRatesController {
         model.addAttribute(TAX_RATES_FORM, taxRatesForm);
         return "taxrates-view";
     }
-    
+
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
     public String taxRatesEditView(final Model model) {
         DemandReasonDetailsBean taxRatesForm = new DemandReasonDetailsBean();
@@ -185,8 +185,9 @@ public class ViewTaxRatesController {
         }
         return isValid;
     }
-    
-    Boolean validate(final DemandReasonDetailsBean taxRatesForm, final Model model, final HttpServletRequest request) {
+
+    private Boolean validate(final DemandReasonDetailsBean taxRatesForm, final Model model,
+            final HttpServletRequest request) {
         EgDemandReasonDetails existingDemandReasonDetails;
         BigDecimal netResdPercentage = BigDecimal.ZERO;
         BigDecimal netNonResdPercentage = BigDecimal.ZERO;
@@ -230,7 +231,7 @@ public class ViewTaxRatesController {
         return true;
     }
 
-    void addTotalTaxHeadsToModel(Model model) {
+    private void addTotalTaxHeadsToModel(Model model) {
         for (EgDemandReasonDetails drd : taxRatesService.getTaxRates()) {
             if (drd.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(TOTAL_TAX_RESD))
                 model.addAttribute("genTaxResd", drd.getPercentage().setScale(2, BigDecimal.ROUND_CEILING));
