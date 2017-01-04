@@ -41,8 +41,10 @@ package org.egov.mrs.domain.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -105,7 +107,7 @@ public class MarriageRegistration extends StateAware {
     @NotNull
     private Date dateOfMarriage;
 
-   /* @NotNull*/
+    /* @NotNull */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "marriageact")
     private MarriageAct marriageAct;
@@ -161,7 +163,7 @@ public class MarriageRegistration extends StateAware {
     private boolean affidavit;
     private boolean marriageCard;
 
-   // @NotNull
+    // @NotNull
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "feeCriteria")
     private MarriageFee feeCriteria;
@@ -215,7 +217,7 @@ public class MarriageRegistration extends StateAware {
     @NotNull
     @Valid
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "registration")
-    private List<RegistrationDocument> registrationDocuments = new ArrayList<RegistrationDocument>();
+    private Set<RegistrationDocument> registrationDocuments = new HashSet<RegistrationDocument>();
 
     @OneToMany(mappedBy = "registration", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MarriageCertificate> marriageCertificate = new ArrayList<MarriageCertificate>();
@@ -461,14 +463,6 @@ public class MarriageRegistration extends StateAware {
         this.applicationDate = applicationDate;
     }
 
-    public List<RegistrationDocument> getRegistrationDocuments() {
-        return registrationDocuments;
-    }
-
-    public void setRegistrationDocuments(final List<RegistrationDocument> registrationDocuments) {
-        this.registrationDocuments = registrationDocuments;
-    }
-
     public List<MarriageDocument> getDocuments() {
         return documents;
     }
@@ -644,6 +638,14 @@ public class MarriageRegistration extends StateAware {
 
     public void setPageNo(final String pageNo) {
         this.pageNo = pageNo;
+    }
+
+    public Set<RegistrationDocument> getRegistrationDocuments() {
+        return registrationDocuments;
+    }
+
+    public void setRegistrationDocuments(final Set<RegistrationDocument> registrationDocuments) {
+        this.registrationDocuments = registrationDocuments;
     }
 
 }

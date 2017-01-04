@@ -59,15 +59,15 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "egmrs_registrationdocument")
-@SequenceGenerator(name = RegistrationDocument.SEQ_REGISTRATIONDOCUMENT, sequenceName = RegistrationDocument.SEQ_REGISTRATIONDOCUMENT, allocationSize = 1)
+@SequenceGenerator(name = RegistrationDocument.SEQ_APPLICANTDOCUMENT, sequenceName = RegistrationDocument.SEQ_APPLICANTDOCUMENT, allocationSize = 1)
 public class RegistrationDocument extends AbstractDocument {
 
     private static final long serialVersionUID = 6808024071929495513L;
 
-    public static final String SEQ_REGISTRATIONDOCUMENT = "SEQ_EGMRS_REGISTRATIONDOCUMENT";
+    public static final String SEQ_APPLICANTDOCUMENT = "SEQ_EGMRS_APPLICANTDOCUMENT";
 
     @Id
-    @GeneratedValue(generator = SEQ_REGISTRATIONDOCUMENT, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_APPLICANTDOCUMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull

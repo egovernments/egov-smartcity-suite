@@ -85,6 +85,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/registration")
 public class SearchRegistrationController {
 
+    private static final String DATA = "{ \"data\":";
+    private static final String REGISTRATION = "registration";
     private final MarriageRegistrationService marriageRegistrationService;
     private final SecurityUtils securityUtils;
     @Autowired
@@ -95,114 +97,130 @@ public class SearchRegistrationController {
     protected MarriageRegistrationUnitService marriageRegistrationUnitService;
 
     @Autowired
-    public SearchRegistrationController(final MarriageRegistrationService marriageRegistrationService, final SecurityUtils securityUtils) {
+    public SearchRegistrationController(final MarriageRegistrationService marriageRegistrationService,
+            final SecurityUtils securityUtils) {
         this.marriageRegistrationService = marriageRegistrationService;
         this.securityUtils = securityUtils;
     }
 
-    public void prepareSearchForm(final Model model){
+    public void prepareSearchForm(final Model model) {
         model.addAttribute("marriageRegistrationUnit", marriageRegistrationUnitService.getActiveRegistrationunit());
 
     }
+
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String showSearch( final Model model) {
-        
+    public String showSearch(final Model model) {
+
         final List<Role> operatorRoles = securityUtils.getCurrentUser().getRoles().stream()
-                .filter(role -> role.getName().equalsIgnoreCase("Collection Operator")).collect(Collectors.toList());
-        model.addAttribute("registration", new MarriageRegistration());
+                .filter(role -> "Collection Operator".equalsIgnoreCase(role.getName())).collect(Collectors.toList());
+        model.addAttribute(REGISTRATION, new MarriageRegistration());
         final boolean isCollectionOperator = operatorRoles == null || operatorRoles.isEmpty() ? false : true;
         model.addAttribute("isCollectionOperator", isCollectionOperator);
         prepareSearchForm(model);
         return "registration-search";
     }
-    
+
     @RequestMapping(value = "/searchApproved", method = RequestMethod.GET)
-    public String showSearchApproved( final Model model) {
-        
+    public String showSearchApproved(final Model model) {
+
         final List<Role> operatorRoles = securityUtils.getCurrentUser().getRoles().stream()
-                .filter(role -> role.getName().equalsIgnoreCase("Collection Operator")).collect(Collectors.toList());
-        model.addAttribute("registration", new MarriageRegistration());
+                .filter(role -> "Collection Operator".equalsIgnoreCase(role.getName())).collect(Collectors.toList());
+        model.addAttribute(REGISTRATION, new MarriageRegistration());
         final boolean isCollectionOperator = operatorRoles == null || operatorRoles.isEmpty() ? false : true;
         model.addAttribute("isCollectionOperator", isCollectionOperator);
         prepareSearchForm(model);
         return "registration-search-approved";
     }
-    
-    public @ModelAttribute("marriageRegistrationTypes") List<MarriageCertificateType> mrTypeList() {
-        List<MarriageCertificateType> enumValues = new ArrayList<MarriageCertificateType>();
-        for(MarriageCertificateType mct: Arrays.asList(MarriageCertificateType.values())){
-            if(!mct.name().equalsIgnoreCase("REJECTION")){
+
+    @ModelAttribute("marriageRegistrationTypes")
+    public List<MarriageCertificateType> mrTypeList() {
+        List<MarriageCertificateType> enumValues = new ArrayList<>();
+        for (MarriageCertificateType mct : Arrays.asList(MarriageCertificateType.values())) {
+            if (!"REJECTION".equalsIgnoreCase(mct.name())) {
                 enumValues.add(mct);
             }
         }
-        return enumValues;   
-    } 
-        
+        return enumValues;
+    }
+
     @RequestMapping(value = "/collectmrfee", method = RequestMethod.GET)
-    public String showSearchApprovedforFee( final Model model) {
-         model.addAttribute("registration", new MarriageRegistration());
-         model.addAttribute("mode", "collectmrfee");
-         prepareSearchForm(model);
-         return "registration-search-forfee";
+    public String showSearchApprovedforFee(final Model model) {
+        model.addAttribute(REGISTRATION, new MarriageRegistration());
+        model.addAttribute("mode", "collectmrfee");
+        prepareSearchForm(model);
+        return "registration-search-forfee";
     }
-    
+
     @RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String search(Model model,@ModelAttribute final MarriageRegistration registration) throws ParseException {
+    @ResponseBody
+    public String search(Model model, @ModelAttribute final MarriageRegistration registration) throws ParseException {
         List<MarriageRegistration> searchResultList = marriageRegistrationService.searchMarriageRegistrations(registration);
-         String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,MarriageRegistration.class,  MarriageRegistrationJsonAdaptor.class)).append("}")
-                   .toString();
-          return result;
+        return new StringBuilder(DATA)
+                .append(toJSON(searchResultList, MarriageRegistration.class, MarriageRegistrationJsonAdaptor.class)).append("}")
+                .toString();
     }
-    
+
     @RequestMapping(value = "/searchApproved", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchRegisterStatusMarriageRecords(Model model,@ModelAttribute final MarriageRegistration registration) throws ParseException {
-        List<MarriageRegistration> searchResultList = marriageRegistrationService.searchRegistrationByStatus(registration,MarriageRegistration.RegistrationStatus.REGISTERED.toString());
-         String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,MarriageRegistration.class,  MarriageRegistrationJsonAdaptor.class)).append("}")
-                   .toString();
-          return result;
+    @ResponseBody
+    public String searchRegisterStatusMarriageRecords(Model model, @ModelAttribute final MarriageRegistration registration)
+            throws ParseException {
+        List<MarriageRegistration> searchResultList = marriageRegistrationService.searchRegistrationByStatus(registration,
+                MarriageRegistration.RegistrationStatus.REGISTERED.toString());
+        return new StringBuilder(DATA)
+                .append(toJSON(searchResultList, MarriageRegistration.class, MarriageRegistrationJsonAdaptor.class)).append("}")
+                .toString();
     }
-    
+
     @RequestMapping(value = "/collectmrfeeajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchMarriageRegistrationsForFeeCollection(Model model,@ModelAttribute final MarriageRegistration registration) throws ParseException {
-        List<MarriageRegistration> searchResultList = marriageRegistrationService.searchMarriageRegistrationsForFeeCollection(registration);
-        List<MarriageRegistration> newSearchResultList = new ArrayList<MarriageRegistration>();
-        for(MarriageRegistration mr : searchResultList){
-            if(mr!=null && !mr.isFeeCollected())
+    @ResponseBody
+    public String searchMarriageRegistrationsForFeeCollection(Model model,
+            @ModelAttribute final MarriageRegistration registration) throws ParseException {
+        List<MarriageRegistration> searchResultList = marriageRegistrationService
+                .searchMarriageRegistrationsForFeeCollection(registration);
+        List<MarriageRegistration> newSearchResultList = new ArrayList<>();
+        for (MarriageRegistration mr : searchResultList) {
+            if (mr != null && !mr.isFeeCollected())
                 newSearchResultList.add(mr);
         }
-         String result = new StringBuilder("{ \"data\":").append(toJSON(newSearchResultList,MarriageRegistration.class,  MarriageRegistrationJsonAdaptor.class)).append("}")
-                   .toString();
-          return result;
+        return new StringBuilder(DATA)
+                .append(toJSON(newSearchResultList, MarriageRegistration.class, MarriageRegistrationJsonAdaptor.class))
+                .append("}")
+                .toString();
     }
-    
+
     @RequestMapping(value = "/collectmrreissuefeeajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchApprovedMarriageReIssueRecordsForFee(Model model,
+    @ResponseBody
+    public String searchApprovedMarriageReIssueRecordsForFee(Model model,
             @ModelAttribute final MarriageRegistrationSearchFilter mrSearchFilter) throws ParseException {
         List<ReIssue> searchResultList = marriageRegistrationService.searchApprovedReIssueRecordsForFeeCollection(mrSearchFilter);
-        List<ReIssue> newSearchResultList = new ArrayList<ReIssue>();
-        for(ReIssue mrr : searchResultList){
-            if(mrr !=null && !mrr.isFeeCollected())
+        List<ReIssue> newSearchResultList = new ArrayList<>();
+        for (ReIssue mrr : searchResultList) {
+            if (mrr != null && !mrr.isFeeCollected())
                 newSearchResultList.add(mrr);
         }
-         String result = new StringBuilder("{ \"data\":").append(toJSON(newSearchResultList,ReIssue.class,  MarriageReIssueJsonAdaptor.class)).append("}")
-                   .toString();
-          return result;
+        return new StringBuilder(DATA).append(toJSON(newSearchResultList, ReIssue.class, MarriageReIssueJsonAdaptor.class))
+                .append("}")
+                .toString();
     }
-    
+
     @RequestMapping(value = "/searchregisteredrecord", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchRegisteredStatusMarriageRecords(Model model,@ModelAttribute final MarriageRegistration registration) throws ParseException {
-        List<MarriageRegistration> searchResultList = marriageRegistrationService.searchRegistrationByStatus(registration,MarriageRegistration.RegistrationStatus.REGISTERED.toString());
-         String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,MarriageRegistration.class,  MarriageRegistrationJsonAdaptor.class)).append("}")
-                   .toString();
-          return result;
+    @ResponseBody
+    public String searchRegisteredStatusMarriageRecords(Model model, @ModelAttribute final MarriageRegistration registration)
+            throws ParseException {
+        List<MarriageRegistration> searchResultList = marriageRegistrationService.searchRegistrationByStatus(registration,
+                MarriageRegistration.RegistrationStatus.REGISTERED.toString());
+        return new StringBuilder(DATA)
+                .append(toJSON(searchResultList, MarriageRegistration.class, MarriageRegistrationJsonAdaptor.class)).append("}")
+                .toString();
     }
+
     @RequestMapping(value = "/reissuecertificate", method = RequestMethod.GET)
-    public String reissueCertificateSearch( final Model model) {
-        model.addAttribute("registration", new MarriageRegistration());
-          prepareSearchForm(model);
-          return "registration-search-certificateissue";
+    public String reissueCertificateSearch(final Model model) {
+        model.addAttribute(REGISTRATION, new MarriageRegistration());
+        prepareSearchForm(model);
+        return "registration-search-certificateissue";
     }
-    
+
     @RequestMapping(value = "/searchcertificates", method = RequestMethod.GET)
     public String showReportForm(final Model model) {
         model.addAttribute("certificate", new MarriageCertificate());
@@ -210,16 +228,18 @@ public class SearchRegistrationController {
     }
 
     @RequestMapping(value = "/searchcertificates", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchApprovedMarriageRecords(Model model,@ModelAttribute final MarriageCertificate certificate) {
+    @ResponseBody
+    public String searchApprovedMarriageRecords(Model model, @ModelAttribute final MarriageCertificate certificate) {
         List<MarriageCertificate> searchResultList = marriageCertificateService.searchMarriageCertificates(certificate);
-         String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,MarriageCertificate.class,  MarriageCerftificateJsonAdaptor.class)).append("}")
-                   .toString();
-          return result;
-    } 
-    
+        return new StringBuilder(DATA)
+                .append(toJSON(searchResultList, MarriageCertificate.class, MarriageCerftificateJsonAdaptor.class)).append("}")
+                .toString();
+    }
+
     @RequestMapping(value = "/printcertficate/{id}")
     public void download(@PathVariable final long id, final HttpServletResponse response) throws IOException {
         MarriageCertificate certificate = marriageCertificateService.findById(id);
-        fileStoreUtils.fetchFileAndWriteToStream(certificate.getFileStore().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE, false, response);
+        fileStoreUtils.fetchFileAndWriteToStream(certificate.getFileStore().getFileStoreId(),
+                MarriageConstants.FILESTORE_MODULECODE, false, response);
     }
 }

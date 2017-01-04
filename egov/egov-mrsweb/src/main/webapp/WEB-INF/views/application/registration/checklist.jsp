@@ -45,7 +45,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-	
 	<div class="panel-heading">
 		<div class="panel-title">
 				<spring:message code="lbl.common.docs"/>
@@ -58,7 +57,38 @@
 		</label>
 	</div>
 	
-	<div class="form-group">
+	<c:forEach var="doc" items="${generalDocuments}" varStatus="status">	
+	<div class="form-group">	
+		<div class="col-sm-1"></div>
+		<form:hidden id="documents[${status.index}].id" path="documents[${status.index}].id" value="${doc.id}" /> 
+		<div class="col-sm-4 add-margin text-right">
+			<c:out value="${doc.name}"></c:out><c:if test="${doc.mandatory}"><span class="mandatory"></span></c:if>
+		</div> 
+		<div class="col-sm-2 add-margin text-center">
+		<c:choose>
+		<c:when test="${doc.mandatory}">
+			<input type="file" id="file${status.index}id" name="documents[${status.index}].file" class="file-ellipsis upload-file" required="required">
+		</c:when>
+		<c:otherwise>
+			<input type="file" id="file${status.index}id" name="documents[${status.index}].file" class="file-ellipsis upload-file">
+		</c:otherwise>
+		</c:choose>	
+			<form:errors path="documents[${status.index}].file" cssClass="add-margin error-msg" />
+		</div>
+		<div class="col-sm-2">
+			<c:set value="false" var="isDocFound"></c:set>
+			<c:forEach items="${marriageRegistration.registrationDocuments}" var="regdoc" varStatus="loopStatus">
+				<c:if test="${regdoc.document.id == doc.id}">
+					<c:set value="true" var="isDocFound"></c:set>
+					 <input type="hidden" id="registrationfile${status.index}" value="${regdoc.fileStoreMapper.fileName}|${regdoc.fileStoreMapper.contentType}|${regdoc.base64EncodedFile}"> 
+					<a id="regdoc${status.index}"> ${regdoc.fileStoreMapper.fileName}</a>
+				</c:if>
+			</c:forEach>
+		</div>
+	</div>
+	</c:forEach>
+	
+	<%-- <div class="form-group">
 		<label class="col-sm-6 control-label">
 			<spring:message code="lbl.memo.of.marriage"/><span class="mandatory"></span>
 		</label>
@@ -96,7 +126,7 @@
 			<form:checkbox path="marriageCard" />
 			<form:errors path="marriageCard" cssClass="add-margin error-msg"/>
 		</div>
-	</div>
+	</div> --%> 
 	
 	<div class="panel-heading">
 		<div class="panel-title">
@@ -105,15 +135,75 @@
 	</div>
 	
 	<div class="form-group">
-		<div class="col-sm-offset-6 col-sm-1 view-content">
+		<div class="col-sm-offset-5 col-sm-1 view-content">
 			<spring:message code="lbl.husband"/>
 		</div>
-		<div class="col-sm-1 text-center view-content">
+		<div class="col-sm-5 text-center view-content">
 			<spring:message code="lbl.wife"/>
 		</div>
 	</div>
 	
-	<div class="form-group">
+	<c:forEach var="doc" items="${individualDocuments}" varStatus="status">	
+	<c:if test="${doc.documentProofType=='COMMON'}">
+	<div class="form-group">	
+		<div class="col-sm-1"></div>
+		<form:hidden id="husband.documents[${status.index}].id" path="husband.documents[${status.index}].id" value="${doc.id}" /> 
+		<form:hidden id="wife.documents[${status.index}].id" path="wife.documents[${status.index}].id" value="${doc.id}" /> 
+		<div class="col-sm-4 add-margin text-right">
+			<c:out value="${doc.name}"></c:out>
+		</div>
+		<div class="col-sm-2 add-margin text-center">
+			<c:choose>
+			<c:when test="${doc.name=='Passport'}">
+				<input type="file" id="indvcommonhusband${doc.name}file${status.index}id" name="husband.documents[${status.index}].file" class="file-ellipsis upload-file">
+			</c:when>
+			<c:otherwise>
+				<input type="file" id="indvcommonhusbandfile${status.index}id" name="husband.documents[${status.index}].file" class="file-ellipsis upload-file">
+			</c:otherwise>
+			</c:choose>
+			<form:errors path="husband.documents[${status.index}].file" cssClass="add-margin error-msg" />
+			&nbsp;&nbsp;
+			<c:set value="false" var="isDocFound"></c:set>
+			<c:forEach items="${marriageRegistration.husband.applicantDocuments}" var="appdoc" varStatus="loopStatus">
+				<c:if test="${appdoc.document.id == doc.id}">
+					<c:set value="true" var="isDocFound"></c:set>
+					<input type="hidden" id="husbandfile${status.index}" value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
+					<a id="husbanddoc${status.index}"> ${appdoc.fileStoreMapper.fileName}</a>
+				</c:if>
+			</c:forEach>
+			<%-- <c:if test="${!isDocFound}">
+				NA
+			</c:if> --%>
+		</div>
+		<div class="col-sm-1"></div>
+		<div class="col-sm-2 add-margin text-center">
+			<c:choose>
+			<c:when test="${doc.name=='Passport'}">
+				<input type="file" id="indvcommonwife${doc.name}file${status.index}id" name="wife.documents[${status.index}].file" class="file-ellipsis upload-file">
+			</c:when>
+			<c:otherwise>
+				<input type="file" id="indvcommonwifefile${status.index}id" name="wife.documents[${status.index}].file" class="file-ellipsis upload-file">
+			</c:otherwise>
+			</c:choose>
+			<form:errors path="wife.documents[${status.index}].file" cssClass="add-margin error-msg" />
+			
+			<c:set value="false" var="isDocFound"></c:set>
+			<c:forEach items="${marriageRegistration.wife.applicantDocuments}" var="appdoc" varStatus="loopStatus">
+				<c:if test="${appdoc.document.id == doc.id}">
+					<c:set value="true" var="isDocFound"></c:set>
+					<input type="hidden" id="wifefile${status.index}" value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
+					<a id="wifedoc${status.index}"> ${appdoc.fileStoreMapper.fileName}</a>
+				</c:if>
+			</c:forEach>
+			<%-- <c:if test="${!isDocFound}">
+				NA
+			</c:if> --%>
+		</div>
+	</div>
+	</c:if>
+</c:forEach> 
+	
+<%-- 	<div class="form-group">
 		<label class="col-sm-6 control-label">
 			<spring:message code="lbl.photograph"/>
 		</label>
@@ -127,7 +217,7 @@
 			<form:checkbox path="wife.proofsAttached.photograph" value="false" />
 			<form:errors path="wife.proofsAttached.photograph" cssClass="add-margin error-msg"/>
 		</div>
-	</div>
+	</div> 
 	
 	<div class="form-group">
 		<label class="col-sm-6 control-label">
@@ -141,16 +231,62 @@
 			<form:checkbox path="wife.proofsAttached.aadhar" value="false" />
 			<form:errors path="wife.proofsAttached.aadhar" cssClass="add-margin error-msg"/>
 		</div>
-	</div>
+	</div> --%>
 	
 	<div class="form-group">
-		<label class="col-sm-6 control-label text-left view-content">
+		<label class="col-sm-5 control-label text-left view-content">
 			<spring:message code="lbl.proof.of.age"/><span class="mandatory"></span><br>
 			<spring:message code="lbl.proof.note"/>
 		</label>
 	</div>
+	<div><br></div>
+	<c:forEach var="doc" items="${individualDocuments}" varStatus="status">	
+	<c:if test="${doc.documentProofType=='AGE_PROOF'}">
+	<div class="form-group">	
+		<div class="col-sm-1"></div>
+		<form:hidden id="husband.documents[${status.index}].id" path="husband.documents[${status.index}].id" value="${doc.id}" /> 
+		<form:hidden id="wife.documents[${status.index}].id" path="wife.documents[${status.index}].id" value="${doc.id}" /> 
+		<div class="col-sm-4 add-margin text-right">
+			<c:out value="${doc.name}"></c:out>
+		</div>
+		<div class="col-sm-2 add-margin text-center">
+			<input type="file" id="ageproofhusbandfile${status.index}id" name="husband.documents[${status.index}].file" class="file-ellipsis upload-file">
+			<form:errors path="husband.documents[${status.index}].file" cssClass="add-margin error-msg" />
+			&nbsp;&nbsp;
+			<c:set value="false" var="isDocFound"></c:set>
+			<c:forEach items="${marriageRegistration.husband.applicantDocuments}" var="appdoc" varStatus="loopStatus">
+				<c:if test="${appdoc.document.id == doc.id}">
+					<c:set value="true" var="isDocFound"></c:set>
+					<input type="hidden" id="husbandfile${status.index}" value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
+					<a id="husbanddoc${status.index}"> ${appdoc.fileStoreMapper.fileName}</a>
+				</c:if>
+			</c:forEach>
+			<%-- <c:if test="${!isDocFound}">
+				NA
+			</c:if> --%>
+		</div>
+		<div class="col-sm-1"></div>
+		<div class="col-sm-2 add-margin text-center">
+			<input type="file" id="ageproofwifefile${status.index}id" name="wife.documents[${status.index}].file" class="file-ellipsis upload-file">
+			<form:errors path="wife.documents[${status.index}].file" cssClass="add-margin error-msg" />
+			
+			<c:set value="false" var="isDocFound"></c:set>
+			<c:forEach items="${marriageRegistration.wife.applicantDocuments}" var="appdoc" varStatus="loopStatus">
+				<c:if test="${appdoc.document.id == doc.id}">
+					<c:set value="true" var="isDocFound"></c:set>
+					<input type="hidden" id="wifefile${status.index}" value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
+					<a id="wifedoc${status.index}"> ${appdoc.fileStoreMapper.fileName}</a>
+				</c:if>
+			</c:forEach>
+			<%-- <c:if test="${!isDocFound}">
+				NA
+			</c:if> --%>
+		</div>
+	</div>
+	</c:if>
+</c:forEach> 
 	
-	<div class="form-group">
+	<%-- <div class="form-group">
 		<label class="col-sm-6 control-label text-right">
 			<spring:message code="lbl.school.leaving.certificate"/>
 		</label>
@@ -233,17 +369,64 @@
 			<form:errors path="wife.proofsAttached.notaryAffidavit" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
-	
+	 --%>
 	<div class="form-group">
-		<label class="col-sm-6 control-label text-left view-content">
+		<label class="col-sm-5 control-label text-left view-content">
 			<spring:message code="lbl.proof.of.residence"/><span class="mandatory"></span><br>
 			<spring:message code="lbl.proof.note"/>
 		</label>
 		<div class="col-sm-6">
 		</div>
 	</div>
+	<div><br></div>
+	<c:forEach var="doc" items="${individualDocuments}" varStatus="status">	
+	<c:if test="${doc.documentProofType=='ADDRESS_PROOF'}">
+	<div class="form-group">	
+		<div class="col-sm-1"></div>
+		<form:hidden id="husband.documents[${status.index}].id" path="husband.documents[${status.index}].id" value="${doc.id}" /> 
+		<form:hidden id="wife.documents[${status.index}].id" path="wife.documents[${status.index}].id" value="${doc.id}" /> 
+		<div class="col-sm-4 add-margin text-right">
+			<c:out value="${doc.name}"></c:out>
+		</div>
+		<div class="col-sm-2 add-margin text-center">
+			<input type="file" id="addressproofhusbandfile${status.index}id" name="husband.documents[${status.index}].file" class="file-ellipsis upload-file">
+			<form:errors path="husband.documents[${status.index}].file" cssClass="add-margin error-msg" />
+			&nbsp;&nbsp;
+			<c:set value="false" var="isDocFound"></c:set>
+			<c:forEach items="${marriageRegistration.husband.applicantDocuments}" var="appdoc" varStatus="loopStatus">
+				<c:if test="${appdoc.document.id == doc.id}">
+					<c:set value="true" var="isDocFound"></c:set>
+					<input type="hidden" id="husbandfile${status.index}" value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
+					<a id="husbanddoc${status.index}"> ${appdoc.fileStoreMapper.fileName}</a>
+				</c:if>
+			</c:forEach>
+			<%-- <c:if test="${!isDocFound}">
+				NA
+			</c:if> --%>
+		</div>
+		<div class="col-sm-1"></div>
+		<div class="col-sm-2 add-margin text-center">
+			<input type="file" id="addressproofwifefile${status.index}id" name="wife.documents[${status.index}].file" class="file-ellipsis upload-file">
+			<form:errors path="wife.documents[${status.index}].file" cssClass="add-margin error-msg" />
+			
+			<c:set value="false" var="isDocFound"></c:set>
+			<c:forEach items="${marriageRegistration.wife.applicantDocuments}" var="appdoc" varStatus="loopStatus">
+				<c:if test="${appdoc.document.id == doc.id}">
+					<c:set value="true" var="isDocFound"></c:set>
+					<input type="hidden" id="wifefile${status.index}" value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
+					<a id="wifedoc${status.index}"> ${appdoc.fileStoreMapper.fileName}</a>
+				</c:if>
+			</c:forEach>
+			<%-- <c:if test="${!isDocFound}">
+				NA
+			</c:if> --%>
+		</div>
+	</div>
+	</c:if>
+</c:forEach> 
 	
-	<div class="form-group">
+	
+	<%-- <div class="form-group">
 		<label class="col-sm-6 control-label text-right">
 			<spring:message code="lbl.passport"/>
 		</label>
@@ -297,7 +480,7 @@
 			<form:checkbox path="wife.proofsAttached.telephoneBill" value="${wife.proofsAttached.telephoneBill}" id="resProofWTeleBill"/>
 			<form:errors path="wife.proofsAttached.telephoneBill" cssClass="add-margin error-msg"/>
 		</div>
-	</div>
+	</div> --%>
 	
 	<div class="form-group">
 		<label class="col-sm-6 add-margin text-right">

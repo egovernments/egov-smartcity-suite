@@ -83,7 +83,7 @@
 								name="feeMatrixDetail[0].uomFrom" value="0"
 								class="form-control text-right patternvalidation fromvalue"
 								pattern="-?\d*" data-pattern="numerichyphen" data-fromto="from"
-								required="required" />
+								required="required" readonly="readonly"/>
 							</td>
 							<td><input type="text" name="feeMatrixDetail[0].uomTo"
 								class="form-control text-right patternvalidation tovalue"

@@ -61,3 +61,18 @@ function validateTaxValues() {
 	}
 	return true;
 }
+
+$("#btnsubmit").click(function(){
+    var isFormValid = true;
+
+    $("#taxrate-update :input").each(function(){
+        if ($.trim($(this).val()).length == 0){
+            isFormValid = false;
+        }
+    });
+
+    if (!isFormValid) {
+    	bootbox.alert("Percentage cannot be empty");
+    }
+    return isFormValid;
+});

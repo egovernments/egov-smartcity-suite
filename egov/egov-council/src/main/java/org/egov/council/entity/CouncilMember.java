@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.egov.common.entity.EducationalQualification;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -49,7 +50,7 @@ public class CouncilMember extends AbstractAuditable {
 
     @ManyToOne
     @JoinColumn(name = "qualification")
-    private CouncilQualification qualification;
+    private EducationalQualification qualification;
     @ManyToOne
     @JoinColumn(name = "caste")
     private CouncilCaste caste;
@@ -58,9 +59,6 @@ public class CouncilMember extends AbstractAuditable {
     @JoinColumn(name = "partyAffiliation")
     private CouncilParty partyAffiliation;
     
-   
-    
-
     @Enumerated(EnumType.ORDINAL)
     @NotNull
     private Gender gender;
@@ -146,11 +144,11 @@ public class CouncilMember extends AbstractAuditable {
         this.designation = designation;
     }
 
-    public CouncilQualification getQualification() {
+    public EducationalQualification getQualification() {
         return qualification;
     }
 
-    public void setQualification(CouncilQualification qualification) {
+    public void setQualification(EducationalQualification qualification) {
         this.qualification = qualification;
     }
 

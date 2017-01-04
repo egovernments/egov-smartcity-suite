@@ -151,7 +151,7 @@ public class WorksSectorReportJsonAdaptor implements JsonSerializer<WorksMilesto
                 worksReportJsonAdaptorHelper.showOctoberData(response, jsonObject, currentDate);
                 break;
             case 11:
-                worksReportJsonAdaptorHelper.showNocemberData(response, jsonObject, currentDate);
+                worksReportJsonAdaptorHelper.showNovemberData(response, jsonObject, currentDate);
 
                 break;
             case 12:

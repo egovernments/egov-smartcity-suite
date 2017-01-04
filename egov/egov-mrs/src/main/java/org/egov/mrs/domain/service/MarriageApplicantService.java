@@ -39,6 +39,15 @@
 
 package org.egov.mrs.domain.service;
 
+import static org.egov.mrs.application.MarriageConstants.Aadhar;
+import static org.egov.mrs.application.MarriageConstants.Birth_certificate;
+import static org.egov.mrs.application.MarriageConstants.Death_certificate;
+import static org.egov.mrs.application.MarriageConstants.Divorce_certificate;
+import static org.egov.mrs.application.MarriageConstants.Passport;
+import static org.egov.mrs.application.MarriageConstants.RationCard;
+import static org.egov.mrs.application.MarriageConstants.Schooll_Leaveing_Cert;
+import static org.egov.mrs.application.MarriageConstants.TelephoneBill;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,6 +62,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.mrs.application.MarriageConstants;
+import org.egov.mrs.domain.entity.IdentityProof;
 import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.entity.MrApplicant;
 import org.egov.mrs.domain.entity.MrApplicantDocument;
@@ -76,6 +86,9 @@ public class MarriageApplicantService {
 
     @Autowired
     private ApplicantDocumentService applicantDocumentService;
+
+    @Autowired
+    private MarriageDocumentService marriageDocumentService;
 
     @Autowired
     public MarriageApplicantService(final MarriageApplicantRepository applicantRepository) {
@@ -165,17 +178,48 @@ public class MarriageApplicantService {
      */
     public void addDocumentsToFileStore(final MrApplicant applicant, final Map<Long, MarriageDocument> documentAndId) {
         final List<MarriageDocument> documents = applicant.getDocuments();
+        IdentityProof identityProof;
+        if (applicant.getProofsAttached() != null)
+            identityProof = applicant.getProofsAttached();
+        else
+            identityProof = new IdentityProof();
+
         if (documents != null)
             documents.stream()
                     .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
                     .map(document -> {
                         final MrApplicantDocument applicantDocument = new MrApplicantDocument();
+                        setApplicantDocumentsFalg(applicant, document, identityProof);
                         applicantDocument.setApplicant(applicant);
                         applicantDocument.setDocument(documentAndId.get(document.getId()));
                         applicantDocument.setFileStoreMapper(addToFileStore(document.getFile()));
                         return applicantDocument;
                     }).collect(Collectors.toList())
                     .forEach(doc -> applicant.addApplicantDocument(doc));
+        applicant.setProofsAttached(identityProof);
+    }
+
+    public void setApplicantDocumentsFalg(final MrApplicant mrApplicant, final MarriageDocument document,
+            final IdentityProof identityProof) {
+        final MarriageDocument marriageDocument = marriageDocumentService.get(document.getId());
+        if (marriageDocument.getCode().equals(Passport))
+            identityProof.setPassport(true);
+        if (marriageDocument.getCode().equals(RationCard))
+            identityProof.setRationCard(true);
+        if (marriageDocument.getCode().equals(Aadhar))
+            identityProof.setAadhar(true);
+        if (marriageDocument.getCode().equals(Schooll_Leaveing_Cert))
+            identityProof.setSchoolLeavingCertificate(true);
+        if (marriageDocument.getCode().equals(TelephoneBill))
+            identityProof.setTelephoneBill(true);
+        if (marriageDocument.getCode().equals(Birth_certificate))
+            identityProof.setBirthCertificate(true);
+        if (marriageDocument.getCode().equals(Death_certificate))
+            identityProof.setDeaceasedDeathCertificate(true);
+        if (marriageDocument.getCode().equals(Divorce_certificate))
+            identityProof.setDivorceCertificate(true);
+        if (mrApplicant.getPhotoFile().getSize() != 0)
+            identityProof.setPhotograph(true);
     }
 
     private FileStoreMapper addToFileStore(final MultipartFile file) {

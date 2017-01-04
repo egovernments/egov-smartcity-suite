@@ -49,7 +49,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -68,14 +67,13 @@ public class FeeMatrixDetailService {
     }
 
     public FeeMatrixDetail findByLicenseFeeByRange(final FeeMatrix feeMatrix,
-            final BigDecimal uom, final Date date, final long financialYearId) {
-        return feeMatrixDetailRepository.findFeeDetailList(feeMatrix, uom.intValue(), date, financialYearId);
+                                                   final BigDecimal uom) {
+        return feeMatrixDetailRepository.findFeeDetailList(feeMatrix, uom.intValue());
 
     }
 
     public FeeMatrixDetail findByFeeMatrixDetailId(final Long feeMatrixDetailId) {
-        final FeeMatrixDetail feeMatrixDetail = feeMatrixDetailRepository.findOne(feeMatrixDetailId);
-        return feeMatrixDetail;
+        return feeMatrixDetailRepository.findOne(feeMatrixDetailId);
     }
 
     @Transactional

@@ -81,21 +81,25 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/registration")
 public class NewRegistrationController extends MarriageRegistrationController {
 
+    private static final String APPROVAL_POSITION = "approvalPosition";
+    private static final String MARRIAGE_REGISTRATION = "marriageRegistration";
     @Autowired
     protected AssignmentService assignmentService;
+    @Autowired
+    private MarriageFormValidator marriageFormValidator;
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public String showRegistration(final Model model) {
-        Assignment currentuser = null;
+        Assignment currentuser;
         final Integer loggedInUser = ApplicationThreadLocals.getUserId().intValue();
         currentuser = assignmentService.getPrimaryAssignmentForUser(loggedInUser.longValue());
         if (null == currentuser) {
             model.addAttribute("message", "msg.superuser");
             return "marriagecommon-error";
         }
-        final MarriageRegistration registration = new MarriageRegistration();
-        model.addAttribute("registration", registration);
-        prepareWorkFlowForNewMarriageRegistration(registration, model);
+        final MarriageRegistration marriageRegistration = new MarriageRegistration();
+        model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
+        prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
         return "registration-form";
     }
 
@@ -110,20 +114,20 @@ public class NewRegistrationController extends MarriageRegistrationController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String register(final WorkflowContainer workflowContainer,
-            @ModelAttribute("registration") final MarriageRegistration registration,
+            @ModelAttribute(MARRIAGE_REGISTRATION) final MarriageRegistration marriageRegistration,
             final Model model,
             final HttpServletRequest request,
             final BindingResult errors, final RedirectAttributes redirectAttributes) {
 
-        validateApplicationDate(registration, errors, request);
-
+        validateApplicationDate(marriageRegistration, errors, request);
+        marriageFormValidator.validate(marriageRegistration, errors, "registration");
         if (errors.hasErrors()) {
-            model.addAttribute("registration", registration);
-            prepareWorkFlowForNewMarriageRegistration(registration, model);
+            model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
+            prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
             return "registration-form";
 
         }
-        Assignment currentuser = null;
+        Assignment currentuser;
         final Integer loggedInUser = ApplicationThreadLocals.getUserId().intValue();
         currentuser = assignmentService.getPrimaryAssignmentForUser(loggedInUser.longValue());
         if (null == currentuser) {
@@ -133,7 +137,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
         }
 
         obtainWorkflowParameters(workflowContainer, request);
-        final String appNo = marriageRegistrationService.createRegistration(registration, workflowContainer);
+        final String appNo = marriageRegistrationService.createRegistration(marriageRegistration, workflowContainer);
         model.addAttribute("ackNumber", appNo);
 
         return "registration-ack";
@@ -141,7 +145,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
 
     @RequestMapping(value = "/workflow", method = RequestMethod.POST)
     public String handleWorkflowAction(@RequestParam final Long id,
-            @ModelAttribute final MarriageRegistration registration,
+            @ModelAttribute final MarriageRegistration marriageRegistration,
             @ModelAttribute final WorkflowContainer workflowContainer,
             final Model model,
             final HttpServletRequest request,
@@ -155,20 +159,20 @@ public class NewRegistrationController extends MarriageRegistrationController {
 
         switch (workflowContainer.getWorkFlowAction()) {
         case "Forward":
-            result = marriageRegistrationService.forwardRegistration(registration, workflowContainer);
+            result = marriageRegistrationService.forwardRegistration(marriageRegistration, workflowContainer);
             break;
         case "Approve":
-            result = marriageRegistrationService.approveRegistration(registration, workflowContainer);
+            result = marriageRegistrationService.approveRegistration(marriageRegistration, workflowContainer);
             break;
         case "Reject":
-            result = marriageRegistrationService.rejectRegistration(registration, workflowContainer);
+            result = marriageRegistrationService.rejectRegistration(marriageRegistration, workflowContainer);
             break;
         case "Cancel Registration":
-            result = marriageRegistrationService.rejectRegistration(registration, workflowContainer);
+            result = marriageRegistrationService.rejectRegistration(marriageRegistration, workflowContainer);
             break;
         }
 
-        model.addAttribute("registration", result);
+        model.addAttribute(MARRIAGE_REGISTRATION, result);
         return "registration-ack";
     }
 
@@ -183,19 +187,14 @@ public class NewRegistrationController extends MarriageRegistrationController {
             workflowContainer.setApproverComments(request.getParameter("approvalComent"));
         if (request.getParameter("workFlowAction") != null)
             workflowContainer.setWorkFlowAction(request.getParameter("workFlowAction"));
-        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-            workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter("approvalPosition")));
+        if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
+            workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter(APPROVAL_POSITION)));
     }
 
     /**
      *
      * @param feeId
      * @return
-     */
-    /*
-     * @RequestMapping(value = "/calculatemarriagefee", method = GET, produces = APPLICATION_JSON_VALUE)
-     * @ResponseBody public Double calculateMarriageFee(@RequestParam final Long feeId) { MarriageFee marriageFee =
-     * marriageFeeService.getFee(feeId); if (marriageFee != null) return marriageFee.getFees(); return null; }
      */
     @RequestMapping(value = "/getmrregistrationunitzone", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -209,22 +208,25 @@ public class NewRegistrationController extends MarriageRegistrationController {
     @RequestMapping(value = "/calculatemarriagefee", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public Double calculateMarriageFee(@RequestParam final Date dateOfMarriage) {
+        Double fee = null;
         final AppConfigValues allowValidation = getDaysValidationAppConfValue(
                 MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION);
         final int days = Days.daysBetween(new DateTime(dateOfMarriage), new DateTime(new Date())).getDays();
         if (allowValidation != null && !allowValidation.getValue().isEmpty())
-            if (allowValidation.getValue().equalsIgnoreCase("NO")) {
-                final List<MarriageFee> fee = marriageFeeService.getActiveGeneralTypeFeeses();
-                for (final MarriageFee marriageFee : fee)
-                    if (days >= marriageFee.getFromDays() && (marriageFee.getToDays() == null || days <= marriageFee.getToDays()))
-                        return marriageFee.getFees();
+            if ("NO".equalsIgnoreCase(allowValidation.getValue())) {
+                fee = checkMarriageFeeForCriteria(days);
+            } else if ("YES".equalsIgnoreCase(allowValidation.getValue()) && days <= 90) {
+                fee = checkMarriageFeeForCriteria(days);
             }
-            else if (allowValidation.getValue().equalsIgnoreCase("YES") && days <= 90) {
-                final List<MarriageFee> fee = marriageFeeService.getActiveGeneralTypeFeeses();
-                for (final MarriageFee marriageFee : fee)
-                    if (days >= marriageFee.getFromDays() && (marriageFee.getToDays() == null || days <= marriageFee.getToDays()))
-                        return marriageFee.getFees();
-            }
+        return fee;
+    }
+
+    private Double checkMarriageFeeForCriteria(final int days) {
+        final List<MarriageFee> fee = marriageFeeService.getActiveGeneralTypeFeeses();
+        for (final MarriageFee marriageFee : fee)
+            if (days >= marriageFee.getFromDays() && (marriageFee.getToDays() == null || days <= marriageFee.getToDays()))
+                return marriageFee.getFees();
         return null;
     }
+
 }

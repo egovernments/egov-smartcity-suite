@@ -48,16 +48,16 @@
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"></div>
 		<form:form role="form" method="post" action="/mrs/registration/update"
-			modelAttribute="registration" id="form-updateregistration"
+			modelAttribute="marriageRegistration" id="form-updateregistration"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<input type="hidden" name="marriageRegistration" value="${registration.id}" />
+			<input type="hidden" name="marriageRegistration" value="${marriageRegistration.id}" />
 			<input type="hidden" id="registrationStatus"
-				value="${registration.status.code}" />
+				value="${marriageRegistration.status.code}" />
 			<input type="hidden" id="allowDaysValidation" value="${allowDaysValidation}" />
 			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
-			<input type="hidden" id="feeCollected" value="${registration.feeCollected}" />
-				<c:if test="${registration.status.code =='CREATED' && !registration.feeCollected}">  
+			<input type="hidden" id="feeCollected" value="${marriageRegistration.feeCollected}" />
+				<c:if test="${marriageRegistration.status.code =='CREATED' && !marriageRegistration.feeCollected}">  
 				 <div  data-collapsed="0">
 					<div class="panel-heading">
 						<div  style="color: red; font-size: 16px;" align="center">
@@ -66,6 +66,14 @@
 					</div>
 				</div>	
 				</c:if>
+				<div>
+					<spring:hasBindErrors name="marriageRegistration">
+					<div class="alert alert-danger col-md-10 col-md-offset-1">
+					<form:errors path="*" /><br/>
+					</div>
+					</spring:hasBindErrors> 
+					<br/>
+				</div>
 			<ul class="nav nav-tabs" id="settingstab">
 			    <li class="active"><a data-toggle="tab" href="#applicant-info" data-tabidx=0>Applicant's Information</a></li>
 			    <li><a data-toggle="tab" href="#witness-info" data-tabidx=1>Witnesses Information</a></li>
@@ -81,7 +89,7 @@
 				    	<div class="panel panel-primary" data-collapsed="0">
 				    		<c:set value="witnesses[0]" var="witness" scope="request"></c:set>
 				    		<form:hidden path="witnesses[0].id"/>
-				    		<input type="hidden" name="marriageRegistration" value="${registration.id}" />
+				    		<input type="hidden" name="marriageRegistration" value="${marriageRegistration.id}" />
 				    		<form:hidden path="witnesses[0].applicantType" />
 					    	<jsp:include page="witnessinfo.jsp">
 								<jsp:param value="subheading.witness1.info" name="subhead" />
@@ -129,17 +137,16 @@
 			<jsp:include page="../../common/reg-reissue-wfhistory.jsp"></jsp:include>
 			 <jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
 			<c:choose>
-				<c:when test="${registration.status.code =='CREATED' && !registration.feeCollected}"> 
+				<c:when test="${marriageRegistration.status.code =='CREATED' && !marriageRegistration.feeCollected}">  
 					<div class="buttonbottom" align="center">
 					<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();" />
 					</div>	
-				</c:when>
+				 </c:when>
 				<c:otherwise>
 				<div class="buttonbottom" align="center">
 							<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
 						</div>
-				
-				</c:otherwise>
+				</c:otherwise> 
 			</c:choose>
 		</form:form>
 	</div>

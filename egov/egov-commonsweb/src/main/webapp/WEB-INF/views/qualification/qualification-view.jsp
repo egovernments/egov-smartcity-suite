@@ -2,7 +2,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2017>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -39,27 +39,47 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form role="form" action="create"
-	modelAttribute="councilQualification" id="councilQualificationform"
-	cssClass="form-horizontal form-groups-bordered"
-	enctype="multipart/form-data">
-	<%@ include file="councilqualification-form.jsp"%>
-
-	<div class="form-group">
-		<div class="text-center">
-			<button type='submit' class='btn btn-primary' id="buttonSubmit">
-				<spring:message code='lbl.create' />
-			</button>
-			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a>
+<div class="main-content">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">Educational Qualification</div>
+				</div>
+				<div class="panel-body custom">
+					<div class="row add-border">
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.name" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							${educationalQualification.name}</div>
+					</div>
+				</div>
+				<div class="panel-body custom">
+					<div class="row add-border">
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.description" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							${educationalQualification.description}</div>
+					</div>
+				</div>
+				<div class="panel-body custom">
+					<div class="row add-border">
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.isactive" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							${educationalQualification.isActive}</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
-</form:form>
-<script>
-	$('#buttonSubmit').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
-	});
-</script>
+</div>
+<div class="row text-center">
+	<div class="add-margin">
+		<a href="javascript:void(0)" class="btn btn-default"
+			onclick="self.close()">Close</a>
+	</div>
+</div>

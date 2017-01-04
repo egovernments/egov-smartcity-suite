@@ -59,6 +59,7 @@ import org.egov.mrs.domain.service.ReIssueService;
 import org.egov.mrs.masters.entity.MarriageFee;
 import org.egov.mrs.masters.service.MarriageFeeService;
 import org.egov.mrs.masters.service.MarriageRegistrationUnitService;
+import org.egov.mrs.web.controller.application.registration.MarriageFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
@@ -68,7 +69,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Handles Marriage Registration ReIssue transaction
@@ -101,54 +101,48 @@ public class NewReIssueController extends GenericWorkFlowController {
     protected AppConfigValueService appConfigValuesService;
     
     @Autowired
+    private MarriageFormValidator marriageFormValidator;
+    
+    @Autowired
     private MarriageRegistrationUnitService marriageRegistrationUnitService;
     
     
-	public void prepareNewForm(final Model model) {
+    public void prepareNewForm(final Model model, final ReIssue reIssue) {
 		model.addAttribute("marriageRegistrationUnit",
 				marriageRegistrationUnitService.getActiveRegistrationunit());
+		marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getHusband());
+		marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getWife());
+		MarriageFee marriageFee=marriageFeeService.getFeeForCriteria(MarriageConstants.REISSUE_FEECRITERIA);
+	        if(marriageFee!=null){
+	           reIssue.setFeeCriteria(marriageFee);
+	           reIssue.setFeePaid(marriageFee.getFees());
+	        } 
+		prepareWorkFlowForReIssue(reIssue, model);
+		model.addAttribute("reIssue", reIssue);
+		model.addAttribute("documents", marriageDocumentService.getIndividualDocuments());
 	}
     
     @RequestMapping(value = "/create/{registrationId}", method = RequestMethod.GET)
     public String showReIssueForm(@PathVariable final Long registrationId, final Model model) {
 
         final MarriageRegistration registration = marriageRegistrationService.get(registrationId);
-
-		if (registration == null) {
-			model.addAttribute("message", "msg.invalid.request");
-			return "marriagecommon-error";
-		} // CHECK ANY RECORD ALREADY IN ISSUE CERTIFICATE WORKFLOW FOR THE SELECTED REGISTRATION.IF YES, DO NOT ALLOW THEM TO PROCESS THE
+        if (registration == null) {
+		model.addAttribute("message", "msg.invalid.request");
+		return "marriagecommon-error";
+	} // CHECK ANY RECORD ALREADY IN ISSUE CERTIFICATE WORKFLOW FOR THE SELECTED REGISTRATION.IF YES, DO NOT ALLOW THEM TO PROCESS THE
 			// REQUEST.
-		else if (reIssueService.checkAnyWorkFlowInProgressForRegistration(registration)) {
-			model.addAttribute("message", "msg.workflow.alreadyPresent");
-			return "marriagecommon-error";
-		}
-	   //  marriageRegistrationService.prepareDocumentsForView(registration);
-        marriageApplicantService.prepareDocumentsForView(registration.getHusband());
-        marriageApplicantService.prepareDocumentsForView(registration.getWife());
-          /*
-         * registration.getWitnesses() .stream() .filter(witness -> witness.getPhoto() != null && witness.getPhoto().length > 0)
-         * .forEach(witness -> witness.setEncodedPhoto(Base64.getEncoder().encodeToString(witness.getPhoto())));
-         */
-
-        final ReIssue reIssue = new ReIssue();
-        MarriageFee marriageFee=marriageFeeService.getFeeForCriteria(MarriageConstants.REISSUE_FEECRITERIA);
-        if(marriageFee!=null){
-        reIssue.setFeeCriteria(marriageFee);
-        reIssue.setFeePaid(marriageFee.getFees());
-        } 
+	else if (reIssueService.checkAnyWorkFlowInProgressForRegistration(registration)) {
+		model.addAttribute("message", "msg.workflow.alreadyPresent");
+		return "marriagecommon-error";
+	}
+        ReIssue reIssue = new ReIssue();
         reIssue.setRegistration(registration);
+        prepareNewForm(model,reIssue);
         
-        prepareWorkFlowForNewMarriageRegistration(reIssue, model);
-        
-        model.addAttribute("reIssue", reIssue);
-        model.addAttribute("documents", marriageDocumentService.getIndividualDocuments());
-        prepareNewForm(model);
-        prepareWorkflow(model, reIssue, new WorkflowContainer());
         return "reissue-form";
     }
 
-    private void prepareWorkFlowForNewMarriageRegistration(final ReIssue reIssue, final Model model) {
+    private void prepareWorkFlowForReIssue(final ReIssue reIssue, final Model model) {
         WorkflowContainer workFlowContainer = new WorkflowContainer();
         workFlowContainer.setAdditionalRule(MarriageConstants.ADDITIONAL_RULE_REGISTRATION);
         prepareWorkflow(model, reIssue, workFlowContainer);
@@ -157,16 +151,22 @@ public class NewReIssueController extends GenericWorkFlowController {
         model.addAttribute("currentState", "NEW");
     }
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String createReIssue(@ModelAttribute final ReIssue reIssue,
-            @ModelAttribute final WorkflowContainer workflowContainer,
+    public String createReIssue(@ModelAttribute final WorkflowContainer workflowContainer,
+            @ModelAttribute final ReIssue reIssue,
             final Model model,
             final HttpServletRequest request,
             final BindingResult errors) {
-
-		if (errors.hasErrors()) {
-			prepareWorkFlowForNewMarriageRegistration(reIssue, model);
-			return "reissue-form";
-		}
+        
+        marriageFormValidator.validateReIssue(reIssue, errors);
+        if (errors.hasErrors()){
+            final MarriageRegistration registration = marriageRegistrationService.get(reIssue.getRegistration().getId());
+            reIssue.setRegistration(registration); 
+            Double fees=reIssue.getFeePaid();
+            prepareNewForm(model,reIssue);   
+            reIssue.setFeePaid(fees);
+            return "reissue-form";
+        }
+       
         reIssue.setRegistration(marriageRegistrationService.get(reIssue.getRegistration().getId()));
         obtainWorkflowParameters(workflowContainer, request);
         final String appNo = reIssueService.createReIssueApplication(reIssue, workflowContainer);

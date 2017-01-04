@@ -276,6 +276,16 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/taxrates/taxrates-edit.jsp"/>
     </definition>
     
+    <definition name="taxrates-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.taxRates" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/taxrates/taxrates-view.jsp"/>
+    </definition>
+    
+    <definition name="taxrates-editview" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.taxRates" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/taxrates/taxrates-editview.jsp"/>
+    </definition>
+    
     <definition name="curretInstDCB-form" extends="base_layout">
         <put-attribute name="page-title" value="lbl.hdr.currInstDCB" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/curretInstDCB-form.jsp"/>

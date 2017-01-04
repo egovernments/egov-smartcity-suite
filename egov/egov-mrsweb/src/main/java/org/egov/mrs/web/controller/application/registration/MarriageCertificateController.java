@@ -50,9 +50,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.mrs.application.MarriageConstants;
-import org.egov.mrs.application.service.MarriageCertificateService;
 import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.egov.mrs.domain.service.ReIssueService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,48 +75,46 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/certificate")
 public class MarriageCertificateController {
-	@Autowired
-	private MarriageCertificateService marriageCertificateService;
 
-	@Autowired
-	private MarriageRegistrationService marriageRegistrationService;
-	
-	@Autowired
-	private ReIssueService reIssueService;
-	
-	@Autowired
-        @Qualifier("fileStoreService")
-        protected FileStoreService fileStoreService;
-	
-	private ReportOutput reportOutput = null;
-	
-	@RequestMapping(value = "/registration", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<byte[]> showRegistrationCertificate(HttpServletRequest request,
-			@RequestParam final Long id, final Model model, final HttpSession session) throws IOException {
-	    return getResponseEntity((marriageRegistrationService.get(id)).getMarriageCertificate().get(0).getFileStore());
-	}
-	
-	@RequestMapping(value = "/reissue", method = RequestMethod.GET)
-        public @ResponseBody ResponseEntity<byte[]> showReIssuedCertificate(HttpServletRequest request,
-                        @RequestParam final Long id, final Model model, final HttpSession session) throws IOException {
-            return getResponseEntity((reIssueService.get(id)).getMarriageCertificate().get(0).getFileStore()); 
-        }
+    @Autowired
+    private MarriageRegistrationService marriageRegistrationService;
 
-	/**
-	 * @param fsm
-	 * @return
-	 * @throws IOException
-	 */
-	private ResponseEntity<byte[]> getResponseEntity(final FileStoreMapper fsm ) throws IOException {
-	    reportOutput = new ReportOutput();
-	    final File file = fileStoreService.fetch(fsm, MarriageConstants.FILESTORE_MODULECODE);
-            final byte[] bFile = FileUtils.readFileToByteArray(file);
-            reportOutput.setReportOutputData(bFile);
-            reportOutput.setReportFormat(FileFormat.PDF);
-            final HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.parseMediaType("application/pdf"));
-            headers.add("content-disposition", "inline;filename="+file.getName());
-            return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(),headers,HttpStatus.CREATED);
-	}
+    @Autowired
+    private ReIssueService reIssueService;
+
+    @Autowired
+    @Qualifier("fileStoreService")
+    protected FileStoreService fileStoreService;
+
+    @RequestMapping(value = "/registration", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<byte[]> showRegistrationCertificate(HttpServletRequest request,
+            @RequestParam final Long id, final Model model, final HttpSession session) throws IOException {
+        return getResponseEntity((marriageRegistrationService.get(id)).getMarriageCertificate().get(0).getFileStore());
+    }
+
+    @RequestMapping(value = "/reissue", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<byte[]> showReIssuedCertificate(HttpServletRequest request,
+            @RequestParam final Long id, final Model model, final HttpSession session) throws IOException {
+        return getResponseEntity((reIssueService.get(id)).getMarriageCertificate().get(0).getFileStore());
+    }
+
+    /**
+     * @param fsm
+     * @return
+     * @throws IOException
+     */
+    private ResponseEntity<byte[]> getResponseEntity(final FileStoreMapper fsm) throws IOException {
+        ReportOutput reportOutput = new ReportOutput();
+        final File file = fileStoreService.fetch(fsm, MarriageConstants.FILESTORE_MODULECODE);
+        final byte[] bFile = FileUtils.readFileToByteArray(file);
+        reportOutput.setReportOutputData(bFile);
+        reportOutput.setReportFormat(FileFormat.PDF);
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=" + file.getName());
+        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+    }
 
 }

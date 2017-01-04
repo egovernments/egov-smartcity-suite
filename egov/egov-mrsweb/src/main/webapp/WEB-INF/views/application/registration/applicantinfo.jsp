@@ -155,9 +155,9 @@
 						var strData = '';
 
 						if (applicant == 'husband') {
-							strData = '<c:out value="${registration.husband.encodedSignature}" />';
+							strData = '<c:out value="${marriageRegistration.husband.encodedSignature}" />';
 						} else {
-							strData = '<c:out value="${registration.wife.encodedSignature}" />';
+							strData = '<c:out value="${marriageRegistration.wife.encodedSignature}" />';
 						}
 
 						if (strData != null && strData.length > 0) {
@@ -193,9 +193,9 @@
 						var strData = '';
 
 						if (applicant == 'husband') {
-							strData = '<c:out value="${registration.husband.encodedPhoto}" />';
+							strData = '<c:out value="${marriageRegistration.husband.encodedPhoto}" />';
 						} else {
-							strData = '<c:out value="${registration.wife.encodedPhoto}" />';
+							strData = '<c:out value="${marriageRegistration.wife.encodedPhoto}" />';
 						}
 
 						if (strData != null && strData.length > 0) {
@@ -379,7 +379,7 @@
 				<spring:message code="lbl.default.option" />
 			</form:option>
 			<c:choose>
-				<c:when test="${empty registration.husband.id}">
+				<c:when test="${empty marriageRegistration.husband.id}">
 					<c:forEach items="${nationalitylist}" var="auc" varStatus="status">
 						<c:choose>
 							<c:when test="${auc.name eq 'Indian'}">

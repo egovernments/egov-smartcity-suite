@@ -2,7 +2,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2017>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -41,8 +41,8 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <form:form role="form" action="search"
-	modelAttribute="councilQualification"
-	id="councilQualificationsearchform"
+	modelAttribute="educationalQualification"
+	id="educationQualificationsearchform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="main-content">
@@ -95,7 +95,7 @@
 				<tr>
 					<th><spring:message code="lbl.name" /></th>
 					<th><spring:message code="lbl.isactive" /></th>
-					<th><spring:message code="lbl.view"/></th>
+					<th><spring:message code="lbl.action"/></th>
 					<th>&nbsp;</th>
 				</tr>
 			</thead>
@@ -126,15 +126,6 @@
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-<script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
-	type="text/javascript"></script>
 <script type="text/javascript"
-	src="<cdn:url value='/resources/app/js/councilQualificationHelper.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/app/js/qualificationHelper.js?rnd=${app_release_no}'/>"></script>

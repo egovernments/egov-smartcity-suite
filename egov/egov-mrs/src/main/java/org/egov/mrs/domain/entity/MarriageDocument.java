@@ -83,13 +83,18 @@ public class MarriageDocument extends AbstractAuditable {
 
     private boolean individual;
     private boolean active;
+    private boolean mandatory;
+
+    @NotNull
+    @SafeHtml
+    private String documentProofType;
     @NotNull
     @Enumerated(EnumType.STRING)
     private MarriageDocumentType type;
 
     @Transient
     private MultipartFile file;
-    
+
     @Override
     public Long getId() {
         return id;
@@ -101,14 +106,14 @@ public class MarriageDocument extends AbstractAuditable {
     }
 
     public boolean isActive() {
-		return active;
-	}
+        return active;
+    }
 
-	public void setActive(boolean active) {
-		this.active = active;
-	}
+    public void setActive(final boolean active) {
+        this.active = active;
+    }
 
-	public String getName() {
+    public String getName() {
         return name;
     }
 
@@ -136,7 +141,7 @@ public class MarriageDocument extends AbstractAuditable {
         return type;
     }
 
-    public void setType(MarriageDocumentType type) {
+    public void setType(final MarriageDocumentType type) {
         this.type = type;
     }
 
@@ -146,5 +151,21 @@ public class MarriageDocument extends AbstractAuditable {
 
     public void setFile(final MultipartFile file) {
         this.file = file;
+    }
+
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(final boolean mandatory) {
+        this.mandatory = mandatory;
+    }
+
+    public String getDocumentProofType() {
+        return documentProofType;
+    }
+
+    public void setDocumentProofType(final String documentProofType) {
+        this.documentProofType = documentProofType;
     }
 }

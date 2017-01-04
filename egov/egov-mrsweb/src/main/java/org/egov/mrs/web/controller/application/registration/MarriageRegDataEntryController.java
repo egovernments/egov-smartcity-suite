@@ -44,8 +44,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.mrs.domain.entity.MarriageRegistration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -58,60 +58,64 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/registration")
 public class MarriageRegDataEntryController extends MarriageRegistrationController {
-    
+
+    private static final String DATAENTRY = "DATAENTRY";
+    @Autowired
+    private MarriageFormValidator marriageFormValidator;
+
     @RequestMapping(value = "/createdataentry", method = RequestMethod.GET)
-    public String showRegistration( final Model model) { 
-         MarriageRegistration registration= new MarriageRegistration();   
-         model.addAttribute("registration",registration);
-         model.addAttribute("currentState", "DATAENTRY");
-       return "mrgreg-dataentryform";
+    public String showRegistration(final Model model) {
+        MarriageRegistration marriageRegistration = new MarriageRegistration();
+        model.addAttribute("marriageRegistration", marriageRegistration);
+        model.addAttribute("currentState", DATAENTRY);
+        return "mrgreg-dataentryform";
     }
 
-
     @RequestMapping(value = "/createdataentry", method = RequestMethod.POST)
-    public String register(@ModelAttribute final MarriageRegistration registration,
-            @ModelAttribute final WorkflowContainer workflowContainer,
+    public String register(@ModelAttribute final MarriageRegistration marriageRegistration,
             final Model model,
             final HttpServletRequest request,
-            final BindingResult errors) { 
-
-        if (errors.hasErrors()){
+            final BindingResult errors) {
+        marriageFormValidator.validate(marriageRegistration, errors, DATAENTRY);
+        if (errors.hasErrors()) {
+            model.addAttribute("currentState", DATAENTRY);
             return "mrgreg-dataentryform";
         }
 
-        final String appNo = marriageRegistrationService.createDataEntryMrgRegistration(registration);
+        final String appNo = marriageRegistrationService.createDataEntryMrgRegistration(marriageRegistration);
         model.addAttribute("ackNumber", appNo);
         return "registration-ack";
     }
-    
-  
+
     /**
      * @param applicationNo
      * @param registrationNo
      * @return
      */
     @RequestMapping(value = "/checkUniqueAppl-RegNo", method = GET, produces = APPLICATION_JSON_VALUE)
-        public @ResponseBody boolean uniqueApplRegNo(@RequestParam final String applicationNo ,@RequestParam final String registrationNo) {
-            MarriageRegistration registration = ((applicationNo!=null && applicationNo!="")?
-                    marriageRegistrationService.findByApplicationNo(applicationNo):marriageRegistrationService.findByRegistrationNo(registrationNo));
-            if (registration != null)
-                    return false;
-            return true; 
-        }
-    
+    @ResponseBody
+    public boolean uniqueApplRegNo(@RequestParam final String applicationNo, @RequestParam final String registrationNo) {
+        MarriageRegistration registration = applicationNo != null && applicationNo != ""
+                ? marriageRegistrationService.findByApplicationNo(applicationNo)
+                : marriageRegistrationService.findByRegistrationNo(registrationNo);
+        if (registration != null)
+            return false;
+        return true;
+    }
+
     /**
      * @param serialNo
      * @return
      */
     @RequestMapping(value = "/checkunique-serialno", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-        public boolean uniqueSerialNo(@RequestParam final String serialNo ) {
+    public boolean uniqueSerialNo(@RequestParam final String serialNo) {
         MarriageRegistration registration = null;
-        if(serialNo!=null && serialNo!=""){  
-         registration = marriageRegistrationService.findBySerialNo(serialNo);
+        if (serialNo != null && serialNo != "") {
+            registration = marriageRegistrationService.findBySerialNo(serialNo);
         }
-            if (registration != null)
-                    return false;
-                return true; 
-        } 
+        if (registration != null)
+            return false;
+        return true;
+    }
 }

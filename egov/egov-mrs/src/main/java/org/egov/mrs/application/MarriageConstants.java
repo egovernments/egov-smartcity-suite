@@ -77,6 +77,21 @@ public class MarriageConstants {
     public static final String BOUNDARYTYPE_LOCALITY = "locality";
     public static final String REISSUE_PRINTREJECTIONCERTIFICATE = "REISSUE_PRINTREJECTIONCERTIFICATE";
 
+    public static final String MOM = "MoM";
+    public static final String CF_STAMP = "CF_STAMP";
+    public static final String AFFIDAVIT = "AFFIDAVIT";
+    public static final String MIC = "MIC";
+    public static final String Schooll_Leaveing_Cert = "SLC";
+    public static final String Birth_certificate = "BC";
+    public static final String Divorce_certificate = "DCA";
+    public static final String Death_certificate = "DCSWA";
+    public static final String Notary_Affidavit = "NotaryAffidavit";
+    public static final String RationCard = "RationCard";
+    public static final String MSEBBILL = "MSEBBILL";
+    public static final String TelephoneBill = "TelephoneBill";
+    public static final String Passport = "Passport";
+    public static final String Aadhar = "Aadhar";
+
     public static final List<String> venuelist = new ArrayList<String>() {
         /**
          *

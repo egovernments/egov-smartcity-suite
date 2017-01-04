@@ -203,6 +203,7 @@
 					<input type="file" id="marriage-photo" name="marriagePhotoFile"
 						class="file-ellipsis upload-file validate-file"
 						data-fileto="#marriage-photo">
+					<form:errors path="marriagePhotoFile" cssClass="add-margin error-msg" />
 				</c:when>
 				<c:otherwise>
 					<img id="marriage-photo" class="add-margin marriage-img"
@@ -210,6 +211,7 @@
 					<input type="file" id="marriage-photo" name="marriagePhotoFile"
 						class="file-ellipsis upload-file validate-file" required="true"
 						data-fileto="#marriage-photo">
+					<form:errors path="marriagePhotoFile" cssClass="add-margin error-msg" />
 				</c:otherwise>
 			</c:choose>
 		</div>
@@ -247,7 +249,7 @@
 	</jsp:include>
 
 	<c:if
-		test="${registration.status.code =='APPROVED' || currentState == 'DATAENTRY' || registration.status.code =='REGISTERED'}">
+		test="${marriageRegistration.status.code =='APPROVED' || currentState == 'DATAENTRY' || marriageRegistration.status.code =='REGISTERED'}">
 		<div class="form-group">
 			<label class="col-sm-3 control-label"> <spring:message
 					code="lbl.serial.no" /><span class="mandatory"></span>

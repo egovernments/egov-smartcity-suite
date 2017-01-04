@@ -258,7 +258,7 @@
      
     <!-- END DemandActivationJob -->
     
-    <bean name="recoveryNoticesJobScheduler" id="recoveryNoticesJobScheduler" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
+    <bean name="recoveryNoticesJobDetails" id="recoveryNoticesJobDetails" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
 		<property name="group" value="PTIS_RECOVERY_NOTICES_JOB_GROUP"/>
 		<property name="name" value="PTISRecoveryNoticesJob"/>
 		<property name="durability" value="true" />

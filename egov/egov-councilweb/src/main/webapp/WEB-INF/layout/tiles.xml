@@ -115,30 +115,6 @@
 	<put-attribute name="body" value="/WEB-INF/views/councildesignation/councildesignation-search.jsp"/>
 </definition>
 
-<definition name="councilqualification-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.councilqualification.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/councilqualification/councilqualification-new.jsp"/>
-</definition>
-
-<definition name="councilqualification-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.councilqualification.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/councilqualification/councilqualification-view.jsp"/>
-</definition>
-
-<definition name="councilqualification-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.councilqualification.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/councilqualification/councilqualification-edit.jsp"/>
-</definition>
-
-<definition name="councilqualification-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.councilqualification.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/councilqualification/councilqualification-result.jsp"/>
-</definition>
-
-<definition name="councilqualification-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.councilqualification.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/councilqualification/councilqualification-search.jsp"/>
-</definition>
 
 <definition name="councilcaste-new" extends="base_layout">
 	<put-attribute name="page-title" value="title.councilcaste.new" cascade="true"/>

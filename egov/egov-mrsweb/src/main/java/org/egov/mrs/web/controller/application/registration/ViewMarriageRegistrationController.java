@@ -66,12 +66,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping(value = "/registration")
 public class ViewMarriageRegistrationController extends MarriageRegistrationController {
-	
-	@Autowired
+
+    @Autowired
     private FileStoreService fileStoreService;
-	
-	 private static final Logger LOG = Logger.getLogger(ViewMarriageRegistrationController.class);
-	 
+
+    private static final Logger LOG = Logger.getLogger(ViewMarriageRegistrationController.class);
+
     @RequestMapping(value = "/view/{registrationId}", method = RequestMethod.GET)
     public String viewRegistration(@PathVariable final Long registrationId, @RequestParam(required = false) String mode,
             final Model model) throws IOException {
@@ -79,7 +79,7 @@ public class ViewMarriageRegistrationController extends MarriageRegistrationCont
 
         model.addAttribute("registration", registration);
         model.addAttribute("mode", mode);
-        
+
         if (registration.getMarriagePhotoFileStore() != null) {
             final File file = fileStoreService.fetch(registration.getMarriagePhotoFileStore().getFileStoreId(),
                     MarriageConstants.FILESTORE_MODULECODE);
@@ -89,35 +89,22 @@ public class ViewMarriageRegistrationController extends MarriageRegistrationCont
                 LOG.error("Error while preparing the document for view", e);
             }
         }
-        
+
         marriageRegistrationService.prepareDocumentsForView(registration);
         marriageApplicantService.prepareDocumentsForView(registration.getHusband());
         marriageApplicantService.prepareDocumentsForView(registration.getWife());
-        
+
         registration.getWitnesses().forEach(witness -> {
             try {
-            	if(witness.getPhotoFileStore() != null){
-            		final File file = fileStoreService.fetch(witness.getPhotoFileStore().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE);
-            		witness.setEncodedPhoto(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
-            	}
+                if (witness.getPhotoFileStore() != null) {
+                    final File file = fileStoreService.fetch(witness.getPhotoFileStore().getFileStoreId(),
+                            MarriageConstants.FILESTORE_MODULECODE);
+                    witness.setEncodedPhoto(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
+                }
             } catch (final Exception e) {
                 LOG.error("Error while preparing the document for view", e);
             }
         });
-        /*String screen = null;
-
-        if (registration.getStatus().getCode().equalsIgnoreCase(MarriageRegistration.RegistrationStatus.APPROVED.toString())) {
-            if (mode == null)
-                mode = utils.isLoggedInUserApprover() ? "view" : mode;
-
-            screen = mode != null && mode.equalsIgnoreCase("view") ? "registration-view" : "registration-form";
-
-        } else
-            screen = "registration-view";
-
-        int i = 0;*/
-
-        //prepareWorkflow(model, registration, new WorkflowContainer());
         return "registration-view";
     }
 

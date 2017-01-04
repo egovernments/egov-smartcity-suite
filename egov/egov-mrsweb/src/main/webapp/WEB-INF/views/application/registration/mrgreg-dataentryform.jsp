@@ -50,11 +50,12 @@
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"></div>
 		<form:form role="form" action="/mrs/registration/createdataentry"
-			modelAttribute="registration" id="form-registration"
+			modelAttribute="marriageRegistration" id="form-registration"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<input type="hidden" id="registrationId" value="${registration.id}" />
-			<input type="hidden" id="registrationStatus" value="${registration.status}" />
+			<input type="hidden" id="registrationId" value="${marriageRegistration.id}" />
+			<input type="hidden" id="registrationStatus" value="${marriageRegistration.status}" />
+			<input type="hidden" name="marriageRegistration" value="${marriageRegistration.id}" />
 			 <ul class="nav nav-tabs" id="settingstab">
 			    <li class="active"><a data-toggle="tab" href="#applicant-info" data-tabidx=0>Applicant's Information</a></li>
 			    <li><a data-toggle="tab" href="#witness-info" data-tabidx=1>Witnesses Information</a></li>

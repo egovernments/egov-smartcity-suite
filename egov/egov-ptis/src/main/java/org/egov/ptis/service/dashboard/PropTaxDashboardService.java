@@ -59,6 +59,8 @@ import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.admin.master.entity.es.CityIndex;
 import org.egov.infra.admin.master.service.es.CityIndexService;
 import org.egov.infra.rest.client.SimpleRestClient;
@@ -81,7 +83,6 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.service.es.CollectionIndexElasticSearchService;
 import org.egov.ptis.service.es.PropertyTaxElasticSearchIndexService;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +99,9 @@ public class PropTaxDashboardService {
 
     @PersistenceContext
     private EntityManager entityManager;
+    
+    @Autowired
+    private CFinancialYearService cFinancialYearService;
 
     @Autowired
     private CollectionIndexElasticSearchService collectionIndexElasticSearchService;
@@ -145,6 +149,8 @@ public class PropTaxDashboardService {
         Map<String, BigDecimal> consolidatedColl = collectionIndexElasticSearchService
                 .getFinYearsCollByService(COLLECION_BILLING_SERVICE_PT);
         Long timeTaken = System.currentTimeMillis() - startTime;
+        CFinancialYear currFinYear = cFinancialYearService.getFinancialYearByDate(new Date());
+
         LOGGER.debug("Time taken by getFinYearsCollByService() for Property Tax is : " + timeTaken + " (millisecs) ");
         if (!consolidatedColl.isEmpty()) {
             consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
@@ -155,7 +161,7 @@ public class PropTaxDashboardService {
         timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken by Property Tax getTotalDemand() is : " + timeTaken + " (millisecs) ");
         int noOfMonths = DateUtils
-                .noOfMonths(new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate(), new Date()) + 1;
+                .noOfMonths(DateUtils.startOfDay(currFinYear.getStartingDate()), new Date()) + 1;
         consolidatedData.setTotalDmd(totalDmd.divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP)
                 .multiply(BigDecimal.valueOf(noOfMonths)));
         consolidatedData.setPerformance((consolidatedData.getCytdColl().multiply(BIGDECIMAL_100))

@@ -2,7 +2,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2017>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -39,47 +39,6 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<div class="main-content">
-	<div class="row">
-		<div class="col-md-12">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">Council Qualification</div>
-				</div>
-				<div class="panel-body custom">
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.name" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${councilQualification.name}</div>
-					</div>
-				</div>
-				<div class="panel-body custom">
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.description" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${councilQualification.description}</div>
-					</div>
-				</div>
-				<div class="panel-body custom">
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.isactive" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${councilQualification.isActive}</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="row text-center">
-	<div class="add-margin">
-		<a href="javascript:void(0)" class="btn btn-default"
-			onclick="self.close()">Close</a>
-	</div>
-</div>
+<div class="alert alert-success" role="alert">
+	<strong>${message}</strong>
+</div><%@ include file="qualification-view.jsp"%>

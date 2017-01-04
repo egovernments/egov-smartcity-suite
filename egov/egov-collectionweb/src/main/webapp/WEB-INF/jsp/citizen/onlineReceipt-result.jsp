@@ -74,9 +74,27 @@ function onBodyLoad(){
 			<td>Transaction Number : <s:property value="%{onlinePaymentReceiptHeader.onlinePayment.transactionNumber}" /></td>
 	</tr> -->
 	
-	<div style="text-align: center;padding-bottom: 15px;">Your payment of Amount Rs.  <s:property value="%{onlinePaymentReceiptHeader.totalAmount}" /> has been received. The Reference Number is <s:property value="%{onlinePaymentReceiptHeader.referencenumber}" />. Please click on Generate Receipt to print the receipt</div>
-    <a href='${pageContext.request.contextPath}/citizen/onlineReceipt-view.action?receiptId=<s:property value='%{onlinePaymentReceiptHeader.id}'/>' class="btn btn-primary">Generate Receipt</a>&nbsp;
+	<div id="paymentInfo" style="text-align: center;padding-bottom: 15px;">Your payment of Amount &#8377; <s:property value="%{onlinePaymentReceiptHeader.totalAmount}" /> has been received. The Reference Number is <s:property value="%{onlinePaymentReceiptHeader.referencenumber}" />. Please click on <span>Generate Receipt to print the receipt</span></div>
+    <a href='${pageContext.request.contextPath}/citizen/onlineReceipt-view.action?receiptId=<s:property value='%{onlinePaymentReceiptHeader.id}'/>' class="btn btn-primary" id="btnGenerateReceipt">Generate Receipt</a>&nbsp;
 </s:else>
 </div>
+
+<script>
+
+if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+	if(CitizenApp)
+	{
+		jQuery('#btnGenerateReceipt').text('Download Receipt');
+		jQuery('#btnGenerateReceipt').attr('href','javascript:void(0);');
+		jQuery('#paymentInfo').find('span').html('Download Receipt');
+		CitizenApp.showSnackBar('Your payment of Amount Rs.<s:property value="%{onlinePaymentReceiptHeader.totalAmount}" /> has been received. The Reference Number is <s:property value="%{onlinePaymentReceiptHeader.referencenumber}" />.');
+		jQuery('#btnGenerateReceipt').click(function(e){
+			CitizenApp.downloadReceipt('<s:property value="%{onlinePaymentReceiptHeader.receiptnumber}" />', '<s:property value="%{onlinePaymentReceiptHeader.consumerCode}" />');
+		});
+	}
+}
+
+</script>
+
 </body>
 </html>

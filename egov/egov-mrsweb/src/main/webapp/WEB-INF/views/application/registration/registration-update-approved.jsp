@@ -49,14 +49,14 @@
 		<div class="text-right error-msg" style="font-size: 14px;"></div>
 		<form:form role="form" method="post"
 			action="/mrs/registration/update-approved"
-			modelAttribute="registration" id="form-updateregistration"
+			modelAttribute="marriageRegistration" id="form-updateregistration"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 
 			<input type="hidden" name="marriageRegistration"
-				value="${registration.id}" />
+				value="${marriageRegistration.id}" />
 			<input type="hidden" id="registrationStatus"
-				value="${registration.status.code}" />
+				value="${marriageRegistration.status.code}" />
 			<input type="hidden" id="allowDaysValidation"
 				value="${allowDaysValidation}" />
 			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
