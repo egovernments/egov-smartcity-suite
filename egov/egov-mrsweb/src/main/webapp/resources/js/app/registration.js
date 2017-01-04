@@ -40,6 +40,20 @@
 
 $(document).ready( function () {
 	
+	$( "#select-venue" ).change(function() {
+		var venue = $( "#select-venue option:selected" ).text();
+		if(venue == 'Residence'){
+			$('.toggle-madatory').find("span").removeClass( "mandatory" );
+			$('.addremoverequired').removeAttr( "required" );
+			$("#txt-placeofmrg").attr("disabled", "disabled");
+		}else{
+			$('.toggle-madatory').find("span").addClass( "mandatory" );
+			$('.addremoverequired').attr( "required", "true" );
+			$("#txt-placeofmrg").removeAttr("disabled", "disabled");
+		}
+		
+	});
+	
 	if($('#registrationStatus').val()=='APPROVED'){
 		$(':input').attr('readonly','readonly');
 		$('#form-updateregistration select').attr('disabled', 'true'); 

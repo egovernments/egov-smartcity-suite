@@ -64,11 +64,10 @@ import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.egov.common.entity.EducationalQualification;
 import org.egov.common.entity.Nationality;
-import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.mrs.domain.enums.MREducationQualification;
 import org.egov.mrs.domain.enums.MaritalStatus;
 import org.egov.mrs.domain.enums.ReligionPractice;
 import org.egov.mrs.masters.entity.MarriageReligion;
@@ -152,14 +151,16 @@ public class MrApplicant extends AbstractAuditable {
     @NotNull
     @Valid
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "applicant")
-    private Set<MrApplicantDocument> applicantDocuments = new HashSet<MrApplicantDocument>();
+    private Set<MrApplicantDocument> applicantDocuments = new HashSet<>();
 
     @NotNull
     @Length(max = 20)
     private String parentsName;
 
-    @Enumerated(EnumType.STRING)
-    private MREducationQualification qualification;
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "qualification")
+    private EducationalQualification qualification;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -170,9 +171,7 @@ public class MrApplicant extends AbstractAuditable {
     private String street;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "locality")
-    private Boundary locality;
+    private String locality;   
 
     @NotNull
     private String city;
@@ -180,11 +179,9 @@ public class MrApplicant extends AbstractAuditable {
     @Transient
     private List<MarriageDocument> documents;
 
-    @Transient
-    private MultipartFile photoFile;
+    private transient MultipartFile photoFile;
 
-    @Transient
-    private MultipartFile signatureFile;
+    private transient MultipartFile signatureFile;
 
     private transient String encodedPhoto;
     private transient String encodedSignature;
@@ -435,19 +432,20 @@ public class MrApplicant extends AbstractAuditable {
         this.nationality = nationality;
     }
 
-    public Boundary getLocality() {
+
+    public String getLocality() {
         return locality;
     }
 
-    public void setLocality(final Boundary locality) {
+    public void setLocality(String locality) {
         this.locality = locality;
     }
 
-    public MREducationQualification getQualification() {
+    public EducationalQualification getQualification() {
         return qualification;
     }
 
-    public void setQualification(final MREducationQualification qualification) {
+    public void setQualification(EducationalQualification qualification) {
         this.qualification = qualification;
     }
 

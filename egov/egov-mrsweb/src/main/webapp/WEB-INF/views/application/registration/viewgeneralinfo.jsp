@@ -72,13 +72,15 @@
 			<c:out value="${applicationDate}">
 		</c:out></div>
 	</div>
-	
+	<c:if test="${registration.venue !='Residence'}">
 	<div class="row add-border">
 	<%-- 	<div class="col-sm-3 add-margin"><spring:message code="lbl.law"/></div>
 		<div class="col-sm-3 add-margin view-content"><c:out value="${registration.marriageAct.name}"></c:out></div> --%>
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.place.of.marriage"/></div>
 		<div class="col-sm-3 add-margin view-content"><c:out value="${registration.placeOfMarriage}"></c:out></div>
 	</div>
+	</c:if>
+	
 	<div class="row add-border">
 	    <div class="col-sm-3 add-margin"><spring:message code="lbl.registrationunit"/></div>
 		<div class="col-sm-3 add-margin view-content"><c:out value="${registration.marriageRegistrationUnit.name}"></c:out></div>
@@ -130,7 +132,7 @@
 		<jsp:param value="${registration.husband.maritalStatus}" name="appPresentRelation"/>
 		<jsp:param value="${registration.husband.occupation}" name="appOccupation"/>
 		<jsp:param value="${registration.husband.street}" name="appstreet"/>
-		<jsp:param value="${registration.husband.locality.name}" name="applocality"/>
+		<jsp:param value="${registration.husband.locality}" name="applocality"/>
 		<jsp:param value="${registration.husband.nationality.name}" name="appNationality"/>
 		<jsp:param value="${registration.husband.city}" name="appcity"/>
 		<jsp:param value="${registration.husband.contactInfo.residenceAddress}" name="appResidenceAddress"/>
@@ -163,7 +165,7 @@
 	<jsp:param value="${registration.wife.maritalStatus}" name="appPresentRelation"/>
 	<jsp:param value="${registration.wife.occupation}" name="appOccupation"/>
 	<jsp:param value="${registration.wife.street}" name="appstreet"/>
-	<jsp:param value="${registration.wife.locality.name}" name="applocality"/>
+	<jsp:param value="${registration.wife.locality}" name="applocality"/>
 	<jsp:param value="${registration.wife.city}" name="appcity"/>
 	<jsp:param value="${registration.wife.nationality.name}" name="appNationality"/>
 	<jsp:param value="${registration.wife.contactInfo.residenceAddress}" name="appResidenceAddress"/>

@@ -111,7 +111,7 @@
 
 								<c:set value="priest" var="priest" scope="request"></c:set>
 								<form:hidden path="priest.id" />
-								<jsp:include page="priestinfo.jsp"></jsp:include>
+								<%-- <jsp:include page="priestinfo.jsp"></jsp:include> --%>
 							</div>
 							<div id="checklist-info" class="tab-pane fade">
 								<div class="panel panel-primary" data-collapsed="0">

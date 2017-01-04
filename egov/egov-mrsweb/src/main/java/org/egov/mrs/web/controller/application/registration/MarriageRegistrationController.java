@@ -50,6 +50,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.commons.service.EducationalQualificationService;
 import org.egov.commons.service.NationalityService;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -58,7 +59,6 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.domain.entity.MarriageRegistration;
-import org.egov.mrs.domain.enums.MREducationQualification;
 import org.egov.mrs.domain.enums.MaritalStatus;
 import org.egov.mrs.domain.enums.ReligionPractice;
 import org.egov.mrs.domain.service.MarriageApplicantService;
@@ -112,6 +112,9 @@ public class MarriageRegistrationController extends GenericWorkFlowController {
 
     @Autowired
     protected NationalityService nationalityService;
+    
+    @Autowired
+    private EducationalQualificationService educationalQualificationService;
 
     @ModelAttribute
     public void prepareForm(final Model model) {
@@ -125,7 +128,7 @@ public class MarriageRegistrationController extends GenericWorkFlowController {
         model.addAttribute("maritalStatusList", Arrays.asList(MaritalStatus.values()));
         model.addAttribute("venuelist", MarriageConstants.venuelist);
         model.addAttribute("witnessRelation", MarriageConstants.witnessRelation);
-        model.addAttribute("Educationqualificationlist", MREducationQualification.values());
+        model.addAttribute("Educationqualificationlist", educationalQualificationService.getActiveQualifications());
         model.addAttribute("nationalitylist", nationalityService.findAll());
         model.addAttribute("feesList", marriageFeeService.getActiveGeneralTypeFeeses());
         model.addAttribute("generalDocuments", marriageDocumentService.getGeneralDocuments());

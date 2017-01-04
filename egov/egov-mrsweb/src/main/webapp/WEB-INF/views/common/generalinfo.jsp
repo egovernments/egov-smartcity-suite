@@ -120,7 +120,7 @@
 			<spring:message code="lbl.locality" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${reIssue.registration.locality.name}"></c:out>
+			<c:out value="${reIssue.registration.locality}"></c:out>
 		</div>
 	</div>
 	<div class="row add-border">
@@ -173,7 +173,7 @@
 		name="appOccupation" />
 	<jsp:param value="${reIssue.registration.husband.street}"
 		name="appstreet" />
-	<jsp:param value="${reIssue.registration.husband.locality.name}"
+	<jsp:param value="${reIssue.registration.husband.locality}"
 		name="applocality" />
 	<jsp:param value="${reIssue.registration.husband.city}" name="appcity" />
 	<jsp:param value="${reIssue.registration.husband.nationality.name}"
@@ -223,7 +223,7 @@
 	<jsp:param value="${reIssue.registration.wife.occupation}"
 		name="appOccupation" />
 	<jsp:param value="${reIssue.registration.wife.street}" name="appstreet" />
-	<jsp:param value="${reIssue.registration.wife.locality.name}"
+	<jsp:param value="${reIssue.registration.wife.locality}"
 		name="applocality" />
 	<jsp:param value="${reIssue.registration.wife.city}" name="appcity" />
 	<jsp:param value="${reIssue.registration.wife.nationality.name}"

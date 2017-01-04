@@ -150,21 +150,11 @@
 			 <form:hidden path="feeCriteria.criteria" name="feeCriteria" id="txt_feecriteria"/>
 			<form:errors path="feeCriteria" cssClass="add-margin error-msg" />
 		</div> --%>
-		<label class="col-sm-3 control-label"> <spring:message
-				code="lbl.marriage.fee" /><span class="mandatory"></span>
-		</label>
-		<div class="col-sm-3">
-			<form:input path="feePaid" id="txt-feepaid" type="text" readonly="true"
-				class="form-control low-width patternvalidation"
-				data-pattern="decimalvalue" placeholder="" autocomplete="off"
-				required="required" />
-			<form:errors path="feePaid" cssClass="add-margin error-msg" />
-		</div>
-		<label class="col-sm-2 control-label"> <spring:message
+		<label class="col-sm-3 control-label "> <spring:message
 				code="lbl.marriage.venue" /><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
-			<form:select path="venue" id="select-venue" cssClass="form-control"
+			<form:select path="venue" id="select-venue" cssClass="form-control "
 				cssErrorClass="form-control error" required="required">
 				<form:option value="">
 					<spring:message code="lbl.default.option" />
@@ -174,20 +164,32 @@
 			<%-- <form:input path="placeOfMarriage" id="txt-placeOfMarriage" type="text" class="form-control low-width is_valid_alphabet" placeholder="" autocomplete="off" required="required"/> --%>
 			<form:errors path="venue" cssClass="add-margin error-msg" />
 		</div>
+		
+		<label class="col-sm-2 control-label"> <spring:message
+				code="lbl.marriage.fee" /><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3">
+			<form:input path="feePaid" id="txt-feepaid" type="text" readonly="true"
+				class="form-control low-width patternvalidation"
+				data-pattern="decimalvalue" placeholder="" autocomplete="off"
+				required="required" />
+			<form:errors path="feePaid" cssClass="add-margin error-msg" />
+		</div>
 	</div>
 	<div class="form-group">
-		<label class="col-sm-3 control-label" id="txt-venuelabel"
-			required="required"> <spring:message
-				code="lbl.place.of.marriage" /><span class="mandatory"></span>
+	 <div id="hideplaceofmrg">
+		<label class="col-sm-3 control-label toggle-madatory" id="txt-venuelabel">
+		 <spring:message code="lbl.place.of.marriage" /><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
 
-			<form:input path="placeOfMarriage" id="txt-venue" type="text"
-				class="form-control low-width patternvalidation" placeholder=""
+			<form:input path="placeOfMarriage" id="txt-placeofmrg" type="text"
+				class="form-control low-width patternvalidation addremoverequired" placeholder=""
 				autocomplete="off" />
 
 			<form:errors path="placeOfMarriage" cssClass="add-margin error-msg" />
 		</div>
+	 </div>
 		<label class="col-sm-2 text-right"> <spring:message
 				code="lbl.marriage.photo" /><span class="mandatory"></span>
 		</label>
