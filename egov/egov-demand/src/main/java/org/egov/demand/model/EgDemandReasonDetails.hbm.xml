@@ -99,4 +99,10 @@
 	<query name="DEMANDREASONDETAILS_BY_DEMANDREASON_AND_INSTALLMENT">
     	<![CDATA[select drd from EgDemandReasonDetails drd where drd.egDemandReason.egDemandReasonMaster.code = ? and ? between drd.lowLimit and drd.highLimit and ((? between drd.fromDate and drd.toDate) or (? between drd.fromDate and drd.toDate)) order by drd.fromDate]]>
 	</query>
+	<query name="DEMANDREASONDETAILS_BY_MOUDULEID">
+    	<![CDATA[select drd from EgDemandReasonDetails drd where drd.egDemandReason.egDemandReasonMaster.egModule = ? order by drd.egDemandReason.egDemandReasonMaster.reasonMaster]]>
+	</query>
+	<query name="DEMANDREASONDETAILS_BY_ID">
+    	<![CDATA[select drd from EgDemandReasonDetails drd where drd.id = ?]]>
+	</query>
 </hibernate-mapping>

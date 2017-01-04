@@ -40,11 +40,15 @@
 package org.egov.ptis.web.controller.masters.taxrates;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.demand.bean.DemandReasonDetailsBean;
+import org.egov.demand.model.EgDemandReasonDetails;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.ptis.master.service.TaxRatesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,9 +69,12 @@ public class ViewTaxRatesController {
     private static final String GENERAL_TAX_RESD = "GEN_TAX_RESD";
     private static final String GENERAL_TAX_NONRESD = "GEN_TAX_NR";
     private static final String EDUCATIONAL_TAX = "EDU_CESS";
-    private static final String REDIRECT_URL = "redirect:/taxrates/edit";
-    private static final String REDIRECT_VIEW_URL = "redirect:/taxrates/view";
+    private static final String REDIRECT_URL = "redirect:/taxrates/appconfig/edit";
+    private static final String REDIRECT_VIEW_URL = "redirect:/taxrates/appconfig/view";
     private static final String MESSAGE = "message";
+    private static final String TOTAL_TAX_RESD = "TOT_RESD_TAX";
+    private static final String TOTAL_TAX_NONRESD = "TOT_NR_RESD_TAX";
+    private static final String TAX_RATES_FORM = "taxRatesForm";
 
     @Autowired
     public ViewTaxRatesController(final TaxRatesService taxRatesService) {
@@ -78,23 +85,23 @@ public class ViewTaxRatesController {
     public AppConfigValues taxRatesModel() {
         return new AppConfigValues();
     }
-
-    @RequestMapping(value = "/view", method = RequestMethod.GET)
-    public String showTaxRates(final Model model) {
+    
+    @RequestMapping(value = "/appconfig/view", method = RequestMethod.GET)
+    public String showAppConfigTaxRates(final Model model) {
         final Map<String, Double> taxRatesMap = taxRatesService.getTaxDetails();
         model.addAttribute("taxRates", taxRatesMap);
         return TAXRATE_VIEW;
     }
 
-    @RequestMapping(value = "/edit", method = RequestMethod.GET)
+    @RequestMapping(value = "/appconfig/edit", method = RequestMethod.GET)
     public String viewTaxRates(final Model model) {
         final Map<String, Double> taxRatesMap = taxRatesService.getTaxDetails();
         model.addAttribute("taxRates", taxRatesMap);
         return TAXRATE_EDIT;
     }
 
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public String saveTaxRates(final Model model, final HttpServletRequest request,
+    @RequestMapping(value = "/appconfig/edit", method = RequestMethod.POST)
+    public String saveAppConfigTaxRates(@ModelAttribute final DemandReasonDetailsBean taxRatesForm, final Model model, final HttpServletRequest request,
             final RedirectAttributes redirectAttributes) {
         final String resTaxValue = request.getParameter("General Tax Residential-value");
         final String nonResTaxValue = request.getParameter("General Tax Non Residential-value");
@@ -128,6 +135,39 @@ public class ViewTaxRatesController {
             return REDIRECT_URL;
         }
     }
+    
+    @RequestMapping(value = "/view", method = RequestMethod.GET)
+    public String showTaxRates(final Model model) {
+        DemandReasonDetailsBean taxRatesForm = new DemandReasonDetailsBean();
+        taxRatesForm.setDemandReasonDetails(taxRatesService.getTaxRates());
+        model.addAttribute(TAX_RATES_FORM, taxRatesForm);
+        return "taxrates-view";
+    }
+    
+    @RequestMapping(value = "/edit", method = RequestMethod.GET)
+    public String taxRatesEditView(final Model model) {
+        DemandReasonDetailsBean taxRatesForm = new DemandReasonDetailsBean();
+        List<EgDemandReasonDetails> egDemandReasonDetails = taxRatesService.getTaxRates();
+        taxRatesForm.setDemandReasonDetails(taxRatesService.excludeOldTaxHeads(egDemandReasonDetails));
+        model.addAttribute("taxRatesForm", taxRatesForm);
+        addTotalTaxHeadsToModel(model);
+        return "taxrates-editview";
+    }
+
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    public String saveTaxRates(@ModelAttribute final DemandReasonDetailsBean taxRatesForm, final Model model,
+            final HttpServletRequest request, final RedirectAttributes redirectAttributes) {
+        EgDemandReasonDetails existingDemandReasonDetails;
+        if (!validate(taxRatesForm, model, request))
+            return "taxrates-editview";
+        for (EgDemandReasonDetails egDemandReasonDetail : taxRatesForm.getDemandReasonDetails()) {
+            existingDemandReasonDetails = taxRatesService.getDemandReasonDetailsById(egDemandReasonDetail.getId());
+            existingDemandReasonDetails.setPercentage(egDemandReasonDetail.getPercentage());
+            taxRatesService.updateTaxRates(existingDemandReasonDetails);
+        }
+        redirectAttributes.addFlashAttribute(MESSAGE, "msg.update.taxrates");
+        return "redirect:/taxrates/view";
+    }
 
     private Boolean validateTaxValues(final String newRsdTax, final String newNonRsdTax, final String newEduTax) {
         boolean isValid = true;
@@ -144,5 +184,58 @@ public class ViewTaxRatesController {
                 isValid = false;
         }
         return isValid;
+    }
+    
+    Boolean validate(final DemandReasonDetailsBean taxRatesForm, final Model model, final HttpServletRequest request) {
+        EgDemandReasonDetails existingDemandReasonDetails;
+        BigDecimal netResdPercentage = BigDecimal.ZERO;
+        BigDecimal netNonResdPercentage = BigDecimal.ZERO;
+        BigDecimal generalTaxNr = BigDecimal.ZERO;
+        BigDecimal generalTaxResd = BigDecimal.ZERO;
+        BigDecimal netOtherTaxPercentage = BigDecimal.ZERO;
+        List<EgDemandReasonDetails> updatedTaxRatesForm = new ArrayList<>();
+        for (EgDemandReasonDetails egDemandReasonDetail : taxRatesForm.getDemandReasonDetails()) {
+            existingDemandReasonDetails = taxRatesService.getDemandReasonDetailsById(egDemandReasonDetail.getId());
+            existingDemandReasonDetails.setPercentage(egDemandReasonDetail.getPercentage());
+            updatedTaxRatesForm.add(existingDemandReasonDetails);
+            if (!(existingDemandReasonDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                    .equals(GENERAL_TAX_RESD)
+                    || existingDemandReasonDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                            .equals(GENERAL_TAX_NONRESD)
+                    || existingDemandReasonDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                            .equals(EDUCATIONAL_TAX)))
+                netOtherTaxPercentage = netOtherTaxPercentage.add(existingDemandReasonDetails.getPercentage());
+            else if (existingDemandReasonDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                    .equals(GENERAL_TAX_RESD))
+                generalTaxResd = existingDemandReasonDetails.getPercentage();
+            else if (existingDemandReasonDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                    .equals(GENERAL_TAX_NONRESD))
+                generalTaxNr = existingDemandReasonDetails.getPercentage();
+        }
+        netResdPercentage = netResdPercentage.add(generalTaxResd).add(netOtherTaxPercentage);
+        netNonResdPercentage = netNonResdPercentage.add(generalTaxNr).add(netOtherTaxPercentage);
+        if (new BigDecimal(request.getParameter("genTaxResd")).compareTo(netResdPercentage) != 0) {
+            taxRatesForm.setDemandReasonDetails(updatedTaxRatesForm);
+            model.addAttribute(MESSAGE, "msg.taxrate.resd.valid");
+            model.addAttribute(TAX_RATES_FORM, taxRatesForm);
+            addTotalTaxHeadsToModel(model);
+            return false;
+        } else if (new BigDecimal(request.getParameter("genTaxNonResd")).compareTo(netNonResdPercentage) != 0) {
+            taxRatesForm.setDemandReasonDetails(updatedTaxRatesForm);
+            model.addAttribute(MESSAGE, "msg.taxrate.nresd.valid");
+            model.addAttribute(TAX_RATES_FORM, taxRatesForm);
+            addTotalTaxHeadsToModel(model);
+            return false;
+        }
+        return true;
+    }
+
+    void addTotalTaxHeadsToModel(Model model) {
+        for (EgDemandReasonDetails drd : taxRatesService.getTaxRates()) {
+            if (drd.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(TOTAL_TAX_RESD))
+                model.addAttribute("genTaxResd", drd.getPercentage().setScale(2, BigDecimal.ROUND_CEILING));
+            if (drd.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(TOTAL_TAX_NONRESD))
+                model.addAttribute("genTaxNonResd", drd.getPercentage().setScale(2, BigDecimal.ROUND_CEILING));
+        }
     }
 }

@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -37,42 +37,22 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.demand.bean;
 
+import java.util.List;
 
-function validateTaxValues() {
-	var newGenTaxRsd = jQuery("#General_Tax_Residential").val();
-	var existGenTaxRsd = jQuery("#General_Tax_Residential-exist").val();
-	var newGenTaxNonRsd = jQuery("#General_Tax_Non_Residential").val();
-	var existGenTaxNonRsd = jQuery("#General_Tax_Non_Residential-exist").val();
-	var newEduTax = jQuery("#Education_Cess").val();
-	var existEduTax = jQuery("#Education_Cess-exist").val();
-	if (Number(existGenTaxRsd) > Number(newGenTaxRsd)) {
-		bootbox
-				.alert('New Tax for Residential should be greater than existing tax!');
-		return false;
-	} else if (Number(existGenTaxNonRsd) > Number(newGenTaxNonRsd)) {
-		bootbox
-				.alert('New Tax for Non Residential should be greater than existing tax!');
-		return false;
-	} else if (Number(existEduTax) > Number(newEduTax)) {
-		bootbox
-				.alert('New Tax for Education Cess should be greater than existing tax!');
-		return false;
-	}
-	return true;
-}
+import org.egov.demand.model.EgDemandReasonDetails;
 
-$("#btnsubmit").click(function(){
-    var isFormValid = true;
+public class DemandReasonDetailsBean {
 
-    $("#taxrate-update :input").each(function(){
-        if ($.trim($(this).val()).length == 0){
-            isFormValid = false;
-        }
-    });
+    private List<EgDemandReasonDetails> demandReasonDetails;
 
-    if (!isFormValid) {
-    	bootbox.alert("Percentage cannot be empty");
+    public List<EgDemandReasonDetails> getDemandReasonDetails() {
+        return demandReasonDetails;
     }
-    return isFormValid;
-});
+
+    public void setDemandReasonDetails(List<EgDemandReasonDetails> demandReasonDetails) {
+        this.demandReasonDetails = demandReasonDetails;
+    }
+
+}

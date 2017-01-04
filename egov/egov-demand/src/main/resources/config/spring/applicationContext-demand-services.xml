@@ -46,5 +46,9 @@
        default-lazy-init="true">
 
     <context:component-scan base-package="org.egov.demand" />
+    
+    <bean id="egDemandReasonDetailsService" parent="abstractPersistenceService" scope="prototype">
+		<constructor-arg name="type" value="org.egov.demand.model.EgDemandReasonDetails" />
+	</bean>
         
 </beans>
