@@ -216,7 +216,9 @@ $(document).ready( function () {
 
 	$('#dataEntrySubmit').click(function(e){
 		if($('form').valid()){
-			
+			if (!validateChecklists()) {
+				return false;
+			}
 		}else{
 			e.preventDefault();
 		}
@@ -227,33 +229,47 @@ $(document).ready( function () {
 // Called from Data Entry Screen - Ends
 
 function validateChecklists() {
-	var noOfCheckboxes1 = $('input[id^="ageProofH"]:checked').length;
-	var noOfCheckboxes2 = $('input[id^="ageProofW"]:checked').length;
-
-	if (noOfCheckboxes1 == undefined || noOfCheckboxes1 == null || noOfCheckboxes1 == 0) {
-		bootbox.alert("Any one Age Proof for Husband is mandatory");
-		$('#ageProofHLC').focus();
-		return false;
-	}
-
-	if (noOfCheckboxes2 == undefined || noOfCheckboxes2 == null || noOfCheckboxes2 == 0) {
-		bootbox.alert("Any one Age Proof for Wife is mandatory");
-		$('#ageProofWLC').focus();
-		return false;
-	}
-
-	var noOfResProofCheckboxes1 = $('input[id^="resProofH"]:checked').length;
-	var noOfResProofCheckboxes2 = $('input[id^="resProofW"]:checked').length;
-
-	if (noOfResProofCheckboxes1 == undefined || noOfResProofCheckboxes1 == null || noOfResProofCheckboxes1 == 0) {
-		bootbox.alert("Any one Residence Proof for Husband is mandatory");
-		return false;
-	}
-
-	if (noOfResProofCheckboxes2 == undefined || noOfResProofCheckboxes2 == null || noOfResProofCheckboxes2 == 0) {
-		bootbox.alert("Any one Residence Proof for Wife is mandatory");
-		return false;
-	}
-	
-	return true;
+	 var ageAddrProofAttached = false;
+		if($('input[id^="indvcommonhusbandPassport"]').val()==""){
+			 $('input[type="file"][id^="ageproofhusband"]').toArray().map(function(item) {
+				 if(item.value!="")
+					 ageAddrProofAttached = true;
+			 });
+			 if (ageAddrProofAttached == false) {
+				bootbox.alert("Any one Age Proof for Husband is mandatory");
+				return false;
+			}
+			 
+			 ageAddrProofAttached = false;
+			 $('input[type="file"][id^="addressproofhusband"]').toArray().map(function(item) {
+				 if(item.value!="")
+					 ageAddrProofAttached = true;
+			 });
+			 if (ageAddrProofAttached == false) {
+				 bootbox.alert("Any one Residence Proof for Husband is mandatory");
+					return false;
+			 }
+		}
+		if($('input[id^="indvcommonwifePassport"]').val()==""){
+			 ageAddrProofAttached = false;
+			 $('input[type="file"][id^="ageproofwife"]').toArray().map(function(item) {
+				 if(item.value!="")
+					 ageAddrProofAttached = true;
+			 });
+			 if (ageAddrProofAttached == false) {
+				bootbox.alert("Any one Age Proof for Wife is mandatory");
+				return false;
+			}
+			 
+			 ageAddrProofAttached = false;
+			 $('input[type="file"][id^="addressproofwife"]').toArray().map(function(item) {
+				 if(item.value!="")
+					 ageAddrProofAttached = true;
+			 });
+			 if (ageAddrProofAttached == false) {
+				 bootbox.alert("Any one Residence Proof for Wife is mandatory");
+					return false;
+			 }
+		}
+		return true;
 }
