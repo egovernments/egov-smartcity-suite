@@ -96,9 +96,9 @@
 			<div class="tab-pane fade" id="checklist">
 				<jsp:include page="expensebill-view-checklist.jsp"/>
 			</div>
-			<c:if test="${!workflowHistory.isEmpty() && mode != 'readOnly'}">
+			<%-- <c:if test="${!workflowHistory.isEmpty() && mode != 'readOnly'}">
 				<jsp:include page="../common/commonworkflowhistory-view.jsp"></jsp:include>
-			</c:if>
+			</c:if> --%>
 			<c:if test="${mode != 'readOnly'}">
 				<jsp:include page="../common/commonworkflowmatrix.jsp"/>
 				<div class="buttonbottom" align="center">
