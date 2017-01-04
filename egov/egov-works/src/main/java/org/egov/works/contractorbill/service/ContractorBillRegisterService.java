@@ -1010,8 +1010,16 @@ public class ContractorBillRegisterService {
     }
 
     public Double getTotalPartBillsAmount(final Long workOrderEstimateId, final String billStatus, final String billtype) {
-        return contractorBillRegisterRepository.findSumOfBillAmountByWorkOrderEstimateAndStatusAndBilltype(workOrderEstimateId,
-                billStatus, billtype);
+        final List<CChartOfAccounts> contractorAdvanceDeductionList = chartOfAccountsService
+                .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_ADVANCE_PURPOSE);
+        final List<BigDecimal> coaIds = new ArrayList<>();
+        for (final CChartOfAccounts accounts : contractorAdvanceDeductionList)
+            coaIds.add(BigDecimal.valueOf(accounts.getId()));
+        return contractorBillRegisterRepository
+                .findSumOfBillAmountByWorkOrderEstimateAndStatusAndBilltype(workOrderEstimateId,
+                        billStatus, billtype)
+                - contractorBillRegisterRepository.getTotalAdvanceAdjusted(workOrderEstimateId, coaIds,
+                        BillStatus.CANCELLED.toString());
     }
 
     public Double getAdvanceAdjustedSoFar(final Long woeId, final Long contractorBillId,

@@ -622,9 +622,13 @@ public class ContractorAdvanceService {
             advancePaidTillNow = 0D;
         if (contractorAdvanceRequisition.getAdvanceRequisitionAmount()
                 .add(BigDecimal.valueOf(advancePaidTillNow + totalPartBillsAmount)).compareTo(BigDecimal
-                        .valueOf(contractorAdvanceRequisition.getWorkOrderEstimate().getWorkOrder().getWorkOrderAmount())) > 0)
-            errors.reject("error.advance.exceeded", new String[] {},
+                        .valueOf(contractorAdvanceRequisition.getWorkOrderEstimate().getWorkOrder().getWorkOrderAmount())) > 0) {
+            final Double diffAmount = advancePaidTillNow + totalPartBillsAmount
+                    + contractorAdvanceRequisition.getAdvanceRequisitionAmount().longValue()
+                    - contractorAdvanceRequisition.getWorkOrderEstimate().getWorkOrder().getWorkOrderAmount();
+            errors.reject("error.advance.exceeded", new String[] { diffAmount.toString() },
                     null);
+        }
     }
 
     public void validateARFInDrafts(final Long contractorAdvanceRegisterId, final Long workOrderEstimateId,

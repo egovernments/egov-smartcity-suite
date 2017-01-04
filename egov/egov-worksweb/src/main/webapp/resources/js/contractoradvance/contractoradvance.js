@@ -158,7 +158,9 @@ function validateContractorAdvance() {
 		return false;
 	}
 	if (workOrderAmount < (advancePaidTillNow + advanceRequisitionAmount + totalPartBillsAmount)) {
-		bootbox.alert($('#errorAdvanceExceeded').val());
+		var message = $('#errorAdvanceExceeded').val();
+		message = message.replace('{0}', parseFloat(advancePaidTillNow + advanceRequisitionAmount + totalPartBillsAmount - workOrderAmount).toFixed(2))
+		bootbox.alert(message);
 		return false;
 	}
 	return true;

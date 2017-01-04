@@ -53,7 +53,6 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.eis.web.contract.WorkflowContainer;
-import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -91,7 +90,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/contractorbill")
-public class UpdateContractorBillController extends GenericWorkFlowController {
+public class UpdateContractorBillController extends BaseContractorBillController {
     @Autowired
     private DepartmentService departmentService;
 
@@ -356,38 +355,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         if (mBHeader != null && contractorBillRegister.getBilldate().before(mBHeader.getMbDate()))
             resultBinder.rejectValue("mbHeader.mbDate", "error.billdate.mbdate");
 
-        final List<CChartOfAccounts> contractorAdvanceAccountCodes = chartOfAccountsService
-                .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_ADVANCE_PURPOSE);
-        for (final EgBilldetails billdetails : contractorBillRegister.getAdvanceAdjustmentDetails())
-            if (contractorAdvanceAccountCodes != null && !contractorAdvanceAccountCodes.isEmpty()
-                    && contractorAdvanceAccountCodes
-                            .contains(chartOfAccountsService.findById(billdetails.getGlcodeid().longValue(), false))) {
-                final Double advancePaidSoFar = contractorAdvanceService.getTotalAdvancePaid(null,
-                        workOrderEstimate.getId(),
-                        ContractorAdvanceRequisitionStatus.APPROVED.toString());
-                final Double advanceAdjustedSoFar = contractorBillRegisterService.getAdvanceAdjustedSoFar(
-                        workOrderEstimate.getId(),
-                        contractorBillRegister.getId(), contractorAdvanceAccountCodes);
-                if (billdetails.getCreditamount().compareTo(BigDecimal.valueOf(advancePaidSoFar)) == 1)
-                    resultBinder.reject("error.advance.greater.paid", "error.advance.greater.paid");
-                if (billdetails.getCreditamount().compareTo(contractorBillRegister.getBillamount()) == 1)
-                    resultBinder.reject("error.advance.greater.billamount", "error.advance.greater.billamount");
-                if (billdetails.getCreditamount().add(BigDecimal.valueOf(advanceAdjustedSoFar))
-                        .compareTo(BigDecimal.valueOf(advancePaidSoFar)) == 1)
-                    resultBinder.reject("error.adjusted.greater.paid", "error.adjusted.greater.paid");
-                if (contractorBillRegister.getBilltype().equalsIgnoreCase(WorksConstants.FINAL_BILL) && advancePaidSoFar > 0
-                        && advanceAdjustedSoFar == 0)
-                    resultBinder.reject("error.finalbill.adjusted.zero", new String[] { advancePaidSoFar.toString() },
-                            "error.finalbill.adjusted.zero");
-                if (contractorBillRegister.getBilltype().equalsIgnoreCase(WorksConstants.FINAL_BILL) && advancePaidSoFar > 0
-                        && billdetails.getCreditamount().add(BigDecimal.valueOf(advanceAdjustedSoFar))
-                                .compareTo(BigDecimal.valueOf(advancePaidSoFar)) != 0) {
-                    final Double balance = advancePaidSoFar - advanceAdjustedSoFar;
-                    resultBinder.reject("error.finalbill.adjust.remaining",
-                            new String[] { advancePaidSoFar.toString(), advanceAdjustedSoFar.toString(), balance.toString() },
-                            "error.finalbill.adjust.remaining");
-                }
-            }
+        validateContractorAdvanceDetails(contractorBillRegister, workOrderEstimate, resultBinder);
     }
 
     private void setDropDownValues(final Model model) {

@@ -107,7 +107,7 @@ public interface ContractorBillRegisterRepository extends JpaRepository<Contract
             @Param("glCodeId") final BigDecimal glCodeId, @Param("status") final String status,
             @Param("contractorBillId") final Long contractorBillId);
 
-    @Query("select sum(cbr.billamount) from ContractorBillRegister as cbr where cbr.workOrderEstimate.id = :workOrderEstimateId and upper(cbr.billstatus) != :status and cbr.billtype = :billtype")
+    @Query("select COALESCE(sum(cbr.billamount),0) from ContractorBillRegister as cbr where cbr.workOrderEstimate.id = :workOrderEstimateId and upper(cbr.billstatus) != :status and cbr.billtype = :billtype")
     Double findSumOfBillAmountByWorkOrderEstimateAndStatusAndBilltype(
             @Param("workOrderEstimateId") final Long workOrderEstimateId, @Param("status") final String status,
             @Param("billtype") final String billtype);
@@ -115,4 +115,8 @@ public interface ContractorBillRegisterRepository extends JpaRepository<Contract
     @Query("select COALESCE(sum(billdetail.creditamount),0) from EgBilldetails billdetail where billdetail.egBillregister.billstatus != :billStatus and billdetail.glcodeid in :coaIds and exists (select cbr from ContractorBillRegister cbr where billdetail.egBillregister.id = cbr.id and cbr.workOrderEstimate.id =:woeId and cbr.billstatus != :billStatus) and (billdetail.egBillregister.createdDate < (select createdDate from ContractorBillRegister where id = :contractorBillId) or (select count(*) from ContractorBillRegister where id = :contractorBillId) = 0 )")
     Double getAdvanceAdjustedSoFar(@Param("woeId") final Long woeId, @Param("contractorBillId") final Long contractorBillId,
             @Param("coaIds") final List<BigDecimal> coaIds, @Param("billStatus") final String billStatus);
+
+    @Query("select COALESCE(sum(billdetail.creditamount),0) from EgBilldetails billdetail where billdetail.egBillregister.billstatus != :billStatus and billdetail.glcodeid in :coaIds and exists (select cbr from ContractorBillRegister cbr where billdetail.egBillregister.id = cbr.id and cbr.workOrderEstimate.id =:woeId and cbr.billstatus != :billStatus)")
+    Double getTotalAdvanceAdjusted(@Param("woeId") final Long woeId, @Param("coaIds") final List<BigDecimal> coaIds,
+            @Param("billStatus") final String billStatus);
 }
