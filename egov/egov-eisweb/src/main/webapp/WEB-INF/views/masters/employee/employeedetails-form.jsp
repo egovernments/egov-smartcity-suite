@@ -121,7 +121,6 @@
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin view-content">
 							<div class="input-group">
-								<span class="input-group-addon">+91</span>
 								<form:input type="text" path="altContactNumber" id="altcontact"
 									cssClass="form-control" data-inputmask="'mask': '9999999999'"
 									maxlength="10" placeholder="Mobile Number" />

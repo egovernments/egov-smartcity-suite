@@ -83,9 +83,7 @@ function goToView(obj) {
 	if(mode=="update")
 		url = "/eis/employee/update/";
 	else if (mode=="updatecontact")
-		url = "/eis/employee/updatecontact/";
-	jQuery('input[name=' + jQuery(obj).data('hiddenele') + ']')
-	.val(jQuery(obj).data('eleval'));   
+		url = "/eis/employee/updatecontact/"; 
 	window.open(url+jQuery(obj).data('eleval'), '', 'scrollbars=yes,width=1000,height=700,status=yes');
 } 
 

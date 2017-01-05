@@ -42,8 +42,7 @@ $(document).ready(function()
 {
 	$("#submit").click(function () {
 		var mobileno = $("#mobileNumber").val();
-		var altcontact = $("#altcontact").val();
-		if (mobileno.charAt(0)=="0" || (altcontact!="" && altcontact.charAt(0)=="0")){
+		if (mobileno.charAt(0)=="0"){
 			bootbox.alert("Mobile Number should not start with 0");
 			return false;
 		}
