@@ -39,6 +39,19 @@
  */
 package org.egov.works.web.controller.contractorbill;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -69,18 +82,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @Controller
 @RequestMapping(value = "/contractorbill")
 public class ContractorBillPDFController {
@@ -104,9 +105,6 @@ public class ContractorBillPDFController {
     private MBHeaderService mbHeaderService;
 
     public static final String CONTRACTORBILLPDF = "ContractorBillPDF";
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
 
     @Autowired
     @Qualifier("fileStoreService")
@@ -114,23 +112,23 @@ public class ContractorBillPDFController {
 
     @RequestMapping(value = "/contractorbillPDF/{contractorBillId}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateContractorBillPDF(final HttpServletRequest request,
-            @PathVariable("contractorBillId") final Long id,
-            final HttpSession session) throws IOException {
+            @PathVariable("contractorBillId") final Long id, final HttpSession session) throws IOException {
         final ContractorBillRegister contractorBillRegister = contractorBillRegisterService.getContractorBillById(id);
         return generateReport(contractorBillRegister, request, session);
     }
 
     private ResponseEntity<byte[]> generateReport(final ContractorBillRegister contractorBillRegister,
-            final HttpServletRequest request,
-            final HttpSession session) {
+            final HttpServletRequest request, final HttpSession session) {
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput = null;
         if (contractorBillRegister != null) {
 
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
             new DecimalFormat("#.##");
             final LineEstimateDetails lineEstimateDetails = lineEstimateService
-                    .findByEstimateNumber(contractorBillRegister.getWorkOrder()
-                            .getEstimateNumber());
+                    .findByEstimateNumber(contractorBillRegister.getWorkOrder().getEstimateNumber());
 
             final String url = WebUtils.extractRequestDomainURL(request, false);
 
@@ -157,10 +155,13 @@ public class ContractorBillPDFController {
             reportParams.put("department", lineEstimateDetails.getLineEstimate().getExecutingDepartment().getName());
             reportParams.put("reportRunDate", sdf.format(new Date()));
             reportParams.put("creatorName", contractorBillRegister.getCreatedBy().getName());
-            reportParams.put("creatorDesignation", worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy()));
-            reportParams.put("approverDesignation", worksUtils.getUserDesignation(contractorBillRegister.getApprovedBy()));
+            reportParams.put("creatorDesignation",
+                    worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy()));
+            reportParams.put("approverDesignation",
+                    worksUtils.getUserDesignation(contractorBillRegister.getApprovedBy()));
             reportParams.put("approverName", contractorBillRegister.getApprovedBy().getName());
-            final List<MBHeader> mbHeaders = mbHeaderService.getApprovedMBHeadersByContractorBill(contractorBillRegister);
+            final List<MBHeader> mbHeaders = mbHeaderService
+                    .getApprovedMBHeadersByContractorBill(contractorBillRegister);
             reportParams.put("mbRefNo", mbHeaders != null && !mbHeaders.isEmpty() ? mbHeaders.get(0).getMbRefNo() : "");
 
             reportInput = new ReportRequest(CONTRACTORBILLPDF, getBillDetailsMap(contractorBillRegister, reportParams),
@@ -187,7 +188,8 @@ public class ContractorBillPDFController {
         for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes()) {
             if (egBilldetails.getDebitamount() != null) {
                 billDetails = new HashMap<String, Object>();
-                final CChartOfAccounts coa = chartOfAccountsHibernateDAO.findById(egBilldetails.getGlcodeid().longValue(), false);
+                final CChartOfAccounts coa = chartOfAccountsHibernateDAO
+                        .findById(egBilldetails.getGlcodeid().longValue(), false);
                 billDetails.put("glcodeId", coa.getId());
                 billDetails.put("glcode", coa.getGlcode());
                 billDetails.put("accountHead", coa.getName());
@@ -197,7 +199,8 @@ public class ContractorBillPDFController {
                 billDetails.put("isNetPayable", false);
             } else if (egBilldetails.getCreditamount() != null) {
                 billDetails = new HashMap<String, Object>();
-                final CChartOfAccounts coa = chartOfAccountsHibernateDAO.findById(egBilldetails.getGlcodeid().longValue(), false);
+                final CChartOfAccounts coa = chartOfAccountsHibernateDAO
+                        .findById(egBilldetails.getGlcodeid().longValue(), false);
                 billDetails.put("glcodeId", coa.getId());
                 billDetails.put("glcode", coa.getGlcode());
                 billDetails.put("accountHead", coa.getName());

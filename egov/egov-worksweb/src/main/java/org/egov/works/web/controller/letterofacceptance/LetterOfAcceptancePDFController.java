@@ -39,6 +39,16 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -62,15 +72,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
-
 @Controller
 @RequestMapping(value = "/letterofacceptance")
 public class LetterOfAcceptancePDFController {
@@ -88,9 +89,6 @@ public class LetterOfAcceptancePDFController {
     private LetterOfAcceptanceService letterOfAcceptanceService;
 
     public static final String LETTEROFACCEPTANCEPDF = "letterOfAcceptancePDF";
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
 
     @Autowired
     @Qualifier("fileStoreService")
@@ -98,42 +96,43 @@ public class LetterOfAcceptancePDFController {
 
     @RequestMapping(value = "/letterOfAcceptancePDF/{letterOfAcceptanceId}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateLineEstimatePDF(final HttpServletRequest request,
-            @PathVariable("letterOfAcceptanceId") final Long id,
-            final HttpSession session) throws IOException {
+            @PathVariable("letterOfAcceptanceId") final Long id, final HttpSession session) throws IOException {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(id);
         return generateReport(workOrder, request, session);
     }
 
     private ResponseEntity<byte[]> generateReport(final WorkOrder workOrder, final HttpServletRequest request,
             final HttpSession session) {
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput = null;
         if (workOrder != null) {
 
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final DecimalFormat df = new DecimalFormat("0.00");
-            final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder
-                    .getEstimateNumber());
+            final LineEstimateDetails lineEstimateDetails = lineEstimateService
+                    .findByEstimateNumber(workOrder.getEstimateNumber());
 
             final String url = WebUtils.extractRequestDomainURL(request, false);
-            reportParams
-                    .put("cityLogo",
-                            url.concat(ReportConstants.IMAGE_CONTEXT_PATH).concat(
-                                    (String) request.getSession().getAttribute("citylogo")));
+            reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
+                    .concat((String) request.getSession().getAttribute("citylogo")));
 
             final String cityName = (String) request.getSession().getAttribute("citymunicipalityname");
             reportParams.put("cityName", cityName);
-            reportParams.put("workOrderNumber", workOrder.getWorkOrderNumber() != null ? workOrder.getWorkOrderNumber() : "");
+            reportParams.put("workOrderNumber",
+                    workOrder.getWorkOrderNumber() != null ? workOrder.getWorkOrderNumber() : "");
             reportParams.put("workOrderDate",
                     workOrder.getWorkOrderDate() != null ? formatter.format(workOrder.getWorkOrderDate()) : "");
-            reportParams.put("contractorName", workOrder.getContractor().getName() != null ? workOrder.getContractor().getName()
-                    : "");
-            reportParams.put("contractorAddress", workOrder.getContractor().getBankaccount() != null ? workOrder.getContractor()
-                    .getCorrespondenceAddress() : "");
-            reportParams.put("panNo", workOrder.getContractor().getPanNumber() != null ? workOrder.getContractor().getPanNumber()
-                    : "");
-            reportParams.put("bank", workOrder.getContractor().getBank() != null ? workOrder.getContractor().getBank().getName()
-                    : "");
-            reportParams.put("accountNo", workOrder.getContractor().getBankaccount() != null ? workOrder.getContractor()
-                    .getBankaccount() : "");
+            reportParams.put("contractorName",
+                    workOrder.getContractor().getName() != null ? workOrder.getContractor().getName() : "");
+            reportParams.put("contractorAddress", workOrder.getContractor().getBankaccount() != null
+                    ? workOrder.getContractor().getCorrespondenceAddress() : "");
+            reportParams.put("panNo",
+                    workOrder.getContractor().getPanNumber() != null ? workOrder.getContractor().getPanNumber() : "");
+            reportParams.put("bank",
+                    workOrder.getContractor().getBank() != null ? workOrder.getContractor().getBank().getName() : "");
+            reportParams.put("accountNo", workOrder.getContractor().getBankaccount() != null
+                    ? workOrder.getContractor().getBankaccount() : "");
             reportParams.put("subject", lineEstimateDetails.getNameOfWork());
             reportParams.put("modeOfAllotment", lineEstimateDetails.getLineEstimate().getModeOfAllotment());
             reportParams.put("agreementAmount", df.format(workOrder.getWorkOrderAmount()));
@@ -144,9 +143,13 @@ public class LetterOfAcceptancePDFController {
                     lineEstimateDetails.getActualEstimateAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
             reportParams.put("headOfAccount", lineEstimateDetails.getLineEstimate().getBudgetHead().getName());
             reportParams.put("ward", lineEstimateDetails.getLineEstimate().getWard().getName());
-
-            final String technicalSanctionByDesignation = worksUtils.getUserDesignation(lineEstimateDetails.getLineEstimate()
-                    .getTechnicalSanctionBy());
+            String technicalSanctionByDesignation;
+            if (lineEstimateDetails.getLineEstimate().getTechnicalSanctionBy() != null)
+                technicalSanctionByDesignation = worksUtils
+                        .getUserDesignation(lineEstimateDetails.getLineEstimate().getTechnicalSanctionBy());
+            else
+                technicalSanctionByDesignation = worksUtils
+                        .getUserDesignation(lineEstimateDetails.getLineEstimate().getCreatedBy());
             reportParams.put("technicalSanctionByDesignation", technicalSanctionByDesignation);
 
             reportInput = new ReportRequest(LETTEROFACCEPTANCEPDF, workOrder.getContractor(), reportParams);

@@ -39,6 +39,18 @@
  */
 package org.egov.works.web.controller.reports;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
@@ -46,10 +58,10 @@ import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.services.budget.BudgetGroupService;
 import org.egov.works.models.estimate.BudgetFolioDetail;
@@ -68,18 +80,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @Controller
 @RequestMapping(value = "/reports/estimateappropriationregister")
 public class EstimateAppropriationRegisterPDFController {
@@ -92,13 +92,13 @@ public class EstimateAppropriationRegisterPDFController {
 
     @Autowired
     private DepartmentService departmentService;
-    
+
     @Autowired
     private FundHibernateDAO fundHibernateDAO;
 
     @Autowired
     private FunctionHibernateDAO functionHibernateDAO;
-    
+
     @Autowired
     private BudgetDetailsDAO budgetDetailsDAO;
 
@@ -107,14 +107,11 @@ public class EstimateAppropriationRegisterPDFController {
 
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
-    
+
     @Autowired
     private BudgetGroupService budgetGroupService;
 
     public static final String BUDGETFOLIOPDF = "BudgetFolio";
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
 
     @Autowired
     @Qualifier("fileStoreService")
@@ -122,14 +119,10 @@ public class EstimateAppropriationRegisterPDFController {
 
     @RequestMapping(value = "/pdf", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateAppropriationRegisterPDF(final HttpServletRequest request,
-            @RequestParam("departments") final Long department,
-            @RequestParam("financialYear") final Long financialYear,
-            @RequestParam("asOnDate") final Date asOnDate,
-            @RequestParam("fund") final Long fund,
-            @RequestParam("functionName") final Long function,
-            @RequestParam("budgetHead") final Long budgetHead,
-            @RequestParam("contentType") final String contentType,
-            final HttpSession session) throws IOException {
+            @RequestParam("departments") final Long department, @RequestParam("financialYear") final Long financialYear,
+            @RequestParam("asOnDate") final Date asOnDate, @RequestParam("fund") final Long fund,
+            @RequestParam("functionName") final Long function, @RequestParam("budgetHead") final Long budgetHead,
+            @RequestParam("contentType") final String contentType, final HttpSession session) throws IOException {
         final EstimateAppropriationRegisterSearchRequest searchRequest = new EstimateAppropriationRegisterSearchRequest();
         searchRequest.setAsOnDate(asOnDate);
         searchRequest.setBudgetHead(budgetHead);
@@ -137,33 +130,35 @@ public class EstimateAppropriationRegisterPDFController {
         searchRequest.setFinancialYear(financialYear);
         searchRequest.setFunction(function);
         searchRequest.setFund(fund);
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
 
-        Map<String, Object> queryParamMap = new HashMap<String, Object>();
+        final Map<String, Object> queryParamMap = new HashMap<String, Object>();
         BigDecimal totalGrant = BigDecimal.ZERO;
         BigDecimal totalGrantPerc = BigDecimal.ZERO;
         BigDecimal planningBudgetPerc = new BigDecimal(0);
-        
-        if(searchRequest != null && searchRequest.getFund() != null)
+
+        if (searchRequest != null && searchRequest.getFund() != null)
             queryParamMap.put("fundid", searchRequest.getFund().intValue());
-        if(searchRequest != null && searchRequest.getFunction() != null)
+        if (searchRequest != null && searchRequest.getFunction() != null)
             queryParamMap.put("functionid", searchRequest.getFunction());
-        if(searchRequest != null && searchRequest.getBudgetHead() != null){        
+        if (searchRequest != null && searchRequest.getBudgetHead() != null) {
             final List<BudgetGroup> budgetheadid = new ArrayList<BudgetGroup>();
-            BudgetGroup budgetGroup = budgetGroupService.findById(searchRequest.getBudgetHead(), true);
+            final BudgetGroup budgetGroup = budgetGroupService.findById(searchRequest.getBudgetHead(), true);
             budgetheadid.add(budgetGroup);
             queryParamMap.put("budgetheadid", budgetheadid);
         }
-        if(searchRequest != null && searchRequest.getDepartment() != null)
+        if (searchRequest != null && searchRequest.getDepartment() != null)
             queryParamMap.put("deptid", searchRequest.getDepartment());
-        if(searchRequest != null && searchRequest.getFinancialYear() != null)
+        if (searchRequest != null && searchRequest.getFinancialYear() != null)
             queryParamMap.put("financialyearid", searchRequest.getFinancialYear());
-        if(searchRequest != null && searchRequest.getAsOnDate() != null)
-        queryParamMap.put("fromDate", financialYearHibernateDAO.getFinancialYearById(searchRequest.getFinancialYear()).getStartingDate());
-            
+        if (searchRequest != null && searchRequest.getAsOnDate() != null)
+            queryParamMap.put("fromDate",
+                    financialYearHibernateDAO.getFinancialYearById(searchRequest.getFinancialYear()).getStartingDate());
+
         totalGrant = budgetDetailsDAO.getBudgetedAmtForYear(queryParamMap);
         queryParamMap.put("deptid", searchRequest.getDepartment().intValue());
         planningBudgetPerc = budgetDetailsDAO.getPlanningPercentForYear(queryParamMap);
-        
+
         if (planningBudgetPerc != null && !planningBudgetPerc.equals(0)) {
             totalGrantPerc = totalGrant.multiply(planningBudgetPerc.divide(new BigDecimal(100)));
             queryParamMap.put("totalGrantPerc", totalGrantPerc);
@@ -171,43 +166,45 @@ public class EstimateAppropriationRegisterPDFController {
         reportParams.put("totalGrant", totalGrant);
         reportParams.put("planningBudgetPerc", planningBudgetPerc);
         reportParams.put("totalGrantPerc", totalGrantPerc);
-        
+
         reportParams.put("department", departmentService.getDepartmentById(department).getName());
         reportParams.put("function", functionHibernateDAO.getFunctionById(function).getName());
         reportParams.put("functionCode", functionHibernateDAO.getFunctionById(function).getCode());
         reportParams.put("budgetHead", budgetGroupDAO.getBudgetHeadById(budgetHead).getName());
-        reportParams.put("fund", fundHibernateDAO.fundById(fund.intValue(),true).getName());
-        
+        reportParams.put("fund", fundHibernateDAO.fundById(fund.intValue(), true).getName());
+
         final Map<String, List> approvedBudgetFolioDetailsMap = estimateAppropriationRegisterService
                 .searchEstimateAppropriationRegister(searchRequest);
-        
-        List<BudgetFolioDetail> approvedBudgetFolioDetails = approvedBudgetFolioDetailsMap.get("budgetFolioList");
 
-        List calculatedValuesList = approvedBudgetFolioDetailsMap.get("calculatedValues");
-        Double latestCumulative = (Double) calculatedValuesList.get(0);
-        BigDecimal latestBalance = (BigDecimal) calculatedValuesList.get(1);
-        
-        for(BudgetFolioDetail bfd : approvedBudgetFolioDetails) {
+        final List<BudgetFolioDetail> approvedBudgetFolioDetails = approvedBudgetFolioDetailsMap.get("budgetFolioList");
+
+        final List calculatedValuesList = approvedBudgetFolioDetailsMap.get("calculatedValues");
+        final Double latestCumulative = (Double) calculatedValuesList.get(0);
+        final BigDecimal latestBalance = (BigDecimal) calculatedValuesList.get(1);
+
+        for (final BudgetFolioDetail bfd : approvedBudgetFolioDetails) {
             bfd.setCumulativeExpensesIncurred(latestCumulative);
             bfd.setActualBalanceAvailable(latestBalance.doubleValue());
         }
-        return generateReport(approvedBudgetFolioDetails, request, session, contentType);
+        return generateReport(approvedBudgetFolioDetails, request, session, contentType, reportParams);
 
     }
 
     private ResponseEntity<byte[]> generateReport(final List<BudgetFolioDetail> budgetFolioDetails,
-            final HttpServletRequest request, final HttpSession session, final String contentType) {
+            final HttpServletRequest request, final HttpSession session, final String contentType,
+            final Map<String, Object> reportParams) {
 
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
-     
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput = null;
         reportParams.put("heading", WorksConstants.HEADING_ESTIMATE_APPROPRIATION_REGISTER_REPORT);
         reportParams.put("reportRunDate", formatter.format(new Date()));
 
         reportInput = new ReportRequest(BUDGETFOLIOPDF, budgetFolioDetails, reportParams);
-        
+
         reportParams.put("latestBalanceAvailable", budgetFolioDetails.get(0).getActualBalanceAvailable());
         reportParams.put("cumulativeExpensesIncurred", budgetFolioDetails.get(0).getCumulativeExpensesIncurred());
-        
+
         final HttpHeaders headers = new HttpHeaders();
         if (contentType.equalsIgnoreCase("pdf")) {
             reportInput.setReportFormat(FileFormat.PDF);
