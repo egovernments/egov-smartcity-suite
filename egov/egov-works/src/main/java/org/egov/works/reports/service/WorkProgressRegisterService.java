@@ -929,7 +929,8 @@ public class WorkProgressRegisterService {
             final ContractorWiseAbstractReport contractorWiseAbstractReport) {
         final StringBuilder query = new StringBuilder();
         final StringBuilder groupByFilter = new StringBuilder();
-        groupByFilter.append(" GROUP BY details.boundaryNum ,details.contractorName ,details.contractorCode");
+        groupByFilter.append(
+                " GROUP BY boundarytype.name, boundary.name,details.boundaryNum ,details.contractorName ,details.contractorCode");
         if (StringUtils.isBlank(contractorWiseAbstractReport.getContractor())) {
             query.append(" SELECT array_agg(electionWard) AS electionWard,contractorName,contractorCode,");
             query.append(" SUM(approvedEstimates)                 AS approvedEstimates ,  ");
@@ -952,7 +953,7 @@ public class WorkProgressRegisterService {
         }
         final StringBuilder selectQuery = new StringBuilder();
         selectQuery.append(
-                "SELECT details.boundaryNum AS electionWard,details.contractorName as contractorName,details.contractorCode as contractorCode,");
+                "SELECT (CASE WHEN upper(boundarytype.name) = 'CITY' THEN boundary.name ELSE CAST(details.boundaryNum AS CHAR) END ) AS electionWard,details.contractorName as contractorName,details.contractorCode as contractorCode,");
         query.append(" SELECT electionWard,contractorName,contractorCode,");
         query.append(" SUM(approvedEstimates)                 AS approvedEstimates ,  ");
         query.append(" SUM(approvedAmount)                    AS approvedAmount ,  ");
@@ -988,9 +989,9 @@ public class WorkProgressRegisterService {
         query.append("0                                             AS balanceWorkAmount, ");
         query.append("0                                             AS liableAmount ");
         query.append(
-                " FROM egw_mv_work_progress_register details left join egw_contractor_detail cd on cd.contractor_id = details.contractor ");
+                " FROM egw_mv_work_progress_register details left join egw_contractor_detail cd on cd.contractor_id = details.contractor left join eg_boundary boundary on details.ward = boundary.id left join eg_boundary_type boundarytype on boundary.boundaryType = boundarytype.id ");
         query.append(" WHERE  details.woStatusCode = '" + WorksConstants.APPROVED + "' ");
-        query.append(commonFilterConditions.toString());
+        query.append(commonFilterConditions);
         query.append(groupByFilter.toString());
         query.append(" UNION ");
         query.append(selectQuery.toString());
@@ -1010,11 +1011,11 @@ public class WorkProgressRegisterService {
         query.append("0                                                 AS balanceWorkAmount, ");
         query.append("0                                                 AS liableAmount ");
         query.append(
-                " FROM egw_mv_work_progress_register details left join egw_contractor_detail cd on cd.contractor_id = details.contractor ");
+                " FROM egw_mv_work_progress_register details left join egw_contractor_detail cd on cd.contractor_id = details.contractor left join eg_boundary boundary on details.ward = boundary.id left join eg_boundary_type boundarytype on boundary.boundaryType = boundarytype.id ");
         query.append(" WHERE details.woStatusCode = '" + WorksConstants.APPROVED + "' ");
         query.append(" AND details.woOfflineStatusCode not in ('" + OfflineStatuses.SITE_HANDED_OVER.toString().toUpperCase()
                 + "','" + OfflineStatuses.WORK_COMMENCED.toString().toUpperCase() + "') ");
-        query.append(commonFilterConditions.toString());
+        query.append(commonFilterConditions);
         query.append(groupByFilter.toString());
         query.append(" UNION ");
         query.append(selectQuery.toString());
@@ -1034,10 +1035,10 @@ public class WorkProgressRegisterService {
         query.append("0                                                 AS balanceWorkAmount, ");
         query.append("0                                                 AS liableAmount ");
         query.append(
-                " FROM egw_mv_work_progress_register details left join egw_contractor_detail cd on cd.contractor_id = details.contractor ");
+                " FROM egw_mv_work_progress_register details left join egw_contractor_detail cd on cd.contractor_id = details.contractor left join eg_boundary boundary on details.ward = boundary.id left join eg_boundary_type boundarytype on boundary.boundaryType = boundarytype.id ");
         query.append(" WHERE details.woStatusCode = '" + WorksConstants.APPROVED + "' ");
         query.append(" AND details.woOfflineStatusCode = '" + OfflineStatuses.SITE_HANDED_OVER.toString().toUpperCase() + "' ");
-        query.append(commonFilterConditions.toString());
+        query.append(commonFilterConditions);
         query.append(groupByFilter.toString());
         query.append(" UNION ");
         query.append(selectQuery.toString());
@@ -1057,12 +1058,12 @@ public class WorkProgressRegisterService {
         query.append("0                                                 AS balanceWorkAmount, ");
         query.append("0                                                 AS liableAmount ");
         query.append(
-                " FROM egw_mv_work_progress_register details left join egw_contractor_detail cd on cd.contractor_id = details.contractor ");
+                " FROM egw_mv_work_progress_register details left join egw_contractor_detail cd on cd.contractor_id = details.contractor left join eg_boundary boundary on details.ward = boundary.id left join eg_boundary_type boundarytype on boundary.boundaryType = boundarytype.id ");
         query.append(" WHERE details.woStatusCode = '" + WorksConstants.APPROVED + "' ");
         query.append(" AND details.woOfflineStatusCode ='" + OfflineStatuses.WORK_COMMENCED.toString().toUpperCase() + "' ");
         query.append(" AND (details.billtype is NULL OR details.billtype != '" + WorksConstants.FINAL_BILL + "' )");
         query.append(" AND details.boqexists = 't' ");
-        query.append(commonFilterConditions.toString());
+        query.append(commonFilterConditions);
         query.append(groupByFilter.toString());
         query.append(" UNION ");
         query.append(selectQuery.toString());
@@ -1082,12 +1083,12 @@ public class WorkProgressRegisterService {
         query.append("0                                                 AS balanceWorkAmount, ");
         query.append("0                                                 AS liableAmount ");
         query.append(
-                " FROM egw_mv_work_progress_register details left join egw_contractor_detail cd on cd.contractor_id = details.contractor ");
+                " FROM egw_mv_work_progress_register details left join egw_contractor_detail cd on cd.contractor_id = details.contractor left join eg_boundary boundary on details.ward = boundary.id left join eg_boundary_type boundarytype on boundary.boundaryType = boundarytype.id ");
         query.append(" WHERE details.woStatusCode = '" + WorksConstants.APPROVED + "' ");
         query.append(" AND details.billtype != '" + WorksConstants.FINAL_BILL + "' AND details.workstatus = '"
                 + WorkStatus.In_Progress.toString() + "' ");
         query.append(" AND details.boqexists = 'f' ");
-        query.append(commonFilterConditions.toString());
+        query.append(commonFilterConditions);
         query.append(groupByFilter.toString());
         query.append(" UNION ");
         query.append(selectQuery.toString());
@@ -1107,10 +1108,10 @@ public class WorkProgressRegisterService {
         query.append("0                                                 AS balanceWorkAmount, ");
         query.append("0                                                 AS liableAmount ");
         query.append(
-                " FROM egw_mv_work_progress_register details left join egw_contractor_detail cd on cd.contractor_id = details.contractor ");
+                " FROM egw_mv_work_progress_register details left join egw_contractor_detail cd on cd.contractor_id = details.contractor left join eg_boundary boundary on details.ward = boundary.id left join eg_boundary_type boundarytype on boundary.boundaryType = boundarytype.id ");
         query.append(" WHERE details.woStatusCode = '" + WorksConstants.APPROVED + "' ");
         query.append(" AND details.billtype = '" + WorksConstants.FINAL_BILL + "' ");
-        query.append(commonFilterConditions.toString());
+        query.append(commonFilterConditions);
         query.append(groupByFilter.toString());
         query.append(" UNION ");
         query.append(selectQuery.toString());
@@ -1130,11 +1131,11 @@ public class WorkProgressRegisterService {
         query.append("0                                                 AS balanceWorkAmount, ");
         query.append("sum(details.totalbillamount)                      AS liableAmount ");
         query.append(
-                " FROM egw_mv_work_progress_register details left join egw_contractor_detail cd on cd.contractor_id = details.contractor ");
+                " FROM egw_mv_work_progress_register details left join egw_contractor_detail cd on cd.contractor_id = details.contractor left join eg_boundary boundary on details.ward = boundary.id left join eg_boundary_type boundarytype on boundary.boundaryType = boundarytype.id ");
         query.append(" WHERE details.woStatusCode = '" + WorksConstants.APPROVED + "' ");
         query.append(" AND details.woOfflineStatusCode ='" + OfflineStatuses.WORK_COMMENCED.toString().toUpperCase() + "' ");
         query.append(" AND details.billtype != '" + WorksConstants.FINAL_BILL + "' ");
-        query.append(commonFilterConditions.toString());
+        query.append(commonFilterConditions);
         query.append(groupByFilter.toString());
         query.append(" ) final ");
         query.append(" GROUP BY electionWard,contractorName,contractorCode ");

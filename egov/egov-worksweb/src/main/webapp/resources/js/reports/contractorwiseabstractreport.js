@@ -99,7 +99,7 @@ $(document).ready(function(){
             filter: function (data) {
                 return $.map(data, function (ct) {
                     return {
-                        name: '' + ct.boundaryNum + '',
+                    	name: ct.boundaryType.name.toUpperCase() == 'CITY' ? ct.name : ct.boundaryNum + '' ,
                         value: ct.id
                     };
                 });
