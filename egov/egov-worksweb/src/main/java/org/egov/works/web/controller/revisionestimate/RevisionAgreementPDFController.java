@@ -166,6 +166,12 @@ public class RevisionAgreementPDFController {
             reportParams.put("LumpSumActivities", revisionEstimate.getLumpSumActivities());
             revisionEstimateService.prepareChangeQuantityActivities(revisionEstimate);
             reportParams.put("changeQuatityActivities", revisionEstimate.getChangeQuantityActivities());
+            reportParams.put("nonTenderedActivitiesFlag",
+                    !revisionEstimate.getNonTenderedActivities().isEmpty() ? Boolean.FALSE : Boolean.TRUE);
+            reportParams.put("LumpSumActivitiesFlag",
+                    !revisionEstimate.getLumpSumActivities().isEmpty() ? Boolean.FALSE : Boolean.TRUE);
+            reportParams.put("changeQuatityActivitiesFlag",
+                    !revisionEstimate.getChangeQuantityActivities().isEmpty() ? Boolean.FALSE : Boolean.TRUE);
             double tenderAmount = 0;
             double nonTenderAmount = 0;
             double approvedAmount = 0;

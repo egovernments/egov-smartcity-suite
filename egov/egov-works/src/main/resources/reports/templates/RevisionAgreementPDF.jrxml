@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-12-06T13:23:55 -->
+<!-- 2017-01-05T17:40:35 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RevisionAgreementPDF" pageWidth="920" pageHeight="600" orientation="Landscape" columnWidth="880" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" isSummaryWithPageHeaderAndFooter="true" uuid="b859b601-587a-4825-b964-d9bb5328ed8e">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -84,6 +84,9 @@
 	<parameter name="changeQtyTenderAmount" class="java.lang.Double"/>
 	<parameter name="changeQtyNonTenderAmount" class="java.lang.Double"/>
 	<parameter name="workValue" class="java.lang.String"/>
+	<parameter name="nonTenderedActivitiesFlag" class="java.lang.Boolean"/>
+	<parameter name="LumpSumActivitiesFlag" class="java.lang.Boolean"/>
+	<parameter name="changeQuatityActivitiesFlag" class="java.lang.Boolean"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -366,6 +369,7 @@
 			<subreport>
 				<reportElement positionType="Float" x="22" y="0" width="506" height="20" uuid="d118533d-c4ca-43f3-aaca-299d3618d00e">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<printWhenExpression><![CDATA[$P{nonTenderedActivitiesFlag} != true]]></printWhenExpression>
 				</reportElement>
 				<subreportParameter name="tenderFinalizedPercentage">
 					<subreportParameterExpression><![CDATA[$P{tenderFinalizedPercentage}]]></subreportParameterExpression>
@@ -379,6 +383,7 @@
 			<subreport>
 				<reportElement positionType="Float" x="22" y="22" width="506" height="20" uuid="9085214c-0163-4710-8d2f-3da0d5ed9b71">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<printWhenExpression><![CDATA[$P{LumpSumActivitiesFlag} != true]]></printWhenExpression>
 				</reportElement>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{LumpSumActivities},false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("RevisionAgreement_LumpSumActivities.jasper")]]></subreportExpression>
@@ -386,6 +391,7 @@
 			<subreport>
 				<reportElement positionType="Float" x="5" y="44" width="506" height="20" uuid="9a48332f-7595-4933-a2ec-a7d7efabd792">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<printWhenExpression><![CDATA[$P{changeQuatityActivitiesFlag} != true]]></printWhenExpression>
 				</reportElement>
 				<subreportParameter name="tenderFinalizedPercentage">
 					<subreportParameterExpression><![CDATA[$P{tenderFinalizedPercentage}]]></subreportParameterExpression>
