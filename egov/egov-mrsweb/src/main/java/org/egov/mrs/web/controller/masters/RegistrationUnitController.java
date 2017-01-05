@@ -67,125 +67,122 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/masters")
 public class RegistrationUnitController {
-	private final static String REGISTRATIONUNIT_CREATE = "registrationunit-create";
-	private final static String REGISTRATIONUNIT_RESULT = "registrationunit-result";
-	private final static String REGISTRATIONUNIT_EDIT = "registrationunit-edit";
-	private final static String REGISTRATIONUNIT_VIEW = "registrationunit-view";
-	private final static String REGISTRATIONUNIT_SEARCH = "registrationunit-search";
+    private static final String MARRIAGE_REGISTRATION_UNIT = "marriageRegistrationUnit";
+    private static final String REGISTRATIONUNIT_CREATE = "registrationunit-create";
+    private static final String REGISTRATIONUNIT_RESULT = "registrationunit-result";
+    private static final String REGISTRATIONUNIT_EDIT = "registrationunit-edit";
+    private static final String REGISTRATIONUNIT_VIEW = "registrationunit-view";
+    private static final String REGISTRATIONUNIT_SEARCH = "registrationunit-search";
 
-	@Autowired
-	private MessageSource messageSource;
+    @Autowired
+    private MessageSource messageSource;
 
-	@Autowired
-	private BoundaryService boundaryService;
+    @Autowired
+    private BoundaryService boundaryService;
 
-	@Autowired
-	private MarriageRegistrationUnitService marriageRegistrationUnitService;
+    @Autowired
+    private MarriageRegistrationUnitService marriageRegistrationUnitService;
 
-	private void prepareNewForm(Model model) {
-		model.addAttribute("zones", boundaryService
-				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
-						BOUNDARY_TYPE, REVENUE_HIERARCHY_TYPE));
-	}
+    private void prepareNewForm(Model model) {
+        model.addAttribute("zones", boundaryService
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                        BOUNDARY_TYPE, REVENUE_HIERARCHY_TYPE));
+    }
 
-	@RequestMapping(value = "/mrregistrationunit/new", method = RequestMethod.GET)
-	public String newForm(final Model model) {
-		prepareNewForm(model);
+    @RequestMapping(value = "/mrregistrationunit/new", method = RequestMethod.GET)
+    public String newForm(final Model model) {
+        prepareNewForm(model);
+        MarriageRegistrationUnit marriageRegistrationUnit = new MarriageRegistrationUnit();
+        marriageRegistrationUnit.setCode(RandomStringUtils.random(4,
+                Boolean.TRUE, Boolean.TRUE).toUpperCase());
+        model.addAttribute(MARRIAGE_REGISTRATION_UNIT, marriageRegistrationUnit);
+        return REGISTRATIONUNIT_CREATE;
+    }
 
-		MarriageRegistrationUnit marriageRegistrationUnit = new MarriageRegistrationUnit();
-		if (marriageRegistrationUnit != null
-				&& marriageRegistrationUnit.getCode() == null)
-			marriageRegistrationUnit.setCode(RandomStringUtils.random(4,
-					Boolean.TRUE, Boolean.TRUE).toUpperCase());
+    @RequestMapping(value = "/mrregistrationunit/create", method = RequestMethod.POST)
+    public String createRegistrationunit(
+            @Valid @ModelAttribute final MarriageRegistrationUnit marriageRegistrationUnit,
+            final BindingResult errors, final Model model,
+            final RedirectAttributes redirectAttrs) {
+        if (errors.hasErrors()) {
+            prepareNewForm(model);
+            return REGISTRATIONUNIT_CREATE;
+        }
+        marriageRegistrationUnitService
+        .createMrRegistrationUnit(marriageRegistrationUnit);
+        redirectAttrs.addFlashAttribute("message", messageSource.getMessage(
+                "msg.registrationunit.success", null, null));
+        return "redirect:/masters/mrregistrationunit/result/"
+        + marriageRegistrationUnit.getId();
+    }
 
-		model.addAttribute("marriageRegistrationUnit", marriageRegistrationUnit);
-		return REGISTRATIONUNIT_CREATE;
-	}
+    @RequestMapping(value = "/mrregistrationunit/result/{id}", method = RequestMethod.GET)
+    public String resultRegistrationunit(@PathVariable("id") final Long id,
+            Model model) {
+        model.addAttribute(MARRIAGE_REGISTRATION_UNIT,
+                marriageRegistrationUnitService.findById(id));
+        return REGISTRATIONUNIT_RESULT;
+    }
 
-	@RequestMapping(value = "/mrregistrationunit/create", method = RequestMethod.POST)
-	public String createRegistrationunit(
-			@Valid @ModelAttribute final MarriageRegistrationUnit marriageRegistrationUnit,
-			final BindingResult errors, final Model model,
-			final RedirectAttributes redirectAttrs) {
-		//TODO: CHECK UNIQUE VALUE
-		if (errors.hasErrors()) {
-			prepareNewForm(model);
-			return REGISTRATIONUNIT_CREATE;
-		}
-		marriageRegistrationUnitService
-				.createMrRegistrationUnit(marriageRegistrationUnit);
-		redirectAttrs.addFlashAttribute("message", messageSource.getMessage(
-				"msg.registrationunit.success", null, null));
-		return "redirect:/masters/mrregistrationunit/result/"
-				+ marriageRegistrationUnit.getId();
-	}
+    @RequestMapping(value = "/mrregistrationunit/search/{mode}", method = RequestMethod.GET)
+    public String searchRegistrationunit(
+            @PathVariable("mode") final String mode, Model model) {
+        MarriageRegistrationUnit marriageRegistrationUnit = new MarriageRegistrationUnit();
+        prepareNewForm(model);
+        model.addAttribute(MARRIAGE_REGISTRATION_UNIT, marriageRegistrationUnit);
+        return REGISTRATIONUNIT_SEARCH;
 
-	@RequestMapping(value = "/mrregistrationunit/result/{id}", method = RequestMethod.GET)
-	public String resultRegistrationunit(@PathVariable("id") final Long id,
-			Model model) {
-		model.addAttribute("marriageRegistrationUnit",
-				marriageRegistrationUnitService.findById(id));
-		return REGISTRATIONUNIT_RESULT;
-	}
+    }
 
-	@RequestMapping(value = "/mrregistrationunit/search/{mode}", method = RequestMethod.GET)
-	public String searchRegistrationunit(
-			@PathVariable("mode") final String mode, Model model) {
-		MarriageRegistrationUnit marriageRegistrationUnit = new MarriageRegistrationUnit();
-		prepareNewForm(model);
-		model.addAttribute("marriageRegistrationUnit", marriageRegistrationUnit);
-		return REGISTRATIONUNIT_SEARCH;
+    @RequestMapping(value = "/mrregistrationunit/view/{id}", method = RequestMethod.GET)
+    public String viewRegistrationunit(@PathVariable("id") final Long id,
+            Model model) {
+        MarriageRegistrationUnit marriageRegistrationUnit = marriageRegistrationUnitService
+                .findById(id);
+        prepareNewForm(model);
+        model.addAttribute(MARRIAGE_REGISTRATION_UNIT, marriageRegistrationUnit);
+        return REGISTRATIONUNIT_VIEW;
+    }
 
-	}
+    @RequestMapping(value = "/mrregistrationunit/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String ajaxsearchRegistrationunit(
+            @PathVariable("mode") final String mode,
+            Model model,
+            @ModelAttribute final MarriageRegistrationUnit marriageRegistrationUnit) {
+        List<MarriageRegistrationUnit> searchResultList = marriageRegistrationUnitService
+                .searchMarriageRegistrationUnit(marriageRegistrationUnit);
+        return new StringBuilder("{ \"data\":")
+                .append(toJSON(searchResultList,
+                        MarriageRegistrationUnit.class,
+                        MarriageRegistrationUnitJsonAdaptor.class))
+                .append("}")
+                .toString();
+    }
 
-	@RequestMapping(value = "/mrregistrationunit/view/{id}", method = RequestMethod.GET)
-	public String viewRegistrationunit(@PathVariable("id") final Long id,
-			Model model) {
-		MarriageRegistrationUnit marriageRegistrationUnit = marriageRegistrationUnitService
-				.findById(id);
-		prepareNewForm(model);
-		model.addAttribute("marriageRegistrationUnit", marriageRegistrationUnit);
-		return REGISTRATIONUNIT_VIEW;
-	}
+    @RequestMapping(value = "/mrregistrationunit/edit/{id}", method = RequestMethod.GET)
+    public String editRegistrationunit(@PathVariable("id") Long id,
+            final Model model) {
+        prepareNewForm(model);
+        model.addAttribute(MARRIAGE_REGISTRATION_UNIT,
+                marriageRegistrationUnitService.findById(id));
+        return REGISTRATIONUNIT_EDIT;
+    }
 
-	@RequestMapping(value = "/mrregistrationunit/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-	public @ResponseBody String ajaxsearchRegistrationunit(
-			@PathVariable("mode") final String mode,
-			Model model,
-			@ModelAttribute final MarriageRegistrationUnit marriageRegistrationUnit) {
-		List<MarriageRegistrationUnit> searchResultList = marriageRegistrationUnitService
-				.searchMarriageRegistrationUnit(marriageRegistrationUnit);
-		String result = new StringBuilder("{ \"data\":")
-				.append(toJSON(searchResultList,
-						MarriageRegistrationUnit.class,
-						MarriageRegistrationUnitJsonAdaptor.class)).append("}")
-				.toString();
-		return result;
-	}
+    @RequestMapping(value = "/mrregistrationunit/update", method = RequestMethod.POST)
+    public String updateRegistrationunit(
+            @Valid @ModelAttribute final MarriageRegistrationUnit marriageRegistrationUnit,
+            final BindingResult errors,
+            final RedirectAttributes redirectAttributes) {
+        if (errors.hasErrors()) {
+            return REGISTRATIONUNIT_EDIT;
+        }
+        marriageRegistrationUnitService
+        .updateMrRegistrationUnit(marriageRegistrationUnit);
+        redirectAttributes.addFlashAttribute("message", messageSource
+                .getMessage("msg.registrationunit.update.success", null, null));
+        return "redirect:/masters/mrregistrationunit/result/"
+        + marriageRegistrationUnit.getId();
+    }
 
-	@RequestMapping(value = "/mrregistrationunit/edit/{id}", method = RequestMethod.GET)
-	public String editRegistrationunit(@PathVariable("id") Long id,
-			final Model model) {
-		prepareNewForm(model);
-		model.addAttribute("marriageRegistrationUnit",
-				marriageRegistrationUnitService.findById(id));
-		return REGISTRATIONUNIT_EDIT;
-	}
-
-	@RequestMapping(value = "/mrregistrationunit/update", method = RequestMethod.POST)
-	public String updateRegistrationunit(
-			@Valid @ModelAttribute final MarriageRegistrationUnit marriageRegistrationUnit,
-			final BindingResult errors,
-			final RedirectAttributes redirectAttributes) {
-		if (errors.hasErrors()) {
-			return REGISTRATIONUNIT_EDIT;
-		}
-		marriageRegistrationUnitService
-				.updateMrRegistrationUnit(marriageRegistrationUnit);
-		redirectAttributes.addFlashAttribute("message", messageSource
-				.getMessage("msg.registrationunit.update.success", null, null));
-		return "redirect:/masters/mrregistrationunit/result/"
-				+ marriageRegistrationUnit.getId();
-	}
-	
 }

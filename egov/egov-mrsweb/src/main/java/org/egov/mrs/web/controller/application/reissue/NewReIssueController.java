@@ -80,65 +80,61 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/reissue")
 public class NewReIssueController extends GenericWorkFlowController {
 
+    private static final String APPROVAL_POSITION = "approvalPosition";
+    private static final String MESSAGE = "message";
+
     @Autowired
     private ReIssueService reIssueService;
-
     @Autowired
     private MarriageFeeService marriageFeeService;
-
     @Autowired
     private MarriageRegistrationService marriageRegistrationService;
-
     @Autowired
     private MarriageApplicantService marriageApplicantService;
-
     @Autowired
     private MarriageDocumentService marriageDocumentService;
-  
     @Autowired
     protected ResourceBundleMessageSource messageSource;
     @Autowired
     protected AppConfigValueService appConfigValuesService;
-    
     @Autowired
     private MarriageFormValidator marriageFormValidator;
-    
     @Autowired
     private MarriageRegistrationUnitService marriageRegistrationUnitService;
-    
-    
+
     public void prepareNewForm(final Model model, final ReIssue reIssue) {
-		model.addAttribute("marriageRegistrationUnit",
-				marriageRegistrationUnitService.getActiveRegistrationunit());
-		marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getHusband());
-		marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getWife());
-		MarriageFee marriageFee=marriageFeeService.getFeeForCriteria(MarriageConstants.REISSUE_FEECRITERIA);
-	        if(marriageFee!=null){
-	           reIssue.setFeeCriteria(marriageFee);
-	           reIssue.setFeePaid(marriageFee.getFees());
-	        } 
-		prepareWorkFlowForReIssue(reIssue, model);
-		model.addAttribute("reIssue", reIssue);
-		model.addAttribute("documents", marriageDocumentService.getIndividualDocuments());
-	}
-    
+        model.addAttribute("marriageRegistrationUnit",
+                marriageRegistrationUnitService.getActiveRegistrationunit());
+        marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getHusband());
+        marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getWife());
+        MarriageFee marriageFee = marriageFeeService.getFeeForCriteria(MarriageConstants.REISSUE_FEECRITERIA);
+        if (marriageFee != null) {
+            reIssue.setFeeCriteria(marriageFee);
+            reIssue.setFeePaid(marriageFee.getFees());
+        }
+        prepareWorkFlowForReIssue(reIssue, model);
+        model.addAttribute("reIssue", reIssue);
+        model.addAttribute("documents", marriageDocumentService.getIndividualDocuments());
+    }
+
     @RequestMapping(value = "/create/{registrationId}", method = RequestMethod.GET)
     public String showReIssueForm(@PathVariable final Long registrationId, final Model model) {
 
         final MarriageRegistration registration = marriageRegistrationService.get(registrationId);
         if (registration == null) {
-		model.addAttribute("message", "msg.invalid.request");
-		return "marriagecommon-error";
-	} // CHECK ANY RECORD ALREADY IN ISSUE CERTIFICATE WORKFLOW FOR THE SELECTED REGISTRATION.IF YES, DO NOT ALLOW THEM TO PROCESS THE
-			// REQUEST.
-	else if (reIssueService.checkAnyWorkFlowInProgressForRegistration(registration)) {
-		model.addAttribute("message", "msg.workflow.alreadyPresent");
-		return "marriagecommon-error";
-	}
+            model.addAttribute(MESSAGE, "msg.invalid.request");
+            return "marriagecommon-error";
+        } // CHECK ANY RECORD ALREADY IN ISSUE CERTIFICATE WORKFLOW FOR THE SELECTED REGISTRATION.IF YES, DO NOT ALLOW THEM TO
+        // PROCESS THE
+        // REQUEST.
+        else if (reIssueService.checkAnyWorkFlowInProgressForRegistration(registration)) {
+            model.addAttribute(MESSAGE, "msg.workflow.alreadyPresent");
+            return "marriagecommon-error";
+        }
         ReIssue reIssue = new ReIssue();
         reIssue.setRegistration(registration);
-        prepareNewForm(model,reIssue);
-        
+        prepareNewForm(model, reIssue);
+
         return "reissue-form";
     }
 
@@ -150,32 +146,32 @@ public class NewReIssueController extends GenericWorkFlowController {
         model.addAttribute("stateType", reIssue.getClass().getSimpleName());
         model.addAttribute("currentState", "NEW");
     }
+
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String createReIssue(@ModelAttribute final WorkflowContainer workflowContainer,
             @ModelAttribute final ReIssue reIssue,
             final Model model,
             final HttpServletRequest request,
             final BindingResult errors) {
-        
+
         marriageFormValidator.validateReIssue(reIssue, errors);
-        if (errors.hasErrors()){
+        if (errors.hasErrors()) {
             final MarriageRegistration registration = marriageRegistrationService.get(reIssue.getRegistration().getId());
-            reIssue.setRegistration(registration); 
-            Double fees=reIssue.getFeePaid();
-            prepareNewForm(model,reIssue);   
+            reIssue.setRegistration(registration);
+            Double fees = reIssue.getFeePaid();
+            prepareNewForm(model, reIssue);
             reIssue.setFeePaid(fees);
             return "reissue-form";
         }
-       
         reIssue.setRegistration(marriageRegistrationService.get(reIssue.getRegistration().getId()));
         obtainWorkflowParameters(workflowContainer, request);
         final String appNo = reIssueService.createReIssueApplication(reIssue, workflowContainer);
-        String message = StringUtils.EMPTY;
+        String message;
         String approverName = request.getParameter("approverName");
         String nextDesignation = request.getParameter("nextDesignation");
         message = messageSource.getMessage("msg.reissue.forward",
                 new String[] { approverName.concat("~").concat(nextDesignation), appNo }, null);
-        model.addAttribute("message",message);
+        model.addAttribute(MESSAGE, message);
         model.addAttribute("ackNumber", appNo);
 
         return "reissue-ack";
@@ -187,35 +183,33 @@ public class NewReIssueController extends GenericWorkFlowController {
             final Model model,
             final HttpServletRequest request,
             final BindingResult errors) throws IOException {
-        String message = StringUtils.EMPTY;   
+        String message = StringUtils.EMPTY;
+        ReIssue reIssueResult = null;
         if (errors.hasErrors())
             return "reissue-view";
-       
+
         obtainWorkflowParameters(workflowContainer, request);
-        switch (workflowContainer.getWorkFlowAction()) {
-        case "Forward":
-            reIssue = reIssueService.forwardReIssue(reIssue.getId(), reIssue, workflowContainer);
-            break;
-        case "Cancel ReIssue":
-            reIssue = reIssueService.rejectReIssue(reIssue, workflowContainer,request);
+
+        if ("Forward".equals(workflowContainer.getWorkFlowAction())) {
+            reIssueResult = reIssueService.forwardReIssue(reIssue.getId(), reIssue, workflowContainer);
+        } else if ("Cancel ReIssue".equals(workflowContainer.getWorkFlowAction())) {
+            reIssueResult = reIssueService.rejectReIssue(reIssue, workflowContainer, request);
             message = messageSource.getMessage("msg.rejected.reissue", null, null);
-            break;
         }
- 
-            // On Cancel, output rejection certificate 
+
+        // On Cancel, output rejection certificate
         if (workflowContainer.getWorkFlowAction() != null && !workflowContainer.getWorkFlowAction().isEmpty()
                 && workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL_REISSUE)) {
             List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(
                     MarriageConstants.MODULE_NAME, MarriageConstants.REISSUE_PRINTREJECTIONCERTIFICATE);
-            if (appConfigValues != null && appConfigValues.size() > 0
-                    && appConfigValues.get(0).getValue().equalsIgnoreCase("YES"))
-            {
+            if (appConfigValues != null && !appConfigValues.isEmpty()
+                    && "YES".equalsIgnoreCase(appConfigValues.get(0).getValue())) {
                 return "redirect:/certificate/reissue?id="
-                        + reIssue.getId();
+                        + reIssueResult.getId();
             }
         }
-        model.addAttribute("ackNumber", reIssue.getApplicationNo());
-        model.addAttribute("message", message);
+        model.addAttribute("ackNumber", reIssueResult.getApplicationNo());
+        model.addAttribute(MESSAGE, message);
         return "reissue-ack";
     }
 
@@ -230,7 +224,7 @@ public class NewReIssueController extends GenericWorkFlowController {
             workflowContainer.setApproverComments(request.getParameter("approvalComent"));
         if (request.getParameter("workFlowAction") != null)
             workflowContainer.setWorkFlowAction(request.getParameter("workFlowAction"));
-        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-            workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter("approvalPosition")));
+        if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
+            workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter(APPROVAL_POSITION)));
     }
 }

@@ -88,36 +88,29 @@ import org.springframework.stereotype.Service;
 @Service
 public class MarriageCertificateService {
 
+    private static final String CITY_CODE = "cityCode";
+    private static final String CERTIFICATE_DATE = "certificateDate";
     private static final String CERTIFICATE_TEMPLATE_REGISTRATION = "registrationcertificate";
     private static final String CERTIFICATE_TEMPLATE_REISSUE = "reissuecertificate";
     private static final String CERTIFICATE_TEMPLATE_REJECTION = "rejectioncertificate";
-    String[] monthName = { "January", "February",
-            "March", "April", "May", "June", "July",
-            "August", "September", "October", "November",
-            "December" };
+    private static final String[] MONTHNAME = { "January", "February", "March", "April", "May", "June", "July", "August",
+            "September", "October", "November", "December" };
 
     @PersistenceContext
     private EntityManager entityManager;
-
     @Autowired
     private ReportService reportService;
-
     @Autowired
     private SecurityUtils securityUtils;
-
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
-
     @Autowired
     private MarriageCertificateNumberGenerator marriageCertificateNumberGenerator;
-
     @Autowired
     private MarriageCertificateRepository marriageCertificateRepository;
-
     @Autowired
     private MarriageRegistrationReportsService marriageRegistrationReportsService;
-
     private InputStream generateCertificatePDF;
 
     private Session getCurrentSession() {
@@ -136,20 +129,20 @@ public class MarriageCertificateService {
      * @throws IOException
      */
     public ReportOutput generate(MarriageRegistration registration, String cityName,
-            String logopath,String certificateNo) throws IOException {
+            String logopath, String certificateNo) throws IOException {
         ReportRequest reportInput;
         ReportOutput reportOutput;
         Calendar calForApplnDate = Calendar.getInstance();
         Calendar calForMrgDate = Calendar.getInstance();
         calForApplnDate.setTime(registration.getApplicationDate());
         calForMrgDate.setTime(registration.getDateOfMarriage());
-        Map<String, Object> reportParams = new HashMap<String, Object>();
+        Map<String, Object> reportParams = new HashMap<>();
         String template = CERTIFICATE_TEMPLATE_REGISTRATION;
         byte[] husbandPhoto = null;
         byte[] wifePhoto = null;
         byte[] marriagePhoto = null;
         reportParams.put("cityName", cityName);
-        reportParams.put("certificateDate", new Date());
+        reportParams.put(CERTIFICATE_DATE, new Date());
         reportParams.put("logoPath", logopath);
         reportParams.put("registrationcenter", registration.getMarriageRegistrationUnit().getName());
         reportParams.put("registrarName", registration.getState().getSenderName().split("::")[1]);
@@ -157,11 +150,11 @@ public class MarriageCertificateService {
         reportParams.put("wifeParentName", registration.getWife().getParentsName());
         reportParams.put("applicationdateday", calForApplnDate.get(Calendar.DAY_OF_MONTH)
                 + getDayNumberSuffix(calForApplnDate.get(Calendar.DAY_OF_MONTH)));
-        reportParams.put("applicationdatemonth", monthName[calForApplnDate.get(Calendar.MONTH)]);
+        reportParams.put("applicationdatemonth", MONTHNAME[calForApplnDate.get(Calendar.MONTH)]);
         reportParams.put("applicationdateyear", calForApplnDate.get(Calendar.YEAR));
         reportParams.put("marriagedateday", calForMrgDate.get(Calendar.DAY_OF_MONTH)
                 + getDayNumberSuffix(calForMrgDate.get(Calendar.DAY_OF_MONTH)));
-        reportParams.put("marriagedatemonth", monthName[calForMrgDate.get(Calendar.MONTH)]);
+        reportParams.put("marriagedatemonth", MONTHNAME[calForMrgDate.get(Calendar.MONTH)]);
         reportParams.put("marriagedateyear", calForMrgDate.get(Calendar.YEAR));
 
         reportParams.put("serialno", registration.getSerialNo());
@@ -181,8 +174,6 @@ public class MarriageCertificateService {
                 new RegistrationCertificate(registration, securityUtils.getCurrentUser(), husbandPhoto, wifePhoto, marriagePhoto),
                 reportParams);
         reportOutput = reportService.createReport(reportInput);
-        // registration.setCertificateIssued(true);
-        // marriageRegistrationService.update(registration);
         return reportOutput;
     }
 
@@ -212,13 +203,14 @@ public class MarriageCertificateService {
     public MarriageCertificate generateMarriageCertificate(final MarriageRegistration marriageRegistration,
             final HttpServletRequest request) throws IOException {
         MarriageCertificate marriageCertificate = null;
-        ReportOutput reportOutput = null;
+        ReportOutput reportOutput;
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
         final String url = WebUtils.extractRequestDomainURL(request, false);
         final String cityLogo = url.concat(MarriageConstants.IMAGE_CONTEXT_PATH)
                 .concat((String) request.getSession().getAttribute("citylogo"));
-        String certificateNo = marriageCertificateNumberGenerator.generateCertificateNumber(marriageRegistration, request.getSession().getAttribute("cityCode").toString());
-        reportOutput = generate(marriageRegistration, cityName, cityLogo,certificateNo);
+        String certificateNo = marriageCertificateNumberGenerator.generateCertificateNumber(marriageRegistration,
+                request.getSession().getAttribute(CITY_CODE).toString());
+        reportOutput = generate(marriageRegistration, cityName, cityLogo, certificateNo);
         if (reportOutput != null && reportOutput.getReportOutputData() != null) {
             generateCertificatePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
             marriageCertificate = saveRegisteredCertificate(marriageRegistration, generateCertificatePDF,
@@ -273,16 +265,18 @@ public class MarriageCertificateService {
     public MarriageCertificate reIssueCertificate(final ReIssue reIssue,
             final HttpServletRequest request, final String certificateType) throws IOException {
         MarriageCertificate marriageCertificate = null;
-        ReportOutput reportOutput = null;
+        ReportOutput reportOutput;
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
         final String url = WebUtils.extractRequestDomainURL(request, false);
-        final String cityLogo = url.concat(MarriageConstants.IMAGE_CONTEXT_PATH).concat((String) request.getSession().getAttribute("citylogo"));
-        String certificateNo = marriageCertificateNumberGenerator.generateCertificateNumber(reIssue, request.getSession().getAttribute("cityCode").toString());        
-        reportOutput = generateCertificate(reIssue, certificateType, cityName, cityLogo,certificateNo);
+        final String cityLogo = url.concat(MarriageConstants.IMAGE_CONTEXT_PATH)
+                .concat((String) request.getSession().getAttribute("citylogo"));
+        String certificateNo = marriageCertificateNumberGenerator.generateCertificateNumber(reIssue,
+                request.getSession().getAttribute(CITY_CODE).toString());
+        reportOutput = generateCertificate(reIssue, certificateType, cityName, cityLogo, certificateNo);
         if (reportOutput != null && reportOutput.getReportOutputData() != null) {
             generateCertificatePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
             marriageCertificate = saveReIssuedCertificate(reIssue, generateCertificatePDF,
-                    request.getSession().getAttribute("cityCode").toString(), certificateType,certificateNo);
+                    request.getSession().getAttribute(CITY_CODE).toString(), certificateType, certificateNo);
         }
         return marriageCertificate;
     }
@@ -296,12 +290,12 @@ public class MarriageCertificateService {
      * @throws IOException
      */
     public ReportOutput generateCertificate(ReIssue reIssue, String certificateType, String cityName,
-            String logopath,String certificateNo) throws IOException {
+            String logopath, String certificateNo) throws IOException {
         ReportRequest reportInput;
         ReportOutput reportOutput;
-        Map<String, Object> reportParams = new HashMap<String, Object>();
-        String template = (certificateType.equalsIgnoreCase(MarriageCertificateType.REISSUE.toString())
-                ? CERTIFICATE_TEMPLATE_REISSUE : CERTIFICATE_TEMPLATE_REJECTION);
+        Map<String, Object> reportParams = new HashMap<>();
+        String template = certificateType.equalsIgnoreCase(MarriageCertificateType.REISSUE.toString())
+                ? CERTIFICATE_TEMPLATE_REISSUE : CERTIFICATE_TEMPLATE_REJECTION;
         byte[] husbandPhoto = null;
         byte[] wifePhoto = null;
         byte[] marriagePhoto = null;
@@ -310,9 +304,9 @@ public class MarriageCertificateService {
         calForApplnDate.setTime(reIssue.getApplicationDate());
         calForMrgDate.setTime(reIssue.getRegistration().getDateOfMarriage());
         reportParams.put("certificateno", certificateNo);
-        
+
         reportParams.put("cityName", cityName);
-        reportParams.put("certificateDate", new Date());
+        reportParams.put(CERTIFICATE_DATE, new Date());
         reportParams.put("logoPath", logopath);
         reportParams.put("registrationcenter", reIssue.getMarriageRegistrationUnit().getName());
         reportParams.put("registrarName", reIssue.getState().getSenderName().split("::")[1]);
@@ -320,16 +314,16 @@ public class MarriageCertificateService {
         reportParams.put("wifeParentName", reIssue.getRegistration().getWife().getParentsName());
         reportParams.put("applicationdateday", calForApplnDate.get(Calendar.DAY_OF_MONTH)
                 + getDayNumberSuffix(calForApplnDate.get(Calendar.DAY_OF_MONTH)));
-        reportParams.put("applicationdatemonth", monthName[calForApplnDate.get(Calendar.MONTH)]);
+        reportParams.put("applicationdatemonth", MONTHNAME[calForApplnDate.get(Calendar.MONTH)]);
         reportParams.put("applicationdateyear", calForApplnDate.get(Calendar.YEAR));
         reportParams.put("marriagedateday", calForMrgDate.get(Calendar.DAY_OF_MONTH)
                 + getDayNumberSuffix(calForMrgDate.get(Calendar.DAY_OF_MONTH)));
-        reportParams.put("marriagedatemonth", monthName[calForMrgDate.get(Calendar.MONTH)]);
+        reportParams.put("marriagedatemonth", MONTHNAME[calForMrgDate.get(Calendar.MONTH)]);
         reportParams.put("marriagedateyear", calForMrgDate.get(Calendar.YEAR));
 
         reportParams.put("serialno", reIssue.getRegistration().getSerialNo());
         reportParams.put("pageno", reIssue.getRegistration().getPageNo());
-        
+
         if (reIssue.getRegistration().getWife() != null && reIssue.getRegistration().getWife().getPhotoFileStore() != null)
             wifePhoto = FileUtils.readFileToByteArray(fileStoreService
                     .fetch(reIssue.getRegistration().getWife().getPhotoFileStore(), MarriageConstants.FILESTORE_MODULECODE));
@@ -369,11 +363,11 @@ public class MarriageCertificateService {
      * @return
      */
     public MarriageCertificate saveReIssuedCertificate(final ReIssue reIssue,
-            final InputStream fileStream, String cityCode, String type,String certificateNo) {
+            final InputStream fileStream, String cityCode, String type, String certificateNo) {
         MarriageCertificate marriageCertificate = new MarriageCertificate();
         if (reIssue != null) {
             final String fileName = certificateNo + ".pdf";
-            buildCertificate(null, reIssue, marriageCertificate, certificateNo, type.toString());
+            buildCertificate(null, reIssue, marriageCertificate, certificateNo, type);
             final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
                     MarriageConstants.FILESTORE_MODULECODE);
             marriageCertificate.setFileStore(fileStore);
@@ -393,14 +387,14 @@ public class MarriageCertificateService {
         if (certificate.getCertificateType() != null)
             criteria.add(Restrictions.eq("certificateType", certificate.getCertificateType().trim()));
         if (certificate.getFromDate() != null) {
-            criteria.add(Restrictions.ge("certificateDate",
+            criteria.add(Restrictions.ge(CERTIFICATE_DATE,
                     marriageRegistrationReportsService.resetFromDateTimeStamp(certificate.getFromDate())));
         }
         if (certificate.getToDate() != null) {
-            criteria.add(Restrictions.le("certificateDate",
+            criteria.add(Restrictions.le(CERTIFICATE_DATE,
                     marriageRegistrationReportsService.resetToDateTimeStamp(certificate.getToDate())));
         }
-        if (certificate.getFrequency() != null && certificate.getFrequency().equalsIgnoreCase("LATEST")) {
+        if (certificate.getFrequency() != null && "LATEST".equalsIgnoreCase(certificate.getFrequency())) {
             criteria.addOrder(Order.desc("createdDate"));
         }
         return criteria.list();

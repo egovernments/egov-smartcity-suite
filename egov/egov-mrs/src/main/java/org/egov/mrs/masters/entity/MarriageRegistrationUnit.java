@@ -64,92 +64,92 @@ import org.hibernate.validator.constraints.Length;
 @SequenceGenerator(name = MarriageRegistrationUnit.SEQ_REGISTRATIONUNIT, sequenceName = MarriageRegistrationUnit.SEQ_REGISTRATIONUNIT, allocationSize = 1)
 public class MarriageRegistrationUnit extends AbstractAuditable {
 
-	private static final long serialVersionUID = 251802908061985741L;
+    private static final long serialVersionUID = 251802908061985741L;
 
-	public static final String SEQ_REGISTRATIONUNIT = "SEQ_EGMRS_REGISTRATIONUNIT";
+    public static final String SEQ_REGISTRATIONUNIT = "SEQ_EGMRS_REGISTRATIONUNIT";
 
-	@Id
-	@GeneratedValue(generator = SEQ_REGISTRATIONUNIT, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_REGISTRATIONUNIT, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@NotNull
-	
-	@Length(max = 100)
-	private String name;
+    @NotNull
 
-	@NotNull
-	@Length(max = 20)
-	@Column(name = "code", updatable = false)
-	private String code;
+    @Length(max = 100)
+    private String name;
 
-	@NotNull
-	private String address;
+    @NotNull
+    @Length(max = 20)
+    @Column(name = "code", updatable = false)
+    private String code;
 
-	@NotNull
-	private Boolean isMainRegistrationUnit;
+    @NotNull
+    private String address;
 
-	@NotNull
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @NotNull
+    private Boolean isMainRegistrationUnit;
+
+    @NotNull
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "zone")
-	private Boundary zone;
+    private Boundary zone;
 
-	@NotNull
-	private Boolean isActive;
+    @NotNull
+    private Boolean isActive;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public Boundary getZone() {
-		return zone;
-	}
+    public Boundary getZone() {
+        return zone;
+    }
 
-	public void setZone(Boundary zone) {
-		this.zone = zone;
-	}
+    public void setZone(Boundary zone) {
+        this.zone = zone;
+    }
 
-	public Boolean getIsMainRegistrationUnit() {
-		return isMainRegistrationUnit;
-	}
+    public Boolean getIsMainRegistrationUnit() {
+        return isMainRegistrationUnit;
+    }
 
-	public void setIsMainRegistrationUnit(Boolean isMainRegistrationUnit) {
-		this.isMainRegistrationUnit = isMainRegistrationUnit;
-	}
+    public void setIsMainRegistrationUnit(Boolean isMainRegistrationUnit) {
+        this.isMainRegistrationUnit = isMainRegistrationUnit;
+    }
 
-	public Boolean getIsActive() {
-		return isActive;
-	}
+    public Boolean getIsActive() {
+        return isActive;
+    }
 
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
 
-	public String getAddress() {
-		return address;
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
 }

@@ -62,80 +62,79 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class MarriageFeeService {
-	
-	@Autowired
-	private  MarriageFeeRepository marriageFeeRepository;
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @Autowired
+    private MarriageFeeRepository marriageFeeRepository;
 
-	public Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	@Transactional
-	public void create(final MarriageFee fee) {
-		marriageFeeRepository.save(fee);
-	}
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	@Transactional
-	public MarriageFee update(final MarriageFee fee) {
-		return marriageFeeRepository.saveAndFlush(fee);
-	}
+    @Transactional
+    public void create(final MarriageFee fee) {
+        marriageFeeRepository.save(fee);
+    }
 
-	public MarriageFee getFee(final Long id) {
-		return marriageFeeRepository.findById(id);
-	}
+    @Transactional
+    public MarriageFee update(final MarriageFee fee) {
+        return marriageFeeRepository.saveAndFlush(fee);
+    }
 
-	public List<MarriageFee> getAll() {
-		return marriageFeeRepository.findAll();
-	}
+    public MarriageFee getFee(final Long id) {
+        return marriageFeeRepository.findById(id);
+    }
 
-	public MarriageFee getFeeForDays(Long days) {
-		return marriageFeeRepository.findByToDaysLessThanEqual(days);
-	}
+    public List<MarriageFee> getAll() {
+        return marriageFeeRepository.findAll();
+    }
 
-	public MarriageFee getFeeForDate(Date date) {
-		Long daysAfterMarriage = ChronoUnit.DAYS.between(date.toInstant()
-				.atZone(ZoneId.systemDefault()).toLocalDateTime(),
-				LocalDateTime.now());
+    public MarriageFee getFeeForDays(Long days) {
+        return marriageFeeRepository.findByToDaysLessThanEqual(days);
+    }
 
-		return getFeeForDays(daysAfterMarriage);
-	}
+    public MarriageFee getFeeForDate(Date date) {
+        Long daysAfterMarriage = ChronoUnit.DAYS.between(date.toInstant()
+                .atZone(ZoneId.systemDefault()).toLocalDateTime(),
+                LocalDateTime.now());
 
-	public MarriageFee getFeeForCriteria(String criteria) {
-		return marriageFeeRepository.findByCriteria(criteria);
-	}
-	
-	public List<MarriageFee> searchFee(MarriageFee fee) {
-		  final Criteria criteria = buildSearchCriteria(fee);
-	        return criteria.list();
-	}
+        return getFeeForDays(daysAfterMarriage);
+    }
 
-	public List<MarriageFee> getActiveGeneralTypeFeeses() {
-		final Criteria criteria = getCurrentSession().createCriteria(MarriageFee.class);
-		criteria.add(Restrictions.eq("feeType", MarriageFeeCriteriaType.GENERAL)).add(Restrictions.eq("active",Boolean.TRUE));
-	        return criteria.list();
-	}
+    public MarriageFee getFeeForCriteria(String criteria) {
+        return marriageFeeRepository.findByCriteria(criteria);
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<MarriageFee> searchRegistrationFeesWithGeneralType(MarriageFee fee) {
-		final Criteria criteria = buildSearchCriteria(fee);
-		criteria.add(Restrictions.eq("feeType", MarriageFeeCriteriaType.GENERAL));
-		return criteria.list();
-		
-	}
-	
-	
-	public Criteria buildSearchCriteria(MarriageFee fee) {
-		final Criteria criteria = getCurrentSession().createCriteria(MarriageFee.class);
+    public List<MarriageFee> searchFee(MarriageFee fee) {
+        final Criteria criteria = buildSearchCriteria(fee);
+        return criteria.list();
+    }
 
-		if (null != fee.getCriteria())
-			criteria.add(Restrictions.ilike("criteria", fee.getCriteria().trim(),
-					MatchMode.ANYWHERE));
-		
-		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		return criteria;
-	}
+    public List<MarriageFee> getActiveGeneralTypeFeeses() {
+        final Criteria criteria = getCurrentSession().createCriteria(MarriageFee.class);
+        criteria.add(Restrictions.eq("feeType", MarriageFeeCriteriaType.GENERAL)).add(Restrictions.eq("active", Boolean.TRUE));
+        return criteria.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<MarriageFee> searchRegistrationFeesWithGeneralType(MarriageFee fee) {
+        final Criteria criteria = buildSearchCriteria(fee);
+        criteria.add(Restrictions.eq("feeType", MarriageFeeCriteriaType.GENERAL));
+        return criteria.list();
+
+    }
+
+    public Criteria buildSearchCriteria(MarriageFee fee) {
+        final Criteria criteria = getCurrentSession().createCriteria(MarriageFee.class);
+
+        if (null != fee.getCriteria())
+            criteria.add(Restrictions.ilike("criteria", fee.getCriteria().trim(),
+                    MatchMode.ANYWHERE));
+
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return criteria;
+    }
 
 }

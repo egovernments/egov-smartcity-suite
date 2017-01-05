@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -94,6 +94,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class MarriageRegistrationReportsService {
 
+    private static final String WIFE = "wife";
+    private static final String ALL = "ALL";
     private static final String APPLICATIONDATE_BETWEEN_CONDITION = " and applicationdate between to_timestamp(:fromdate,'yyyy-MM-dd HH24:mi:ss') and to_timestamp(:todate,'YYYY-MM-DD HH24:MI:SS') ";
     private static final String MARRIAGE_REGISTRATION_DOT_HUSBAND = "marriageRegistration.husband";
     private static final String DOT_MARRIAGE_REGISTRATION_UNIT = ".marriageRegistrationUnit";
@@ -119,7 +121,7 @@ public class MarriageRegistrationReportsService {
     private static final String MARRIAGE_REGISTRATION = "marriageRegistration";
     private static final String UNION = " union ";
 
-    final SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private final SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -197,24 +199,21 @@ public class MarriageRegistrationReportsService {
 
         final Map<String, String> params = new HashMap<>();
 
-        final StringBuilder queryStrForRegistration = new StringBuilder(500);
+        final StringBuilder queryStrForRegistration = new StringBuilder(1000);
         queryStrForRegistration
                 .append(
-                        "Select reg.registrationno,reg.dateofmarriage,reg.applicationdate,reg.rejectionreason,cert.certificateno,cert.certificatetype,cert.certificatedate, brndy.name,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name from egmrs_applicant app where app.id = reg.wife),reg.id");
-        queryStrForRegistration
-                .append(" from egmrs_registration reg, egmrs_certificate cert, eg_boundary brndy,egw_status st");
-        queryStrForRegistration
-                .append(
-                        " where reg.zone = brndy.id and reg.status = st.id and st.code in('REGISTERED')  and reg.id = cert.registration and cert.reissue is null ");
+                        "Select reg.registrationno,reg.dateofmarriage,reg.applicationdate,reg.rejectionreason,cert.certificateno,cert.certificatetype,cert.certificatedate, brndy.name,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name from egmrs_applicant app where app.id = reg.wife),reg.id "
+                                + " from egmrs_registration reg, egmrs_certificate cert, eg_boundary brndy,egw_status st"
+                                + " where reg.zone = brndy.id and reg.status = st.id and st.code in('REGISTERED')  and reg.id = cert.registration and cert.reissue is null ");
         if (certificate.getRegistration().getZone() != null) {
             queryStrForRegistration.append(REG_ZONE_WHERE_CONDITION);
             params.put(ZONE, String.valueOf(certificate.getRegistration().getZone().getId()));
         }
 
-        if (certificate.getCertificateType() != null && !"ALL".equals(certificate.getCertificateType())) {
+        if (certificate.getCertificateType() != null && !ALL.equals(certificate.getCertificateType())) {
             queryStrForRegistration.append(" and cert.certificatetype=:certificatetype");
             params.put("certificatetype", certificate.getCertificateType());
-        } else if (certificate.getCertificateType() != null && "ALL".equals(certificate.getCertificateType()))
+        } else if (certificate.getCertificateType() != null && ALL.equals(certificate.getCertificateType()))
             queryStrForRegistration.append(" and cert.certificatetype in('REGISTRATION','REISSUE','REJECTION')");
 
         if (certificate.getFromDate() != null) {
@@ -236,24 +235,21 @@ public class MarriageRegistrationReportsService {
             params.put("registrationNo", certificate.getRegistration().getRegistrationNo());
         }
 
-        final StringBuilder queryStrForReissue = new StringBuilder(500);
+        final StringBuilder queryStrForReissue = new StringBuilder(1000);
         queryStrForReissue
                 .append(
-                        "Select reg.registrationno,reg.dateofmarriage,reg.applicationdate,reg.rejectionreason,cert.certificateno,cert.certificatetype,cert.certificatedate, brndy.name,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name from egmrs_applicant app where app.id = reg.wife),reg.id");
-        queryStrForReissue.append(
-                " from egmrs_registration reg,egmrs_reissue reis, egmrs_certificate cert, eg_boundary brndy,egw_status st ");
-        queryStrForReissue
-                .append(
-                        "where reg.zone = brndy.id and reg.id=reis.registration and reis.status = st.id and st.code in('CERTIFICATEREISSUED','REJECTION')  and reis.id = cert.reissue and cert.registration is null");
+                        "Select reg.registrationno,reg.dateofmarriage,reg.applicationdate,reg.rejectionreason,cert.certificateno,cert.certificatetype,cert.certificatedate, brndy.name,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name from egmrs_applicant app where app.id = reg.wife),reg.id"
+                                + " from egmrs_registration reg,egmrs_reissue reis, egmrs_certificate cert, eg_boundary brndy,egw_status st "
+                                + " where reg.zone = brndy.id and reg.id=reis.registration and reis.status = st.id and st.code in('CERTIFICATEREISSUED','REJECTION')  and reis.id = cert.reissue and cert.registration is null");
         if (certificate.getRegistration().getZone() != null) {
             queryStrForReissue.append(REG_ZONE_WHERE_CONDITION);
             params.put(ZONE, String.valueOf(certificate.getRegistration().getZone().getId()));
         }
 
-        if (certificate.getCertificateType() != null && !"ALL".equals(certificate.getCertificateType())) {
+        if (certificate.getCertificateType() != null && !ALL.equals(certificate.getCertificateType())) {
             queryStrForReissue.append(" and cert.certificatetype=:certificatetype");
             params.put("certificatetype", certificate.getCertificateType());
-        } else if (certificate.getCertificateType() != null && "ALL".equals(certificate.getCertificateType()))
+        } else if (certificate.getCertificateType() != null && ALL.equals(certificate.getCertificateType()))
             queryStrForReissue.append(" and cert.certificatetype in('REGISTRATION','REISSUE','REJECTION')");
 
         if (certificate.getFromDate() != null) {
@@ -277,7 +273,6 @@ public class MarriageRegistrationReportsService {
 
         final StringBuilder aggregateQueryStr = new StringBuilder();
         aggregateQueryStr.append(queryStrForRegistration.toString());
-
         aggregateQueryStr.append(UNION);
         aggregateQueryStr.append(queryStrForReissue.toString());
 
@@ -285,7 +280,6 @@ public class MarriageRegistrationReportsService {
         for (final Map.Entry<String, String> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
-
     }
 
     @SuppressWarnings("unchecked")
@@ -293,29 +287,23 @@ public class MarriageRegistrationReportsService {
             throws ParseException {
 
         final Map<String, Integer> params = new HashMap<>();
-        final StringBuilder queryForHusband = new StringBuilder(500);
+        final StringBuilder queryForHusband = new StringBuilder(1000);
         queryForHusband
                 .append(
-                        "(Select ap.ageinyears , count(*)");
-        queryForHusband
-                .append(" from egmrs_registration rg,egmrs_applicant ap,egmrs_registrationunit  ru,egw_status st ");
-        queryForHusband
-                .append(" where rg.husband=ap.id and  rg.registrationunit=ru.id and rg.status = st.id and  st.code='APPROVED'");
+                        "(Select ap.ageinyears , count(*) from egmrs_registration rg,egmrs_applicant ap,egmrs_registrationunit  ru,egw_status st"
+                                + " where rg.husband=ap.id and  rg.registrationunit=ru.id and rg.status = st.id and  st.code='REGISTERED'"
+                                + " and extract( year from rg.applicationdate)=:year ");
+        params.put(INPUTYEAR, year);
 
-        queryForHusband.append(" and extract( year from rg.applicationdate)=:year ");
-            params.put(INPUTYEAR, year);
-        
         if (registration.getMarriageRegistrationUnit().getId() != null) {
             queryForHusband
                     .append(" and  rg.registrationunit=:regunit ");
             params.put(REGUNIT, registration.getMarriageRegistrationUnit().getId().intValue());
-
         }
         if (registration.getZone().getId() != null) {
             queryForHusband
                     .append(" and  rg.zone=:zone ");
             params.put(ZONE, registration.getZone().getId().intValue());
-
         }
         queryForHusband.append("group by ap.ageinyears order by ap.ageinyears )");
 
@@ -331,18 +319,14 @@ public class MarriageRegistrationReportsService {
             throws ParseException {
 
         final Map<String, Integer> params = new HashMap<>();
-        final StringBuilder queryForWife = new StringBuilder(500);
+        final StringBuilder queryForWife = new StringBuilder(1000);
         queryForWife
                 .append(
-                        "(Select ap.ageinyears , count(*)");
-        queryForWife
-                .append(" from egmrs_registration rg,egmrs_applicant ap,egmrs_registrationunit  ru,egw_status st");
-        queryForWife
-                .append(" where rg.wife=ap.id and  rg.registrationunit=ru.id and rg.status = st.id and  st.code='APPROVED'");
+                        "(Select ap.ageinyears , count(*) from egmrs_registration rg,egmrs_applicant ap,egmrs_registrationunit  ru,egw_status st"
+                                + " where rg.wife=ap.id and  rg.registrationunit=ru.id and rg.status = st.id and  st.code='REGISTERED'"
+                                + " and  extract( year from rg.applicationdate)=:year ");
+        params.put(INPUTYEAR, year);
 
-            queryForWife.append(" and  extract( year from rg.applicationdate)=:year ");
-            params.put(INPUTYEAR, year);
-       
         if (registration.getMarriageRegistrationUnit().getId() != null) {
             queryForWife
                     .append(" and  rg.registrationunit=:regunit ");
@@ -369,18 +353,11 @@ public class MarriageRegistrationReportsService {
 
         final Map<String, Integer> params = new HashMap<>();
         final StringBuilder queryForAct = new StringBuilder(700);
-
         queryForAct
-                .append("(select extract( month from reg.applicationdate) as Month,count(*) ");
-        queryForAct
-                .append(" from egmrs_registration  reg, egmrs_act  act, egw_status  status ,egmrs_registrationunit ru,eg_boundary b ");
-
-        queryForAct
-                .append("where reg.marriageact=act.id and  reg.registrationunit=ru.id and reg.status = status.id and status.code in('APPROVED')  and reg.zone=b.id ");
-
-        queryForAct.append("and reg.marriageact=:act ");
+                .append("(select extract( month from reg.applicationdate) as Month,count(*)  from egmrs_registration  reg, egmrs_act  act, egw_status  status ,egmrs_registrationunit ru,eg_boundary b "
+                        + "where reg.marriageact=act.id and  reg.registrationunit=ru.id and reg.status = status.id and status.code in('REGISTERED')  and reg.zone=b.id and "
+                        + "reg.marriageact=:act and extract( year from reg.applicationdate)=:year ");
         params.put("act", registration.getMarriageAct().getId().intValue());
-        queryForAct.append(" and extract( year from reg.applicationdate)=:year ");
         params.put(INPUTYEAR, year);
         if (registration.getMarriageRegistrationUnit().getId() != null) {
             queryForAct
@@ -395,7 +372,7 @@ public class MarriageRegistrationReportsService {
 
         }
         queryForAct.append("group by Month)");
-       
+
         final org.hibernate.Query query = getCurrentSession().createSQLQuery(queryForAct.toString());
         for (final Map.Entry<String, Integer> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
@@ -417,38 +394,32 @@ public class MarriageRegistrationReportsService {
         if (HUSBAND.equals(applicant)) {
             criteria.createAlias(MARRIAGE_REGISTRATION_DOT_HUSBAND, HUSBAND).add(Restrictions
                     .between("husband.ageInYearsAsOnMarriage", Integer.valueOf(values[0]), Integer.valueOf(values[1])));
-            if (fromDate != null)
-                criteria.add(Restrictions.ge(MARRIAGE_REGISTRATION_APPLICATION_DATE, fromDate));
-            if (toDate != null)
-                criteria.add(Restrictions.le(MARRIAGE_REGISTRATION_APPLICATION_DATE, toDate));
-            if (regunit != null)
-                criteria.createAlias(MARRIAGE_REGISTRATION + DOT_MARRIAGE_REGISTRATION_UNIT, MARRIAGE_REGISTRATION_UNIT)
-                        .add(Restrictions.eq(MARRIAGE_REGISTRATION_UNIT_DOT_ID,
-                                Long.parseLong(regunit)));
-            if (null != registration.getZone()
-                    && registration.getZone().getId() != null)
-                criteria.add(Restrictions.eq(ZONE_ID, registration.getZone()
-                        .getId()));
+            buildAgeWiseSearchCriteria(registration, regunit, criteria, fromDate, toDate);
         } else {
-            criteria.createAlias(MARRIAGE_REGISTRATION_DOT_WIFE, "wife").add(Restrictions
+            criteria.createAlias(MARRIAGE_REGISTRATION_DOT_WIFE, WIFE).add(Restrictions
                     .between("wife.ageInYearsAsOnMarriage", Integer.valueOf(values[0]), Integer.valueOf(values[1])));
-            if (fromDate != null)
-                criteria.add(Restrictions.ge(MARRIAGE_REGISTRATION_APPLICATION_DATE, fromDate));
-            if (toDate != null)
-                criteria.add(Restrictions.le(MARRIAGE_REGISTRATION_APPLICATION_DATE, toDate));
-            if (regunit != null)
-                criteria.createAlias(MARRIAGE_REGISTRATION + DOT_MARRIAGE_REGISTRATION_UNIT, MARRIAGE_REGISTRATION_UNIT)
-                        .add(Restrictions.eq(MARRIAGE_REGISTRATION_UNIT_DOT_ID,
-                                Long.parseLong(regunit)));
-            if (null != registration.getZone()
-                    && registration.getZone().getId() != null)
-                criteria.add(Restrictions.eq(ZONE_ID, registration.getZone()
-                        .getId()));
+            buildAgeWiseSearchCriteria(registration, regunit, criteria, fromDate, toDate);
         }
 
         criteria.createAlias(MARRIAGE_REGISTRATION_STATUS, STATUS).add(Restrictions.in(STATUS_DOT_CODE,
-                new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString() }));
+                new String[] { MarriageRegistration.RegistrationStatus.REGISTERED.toString() }));
         return criteria.list();
+    }
+
+    private void buildAgeWiseSearchCriteria(final MarriageRegistration registration, final String regunit,
+            final Criteria criteria, final Date fromDate, final Date toDate) {
+        if (fromDate != null)
+            criteria.add(Restrictions.ge(MARRIAGE_REGISTRATION_APPLICATION_DATE, fromDate));
+        if (toDate != null)
+            criteria.add(Restrictions.le(MARRIAGE_REGISTRATION_APPLICATION_DATE, toDate));
+        if (regunit != null)
+            criteria.createAlias(MARRIAGE_REGISTRATION + DOT_MARRIAGE_REGISTRATION_UNIT, MARRIAGE_REGISTRATION_UNIT)
+                    .add(Restrictions.eq(MARRIAGE_REGISTRATION_UNIT_DOT_ID,
+                            Long.parseLong(regunit)));
+        if (null != registration.getZone()
+                && registration.getZone().getId() != null)
+            criteria.add(Restrictions.eq(ZONE_ID, registration.getZone()
+                    .getId()));
     }
 
     @SuppressWarnings("unchecked")
@@ -459,7 +430,7 @@ public class MarriageRegistrationReportsService {
         if (registration.getHusband().getMaritalStatus() != null)
             criteria.createAlias(MARRIAGE_REGISTRATION_DOT_HUSBAND, HUSBAND)
                     .add(Restrictions.eq("husband.maritalStatus", registration.getHusband().getMaritalStatus()));
-        criteria.createAlias(MARRIAGE_REGISTRATION_DOT_WIFE, "wife")
+        criteria.createAlias(MARRIAGE_REGISTRATION_DOT_WIFE, WIFE)
                 .add(Restrictions.eq("wife.maritalStatus", registration.getHusband().getMaritalStatus()));
 
         criteria.add(Restrictions.in(STATUS_DOT_CODE,
@@ -547,7 +518,6 @@ public class MarriageRegistrationReportsService {
                     .append(" and zone=to_number(:zone,'999999')");
             params.put(ZONE, registration.getZone().getId().toString());
         }
-
         queryStrForWifeCount.append(
                 " group by app.relationstatus, to_char(app.createddate,'Mon') order by to_char(app.createddate,'Mon') desc");
         final org.hibernate.Query query = getCurrentSession().createSQLQuery(queryStrForWifeCount.toString());
@@ -582,7 +552,7 @@ public class MarriageRegistrationReportsService {
 
             criteria.add(Restrictions.eq("husband.maritalStatus", MaritalStatus.valueOf(maritalStatus)));
         } else {
-            criteria = criteria.createAlias(MARRIAGE_REGISTRATION + ".wife", "wife");
+            criteria = criteria.createAlias(MARRIAGE_REGISTRATION + ".wife", WIFE);
             if (fromDate != null)
                 criteria.add(Restrictions.ge("wife.createdDate", resetFromDateTimeStamp(fromDate)));
             if (toDate != null)
@@ -597,7 +567,6 @@ public class MarriageRegistrationReportsService {
                     && registration.getZone().getId() != null)
                 criteria.add(Restrictions.eq(ZONE_ID, registration.getZone()
                         .getId()));
-
         }
 
         return criteria.list();
@@ -657,63 +626,23 @@ public class MarriageRegistrationReportsService {
     public List<String[]> getMonthwiseFundCollected(final MarriageRegistration registration, final String year) {
         final Map<String, String> params = new HashMap<>();
         final Map<String, Integer> intparams = new HashMap<>();
-        final StringBuilder queryStrForRegFee = new StringBuilder(500);
-        final StringBuilder queryStrForReissueFee = new StringBuilder(500);
+        final StringBuilder queryStrForRegFee = new StringBuilder(1000);
+        final StringBuilder queryStrForReissueFee = new StringBuilder(1000);
         final StringBuilder queryStr = new StringBuilder(700);
         queryStr.append("select Month, SUM(Amount),Monthname from (");
         queryStrForRegFee
-                .append("(select extract(month from applicationdate) as Month,SUM(reg.feepaid) as Amount,to_char(applicationdate,'Month') as Monthname from egmrs_registration reg,egmrs_registrationunit regunit,eg_demand demand ");
-        queryStrForRegFee.append("where reg.registrationunit=regunit.id ");
-        queryStrForRegFee.append("and reg.demand=demand.id ");
-        queryStrForRegFee.append("and demand.amt_collected!=0 ");
-        queryStrForRegFee.append(" and extract(year from applicationdate)=:years ");
-        if (registration.getMonth_year() != null) {
-            queryStrForRegFee
-                    .append(APPLICATIONDATE_BETWEEN_CONDITION);
-            params.put(FROMDATE, sf.format(getMonthStartday(registration.getMonth_year())));
-            params.put(TODATE, sf.format(getMonthEndday(registration.getMonth_year())));
-        }
-        if (registration.getMarriageRegistrationUnit().getId() != null) {
-            queryStrForRegFee
-                    .append(REGISTRATIONUNIT_WHERE_QUERY);
-            params.put(REGUNIT, registration.getMarriageRegistrationUnit().getId().toString());
-        }
-        if (year != null) {
-            final int years = Integer.parseInt(year);
-            intparams.put("years", years);
-        }
-        queryStrForRegFee
-                .append("group by regunit.name,extract(month from applicationdate),to_char(applicationdate,'Month') order by regunit.name)");
+                .append("(select extract(month from applicationdate) as Month,SUM(reg.feepaid) as Amount,to_char(applicationdate,'Month') as Monthname from egmrs_registration reg,egmrs_registrationunit regunit,eg_demand demand "
+                        + "where reg.registrationunit=regunit.id and reg.demand=demand.id and demand.amt_collected!=0 ");
+        buildSearchCriteriaMonthWiseFundCollection(registration, year, params, intparams, queryStrForRegFee);
 
         queryStrForReissueFee
-                .append("(select extract(month from applicationdate) as Month,SUM(reissue.feepaid) as Amount,to_char(applicationdate,'Month') as Monthname from egmrs_reissue reissue,egmrs_registrationunit regunit,eg_demand demand ");
-        queryStrForReissueFee.append("where reissue.registrationunit=regunit.id ");
-        queryStrForReissueFee.append("and reissue.demand=demand.id ");
-        queryStrForReissueFee.append("and demand.amt_collected!=0 ");
-        queryStrForReissueFee.append(" and extract(year from applicationdate)=:years ");
+                .append("(select extract(month from applicationdate) as Month,SUM(reissue.feepaid) as Amount,to_char(applicationdate,'Month') as Monthname from egmrs_reissue reissue,egmrs_registrationunit regunit,eg_demand demand "
+                        + "where reissue.registrationunit=regunit.id and reissue.demand=demand.id and demand.amt_collected!=0 ");
+        buildSearchCriteriaMonthWiseFundCollection(registration, year, params, intparams, queryStrForReissueFee);
 
-        if (registration.getMonth_year() != null) {
-            queryStrForReissueFee
-                    .append(APPLICATIONDATE_BETWEEN_CONDITION);
-            params.put(FROMDATE, sf.format(getMonthStartday(registration.getMonth_year())));
-            params.put(TODATE, sf.format(getMonthEndday(registration.getMonth_year())));
-        }
-        if (registration.getMarriageRegistrationUnit().getId() != null) {
-            queryStrForRegFee
-                    .append(REGISTRATIONUNIT_WHERE_QUERY);
-            params.put(REGUNIT, registration.getMarriageRegistrationUnit().getId().toString());
-        }
-        if (year != null) {
-            final int years = Integer.parseInt(year);
-            intparams.put("years", years);
-        }
-        queryStrForReissueFee
-                .append("group by regunit.name,extract(month from applicationdate),to_char(applicationdate,'Month') order by regunit.name)");
         final StringBuilder aggregateQueryStr = new StringBuilder();
         aggregateQueryStr.append(queryStrForRegFee.toString());
-
         aggregateQueryStr.append(UNION);
-
         aggregateQueryStr.append(queryStrForReissueFee.toString());
         queryStr.append(aggregateQueryStr.toString());
         queryStr.append(") as x GROUP BY MONTH,Monthname");
@@ -726,56 +655,56 @@ public class MarriageRegistrationReportsService {
         return query.list();
     }
 
+    private void buildSearchCriteriaMonthWiseFundCollection(final MarriageRegistration registration, final String year,
+            final Map<String, String> params, final Map<String, Integer> intparams, final StringBuilder queryStrFOorApplns) {
+        if (year != null) {
+            queryStrFOorApplns.append(" and extract(year from applicationdate)=:years ");
+            final int years = Integer.parseInt(year);
+            intparams.put("years", years);
+        }
+
+        if (registration.getMonth_year() != null) {
+            queryStrFOorApplns
+                    .append(APPLICATIONDATE_BETWEEN_CONDITION);
+            params.put(FROMDATE, sf.format(getMonthStartday(registration.getMonth_year())));
+            params.put(TODATE, sf.format(getMonthEndday(registration.getMonth_year())));
+        }
+        if (registration.getMarriageRegistrationUnit().getId() != null) {
+            queryStrFOorApplns
+                    .append(REGISTRATIONUNIT_WHERE_QUERY);
+            params.put(REGUNIT, registration.getMarriageRegistrationUnit().getId().toString());
+        }
+
+        queryStrFOorApplns
+                .append("group by regunit.name,extract(month from applicationdate),to_char(applicationdate,'Month') order by regunit.name)");
+    }
+
     @SuppressWarnings("unchecked")
     public List<String[]> getCountOfApplications(final MarriageRegistration registration) {
 
         final Map<String, String> params = new HashMap<>();
-        final StringBuilder queryStrForRegCount = new StringBuilder(500);
+        final StringBuilder queryStrForRegCount = new StringBuilder(1000);
         queryStrForRegCount
-                .append("(select regunit.name,count(*),to_char(applicationdate,'Mon'),'registration' from egmrs_registration reg,egmrs_registrationunit regunit,egw_status st ");
-        queryStrForRegCount.append("where reg.registrationunit=regunit.id and reg.status = st.id and st.code='REGISTERED' ");
-        if (registration.getMonth_year() != null) {
-            queryStrForRegCount.append(
-                    APPLICATIONDATE_BETWEEN_CONDITION);
-            params.put(FROMDATE, sf.format(getMonthStartday(registration.getMonth_year())));
-            params.put(TODATE, sf.format(getMonthEndday(registration.getMonth_year())));
-        }
-        if (registration.getMarriageRegistrationUnit().getId() != null) {
-            queryStrForRegCount
-                    .append(REGISTRATIONUNIT_WHERE_QUERY);
-            params.put(REGUNIT, registration.getMarriageRegistrationUnit().getId().toString());
-        }
+                .append("(select regunit.name,count(*),to_char(applicationdate,'Mon'),'registration' from egmrs_registration reg,egmrs_registrationunit regunit,egw_status st "
+                        + "where reg.registrationunit=regunit.id and reg.status = st.id and st.code='REGISTERED' ");
+
         if (registration.getZone().getId() != null) {
             queryStrForRegCount
-                    .append(REG_ZONE_WHERE_CONDITION);
+                    .append(" and reg.zone=to_number(:zone,'999999')");
             params.put(ZONE, registration.getZone().getId().toString());
         }
+        buildCriteriaForMrgApplicationsCount(registration, params, queryStrForRegCount);
+        final StringBuilder queryStrForReissueCount = new StringBuilder(1000);
+        queryStrForReissueCount
+                .append("(select regunit.name,count(*),to_char(applicationdate,'Mon'),'reissue' from egmrs_reissue rei,egmrs_registrationunit regunit,egw_status st"
+                        + " where rei.registrationunit=regunit.id and rei.status = st.id and st.code='CERTIFICATEREISSUED' ");
 
-        queryStrForRegCount.append("group by regunit.name,to_char(applicationdate,'Mon') order by regunit.name)");
-        final StringBuilder queryStrForReissueCount = new StringBuilder(500);
-        queryStrForReissueCount
-                .append("(select regunit.name,count(*),to_char(applicationdate,'Mon'),'reissue' from egmrs_reissue rei,egmrs_registrationunit regunit,egw_status st");
-        queryStrForReissueCount
-                .append(" where rei.registrationunit=regunit.id and rei.status = st.id and st.code='CERTIFICATEREISSUED' ");
-        if (registration.getMonth_year() != null) {
-            queryStrForReissueCount.append(
-                    APPLICATIONDATE_BETWEEN_CONDITION);
-            params.put(FROMDATE, sf.format(getMonthStartday(registration.getMonth_year())));
-            params.put(TODATE, sf.format(getMonthEndday(registration.getMonth_year())));
-        }
-        if (registration.getMarriageRegistrationUnit().getId() != null) {
-            queryStrForReissueCount
-                    .append(REGISTRATIONUNIT_WHERE_QUERY);
-            params.put(REGUNIT, registration.getMarriageRegistrationUnit().getId().toString());
-        }
         if (registration.getZone().getId() != null) {
             queryStrForReissueCount
                     .append(" and rei.zone=to_number(:zone,'999999')");
             params.put(ZONE, registration.getZone().getId().toString());
         }
-
-        queryStrForReissueCount.append("group by regunit.name,to_char(applicationdate,'Mon') order by regunit.name)");
-
+        buildCriteriaForMrgApplicationsCount(registration, params, queryStrForReissueCount);
         final StringBuilder aggregateQueryStr = new StringBuilder();
         aggregateQueryStr.append(queryStrForRegCount.toString());
 
@@ -786,6 +715,22 @@ public class MarriageRegistrationReportsService {
         for (final Map.Entry<String, String> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         return query.list();
+    }
+
+    private void buildCriteriaForMrgApplicationsCount(final MarriageRegistration registration, final Map<String, String> params,
+            final StringBuilder queryForApplns) {
+        if (registration.getMonth_year() != null) {
+            queryForApplns.append(
+                    APPLICATIONDATE_BETWEEN_CONDITION);
+            params.put(FROMDATE, sf.format(getMonthStartday(registration.getMonth_year())));
+            params.put(TODATE, sf.format(getMonthEndday(registration.getMonth_year())));
+        }
+        if (registration.getMarriageRegistrationUnit().getId() != null) {
+            queryForApplns
+                    .append(REGISTRATIONUNIT_WHERE_QUERY);
+            params.put(REGUNIT, registration.getMarriageRegistrationUnit().getId().toString());
+        }
+        queryForApplns.append("group by regunit.name,to_char(applicationdate,'Mon') order by regunit.name)");
     }
 
     @SuppressWarnings("unchecked")
@@ -849,7 +794,7 @@ public class MarriageRegistrationReportsService {
                             .getHusband().getReligion().getId()));
         if (null != registration.getWife().getReligion()
                 && registration.getWife().getReligion().getId() != null)
-            criteria.createAlias(MARRIAGE_REGISTRATION_DOT_WIFE, "wife").add(
+            criteria.createAlias(MARRIAGE_REGISTRATION_DOT_WIFE, WIFE).add(
                     Restrictions.eq("wife.religion.id", registration.getWife()
                             .getReligion().getId()));
         if (null != fromDate)
@@ -877,16 +822,12 @@ public class MarriageRegistrationReportsService {
     @SuppressWarnings("unchecked")
     public List<String[]> searchRegistrationMrActWise(final int year, final MarriageRegistration registration) {
         final Map<String, Integer> params = new HashMap<>();
-        final StringBuilder queryForAct = new StringBuilder(500);
+        final StringBuilder queryForAct = new StringBuilder(1000);
 
         queryForAct
-                .append("(select act.name,count(*) ");
-        queryForAct
-                .append(" from egmrs_registration  reg, egmrs_act  act, egw_status  status ,egmrs_registrationunit ru,eg_boundary b ");
-
-        queryForAct
-                .append("where reg.marriageact=act.id and status.code in('APPROVED')  and reg.registrationunit=ru.id and reg.status = status.id and reg.zone=b.id ");
-        queryForAct.append(" and extract( year from reg.applicationdate)=:year ");
+                .append("(select act.name,count(*) from egmrs_registration  reg, egmrs_act  act, egw_status  status ,egmrs_registrationunit ru,eg_boundary b "
+                        + "where reg.marriageact=act.id and status.code in('APPROVED')  and reg.registrationunit=ru.id and reg.status = status.id and reg.zone=b.id "
+                        + " and extract( year from reg.applicationdate)=:year ");
         params.put(INPUTYEAR, year);
         if (registration.getMarriageRegistrationUnit().getId() != null) {
             queryForAct
@@ -957,30 +898,22 @@ public class MarriageRegistrationReportsService {
     public List<Object[]> getAgeingRegDetails(final String day, final int year)
             throws ParseException {
         final String[] values = day.split("-");
-
-        final StringBuilder queryStrForRegistration = new StringBuilder(500);
+        final StringBuilder queryStrForRegistration = new StringBuilder(1000);
         final Map<String, Double> params = new HashMap<>();
-
         queryStrForRegistration
                 .append(
-                        "Select reg.applicationno,reg.registrationno,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name from egmrs_applicant app where app.id = reg.wife),reg.dateofmarriage,reg.applicationdate,reg.placeofmarriage, brndy.name,st.code,'Marriage Registration',state.owner_pos,state.nextaction");
-        queryStrForRegistration
-                .append(" from egmrs_registration reg,egmrs_applicant app, eg_boundary brndy,egw_status st,eg_wf_states state");
-        queryStrForRegistration
-                .append(
-                        " where reg.state_id = state.id and reg.zone = brndy.id and reg.status = st.id and st.code not in ('REGISTERED','CANCELLED') and EXTRACT(EPOCH FROM date_trunc('day',(now()-reg.applicationdate)))/60/60/24 between :fromdays and :todays ");
+                        "Select reg.applicationno,reg.registrationno,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name from egmrs_applicant app where app.id = reg.wife),reg.dateofmarriage,reg.applicationdate,reg.placeofmarriage, brndy.name,st.code,'Marriage Registration',state.owner_pos,state.nextaction"
+                                + " from egmrs_registration reg,egmrs_applicant app, eg_boundary brndy,egw_status st,eg_wf_states state"
+                                + " where reg.state_id = state.id and reg.zone = brndy.id and reg.status = st.id and st.code not in ('REGISTERED','CANCELLED') and EXTRACT(EPOCH FROM date_trunc('day',(now()-reg.applicationdate)))/60/60/24 between :fromdays and :todays ");
         params.put("fromdays", Double.valueOf(values[0]));
         params.put("todays", Double.valueOf(values[1]));
 
-        final StringBuilder queryStrForReissue = new StringBuilder(500);
+        final StringBuilder queryStrForReissue = new StringBuilder(1000);
         queryStrForReissue
                 .append(
-                        "Select rei.applicationno,reg.registrationno,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name from egmrs_applicant app where app.id = reg.wife),reg.dateofmarriage,rei.applicationdate,reg.placeofmarriage,brndy.name,st.code,'Reissue',state1.owner_pos,state1.nextaction as action1");
-        queryStrForReissue
-                .append(" from egmrs_reissue rei,egmrs_registration reg, egmrs_applicant app, eg_boundary brndy,egw_status st,eg_wf_states state1");
-        queryStrForReissue
-                .append(
-                        " where rei.state_id = state1.id and rei.registration=reg.id and rei.zone = brndy.id and rei.status = st.id and st.code not in ('CERTIFICATEREISSUED','CANCELLED') and EXTRACT(EPOCH FROM date_trunc('day',(now()-rei.applicationdate)))/60/60/24 between :fromdays and :todays ");
+                        "Select rei.applicationno,reg.registrationno,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name from egmrs_applicant app where app.id = reg.wife),reg.dateofmarriage,rei.applicationdate,reg.placeofmarriage,brndy.name,st.code,'Reissue',state1.owner_pos,state1.nextaction as action1"
+                                + " from egmrs_reissue rei,egmrs_registration reg, egmrs_applicant app, eg_boundary brndy,egw_status st,eg_wf_states state1"
+                                + " where rei.state_id = state1.id and rei.registration=reg.id and rei.zone = brndy.id and rei.status = st.id and st.code not in ('CERTIFICATEREISSUED','CANCELLED') and EXTRACT(EPOCH FROM date_trunc('day',(now()-rei.applicationdate)))/60/60/24 between :fromdays and :todays ");
         params.put("fromdays", Double.valueOf(values[0]));
         params.put("todays", Double.valueOf(values[1]));
 
@@ -1001,15 +934,12 @@ public class MarriageRegistrationReportsService {
             throws ParseException {
 
         final Map<String, Integer> params = new HashMap<>();
-        final StringBuilder queryStrForRegAgeingDetails = new StringBuilder(500);
+        final StringBuilder queryStrForRegAgeingDetails = new StringBuilder(1000);
         queryStrForRegAgeingDetails
                 .append(
-                        "(Select EXTRACT(EPOCH FROM date_trunc('day',(now()-applicationdate)))/60/60/24, count(*),st.code ");
-        queryStrForRegAgeingDetails
-                .append(" from egmrs_registration reg,egw_status st,egmrs_registrationunit ru,eg_boundary brndy");
-        queryStrForRegAgeingDetails
-                .append(
-                        " where reg.zone=brndy.id and reg.registrationunit=ru.id and status = st.id and st.code not in ('REGISTERED','CANCELLED') and extract(year from applicationdate)=:year ");
+                        "(Select EXTRACT(EPOCH FROM date_trunc('day',(now()-applicationdate)))/60/60/24, count(*),st.code"
+                                + " from egmrs_registration reg,egw_status st,egmrs_registrationunit ru,eg_boundary brndy"
+                                + " where reg.zone=brndy.id and reg.registrationunit=ru.id and status = st.id and st.code not in ('REGISTERED','CANCELLED') and extract(year from applicationdate)=:year ");
 
         params.put(INPUTYEAR, year);
         if (registration.getMarriageRegistrationUnit().getId() != null) {
@@ -1027,15 +957,12 @@ public class MarriageRegistrationReportsService {
         queryStrForRegAgeingDetails
                 .append(" group by st.code,EXTRACT(EPOCH FROM date_trunc('day',(now()-applicationdate)))/60/60/24 order by EXTRACT(EPOCH FROM date_trunc('day',(now()-applicationdate)))/60/60/24 ) ");
 
-        final StringBuilder queryStrForReIssueAgeingDetails = new StringBuilder(500);
+        final StringBuilder queryStrForReIssueAgeingDetails = new StringBuilder(1000);
         queryStrForReIssueAgeingDetails
                 .append(
-                        "(Select EXTRACT(EPOCH FROM date_trunc('day',(now()-applicationdate)))/60/60/24, count(*),st.code ");
-        queryStrForReIssueAgeingDetails
-                .append(" from egmrs_reissue rei,egw_status st,egmrs_registrationunit ru,eg_boundary brndy  ");
-        queryStrForReIssueAgeingDetails
-                .append(
-                        " where  rei.registrationunit=ru.id and  rei.zone=brndy.id and status = st.id and st.code not in ('CERTIFICATEREISSUED','CANCELLED') and extract(year from applicationdate)=:year  ");
+                        "(Select EXTRACT(EPOCH FROM date_trunc('day',(now()-applicationdate)))/60/60/24, count(*),st.code"
+                                + " from egmrs_reissue rei,egw_status st,egmrs_registrationunit ru,eg_boundary brndy"
+                                + " where  rei.registrationunit=ru.id and  rei.zone=brndy.id and status = st.id and st.code not in ('CERTIFICATEREISSUED','CANCELLED') and extract(year from applicationdate)=:year  ");
         params.put(INPUTYEAR, year);
 
         if (registration.getMarriageRegistrationUnit().getId() != null) {
@@ -1071,10 +998,10 @@ public class MarriageRegistrationReportsService {
             final MarriageRegistrationUnit registrationUnit, final MarriageRegistration registration) {
 
         final Map<String, String> params = new HashMap<>();
-        final StringBuilder queryStrForRegCount = new StringBuilder(500);
+        final StringBuilder queryStrForRegCount = new StringBuilder(1000);
         queryStrForRegCount
-                .append("select regunit.name,st.code,count(*) from egmrs_registration reg,egmrs_registrationunit regunit,egw_status st ");
-        queryStrForRegCount.append("where reg.registrationunit=regunit.id and reg.status = st.id  ");
+                .append("select regunit.name,st.code,count(*) from egmrs_registration reg,egmrs_registrationunit regunit,egw_status st"
+                        + " where reg.registrationunit=regunit.id and reg.status = st.id  ");
         if (fromDate != null) {
             queryStrForRegCount.append(" and applicationdate >= to_timestamp(:fromdate,'yyyy-MM-dd HH24:mi:ss')");
             params.put(FROMDATE, sf.format(resetFromDateTimeStamp(fromDate)));
@@ -1083,7 +1010,7 @@ public class MarriageRegistrationReportsService {
             queryStrForRegCount.append(" and applicationdate <=to_timestamp(:todate,'YYYY-MM-DD HH24:MI:SS') ");
             params.put(TODATE, sf.format(resetToDateTimeStamp(toDate)));
         }
-        if (status != null && "ALL".equalsIgnoreCase(status))
+        if (status != null && ALL.equalsIgnoreCase(status))
             queryStrForRegCount
                     .append(" and st.code in ('CREATED','APPROVED','REGISTERED','REJECTED','CANCELLED')");
         else if (status != null) {
@@ -1126,7 +1053,7 @@ public class MarriageRegistrationReportsService {
             criteria.createAlias("marriageRegistration.marriageRegistrationUnit", MARRIAGE_REGISTRATION_UNIT)
                     .add(Restrictions.eq("marriageRegistrationUnit.name", registrationUnit.replaceAll("[^a-zA-Z0-9]", " ")));
 
-        if (status != null && !"ALL".equalsIgnoreCase(status))
+        if (status != null && !ALL.equalsIgnoreCase(status))
             criteria.add(Restrictions.in(STATUS_DOT_CODE, new String[] { status }));
         else
             criteria.add(Restrictions.in(STATUS_DOT_CODE,
@@ -1142,26 +1069,26 @@ public class MarriageRegistrationReportsService {
             ulbWiseResponse = findAllReligionByUlbName(searchRequest,
                     getQueryFilter(searchRequest));
         } catch (final Exception e) {
-            throw new ApplicationRuntimeException("", e);
+            throw new ApplicationRuntimeException("Error Occured while fetching records from elastic search", e);
         }
 
         final List<SearchResult> responseDetailsList = new ArrayList<>();
         final Terms ulbs = ulbWiseResponse.getAggregations().get("groupByUlbName");
-
+        SearchResult searchResult;
         for (final Terms.Bucket ulb : ulbs.getBuckets()) {
             long countOthers = 0;
             long total = 0;
-            final SearchResult searchResult = new SearchResult();
+            searchResult = new SearchResult();
             searchResult.setUlbName(ulb.getKeyAsString());
             final Terms religions = ulb.getAggregations().get("groupByReligion");
             for (final Terms.Bucket religion : religions.getBuckets())
-                if ("Christian".equals(religion.getKeyAsString())) {
+                if ("Christianity".equals(religion.getKeyAsString())) {
                     total = total + religion.getDocCount();
                     searchResult.setChristian(religion.getDocCount());
-                } else if ("Hindu".equals(religion.getKeyAsString())) {
+                } else if ("Hinduism".equals(religion.getKeyAsString())) {
                     total = total + religion.getDocCount();
                     searchResult.setHindu(religion.getDocCount());
-                } else if ("Muslim".equals(religion.getKeyAsString())) {
+                } else if ("Islam".equals(religion.getKeyAsString())) {
                     total = total + religion.getDocCount();
                     searchResult.setMuslim(religion.getDocCount());
                 } else {
