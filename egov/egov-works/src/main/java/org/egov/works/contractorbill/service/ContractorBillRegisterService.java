@@ -1031,4 +1031,10 @@ public class ContractorBillRegisterService {
                 BillStatus.CANCELLED.toString());
     }
 
+    public List<String> getBillNumberToCancelAdvanceReqisition(final Long workOrderEstimateId, final BigDecimal glCodes) {
+        final List<String> billNumbers = contractorBillRegisterRepository
+                .findBillNumberToCancelAdvanceReqisition(workOrderEstimateId, BillStatus.CANCELLED.toString(), glCodes);
+        return billNumbers;
+    }
+
 }

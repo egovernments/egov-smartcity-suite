@@ -52,6 +52,7 @@ import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
 import org.egov.works.contractoradvance.entity.SearchRequestContractorRequisition;
 import org.egov.works.contractoradvance.service.ContractorAdvanceService;
 import org.egov.works.web.adaptor.SearchContractorAdvanceJsonAdaptor;
+import org.egov.works.web.adaptor.SearchContractorAdvanceToCancelJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -75,6 +76,9 @@ public class AjaxContractorAdvanceController {
 
     @Autowired
     private ContractorAdvanceService contractorAdvanceService;
+
+    @Autowired
+    private SearchContractorAdvanceToCancelJsonAdaptor searchContractorAdvanceToCancelJsonAdaptor;
 
     @RequestMapping(value = "/ajaxarfnumbers-searchcr", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> getAdvanceRequisitionNumberToSearchCR(@RequestParam final String advanceRequisitionNumber) {
@@ -136,6 +140,41 @@ public class AjaxContractorAdvanceController {
     @RequestMapping(value = "/ajaxadvancebillnumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> getAdvanceBillNumber(@RequestParam final String advanceBillNumber) {
         return contractorAdvanceService.findAdvanceBillNumber(advanceBillNumber);
+    }
+
+    @RequestMapping(value = "/ajaxarfnumbers-cancel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> getAdvanceRequistionNumberToCancelContractorAdvance(
+            @RequestParam final String advanceRequisitionNumber) {
+        return contractorAdvanceService.findAdvanceRequisitionNumberToCancelContractorAdvance(advanceRequisitionNumber);
+    }
+
+    @RequestMapping(value = "/ajaxcontractors-cancel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> getContractorsToCancelContractorAdvance(@RequestParam final String contractorName) {
+        return contractorAdvanceService.findContractorsToCancelContractorAdvance(contractorName);
+    }
+
+    @RequestMapping(value = "/ajaxloanumbers-cancel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> getWorkOrderNumberToCancelContractorAdvance(@RequestParam final String workOrderNumber) {
+        return contractorAdvanceService.findWorkOrderNumberToCancelContractorAdvance(workOrderNumber);
+    }
+
+    @RequestMapping(value = "/cancel/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchContractorAdvanceToCancel(
+            @ModelAttribute final SearchRequestContractorRequisition searchRequestContractorRequisition) {
+        final List<ContractorAdvanceRequisition> contractorAdvanceRequisitionList = contractorAdvanceService
+                .searchContractorAdvanceToCancel(searchRequestContractorRequisition);
+        final String result = new StringBuilder("{ \"data\":")
+                .append(searchContractorAdvanceToCancel(contractorAdvanceRequisitionList))
+                .append("}").toString();
+        return result;
+    }
+
+    public Object searchContractorAdvanceToCancel(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder
+                .registerTypeAdapter(ContractorAdvanceRequisition.class, searchContractorAdvanceToCancelJsonAdaptor).create();
+        final String json = gson.toJson(object);
+        return json;
     }
 
 }

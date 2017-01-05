@@ -119,4 +119,10 @@ public interface ContractorBillRegisterRepository extends JpaRepository<Contract
     @Query("select COALESCE(sum(billdetail.creditamount),0) from EgBilldetails billdetail where billdetail.egBillregister.billstatus != :billStatus and billdetail.glcodeid in :coaIds and exists (select cbr from ContractorBillRegister cbr where billdetail.egBillregister.id = cbr.id and cbr.workOrderEstimate.id =:woeId and cbr.billstatus != :billStatus)")
     Double getTotalAdvanceAdjusted(@Param("woeId") final Long woeId, @Param("coaIds") final List<BigDecimal> coaIds,
             @Param("billStatus") final String billStatus);
+
+    @Query("select distinct(billdetail.egBillregister.billnumber) from EgBilldetails billdetail where upper(billdetail.egBillregister.billstatus) != :billStatus and upper(billdetail.egBillregister.status.code) !=:billStatus and billdetail.creditamount > 0 and billdetail.glcodeid in (:glcodeId) and exists (select cbr from ContractorBillRegister cbr where billdetail.egBillregister.id = cbr.id and cbr.workOrderEstimate.id =:workOrderEstimateId)")
+    List<String> findBillNumberToCancelAdvanceReqisition(@Param("workOrderEstimateId") final Long workOrderEstimateId,
+            @Param("billStatus") final String billStatus,
+            @Param("glcodeId") final BigDecimal glcodeId);
+
 }

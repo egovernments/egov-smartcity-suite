@@ -37,83 +37,37 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.contractoradvance.entity;
+package org.egov.works.web.adaptor;
 
-import java.util.Date;
+import java.lang.reflect.Type;
 
-public class SearchRequestContractorRequisition {
+import org.egov.infra.utils.DateUtils;
+import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
+import org.springframework.stereotype.Component;
 
-    private String workOrderNumber;
-    private String advanceRequisitionNumber;
-    private Date fromDate;
-    private Date toDate;
-    private String contractorName;
-    private String egwStatus;
-    private String advanceBillNumber;
-    private Long createdBy;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-    public String getWorkOrderNumber() {
-        return workOrderNumber;
-    }
+@Component
+public class SearchContractorAdvanceToCancelJsonAdaptor implements JsonSerializer<ContractorAdvanceRequisition> {
 
-    public void setWorkOrderNumber(final String workOrderNumber) {
-        this.workOrderNumber = workOrderNumber;
-    }
+    @Override
+    public JsonElement serialize(final ContractorAdvanceRequisition contractorAdvanceRequisition, final Type typeOfSrc,
+            final JsonSerializationContext context) {
+        final JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("advanceRequisitionNumber", contractorAdvanceRequisition.getAdvanceRequisitionNumber());
+        jsonObject.addProperty("nameOfWork", contractorAdvanceRequisition.getWorkOrderEstimate().getEstimate().getName());
+        jsonObject.addProperty("advanceRequisitionAmount", contractorAdvanceRequisition.getAdvanceRequisitionAmount());
+        jsonObject.addProperty("advanceRequisitionDate",
+                DateUtils.getFormattedDate(contractorAdvanceRequisition.getAdvanceRequisitionDate(), "dd/MM/yyyy").toString());
+        jsonObject.addProperty("workOrderNumber",
+                contractorAdvanceRequisition.getWorkOrderEstimate().getWorkOrder().getWorkOrderNumber());
 
-    public String getAdvanceRequisitionNumber() {
-        return advanceRequisitionNumber;
-    }
-
-    public void setAdvanceRequisitionNumber(final String advanceRequisitionNumber) {
-        this.advanceRequisitionNumber = advanceRequisitionNumber;
-    }
-
-    public Date getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(final Date fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public Date getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(final Date toDate) {
-        this.toDate = toDate;
-    }
-
-    public String getContractorName() {
-        return contractorName;
-    }
-
-    public void setContractorName(final String contractorName) {
-        this.contractorName = contractorName;
-    }
-
-    public String getEgwStatus() {
-        return egwStatus;
-    }
-
-    public void setEgwStatus(final String egwStatus) {
-        this.egwStatus = egwStatus;
-    }
-
-    public String getAdvanceBillNumber() {
-        return advanceBillNumber;
-    }
-
-    public void setAdvanceBillNumber(final String advanceBillNumber) {
-        this.advanceBillNumber = advanceBillNumber;
-    }
-
-    public Long getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(final Long createdBy) {
-        this.createdBy = createdBy;
+        jsonObject.addProperty("contractorAdvanceId", contractorAdvanceRequisition.getId());
+        jsonObject.addProperty("workOrderId", contractorAdvanceRequisition.getWorkOrderEstimate().getWorkOrder().getId());
+        return jsonObject;
     }
 
 }

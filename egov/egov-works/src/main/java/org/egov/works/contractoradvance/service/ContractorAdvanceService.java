@@ -54,6 +54,7 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.repository.AccountdetailtypeRepository;
 import org.egov.egf.expensebill.service.ExpenseBillService;
 import org.egov.eis.entity.Assignment;
@@ -150,6 +151,9 @@ public class ContractorAdvanceService {
 
     @Autowired
     private ContractorBillRegisterService contractorBillRegisterService;
+
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     public ContractorAdvanceRequisition getContractorAdvanceRequisitionById(final Long id) {
         return contractorAdvanceRepository.findOne(id);
@@ -757,4 +761,121 @@ public class ContractorAdvanceService {
         return contractorAdvanceRepository.findByWorkOrderEstimate_IdAndStatus_CodeNot(workOrderEstimate.getId(),
                 WorksConstants.CANCELLED_STATUS);
     }
+
+    public List<User> getAdvanceRequisitionCreatedByUsers() {
+        return contractorAdvanceRepository
+                .getAdvanceRequisitionCreatedByUsers(ContractorAdvanceRequisitionStatus.APPROVED.toString());
+    }
+
+    public List<String> findAdvanceRequisitionNumberToCancelContractorAdvance(final String advanceRequisitionNumber) {
+        final List<String> advanceRequisitionNumbers = contractorAdvanceRepository
+                .findAdvanceRequisitionNumberToCancelContractorAdvance("%" + advanceRequisitionNumber + "%",
+                        ContractorAdvanceRequisitionStatus.APPROVED.toString());
+        return advanceRequisitionNumbers;
+    }
+
+    public List<String> findContractorsToCancelContractorAdvance(final String contractorName) {
+        final List<String> contractorNames = contractorAdvanceRepository
+                .findContractorsToCancelContractorAdvance("%" + contractorName + "%",
+                        ContractorAdvanceRequisitionStatus.APPROVED.toString());
+        return contractorNames;
+    }
+
+    public List<String> findWorkOrderNumberToCancelContractorAdvance(final String workOrderNumber) {
+        final List<String> workOrderNumbers = contractorAdvanceRepository
+                .findWorkOrderNumberToCancelContractorAdvance("%" + workOrderNumber + "%",
+                        ContractorAdvanceRequisitionStatus.APPROVED.toString());
+        return workOrderNumbers;
+    }
+
+    public List<ContractorAdvanceRequisition> searchContractorAdvanceToCancel(
+            final SearchRequestContractorRequisition searchRequestContractorRequisition) {
+        final StringBuilder queryStr = new StringBuilder(500);
+
+        queryStr.append(
+                "select car from ContractorAdvanceRequisition as car where car.status.code =:contractorAdvanceStatus ");
+
+        if (StringUtils.isNotBlank(searchRequestContractorRequisition.getAdvanceRequisitionNumber()))
+            queryStr.append(
+                    " and upper(car.advanceRequisitionNumber) = :advanceRequisitionNumber");
+
+        if (StringUtils.isNotBlank(searchRequestContractorRequisition.getWorkOrderNumber()))
+            queryStr.append(" and upper(car.workOrderEstimate.workOrder.workOrderNumber) = :workOrderNumber");
+
+        if (StringUtils.isNotBlank(searchRequestContractorRequisition.getContractorName()))
+            queryStr.append(" and upper(car.workOrderEstimate.workOrder.contractor.name) = :contractorName");
+
+        if (searchRequestContractorRequisition.getFromDate() != null)
+            queryStr.append(
+                    " and car.advanceRequisitionDate >= :fromDate");
+
+        if (searchRequestContractorRequisition.getToDate() != null)
+            queryStr.append(
+                    " and car.advanceRequisitionDate <= :toDate");
+
+        if (searchRequestContractorRequisition.getCreatedBy() != null)
+            queryStr.append(
+                    " and car.createdBy.id = :createdBy)");
+
+        final Query query = setParameterToCancelContractorAdvance(searchRequestContractorRequisition, queryStr);
+        final List<ContractorAdvanceRequisition> contractorAdvanceRequisitionList = query.getResultList();
+        return contractorAdvanceRequisitionList;
+    }
+
+    private Query setParameterToCancelContractorAdvance(
+            final SearchRequestContractorRequisition searchRequestContractorRequisition,
+            final StringBuilder queryStr) {
+        final Query qry = entityManager.createQuery(queryStr.toString());
+
+        qry.setParameter("contractorAdvanceStatus", ContractorAdvanceRequisitionStatus.APPROVED.toString());
+        if (searchRequestContractorRequisition != null) {
+            if (StringUtils.isNotBlank(searchRequestContractorRequisition.getWorkOrderNumber()))
+                qry.setParameter("workOrderNumber",
+                        searchRequestContractorRequisition.getWorkOrderNumber().toUpperCase());
+            if (StringUtils.isNotBlank(searchRequestContractorRequisition.getAdvanceRequisitionNumber()))
+                qry.setParameter("advanceRequisitionNumber",
+                        searchRequestContractorRequisition.getAdvanceRequisitionNumber().toUpperCase());
+            if (StringUtils.isNotBlank(searchRequestContractorRequisition.getContractorName()))
+                qry.setParameter("contractorName", searchRequestContractorRequisition.getContractorName().toUpperCase());
+            if (searchRequestContractorRequisition.getFromDate() != null)
+                qry.setParameter("fromDate", searchRequestContractorRequisition.getFromDate());
+            if (searchRequestContractorRequisition.getToDate() != null) {
+                final DateTime dateTime = new DateTime(searchRequestContractorRequisition.getToDate().getTime()).plusDays(1);
+                qry.setParameter("toDate", dateTime.toDate());
+            }
+            if (searchRequestContractorRequisition.getCreatedBy() != null)
+                qry.setParameter("createdBy",
+                        searchRequestContractorRequisition.getCreatedBy());
+
+        }
+        return qry;
+    }
+
+    @Transactional
+    public ContractorAdvanceRequisition cancelContractorAdvance(final ContractorAdvanceRequisition contractorAdvanceRequisition) {
+        contractorAdvanceRequisition.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
+                WorksConstants.CONTRACTOR_ADVANCE, ContractorAdvanceRequisitionStatus.CANCELLED.toString()));
+        if (contractorAdvanceRequisition.getEgAdvanceReqMises().getEgBillregister() != null) {
+            contractorAdvanceRequisition.getEgAdvanceReqMises().getEgBillregister()
+                    .setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
+                            WorksConstants.ADVANCE_BILL, WorksConstants.CANCELLED_STATUS));
+            contractorAdvanceRequisition.getEgAdvanceReqMises().getEgBillregister()
+                    .setBillstatus(ContractorAdvanceRequisitionStatus.CANCELLED.toString());
+
+        }
+        return contractorAdvanceRepository.save(contractorAdvanceRequisition);
+    }
+
+    public String getAdvanceRequisitionGreaterThanCurrent(final Long workOrderEstimateId, final Date createdDate) {
+
+        final List<ContractorAdvanceRequisition> contractorAdvanceRequisitions = contractorAdvanceRepository
+                .findByWorkOrderEstimate_idAndCreatedDateAfterAndStatus_codeNotLike(workOrderEstimateId, createdDate,
+                        ContractorAdvanceRequisitionStatus.CANCELLED.toString());
+        final StringBuilder advanceRequistion = new StringBuilder();
+        for (final ContractorAdvanceRequisition revisionAbstractEstimate : contractorAdvanceRequisitions)
+            advanceRequistion.append(revisionAbstractEstimate.getAdvanceRequisitionNumber()).append(",");
+
+        return advanceRequistion.toString();
+    }
+
 }

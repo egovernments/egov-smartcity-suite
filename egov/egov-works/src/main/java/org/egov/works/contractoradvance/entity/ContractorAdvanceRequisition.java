@@ -88,6 +88,10 @@ public class ContractorAdvanceRequisition extends EgAdvanceRequisition {
 
     private final transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
 
+    private String cancellationReason;
+
+    private String cancellationRemarks;
+
     @Override
     public String getStateDetails() {
         return "Contractor ARF Number : " + getAdvanceRequisitionNumber();
@@ -141,6 +145,22 @@ public class ContractorAdvanceRequisition extends EgAdvanceRequisition {
 
     public void setApprovedBy(final User approvedBy) {
         this.approvedBy = approvedBy;
+    }
+
+    public String getCancellationReason() {
+        return cancellationReason;
+    }
+
+    public void setCancellationReason(final String cancellationReason) {
+        this.cancellationReason = cancellationReason;
+    }
+
+    public String getCancellationRemarks() {
+        return cancellationRemarks;
+    }
+
+    public void setCancellationRemarks(final String cancellationRemarks) {
+        this.cancellationRemarks = cancellationRemarks;
     }
 
 }

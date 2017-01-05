@@ -39,8 +39,10 @@
  */
 package org.egov.works.contractoradvance.repository;
 
+import java.util.Date;
 import java.util.List;
 
+import org.egov.infra.admin.master.entity.User;
 import org.egov.works.contractoradvance.entity.ContractorAdvanceRequisition;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -76,4 +78,25 @@ public interface ContractorAdvanceRepository extends JpaRepository<ContractorAdv
     List<String> findAdvanceBillNumber(@Param("advanceBillNumber") String advanceBillNumber);
 
     List<ContractorAdvanceRequisition> findByWorkOrderEstimate_IdAndStatus_CodeNot(final Long woeId, final String status);
+
+    @Query("select distinct(createdBy) from ContractorAdvanceRequisition as car where car.status.code = :advanceRequisitionStatus")
+    List<User> getAdvanceRequisitionCreatedByUsers(@Param("advanceRequisitionStatus") String advanceRequisitionStatus);
+
+    @Query("select distinct(car.advanceRequisitionNumber) from ContractorAdvanceRequisition as car where upper(car.advanceRequisitionNumber) like upper(:advanceRequisitionNumber) and car.status.code = :advanceRequisitionStatus)")
+    List<String> findAdvanceRequisitionNumberToCancelContractorAdvance(
+            @Param("advanceRequisitionNumber") String advanceRequisitionNumber,
+            @Param("advanceRequisitionStatus") String advanceRequisitionStatus);
+
+    @Query("select distinct(car.workOrderEstimate.workOrder.contractor.name) from ContractorAdvanceRequisition as car where upper(car.workOrderEstimate.workOrder.contractor.name) like upper(:contractorName) or upper(car.workOrderEstimate.workOrder.contractor.code) like upper(:contractorName) and car.status.code = :advanceRequisitionStatus")
+    List<String> findContractorsToCancelContractorAdvance(@Param("contractorName") String contractorName,
+            @Param("advanceRequisitionStatus") String advanceRequisitionStatus);
+
+    @Query("select distinct(car.workOrderEstimate.workOrder.workOrderNumber) from ContractorAdvanceRequisition as car where upper(car.workOrderEstimate.workOrder.workOrderNumber) like upper(:workOrderNumber) and car.status.code = :advanceRequisitionStatus)")
+    List<String> findWorkOrderNumberToCancelContractorAdvance(@Param("workOrderNumber") String workOrderNumber,
+            @Param("advanceRequisitionStatus") String advanceRequisitionStatus);
+
+    List<ContractorAdvanceRequisition> findByWorkOrderEstimate_idAndCreatedDateAfterAndStatus_codeNotLike(
+            @Param("workOrderEstimateId") final Long workOrderEstimateId,
+            @Param("createdDate") final Date createdDate, @Param("status") final String status);
+
 }

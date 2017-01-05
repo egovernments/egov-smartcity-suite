@@ -560,4 +560,15 @@
         <put-attribute name="page-title" value="lbl.modifysubtypeofwork" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/master/subtypeofwork/subtypeofwork-modify.jsp"/>
     </definition>
+
+    <definition name="contractorAdvance-cancel" extends="base_layout">
+        <put-attribute name="page-title" value="title.arf.cancel" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/contractoradvance/contractoradvance-cancel-search.jsp"/>
+    </definition>
+
+    <definition name="contractorAdvance-cancel-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.arf.cancel" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/contractoradvance/contractoradvance-cancel-success.jsp"/>
+    </definition>
+    
 </tiles-definitions>
