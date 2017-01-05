@@ -62,7 +62,11 @@ public class CollTableData {
     private BigDecimal lytdColl = BigDecimal.ZERO;
     private BigDecimal arrearColl = BigDecimal.ZERO;
     private BigDecimal currentColl = BigDecimal.ZERO;
-    private BigDecimal interest = BigDecimal.ZERO;
+    private BigDecimal interestColl = BigDecimal.ZERO;
+    private BigDecimal arrearDemand = BigDecimal.ZERO;
+    private BigDecimal currentDemand = BigDecimal.ZERO;
+    private BigDecimal proportionalArrearDemand = BigDecimal.ZERO;
+    private BigDecimal proportionalCurrentDemand = BigDecimal.ZERO;
     private BigDecimal lyVar = BigDecimal.ZERO;
 
     public String getRegionName() {
@@ -201,11 +205,44 @@ public class CollTableData {
         this.currentColl = currentColl;
     }
 
-    public BigDecimal getInterest() {
-        return interest;
+    public BigDecimal getInterestColl() {
+        return interestColl;
     }
 
-    public void setInterest(BigDecimal interest) {
-        this.interest = interest;
+    public void setInterestColl(BigDecimal interestColl) {
+        this.interestColl = interestColl;
     }
+
+    public BigDecimal getArrearDemand() {
+        return arrearDemand;
+    }
+
+    public void setArrearDemand(BigDecimal arrearDemand) {
+        this.arrearDemand = arrearDemand;
+    }
+
+    public BigDecimal getCurrentDemand() {
+        return currentDemand;
+    }
+
+    public void setCurrentDemand(BigDecimal currentDemand) {
+        this.currentDemand = currentDemand;
+    }
+
+    public BigDecimal getProportionalArrearDemand() {
+        return proportionalArrearDemand;
+    }
+
+    public void setProportionalArrearDemand(BigDecimal proportionalArrearDemand) {
+        this.proportionalArrearDemand = proportionalArrearDemand;
+    }
+
+    public BigDecimal getProportionalCurrentDemand() {
+        return proportionalCurrentDemand;
+    }
+
+    public void setProportionalCurrentDemand(BigDecimal proportionalCurrentDemand) {
+        this.proportionalCurrentDemand = proportionalCurrentDemand;
+    }
+
 }
