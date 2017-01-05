@@ -120,7 +120,7 @@
 			<spring:message code="lbl.locality" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${reIssue.registration.locality}"></c:out>
+			<c:out value="${reIssue.registration.locality.name}"></c:out>
 		</div>
 	</div>
 	<div class="row add-border">

@@ -202,6 +202,14 @@
 					<form:hidden class="encodedPhoto" path="encodedMarriagePhoto" />
 					<img id="marriage-photo" class="add-margin marriage-img"
 						height="150" width="130" />
+						<script>
+						var	strData = '<c:out value="${marriageRegistration.encodedMarriagePhoto}" />';
+						if (strData != null && strData.length > 0) {
+							$('#marriage-photo').prop('src',
+									"data:image/jpg;base64," + strData);
+							$('#marriage-photo').attr('data-exist');
+						}
+					</script>
 					<input type="file" id="marriage-photo" name="marriagePhotoFile"
 						class="file-ellipsis upload-file validate-file"
 						data-fileto="#marriage-photo">
