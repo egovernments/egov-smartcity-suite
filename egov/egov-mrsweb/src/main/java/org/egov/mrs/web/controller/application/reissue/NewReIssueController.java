@@ -170,6 +170,12 @@ public class NewReIssueController extends GenericWorkFlowController {
         reIssue.setRegistration(marriageRegistrationService.get(reIssue.getRegistration().getId()));
         obtainWorkflowParameters(workflowContainer, request);
         final String appNo = reIssueService.createReIssueApplication(reIssue, workflowContainer);
+        String message = StringUtils.EMPTY;
+        String approverName = request.getParameter("approverName");
+        String nextDesignation = request.getParameter("nextDesignation");
+        message = messageSource.getMessage("msg.reissue.forward",
+                new String[] { approverName.concat("~").concat(nextDesignation), appNo }, null);
+        model.addAttribute("message",message);
         model.addAttribute("ackNumber", appNo);
 
         return "reissue-ack";

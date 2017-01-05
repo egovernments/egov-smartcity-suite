@@ -44,6 +44,8 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.utils.StringUtils;
@@ -75,7 +77,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping(value = "/reissue")
 public class UpdateMrgReIssueController extends GenericWorkFlowController {
 
-
     @Autowired
     private ReIssueService reIssueService;
 
@@ -88,11 +89,11 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
     @Autowired
     protected ResourceBundleMessageSource messageSource;
 
-
     @Autowired
     private MarriageRegistrationUnitService marriageRegistrationUnitService;
 
-   
+    @Autowired
+    protected AssignmentService assignmentService;
 
     public void prepareNewForm(final Model model) {
         model.addAttribute("marriageRegistrationUnit",
@@ -126,13 +127,13 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String updateReIssue(@RequestParam final Long id, @ModelAttribute ReIssue reIssue,
+    public String updateReIssue(@RequestParam final Long id, @ModelAttribute final ReIssue reIssue,
             @ModelAttribute final WorkflowContainer workflowContainer,
             final Model model,
             final HttpServletRequest request,
             final BindingResult errors) throws IOException {
 
-        String workFlowAction = "";
+        String workFlowAction = StringUtils.EMPTY;
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
 
@@ -140,26 +141,42 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
             return "reissue-view";
 
         String message = StringUtils.EMPTY;
+        String approverName = StringUtils.EMPTY;
+        String nextDesignation = StringUtils.EMPTY;
+
         if (workFlowAction != null && !workFlowAction.isEmpty()) {
             workflowContainer.setWorkFlowAction(workFlowAction);
+            final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(reIssue.getCreatedBy().getId());
+            approverName = wfInitiator.getEmployee().getName();
+            nextDesignation = wfInitiator.getDesignation().getName();
             workflowContainer.setApproverComments(request.getParameter("approvalComent"));
-            if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT) ||
-                    workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL)) {
+            if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT))
+            {
+
                 reIssueService.rejectReIssue(reIssue, workflowContainer, request);
-                message = messageSource.getMessage("msg.rejected.reissue", null, null);
+                message = messageSource.getMessage("msg.rejected.reissue", new String[] { reIssue.getApplicationNo(),
+                        approverName.concat("~").concat(nextDesignation) }, null);
+            } else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL)) {
+                reIssueService.rejectReIssue(reIssue, workflowContainer, request);
+                message = messageSource.getMessage("msg.cancelled.reissue", new String[] { reIssue.getApplicationNo(), null },
+                        null);
             }
             else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_APPROVE)) {
                 reIssueService.approveReIssue(reIssue, workflowContainer);
-                message = messageSource.getMessage("msg.approved.reissue", null, null);
+                message = messageSource.getMessage("msg.approved.reissue", new String[] { reIssue.getApplicationNo(),
+                        approverName.concat("~").concat(nextDesignation) }, null);
             }
             else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE)) {
                 reIssueService.printCertificate(reIssue, workflowContainer, request);
                 message = messageSource.getMessage("msg.printcerificate.reissue", null, null);
             }
             else {
+                approverName = request.getParameter("approverName");
+                nextDesignation = request.getParameter("nextDesignation");
                 workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter("approvalPosition")));
                 reIssueService.forwardReIssue(id, reIssue, workflowContainer);
-                message = messageSource.getMessage("msg.forward.reissue", null, null);
+                message = messageSource.getMessage("msg.forward.reissue",
+                        new String[] { approverName.concat("~").concat(nextDesignation), reIssue.getApplicationNo() }, null);
             }
         }
         // On print certificate, output registration certificate

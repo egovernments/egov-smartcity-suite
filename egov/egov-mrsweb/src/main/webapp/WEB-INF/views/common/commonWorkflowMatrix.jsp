@@ -63,7 +63,8 @@
 <form:hidden  path="" id="amountRule" name="amountRule" value="${amountRule}"/>
 <form:hidden path="" id="workFlowDepartment" name="workFlowDepartment" value="${workFlowDepartment}"/>
 <form:hidden path="" id="pendingActions" name="pendingActions" value="${pendingActions}"/>
-<%-- <form:hidden path="" id="approverName" name="approverName" /> --%>
+<form:hidden path="" id="approverName" name="approverName" />
+<form:hidden path="" id="nextDesignation" name="nextDesignation"/>
 
 <form:hidden path="" name="stateType" id="stateType" value="${stateType}"/>	
 <form:hidden path="" id="workFlowAction" name="workFlowAction"/>		

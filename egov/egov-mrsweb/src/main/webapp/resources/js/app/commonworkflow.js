@@ -94,6 +94,14 @@ $(document).ready(function()
 		});
 	});
 	
+	$('#approvalPosition').change(function(){
+		var approvername=$('#approvalPosition option:selected').text().split('/')[0];
+		var nextDesignation=$('#approvalPosition option:selected').text().split('/')[1];
+		$('#approverName').val(approvername);
+		$('#nextDesignation').val(nextDesignation);
+	});
+	
+	
 });
 
 function callAlertForDepartment() {

@@ -47,6 +47,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -127,6 +128,9 @@ public class NewRegistrationController extends MarriageRegistrationController {
             return "registration-form";
 
         }
+        String message = StringUtils.EMPTY;
+        String approverName = request.getParameter("approverName");
+        String nextDesignation = request.getParameter("nextDesignation");
         Assignment currentuser;
         final Integer loggedInUser = ApplicationThreadLocals.getUserId().intValue();
         currentuser = assignmentService.getPrimaryAssignmentForUser(loggedInUser.longValue());
@@ -138,11 +142,13 @@ public class NewRegistrationController extends MarriageRegistrationController {
 
         obtainWorkflowParameters(workflowContainer, request);
         final String appNo = marriageRegistrationService.createRegistration(marriageRegistration, workflowContainer);
-        model.addAttribute("ackNumber", appNo);
-
+        message = messageSource.getMessage("msg.success.forward",
+                new String[] { approverName.concat("~").concat(nextDesignation), appNo }, null);
+        model.addAttribute("message",message);
         return "registration-ack";
     }
 
+    
     @RequestMapping(value = "/workflow", method = RequestMethod.POST)
     public String handleWorkflowAction(@RequestParam final Long id,
             @ModelAttribute final MarriageRegistration marriageRegistration,
