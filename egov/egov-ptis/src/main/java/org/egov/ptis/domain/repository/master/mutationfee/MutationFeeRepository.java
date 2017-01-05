@@ -41,10 +41,12 @@
 package org.egov.ptis.domain.repository.master.mutationfee;
 
 import java.math.BigDecimal;
-
+import java.util.Date;
+import java.util.List;
 import org.egov.ptis.domain.model.MutationFeeDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -55,5 +57,23 @@ public interface MutationFeeRepository extends JpaRepository<MutationFeeDetails,
 
     @Query("select lowLimit from MutationFeeDetails where highLimit is null")
     BigDecimal findLowLimitForHighLimitNullValue();
+
+    @Query("select max(mfd.toDate) from MutationFeeDetails mfd where mfd.slabName=:slabName ")
+    Date findToDateBySlabName(@Param("slabName") String slabName);
+
+    @Query("select mfd1.slabName from MutationFeeDetails mfd1 where mfd1.slabName=:slabName")
+    List<String> findIfSlabNameExists(@Param("slabName") String slabName);
+
+    @Query(value = "select distinct on(slab_name) * from egpt_mutation_fee_details order by slab_name ", nativeQuery = true)
+    List<MutationFeeDetails> getDistinctSlabNamesList();
+
+    @Query("select md from MutationFeeDetails md where md.slabName=:slabName")
+    List<MutationFeeDetails> findBySlabNames(@Param("slabName") String slabName);
+
+    @Query("select mfd2 from MutationFeeDetails mfd2 where mfd2.id=:id")
+    MutationFeeDetails getAllDetailsById(@Param("id") Long id);
+
+    @Query("select mfd3 from MutationFeeDetails mfd3 order by mfd3.slabName asc")
+    List<MutationFeeDetails> selectAllOrderBySlabName();
 
 }
