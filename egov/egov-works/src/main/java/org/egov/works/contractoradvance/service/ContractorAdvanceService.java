@@ -227,22 +227,7 @@ public class ContractorAdvanceService {
         final Query qry = entityManager.createQuery(queryStr.toString());
 
         if (searchRequestContractorRequisition != null) {
-            if (StringUtils.isNotBlank(searchRequestContractorRequisition.getWorkOrderNumber()))
-                qry.setParameter("workOrderNumber",
-                        searchRequestContractorRequisition.getWorkOrderNumber().toUpperCase());
-            if (StringUtils.isNotBlank(searchRequestContractorRequisition.getAdvanceRequisitionNumber()))
-                qry.setParameter("advanceRequisitionNumber",
-                        searchRequestContractorRequisition.getAdvanceRequisitionNumber().toUpperCase());
-            if (StringUtils.isNotBlank(searchRequestContractorRequisition.getContractorName()))
-                qry.setParameter("contractorName", searchRequestContractorRequisition.getContractorName().toUpperCase());
-            if (searchRequestContractorRequisition.getEgwStatus() != null)
-                qry.setParameter("status", searchRequestContractorRequisition.getEgwStatus());
-            if (searchRequestContractorRequisition.getFromDate() != null)
-                qry.setParameter("fromDate", searchRequestContractorRequisition.getFromDate());
-            if (searchRequestContractorRequisition.getToDate() != null) {
-                final DateTime dateTime = new DateTime(searchRequestContractorRequisition.getToDate().getTime()).plusDays(1);
-                qry.setParameter("toDate", dateTime.toDate());
-            }
+            setSearchParameterForContractorAdvance(searchRequestContractorRequisition, qry);
             if (StringUtils.isNotBlank(searchRequestContractorRequisition.getAdvanceBillNumber()))
                 qry.setParameter("advanceBillNumber",
                         searchRequestContractorRequisition.getAdvanceBillNumber().toUpperCase());
@@ -829,20 +814,7 @@ public class ContractorAdvanceService {
 
         qry.setParameter("contractorAdvanceStatus", ContractorAdvanceRequisitionStatus.APPROVED.toString());
         if (searchRequestContractorRequisition != null) {
-            if (StringUtils.isNotBlank(searchRequestContractorRequisition.getWorkOrderNumber()))
-                qry.setParameter("workOrderNumber",
-                        searchRequestContractorRequisition.getWorkOrderNumber().toUpperCase());
-            if (StringUtils.isNotBlank(searchRequestContractorRequisition.getAdvanceRequisitionNumber()))
-                qry.setParameter("advanceRequisitionNumber",
-                        searchRequestContractorRequisition.getAdvanceRequisitionNumber().toUpperCase());
-            if (StringUtils.isNotBlank(searchRequestContractorRequisition.getContractorName()))
-                qry.setParameter("contractorName", searchRequestContractorRequisition.getContractorName().toUpperCase());
-            if (searchRequestContractorRequisition.getFromDate() != null)
-                qry.setParameter("fromDate", searchRequestContractorRequisition.getFromDate());
-            if (searchRequestContractorRequisition.getToDate() != null) {
-                final DateTime dateTime = new DateTime(searchRequestContractorRequisition.getToDate().getTime()).plusDays(1);
-                qry.setParameter("toDate", dateTime.toDate());
-            }
+            setSearchParameterForContractorAdvance(searchRequestContractorRequisition, qry);
             if (searchRequestContractorRequisition.getCreatedBy() != null)
                 qry.setParameter("createdBy",
                         searchRequestContractorRequisition.getCreatedBy());
@@ -873,9 +845,29 @@ public class ContractorAdvanceService {
                         ContractorAdvanceRequisitionStatus.CANCELLED.toString());
         final StringBuilder advanceRequistion = new StringBuilder();
         for (final ContractorAdvanceRequisition revisionAbstractEstimate : contractorAdvanceRequisitions)
-            advanceRequistion.append(revisionAbstractEstimate.getAdvanceRequisitionNumber()).append(",");
+            advanceRequistion.append(revisionAbstractEstimate.getAdvanceRequisitionNumber()).append(',');
 
         return advanceRequistion.toString();
+    }
+
+    private void setSearchParameterForContractorAdvance(
+            final SearchRequestContractorRequisition searchRequestContractorRequisition, final Query qry) {
+        if (StringUtils.isNotBlank(searchRequestContractorRequisition.getWorkOrderNumber()))
+            qry.setParameter("workOrderNumber",
+                    searchRequestContractorRequisition.getWorkOrderNumber().toUpperCase());
+        if (StringUtils.isNotBlank(searchRequestContractorRequisition.getAdvanceRequisitionNumber()))
+            qry.setParameter("advanceRequisitionNumber",
+                    searchRequestContractorRequisition.getAdvanceRequisitionNumber().toUpperCase());
+        if (StringUtils.isNotBlank(searchRequestContractorRequisition.getContractorName()))
+            qry.setParameter("contractorName", searchRequestContractorRequisition.getContractorName().toUpperCase());
+        if (searchRequestContractorRequisition.getFromDate() != null)
+            qry.setParameter("fromDate", searchRequestContractorRequisition.getFromDate());
+        if (searchRequestContractorRequisition.getToDate() != null) {
+            final DateTime dateTime = new DateTime(searchRequestContractorRequisition.getToDate().getTime()).plusDays(1);
+            qry.setParameter("toDate", dateTime.toDate());
+        }
+        if (searchRequestContractorRequisition.getEgwStatus() != null)
+            qry.setParameter("status", searchRequestContractorRequisition.getEgwStatus());
     }
 
 }

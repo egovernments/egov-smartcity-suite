@@ -68,6 +68,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/contractoradvance")
 public class CancelContractorAdvanceController {
 
+    public static final String CONTRACTORADVANCE_CANCEL_SUCCESS = "contractorAdvance-cancel-success";
+    public static final String ERROR_MESSAGE = "errorMessage";
+
     @Autowired
     private ContractorAdvanceService contractorAdvanceService;
 
@@ -107,9 +110,9 @@ public class CancelContractorAdvanceController {
             final String advanceRequisitionBillNumbers = checkForAdvanceAdjustment(contractorAdvanceRequisition);
 
             if (!StringUtils.isBlank(advanceRequisitionBillNumbers)) {
-                model.addAttribute("errorMessage", messageSource.getMessage("error.arf.advanceadjustment",
-                        new String[] { advanceRequisitionBillNumbers.toString() }, null));
-                return "contractorAdvance-cancel-success";
+                model.addAttribute(ERROR_MESSAGE, messageSource.getMessage("error.arf.advanceadjustment",
+                        new String[] { advanceRequisitionBillNumbers }, null));
+                return CONTRACTORADVANCE_CANCEL_SUCCESS;
             }
         }
 
@@ -117,20 +120,20 @@ public class CancelContractorAdvanceController {
                 contractorAdvanceRequisition.getWorkOrderEstimate().getId(), contractorAdvanceRequisition.getCreatedDate());
 
         if (!StringUtils.EMPTY.equals(advanceRequistions)) {
-            model.addAttribute("errorMessage", messageSource.getMessage("error.arfexists.greaterthancreateddate",
+            model.addAttribute(ERROR_MESSAGE, messageSource.getMessage("error.arfexists.greaterthancreateddate",
                     new String[] { advanceRequistions }, null));
-            return "contractorAdvance-cancel-success";
+            return CONTRACTORADVANCE_CANCEL_SUCCESS;
         }
 
         final EgBillregister billregister = contractorAdvanceRequisition.getEgAdvanceReqMises().getEgBillregister();
         if (billregister.getEgBillregistermis() != null
                 && billregister.getEgBillregistermis().getVoucherHeader() != null
                 && billregister.getEgBillregistermis().getVoucherHeader().getStatus() != 4) {
-            model.addAttribute("errorMessage", messageSource.getMessage("error.arf.voucher.created",
+            model.addAttribute(ERROR_MESSAGE, messageSource.getMessage("error.arf.voucher.created",
                     new String[] { contractorAdvanceRequisition.getAdvanceRequisitionNumber(),
                             billregister.getEgBillregistermis().getVoucherHeader().getVoucherNumber() },
                     null));
-            return "contractorAdvance-cancel-success";
+            return CONTRACTORADVANCE_CANCEL_SUCCESS;
         }
 
         contractorAdvanceRequisition.setCancellationReason(cancellationReason);
@@ -142,7 +145,7 @@ public class CancelContractorAdvanceController {
                 new String[] { contractorAdvanceRequisition.getAdvanceRequisitionNumber(),
                         billregister.getBillnumber() },
                 null));
-        return "contractorAdvance-cancel-success";
+        return CONTRACTORADVANCE_CANCEL_SUCCESS;
 
     }
 
@@ -151,13 +154,13 @@ public class CancelContractorAdvanceController {
                 .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_ADVANCE_PURPOSE);
         final StringBuilder glcodeIds = new StringBuilder();
         for (final CChartOfAccounts chartOfAccounts : contractorAdvanceAccountList)
-            glcodeIds.append(",").append(chartOfAccounts.getId());
+            glcodeIds.append(',').append(chartOfAccounts.getId());
         final BigDecimal glCodes = new BigDecimal(glcodeIds.toString().replaceFirst(",", ""));
         final List<String> billNumbers = contractorBillRegisterService
                 .getBillNumberToCancelAdvanceReqisition(contractorAdvanceRequisition.getWorkOrderEstimate().getId(), glCodes);
         final StringBuilder existingBillNumbers = new StringBuilder();
         for (final String details : billNumbers)
-            existingBillNumbers.append(details).append(",");
+            existingBillNumbers.append(details).append(',');
         return existingBillNumbers.toString();
 
     }
