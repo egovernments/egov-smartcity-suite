@@ -112,14 +112,13 @@ public class CreateContractorAdvanceController extends GenericWorkFlowController
 
         final JsonObject jsonObject = new JsonObject();
         contractorAdvanceService.validateARFInDrafts(contractorAdvanceRequisition.getId(),
-                contractorAdvanceRequisition.getWorkOrderEstimate().getId(), jsonObject,
-                resultBinder);
+                contractorAdvanceRequisition.getWorkOrderEstimate().getId(), jsonObject, resultBinder);
         contractorAdvanceService.validateARFInWorkFlow(contractorAdvanceRequisition.getId(),
-                contractorAdvanceRequisition.getWorkOrderEstimate().getId(), jsonObject,
-                resultBinder);
+                contractorAdvanceRequisition.getWorkOrderEstimate().getId(), jsonObject, resultBinder);
         contractorAdvanceService.validateInput(contractorAdvanceRequisition, resultBinder);
         for (final EgAdvanceRequisitionDetails details : contractorAdvanceRequisition.getEgAdvanceReqDetailses())
-            contractorAdvanceService.getEgAdvanceRequisitionDetails(contractorAdvanceRequisition, details, resultBinder);
+            contractorAdvanceService.getEgAdvanceRequisitionDetails(contractorAdvanceRequisition, details,
+                    resultBinder);
 
         if (resultBinder.hasErrors()) {
             setModelValues(contractorAdvanceRequisition, model);
@@ -133,7 +132,7 @@ public class CreateContractorAdvanceController extends GenericWorkFlowController
 
             Long approvalPosition = 0l;
             String approvalComment = "";
-            if (request.getParameter("approvalComment") != null)
+            if (request.getParameter("approvalComent") != null)
                 approvalComment = request.getParameter("approvalComent");
             if (request.getParameter("workFlowAction") != null)
                 workFlowAction = request.getParameter("workFlowAction");
@@ -141,10 +140,10 @@ public class CreateContractorAdvanceController extends GenericWorkFlowController
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
             final ContractorAdvanceRequisition savedContractorAdvanceRequisition = contractorAdvanceService.create(
-                    contractorAdvanceRequisition, files,
-                    approvalPosition, approvalComment, null, workFlowAction);
+                    contractorAdvanceRequisition, files, approvalPosition, approvalComment, null, workFlowAction);
             final String pathVars = worksUtils.getPathVars(savedContractorAdvanceRequisition.getStatus(),
-                    savedContractorAdvanceRequisition.getState(), savedContractorAdvanceRequisition.getId(), approvalPosition);
+                    savedContractorAdvanceRequisition.getState(), savedContractorAdvanceRequisition.getId(),
+                    approvalPosition);
 
             return "redirect:/contractoradvance/contractoradvance-success?pathVars=" + pathVars + "&arfNumber="
                     + savedContractorAdvanceRequisition.getAdvanceRequisitionNumber();
@@ -188,34 +187,44 @@ public class CreateContractorAdvanceController extends GenericWorkFlowController
         return "contractorAdvance-success";
     }
 
-    private String getMessageByStatus(final ContractorAdvanceRequisition contractorAdvanceRequisition, final String approverName,
-            final String nextDesign) {
+    private String getMessageByStatus(final ContractorAdvanceRequisition contractorAdvanceRequisition,
+            final String approverName, final String nextDesign) {
         String message = "";
 
         if (contractorAdvanceRequisition.getStatus().getCode()
                 .equals(ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CREATED.toString()))
-            message = messageSource.getMessage("msg.contractoradvance.create.success",
-                    new String[] { contractorAdvanceRequisition.getAdvanceRequisitionNumber(), approverName, nextDesign }, null);
+            message = messageSource.getMessage(
+                    "msg.contractoradvance.create.success", new String[] {
+                            contractorAdvanceRequisition.getAdvanceRequisitionNumber(), approverName, nextDesign },
+                    null);
         else if (contractorAdvanceRequisition.getStatus().getCode()
                 .equalsIgnoreCase(ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.APPROVED.toString()))
             message = messageSource.getMessage("msg.contractoradvance.approved.success",
                     new String[] { contractorAdvanceRequisition.getAdvanceRequisitionNumber() }, null);
-        else if (contractorAdvanceRequisition.getStatus().getCode()
-                .equalsIgnoreCase(ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.RESUBMITTED.toString()))
-            message = messageSource.getMessage("msg.contractoradvance.resubmit.success",
-                    new String[] { contractorAdvanceRequisition.getAdvanceRequisitionNumber(), approverName, nextDesign }, null);
+        else if (contractorAdvanceRequisition.getStatus().getCode().equalsIgnoreCase(
+                ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.RESUBMITTED.toString()))
+            message = messageSource.getMessage(
+                    "msg.contractoradvance.resubmit.success", new String[] {
+                            contractorAdvanceRequisition.getAdvanceRequisitionNumber(), approverName, nextDesign },
+                    null);
         else if (contractorAdvanceRequisition.getState().getValue().equalsIgnoreCase(WorksConstants.WF_STATE_REJECTED))
-            message = messageSource.getMessage("msg.contractoradvance.reject",
-                    new String[] { contractorAdvanceRequisition.getAdvanceRequisitionNumber(), approverName, nextDesign }, null);
+            message = messageSource.getMessage(
+                    "msg.contractoradvance.reject", new String[] {
+                            contractorAdvanceRequisition.getAdvanceRequisitionNumber(), approverName, nextDesign },
+                    null);
         else if (contractorAdvanceRequisition.getState().getValue().equalsIgnoreCase(WorksConstants.WF_STATE_CANCELLED))
             message = messageSource.getMessage("msg.contractoradvance.cancel",
                     new String[] { contractorAdvanceRequisition.getAdvanceRequisitionNumber() }, null);
         else if (contractorAdvanceRequisition.getStatus().getCode().equalsIgnoreCase(WorksConstants.WF_STATE_REJECTED))
-            message = messageSource.getMessage("msg.contractoradvance.forward.success",
-                    new String[] { contractorAdvanceRequisition.getAdvanceRequisitionNumber(), approverName, nextDesign }, null);
+            message = messageSource.getMessage(
+                    "msg.contractoradvance.forward.success", new String[] {
+                            contractorAdvanceRequisition.getAdvanceRequisitionNumber(), approverName, nextDesign },
+                    null);
         else if (contractorAdvanceRequisition.getStatus().getCode().equalsIgnoreCase(WorksConstants.CHECKED_STATUS))
-            message = messageSource.getMessage("msg.contractoradvance.checked.success",
-                    new String[] { contractorAdvanceRequisition.getAdvanceRequisitionNumber(), approverName, nextDesign }, null);
+            message = messageSource.getMessage(
+                    "msg.contractoradvance.checked.success", new String[] {
+                            contractorAdvanceRequisition.getAdvanceRequisitionNumber(), approverName, nextDesign },
+                    null);
 
         return message;
     }

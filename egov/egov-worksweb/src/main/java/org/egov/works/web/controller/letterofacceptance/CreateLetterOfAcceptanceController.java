@@ -150,15 +150,13 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
 
         model.addAttribute("workOrder", workOrder);
         model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(abstractEstimate.getId()));
-        model.addAttribute("workflowHistory",
-                worksUtils.getHistory(workOrder.getState(), workOrder.getStateHistory()));
+        model.addAttribute("workflowHistory", worksUtils.getHistory(workOrder.getState(), workOrder.getStateHistory()));
         return "createLetterOfAcceptance-form";
     }
 
     private void setDropDownValues(final Model model, final AbstractEstimate abstractEstimate) {
         model.addAttribute("engineerInchargeList",
-                letterOfAcceptanceService.getEngineerInchargeList(
-                        abstractEstimate.getExecutingDepartment().getId(),
+                letterOfAcceptanceService.getEngineerInchargeList(abstractEstimate.getExecutingDepartment().getId(),
                         letterOfAcceptanceService.getEngineerInchargeDesignationIds()));
     }
 
@@ -198,7 +196,7 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
         } else {
             Long approvalPosition = 0l;
             String approvalComment = "";
-            if (request.getParameter("approvalComment") != null)
+            if (request.getParameter("approvalComent") != null)
                 approvalComment = request.getParameter("approvalComent");
             if (request.getParameter("workFlowAction") != null)
                 workFlowAction = request.getParameter("workFlowAction");

@@ -126,14 +126,15 @@ public class UpdateMBController extends GenericWorkFlowController {
             throws ApplicationException {
         final MBHeader mbHeader = getMBHeader(mbHeaderId);
         for (final MBDetails details : mbHeader.getMbDetails()) {
-            final Double prevCumulativeQuantity = mbHeaderService.getPreviousCumulativeQuantity(details.getMbHeader().getId(),
-                    details.getWorkOrderActivity().getId());
+            final Double prevCumulativeQuantity = mbHeaderService.getPreviousCumulativeQuantity(
+                    details.getMbHeader().getId(), details.getWorkOrderActivity().getId());
             details.setPrevCumlvQuantity(prevCumulativeQuantity != null ? prevCumulativeQuantity : 0);
-            for (final WorkOrderMeasurementSheet woms : details.getWorkOrderActivity().getWorkOrderMeasurementSheets()) {
-                final Double prevMBMSCumulativeQuantity = mbHeaderService.getMeasurementsPreviousCumulativeQuantity(
-                        details.getMbHeader().getId(), woms.getId());
-                woms.setCumulativeQuantity(
-                        prevMBMSCumulativeQuantity != null ? new BigDecimal(prevCumulativeQuantity) : new BigDecimal(0));
+            for (final WorkOrderMeasurementSheet woms : details.getWorkOrderActivity()
+                    .getWorkOrderMeasurementSheets()) {
+                final Double prevMBMSCumulativeQuantity = mbHeaderService
+                        .getMeasurementsPreviousCumulativeQuantity(details.getMbHeader().getId(), woms.getId());
+                woms.setCumulativeQuantity(prevMBMSCumulativeQuantity != null ? new BigDecimal(prevCumulativeQuantity)
+                        : new BigDecimal(0));
             }
         }
 
@@ -155,10 +156,9 @@ public class UpdateMBController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/save/{mbHeaderId}", method = RequestMethod.POST)
     public @ResponseBody String save(@ModelAttribute("mbHeader") final MBHeader mbHeader,
-            @RequestParam("file") final MultipartFile[] files,
-            final Model model, final BindingResult errors, final HttpServletRequest request, final BindingResult resultBinder,
-            final HttpServletResponse response, @RequestParam("removedDetailIds") final String removedDetailIds)
-            throws ApplicationException, IOException {
+            @RequestParam("file") final MultipartFile[] files, final Model model, final BindingResult errors,
+            final HttpServletRequest request, final BindingResult resultBinder, final HttpServletResponse response,
+            @RequestParam("removedDetailIds") final String removedDetailIds) throws ApplicationException, IOException {
 
         Long approvalPosition = 0l;
         String approvalComment = "";
@@ -166,7 +166,7 @@ public class UpdateMBController extends GenericWorkFlowController {
         String mode = "";
         if (request.getParameter("mode") != null)
             mode = request.getParameter("mode");
-        if (request.getParameter("approvalComment") != null)
+        if (request.getParameter("approvalComent") != null)
             approvalComment = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
@@ -185,13 +185,11 @@ public class UpdateMBController extends GenericWorkFlowController {
                 removedDetailIds, files);
         mbHeaderService.fillWorkflowData(jsonObject, request, updatedMBHeader);
         if (workFlowAction.equalsIgnoreCase(WorksConstants.SAVE_ACTION))
-            jsonObject.addProperty("message", messageSource.getMessage("msg.mbheader.saved",
-                    new String[] { mbHeader.getMbRefNo() },
-                    null));
+            jsonObject.addProperty("message",
+                    messageSource.getMessage("msg.mbheader.saved", new String[] { mbHeader.getMbRefNo() }, null));
         else if (workFlowAction.equalsIgnoreCase(WorksConstants.CANCEL_ACTION))
-            jsonObject.addProperty("message", messageSource.getMessage("msg.mbheader.cancelled",
-                    new String[] { mbHeader.getMbRefNo() },
-                    null));
+            jsonObject.addProperty("message",
+                    messageSource.getMessage("msg.mbheader.cancelled", new String[] { mbHeader.getMbRefNo() }, null));
         else {
             final String pathVars = worksUtils.getPathVars(mbHeader.getEgwStatus(), mbHeader.getState(),
                     mbHeader.getId(), approvalPosition);
@@ -208,8 +206,7 @@ public class UpdateMBController extends GenericWorkFlowController {
                 }
 
             jsonObject.addProperty("message", messageSource.getMessage("msg.mbheader.created",
-                    new String[] { approverName, nextDesign, mbHeader.getMbRefNo() },
-                    null));
+                    new String[] { approverName, nextDesign, mbHeader.getMbRefNo() }, null));
         }
         return jsonObject.toString();
     }
@@ -225,12 +222,10 @@ public class UpdateMBController extends GenericWorkFlowController {
     }
 
     @RequestMapping(value = "/update/{mbHeaderId}", method = RequestMethod.POST)
-    public String update(@ModelAttribute("mbHeader") final MBHeader mbHeader,
-            final BindingResult errors, final RedirectAttributes redirectAttributes,
-            final Model model, final HttpServletRequest request,
+    public String update(@ModelAttribute("mbHeader") final MBHeader mbHeader, final BindingResult errors,
+            final RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request,
             @RequestParam("removedDetailIds") final String removedDetailIds,
-            @RequestParam("file") final MultipartFile[] files)
-            throws ApplicationException, IOException {
+            @RequestParam("file") final MultipartFile[] files) throws ApplicationException, IOException {
 
         String mode = "";
         String workFlowAction = "";
@@ -253,8 +248,7 @@ public class UpdateMBController extends GenericWorkFlowController {
 
         // For Get Configured ApprovalPosition from workflow history
         if (approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
-            approvalPosition = mbHeaderService.getApprovalPositionByMatrixDesignation(
-                    mbHeader, approvalPosition, null,
+            approvalPosition = mbHeaderService.getApprovalPositionByMatrixDesignation(mbHeader, approvalPosition, null,
                     mode, workFlowAction);
 
         if ((approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
@@ -270,8 +264,8 @@ public class UpdateMBController extends GenericWorkFlowController {
             return loadViewData(model, request, mbHeader);
         } else {
             if (null != workFlowAction)
-                updatedMBHeader = mbHeaderService.update(mbHeader, approvalPosition,
-                        approvalComment, workFlowAction, removedDetailIds, files);
+                updatedMBHeader = mbHeaderService.update(mbHeader, approvalPosition, approvalComment, workFlowAction,
+                        removedDetailIds, files);
             redirectAttributes.addFlashAttribute("mbHeader", updatedMBHeader);
 
             if (updatedMBHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString()))
@@ -281,18 +275,16 @@ public class UpdateMBController extends GenericWorkFlowController {
                 return "redirect:/measurementbook/mb-success?mbHeader=" + updatedMBHeader.getId()
                         + "&approvalPosition=";
             else
-                return "redirect:/measurementbook/mb-success?mbHeader=" + updatedMBHeader.getId()
-                        + "&approvalPosition=" + approvalPosition;
+                return "redirect:/measurementbook/mb-success?mbHeader=" + updatedMBHeader.getId() + "&approvalPosition="
+                        + approvalPosition;
         }
     }
 
-    private String loadViewData(final Model model, final HttpServletRequest request,
-            final MBHeader mbHeader) {
+    private String loadViewData(final Model model, final HttpServletRequest request, final MBHeader mbHeader) {
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Boolean isMBEditable = false;
         model.addAttribute("stateType", mbHeader.getClass().getSimpleName());
-        if (mbHeader.getCurrentState() != null
-                && !mbHeader.getCurrentState().getValue().equals(WorksConstants.NEW))
+        if (mbHeader.getCurrentState() != null && !mbHeader.getCurrentState().getValue().equals(WorksConstants.NEW))
             model.addAttribute("currentState", mbHeader.getCurrentState().getValue());
         if (mbHeader.getState() != null && mbHeader.getState().getNextAction() != null) {
             model.addAttribute("nextAction", mbHeader.getState().getNextAction());
@@ -311,9 +303,10 @@ public class UpdateMBController extends GenericWorkFlowController {
         if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString())) {
             List<String> validActions = Collections.emptyList();
 
-            validActions = customizedWorkFlowService.getNextValidActions(mbHeader.getStateType(), workflowContainer
-                    .getWorkFlowDepartment(), workflowContainer.getAmountRule(), workflowContainer.getAdditionalRule(),
-                    WorksConstants.NEW, workflowContainer.getPendingActions(), mbHeader.getCreatedDate());
+            validActions = customizedWorkFlowService.getNextValidActions(mbHeader.getStateType(),
+                    workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
+                    workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
+                    mbHeader.getCreatedDate());
             model.addAttribute("validActionList", validActions);
         }
 
@@ -323,14 +316,13 @@ public class UpdateMBController extends GenericWorkFlowController {
 
         model.addAttribute("quantityTolerance", value.getValue());
 
-        values = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_MB_SECOND_LEVEL_EDIT);
+        values = appConfigValuesService.getConfigValuesByModuleAndKey(WorksConstants.WORKS_MODULE_NAME,
+                WorksConstants.APPCONFIG_KEY_MB_SECOND_LEVEL_EDIT);
         value = values.get(0);
         if (value.getValue().equalsIgnoreCase("Yes"))
             isMBEditable = true;
 
-        model.addAttribute("workflowHistory",
-                worksUtils.getHistory(mbHeader.getState(), mbHeader.getStateHistory()));
+        model.addAttribute("workflowHistory", worksUtils.getHistory(mbHeader.getState(), mbHeader.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
         model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
@@ -346,8 +338,7 @@ public class UpdateMBController extends GenericWorkFlowController {
             model.addAttribute("workCommencedDate", sdf.format(offlineStatus.getStatusDate()));
 
         final Double totalMBAmountOfMBs = mbHeaderService.getTotalMBAmountOfMBs(updatedMBHeader.getId(),
-                updatedMBHeader.getWorkOrderEstimate().getId(),
-                MBHeader.MeasurementBookStatus.CANCELLED.toString());
+                updatedMBHeader.getWorkOrderEstimate().getId(), MBHeader.MeasurementBookStatus.CANCELLED.toString());
         if (totalMBAmountOfMBs != null)
             model.addAttribute("totalMBAmountOfMBs", totalMBAmountOfMBs - updatedMBHeader.getMbAmount().doubleValue());
 
@@ -391,8 +382,7 @@ public class UpdateMBController extends GenericWorkFlowController {
 
     private MBHeader getMbHeaderDocuments(final MBHeader mbHeader) {
         List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
-        documentDetailsList = worksUtils.findByObjectIdAndObjectType(mbHeader.getId(),
-                WorksConstants.MBHEADER);
+        documentDetailsList = worksUtils.findByObjectIdAndObjectType(mbHeader.getId(), WorksConstants.MBHEADER);
         mbHeader.setDocumentDetails(documentDetailsList);
         return mbHeader;
     }

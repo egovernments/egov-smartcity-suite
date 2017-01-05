@@ -61,14 +61,14 @@ public class CreateMBController {
     private WorksUtils worksUtils;
 
     public WorkOrderEstimate getWorkOrderEstimate(final Long workOrderEstimateId) {
-        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
+                .getWorkOrderEstimateById(workOrderEstimateId);
         return workOrderEstimate;
     }
 
     @RequestMapping(value = "/create/{workOrderEstimateId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String createMeasurementBook(@PathVariable final Long workOrderEstimateId,
-            final HttpServletRequest request,
-            final HttpServletResponse response) {
+            final HttpServletRequest request, final HttpServletResponse response) {
         final WorkOrderEstimate workOrderEstimate = getWorkOrderEstimate(workOrderEstimateId);
         final String result = new StringBuilder().append(toSearchMilestoneTemplateJson(workOrderEstimate)).toString();
         return result;
@@ -82,8 +82,8 @@ public class CreateMBController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String create(@ModelAttribute("mbHeader") final MBHeader mbHeader,
-            final Model model, final BindingResult errors, final HttpServletRequest request, final BindingResult resultBinder,
+    public @ResponseBody String create(@ModelAttribute("mbHeader") final MBHeader mbHeader, final Model model,
+            final BindingResult errors, final HttpServletRequest request, final BindingResult resultBinder,
             final HttpServletResponse response, @RequestParam("file") final MultipartFile[] files)
             throws ApplicationException, IOException {
 
@@ -93,7 +93,7 @@ public class CreateMBController {
         String mode = "";
         if (request.getParameter("mode") != null)
             mode = request.getParameter("mode");
-        if (request.getParameter("approvalComment") != null)
+        if (request.getParameter("approvalComent") != null)
             approvalComment = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
@@ -101,14 +101,15 @@ public class CreateMBController {
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
         mbHeader.setWorkOrder(letterOfAcceptanceService.getWorkOrderById(mbHeader.getWorkOrder().getId()));
-        mbHeader.setWorkOrderEstimate(workOrderEstimateService.getWorkOrderEstimateById(mbHeader.getWorkOrderEstimate().getId()));
+        mbHeader.setWorkOrderEstimate(
+                workOrderEstimateService.getWorkOrderEstimateById(mbHeader.getWorkOrderEstimate().getId()));
 
         final JsonObject jsonObject = new JsonObject();
         mbHeaderService.validateMBInDrafts(mbHeader.getWorkOrderEstimate().getId(), jsonObject, errors);
         mbHeaderService.validateMBInWorkFlow(mbHeader.getWorkOrderEstimate().getId(), jsonObject, errors);
         mbHeaderService.validateMBHeader(mbHeader, jsonObject, resultBinder, mode);
-        workOrderEstimateService.getContratorBillForWorkOrderEstimateAndBillType(mbHeader.getWorkOrderEstimate().getId(),
-                jsonObject);
+        workOrderEstimateService
+                .getContratorBillForWorkOrderEstimateAndBillType(mbHeader.getWorkOrderEstimate().getId(), jsonObject);
         if (StringUtils.isBlank(workFlowAction))
             validateMBDateToSkipWorkflow(mbHeader, jsonObject, errors);
         if (jsonObject.toString().length() > 2) {
@@ -116,14 +117,14 @@ public class CreateMBController {
             return "";
         }
 
-        final MBHeader savedMBHeader = mbHeaderService.create(mbHeader, files, approvalPosition, approvalComment, workFlowAction);
+        final MBHeader savedMBHeader = mbHeaderService.create(mbHeader, files, approvalPosition, approvalComment,
+                workFlowAction);
 
         mbHeaderService.fillWorkflowData(jsonObject, request, savedMBHeader);
 
         if (workFlowAction.equalsIgnoreCase(WorksConstants.SAVE_ACTION))
-            jsonObject.addProperty("message", messageSource.getMessage("msg.mbheader.saved",
-                    new String[] { mbHeader.getMbRefNo() },
-                    null));
+            jsonObject.addProperty("message",
+                    messageSource.getMessage("msg.mbheader.saved", new String[] { mbHeader.getMbRefNo() }, null));
         else {
             final String pathVars = worksUtils.getPathVars(mbHeader.getEgwStatus(), mbHeader.getState(),
                     mbHeader.getId(), approvalPosition);
@@ -140,12 +141,10 @@ public class CreateMBController {
                 }
             if (StringUtils.isBlank(workFlowAction))
                 jsonObject.addProperty("message", messageSource.getMessage("msg.mbheader.createdandapprove",
-                        new String[] { mbHeader.getMbRefNo() },
-                        null));
+                        new String[] { mbHeader.getMbRefNo() }, null));
             else
                 jsonObject.addProperty("message", messageSource.getMessage("msg.mbheader.created",
-                        new String[] { approverName, nextDesign, mbHeader.getMbRefNo() },
-                        null));
+                        new String[] { approverName, nextDesign, mbHeader.getMbRefNo() }, null));
         }
 
         return jsonObject.toString();
@@ -162,15 +161,15 @@ public class CreateMBController {
     }
 
     @RequestMapping(value = "/mb-success", method = RequestMethod.GET)
-    public ModelAndView successView(@ModelAttribute MBHeader mbHeader,
-            @RequestParam("mbHeader") Long id, @RequestParam("approvalPosition") final Long approvalPosition,
-            final HttpServletRequest request, final Model model) {
+    public ModelAndView successView(@ModelAttribute MBHeader mbHeader, @RequestParam("mbHeader") Long id,
+            @RequestParam("approvalPosition") final Long approvalPosition, final HttpServletRequest request,
+            final Model model) {
 
         if (id != null)
             mbHeader = mbHeaderService.getMBHeaderById(id);
 
-        final String pathVars = worksUtils.getPathVars(mbHeader.getEgwStatus(), mbHeader.getState(),
-                mbHeader.getId(), approvalPosition);
+        final String pathVars = worksUtils.getPathVars(mbHeader.getEgwStatus(), mbHeader.getState(), mbHeader.getId(),
+                approvalPosition);
 
         final String[] keyNameArray = pathVars.split(",");
         String approverName = "";
@@ -203,13 +202,11 @@ public class CreateMBController {
         return new ModelAndView("mb-success", "mbHeader", mbHeader);
     }
 
-    private String getMessageByStatus(final MBHeader mbHeader, final String approverName,
-            final String nextDesign) {
+    private String getMessageByStatus(final MBHeader mbHeader, final String approverName, final String nextDesign) {
         String message = "";
 
         if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString()))
-            message = messageSource.getMessage("msg.mbheader.saved",
-                    new String[] { mbHeader.getMbRefNo() }, null);
+            message = messageSource.getMessage("msg.mbheader.saved", new String[] { mbHeader.getMbRefNo() }, null);
         else if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.CREATED.toString())
                 && !mbHeader.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
             message = messageSource.getMessage("msg.mbheader.created",
@@ -219,15 +216,12 @@ public class CreateMBController {
             message = messageSource.getMessage("msg.mbheader.resubmitted",
                     new String[] { approverName, nextDesign, mbHeader.getMbRefNo() }, null);
         else if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.APPROVED.toString()))
-            message = messageSource.getMessage("msg.mbheader.approved",
-                    new String[] { mbHeader.getMbRefNo() }, null);
-        else if (mbHeader.getState() != null
-                && mbHeader.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
+            message = messageSource.getMessage("msg.mbheader.approved", new String[] { mbHeader.getMbRefNo() }, null);
+        else if (mbHeader.getState() != null && mbHeader.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
             message = messageSource.getMessage("msg.mbheader.rejected",
                     new String[] { mbHeader.getMbRefNo(), approverName, nextDesign }, null);
         else if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.CANCELLED.toString()))
-            message = messageSource.getMessage("msg.mbheader.cancelled",
-                    new String[] { mbHeader.getMbRefNo() }, null);
+            message = messageSource.getMessage("msg.mbheader.cancelled", new String[] { mbHeader.getMbRefNo() }, null);
 
         else if (MBHeader.MeasurementBookStatus.CHECKED.toString().equalsIgnoreCase(mbHeader.getEgwStatus().getCode()))
             message = messageSource.getMessage("msg.mbheader.checked",
@@ -236,7 +230,8 @@ public class CreateMBController {
         return message;
     }
 
-    private void validateMBDateToSkipWorkflow(final MBHeader mBHeader, final JsonObject jsonObject, final BindingResult errors) {
+    private void validateMBDateToSkipWorkflow(final MBHeader mBHeader, final JsonObject jsonObject,
+            final BindingResult errors) {
         final Date cutOffDate = worksUtils.getCutOffDate();
         final SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy");
         if (cutOffDate != null && mBHeader.getMbDate().after(cutOffDate)) {

@@ -146,9 +146,10 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         } else {
 
             final WorkflowContainer workflowContainer = new WorkflowContainer();
-            workflowContainer.setAmountRule(abstractEstimate.getEstimateValue()!= null ? abstractEstimate.getEstimateValue() : BigDecimal.ZERO);
-            workflowContainer
-                    .setAdditionalRule((String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+            workflowContainer.setAmountRule(abstractEstimate.getEstimateValue() != null
+                    ? abstractEstimate.getEstimateValue() : BigDecimal.ZERO);
+            workflowContainer.setAdditionalRule(
+                    (String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
             prepareWorkflow(model, abstractEstimate, workflowContainer);
             List<String> validActions = Collections.emptyList();
             validActions = customizedWorkFlowService.getNextValidActions(abstractEstimate.getStateType(),
@@ -177,7 +178,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         Long approvalPosition = 0l;
         String approvalComment = "";
         String additionalRule = "";
-        if (request.getParameter("approvalComment") != null)
+        if (request.getParameter("approvalComent") != null)
             approvalComment = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
@@ -217,7 +218,8 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
             model.addAttribute("designation", request.getParameter("designation"));
-            model.addAttribute("technicalSanctionBy", request.getParameter("estimateTechnicalSanctions[0].technicalSanctionBy"));
+            model.addAttribute("technicalSanctionBy",
+                    request.getParameter("estimateTechnicalSanctions[0].technicalSanctionBy"));
             model.addAttribute("approvedByValue", request.getParameter("approvedBy"));
             model.addAttribute(WorksConstants.ADDITIONAL_RULE,
                     cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
@@ -228,8 +230,8 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
                     abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
                             WorksConstants.ABSTRACTESTIMATE, EstimateStatus.CREATED.toString()));
                 else if (WorksConstants.CREATE_AND_APPROVE.equalsIgnoreCase(workFlowAction)) {
-                    abstractEstimate.setEgwStatus(egwStatusHibernateDAO
-                            .getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE, EstimateStatus.APPROVED.toString()));
+                    abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
+                            WorksConstants.ABSTRACTESTIMATE, EstimateStatus.APPROVED.toString()));
                     estimateService.saveTechnicalSanctionDetails(abstractEstimate);
                     estimateService.saveAdminSanctionDetails(abstractEstimate);
                 } else

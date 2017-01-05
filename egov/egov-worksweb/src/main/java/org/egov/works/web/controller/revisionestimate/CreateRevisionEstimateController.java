@@ -130,7 +130,8 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
     public String showForm(@ModelAttribute("revisionEstimate") final RevisionAbstractEstimate revisionEstimate,
             @RequestParam final Long workOrderEstimateId, final Model model) {
 
-        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
+                .getWorkOrderEstimateById(workOrderEstimateId);
         revisionEstimate.setParent(workOrderEstimate.getEstimate());
         revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model);
         final WorkflowContainer workflowContainer = new WorkflowContainer();
@@ -153,7 +154,7 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
         RevisionAbstractEstimate savedRevisionEstimate;
         Long approvalPosition = 0l;
         String approvalComment = "";
-        if (request.getParameter("approvalComment") != null)
+        if (request.getParameter("approvalComent") != null)
             approvalComment = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
@@ -178,7 +179,8 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
                 final WorkOrderActivity workOrderActivity = workOrderActivityService
                         .getWorkOrderActivityByActivity(activity.getParent().getId());
                 if (workOrderActivity != null) {
-                    final Double consumedQuantity = mbHeaderService.getPreviousCumulativeQuantity(-1L, workOrderActivity.getId());
+                    final Double consumedQuantity = mbHeaderService.getPreviousCumulativeQuantity(-1L,
+                            workOrderActivity.getId());
                     activity.setConsumedQuantity(consumedQuantity == null ? 0 : consumedQuantity);
                     activity.setEstimateQuantity(workOrderActivity.getApprovedQuantity());
                     if ("-".equalsIgnoreCase(activity.getSignValue()))
@@ -206,20 +208,19 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
 
             if (revisionEstimate.getState() == null)
                 if (WorksConstants.FORWARD_ACTION.equals(workFlowAction))
-                    revisionEstimate.setEgwStatus(
-                            worksUtils.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
-                                    EstimateStatus.CREATED.toString()));
+                    revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
+                            WorksConstants.REVISIONABSTRACTESTIMATE, EstimateStatus.CREATED.toString()));
                 else
-                    revisionEstimate.setEgwStatus(
-                            worksUtils.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
-                                    EstimateStatus.NEW.toString()));
+                    revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
+                            WorksConstants.REVISIONABSTRACTESTIMATE, EstimateStatus.NEW.toString()));
 
             if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                     .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
-                validateBudgetAmount(revisionEstimate.getParent().getLineEstimateDetails().getLineEstimate(), bindErrors);
+                validateBudgetAmount(revisionEstimate.getParent().getLineEstimateDetails().getLineEstimate(),
+                        bindErrors);
             try {
-                savedRevisionEstimate = revisionEstimateService.createRevisionEstimate(revisionEstimate, approvalPosition,
-                        approvalComment, null, workFlowAction);
+                savedRevisionEstimate = revisionEstimateService.createRevisionEstimate(revisionEstimate,
+                        approvalPosition, approvalComment, null, workFlowAction);
             } catch (final ValidationException e) {
                 final String errorMessage = messageSource.getMessage("error.budgetappropriation.insufficient.amount",
                         new String[] {}, null);
@@ -240,19 +241,15 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
         budgetheadid.add(lineEstimate.getBudgetHead().getId());
 
         try {
-            final BigDecimal budgetAvailable = budgetDetailsDAO
-                    .getPlanningBudgetAvailable(
-                            worksUtils.getFinancialYearByDate(new Date()).getId(),
-                            Integer.parseInt(lineEstimate
-                                    .getExecutingDepartment().getId().toString()),
-                            lineEstimate.getFunction().getId(),
-                            null,
-                            lineEstimate.getScheme() == null ? null : Integer.parseInt(lineEstimate.getScheme().getId()
-                                    .toString()),
-                            lineEstimate.getSubScheme() == null ? null : Integer.parseInt(lineEstimate.getSubScheme().getId()
-                                    .toString()),
-                            null, budgetheadid, Integer.parseInt(lineEstimate.getFund()
-                                    .getId().toString()));
+            final BigDecimal budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
+                    worksUtils.getFinancialYearByDate(new Date()).getId(),
+                    Integer.parseInt(lineEstimate.getExecutingDepartment().getId().toString()),
+                    lineEstimate.getFunction().getId(), null,
+                    lineEstimate.getScheme() == null ? null
+                            : Integer.parseInt(lineEstimate.getScheme().getId().toString()),
+                    lineEstimate.getSubScheme() == null ? null
+                            : Integer.parseInt(lineEstimate.getSubScheme().getId().toString()),
+                    null, budgetheadid, Integer.parseInt(lineEstimate.getFund().getId().toString()));
 
             BigDecimal totalEstimateAmount = BigDecimal.ZERO;
 
@@ -314,10 +311,9 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
         if (RevisionEstimateStatus.BUDGET_SANCTIONED.toString().equals(revisionEstimate.getEgwStatus().getCode())) {
             final LineEstimateAppropriation lea = lineEstimateAppropriationService
                     .findLatestByLineEstimateDetails_EstimateNumber(revisionEstimate.getParent().getEstimateNumber());
-            model.addAttribute("basMessage", messageSource
-                    .getMessage("msg.revisionestimate.budgetsanction.success",
-                            new String[] { revisionEstimate.getEstimateNumber(),
-                                    lea.getBudgetUsage().getAppropriationnumber() },
+            model.addAttribute("basMessage",
+                    messageSource.getMessage("msg.revisionestimate.budgetsanction.success", new String[] {
+                            revisionEstimate.getEstimateNumber(), lea.getBudgetUsage().getAppropriationnumber() },
                             null));
         }
 
@@ -348,13 +344,15 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
         else if (RevisionEstimateStatus.APPROVED.toString().equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode()))
             message = messageSource.getMessage("msg.revisionestimate.approved",
                     new String[] { revisionEstimate.getEstimateNumber() }, null);
-        else if (RevisionEstimateStatus.TECH_SANCTIONED.toString().equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode()))
+        else if (RevisionEstimateStatus.TECH_SANCTIONED.toString()
+                .equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode()))
             message = messageSource.getMessage("msg.revisionestimate.technicalsanction",
                     new String[] { revisionEstimate.getEstimateNumber(), approverName, nextDesign }, null);
         else if (RevisionEstimateStatus.CHECKED.toString().equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode()))
             message = messageSource.getMessage("msg.revisionestimate.checked",
                     new String[] { revisionEstimate.getEstimateNumber(), approverName, nextDesign }, null);
-        else if (RevisionEstimateStatus.BUDGET_SANCTIONED.toString().equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode()))
+        else if (RevisionEstimateStatus.BUDGET_SANCTIONED.toString()
+                .equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode()))
             message = messageSource.getMessage("msg.revisionestimate.budgetsanction",
                     new String[] { revisionEstimate.getEstimateNumber(), approverName, nextDesign }, null);
         return message;

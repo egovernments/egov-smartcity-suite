@@ -204,7 +204,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             Long approvalPosition = 0l;
             String approvalComment = "";
             String additionalRule = "";
-            if (request.getParameter("approvalComment") != null)
+            if (request.getParameter("approvalComent") != null)
                 approvalComment = request.getParameter("approvalComent");
             if (request.getParameter("workFlowAction") != null)
                 workFlowAction = request.getParameter("workFlowAction");

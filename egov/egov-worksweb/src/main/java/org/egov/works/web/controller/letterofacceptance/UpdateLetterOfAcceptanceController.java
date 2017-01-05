@@ -158,7 +158,7 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(Long.valueOf(id));
         Long approvalPosition = 0l;
         String approvalComment = "";
-        if (request.getParameter("approvalComment") != null)
+        if (request.getParameter("approvalComent") != null)
             approvalComment = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
@@ -195,8 +195,7 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
         model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(abstractEstimate.getId()));
         model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
         model.addAttribute("mode", "modify");
-        model.addAttribute("workflowHistory",
-                worksUtils.getHistory(workOrder.getState(), workOrder.getStateHistory()));
+        model.addAttribute("workflowHistory", worksUtils.getHistory(workOrder.getState(), workOrder.getStateHistory()));
         return "letterOfAcceptance-modify";
     }
 

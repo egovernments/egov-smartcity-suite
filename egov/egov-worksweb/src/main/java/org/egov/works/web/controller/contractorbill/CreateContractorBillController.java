@@ -150,8 +150,8 @@ public class CreateContractorBillController extends BaseContractorBillController
         prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
         contractorBillRegister.setBilldate(new Date());
         model.addAttribute("mode", "new");
-        model.addAttribute("mbHeaders",
-                mBHeaderService.getMBHeaderBasedOnBillDate(workOrderEstimate.getId(), contractorBillRegister.getBilldate()));
+        model.addAttribute("mbHeaders", mBHeaderService.getMBHeaderBasedOnBillDate(workOrderEstimate.getId(),
+                contractorBillRegister.getBilldate()));
         // TODO: remove this condition to check if spillover
         if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null
                 && !workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isSpillOverFlag())
@@ -188,8 +188,8 @@ public class CreateContractorBillController extends BaseContractorBillController
         model.addAttribute("netPayableAccounCodes", contractorPayableAccountList);
         model.addAttribute("statutoryDeductionAccounCodes",
                 chartOfAccountsService.getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_DEDUCTIONS_PURPOSE));
-        model.addAttribute("retentionMoneyDeductionAccounCodes", chartOfAccountsService
-                .getAccountCodeByPurposeName(WorksConstants.RETENTION_MONEY_DEDUCTIONS_PURPOSE));
+        model.addAttribute("retentionMoneyDeductionAccounCodes",
+                chartOfAccountsService.getAccountCodeByPurposeName(WorksConstants.RETENTION_MONEY_DEDUCTIONS_PURPOSE));
 
         model.addAttribute("refundAccounCodes", contractorRefundAccountList);
         model.addAttribute("billTypes", BillTypes.values());
@@ -211,8 +211,8 @@ public class CreateContractorBillController extends BaseContractorBillController
         final List<CChartOfAccounts> contractorAdvanceAccountCodes = chartOfAccountsService
                 .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_ADVANCE_PURPOSE);
         final Double advanceAdjustedSoFar = contractorBillRegisterService.getAdvanceAdjustedSoFar(
-                contractorBillRegister.getWorkOrderEstimate().getId(),
-                contractorBillRegister.getId(), contractorAdvanceAccountCodes);
+                contractorBillRegister.getWorkOrderEstimate().getId(), contractorBillRegister.getId(),
+                contractorAdvanceAccountCodes);
         model.addAttribute("contractorAdvanceAccountCodes", contractorAdvanceAccountCodes);
         model.addAttribute("advanceAdjustedSoFar", advanceAdjustedSoFar);
     }
@@ -272,19 +272,20 @@ public class CreateContractorBillController extends BaseContractorBillController
                     offlineStatus != null ? offlineStatus.getStatusDate() : "");
             model.addAttribute("workOrderEstimate", workOrderEstimate);
             model.addAttribute("contractorBillRegister", contractorBillRegister);
-            model.addAttribute("mbHeaders",
-                    mBHeaderService.getMBHeaderBasedOnBillDate(workOrderEstimate.getId(), contractorBillRegister.getBilldate()));
+            model.addAttribute("mbHeaders", mBHeaderService.getMBHeaderBasedOnBillDate(workOrderEstimate.getId(),
+                    contractorBillRegister.getBilldate()));
 
             model.addAttribute("mode", "edit");
 
-            model.addAttribute("billDetailsMap", contractorBillRegisterService.getBillDetailsMap(contractorBillRegister, model));
+            model.addAttribute("billDetailsMap",
+                    contractorBillRegisterService.getBillDetailsMap(contractorBillRegister, model));
 
             return "contractorBill-form";
         } else {
 
             Long approvalPosition = 0l;
             String approvalComment = "";
-            if (request.getParameter("approvalComment") != null)
+            if (request.getParameter("approvalComent") != null)
                 approvalComment = request.getParameter("approvalComent");
             if (request.getParameter("workFlowAction") != null)
                 workFlowAction = request.getParameter("workFlowAction");
@@ -433,8 +434,7 @@ public class CreateContractorBillController extends BaseContractorBillController
                 resultBinder.rejectValue("mbHeader.mbDate", "error.validate.mbdate.lessthan.loadate");
 
             if (contractorBillRegister.getMbHeader().getMbDate() != null
-                    && contractorBillRegister.getBilldate()
-                            .before(contractorBillRegister.getMbHeader().getMbDate()))
+                    && contractorBillRegister.getBilldate().before(contractorBillRegister.getMbHeader().getMbDate()))
                 resultBinder.rejectValue("mbHeader.mbDate", "error.billdate.mbdate");
 
         }
@@ -453,8 +453,7 @@ public class CreateContractorBillController extends BaseContractorBillController
             resultBinder.rejectValue("egBillregistermis.partyBillDate", "error.partybilldate.billdate");
 
         final Date workCompletionDate = contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate();
-        if (contractorBillRegister.getBilltype().equals(BillTypes.Final_Bill.toString())
-                && workCompletionDate == null)
+        if (contractorBillRegister.getBilltype().equals(BillTypes.Final_Bill.toString()) && workCompletionDate == null)
             resultBinder.rejectValue("workOrderEstimate.workCompletionDate", "error.workcompletiondate.required");
 
         final Date currentDate = new Date();
@@ -553,20 +552,18 @@ public class CreateContractorBillController extends BaseContractorBillController
             resultBinder.reject("error.contractorbill.accountdetails.required",
                     "error.contractorbill.accountdetails.required");
         for (final EgBilldetails egBilldetails : contractorBillRegister.getBillDetailes())
-            if (!contractorBillRegister.getEgBilldetailes().isEmpty() && contractorBillRegister.getEgBilldetailes().size() == 1) {
+            if (!contractorBillRegister.getEgBilldetailes().isEmpty()
+                    && contractorBillRegister.getEgBilldetailes().size() == 1) {
                 for (final EgBilldetails refundBill : contractorBillRegister.getRefundBillDetails())
                     if (refundBill.getGlcodeid() != null)
-                        contractorBillRegister.addEgBilldetailes(
-                                contractorBillRegisterService.getBillDetails(contractorBillRegister, refundBill,
-                                        workOrderEstimate, resultBinder, request));
+                        contractorBillRegister.addEgBilldetailes(contractorBillRegisterService.getBillDetails(
+                                contractorBillRegister, refundBill, workOrderEstimate, resultBinder, request));
                 if (egBilldetails.getGlcodeid() != null)
-                    contractorBillRegister
-                            .addEgBilldetailes(contractorBillRegisterService.getBillDetails(contractorBillRegister, egBilldetails,
-                                    workOrderEstimate, resultBinder, request));
+                    contractorBillRegister.addEgBilldetailes(contractorBillRegisterService.getBillDetails(
+                            contractorBillRegister, egBilldetails, workOrderEstimate, resultBinder, request));
             } else if (egBilldetails.getGlcodeid() != null)
-                contractorBillRegister
-                        .addEgBilldetailes(contractorBillRegisterService.getBillDetails(contractorBillRegister, egBilldetails,
-                                workOrderEstimate, resultBinder, request));
+                contractorBillRegister.addEgBilldetailes(contractorBillRegisterService.getBillDetails(
+                        contractorBillRegister, egBilldetails, workOrderEstimate, resultBinder, request));
 
         contractorBillRegisterService.validateZeroCreditAndDebitAmount(contractorBillRegister, resultBinder);
 
@@ -577,9 +574,8 @@ public class CreateContractorBillController extends BaseContractorBillController
             final EgBilldetails billdetails = new EgBilldetails();
             billdetails.setGlcodeid(new BigDecimal(netPayableAccountCodeId));
             billdetails.setCreditamount(new BigDecimal(netPayableAmount));
-            contractorBillRegister.addEgBilldetailes(
-                    contractorBillRegisterService.getBillDetails(contractorBillRegister, billdetails, workOrderEstimate,
-                            resultBinder, request));
+            contractorBillRegister.addEgBilldetailes(contractorBillRegisterService
+                    .getBillDetails(contractorBillRegister, billdetails, workOrderEstimate, resultBinder, request));
 
         }
 
@@ -593,9 +589,7 @@ public class CreateContractorBillController extends BaseContractorBillController
         final Date currFinYearStartDate = worksUtils.getFinancialYearByDate(new Date()).getStartingDate();
         if (cutOffDate != null && (contractorBillRegister.getBilldate().before(currFinYearStartDate)
                 || contractorBillRegister.getBilldate().after(cutOffDate)))
-            resultBinder.reject("error.billdate.cutoffdate",
-                    new String[] { fmt.format(cutOffDate) },
-                    null);
+            resultBinder.reject("error.billdate.cutoffdate", new String[] { fmt.format(cutOffDate) }, null);
     }
 
     public List<EgBilldetails> prepairBillDetailsMap(final AbstractEstimate abstractEstimate, final Model model) {
