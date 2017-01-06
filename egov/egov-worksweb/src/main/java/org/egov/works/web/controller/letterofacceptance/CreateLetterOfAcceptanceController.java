@@ -53,9 +53,11 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
@@ -127,6 +129,9 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
     @Autowired
     private MeasurementSheetService measurementSheetService;
 
+    @Autowired
+    private CityService cityService;
+
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(@ModelAttribute("workOrder") WorkOrder workOrder, final Model model,
             final HttpServletRequest request) {
@@ -195,13 +200,16 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
             return "createLetterOfAcceptance-form";
         } else {
             Long approvalPosition = 0l;
-            String approvalComment = "";
+            String approvalComment = org.apache.commons.lang.StringUtils.EMPTY;
+            String additionalRule = org.apache.commons.lang.StringUtils.EMPTY;
             if (request.getParameter("approvalComent") != null)
                 approvalComment = request.getParameter("approvalComent");
             if (request.getParameter("workFlowAction") != null)
                 workFlowAction = request.getParameter("workFlowAction");
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+            if (request.getParameter(WorksConstants.ADDITIONAL_RULE) != null)
+                additionalRule = request.getParameter(WorksConstants.ADDITIONAL_RULE);
 
             workOrder.setContractor(contractorService.getContractorById(workOrder.getContractor().getId()));
             final WorkOrderEstimate workOrderEstimate = letterOfAcceptanceService.createWorkOrderEstimate(workOrder);
@@ -216,7 +224,7 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
                 workOrder.setWorkOrderNumber(workOrderNumber);
             }
             final WorkOrder savedWorkOrder = letterOfAcceptanceService.create(workOrder, files, approvalPosition,
-                    approvalComment, null, workFlowAction, abstractEstimate);
+                    approvalComment, additionalRule, workFlowAction, abstractEstimate);
 
             String pathVars = "";
 
@@ -238,6 +246,8 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
         model.addAttribute("stateType", workOrder.getClass().getSimpleName());
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         workflowContainer.setAmountRule(new BigDecimal(workOrder.getWorkOrderAmount()));
+        workflowContainer.setAdditionalRule(
+                (String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
         prepareWorkflow(model, workOrder, workflowContainer);
         List<String> validActions = Collections.emptyList();
         if (workOrder.getId() != null) {
@@ -270,6 +280,8 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
         model.addAttribute("amountRule", workOrder.getWorkOrderAmount());
         final List<AppConfigValues> nominationName = estimateService.getNominationName();
         model.addAttribute("nominationName", !nominationName.isEmpty() ? nominationName.get(0).getValue() : "");
+        model.addAttribute(WorksConstants.ADDITIONAL_RULE,
+                cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
     }
 
     @RequestMapping(value = "/letterofacceptance-success", method = RequestMethod.GET)

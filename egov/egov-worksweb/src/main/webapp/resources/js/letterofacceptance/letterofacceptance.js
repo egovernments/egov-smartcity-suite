@@ -142,10 +142,14 @@ $(document).ready(function(){
 				    	percentageVal = assignSignForTenderFinalizedPercentage(tenderFinalizedPercentage);
 				    	var agreementAmount = eval($('#workValue').val())+(eval($('#workValue').val())*percentageVal)/100;
 					   $('#workOrderAmount').val(roundTo(agreementAmount));
+					   $('#amountRule').val(roundTo(agreementAmount));
 					   $('#agreementValue').html(roundTo(agreementAmount));
 				}
-				else 
-						$('#workOrderAmount').val('');
+				else {
+					$('#workOrderAmount').val('');
+					$('#amountRule').val('');
+				}
+						
 			}
 		}
 		
@@ -160,6 +164,7 @@ $(document).ready(function(){
 	    		$('.number-sign button').html('<span class="sign-text">+</span> &nbsp;<span class="caret"></span>');
 	    	$('#tenderFinalizedPer').html(tenderFinalizedPercentage);
 	    	 $('#agreementValue').html(roundTo(agreementValue));
+	    	 $('#amountRule').val(roundTo(agreementValue));
 		}
 
 		function assignSignForTenderFinalizedPercentage(tenderFinalizedPercentage){

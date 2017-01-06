@@ -51,8 +51,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
@@ -103,6 +105,9 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
     @Autowired
     private MeasurementSheetService measurementSheetService;
 
+    @Autowired
+    private CityService cityService;
+
     @ModelAttribute
     public WorkOrder getWorkOrder(@PathVariable final String id) {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(Long.parseLong(id));
@@ -114,10 +119,12 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
             throws ApplicationException {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(Long.valueOf(id));
         final AbstractEstimate abstractEstimate = workOrder.getWorkOrderEstimates().get(0).getEstimate();
-        if (workOrder.getEgwStatus().getCode().equals(WorksConstants.REJECTED))
+        if (workOrder.getEgwStatus().getCode().equals(WorksConstants.REJECTED)) {
+            model.addAttribute(WorksConstants.ADDITIONAL_RULE,
+                    cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
             return "redirect:/letterofacceptance/newform?estimateNumber=" + abstractEstimate.getEstimateNumber()
                     + "&mode=edit";
-        else {
+        } else {
             model.addAttribute("stateType", workOrder.getClass().getSimpleName());
             if (workOrder.getCurrentState() != null
                     && !workOrder.getCurrentState().getValue().equalsIgnoreCase(WorksConstants.NEW))
@@ -129,6 +136,8 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
             final WorkflowContainer workflowContainer = new WorkflowContainer();
             workflowContainer.setAmountRule(new BigDecimal(workOrder.getWorkOrderAmount()));
             workflowContainer.setPendingActions(workOrder.getState().getNextAction());
+            workflowContainer.setAdditionalRule(
+                    (String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
             prepareWorkflow(model, workOrder, workflowContainer);
             List<String> validActions = Collections.emptyList();
             validActions = customizedWorkFlowService.getNextValidActions(workOrder.getStateType(),
@@ -157,16 +166,20 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
 
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(Long.valueOf(id));
         Long approvalPosition = 0l;
-        String approvalComment = "";
+        String approvalComment = org.apache.commons.lang.StringUtils.EMPTY;
+        String additionalRule = org.apache.commons.lang.StringUtils.EMPTY;
+
         if (request.getParameter("approvalComent") != null)
             approvalComment = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+        if (request.getParameter(WorksConstants.ADDITIONAL_RULE) != null)
+            additionalRule = request.getParameter(WorksConstants.ADDITIONAL_RULE);
 
         final WorkOrder savedWorkOrder = letterOfAcceptanceService.forward(workOrder, approvalPosition, approvalComment,
-                null, workFlowAction);
+                additionalRule, workFlowAction);
 
         if (savedWorkOrder.getEgwStatus().getCode().equals(WorksConstants.APPROVED)) {
 
