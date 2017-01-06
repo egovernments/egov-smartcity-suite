@@ -39,13 +39,11 @@
  */
 package org.egov.collection.service;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -60,6 +58,8 @@ import org.egov.collection.entity.OnlinePaymentResult;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.DoubleType;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -135,46 +135,52 @@ public class CollectionReportHeadWiseService {
         final SimpleDateFormat toDateFormatter = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
         final StringBuilder defaultQueryStr = new StringBuilder(500);
         final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("SELECT  (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN count(*) END) AS CASH_COUNT,  ")
-        .append("(CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN count(*) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN count(*) END) AS CHEQUEDD_COUNT, ")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN count(*) END) AS ONLINE_COUNT, ")
-        .append(" EGCL_COLLECTIONHEADER.SOURCE AS SOURCE, EG_LOCATION.NAME AS COUNTER_NAME, EG_USER.NAME AS EMPLOYEE_NAME,GLCODE,")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS CASH_AMOUNT, ")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) END) AS CHEQUEDD_AMOUNT,")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) END) AS ONLINE_AMOUNT, EG_USER.ID AS USERID FROM")
-        .append(" EGCL_COLLECTIONHEADER EGCL_COLLECTIONHEADER INNER JOIN EGCL_COLLECTIONINSTRUMENT EGCL_COLLECTIONINSTRUMENT ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONINSTRUMENT.COLLECTIONHEADER ")
-        .append(" INNER JOIN EGF_INSTRUMENTHEADER EGF_INSTRUMENTHEADER ON EGCL_COLLECTIONINSTRUMENT.INSTRUMENTHEADER = EGF_INSTRUMENTHEADER.ID ")
-        .append(" INNER JOIN EGW_STATUS EGW_STATUS ON EGCL_COLLECTIONHEADER.STATUS = EGW_STATUS.ID ")
-        .append(" INNER JOIN EG_LOCATION EG_LOCATION ON EGCL_COLLECTIONHEADER.LOCATION = EG_LOCATION.ID ")
-        .append(" INNER JOIN EGF_INSTRUMENTTYPE EGF_INSTRUMENTTYPE ON EGF_INSTRUMENTHEADER.INSTRUMENTTYPE = EGF_INSTRUMENTTYPE.ID ")
-        .append(" INNER JOIN EGCL_COLLECTIONMIS EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONMIS.COLLECTIONHEADER ")
-        .append(" INNER JOIN EG_USER EG_USER ON EGCL_COLLECTIONHEADER.CREATEDBY = EG_USER.ID ")
-        .append(" INNER JOIN EGEIS_EMPLOYEE EG_EMPLOYEE ON EG_USER.ID = EG_EMPLOYEE.ID ")
-        .append(" INNER JOIN EGEIS_ASSIGNMENT EGEIS_ASSIGNMENT ON EGEIS_ASSIGNMENT.EMPLOYEE = EG_EMPLOYEE.ID ")
-        .append("INNER JOIN EGCL_COLLECTIONDETAILS EGCL_COLLECTIONDETAILS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONDETAILS.COLLECTIONHEADER ")
-        .append(" INNER JOIN CHARTOFACCOUNTS CAO ON CAO.ID = EGCL_COLLECTIONDETAILS.CHARTOFACCOUNT WHERE")
-        .append(" EGW_STATUS.DESCRIPTION != 'Cancelled' AND EGCL_COLLECTIONDETAILS.CRAMOUNT>0");
+        queryStr.append("SELECT  (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN count(*) END) AS cashCount,  ")
+                .append("(CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN count(*) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN count(*) END) AS chequeddCount, ")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN count(*) END) AS onlineCount, ")
+                .append(" EGCL_COLLECTIONHEADER.SOURCE AS source, EG_LOCATION.NAME AS counterName, EG_USER.NAME AS employeeName,GLCODE,")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS cashAmount, ")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) END) AS chequeddAmount,")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='card' THEN count(*) END) AS cardCount, ")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='card' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS cardAmount, ")
+                .append(" count(*) as totalReceiptCount, ")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) END) AS onlineAmount, EG_USER.ID AS USERID FROM")
+                .append(" EGCL_COLLECTIONHEADER EGCL_COLLECTIONHEADER INNER JOIN EGCL_COLLECTIONINSTRUMENT EGCL_COLLECTIONINSTRUMENT ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONINSTRUMENT.COLLECTIONHEADER ")
+                .append(" INNER JOIN EGF_INSTRUMENTHEADER EGF_INSTRUMENTHEADER ON EGCL_COLLECTIONINSTRUMENT.INSTRUMENTHEADER = EGF_INSTRUMENTHEADER.ID ")
+                .append(" INNER JOIN EGW_STATUS EGW_STATUS ON EGCL_COLLECTIONHEADER.STATUS = EGW_STATUS.ID ")
+                .append(" INNER JOIN EG_LOCATION EG_LOCATION ON EGCL_COLLECTIONHEADER.LOCATION = EG_LOCATION.ID ")
+                .append(" INNER JOIN EGF_INSTRUMENTTYPE EGF_INSTRUMENTTYPE ON EGF_INSTRUMENTHEADER.INSTRUMENTTYPE = EGF_INSTRUMENTTYPE.ID ")
+                .append(" INNER JOIN EGCL_COLLECTIONMIS EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONMIS.COLLECTIONHEADER ")
+                .append(" INNER JOIN EG_USER EG_USER ON EGCL_COLLECTIONHEADER.CREATEDBY = EG_USER.ID ")
+                .append(" INNER JOIN EGEIS_EMPLOYEE EG_EMPLOYEE ON EG_USER.ID = EG_EMPLOYEE.ID ")
+                .append(" INNER JOIN EGEIS_ASSIGNMENT EGEIS_ASSIGNMENT ON EGEIS_ASSIGNMENT.EMPLOYEE = EG_EMPLOYEE.ID ")
+                .append("INNER JOIN EGCL_COLLECTIONDETAILS EGCL_COLLECTIONDETAILS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONDETAILS.COLLECTIONHEADER ")
+                .append(" INNER JOIN CHARTOFACCOUNTS CAO ON CAO.ID = EGCL_COLLECTIONDETAILS.CHARTOFACCOUNT WHERE")
+                .append(" EGW_STATUS.DESCRIPTION != 'Cancelled' AND EGCL_COLLECTIONDETAILS.CRAMOUNT>0");
 
         final StringBuilder onlineQueryStr = new StringBuilder();
         onlineQueryStr
-        .append("SELECT  (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN count(*) END) AS CASH_COUNT,  ")
-        .append("(CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN count(*) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN count(*) END) AS CHEQUEDD_COUNT, ")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN count(*) END) AS ONLINE_COUNT, ")
-        .append(" EGCL_COLLECTIONHEADER.SOURCE AS SOURCE, '' AS COUNTER_NAME, '' AS EMPLOYEE_NAME,CAO.NAME || '-' || CAO.GLCODE AS GLCODE,")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) END) AS CASH_AMOUNT, ")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS CHEQUEDD_AMOUNT,")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) END) AS ONLINE_AMOUNT, 0 AS USERID FROM ")
-        .append(" EGCL_COLLECTIONHEADER EGCL_COLLECTIONHEADER INNER JOIN EGCL_COLLECTIONINSTRUMENT EGCL_COLLECTIONINSTRUMENT ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONINSTRUMENT.COLLECTIONHEADER ")
-        .append(" INNER JOIN EGF_INSTRUMENTHEADER EGF_INSTRUMENTHEADER ON EGCL_COLLECTIONINSTRUMENT.INSTRUMENTHEADER = EGF_INSTRUMENTHEADER.ID ")
-        .append(" INNER JOIN EGW_STATUS EGW_STATUS ON EGCL_COLLECTIONHEADER.STATUS = EGW_STATUS.ID")
-        .append(" INNER JOIN EGF_INSTRUMENTTYPE EGF_INSTRUMENTTYPE ON EGF_INSTRUMENTHEADER.INSTRUMENTTYPE = EGF_INSTRUMENTTYPE.ID")
-        .append(" INNER JOIN EGCL_COLLECTIONMIS EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONMIS.COLLECTIONHEADER ")
-        .append("INNER JOIN EGCL_COLLECTIONDETAILS EGCL_COLLECTIONDETAILS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONDETAILS.COLLECTIONHEADER ")
-        .append(" INNER JOIN CHARTOFACCOUNTS CAO ON CAO.ID = EGCL_COLLECTIONDETAILS.CHARTOFACCOUNT WHERE")
-        .append(" EGW_STATUS.DESCRIPTION != 'Cancelled' AND EGCL_COLLECTIONDETAILS.CRAMOUNT>0");
+                .append("SELECT  (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN count(*) END) AS cashCount,  ")
+                .append("(CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN count(*) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN count(*) END) AS chequeddCount, ")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN count(*) END) AS onlineCount, ")
+                .append(" EGCL_COLLECTIONHEADER.SOURCE AS source, '' AS counterName, '' AS employeeName,CAO.NAME || '-' || CAO.GLCODE AS GLCODE,")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) END) AS cashAmount, ")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS chequeddAmount,")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='card' THEN count(*) END) AS cardCount, ")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='card' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS cardAmount, ")
+                .append(" count(*) as totalReceiptCount, ")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) END) AS onlineAmount, 0 AS USERID FROM ")
+                .append(" EGCL_COLLECTIONHEADER EGCL_COLLECTIONHEADER INNER JOIN EGCL_COLLECTIONINSTRUMENT EGCL_COLLECTIONINSTRUMENT ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONINSTRUMENT.COLLECTIONHEADER ")
+                .append(" INNER JOIN EGF_INSTRUMENTHEADER EGF_INSTRUMENTHEADER ON EGCL_COLLECTIONINSTRUMENT.INSTRUMENTHEADER = EGF_INSTRUMENTHEADER.ID ")
+                .append(" INNER JOIN EGW_STATUS EGW_STATUS ON EGCL_COLLECTIONHEADER.STATUS = EGW_STATUS.ID")
+                .append(" INNER JOIN EGF_INSTRUMENTTYPE EGF_INSTRUMENTTYPE ON EGF_INSTRUMENTHEADER.INSTRUMENTTYPE = EGF_INSTRUMENTTYPE.ID")
+                .append(" INNER JOIN EGCL_COLLECTIONMIS EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONMIS.COLLECTIONHEADER ")
+                .append("INNER JOIN EGCL_COLLECTIONDETAILS EGCL_COLLECTIONDETAILS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONDETAILS.COLLECTIONHEADER ")
+                .append(" INNER JOIN CHARTOFACCOUNTS CAO ON CAO.ID = EGCL_COLLECTIONDETAILS.CHARTOFACCOUNT WHERE")
+                .append(" EGW_STATUS.DESCRIPTION != 'Cancelled' AND EGCL_COLLECTIONDETAILS.CRAMOUNT>0");
         final StringBuilder queryStrGroup = new StringBuilder();
         queryStrGroup
-        .append(" GROUP BY  SOURCE, COUNTER_NAME, EMPLOYEE_NAME, USERID,CAO.NAME,CAO.GLCODE,EGF_INSTRUMENTTYPE.TYPE");
+                .append(" GROUP BY  source, counterName, employeeName, USERID,CAO.NAME,CAO.GLCODE,EGF_INSTRUMENTTYPE.TYPE");
 
         if (fromDate != null && toDate != null) {
             queryStr.append(" AND EGCL_COLLECTIONHEADER.RECEIPTDATE between to_timestamp('"
@@ -193,17 +199,15 @@ public class CollectionReportHeadWiseService {
             queryStr.append(onlineQueryStr);
         }
 
-        if (glCode != null ){
+        if (glCode != null) {
             queryStr.append(" AND CAO.GLCODE =:glCode");
             onlineQueryStr.append(" AND CAO.GLCODE =:glCode");
-        }
-        else
-        {
+        } else {
             queryStr.setLength(0);
             queryStr.append(onlineQueryStr);
         }
-        
-        if (status != -1 ) {
+
+        if (status != -1) {
             queryStr.append(" AND EGCL_COLLECTIONHEADER.STATUS =:searchStatus");
             onlineQueryStr.append(" AND EGCL_COLLECTIONHEADER.STATUS =:searchStatus");
         }
@@ -228,6 +232,10 @@ public class CollectionReportHeadWiseService {
             defaultQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE in ('cheque', 'dd')");
             defaultQueryStr.append(queryStrGroup);
             defaultQueryStr.append(" union ");
+            defaultQueryStr.append(queryStr);
+            defaultQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = 'card'");
+            defaultQueryStr.append(queryStrGroup);
+            defaultQueryStr.append(" union ");
             defaultQueryStr.append(onlineQueryStr);
             defaultQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = 'online'");
             defaultQueryStr.append(queryStrGroup);
@@ -244,46 +252,74 @@ public class CollectionReportHeadWiseService {
         aggregateQueryStr.append(queryStrGroup);
         aggregateQueryStr.append(" union ");
         aggregateQueryStr.append(onlineQueryStr);
+        aggregateQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = 'card'");
+        aggregateQueryStr.append(queryStrGroup);
+        aggregateQueryStr.append(" union ");
+        aggregateQueryStr.append(onlineQueryStr);
         aggregateQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = 'online'");
         aggregateQueryStr.append(queryStrGroup);
 
         final StringBuilder finalQueryStr = new StringBuilder();
         finalQueryStr
-        .append("SELECT cast(sum(CASH_COUNT) AS NUMERIC) AS CASH_COUNT,cast(sum(CHEQUEDD_COUNT) AS NUMERIC) AS CHEQUEDD_COUNT,cast(sum(ONLINE_COUNT) AS NUMERIC) AS ONLINE_COUNT,SOURCE,COUNTER_NAME,EMPLOYEE_NAME,GLCODE,cast(sum(CASH_AMOUNT) AS DOUBLE PRECISION) AS CASH_AMOUNT, cast(sum(CHEQUEDD_AMOUNT) AS DOUBLE PRECISION) AS CHEQUEDD_AMOUNT, cast(sum(ONLINE_AMOUNT) AS DOUBLE PRECISION) AS ONLINE_AMOUNT ,USERID FROM (");
+                .append("SELECT cast(sum(cashCount) AS NUMERIC) AS cashCount,cast(sum(chequeddCount) AS NUMERIC) AS chequeddCount,cast(sum(onlineCount) AS NUMERIC) AS onlineCount,SOURCE,counterName,employeeName,glCode,cast(sum(cashAmount) AS DOUBLE PRECISION) AS cashAmount, cast(sum(chequeddAmount) AS DOUBLE PRECISION) AS chequeddAmount,  "
+                        + " cast(sum(cardCount) AS NUMERIC) AS cardCount,cast(sum(cardAmount) AS DOUBLE PRECISION) AS cardAmount ,  "
+                        + " cast(sum(totalReceiptCount) AS NUMERIC) as totalReceiptCount, cast(sum(onlineAmount) AS DOUBLE PRECISION) AS onlineAmount ,USERID FROM (");
         finalQueryStr
-        .append(queryStr)
-        .append(" ) AS RESULT GROUP BY RESULT.SOURCE,RESULT.COUNTER_NAME,RESULT.EMPLOYEE_NAME,RESULT.USERID,RESULT.GLCODE order by SOURCE,EMPLOYEE_NAME,GLCODE");
+                .append(queryStr)
+                .append(" ) AS RESULT GROUP BY RESULT.SOURCE,RESULT.counterName,RESULT.employeeName,RESULT.USERID,RESULT.glCode order by SOURCE,employeeName,glCode");
 
         final StringBuilder finalAggregateQryStr = new StringBuilder();
         finalAggregateQryStr
-        .append("SELECT sum(CASH_COUNT) AS CASH_COUNT,sum(CHEQUEDD_COUNT) AS CHEQUEDD_COUNT,sum(ONLINE_COUNT) AS ONLINE_COUNT,SOURCE,COUNTER_NAME,EMPLOYEE_NAME,GLCODE,sum(CASH_AMOUNT) AS CASH_AMOUNT, sum(CHEQUEDD_AMOUNT) AS CHEQUEDD_AMOUNT, sum(ONLINE_AMOUNT) AS ONLINE_AMOUNT ,USERID FROM (");
+                .append("SELECT sum(cashCount) AS cashCount,sum(chequeddCount) AS chequeddCount,sum(onlineCount) AS onlineCount,SOURCE,counterName,employeeName,glCode,sum(cashAmount) AS cashAmount, sum(chequeddAmount) AS chequeddAmount,  "
+                        + "  sum(cardCount) AS cardCount, sum(cardAmount) AS cardAmount, cast(sum(totalReceiptCount) AS NUMERIC) as totalReceiptCount , sum(onlineAmount) AS onlineAmount ,USERID FROM (");
         finalAggregateQryStr
-        .append(aggregateQueryStr)
-        .append(" ) AS RESULT GROUP BY RESULT.SOURCE,RESULT.COUNTER_NAME,RESULT.EMPLOYEE_NAME,RESULT.USERID,RESULT.GLCODE order by SOURCE,EMPLOYEE_NAME, GLCODE");
+                .append(aggregateQueryStr)
+                .append(" ) AS RESULT GROUP BY RESULT.SOURCE,RESULT.counterName,RESULT.employeeName,RESULT.USERID,RESULT.glCode order by source,employeeName, glCode");
 
-        final SQLQuery query = getCurrentSession().createSQLQuery(finalQueryStr.toString());
+        final SQLQuery query = (SQLQuery) getCurrentSession().createSQLQuery(finalQueryStr.toString())
+                .addScalar("cashCount", org.hibernate.type.StringType.INSTANCE).addScalar("cashAmount", DoubleType.INSTANCE)
+                .addScalar("chequeddCount", org.hibernate.type.StringType.INSTANCE)
+                .addScalar("chequeddAmount", DoubleType.INSTANCE)
+                .addScalar("onlineCount", org.hibernate.type.StringType.INSTANCE).addScalar("onlineAmount", DoubleType.INSTANCE)
+                .addScalar("source", org.hibernate.type.StringType.INSTANCE)
+                .addScalar("counterName", org.hibernate.type.StringType.INSTANCE)
+                .addScalar("employeeName", org.hibernate.type.StringType.INSTANCE)
+                .addScalar("glCode", org.hibernate.type.StringType.INSTANCE)
+                .addScalar("cardAmount", DoubleType.INSTANCE).addScalar("cardCount", org.hibernate.type.StringType.INSTANCE)
+                .addScalar("totalReceiptCount", org.hibernate.type.StringType.INSTANCE)
+                .setResultTransformer(Transformers.aliasToBean(CollectionSummaryHeadWiseReport.class));
 
-        final SQLQuery aggrQuery = getCurrentSession().createSQLQuery(finalAggregateQryStr.toString());
+        final SQLQuery aggrQuery = (SQLQuery) getCurrentSession().createSQLQuery(finalAggregateQryStr.toString())
+                .addScalar("cashCount", org.hibernate.type.StringType.INSTANCE).addScalar("cashAmount", DoubleType.INSTANCE)
+                .addScalar("chequeddCount", org.hibernate.type.StringType.INSTANCE)
+                .addScalar("chequeddAmount", DoubleType.INSTANCE)
+                .addScalar("onlineCount", org.hibernate.type.StringType.INSTANCE).addScalar("onlineAmount", DoubleType.INSTANCE)
+                .addScalar("source", org.hibernate.type.StringType.INSTANCE)
+                .addScalar("counterName", org.hibernate.type.StringType.INSTANCE)
+                .addScalar("employeeName", org.hibernate.type.StringType.INSTANCE)
+                .addScalar("glCode", org.hibernate.type.StringType.INSTANCE)
+                .addScalar("cardAmount", DoubleType.INSTANCE).addScalar("cardCount", org.hibernate.type.StringType.INSTANCE)
+                .addScalar("totalReceiptCount", org.hibernate.type.StringType.INSTANCE)
+                .setResultTransformer(Transformers.aliasToBean(CollectionSummaryHeadWiseReport.class));
 
         if (!source.isEmpty() && !source.equals(CollectionConstants.ALL)) {
             query.setString("source", source);
             aggrQuery.setString("source", source);
         }
-        if (glCode != null ) {
+        if (glCode != null) {
             query.setString("glCode", glCode);
             aggrQuery.setString("glCode", glCode);
         }
-        if (status != -1 ) {
+        if (status != -1) {
             query.setLong("searchStatus", status);
             aggrQuery.setLong("searchStatus", status);
         }
-      
+
         if (StringUtils.isNotBlank(paymentMode) && !paymentMode.equals(CollectionConstants.ALL))
             if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD)) {
                 query.setParameterList("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
                 aggrQuery.setParameterList("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
-            } else
-            {
+            } else {
                 query.setString("paymentMode", paymentMode);
                 aggrQuery.setString("paymentMode", paymentMode);
             }
@@ -295,39 +331,32 @@ public class CollectionReportHeadWiseService {
         return collResult;
     }
 
-    public List<CollectionSummaryHeadWiseReport> populateQueryResults(final List<Object[]> queryResults) {
-        final List<CollectionSummaryHeadWiseReport> reportResults = new LinkedList<CollectionSummaryHeadWiseReport>();
-        for (int i = 0; i < queryResults.size(); i++) {
-            final Object[] arrayObjectInitialIndex = queryResults.get(i);
-            final CollectionSummaryHeadWiseReport collSummaryReportResult = new CollectionSummaryHeadWiseReport();
-            BigDecimal cashCnt = BigDecimal.ZERO, chequeddCnt = BigDecimal.ZERO, onlineCnt = BigDecimal.ZERO;
-            cashCnt = (BigDecimal) arrayObjectInitialIndex[0] == null ? BigDecimal.ZERO
-                    : (BigDecimal) arrayObjectInitialIndex[0];
-            chequeddCnt = (BigDecimal) arrayObjectInitialIndex[1] == null ? BigDecimal.ZERO
-                    : (BigDecimal) arrayObjectInitialIndex[1];
-            onlineCnt = (BigDecimal) arrayObjectInitialIndex[2] == null ? BigDecimal.ZERO
-                    : (BigDecimal) arrayObjectInitialIndex[2];
-            collSummaryReportResult.setCashCount(cashCnt.equals(BigDecimal.ZERO) ? "" : cashCnt.toString());
-            collSummaryReportResult.setChequeddCount(chequeddCnt.equals(BigDecimal.ZERO) ? "" : chequeddCnt.toString());
-            collSummaryReportResult.setOnlineCount(onlineCnt.equals(BigDecimal.ZERO) ? "" : onlineCnt.toString());
-            collSummaryReportResult.setSource((String) arrayObjectInitialIndex[3]);
-            collSummaryReportResult.setCounterName((String) arrayObjectInitialIndex[4]);
-            collSummaryReportResult.setEmployeeName((String) arrayObjectInitialIndex[5]);
-            collSummaryReportResult.setGlCode((String) arrayObjectInitialIndex[6]);
-            collSummaryReportResult.setCashAmount((Double) arrayObjectInitialIndex[7]);
-            collSummaryReportResult.setChequeddAmount((Double) arrayObjectInitialIndex[8]);
-            collSummaryReportResult.setOnlineAmount((Double) arrayObjectInitialIndex[9]);
-            final BigDecimal receiptCount = cashCnt.add(chequeddCnt).add(onlineCnt);
-            collSummaryReportResult
-            .setTotalReceiptCount(receiptCount.equals(BigDecimal.ZERO) ? "" : receiptCount.toString());
-            collSummaryReportResult.setTotalAmount((new Double(0.0).sum((Double) arrayObjectInitialIndex[7] == null ? new Double(0.0):(Double) arrayObjectInitialIndex[7],(
-                    new Double(0.0).sum((Double) arrayObjectInitialIndex[8] != null ? (Double) arrayObjectInitialIndex[8]
-                                    : new Double(0.0),
-                                    (Double) arrayObjectInitialIndex[9] != null ? (Double) arrayObjectInitialIndex[9]
-                                            : new Double(0.0))))));
-
-            reportResults.add(collSummaryReportResult);
+    public List<CollectionSummaryHeadWiseReport> populateQueryResults(final List<CollectionSummaryHeadWiseReport> queryResults) {
+        for (final CollectionSummaryHeadWiseReport collectionSummaryHeadWiseReport : queryResults) {
+            if (collectionSummaryHeadWiseReport.getCashCount() == null)
+                collectionSummaryHeadWiseReport.setCashCount("");
+            if (collectionSummaryHeadWiseReport.getChequeddCount() == null)
+                collectionSummaryHeadWiseReport.setChequeddCount("");
+            if (collectionSummaryHeadWiseReport.getOnlineCount() == null)
+                collectionSummaryHeadWiseReport.setOnlineCount("");
+            if (collectionSummaryHeadWiseReport.getCardCount() == null)
+                collectionSummaryHeadWiseReport.setCardCount("");
+            if (collectionSummaryHeadWiseReport.getTotalReceiptCount() == null)
+                collectionSummaryHeadWiseReport.setTotalReceiptCount("");
+            if (collectionSummaryHeadWiseReport.getCashAmount() == null)
+                collectionSummaryHeadWiseReport.setCashAmount(new Double(0.0));
+            if (collectionSummaryHeadWiseReport.getChequeddAmount() == null)
+                collectionSummaryHeadWiseReport.setChequeddAmount(new Double(0.0));
+            if (collectionSummaryHeadWiseReport.getOnlineAmount() == null)
+                collectionSummaryHeadWiseReport.setOnlineAmount(new Double(0.0));
+            if (collectionSummaryHeadWiseReport.getCardAmount() == null)
+                collectionSummaryHeadWiseReport.setCardAmount(new Double(0.0));
+            new Double(0.0);
+            collectionSummaryHeadWiseReport.getOnlineAmount();
+            collectionSummaryHeadWiseReport.setTotalAmount(Double.sum(collectionSummaryHeadWiseReport.getCardAmount(),
+                    Double.sum(collectionSummaryHeadWiseReport.getChequeddAmount(),
+                            collectionSummaryHeadWiseReport.getCashAmount())));
         }
-        return reportResults;
+        return queryResults;
     }
 }

@@ -104,6 +104,7 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD,
                 CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD);
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_ONLINE, CollectionConstants.INSTRUMENTTYPE_ONLINE);
+        paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CARD, CollectionConstants.INSTRUMENTTYPE_CARD);
         return paymentModesMap;
     }
 

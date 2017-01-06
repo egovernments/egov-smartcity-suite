@@ -106,6 +106,7 @@ public class CollectionSummaryAction extends ReportFormAction {
                 CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD);
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_ONLINE, CollectionConstants.INSTRUMENTTYPE_ONLINE);
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_BANK, CollectionConstants.INSTRUMENTTYPE_BANK);
+        paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CARD, CollectionConstants.INSTRUMENTTYPE_CARD);
         return paymentModesMap;
     }
 

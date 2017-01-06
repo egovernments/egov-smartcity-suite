@@ -58,6 +58,8 @@ public class CollectionSummaryReport {
     private BigDecimal totalAmount;
     private String employeeName;
     private String counterName;
+    private BigDecimal cardAmount;
+    private String cardCount;
 
     public String getSource() {
         return source;
@@ -169,5 +171,21 @@ public class CollectionSummaryReport {
 
     public void setCounterName(final String counterName) {
         this.counterName = counterName;
+    }
+
+    public BigDecimal getCardAmount() {
+        return cardAmount;
+    }
+
+    public void setCardAmount(BigDecimal cardAmount) {
+        this.cardAmount = cardAmount;
+    }
+
+    public String getCardCount() {
+        return cardCount;
+    }
+
+    public void setCardCount(String cardCount) {
+        this.cardCount = cardCount;
     }
 }

@@ -251,7 +251,7 @@ function showInstrumentDetails(obj){
 			name="paytradiobutton" value="dd" /> DD &nbsp;
 	</span> <span style="float: left;" id="cardradiobuttonspan"> <input
 			onClick="showInstrumentDetails(this)" type="radio" align="absmiddle"
-			id="cardradiobutton" name="paytradiobutton" /> Credit card &nbsp;
+			id="cardradiobutton" name="paytradiobutton" /> Credit/Debit card &nbsp;
 	</span> <span style="float: left;" id="bankradiobuttonspan"> <input
 			onClick="showInstrumentDetails(this)" type="radio" align="absmiddle"
 			id="bankradiobutton" name="paytradiobutton" /> Direct Bank &nbsp;
