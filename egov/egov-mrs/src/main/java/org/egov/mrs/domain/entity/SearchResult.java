@@ -66,7 +66,6 @@ public class SearchResult {
     private long muslim;
     private long others;
     private long total;
-    
 
     public Long getRegistrationId() {
         return registrationId;

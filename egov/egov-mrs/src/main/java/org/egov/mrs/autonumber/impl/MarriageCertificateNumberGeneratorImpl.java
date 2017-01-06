@@ -49,24 +49,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MarriageCertificateNumberGeneratorImpl implements MarriageCertificateNumberGenerator{
-    
-private static final String CERTIFICATE_NUMBER_SEQ_PREFIX = "SEQ_EGMRS_CERTIFICATE_NUMBER";
-    
+public class MarriageCertificateNumberGeneratorImpl implements MarriageCertificateNumberGenerator {
+
+    private static final String CERTIFICATE_NUMBER_SEQ_PREFIX = "SEQ_EGMRS_CERTIFICATE_NUMBER";
+
     @Autowired
     private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
-    
-    @Override 
-    public String generateCertificateNumber(MarriageRegistration marriageRegistration,String cityCode){
+
+    @Override
+    public String generateCertificateNumber(MarriageRegistration marriageRegistration, String cityCode) {
         final String sequenceName = CERTIFICATE_NUMBER_SEQ_PREFIX;
         final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-        return String.format("%s%06d", cityCode,nextSequence);
+        return String.format("%s%06d", cityCode, nextSequence);
     }
 
-	@Override
-	public String generateCertificateNumber(ReIssue reIssue, String cityCode) {
-		 final String sequenceName = CERTIFICATE_NUMBER_SEQ_PREFIX;
-	        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-	        return String.format("%s%06d", cityCode,nextSequence);
-	}
+    @Override
+    public String generateCertificateNumber(ReIssue reIssue, String cityCode) {
+        final String sequenceName = CERTIFICATE_NUMBER_SEQ_PREFIX;
+        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        return String.format("%s%06d", cityCode, nextSequence);
+    }
 }

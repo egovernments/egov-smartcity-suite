@@ -63,7 +63,7 @@ public class Name {
     @SafeHtml
     @Length(max = 20)
     private String lastName;
-    
+
     @Formula("concat(firstName,' ',middleName,' ',lastName)")
     private String fullname;
 

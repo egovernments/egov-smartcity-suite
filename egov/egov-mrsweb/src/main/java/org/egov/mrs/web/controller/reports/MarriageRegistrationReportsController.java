@@ -129,7 +129,7 @@ public class MarriageRegistrationReportsController {
     private static final String YEARLIST = "yearlist";
     private static final String REGISTRATION = "registration";
     private static final String[] RANGES = new String[] { "0-18", "19-25", "26-30", "31-35", "36-40", "40-45", "46-50",
-    "50-100" };
+                                                            "50-100" };
     private static final String KEY_AGE = "age";
     private static final String KEY_HUSBANDCOUNT = "husbandcount";
     private static final String KEY_WIFECOUNT = "wifecount";
@@ -137,7 +137,7 @@ public class MarriageRegistrationReportsController {
     private static final String KEY_REGCOUNT = "Registrationcount";
     private static final String KEY_ACT = "MarriageAct";
     private static final String[] DAYRANGE = new String[] { "0-3", "4-6", "7-9", "10-12", "13-15", "16-20", "20-25", "26-30",
-    "31-365" };
+                                                            "31-365" };
     private static final String KEY_DAY = "days";
     private static final String KEY_REGISTRATIONCOUNT = "registrationcount";
     private static final String KEY_COLLECTIONAMOUNT = "totalcollection";
@@ -187,7 +187,7 @@ public class MarriageRegistrationReportsController {
     @ResponseBody
     public String getByApplicationsStatusCount(final Model model,
             @ModelAttribute final MarriageRegistration registration)
-                    throws ParseException {
+            throws ParseException {
         final ArrayList<ApplicationStatusResultForReport> result = new ArrayList<>();
 
         final List<String[]> applnsStatusCount = marriageRegistrationReportsService
@@ -277,13 +277,11 @@ public class MarriageRegistrationReportsController {
     public String search(final Model model,
             @RequestParam(STATUS) String status, @RequestParam("registrationUnit") String registrationUnit,
             @RequestParam(FROM_DATE) Date fromDate, @RequestParam(TO_DATE) Date toDate)
-                    throws ParseException {
+            throws ParseException {
         final List<MarriageRegistration> searchResultList = marriageRegistrationReportsService
                 .searchRegistrationByStatusForReport(registrationUnit, status, fromDate, toDate);
         return new StringBuilder(DATA)
-                .append(toJSON(searchResultList, MarriageRegistration.class,
-                        MarriageRegistrationJsonAdaptor.class))
-                .append("}")
+                .append(toJSON(searchResultList, MarriageRegistration.class, MarriageRegistrationJsonAdaptor.class)).append("}")
                 .toString();
     }
 
@@ -298,7 +296,7 @@ public class MarriageRegistrationReportsController {
     @ResponseBody
     public String searchAgeWise(@RequestParam(YEAR) final int year,
             final Model model, @ModelAttribute final MarriageRegistration registration)
-                    throws ParseException {
+            throws ParseException {
 
         final Map<String, Integer> husbandAgeRangesCount = getCountByRange(marriageRegistrationReportsService
                 .searchRegistrationOfHusbandAgeWise(year, registration));
@@ -321,9 +319,8 @@ public class MarriageRegistrationReportsController {
         }
         final JsonArray jsonArray = (JsonArray) new Gson().toJsonTree(result,
                 new TypeToken<List<HashMap<String, Object>>>() {
-
-            private static final long serialVersionUID = 5562709025385195886L;
-        }.getType());
+                    private static final long serialVersionUID = 5562709025385195886L;
+                }.getType());
 
         final JsonObject response = new JsonObject();
         response.add("data", jsonArray);
@@ -333,16 +330,17 @@ public class MarriageRegistrationReportsController {
     public Map<String, Integer> getCountByRange(final List<String[]> inputs) {
         final HashMap<String, Integer> response = new HashMap<>();
         for (final Object[] input : inputs) {
-            final String[] values = Arrays.toString(input).replaceFirst("^\\[", "").replaceFirst("\\]$", "").split(","); //
-            // age -> [0],count-> [1]
+            final String[] values = Arrays.toString(input).replaceFirst("^\\[", "").replaceFirst("\\]$", "").split(","); // age ->
+                                                                                                                         // [0],count->
+                                                                                                                         // [1]
             final Integer age = Integer.parseInt(values[0]);
             for (final String range : RANGES)
                 if (isInRange(range, age)) {
                     final int existingCount = response.get(range) != null ? response
                             .get(range) : 0;
-                            response.put(range,
-                                    existingCount + Integer.valueOf(values[1].trim()));
-                            break;
+                    response.put(range,
+                            existingCount + Integer.valueOf(values[1].trim()));
+                    break;
                 }
         }
         return response;
@@ -359,7 +357,7 @@ public class MarriageRegistrationReportsController {
             @RequestParam(value = REGUNIT, required = false) final String regunit, @RequestParam(YEAR) final int year,
             @RequestParam("applicantType") final String applicantType,
             @RequestParam("agerange") final String ageRange, final Model model)
-                    throws ParseException {
+            throws ParseException {
         final List<MarriageRegistration> marriageRegistrations = marriageRegistrationReportsService
                 .getAgewiseDetails(registration, regunit, ageRange, year, applicantType);
         model.addAttribute(MARRIAGE_REGISTRATIONS, marriageRegistrations);
@@ -377,22 +375,21 @@ public class MarriageRegistrationReportsController {
     @ResponseBody
     public String searchApprovedMarriageRecords(final Model model,
             @ModelAttribute final MarriageCertificate certificate)
-                    throws ParseException {
+            throws ParseException {
         final List<RegistrationCertificatesResultForReport> regCertificateResult = new ArrayList<>();
         final List<Object[]> searchResultList = marriageRegistrationReportsService
                 .searchMarriageRegistrationsForCertificateReport(certificate);
         for (final Object[] objects : searchResultList) {
             final RegistrationCertificatesResultForReport certificatesResultForReport = new RegistrationCertificatesResultForReport();
             certificatesResultForReport
-            .setRegistrationNo(objects[0] != null ? objects[0].toString() : "");
+                    .setRegistrationNo(objects[0] != null ? objects[0].toString() : "");
             certificatesResultForReport
-            .setDateOfMarriage(objects[1].toString());
+                    .setDateOfMarriage(objects[1].toString());
             certificatesResultForReport.setRegistrationDate(objects[2]
                     .toString());
             certificatesResultForReport.setRejectReason(objects[3] != null ? objects[3].toString() : "");
             certificatesResultForReport
-            .setCertificateNo(objects[4] != null ? objects[4]
-                    .toString() : "");
+                    .setCertificateNo(objects[4] != null ? objects[4].toString() : "");
             certificatesResultForReport.setCertificateType(objects[5]
                     .toString());
             certificatesResultForReport.setCertificateDate(objects[6]
@@ -427,26 +424,26 @@ public class MarriageRegistrationReportsController {
             @RequestParam("maritalStatus") final String maritalStatus, @RequestParam(APPLICANT_TYPE) final String applicantType,
             final Model model,
             @ModelAttribute final MarriageRegistration registration)
-                    throws ParseException {
+            throws ParseException {
         final List<MaritalStatusReport> maritalStatusReports = new ArrayList<>();
         if ("Husband".equals(applicantType)) {
             maritalStatusReports.addAll(putRecordsIntoHashMapByMonth(
                     marriageRegistrationReportsService
-                    .getHusbandCountByMaritalStatus(fromDate, toDate, maritalStatus, registration),
+                            .getHusbandCountByMaritalStatus(fromDate, toDate, maritalStatus, registration),
                     HUSBAND));
         } else if ("Wife".equals(applicantType)) {
             maritalStatusReports.addAll(putRecordsIntoHashMapByMonth(
                     marriageRegistrationReportsService
-                    .getWifeCountByMaritalStatus(fromDate, toDate, maritalStatus, registration),
+                            .getWifeCountByMaritalStatus(fromDate, toDate, maritalStatus, registration),
                     "wife"));
         } else {
             maritalStatusReports.addAll(putRecordsIntoHashMapByMonth(
                     marriageRegistrationReportsService
-                    .getHusbandCountByMaritalStatus(fromDate, toDate, maritalStatus, registration),
+                            .getHusbandCountByMaritalStatus(fromDate, toDate, maritalStatus, registration),
                     HUSBAND));
             maritalStatusReports.addAll(putRecordsIntoHashMapByMonth(
                     marriageRegistrationReportsService
-                    .getWifeCountByMaritalStatus(fromDate, toDate, maritalStatus, registration),
+                            .getWifeCountByMaritalStatus(fromDate, toDate, maritalStatus, registration),
                     "wife"));
         }
         return new StringBuilder(DATA)
@@ -529,7 +526,7 @@ public class MarriageRegistrationReportsController {
             @RequestParam(APPLICANT_TYPE) final String applicantType,
             @RequestParam("maritalStatus") final String maritalStatus, @RequestParam(FROM_DATE) final Date fromDate,
             @RequestParam(TO_DATE) final Date toDate, final Model model)
-                    throws ParseException {
+            throws ParseException {
         final List<MarriageRegistration> marriageRegistrations = marriageRegistrationReportsService
                 .getByMaritalStatusDetails(registration, regunit, applicantType,
                         maritalStatus, fromDate, toDate);
@@ -549,7 +546,7 @@ public class MarriageRegistrationReportsController {
     @ResponseBody
     public String showDatewiseReportresult(final Model model,
             @ModelAttribute final MarriageRegistration registration)
-                    throws ParseException {
+            throws ParseException {
         final List<MarriageRegistration> searchResultList = marriageRegistrationReportsService
                 .searchRegistrationBydate(registration);
         return new StringBuilder(DATA)
@@ -570,7 +567,7 @@ public class MarriageRegistrationReportsController {
     @ResponseBody
     public String getMonthlyApplicationsCount(final Model model,
             @ModelAttribute final MarriageRegistration registration)
-                    throws ParseException {
+            throws ParseException {
         final ArrayList<HashMap<String, Object>> result = new ArrayList<>();
         final List<String[]> applnsCount = marriageRegistrationReportsService
                 .getCountOfApplications(registration);
@@ -593,8 +590,8 @@ public class MarriageRegistrationReportsController {
         buildMonthlyApplicationsCountResult(result, map);
         final JsonArray jsonArray = (JsonArray) new Gson().toJsonTree(result,
                 new TypeToken<List<HashMap<String, Integer>>>() {
-            private static final long serialVersionUID = -3045535969083515053L;
-        }.getType());
+                    private static final long serialVersionUID = -3045535969083515053L;
+                }.getType());
         final JsonObject response = new JsonObject();
         response.add("data", jsonArray);
         return response.toString();
@@ -659,12 +656,12 @@ public class MarriageRegistrationReportsController {
     @ResponseBody
     public String getMonthlyFundCollection(@RequestParam(YEAR) final String year, final Model model,
             @ModelAttribute final MarriageRegistration registration)
-                    throws ParseException {
+            throws ParseException {
         final ArrayList<HashMap<String, String>> result = new ArrayList<>();
         final List<String[]> totalCollection = marriageRegistrationReportsService
                 .getMonthwiseFundCollected(registration, year);
-        if (registration != null && registration.getMonth_year() != null && year != null
-                && registration.getMonth_year().substring(3).equals(year)) {
+        if (registration != null && registration.getMonthYear() != null && year != null
+                && registration.getMonthYear().substring(3).equals(year)) {
             final HashMap<String, String> map = new HashMap<>();
             for (final Object[] input : totalCollection) {
                 final String[] values = Arrays.toString(input).replaceFirst("^\\[", "").replaceFirst("\\]$", "").split(",");
@@ -672,23 +669,23 @@ public class MarriageRegistrationReportsController {
                 map.put("totalcollection", values[1].trim());
                 result.add(map);
             }
-        } else if (registration != null && year != null && registration.getMonth_year() == null) {
+        } else if (registration != null && year != null && registration.getMonthYear() == null) {
             final HashMap<String, Integer> registrationCount = getFundBymonth(totalCollection);
             HashMap<String, String> monthRegMap;
             for (final Map.Entry<Integer, String> monthname : monthMap.entrySet()) {
                 monthRegMap = new HashMap<>();
                 monthRegMap.put(KEY_MONTH, monthname.getValue());
                 monthRegMap
-                .put(KEY_COLLECTIONAMOUNT,
-                        registrationCount.get(monthname.getValue()) != null ? String.valueOf(registrationCount
-                                .get(monthname.getValue())) : "0");
+                        .put(KEY_COLLECTIONAMOUNT,
+                                registrationCount.get(monthname.getValue()) != null ? String.valueOf(registrationCount
+                                        .get(monthname.getValue())) : "0");
                 result.add(monthRegMap);
             }
         }
         final JsonArray jsonArray = (JsonArray) new Gson().toJsonTree(result,
                 new TypeToken<List<HashMap<String, Integer>>>() {
-            private static final long serialVersionUID = -3045535969083515053L;
-        }.getType());
+                    private static final long serialVersionUID = -3045535969083515053L;
+                }.getType());
         final JsonObject response = new JsonObject();
         response.add("data", jsonArray);
         return response.toString();
@@ -703,8 +700,8 @@ public class MarriageRegistrationReportsController {
                 if (month.equals(monthname.getKey())) {
                     final int existingCount = response.get(monthname) != null ? response
                             .get(monthname) : 0;
-                            response.put(monthname.getValue(),
-                                    existingCount + Double.valueOf(values[1]).intValue());
+                    response.put(monthname.getValue(),
+                            existingCount + Double.valueOf(values[1]).intValue());
                 }
         }
         return response;
@@ -714,7 +711,7 @@ public class MarriageRegistrationReportsController {
     public String showMonthlyApplicationDetails(final Model model,
             @RequestParam(KEY_MONTH) String month, @RequestParam(REGUNIT) String registrationUnit,
             @RequestParam("applicationType") String applicationType)
-                    throws ParseException {
+            throws ParseException {
         model.addAttribute(REGISTRATION, new MarriageRegistration());
         model.addAttribute(KEY_MONTH, month);
         model.addAttribute("registrationUnit", registrationUnit.replaceAll("[^a-zA-Z0-9]", " "));
@@ -728,23 +725,18 @@ public class MarriageRegistrationReportsController {
     public String getMonthlyApplicationDetailsResult(final Model model, @ModelAttribute final MarriageRegistration registration,
             @RequestParam(KEY_MONTH) String month, @RequestParam(REGUNIT) String registrationUnit,
             @RequestParam("applicationType") String applicationType)
-                    throws ParseException {
+            throws ParseException {
         if ("registration".equalsIgnoreCase(applicationType)) {
             final List<MarriageRegistration> searchResultList = marriageRegistrationReportsService
                     .searchRegistrationBymonth(registration, month, registrationUnit);
             return new StringBuilder(DATA)
-                    .append(toJSON(searchResultList, MarriageRegistration.class,
-                            MarriageRegistrationJsonAdaptor.class))
-                    .append("}")
-                    .toString();
+                    .append(toJSON(searchResultList, MarriageRegistration.class, MarriageRegistrationJsonAdaptor.class))
+                    .append("}").toString();
         } else {
             final List<ReIssue> searchResultList = marriageRegistrationReportsService
                     .searchReissueBymonth(registration, month, registrationUnit);
             return new StringBuilder(DATA)
-                    .append(toJSON(searchResultList, ReIssue.class,
-                            MarriageReIssueJsonAdaptor.class))
-                    .append("}")
-                    .toString();
+                    .append(toJSON(searchResultList, ReIssue.class, MarriageReIssueJsonAdaptor.class)).append("}").toString();
         }
 
     }
@@ -762,7 +754,7 @@ public class MarriageRegistrationReportsController {
     public String showActwiseReportresult(
             @RequestParam(YEAR) final int year,
             @ModelAttribute final MarriageRegistration registration)
-                    throws ParseException {
+            throws ParseException {
         final JsonObject response = new JsonObject();
         List<String[]> regcount;
         HashMap<String, Integer> registrationCount;
@@ -778,16 +770,16 @@ public class MarriageRegistrationReportsController {
                 monthRegMap = new HashMap<>();
                 monthRegMap.put(KEY_MONTH, monthname.getValue());
                 monthRegMap
-                .put(KEY_REGCOUNT,
-                        registrationCount.get(monthname.getValue()) != null ? registrationCount
-                                .get(monthname.getValue()) : 0);
+                        .put(KEY_REGCOUNT,
+                                registrationCount.get(monthname.getValue()) != null ? registrationCount
+                                        .get(monthname.getValue()) : 0);
                 result.add(monthRegMap);
             }
 
             jsonArray = (JsonArray) new Gson().toJsonTree(result,
                     new TypeToken<List<HashMap<String, Object>>>() {
-                private static final long serialVersionUID = -3045535969083515053L;
-            }.getType());
+                        private static final long serialVersionUID = -3045535969083515053L;
+                    }.getType());
 
             response.add("data", jsonArray);
         }
@@ -803,16 +795,15 @@ public class MarriageRegistrationReportsController {
                 actRegMap = new HashMap<>();
                 actRegMap.put(KEY_ACT, actName.getName());
                 actRegMap
-                .put(KEY_REGCOUNT,
-                        registrationCount.get(actName.getName()) != null ? registrationCount
-                                .get(actName.getName()) : 0);
+                        .put(KEY_REGCOUNT,
+                                registrationCount.get(actName.getName()) != null ? registrationCount
+                                        .get(actName.getName()) : 0);
                 result.add(actRegMap);
             }
-
             jsonArray = (JsonArray) new Gson().toJsonTree(result,
                     new TypeToken<List<HashMap<String, Object>>>() {
-                private static final long serialVersionUID = -3419248131719029680L;
-            }.getType());
+                        private static final long serialVersionUID = -3419248131719029680L;
+                    }.getType());
             response.add("data", jsonArray);
         }
         return response.toString();
@@ -829,8 +820,8 @@ public class MarriageRegistrationReportsController {
                 if (month.equals(monthname.getKey())) {
                     final int existingCount = response.get(monthname) != null ? response
                             .get(monthname) : 0;
-                            response.put(monthname.getValue(),
-                                    existingCount + Integer.valueOf(values[1].trim()));
+                    response.put(monthname.getValue(),
+                            existingCount + Integer.valueOf(values[1].trim()));
                 }
         }
         return response;
@@ -846,9 +837,9 @@ public class MarriageRegistrationReportsController {
                 if (actName.equals(act.getName())) {
                     final int existingCount = response.get(actName) != null ? response
                             .get(actName) : 0;
-                            response.put(actName,
-                                    existingCount + Integer.valueOf(values[1].trim()));
-                            break;
+                    response.put(actName,
+                            existingCount + Integer.valueOf(values[1].trim()));
+                    break;
                 }
         }
         return response;
@@ -882,20 +873,18 @@ public class MarriageRegistrationReportsController {
     public String showRegionwiseReportresult(
             @RequestParam(YEAR) final int year, final Model model,
             @ModelAttribute final MarriageRegistration registration)
-                    throws ParseException {
+            throws ParseException {
         final List<MarriageRegistration> searchResultList = marriageRegistrationReportsService
                 .searchRegistrationByreligion(registration, year);
         return new StringBuilder(DATA)
-                .append(toJSON(searchResultList, MarriageRegistration.class,
-                        MarriageRegistrationJsonAdaptor.class))
-                .append("}")
+                .append(toJSON(searchResultList, MarriageRegistration.class, MarriageRegistrationJsonAdaptor.class)).append("}")
                 .toString();
     }
 
     @RequestMapping(value = "/act-wise/view/{year}/{MarriageAct}", method = RequestMethod.GET)
     public String viewActWiseDetails(@PathVariable final int year,
             @PathVariable final String marriageAct, final Model model)
-                    throws ParseException {
+            throws ParseException {
         final List<MarriageRegistration> marriageRegistrations = marriageRegistrationReportsService
                 .getActwiseDetails(year, marriageAct);
         model.addAttribute(MARRIAGE_REGISTRATIONS, marriageRegistrations);
@@ -928,7 +917,7 @@ public class MarriageRegistrationReportsController {
     @ResponseBody
     public String agiengReport(@RequestParam(YEAR) final int year,
             final Model model, @ModelAttribute final MarriageRegistration registration)
-                    throws ParseException {
+            throws ParseException {
 
         final Map<String, Integer> registrationcount = getCountByDays(marriageRegistrationReportsService
                 .searchRegistrationbyDays(year, registration));
@@ -945,8 +934,8 @@ public class MarriageRegistrationReportsController {
         }
         final JsonArray jsonArray = (JsonArray) new Gson().toJsonTree(result,
                 new TypeToken<List<HashMap<String, Object>>>() {
-            private static final long serialVersionUID = 5562709025385195886L;
-        }.getType());
+                    private static final long serialVersionUID = 5562709025385195886L;
+                }.getType());
 
         final JsonObject response = new JsonObject();
         response.add("data", jsonArray);
@@ -962,9 +951,9 @@ public class MarriageRegistrationReportsController {
                 if (isInRange(range, days)) {
                     final int existingCount = response.get(range) != null ? response
                             .get(range) : 0;
-                            response.put(range,
-                                    existingCount + Integer.valueOf(values[1].trim()));
-                            break;
+                    response.put(range,
+                            existingCount + Integer.valueOf(values[1].trim()));
+                    break;
                 }
         }
         return response;
@@ -973,7 +962,7 @@ public class MarriageRegistrationReportsController {
     @RequestMapping(value = "/ageing-report/view/{year}/{dayRange}", method = RequestMethod.GET)
     public String viewAgeingRegDetails(@PathVariable final int year,
             @PathVariable final String dayRange, final Model model)
-                    throws ParseException {
+            throws ParseException {
         model.addAttribute(YEAR, year);
         model.addAttribute("dayRange", dayRange);
         return "ageingreport-view";
@@ -983,14 +972,14 @@ public class MarriageRegistrationReportsController {
     @ResponseBody
     public String getAgeingRegDetails(@RequestParam(YEAR) final int year,
             @RequestParam("dayRange") final String dayRange, final Model model)
-                    throws ParseException {
+            throws ParseException {
         List<RegistrationReportsSearchResult> reportsSearchResults = new ArrayList<>();
         final List<Object[]> marriageRegistrations = marriageRegistrationReportsService
                 .getAgeingRegDetails(dayRange, year);
         RegistrationReportsSearchResult reportsSearchResult = new RegistrationReportsSearchResult();
         for (Object[] mrgReg : marriageRegistrations) {
             reportsSearchResult.setApplicationNo(mrgReg[0].toString());
-            reportsSearchResult.setRegistrationNo(mrgReg[1] != null?mrgReg[1].toString():"N/A");
+            reportsSearchResult.setRegistrationNo(mrgReg[1] != null ? mrgReg[1].toString() : "N/A");
             reportsSearchResult.setApplicationType(mrgReg[9].toString());
             reportsSearchResult.setHusbandName(mrgReg[2].toString());
             reportsSearchResult.setWifeName(mrgReg[3].toString());
@@ -1020,8 +1009,7 @@ public class MarriageRegistrationReportsController {
     @RequestMapping(value = "/religion-wise-registrations-report", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String getAgeWiseStatutoryReportDetails(@ModelAttribute final SearchModel searchRequest,
-            final Model model)
-                    throws ParseException {
+            final Model model) throws ParseException {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         if (cityWebsite != null)
             searchRequest.setUlbName(cityWebsite.getName());

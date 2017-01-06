@@ -85,10 +85,10 @@ public class MarriageRegistrationIndexService {
         if (registration != null) {
             registrationSearch.setId(cityWebsite.getCode().concat("-").concat(registrationSearch.getApplicationNo()));
             registrationSearch
-                    .setApplicationNo(registration.getApplicationNo() != null ? registration.getApplicationNo() : "");
+            .setApplicationNo(registration.getApplicationNo() != null ? registration.getApplicationNo() : "");
             registrationSearch.setConsumerNumber(registration.getApplicationNo() != null ? registration.getApplicationNo() : "");
             registrationSearch
-                    .setRegistrationNo(registration.getRegistrationNo() != null ? registration.getRegistrationNo() : "");
+            .setRegistrationNo(registration.getRegistrationNo() != null ? registration.getRegistrationNo() : "");
             registrationSearch.setApplicationType(applicationType);
             registrationSearch.setDateOfMarriage(
                     registration.getDateOfMarriage() != null ? registration.getDateOfMarriage() : new Date());
@@ -99,7 +99,7 @@ public class MarriageRegistrationIndexService {
             registrationSearch.setApplicationCreatedBy(
                     registration.getCreatedBy().getName() != null ? registration.getCreatedBy().getName() : "");
             registrationSearch
-                    .setZone(registration.getZone().getName() != null ? registration.getZone().getName() : "");
+            .setZone(registration.getZone().getName() != null ? registration.getZone().getName() : "");
             registrationSearch.setMarriageAct(registration.getMarriageAct() != null
                     && registration.getMarriageAct().getDescription() != null
                     ? registration.getMarriageAct().getDescription() : "");
@@ -116,17 +116,17 @@ public class MarriageRegistrationIndexService {
                 registrationSearch.setHusbandReligion(registration.getHusband().getReligion() != null
                         ? registration.getHusband().getReligion().getDescription() : "");
                 registrationSearch
-                        .setHusbandAgeInYearsAsOnMarriage(registration.getHusband().getAgeInYearsAsOnMarriage() != null
-                                ? Double.valueOf(registration.getHusband().getAgeInYearsAsOnMarriage()) : 0.0d);
+                .setHusbandAgeInYearsAsOnMarriage(registration.getHusband().getAgeInYearsAsOnMarriage() != null
+                ? Double.valueOf(registration.getHusband().getAgeInYearsAsOnMarriage()) : 0.0d);
                 registrationSearch.setHusbandAgeInMonthsAsOnMarriage(
                         registration.getHusband().getAgeInMonthsAsOnMarriage() != null
-                                ? Double.valueOf(registration.getHusband().getAgeInMonthsAsOnMarriage()) : 0.0d);
+                        ? Double.valueOf(registration.getHusband().getAgeInMonthsAsOnMarriage()) : 0.0d);
                 registrationSearch.setHusbandMaritalStatus(registration.getHusband().getMaritalStatus().name() != null
                         ? registration.getHusband().getMaritalStatus().name() : "");
                 registrationSearch
-                        .setHusbandReligionPractice(registration.getHusband().getReligionPractice() != null
-                                && registration.getHusband().getReligionPractice().name() != null
-                                ? registration.getHusband().getReligionPractice().name() : "");
+                .setHusbandReligionPractice(registration.getHusband().getReligionPractice() != null
+                && registration.getHusband().getReligionPractice().name() != null
+                ? registration.getHusband().getReligionPractice().name() : "");
                 registrationSearch.setHusbandOccupation(registration.getHusband().getOccupation() != null
                         ? registration.getHusband().getOccupation() : "");
                 registrationSearch.setHusbandPhoneNo(registration.getHusband().getContactInfo() != null
@@ -135,10 +135,10 @@ public class MarriageRegistrationIndexService {
                         ? registration.getHusband().getAadhaarNo() : "");
                 registrationSearch.setHusbandResidencyAddress(
                         registration.getHusband().getContactInfo().getResidenceAddress() != null
-                                ? registration.getHusband().getContactInfo().getResidenceAddress() : "");
+                        ? registration.getHusband().getContactInfo().getResidenceAddress() : "");
                 registrationSearch
-                        .setHusbandOfficeAddress(registration.getHusband().getContactInfo().getOfficeAddress() != null
-                                ? registration.getHusband().getContactInfo().getOfficeAddress() : "");
+                .setHusbandOfficeAddress(registration.getHusband().getContactInfo().getOfficeAddress() != null
+                ? registration.getHusband().getContactInfo().getOfficeAddress() : "");
                 registrationSearch.setHusbandEmail(registration.getHusband().getContactInfo().getEmail() != null
                         ? registration.getHusband().getContactInfo().getEmail() : "");
                 registrationSearch.setHusbandHandicapped(registration.getHusband().isHandicapped());
@@ -149,11 +149,11 @@ public class MarriageRegistrationIndexService {
                 registrationSearch.setWifeReligion(registration.getWife().getReligion() != null
                         ? registration.getWife().getReligion().getDescription() : "");
                 registrationSearch
-                        .setWifeAgeInYearsAsOnMarriage(registration.getWife().getAgeInYearsAsOnMarriage() != null
-                                ? Double.valueOf(registration.getWife().getAgeInYearsAsOnMarriage()) : 0.0d);
+                .setWifeAgeInYearsAsOnMarriage(registration.getWife().getAgeInYearsAsOnMarriage() != null
+                ? Double.valueOf(registration.getWife().getAgeInYearsAsOnMarriage()) : 0.0d);
                 registrationSearch
-                        .setWifeAgeInMonthsAsOnMarriage(registration.getWife().getAgeInMonthsAsOnMarriage() != null
-                                ? Double.valueOf(registration.getWife().getAgeInMonthsAsOnMarriage()) : 0.0d);
+                .setWifeAgeInMonthsAsOnMarriage(registration.getWife().getAgeInMonthsAsOnMarriage() != null
+                ? Double.valueOf(registration.getWife().getAgeInMonthsAsOnMarriage()) : 0.0d);
 
                 registrationSearch.setWifeMaritalStatus(registration.getWife().getMaritalStatus() != null
                         ? registration.getWife().getMaritalStatus().name() : "");
@@ -167,11 +167,11 @@ public class MarriageRegistrationIndexService {
                 registrationSearch.setWifeAadhaarNo(
                         registration.getWife().getAadhaarNo() != null ? registration.getWife().getAadhaarNo() : "");
                 registrationSearch
-                        .setWifeResidencyAddress(registration.getWife().getContactInfo().getResidenceAddress() != null
-                                ? registration.getWife().getContactInfo().getResidenceAddress() : "");
+                .setWifeResidencyAddress(registration.getWife().getContactInfo().getResidenceAddress() != null
+                ? registration.getWife().getContactInfo().getResidenceAddress() : "");
                 registrationSearch
-                        .setWifeOfficeAddress(registration.getWife().getContactInfo().getOfficeAddress() != null
-                                ? registration.getWife().getContactInfo().getOfficeAddress() : "");
+                .setWifeOfficeAddress(registration.getWife().getContactInfo().getOfficeAddress() != null
+                ? registration.getWife().getContactInfo().getOfficeAddress() : "");
                 registrationSearch.setWifeEmail(registration.getWife().getContactInfo().getEmail() != null
                         ? registration.getWife().getContactInfo().getEmail() : "");
                 registrationSearch.setWifeHandicapped(registration.getWife().isHandicapped());
@@ -182,42 +182,42 @@ public class MarriageRegistrationIndexService {
                 if (witness1 != null) {
                     registrationSearch.setWitness1Name(witness1.getFullName());
                     registrationSearch
-                            .setWitness1AadhaarNo(witness1.getAadhaarNo() != null ? witness1.getAadhaarNo() : "");
+                    .setWitness1AadhaarNo(witness1.getAadhaarNo() != null ? witness1.getAadhaarNo() : "");
                     registrationSearch
-                            .setWitness1Occupation(witness1.getOccupation() != null ? witness1.getOccupation() : "");
+                    .setWitness1Occupation(witness1.getOccupation() != null ? witness1.getOccupation() : "");
                     registrationSearch.setWitness1Address(witness1.getContactInfo().getResidenceAddress() != null
                             ? witness1.getContactInfo().getResidenceAddress() : "");
                     registrationSearch
-                            .setWitness1RelationshipWithApplicant(witness1.getRelationshipWithApplicant() != null
-                                    ? witness1.getRelationshipWithApplicant() : "");
+                    .setWitness1RelationshipWithApplicant(witness1.getRelationshipWithApplicant() != null
+                    ? witness1.getRelationshipWithApplicant() : "");
                 }
 
                 final MarriageWitness witness2 = registration.getWitnesses().get(1);
                 if (witness2 != null) {
                     registrationSearch.setWitness2Name(witness2.getFullName());
                     registrationSearch
-                            .setWitness2AadhaarNo(witness2.getAadhaarNo() != null ? witness2.getAadhaarNo() : "");
+                    .setWitness2AadhaarNo(witness2.getAadhaarNo() != null ? witness2.getAadhaarNo() : "");
                     registrationSearch
-                            .setWitness2Occupation(witness2.getOccupation() != null ? witness2.getOccupation() : "");
+                    .setWitness2Occupation(witness2.getOccupation() != null ? witness2.getOccupation() : "");
                     registrationSearch.setWitness2Address(witness2.getContactInfo().getResidenceAddress() != null
                             ? witness2.getContactInfo().getResidenceAddress() : "");
                     registrationSearch
-                            .setWitness2RelationshipWithApplicant(witness2.getRelationshipWithApplicant() != null
-                                    ? witness2.getRelationshipWithApplicant() : "");
+                    .setWitness2RelationshipWithApplicant(witness2.getRelationshipWithApplicant() != null
+                    ? witness2.getRelationshipWithApplicant() : "");
                 }
 
                 final MarriageWitness witness3 = registration.getWitnesses().get(2);
                 if (witness3 != null) {
                     registrationSearch.setWitness3Name(witness3.getFullName());
                     registrationSearch
-                            .setWitness3AadhaarNo(witness3.getAadhaarNo() != null ? witness3.getAadhaarNo() : "");
+                    .setWitness3AadhaarNo(witness3.getAadhaarNo() != null ? witness3.getAadhaarNo() : "");
                     registrationSearch
-                            .setWitness3Occupation(witness3.getOccupation() != null ? witness3.getOccupation() : "");
+                    .setWitness3Occupation(witness3.getOccupation() != null ? witness3.getOccupation() : "");
                     registrationSearch.setWitness3Address(witness3.getContactInfo().getResidenceAddress() != null
                             ? witness3.getContactInfo().getResidenceAddress() : "");
                     registrationSearch
-                            .setWitness3RelationshipWithApplicant(witness3.getRelationshipWithApplicant() != null
-                                    ? witness3.getRelationshipWithApplicant() : "");
+                    .setWitness3RelationshipWithApplicant(witness3.getRelationshipWithApplicant() != null
+                    ? witness3.getRelationshipWithApplicant() : "");
                 }
             }
 
@@ -225,8 +225,8 @@ public class MarriageRegistrationIndexService {
                 registrationSearch.setPriestName(registration.getPriest().getName() != null
                         ? registration.getPriest().getName().getFirstName() : "");
                 registrationSearch
-                        .setPriestAddress(registration.getPriest().getContactInfo() != null
-                                ? registration.getPriest().getContactInfo().getResidenceAddress() : "");
+                .setPriestAddress(registration.getPriest().getContactInfo() != null
+                ? registration.getPriest().getContactInfo().getResidenceAddress() : "");
                 registrationSearch.setPriestReligion(registration.getPriest().getReligion() != null
                         ? registration.getPriest().getReligion().getName() : "");
             }
@@ -255,13 +255,13 @@ public class MarriageRegistrationIndexService {
         if (StringUtils.isNotBlank(ulbName) && null != ulbName)
             boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("ulbName", ulbName));
         if (StringUtils.isNotBlank(applicantType) && null != applicantType)
-            if (applicantType.equalsIgnoreCase("Husband"))
+            if ("Husband".equalsIgnoreCase(applicantType))
                 boolQuery = boolQuery.filter(QueryBuilders.matchQuery("husbandHandicapped", true));
-            else if (applicantType.equalsIgnoreCase("Wife"))
+            else if ("Wife".equalsIgnoreCase(applicantType))
                 boolQuery = boolQuery.filter(QueryBuilders.matchQuery("wifeHandicapped", true));
             else
-                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("husbandHandicapped", true)).
-                        filter(QueryBuilders.matchQuery("wifeHandicapped", true));
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("husbandHandicapped", true))
+                .filter(QueryBuilders.matchQuery("wifeHandicapped", true));
         return boolQuery;
     }
 

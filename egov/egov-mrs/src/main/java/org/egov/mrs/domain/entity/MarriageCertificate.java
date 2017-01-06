@@ -64,13 +64,10 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = MarriageCertificate.SEQ_MARRIAGECERTIFICATE, sequenceName = MarriageCertificate.SEQ_MARRIAGECERTIFICATE, allocationSize = 1)
 public class MarriageCertificate extends AbstractAuditable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
     public static final String SEQ_MARRIAGECERTIFICATE = "SEQ_EGMRS_CERTIFICATE";
-    
+
     @Id
     @GeneratedValue(generator = SEQ_MARRIAGECERTIFICATE, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -79,7 +76,7 @@ public class MarriageCertificate extends AbstractAuditable {
 
     @Temporal(value = TemporalType.DATE)
     private Date certificateDate;
-    
+
     @SafeHtml
     private String certificateType;
 
@@ -93,18 +90,18 @@ public class MarriageCertificate extends AbstractAuditable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reissue")
-    private ReIssue reIssue; 
-    
+    private ReIssue reIssue;
+
     private boolean certificateIssued;
-    
+
     @Transient
     private Date fromDate;
     @Transient
     private Date toDate;
-    
+
     @Transient
     private String frequency;
-    
+
     public Long getId() {
         return id;
     }
@@ -169,28 +166,28 @@ public class MarriageCertificate extends AbstractAuditable {
         this.certificateIssued = certificateIssued;
     }
 
-	public Date getFromDate() {
-		return fromDate;
-	}
+    public Date getFromDate() {
+        return fromDate;
+    }
 
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
 
-	public Date getToDate() {
-		return toDate;
-	}
+    public Date getToDate() {
+        return toDate;
+    }
 
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
-	
-	public void setFrequency(String frequency) {
-		this.frequency = frequency;
-	}
-	
-	public String getFrequency() {
-		return frequency;
-	}
-    
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public void setFrequency(String frequency) {
+        this.frequency = frequency;
+    }
+
+    public String getFrequency() {
+        return frequency;
+    }
+
 }

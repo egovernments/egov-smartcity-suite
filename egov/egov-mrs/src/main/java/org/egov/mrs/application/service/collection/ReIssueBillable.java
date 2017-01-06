@@ -83,7 +83,7 @@ public class ReIssueBillable extends AbstractBillable implements Billable {
 
     private Long userId;
     private EgBillType billType;
-    private boolean callbackForApportion= Boolean.FALSE;
+    private boolean callbackForApportion = Boolean.FALSE;
     private String referenceNumber;
     private String transanctionReferenceNumber;
 
@@ -115,7 +115,7 @@ public class ReIssueBillable extends AbstractBillable implements Billable {
         List<EgDemand> demands = null;
         final Long demandIds = getCurrentDemand().getId();
         if (demandIds != null) {
-            demands = new ArrayList<EgDemand>();
+            demands = new ArrayList<>();
 
             demands.add(egDemandDAO.findById(Long.valueOf(demandIds.toString()), false));
         }
@@ -272,14 +272,13 @@ public class ReIssueBillable extends AbstractBillable implements Billable {
         this.reIssue = reIssue;
     }
 
-	@Override
-	public String getEmailId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String getEmailId() {
+        return null;
+    }
 
     @Override
     public String getConsumerType() {
-          return MARRIAGE_REISSUE_MESSAGE;
+        return MARRIAGE_REISSUE_MESSAGE;
     }
 }

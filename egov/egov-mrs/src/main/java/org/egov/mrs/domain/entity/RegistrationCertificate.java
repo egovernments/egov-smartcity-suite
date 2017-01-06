@@ -74,15 +74,14 @@ public class RegistrationCertificate {
     private byte[] wifePhoto;
     private byte[] marriagePhoto;
 
-    
-
-    public RegistrationCertificate(final MarriageRegistration registration, final User user,byte[] husbandPhoto, byte[] wifePhoto,byte[] marriagePhoto) {
+    public RegistrationCertificate(final MarriageRegistration registration, final User user, byte[] husbandPhoto,
+            byte[] wifePhoto, byte[] marriagePhoto) {
         this.registration = registration;
         this.user = user;
-        this.husbandPhoto=husbandPhoto;
-        this.wifePhoto=wifePhoto;
-        this.marriagePhoto=marriagePhoto;
-        
+        this.husbandPhoto = husbandPhoto;
+        this.wifePhoto = wifePhoto;
+        this.marriagePhoto = marriagePhoto;
+
     }
 
     public MarriageRegistration getRegistration() {
@@ -99,58 +98,50 @@ public class RegistrationCertificate {
 
     public String getHusbandName() {
         return registration.getHusband().getFullName();
-        // return String.join(" ", STYLE_TAG_BEGIN, this.registration.getHusband().getFullName(), STYLE_TAG_END);
     }
 
     public String getHusbandAddress() {
         return registration.getHusband().getContactInfo().getResidenceAddress();
-        // return String.join(" ", STYLE_TAG_BEGIN, this.registration.getHusband().getContactInfo().getResidenceAddress(),
-        // STYLE_TAG_END);
     }
 
     public String getWifeName() {
         return registration.getWife().getFullName();
-        // return String.join(" ", STYLE_TAG_BEGIN, this.registration.getWife().getFullName(), STYLE_TAG_END);
     }
 
     public String getWifeAddress() {
         return registration.getWife().getContactInfo().getResidenceAddress();
-        // return String.join(" ", STYLE_TAG_BEGIN, this.registration.getWife().getContactInfo().getResidenceAddress(),
-        // STYLE_TAG_END);
     }
 
     public String getDateOfMarriage() {
         return dateFormatter.format(registration.getDateOfMarriage());
-        // return String.join(" ", STYLE_TAG_BEGIN, dateFormatter.format(this.registration.getDateOfMarriage()), STYLE_TAG_END);
     }
 
     public String getPlaceOfMarriage() {
         return registration.getPlaceOfMarriage();
-        // return String.join(" ", STYLE_TAG_BEGIN, this.registration.getPlaceOfMarriage(), STYLE_TAG_END);
     }
 
     public String getDateOfRegistration() {
         return dateFormatter.format(registration.getCreatedDate());
-        // return String.join(" ", STYLE_TAG_BEGIN, dateFormatter.format(this.registration.getCreatedDate()), STYLE_TAG_END);
     }
 
     public InputStream getWifePhoto() {
-		if (this.wifePhoto != null)
-			return new java.io.ByteArrayInputStream(this.wifePhoto);
-		return null;
-	}
+        if (this.wifePhoto != null)
+            return new java.io.ByteArrayInputStream(this.wifePhoto);
+        return null;
+    }
 
-	public InputStream getHusbandPhoto() {
-		if (this.husbandPhoto != null)
-			return new java.io.ByteArrayInputStream(this.husbandPhoto);
-		return null;
+    public InputStream getHusbandPhoto() {
+        if (this.husbandPhoto != null)
+            return new java.io.ByteArrayInputStream(this.husbandPhoto);
+        return null;
     }
-	
-   public InputStream getMarriagePhoto() {
-            if (this.marriagePhoto != null)
-                    return new java.io.ByteArrayInputStream(this.marriagePhoto);
-            return null;
+
+    public InputStream getMarriagePhoto() {
+        if (this.marriagePhoto != null)
+            return new java.io.ByteArrayInputStream(this.marriagePhoto);
+        return null;
     }
+
     public String getRoleName() {
         return new ArrayList<Role>(user.getRoles()).get(0).getName();
     }
@@ -170,20 +161,7 @@ public class RegistrationCertificate {
             fileData[j++] = orginalFileData[i];
 
         return new ByteArrayInputStream(fileData);
-        // final File imageFile = Files.createTempFile(tempFilePath, "mrphoto", ".jpg").toFile();
-        // FileUtils.writeByteArrayToFile(imageFile, fileData);
-        // System.out.println("===== " + imageFile.getAbsolutePath() + "============");
-        // return imageFile.getAbsolutePath();
 
-        /*
-         * bais.mark(2); int byte1; try { byte1 = bais.read(); while(byte1 != -1) { if (byte1 == 0xFF || byte1 == 216) {
-         * //System.out.println("Is a jpeg image.."); System.out.print( "  " + byte1); } byte1 = bais.read(); } } catch
-         * (IOException e1) { // TODO Auto-generated catch block e1.printStackTrace(); } bais.reset();
-         */
-        /*
-         * Image image = null; try { image = ImageIO.read(bais); } catch (Exception e) { System.out.println("decodePhoto --- " +
-         * e); } return image;
-         */
     }
 
     public String getUserName() {
@@ -198,15 +176,13 @@ public class RegistrationCertificate {
     public String getRejectionReason() {
         return registration.getRejectionReason();
     }
-    
-    public String getRegistrationNumber()
-    {
-    	return registration.getRegistrationNo();
+
+    public String getRegistrationNumber() {
+        return registration.getRegistrationNo();
     }
-    public String getApplicationNumber()
-    {
-    	return registration.getApplicationNo();
+
+    public String getApplicationNumber() {
+        return registration.getApplicationNo();
     }
-    
-    
+
 }

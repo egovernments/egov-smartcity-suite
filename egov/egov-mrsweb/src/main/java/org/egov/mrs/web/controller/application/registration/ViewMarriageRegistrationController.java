@@ -85,7 +85,7 @@ public class ViewMarriageRegistrationController extends MarriageRegistrationCont
                     MarriageConstants.FILESTORE_MODULECODE);
             try {
                 registration.setEncodedMarriagePhoto(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
-            } catch (final Exception e) {
+            } catch (final IOException e) {
                 LOG.error("Error while preparing the document for view", e);
             }
         }
@@ -101,7 +101,7 @@ public class ViewMarriageRegistrationController extends MarriageRegistrationCont
                             MarriageConstants.FILESTORE_MODULECODE);
                     witness.setEncodedPhoto(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
                 }
-            } catch (final Exception e) {
+            } catch (final IOException e) {
                 LOG.error("Error while preparing the document for view", e);
             }
         });

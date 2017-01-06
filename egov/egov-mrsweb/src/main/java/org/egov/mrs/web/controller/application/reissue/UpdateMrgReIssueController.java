@@ -141,8 +141,8 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
             return "reissue-view";
 
         String message = StringUtils.EMPTY;
-        String approverName = StringUtils.EMPTY;
-        String nextDesignation = StringUtils.EMPTY;
+        String approverName;
+        String nextDesignation;
 
         if (workFlowAction != null && !workFlowAction.isEmpty()) {
             workflowContainer.setWorkFlowAction(workFlowAction);
@@ -150,8 +150,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
             approverName = wfInitiator.getEmployee().getName();
             nextDesignation = wfInitiator.getDesignation().getName();
             workflowContainer.setApproverComments(request.getParameter("approvalComent"));
-            if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT))
-            {
+            if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT)) {
 
                 reIssueService.rejectReIssue(reIssue, workflowContainer, request);
                 message = messageSource.getMessage("msg.rejected.reissue", new String[] { reIssue.getApplicationNo(),
@@ -160,17 +159,14 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
                 reIssueService.rejectReIssue(reIssue, workflowContainer, request);
                 message = messageSource.getMessage("msg.cancelled.reissue", new String[] { reIssue.getApplicationNo(), null },
                         null);
-            }
-            else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_APPROVE)) {
+            } else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_APPROVE)) {
                 reIssueService.approveReIssue(reIssue, workflowContainer);
                 message = messageSource.getMessage("msg.approved.reissue", new String[] { reIssue.getApplicationNo(),
                         approverName.concat("~").concat(nextDesignation) }, null);
-            }
-            else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE)) {
+            } else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE)) {
                 reIssueService.printCertificate(reIssue, workflowContainer, request);
                 message = messageSource.getMessage("msg.printcerificate.reissue", null, null);
-            }
-            else {
+            } else {
                 approverName = request.getParameter("approverName");
                 nextDesignation = request.getParameter("nextDesignation");
                 workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter("approvalPosition")));
@@ -183,7 +179,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
         if (workFlowAction != null && !workFlowAction.isEmpty()
                 && workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE))
             return "redirect:/certificate/reissue?id="
-                    + reIssue.getId();
+            + reIssue.getId();
 
         model.addAttribute("message", message);
         return "reissue-ack";

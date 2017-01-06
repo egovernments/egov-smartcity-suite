@@ -65,49 +65,45 @@ import org.springframework.stereotype.Service;
 @Service
 public class ReIssueDemandService extends MarriageDemandService {
 
-	@Override
-	public Set<EgDemandDetails> createDemandDetails(final BigDecimal amount) {
-		final Set<EgDemandDetails> demandDetails = new HashSet<EgDemandDetails>();
-		final Module module = moduleService.getModuleByName(MarriageConstants.MODULE_NAME);
-		final Installment installment = installmentDAO.getInsatllmentByModuleForGivenDate(module, new Date());
-		final EgDemandReasonMaster demandReasonMaster = demandGenericDAO
-				.getDemandReasonMasterByCode(MarriageFeeType.CERTIFICATEISSUE.name(), module);
-		final EgDemandReason demandReason = demandGenericDAO
-				.getDmdReasonByDmdReasonMsterInstallAndMod(demandReasonMaster, installment, module);
-		demandDetails.add(EgDemandDetails.fromReasonAndAmounts(amount, demandReason, BigDecimal.ZERO));
-		return demandDetails;
-	}
+    @Override
+    public Set<EgDemandDetails> createDemandDetails(final BigDecimal amount) {
+        final Set<EgDemandDetails> demandDetails = new HashSet<>();
+        final Module module = moduleService.getModuleByName(MarriageConstants.MODULE_NAME);
+        final Installment installment = installmentDAO.getInsatllmentByModuleForGivenDate(module, new Date());
+        final EgDemandReasonMaster demandReasonMaster = demandGenericDAO
+                .getDemandReasonMasterByCode(MarriageFeeType.CERTIFICATEISSUE.name(), module);
+        final EgDemandReason demandReason = demandGenericDAO
+                .getDmdReasonByDmdReasonMsterInstallAndMod(demandReasonMaster, installment, module);
+        demandDetails.add(EgDemandDetails.fromReasonAndAmounts(amount, demandReason, BigDecimal.ZERO));
+        return demandDetails;
+    }
 
-	@Override
-	public void updateDemand(EgDemand demand, BigDecimal amount) {
-		if (demand != null) {
-			for (final EgDemandDetails dmdDtl : demand.getEgDemandDetails()) {
-				if (dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
-						.equalsIgnoreCase(MarriageFeeType.CERTIFICATEISSUE.name())) {
-					dmdDtl.setAmount(amount);
-					dmdDtl.setAmtCollected(BigDecimal.ZERO);
-				}
-			}
-		}
-	}
-	
-	/**
-         * 
-         * @param marriageRegistration
-         * @return
-         */
-        public Boolean checkAnyTaxIsPendingToCollect(final ReIssue reIssue) {
+    @Override
+    public void updateDemand(EgDemand demand, BigDecimal amount) {
+        if (demand != null) {
+            for (final EgDemandDetails dmdDtl : demand.getEgDemandDetails()) {
+                if (dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                        .equalsIgnoreCase(MarriageFeeType.CERTIFICATEISSUE.name())) {
+                    dmdDtl.setAmount(amount);
+                    dmdDtl.setAmtCollected(BigDecimal.ZERO);
+                }
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param marriageRegistration
+     * @return
+     */
+    public Boolean checkAnyTaxIsPendingToCollect(final ReIssue reIssue) {
         Boolean pendingTaxCollection = false;
-
         if (reIssue != null && reIssue.getDemand() != null)
             for (final EgDemandDetails demandDtl : reIssue.getDemand().getEgDemandDetails())
                 if (demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0) {
                     pendingTaxCollection = true;
                     break;
-
                 }
-
         return pendingTaxCollection;
-
     }
 }

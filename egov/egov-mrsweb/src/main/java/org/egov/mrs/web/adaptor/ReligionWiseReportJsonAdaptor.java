@@ -52,8 +52,7 @@ import com.google.gson.JsonSerializer;
 
 public class ReligionWiseReportJsonAdaptor implements JsonSerializer<SearchResult> {
     @Override
-    public JsonElement serialize(final SearchResult reportSearchResult, final Type type,
-            final JsonSerializationContext jsc) {
+    public JsonElement serialize(final SearchResult reportSearchResult, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (reportSearchResult != null) {
             if (reportSearchResult.getUlbName() != null)

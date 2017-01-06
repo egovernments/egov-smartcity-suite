@@ -199,19 +199,15 @@ public class MarriageRegistrationService {
                     witness.setPhoto(FileCopyUtils.copyToByteArray(witness.getPhotoFile().getInputStream()));
                     witness.setPhotoFileStore(addToFileStore(witness.getPhotoFile()));
                 }
-            } catch (final Exception e) {
+            } catch (final IOException e) {
                 LOG.error(ERROR_WHILE_COPYING_MULTIPART_FILE_BYTES, e);
             }
         });
-        try {
-            registration.setMarriagePhotoFileStore(addToFileStore(registration.getMarriagePhotoFile()));
-            if (registration.getWife().getPhotoFile().getSize() != 0)
-                registration.getWife().setPhotoFileStore(addToFileStore(registration.getWife().getPhotoFile()));
-            if (registration.getHusband().getPhotoFile().getSize() != 0)
-                registration.getHusband().setPhotoFileStore(addToFileStore(registration.getHusband().getPhotoFile()));
-        } catch (final Exception e) {
-            LOG.error("Error while saving documents!!!!!", e);
-        }
+        registration.setMarriagePhotoFileStore(addToFileStore(registration.getMarriagePhotoFile()));
+        if (registration.getWife().getPhotoFile().getSize() != 0)
+            registration.getWife().setPhotoFileStore(addToFileStore(registration.getWife().getPhotoFile()));
+        if (registration.getHusband().getPhotoFile().getSize() != 0)
+            registration.getHusband().setPhotoFileStore(addToFileStore(registration.getHusband().getPhotoFile()));
 
         final Map<Long, MarriageDocument> generalDocumentAndId = new HashMap<>();
         marriageDocumentService.getGeneralDocuments().forEach(document -> generalDocumentAndId.put(document.getId(), document));
@@ -293,12 +289,13 @@ public class MarriageRegistrationService {
             LOG.error(ERROR_WHILE_COPYING_MULTIPART_FILE_BYTES, e);
         }
         marriageRegistration.getWitnesses().forEach(witness -> {
-            try {
-                witness.setPhoto(FileCopyUtils.copyToByteArray(witness.getPhotoFile().getInputStream()));
+                try {
+                    witness.setPhoto(FileCopyUtils.copyToByteArray(witness.getPhotoFile().getInputStream()));
+                } catch (IOException e) {
+                    LOG.error(ERROR_WHILE_COPYING_MULTIPART_FILE_BYTES, e);
+                }
                 witness.setPhotoFileStore(addToFileStore(witness.getPhotoFile()));
-            } catch (final Exception e) {
-                LOG.error(ERROR_WHILE_COPYING_MULTIPART_FILE_BYTES, e);
-            }
+            
         });
         if (marriageRegistration.getMarriagePhotoFile().getSize() != 0)
             marriageRegistration.setMarriagePhotoFileStore(addToFileStore(marriageRegistration.getMarriagePhotoFile()));
@@ -333,7 +330,7 @@ public class MarriageRegistrationService {
             registrationDocument.setFileStoreMapper(addToFileStore(document.getFile()));
             return registrationDocument;
         }).collect(Collectors.toList())
-        .forEach(doc -> registration.addRegistrationDocument(doc));
+            .forEach(doc -> registration.addRegistrationDocument(doc));
     }
 
     private void setCommonDocumentsFalg(final MarriageRegistration registration, final MarriageDocument document) {
@@ -426,7 +423,7 @@ public class MarriageRegistrationService {
         try {
             fileStoreMapper = fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
                     file.getContentType(), MarriageConstants.FILESTORE_MODULECODE);
-        } catch (final Exception e) {
+        } catch (final IOException e) {
             throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
         }
         return fileStoreMapper;
@@ -436,7 +433,7 @@ public class MarriageRegistrationService {
         final List<RegistrationDocument> toDelete = new ArrayList<>();
         final Map<Long, RegistrationDocument> documentIdAndRegistrationDoc = new HashMap<>();
         registration.getRegistrationDocuments()
-        .forEach(regDoc -> documentIdAndRegistrationDoc.put(regDoc.getDocument().getId(), regDoc));
+            .forEach(regDoc -> documentIdAndRegistrationDoc.put(regDoc.getDocument().getId(), regDoc));
 
         regModel.getDocuments()
         .stream()
@@ -448,7 +445,7 @@ public class MarriageRegistrationService {
                         MarriageConstants.FILESTORE_MODULECODE);
             return regDoc;
         }).collect(Collectors.toList())
-        .forEach(regDoc -> toDelete.add(regDoc));
+            .forEach(regDoc -> toDelete.add(regDoc));
 
         registrationDocumentService.delete(toDelete);
     }
@@ -459,7 +456,7 @@ public class MarriageRegistrationService {
                         MarriageConstants.MODULE_NAME)
                         : marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.REJECTED.toString(),
                                 MarriageConstants.MODULE_NAME);
-                return registrationRepository.findByCreatedDateAfterAndCreatedDateBeforeAndStatus(searchModel.getFromDate(),
+        return registrationRepository.findByCreatedDateAfterAndCreatedDateBeforeAndStatus(searchModel.getFromDate(),
                         searchModel.getToDate(), status);
     }
 
@@ -471,7 +468,7 @@ public class MarriageRegistrationService {
                                 MarriageConstants.FILESTORE_MODULECODE);
                         try {
                             appDoc.setBase64EncodedFile(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
-                        } catch (final Exception e) {
+                        } catch (final IOException e) {
                             LOG.error("Error while preparing the document for view", e);
                         }
                     });

@@ -104,7 +104,6 @@ public class MarriageRegistrationJsonAdaptor implements JsonSerializer<MarriageR
                 jsonObject.addProperty("certificateIssued", "No");
             else if (registration.getMarriageCertificate().get(0).isCertificateIssued())
                 jsonObject.addProperty("certificateIssued", "Yes");
-
             if (registration.getStatus() != null)
                 jsonObject.addProperty("status", registration.getStatus().getDescription());
             else
@@ -115,14 +114,9 @@ public class MarriageRegistrationJsonAdaptor implements JsonSerializer<MarriageR
                 jsonObject.addProperty("feePaid", org.apache.commons.lang.StringUtils.EMPTY);
 
             if (!registration.isFeeCollected()) {
-              /*  if (registration.getStatus().getCode()
-                        .equalsIgnoreCase(MarriageRegistration.RegistrationStatus.APPROVED.toString())
-                        && registration.getCurrentState().getNextAction().equalsIgnoreCase("Certificate Print Pending")) {*/
-                    jsonObject.addProperty("feeCollected", "No");
-                    jsonObject.addProperty("feeCollectionPending", true);
-               // }
-            }
-            else
+                jsonObject.addProperty("feeCollected", "No");
+                jsonObject.addProperty("feeCollectionPending", true);
+            } else
                 jsonObject.addProperty("feeCollected", "Yes");
 
             if (registration.getRemarks() != null)
@@ -136,7 +130,7 @@ public class MarriageRegistrationJsonAdaptor implements JsonSerializer<MarriageR
             if (registration.getStateType() != null)
                 jsonObject.addProperty("applicationType", registration.getStateType());
             else
-                jsonObject.addProperty("remarks", org.apache.commons.lang.StringUtils.EMPTY);
+                jsonObject.addProperty("applicationType", org.apache.commons.lang.StringUtils.EMPTY);
             if (registration.getMarriageRegistrationUnit() != null)
                 jsonObject.addProperty("marriageRegistrationUnit", registration.getMarriageRegistrationUnit().getName());
             else

@@ -59,8 +59,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MarriageRegistrationUnitService {
 
     @Autowired
-    private MrRegistrationUnitRepository MrregistrationUnitRepository;
-
+    private MrRegistrationUnitRepository mrregistrationUnitRepository;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -71,39 +70,39 @@ public class MarriageRegistrationUnitService {
     @Transactional
     public void createMrRegistrationUnit(
             final MarriageRegistrationUnit marriageRegistrationUnit) {
-        MrregistrationUnitRepository.save(marriageRegistrationUnit);
+        mrregistrationUnitRepository.save(marriageRegistrationUnit);
     }
 
     @Transactional
     public MarriageRegistrationUnit updateMrRegistrationUnit(
             final MarriageRegistrationUnit marriageRegistrationUnit) {
-        return MrregistrationUnitRepository
+        return mrregistrationUnitRepository
                 .saveAndFlush(marriageRegistrationUnit);
     }
 
     public List<MarriageRegistrationUnit> getActiveRegistrationunit() {
-        return MrregistrationUnitRepository.findByisActiveTrueOrderByNameAsc();
+        return mrregistrationUnitRepository.findByisActiveTrueOrderByNameAsc();
     }
 
     public MarriageRegistrationUnit findById(final Long id) {
-        return MrregistrationUnitRepository.findById(id);
+        return mrregistrationUnitRepository.findById(id);
     }
 
     public MarriageRegistrationUnit getMarriageRegistrationUnit(
             final String name) {
-        return MrregistrationUnitRepository.findByName(name);
+        return mrregistrationUnitRepository.findByName(name);
     }
 
     public List<MarriageRegistrationUnit> getMarriageRegistrationUnits() {
-        return MrregistrationUnitRepository.findAll();
+        return mrregistrationUnitRepository.findAll();
     }
 
     public MarriageRegistrationUnit getbyId(final Long id) {
-        return MrregistrationUnitRepository.getOne(id);
+        return mrregistrationUnitRepository.getOne(id);
     }
 
     public List<MarriageRegistrationUnit> findAll() {
-        return MrregistrationUnitRepository.findAll();
+        return mrregistrationUnitRepository.findAll();
     }
 
     @SuppressWarnings("unchecked")
@@ -117,11 +116,11 @@ public class MarriageRegistrationUnitService {
         if (null != marriageRegistrationUnit.getAddress())
             criteria.add(Restrictions.ilike("address",
                     marriageRegistrationUnit.getAddress(), MatchMode.ANYWHERE));
-        if (null != marriageRegistrationUnit.getIsActive() && marriageRegistrationUnit.getIsActive() == true)
+        if (null != marriageRegistrationUnit.getIsActive() && marriageRegistrationUnit.getIsActive())
             criteria.add(Restrictions.eq("isActive",
                     marriageRegistrationUnit.getIsActive()));
         if (null != marriageRegistrationUnit.getIsMainRegistrationUnit()
-                && marriageRegistrationUnit.getIsMainRegistrationUnit() == true)
+                && marriageRegistrationUnit.getIsMainRegistrationUnit())
             criteria.add(Restrictions.eq("isMainRegistrationUnit",
                     marriageRegistrationUnit.getIsMainRegistrationUnit()));
         if (marriageRegistrationUnit.getZone().getId() != null)

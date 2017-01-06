@@ -64,66 +64,66 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping(value = "/reissue")
 public class ViewReIssueController extends GenericWorkFlowController {
-    
+
+    private static final String APPROVAL_POSITION = "approvalPosition";
     private final ReIssueService reIssueService;
     private final MarriageRegistrationService marriageRegistrationService;
-    
+
     @Autowired
     private MarriageApplicantService marriageApplicantService;
-    
+
     @Autowired
     private MarriageDocumentService marriageDocumentService;
-    
+
     @Autowired
     private MarriageUtils utils;
-    
-   @Autowired
-   private MarriageRegistrationUnitService marriageRegistrationUnitService;
 
-    
-    public void prepareNewForm(final Model model) {
-		model.addAttribute("marriageRegistrationUnit",
-				marriageRegistrationUnitService.getActiveRegistrationunit());
-	}
-    
     @Autowired
-    public ViewReIssueController(final ReIssueService reIssueService, final MarriageRegistrationService marriageRegistrationService) {
+    private MarriageRegistrationUnitService marriageRegistrationUnitService;
+
+    @Autowired
+    public ViewReIssueController(final ReIssueService reIssueService,
+            final MarriageRegistrationService marriageRegistrationService) {
         this.reIssueService = reIssueService;
         this.marriageRegistrationService = marriageRegistrationService;
     }
-    
+
+    public void prepareNewForm(final Model model) {
+        model.addAttribute("marriageRegistrationUnit",
+                marriageRegistrationUnitService.getActiveRegistrationunit());
+    }
+
     @RequestMapping(value = "/{reIssueId}", method = RequestMethod.GET)
     public String viewRegistration(@PathVariable final Long reIssueId, @RequestParam(required = false) String mode,
             final Model model) throws IOException {
-        
+        String mode1 = null;
         final ReIssue reIssue = reIssueService.get(reIssueId);
         final MarriageRegistration registration = reIssue.getRegistration();
-        
+
         model.addAttribute("documents", marriageDocumentService.getReIssueApplicantDocs());
         model.addAttribute("reIssue", reIssue);
-        model.addAttribute("mode", mode);
-        
+        model.addAttribute("mode", mode1);
+
         marriageRegistrationService.prepareDocumentsForView(registration);
         marriageApplicantService.prepareDocumentsForView(registration.getHusband());
         marriageApplicantService.prepareDocumentsForView(registration.getWife());
         marriageApplicantService.prepareDocumentsForView(reIssue.getApplicant());
-                
-        String screen = null;
-       
+
+        String screen;
+
         if (!reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.APPROVED.toString())) {
-            
+
             if (mode == null)
-                mode = utils.isLoggedInUserApprover() ? "view" : mode;
-            
-            screen = mode != null && mode.equalsIgnoreCase("view") ? "reissue-view" : "reissue-form";
+                mode1 = utils.isLoggedInUserApprover() ? "view" : mode;
+
+            screen = mode1 != null && "view".equalsIgnoreCase(mode1) ? "reissue-view" : "reissue-form";
         } else
             screen = "reissue-view";
-        
+
         prepareNewForm(model);
         prepareWorkflow(model, reIssue, new WorkflowContainer());
         return screen;
     }
-
 
     /**
      * Obtains the workflow paramaters from the HttpServletRequest
@@ -137,26 +137,26 @@ public class ViewReIssueController extends GenericWorkFlowController {
             workflowContainer.setApproverComments(request.getParameter("approvalComent"));
         if (request.getParameter("workFlowAction") != null)
             workflowContainer.setWorkFlowAction(request.getParameter("workFlowAction"));
-        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-            workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter("approvalPosition")));
+        if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
+            workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter(APPROVAL_POSITION)));
     }
-    
+
     @RequestMapping(value = "/view/{reIssueId}", method = RequestMethod.GET)
     public String showReIssueApplication(@PathVariable final Long reIssueId,
             final Model model) throws IOException {
-        
+
         final ReIssue reIssue = reIssueService.get(reIssueId);
         final MarriageRegistration registration = reIssue.getRegistration();
         model.addAttribute("reIssue", reIssue);
         model.addAttribute("documents", marriageDocumentService.getIndividualDocuments());
-        
+
         marriageRegistrationService.prepareDocumentsForView(registration);
         marriageApplicantService.prepareDocumentsForView(registration.getHusband());
         marriageApplicantService.prepareDocumentsForView(registration.getWife());
         marriageApplicantService.prepareDocumentsForView(reIssue.getApplicant());
         prepareNewForm(model);
         prepareWorkflow(model, reIssue, new WorkflowContainer());
-       
+
         return "reissue-success";
     }
 }

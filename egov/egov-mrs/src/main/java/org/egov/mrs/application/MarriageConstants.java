@@ -81,44 +81,38 @@ public class MarriageConstants {
     public static final String CF_STAMP = "CF_STAMP";
     public static final String AFFIDAVIT = "AFFIDAVIT";
     public static final String MIC = "MIC";
-    public static final String Schooll_Leaveing_Cert = "SLC";
-    public static final String Birth_certificate = "BC";
-    public static final String Divorce_certificate = "DCA";
-    public static final String Death_certificate = "DCSWA";
-    public static final String Notary_Affidavit = "NotaryAffidavit";
-    public static final String RationCard = "RationCard";
-    public static final String MSEBBILL = "MSEBBILL";
-    public static final String TelephoneBill = "TelephoneBill";
-    public static final String Passport = "Passport";
-    public static final String Aadhar = "Aadhar";
+    public static final String SCHOOL_LEAVING_CERT = "SLC";
+    public static final String BIRTH_CERTIFICATE = "BC";
+    public static final String DIVORCE_CERTIFICATE = "DCA";
+    public static final String DEATH_CERTIFICATE = "DCSWA";
+    public static final String NOTARY_AFFIDAVIT = "NotaryAffidavit";
+    public static final String RATION_CRAD = "RationCard";
+    public static final String ELECTRICITY_BILL = "MSEBBILL";
+    public static final String TELEPHONE_BILL = "TelephoneBill";
+    public static final String PASSPORT = "Passport";
+    public static final String AADHAR = "Aadhar";
+    public static final String YEAR = "year";
 
-    public static final List<String> venuelist = new ArrayList<String>() {
-        /**
-         *
-         */
+    protected static final List<String> venuelist = new ArrayList<String>() {
         private static final long serialVersionUID = -6112513531476444226L;
-
         {
             add("Residence");
             add("Function Hall");
             add("Worship Place");
             add("Others");
-
         }
     };
 
-    public static final List<String> witnessRelation = new ArrayList<String>() {
-        /**
-         *
-         */
+    protected static final List<String> witnessRelation = new ArrayList<String>() {
         private static final long serialVersionUID = -8054560659655351886L;
-
         {
-
             add("S/o");
             add("D/o");
             add("W/o");
-
         }
     };
+
+    private MarriageConstants() {
+        // To hide implicit public
+    }
 }

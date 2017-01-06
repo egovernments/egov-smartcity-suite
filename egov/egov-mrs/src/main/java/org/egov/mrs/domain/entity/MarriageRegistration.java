@@ -107,7 +107,6 @@ public class MarriageRegistration extends StateAware {
     @NotNull
     private Date dateOfMarriage;
 
-    /* @NotNull */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "marriageact")
     private MarriageAct marriageAct;
@@ -149,7 +148,7 @@ public class MarriageRegistration extends StateAware {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "registration")
     @Size(max = 4)
     @OrderBy("id")
-    private List<MarriageWitness> witnesses = new LinkedList<MarriageWitness>();
+    private List<MarriageWitness> witnesses = new LinkedList<>();
 
     @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -163,7 +162,6 @@ public class MarriageRegistration extends StateAware {
     private boolean affidavit;
     private boolean marriageCard;
 
-    // @NotNull
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "feeCriteria")
     private MarriageFee feeCriteria;
@@ -206,7 +204,7 @@ public class MarriageRegistration extends StateAware {
     private Date toDate;
 
     @Transient
-    private String month_year;
+    private String monthYear;
 
     @Transient
     private int year;
@@ -217,10 +215,10 @@ public class MarriageRegistration extends StateAware {
     @NotNull
     @Valid
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "registration")
-    private Set<RegistrationDocument> registrationDocuments = new HashSet<RegistrationDocument>();
+    private Set<RegistrationDocument> registrationDocuments = new HashSet<>();
 
     @OneToMany(mappedBy = "registration", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<MarriageCertificate> marriageCertificate = new ArrayList<MarriageCertificate>();
+    private List<MarriageCertificate> marriageCertificate = new ArrayList<>();
 
     @Transient
     private List<MarriageDocument> documents;
@@ -536,12 +534,12 @@ public class MarriageRegistration extends StateAware {
         this.isLegacy = isLegacy;
     }
 
-    public String getMonth_year() {
-        return month_year;
+    public String getMonthYear() {
+        return monthYear;
     }
 
-    public void setMonth_year(final String month_year) {
-        this.month_year = month_year;
+    public void setMonthYear(String monthYear) {
+        this.monthYear = monthYear;
     }
 
     public int getYear() {

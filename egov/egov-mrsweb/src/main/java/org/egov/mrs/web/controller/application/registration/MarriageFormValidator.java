@@ -23,6 +23,8 @@ import org.springframework.validation.Validator;
 @Component
 public class MarriageFormValidator implements Validator {
 
+    private static final String VALIDATE_MOBILE_NO = "validate.mobile.no";
+    private static final String VALIDATE_EMAIL = "validate.email";
     private static final String NOTEMPTY_MRG_WITNESS_AGE = "Notempty.mrg.witness.age";
     private static final String NOTEMPTY_MRG_WITNESS_PARENT = "Notempty.mrg.witness.parent";
     private static final String NOTEMPTY_MRG_RESIDENCE_ADDRESS = "Notempty.mrg.residence.address";
@@ -44,37 +46,37 @@ public class MarriageFormValidator implements Validator {
     public boolean supports(final Class<?> clazz) {
         return MarriageRegistration.class.equals(clazz);
     }
-    
+
     public void validateReIssue(Object target, Errors errors) {
         ReIssue reIssue = (ReIssue) target;
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "marriageRegistrationUnit", "Notempty.regUnit.name");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicant.name.firstName", NOTEMPTY_MRG_FIRST_NAME);
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicant.contactInfo.residenceAddress", NOTEMPTY_MRG_RESIDENCE_ADDRESS);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicant.contactInfo.residenceAddress",
+                NOTEMPTY_MRG_RESIDENCE_ADDRESS);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicant.contactInfo.officeAddress", NOTEMPTY_MRG_OFFICE_ADDRESS);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicant.contactInfo.mobileNo", "Notempty.mrg.mobile.no");
-        
-        if(reIssue.getFeePaid()==null)
+
+        if (reIssue.getFeePaid() == null)
             errors.reject("Notempty.reissue.fee", null);
-       // ValidationUtils.rejectIfEmptyOrWhitespace(errors, "feePaid", "Notempty.reissue.fee");
+        // ValidationUtils.rejectIfEmptyOrWhitespace(errors, "feePaid", "Notempty.reissue.fee");
         if (reIssue.getApplicant() != null && reIssue.getApplicant().getContactInfo() != null
                 && reIssue.getApplicant().getContactInfo().getMobileNo() != null) {
             pattern = Pattern.compile(MOBILE_PATTERN);
             matcher = pattern.matcher(reIssue.getApplicant().getContactInfo().getMobileNo());
             if (!matcher.matches()) {
-                errors.rejectValue("applicant.contactInfo.mobileNo", "validate.mobile.no");
+                errors.rejectValue("applicant.contactInfo.mobileNo", VALIDATE_MOBILE_NO);
             }
         }
-        
+
         if (reIssue.getApplicant() != null && reIssue.getApplicant().getContactInfo() != null
                 && reIssue.getApplicant().getContactInfo().getEmail() != null) {
             pattern = Pattern.compile(EMAIL_PATTERN);
             matcher = pattern.matcher(reIssue.getApplicant().getContactInfo().getEmail());
             if (!matcher.matches()) {
-                errors.rejectValue("applicant.contactInfo.email", "validate.email");
+                errors.rejectValue("applicant.contactInfo.email", VALIDATE_EMAIL);
             }
         }
     }
-    
 
     public void validate(final Object target, final Errors errors, final String type) {
         final MarriageRegistration registration = (MarriageRegistration) target;
@@ -89,7 +91,7 @@ public class MarriageFormValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "city", NOTEMPTY_MRG_CITY);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateOfMarriage", "Notempty.mrg.date.of.mrg");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "venue", "Notempty.mrg.venue");
-        if(!"Residence".equals(registration.getVenue())){
+        if (!"Residence".equals(registration.getVenue())) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "placeOfMarriage", "Notempty.mrg.place.of.mrg");
         }
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "husband.name.firstName", NOTEMPTY_MRG_FIRST_NAME);
@@ -169,10 +171,10 @@ public class MarriageFormValidator implements Validator {
     private void validateDocumentAttachments(final Errors errors, final MarriageRegistration registration) {
         if (registration.getId() == null)
             for (final MarriageDocument marriageDocument : registration.getDocuments()) {
-                final MarriageDocument Document = marriageDocumentService.get(marriageDocument.getId());
-                if (Document.getCode().equals(MOM) && marriageDocument.getFile().getSize() == 0)
+                final MarriageDocument document = marriageDocumentService.get(marriageDocument.getId());
+                if (document.getCode().equals(MOM) && marriageDocument.getFile().getSize() == 0)
                     errors.rejectValue("memorandumOfMarriage", "validate.memorendum");
-                if (Document.getCode().equals(CF_STAMP) && marriageDocument.getFile().getSize() == 0)
+                if (document.getCode().equals(CF_STAMP) && marriageDocument.getFile().getSize() == 0)
                     errors.rejectValue("courtFeeStamp", "validate.courtfeettamp");
             }
     }
@@ -199,7 +201,7 @@ public class MarriageFormValidator implements Validator {
             pattern = Pattern.compile(EMAIL_PATTERN);
             matcher = pattern.matcher(registration.getWife().getContactInfo().getEmail());
             if (!matcher.matches())
-                errors.rejectValue("wife.contactInfo.email", "validate.email");
+                errors.rejectValue("wife.contactInfo.email", VALIDATE_EMAIL);
         }
     }
 
@@ -209,7 +211,7 @@ public class MarriageFormValidator implements Validator {
             pattern = Pattern.compile(MOBILE_PATTERN);
             matcher = pattern.matcher(registration.getWife().getContactInfo().getMobileNo());
             if (!matcher.matches())
-                errors.rejectValue("wife.contactInfo.mobileNo", "validate.mobile.no");
+                errors.rejectValue("wife.contactInfo.mobileNo", VALIDATE_MOBILE_NO);
         }
     }
 
@@ -230,7 +232,7 @@ public class MarriageFormValidator implements Validator {
             pattern = Pattern.compile(EMAIL_PATTERN);
             matcher = pattern.matcher(registration.getHusband().getContactInfo().getEmail());
             if (!matcher.matches())
-                errors.rejectValue("husband.contactInfo.email", "validate.email");
+                errors.rejectValue("husband.contactInfo.email", VALIDATE_EMAIL);
         }
     }
 
@@ -240,7 +242,7 @@ public class MarriageFormValidator implements Validator {
             pattern = Pattern.compile(MOBILE_PATTERN);
             matcher = pattern.matcher(registration.getHusband().getContactInfo().getMobileNo());
             if (!matcher.matches())
-                errors.rejectValue("husband.contactInfo.mobileNo", "validate.mobile.no");
+                errors.rejectValue("husband.contactInfo.mobileNo", VALIDATE_MOBILE_NO);
         }
     }
 

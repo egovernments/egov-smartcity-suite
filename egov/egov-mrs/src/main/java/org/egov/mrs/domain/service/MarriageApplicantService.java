@@ -39,14 +39,14 @@
 
 package org.egov.mrs.domain.service;
 
-import static org.egov.mrs.application.MarriageConstants.Aadhar;
-import static org.egov.mrs.application.MarriageConstants.Birth_certificate;
-import static org.egov.mrs.application.MarriageConstants.Death_certificate;
-import static org.egov.mrs.application.MarriageConstants.Divorce_certificate;
-import static org.egov.mrs.application.MarriageConstants.Passport;
-import static org.egov.mrs.application.MarriageConstants.RationCard;
-import static org.egov.mrs.application.MarriageConstants.Schooll_Leaveing_Cert;
-import static org.egov.mrs.application.MarriageConstants.TelephoneBill;
+import static org.egov.mrs.application.MarriageConstants.AADHAR;
+import static org.egov.mrs.application.MarriageConstants.BIRTH_CERTIFICATE;
+import static org.egov.mrs.application.MarriageConstants.DEATH_CERTIFICATE;
+import static org.egov.mrs.application.MarriageConstants.DIVORCE_CERTIFICATE;
+import static org.egov.mrs.application.MarriageConstants.PASSPORT;
+import static org.egov.mrs.application.MarriageConstants.RATION_CRAD;
+import static org.egov.mrs.application.MarriageConstants.SCHOOL_LEAVING_CERT;
+import static org.egov.mrs.application.MarriageConstants.TELEPHONE_BILL;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,16 +77,14 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class MarriageApplicantService {
 
+    private static final String ERROR_WHILE_PREPARING_THE_DOCUMENT_FOR_VIEW = "Error while preparing the document for view";
     private static final Logger LOG = Logger.getLogger(MarriageRegistrationService.class);
 
     private final MarriageApplicantRepository applicantRepository;
-
     @Autowired
     private FileStoreService fileStoreService;
-
     @Autowired
     private ApplicantDocumentService applicantDocumentService;
-
     @Autowired
     private MarriageDocumentService marriageDocumentService;
 
@@ -117,7 +115,7 @@ public class MarriageApplicantService {
             try {
                 applicant.setEncodedPhoto(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
             } catch (final IOException e) {
-                e.printStackTrace();
+                LOG.error(ERROR_WHILE_PREPARING_THE_DOCUMENT_FOR_VIEW, e);
             }
         }
 
@@ -127,7 +125,7 @@ public class MarriageApplicantService {
             try {
                 applicant.setEncodedSignature(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
             } catch (final IOException e) {
-                e.printStackTrace();
+                LOG.error(ERROR_WHILE_PREPARING_THE_DOCUMENT_FOR_VIEW, e);
             }
         }
 
@@ -141,32 +139,31 @@ public class MarriageApplicantService {
                             appDoc.setBase64EncodedFile(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
                         }
 
-                    } catch (final Exception e) {
-                        LOG.error("Error while preparing the document for view", e);
+                    } catch (final IOException e) {
+                        LOG.error(ERROR_WHILE_PREPARING_THE_DOCUMENT_FOR_VIEW, e);
                     }
                 });
     }
 
     public void deleteDocuments(final MrApplicant applicantModel, final MrApplicant applicant) {
 
-        final List<MrApplicantDocument> toDelete = new ArrayList<MrApplicantDocument>();
-        final Map<Long, MrApplicantDocument> documentIdAndApplicantDoc = new HashMap<Long, MrApplicantDocument>();
+        final List<MrApplicantDocument> toDelete = new ArrayList<>();
+        final Map<Long, MrApplicantDocument> documentIdAndApplicantDoc = new HashMap<>();
         applicant.getApplicantDocuments().forEach(appDoc -> documentIdAndApplicantDoc.put(appDoc.getDocument().getId(), appDoc));
 
         if (applicantModel.getDocuments() != null) {
             applicantModel
-                    .getDocuments()
-                    .stream()
-                    .filter(doc -> doc.getFile().getSize() > 0)
-                    .map(doc -> {
-                        final MrApplicantDocument appDoc = documentIdAndApplicantDoc.get(doc.getId());
-                        if (appDoc != null)
-                            fileStoreService.delete(appDoc.getFileStoreMapper().getFileStoreId(),
-                                    MarriageConstants.FILESTORE_MODULECODE);
-                        return appDoc;
-                    }).collect(Collectors.toList())
-                    .forEach(appDoc -> toDelete.add(appDoc)); // seems like redundent, check
-
+            .getDocuments()
+            .stream()
+            .filter(doc -> doc.getFile().getSize() > 0)
+            .map(doc -> {
+                final MrApplicantDocument appDoc = documentIdAndApplicantDoc.get(doc.getId());
+                if (appDoc != null)
+                    fileStoreService.delete(appDoc.getFileStoreMapper().getFileStoreId(),
+                            MarriageConstants.FILESTORE_MODULECODE);
+                return appDoc;
+            }).collect(Collectors.toList())
+            .forEach(appDoc -> toDelete.add(appDoc)); // seems like redundent, check
             applicantDocumentService.delete(toDelete);
         }
     }
@@ -186,37 +183,37 @@ public class MarriageApplicantService {
 
         if (documents != null)
             documents.stream()
-                    .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
-                    .map(document -> {
-                        final MrApplicantDocument applicantDocument = new MrApplicantDocument();
-                        setApplicantDocumentsFalg(applicant, document, identityProof);
-                        applicantDocument.setApplicant(applicant);
-                        applicantDocument.setDocument(documentAndId.get(document.getId()));
-                        applicantDocument.setFileStoreMapper(addToFileStore(document.getFile()));
-                        return applicantDocument;
-                    }).collect(Collectors.toList())
-                    .forEach(doc -> applicant.addApplicantDocument(doc));
+            .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
+            .map(document -> {
+                final MrApplicantDocument applicantDocument = new MrApplicantDocument();
+                setApplicantDocumentsFalg(applicant, document, identityProof);
+                applicantDocument.setApplicant(applicant);
+                applicantDocument.setDocument(documentAndId.get(document.getId()));
+                applicantDocument.setFileStoreMapper(addToFileStore(document.getFile()));
+                return applicantDocument;
+            }).collect(Collectors.toList())
+            .forEach(doc -> applicant.addApplicantDocument(doc));
         applicant.setProofsAttached(identityProof);
     }
 
     public void setApplicantDocumentsFalg(final MrApplicant mrApplicant, final MarriageDocument document,
             final IdentityProof identityProof) {
         final MarriageDocument marriageDocument = marriageDocumentService.get(document.getId());
-        if (marriageDocument.getCode().equals(Passport))
+        if (marriageDocument.getCode().equals(PASSPORT))
             identityProof.setPassport(true);
-        if (marriageDocument.getCode().equals(RationCard))
+        if (marriageDocument.getCode().equals(RATION_CRAD))
             identityProof.setRationCard(true);
-        if (marriageDocument.getCode().equals(Aadhar))
+        if (marriageDocument.getCode().equals(AADHAR))
             identityProof.setAadhar(true);
-        if (marriageDocument.getCode().equals(Schooll_Leaveing_Cert))
+        if (marriageDocument.getCode().equals(SCHOOL_LEAVING_CERT))
             identityProof.setSchoolLeavingCertificate(true);
-        if (marriageDocument.getCode().equals(TelephoneBill))
+        if (marriageDocument.getCode().equals(TELEPHONE_BILL))
             identityProof.setTelephoneBill(true);
-        if (marriageDocument.getCode().equals(Birth_certificate))
+        if (marriageDocument.getCode().equals(BIRTH_CERTIFICATE))
             identityProof.setBirthCertificate(true);
-        if (marriageDocument.getCode().equals(Death_certificate))
+        if (marriageDocument.getCode().equals(DEATH_CERTIFICATE))
             identityProof.setDeaceasedDeathCertificate(true);
-        if (marriageDocument.getCode().equals(Divorce_certificate))
+        if (marriageDocument.getCode().equals(DIVORCE_CERTIFICATE))
             identityProof.setDivorceCertificate(true);
         if (mrApplicant.getPhotoFile().getSize() != 0)
             identityProof.setPhotograph(true);
@@ -227,7 +224,7 @@ public class MarriageApplicantService {
         try {
             fileStoreMapper = fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
                     file.getContentType(), MarriageConstants.FILESTORE_MODULECODE);
-        } catch (final Exception e) {
+        } catch (final IOException e) {
             throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
         }
         return fileStoreMapper;

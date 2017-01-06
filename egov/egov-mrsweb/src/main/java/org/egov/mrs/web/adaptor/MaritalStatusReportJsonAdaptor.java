@@ -50,44 +50,43 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 public class MaritalStatusReportJsonAdaptor implements JsonSerializer<MaritalStatusReport> {
-	@Override
-	public JsonElement serialize(final MaritalStatusReport marital, final Type type,
-			final JsonSerializationContext jsc) {
-		final JsonObject jsonObject = new JsonObject();
-		if (marital != null) {
-			if (marital.getMonth() != null)
-				jsonObject.addProperty("month", marital.getMonth());
-			else
-				jsonObject.addProperty("name", StringUtils.EMPTY);
-			if (marital.getApplicantType() != null)
-				jsonObject.addProperty("applicantType", marital.getApplicantType());
-			else
-				jsonObject.addProperty("applicantType", StringUtils.EMPTY);
+    @Override
+    public JsonElement serialize(final MaritalStatusReport marital, final Type type,
+            final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (marital != null) {
+            if (marital.getMonth() != null)
+                jsonObject.addProperty("month", marital.getMonth());
+            else
+                jsonObject.addProperty("name", StringUtils.EMPTY);
+            if (marital.getApplicantType() != null)
+                jsonObject.addProperty("applicantType", marital.getApplicantType());
+            else
+                jsonObject.addProperty("applicantType", StringUtils.EMPTY);
 
-			if (marital.getMarried() != null)
-				jsonObject.addProperty("married", marital.getMarried());
-			else
-				jsonObject.addProperty("married", "0");
+            if (marital.getMarried() != null)
+                jsonObject.addProperty("married", marital.getMarried());
+            else
+                jsonObject.addProperty("married", "0");
 
-			if (marital.getUnmarried() != null)
-				jsonObject.addProperty("unmarried", marital.getUnmarried());
-			else
-				jsonObject.addProperty("unmarried", "0");
-			if (marital.getWidower() != null)
-				jsonObject.addProperty("widower", marital.getWidower());
-			else
-				jsonObject.addProperty("widower", "0");
-			if (marital.getDivorced() != null)
-				jsonObject.addProperty("divorced", marital.getDivorced());
-			else
-				jsonObject.addProperty("divorced", "0");
-			
-			if (marital.getTotal() != null)
-                            jsonObject.addProperty("total", marital.getTotal());
-                    else
-                            jsonObject.addProperty("total", "0");
+            if (marital.getUnmarried() != null)
+                jsonObject.addProperty("unmarried", marital.getUnmarried());
+            else
+                jsonObject.addProperty("unmarried", "0");
+            if (marital.getWidower() != null)
+                jsonObject.addProperty("widower", marital.getWidower());
+            else
+                jsonObject.addProperty("widower", "0");
+            if (marital.getDivorced() != null)
+                jsonObject.addProperty("divorced", marital.getDivorced());
+            else
+                jsonObject.addProperty("divorced", "0");
 
-		}
-		return jsonObject;
-	}
+            if (marital.getTotal() != null)
+                jsonObject.addProperty("total", marital.getTotal());
+            else
+                jsonObject.addProperty("total", "0");
+        }
+        return jsonObject;
+    }
 }

@@ -62,64 +62,55 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping(value = "/collection")
 public class MarriageFeeCollectionController {
-	@Autowired
-	private MarriageBillService marriageBillService;
-	@Autowired
-	private MarriageRegistrationService marriageRegistrationService;
-	@Autowired
-	private  MarriageRegistrationDemandService marriageRegistrationDemandService;
-	
-	@Autowired
-        private ReIssueService reIssueService;
-	
-	@Autowired
-        private  ReIssueDemandService reIssueDemandService;
+    @Autowired
+    private MarriageBillService marriageBillService;
+    @Autowired
+    private MarriageRegistrationService marriageRegistrationService;
+    @Autowired
+    private MarriageRegistrationDemandService marriageRegistrationDemandService;
 
-	@RequestMapping(value = "/bill/{id}", method = RequestMethod.GET)
-	public String generateRegistrationBill(@PathVariable final Long id, final Model model) {
+    @Autowired
+    private ReIssueService reIssueService;
 
-		MarriageRegistration marriageRegistration = marriageRegistrationService
-				.get(id);
+    @Autowired
+    private ReIssueDemandService reIssueDemandService;
 
-		if (marriageRegistration != null
-				&& marriageRegistration.getDemand() != null) {
-			// CHECK ANY DEMAND PENDING OR NOT
-			if (!marriageRegistrationDemandService
-					.checkAnyTaxIsPendingToCollect(marriageRegistration)) {
-				model.addAttribute("message", "msg.collection.noPendingTax");
-				return "collectmarriagefee-error";
-			}
-		}
-		final String billXml = marriageBillService
-				.generateBill(marriageRegistration);
+    @RequestMapping(value = "/bill/{id}", method = RequestMethod.GET)
+    public String generateRegistrationBill(@PathVariable final Long id, final Model model) {
 
-		model.addAttribute("billXml", billXml);
-
-		return "registrationCollection-view";
-	}
-	
-	
-	@RequestMapping(value = "/reissuebill/{id}", method = RequestMethod.GET)
-        public String generateReIssueBill(@PathVariable final Long id, final Model model) {
-
-                ReIssue reIssue = reIssueService
-                                .get(id);
-
-                if (reIssue != null
-                                && reIssue.getDemand() != null) {
-                        // CHECK ANY DEMAND PENDING OR NOT
-                        if (!reIssueDemandService
-                                        .checkAnyTaxIsPendingToCollect(reIssue)) {
-                                model.addAttribute("message", "msg.collection.noPendingTax");
-                                return "collectmarriagefee-error";
-                        }
-                }
-                final String billXml = marriageBillService
-                                .generateBill(reIssue);
-
-                model.addAttribute("billXml", billXml);
-
-                return "registrationCollection-view";
+        MarriageRegistration marriageRegistration = marriageRegistrationService
+                .get(id);
+        // CHECK ANY DEMAND PENDING OR NOT
+        if (marriageRegistration != null && marriageRegistration.getDemand() != null && !marriageRegistrationDemandService
+                .checkAnyTaxIsPendingToCollect(marriageRegistration)) {
+            model.addAttribute("message", "msg.collection.noPendingTax");
+            return "collectmarriagefee-error";
         }
+        final String billXml = marriageBillService
+                .generateBill(marriageRegistration);
+
+        model.addAttribute("billXml", billXml);
+
+        return "registrationCollection-view";
+    }
+
+    @RequestMapping(value = "/reissuebill/{id}", method = RequestMethod.GET)
+    public String generateReIssueBill(@PathVariable final Long id, final Model model) {
+
+        ReIssue reIssue = reIssueService
+                .get(id);
+        // CHECK ANY DEMAND PENDING OR NOT
+        if (reIssue != null && reIssue.getDemand() != null && !reIssueDemandService
+                .checkAnyTaxIsPendingToCollect(reIssue)) {
+            model.addAttribute("message", "msg.collection.noPendingTax");
+            return "collectmarriagefee-error";
+        }
+        final String billXml = marriageBillService
+                .generateBill(reIssue);
+
+        model.addAttribute("billXml", billXml);
+
+        return "registrationCollection-view";
+    }
 
 }

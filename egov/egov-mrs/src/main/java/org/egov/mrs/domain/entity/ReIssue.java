@@ -77,53 +77,53 @@ import org.egov.mrs.domain.entity.MrApplicant;
 @Table(name = "egmrs_reissue")
 @SequenceGenerator(name = ReIssue.SEQ_REISSUE, sequenceName = ReIssue.SEQ_REISSUE, allocationSize = 1)
 public class ReIssue extends StateAware {
-    
+
     public enum ReIssueStatus {
         CREATED, APPROVED, REJECTED, CANCELLED, CERTIFICATEREISSUED
     }
-    
+
     private static final long serialVersionUID = 7398043339748917008L;
 
     public static final String SEQ_REISSUE = "SEQ_EGMRS_REISSUE";
-    
+
     @Id
     @GeneratedValue(generator = SEQ_REISSUE, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @NotNull
     private String applicationNo;
 
     @NotNull
     private Date applicationDate;
-    
+
     private Date reIssueDate;
-    
+
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "zone")
     private Boundary zone;
-    
+
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "registrationUnit")
     private MarriageRegistrationUnit marriageRegistrationUnit;
-    
+
     @NotNull
     @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "applicant")    
+    @JoinColumn(name = "applicant")
     private MrApplicant applicant;
-    
+
     @NotNull
     @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "registration")
     private MarriageRegistration registration;
-    
+
     @ManyToOne
     @JoinColumn(name = "feecriteria", nullable = false)
-    private MarriageFee feeCriteria;   
-     
+    private MarriageFee feeCriteria;
+
     @NotNull
     private Double feePaid;
 
@@ -134,7 +134,7 @@ public class ReIssue extends StateAware {
     @ManyToOne
     @JoinColumn(name = "status", nullable = false)
     private EgwStatus status;
-    
+
     private boolean isActive;
 
     @Length(max = 256)
@@ -148,36 +148,35 @@ public class ReIssue extends StateAware {
 
     @Transient
     private String approvalComent;
-    
-    @OneToMany(mappedBy = "reIssue", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<MarriageCertificate> marriageCertificate = new ArrayList<MarriageCertificate>();
 
+    @OneToMany(mappedBy = "reIssue", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MarriageCertificate> marriageCertificate = new ArrayList<>();
 
     @Override
     public String getStateDetails() {
         return "Marriage registration re-issue application no : " + applicationNo;
     }
-    
+
     public Long getId() {
         return id;
     }
-    
+
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public MrApplicant getApplicant() {
         return applicant;
     }
-    
+
     public void setApplicant(MrApplicant applicant) {
         this.applicant = applicant;
     }
-    
+
     public MarriageRegistration getRegistration() {
         return registration;
     }
-    
+
     public void setRegistration(MarriageRegistration registration) {
         this.registration = registration;
     }
@@ -193,27 +192,27 @@ public class ReIssue extends StateAware {
     public Date getApplicationDate() {
         return applicationDate;
     }
-    
+
     public void setApplicationDate(Date applicationDate) {
         this.applicationDate = applicationDate;
     }
-    
+
     public Date getReIssueDate() {
         return reIssueDate;
     }
-    
+
     public void setReIssueDate(Date reIssueDate) {
         this.reIssueDate = reIssueDate;
     }
-    
+
     public MarriageFee getFeeCriteria() {
         return feeCriteria;
     }
-    
+
     public void setFeeCriteria(MarriageFee feeCriteria) {
         this.feeCriteria = feeCriteria;
     }
-    
+
     public Double getFeePaid() {
         return feePaid;
     }
@@ -225,39 +224,39 @@ public class ReIssue extends StateAware {
     public EgDemand getDemand() {
         return demand;
     }
-    
+
     public void setDemand(EgDemand demand) {
         this.demand = demand;
     }
-    
+
     public String getRejectionReason() {
         return rejectionReason;
     }
-    
+
     public void setRejectionReason(String rejectionReason) {
         this.rejectionReason = rejectionReason;
     }
-    
+
     public String getRemarks() {
         return remarks;
     }
-    
+
     public void setRemarks(String remarks) {
         this.remarks = remarks;
     }
-    
+
     public Long getApprovalDepartment() {
         return approvalDepartment;
     }
-    
+
     public void setApprovalDepartment(Long approvalDepartment) {
         this.approvalDepartment = approvalDepartment;
     }
-    
+
     public String getApprovalComent() {
         return approvalComent;
     }
-    
+
     public void setApprovalComent(String approvalComent) {
         this.approvalComent = approvalComent;
     }
@@ -285,7 +284,7 @@ public class ReIssue extends StateAware {
     public void setMarriageCertificate(List<MarriageCertificate> marriageCertificate) {
         this.marriageCertificate = marriageCertificate;
     }
-    
+
     public void addCertificate(final MarriageCertificate certificate) {
         getMarriageCertificate().add(certificate);
     }
@@ -293,25 +292,25 @@ public class ReIssue extends StateAware {
     public void removeCertificate(final MarriageCertificate certificate) {
         getMarriageCertificate().remove(certificate);
     }
-    
+
     public boolean isFeeCollected() {
-        return demand.getBaseDemand().compareTo(demand.getAmtCollected()) == 0 ? true : false; 
+        return demand.getBaseDemand().compareTo(demand.getAmtCollected()) == 0 ? true : false;
     }
 
-	public Boundary getZone() {
-		return zone;
-	}
+    public Boundary getZone() {
+        return zone;
+    }
 
-	public void setZone(Boundary zone) {
-		this.zone = zone;
-	}
+    public void setZone(Boundary zone) {
+        this.zone = zone;
+    }
 
-	public MarriageRegistrationUnit getMarriageRegistrationUnit() {
-		return marriageRegistrationUnit;
-	}
+    public MarriageRegistrationUnit getMarriageRegistrationUnit() {
+        return marriageRegistrationUnit;
+    }
 
-	public void setMarriageRegistrationUnit(
-			MarriageRegistrationUnit marriageRegistrationUnit) {
-		this.marriageRegistrationUnit = marriageRegistrationUnit;
-	}
+    public void setMarriageRegistrationUnit(
+            MarriageRegistrationUnit marriageRegistrationUnit) {
+        this.marriageRegistrationUnit = marriageRegistrationUnit;
+    }
 }
