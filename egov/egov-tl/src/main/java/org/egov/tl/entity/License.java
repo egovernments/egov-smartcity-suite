@@ -44,6 +44,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -56,7 +57,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -67,6 +67,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.commons.EgwStatus;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
@@ -470,9 +471,11 @@ public class License extends StateAware {
     }
 
     public BigDecimal getCurrentLicenseFee() {
-        return getCurrentDemand().getEgDemandDetails().stream()
+        Optional<EgDemandDetails> demandDetails = getCurrentDemand().getEgDemandDetails().stream()
                 .filter(dd -> dd.getEgDemandReason().getEgInstallmentMaster().equals(getCurrentDemand().getEgInstallmentMaster()))
-                .findAny().get().getAmount();
+                .filter(dd -> dd.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(Constants.LICENSE_FEE_TYPE))
+                .findAny();
+        return demandDetails.isPresent() ? demandDetails.get().getAmount() : BigDecimal.ZERO;
     }
 
     public boolean isPaid() {
