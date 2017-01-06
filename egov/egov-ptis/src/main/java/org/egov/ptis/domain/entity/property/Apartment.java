@@ -37,34 +37,81 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.ptis.domain.entity.property;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 
 @Entity
-@Table(name = "egpt_apartment")
-@SequenceGenerator(name = Apartment.SEQ_APARTMENTS, sequenceName = Apartment.SEQ_APARTMENTS, allocationSize = 1)
+@Table(name = "EGPT_APARTMENT")
+@Unique(columnName = { "code" }, fields = { "code" }, enableDfltMsg = true)
+
+@SequenceGenerator(name = Apartment.SEQ_APARTMENT, sequenceName = Apartment.SEQ_APARTMENT, allocationSize = 1)
 public class Apartment extends AbstractAuditable {
+
     private static final long serialVersionUID = 1L;
-    public static final String SEQ_APARTMENTS = "SEQ_EGPT_APARTMENTS";
+    public static final String SEQ_APARTMENT = "SEQ_EGPT_APARTMENT";
 
     @Id
-    @GeneratedValue(generator = SEQ_APARTMENTS, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_APARTMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @SafeHtml
+    @OneToMany(mappedBy = "apartment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ApartmentHouse> apartmentHouse = new ArrayList<>();
+
+    @Transient
+    private List<ApartmentHouse> apartmentHouseProxy = new ArrayList<>();
+
+    @NotNull
     private String name;
 
-    @SafeHtml
+    @NotNull
     private String code;
+
+    @NotNull
+    private Double builtUpArea;
+
+    @NotNull
+    private Integer totalProperties;
+
+    @NotNull
+    private Integer totalFloors;
+
+    @NotNull
+    private Double openSpaceArea;
+
+    private Boolean liftFacility;
+
+    private Boolean powerBackup;
+
+    private Boolean parkingFacility;
+
+    private Boolean fireFightingFacility;
+
+    @NotNull
+    private Integer totalResidentialProperties;
+
+    private Integer totalNonResidentialProperties;
+
+    private String sourceOfWater;
+
+    private Boolean isResidential;
 
     public String getName() {
         return name;
@@ -74,12 +121,108 @@ public class Apartment extends AbstractAuditable {
         this.name = name;
     }
 
+    public Double getBuiltUpArea() {
+        return builtUpArea;
+    }
+
     public String getCode() {
         return code;
     }
 
     public void setCode(final String code) {
-        this.code = code;
+        this.code = code.toUpperCase();
+    }
+
+    public void setBuiltUpArea(final Double builtUpArea) {
+        this.builtUpArea = builtUpArea;
+    }
+
+    public Integer getTotalProperties() {
+        return totalProperties;
+    }
+
+    public void setTotalProperties(final Integer totalProperties) {
+        this.totalProperties = totalProperties;
+    }
+
+    public Integer getTotalFloors() {
+        return totalFloors;
+    }
+
+    public void setTotalFloors(final Integer totalFloors) {
+        this.totalFloors = totalFloors;
+    }
+
+    public Double getOpenSpaceArea() {
+        return openSpaceArea;
+    }
+
+    public void setOpenSpaceArea(final Double openSpaceArea) {
+        this.openSpaceArea = openSpaceArea;
+    }
+
+    public Boolean getLiftFacility() {
+        return liftFacility;
+    }
+
+    public void setLiftFacility(final Boolean liftFacility) {
+        this.liftFacility = liftFacility;
+    }
+
+    public Boolean getPowerBackup() {
+        return powerBackup;
+    }
+
+    public void setPowerBackup(final Boolean powerBackup) {
+        this.powerBackup = powerBackup;
+    }
+
+    public Boolean getParkingFacility() {
+        return parkingFacility;
+    }
+
+    public void setParkingFacility(final Boolean parkingFacility) {
+        this.parkingFacility = parkingFacility;
+    }
+
+    public Boolean getFireFightingFacility() {
+        return fireFightingFacility;
+    }
+
+    public void setFireFightingFacility(final Boolean fireFightingFacility) {
+        this.fireFightingFacility = fireFightingFacility;
+    }
+
+    public Integer getTotalResidentialProperties() {
+        return totalResidentialProperties;
+    }
+
+    public void setTotalResidentialProperties(final Integer totalResidentialProperties) {
+        this.totalResidentialProperties = totalResidentialProperties;
+    }
+
+    public Integer getTotalNonResidentialProperties() {
+        return totalNonResidentialProperties;
+    }
+
+    public void setTotalNonResidentialProperties(final Integer totalNonResidentialProperties) {
+        this.totalNonResidentialProperties = totalNonResidentialProperties;
+    }
+
+    public String getSourceOfWater() {
+        return sourceOfWater;
+    }
+
+    public void setSourceOfWater(final String sourceOfWater) {
+        this.sourceOfWater = sourceOfWater;
+    }
+
+    public Boolean getIsResidential() {
+        return isResidential;
+    }
+
+    public void setIsResidential(final Boolean isResidential) {
+        this.isResidential = isResidential;
     }
 
     @Override
@@ -92,4 +235,19 @@ public class Apartment extends AbstractAuditable {
         this.id = id;
     }
 
+    public List<ApartmentHouse> getApartmentHouse() {
+        return apartmentHouse;
+    }
+
+    public void setApartmentHouse(final List<ApartmentHouse> apartmentHouse) {
+        this.apartmentHouse = apartmentHouse;
+    }
+
+    public List<ApartmentHouse> getApartmentHouseProxy() {
+        return apartmentHouseProxy;
+    }
+
+    public void setApartmentHouseProxy(final List<ApartmentHouse> apartmentHouseProxy) {
+        this.apartmentHouseProxy = apartmentHouseProxy;
+    }
 }

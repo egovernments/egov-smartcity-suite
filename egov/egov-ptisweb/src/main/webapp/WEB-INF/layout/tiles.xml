@@ -420,4 +420,24 @@
     	<put-attribute name="body" value="/WEB-INF/views/transactions/notice/recoveryNotices-ack.jsp"/>
     </definition>
     
+    <definition name="apartment-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/apartment/apartment-search.jsp"/>
+    </definition>
+    
+    <definition name="apartment-view" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.apartment.view" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/apartment/apartment-view.jsp"/>
+    </definition>
+     
+    <definition name="apartment-create" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.apartment.create" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/apartment/apartment-create.jsp"/>
+    </definition>
+    
+    <definition name="apartment-success" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.apartment.success" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/apartment/apartment-success.jsp"/>
+    </definition>
+    
 </tiles-definitions> 
