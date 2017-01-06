@@ -93,7 +93,7 @@ public class MarriageConstants {
     public static final String AADHAR = "Aadhar";
     public static final String YEAR = "year";
 
-    protected static final List<String> venuelist = new ArrayList<String>() {
+    public static final List<String> venuelist = new ArrayList<String>() {
         private static final long serialVersionUID = -6112513531476444226L;
         {
             add("Residence");
@@ -103,7 +103,7 @@ public class MarriageConstants {
         }
     };
 
-    protected static final List<String> witnessRelation = new ArrayList<String>() {
+    public static final List<String> witnessRelation = new ArrayList<String>() {
         private static final long serialVersionUID = -8054560659655351886L;
         {
             add("S/o");
