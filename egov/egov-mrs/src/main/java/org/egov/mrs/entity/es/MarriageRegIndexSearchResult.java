@@ -40,72 +40,79 @@
 
 package org.egov.mrs.entity.es;
 
-
 public class MarriageRegIndexSearchResult {
-    
+
     private String applicationNumber;
     private String registrationNumber;
-    private String registrationUnit;
     private String zone;
     private String status;
     private String marriageDate;
     private String registrationDate;
     private String husbandName;
     private String wifeName;
-    
+
     public String getApplicationNumber() {
         return applicationNumber;
     }
-    public void setApplicationNumber(String applicationNumber) {
+
+    public void setApplicationNumber(final String applicationNumber) {
         this.applicationNumber = applicationNumber;
     }
+
     public String getRegistrationNumber() {
         return registrationNumber;
     }
-    public void setRegistrationNumber(String registrationNumber) {
+
+    public void setRegistrationNumber(final String registrationNumber) {
         this.registrationNumber = registrationNumber;
     }
-    public String getRegistrationUnit() {
-        return registrationUnit;
-    }
-    public void setRegistrationUnit(String registrationUnit) {
-        this.registrationUnit = registrationUnit;
-    }
+
     public String getZone() {
         return zone;
     }
-    public void setZone(String zone) {
+
+    public void setZone(final String zone) {
         this.zone = zone;
     }
+
     public String getStatus() {
         return status;
     }
-    public void setStatus(String status) {
+
+    public void setStatus(final String status) {
         this.status = status;
     }
+
     public String getMarriageDate() {
         return marriageDate;
     }
-    public void setMarriageDate(String marriageDate) {
+
+    public void setMarriageDate(final String marriageDate) {
         this.marriageDate = marriageDate;
     }
+
     public String getRegistrationDate() {
         return registrationDate;
     }
-    public void setRegistrationDate(String registrationDate) {
+
+    public void setRegistrationDate(final String registrationDate) {
         this.registrationDate = registrationDate;
     }
+
     public String getHusbandName() {
         return husbandName;
     }
-    public void setHusbandName(String husbandName) {
+
+    public void setHusbandName(final String husbandName) {
         this.husbandName = husbandName;
     }
+
     public String getWifeName() {
         return wifeName;
     }
-    public void setWifeName(String wifeName) {
+
+    public void setWifeName(final String wifeName) {
         this.wifeName = wifeName;
     }
-   
+
 }

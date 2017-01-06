@@ -70,10 +70,9 @@ public class MarriageRegistrationIndexService {
     private MarriageRegistrationIndexRepository marriageRegistrationIndexRepository;
     @Autowired
     private CityService cityService;
-    
+
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
-
 
     public MarriageRegistrationIndex createMarriageIndex(final MarriageRegistration registration,
             final String applicationType) {
@@ -101,11 +100,13 @@ public class MarriageRegistrationIndexService {
                     registration.getCreatedBy().getName() != null ? registration.getCreatedBy().getName() : "");
             registrationSearch
                     .setZone(registration.getZone().getName() != null ? registration.getZone().getName() : "");
-            registrationSearch.setMarriageAct(registration.getMarriageAct()!=null && registration.getMarriageAct().getDescription() != null
+            registrationSearch.setMarriageAct(registration.getMarriageAct() != null
+                    && registration.getMarriageAct().getDescription() != null
                     ? registration.getMarriageAct().getDescription() : "");
             registrationSearch.setPlaceOfMarriage(
                     registration.getPlaceOfMarriage() != null ? registration.getPlaceOfMarriage() : "");
-            registrationSearch.setMarriageFeeCriteria(registration.getFeeCriteria()!=null && registration.getFeeCriteria().getCriteria() != null
+            registrationSearch.setMarriageFeeCriteria(registration.getFeeCriteria() != null
+                    && registration.getFeeCriteria().getCriteria() != null
                     ? registration.getFeeCriteria().getCriteria() : "");
             registrationSearch.setMarriageFeeAmount(registration.getFeePaid() != null
                     ? BigDecimal.valueOf(registration.getFeePaid()) : BigDecimal.ZERO);
@@ -123,7 +124,8 @@ public class MarriageRegistrationIndexService {
                 registrationSearch.setHusbandMaritalStatus(registration.getHusband().getMaritalStatus().name() != null
                         ? registration.getHusband().getMaritalStatus().name() : "");
                 registrationSearch
-                        .setHusbandReligionPractice(registration.getHusband().getReligionPractice()!=null && registration.getHusband().getReligionPractice().name() != null
+                        .setHusbandReligionPractice(registration.getHusband().getReligionPractice() != null
+                                && registration.getHusband().getReligionPractice().name() != null
                                 ? registration.getHusband().getReligionPractice().name() : "");
                 registrationSearch.setHusbandOccupation(registration.getHusband().getOccupation() != null
                         ? registration.getHusband().getOccupation() : "");
@@ -155,7 +157,8 @@ public class MarriageRegistrationIndexService {
 
                 registrationSearch.setWifeMaritalStatus(registration.getWife().getMaritalStatus() != null
                         ? registration.getWife().getMaritalStatus().name() : "");
-                registrationSearch.setWifeReligionPractice(registration.getWife().getReligionPractice()!=null && registration.getWife().getReligionPractice().name() != null
+                registrationSearch.setWifeReligionPractice(registration.getWife().getReligionPractice() != null
+                        && registration.getWife().getReligionPractice().name() != null
                         ? registration.getWife().getReligionPractice().name() : "");
                 registrationSearch.setWifeOccupation(
                         registration.getWife().getOccupation() != null ? registration.getWife().getOccupation() : "");
@@ -246,28 +249,25 @@ public class MarriageRegistrationIndexService {
         marriageRegistrationIndexRepository.save(registrationSearch);
         return registrationSearch;
     }
-     
+
     public BoolQueryBuilder getQueryFilterForHandicap(final String applicantType, final String ulbName) {
         BoolQueryBuilder boolQuery = null;
-        if (StringUtils.isNotBlank(ulbName) && null!=ulbName)
+        if (StringUtils.isNotBlank(ulbName) && null != ulbName)
             boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("ulbName", ulbName));
-        if (StringUtils.isNotBlank(applicantType) && null!=applicantType){
-            if(applicantType.equalsIgnoreCase("Husband"))
+        if (StringUtils.isNotBlank(applicantType) && null != applicantType)
+            if (applicantType.equalsIgnoreCase("Husband"))
                 boolQuery = boolQuery.filter(QueryBuilders.matchQuery("husbandHandicapped", true));
-            else if(applicantType.equalsIgnoreCase("Wife"))
+            else if (applicantType.equalsIgnoreCase("Wife"))
                 boolQuery = boolQuery.filter(QueryBuilders.matchQuery("wifeHandicapped", true));
             else
                 boolQuery = boolQuery.filter(QueryBuilders.matchQuery("husbandHandicapped", true)).
-                filter(QueryBuilders.matchQuery("wifeHandicapped", true));
-        }
+                        filter(QueryBuilders.matchQuery("wifeHandicapped", true));
         return boolQuery;
     }
 
     public List<MarriageRegistrationIndex> getHandicapSearchResultByBoolQuery(final BoolQueryBuilder boolQuery) {
-        List<MarriageRegistrationIndex> resultList;
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("marriageregistration").withQuery(boolQuery)
                 .withSort(new FieldSortBuilder("consumerNumber").order(SortOrder.DESC)).build();
-        resultList = elasticsearchTemplate.queryForList(searchQuery, MarriageRegistrationIndex.class);
-        return resultList;
-    }   
+        return elasticsearchTemplate.queryForList(searchQuery, MarriageRegistrationIndex.class);
+    }
 }

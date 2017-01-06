@@ -360,6 +360,7 @@ public final class CollectionConstants {
     public static final String SERVICECODE_PROPERTYTAX = "PT";
     public static final String SERVICECODE_PROFESSIONALTAX = "PRFT";
     public static final String SERVICECODE_AXIS = "AXIS";
+    public static final String SERVICECODE_SBIMOPS = "SBIMOPS";
 
     // Online Payment Statuses
     public static final String ONLINEPAYMENT_STATUS_CODE_PENDING = "ONLINE_STATUS_PENDING";
@@ -519,6 +520,23 @@ public final class CollectionConstants {
     public static final String AXIS_FAILED_ABORTED_MESSAGE = "Failed/Aborted Transaction.";
     public static final String AXIS_CHECK_DR_EXISTS = "vpc_DRExists";
     public static final String AXIS_ABORTED_AUTH_STATUS = "A";
+    
+    //SBIMOPS payment gateway variables
+    public static final String SBIMOPS_DEPTCODE ="deptcode";
+    public static final String SBIMOPS_DDCODE = "ddocode";
+    public static final String SBIMOPS_HOA = "hoa";
+    public static final String SBIMOPS_DEPTTRANSID = "depttransid";
+    public static final String SBIMOPS_REMITTER_NAME = "remittersname";
+    public static final String SBIMOPS_TAMOUNT = "tamount";
+    public static final String SBIMOPS_MD = "MD";
+    public static final String SBIMOPS_DRU = "dru";
+    public static final String SBIMOPS_BANKSTATUS = "bankstatus";
+    public static final String SBIMOPS_BANK_DATE = "bankdate";
+    public static final String SBIMOPS_BANK_AMOUNT = "bankamount";
+    public static final String SBIMOPS_BANK_NAME = "bankname";
+    public static final String SBIMOPS_UAMOUNT = "uamount";
+
+    
 
     // This is an array for creating hex chars
     public static final char[] AXIS_HEX_TABLE = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',

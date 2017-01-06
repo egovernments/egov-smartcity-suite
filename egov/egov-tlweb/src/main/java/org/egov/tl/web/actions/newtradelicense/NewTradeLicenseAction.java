@@ -122,18 +122,17 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String showForApproval() throws IOException {
         if (license().getState().getValue().equals(Constants.WF_LICENSE_CREATED) ||
                 license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR)
-                        && license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE))
+                        && license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE)) {
             mode = Constants.ACK_MODE;
-        else if (license().getState().getValue().equals(Constants.WF_FIRST_LVL_FEECOLLECTED)
+            message = Constants.PENDING_COLLECTION_MSG;
+        } else if (license().getState().getValue().equals(Constants.WF_FIRST_LVL_FEECOLLECTED)
                 || license().getState().getValue().equals(Constants.WF_SI_APPROVED))
             mode = VIEW;
         else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
             mode = Constants.EDIT_REJECT_MODE;
         else if (license().getState().getValue().contains(Constants.WF_REVENUECLERK_APPROVED))
             mode = Constants.EDIT_APPROVAL_MODE;
-        else if (license().getState().getValue().contains(Constants.WF_STATE_DIGISIGN_STR)
-                || license().getState().getValue().contains(Constants.WF_STATE_INSPECTION_APPROVED_STR)
-                || license().getState().getValue().contains(Constants.WF_SECOND_LVL_FEECOLLECTED)
+        else if (license().getState().getValue().contains(Constants.WF_SECOND_LVL_FEECOLLECTED)
                 || license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_APPROVED_CODE)
                 && license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))
             mode = Constants.DISABLE_APPROVER_MODE;
@@ -142,10 +141,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                 || license().getState().getValue().equals(Constants.WF_DIGI_SIGNED)
                 || license().getState().getValue().equals(Constants.WF_ACTION_DIGI_SIGN_COMMISSION_NO_COLLECTION))
             mode = Constants.DISABLE_APPROVER_MODE;
-        if (license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR)
-                && license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE)
-                || license().getState().getValue().contains(Constants.WF_LICENSE_CREATED))
-            message = Constants.PENDING_COLLECTION_MSG;
         List<Position> positionList = positionMasterService.getPositionsForEmployee(securityUtils.getCurrentUser().getId(), new Date());
         if (!positionList.isEmpty() && !positionList.contains(license().getState().getOwnerPosition())) {
             ServletActionContext.getResponse().setContentType("text/html");

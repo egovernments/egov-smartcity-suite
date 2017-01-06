@@ -75,9 +75,9 @@
 						    		<jsp:param value="subheading.witness1.info" name="header" />
 						    		</jsp:include>
 						    	</div>
-						    	<div class="panel panel-primary" data-collapsed="0">				    	
+						    	<%-- <div class="panel panel-primary" data-collapsed="0">				    	
 									<jsp:include page="viewpriestinfo.jsp"></jsp:include>
-								</div>
+								</div> --%>
 					    </div>
 					    <div id="checklist" class="tab-pane fade">
 						    <div class="panel panel-primary" data-collapsed="0">		

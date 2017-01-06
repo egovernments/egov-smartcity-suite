@@ -178,7 +178,7 @@
 			</c:choose>
 		</div> --%>
 		<label class="col-sm-4 text-right"> <spring:message
-				code="lbl.photo" />
+				code="lbl.photo" /><span class="mandatory"></span>
 		</label>
 
 		<div class="col-sm-8 setimage">
@@ -211,7 +211,7 @@
 					<img class="add-border" id="${applicant}-photo" height="150"
 						width="130" name="${applicant}.photo">
 					<input type="file" id="${applicant}-photo"
-						name="${applicant}.photoFile" class="file-ellipsis upload-file">
+						name="${applicant}.photoFile" class="file-ellipsis upload-file" required="required">
 				</c:otherwise>
 			</c:choose>
 
@@ -276,15 +276,10 @@
 			code="lbl.locality" /><span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3">
-
-		<form:select path="${applicant}.locality" id="select-locality"
-			cssClass="form-control" cssErrorClass="form-control error"
-			required="required">
-			<form:option value="">
-				<spring:message code="lbl.default.option" />
-			</form:option>
-			<form:options items="${localitylist}" itemValue="id" itemLabel="name" />
-		</form:select>
+	
+		<form:input path="${applicant}.locality" id="txt-locality" type="text"
+			class="form-control is_valid_alphabet inline-elem" placeholder=""
+			autocomplete="off" required="required" />
 		<form:errors path="${applicant}.locality"
 			cssClass="add-margin error-msg" />
 	</div>
@@ -363,7 +358,8 @@
 			<form:option value="">
 				<spring:message code="lbl.default.option" />
 			</form:option>
-			<form:options items="${Educationqualificationlist}" />
+			<form:options items="${Educationqualificationlist}" itemValue="id"
+						itemLabel="name" />
 		</form:select>
 		<form:errors path="${applicant}.qualification"
 			cssClass="add-margin error-msg" />

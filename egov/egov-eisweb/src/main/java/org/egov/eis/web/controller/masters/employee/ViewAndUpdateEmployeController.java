@@ -72,6 +72,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/employee")
 public class ViewAndUpdateEmployeController {
+    private static final String EMPLOYEEDETAILS_FORM = "employeedetails-form";
+    private static final String EMPLOYEESUCCESS = "employee-success";
     private static final Logger LOGGER = Logger.getLogger(ViewAndUpdateEmployeController.class);
     private static final String IMAGE = "image";
     private static final String EMPLOYEEFORM = "employee-form";
@@ -154,7 +156,26 @@ public class ViewAndUpdateEmployeController {
         employeeService.update(employee);
         redirectAttrs.addFlashAttribute("employee", employee);
         model.addAttribute("message", "Employee updated successfully");
-        return "employee-success";
+        return EMPLOYEESUCCESS;
+    }
+
+    @RequestMapping(value = "/updatecontact/{code}", method = RequestMethod.GET)
+    public String editContact(final Model model, @PathVariable final String code) {
+        setDropDownValues(model);
+        return EMPLOYEEDETAILS_FORM;
+    }
+
+    @RequestMapping(value = "/updatecontact/{code}", method = RequestMethod.POST)
+    public String updateContact(@Valid @ModelAttribute final Employee employee, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, final Model model) {
+        if (errors.hasErrors()) {
+            setDropDownValues(model);
+            return EMPLOYEEDETAILS_FORM;
+        }
+        employeeService.updateEmployeeDetails(employee);
+        redirectAttrs.addFlashAttribute("employee", employee);
+        model.addAttribute("message", "Employee updated successfully");
+        return EMPLOYEESUCCESS;
     }
 
     @RequestMapping(value = "/view/{code}", method = RequestMethod.GET)
@@ -166,7 +187,7 @@ public class ViewAndUpdateEmployeController {
         if (null != employee.getSignature())
             image = Base64.encodeBytes(employee.getSignature());
         model.addAttribute(IMAGE, image);
-        return "employee-success";
+        return EMPLOYEESUCCESS;
     }
 
     private void setDropDownValues(final Model model) {

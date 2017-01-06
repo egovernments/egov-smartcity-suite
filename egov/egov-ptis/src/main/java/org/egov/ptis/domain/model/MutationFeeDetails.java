@@ -41,7 +41,6 @@ package org.egov.ptis.domain.model;
 
 import java.math.BigDecimal;
 import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -49,7 +48,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
@@ -57,119 +55,129 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = MutationFeeDetails.SEQ_MUTATION_FEE_DETAILS, sequenceName = MutationFeeDetails.SEQ_MUTATION_FEE_DETAILS, allocationSize = 1)
 public class MutationFeeDetails extends AbstractAuditable {
 
-	private static final long serialVersionUID = 1521640343172434478L;
-	
-	public static final String SEQ_MUTATION_FEE_DETAILS = "SEQ_EGPT_MUTATION_FEE_DETAILS";
-	
-	@Id
+    private static final long serialVersionUID = 1521640343172434478L;
+
+    public static final String SEQ_MUTATION_FEE_DETAILS = "SEQ_EGPT_MUTATION_FEE_DETAILS";
+
+    @Id
     @GeneratedValue(generator = SEQ_MUTATION_FEE_DETAILS, strategy = GenerationType.SEQUENCE)
     private Long id;
-	
-	@Column(name = "low_limit")
-	private BigDecimal lowLimit;
-	
-	@Column(name = "high_limit")
-	private BigDecimal highLimit;
-	
-	private Date fromDate;
-	
-	private Date toDate;
-	
-	@Column(name = "flat_amount")
-	private BigDecimal flatAmount;
-	
-	private BigDecimal percentage;
-	
-	@Column(name = "is_recursive")
-	private Character isRecursive;
-	
-	@Column(name = "recursive_factor")
-	private BigDecimal recursiveFactor;
-	
-	@Column(name = "recursive_amount")
-	private BigDecimal recursiveAmount;
-	
-	
-	@Override
-	protected void setId(Long id) {
-		this.id = id;
-	}
 
-	@Override
-	public Long getId() {
-		return id;
-	}
-	
-	public BigDecimal getLowLimit() {
-		return lowLimit;
-	}
+    @Column(name = "low_limit")
+    private BigDecimal lowLimit;
 
-	public void setLowLimit(BigDecimal lowLimit) {
-		this.lowLimit = lowLimit;
-	}
+    @Column(name = "high_limit")
+    private BigDecimal highLimit;
 
-	public BigDecimal getHighLimit() {
-		return highLimit;
-	}
+    private Date fromDate;
 
-	public void setHighLimit(BigDecimal highLimit) {
-		this.highLimit = highLimit;
-	}
+    private Date toDate;
 
-	public Date getFromDate() {
-		return fromDate;
-	}
+    @Column(name = "flat_amount")
+    private BigDecimal flatAmount;
 
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
+    private BigDecimal percentage;
 
-	public Date getToDate() {
-		return toDate;
-	}
+    @Column(name = "is_recursive")
+    private Character isRecursive;
 
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
+    @Column(name = "recursive_factor")
+    private BigDecimal recursiveFactor;
 
-	public BigDecimal getFlatAmount() {
-		return flatAmount;
-	}
+    @Column(name = "recursive_amount")
+    private BigDecimal recursiveAmount;
 
-	public void setFlatAmount(BigDecimal flatAmount) {
-		this.flatAmount = flatAmount;
-	}
+    @Column(name = "slab_name")
+    private String slabName;
 
-	public BigDecimal getPercentage() {
-		return percentage;
-	}
+    public String getSlabName() {
+        return slabName;
+    }
 
-	public void setPercentage(BigDecimal percentage) {
-		this.percentage = percentage;
-	}
+    public void setSlabName(String slabName) {
+        this.slabName = slabName;
+    }
 
-	public Character getIsRecursive() {
-		return isRecursive;
-	}
+    @Override
+    protected void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setIsRecursive(Character isRecursive) {
-		this.isRecursive = isRecursive;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public BigDecimal getRecursiveFactor() {
-		return recursiveFactor;
-	}
+    public BigDecimal getLowLimit() {
+        return lowLimit;
+    }
 
-	public void setRecursiveFactor(BigDecimal recursiveFactor) {
-		this.recursiveFactor = recursiveFactor;
-	}
+    public void setLowLimit(BigDecimal lowLimit) {
+        this.lowLimit = lowLimit;
+    }
 
-	public BigDecimal getRecursiveAmount() {
-		return recursiveAmount;
-	}
+    public BigDecimal getHighLimit() {
+        return highLimit;
+    }
 
-	public void setRecursiveAmount(BigDecimal recursiveAmount) {
-		this.recursiveAmount = recursiveAmount;
-	}
+    public void setHighLimit(BigDecimal highLimit) {
+        this.highLimit = highLimit;
+    }
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public BigDecimal getFlatAmount() {
+        return flatAmount;
+    }
+
+    public void setFlatAmount(BigDecimal flatAmount) {
+        this.flatAmount = flatAmount;
+    }
+
+    public BigDecimal getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(BigDecimal percentage) {
+        this.percentage = percentage;
+    }
+
+    public Character getIsRecursive() {
+        return isRecursive;
+    }
+
+    public void setIsRecursive(Character isRecursive) {
+        this.isRecursive = isRecursive;
+    }
+
+    public BigDecimal getRecursiveFactor() {
+        return recursiveFactor;
+    }
+
+    public void setRecursiveFactor(BigDecimal recursiveFactor) {
+        this.recursiveFactor = recursiveFactor;
+    }
+
+    public BigDecimal getRecursiveAmount() {
+        return recursiveAmount;
+    }
+
+    public void setRecursiveAmount(BigDecimal recursiveAmount) {
+        this.recursiveAmount = recursiveAmount;
+    }
 
 }

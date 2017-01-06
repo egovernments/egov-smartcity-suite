@@ -10,7 +10,7 @@
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
+4 *     any later version.
  *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -38,68 +38,135 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-jQuery(document).ready(function() {
-	jQuery('#flatAmount').change(function() {
-		if (jQuery(this).val() != "" || jQuery(this).val().length > 0)
-			jQuery('#percentage').attr('disabled', 'disabled');
-		else
-			jQuery('#percentage').removeAttr('disabled');
-	});
+jQuery(document).ready(
+		function() {
 
-	jQuery('#percentage').change(function() {
-		if (this.value != "" || this.value.length > 0)
-			jQuery('#flatAmount').attr('disabled', 'disabled');
-		else
-			jQuery('#flatAmount').removeAttr('disabled');
-	});
+			var todt;
+			jQuery('#flatAmount').blur(function() {
+				if (jQuery(this).val() != "" || jQuery(this).val().length > 0)
+					jQuery('#percentage').attr('disabled', 'disabled');
+				else
+					jQuery('#percentage').removeAttr('disabled');
+			});
 
-	$("#fromDate,#toDate").datepicker({
-		format : "dd/mm/yyyy",
-		autoclose : true
-	}).on('changeDate', function(ev) {
-		var fromDate = jQuery('#fromDate').val();
-		var toDate = jQuery('#toDate').val();
-		if (fromDate != "" && toDate != "") {
-			var stsplit = fromDate.split("/");
-			var ensplit = toDate.split("/");
-			fromDate = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
-			toDate = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
+			jQuery('#percentage').blur(function() {
+				if (this.value != "" || this.value.length > 0)
+					jQuery('#flatAmount').attr('disabled', 'disabled');
+				else
+					jQuery('#flatAmount').removeAttr('disabled');
+			});
+	
+			$("#fromDate,#toDate").datepicker({
+				format : "dd/mm/yyyy",
+				autoclose : true
+			}).on(
+					'changeDate',
+					function(ev) {
+						var fromDate = jQuery('#fromDate').val();
+						var toDate = jQuery('#toDate').val();
+						if (fromDate != "" && toDate != "") {
+							var stsplit = fromDate.split("/");
+							var ensplit = toDate.split("/");
+							fromDate = stsplit[0] + "/" + stsplit[1] + "/"
+									+ stsplit[2];
+							toDate = ensplit[0] + "/" + ensplit[1] + "/"
+									+ ensplit[2];
 
-			var start = Date.parse(fromDate);
-			var end = Date.parse(toDate);
-			var difference = (end - start) / (86400000 * 7);
-			if (difference <= 0) {
-				jQuery('#todateerror').show();
-				jQuery('#toDate').val("");
-			} else {
-				jQuery('#todateerror').hide();
+							var start = Date.parse(fromDate);
+							var end = Date.parse(toDate);
+							var difference = (end - start) / (86400000 * 7);
+							if (difference <= 0) {
+								jQuery('#todateerror').show();
+								jQuery('#toDate').val("");
+							} else {
+								jQuery('#todateerror').hide();
+							}
+						}
+					});
+
+			jQuery('#recursiveFactor').blur(function() {
+				if (this.value != "" || this.value.length > 0) {
+					jQuery('#highLimit').val("").attr('disabled', 'disabled');
+
+				} else {
+					jQuery('#highLimit').removeAttr('disabled');
+				}
+			});
+			jQuery('#recursiveAmount').blur(function() {
+				if (this.value != "" || this.value.length > 0) {
+					jQuery('#highLimit').val("").attr('disabled', 'disabled');
+
+				} else {
+					jQuery('#highLimit').removeAttr('disabled');
+
+				}
+			});
+			jQuery('.effToDate').blur(function() {
+				if (this.value != "" || this.value.length > 0) {
+					jQuery('.btnsave').removeAttr('disabled');
+
+				} 
+			});
+
+			jQuery('.btnedit').click(
+					function(e) {
+						var effToDateTextBox = $(
+								'#tblViewMutation tbody tr:eq('
+										+ jQuery(this).attr('data-idx') + ')')
+								.find('.effToDate');
+						var effToDateValue = effToDateTextBox.val();
+						var todaysDate = new Date();
+						var currentDate = todaysDate.getDate() + "/"
+								+ (todaysDate.getMonth() + 1) + "/"
+								+ todaysDate.getFullYear();
+						var stsplit = effToDateValue.split("/");
+						var ensplit = currentDate.split("/");
+						effToDateValue = stsplit[1] + "/" + stsplit[0] + "/"
+								+ stsplit[2];
+						currentDate = ensplit[1] + "/" + ensplit[0] + "/"
+								+ ensplit[2];
+
+						var start = Date.parse(effToDateValue);
+						var end = Date.parse(currentDate);
+						var difference = (end - start) / (86400000 * 7);
+						if (difference < 0) {
+
+							effToDateTextBox.removeAttr('disabled');
+							effToDateTextBox.addClass('datepicker');
+							changeDatePicker();
+						}
+						return false;
+					});
+
+			$('#view').click(
+					function() {
+						$('#mutationFeeForm').attr('method', 'get');
+						$('#mutationFeeForm').attr(
+								'action',
+								'/ptis/mutationfee/modify/'
+										+ $('#slabName').val());
+					});
+			$('.btnsave').click(
+					function() {
+						$('#mutationFeeForm').attr('method', 'post');
+						$('#mutationFeeForm').attr('action',
+								'/ptis/mutationfee/modify/' +todt);
+					});
+
+			function changeDatePicker() {
+				$(".effToDate").datepicker({
+					format : "dd/mm/yyyy",
+					autoclose : true
+				}).on('changeDate', function(ev) {
+					todt = $(this).closest('tr').find('#key').val();
+				});
 			}
-		}
-	});
+		});
 
-	jQuery('#recursiveFactor').change(function() {
-		if (this.value != "" || this.value.length > 0) {
-			jQuery('#highLimit').val("").attr('disabled', 'disabled');
-
-		} else {
-			jQuery('#highLimit').removeAttr('disabled');
-		}
-	});
-	jQuery('#recursiveAmount').change(function() {
-		if (this.value != "" || this.value.length > 0) {
-			jQuery('#highLimit').val("").attr('disabled', 'disabled');
-
-		} else {
-			jQuery('#highLimit').removeAttr('disabled');
-
-		}
-	});
-
-});
 function validate() {
 	var low = jQuery('#lowLimit').val();
 	var high = jQuery('#highLimit').val();
-	if ((high.value != "" || high.length > 0) && (Number(high) > Number(low))) {
+	if ((high.length > 0) && (Number(high) > Number(low))) {
 		jQuery('#highlimiterror').hide();
 		jQuery('#recursiveFactor').val("").attr('disabled', 'disabled');
 		jQuery('#recursiveAmount').val("").attr('disabled', 'disabled');
@@ -107,7 +174,5 @@ function validate() {
 		jQuery('#highLimit').val("");
 		jQuery('#highlimiterror').show();
 		jQuery('#recursiveFactor,#recursiveAmount').removeAttr('disabled');
-
 	}
-
 }

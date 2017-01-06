@@ -59,44 +59,42 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/masters")
 public class ViewActController {
-	@Autowired
-	private  MarriageActService marriageActService;
+    private static final String MRG_ACT_SUCCESS = "act-success";
+    private static final String MRG_ACT_SEARCH = "act-search";
+    private static final String MRG_ACT_VIEW = "act-view";
 
+    @Autowired
+    private MarriageActService marriageActService;
 
-	private static final String MRG_ACT_SUCCESS = "act-success";
-	private static final String MRG_ACT_SEARCH = "act-search";
-	private static final String MRG_ACT_VIEW = "act-view";
+    @RequestMapping(value = "/act/success/{id}", method = RequestMethod.GET)
+    public String viewAct(@PathVariable Long id, final Model model) {
+        model.addAttribute("marriageAct", marriageActService.getAct(id));
+        return MRG_ACT_SUCCESS;
+    }
 
-	
+    @RequestMapping(value = "/act/view/{id}", method = RequestMethod.GET)
+    public String viewRegistrationunit(@PathVariable("id") final Long id,
+            Model model) {
+        MarriageAct marriageAct = marriageActService.getAct(id);
+        model.addAttribute("marriageAct", marriageAct);
+        return MRG_ACT_VIEW;
+    }
 
-	@RequestMapping(value = "/act/success/{id}", method = RequestMethod.GET)
-	public String viewAct(@PathVariable Long id, final Model model) {
-		model.addAttribute("marriageAct", marriageActService.getAct(id));
-		return MRG_ACT_SUCCESS;
-	}
-	
-	@RequestMapping(value = "/act/view/{id}", method = RequestMethod.GET)
-	public String viewRegistrationunit(@PathVariable("id") final Long id,
-			Model model) {
-		MarriageAct marriageAct = marriageActService.getAct(id);
-		model.addAttribute("marriageAct", marriageAct);
-		return MRG_ACT_VIEW;
-	}
-	
-	@RequestMapping(value = "/act/search/{mode}", method = RequestMethod.GET)
-	public String getSearchPage(@PathVariable("mode") final String mode,
-			final Model model) {
-		model.addAttribute("act", new MarriageAct());
-		return MRG_ACT_SEARCH;
-	}
+    @RequestMapping(value = "/act/search/{mode}", method = RequestMethod.GET)
+    public String getSearchPage(@PathVariable("mode") final String mode,
+            final Model model) {
+        model.addAttribute("act", new MarriageAct());
+        return MRG_ACT_SEARCH;
+    }
 
-	@RequestMapping(value = "/act/searchResult", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-	public @ResponseBody String searchActResult(Model model,
-			@ModelAttribute final MarriageAct act) {
-		List<MarriageAct> searchResultList = marriageActService.searchActs(act);
-		String result = new StringBuilder("{ \"data\":")
-				.append(toJSON(searchResultList, MarriageAct.class,
-						ActJsonAdaptor.class)).append("}").toString();
-		return result;
-	}
+    @RequestMapping(value = "/act/searchResult", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String searchActResult(Model model,
+            @ModelAttribute final MarriageAct act) {
+        List<MarriageAct> searchResultList = marriageActService.searchActs(act);
+        return new StringBuilder("{ \"data\":")
+                .append(toJSON(searchResultList, MarriageAct.class,
+                        ActJsonAdaptor.class))
+                .append("}").toString();
+    }
 }

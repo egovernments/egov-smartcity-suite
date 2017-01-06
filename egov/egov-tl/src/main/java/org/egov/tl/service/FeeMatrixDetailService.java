@@ -50,6 +50,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -66,8 +67,8 @@ public class FeeMatrixDetailService {
         return feeMatrixDetailRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 
-    public FeeMatrixDetail findByLicenseFeeByRange(final FeeMatrix feeMatrix,
-                                                   final BigDecimal uom) {
+    public Optional<FeeMatrixDetail> findByLicenseFeeByRange(final FeeMatrix feeMatrix,
+                                                            final BigDecimal uom) {
         return feeMatrixDetailRepository.findFeeDetailList(feeMatrix, uom.intValue());
 
     }

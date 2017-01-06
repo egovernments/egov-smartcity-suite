@@ -39,30 +39,30 @@
 
 package org.egov.mrs.web.controller.reports;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.mrs.application.reports.service.MarriageRegistrationReportsService;
-import org.egov.mrs.domain.service.MarriageRegistrationService;
+import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.entity.es.MarriageRegIndexSearchResult;
 import org.egov.mrs.entity.es.MarriageRegistrationIndex;
-import org.egov.mrs.masters.service.MarriageActService;
-import org.egov.mrs.masters.service.MarriageRegistrationUnitService;
-import org.egov.mrs.masters.service.ReligionService;
 import org.egov.mrs.service.es.MarriageRegistrationIndexService;
+import org.egov.mrs.web.adaptor.HandicappedReportJsonAdaptor;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -74,7 +74,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/report")
 public class HandicappedMarriageRegReportController {
-   
+
     @Autowired
     private CityService cityService;
     @Autowired
@@ -85,27 +85,26 @@ public class HandicappedMarriageRegReportController {
             throws ParseException {
         return "handicapped-marriage-report";
     }
-    
+
     private List<MarriageRegistrationIndex> getSearchResult(final String applicantType) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        String ulbName="";
+        String ulbName = "";
         if (cityWebsite != null)
-            ulbName=cityWebsite.getName();
-        final BoolQueryBuilder boolQuery = marriageRegistrationIndexService.getQueryFilterForHandicap(applicantType,ulbName);
+            ulbName = cityWebsite.getName();
+        final BoolQueryBuilder boolQuery = marriageRegistrationIndexService.getQueryFilterForHandicap(applicantType, ulbName);
         return marriageRegistrationIndexService.getHandicapSearchResultByBoolQuery(boolQuery);
     }
-  
-    @RequestMapping(value = "/handicapped-report-search", method = RequestMethod.POST)
+
+    @RequestMapping(value = "/handicapped-report-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public List<MarriageRegIndexSearchResult> showHandicappedApplicationDetails(@ModelAttribute final String applicantType) {
-        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    public String showHandicappedApplicationDetails(@RequestParam("applicantType") final String applicantType, final Model model,
+            @ModelAttribute final MarriageRegistration registration) {
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-YYYY");
         final List<MarriageRegIndexSearchResult> searchResultFomatted = new ArrayList<>();
-        final List<MarriageRegistrationIndex> searchResult = getSearchResult(applicantType);
         MarriageRegIndexSearchResult mrisr = null;
-        for (final MarriageRegistrationIndex mrsIndexObj : searchResult) {
+        for (final MarriageRegistrationIndex mrsIndexObj : getSearchResult(applicantType)) {
             mrisr = new MarriageRegIndexSearchResult();
             mrisr.setApplicationNumber(mrsIndexObj.getApplicationNo());
-          //  mrisr.setRegistrationUnit();
             mrisr.setRegistrationNumber(mrsIndexObj.getRegistrationNo());
             mrisr.setRegistrationDate(formatter.format(mrsIndexObj.getApplicationCreatedDate()));
             mrisr.setZone(mrsIndexObj.getZone());
@@ -115,6 +114,11 @@ public class HandicappedMarriageRegReportController {
             mrisr.setWifeName(mrsIndexObj.getWifeName());
             searchResultFomatted.add(mrisr);
         }
-        return searchResultFomatted;
+
+        return new StringBuilder("{\"data\":")
+                .append(toJSON(searchResultFomatted, MarriageRegIndexSearchResult.class, HandicappedReportJsonAdaptor.class))
+                .append("}")
+                .toString();
     }
+
 }

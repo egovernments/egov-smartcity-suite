@@ -249,6 +249,11 @@ public class EmployeeService implements EntityTypeService {
     }
 
     @Transactional
+    public void updateEmployeeDetails(final Employee employee) {
+        employeeRepository.saveAndFlush(employee);
+    }
+
+    @Transactional
     public void addOrRemoveUserRole() {
         final List<Employee> employee = getAllEmployees();
 

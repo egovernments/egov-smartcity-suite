@@ -43,105 +43,105 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 public class RegistrationCertificatesResultForReport {
-	
-	private Long id;
-	private String registrationNo;
-	private String dateOfMarriage;
-	private String zone;
-	private String husbandName;
-	private String wifeName;
-	private String certificateNo;
-	private String certificateType;
-	private String certificateDate;
-	private String registrationDate;
-	private String rejectReason;
-	
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public Long getId() {
-		return id;
-	}
-	
-	public String getRegistrationNo() {
-		return registrationNo;
-	}
 
-	public void setRegistrationNo(String registrationNo) {
-		this.registrationNo = registrationNo;
-	}
+    private Long id;
+    private String registrationNo;
+    private String dateOfMarriage;
+    private String zone;
+    private String husbandName;
+    private String wifeName;
+    private String certificateNo;
+    private String certificateType;
+    private String certificateDate;
+    private String registrationDate;
+    private String rejectReason;
 
-	public String getDateOfMarriage() {
-		return dateOfMarriage;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setDateOfMarriage(String dateOfMarriage) {
-		this.dateOfMarriage = dateOfMarriage;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getZone() {
-		return zone;
-	}
+    public String getRegistrationNo() {
+        return registrationNo;
+    }
 
-	public void setZone(String zone) {
-		this.zone = zone;
-	}
+    public void setRegistrationNo(String registrationNo) {
+        this.registrationNo = registrationNo;
+    }
 
-	public String getHusbandName() {
-		return husbandName;
-	}
+    public String getDateOfMarriage() {
+        return dateOfMarriage;
+    }
 
-	public void setHusbandName(String husbandName) {
-		this.husbandName = husbandName;
-	}
+    public void setDateOfMarriage(String dateOfMarriage) {
+        this.dateOfMarriage = dateOfMarriage;
+    }
 
-	public String getWifeName() {
-		return wifeName;
-	}
+    public String getZone() {
+        return zone;
+    }
 
-	public void setWifeName(String wifeName) {
-		this.wifeName = wifeName;
-	}
+    public void setZone(String zone) {
+        this.zone = zone;
+    }
 
-	public String getCertificateNo() {
-		return certificateNo;
-	}
+    public String getHusbandName() {
+        return husbandName;
+    }
 
-	public void setCertificateNo(String certificateNo) {
-		this.certificateNo = certificateNo;
-	}
+    public void setHusbandName(String husbandName) {
+        this.husbandName = husbandName;
+    }
 
-	public String getCertificateType() {
-		return certificateType;
-	}
+    public String getWifeName() {
+        return wifeName;
+    }
 
-	public void setCertificateType(String certificateType) {
-		this.certificateType = certificateType;
-	}
+    public void setWifeName(String wifeName) {
+        this.wifeName = wifeName;
+    }
 
-	public void setCertificateDate(String certificateDate) {
-		this.certificateDate = certificateDate;
-	}
+    public String getCertificateNo() {
+        return certificateNo;
+    }
 
-	public String getCertificateDate() {
-		return certificateDate;
-	}
+    public void setCertificateNo(String certificateNo) {
+        this.certificateNo = certificateNo;
+    }
 
-	public String getRegistrationDate() {
-		return registrationDate;
-	}
+    public String getCertificateType() {
+        return certificateType;
+    }
 
-	public void setRegistrationDate(String registrationDate) {
-		this.registrationDate = registrationDate;
-	}
+    public void setCertificateType(String certificateType) {
+        this.certificateType = certificateType;
+    }
 
-	public String getRejectReason() {
-		return rejectReason;
-	}
+    public void setCertificateDate(String certificateDate) {
+        this.certificateDate = certificateDate;
+    }
 
-	public void setRejectReason(String rejectReason) {
-		this.rejectReason = rejectReason;
-	}
+    public String getCertificateDate() {
+        return certificateDate;
+    }
+
+    public String getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(String registrationDate) {
+        this.registrationDate = registrationDate;
+    }
+
+    public String getRejectReason() {
+        return rejectReason;
+    }
+
+    public void setRejectReason(String rejectReason) {
+        this.rejectReason = rejectReason;
+    }
 
 }

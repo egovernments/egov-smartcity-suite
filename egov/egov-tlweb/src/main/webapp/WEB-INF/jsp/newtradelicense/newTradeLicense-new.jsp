@@ -48,23 +48,23 @@
 		
 		function validateLicenseForm(obj) {
 				var adhaar = document.getElementById('adhaarId').value;
-				if (document.getElementById("mobilePhoneNumber").value == '' || document.getElementById("mobilePhoneNumber").value == null){
+				if (document.getElementById("mobilePhoneNumber").value.trim() == '' || document.getElementById("mobilePhoneNumber").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.mobilephonenumber.null" />');
 					window.scroll(0, 0); 
 					return false;
-				} else if (document.getElementById("applicantName").value == '' || document.getElementById("applicantName").value == null){
+				} else if (document.getElementById("applicantName").value.trim() == '' || document.getElementById("applicantName").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.applicantname.null" />');
 					window.scroll(0, 0); 
 					return false;
-				} else if (document.getElementById("fatherOrSpouseName").value == '' || document.getElementById("fatherOrSpouseName").value == null){
+				} else if (document.getElementById("fatherOrSpouseName").value.trim() == '' || document.getElementById("fatherOrSpouseName").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.fatherorspousename.null" />');
 					window.scroll(0, 0); 
 					return false;
-				} else if (document.getElementById("emailId").value == '' || document.getElementById("emailId").value == null){
+				} else if (document.getElementById("emailId").value.trim() == '' || document.getElementById("emailId").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.email.null" />');
 					window.scroll(0, 0);
 					return false;
-				} else if (document.getElementById("licenseeAddress").value == '' || document.getElementById("licenseeAddress").value == null){
+				} else if (document.getElementById("licenseeAddress").value.trim() == '' || document.getElementById("licenseeAddress").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.licenseeaddress.null" />');
 					window.scroll(0, 0); 
 					return false;
@@ -76,12 +76,12 @@
 					showMessage('newLicense_error', '<s:text name="newlicense.ownershiptype.null" />');
 					window.scroll(0, 0); 
 					return false;
-				}else if (document.getElementById("nameOfEstablishment").value == '' || document.getElementById("nameOfEstablishment").value == null){
+				}else if (document.getElementById("nameOfEstablishment").value.trim() == '' || document.getElementById("nameOfEstablishment").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.tradeTitle.null" />');
 					window.scroll(0, 0); 
 					return false;
 				}  
-				else if (document.getElementById("address").value == '' || document.getElementById("address").value == null){
+				else if (document.getElementById("address").value.trim() == '' || document.getElementById("address").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.licenseaddress.null" />');
 					window.scroll(0, 0);
 					return false;
@@ -114,7 +114,7 @@
 							showMessage('newLicense_error', '<s:text name="newlicense.agreementDate.null" />');
 							window.scroll(0, 0);  
 							return false;
-					 } else if(document.getElementById("agreementDocNo").value == '' || document.getElementById("agreementDocNo").value == null){
+					 } else if(document.getElementById("agreementDocNo").value.trim() == '' || document.getElementById("agreementDocNo").value == null){
 						 	showMessage('newLicense_error', '<s:text name="newlicense.agreementDocNo.null" />');
 							window.scroll(0, 0);  
 							return false;
@@ -303,7 +303,12 @@
 							</s:if>
 							<s:else>
 								<div class="panel-title" style="text-align:center">
-										<s:text name='newtradeLicense.heading' /> 
+                                    <s:if test="%{licenseAppType.name=='Renew'}">
+										<s:text name='renewtradeLicense.heading' />
+                                    </s:if>
+                                    <s:else>
+                                        <s:text name='newtradeLicense.heading' />
+                                    </s:else>
 								</div>
 							</s:else>
                             

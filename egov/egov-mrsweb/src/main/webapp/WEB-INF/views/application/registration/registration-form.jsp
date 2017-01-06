@@ -126,7 +126,7 @@
 							<jsp:param value="" name="header" />
 						</jsp:include>
 
-						<jsp:include page="priestinfo.jsp"></jsp:include>
+						<%-- <jsp:include page="priestinfo.jsp"></jsp:include> --%>
 					</div>
 				</div>
 				<div id="checklist-info" class="tab-pane fade">

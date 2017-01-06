@@ -40,6 +40,8 @@
 package org.egov.ptis.master.service;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 import org.egov.ptis.domain.model.MutationFeeDetails;
 import org.egov.ptis.domain.repository.master.mutationfee.MutationFeeRepository;
@@ -57,12 +59,42 @@ public class MutationFeeService {
         this.mutationFeeRepository = mutationFeeRepository;
     }
 
+    public void generateSlabName(MutationFeeDetails mutationFeeDetails) {
+        if (mutationFeeDetails.getHighLimit() == null)
+            mutationFeeDetails.setSlabName(mutationFeeDetails.getLowLimit().toString().concat("_").concat("ABOVE"));
+        else
+            mutationFeeDetails.setSlabName(
+                    mutationFeeDetails.getLowLimit().toString().concat("_").concat(mutationFeeDetails.getHighLimit().toString()));
+    }
+
     public BigDecimal getMaxHighLimit() {
         return mutationFeeRepository.maxByHighLimit();
     }
 
     public boolean validateForHighLimitNull() {
         return mutationFeeRepository.findLowLimitForHighLimitNullValue() != null ? true : false;
+    }
+
+    public boolean getToDateBySlabName(final String slabName) {
+        final Date today = new Date();
+        final int result = today.compareTo(mutationFeeRepository.findToDateBySlabName(slabName));
+        return result >= 0 ? true : false;
+    }
+
+    public boolean findExistingSlabName(final String slabName) {
+        return !mutationFeeRepository.findIfSlabNameExists(slabName).isEmpty() ? true : false;
+    }
+
+    public List<MutationFeeDetails> findSlabName() {
+        return mutationFeeRepository.getDistinctSlabNamesList();
+    }
+
+    public List<MutationFeeDetails> findDuplicateSlabName(final String slabname) {
+        return mutationFeeRepository.findBySlabNames(slabname);
+    }
+
+    public MutationFeeDetails getMutationFeeById(final Long id) {
+        return mutationFeeRepository.findOne(id);
     }
 
     public boolean validateForMaxHighLimit(final BigDecimal lowlimit) {
@@ -73,5 +105,14 @@ public class MutationFeeService {
     @Transactional
     public void createMutationFee(final MutationFeeDetails mutation) {
         mutationFeeRepository.save(mutation);
+    }
+
+    public List<MutationFeeDetails> getAllMutationFee() {
+        return mutationFeeRepository.selectAllOrderBySlabName();
+    }
+
+    @Transactional
+    public MutationFeeDetails getDetailsById(final Long id) {
+        return mutationFeeRepository.getAllDetailsById(id);
     }
 }

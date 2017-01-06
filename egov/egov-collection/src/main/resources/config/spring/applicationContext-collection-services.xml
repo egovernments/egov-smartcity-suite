@@ -152,6 +152,8 @@
 	</bean>
 
 	<bean id="AXISPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.AxisAdaptor" />
+	
+	<bean id="SBIMOPSPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.SbimopsAdaptor" />
 
 	<bean class="org.egov.collection.integration.services.ReconciliationService"
 		id="reconciliationService">

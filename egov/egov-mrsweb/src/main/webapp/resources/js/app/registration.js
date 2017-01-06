@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -40,6 +40,29 @@
 
 $(document).ready( function () {
 	
+	$( "#select-venue" ).change(function() {
+		var venue = $( "#select-venue option:selected" ).text();
+		if(venue == 'Residence'){
+			$('#txt-placeofmrg').val('');
+			$('.toggle-madatory').find("span").removeClass( "mandatory" );
+			$('.addremoverequired').removeAttr( "required" );
+			$("#txt-placeofmrg").attr("disabled", "disabled");
+		}else{
+			$('.toggle-madatory').find("span").addClass( "mandatory" );
+			$('.addremoverequired').attr( "required", "true" );
+			$("#txt-placeofmrg").removeAttr("disabled", "disabled");
+		}
+		
+	});
+	
+	//default currentdate in create screen
+	if($('#registrationStatus').val()=="")
+		$('#txt-dateOfMarriage').datepicker('setDate', new Date());
+	//Date of marriage shld not be editable in workflow 
+	if($('#registrationStatus').val()=='CREATED' || $('#registrationStatus').val()=='APPROVED'){
+		$('#txt-dateOfMarriage').attr('disabled', 'disabled');
+	}
+	// make form elements disabled at final level of workflow	
 	if($('#registrationStatus').val()=='APPROVED'){
 		$(':input').attr('readonly','readonly');
 		$('#form-updateregistration select').attr('disabled', 'true'); 

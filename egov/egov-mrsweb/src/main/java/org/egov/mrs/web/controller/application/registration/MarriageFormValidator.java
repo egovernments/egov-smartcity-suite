@@ -89,7 +89,9 @@ public class MarriageFormValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "city", NOTEMPTY_MRG_CITY);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateOfMarriage", "Notempty.mrg.date.of.mrg");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "venue", "Notempty.mrg.venue");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "placeOfMarriage", "Notempty.mrg.place.of.mrg");
+        if(!"Residence".equals(registration.getVenue())){
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "placeOfMarriage", "Notempty.mrg.place.of.mrg");
+        }
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "husband.name.firstName", NOTEMPTY_MRG_FIRST_NAME);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "husband.religion", "Notempty.mrg.religion.name");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "husband.ageInYearsAsOnMarriage", "Notempty.mrg.age.year");

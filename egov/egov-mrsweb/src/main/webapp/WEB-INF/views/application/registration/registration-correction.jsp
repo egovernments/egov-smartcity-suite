@@ -122,16 +122,13 @@
 								<jsp:param value="" name="header" />
 							</jsp:include>	
 							
-							<jsp:include page="priestinfo.jsp"></jsp:include>
+							<%-- <jsp:include page="priestinfo.jsp"></jsp:include> --%>
 						</div>
 				    </div>
 				    <div id="checklist-info" class="tab-pane fade">
 				    	<div class="panel panel-primary" data-collapsed="0">
 				    		<jsp:include page="checklist.jsp"></jsp:include>
 				    	</div>
-				    	<div class="panel panel-primary" data-collapsed="0">
-				    		<jsp:include page="documentdetails.jsp"></jsp:include>
-			    		</div>
 				    </div>
 			</div>
 			<jsp:include page="../../common/reg-reissue-wfhistory.jsp"></jsp:include>

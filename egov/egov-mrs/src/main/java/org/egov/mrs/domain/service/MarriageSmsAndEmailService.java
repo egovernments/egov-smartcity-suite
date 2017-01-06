@@ -56,163 +56,147 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MarriageSmsAndEmailService {
-	private final String MSG_KEY_SMS_REGISTRATION_NEW = "msg.newregistration.sms";
-	private final String MSG_KEY_SMS_REGISTRATION_REJECTION = "msg.rejectregistration.sms";
-	private final String MSG_KEY_SMS_REGISTRATION_REGISTERED = "msg.registration.registered.sms";
-	private final String MSG_KEY_EMAIL_REGISTRATION_NEW_EMAIL = "msg.newregistration.mail";
-	private final String MSG_KEY_EMAIL_REGISTRATION_NEW_SUBJECT = "msg.newregistration.mail.subject";
-	private final String MSG_KEY_EMAIL_REGISTRATION_REJECTION_EMAIL = "msg.rejectionregistration.mail";
-	private final String MSG_KEY_EMAIL_REGISTRATION_REJECTION_SUBJECT = "msg.rejectionregistration.mail.subject";
-	private final String MSG_KEY_EMAIL_REGISTRATION_REGISTERED = "msg.registration.registered.mail";
-	private final String MSG_KEY_EMAIL_REGISTRATION_REGISTERED_SUBJECT = "msg.registration.registered.mail.subject";
+    private static final String MSG_KEY_SMS_REGISTRATION_NEW = "msg.newregistration.sms";
+    private static final String MSG_KEY_SMS_REGISTRATION_REJECTION = "msg.rejectregistration.sms";
+    private static final String MSG_KEY_SMS_REGISTRATION_REGISTERED = "msg.registration.registered.sms";
+    private static final String MSG_KEY_EMAIL_REGISTRATION_NEW_EMAIL = "msg.newregistration.mail";
+    private static final String MSG_KEY_EMAIL_REGISTRATION_NEW_SUBJECT = "msg.newregistration.mail.subject";
+    private static final String MSG_KEY_EMAIL_REGISTRATION_REJECTION_EMAIL = "msg.rejectionregistration.mail";
+    private static final String MSG_KEY_EMAIL_REGISTRATION_REJECTION_SUBJECT = "msg.rejectionregistration.mail.subject";
+    private static final String MSG_KEY_EMAIL_REGISTRATION_REGISTERED = "msg.registration.registered.mail";
+    private static final String MSG_KEY_EMAIL_REGISTRATION_REGISTERED_SUBJECT = "msg.registration.registered.mail.subject";
 
-	private final String MSG_KEY_SMS_REISSUE_NEW = "msg.reissue.sms";
-	private final String MSG_KEY_SMS_REISSUE_REJECTION = "msg.reissuerejected.sms";
-	private final String MSG_KEY_SMS_REISSUE_APPROVED = "msg.reissue.approved.sms";
+    private static final String MSG_KEY_SMS_REISSUE_NEW = "msg.reissue.sms";
+    private static final String MSG_KEY_SMS_REISSUE_REJECTION = "msg.reissuerejected.sms";
+    private static final String MSG_KEY_SMS_REISSUE_APPROVED = "msg.reissue.approved.sms";
 
-	private final String MSG_KEY_EMAIL_REISSUE_NEW_EMAIL = "msg.reissue.mail";
-	private final String MSG_KEY_EMAIL_REISSUE_NEW_SUBJECT = "msg.reissue.mail.subject";
-	private final String MSG_KEY_EMAIL_REISSUE_REJECTION_EMAIL = "msg.reissuerejected.mail";
-	private final String MSG_KEY_EMAIL_REISSUE_REJECTION_SUBJECT = "msg.reissuerejected.mail.subject";
-	private final String MSG_KEY_EMAIL_REISSUE_APPROVED_EMAIL = "msg.reissueApprove.mail";
-	private final String MSG_KEY_EMAIL_REISSUE_APPROVED_SUBJECT = "msg.reissueApprove.mail.subject";
+    private static final String MSG_KEY_EMAIL_REISSUE_NEW_EMAIL = "msg.reissue.mail";
+    private static final String MSG_KEY_EMAIL_REISSUE_NEW_SUBJECT = "msg.reissue.mail.subject";
+    private static final String MSG_KEY_EMAIL_REISSUE_REJECTION_EMAIL = "msg.reissuerejected.mail";
+    private static final String MSG_KEY_EMAIL_REISSUE_REJECTION_SUBJECT = "msg.reissuerejected.mail.subject";
+    private static final String MSG_KEY_EMAIL_REISSUE_APPROVED_EMAIL = "msg.reissueApprove.mail";
+    private static final String MSG_KEY_EMAIL_REISSUE_APPROVED_SUBJECT = "msg.reissueApprove.mail.subject";
 
-	@Autowired
-	private MessagingService messagingService;
+    @Autowired
+    private MessagingService messagingService;
+    @Autowired
+    @Qualifier("parentMessageSource")
+    private MessageSource mrsMessageSource;
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
-	@Autowired
-	@Qualifier("parentMessageSource")
-	private MessageSource mrsMessageSource;
+    public void sendSMS(final MarriageRegistration registration, String status) {
+        String msgKey = MSG_KEY_SMS_REGISTRATION_NEW;
+        String referenceNumber;
+        if (isSmsEnabled() && registration.getApplicationNo() != null) {
 
-	@Autowired
-	private AppConfigValueService appConfigValuesService;
+            referenceNumber = registration.getApplicationNo();
+            if (registration.getStatus() != null && registration.getStatus().getCode()
+                    .equalsIgnoreCase(MarriageRegistration.RegistrationStatus.CANCELLED.toString())) {
+                msgKey = MSG_KEY_SMS_REGISTRATION_REJECTION;
 
-	public void sendSMS(final MarriageRegistration registration, String status) {
-		String msgKey = MSG_KEY_SMS_REGISTRATION_NEW;
-		String referenceNumber = "";
-		if (isSmsEnabled() && registration.getApplicationNo() != null) {
+            } else if (registration.getStatus() != null && registration.getStatus().getCode()
+                    .equalsIgnoreCase(MarriageRegistration.RegistrationStatus.APPROVED.toString())) {
+                msgKey = MSG_KEY_SMS_REGISTRATION_REGISTERED;
+                referenceNumber = registration.getRegistrationNo();
+            }
+            final String message = buildEmailMessage(registration, msgKey, referenceNumber);
+            if (registration.getHusband() != null && registration.getHusband().getContactInfo() != null
+                    && registration.getHusband().getContactInfo().getMobileNo() != null)
+                messagingService.sendSMS(registration.getHusband().getContactInfo().getMobileNo(), message);
+            if (registration.getWife() != null && registration.getWife().getContactInfo() != null
+                    && registration.getWife().getContactInfo().getMobileNo() != null)
+                messagingService.sendSMS(registration.getWife().getContactInfo().getMobileNo(), message);
+        }
+    }
 
-			referenceNumber = registration.getApplicationNo();
-			if (registration.getStatus() != null && registration.getStatus().getCode()
-					.equalsIgnoreCase(MarriageRegistration.RegistrationStatus.CANCELLED.toString())) {
-				msgKey = MSG_KEY_SMS_REGISTRATION_REJECTION;
+    public void sendEmail(final MarriageRegistration registration, String status) {
+        String msgKeyMail = MSG_KEY_EMAIL_REGISTRATION_NEW_EMAIL;
+        String msgKeyMailSubject = MSG_KEY_EMAIL_REGISTRATION_NEW_SUBJECT;
+        String referenceNumber;
+        if (isEmailEnabled() && registration.getApplicationNo() != null) {
+            referenceNumber = registration.getApplicationNo();
+            if (registration.getStatus() != null && registration.getStatus().getCode()
+                    .equalsIgnoreCase(MarriageRegistration.RegistrationStatus.CANCELLED.toString())) {
+                msgKeyMail = MSG_KEY_EMAIL_REGISTRATION_REJECTION_EMAIL;
+                msgKeyMailSubject = MSG_KEY_EMAIL_REGISTRATION_REJECTION_SUBJECT;
+            } else if (registration.getStatus() != null && registration.getStatus().getCode()
+                    .equalsIgnoreCase(MarriageRegistration.RegistrationStatus.APPROVED.toString())) {
+                msgKeyMail = MSG_KEY_EMAIL_REGISTRATION_REGISTERED;
+                msgKeyMailSubject = MSG_KEY_EMAIL_REGISTRATION_REGISTERED_SUBJECT;
+                referenceNumber = registration.getRegistrationNo();
+            }
+            final String message = buildEmailMessage(registration, msgKeyMail, referenceNumber);
 
-			} else if (registration.getStatus() != null && registration.getStatus().getCode()
-					.equalsIgnoreCase(MarriageRegistration.RegistrationStatus.APPROVED.toString())) {
-				msgKey = MSG_KEY_SMS_REGISTRATION_REGISTERED;
-				referenceNumber = registration.getRegistrationNo();
-			}
+            final String subject = mrsMessageSource.getMessage(msgKeyMailSubject, null, null);
+            if (registration.getHusband() != null && registration.getHusband().getContactInfo() != null
+                    && registration.getHusband().getContactInfo().getEmail() != null)
+                messagingService.sendEmail(registration.getHusband().getContactInfo().getEmail(), subject, message);
+            if (registration.getWife() != null && registration.getWife().getContactInfo() != null
+                    && registration.getWife().getContactInfo().getEmail() != null)
+                messagingService.sendEmail(registration.getWife().getContactInfo().getEmail(), subject, message);
+        }
+    }
 
-			final String message = buildEmailMessage(registration, msgKey, (referenceNumber));
-			if (registration.getHusband() != null && registration.getHusband().getContactInfo() != null
-					&& registration.getHusband().getContactInfo().getMobileNo() != null)
-				messagingService.sendSMS(registration.getHusband().getContactInfo().getMobileNo(), message);
-			if (registration.getWife() != null && registration.getWife().getContactInfo() != null
-					&& registration.getWife().getContactInfo().getMobileNo() != null)
-				messagingService.sendSMS(registration.getWife().getContactInfo().getMobileNo(), message);
-		}
-	}
+    public void sendSMSForReIssueApplication(final ReIssue reIssue) {
+        String msgKey = MSG_KEY_SMS_REISSUE_NEW;
 
-	public void sendEmail(final MarriageRegistration registration, String status) {
-		String msgKeyMail = MSG_KEY_EMAIL_REGISTRATION_NEW_EMAIL;
-		String msgKeyMailSubject = MSG_KEY_EMAIL_REGISTRATION_NEW_SUBJECT;
-		String referenceNumber = "";
-		if (isEmailEnabled() && registration.getApplicationNo() != null) {
-			referenceNumber = registration.getApplicationNo();
-			if (registration.getStatus() != null && registration.getStatus().getCode()
-					.equalsIgnoreCase(MarriageRegistration.RegistrationStatus.CANCELLED.toString())) {
-				msgKeyMail = MSG_KEY_EMAIL_REGISTRATION_REJECTION_EMAIL;
-				msgKeyMailSubject = MSG_KEY_EMAIL_REGISTRATION_REJECTION_SUBJECT;
-			} else if (registration.getStatus() != null && registration.getStatus().getCode()
-					.equalsIgnoreCase(MarriageRegistration.RegistrationStatus.APPROVED.toString())) {
-				msgKeyMail = MSG_KEY_EMAIL_REGISTRATION_REGISTERED;
-				msgKeyMailSubject = MSG_KEY_EMAIL_REGISTRATION_REGISTERED_SUBJECT;
-				referenceNumber = registration.getRegistrationNo();
-			}
-			final String message = buildEmailMessage(registration, msgKeyMail, (referenceNumber));
+        if (isSmsEnabled() && null != reIssue.getApplicationNo() && null != reIssue.getApplicant().getContactInfo().getEmail()) {
+            if (reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.CANCELLED.toString()))
+                msgKey = MSG_KEY_SMS_REISSUE_REJECTION;
+            else if (reIssue.getStatus() != null
+                    && reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.APPROVED.toString())) {
+                msgKey = MSG_KEY_SMS_REISSUE_APPROVED;
+            }
+            final String message = buildMessageForIssueCertificate(reIssue, msgKey);
+            messagingService.sendSMS(reIssue.getApplicant().getContactInfo().getMobileNo(), message);
+        }
+    }
 
-			final String subject = mrsMessageSource.getMessage(msgKeyMailSubject, null, null);
-			if (registration.getHusband() != null && registration.getHusband().getContactInfo() != null
-					&& registration.getHusband().getContactInfo().getEmail() != null)
-				messagingService.sendEmail(registration.getHusband().getContactInfo().getEmail(), subject, message);
-			if (registration.getWife() != null && registration.getWife().getContactInfo() != null
-					&& registration.getWife().getContactInfo().getEmail() != null)
-				messagingService.sendEmail(registration.getWife().getContactInfo().getEmail(), subject, message);
-		}
-	}
+    public void sendEmailForReIssueApplication(final ReIssue reIssue) {
+        String msgKeyMail = MSG_KEY_EMAIL_REISSUE_NEW_EMAIL;
+        String msgKeyMailSubject = MSG_KEY_EMAIL_REISSUE_NEW_SUBJECT;
 
-	public void sendSMSForReIssueApplication(final ReIssue reIssue) {
-		String msgKey = MSG_KEY_SMS_REISSUE_NEW;
+        if (isEmailEnabled() && null != reIssue.getApplicationNo()
+                && null != reIssue.getApplicant().getContactInfo().getEmail()) {
+            if (reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.CANCELLED.toString())) {
+                msgKeyMail = MSG_KEY_EMAIL_REISSUE_REJECTION_EMAIL;
+                msgKeyMailSubject = MSG_KEY_EMAIL_REISSUE_REJECTION_SUBJECT;
+            } else if (reIssue.getStatus() != null
+                    && reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.APPROVED.toString())) {
+                msgKeyMail = MSG_KEY_EMAIL_REISSUE_APPROVED_EMAIL;
+                msgKeyMailSubject = MSG_KEY_EMAIL_REISSUE_APPROVED_SUBJECT;
+            }
+            final String message = buildMessageForIssueCertificate(reIssue, msgKeyMail);
+            final String subject = mrsMessageSource.getMessage(msgKeyMailSubject, null, null);
+            messagingService.sendEmail(reIssue.getApplicant().getContactInfo().getEmail(), subject, message);
+        }
+    }
 
-		if (null != reIssue.getApplicationNo() && null != reIssue.getApplicant().getContactInfo().getEmail()) {
-			if (isSmsEnabled()) {
+    private String buildEmailMessage(final MarriageRegistration registration, String msgKeyMail, String number) {
+        return mrsMessageSource.getMessage(msgKeyMail,
+                new String[] { registration.getHusband().getFullName(), registration.getWife().getFullName(), number },
+                null);
+    }
 
-				if (reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.CANCELLED.toString()))
-					msgKey = MSG_KEY_SMS_REISSUE_REJECTION;
-				else if (reIssue.getStatus() != null
-						&& reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.APPROVED.toString())) {
-					msgKey = MSG_KEY_SMS_REISSUE_APPROVED;
-				}
+    private String buildMessageForIssueCertificate(final ReIssue reIssue, String msgKeyMail) {
+        return mrsMessageSource.getMessage(msgKeyMail,
+                new String[] { reIssue.getApplicant().getFullName(), reIssue.getApplicationNo() }, null);
+    }
 
-				final String message = buildMessageForIssueCertificate(reIssue, msgKey);
-				messagingService.sendSMS(reIssue.getApplicant().getContactInfo().getMobileNo(), message);
-			}
-		}
-	}
+    public Boolean isSmsEnabled() {
+        return getAppConfigValueByPassingModuleAndType(MODULE_NAME, SENDSMSFROOMMARRIAGEMODULE);
+    }
 
-	public void sendEmailForReIssueApplication(final ReIssue reIssue) {
-		String msgKeyMail = MSG_KEY_EMAIL_REISSUE_NEW_EMAIL;
-		String msgKeyMailSubject = MSG_KEY_EMAIL_REISSUE_NEW_SUBJECT;
+    public Boolean getAppConfigValueByPassingModuleAndType(String moduleName, String sendsmsoremail) {
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName,
+                sendsmsoremail);
+        return "YES".equalsIgnoreCase(
+                appConfigValue != null && !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : "NO");
+    }
 
-		if (null != reIssue.getApplicationNo() && null != reIssue.getApplicant().getContactInfo().getEmail()) {
-			if (isEmailEnabled()) {
-				if (reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.CANCELLED.toString())) {
-					msgKeyMail = MSG_KEY_EMAIL_REISSUE_REJECTION_EMAIL;
-					msgKeyMailSubject = MSG_KEY_EMAIL_REISSUE_REJECTION_SUBJECT;
-				} else if (reIssue.getStatus() != null
-						&& reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.APPROVED.toString())) {
-					msgKeyMail = MSG_KEY_EMAIL_REISSUE_APPROVED_EMAIL;
-					msgKeyMailSubject = MSG_KEY_EMAIL_REISSUE_APPROVED_SUBJECT;
-				}
-
-				final String message = buildMessageForIssueCertificate(reIssue, msgKeyMail);
-				final String subject = mrsMessageSource.getMessage(msgKeyMailSubject, null, null);
-				messagingService.sendEmail(reIssue.getApplicant().getContactInfo().getEmail(), subject, message);
-			}
-		}
-	}
-
-	private String buildEmailMessage(final MarriageRegistration registration, String msgKeyMail, String number) {
-		final String message = mrsMessageSource.getMessage(msgKeyMail,
-				new String[] { registration.getHusband().getFullName(), registration.getWife().getFullName(), number },
-				null);
-		return message;
-	}
-
-	private String buildMessageForIssueCertificate(final ReIssue reIssue, String msgKeyMail) {
-
-		final String message = mrsMessageSource.getMessage(msgKeyMail,
-				new String[] { reIssue.getApplicant().getFullName(), reIssue.getApplicationNo() }, null);
-		return message;
-	}
-
-	public Boolean isSmsEnabled() {
-
-		return getAppConfigValueByPassingModuleAndType(MODULE_NAME, SENDSMSFROOMMARRIAGEMODULE);
-	}
-
-	private Boolean getAppConfigValueByPassingModuleAndType(String moduleName, String sendsmsoremail) {
-		final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName,
-				sendsmsoremail);
-
-		return "YES".equalsIgnoreCase(
-				appConfigValue != null && appConfigValue.size() > 0 ? appConfigValue.get(0).getValue() : "NO");
-	}
-
-	public Boolean isEmailEnabled() {
-
-		return getAppConfigValueByPassingModuleAndType(MODULE_NAME, SENDEMAILFROOMMARRIAGEMODULE);
-
-	}
+    public Boolean isEmailEnabled() {
+        return getAppConfigValueByPassingModuleAndType(MODULE_NAME, SENDEMAILFROOMMARRIAGEMODULE);
+    }
 
 }
