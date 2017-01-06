@@ -267,13 +267,19 @@ public class WorksReportJsonAdaptorHelper {
         if (response.getOct01to15target() != null && !response.getOct01to15target().isNaN())
             jsonObject.addProperty(OCT_01_TO_15_TARGET,
                     BigDecimal.valueOf(response.getOct01to15target()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(OCT_01_TO_15_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
         if (response.getOct01to15actual() != null && !response.getOct01to15actual().isNaN())
             jsonObject.addProperty(OCT_01_TO_15_ACTUAL,
                     BigDecimal.valueOf(response.getOct01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(OCT_01_TO_15_ACTUAL, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
         if (response.getOct01to15variance() != null)
             jsonObject.addProperty(OCT_01_TO_15_VARIANCE,
                     BigDecimal.valueOf(response.getOct01to15variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
+        else
+            jsonObject.addProperty(OCT_01_TO_15_VARIANCE, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
 
         if (currentDate.getDayOfMonth() > 15) {
             if (response.getOct16to31target() != null && !response.getOct16to31target().isNaN())
@@ -327,27 +333,39 @@ public class WorksReportJsonAdaptorHelper {
         if (response.getSep01to15target() != null && !response.getSep01to15target().isNaN())
             jsonObject.addProperty(SEP_01_TO_15_TARGET,
                     BigDecimal.valueOf(response.getSep01to15target()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(SEP_01_TO_15_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
         if (response.getSep01to15actual() != null && !response.getSep01to15actual().isNaN())
             jsonObject.addProperty(SEP_01_TO_15_ACTUAL,
                     BigDecimal.valueOf(response.getSep01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(SEP_01_TO_15_ACTUAL, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
         if (response.getSep01to15variance() != null)
             jsonObject.addProperty(SEP_01_TO_15_VARIANCE,
                     BigDecimal.valueOf(response.getSep01to15variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
+        else
+            jsonObject.addProperty(SEP_01_TO_15_VARIANCE, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
 
         if (currentDate.getDayOfMonth() > 15) {
             if (response.getSep16to30target() != null && !response.getSep16to30target().isNaN())
                 jsonObject.addProperty(SEP_16_TO_30_TARGET,
                         BigDecimal.valueOf(response.getSep16to30target()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(SEP_16_TO_30_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getSep16to30actual() != null && !response.getSep16to30actual().isNaN())
                 jsonObject.addProperty(SEP_16_TO_30_ACTUAL,
                         BigDecimal.valueOf(response.getSep16to30actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(SEP_16_TO_30_ACTUAL, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getSep16to30variance() != null)
                 jsonObject.addProperty(SEP_16_TO_30_VARIANCE,
                         BigDecimal.valueOf(response.getSep16to30variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(SEP_16_TO_30_VARIANCE, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getSep16to30actual() != null && !response.getSep16to30actual().isNaN()) {
                 if (response.getSep16to30target() != null && !response.getSep16to30target().isNaN()
                         && response.getSep16to30target().compareTo((double) 0) == 0)
@@ -381,27 +399,39 @@ public class WorksReportJsonAdaptorHelper {
         if (response.getAug01to15target() != null && !response.getAug01to15target().isNaN())
             jsonObject.addProperty(AUG_01_TO_15_TARGET,
                     BigDecimal.valueOf(response.getAug01to15target()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(AUG_01_TO_15_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
         if (response.getAug01to15actual() != null && !response.getAug01to15actual().isNaN())
             jsonObject.addProperty(AUG_01_TO_15_ACTUAL,
                     BigDecimal.valueOf(response.getAug01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(AUG_01_TO_15_ACTUAL, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
         if (response.getAug01to15variance() != null)
             jsonObject.addProperty(AUG_01_TO_15_VARIANCE,
                     BigDecimal.valueOf(response.getAug01to15variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
+        else
+            jsonObject.addProperty(AUG_01_TO_15_VARIANCE, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
 
         if (currentDate.getDayOfMonth() > 15) {
             if (response.getAug16to31target() != null && !response.getAug16to31target().isNaN())
                 jsonObject.addProperty(AUG_16_TO_31_TARGET,
                         BigDecimal.valueOf(response.getAug16to31target()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(AUG_16_TO_31_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getAug16to31actual() != null && !response.getAug16to31actual().isNaN())
                 jsonObject.addProperty(AUG_16_TO_31_ACTUAL,
                         BigDecimal.valueOf(response.getAug16to31actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(AUG_16_TO_31_ACTUAL, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getAug16to31variance() != null)
                 jsonObject.addProperty(AUG_16_TO_31_VARIANCE,
                         BigDecimal.valueOf(response.getAug16to31variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(AUG_16_TO_31_VARIANCE, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getAug16to31actual() != null && !response.getAug16to31actual().isNaN()) {
                 if (response.getAug16to31target() != null && !response.getAug16to31target().isNaN()
                         && response.getAug16to31target().compareTo((double) 0) == 0)
@@ -434,27 +464,39 @@ public class WorksReportJsonAdaptorHelper {
         if (response.getJul01to15target() != null && !response.getJul01to15target().isNaN())
             jsonObject.addProperty(JUL_01_TO_15_TARGET,
                     BigDecimal.valueOf(response.getJul01to15target()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(JUL_01_TO_15_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
         if (response.getJul01to15actual() != null && !response.getJul01to15actual().isNaN())
             jsonObject.addProperty(JUL_01_TO_15_ACTUAL,
                     BigDecimal.valueOf(response.getJul01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(JUL_01_TO_15_ACTUAL, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
         if (response.getJul01to15variance() != null)
             jsonObject.addProperty(JUL_01_TO_15_VARIANCE,
                     BigDecimal.valueOf(response.getJul01to15variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
+        else
+            jsonObject.addProperty(JUL_01_TO_15_VARIANCE, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
 
         if (currentDate.getDayOfMonth() > 15) {
             if (response.getJul16to31target() != null && !response.getJul16to31target().isNaN())
                 jsonObject.addProperty(JUL_16_TO_31_TARGET,
                         BigDecimal.valueOf(response.getJul16to31target()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(JUL_16_TO_31_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getJul16to31actual() != null && !response.getJul16to31actual().isNaN())
                 jsonObject.addProperty(JUL_16_TO_31_ACTUAL,
                         BigDecimal.valueOf(response.getJul16to31actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(JUL_16_TO_31_ACTUAL, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getJul16to31variance() != null)
                 jsonObject.addProperty(JUL_16_TO_31_VARIANCE,
                         BigDecimal.valueOf(response.getJul16to31variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(JUL_16_TO_31_VARIANCE, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getJul16to31actual() != null && !response.getJul16to31actual().isNaN()) {
                 if (response.getJul16to31target() != null && !response.getJul16to31target().isNaN()
                         && response.getJul16to31target().compareTo((double) 0) == 0)
@@ -488,28 +530,39 @@ public class WorksReportJsonAdaptorHelper {
         if (response.getJun01to15target() != null && !response.getJun01to15target().isNaN())
             jsonObject.addProperty(JUN_01_TO_15_TARGET,
                     BigDecimal.valueOf(response.getJun01to15target()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(JUN_01_TO_15_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
         if (response.getJun01to15actual() != null && !response.getJun01to15actual().isNaN())
             jsonObject.addProperty(JUN_01_TO_15_ACTUAL,
                     BigDecimal.valueOf(response.getJun01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(JUN_01_TO_15_ACTUAL, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
         if (response.getJun01to15variance() != null)
             jsonObject.addProperty(JUN_01_TO_15_VARIANCE,
                     BigDecimal.valueOf(response.getJun01to15variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
+        else
+            jsonObject.addProperty(JUN_01_TO_15_VARIANCE, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
 
         if (currentDate.getDayOfMonth() > 15) {
-
             if (response.getJun16to30target() != null && !response.getJun16to30target().isNaN())
                 jsonObject.addProperty(JUN_16_TO_30_TARGET,
                         BigDecimal.valueOf(response.getJun16to30target()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(JUN_16_TO_30_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getJun16to30actual() != null && !response.getJun16to30actual().isNaN())
                 jsonObject.addProperty(JUN_16_TO_30_ACTUAL,
                         BigDecimal.valueOf(response.getJun16to30actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(JUN_16_TO_30_ACTUAL, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getJun16to30variance() != null)
                 jsonObject.addProperty(JUN_16_TO_30_VARIANCE,
                         BigDecimal.valueOf(response.getJun16to30variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(JUN_16_TO_30_VARIANCE, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getJun16to30actual() != null && !response.getJun16to30actual().isNaN()) {
                 if (response.getJun16to30target() != null && !response.getJun16to30target().isNaN()
                         && response.getJun16to30target().compareTo((double) 0) == 0)
@@ -543,27 +596,39 @@ public class WorksReportJsonAdaptorHelper {
         if (response.getMay01to15target() != null && !response.getMay01to15target().isNaN())
             jsonObject.addProperty(MAY_01_TO_15_TARGET,
                     BigDecimal.valueOf(response.getMay01to15target()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(MAY_01_TO_15_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
         if (response.getMay01to15actual() != null && !response.getMay01to15actual().isNaN())
             jsonObject.addProperty(MAY_01_TO_15_ACTUAL,
                     BigDecimal.valueOf(response.getMay01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(MAY_01_TO_15_ACTUAL, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
         if (response.getMay01to15variance() != null)
             jsonObject.addProperty(MAY_01_TO_15_VARIANCE,
                     BigDecimal.valueOf(response.getMay01to15variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
+        else
+            jsonObject.addProperty(MAY_01_TO_15_VARIANCE, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
 
         if (currentDate.getDayOfMonth() > 15) {
             if (response.getMay16to31target() != null && !response.getMay16to31target().isNaN())
                 jsonObject.addProperty(MAY_16_TO_31_TARGET,
                         BigDecimal.valueOf(response.getMay16to31target()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(MAY_16_TO_31_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getMay16to31actual() != null && !response.getMay16to31actual().isNaN())
                 jsonObject.addProperty(MAY_16_TO_31_ACTUAL,
                         BigDecimal.valueOf(response.getMay16to31actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(MAY_16_TO_31_ACTUAL, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getMay16to31variance() != null)
                 jsonObject.addProperty(MAY_16_TO_31_VARIANCE,
                         BigDecimal.valueOf(response.getMay16to31variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(MAY_16_TO_31_VARIANCE, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getMay16to31actual() != null && !response.getMay16to31actual().isNaN()) {
                 if (response.getMay16to31target() != null && !response.getMay16to31target().isNaN()
                         && response.getMay16to31target().compareTo((double) 0) == 0)
@@ -597,27 +662,39 @@ public class WorksReportJsonAdaptorHelper {
         if (response.getApr01to15target() != null && !response.getApr01to15target().isNaN())
             jsonObject.addProperty(APR_01_TO_15_TARGET,
                     BigDecimal.valueOf(response.getApr01to15target()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(APR_01_TO_15_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
         if (response.getApr01to15actual() != null && !response.getApr01to15actual().isNaN())
             jsonObject.addProperty(APR_01_TO_15_ACTUAL,
                     BigDecimal.valueOf(response.getApr01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(APR_01_TO_15_ACTUAL, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
         if (response.getApr01to15variance() != null)
             jsonObject.addProperty(APR_01_TO_15_VARIANCE,
                     BigDecimal.valueOf(response.getApr01to15variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
+        else
+            jsonObject.addProperty(APR_01_TO_15_VARIANCE, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
 
         if (currentDate.getDayOfMonth() > 15) {
             if (response.getApr16to30target() != null && !response.getApr16to30target().isNaN())
                 jsonObject.addProperty(APR_16_TO_30_TARGET,
                         BigDecimal.valueOf(response.getApr16to30target()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(APR_16_TO_30_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getApr16to30actual() != null && !response.getApr16to30actual().isNaN())
                 jsonObject.addProperty(APR_16_TO_30_ACTUAL,
                         BigDecimal.valueOf(response.getApr16to30actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(APR_16_TO_30_ACTUAL, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getApr16to30variance() != null)
                 jsonObject.addProperty(APR_16_TO_30_VARIANCE,
                         BigDecimal.valueOf(response.getApr16to30variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(APR_16_TO_30_VARIANCE, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getApr16to30actual() != null && !response.getApr16to30actual().isNaN()) {
                 if (response.getApr16to30target() != null && !response.getApr16to30target().isNaN()
                         && response.getApr16to30target().compareTo((double) 0) == 0)
@@ -650,27 +727,39 @@ public class WorksReportJsonAdaptorHelper {
         if (response.getMar01to15target() != null && !response.getMar01to15target().isNaN())
             jsonObject.addProperty(MAR_01_TO_15_TARGET,
                     BigDecimal.valueOf(response.getMar01to15target()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(MAR_01_TO_15_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
         if (response.getMar01to15actual() != null && !response.getMar01to15actual().isNaN())
             jsonObject.addProperty(MAR_01_TO_15_ACTUAL,
                     BigDecimal.valueOf(response.getMar01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(MAR_01_TO_15_ACTUAL, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
         if (response.getMar01to15variance() != null)
             jsonObject.addProperty(MAR_01_TO_15_VARIANCE,
                     BigDecimal.valueOf(response.getMar01to15variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
+        else
+            jsonObject.addProperty(MAR_01_TO_15_VARIANCE, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
 
         if (currentDate.getDayOfMonth() > 15) {
             if (response.getMar16to31target() != null && !response.getMar16to31target().isNaN())
                 jsonObject.addProperty(MAR_16_TO_31_TARGET,
                         BigDecimal.valueOf(response.getMar16to31target()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(MAR_16_TO_31_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getMar16to31actual() != null && !response.getMar16to31actual().isNaN())
-                jsonObject.addProperty(MAR_16_TO_31_ACTUAL,
+                jsonObject.addProperty(MAR_16_TO_31_TARGET,
                         BigDecimal.valueOf(response.getMar16to31actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(MAR_16_TO_31_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getMar16to31variance() != null)
                 jsonObject.addProperty(MAR_16_TO_31_VARIANCE,
                         BigDecimal.valueOf(response.getMar16to31variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(MAR_16_TO_31_VARIANCE, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
 
             if (response.getMar16to31actual() != null && !response.getMar16to31actual().isNaN()) {
                 if (response.getMar16to31target() != null && !response.getMar16to31target().isNaN()
@@ -705,27 +794,39 @@ public class WorksReportJsonAdaptorHelper {
         if (response.getFeb01to15target() != null && !response.getFeb01to15target().isNaN())
             jsonObject.addProperty(FEB_01_TO_15_TARGET,
                     BigDecimal.valueOf(response.getFeb01to15target()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(FEB_01_TO_15_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
         if (response.getFeb01to15actual() != null && !response.getFeb01to15actual().isNaN())
             jsonObject.addProperty(FEB_01_TO_15_ACTUAL,
                     BigDecimal.valueOf(response.getFeb01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(FEB_01_TO_15_ACTUAL, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
         if (response.getFeb01to15variance() != null)
             jsonObject.addProperty(FEB_01_TO_15_VARIANCE,
                     BigDecimal.valueOf(response.getFeb01to15variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
+        else
+            jsonObject.addProperty(FEB_01_TO_15_VARIANCE, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
 
         if (currentDate.getDayOfMonth() > 15) {
             if (response.getFeb16to28or29target() != null && !response.getFeb16to28or29target().isNaN())
                 jsonObject.addProperty(FEB_16_TO_28_OR_29_TARGET,
                         BigDecimal.valueOf(response.getFeb16to28or29target()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(FEB_16_TO_28_OR_29_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getFeb16to28or29actual() != null && !response.getFeb16to28or29actual().isNaN())
                 jsonObject.addProperty(FEB_16_TO_28_OR_29_ACTUAL,
                         BigDecimal.valueOf(response.getFeb16to28or29actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(FEB_16_TO_28_OR_29_ACTUAL, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getFeb16to28or29variance() != null)
                 jsonObject.addProperty(FEB_16_TO_28_OR_29_VARIANCE,
                         BigDecimal.valueOf(response.getFeb16to28or29variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(FEB_16_TO_28_OR_29_VARIANCE, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getFeb16to28or29actual() != null && !response.getFeb16to28or29actual().isNaN()) {
                 if (response.getFeb16to28or29target() != null && !response.getFeb16to28or29target().isNaN()
                         && response.getFeb16to28or29target().compareTo((double) 0) == 0)
@@ -759,28 +860,39 @@ public class WorksReportJsonAdaptorHelper {
         if (response.getJan01to15target() != null && !response.getJan01to15target().isNaN())
             jsonObject.addProperty(JAN_01_TO_15_TARGET,
                     BigDecimal.valueOf(response.getJan01to15target()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(JAN_01_TO_15_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
         if (response.getJan01to15actual() != null && !response.getJan01to15actual().isNaN())
             jsonObject.addProperty(JAN_01_TO_15_ACTUAL,
                     BigDecimal.valueOf(response.getJan01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        else
+            jsonObject.addProperty(JAN_01_TO_15_ACTUAL, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
         if (response.getJan01to15variance() != null)
             jsonObject.addProperty(JAN_01_TO_15_VARIANCE,
                     BigDecimal.valueOf(response.getJan01to15variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
+        else
+            jsonObject.addProperty(JAN_01_TO_15_VARIANCE, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
 
         if (currentDate.getDayOfMonth() > 15) {
-
             if (response.getJan16to31target() != null && !response.getJan16to31target().isNaN())
                 jsonObject.addProperty(JAN_16_TO_31_TARGET,
                         BigDecimal.valueOf(response.getJan16to31target()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(JAN_16_TO_31_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getJan16to31actual() != null && !response.getJan16to31actual().isNaN())
                 jsonObject.addProperty(JAN_16_TO_31_ACTUAL,
                         BigDecimal.valueOf(response.getJan16to31actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(JAN_16_TO_31_ACTUAL, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getJan16to31variance() != null)
                 jsonObject.addProperty(JAN_16_TO_31_VARIANCE,
                         BigDecimal.valueOf(response.getJan16to31variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
+            else
+                jsonObject.addProperty(JAN_16_TO_31_VARIANCE, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
 
             if (response.getJan16to31actual() != null && !response.getJan16to31actual().isNaN())
                 if (response.getJan16to31target() != null && !response.getJan16to31target().isNaN()
