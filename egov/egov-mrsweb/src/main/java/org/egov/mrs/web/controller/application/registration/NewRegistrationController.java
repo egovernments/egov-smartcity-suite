@@ -99,6 +99,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
             return "marriagecommon-error";
         }
         final MarriageRegistration marriageRegistration = new MarriageRegistration();
+        marriageRegistration.setFeePaid(calculateMarriageFee(new Date()));
         model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
         prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
         return "registration-form";
@@ -214,14 +215,14 @@ public class NewRegistrationController extends MarriageRegistrationController {
     @RequestMapping(value = "/calculatemarriagefee", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public Double calculateMarriageFee(@RequestParam final Date dateOfMarriage) {
-        Double fee = null;
+        Double fee = null;  
         final AppConfigValues allowValidation = getDaysValidationAppConfValue(
                 MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION);
         final int days = Days.daysBetween(new DateTime(dateOfMarriage), new DateTime(new Date())).getDays();
         if (allowValidation != null && !allowValidation.getValue().isEmpty())
             if ("NO".equalsIgnoreCase(allowValidation.getValue())) {
                 fee = checkMarriageFeeForCriteria(days);
-            } else if ("YES".equalsIgnoreCase(allowValidation.getValue()) && days <= 90) {
+            } else if ("YES".equalsIgnoreCase(allowValidation.getValue()) && days <= 90) { 
                 fee = checkMarriageFeeForCriteria(days);
             }
         return fee;

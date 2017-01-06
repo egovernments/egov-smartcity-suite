@@ -129,9 +129,6 @@
 				    	<div class="panel panel-primary" data-collapsed="0">
 				    		<jsp:include page="checklist.jsp"></jsp:include>
 				    	</div>
-				    	<div class="panel panel-primary" data-collapsed="0">
-				    		<jsp:include page="documentdetails.jsp"></jsp:include>
-			    		</div>
 				    </div>
 			</div>
 			<jsp:include page="../../common/reg-reissue-wfhistory.jsp"></jsp:include>

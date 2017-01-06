@@ -55,6 +55,14 @@ $(document).ready( function () {
 		
 	});
 	
+	//default currentdate in create screen
+	if($('#registrationStatus').val()=="")
+		$('#txt-dateOfMarriage').datepicker('setDate', new Date());
+	//Date of marriage shld not be editable in workflow 
+	if($('#registrationStatus').val()=='CREATED' || $('#registrationStatus').val()=='APPROVED'){
+		$('#txt-dateOfMarriage').attr('disabled', 'disabled');
+	}
+	// make form elements disabled at final level of workflow	
 	if($('#registrationStatus').val()=='APPROVED'){
 		$(':input').attr('readonly','readonly');
 		$('#form-updateregistration select').attr('disabled', 'true'); 
