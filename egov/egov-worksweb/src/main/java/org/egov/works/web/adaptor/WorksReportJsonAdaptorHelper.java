@@ -749,11 +749,11 @@ public class WorksReportJsonAdaptorHelper {
             else
                 jsonObject.addProperty(MAR_16_TO_31_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getMar16to31actual() != null && !response.getMar16to31actual().isNaN())
-                jsonObject.addProperty(MAR_16_TO_31_TARGET,
+                jsonObject.addProperty(MAR_16_TO_31_ACTUAL,
                         BigDecimal.valueOf(response.getMar16to31actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                 .toString());
             else
-                jsonObject.addProperty(MAR_16_TO_31_TARGET, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
+                jsonObject.addProperty(MAR_16_TO_31_ACTUAL, PHYSICAL_PROGRESS_DEFAULT_EMPTY_VALUE);
             if (response.getMar16to31variance() != null)
                 jsonObject.addProperty(MAR_16_TO_31_VARIANCE,
                         BigDecimal.valueOf(response.getMar16to31variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
