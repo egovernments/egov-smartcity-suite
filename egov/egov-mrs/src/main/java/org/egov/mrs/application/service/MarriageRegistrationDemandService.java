@@ -88,6 +88,7 @@ public class MarriageRegistrationDemandService extends MarriageDemandService {
                     dmdDtl.setAmtCollected(BigDecimal.ZERO);
                 }
             }
+            demand.addBaseDemand(amount);
         }
     }
 
