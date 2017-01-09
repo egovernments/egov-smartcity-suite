@@ -143,7 +143,7 @@ public class MarriageFeeCollection extends TaxCollection {
         for (final ReceiptAccountInfo receiptAccount : accountDetails) {
             if (org.apache.commons.lang.StringUtils.isNotBlank(receiptAccount.getDescription())
                     && receiptAccount.getCrAmount() != null
-                    && receiptAccount.getCrAmount().compareTo(BigDecimal.ZERO) == 0) {
+                    && receiptAccount.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
 
                 final String[] desc = receiptAccount.getDescription().split("-", 2);
                 final String reason = desc[0].trim();
@@ -212,7 +212,7 @@ public class MarriageFeeCollection extends TaxCollection {
         }
         String installment;
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
-            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 0
+            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
                     && !rcptAccInfo.getIsRevenueAccount()) {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0].trim();
@@ -262,7 +262,7 @@ public class MarriageFeeCollection extends TaxCollection {
         BigDecimal currentInstallmentAmount = BigDecimal.ZERO;
         if (billReceiptInfo != null && billReceiptInfo.getBillReferenceNum() != null) {
             for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails()) {
-                if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 0) {
+                if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
                     currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
                 }
             }
