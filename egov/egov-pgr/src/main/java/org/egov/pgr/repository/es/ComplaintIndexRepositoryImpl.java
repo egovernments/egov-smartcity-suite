@@ -71,11 +71,14 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 
 public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomRepository {
+
+    private static final String LOCALITY_NAME = "localityName";
 
     private static final String RE_OPENED = "reOpened";
 
@@ -157,6 +160,29 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                 .execute().actionGet();
 
         final HashMap<String, SearchResponse> result = new HashMap<>();
+
+        if (grouByField.equals(LOCALITY_NAME)) {
+            final SearchResponse localityMissingResponse = elasticsearchTemplate
+                    .getClient()
+                    .prepareSearch(PGR_INDEX_NAME)
+                    .setQuery(query)
+                    .setSize(0)
+                    .addAggregation(AggregationBuilders.missing("nolocality").field(LOCALITY_NAME)
+                            .subAggregation(
+                                    getAverageWithExclusion("groupByFieldSatisfactionAverage", "satisfactionIndex"))
+                            .subAggregation(
+                                    getCountWithGrouping("groupFieldWiseOpenAndClosedCount", "ifClosed", 2)
+                                            .subAggregation(
+                                                    AggregationBuilders.range("groupByFieldAgeing")
+                                                            .field("complaintAgeingdaysFromDue")
+                                                            .addRange("1week", 0, 8).addRange("1month", 8, 32)
+                                                            .addRange("3months", 32, 91)
+                                                            .addUnboundedFrom("remainingMonths", 91))
+                                            .subAggregation(getCountWithGrouping("groupByFieldSla", "ifSLA", 2))))
+                    .execute().actionGet();
+            result.put("noLocality", localityMissingResponse);
+        }
+
         result.put("consolidatedResponse", consolidatedResponse);
         result.put("tableResponse", tableResponse);
 
@@ -247,7 +273,9 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                                                         AggregationBuilders.topHits("complaintrecord")
                                                                                 .addField(CITY_NAME)
                                                                                 .addField(CITY_CODE).addField(DISTRICT_NAME)
-                                                                                .addField("departmentName").setSize(1))
+                                                                                .addField("departmentName")
+                                                                                .addField("currentFunctionaryMobileNumber")
+                                                                                .setSize(1))
                                                                 .subAggregation(
                                                                         getCountWithGrouping("closedComplaintCount", "ifClosed",
                                                                                 2))
@@ -299,13 +327,13 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
         return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME).setSize(0).setQuery(query)
                 .addAggregation(AggregationBuilders.terms("ulbwise").field(CITY_CODE).size(120)
                         .subAggregation(AggregationBuilders.terms("wardwise").field(WARD_NUMBER).size(size)
-                                .subAggregation(AggregationBuilders.terms("localitywise").field("localityName").size(size)
+                                .subAggregation(AggregationBuilders.terms("localitywise").field(LOCALITY_NAME).size(size)
                                         .subAggregation(AggregationBuilders.topHits("complaintrecord").addField(CITY_CODE)
                                                 .addField("cityDistrictName").addField(CITY_NAME)
-                                                .addField(WARD_NAME).addField("localityName").setSize(1))
+                                                .addField(WARD_NAME).addField(LOCALITY_NAME).setSize(1))
                                         .subAggregation(getCountWithGrouping("complaintCount", "ifClosed", 2)))
                                 .subAggregation(getCountWithGrouping(RE_OPENED_COMPLAINT_COUNT, RE_OPENED, 2))))
-                .addAggregation(AggregationBuilders.missing("nolocality").field("localityName")
+                .addAggregation(AggregationBuilders.missing("nolocality").field(LOCALITY_NAME)
                         .subAggregation(getCountWithGrouping("noLocalityComplaintCount", "ifClosed", 2)))
                 .execute().actionGet();
     }
@@ -313,6 +341,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     @Override
     public List<ComplaintIndex> findAllComplaintsBySource(final String fieldName, final String paramValue) {
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(QueryBuilders.matchQuery(fieldName, paramValue))
+                .withPageable(new PageRequest(0, 5000))
                 .build();
         return elasticsearchTemplate.queryForList(searchQuery, ComplaintIndex.class);
     }
