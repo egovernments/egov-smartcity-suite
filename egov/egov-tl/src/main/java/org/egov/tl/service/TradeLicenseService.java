@@ -71,6 +71,7 @@ import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.entity.dto.SearchForm;
+import org.egov.tl.repository.LicenseRepository;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.hibernate.Criteria;
@@ -90,6 +91,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Autowired
     private LicenseUtils licenseUtils;
+    
+    @Autowired
+    private LicenseRepository licenseRepository;
 
     @Autowired
     private ModuleService moduleService;
@@ -233,29 +237,29 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return reportParams;
     }
 
-    public List<TradeLicense> getTradeLicenseForGivenParam(final String paramValue, final String paramType) {
-        List<TradeLicense> licenseList = new ArrayList<>();
+    public List<String> getTradeLicenseForGivenParam(final String paramValue, final String paramType) {
+        List<String> licenseList = new ArrayList<>();
         if (paramType.equals(Constants.SEARCH_BY_APPNO))
-            licenseList = entityQueryService.findAllBy("from License where upper(applicationNumber) like ?", "%"
-                    + paramValue.toUpperCase() + "%");
-        else if (paramType.equals(Constants.SEARCH_BY_LICENSENO))
-            licenseList = entityQueryService.findAllBy("from License where  upper(licenseNumber) like ?", "%"
-                    + paramValue.toUpperCase() + "%");
+          licenseList = licenseRepository.findApplicationNumberByApplicationNumber("%"+paramValue.toUpperCase()+"%");
+         
+       else if (paramType.equals(Constants.SEARCH_BY_LICENSENO))
+           licenseList=licenseRepository.findLicenseNumberByLicenseNumber("%"+paramValue.toUpperCase()+"%");
+          
         else if (paramType.equals(Constants.SEARCH_BY_OLDLICENSENO))
-            licenseList = entityQueryService.findAllBy("from License where  upper(oldLicenseNumber) like ?", "%"
-                    + paramValue.toUpperCase() + "%");
+            licenseList=licenseRepository.findOldLicenseNumberByOldLicenseNumber("%"+paramValue.toUpperCase()+"%");
+       
         else if (paramType.equals(Constants.SEARCH_BY_TRADETITLE))
-            licenseList = entityQueryService.findAllBy("from License where  upper(nameOfEstablishment) like ?",
-                    "%" + paramValue.toUpperCase() + "%");
+             licenseList=licenseRepository.findNameOfEstablishmentByNameOfEstablishment("%"+paramValue.toUpperCase()+"%");
+          
         else if (paramType.equals(Constants.SEARCH_BY_TRADEOWNERNAME))
-            licenseList = entityQueryService.findAllBy(
-                    "from License where  upper(licensee.applicantName) like ?", "%" + paramValue.toUpperCase() + "%");
+            licenseList=licenseRepository.findApplicantNameByApplicantName("%"+paramValue.toUpperCase()+"%");
+           
         else if (paramType.equals(Constants.SEARCH_BY_PROPERTYASSESSMENTNO))
-            licenseList = entityQueryService.findAllBy("from License where  upper(assessmentNo) like ?", "%"
-                    + paramValue.toUpperCase() + "%");
-        else if (paramType.equals(Constants.SEARCH_BY_MOBILENO))
-            licenseList = entityQueryService.findAllBy("from License where  licensee.mobilePhoneNumber like ?",
-                    "%" + paramValue + "%");
+            licenseList=licenseRepository.findAssessmentNoByAssessmentNo("%"+paramValue.toUpperCase()+"%");
+    
+       else if (paramType.equals(Constants.SEARCH_BY_MOBILENO))
+            licenseList=licenseRepository.findMobilePhoneNumberByMobilePhoneNumber("%"+paramValue.toUpperCase()+"%");
+          
         return licenseList;
     }
 

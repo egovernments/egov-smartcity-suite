@@ -255,9 +255,8 @@ $('#result tbody').on('click','tr td .delete-row',function(e){
 					$('#result tbody tr:last').remove();
 				}else{
 					$.ajax({
-						url: "/tl/domain/commonAjax-deleteFee.action?feeMatrixDetailId="+id,
+						url: '../feematrix/deleterow?feeMatrixDetailId='+id,
 						type : "GET",
-						dataType : "json",
 						success : function(response) {
 							$('#result tbody tr:last').remove();
 						},

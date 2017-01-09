@@ -48,14 +48,17 @@ $(document).ready(function() {
 		},
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		remote: {
-			url:'../domain/commonTradeLicenseAjax-populateData.action?searchParamValue=%QUERY&searchParamType=ApplicationNumber',
+			url:'../search/tradeLicense',
+			replace: function(url,query)
+			{
+				return url+'?searchParamValue='+query+'&searchParamType=ApplicationNumber';
+			},
 			filter: function (data) {
-				// Map the remote source JSON array to a JavaScript object array
-				return $.map(data.ResultSet.Result, function (cl) {
-					return {
-						name: cl.label,
-						value: cl.value
-					};
+			// Map the remote source JSON array to a JavaScript object array
+				return $.map(data, function (applicationNumber){	
+					return{
+						name:applicationNumber
+					}	 
 				});
 			}
 		}
@@ -68,7 +71,7 @@ $(document).ready(function() {
 	$('#applicationNumber').typeahead({
 		  hint: false,
 		  highlight: true,
-		  minLength: 1
+		  minLength: 3
 		}, {
 		displayKey: 'name',
 		source: applicationnoengine.ttAdapter()
@@ -83,14 +86,17 @@ $(document).ready(function() {
 		},
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		remote: {
-			url:'../domain/commonTradeLicenseAjax-populateData.action?searchParamValue=%QUERY&searchParamType=LicenseNumber',
+			url:'../search/tradeLicense',
+			replace: function(url,query)
+			{
+				return url+'?searchParamValue='+query+'&searchParamType=LicenseNumber';
+			},
 			filter: function (data) {
-				// Map the remote source JSON array to a JavaScript object array
-				return $.map(data.ResultSet.Result, function (cl) {
-					return {
-						name: cl.label,
-						value: cl.value
-					};
+			// Map the remote source JSON array to a JavaScript object array
+				return $.map(data, function (licenseNumber){	
+					return{
+						name:licenseNumber
+					}	 
 				});
 			}
 		}
@@ -102,7 +108,7 @@ $(document).ready(function() {
 	$('#licenseNumber').typeahead({
 		  hint: false,
 		  highlight: true,
-		  minLength: 1
+		  minLength: 3
 		}, {
 		displayKey: 'name',
 		source: licensenoengine.ttAdapter()
@@ -116,14 +122,17 @@ $(document).ready(function() {
 		},
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		remote: {
-			url:'../domain/commonTradeLicenseAjax-populateData.action?searchParamValue=%QUERY&searchParamType=OldLicenseNumber',
+			url:'../search/tradeLicense',
+			replace: function(url,query)
+			{
+				return url+'?searchParamValue='+query+'&searchParamType=OldLicenseNumber';
+			},
 			filter: function (data) {
-				// Map the remote source JSON array to a JavaScript object array
-				return $.map(data.ResultSet.Result, function (cl) {
-					return {
-						name: cl.label,
-						value: cl.value
-					};
+			// Map the remote source JSON array to a JavaScript object array
+				return $.map(data, function (oldLicenseNumber){	
+					return{
+						name:oldLicenseNumber
+					}	 
 				});
 			}
 		}
@@ -135,7 +144,7 @@ $(document).ready(function() {
 	$('#oldLicenseNumber').typeahead({
 		  hint: false,
 		  highlight: true,
-		  minLength: 1
+		  minLength: 3
 		}, {
 		displayKey: 'name',
 		source: oldlicensenoengine.ttAdapter()
@@ -150,14 +159,17 @@ $(document).ready(function() {
 		},
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		remote: {
-			url:'../domain/commonTradeLicenseAjax-populateData.action?searchParamValue=%QUERY&searchParamType=TradeTitle',
+			url:'../search/tradeLicense',
+			replace: function(url,query)
+			{
+				return url+'?searchParamValue='+query+'&searchParamType=TradeTitle';
+			},
 			filter: function (data) {
-				// Map the remote source JSON array to a JavaScript object array
-				return $.map(data.ResultSet.Result, function (cl) {
-					return {
-						name: cl.label,
-						value: cl.value
-					};
+			// Map the remote source JSON array to a JavaScript object array
+				return $.map(data, function (tradeTitle){	
+					return{
+						name:tradeTitle
+					}	 
 				});
 			}
 		}
@@ -170,7 +182,7 @@ $(document).ready(function() {
 	$('#tradeTitle').typeahead({
 		  hint: false,
 		  highlight: true,
-		  minLength: 1
+		  minLength: 3
 		}, {
 		displayKey: 'name',
 		source: tradetitleengine.ttAdapter()
@@ -184,14 +196,17 @@ $(document).ready(function() {
 		},
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		remote: {
-			url:'../domain/commonTradeLicenseAjax-populateData.action?searchParamValue=%QUERY&searchParamType=TradeOwnerName',
+			url:'../search/tradeLicense',
+			replace: function(url,query)
+			{
+				return url+'?searchParamValue='+query+'&searchParamType=TradeOwnerName';
+			},
 			filter: function (data) {
-				// Map the remote source JSON array to a JavaScript object array
-				return $.map(data.ResultSet.Result, function (cl) {
-					return {
-						name: cl.label,
-						value: cl.value
-					};
+			// Map the remote source JSON array to a JavaScript object array
+				return $.map(data, function (tradeOwnerName){	
+					return{
+						name:tradeOwnerName
+					}	 
 				});
 			}
 		}
@@ -204,7 +219,7 @@ $(document).ready(function() {
 	$('#tradeOwnerName').typeahead({
 		  hint: false,
 		  highlight: true,
-		  minLength: 1
+		  minLength: 3
 		}, {
 		displayKey: 'name',
 		source: tradeownerengine.ttAdapter()
@@ -219,14 +234,17 @@ $(document).ready(function() {
 		},
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		remote: {
-			url:'../domain/commonTradeLicenseAjax-populateData.action?searchParamValue=%QUERY&searchParamType=PropertyAssessmentNo',
+			url:'../search/tradeLicense',
+			replace: function(url,query)
+			{
+				return url+'?searchParamValue='+query+'&searchParamType=PropertyAssessmentNo';
+			},
 			filter: function (data) {
-				// Map the remote source JSON array to a JavaScript object array
-				return $.map(data.ResultSet.Result, function (cl) {
-					return {
-						name: cl.label,
-						value: cl.value
-					};
+			// Map the remote source JSON array to a JavaScript object array
+				return $.map(data, function (propertyAssessmentNo){	
+					return{
+						name:propertyAssessmentNo
+					}	 
 				});
 			}
 		}
@@ -239,7 +257,7 @@ $(document).ready(function() {
 	$('#propertyAssessmentNo').typeahead({
 		  hint: false,
 		  highlight: true,
-		  minLength: 1
+		  minLength: 3
 		}, {
 		displayKey: 'name',
 		source: propassessnoengine.ttAdapter()
@@ -254,14 +272,17 @@ $(document).ready(function() {
 		},
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		remote: {
-			url:'../domain/commonTradeLicenseAjax-populateData.action?searchParamValue=%QUERY&searchParamType=MobileNo',
+			url:'../search/tradeLicense',
+			replace: function(url,query)
+			{
+				return url+'?searchParamValue='+query+'&searchParamType=MobileNo';
+			},
 			filter: function (data) {
-				// Map the remote source JSON array to a JavaScript object array
-				return $.map(data.ResultSet.Result, function (cl) {
-					return {
-						name: cl.label,
-						value: cl.value
-					};
+			// Map the remote source JSON array to a JavaScript object array
+				return $.map(data, function (mobileNo){	
+					return{
+						name:mobileNo
+					}	 
 				});
 			}
 		}
@@ -274,7 +295,7 @@ $(document).ready(function() {
 	$('#mobileNo').typeahead({
 		  hint: false,
 		  highlight: true,
-		  minLength: 1
+		  minLength: 3
 		}, {
 		displayKey: 'name',
 		source: mobilenoengine.ttAdapter()
@@ -324,9 +345,11 @@ $("#btnsearch").click(
 			
 			$('form').find('input[type=text],input[type="checkbox"], select').each(function(){
 				if($(this).attr('type') == 'checkbox'){
-					if($(this).is(":checked")) valid+=1;
+					if($(this).is(":checked")) 
+						valid+=1;
 				}else{
-					if($(this).val() != "") valid+=1;
+					if($(this).val() != "")
+						valid+=1;
 				}
 	        });
 			
