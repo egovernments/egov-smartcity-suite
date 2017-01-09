@@ -185,7 +185,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Line Estimates]]></text>
+				<text><![CDATA[Estimate]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="550" y="0" width="65" height="47" uuid="74e3ce0c-9b02-457a-a091-0635077f6024"/>

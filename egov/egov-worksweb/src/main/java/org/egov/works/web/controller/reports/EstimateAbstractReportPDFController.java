@@ -334,7 +334,7 @@ public class EstimateAbstractReportPDFController {
 
         if (subTypeOfWork != null)
             queryParameters += messageSource.getMessage("msg.subtypeofwork", null, null)
-                    + egwTypeOfWorkHibernateDAO.getTypeOfWorkById(typeOfWork).getDescription() + ", ";
+                    + egwTypeOfWorkHibernateDAO.getTypeOfWorkById(subTypeOfWork).getDescription() + ", ";
 
         if (departments != null && !departments.toString().equalsIgnoreCase("[null]")) {
             String departmentNames = "";
@@ -400,7 +400,7 @@ public class EstimateAbstractReportPDFController {
                 if (eadwr.getSubTypeOfWorkName() != null)
                     pdf.setSubTypeOfWorkName(eadwr.getSubTypeOfWorkName());
                 else
-                    pdf.setTypeOfWorkName("");
+                    pdf.setSubTypeOfWorkName("");
 
                 if (eadwr.getLineEstimates() != null)
                     pdf.setLineEstimates(eadwr.getLineEstimates());
