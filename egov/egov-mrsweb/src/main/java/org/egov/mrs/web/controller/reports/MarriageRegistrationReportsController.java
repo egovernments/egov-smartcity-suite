@@ -985,7 +985,7 @@ public class MarriageRegistrationReportsController {
             reportsSearchResult.setWifeName(mrgReg[3].toString());
             reportsSearchResult.setDateOfMarriage(mrgReg[4].toString());
             reportsSearchResult.setRegistrationDate(mrgReg[5].toString());
-            reportsSearchResult.setPlaceOfMarriage(mrgReg[6].toString());
+            reportsSearchResult.setPlaceOfMarriage(mrgReg[6]!= null ?mrgReg[6].toString(): "N/A");
             reportsSearchResult.setZone(mrgReg[7].toString());
             reportsSearchResult.setStatus(mrgReg[8].toString());
             reportsSearchResult.setUserName(marriageUtils.getApproverName(Long.valueOf(mrgReg[10].toString())));

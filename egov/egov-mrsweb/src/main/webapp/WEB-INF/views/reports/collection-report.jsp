@@ -65,11 +65,11 @@
 										code="lbl.month" />
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input path="month_year" id="datepicker" type="text"
+									<form:input path="monthYear" id="datepicker" type="text"
 										class="form-control low-width datepicker"
 										data-date-end-date="0d" data-date-today-highlight="true"
 										placeholder="" autocomplete="off" />
-									<form:errors path="month_year" cssClass="add-margin error-msg" />
+									<form:errors path="monthYear" cssClass="add-margin error-msg" />
 								</div>
 								<div class="col-sm-2 control-label">
 								<label>Year</label>

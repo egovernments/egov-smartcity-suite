@@ -107,7 +107,7 @@
 	</definition>
 
 	<definition name="report-registrationstatus" extends="base_layout">
-		<put-attribute name="page-title" value="title.registration"
+		<put-attribute name="page-title" value="title.mrg.reg.status.report"
 			cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/report-registrationstatus.jsp" />
@@ -400,7 +400,7 @@
 			value="/WEB-INF/views/reports/show-monthlyapplns-details.jsp" />
 	</definition>
 	<definition name="report-viewregistration-statusdetails" extends="base_layout">
-		<put-attribute name="page-title" value="title.registration"
+		<put-attribute name="page-title" value="title.mrg.reg.status.details"
 			cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/report-viewregistration-statusdetails.jsp" />
@@ -418,7 +418,7 @@
 			value="/WEB-INF/views/reports/handicapped-marriage-report.jsp" />
 	</definition>
 	<definition name="report-monthwisefundcollection" extends="base_layout">
-		<put-attribute name="page-title" value="title.registration"
+		<put-attribute name="page-title" value="title.hdr.monthlycollection"
 			cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/collection-report.jsp" />
