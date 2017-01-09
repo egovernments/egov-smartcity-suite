@@ -95,4 +95,4 @@
 		</form:form>
 	</div>
 </div>
-<script src="<cdn:url value='/resources/js/app/apartment.js'/>"></script>
+<script src="<cdn:url value='/resources/js/app/apartment.js?rnd=${app_release_no}'/>"></script>

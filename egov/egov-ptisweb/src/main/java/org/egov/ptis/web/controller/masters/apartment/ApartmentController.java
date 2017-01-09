@@ -60,6 +60,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/apartment")
 public class ApartmentController {
+    
+    private static final String APARTMENT_SEARCH = "apartment-search";
 
     private final ApartmentService apartmentService;
 
@@ -83,7 +85,7 @@ public class ApartmentController {
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String search(final Model model) {
-        return "apartment-search";
+        return APARTMENT_SEARCH;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)

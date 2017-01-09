@@ -76,7 +76,7 @@ public class Apartment extends AbstractAuditable {
     private List<ApartmentHouse> apartmentHouse = new ArrayList<>();
 
     @Transient
-    private List<ApartmentHouse> apartmentHouseProxy = new ArrayList<>();
+    private List<ApartmentHouse> apartmentHouseProxy = new ArrayList<>(0);
 
     @NotNull
     private String name;
