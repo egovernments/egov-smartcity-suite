@@ -77,7 +77,7 @@ public class ViewContractorAdvanceController {
         final Double advancePaidTillNow = contractorAdvanceService.getTotalAdvancePaid(
                 contractorAdvanceRequisition.getId() == null ? -1L : contractorAdvanceRequisition.getId(),
                 contractorAdvanceRequisition.getWorkOrderEstimate().getId(),
-                ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.CANCELLED.toString());
+                ContractorAdvanceRequisition.ContractorAdvanceRequisitionStatus.APPROVED.toString());
         model.addAttribute("advancePaidTillNow", advancePaidTillNow);
         model.addAttribute("contractorAdvanceRequisition", updatedContractorAdvance);
         model.addAttribute("workOrderEstimate", updatedContractorAdvance.getWorkOrderEstimate());
