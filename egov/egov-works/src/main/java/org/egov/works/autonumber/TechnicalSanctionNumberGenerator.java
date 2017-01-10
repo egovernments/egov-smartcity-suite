@@ -45,6 +45,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface TechnicalSanctionNumberGenerator {
-    public String getNextNumber(AbstractEstimate abstractEstimate);
+    String getNextNumber(AbstractEstimate abstractEstimate);
 
 }

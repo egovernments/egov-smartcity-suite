@@ -47,8 +47,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface EstimateNumberGenerator {
-    public String getNextNumber(final LineEstimate lineEstimate, final CFinancialYear financialYear);
+    String getNextNumber(final LineEstimate lineEstimate, final CFinancialYear financialYear);
 
-    public String getEstimateNumber(final AbstractEstimate estimate, final CFinancialYear financialYear);
+    String getEstimateNumber(final AbstractEstimate estimate, final CFinancialYear financialYear);
 
 }

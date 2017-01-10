@@ -52,9 +52,6 @@ public class SearchRequestLetterOfAcceptanceForRE {
     private String egwStatus;
     private String contractor;
 
-    public SearchRequestLetterOfAcceptanceForRE() {
-    }
-
     public String getWorkOrderNumber() {
         return workOrderNumber;
     }

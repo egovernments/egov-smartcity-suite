@@ -45,6 +45,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface LetterOfAcceptanceNumberGenerator {
-    public String getNextNumber(final WorkOrderEstimate workOrderEstimate);
+    String getNextNumber(final WorkOrderEstimate workOrderEstimate);
 
 }

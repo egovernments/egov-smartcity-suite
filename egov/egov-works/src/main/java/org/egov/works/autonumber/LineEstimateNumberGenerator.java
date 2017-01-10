@@ -45,6 +45,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface LineEstimateNumberGenerator {
-    public String getNextNumber(LineEstimate lineEstimate);
+    String getNextNumber(LineEstimate lineEstimate);
 
 }

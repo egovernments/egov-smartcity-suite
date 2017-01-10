@@ -44,10 +44,6 @@ public class SearchRequestScheduleCategory {
     private String categoryName;
     private String categoryDescription;
 
-    public SearchRequestScheduleCategory() {
-        // TODO Auto-generated constructor stub
-    }
-
     public String getCategoryName() {
         return categoryName;
     }
