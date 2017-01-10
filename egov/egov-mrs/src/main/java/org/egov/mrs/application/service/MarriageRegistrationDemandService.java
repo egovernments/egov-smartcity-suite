@@ -85,10 +85,9 @@ public class MarriageRegistrationDemandService extends MarriageDemandService {
                 if (dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equalsIgnoreCase(MarriageFeeType.MRGREGISTRATION.name())) {
                     dmdDtl.setAmount(amount);
-                    dmdDtl.setAmtCollected(BigDecimal.ZERO);
                 }
             }
-            demand.addBaseDemand(amount);
+            demand.setBaseDemand(amount);
         }
     }
 

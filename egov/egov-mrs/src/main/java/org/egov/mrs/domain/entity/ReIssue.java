@@ -294,7 +294,7 @@ public class ReIssue extends StateAware {
     }
 
     public boolean isFeeCollected() {
-        return demand.getBaseDemand().compareTo(demand.getAmtCollected()) == 0 ? true : false;
+        return demand.getBaseDemand().compareTo(demand.getAmtCollected()) <= 0 ? true : false;
     }
 
     public Boundary getZone() {

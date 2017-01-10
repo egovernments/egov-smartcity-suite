@@ -85,9 +85,9 @@ public class ReIssueDemandService extends MarriageDemandService {
                 if (dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equalsIgnoreCase(MarriageFeeType.CERTIFICATEISSUE.name())) {
                     dmdDtl.setAmount(amount);
-                    dmdDtl.setAmtCollected(BigDecimal.ZERO);
                 }
             }
+            demand.setBaseDemand(amount);
         }
     }
 
