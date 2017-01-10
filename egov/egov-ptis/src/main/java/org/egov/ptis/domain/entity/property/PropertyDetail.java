@@ -362,4 +362,8 @@ public interface PropertyDetail extends Property {
     public Boolean isCorrAddressDiff();
 
     public void setCorrAddressDiff(Boolean corrAddressDiff);
+    
+    public PropertyDepartment getPropertyDepartment();
+    
+    public void setPropertyDepartment(PropertyDepartment propertyDepartment);
 }

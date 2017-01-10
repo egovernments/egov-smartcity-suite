@@ -1597,7 +1597,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 objection.getProperty()
                         .getPropertyDetail().getWoodType() != null ? objection.getProperty().getPropertyDetail()
                                 .getWoodType().getId() : null,
-                taxExemptedReason);
+                taxExemptedReason, objection.getProperty().getPropertyDetail().getPropertyDepartment() != null ?
+                        objection.getProperty().getPropertyDetail().getPropertyDepartment().getId() : null);
 
         updatePropertyID(objection.getBasicProperty());
         final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(

@@ -201,6 +201,7 @@ public class CreateAction extends PropertyTaxBaseAction{
     private PropertyImpl newProperty = new PropertyImpl();
     private Address ownerAddress = new CorrespondenceAddress();
     Date propCompletionDate = null;
+    private Long propertyDepartmentId;
     
     @Autowired
     private PropertyPersistenceService basicPropertyService;
@@ -568,7 +569,7 @@ public class CreateAction extends PropertyTaxBaseAction{
         taxExemptionId = (taxExemptionId == null || taxExemptionId.isEmpty()) ? "-1" : taxExemptionId;
         property = propService.createProperty(property, getAreaOfPlot(), propertyMutationMaster.getCode(), propTypeId,
                 propUsageId, propOccId, status, getDocNumber(), getNonResPlotArea(), getFloorTypeId(), getRoofTypeId(),
-                getWallTypeId(), getWoodTypeId(), Long.valueOf(taxExemptionId));
+                getWallTypeId(), getWoodTypeId(), Long.valueOf(taxExemptionId), getPropertyDepartmentId());
         property.setStatus(status);
 
         LOGGER.debug("createBasicProp: Property after call to PropertyService.createProperty: " + property);
@@ -1013,5 +1014,13 @@ public class CreateAction extends PropertyTaxBaseAction{
 	public void setApplicationSource(String applicationSource) {
 		this.applicationSource = applicationSource;
 	}
+
+    public Long getPropertyDepartmentId() {
+        return propertyDepartmentId;
+    }
+
+    public void setPropertyDepartmentId(Long propertyDepartmentId) {
+        this.propertyDepartmentId = propertyDepartmentId;
+    }
 
 }

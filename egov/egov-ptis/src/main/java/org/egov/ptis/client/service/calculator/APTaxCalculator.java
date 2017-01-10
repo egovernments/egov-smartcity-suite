@@ -39,12 +39,38 @@
  */
 package org.egov.ptis.client.service.calculator;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
+import static org.egov.ptis.constants.PropertyTaxConstants.BPA_DEVIATION_TAXPERC_1_10;
+import static org.egov.ptis.constants.PropertyTaxConstants.BPA_DEVIATION_TAXPERC_ABOVE_11;
+import static org.egov.ptis.constants.PropertyTaxConstants.BPA_DEVIATION_TAXPERC_NOT_DEFINED;
+import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_DDMMYYY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASERATE_BY_OCCUPANCY_ZONE;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONDETAILS_BY_DEMANDREASON_AND_INSTALLMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.SQUARE_YARD_TO_SQUARE_METER_VALUE;
+
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
-import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.model.EgDemandReasonDetails;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.handler.TaxCalculationInfoXmlHandler;
 import org.egov.ptis.client.model.calculator.APMiscellaneousTax;
@@ -61,35 +87,23 @@ import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.domain.service.calculator.PropertyTaxCalculator;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
-import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 //TODO name class as client specific
 public class APTaxCalculator implements PropertyTaxCalculator {
     private static final Logger LOGGER = Logger.getLogger(APTaxCalculator.class);
     private static BigDecimal RESD_OWNER_DEPRECIATION = new BigDecimal(40);
     private static BigDecimal SEASHORE_RESD_OWNER_DEPRECIATION = new BigDecimal(45);
+    public static final String UNAUTHPENALTY_STARTDATE = "01/04/1987";
     private BigDecimal BUIULDING_VALUE = new BigDecimal(2).divide(new BigDecimal(3), 5, BigDecimal.ROUND_HALF_UP);
     private BigDecimal SITE_VALUE = new BigDecimal(1).divide(new BigDecimal(3), 5, BigDecimal.ROUND_HALF_UP);
     private BigDecimal totalTaxPayable = BigDecimal.ZERO;
     private Boolean isCorporation = Boolean.FALSE;
     private Boolean isSeaShoreULB = Boolean.FALSE;
     private Boolean isPrimaryServiceChrApplicable = Boolean.FALSE;
-    private String unAuthDeviationPerc = "";
     private HashMap<Installment, TaxCalculationInfo> taxCalculationMap = new HashMap<Installment, TaxCalculationInfo>();
     private Properties taxRateProps = null;
-    private Installment currInstallment = null;
 
     @Autowired
     @Qualifier("persistenceService")
@@ -97,15 +111,6 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
-
-    @Autowired
-    private InstallmentHibDao installmentDAO;
-
-    @Autowired
-    private ModuleService moduleService;
-    
-    @Autowired
-    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     /**
      * @param property
@@ -126,7 +131,6 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         taxRateProps = propertyTaxUtil.loadTaxRates();
         isCorporation = propertyTaxUtil.isCorporation();
         isSeaShoreULB = propertyTaxUtil.isSeaShoreULB();
-        currInstallment = propertyTaxCommonUtils.getCurrentInstallment();
         if (isCorporation)
             isPrimaryServiceChrApplicable = propertyTaxUtil.isPrimaryServiceApplicable();
 
@@ -285,22 +289,33 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         }
         // calculating Un Authorized Penalty
         if (!propTypeCode.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
-            if (!(unAuthDeviationPerc == null || "0".equals(unAuthDeviationPerc) || "-1".equals(unAuthDeviationPerc) || (unAuthDeviationPerc != null && unAuthDeviationPerc.intValue() == 0))) {
-                halfYearHeadTax = BigDecimal.ZERO;
-                halfYearHeadTax = calculateUnAuthPenalty(unAuthDeviationPerc, totalHalfTaxPayable);
-                totalHalfTaxPayable = totalHalfTaxPayable.add(halfYearHeadTax);
-                createMiscTax(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, halfYearHeadTax, unitTaxCalculationInfo);
+            try {
+                if (floor.getConstructionDate()
+                        .after(new SimpleDateFormat(DATE_FORMAT_DDMMYYY).parse(UNAUTHPENALTY_STARTDATE))) {
+                    if (!(checkUnAuthDeviationPerc(unAuthDeviationPerc)
+                            || (unAuthDeviationPerc != null && unAuthDeviationPerc.intValue() == 0))) {
+                        halfYearHeadTax = calculateUnAuthPenalty(unAuthDeviationPerc, totalHalfTaxPayable);
+                        totalHalfTaxPayable = totalHalfTaxPayable.add(halfYearHeadTax);
+                        createMiscTax(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, halfYearHeadTax, unitTaxCalculationInfo);
+                    }
+                }
+            } catch (ParseException e) {
+                LOGGER.error(e);
             }
         }
         // calculating Public Service Charges
         if (isPrimaryServiceChrApplicable) {
-            halfYearHeadTax = BigDecimal.ZERO;
             halfYearHeadTax = roundOffToNearestEven(calcPublicServiceCharges(totalHalfTaxPayable));
             totalHalfTaxPayable = totalHalfTaxPayable.add(halfYearHeadTax);
             createMiscTax(DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES, halfYearHeadTax, unitTaxCalculationInfo);
         }
         unitTaxCalculationInfo.setTotalTaxPayable(totalHalfTaxPayable);
         return unitTaxCalculationInfo;
+    }
+    
+    private Boolean checkUnAuthDeviationPerc(BigDecimal unAuthDeviationPerc) {
+        return unAuthDeviationPerc == null || "0".equals(unAuthDeviationPerc.toString())
+                || "-1".equals(unAuthDeviationPerc.toString());
     }
 
     /**

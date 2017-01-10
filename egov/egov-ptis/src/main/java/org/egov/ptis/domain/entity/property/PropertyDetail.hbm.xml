@@ -126,7 +126,7 @@
 		<many-to-one name="wallType" class="org.egov.ptis.domain.entity.property.WallType" column="wallType" />
 		<many-to-one name="woodType" class="org.egov.ptis.domain.entity.property.WoodType" column="woodType" />
 		<many-to-one name="apartment" class="org.egov.ptis.domain.entity.property.Apartment" column="apartment"/>
-		
+		<many-to-one name="propertyDepartment" class="org.egov.ptis.domain.entity.property.PropertyDepartment" column="pt_department"/>
 
 		<!-- <set name="floorDetails" order-by="FLOOR_NO" cascade="all" table="EGPT_FLOOR_DETAIL"> 
 			<key column="ID_PROPERTY_DETAIL" not-null="true" /> <one-to-many class="org.egov.ptis.domain.entity.property.Floor" 

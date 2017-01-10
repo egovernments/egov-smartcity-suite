@@ -127,6 +127,7 @@ import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyDepartment;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -154,6 +155,7 @@ import org.egov.ptis.domain.model.PropertyDetails;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
+import org.egov.ptis.domain.repository.PropertyDepartmentRepository;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
@@ -236,6 +238,9 @@ public class PropertyService {
     private PTBillServiceImpl ptBillServiceImpl;
     @Autowired
     private EisCommonService eisCommonService;
+    
+    @Autowired
+    private PropertyDepartmentRepository ptDepartmentRepository;
 
     /**
      * Creates a new property if property is in transient state else updates persisted property
@@ -259,7 +264,7 @@ public class PropertyService {
     public PropertyImpl createProperty(final PropertyImpl property, final String areaOfPlot, final String mutationCode,
             final String propTypeId, final String propUsageId, final String propOccId, final Character status,
             final String docnumber, final String nonResPlotArea, final Long floorTypeId, final Long roofTypeId,
-            final Long wallTypeId, final Long woodTypeId, final Long taxExemptId) {
+            final Long wallTypeId, final Long woodTypeId, final Long taxExemptId, final Long propertyDepartmentId) {
         LOGGER.debug("Entered into createProperty");
         LOGGER.debug("createProperty: Property: " + property + ", areaOfPlot: " + areaOfPlot + ", mutationCode: "
                 + mutationCode + ",propTypeId: " + propTypeId + ", propUsageId: " + propUsageId + ", propOccId: "
@@ -354,6 +359,10 @@ public class PropertyService {
         if (property.getApplicationNo() == null)
             property.setApplicationNo(applicationNumberGenerator.generate());
         LOGGER.debug("Exiting from createProperty");
+        if(propertyDepartmentId != null && propertyDepartmentId !=-1){
+            final PropertyDepartment propertyDepartment = ptDepartmentRepository.findOne(propertyDepartmentId);
+            property.getPropertyDetail().setPropertyDepartment(propertyDepartment);
+        }
         return property;
     }
 
