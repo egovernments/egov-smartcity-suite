@@ -75,7 +75,10 @@ $(document)
 							&& ((status == 'CREATED' && wfstate != null)
 									|| status == 'VERIFIED'
 									|| status == 'ESTIMATIONNOTICEGENERATED'
-									|| status == 'WORKORDERGENERATED' || status == 'APPROVED')) {
+									|| status == 'WORKORDERGENERATED' || status == 'APPROVED'
+										|| status == 'CLOSERINPROGRESS'
+											|| status=='RECONNECTIONINPROGRESS')
+											|| status=='RECONNDIGSIGNPENDING') {
 						$(".show-row").hide();
 						$('#approverDetailHeading').hide();
 						$('#approvalDepartment').removeAttr('required');
