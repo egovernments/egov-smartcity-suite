@@ -143,7 +143,7 @@ public interface PropertyTaxConstants {
 
     public static final String OBJECTION_RECORD_GENERATEHEARINGNOTICE = "GENERATE HEARING NOTICE";
 
-    public static final String OBJECTION_RECORD_INSPECTIONDETAILS = "RECORD INSPECTION DETAILS";
+    public static final String OBJECTION_RECORD_INSPECTIONDETAILS = "Record inspection details";
     public static final String OBJECTION_RECORD_OBJECTIONOUTCOME = "RECORD OBJECTION OUTCOME";
     public static final String OBJECTION_RECORD_SAVED = "OBJECTION RECORD";
     public static final String OBJECTION_HEARINGDATE_SAVED = "HEARING DATE";

@@ -139,8 +139,14 @@
 	}
 
 	function onSubmit() {
-
 		var actionName = document.getElementById('workFlowAction').value;
+		if(actionName == 'Reject Inspection') {
+			var comments = jQuery("#approverComments").val();
+			if(comments == null || comments == '') {
+				bootbox.alert("Please Enter Approver Remarks ");
+				return false;
+			}
+	    }
 		var action = null;
 		var userDesg = '<s:property value="%{userDesgn}"/>';
 		var statusModuleType = '<s:property value="%{model.egwStatus.moduletype}"/>';
