@@ -1,0 +1,1 @@
+update eg_wf_matrix set nextstate = 'GRP:Registered' where objecttype='RevisionPetition' and currentstate = 'GRP:NEW';
