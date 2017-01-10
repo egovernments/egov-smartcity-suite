@@ -51,6 +51,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.mrs.domain.enums.MarriageDocumentType;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
@@ -63,6 +64,8 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Entity
 @Table(name = "egmrs_document")
+@Unique(id = "id", tableName = "egmrs_document", columnName = { "name","code" }, fields = {
+"name","code" }, enableDfltMsg = false, message = "Already Exist.Name should be unique.")
 @SequenceGenerator(name = MarriageDocument.SEQ_DOCUMENT, sequenceName = MarriageDocument.SEQ_DOCUMENT, allocationSize = 1)
 public class MarriageDocument extends AbstractAuditable {
 
@@ -86,8 +89,8 @@ public class MarriageDocument extends AbstractAuditable {
     private boolean mandatory;
 
     @NotNull
-    @SafeHtml
-    private String documentProofType;
+    @Enumerated(EnumType.STRING)
+    private DocumentProofType documentProofType;
     @NotNull
     @Enumerated(EnumType.STRING)
     private MarriageDocumentType type;
@@ -161,11 +164,12 @@ public class MarriageDocument extends AbstractAuditable {
         this.mandatory = mandatory;
     }
 
-    public String getDocumentProofType() {
+    public DocumentProofType getDocumentProofType() {
         return documentProofType;
     }
 
-    public void setDocumentProofType(final String documentProofType) {
+    public void setDocumentProofType(DocumentProofType documentProofType) {
         this.documentProofType = documentProofType;
     }
+
 }

@@ -367,26 +367,26 @@
 	</definition>
 
 	<definition name="status-timeofmrg-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.status.time.ofmrg.details"
-		cascade="true" />
-	<put-attribute name="body"
-		value="/WEB-INF/views/reports/status-timeofmrg-view.jsp" />
+		<put-attribute name="page-title" value="title.status.time.ofmrg.details"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/reports/status-timeofmrg-view.jsp" />
 	</definition>
-	
+
 	<definition name="reissue-success" extends="base_layout">
 		<put-attribute name="page-title" value="title.reissue"
 			cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/reissue/reissue-success.jsp" />
 	</definition>
-	
+
 	<definition name="ageing-report" extends="base_layout">
 		<put-attribute name="page-title" value="title.registration.ageing.report"
 			cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/ageing-report.jsp" />
 	</definition>
-	
+
 	<definition name="ageingreport-view" extends="base_layout">
 		<put-attribute name="page-title" value="title.registration.ageing.report"
 			cascade="true" />
@@ -399,7 +399,8 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/show-monthlyapplns-details.jsp" />
 	</definition>
-	<definition name="report-viewregistration-statusdetails" extends="base_layout">
+	<definition name="report-viewregistration-statusdetails"
+		extends="base_layout">
 		<put-attribute name="page-title" value="title.mrg.reg.status.details"
 			cascade="true" />
 		<put-attribute name="body"
@@ -411,7 +412,7 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/religion-wise-statutory-report.jsp" />
 	</definition>
-		<definition name="handicapped-marriage-report" extends="base_layout">
+	<definition name="handicapped-marriage-report" extends="base_layout">
 		<put-attribute name="page-title" value="lbl.handicapped.report.title"
 			cascade="true" />
 		<put-attribute name="body"
@@ -422,5 +423,38 @@
 			cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/collection-report.jsp" />
+	</definition>
+
+	<definition name="document-update" extends="base_layout">
+		<put-attribute name="page-title" value="title.Document.update"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/masters/document/document-update.jsp" />
+	</definition>
+	<definition name="document-view" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.document"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/masters/document/document-view.jsp" />
+	</definition>
+	<definition name="document-search" extends="base_layout">
+		<put-attribute name="page-title" value="title.Document.search"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/masters/document/document-search.jsp" />
+	</definition>
+
+	<definition name="document-create" extends="base_layout">
+		<put-attribute name="page-title" value="title.create.document"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/masters/document/document-create.jsp" />
+	</definition>
+
+	<definition name="document-success" extends="base_layout">
+		<put-attribute name="page-title" value="title.document.success"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/masters/document/document-success.jsp" />
 	</definition>
 </tiles-definitions>
