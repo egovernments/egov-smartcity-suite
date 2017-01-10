@@ -69,6 +69,8 @@ public class CouncilMemberController {
     protected FileStoreUtils fileStoreUtils;
     @Autowired
     private CouncilMemberIndexService councilMemberIndexService;
+    @Autowired
+    private CouncilMemberValidator councilMemberValidator;
     private static final Logger LOGGER = Logger.getLogger(CouncilMemberController.class);
 
     private void prepareNewForm(final Model model) {
@@ -94,6 +96,7 @@ public class CouncilMemberController {
     public String create(@Valid @ModelAttribute final CouncilMember councilMember, final BindingResult errors,
             @RequestParam final MultipartFile attachments, final Model model,
             final RedirectAttributes redirectAttrs) {
+        councilMemberValidator.validate(councilMember, errors);
         if (errors.hasErrors()) {
             prepareNewForm(model);
             return COUNCILMEMBER_NEW;
@@ -129,6 +132,7 @@ public class CouncilMemberController {
     public String update(@Valid @ModelAttribute final CouncilMember councilMember, @RequestParam final MultipartFile attachments,
             final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
+        councilMemberValidator.validate(councilMember, errors);
         if (errors.hasErrors()) {
             prepareNewForm(model);
             return COUNCILMEMBER_EDIT;

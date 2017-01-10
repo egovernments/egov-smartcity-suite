@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,7 +50,7 @@ public class CouncilPartyController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final CouncilParty councilParty, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
-
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "notempty.cncl.partyAffiliation");
         if (councilParty != null && councilParty.getCode() == null)
             councilParty.setCode(RandomStringUtils.random(4, Boolean.TRUE, Boolean.TRUE).toUpperCase());
 
@@ -71,6 +72,7 @@ public class CouncilPartyController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final CouncilParty councilParty, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "notempty.cncl.partyAffiliation");
         if (errors.hasErrors()) {
             return COUNCILPARTY_EDIT;
         }
