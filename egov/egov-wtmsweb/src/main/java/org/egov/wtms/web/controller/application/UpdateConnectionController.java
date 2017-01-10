@@ -160,8 +160,9 @@ public class UpdateConnectionController extends GenericConnectionController {
         Boolean isCommissionerLoggedIn = Boolean.FALSE;
         Boolean isSanctionedDetailEnable = isCommissionerLoggedIn;
         final String loggedInUserDesignation = waterTaxUtils.loggedInUserDesignation(waterConnectionDetails);
-        if (!waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.RECONNECTIONCONNECTION)
-                ||!waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CLOSURECONN)){
+        if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
+                ||waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE)
+                ||waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION)){
              if(!waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)
                 || !waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN)
                 || !waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED ))
