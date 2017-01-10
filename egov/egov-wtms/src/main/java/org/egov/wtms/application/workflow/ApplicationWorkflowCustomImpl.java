@@ -290,17 +290,14 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
 
     protected boolean getloggedinUserDesignationForEstimationAndWorkOrderGeneratedStatus(final WaterConnectionDetails waterConnectionDetails,
             final String loggedInUserDesignation) {
-        return loggedInUserDesignation != null && !"".equals(loggedInUserDesignation) && loggedInUserDesignation
+        return loggedInUserDesignation != null && !"".equals(loggedInUserDesignation) && (loggedInUserDesignation
                 .equals(WaterTaxConstants.COMMISSIONER_DESGN)
                 || loggedInUserDesignation.equals(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN)
                 || loggedInUserDesignation.equals(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
                 || loggedInUserDesignation.equals(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
                 || loggedInUserDesignation.equals(WaterTaxConstants.TAP_INSPPECTOR_DESIGN)
-                || loggedInUserDesignation.equals(WaterTaxConstants.ASSISTANT_ENGINEER_DESIGN)
-                        && (waterConnectionDetails.getStatus().getCode()
-                                .equals(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED)
-                                || waterConnectionDetails.getStatus().getCode()
-                                        .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN));
+                || loggedInUserDesignation.equals(WaterTaxConstants.ASSISTANT_ENGINEER_DESIGN))
+                        ;
     }
 
     public String getNatureOfTask(final WaterConnectionDetails waterConnectionDetails) {

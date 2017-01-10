@@ -164,10 +164,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                 ||waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE)
                 ||waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION)){
              if(waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)
-                || waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING)
-                || waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_APPROVED)
-                ||waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED)
-                ||waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED))
+                || waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING))
             workflowContainer.setCurrentDesignation(loggedInUserDesignation);
         }
         if (waterConnectionDetails.getCloseConnectionType() != null
