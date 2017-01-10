@@ -37,46 +37,37 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
-<div class="alert alert-danger" id="schedulecategory_error" class="alert alert-danger" style="display: none;"></div>
-<div class="panel panel-primary" data-collapsed="0" style="text-align: left">
-	<div class="panel-heading">
-		<div class="panel-title">
-			<s:if test="%{id==null}"><s:text name="estimate.scheduleCategory.name" />
-		</s:if>
-		<s:elseif test="%{id!=null && mode=='edit'}"><s:text name="schedCategory.modify"/>
-		</s:elseif>
-		<s:else><s:text name="scheduleCategory.view.sor"/>
-		</s:else>
-		</div>
-	</div>
-	<div class="panel-body">
-		<label class="col-sm-3 control-label text-right"> <s:text name="schedCategory.code" /><span class="mandatory"></span></label>
-			<s:hidden name="id"	id="id" />
-			<s:hidden name="mode" id="mode" />
-		<div class="col-sm-3 add-margin">
-			<s:textfield cssClass="form-control patternvalidation" data-pattern="alphanumericwithallspecialcharacterswithoutspace" name="code" maxlength="15"	id="code" size="40" />
-		</div>
-		<label class="col-sm-2 control-label text-right"> <s:text name="schedCategory.description" /><span class="mandatory"></span></label>
-		<div class="col-sm-3 add-margin">
-			<s:textfield cssClass="form-control" name="description"	maxlength="150" id="description" size="40" />
-		</div>
-	</div>
-</div>
-
+<%@ page contentType="text/html" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <div class="row">
-	<div class="col-sm-12 text-center buttonholdersearch">
-		<s:if test="%{id==null}">
-			<s:submit cssClass="btn btn-primary" value="Create" id="saveButton"
-				name="button" method="save" onclick="return methodTest();" /> &nbsp;
-		</s:if>
-		<s:elseif test="%{id!=null && mode=='edit'}">
-			<s:submit cssClass="btn btn-primary" value="Modify" id="saveButton"
-				name="button" method="save" onclick="return methodTest();" /> &nbsp;
-		</s:elseif>
-		<s:else>
-			<s:text name="scheduleCategory.view.sor" />
-		</s:else>
-		<input type="button" class="btn btn-default" value="Close" id="closeButton" name="button" onclick="window.close();" />
+	<div class="col-md-12">
+		<div id="overheadTable" class="panel panel-primary" data-collapsed="0"
+			style="text-align: left">
+			<div class="panel-heading">
+			<c:if test="${mode=='view' }">
+				<div class="panel-title">
+					<spring:message code="lbl.viewschedulecategory" />
+				</div>
+			</c:if>	
+			</div>
+			<div class="panel-body">
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.categorycode" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<c:out value="${scheduleCategory.code}" />
+					</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.categoryname" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<c:out value="${scheduleCategory.description}" />
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>

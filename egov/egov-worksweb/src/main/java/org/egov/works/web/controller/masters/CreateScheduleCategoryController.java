@@ -39,47 +39,72 @@
  */
 package org.egov.works.web.controller.masters;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.masters.entity.ScheduleCategory;
-import org.egov.works.masters.entity.SearchRequestScheduleCategory;
 import org.egov.works.masters.service.ScheduleCategoryService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping(value = "/masters")
-public class SearchScheduleCategoryController {
+public class CreateScheduleCategoryController extends BaseScheduleCategoryController {
+
+    @Autowired
+    @Qualifier("messageSource")
+    private MessageSource messageSource;
 
     @Autowired
     private ScheduleCategoryService scheduleCategoryService;
 
-    @RequestMapping(value = "/searchform-schedulecategory", method = RequestMethod.GET)
-    public String searchScheduleCategory(
-            @ModelAttribute final SearchRequestScheduleCategory searchRequestScheduleCategory,
-            final Model model, final HttpServletRequest request) throws ApplicationException {
-        model.addAttribute("searchRequestScheduleCategory", searchRequestScheduleCategory);
-        final String mode = request.getParameter(WorksConstants.MODE);
-        model.addAttribute(WorksConstants.MODE, mode);
-        return "schedulecategory-search";
+    @RequestMapping(value = "/schedulecategory-newform", method = RequestMethod.GET)
+    public String showScheduleCategoryForm(final Model model) {
+        final ScheduleCategory scheduleCategory = new ScheduleCategory();
+        model.addAttribute("scheduleCategory", scheduleCategory);
+        return "scheduleCategory-form";
     }
 
-    @RequestMapping(value = "/schedulecategory-view/{scheduleCategoryId}", method = RequestMethod.GET)
-    public String viewScheduleCategory(@PathVariable final String scheduleCategoryId, final Model model,
-            final HttpServletRequest request)
-            throws ApplicationException {
-        final ScheduleCategory scheduleCategory = scheduleCategoryService
-                .getScheduleCategoryById(Long.parseLong(scheduleCategoryId));
+    @RequestMapping(value = "/schedulecategory-save", method = RequestMethod.POST)
+    public String createScheduleCategory(@Valid @ModelAttribute final ScheduleCategory scheduleCategory,
+            final BindingResult resultBinder, final Model model) throws ApplicationException, IOException {
+        validateScheduleCategory(scheduleCategory, resultBinder);
+        if (resultBinder.hasErrors()) {
+            model.addAttribute("scheduleCategory", scheduleCategory);
+            return "scheduleCategory-form";
+        }
+        scheduleCategoryService.save(scheduleCategory);
+        return "redirect:/masters/schedulecategory-success?scheduleCategoryId=" + scheduleCategory.getId();
+
+    }
+
+    @RequestMapping(value = "/schedulecategory-success", method = RequestMethod.GET)
+    public String successView(final Model model, final HttpServletRequest request) {
+        final Long scheduleCategoryId = Long.valueOf(request.getParameter("scheduleCategoryId"));
+        final ScheduleCategory scheduleCategory = scheduleCategoryService.getScheduleCategoryById(scheduleCategoryId);
+        final String mode = request.getParameter(WorksConstants.MODE);
         model.addAttribute("scheduleCategory", scheduleCategory);
-        model.addAttribute(WorksConstants.MODE, WorksConstants.VIEW);
+        if (mode != null && mode.equalsIgnoreCase(WorksConstants.EDIT)) {
+            model.addAttribute(WorksConstants.MODE, mode);
+            model.addAttribute("modifySuccess", messageSource.getMessage("msg.schedulecategory.modify.success",
+                    null, null));
+        } else
+            model.addAttribute("createSuccess", messageSource.getMessage("msg.schedulecategory.save.success",
+                    new String[] { scheduleCategory.getCode() }, null));
+
         return "scheduleCategory-success";
+
     }
 
 }

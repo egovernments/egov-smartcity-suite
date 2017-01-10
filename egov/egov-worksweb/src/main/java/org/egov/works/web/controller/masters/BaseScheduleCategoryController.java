@@ -39,47 +39,27 @@
  */
 package org.egov.works.web.controller.masters;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.validation.regex.Constants;
 import org.egov.works.masters.entity.ScheduleCategory;
-import org.egov.works.masters.entity.SearchRequestScheduleCategory;
-import org.egov.works.masters.service.ScheduleCategoryService;
 import org.egov.works.utils.WorksConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.validation.BindingResult;
 
 @Controller
-@RequestMapping(value = "/masters")
-public class SearchScheduleCategoryController {
+public abstract class BaseScheduleCategoryController {
 
-    @Autowired
-    private ScheduleCategoryService scheduleCategoryService;
+    protected void validateScheduleCategory(final ScheduleCategory scheduleCategory,
+            final BindingResult resultBinder) {
+        if (scheduleCategory.getCode() == null)
+            resultBinder.reject("error.schedulecategory.code.is.required", "error.schedulecategory.code.is.required");
+        if (scheduleCategory.getDescription() == null)
+            resultBinder.reject("error.schedulecategory.name.empty", "error.schedulecategory.name.empty");
+        if (scheduleCategory.getCode() != null
+                && !scheduleCategory.getCode().matches(WorksConstants.ALPHANUMERICWITHHYPHENSLASH))
+            resultBinder.reject("error.schedulecategory.code.invalid", "error.schedulecategory.code.invalid");
+        if (scheduleCategory.getDescription() != null
+                && !scheduleCategory.getDescription().matches(Constants.ALPHANUMERICWITHSPECIALCHAR))
+            resultBinder.reject("error.schedulecategory.name.invalid", "error.schedulecategory.name.invalid");
 
-    @RequestMapping(value = "/searchform-schedulecategory", method = RequestMethod.GET)
-    public String searchScheduleCategory(
-            @ModelAttribute final SearchRequestScheduleCategory searchRequestScheduleCategory,
-            final Model model, final HttpServletRequest request) throws ApplicationException {
-        model.addAttribute("searchRequestScheduleCategory", searchRequestScheduleCategory);
-        final String mode = request.getParameter(WorksConstants.MODE);
-        model.addAttribute(WorksConstants.MODE, mode);
-        return "schedulecategory-search";
     }
-
-    @RequestMapping(value = "/schedulecategory-view/{scheduleCategoryId}", method = RequestMethod.GET)
-    public String viewScheduleCategory(@PathVariable final String scheduleCategoryId, final Model model,
-            final HttpServletRequest request)
-            throws ApplicationException {
-        final ScheduleCategory scheduleCategory = scheduleCategoryService
-                .getScheduleCategoryById(Long.parseLong(scheduleCategoryId));
-        model.addAttribute("scheduleCategory", scheduleCategory);
-        model.addAttribute(WorksConstants.MODE, WorksConstants.VIEW);
-        return "scheduleCategory-success";
-    }
-
 }

@@ -38,5 +38,37 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ include file="schedulecategory-new.jsp" %>
-<script src="<cdn:url value='/resources/js/works.js?rnd=${app_release_no}'/>"></script> 
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
+<div class="page-container" id="page-container">
+<input type="hidden" name="mode" value="${mode}" />
+	
+		<c:if test="${ mode != 'view'}">
+			<div class="new-page-header" >
+				<c:choose>
+					<c:when test="${ mode == 'edit'}">
+						${modifySuccess}
+					</c:when>
+				<c:otherwise>
+						${createSuccess}
+				</c:otherwise>
+			</c:choose>
+			</div>
+			</c:if>
+				<jsp:include page="schedulecategory-commonview.jsp" />
+			<div class="col-sm-12 text-center">
+				<div class="row">
+				<c:if test="${ mode != 'view' && mode != 'edit'}">
+					<input type="submit" name="create" Class="btn btn-primary" value="Create New Schedule Category" id="CREATE" name="button" onclick="createNewScheduleCategory();" />
+				</c:if>
+					<input type="submit" name="closeButton" id="closeButton"
+						value="Close" Class="btn btn-default" onclick="window.close();" />
+				</div>
+			</div>
+		
+</div>
+<script
+	src="<cdn:url value='/resources/js/master/schedulecategory.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/common/commondisablebackspace.js?rnd=${app_release_no}'/>"></script>	

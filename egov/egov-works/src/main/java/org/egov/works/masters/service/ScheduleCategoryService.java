@@ -41,19 +41,16 @@
 package org.egov.works.masters.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.works.masters.entity.ScheduleCategory;
+import org.egov.works.masters.entity.ScheduleOfRate;
 import org.egov.works.masters.entity.SearchRequestScheduleCategory;
 import org.egov.works.masters.repository.ScheduleCategoryRepository;
-import org.egov.works.services.WorksService;
+import org.egov.works.masters.repository.ScheduleOfRateRepository;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -74,50 +71,22 @@ public class ScheduleCategoryService {
     private ScheduleCategoryRepository scheduleCategoryRepository;
 
     @Autowired
-    private WorksService worksService;
-
-    @Autowired
-    private UserService userService;
+    private ScheduleOfRateRepository scheduleOfRateRepository;
 
     public ScheduleCategory getScheduleCategoryById(final Long scheduleCategoryId) {
-        final ScheduleCategory scheduleCategory = entityManager.find(ScheduleCategory.class,
-                scheduleCategoryId);
-        return scheduleCategory;
+        return scheduleCategoryRepository.findOne(scheduleCategoryId);
     }
 
-    // public List<ScheduleCategory> getAllScheduleCategories() {
-    // final Query query = entityManager.createQuery("from ScheduleCategory sc");
-    // final List<ScheduleCategory> scheduleCategoryList = query.getResultList();
-    // return scheduleCategoryList;
-    // }
-
-    public boolean checkForSOR(final Long id) {
-        final Query query = entityManager.createQuery(" from ScheduleOfRate rate where sor_category_id  = "
-                + "(select id from ScheduleCategory  where id = :id)");
-        query.setParameter("id", Long.valueOf(id));
-        final List retList = query.getResultList();
-        if (retList != null && !retList.isEmpty())
+    public boolean checkForSOR(final Long categoryId) {
+        final List<ScheduleOfRate> rates = scheduleOfRateRepository.findByScheduleCategory_id(categoryId);
+        if (rates != null && !rates.isEmpty())
             return false;
         else
             return true;
-    }
-
-    public boolean checkForScheduleCategory(final String code) {
-        final Query query = entityManager.createQuery(" from ScheduleCategory  where code = :code");
-        query.setParameter("code", code);
-        final List retList = query.getResultList();
-        if (retList != null && !retList.isEmpty())
-            return true;
-        else
-            return false;
     }
 
     public List<ScheduleCategory> getAllScheduleCategories() {
         return scheduleCategoryRepository.findAll();
-    }
-
-    public ScheduleCategory findById(final Long id, final boolean b) {
-        return scheduleCategoryRepository.findOne(id);
     }
 
     @Transactional
@@ -145,18 +114,6 @@ public class ScheduleCategoryService {
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
-    }
-
-    // TODO: Need to remove this method after getting better alternate option
-    public ScheduleCategory setPrimaryDetails(final ScheduleCategory scheduleCategory) {
-        final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
-        if (scheduleCategory.getId() == null) {
-            scheduleCategory.setCreatedBy(user);
-            scheduleCategory.setCreatedDate(new Date());
-        }
-        scheduleCategory.setModifiedBy(user);
-        scheduleCategory.setModifiedDate(new Date());
-        return scheduleCategory;
     }
 
     public ScheduleCategory findByCode(final String code) {

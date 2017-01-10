@@ -571,4 +571,20 @@
         <put-attribute name="body" value="/WEB-INF/views/contractoradvance/contractoradvance-cancel-success.jsp"/>
     </definition>
     
+    <definition name="scheduleCategory-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.createschedulecategory" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/schedulecategory/schedulecategory-form.jsp"/>
+    </definition>
+    
+    <definition name="scheduleCategory-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.viewschedulecategory" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/schedulecategory/schedulecategory-success.jsp"/>
+    </definition>
+    
+    <definition name="scheduleCategory-modify" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.modifyschedulecategory" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/schedulecategory/schedulecategory-modify.jsp"/>
+    </definition>
+    
+    
 </tiles-definitions>

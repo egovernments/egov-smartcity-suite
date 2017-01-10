@@ -39,53 +39,40 @@
  */
 package org.egov.works.masters.entity;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.BaseModel;
-import org.egov.works.utils.WorksConstants;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.SafeHtml;
 
-import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
+@Entity
+@Table(name = "EGW_SCHEDULECATEGORY")
+@Unique(fields = { "code" }, enableDfltMsg = true)
+@SequenceGenerator(name = ScheduleCategory.SEQ_EGW_SCHEDULECATEGORY, sequenceName = ScheduleCategory.SEQ_EGW_SCHEDULECATEGORY, allocationSize = 1)
+public class ScheduleCategory extends AbstractAuditable {
 
-@Unique(fields = "code", id = "id", tableName = "EGW_SCHEDULECATEGORY", columnName = "CODE", message = "scheduleCategory.code.isunique")
-public class ScheduleCategory extends BaseModel {
+    private static final long serialVersionUID = 5516485821231001698L;
 
-    private static final long serialVersionUID = -9168726999209110086L;
-    @Length(max = 150, message = "ScheCategory.description.length")
+    public static final String SEQ_EGW_SCHEDULECATEGORY = "SEQ_EGW_SCHEDULECATEGORY";
+
+    @NotNull
+    @SafeHtml
     private String description;
 
-    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHARWITHOUTSPACE, message = "schedulecategory.code.alphaNumeric")
-    @Length(max = 15, message = "ScheCategory.code.length")
-    @Required(message = "contractor.code.null")
+    @NotNull
+    @SafeHtml
     private String code;
-    private ScheduleCategory parent;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_SCHEDULECATEGORY, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-    public ScheduleCategory() {
-    }
-
-    public ScheduleCategory getParent() {
-        return parent;
-    }
-
-    public void setParent(final ScheduleCategory parent) {
-        this.parent = parent;
-    }
-
-    @StringLengthFieldValidator(fieldName = "description", message = "ScheCategory.description.length", key = "i18n.key", shortCircuit = true, trim = true, minLength = "1", maxLength = "150")
-    @NotEmpty(message = "scheduleCategory.description.not.empty")
     public String getDescription() {
         return description;
     }
@@ -94,7 +81,6 @@ public class ScheduleCategory extends BaseModel {
         this.description = description;
     }
 
-    @NotEmpty(message = "scheduleCategory.code.not.empty")
     public String getCode() {
         return code;
     }
@@ -103,34 +89,14 @@ public class ScheduleCategory extends BaseModel {
         this.code = code;
     }
 
-    public ScheduleCategory(final String code, final String description) {
-        super();
-        this.code = code;
-        this.description = description;
-    }
-
-    public String getSearchableData() {
-        return getCode() + " " + getDescription() + " " + (parent == null ? "" : parent.getSearchableData());
+    @Override
+    public Long getId() {
+        return id;
     }
 
     @Override
-    public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-
-        if (code == null && description == null)
-            return Arrays.asList(new ValidationError("code", "scheduleCategory.code.not.empty"));
-        if (description == null)
-            return Arrays.asList(new ValidationError("description", "scheduleCategory.description.not.empty"));
-
-        if (validationErrors.isEmpty())
-            return null;
-        else
-            return validationErrors;
+    public void setId(final Long id) {
+        this.id = id;
     }
-}
 
-/*
- * public boolean validateId(final String code) { final Query query = entityManager.createQuery(
- * "(from ScheduleCategory  where code  =  :code)"); query.setParameter("code", code); final List retList = query.getResultList();
- * if (retList != null && !retList.isEmpty()) return false; else return true; } }
- */
+}

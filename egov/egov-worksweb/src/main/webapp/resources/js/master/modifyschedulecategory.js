@@ -114,5 +114,5 @@ function getFormData($form){
 }
 
 function openScheduleCategory(scheduleCategoryId){
-	window.location = '/egworks/masters/scheduleCategory-edit.action?mode=edit&id='+scheduleCategoryId;
+	window.location = '/egworks/masters/schedulecategory-update/'+scheduleCategoryId;
 }

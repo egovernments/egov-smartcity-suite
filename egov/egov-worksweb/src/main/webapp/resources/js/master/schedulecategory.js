@@ -38,32 +38,5 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 function createNewScheduleCategory() {
-	window.location = "/egworks/masters/scheduleCategory-newform.action";
-}
-
-function methodTest() {
-	var categoryCode = document.getElementById("code").value;
-	var categoryName = document.getElementById("description").value;
-	if (categoryCode == '') {
-        showMessage('schedulecategory_error', 'Category Code is Required');
-        return false;
-    }
-	if (categoryName == '') {
-        showMessage('schedulecategory_error', 'Category Name is Required');
-        return false;
-
-    }
-	return true;
-}
-
-function disableFields() {
-	var mode = document.getElementById('mode').value;
-	if(mode=='view'){
-	document.getElementById("code").disabled = true;
-	document.getElementById("description").disabled = true;	
-	}
-	else if(mode=='edit'){
-	document.getElementById("code").disabled = false;
-	document.getElementById("description").disabled = false;	
-	}
+	window.location = "/egworks/masters/schedulecategory-newform";
 }

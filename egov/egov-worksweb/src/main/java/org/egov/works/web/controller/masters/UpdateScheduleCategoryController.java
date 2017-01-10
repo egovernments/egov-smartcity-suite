@@ -39,16 +39,16 @@
  */
 package org.egov.works.web.controller.masters;
 
-import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.masters.entity.ScheduleCategory;
-import org.egov.works.masters.entity.SearchRequestScheduleCategory;
 import org.egov.works.masters.service.ScheduleCategoryService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,30 +56,44 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping(value = "/masters")
-public class SearchScheduleCategoryController {
+public class UpdateScheduleCategoryController extends BaseScheduleCategoryController {
 
     @Autowired
     private ScheduleCategoryService scheduleCategoryService;
 
-    @RequestMapping(value = "/searchform-schedulecategory", method = RequestMethod.GET)
-    public String searchScheduleCategory(
-            @ModelAttribute final SearchRequestScheduleCategory searchRequestScheduleCategory,
-            final Model model, final HttpServletRequest request) throws ApplicationException {
-        model.addAttribute("searchRequestScheduleCategory", searchRequestScheduleCategory);
-        final String mode = request.getParameter(WorksConstants.MODE);
-        model.addAttribute(WorksConstants.MODE, mode);
-        return "schedulecategory-search";
+    @RequestMapping(value = "/schedulecategory-update/{scheduleCategoryId}", method = RequestMethod.GET)
+    public String showScheduleCategoryToModify(final Model model, @PathVariable final Long scheduleCategoryId)
+            throws ApplicationException {
+        final ScheduleCategory scheduleCategory = scheduleCategoryService.getScheduleCategoryById(scheduleCategoryId);
+        model.addAttribute("scheduleCategory", scheduleCategory);
+        model.addAttribute(WorksConstants.MODE, WorksConstants.EDIT);
+        return "scheduleCategory-modify";
     }
 
-    @RequestMapping(value = "/schedulecategory-view/{scheduleCategoryId}", method = RequestMethod.GET)
-    public String viewScheduleCategory(@PathVariable final String scheduleCategoryId, final Model model,
-            final HttpServletRequest request)
-            throws ApplicationException {
-        final ScheduleCategory scheduleCategory = scheduleCategoryService
-                .getScheduleCategoryById(Long.parseLong(scheduleCategoryId));
-        model.addAttribute("scheduleCategory", scheduleCategory);
-        model.addAttribute(WorksConstants.MODE, WorksConstants.VIEW);
-        return "scheduleCategory-success";
+    @RequestMapping(value = "/schedulecategory-update", method = RequestMethod.POST)
+    public String createScheduleCategory(@ModelAttribute final ScheduleCategory scheduleCategory,
+            final BindingResult resultBinder, final Model model) throws ApplicationException, IOException {
+        validateScheduleOfRate(scheduleCategory, resultBinder);
+        validateScheduleCategory(scheduleCategory, resultBinder);
+        if (resultBinder.hasErrors()) {
+            model.addAttribute("scheduleCategory", scheduleCategory);
+            return "scheduleCategory-modify";
+        }
+        model.addAttribute(WorksConstants.MODE, WorksConstants.EDIT);
+        scheduleCategoryService.save(scheduleCategory);
+        return "redirect:/masters/schedulecategory-success?scheduleCategoryId=" + scheduleCategory.getId();
+
+    }
+
+    private void validateScheduleOfRate(final ScheduleCategory scheduleCategory, final BindingResult resultBinder) {
+        final ScheduleCategory existingCategory = scheduleCategoryService.findByCode(scheduleCategory.getCode());
+        if (existingCategory != null && !existingCategory.getId().equals(scheduleCategory.getId()))
+            resultBinder.reject("error.schedulecategory.code.unique",
+                    "error.schedulecategory.code.unique");
+        if (!scheduleCategoryService.checkForSOR(scheduleCategory.getId()))
+            resultBinder.reject("error.schedulecategory.sor.check",
+                    "error.schedulecategory.sor.check");
+
     }
 
 }

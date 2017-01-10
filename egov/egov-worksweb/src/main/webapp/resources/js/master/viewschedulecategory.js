@@ -93,7 +93,7 @@ function callAjaxSearch() {
 							'click',
 							function() {
 								console.log(data.id);
-								window.open('scheduleCategory-view.action?mode=view&id='
+								window.open('/egworks/masters/schedulecategory-view/'
 										+ data.id, '',
 										'width=800, height=600');
 							});

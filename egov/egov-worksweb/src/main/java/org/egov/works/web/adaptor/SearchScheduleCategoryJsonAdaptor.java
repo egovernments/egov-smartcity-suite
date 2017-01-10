@@ -57,15 +57,8 @@ public class SearchScheduleCategoryJsonAdaptor implements JsonSerializer<Schedul
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (scheduleCategory != null) {
-            if (scheduleCategory.getCode() != null)
-                jsonObject.addProperty("code", scheduleCategory.getCode());
-            else
-                jsonObject.addProperty("code", "");
-            if (scheduleCategory.getDescription() != null)
-                jsonObject.addProperty("description", scheduleCategory.getDescription());
-            else
-                jsonObject.addProperty("description", "");
-
+            jsonObject.addProperty("code", scheduleCategory.getCode());
+            jsonObject.addProperty("description", scheduleCategory.getDescription());
             jsonObject.addProperty("id", scheduleCategory.getId());
         }
         return jsonObject;
