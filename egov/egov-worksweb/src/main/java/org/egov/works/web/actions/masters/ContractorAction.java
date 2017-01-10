@@ -276,7 +276,7 @@ public class ContractorAction extends SearchFormAction {
         setupDropdownDataExcluding(WorksConstants.BANK);
         addDropdownData("departmentList", departmentService.getAllDepartments());
         addDropdownData("gradeList", contractorGradeService.getAllContractorGrades());
-        addDropdownData("bankList", createBankService.getAll());
+        addDropdownData("bankList", createBankService.getByIsActiveTrueOrderByName());
         addDropdownData("statusList", egwStatusHibDAO.getStatusByModule(WorksConstants.STATUS_MODULE_NAME));
 
     }
