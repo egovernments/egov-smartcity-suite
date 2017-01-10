@@ -149,7 +149,14 @@ public class WaterTaxConstants {
     public static final String WF_STATE_WORK_ORDER_GENERETED = "Work order generated";
 
     public static final String APPROVEWORKFLOWACTION = "Approve";
+    public static final String FORWARDWORKFLOWACTION = "Forward";
     public static final String SUBMITWORKFLOWACTION = "Submit";
+    public static final String  EXECUTIVEENGINEERFORWARDED="Engineer Executive Forwarded";
+    public static final String  SUPERINTENDANTENGINEERFORWARDED="Superintendent Executive Forwarded";
+
+    public static final String  EXECUTIVEENGINEERAPPROVED="Executive Engineer Approved";
+    public static final String  DIGITALSIGNATUREUPDATED="Digital Signature Updated";
+
 
     public static final String BPL_CATEGORY = "BPL";
     public static final String HIERARCHYNAME_ADMIN = "ADMINISTRATION";
@@ -346,9 +353,14 @@ public class WaterTaxConstants {
     
     public static final String COMMERCIALCONNECTIONTYPEFORDASHBOARD = "COMMERCIAL";
 
-
-    
-    
+    //Designation
+    public static final String COMMISSIONER_DESGN = "Commissioner";
+    public static final String EXECUTIVE_ENGINEER_DESIGN = "Executive engineer";
+    public static final String MUNICIPAL_ENGINEER_DESIGN = "Municipal Engineer";
+    public static final String SUPERIENTEND_ENGINEER_DESIGN = "Superintendent Engineer";
+    public static final String TAP_INSPPECTOR_DESIGN = "Tap Inspector";
+    public static final String ASSISTANT_ENGINEER_DESIGN = "Assistant engineer";
+    public static final String JUNIOR_OR_SENIOR_ASSISTANT_DESIGN = "Senior Assistant,Junior Assistant";
 
 
 

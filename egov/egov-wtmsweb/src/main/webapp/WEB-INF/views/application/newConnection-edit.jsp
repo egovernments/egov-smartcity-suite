@@ -49,13 +49,16 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 <div class="page-container" id="page-container">
 	<form:hidden id="mode" path="" name="mode" value="${mode}"/> 
 	<form:hidden path="" id="approvalPositionExist" value="${approvalPositionExist}"/>
+			<form:hidden path="" id="wfstateDesc" value="${waterConnectionDetails.state.value}"/> 
 	<form:hidden path="" id="statuscode" value="${waterConnectionDetails.status.code}"/>
+	<form:hidden path="" id="isCommissionerLoggedIn" value="${isCommissionerLoggedIn}"/>
 	<form:hidden path="" id="wfstate" value="${waterConnectionDetails.state.id}"/> 
 	<input type="hidden" id="closerConnection" value="${waterConnectionDetails.closeConnectionType}"/> 
 	<input type="hidden" id="currentUser" value="${currentUser}"/>  
 	<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>  
 	<input type="hidden" id ="typeOfConnection"  value="${typeOfConnection}"/>
 	<input type="hidden" id="meterFocus" value="${meterFocus}"/>
+	<input type="hidden" id="isSanctionedDetailEnable" value="${isSanctionedDetailEnable}"/>
 	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 	<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
@@ -68,13 +71,14 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 	<c:if test="${waterConnectionDetails.status.code != 'CREATED'}">
 		<jsp:include page="connectiondetails-view.jsp"></jsp:include>
 	</c:if>
-	<c:if test="${waterConnectionDetails.status.code =='CREATED' && mode=='fieldInspection'}">
+	<c:if test="${(waterConnectionDetails.status.code =='CREATED'  )&& mode=='fieldInspection'}">
 		<div class="panel panel-primary" data-collapsed="0">
 			<jsp:include page="connectiondetails.jsp"></jsp:include> 	
 		</div>
 		<jsp:include page="documentdetails-view.jsp"></jsp:include> 
 			<jsp:include page="estimationdetails.jsp"></jsp:include>
-	</c:if>				
+	</c:if>	
+			
 	<c:if test="${waterConnectionDetails.status.code =='CREATED' && mode=='edit' }">
 		<div class="panel panel-primary" data-collapsed="0">
 			<jsp:include page="connectiondetails.jsp"></jsp:include> 	
@@ -97,7 +101,7 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 			</div>
 			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 		</div>	
-		<c:if test="${waterConnectionDetails.status.code == 'ESTIMATIONAMOUNTPAID'}">
+		<c:if test="${ (isSanctionedDetailEnable == true && waterConnectionDetails.status.code == 'ESTIMATIONAMOUNTPAID') }">
 		<jsp:include page="sanctiondetails.jsp"></jsp:include>
 		</c:if>	
 		<c:if test="${waterConnectionDetails.status.code == 'WORKORDERGENERATED'}">

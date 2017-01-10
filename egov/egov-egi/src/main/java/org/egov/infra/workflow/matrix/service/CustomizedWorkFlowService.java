@@ -130,10 +130,25 @@ public class CustomizedWorkFlowService {
             validActions = Arrays.asList(wfMatrix.getValidActions().split(","));
         return validActions;
     }
+    public List<String> getNextValidActions(final String type, final String departmentName, final BigDecimal businessRule,
+            final String additionalRule, final String currentState, final String pendingAction, final Date date,final String currentDesignation) {
+
+        final WorkFlowMatrix wfMatrix = workflowService.getWfMatrix(type, departmentName, businessRule, additionalRule,
+                currentState, pendingAction, date,currentDesignation);
+        List<String> validActions = Collections.EMPTY_LIST;
+        
+        if (wfMatrix != null && wfMatrix.getValidActions() != null)
+            validActions = Arrays.asList(wfMatrix.getValidActions().split(","));
+        return validActions;
+    }
 
     public WorkFlowMatrix getWfMatrix(final String type, final String department, final BigDecimal businessRule,
             final String additionalRule, final String currentState, final String pendingAction, final Date date) {
         return workflowService.getWfMatrix(type, department, businessRule, additionalRule, currentState, pendingAction, date);
+    }
+    public WorkFlowMatrix getWfMatrix(final String type, final String department, final BigDecimal businessRule,
+            final String additionalRule, final String currentState, final String pendingAction, final Date date,final String currentDesignation) {
+        return workflowService.getWfMatrix(type, department, businessRule, additionalRule, currentState, pendingAction, date,currentDesignation);
     }
 
     public WorkFlowMatrix getWfMatrix(final String type, final String department, final BigDecimal businessRule,

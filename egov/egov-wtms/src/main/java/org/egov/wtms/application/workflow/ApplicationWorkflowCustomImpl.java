@@ -123,13 +123,14 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
             LOG.debug(" Create WorkFlow Transition Started  ...");
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
-        User currentUser = null;
+        User currentUser;
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
         Position pos = null;
         Assignment wfInitiator = null;
         final Boolean recordCreatedBYNonEmployee = waterTaxUtils
                 .getCurrentUserRole(waterConnectionDetails.getCreatedBy());
         String currState = "";
+        final String loggedInUserDesignation = waterTaxUtils.loggedInUserDesignation(waterConnectionDetails);
         final String natureOfwork = getNatureOfTask(waterConnectionDetails);
         if (recordCreatedBYNonEmployee) {
             currState = WFLOW_ACTION_STEP_THIRDPARTY_CREATED;
@@ -192,7 +193,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     // waterConnectionDetailsService.updateIndexes(connectionToBeDeactivated);
                 }
                 wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
-                        additionalRule, waterConnectionDetails.getCurrentState().getValue(), null);
+                        additionalRule, waterConnectionDetails.getCurrentState().getValue(), null, null);
                 final AssessmentDetails assessmentDetailsFullFlag = propertyExtnUtils.getAssessmentDetailsForFlag(
                         waterConnectionDetails.getConnection().getPropertyIdentifier(),
                         PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
@@ -230,8 +231,43 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                             .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                             .withNatureOfTask(natureOfwork);
             } else {
-                wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
-                        additionalRule, waterConnectionDetails.getCurrentState().getValue(), null);
+                if (getloggedinUserDesignationForEstimationAndWorkOrderGeneratedStatus(waterConnectionDetails, loggedInUserDesignation)) {
+                    if (workFlowAction.equals(WaterTaxConstants.FORWARDWORKFLOWACTION) && waterConnectionDetails
+                            .getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING)
+                        && (loggedInUserDesignation.equals(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
+                                || loggedInUserDesignation.equals(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
+                                || loggedInUserDesignation.equals(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN))){
+                            wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(),
+                                    null, null, additionalRule, WaterTaxConstants.EXECUTIVEENGINEERFORWARDED, null,
+                                    null, loggedInUserDesignation);
+                    } else if (workFlowAction.equals(WaterTaxConstants.FORWARDWORKFLOWACTION)
+                            && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)
+                            && (loggedInUserDesignation.equals(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
+                                    || loggedInUserDesignation.equals(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
+                                    || loggedInUserDesignation.equals(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN)))
+                        wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(),
+                                null, null, additionalRule, "Application Approval Pending", null, null,
+                                loggedInUserDesignation);
+                    else if (workFlowAction.equals(WaterTaxConstants.APPROVEWORKFLOWACTION)
+                            && waterConnectionDetails.getStatus().getCode()
+                                    .equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING)
+                            && (loggedInUserDesignation.equals(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
+                                    || loggedInUserDesignation.equals(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
+                                    || loggedInUserDesignation.equals(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN)))
+                        wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(),
+                                null, null, additionalRule, WaterTaxConstants.EXECUTIVEENGINEERFORWARDED, null, null,
+                                loggedInUserDesignation);
+                    else if (wfmatrix == null && workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION))
+                        wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(),
+                                null, null, additionalRule, WaterTaxConstants.WF_STATE_COMMISSIONER_APPROVED, null,
+                                null, loggedInUserDesignation);
+                    else if (wfmatrix == null)
+                        wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(),
+                                null, null, additionalRule, waterConnectionDetails.getCurrentState().getValue(), null,
+                                null, loggedInUserDesignation);
+                } else
+                    wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
+                            null, additionalRule, waterConnectionDetails.getCurrentState().getValue(), null, null);
                 if ((additionalRule.equals(WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE)
                         || additionalRule.equals(WaterTaxConstants.RECONNECTIONCONNECTION)) && wfmatrix != null
                         && wfmatrix.getNextAction().equalsIgnoreCase("END"))
@@ -248,6 +284,21 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         }
         if (LOG.isDebugEnabled())
             LOG.debug(" WorkFlow Transition Completed  ...");
+    }
+
+    protected boolean getloggedinUserDesignationForEstimationAndWorkOrderGeneratedStatus(final WaterConnectionDetails waterConnectionDetails,
+            final String loggedInUserDesignation) {
+        return loggedInUserDesignation != null && !"".equals(loggedInUserDesignation) && loggedInUserDesignation
+                .equals(WaterTaxConstants.COMMISSIONER_DESGN)
+                || loggedInUserDesignation.equals(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN)
+                || loggedInUserDesignation.equals(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
+                || loggedInUserDesignation.equals(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
+                || loggedInUserDesignation.equals(WaterTaxConstants.TAP_INSPPECTOR_DESIGN)
+                || loggedInUserDesignation.equals(WaterTaxConstants.ASSISTANT_ENGINEER_DESIGN)
+                        && (waterConnectionDetails.getStatus().getCode()
+                                .equals(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED)
+                                || waterConnectionDetails.getStatus().getCode()
+                                        .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN));
     }
 
     public String getNatureOfTask(final WaterConnectionDetails waterConnectionDetails) {
@@ -281,5 +332,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         else
             return waterConnectionDetails.getApplicationType().getName() + " " + wfTypeDisplayName;
     }
+
+    
 
 }

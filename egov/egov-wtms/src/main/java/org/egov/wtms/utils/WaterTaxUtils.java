@@ -153,15 +153,29 @@ public class WaterTaxUtils {
     @Autowired
     private InstallmentDao installmentDao;
 
-    public List<AppConfigValues> getAppConfigValueByModuleNameAndKeyName(String moduleName,String keyName) {
-        final List<AppConfigValues> appconfigValuesList = appConfigValuesService.getConfigValuesByModuleAndKey(
-                moduleName,keyName);
+    public List<AppConfigValues> getAppConfigValueByModuleNameAndKeyName(final String moduleName,
+            final String keyName) {
+        final List<AppConfigValues> appconfigValuesList = appConfigValuesService
+                .getConfigValuesByModuleAndKey(moduleName, keyName);
         return appconfigValuesList;
     }
-    
+
+    public String loggedInUserDesignation(final WaterConnectionDetails waterConnectionDetails) {
+        String loggedInUserDesignation = "";
+        final User user = securityUtils.getCurrentUser();
+        List<Assignment> loggedInUserAssign;
+        if (waterConnectionDetails.getState() != null && waterConnectionDetails.getState().getOwnerPosition() !=null) {
+            loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                    waterConnectionDetails.getState().getOwnerPosition().getId(), user.getId(), new Date());
+            loggedInUserDesignation = !loggedInUserAssign.isEmpty()
+                    ? loggedInUserAssign.get(0).getDesignation().getName() : null;
+        }
+        return loggedInUserDesignation;
+    }
+
     public Boolean isSmsEnabled() {
-        final AppConfigValues appConfigValue = getAppConfigValueByModuleNameAndKeyName(
-                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.SENDSMSFORWATERTAX).get(0);
+        final AppConfigValues appConfigValue = getAppConfigValueByModuleNameAndKeyName(WaterTaxConstants.MODULE_NAME,
+                WaterTaxConstants.SENDSMSFORWATERTAX).get(0);
         return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.getValue());
     }
 
@@ -173,7 +187,6 @@ public class WaterTaxUtils {
             department = appConfigValue.get(0).getValue();
         return department;
     }
-  
 
     public String getDesignationForThirdPartyUser() {
         String designation = "";
@@ -197,9 +210,8 @@ public class WaterTaxUtils {
      * @return appconfigValues List for Keyname='ROLESFORLOGGEDINUSER'
      */
     public List<AppConfigValues> getUserRolesForLoggedInUser() {
-        final List<AppConfigValues> appConfigValueList = appConfigValuesService
-                .getConfigValuesByModuleAndKeyByValueAsc(WaterTaxConstants.MODULE_NAME,
-                        WaterTaxConstants.ROLESFORLOGGEDINUSER);
+        final List<AppConfigValues> appConfigValueList = appConfigValuesService.getConfigValuesByModuleAndKeyByValueAsc(
+                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ROLESFORLOGGEDINUSER);
         // TODO: this method getting Values by Order By value Asc and based on
         // that returning LoggedInRoles
         return !appConfigValueList.isEmpty() ? appConfigValueList : null;
@@ -209,13 +221,13 @@ public class WaterTaxUtils {
         Boolean schedularEnabled = Boolean.FALSE;
         final AppConfigValues appConfigValueObj = appConfigValuesService.getConfigValuesByModuleAndKeyByValueAsc(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ENABLEDEMANEDBILLSCHEDULAR).get(0);
-        if (appConfigValueObj != null && appConfigValueObj.getValue() != null) {
+        if (appConfigValueObj != null && appConfigValueObj.getValue() != null)
             if (appConfigValueObj.getValue().equals(WaterTaxConstants.APPCONFIGVALUEOFENABLED))
                 schedularEnabled = Boolean.TRUE;
-        }
         return schedularEnabled;
 
     }
+
     public Boolean getCurrentUserRole(final User currentUser) {
         Boolean applicationByOthers = false;
 
@@ -243,20 +255,20 @@ public class WaterTaxUtils {
     }
 
     public Boolean isEmailEnabled() {
-        final AppConfigValues appConfigValue = getAppConfigValueByModuleNameAndKeyName(
-                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.SENDEMAILFORWATERTAX).get(0);
+        final AppConfigValues appConfigValue = getAppConfigValueByModuleNameAndKeyName(WaterTaxConstants.MODULE_NAME,
+                WaterTaxConstants.SENDEMAILFORWATERTAX).get(0);
         return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public Boolean isNewConnectionAllowedIfPTDuePresent() {
-        final AppConfigValues appConfigValue = getAppConfigValueByModuleNameAndKeyName(
-                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.NEWCONNECTIONALLOWEDIFPTDUE).get(0);
+        final AppConfigValues appConfigValue = getAppConfigValueByModuleNameAndKeyName(WaterTaxConstants.MODULE_NAME,
+                WaterTaxConstants.NEWCONNECTIONALLOWEDIFPTDUE).get(0);
         return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public Boolean isMultipleNewConnectionAllowedForPID() {
-        final AppConfigValues appConfigValue = getAppConfigValueByModuleNameAndKeyName(
-                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.MULTIPLENEWCONNECTIONFORPID).get(0);
+        final AppConfigValues appConfigValue = getAppConfigValueByModuleNameAndKeyName(WaterTaxConstants.MODULE_NAME,
+                WaterTaxConstants.MULTIPLENEWCONNECTIONFORPID).get(0);
         return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.getValue());
     }
 
@@ -290,17 +302,19 @@ public class WaterTaxUtils {
     public String smsAndEmailBodyByCodeAndArgsForRejection(final String code, final String approvalComment,
             final String applicantName) {
         final Locale locale = LocaleContextHolder.getLocale();
-        final String smsMsg = wcmsMessageSource.getMessage(code, new String[] { applicantName, approvalComment,
-                getMunicipalityName() }, locale);
+        final String smsMsg = wcmsMessageSource.getMessage(code,
+                new String[] { applicantName, approvalComment, getMunicipalityName() }, locale);
         return smsMsg;
     }
 
     public String emailBodyforApprovalEmailByCodeAndArgs(final String code,
             final WaterConnectionDetails waterConnectionDetails, final String applicantName) {
         final Locale locale = LocaleContextHolder.getLocale();
-        final String smsMsg = wcmsMessageSource.getMessage(code,
-                new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                waterConnectionDetails.getConnection().getConsumerCode(), getMunicipalityName() }, locale);
+        final String smsMsg = wcmsMessageSource
+                .getMessage(code,
+                        new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
+                                waterConnectionDetails.getConnection().getConsumerCode(), getMunicipalityName() },
+                        locale);
         return smsMsg;
     }
 
@@ -373,40 +387,48 @@ public class WaterTaxUtils {
         Long approverPosition = 0l;
         final String[] desgnArray = designationName.split(",");
         User currentUser = null;
+        waterConnectionDetails.getState().getValue();
         if (stateHistoryList != null && !stateHistoryList.isEmpty()) {
             currentUser = userService.getUserById(waterConnectionDetails.getCreatedBy().getId());
             if (currentUser != null && waterConnectionDetails.getLegacy().equals(true)) {
                 for (final Role userrole : currentUser.getRoles())
                     if (userrole.getName().equals(WaterTaxConstants.ROLE_SUPERUSER)) {
-                        final Position positionuser = getZonalLevelClerkForLoggedInUser(waterConnectionDetails
-                                .getConnection().getPropertyIdentifier());
+                        final Position positionuser = getZonalLevelClerkForLoggedInUser(
+                                waterConnectionDetails.getConnection().getPropertyIdentifier());
                         approverPosition = positionuser.getId();
                         break;
                     }
             } else {
                 for (final StateHistory stateHistory : stateHistoryList)
                     if (stateHistory.getOwnerPosition() != null) {
-                        final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(
-                                stateHistory.getOwnerPosition().getId(), new Date());
+                        final List<Assignment> assignmentList = assignmentService
+                                .getAssignmentsForPosition(stateHistory.getOwnerPosition().getId(), new Date());
                         for (final Assignment assgn : assignmentList)
-                            for (final String str : desgnArray)
+                            for (final String str : desgnArray) {
+                                System.out.println("user in history= " + assgn.getEmployee().getUsername()
+                                        + " desgnArray= " + str);
                                 if (assgn.getDesignation().getName().equalsIgnoreCase(str)) {
                                     approverPosition = stateHistory.getOwnerPosition().getId();
                                     break;
                                 }
-
+                            }
+                        if (approverPosition != 0)
+                            break;
                     }
                 if (approverPosition == 0) {
                     final State stateObj = waterConnectionDetails.getState();
-                    final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(stateObj
-                            .getOwnerPosition().getId(), new Date());
+                    final List<Assignment> assignmentList = assignmentService
+                            .getAssignmentsForPosition(stateObj.getOwnerPosition().getId(), new Date());
                     for (final Assignment assgn : assignmentList)
-                        if (assgn.getDesignation().getName().equalsIgnoreCase(designationName)) {
-                            approverPosition = stateObj.getOwnerPosition().getId();
-                            break;
+                        for (final String str : desgnArray) {
+                            System.out.println(
+                                    "user in history= " + assgn.getEmployee().getUsername() + " desgnArray= " + str);
+                            if (assgn.getDesignation().getName().equalsIgnoreCase(str)) {
+                                approverPosition = stateObj.getOwnerPosition().getId();
+                                break;
+                            }
                         }
                 }
-
             }
 
         } else {
@@ -414,14 +436,14 @@ public class WaterTaxUtils {
             if (currentUser != null && waterConnectionDetails.getLegacy().equals(true)) {
                 for (final Role userrole : currentUser.getRoles())
                     if (userrole.getName().equals(WaterTaxConstants.ROLE_SUPERUSER)) {
-                        final Position positionuser = getZonalLevelClerkForLoggedInUser(waterConnectionDetails
-                                .getConnection().getPropertyIdentifier());
+                        final Position positionuser = getZonalLevelClerkForLoggedInUser(
+                                waterConnectionDetails.getConnection().getPropertyIdentifier());
                         approverPosition = positionuser.getId();
                         break;
                     }
             } else {
-                final Position posObjToClerk = positionMasterService.getCurrentPositionForUser(waterConnectionDetails
-                        .getCreatedBy().getId());
+                final Position posObjToClerk = positionMasterService
+                        .getCurrentPositionForUser(waterConnectionDetails.getCreatedBy().getId());
                 approverPosition = posObjToClerk.getId();
             }
         }
@@ -445,8 +467,8 @@ public class WaterTaxUtils {
          * assessmentDetails .getBoundaryDetails().getAdminWardNumber());
          */
         // TODO: check whether adminward always mandatory
-        final Boundary boundaryObj = boundaryService.getBoundaryById(assessmentDetails.getBoundaryDetails()
-                .getAdminWardId());
+        final Boundary boundaryObj = boundaryService
+                .getBoundaryById(assessmentDetails.getBoundaryDetails().getAdminWardId());
         assignmentObj = getUserPositionByZone(asessmentNumber, assessmentDetails, boundaryObj);
 
         return assignmentObj != null ? assignmentObj.getPosition() : null;
@@ -473,9 +495,9 @@ public class WaterTaxUtils {
         List<Assignment> assignment = new ArrayList<Assignment>();
         for (final String dept : department) {
             for (final String desg : designation) {
-                assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                        .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),
-                        boundaryObj.getId());
+                assignment = assignmentService.findByDepartmentDesignationAndBoundary(
+                        departmentService.getDepartmentByName(dept).getId(),
+                        designationService.getDesignationByName(desg).getId(), boundaryObj.getId());
                 if (!assignment.isEmpty())
                     break;
             }
@@ -518,8 +540,8 @@ public class WaterTaxUtils {
         final List<WaterConnectionDetails> waterConnectionDetails = waterConnectionDetailsService
                 .getAllConnectionDetailsByParentConnection(parentId);
         for (final WaterConnectionDetails waterconnectiondetails : waterConnectionDetails)
-            waterTaxDueforParent = waterTaxDueforParent.add(waterConnectionDetailsService
-                    .getTotalAmount(waterconnectiondetails));
+            waterTaxDueforParent = waterTaxDueforParent
+                    .add(waterConnectionDetailsService.getTotalAmount(waterconnectiondetails));
         return waterTaxDueforParent.doubleValue();
     }
 
@@ -536,12 +558,13 @@ public class WaterTaxUtils {
 
         return waterdemandConnection;
     }
+
     public List<EgDemand> getAllDemand(final WaterConnectionDetails waterConnectionDetails) {
-        List<EgDemand> demandList=new ArrayList<EgDemand>();
+        final List<EgDemand> demandList = new ArrayList<EgDemand>();
         final List<WaterDemandConnection> waterDemandConnectionList = waterDemandConnectionService
                 .findByWaterConnectionDetails(waterConnectionDetails);
         for (final WaterDemandConnection waterDemandConnection : waterDemandConnectionList)
-        	demandList.add(waterDemandConnection.getDemand());
+            demandList.add(waterDemandConnection.getDemand());
 
         return demandList;
     }
@@ -550,7 +573,8 @@ public class WaterTaxUtils {
         Boolean citizenrole = Boolean.FALSE;
         if (ApplicationThreadLocals.getUserId() != null) {
             final User currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
-            if (currentUser.getRoles().isEmpty() && securityUtils.getCurrentUser().getUsername().equals(WaterTaxConstants.USERNAME_ANONYMOUS))
+            if (currentUser.getRoles().isEmpty()
+                    && securityUtils.getCurrentUser().getUsername().equals(WaterTaxConstants.USERNAME_ANONYMOUS))
                 citizenrole = Boolean.TRUE;
             for (final Role userrole : currentUser.getRoles())
                 if (userrole != null && userrole.getName().equals(WaterTaxConstants.ROLE_CITIZEN)) {
