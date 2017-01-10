@@ -79,8 +79,7 @@ $(document)
 									|| status == 'ESTIMATIONNOTICEGENERATED'
 									|| status == 'WORKORDERGENERATED' || status == 'APPROVED'
 										|| status == 'CLOSERINPROGRESS'
-											|| status=='RECONNECTIONINPROGRESS')
-											|| status=='RECONNDIGSIGNPENDING') {
+											|| status=='RECONNECTIONINPROGRESS')) {
 						$(".show-row").hide();
 						$('#approverDetailHeading').hide();
 						$('#approvalDepartment').removeAttr('required');
@@ -94,6 +93,14 @@ $(document)
 						$('#approvalDesignation').removeAttr('required');
 						$('#approvalPosition').removeAttr('required');
 					}
+					if (isCommissionerLoggedIn == 'true' && ( status =='CLOSUREDIGSIGNPENDING'|| status=='RECONNDIGSIGNPENDING')) {
+						$(".show-row").hide();
+						$('#approverDetailHeading').hide();
+						$('#approvalDepartment').removeAttr('required');
+						$('#approvalDesignation').removeAttr('required');
+						$('#approvalPosition').removeAttr('required');
+					}
+					
 					if (approvalPositionExist != 0
 							&& ((mode == 'closereditForAE' || mode == 'reconEditForAE') && closerConnection != null)
 							&& status != 'DIGITALSIGNATUREPENDING') {

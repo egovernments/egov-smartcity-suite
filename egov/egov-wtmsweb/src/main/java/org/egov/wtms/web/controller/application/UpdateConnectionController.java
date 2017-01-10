@@ -241,7 +241,9 @@ public class UpdateConnectionController extends GenericConnectionController {
         if (loggedInUserDesignation != null && !"".equals(loggedInUserDesignation)
                 && loggedInUserDesignation.equals(WaterTaxConstants.COMMISSIONER_DESGN) && (waterConnectionDetails.getStatus()
                         .getCode().equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING) ||
-                        waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)))
+                        waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)
+                        || waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING)
+                        ||waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING)))
             isCommissionerLoggedIn = Boolean.TRUE;
         if (loggedInUserDesignation.equals(WaterTaxConstants.COMMISSIONER_DESGN)
                 || loggedInUserDesignation.equals(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN)
