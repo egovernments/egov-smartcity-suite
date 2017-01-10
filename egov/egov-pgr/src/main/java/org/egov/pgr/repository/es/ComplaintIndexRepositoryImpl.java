@@ -110,6 +110,12 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
         if (complaintDashBoardRequest.getSize() >= 0)
             size = complaintDashBoardRequest.getSize();
 
+        DateTime currentYearFromDate = new DateTime();
+        if (fromDate.getMonthOfYear() < 4)
+            currentYearFromDate = currentYearFromDate.minusYears(1).withMonthOfYear(4).dayOfMonth().withMinimumValue();
+        else
+            currentYearFromDate = currentYearFromDate.withMonthOfYear(4).dayOfMonth().withMinimumValue();
+
         final SearchResponse consolidatedResponse = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                 .setQuery(query).setSize(0)
                 .addAggregation(getCount("countAggregation", "crn"))
@@ -118,7 +124,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                 .addAggregation(getAverageWithFilter("ifClosed", 1, "AgeingInWeeks", "complaintAgeingdaysFromDue"))
                 .addAggregation(getAverageWithExclusion("satisfactionAverage", "satisfactionIndex"))
                 .addAggregation(getCountBetweenSpecifiedDates("currentYear", "createdDate",
-                        new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toString(formatter),
+                        currentYearFromDate.toString(formatter),
                         new DateTime().toString(formatter)))
                 .addAggregation(getCountBetweenSpecifiedDates("todaysComplaintCount", "createdDate",
                         fromDate.toString(formatter), toDate.toString(formatter)))
