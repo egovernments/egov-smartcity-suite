@@ -123,7 +123,7 @@
 					<c:otherwise>						
 						<c:set var="rowIndex" value="${0}" scope="session" />
 						<c:forEach items="${billDetailsMap }" var="billDetail" varStatus="item" >
-							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isRetentionMoneyDeduction && billDetail.isStatutoryDeduction}">
+							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isRetentionMoneyDeduction && billDetail.isStatutoryDeduction && !billDetail.isContractorAdvanceDeduction}">
 								<tr id="statutorydeductionrow">
 									<td>
 										<form:select path="statutoryDeductionDetailes[${rowIndex }].glcodeid" data-first-option="false" name="statutoryDeductionDetailes[${rowIndex }].creditGlcode" id="statutoryDeductionDetailes[${rowIndex }].creditGlcode"  class="form-control table-input" onchange="resetCreditAccountDetails(this);">
@@ -198,7 +198,7 @@
 
 						<c:set var="rowIndex" value="${0}" scope="session" />
 						<c:forEach items="${billDetailsMap }" var="billDetail" varStatus="item" >						
-							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isStatutoryDeduction && !billDetail.isRetentionMoneyDeduction}">
+							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isStatutoryDeduction && !billDetail.isRetentionMoneyDeduction && !billDetail.isContractorAdvanceDeduction}">
 								<tr id="otherdeductionrow">
 									<td>
 										<input type="text" id="otherDeductionDetailes[${rowIndex }].creditGlcode" name="otherDeductionDetailes[${rowIndex }].creditGlcode" value="${billDetail.glcode} ~ ${billDetail.accountHead}" class="form-control table-input otherDeductionCreditGlcode creditGlcode" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0"  placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
@@ -263,7 +263,7 @@
 					<c:otherwise>					
 						<c:set var="rowIndex" value="${0}" scope="session" />
 						<c:forEach items="${billDetailsMap }" var="billDetail" varStatus="item" >
-							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isStatutoryDeduction && billDetail.isRetentionMoneyDeduction}">
+							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isStatutoryDeduction && billDetail.isRetentionMoneyDeduction && !billDetail.isContractorAdvanceDeduction}">
 								<tr id="retentionmoneydeductionrow">
 									<td>
 										<form:select path="retentionMoneyDeductionDetailes[${rowIndex }].glcodeid" data-first-option="false" name="retentionMoneyDeductionDetailes[${rowIndex }].creditGlcode" id="retentionMoneyDeductionDetailes[${rowIndex }].creditGlcode"  class="form-control table-input" onchange="resetCreditAccountDetails(this);calculateRetentionMoneyDeductionAmount(this);calculateNetPayableAmount();">
