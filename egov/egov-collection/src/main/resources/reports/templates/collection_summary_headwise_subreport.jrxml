@@ -109,7 +109,7 @@
 		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
 	<variable name="TOTAL_RECEIPT_AMOUNT" class="java.lang.Double" resetType="Group" resetGroup="USER_COUNTER">
-		<variableExpression><![CDATA[($V{TOTAL_CASH_AMOUNT} == null ? 0 : $V{TOTAL_CASH_AMOUNT}) + ($V{TOTAL_CHEQUEDD_AMOUNT} == null ? 0 : $V{TOTAL_CHEQUEDD_AMOUNT}) + ($V{TOTAL_ONLINE_AMOUNT} == null ? 0 : $V{TOTAL_ONLINE_AMOUNT})]]></variableExpression>
+		<variableExpression><![CDATA[($V{TOTAL_CASH_AMOUNT} == null ? 0 : $V{TOTAL_CASH_AMOUNT}) + ($V{TOTAL_CHEQUEDD_AMOUNT} == null ? 0 : $V{TOTAL_CHEQUEDD_AMOUNT}) + ($V{TOTAL_ONLINE_AMOUNT} == null ? 0 : $V{TOTAL_ONLINE_AMOUNT}) + ($V{TOTAL_CARD_AMOUNT} == null ? 0 : $V{TOTAL_CARD_AMOUNT})]]></variableExpression>
 		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
 	<group name="USER_COUNTER">
