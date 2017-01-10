@@ -257,19 +257,7 @@ public class WaterTaxCollection extends TaxCollection {
             WorkFlowMatrix wfmatrix;
             final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                     .getInitialisedWorkFlowBean();
-            if (waterConnectionDetails.getApplicationType() != null && waterConnectionDetails.getApplicationType()
-                    .getCode().equals(WaterTaxConstants.RECONNECTIONCONNECTION)) {
-                wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
-                        WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE,
-                        waterConnectionDetails.getCurrentState().getValue(), null);
-                final Position posobj = waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation(),
-                        waterConnectionDetails.getConnection().getPropertyIdentifier());
-                if (posobj != null)
-                    approvalPosition = posobj.getId();
-                applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(waterConnectionDetails,
-                        approvalPosition, WaterTaxConstants.FEE_COLLECTION_COMMENT,
-                        WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE, null);
-            } else {
+         
                 wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                         waterConnectionDetails.getApplicationType().getCode(),
                         waterConnectionDetails.getCurrentState().getValue(), null);
@@ -278,7 +266,7 @@ public class WaterTaxCollection extends TaxCollection {
                 applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(waterConnectionDetails,
                         approvalPosition, WaterTaxConstants.FEE_COLLECTION_COMMENT,
                         waterConnectionDetails.getApplicationType().getCode(), null);
-            }
+            
             waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, null);
             waterConnectionDetailsService.saveAndFlushWaterConnectionDetail(waterConnectionDetails);
         }

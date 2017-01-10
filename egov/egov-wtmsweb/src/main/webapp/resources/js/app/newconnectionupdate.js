@@ -62,6 +62,8 @@ $(document)
 						$('#approvalDepartment').removeAttr('required');
 						$('#approvalDesignation').removeAttr('required');
 						$(".show-row").hide();
+						$("#Forward").hide();
+						$("#Reject").hide();
 						$('#approverDetailHeading').hide();
 						return false;
 
