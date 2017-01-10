@@ -52,6 +52,16 @@
 </div>
 <div class="panel-body custom-form">
 	<form:hidden path="id" />
+	<c:if test="${marriageRegistration.id!=null}">
+	<div class="form-group">
+		<div class="col-sm-3 control-label"><spring:message code="lbl.application.no"/></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${marriageRegistration.applicationNo}"></c:out></div>
+		<c:if test="${marriageRegistration.registrationNo!=null}">
+			<div class="col-sm-2 control-label"><spring:message code="lbl.registration.no"/></div>
+			<div class="col-sm-3 add-margin view-content"><c:out value="${marriageRegistration.registrationNo}"></c:out></div>
+		</c:if>
+	</div>
+	</c:if>
 	<div class="form-group">
 		<label class="col-sm-3 control-label"> <spring:message
 				code="lbl.registrationunit" /><span class="mandatory"></span>
