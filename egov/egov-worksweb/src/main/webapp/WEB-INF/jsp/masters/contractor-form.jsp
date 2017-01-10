@@ -293,7 +293,7 @@ var makeContractorDataTable = function() {
 			</label>
 			<div class="col-sm-3 add-margin">
 				<s:select headerKey="-1" headerValue="select"
-					list="dropdownData.bankList" name="bank" id="bank"
+					list="dropdownData.bankList" name="bank.id" id="bank"
 					cssClass="form-control" listKey="id" listValue="name"
 					value="%{bank.id}" />
 			</div>

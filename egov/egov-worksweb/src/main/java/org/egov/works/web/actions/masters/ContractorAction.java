@@ -55,8 +55,8 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Bank;
-import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.egf.commons.bank.service.CreateBankService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
@@ -111,9 +111,9 @@ public class ContractorAction extends SearchFormAction {
     private EgwStatusHibernateDAO egwStatusHibDAO;
     @Autowired
     private ContractorGradeService contractorGradeService;
-    @Autowired
-    private BankHibernateDAO bankHibernateDAO;
 
+    @Autowired
+    private CreateBankService createBankService;
     private String contractorName;
     private String contractorCode;
     private Long departmentId;
@@ -177,6 +177,8 @@ public class ContractorAction extends SearchFormAction {
 
     @Action(value = "/masters/contractor-save")
     public String save() {
+        final Bank bank = createBankService.getById(contractor.getBank().getId());
+        contractor.setBank(bank);
         populateContractorDetails(mode);
         contractor = contractorService.persist(contractor);
         if (mode == null || mode.equals(""))
@@ -274,7 +276,7 @@ public class ContractorAction extends SearchFormAction {
         setupDropdownDataExcluding(WorksConstants.BANK);
         addDropdownData("departmentList", departmentService.getAllDepartments());
         addDropdownData("gradeList", contractorGradeService.getAllContractorGrades());
-        addDropdownData("bankList", bankHibernateDAO.findAll());
+        addDropdownData("bankList", createBankService.getAll());
         addDropdownData("statusList", egwStatusHibDAO.getStatusByModule(WorksConstants.STATUS_MODULE_NAME));
 
     }

@@ -143,4 +143,8 @@ public class CreateBankService {
 
     }
 
+    public List<Bank> getAll() {
+        return bankRepository.findAll();
+    }
+
 }
