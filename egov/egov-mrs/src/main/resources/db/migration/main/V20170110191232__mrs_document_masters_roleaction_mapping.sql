@@ -1,6 +1,6 @@
 ----- egmrs_document ---------
 ﻿
-ALTER TABLE egmrs_document ALTER COLUMN  type TYPE character varying(30) USING type::character varying(30);
+ALTER TABLE egmrs_document ALTER COLUMN  "type" TYPE character varying(30) ;
 
 ------module----
 INSERT INTO eg_module(id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (nextval('SEQ_EG_MODULE'), 'Marriage Document', true, 'mrs', (select id from eg_module where name='MR-Masters'), 'Marriage Document', 5);
