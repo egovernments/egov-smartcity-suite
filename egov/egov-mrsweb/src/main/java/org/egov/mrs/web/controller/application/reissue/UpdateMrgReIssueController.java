@@ -53,6 +53,7 @@ import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.service.MarriageApplicantService;
 import org.egov.mrs.domain.service.MarriageDocumentService;
+import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.egov.mrs.domain.service.ReIssueService;
 import org.egov.mrs.masters.service.MarriageRegistrationUnitService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,21 +80,18 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
 
     @Autowired
     private ReIssueService reIssueService;
-
     @Autowired
     private MarriageApplicantService marriageApplicantService;
-
     @Autowired
     private MarriageDocumentService marriageDocumentService;
-
     @Autowired
     protected ResourceBundleMessageSource messageSource;
-
     @Autowired
     private MarriageRegistrationUnitService marriageRegistrationUnitService;
-
     @Autowired
     protected AssignmentService assignmentService;
+    @Autowired
+    private MarriageRegistrationService marriageRegistrationService;
 
     public void prepareNewForm(final Model model) {
         model.addAttribute("marriageRegistrationUnit",
@@ -105,6 +103,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
         final ReIssue reIssue = reIssueService.get(id);
         model.addAttribute("documents", marriageDocumentService.getIndividualDocuments());
 
+        marriageRegistrationService.prepareDocumentsForView(reIssue.getRegistration());
         marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getHusband());
         marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getWife());
         marriageApplicantService.prepareDocumentsForView(reIssue.getApplicant());
@@ -179,7 +178,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
         if (workFlowAction != null && !workFlowAction.isEmpty()
                 && workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE))
             return "redirect:/certificate/reissue?id="
-            + reIssue.getId();
+                    + reIssue.getId();
 
         model.addAttribute("message", message);
         return "reissue-ack";

@@ -116,16 +116,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         model.addAttribute("applicationHistory",
                 marriageRegistrationService.getHistory(marriageRegistration));
         prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
-        if (marriageRegistration.getMarriagePhotoFileStore() != null) {
-            final File file = fileStoreService.fetch(marriageRegistration.getMarriagePhotoFileStore().getFileStoreId(),
-                    MarriageConstants.FILESTORE_MODULECODE);
-            try {
-                marriageRegistration
-                        .setEncodedMarriagePhoto(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
-            } catch (final IOException e) {
-                LOG.error("Error while preparing the document for view", e);
-            }
-        }
+
         marriageRegistration.getWitnesses().forEach(
                 witness -> {
                     try {

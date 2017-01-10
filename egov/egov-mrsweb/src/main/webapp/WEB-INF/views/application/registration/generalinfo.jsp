@@ -53,14 +53,22 @@
 <div class="panel-body custom-form">
 	<form:hidden path="id" />
 	<c:if test="${marriageRegistration.id!=null}">
-	<div class="form-group">
-		<div class="col-sm-3 control-label"><spring:message code="lbl.application.no"/></div>
-		<div class="col-sm-3 add-margin view-content"><c:out value="${marriageRegistration.applicationNo}"></c:out></div>
-		<c:if test="${marriageRegistration.registrationNo!=null}">
-			<div class="col-sm-2 control-label"><spring:message code="lbl.registration.no"/></div>
-			<div class="col-sm-3 add-margin view-content"><c:out value="${marriageRegistration.registrationNo}"></c:out></div>
-		</c:if>
-	</div>
+		<div class="form-group">
+			<div class="col-sm-3 control-label">
+				<spring:message code="lbl.application.no" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out value="${marriageRegistration.applicationNo}"></c:out>
+			</div>
+			<c:if test="${marriageRegistration.registrationNo!=null}">
+				<div class="col-sm-2 control-label">
+					<spring:message code="lbl.registration.no" />
+				</div>
+				<div class="col-sm-3 add-margin view-content">
+					<c:out value="${marriageRegistration.registrationNo}"></c:out>
+				</div>
+			</c:if>
+		</div>
 	</c:if>
 	<div class="form-group">
 		<label class="col-sm-3 control-label"> <spring:message
@@ -144,7 +152,7 @@
 	</div>
 
 	<div class="form-group">
-	<%-- 	<label class="col-sm-3 control-label"> <spring:message
+		<%-- 	<label class="col-sm-3 control-label"> <spring:message
 				code="lbl.fee.criteria" /><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
@@ -174,32 +182,33 @@
 			<%-- <form:input path="placeOfMarriage" id="txt-placeOfMarriage" type="text" class="form-control low-width is_valid_alphabet" placeholder="" autocomplete="off" required="required"/> --%>
 			<form:errors path="venue" cssClass="add-margin error-msg" />
 		</div>
-		
+
 		<label class="col-sm-2 control-label"> <spring:message
 				code="lbl.marriage.fee" /><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
-			<form:input path="feePaid" id="txt-feepaid" type="text" readonly="true"
-				class="form-control low-width patternvalidation"
+			<form:input path="feePaid" id="txt-feepaid" type="text"
+				readonly="true" class="form-control low-width patternvalidation"
 				data-pattern="decimalvalue" placeholder="" autocomplete="off"
 				required="required" />
 			<form:errors path="feePaid" cssClass="add-margin error-msg" />
 		</div>
 	</div>
 	<div class="form-group">
-	 <div id="hideplaceofmrg">
-		<label class="col-sm-3 control-label toggle-madatory" id="txt-venuelabel">
-		 <spring:message code="lbl.place.of.marriage" /><span class="mandatory"></span>
-		</label>
-		<div class="col-sm-3">
+		<div id="hideplaceofmrg">
+			<label class="col-sm-3 control-label toggle-madatory"
+				id="txt-venuelabel"> <spring:message
+					code="lbl.place.of.marriage" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3">
 
-			<form:input path="placeOfMarriage" id="txt-placeofmrg" type="text"
-				class="form-control low-width patternvalidation addremoverequired" placeholder=""
-				autocomplete="off" />
+				<form:input path="placeOfMarriage" id="txt-placeofmrg" type="text"
+					class="form-control low-width patternvalidation addremoverequired"
+					placeholder="" autocomplete="off" />
 
-			<form:errors path="placeOfMarriage" cssClass="add-margin error-msg" />
+				<form:errors path="placeOfMarriage" cssClass="add-margin error-msg" />
+			</div>
 		</div>
-	 </div>
 		<label class="col-sm-2 text-right"> <spring:message
 				code="lbl.marriage.photo" /><span class="mandatory"></span>
 		</label>
@@ -212,26 +221,20 @@
 					<form:hidden class="encodedPhoto" path="encodedMarriagePhoto" />
 					<img id="marriage-photo" class="add-margin marriage-img"
 						height="150" width="130" />
-						<script>
-						var	strData = '<c:out value="${marriageRegistration.encodedMarriagePhoto}" />';
-						if (strData != null && strData.length > 0) {
-							$('#marriage-photo').prop('src',
-									"data:image/jpg;base64," + strData);
-							$('#marriage-photo').attr('data-exist');
-						}
-					</script>
 					<input type="file" id="marriage-photo" name="marriagePhotoFile"
 						class="file-ellipsis upload-file validate-file"
-						data-fileto="#marriage-photo">
-					<form:errors path="marriagePhotoFile" cssClass="add-margin error-msg" />
+						data-fileto="marriage-photo">
+					<form:errors path="marriagePhotoFile"
+						cssClass="add-margin error-msg" />
 				</c:when>
 				<c:otherwise>
 					<img id="marriage-photo" class="add-margin marriage-img"
 						height="150" width="130" />
 					<input type="file" id="marriage-photo" name="marriagePhotoFile"
 						class="file-ellipsis upload-file validate-file" required="true"
-						data-fileto="#marriage-photo">
-					<form:errors path="marriagePhotoFile" cssClass="add-margin error-msg" />
+						data-fileto="marriage-photo">
+					<form:errors path="marriagePhotoFile"
+						cssClass="add-margin error-msg" />
 				</c:otherwise>
 			</c:choose>
 		</div>
@@ -239,7 +242,7 @@
 	</div>
 
 	<div class="form-group">
-	<%--	<label class="col-sm-3 control-label"> <spring:message
+		<%--	<label class="col-sm-3 control-label"> <spring:message
 				code="lbl.law" /><span class="mandatory"></span>
 		</label>
 	 	<div class="col-sm-3">
@@ -253,7 +256,7 @@
 			</form:select>
 			<form:errors path="marriageAct" cssClass="add-margin error-msg" />
 		</div> --%>
-		
+
 	</div>
 
 	<c:set value="husband" var="applicant" scope="request"></c:set>

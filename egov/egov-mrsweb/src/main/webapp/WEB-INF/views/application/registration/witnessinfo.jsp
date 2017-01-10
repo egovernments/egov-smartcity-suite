@@ -161,17 +161,15 @@
 					<img id="${witness}.photo" class="add-margin marriage-img"
 						height="150" width="130" />
 					<input type="file" id="${witness}-photo"
-						name="${witness}.photoFile"
-						class="file-ellipsis upload-file validate-file"
-						data-fileto="#${witness}.photo">
+						name="${witness}.photoFile" class="file-ellipsis upload-file"
+						data-fileto="${witness}.photo">
 				</c:when>
 				<c:otherwise>
 					<img id="${witness}.photo" class="add-margin marriage-img"
 						height="150" width="130" />
 					<input type="file" id="${witness}-photo"
-						name="${witness}.photoFile"
-						class="file-ellipsis upload-file validate-file"
-						data-fileto="#${witness}.photo">
+						name="${witness}.photoFile" class="file-ellipsis upload-file"
+						data-fileto="${witness}.photo">
 				</c:otherwise>
 			</c:choose>
 		</div>
@@ -203,16 +201,3 @@
 			cssClass="add-margin error-msg" />
 	</div> --%>
 </div>
-
-
-<c:if test="${currentState != 'NEW' && currentState != 'DATAENTRY'}">
-	<script>
-		$('.setimage').each(function() {
-			var encodedPhoto = $(this).find('.encodedPhoto').val();
-			$(this).find('.marriage-img').attr({
-				src : "data:image/jpg;base64," + encodedPhoto
-			});
-			$(this).find('.marriage-img').attr('data-exist', '');
-		})
-	</script>
-</c:if>

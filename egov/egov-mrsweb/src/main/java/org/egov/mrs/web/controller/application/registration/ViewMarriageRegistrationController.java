@@ -67,10 +67,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping(value = "/registration")
 public class ViewMarriageRegistrationController extends MarriageRegistrationController {
 
+    private static final Logger LOG = Logger.getLogger(ViewMarriageRegistrationController.class);
+
     @Autowired
     private FileStoreService fileStoreService;
-
-    private static final Logger LOG = Logger.getLogger(ViewMarriageRegistrationController.class);
 
     @RequestMapping(value = "/view/{registrationId}", method = RequestMethod.GET)
     public String viewRegistration(@PathVariable final Long registrationId, @RequestParam(required = false) String mode,
@@ -79,16 +79,6 @@ public class ViewMarriageRegistrationController extends MarriageRegistrationCont
 
         model.addAttribute("registration", registration);
         model.addAttribute("mode", mode);
-
-        if (registration.getMarriagePhotoFileStore() != null) {
-            final File file = fileStoreService.fetch(registration.getMarriagePhotoFileStore().getFileStoreId(),
-                    MarriageConstants.FILESTORE_MODULECODE);
-            try {
-                registration.setEncodedMarriagePhoto(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
-            } catch (final IOException e) {
-                LOG.error("Error while preparing the document for view", e);
-            }
-        }
 
         marriageRegistrationService.prepareDocumentsForView(registration);
         marriageApplicantService.prepareDocumentsForView(registration.getHusband());

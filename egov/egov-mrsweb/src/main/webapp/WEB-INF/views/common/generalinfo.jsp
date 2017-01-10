@@ -137,6 +137,12 @@
 			<c:out value="${reIssue.registration.marriageRegistrationUnit.name}" />
 		</div>
 	</div>
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin"><spring:message code="lbl.marriage.photo"/></div>
+	<div class="col-sm-3 add-margin">
+	<img class="add-border" id="marrige-photo" height="150" width="130" src="data:image/jpeg;base64,${reIssue.registration.encodedMarriagePhoto}">
+	</div>
+	</div>
 </div>
 
 <c:set value="registration.husband" var="applicant" scope="request"></c:set>

@@ -164,35 +164,38 @@ public class MarriageBillService extends BillServiceInterface {
 
             final boolean thereIsBalanceFee = demandDetail.getAmount() != null
                     && demandDetail.getAmount().compareTo(demandDetail.getAmtCollected()) > 0 ? true : false;
-                    final EgDemandReasonMaster demandReasonMaster = reason.getEgDemandReasonMaster();
+            final EgDemandReasonMaster demandReasonMaster = reason.getEgDemandReasonMaster();
 
-                    if ("N".equalsIgnoreCase(demandReasonMaster.getIsDebit()) && thereIsBalanceFee) {
+            if ("N".equalsIgnoreCase(demandReasonMaster.getIsDebit()) && thereIsBalanceFee) {
 
-                        final EgBillDetails billdetail = new EgBillDetails();
+                final EgBillDetails billdetail = new EgBillDetails();
 
-                        billdetail.setDrAmount(BigDecimal.ZERO);
-                        billdetail.setCrAmount(demandDetail.getAmount().subtract(demandDetail.getAmtCollected()));
+                billdetail.setDrAmount(BigDecimal.ZERO);
+                billdetail.setCrAmount(demandDetail.getAmount().subtract(demandDetail.getAmtCollected()));
 
-                        if (reason.getGlcodeId() == null)
-                            LOGGER.info("MarriageBillService.getBilldetails - GLCODE does not exists for reason="
-                                    + demandReasonMaster.getReasonMaster());
-                        else
-                            billdetail.setGlcode(reason.getGlcodeId().getGlcode());
+                if (reason.getGlcodeId() == null) {
+                    if (LOGGER.isInfoEnabled()) {
+                        LOGGER.info("MarriageBillService.getBilldetails - GLCODE does not exists for reason="
+                                + demandReasonMaster.getReasonMaster());
+                    }
+                } else {
+                    billdetail.setGlcode(reason.getGlcodeId().getGlcode());
+                }
 
-                        billdetail.setFunctionCode(marriageFunctionCode != null ? marriageFunctionCode.getValue() : "");
-                        billdetail.setEgDemandReason(reason);
-                        billdetail.setAdditionalFlag(Integer.valueOf(1));
-                        billdetail.setCreateDate(currentDate);
-                        billdetail.setModifiedDate(currentDate);
-                        billdetail.setOrderNo(orderNo++);
-                        billdetail.setPurpose(PURPOSE.OTHERS.toString());
-                        descriptionBuilder.append(demandReasonMaster.getReasonMaster())
+                billdetail.setFunctionCode(marriageFunctionCode != null ? marriageFunctionCode.getValue() : "");
+                billdetail.setEgDemandReason(reason);
+                billdetail.setAdditionalFlag(Integer.valueOf(1));
+                billdetail.setCreateDate(currentDate);
+                billdetail.setModifiedDate(currentDate);
+                billdetail.setOrderNo(orderNo++);
+                billdetail.setPurpose(PURPOSE.OTHERS.toString());
+                descriptionBuilder.append(demandReasonMaster.getReasonMaster())
                         .append(" - ")
                         .append(installment.getDescription());
 
-                        billdetail.setDescription(descriptionBuilder.toString());
-                        billDetails.add(billdetail);
-                    }
+                billdetail.setDescription(descriptionBuilder.toString());
+                billDetails.add(billdetail);
+            }
         }
 
         return billDetails;
@@ -203,7 +206,7 @@ public class MarriageBillService extends BillServiceInterface {
         //
     }
 
-    EgBillDetails createBillDet(final Integer orderNo, final BigDecimal billDetailAmount, final String glCode,
+    public EgBillDetails createBillDet(final Integer orderNo, final BigDecimal billDetailAmount, final String glCode,
             final String description, final Integer addlFlag) {
         final AppConfigValues marriageFunctionCode = appConfigValuesService.getConfigValuesByModuleAndKey(
                 MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEFEECOLLECTION_FUCNTION_CODE).get(0);
@@ -220,7 +223,9 @@ public class MarriageBillService extends BillServiceInterface {
         billdetail.setGlcode(glCode);
         billdetail.setDescription(description);
         billdetail.setAdditionalFlag(addlFlag);
-        LOGGER.info("Bill Detail object created with amount " + billDetailAmount);
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Bill Detail object created with amount " + billDetailAmount);
+        }
         return billdetail;
     }
 
