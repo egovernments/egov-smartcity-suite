@@ -57,6 +57,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -99,9 +100,16 @@ public class DocumentController {
             final Errors errors, final Model model,
             final RedirectAttributes redirectAttributes) {
         validate(errors, marriageDocument);
-        if (errors.hasErrors()) {
-            return DOCUMENT_CREATE;
-        }
+        if (errors.hasErrors())
+            for (final Object object : errors.getAllErrors()) {
+                if (object instanceof FieldError) {
+                    final FieldError fieldError = (FieldError) object;
+                    messageSource.getMessage(fieldError, null);
+                }
+                model.addAttribute("currentstate", "NEW");
+
+                return DOCUMENT_CREATE;
+            }
         marriageDocumentService.create(marriageDocument);
         redirectAttributes.addFlashAttribute("message", messageSource
                 .getMessage("msg.document.create.success", null, null));
@@ -173,10 +181,8 @@ public class DocumentController {
             final BindingResult errors,
             final RedirectAttributes redirectAttributes) {
         validate(errors, marriageDocument);
-        if (errors.hasErrors()) {
-
+        if (errors.hasErrors())
             return DOCUMENT_UPDATE;
-        }
         marriageDocumentService
                 .updateDocument(marriageDocument);
 
