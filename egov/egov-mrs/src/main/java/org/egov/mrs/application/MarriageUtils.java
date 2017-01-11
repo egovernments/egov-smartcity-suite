@@ -55,37 +55,36 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MarriageUtils {
-    
+
     @Autowired
     private SecurityUtils securityUtils;
-    
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
-    
     @Autowired
     private AssignmentService assignmentService;
-    
+
     public boolean isLoggedInUserApprover() {
         List<Role> approvers = securityUtils.getCurrentUser().getRoles().stream()
-                .filter(role -> role.getName().equalsIgnoreCase(MarriageConstants.APPROVER_ROLE_NAME)).collect(Collectors.toList());
+                .filter(role -> role.getName().equalsIgnoreCase(MarriageConstants.APPROVER_ROLE_NAME))
+                .collect(Collectors.toList());
 
         if (approvers.isEmpty())
             return false;
 
         return true;
     }
-    
+
     public EgwStatus getStatusByCodeAndModuleType(final String code, final String moduleName) {
         return egwStatusHibernateDAO.getStatusByModuleAndCode(moduleName, code);
     }
-    
+
     public String getApproverName(final Long approvalPosition) {
         Assignment assignment = null;
         List<Assignment> asignList = null;
         if (approvalPosition != null)
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
         if (assignment != null) {
-            asignList = new ArrayList<Assignment>();
+            asignList = new ArrayList<>();
             asignList.add(assignment);
         } else if (assignment == null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());

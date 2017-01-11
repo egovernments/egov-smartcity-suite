@@ -186,13 +186,15 @@ public class MarriageFeeCollection extends TaxCollection {
     // Receipt cancellation ,updating bill,demanddetails,demand
     @Transactional
     public void updateCollectionForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
-        LOGGER.debug("reconcileCollForRcptCancel : Updating Collection Started For Demand : " + demand
-                + " with BillReceiptInfo - " + billRcptInfo);
-
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("reconcileCollForRcptCancel : Updating Collection Started For Demand : " + demand
+                    + " with BillReceiptInfo - " + billRcptInfo);
+        }
         cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
         updateDmdDetForRcptCancel(demand, billRcptInfo);
-
-        LOGGER.debug("reconcileCollForRcptCancel : Updating Collection finished For Demand : " + demand);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("reconcileCollForRcptCancel : Updating Collection finished For Demand : " + demand);
+        }
     }
 
     @Transactional
@@ -205,11 +207,13 @@ public class MarriageFeeCollection extends TaxCollection {
 
     @Transactional
     public void updateDmdDetForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
-        LOGGER.debug("Entering method updateDmdDetForRcptCancel");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entering method updateDmdDetForRcptCancel");
+        }
         String installment;
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-            && !rcptAccInfo.getIsRevenueAccount()) {
+                    && !rcptAccInfo.getIsRevenueAccount()) {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0].trim();
                 installment = desc[1].trim();
@@ -226,7 +230,7 @@ public class MarriageFeeCollection extends TaxCollection {
                                             + " is greater than the collected amount " + demandDetail.getAmtCollected()
                                             + " for demandDetail " + demandDetail);
                         demandDetail
-                        .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+                                .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
                         if (demand.getAmtCollected() != null && demand.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
                                 && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
                             demand.setAmtCollected(demand.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
@@ -236,7 +240,9 @@ public class MarriageFeeCollection extends TaxCollection {
                     }
             }
         updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
-        LOGGER.debug("Exiting method updateDmdDetForRcptCancel");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Exiting method updateDmdDetForRcptCancel");
+        }
     }
 
     @Override

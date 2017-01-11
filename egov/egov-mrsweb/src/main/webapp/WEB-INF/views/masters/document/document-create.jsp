@@ -1,10 +1,8 @@
-<%@ page contentType="text/json" %>
-<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %> 
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2017>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -40,9 +38,48 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-{
-"ResultSet": {
-    "Result":[
-    ]
-  }
-}
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+
+<c:if test="${not empty message}">
+	<strong><spring:message code="${message}" /></strong>
+</c:if>
+<form:form method="post" action="/mrs/masters/document/create"
+	class="form-horizontal form-groups-bordered"
+	commandName="marriageDocument" id="form-marriageRegistrationUnit">
+	<div class="row" id="page-content">
+		<div class="col-md-12">
+			<div class="panel" data-collapsed="0">
+				<div class="panel-body">
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-heading">
+							<div class="panel-title">
+								<strong><spring:message code="lbl.hdr.createDocument" /></strong>
+							</div>
+						</div>
+						<jsp:include page="document-form.jsp"></jsp:include>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="text-center">
+			<button type="submit" class="btn btn-primary">
+				<spring:message code="lbl.save.document" />
+			</button>
+			<button type="reset" class="btn btn-default">
+				<spring:message code="lbl.reset" />
+			</button>
+			<a href="javascript:void(0)" class="btn btn-default"
+				onclick="self.close()"><spring:message code="lbl.close" /></a>
+		</div>
+	</div>
+</form:form>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/js/app/documentvalidate.js?rnd=${app_release_no}'/>"></script>
+

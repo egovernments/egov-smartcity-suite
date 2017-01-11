@@ -75,6 +75,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/report")
 public class HandicappedMarriageRegReportController {
 
+    private static final String HANDICAPPED_MARRIAGE_REPORT = "handicapped-marriage-report";
     @Autowired
     private CityService cityService;
     @Autowired
@@ -83,7 +84,7 @@ public class HandicappedMarriageRegReportController {
     @RequestMapping(value = "/handicapped-report", method = RequestMethod.GET)
     public String searchHandicappedApplications(final Model model)
             throws ParseException {
-        return "handicapped-marriage-report";
+        return HANDICAPPED_MARRIAGE_REPORT;
     }
 
     private List<MarriageRegistrationIndex> getSearchResult(final String applicantType) {
@@ -101,7 +102,7 @@ public class HandicappedMarriageRegReportController {
             @ModelAttribute final MarriageRegistration registration) {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-YYYY");
         final List<MarriageRegIndexSearchResult> searchResultFomatted = new ArrayList<>();
-        MarriageRegIndexSearchResult mrisr = null;
+        MarriageRegIndexSearchResult mrisr;
         for (final MarriageRegistrationIndex mrsIndexObj : getSearchResult(applicantType)) {
             mrisr = new MarriageRegIndexSearchResult();
             mrisr.setApplicationNumber(mrsIndexObj.getApplicationNo());

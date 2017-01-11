@@ -102,12 +102,12 @@ public class MarriageRegistrationIndexService {
                     .setZone(registration.getZone().getName() != null ? registration.getZone().getName() : "");
             registrationSearch.setMarriageAct(registration.getMarriageAct() != null
                     && registration.getMarriageAct().getDescription() != null
-                    ? registration.getMarriageAct().getDescription() : "");
+                            ? registration.getMarriageAct().getDescription() : "");
             registrationSearch.setPlaceOfMarriage(
                     registration.getPlaceOfMarriage() != null ? registration.getPlaceOfMarriage() : "");
             registrationSearch.setMarriageFeeCriteria(registration.getFeeCriteria() != null
                     && registration.getFeeCriteria().getCriteria() != null
-                    ? registration.getFeeCriteria().getCriteria() : "");
+                            ? registration.getFeeCriteria().getCriteria() : "");
             registrationSearch.setMarriageFeeAmount(registration.getFeePaid() != null
                     ? BigDecimal.valueOf(registration.getFeePaid()) : BigDecimal.ZERO);
 
@@ -126,7 +126,7 @@ public class MarriageRegistrationIndexService {
                 registrationSearch
                         .setHusbandReligionPractice(registration.getHusband().getReligionPractice() != null
                                 && registration.getHusband().getReligionPractice().name() != null
-                                ? registration.getHusband().getReligionPractice().name() : "");
+                                        ? registration.getHusband().getReligionPractice().name() : "");
                 registrationSearch.setHusbandOccupation(registration.getHusband().getOccupation() != null
                         ? registration.getHusband().getOccupation() : "");
                 registrationSearch.setHusbandPhoneNo(registration.getHusband().getContactInfo() != null
@@ -159,7 +159,7 @@ public class MarriageRegistrationIndexService {
                         ? registration.getWife().getMaritalStatus().name() : "");
                 registrationSearch.setWifeReligionPractice(registration.getWife().getReligionPractice() != null
                         && registration.getWife().getReligionPractice().name() != null
-                        ? registration.getWife().getReligionPractice().name() : "");
+                                ? registration.getWife().getReligionPractice().name() : "");
                 registrationSearch.setWifeOccupation(
                         registration.getWife().getOccupation() != null ? registration.getWife().getOccupation() : "");
                 registrationSearch.setWifePhoneNo(registration.getWife().getContactInfo().getMobileNo() != null
@@ -254,14 +254,16 @@ public class MarriageRegistrationIndexService {
         BoolQueryBuilder boolQuery = null;
         if (StringUtils.isNotBlank(ulbName) && null != ulbName)
             boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("ulbName", ulbName));
-        if (StringUtils.isNotBlank(applicantType) && null != applicantType)
-            if (applicantType.equalsIgnoreCase("Husband"))
-                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("husbandHandicapped", true));
-            else if (applicantType.equalsIgnoreCase("Wife"))
-                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("wifeHandicapped", true));
-            else
-                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("husbandHandicapped", true)).
-                        filter(QueryBuilders.matchQuery("wifeHandicapped", true));
+        if (null != boolQuery) {
+            if (StringUtils.isNotBlank(applicantType) && null != applicantType)
+                if ("Husband".equalsIgnoreCase(applicantType))
+                    boolQuery = boolQuery.filter(QueryBuilders.matchQuery("husbandHandicapped", true));
+                else if ("Wife".equalsIgnoreCase(applicantType))
+                    boolQuery = boolQuery.filter(QueryBuilders.matchQuery("wifeHandicapped", true));
+                else
+                    boolQuery = boolQuery.filter(QueryBuilders.matchQuery("husbandHandicapped", true))
+                            .filter(QueryBuilders.matchQuery("wifeHandicapped", true));
+        }
         return boolQuery;
     }
 

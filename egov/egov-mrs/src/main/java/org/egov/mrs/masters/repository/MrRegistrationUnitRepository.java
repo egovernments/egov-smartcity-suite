@@ -44,12 +44,11 @@ import java.util.List;
 import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface MrRegistrationUnitRepository extends
-        JpaRepository<MarriageRegistrationUnit, Long> {
+public interface MrRegistrationUnitRepository extends JpaRepository<MarriageRegistrationUnit, Long> {
     MarriageRegistrationUnit findById(Long id);
 
     MarriageRegistrationUnit findByName(String name);
 
-    public List<MarriageRegistrationUnit> findByisActiveTrueOrderByNameAsc();
+    List<MarriageRegistrationUnit> findByisActiveTrueOrderByNameAsc();
 
 }

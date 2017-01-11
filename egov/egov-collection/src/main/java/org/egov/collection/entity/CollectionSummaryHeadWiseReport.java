@@ -39,9 +39,6 @@
  */
 package org.egov.collection.entity;
 
-import java.math.BigDecimal;
-
-
 public class CollectionSummaryHeadWiseReport {
 
     private String source;
@@ -56,6 +53,8 @@ public class CollectionSummaryHeadWiseReport {
     private Double totalAmount;
     private String employeeName;
     private String counterName;
+    private Double cardAmount;
+    private String cardCount;
 
     public String getSource() {
         return source;
@@ -151,5 +150,21 @@ public class CollectionSummaryHeadWiseReport {
 
     public void setCounterName(final String counterName) {
         this.counterName = counterName;
+    }
+
+    public String getCardCount() {
+        return cardCount;
+    }
+
+    public void setCardCount(final String cardCount) {
+        this.cardCount = cardCount;
+    }
+
+    public Double getCardAmount() {
+        return cardAmount;
+    }
+
+    public void setCardAmount(final Double cardAmount) {
+        this.cardAmount = cardAmount;
     }
 }

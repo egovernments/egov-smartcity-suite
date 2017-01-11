@@ -430,7 +430,7 @@ public abstract class AbstractLicenseService<T extends License> {
             wfInitiator = this.getWorkflowInitiator(license);
 
         if (wfInitiator != null && BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            if (wfInitiator.equals(userAssignment.getPosition()) && "Rejected".equals(license.getState().getValue())) {
+            if (wfInitiator.equals(userAssignment.getPosition()) && ("Rejected".equals(license.getState().getValue()) || "License Created".equals(license.getState().getValue()))) {
                 license.transition(true).end().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());

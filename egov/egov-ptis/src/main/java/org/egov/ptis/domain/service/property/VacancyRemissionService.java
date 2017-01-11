@@ -72,6 +72,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 
+import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -643,7 +644,7 @@ public class VacancyRemissionService {
             reportParams.put("isCorporation", isCorporation);
             reportParams.put("cityName", cityName);
             reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null
-                    ? securityUtils.getCurrentUser().getSignature() != null : "");
+                    ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : "");
             reportParams.put("loggedInUsername",
                     userService.getUserById(ApplicationThreadLocals.getUserId()).getName());
             reportParams.put("approvedDate", formatter.format(vacancyRemission.getState().getCreatedDate()));

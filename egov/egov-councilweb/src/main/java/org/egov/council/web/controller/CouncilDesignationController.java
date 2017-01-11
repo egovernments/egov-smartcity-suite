@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,7 +54,7 @@ public class CouncilDesignationController {
 
         if (councilDesignation != null && councilDesignation.getCode() == null)
             councilDesignation.setCode(RandomStringUtils.random(4, Boolean.TRUE, Boolean.TRUE).toUpperCase());
-
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "notempty.cncl.designation");
         if (errors.hasErrors()) {
             return COUNCILDESIGNATION_NEW;
         }
@@ -74,6 +75,7 @@ public class CouncilDesignationController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final CouncilDesignation councilDesignation,
             final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs) {
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "notempty.cncl.designation");
         if (errors.hasErrors()) {
             return COUNCILDESIGNATION_EDIT;
         }

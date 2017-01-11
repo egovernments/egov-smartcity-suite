@@ -1,5 +1,5 @@
-<%@ page contentType="text/json" %>
-<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %> 
+<%@page contentType="text/json" %>
+<%@taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %>  
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -43,9 +43,9 @@
 {
 "ResultSet": {
     "Result":[
-    <s:iterator var="s" value="divisionList" status="status">
-    {"Text":"<s:property value="%{name}" />",
-    "Value":"<s:property value="%{id}" />"
+	<s:iterator var="s" value="propertyDepartmentList" status="status">  
+    {"Value":"<s:property value="%{id}" />",
+    "Text":"<s:property value="%{name}" />"
     }<s:if test="!#status.last">,</s:if>
     </s:iterator>       
     ]

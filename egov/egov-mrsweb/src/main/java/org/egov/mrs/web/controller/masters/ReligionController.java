@@ -65,6 +65,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/masters")
 public class ReligionController {
 
+    private static final String MARRIAGE_RELIGION = "marriageReligion";
     private static final String MRG_RELIGION_CREATE = "religion-create";
     private static final String MRG_RELIGION_UPDATE = "religion-update";
     private static final String MRG_RELIGION_VIEW = "religion-view";
@@ -79,7 +80,7 @@ public class ReligionController {
 
     @RequestMapping(value = "/religion/create", method = RequestMethod.GET)
     public String loadCreateForm(final Model model) {
-        model.addAttribute("marriageReligion", new MarriageReligion());
+        model.addAttribute(MARRIAGE_RELIGION, new MarriageReligion());
         return MRG_RELIGION_CREATE;
     }
 
@@ -99,14 +100,14 @@ public class ReligionController {
 
     @RequestMapping(value = "/religion/success/{id}", method = RequestMethod.GET)
     public String viewReligion(@PathVariable final Long id, final Model model) {
-        model.addAttribute("marriageReligion", religionService.findById(id));
+        model.addAttribute(MARRIAGE_RELIGION, religionService.findById(id));
         return MRG_RELIGION_SUCCESS;
     }
 
     @RequestMapping(value = "/religion/search/{mode}", method = RequestMethod.GET)
     public String getSearchPage(@PathVariable("mode") final String mode,
             final Model model) {
-        model.addAttribute("marriageReligion", new MarriageReligion());
+        model.addAttribute(MARRIAGE_RELIGION, new MarriageReligion());
         return MRG_RELIGION_SEARCH;
     }
 
@@ -114,24 +115,23 @@ public class ReligionController {
     public String viewRegistrationunit(@PathVariable("id") final Long id,
             final Model model) {
         final MarriageReligion marriageReligion = religionService.findById(id);
-        model.addAttribute("marriageReligion", marriageReligion);
+        model.addAttribute(MARRIAGE_RELIGION, marriageReligion);
         return MRG_RELIGION_VIEW;
     }
 
     @RequestMapping(value = "/religion/searchResult", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchReligionResult(final Model model,
+    @ResponseBody
+    public String searchReligionResult(final Model model,
             @ModelAttribute final MarriageReligion religion) {
         final List<MarriageReligion> searchResultList = religionService
                 .searchReligions(religion);
-        final String result = new StringBuilder("{ \"data\":")
-                .append(toJSON(searchResultList, MarriageReligion.class,
-                        ReligionJsonAdaptor.class)).append("}").toString();
-        return result;
+        return new StringBuilder("{ \"data\":")
+                .append(toJSON(searchResultList, MarriageReligion.class, ReligionJsonAdaptor.class)).append("}").toString();
     }
 
     @RequestMapping(value = "/religion/edit/{id}", method = RequestMethod.GET)
     public String editReligion(@PathVariable("id") final Long id, final Model model) {
-        model.addAttribute("marriageReligion", religionService.findById(id));
+        model.addAttribute(MARRIAGE_RELIGION, religionService.findById(id));
         return MRG_RELIGION_UPDATE;
     }
 

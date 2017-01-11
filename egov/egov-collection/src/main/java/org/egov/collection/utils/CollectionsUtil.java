@@ -324,14 +324,6 @@ public class CollectionsUtil {
         if (isEmp && !isDeptAllowed)
             throw new ValidationException(
                     Arrays.asList(new ValidationError("Department", "billreceipt.counter.deptcode.null")));
-        else if (!isEmp || isDeptAllowed)
-            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
-        // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
-        else {
-            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CASH);
-            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
-            // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
-        }
         return collectionsModeNotAllowed;
     }
 

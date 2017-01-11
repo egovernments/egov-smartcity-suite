@@ -43,6 +43,17 @@ package org.egov.tl.web.actions;
 import static org.egov.tl.utils.Constants.APPROVE_PAGE;
 import static org.egov.tl.utils.Constants.GENERATE_CERTIFICATE;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -82,27 +93,15 @@ import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.service.AbstractLicenseService;
 import org.egov.tl.service.FeeTypeService;
-import org.egov.tl.service.TradeLicenseService;
-import org.egov.tl.service.TradeLicenseSmsAndEmailService;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseSubCategoryService;
+import org.egov.tl.service.TradeLicenseService;
+import org.egov.tl.service.TradeLicenseSmsAndEmailService;
 import org.egov.tl.service.UnitOfMeasurementService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
-import org.egov.tl.web.actions.domain.CommonAjaxAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-
-import java.util.List;
-import java.util.Map;
 
 @ParentPackage("egov")
 @Results({
@@ -394,25 +393,6 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
         }
         return result;
-    }
-
-    public void loadAjaxedDropDowns() {
-        final CommonAjaxAction commonAjaxAction = new CommonAjaxAction();
-        commonAjaxAction.setLicenseUtils(licenseUtils);
-        commonAjaxAction.setBoundaryService(boundaryService);
-        commonAjaxAction.setEisCommonService(eisCommonService);
-        commonAjaxAction.setDesignationService(designationService);
-
-        if (workflowBean.getDepartmentId() != null) {
-            commonAjaxAction.setDepartmentId(workflowBean.getDepartmentId());
-            commonAjaxAction.ajaxPopulateDesignationsByDept();
-            workflowBean.setDesignationList(commonAjaxAction.getDesignationList());
-        }
-        if (workflowBean.getDesignationId() != null) {
-            commonAjaxAction.setDesignationId(workflowBean.getDesignationId());
-            commonAjaxAction.ajaxPopulateUsersByDesignation();
-            workflowBean.setAppoverUserList(commonAjaxAction.getAllActiveUsersByGivenDesg());
-        }
     }
 
     public void setupWorkflowDetails() {

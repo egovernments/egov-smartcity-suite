@@ -50,44 +50,43 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 public class ApplicationStatusResultReportJsonAdaptor implements JsonSerializer<ApplicationStatusResultForReport> {
-	@Override
-	public JsonElement serialize(final ApplicationStatusResultForReport statusResultForReport, final Type type,
-			final JsonSerializationContext jsc) {
-		final JsonObject jsonObject = new JsonObject();
-		if (statusResultForReport != null) {
-			if (statusResultForReport.getRegistrationUnit() != null)
-				jsonObject.addProperty("registrationUnit", statusResultForReport.getRegistrationUnit());
-			else
-				jsonObject.addProperty("registrationUnit", StringUtils.EMPTY);
-			if (statusResultForReport.getCreatedCount() != null)
-				jsonObject.addProperty("createdCount", statusResultForReport.getCreatedCount());
-			else
-				jsonObject.addProperty("createdCount", "0");
+    @Override
+    public JsonElement serialize(final ApplicationStatusResultForReport statusResultForReport, final Type type,
+            final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (statusResultForReport != null) {
+            if (statusResultForReport.getRegistrationUnit() != null)
+                jsonObject.addProperty("registrationUnit", statusResultForReport.getRegistrationUnit());
+            else
+                jsonObject.addProperty("registrationUnit", StringUtils.EMPTY);
+            if (statusResultForReport.getCreatedCount() != null)
+                jsonObject.addProperty("createdCount", statusResultForReport.getCreatedCount());
+            else
+                jsonObject.addProperty("createdCount", "0");
 
-			if (statusResultForReport.getApprovedCount() != null)
-				jsonObject.addProperty("approvedCount", statusResultForReport.getApprovedCount());
-			else
-				jsonObject.addProperty("approvedCount", "0");
+            if (statusResultForReport.getApprovedCount() != null)
+                jsonObject.addProperty("approvedCount", statusResultForReport.getApprovedCount());
+            else
+                jsonObject.addProperty("approvedCount", "0");
 
-			if (statusResultForReport.getRegisteredCount() != null)
-				jsonObject.addProperty("registeredCount", statusResultForReport.getRegisteredCount());
-			else
-				jsonObject.addProperty("registeredCount", "0");
-			if (statusResultForReport.getCancelledCount() != null)
-				jsonObject.addProperty("cancelledCount", statusResultForReport.getCancelledCount());
-			else
-				jsonObject.addProperty("cancelledCount", "0");
-			if (statusResultForReport.getRejectedCount() != null)
-				jsonObject.addProperty("rejectedCount", statusResultForReport.getRejectedCount());
-			else
-				jsonObject.addProperty("rejectedCount", "0");
-			
-			if (statusResultForReport.getTotal() != null)
-                            jsonObject.addProperty("total", statusResultForReport.getTotal());
-                    else
-                            jsonObject.addProperty("total", "0");
+            if (statusResultForReport.getRegisteredCount() != null)
+                jsonObject.addProperty("registeredCount", statusResultForReport.getRegisteredCount());
+            else
+                jsonObject.addProperty("registeredCount", "0");
+            if (statusResultForReport.getCancelledCount() != null)
+                jsonObject.addProperty("cancelledCount", statusResultForReport.getCancelledCount());
+            else
+                jsonObject.addProperty("cancelledCount", "0");
+            if (statusResultForReport.getRejectedCount() != null)
+                jsonObject.addProperty("rejectedCount", statusResultForReport.getRejectedCount());
+            else
+                jsonObject.addProperty("rejectedCount", "0");
 
-		}
-		return jsonObject;
-	}
+            if (statusResultForReport.getTotal() != null)
+                jsonObject.addProperty("total", statusResultForReport.getTotal());
+            else
+                jsonObject.addProperty("total", "0");
+        }
+        return jsonObject;
+    }
 }

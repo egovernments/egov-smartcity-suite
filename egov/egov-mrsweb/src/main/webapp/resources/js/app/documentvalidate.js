@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -38,16 +38,20 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.service.integration;
+$(document).ready(function() {
+	$("#prooftype").change(function() {
+		var type = $("#prooftype option:selected").text();
+		if (type == "COMMON") {
+			$('#txt-individual').prop('checked', false);
+		} else {
+			$("#txt-individual").prop('checked', true);
+		}
+	})
 
-import org.egov.demand.model.EgDemandDetails;
-
-import java.util.Comparator;
-
-public class DemandComparatorByOrderId implements Comparator<EgDemandDetails> {
-    @Override
-    public int compare(final EgDemandDetails d1, final EgDemandDetails d2) {
-        return d1.getEgDemandReason().getEgDemandReasonMaster().getOrderId().compareTo
-                (d2.getEgDemandReason().getEgDemandReasonMaster().getOrderId());
-    }
-}
+	var currentstate = $('#currentstate').val();
+	if (currentstate == 'NEW') {
+		$('#active').attr("checked", "checked");
+	} else {
+		$('#active').removeAttr("checked", "checked");
+	}
+});

@@ -153,11 +153,8 @@ public class RegistrationUnitController {
         List<MarriageRegistrationUnit> searchResultList = marriageRegistrationUnitService
                 .searchMarriageRegistrationUnit(marriageRegistrationUnit);
         return new StringBuilder("{ \"data\":")
-                .append(toJSON(searchResultList,
-                        MarriageRegistrationUnit.class,
-                        MarriageRegistrationUnitJsonAdaptor.class))
-                .append("}")
-                .toString();
+                .append(toJSON(searchResultList, MarriageRegistrationUnit.class, MarriageRegistrationUnitJsonAdaptor.class))
+                .append("}").toString();
     }
 
     @RequestMapping(value = "/mrregistrationunit/edit/{id}", method = RequestMethod.GET)

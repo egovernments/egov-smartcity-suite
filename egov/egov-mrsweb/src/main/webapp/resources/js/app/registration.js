@@ -75,9 +75,11 @@ $(document).ready( function () {
 	
 	if($('#registrationStatus').val()=='APPROVED' && $("#feeCollected").val()=='false'){ 
 		 $("[id='Print Certificate']").hide();
-	 }   
-	
-	if($('#registrationStatus').val()=='APPROVED' || $('#registrationStatus').val()=='CREATED' ||$('#registrationStatus').val()=='REGISTERED'){ 
+	 }  
+	 
+	//Removing file attachment validation from workflow and modify screen 
+	if($('#registrationStatus').val()=='APPROVED' || $('#registrationStatus').val()=='CREATED' 
+		|| $('#registrationStatus').val()=='REGISTERED' || $('#registrationStatus').val()=='REJECTED'){ 
 		$(".file-ellipsis.upload-file").removeAttr('required');
 	 }  
 	
@@ -139,12 +141,10 @@ $(document).ready( function () {
 	        	$('div#' + elem.id).addClass('in active');	
 	    	}
 	    	
-	    	console.log('target' + e.target.id);
 	    	var imgAttach = e.target.id;
 	    }  
 	});
 
-	/*$("input[id$='religionPractice1']").prop("checked", true);*/
 	
 	$('#table_search').keyup(function(){
     	$('#registration_table').fnFilter(this.value);
@@ -166,10 +166,8 @@ $(document).ready( function () {
 		if($(this).parent().find('#toggle-his-icon').hasClass('fa fa-angle-down'))
 		{
 			$(this).parent().find('#toggle-his-icon').removeClass('fa fa-angle-down').addClass('fa fa-angle-up');
-			//$('#see-more-link').hide();
 			}else{
 			$(this).parent().find('#toggle-his-icon').removeClass('fa fa-angle-up').addClass('fa fa-angle-down');
-			//$('#see-more-link').show();
 		}
 	});
 	
@@ -190,56 +188,90 @@ $(document).ready( function () {
 			e.preventDefault();
 		}
 	});
+	
+	//To render all marriage registration images from second level
+	$('.setimage').each(function() {
+		var encodedPhoto = $(this).find('.encodedPhoto').val();
+		if(encodedPhoto){
+			$(this).find('.marriage-img').attr({
+				src : "data:image/jpg;base64," + encodedPhoto
+			});
+			$(this).find('.marriage-img').attr('data-exist', '');
+		}
+	});
+	
+	// To show preview of all uploaded images of marriage registration
+	$('.upload-file[data-fileto]').change(function(e){
+		if(this.files[0].name){
+			readURL(this, $(this).data('fileto'));
+		}
+	});
 
-})
+});
 
+
+function readURL(input, imgId) {
+	if (input.files && input.files[0]) {
+		var reader = new FileReader();
+		reader.onload = function (e) {
+			$('img[id="'+imgId+'"]').attr('src', e.target.result);
+		}
+
+		reader.readAsDataURL(input.files[0]);
+	}
+}
 
 function validateChecklists() {
 	//Passport is assumed to be common proof for both age and residence
 	//If passport is not attached then validate for other age and residence proof documents
-	 var ageAddrProofAttached = false;
-	if($('input[id^="indvcommonhusbandPassport"]').val()==""){
-		 $('input[type="file"][id^="ageproofhusband"]').toArray().map(function(item) {
-			 if(item.value!="")
-				 ageAddrProofAttached = true;
-		 });
-		 if (ageAddrProofAttached == false) {
-			bootbox.alert("Any one Age Proof for Husband is mandatory");
-			return false;
-		}
-		 
-		 ageAddrProofAttached = false;
-		 $('input[type="file"][id^="addressproofhusband"]').toArray().map(function(item) {
-			 if(item.value!="")
-				 ageAddrProofAttached = true;
-		 });
-		 if (ageAddrProofAttached == false) {
-			 bootbox.alert("Any one Residence Proof for Husband is mandatory");
+	if($('#registrationStatus').val()==""){
+		var ageAddrProofAttached = false;
+		if($('input[id^="indvcommonhusbandPassport"]').val()==""){
+			 $('input[type="file"][id^="ageproofhusband"]').toArray().map(function(item) {
+				 if(item.value!="")
+					 ageAddrProofAttached = true;
+			 });
+			 if (!ageAddrProofAttached) {
+				bootbox.alert("Any one Age Proof for Husband is mandatory");
 				return false;
-		 }
-	}
-	if($('input[id^="indvcommonwifePassport"]').val()==""){
-		 ageAddrProofAttached = false;
-		 $('input[type="file"][id^="ageproofwife"]').toArray().map(function(item) {
-			 if(item.value!="")
-				 ageAddrProofAttached = true;
-		 });
-		 if (ageAddrProofAttached == false) {
-			bootbox.alert("Any one Age Proof for Wife is mandatory");
-			return false;
+			}
+			 
+			 ageAddrProofAttached = false;
+			 $('input[type="file"][id^="addressproofhusband"]').toArray().map(function(item) {
+				 if(item.value!="")
+					 ageAddrProofAttached = true;
+			 });
+			 if (!ageAddrProofAttached) {
+				 bootbox.alert("Any one Residence Proof for Husband is mandatory");
+					return false;
+			 }
 		}
-		 
-		 ageAddrProofAttached = false;
-		 $('input[type="file"][id^="addressproofwife"]').toArray().map(function(item) {
-			 if(item.value!="")
-				 ageAddrProofAttached = true;
-		 });
-		 if (ageAddrProofAttached == false) {
-			 bootbox.alert("Any one Residence Proof for Wife is mandatory");
+		if($('input[id^="indvcommonwifePassport"]').val()==""){
+			 ageAddrProofAttached = false;
+			 $('input[type="file"][id^="ageproofwife"]').toArray().map(function(item) {
+				 if(item.value!="")
+					 ageAddrProofAttached = true;
+			 });
+			 if (!ageAddrProofAttached) {
+				bootbox.alert("Any one Age Proof for Wife is mandatory");
 				return false;
-		 }
-	}
-	return true;
+			}
+			 
+			 ageAddrProofAttached = false;
+			 $('input[type="file"][id^="addressproofwife"]').toArray().map(function(item) {
+				 if(item.value!="")
+					 ageAddrProofAttached = true;
+			 });
+			 if (!ageAddrProofAttached) {
+				 bootbox.alert("Any one Residence Proof for Wife is mandatory");
+					return false;
+			 }
+		}
+		return true;
+	}else{
+		return true;
+	}  
+	
 }
 
 function removeMandatory() {
@@ -253,7 +285,6 @@ function validateApplicationDate(){
 	var one_day=1000*60*60*24
 	var start = $('#txt-dateOfMarriage').datepicker('getDate'); // date of marriage
 	var end = new Date(); // current date
-	// Math.ceil((end.getTime() - start.getTime())/one_day);
 	var days   = Math.round((end.getTime() - start.getTime())/one_day);
 	return days;
 }
@@ -272,7 +303,7 @@ $(".btn-primary").click(function(e) {
 	if(action == 'Reject') { 
 		 $('#Reject').attr('formnovalidate','true');
 		 var r = confirm("Do You Really Want to Reject The Registration!");
-		 if (r == true) {
+		 if (r) {
 			 var approvalComent=$('#approvalComent').val();
 			  if(approvalComent == "") {
 				  bootbox.alert("Please enter rejection comments!");
@@ -290,10 +321,10 @@ $(".btn-primary").click(function(e) {
 	
 	 if(action == 'Cancel Registration') { 
 		 $('#Cancel Registration').attr('formnovalidate','true');
-		 var r = confirm("Do You Really Want to Cancel The Registration!");
-		 if (r == true) {
-			 var approvalComent=$('#approvalComent').val();
-			  if(approvalComent == "") {
+		 var res = confirm("Do You Really Want to Cancel The Registration!");
+		 if (res) {
+			 var approvalComment=$('#approvalComent').val();
+			  if(approvalComment == "") {
 				  bootbox.alert("Please enter cancellation comments!");
 					$('#approvalComent').focus();
 					return false; 
@@ -331,7 +362,7 @@ function validateSerialNumber(){
 			},
 			dataType: "json",
 			success: function (response) { 
-				if(response != true) {
+				if(response) {
 						bootbox.alert("Entered Serial Number already exists. Please Enter Unique Number.");
 						$('#txt-serialNo').val('');
 				}

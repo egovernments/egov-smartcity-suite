@@ -51,15 +51,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RegistrationFeeCalculatorService implements MarriageFeeCalculator {
-	@Autowired
+    @Autowired
     private MarriageFeeService marriageFeeService;
-    
+
     @Override
     public Double calculateFee(final Date date) {
         Long daysAfterMarriage = ChronoUnit.DAYS.between(
                 date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
                 LocalDateTime.now());
-        
         return marriageFeeService.getFeeForDays(daysAfterMarriage).getFees();
     }
 
@@ -67,5 +66,4 @@ public class RegistrationFeeCalculatorService implements MarriageFeeCalculator {
     public String getFeeType() {
         return MarriageFeeType.MRGREGISTRATION.name();
     }
-
 }

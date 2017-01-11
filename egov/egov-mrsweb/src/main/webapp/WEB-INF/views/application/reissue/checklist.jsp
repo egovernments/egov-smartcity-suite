@@ -249,4 +249,4 @@
 	<div class="col-sm-4"></div>
 </div>
 
-<jsp:include page="documentdetails.jsp"></jsp:include>
+<jsp:include page="../registration/documentdetails.jsp"></jsp:include>

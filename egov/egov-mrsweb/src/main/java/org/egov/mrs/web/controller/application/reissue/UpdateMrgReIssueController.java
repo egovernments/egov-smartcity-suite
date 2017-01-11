@@ -53,6 +53,7 @@ import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.service.MarriageApplicantService;
 import org.egov.mrs.domain.service.MarriageDocumentService;
+import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.egov.mrs.domain.service.ReIssueService;
 import org.egov.mrs.masters.service.MarriageRegistrationUnitService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,21 +80,18 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
 
     @Autowired
     private ReIssueService reIssueService;
-
     @Autowired
     private MarriageApplicantService marriageApplicantService;
-
     @Autowired
     private MarriageDocumentService marriageDocumentService;
-
     @Autowired
     protected ResourceBundleMessageSource messageSource;
-
     @Autowired
     private MarriageRegistrationUnitService marriageRegistrationUnitService;
-
     @Autowired
     protected AssignmentService assignmentService;
+    @Autowired
+    private MarriageRegistrationService marriageRegistrationService;
 
     public void prepareNewForm(final Model model) {
         model.addAttribute("marriageRegistrationUnit",
@@ -105,6 +103,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
         final ReIssue reIssue = reIssueService.get(id);
         model.addAttribute("documents", marriageDocumentService.getIndividualDocuments());
 
+        marriageRegistrationService.prepareDocumentsForView(reIssue.getRegistration());
         marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getHusband());
         marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getWife());
         marriageApplicantService.prepareDocumentsForView(reIssue.getApplicant());
@@ -141,8 +140,8 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
             return "reissue-view";
 
         String message = StringUtils.EMPTY;
-        String approverName = StringUtils.EMPTY;
-        String nextDesignation = StringUtils.EMPTY;
+        String approverName;
+        String nextDesignation;
 
         if (workFlowAction != null && !workFlowAction.isEmpty()) {
             workflowContainer.setWorkFlowAction(workFlowAction);
@@ -150,8 +149,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
             approverName = wfInitiator.getEmployee().getName();
             nextDesignation = wfInitiator.getDesignation().getName();
             workflowContainer.setApproverComments(request.getParameter("approvalComent"));
-            if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT))
-            {
+            if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT)) {
 
                 reIssueService.rejectReIssue(reIssue, workflowContainer, request);
                 message = messageSource.getMessage("msg.rejected.reissue", new String[] { reIssue.getApplicationNo(),
@@ -160,17 +158,14 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
                 reIssueService.rejectReIssue(reIssue, workflowContainer, request);
                 message = messageSource.getMessage("msg.cancelled.reissue", new String[] { reIssue.getApplicationNo(), null },
                         null);
-            }
-            else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_APPROVE)) {
+            } else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_APPROVE)) {
                 reIssueService.approveReIssue(reIssue, workflowContainer);
                 message = messageSource.getMessage("msg.approved.reissue", new String[] { reIssue.getApplicationNo(),
                         approverName.concat("~").concat(nextDesignation) }, null);
-            }
-            else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE)) {
+            } else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE)) {
                 reIssueService.printCertificate(reIssue, workflowContainer, request);
                 message = messageSource.getMessage("msg.printcerificate.reissue", null, null);
-            }
-            else {
+            } else {
                 approverName = request.getParameter("approverName");
                 nextDesignation = request.getParameter("nextDesignation");
                 workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter("approvalPosition")));

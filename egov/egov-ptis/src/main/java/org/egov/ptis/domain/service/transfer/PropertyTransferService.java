@@ -416,7 +416,7 @@ public class PropertyTransferService {
             final List<User> users = eisCommonService.getAllActiveUsersByGivenDesig(designationService
                     .getDesignationByName(COMMISSIONER_DESGN).getId());
             noticeBean.setApproverName(users.get(0).getName());
-            reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : null);
+            reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : "");
             reportParams.put("isCorporation", isCorporation);
             noticeBean.setNoticeNumber(notice!=null ? notice.getNoticeNo() : "N/A");
             noticeBean.setOldOwnerName(propertyMutation.getFullTranferorName());

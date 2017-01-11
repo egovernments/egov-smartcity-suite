@@ -105,6 +105,7 @@ public class NewReIssueController extends GenericWorkFlowController {
     public void prepareNewForm(final Model model, final ReIssue reIssue) {
         model.addAttribute("marriageRegistrationUnit",
                 marriageRegistrationUnitService.getActiveRegistrationunit());
+        marriageRegistrationService.prepareDocumentsForView(reIssue.getRegistration());
         marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getHusband());
         marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getWife());
         MarriageFee marriageFee = marriageFeeService.getFeeForCriteria(MarriageConstants.REISSUE_FEECRITERIA);
@@ -125,8 +126,8 @@ public class NewReIssueController extends GenericWorkFlowController {
             model.addAttribute(MESSAGE, "msg.invalid.request");
             return "marriagecommon-error";
         } // CHECK ANY RECORD ALREADY IN ISSUE CERTIFICATE WORKFLOW FOR THE SELECTED REGISTRATION.IF YES, DO NOT ALLOW THEM TO
-        // PROCESS THE
-        // REQUEST.
+          // PROCESS THE
+          // REQUEST.
         else if (reIssueService.checkAnyWorkFlowInProgressForRegistration(registration)) {
             model.addAttribute(MESSAGE, "msg.workflow.alreadyPresent");
             return "marriagecommon-error";

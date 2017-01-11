@@ -51,30 +51,30 @@ import com.google.gson.JsonSerializer;
 
 public class FeeJsonAdaptor implements JsonSerializer<MarriageFee> {
 
-	@Override
-	public JsonElement serialize(final MarriageFee fee, final Type type,
-			final JsonSerializationContext jsc) {
-		final JsonObject jsonObject = new JsonObject();
-		if (fee != null) {
-			if (fee.getCriteria() != null)
-				jsonObject.addProperty("criteria", fee.getCriteria());
-			else
-				jsonObject.addProperty("criteria", StringUtils.EMPTY);
-			if (fee.getFees() != null)
-				jsonObject.addProperty("fees", fee.getFees());
-			else
-				jsonObject.addProperty("fees", StringUtils.EMPTY);
-			if (fee.getFromDays() != null)
-				jsonObject.addProperty("fromDays", fee.getFromDays());
-			else
-				jsonObject.addProperty("fromDays", StringUtils.EMPTY);
-			if (fee.getToDays() != null)
-				jsonObject.addProperty("toDays", fee.getToDays());
-			else
-				jsonObject.addProperty("toDays", StringUtils.EMPTY);
-			
-			jsonObject.addProperty("id", fee.getId());
-		}
-		return jsonObject;
-	}
+    @Override
+    public JsonElement serialize(final MarriageFee fee, final Type type,
+            final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (fee != null) {
+            if (fee.getCriteria() != null)
+                jsonObject.addProperty("criteria", fee.getCriteria());
+            else
+                jsonObject.addProperty("criteria", StringUtils.EMPTY);
+            if (fee.getFees() != null)
+                jsonObject.addProperty("fees", fee.getFees());
+            else
+                jsonObject.addProperty("fees", StringUtils.EMPTY);
+            if (fee.getFromDays() != null)
+                jsonObject.addProperty("fromDays", fee.getFromDays());
+            else
+                jsonObject.addProperty("fromDays", StringUtils.EMPTY);
+            if (fee.getToDays() != null)
+                jsonObject.addProperty("toDays", fee.getToDays());
+            else
+                jsonObject.addProperty("toDays", StringUtils.EMPTY);
+
+            jsonObject.addProperty("id", fee.getId());
+        }
+        return jsonObject;
+    }
 }

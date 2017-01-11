@@ -57,32 +57,29 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/masters")
 public class CreateActController {
 
-	private static final String MRG_ACT_CREATE = "act-create";
-	@Autowired
-	private  MarriageActService marriageActService;
+    private static final String MRG_ACT_CREATE = "act-create";
+    @Autowired
+    private MarriageActService marriageActService;
+    @Autowired
+    private MessageSource messageSource;
 
-	@Autowired
-	private MessageSource messageSource;
+    @RequestMapping(value = "/act/create", method = RequestMethod.GET)
+    public String loadCreateForm(final Model model) {
+        model.addAttribute("marriageact", new MarriageAct());
+        return MRG_ACT_CREATE;
+    }
 
-	@RequestMapping(value = "/act/create", method = RequestMethod.GET)
-	public String loadCreateForm(final Model model) {
-		model.addAttribute("marriageact", new MarriageAct());
-		return MRG_ACT_CREATE;
-	}
+    @RequestMapping(value = "/act/create", method = RequestMethod.POST)
+    public String createAct(@Valid @ModelAttribute final MarriageAct act,
+            final BindingResult errors,
+            final RedirectAttributes redirectAttributes) {
 
-	@RequestMapping(value = "/act/create", method = RequestMethod.POST)
-	public String createAct(@Valid @ModelAttribute final MarriageAct act,
-			final BindingResult errors,
-			final RedirectAttributes redirectAttributes) {
-
-		if (errors.hasErrors())
-			return MRG_ACT_CREATE;
-
-		marriageActService.create(act);
-		redirectAttributes.addFlashAttribute("message",
-				messageSource.getMessage("msg.act.create.success", null, null));
-		return "redirect:/masters/act/success/" + act.getId();
-
-	}
+        if (errors.hasErrors())
+            return MRG_ACT_CREATE;
+        marriageActService.create(act);
+        redirectAttributes.addFlashAttribute("message",
+                messageSource.getMessage("msg.act.create.success", null, null));
+        return "redirect:/masters/act/success/" + act.getId();
+    }
 
 }

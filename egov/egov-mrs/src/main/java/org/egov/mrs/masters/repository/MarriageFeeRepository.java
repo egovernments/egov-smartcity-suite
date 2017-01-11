@@ -48,6 +48,6 @@ public interface MarriageFeeRepository extends JpaRepository<MarriageFee, Long> 
     MarriageFee findById(Long id);
 
     MarriageFee findByCriteria(String criteria);
-    
+
     MarriageFee findByToDaysLessThanEqual(Long days);
 }

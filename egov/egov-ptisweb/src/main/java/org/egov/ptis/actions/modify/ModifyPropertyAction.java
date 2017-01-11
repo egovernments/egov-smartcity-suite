@@ -305,6 +305,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private Boolean isMeesevaUser = Boolean.FALSE;
     private String meesevaApplicationNumber;
     private Boolean showTaxCalcBtn = Boolean.FALSE;
+    private Long propertyDepartmentId;
 
     @Autowired
     private PropertyPersistenceService basicPropertyService;
@@ -404,7 +405,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             propCompletionDate = propertyModel.getPropertyDetail().getDateOfCompletion();
         final PropertyImpl property = (PropertyImpl) basicProp.getProperty();
         propService.createProperty(property, getAreaOfPlot(), modifyRsn, propTypeId, propUsageId, propOccId, 'A',
-                propertyModel.getDocNumber(), null, floorTypeId, roofTypeId, wallTypeId, woodTypeId, taxExemptedReason);
+                propertyModel.getDocNumber(), null, floorTypeId, roofTypeId, wallTypeId, woodTypeId, taxExemptedReason, propertyDepartmentId);
         propertyModel.setPropertyModifyReason(modifyRsn);
         propertyModel.setBasicProperty(basicProp);
         propertyModel.setEffectiveDate(propCompletionDate);
@@ -991,7 +992,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
         setProperty(propService.createProperty(propertyModel, getAreaOfPlot(), modifyRsn, propTypeId, propUsageId,
                 propOccId, status, propertyModel.getDocNumber(), null, floorTypeId, roofTypeId, wallTypeId, woodTypeId,
-                taxExemptedReason));
+                taxExemptedReason, propertyDepartmentId));
         updatePropertyID(basicProp);
         propertyModel.setPropertyModifyReason(modifyRsn);
         propertyModel.setBasicProperty(basicProp);
@@ -1474,7 +1475,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             setProperty(propService.createProperty(propertyModel, getAreaOfPlot(), modifyRsn, propTypeId, propUsageId,
                     propOccId, STATUS_WORKFLOW, propertyModel.getDocNumber(), null, floorTypeId, roofTypeId, wallTypeId,
                     woodTypeId,
-                    taxExemptedReason));
+                    taxExemptedReason, propertyDepartmentId));
             updatePropertyID(basicProp);
             final Long oldPropTypeId = oldProperty.getPropertyDetail().getPropertyTypeMaster().getId();
             if ((oldPropTypeId == propTypeMstr.getId() && Long.parseLong(propTypeId) != propTypeMstr.getId()
@@ -2193,5 +2194,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     public void setShowTaxCalcBtn(final Boolean showTaxCalcBtn) {
         this.showTaxCalcBtn = showTaxCalcBtn;
+    }
+
+    public Long getPropertyDepartmentId() {
+        return propertyDepartmentId;
+    }
+
+    public void setPropertyDepartmentId(Long propertyDepartmentId) {
+        this.propertyDepartmentId = propertyDepartmentId;
     }
 }

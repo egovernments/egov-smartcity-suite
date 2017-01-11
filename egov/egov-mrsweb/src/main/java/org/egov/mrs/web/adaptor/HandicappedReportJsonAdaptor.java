@@ -64,12 +64,12 @@ public class HandicappedReportJsonAdaptor implements JsonSerializer<MarriageRegI
             else
                 jsonObject.addProperty("applicationNo", org.apache.commons.lang.StringUtils.EMPTY);
             if (marriageRegIndexSearchResult.getRegistrationDate() != null)
-                jsonObject.addProperty("registrationDate", marriageRegIndexSearchResult.getRegistrationDate().toString());
+                jsonObject.addProperty("registrationDate", marriageRegIndexSearchResult.getRegistrationDate());
             else
                 jsonObject.addProperty("registrationDate", org.apache.commons.lang.StringUtils.EMPTY);
 
             if (marriageRegIndexSearchResult.getMarriageDate() != null)
-                jsonObject.addProperty("marriageDate", marriageRegIndexSearchResult.getMarriageDate().toString());
+                jsonObject.addProperty("marriageDate", marriageRegIndexSearchResult.getMarriageDate());
             else
                 jsonObject.addProperty("marriageDate", org.apache.commons.lang.StringUtils.EMPTY);
 

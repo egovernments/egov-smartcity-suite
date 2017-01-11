@@ -168,8 +168,10 @@
 					  	jQuery('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
 					 	 jQuery('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
 					</s:if>
+					document.getElementById("btncancel").disabled=false;
+					document.getElementById("closebn").disabled =false;
 					document.getElementById('workflowDiv').style.visibility = 'hidden';
-					
+
 				} 
 				if(document.getElementById("mode").value=='view'|| document.getElementById("mode").value=='editForReject'){
 					 
@@ -218,7 +220,12 @@
 					return false;
 				}
   			}
-
+			function onCancelSubmit() {
+				document.getElementById("workFlowAction").disabled=false;
+				document.getElementById("workFlowAction").value="Reject";
+				document.newTradeLicense.action='${pageContext.request.contextPath}/newtradelicense/newTradeLicense-approve.action';
+				return true;
+			}
     		function onSubmit() {
         		var mode=document.getElementById("mode").value;
         		var workflowaction = document.getElementById("workFlowAction").value;
@@ -332,15 +339,24 @@
                             </div>
                         </div> 
                         <div style="text-align: center;" hidden="true" id="closeDiv">
-	                    <input type="button" name="closeBtn" id="closeBtn" value="Close" 
+	                    <input type="button" name="closeBtn" id="closeBtn" value="Close"
 							class="button" onclick="window.close();" style="margin:0 5px"/>
 						</div>
-						<s:if test="%{state!=null}">
+						<s:if test="%{state!=null && state.value !='License Created'}">
 	                        <div class="panel panel-primary" id="workflowDiv" >
 	                        	<%@ include file='../common/commonWorkflowMatrix.jsp'%>
 								<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
 							</div>
 						</s:if>
+						<s:elseif test="%{state!=null && state.value=='License Created'}">
+							<div class="text-center">
+								<s:hidden id="workFlowAction" name="workFlowAction"/>
+								<button type="submit" id="btncancel" class="btn btn-primary" onclick="return onCancelSubmit();">
+									Cancel</button>
+								<button type="button" id="closebn" class="btn btn-default" onclick="window.close();">
+									Close</button>
+							</div>
+						</s:elseif>
 						<s:else>
 							<div class="row">
 								<div class="text-center">

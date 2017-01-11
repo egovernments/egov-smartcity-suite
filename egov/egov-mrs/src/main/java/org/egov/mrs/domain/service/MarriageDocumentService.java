@@ -41,9 +41,15 @@ package org.egov.mrs.domain.service;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.enums.MarriageDocumentType;
 import org.egov.mrs.domain.repository.MarriageDocumentRepository;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,17 +57,25 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class MarriageDocumentService {
-
-    private final MarriageDocumentRepository documentRepository;
-
     @Autowired
-    public MarriageDocumentService(final MarriageDocumentRepository documentRepository) {
-        this.documentRepository = documentRepository;
+    private MarriageDocumentRepository documentRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
     }
 
     @Transactional
     public void create(final MarriageDocument document) {
         documentRepository.save(document);
+    }
+
+    @Transactional
+    public MarriageDocument updateDocument(
+            final MarriageDocument marriageDocument) {
+        return documentRepository
+                .saveAndFlush(marriageDocument);
     }
 
     public MarriageDocument get(final Long id) {
@@ -75,16 +89,35 @@ public class MarriageDocumentService {
     public List<MarriageDocument> getAll() {
         return documentRepository.findAll();
     }
-    
+
     public List<MarriageDocument> getIndividualDocuments() {
-        return documentRepository.findByIndividualAndActive(true,true);
+        return documentRepository.findByIndividualAndActive(true, true);
     }
-   
+
     public List<MarriageDocument> getGeneralDocuments() {
-        return documentRepository.findByIndividualAndActive(false,true);
+        return documentRepository.findByIndividualAndActive(false, true);
     }
-   
+
     public List<MarriageDocument> getReIssueApplicantDocs() {
         return documentRepository.findByType(MarriageDocumentType.CERTIFICATEREISSUE);
     }
+
+    @SuppressWarnings("unchecked")
+    public List<MarriageDocument> searchMarriageDocument(final MarriageDocument marriageDocument) {
+        final Criteria criteria = getCurrentSession().createCriteria(
+                MarriageDocument.class);
+
+        if (marriageDocument.getType() != null &&
+                "REGISTRATION".equalsIgnoreCase(marriageDocument.getType().name())) {
+            criteria.add(Restrictions.eq("type", MarriageDocumentType.REGISTRATION));
+        } else if (marriageDocument.getType() != null &&
+                "CERTIFICATEREISSUE".equalsIgnoreCase(marriageDocument.getType().name())) {
+            criteria.add(Restrictions.eq("type", MarriageDocumentType.CERTIFICATEREISSUE));
+        }
+        if (marriageDocument.isActive()) {
+            criteria.add(Restrictions.eq("active", marriageDocument.isActive()));
+        }
+        return criteria.list();
+    }
+
 }

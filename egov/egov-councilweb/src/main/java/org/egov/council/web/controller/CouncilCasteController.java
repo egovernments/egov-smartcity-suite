@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,6 +50,7 @@ public class CouncilCasteController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final CouncilCaste councilCaste, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "notempty.cncl.caste");
         if (errors.hasErrors()) {
             return COUNCILCASTE_NEW;
         }
@@ -67,7 +69,7 @@ public class CouncilCasteController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final CouncilCaste councilCaste, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
-
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "notempty.cncl.caste");
         if (errors.hasErrors()) {
             return COUNCILCASTE_EDIT;
         }

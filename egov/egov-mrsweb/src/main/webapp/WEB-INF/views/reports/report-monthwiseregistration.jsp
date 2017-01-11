@@ -65,12 +65,12 @@
 										code="lbl.month" /><span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
-									<form:input path="month_year" id="datepicker" type="text"
+									<form:input path="monthYear" id="datepicker" type="text"
 										required="required"
 										class="form-control low-width datepicker today"
 										data-date-end-date="0d" data-date-today-highlight="true"
 										placeholder="" autocomplete="off" />
-									<form:errors path="month_year" cssClass="add-margin error-msg" />
+									<form:errors path="monthYear" cssClass="add-margin error-msg" />
 								</div>
 								<label for="field-1" class="col-sm-2 control-label"><spring:message
 										code="lbl.registrationunit" /> </label>

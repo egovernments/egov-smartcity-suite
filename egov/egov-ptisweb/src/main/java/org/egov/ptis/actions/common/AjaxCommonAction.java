@@ -39,6 +39,33 @@
  */
 package org.egov.ptis.actions.common;
 
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.DATE_CONSTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -67,42 +94,18 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.CategoryDao;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Category;
+import org.egov.ptis.domain.entity.property.PropertyDepartment;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.domain.model.MutationFeeDetails;
+import org.egov.ptis.domain.repository.PropertyDepartmentRepository;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.DATE_CONSTANT;
-import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
@@ -118,7 +121,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYP
         @Result(name = "propCategory", location = "ajaxCommon-propCategory.jsp"),
         @Result(name = "checkExistingCategory", location = "ajaxCommon-checkExistingCategory.jsp"),
         @Result(name = "usage", location = "ajaxCommon-usage.jsp"),
-        @Result(name = "calculateMutationFee", location = "ajaxCommon-calculateMutationFee.jsp")})
+        @Result(name = "calculateMutationFee", location = "ajaxCommon-calculateMutationFee.jsp"),
+        @Result(name = "propDepartment", location = "ajaxcommon-propdepartment.jsp")})
 public class AjaxCommonAction extends BaseFormAction implements ServletResponseAware {
 
     private static final String AJAX_RESULT = "AJAX_RESULT";
@@ -169,6 +173,8 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     private BigDecimal partyValue;
     private BigDecimal departmentValue;
     private BigDecimal mutationFee = BigDecimal.ZERO;
+    private List<PropertyDepartment> propertyDepartmentList;
+    
     @Autowired
     private CategoryDao categoryDAO;
     @Autowired
@@ -185,6 +191,8 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     private CrossHierarchyService crossHierarchyService;
     @Autowired
     private BoundaryTypeService boundaryTypeService;
+    @Autowired
+    private PropertyDepartmentRepository propertyDepartmentRepository;
 
     @Override
     public Object getModel() {
@@ -508,6 +516,21 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     	}
     	return RESULT_MUTATION_FEE;
     }
+    
+    @Actions({ @Action(value = "/ajaxcommon-propdepartment-byproptype"),
+            @Action(value = "/public/ajaxcommon-propdepartment-byproptype") })
+    public String getPropDepartmentByPropType() {
+        if (propTypeId != null) {
+            PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService()
+                    .find("from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
+            if (propTypeMstr.getCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT))
+                propertyDepartmentList = propertyDepartmentRepository.getAllStateDepartments();
+            else if (propTypeMstr.getCode().startsWith("CENTRAL_GOVT"))
+                propertyDepartmentList = propertyDepartmentRepository.getAllCentralDepartments();
+        }
+        setPropertyDepartmentList(propertyDepartmentList);
+        return "propDepartment";
+    }
 
     public Long getZoneId() {
         return zoneId;
@@ -829,5 +852,13 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 	public void setMutationFee(BigDecimal mutationFee) {
 		this.mutationFee = mutationFee;
 	}
+
+    public List<PropertyDepartment> getPropertyDepartmentList() {
+        return propertyDepartmentList;
+    }
+
+    public void setPropertyDepartmentList(List<PropertyDepartment> propertyDepartmentList) {
+        this.propertyDepartmentList = propertyDepartmentList;
+    }
 
 }

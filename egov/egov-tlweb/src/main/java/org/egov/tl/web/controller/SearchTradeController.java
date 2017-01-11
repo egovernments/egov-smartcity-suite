@@ -52,10 +52,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
@@ -91,6 +93,13 @@ public class SearchTradeController {
                 toJSON(tradeLicenseService.searchTradeLicense(searchForm), SearchForm.class,
                         SearchTradeResultHelperAdaptor.class))
                 .append("}").toString();
+    }
+    
+    @RequestMapping(value = "/search/tradeLicense",method = RequestMethod.GET, produces =MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<String> populateData(@RequestParam final String searchParamValue , @RequestParam final String searchParamType) {
+        return tradeLicenseService.getTradeLicenseForGivenParam(searchParamValue, searchParamType);
+                    
     }
 
 }

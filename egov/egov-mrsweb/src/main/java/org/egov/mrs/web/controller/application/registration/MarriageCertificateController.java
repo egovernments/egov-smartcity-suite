@@ -90,14 +90,14 @@ public class MarriageCertificateController {
     @ResponseBody
     public ResponseEntity<byte[]> showRegistrationCertificate(HttpServletRequest request,
             @RequestParam final Long id, final Model model, final HttpSession session) throws IOException {
-        return getResponseEntity((marriageRegistrationService.get(id)).getMarriageCertificate().get(0).getFileStore());
+        return getResponseEntity(marriageRegistrationService.get(id).getMarriageCertificate().get(0).getFileStore());
     }
 
     @RequestMapping(value = "/reissue", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<byte[]> showReIssuedCertificate(HttpServletRequest request,
             @RequestParam final Long id, final Model model, final HttpSession session) throws IOException {
-        return getResponseEntity((reIssueService.get(id)).getMarriageCertificate().get(0).getFileStore());
+        return getResponseEntity(reIssueService.get(id).getMarriageCertificate().get(0).getFileStore());
     }
 
     /**

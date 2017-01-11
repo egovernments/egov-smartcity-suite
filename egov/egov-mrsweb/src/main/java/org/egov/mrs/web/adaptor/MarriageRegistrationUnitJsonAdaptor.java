@@ -48,38 +48,35 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-public class MarriageRegistrationUnitJsonAdaptor implements
-		JsonSerializer<MarriageRegistrationUnit> {
+public class MarriageRegistrationUnitJsonAdaptor implements JsonSerializer<MarriageRegistrationUnit> {
+    @Override
+    public JsonElement serialize(final MarriageRegistrationUnit marriageRegistrationUnit, final Type type,
+            final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (marriageRegistrationUnit != null) {
+            if (marriageRegistrationUnit.getName() != null)
+                jsonObject.addProperty("name",
+                        marriageRegistrationUnit.getName());
+            else
+                jsonObject.addProperty("name", StringUtils.EMPTY);
+            if (marriageRegistrationUnit.getAddress() != null)
+                jsonObject.addProperty("address",
+                        marriageRegistrationUnit.getAddress());
+            else
+                jsonObject.addProperty("address", StringUtils.EMPTY);
+            if (marriageRegistrationUnit.getZone() != null && marriageRegistrationUnit.getZone().getName() != null)
+                jsonObject.addProperty("zone", marriageRegistrationUnit
+                        .getZone().getName());
+            else
+                jsonObject.addProperty("zone", StringUtils.EMPTY);
 
-	@Override
-	public JsonElement serialize(
-			final MarriageRegistrationUnit marriageRegistrationUnit,
-			final Type type, final JsonSerializationContext jsc) {
-		final JsonObject jsonObject = new JsonObject();
-		if (marriageRegistrationUnit != null) {
-			if (marriageRegistrationUnit.getName() != null)
-				jsonObject.addProperty("name",
-						marriageRegistrationUnit.getName());
-			else
-				jsonObject.addProperty("name", StringUtils.EMPTY);
-			if (marriageRegistrationUnit.getAddress() != null)
-				jsonObject.addProperty("address",
-						marriageRegistrationUnit.getAddress());
-			else
-				jsonObject.addProperty("address", StringUtils.EMPTY);
-			if (marriageRegistrationUnit.getZone()!=null && marriageRegistrationUnit.getZone().getName() != null)
-				jsonObject.addProperty("zone", marriageRegistrationUnit
-						.getZone().getName());
-			else
-				jsonObject.addProperty("zone", StringUtils.EMPTY);
-			
-			jsonObject.addProperty("isActive",
-					marriageRegistrationUnit.getIsActive()); 
-			jsonObject.addProperty("isMainRegistrationUnit",
-					marriageRegistrationUnit.getIsMainRegistrationUnit());
-					
-			jsonObject.addProperty("id", marriageRegistrationUnit.getId());
-		}
-		return jsonObject;
-	}
+            jsonObject.addProperty("isActive",
+                    marriageRegistrationUnit.getIsActive());
+            jsonObject.addProperty("isMainRegistrationUnit",
+                    marriageRegistrationUnit.getIsMainRegistrationUnit());
+
+            jsonObject.addProperty("id", marriageRegistrationUnit.getId());
+        }
+        return jsonObject;
+    }
 }

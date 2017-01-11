@@ -63,14 +63,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReIssueCertificateUpdateIndexesService {
 
     private static final Logger LOG = Logger.getLogger(ReIssueCertificateUpdateIndexesService.class);
-
     @Autowired
     private SecurityUtils securityUtils;
-
     @Autowired
     private ApplicationIndexService applicationIndexService;
 
-    
     public void createReIssueAppIndex(final ReIssue reIssue) {
         final User user = securityUtils.getCurrentUser();
         if (LOG.isDebugEnabled())
@@ -83,8 +80,8 @@ public class ReIssueCertificateUpdateIndexesService {
                 .withApplicantName(reIssue.getApplicant().getFullName())
                 .withStatus(reIssue.getStatus().getDescription()).withUrl(
                         "/mrs/reissue/" + reIssue.getId())
-                .withApplicantAddress( reIssue.getApplicant().getContactInfo().getResidenceAddress())
-                .withOwnername(user != null ?user.getUsername() + "::" + user.getName():"")
+                .withApplicantAddress(reIssue.getApplicant().getContactInfo().getResidenceAddress())
+                .withOwnername(user != null ? user.getUsername() + "::" + user.getName() : "")
                 .withChannel(Source.SYSTEM.toString())
                 .withMobileNumber(reIssue.getApplicant().getContactInfo().getMobileNo())
                 .withClosed(ClosureStatus.NO)
@@ -95,35 +92,32 @@ public class ReIssueCertificateUpdateIndexesService {
     }
 
     public void updateReIssueAppIndex(final ReIssue reissue) {
-                ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(reissue.getApplicationNo());
-                Integer elapsedDays = 0;
-                if (applicationIndex != null) {
-                        if (!ReIssue.ReIssueStatus.CREATED.toString().equalsIgnoreCase(reissue.getStatus().getDescription())) {
-                                applicationIndex.setStatus(reissue.getStatus().getDescription());
-                                applicationIndex.setApplicantAddress(reissue.getApplicant().getContactInfo().getResidenceAddress());
-                                applicationIndex.setApplicantName(reissue.getApplicant().getFullName());
-                                if (ReIssue.ReIssueStatus.APPROVED.toString().equalsIgnoreCase(reissue.getStatus().getCode())) {
-                                        elapsedDays = (int) TimeUnit.DAYS.convert(
-                                                        new Date().getTime() - reissue.getApplicationDate().getTime(), TimeUnit.MILLISECONDS);
-                                        applicationIndex.setElapsedDays(elapsedDays);
-                                        applicationIndex.setApproved(ApprovalStatus.APPROVED);
-                                        applicationIndex.setClosed(ClosureStatus.YES);
-                                }
-                                // mark application index as rejected and closed on Application
-                                // cancellation
+        ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(reissue.getApplicationNo());
+        Integer elapsedDays;
+        if (applicationIndex != null) {
+            if (!ReIssue.ReIssueStatus.CREATED.toString().equalsIgnoreCase(reissue.getStatus().getDescription())) {
+                applicationIndex.setStatus(reissue.getStatus().getDescription());
+                applicationIndex.setApplicantAddress(reissue.getApplicant().getContactInfo().getResidenceAddress());
+                applicationIndex.setApplicantName(reissue.getApplicant().getFullName());
+                if (ReIssue.ReIssueStatus.APPROVED.toString().equalsIgnoreCase(reissue.getStatus().getCode())) {
+                    elapsedDays = (int) TimeUnit.DAYS.convert(
+                            new Date().getTime() - reissue.getApplicationDate().getTime(), TimeUnit.MILLISECONDS);
+                    applicationIndex.setElapsedDays(elapsedDays);
+                    applicationIndex.setApproved(ApprovalStatus.APPROVED);
+                    applicationIndex.setClosed(ClosureStatus.YES);
+                }
+                // mark application index as rejected and closed on Application cancellation
                 else if (ReIssue.ReIssueStatus.REJECTED.toString().equalsIgnoreCase(reissue.getStatus().getCode())
                         || ReIssue.ReIssueStatus.CANCELLED.toString().equalsIgnoreCase(reissue.getStatus().getCode())) {
-                                        elapsedDays = (int) TimeUnit.DAYS.convert(
-                                                        new Date().getTime() - reissue.getApplicationDate().getTime(), TimeUnit.MILLISECONDS);
-                                        applicationIndex.setElapsedDays(elapsedDays);
-                                        applicationIndex.setApproved(ApprovalStatus.REJECTED);
-                                        applicationIndex.setClosed(ClosureStatus.YES);
-                                }
-
-                        }
-                        applicationIndexService.updateApplicationIndex(applicationIndex);
-                } else
-                        createReIssueAppIndex(reissue);
-        }
-
+                    elapsedDays = (int) TimeUnit.DAYS.convert(
+                            new Date().getTime() - reissue.getApplicationDate().getTime(), TimeUnit.MILLISECONDS);
+                    applicationIndex.setElapsedDays(elapsedDays);
+                    applicationIndex.setApproved(ApprovalStatus.REJECTED);
+                    applicationIndex.setClosed(ClosureStatus.YES);
+                }
+            }
+            applicationIndexService.updateApplicationIndex(applicationIndex);
+        } else
+            createReIssueAppIndex(reissue);
+    }
 }

@@ -56,6 +56,7 @@ public class ComplaintDashBoardRequest {
     private String categoryId;
     private int size;
     private String type;
+    private String localityName;
 
     public String getDistrictName() {
         return districtName;
@@ -167,5 +168,13 @@ public class ComplaintDashBoardRequest {
 
     public void setType(final String type) {
         this.type = type;
+    }
+
+    public String getLocalityName() {
+        return localityName;
+    }
+
+    public void setLocalityName(final String localityName) {
+        this.localityName = localityName;
     }
 }

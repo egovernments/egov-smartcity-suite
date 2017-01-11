@@ -65,7 +65,7 @@ $("#search")
 										}
 									},
 									error : function(response) {
-										console.log("failed");
+										bootbox.alert("failed");
 									}
 								});
 						}else{
@@ -79,9 +79,7 @@ $("#search")
 				var valid = true;
 				//validate all rows before adding new row
 				$('#result tbody tr').each(function(index,value){
-					//console.log('Index Row Count:'+index);
 					$('#result tbody tr:eq('+index+') td input[type="text"]').each(function(i,v){
-						//console.log(i+'<-->'+$(v).val());
 						if(!$.trim($(v).val())){
 							valid = false;
 							bootbox.alert("Enter all values for existing rows!",function(){
@@ -123,18 +121,14 @@ $("#search")
 						$('#result tbody tr:last').remove();
 					}else{
 						$.ajax({
-							url : "/tl/domain/commonAjax-deleteRow.action?penaltyRateId="+id,
+							url : '../penaltyRates/deleterow?penaltyRateId='+id,
 							type : "GET",
-							dataType : "json",
 							success : function(response) {
-								//bootbox.alert("Deleted");
 								$('#result tbody tr:last').remove();
-								//tbl.deleteRow(curRow);
 							},
 							error : function(response) {
 								bootbox.alert("Unable to delete this row.");
-								console.log("failed");
-							}
+						   }
 						});
 					}
 				}

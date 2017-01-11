@@ -109,6 +109,7 @@ public class VacantProperty extends AbstractProperty {
     private String occupancyCertificationNo;
     private Boolean appurtenantLandChecked;
     private Boolean corrAddressDiff;
+    private PropertyDepartment propertyDepartment;
 
     public VacantProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea, Area plinthArea,
             Area commVacantLand, Area nonResPlotArea, Boolean irregular, String surveyNumber, Character fieldVerified,
@@ -122,7 +123,7 @@ public class VacantProperty extends AbstractProperty {
             boolean structure, boolean electricity, boolean attachedBathRoom, boolean waterHarvesting, boolean cable,
             String siteOwner, String pattaNumber, Double currentCapitalValue, Double marketValue, String categoryType,
             String occupancyCertificationNo, Boolean appurtenantLandChecked,
-            Boolean corrAddressDiff) {
+            Boolean corrAddressDiff, PropertyDepartment propertyDepartment) {
         super();
         this.sitalArea = sitalArea;
         this.totalBuiltupArea = totalBuiltupArea;
@@ -173,6 +174,7 @@ public class VacantProperty extends AbstractProperty {
         this.occupancyCertificationNo = occupancyCertificationNo;
         this.appurtenantLandChecked = appurtenantLandChecked;
         this.corrAddressDiff = corrAddressDiff;
+        this.propertyDepartment = propertyDepartment;
     }
 
     public Date getDateOfCompletion() {
@@ -906,6 +908,16 @@ public class VacantProperty extends AbstractProperty {
     @Override
     public void setCorrAddressDiff(Boolean corrAddressDiff) {
         this.corrAddressDiff = corrAddressDiff;
+    }
+
+    @Override
+    public PropertyDepartment getPropertyDepartment() {
+        return propertyDepartment;
+    }
+
+    @Override
+    public void setPropertyDepartment(PropertyDepartment propertyDepartment) {
+        this.propertyDepartment = propertyDepartment;
     }
 
 }

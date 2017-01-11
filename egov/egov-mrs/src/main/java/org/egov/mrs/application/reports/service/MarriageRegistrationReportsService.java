@@ -235,7 +235,7 @@ public class MarriageRegistrationReportsService {
             params.put("registrationNo", certificate.getRegistration().getRegistrationNo());
         }
 
-        final StringBuilder queryStrForReissue = new StringBuilder(1000);
+        final StringBuilder queryStrForReissue = new StringBuilder(1100);
         queryStrForReissue
                 .append(
                         "Select reg.registrationno,reg.dateofmarriage,reg.applicationdate,reg.rejectionreason,cert.certificateno,cert.certificatetype,cert.certificatedate, brndy.name,(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as hus_name from egmrs_applicant app where app.id = reg.husband),(Select concat(concat(concat(app.firstname, ' '), app.middlename, ' '), app.lastname) as wife_name from egmrs_applicant app where app.id = reg.wife),reg.id"
@@ -663,20 +663,18 @@ public class MarriageRegistrationReportsService {
             intparams.put("years", years);
         }
 
-        if (registration.getMonth_year() != null) {
-            queryStrFOorApplns
-                    .append(APPLICATIONDATE_BETWEEN_CONDITION);
-            params.put(FROMDATE, sf.format(getMonthStartday(registration.getMonth_year())));
-            params.put(TODATE, sf.format(getMonthEndday(registration.getMonth_year())));
+        if (registration.getMonthYear() != null) {
+            queryStrFOorApplns.append(APPLICATIONDATE_BETWEEN_CONDITION);
+            params.put(FROMDATE, sf.format(getMonthStartday(registration.getMonthYear())));
+            params.put(TODATE, sf.format(getMonthEndday(registration.getMonthYear())));
         }
         if (registration.getMarriageRegistrationUnit().getId() != null) {
-            queryStrFOorApplns
-                    .append(REGISTRATIONUNIT_WHERE_QUERY);
+            queryStrFOorApplns.append(REGISTRATIONUNIT_WHERE_QUERY);
             params.put(REGUNIT, registration.getMarriageRegistrationUnit().getId().toString());
         }
 
-        queryStrFOorApplns
-                .append("group by regunit.name,extract(month from applicationdate),to_char(applicationdate,'Month') order by regunit.name)");
+        queryStrFOorApplns.append(
+                "group by regunit.name,extract(month from applicationdate),to_char(applicationdate,'Month') order by regunit.name)");
     }
 
     @SuppressWarnings("unchecked")
@@ -719,11 +717,11 @@ public class MarriageRegistrationReportsService {
 
     private void buildCriteriaForMrgApplicationsCount(final MarriageRegistration registration, final Map<String, String> params,
             final StringBuilder queryForApplns) {
-        if (registration.getMonth_year() != null) {
+        if (registration.getMonthYear() != null) {
             queryForApplns.append(
                     APPLICATIONDATE_BETWEEN_CONDITION);
-            params.put(FROMDATE, sf.format(getMonthStartday(registration.getMonth_year())));
-            params.put(TODATE, sf.format(getMonthEndday(registration.getMonth_year())));
+            params.put(FROMDATE, sf.format(getMonthStartday(registration.getMonthYear())));
+            params.put(TODATE, sf.format(getMonthEndday(registration.getMonthYear())));
         }
         if (registration.getMarriageRegistrationUnit().getId() != null) {
             queryForApplns
@@ -1068,7 +1066,7 @@ public class MarriageRegistrationReportsService {
         try {
             ulbWiseResponse = findAllReligionByUlbName(searchRequest,
                     getQueryFilter(searchRequest));
-        } catch (final Exception e) {
+        } catch (ParseException e) {
             throw new ApplicationRuntimeException("Error Occured while fetching records from elastic search", e);
         }
 

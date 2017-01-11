@@ -39,10 +39,15 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -53,7 +58,6 @@ import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.entity.WaterSource;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
 import org.egov.wtms.masters.service.DocumentNamesService;
-import org.egov.wtms.masters.service.MeterCostService;
 import org.egov.wtms.masters.service.PipeSizeService;
 import org.egov.wtms.masters.service.PropertyTypeService;
 import org.egov.wtms.masters.service.UsageTypeService;
@@ -63,12 +67,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public abstract class GenericConnectionController extends GenericWorkFlowController {
 
@@ -96,12 +94,6 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
-
-    @Autowired
-    private DepartmentService departmentService;
-
-    @Autowired
-    private MeterCostService meterCostService;
 
     @Autowired
     protected AssignmentService assignmentService;

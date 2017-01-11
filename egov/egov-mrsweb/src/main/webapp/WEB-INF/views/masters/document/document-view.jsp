@@ -1,10 +1,8 @@
-<%@ page contentType="text/json" %>
-<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %> 
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2017>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -39,10 +37,52 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-{
-"ResultSet": {
-    "Result":[
-    ]
-  }
-}
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title">Marriage Document</div>
+			</div>
+			<div class="panel-body custom">
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.documentname" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${marriageDocument.name}</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.document.code" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${marriageDocument.code}</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.active" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${marriageDocument.active}</div>
+
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.documentproof" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${marriageDocument.documentProofType}</div>
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="text-center">
+		<a href="javascript:void(0)" class="btn btn-default"
+			onclick="self.close()"><spring:message code="lbl.close" /></a>
+	</div>
+</div>

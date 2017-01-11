@@ -76,7 +76,7 @@
 			<form:errors path="${applicant}.name.lastName"
 				cssClass="add-margin error-msg" />
 		</div>
-	<%-- 	<label class="col-sm-6 text-right"> <spring:message
+		<%-- 	<label class="col-sm-6 text-right"> <spring:message
 				code="lbl.othername" />
 		</label>
 		<div class="col-sm-6">
@@ -186,32 +186,21 @@
 				<c:when
 					test="${currentState != 'NEW' && currentState != 'DATAENTRY'}">
 					<form:hidden path="${applicant}.photoFileStore" />
-					<img class="add-border" id="${applicant}-photo" height="150"
-						width="130" name="${applicant}.photo">
-					<script>
-						var applicant = '<c:out value="${applicant}" />';
-						var strData = '';
-
-						if (applicant == 'husband') {
-							strData = '<c:out value="${marriageRegistration.husband.encodedPhoto}" />';
-						} else {
-							strData = '<c:out value="${marriageRegistration.wife.encodedPhoto}" />';
-						}
-
-						if (strData != null && strData.length > 0) {
-							$('#' + applicant + '-photo').prop('src',
-									"data:image/jpg;base64," + strData);
-							$('#' + applicant + '-photo').attr('data-exist');
-						}
-					</script>
-					<input type="file" id="${applicant}-photo"
-						name="${applicant}.photoFile" class="file-ellipsis upload-file">
+					<form:hidden class="encodedPhoto" path="${applicant}.encodedPhoto" />
+					<img class="add-border marriage-img" 
+						id="${applicant}-photo" height="150" width="130"
+						name="${applicant}.photo">
+					<input type="file" data-fileto="${applicant}-photo"
+						id="${applicant}-photo" name="${applicant}.photoFile"
+						class="file-ellipsis upload-file">
 				</c:when>
 				<c:otherwise>
-					<img class="add-border" id="${applicant}-photo" height="150"
-						width="130" name="${applicant}.photo">
+					<img class="add-border marriage-img"
+						id="${applicant}-photo" height="150" width="130"
+						name="${applicant}.photo">
 					<input type="file" id="${applicant}-photo"
-						name="${applicant}.photoFile" class="file-ellipsis upload-file" required="required">
+						data-fileto="${applicant}-photo" name="${applicant}.photoFile"
+						class="file-ellipsis upload-file" required="required">
 				</c:otherwise>
 			</c:choose>
 
@@ -276,7 +265,7 @@
 			code="lbl.locality" /><span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3">
-	
+
 		<form:input path="${applicant}.locality" id="txt-locality" type="text"
 			class="form-control is_valid_alphabet inline-elem" placeholder=""
 			autocomplete="off" required="required" />
@@ -359,7 +348,7 @@
 				<spring:message code="lbl.default.option" />
 			</form:option>
 			<form:options items="${Educationqualificationlist}" itemValue="id"
-						itemLabel="name" />
+				itemLabel="name" />
 		</form:select>
 		<form:errors path="${applicant}.qualification"
 			cssClass="add-margin error-msg" />

@@ -90,18 +90,18 @@ public class MarriageFee extends AbstractAuditable {
     @NotNull
     @Audited
     private Double fees;
-    
+
     @Enumerated(EnumType.ORDINAL)
     private MarriageFeeCriteriaType feeType;
-    
+
     @Audited
     private Integer fromDays;
-    
+
     @Audited
     private Integer toDays;
 
     private boolean active;
-    
+
     @Override
     public Long getId() {
         return id;
@@ -127,7 +127,7 @@ public class MarriageFee extends AbstractAuditable {
     public void setFees(final Double fees) {
         this.fees = fees;
     }
-    
+
     public Integer getFromDays() {
         return fromDays;
     }
@@ -139,18 +139,18 @@ public class MarriageFee extends AbstractAuditable {
     public Integer getToDays() {
         return toDays;
     }
-    
+
     public void setToDays(Integer toDays) {
         this.toDays = toDays;
     }
-    public MarriageFeeCriteriaType getFeeType() {
-		return feeType;
-	}
 
-	public void setFeeType(MarriageFeeCriteriaType feeType) {
-		this.feeType = feeType;
-	}
-    
+    public MarriageFeeCriteriaType getFeeType() {
+        return feeType;
+    }
+
+    public void setFeeType(MarriageFeeCriteriaType feeType) {
+        this.feeType = feeType;
+    }
 
     @Override
     public int hashCode() {
@@ -166,13 +166,13 @@ public class MarriageFee extends AbstractAuditable {
     public boolean equals(final Object obj) {
         if (this == obj)
             return true;
-        
+
         if (!super.equals(obj))
             return false;
-        
+
         if (getClass() != obj.getClass())
             return false;
-        
+
         final MarriageFee other = (MarriageFee) obj;
 
         if (id == null) {
@@ -180,29 +180,28 @@ public class MarriageFee extends AbstractAuditable {
                 return false;
         } else if (!id.equals(other.id))
             return false;
-        
+
         if (criteria == null) {
             if (other.criteria != null)
                 return false;
         } else if (!criteria.equals(other.criteria))
             return false;
-        
+
         if (fees == null) {
             if (other.fees != null)
                 return false;
         } else if (!fees.equals(other.fees))
             return false;
-        
+
         return true;
     }
 
-	public boolean isActive() {
-		return active;
-	}
+    public boolean isActive() {
+        return active;
+    }
 
-	public void setActive(boolean active) {
-		this.active = active;
-	}
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 
-	
 }

@@ -50,26 +50,26 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 public class ActJsonAdaptor implements JsonSerializer<MarriageAct> {
-	 @Override
-	    public JsonElement serialize(final MarriageAct act, final Type type, final JsonSerializationContext jsc) {
-	        final JsonObject jsonObject = new JsonObject();
-	        if (act != null) {
-	            if (act.getName() != null)
-	                jsonObject.addProperty("name", act.getName());
-	            else
-	                jsonObject.addProperty("name", StringUtils.EMPTY);
-	            if (act.getDescription() != null)
-	                jsonObject.addProperty("description", act.getDescription());
-	            else
-	                jsonObject.addProperty("description", StringUtils.EMPTY);
-	            
-	            if (act.getCreatedDate() != null)
-	                jsonObject.addProperty("createdDate", act.getCreatedDate().toString());
-	            else
-	                jsonObject.addProperty("createdDate", StringUtils.EMPTY);
-	            
-	            jsonObject.addProperty("id", act.getId());
-	        }
-	        return jsonObject;
-	    }
+    @Override
+    public JsonElement serialize(final MarriageAct act, final Type type, final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (act != null) {
+            if (act.getName() != null)
+                jsonObject.addProperty("name", act.getName());
+            else
+                jsonObject.addProperty("name", StringUtils.EMPTY);
+            if (act.getDescription() != null)
+                jsonObject.addProperty("description", act.getDescription());
+            else
+                jsonObject.addProperty("description", StringUtils.EMPTY);
+
+            if (act.getCreatedDate() != null)
+                jsonObject.addProperty("createdDate", act.getCreatedDate().toString());
+            else
+                jsonObject.addProperty("createdDate", StringUtils.EMPTY);
+
+            jsonObject.addProperty("id", act.getId());
+        }
+        return jsonObject;
+    }
 }

@@ -187,4 +187,13 @@ public class FeeMatrixController {
                         feeMatrixDetailService.searchFeeMatrix(category, subCategory, finyear), FeeMatrixDetail.class,
                         FeeMatrixResponseAdaptor.class)).append("}").toString();
     }
+    
+    @RequestMapping(value="/deleterow" , method = GET ,produces=TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String deleteFee(@RequestParam Long feeMatrixDetailId ) {
+        final FeeMatrixDetail feeMatrixDetail = feeMatrixDetailService.findByFeeMatrixDetailId(feeMatrixDetailId);
+        if (feeMatrixDetail != null)
+            feeMatrixDetailService.delete(feeMatrixDetail);
+        return "success";
+    }
 }

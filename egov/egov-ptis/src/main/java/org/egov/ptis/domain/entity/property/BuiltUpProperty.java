@@ -107,6 +107,7 @@ public class BuiltUpProperty extends AbstractProperty {
     private String occupancyCertificationNo;
     private Boolean appurtenantLandChecked;
     private Boolean corrAddressDiff;
+    private PropertyDepartment propertyDepartment;
 
     public BuiltUpProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea, Area plinthArea,
             Area commVacantLand, Area nonResPlotArea, Boolean irregular, String surveyNumber, Character fieldVerified,
@@ -120,7 +121,7 @@ public class BuiltUpProperty extends AbstractProperty {
             boolean attachedBathRoom, boolean waterHarvesting, boolean cable, String siteOwner, Apartment apartment,
             String pattaNumber, Double currentCapitalValue, Double marketValue, String categoryType,
             String occupancyCertificationNo, Boolean appurtenantLandChecked,
-            Boolean corrAddressDiff) {
+            Boolean corrAddressDiff, PropertyDepartment propertyDepartment) {
         super();
         this.sitalArea = sitalArea;
         this.totalBuiltupArea = totalBuiltupArea;
@@ -172,6 +173,7 @@ public class BuiltUpProperty extends AbstractProperty {
         this.occupancyCertificationNo = occupancyCertificationNo;
         this.appurtenantLandChecked = appurtenantLandChecked;
         this.corrAddressDiff = corrAddressDiff;
+        this.propertyDepartment = propertyDepartment;
     }
 
     public BuiltUpProperty() {
@@ -944,6 +946,16 @@ public class BuiltUpProperty extends AbstractProperty {
     @Override
     public void setCorrAddressDiff(Boolean corrAddressDiff) {
         this.corrAddressDiff = corrAddressDiff;
+    }
+    
+    @Override
+    public PropertyDepartment getPropertyDepartment() {
+        return propertyDepartment;
+    }
+    
+    @Override
+    public void setPropertyDepartment(PropertyDepartment propertyDepartment) {
+        this.propertyDepartment = propertyDepartment;
     }
 
 }

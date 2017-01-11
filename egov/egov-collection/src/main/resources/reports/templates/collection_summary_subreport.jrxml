@@ -1,46 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-11-10T15:03:40 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-01-03T13:33:50 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection summary subreport" language="groovy" pageWidth="800" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="700" leftMargin="15" rightMargin="15" topMargin="15" bottomMargin="15" uuid="45cae798-aa6d-4b62-a802-37fd9ecaa359">
 	<property name="ireport.zoom" value="1.0000000000000009"/>
 	<property name="ireport.x" value="0"/>
@@ -77,6 +37,8 @@
 	<field name="source" class="java.lang.String"/>
 	<field name="employeeName" class="java.lang.String"/>
 	<field name="counterName" class="java.lang.String"/>
+	<field name="cardAmount" class="java.lang.Double"/>
+	<field name="cardCount" class="java.lang.String"/>
 	<variable name="TOTAL_CASH_AMOUNT" class="java.lang.Double" resetType="Group" resetGroup="USER_COUNTER" calculation="Sum">
 		<variableExpression><![CDATA[$F{cashAmount}]]></variableExpression>
 		<initialValueExpression><![CDATA[0]]></initialValueExpression>
@@ -94,7 +56,7 @@
 		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
 	<variable name="TOTAL_COLLECTION" class="java.lang.Double" resetType="Group" resetGroup="USER_COUNTER">
-		<variableExpression><![CDATA[($V{TOTAL_CASH_AMOUNT} == null ? 0 : $V{TOTAL_CASH_AMOUNT}) + ($V{TOTAL_CHEQUEDD_AMOUNT} == null ? 0 : $V{TOTAL_CHEQUEDD_AMOUNT}) + ($V{TOTAL_ONLINE_AMOUNT} == null ? 0 : $V{TOTAL_ONLINE_AMOUNT}) + ($V{TOTAL_BANK_AMOUNT} == null ? 0 : $V{TOTAL_BANK_AMOUNT})]]></variableExpression>
+		<variableExpression><![CDATA[($V{TOTAL_CASH_AMOUNT} == null ? 0 : $V{TOTAL_CASH_AMOUNT}) + ($V{TOTAL_CHEQUEDD_AMOUNT} == null ? 0 : $V{TOTAL_CHEQUEDD_AMOUNT}) + ($V{TOTAL_ONLINE_AMOUNT} == null ? 0 : $V{TOTAL_ONLINE_AMOUNT}) + ($V{TOTAL_BANK_AMOUNT} == null ? 0 : $V{TOTAL_BANK_AMOUNT}) + ($V{TOTAL_CARD_AMOUNT} == null ? 0 : $V{TOTAL_CARD_AMOUNT})]]></variableExpression>
 		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
 	<variable name="TOTAL_CASH_COUNT" class="java.lang.Integer" resetType="Group" resetGroup="USER_COUNTER" calculation="Sum">
@@ -113,12 +75,20 @@
 		<variableExpression><![CDATA[$F{bankCount}.equals("")?0:Integer.valueOf($F{bankCount})]]></variableExpression>
 		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
+	<variable name="TOTAL_CARD_COUNT" class="java.lang.Integer" resetType="Group" resetGroup="USER_COUNTER" calculation="Sum">
+		<variableExpression><![CDATA[$F{cardCount}.equals("")?0:Integer.valueOf($F{cardCount})]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="TOTAL_CARD_AMOUNT" class="java.lang.Double" resetType="Group" resetGroup="USER_COUNTER" calculation="Sum">
+		<variableExpression><![CDATA[$F{cardAmount}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
 	<variable name="TOTAL_RECEIPT_COUNT" class="java.lang.Integer" resetType="Group" resetGroup="USER_COUNTER" calculation="Sum">
 		<variableExpression><![CDATA[$F{totalReceiptCount}.equals("")?0:Integer.valueOf($F{totalReceiptCount})]]></variableExpression>
 		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
 	<variable name="TOTAL_RECEIPT_AMOUNT" class="java.lang.Double" resetType="Group" resetGroup="USER_COUNTER">
-		<variableExpression><![CDATA[($V{TOTAL_CASH_AMOUNT} == null ? 0 : $V{TOTAL_CASH_AMOUNT}) + ($V{TOTAL_CHEQUEDD_AMOUNT} == null ? 0 : $V{TOTAL_CHEQUEDD_AMOUNT}) + ($V{TOTAL_ONLINE_AMOUNT} == null ? 0 : $V{TOTAL_ONLINE_AMOUNT}) + ($V{TOTAL_BANK_AMOUNT} == null ? 0 : $V{TOTAL_BANK_AMOUNT})]]></variableExpression>
+		<variableExpression><![CDATA[($V{TOTAL_CASH_AMOUNT} == null ? 0 : $V{TOTAL_CASH_AMOUNT}) + ($V{TOTAL_CHEQUEDD_AMOUNT} == null ? 0 : $V{TOTAL_CHEQUEDD_AMOUNT}) + ($V{TOTAL_ONLINE_AMOUNT} == null ? 0 : $V{TOTAL_ONLINE_AMOUNT}) + ($V{TOTAL_BANK_AMOUNT} == null ? 0 : $V{TOTAL_BANK_AMOUNT}) + ($V{TOTAL_CARD_AMOUNT} == null ? 0 : $V{TOTAL_CARD_AMOUNT})]]></variableExpression>
 		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
 	<group name="USER_COUNTER">
@@ -190,9 +160,7 @@
 					<text><![CDATA[Sl. No.]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="176" y="20" width="117" height="20" uuid="49efb4b5-43f4-45e2-aec8-770930613974">
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					</reportElement>
+					<reportElement x="176" y="20" width="100" height="20" uuid="49efb4b5-43f4-45e2-aec8-770930613974"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -206,7 +174,7 @@
 					<text><![CDATA[Cash]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="293" y="20" width="117" height="20" uuid="985ad7f6-d10e-4df2-a856-7cf6c9995760"/>
+					<reportElement x="276" y="20" width="100" height="20" uuid="985ad7f6-d10e-4df2-a856-7cf6c9995760"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -220,7 +188,7 @@
 					<text><![CDATA[Cheque/DD]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="410" y="20" width="117" height="20" uuid="e843f2f6-5eca-48f6-8217-21f34b9439dd"/>
+					<reportElement x="376" y="20" width="100" height="20" uuid="e843f2f6-5eca-48f6-8217-21f34b9439dd"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -278,7 +246,7 @@
 					<text><![CDATA[Receipt]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="221" y="40" width="72" height="20" uuid="16065079-7194-48f8-9447-ca6e4a0196cd">
+					<reportElement x="221" y="40" width="55" height="20" uuid="16065079-7194-48f8-9447-ca6e4a0196cd">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box leftPadding="5" rightPadding="5">
@@ -294,7 +262,7 @@
 					<text><![CDATA[Amount]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="293" y="40" width="45" height="20" uuid="16065079-7194-48f8-9447-ca6e4a0196cd"/>
+					<reportElement x="276" y="40" width="45" height="20" uuid="16065079-7194-48f8-9447-ca6e4a0196cd"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -308,7 +276,7 @@
 					<text><![CDATA[Receipt]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="338" y="40" width="72" height="20" uuid="16065079-7194-48f8-9447-ca6e4a0196cd"/>
+					<reportElement x="321" y="40" width="55" height="20" uuid="16065079-7194-48f8-9447-ca6e4a0196cd"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -322,7 +290,7 @@
 					<text><![CDATA[Amount]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="410" y="40" width="45" height="20" uuid="16065079-7194-48f8-9447-ca6e4a0196cd"/>
+					<reportElement x="376" y="40" width="45" height="20" uuid="16065079-7194-48f8-9447-ca6e4a0196cd"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -336,7 +304,7 @@
 					<text><![CDATA[Receipt]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="455" y="40" width="72" height="20" uuid="16065079-7194-48f8-9447-ca6e4a0196cd"/>
+					<reportElement x="421" y="40" width="55" height="20" uuid="16065079-7194-48f8-9447-ca6e4a0196cd"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -350,7 +318,7 @@
 					<text><![CDATA[Amount]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="644" y="20" width="122" height="20" uuid="0b12ad49-702c-449d-9c99-f6f0dc46a920">
+					<reportElement x="670" y="20" width="100" height="20" uuid="0b12ad49-702c-449d-9c99-f6f0dc46a920">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box leftPadding="5" rightPadding="5">
@@ -366,9 +334,7 @@
 					<text><![CDATA[Row Total]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="644" y="40" width="48" height="20" uuid="16065079-7194-48f8-9447-ca6e4a0196cd">
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					</reportElement>
+					<reportElement x="670" y="40" width="44" height="20" uuid="16065079-7194-48f8-9447-ca6e4a0196cd"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -382,7 +348,7 @@
 					<text><![CDATA[Receipt]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="692" y="40" width="74" height="20" uuid="16065079-7194-48f8-9447-ca6e4a0196cd"/>
+					<reportElement x="714" y="40" width="55" height="20" uuid="16065079-7194-48f8-9447-ca6e4a0196cd"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -396,7 +362,7 @@
 					<text><![CDATA[Amount]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="527" y="20" width="117" height="20" uuid="ff5caf01-6f5c-41d6-97e2-f026ed7032d9"/>
+					<reportElement x="476" y="20" width="100" height="20" uuid="ff5caf01-6f5c-41d6-97e2-f026ed7032d9"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -410,7 +376,7 @@
 					<text><![CDATA[Bank]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="527" y="40" width="45" height="20" uuid="ef22d9fc-a708-4f93-836a-03b714b59841">
+					<reportElement x="476" y="40" width="45" height="20" uuid="ef22d9fc-a708-4f93-836a-03b714b59841">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box leftPadding="5" rightPadding="5">
@@ -426,7 +392,56 @@
 					<text><![CDATA[Receipt]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="572" y="40" width="72" height="20" uuid="d84ffdc2-3469-4ded-97cf-0a838b0b8eee">
+					<reportElement x="521" y="40" width="55" height="20" uuid="d84ffdc2-3469-4ded-97cf-0a838b0b8eee">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box leftPadding="5" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Amount]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="576" y="20" width="93" height="20" uuid="d1ca5b93-f0c6-4394-9782-5184900c7ca4">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box leftPadding="5" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Card]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="577" y="40" width="44" height="20" uuid="ca7d2c1d-0c99-48fd-af0b-614910174f7c">
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					</reportElement>
+					<box leftPadding="5" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Receipt]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="621" y="40" width="49" height="20" uuid="a43dfe46-414a-4233-9c27-70d32cc43509">
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box leftPadding="5" rightPadding="5">
@@ -446,7 +461,9 @@
 		<groupFooter>
 			<band height="25">
 				<textField isStretchWithOverflow="true" evaluationTime="Auto" pattern="###0" isBlankWhenNull="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="410" y="0" width="45" height="20" uuid="e6fc42f3-5a63-405c-8bc7-9158584fb080"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="376" y="0" width="45" height="20" uuid="e6fc42f3-5a63-405c-8bc7-9158584fb080">
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					</reportElement>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -474,9 +491,7 @@
 					<text><![CDATA[Total :]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" evaluationTime="Auto" pattern="###0" isBlankWhenNull="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="176" y="0" width="45" height="20" uuid="448cc8ba-2a35-4fff-976a-7b87df05e234">
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					</reportElement>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="176" y="0" width="45" height="20" uuid="448cc8ba-2a35-4fff-976a-7b87df05e234"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -490,7 +505,9 @@
 					<textFieldExpression><![CDATA[$V{TOTAL_CASH_COUNT}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Auto" pattern="###0" isBlankWhenNull="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="293" y="0" width="45" height="20" uuid="0527e611-bb14-4f02-9521-ae8bff10697d"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="276" y="0" width="45" height="20" uuid="0527e611-bb14-4f02-9521-ae8bff10697d">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -504,7 +521,7 @@
 					<textFieldExpression><![CDATA[$V{TOTAL_CHEQUEDD_COUNT}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Auto" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="221" y="0" width="72" height="20" uuid="4f61ab7e-5b75-4036-9b0d-c6bd9e5550af">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="221" y="0" width="55" height="20" uuid="4f61ab7e-5b75-4036-9b0d-c6bd9e5550af">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box leftPadding="5" rightPadding="5">
@@ -520,7 +537,10 @@
 					<textFieldExpression><![CDATA[$V{TOTAL_CASH_AMOUNT}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Auto" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="338" y="0" width="72" height="20" uuid="f7b8b398-a9c5-498a-a4cb-5f170c397c29"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="321" y="0" width="55" height="20" uuid="f7b8b398-a9c5-498a-a4cb-5f170c397c29">
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -534,7 +554,9 @@
 					<textFieldExpression><![CDATA[$V{TOTAL_CHEQUEDD_AMOUNT}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Auto" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="455" y="0" width="72" height="20" uuid="4c23a5a4-b7cc-4313-bccd-edeaaa599931"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="421" y="0" width="55" height="20" uuid="4c23a5a4-b7cc-4313-bccd-edeaaa599931">
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					</reportElement>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -548,7 +570,9 @@
 					<textFieldExpression><![CDATA[$V{TOTAL_ONLINE_AMOUNT}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Auto" pattern="###0" isBlankWhenNull="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="644" y="0" width="48" height="20" uuid="a14274b0-b100-4508-84aa-cf388f19e4e5"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="670" y="0" width="44" height="20" isRemoveLineWhenBlank="true" uuid="a14274b0-b100-4508-84aa-cf388f19e4e5">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -562,7 +586,9 @@
 					<textFieldExpression><![CDATA[$V{TOTAL_RECEIPT_COUNT}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Auto" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="692" y="0" width="74" height="20" uuid="7eb7ca0f-321b-4977-a693-6732309b8ee7"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="714" y="0" width="55" height="20" uuid="7eb7ca0f-321b-4977-a693-6732309b8ee7">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -576,7 +602,9 @@
 					<textFieldExpression><![CDATA[$V{TOTAL_RECEIPT_AMOUNT}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Auto" pattern="###0" isBlankWhenNull="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="527" y="0" width="45" height="20" uuid="d7744bbe-8b80-4293-bf86-144a59c6761d"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="476" y="0" width="45" height="20" uuid="d7744bbe-8b80-4293-bf86-144a59c6761d">
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					</reportElement>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -590,7 +618,9 @@
 					<textFieldExpression><![CDATA[$V{TOTAL_BANK_COUNT}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Auto" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="572" y="0" width="72" height="20" uuid="d84cf119-5758-4b94-b4a4-8d68fade9eea"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="521" y="0" width="55" height="20" uuid="d84cf119-5758-4b94-b4a4-8d68fade9eea">
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					</reportElement>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -602,6 +632,34 @@
 						<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{TOTAL_BANK_AMOUNT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Auto" pattern="###0" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="577" y="0" width="44" height="20" uuid="cadc504d-c3e6-471b-b9d1-acfb2fa42e37"/>
+					<box leftPadding="5" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTAL_CARD_COUNT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Auto" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="621" y="0" width="49" height="20" uuid="182b4fae-a8b5-4f6f-914a-1060fd95a026"/>
+					<box leftPadding="5" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTAL_CARD_AMOUNT}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -632,7 +690,7 @@
 				<textFieldExpression><![CDATA[$F{cashCount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="221" y="0" width="72" height="20" isPrintWhenDetailOverflows="true" uuid="63e48778-d033-47eb-82b6-a9b7443bdfee"/>
+				<reportElement stretchType="RelativeToTallestObject" x="221" y="0" width="55" height="20" isPrintWhenDetailOverflows="true" uuid="63e48778-d033-47eb-82b6-a9b7443bdfee"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -646,7 +704,7 @@
 				<textFieldExpression><![CDATA[$F{cashAmount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="293" y="0" width="45" height="20" isPrintWhenDetailOverflows="true" uuid="1b347f95-e9b3-418b-a319-b9200425fc3a"/>
+				<reportElement stretchType="RelativeToTallestObject" x="276" y="0" width="45" height="20" isPrintWhenDetailOverflows="true" uuid="1b347f95-e9b3-418b-a319-b9200425fc3a"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -660,7 +718,7 @@
 				<textFieldExpression><![CDATA[$F{chequeddCount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="338" y="0" width="72" height="20" isPrintWhenDetailOverflows="true" uuid="1b347f95-e9b3-418b-a319-b9200425fc3a"/>
+				<reportElement stretchType="RelativeToTallestObject" x="321" y="0" width="55" height="20" isPrintWhenDetailOverflows="true" uuid="1b347f95-e9b3-418b-a319-b9200425fc3a"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -674,7 +732,7 @@
 				<textFieldExpression><![CDATA[$F{chequeddAmount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="410" y="0" width="45" height="20" isPrintWhenDetailOverflows="true" uuid="8079bb67-4953-47cc-add5-8f6c7a3a6e60"/>
+				<reportElement stretchType="RelativeToTallestObject" x="376" y="0" width="45" height="20" isPrintWhenDetailOverflows="true" uuid="8079bb67-4953-47cc-add5-8f6c7a3a6e60"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -688,7 +746,7 @@
 				<textFieldExpression><![CDATA[$F{onlineCount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="455" y="0" width="72" height="20" isPrintWhenDetailOverflows="true" uuid="8079bb67-4953-47cc-add5-8f6c7a3a6e60"/>
+				<reportElement stretchType="RelativeToTallestObject" x="421" y="0" width="55" height="20" isPrintWhenDetailOverflows="true" uuid="8079bb67-4953-47cc-add5-8f6c7a3a6e60"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -702,7 +760,9 @@
 				<textFieldExpression><![CDATA[$F{onlineAmount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="644" y="0" width="48" height="20" isPrintWhenDetailOverflows="true" uuid="8079bb67-4953-47cc-add5-8f6c7a3a6e60"/>
+				<reportElement stretchType="RelativeToTallestObject" x="670" y="0" width="44" height="20" isPrintWhenDetailOverflows="true" uuid="8079bb67-4953-47cc-add5-8f6c7a3a6e60">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -716,7 +776,7 @@
 				<textFieldExpression><![CDATA[$F{totalReceiptCount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="692" y="0" width="74" height="20" isPrintWhenDetailOverflows="true" uuid="8079bb67-4953-47cc-add5-8f6c7a3a6e60"/>
+				<reportElement stretchType="RelativeToTallestObject" x="714" y="0" width="55" height="20" isPrintWhenDetailOverflows="true" uuid="8079bb67-4953-47cc-add5-8f6c7a3a6e60"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -776,7 +836,7 @@
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="572" y="0" width="72" height="20" isPrintWhenDetailOverflows="true" uuid="518c5236-0fb0-420f-bbc5-bbb3308a4289"/>
+				<reportElement stretchType="RelativeToTallestObject" x="521" y="0" width="55" height="20" isPrintWhenDetailOverflows="true" uuid="518c5236-0fb0-420f-bbc5-bbb3308a4289"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -790,7 +850,7 @@
 				<textFieldExpression><![CDATA[$F{bankAmount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="527" y="0" width="45" height="20" isPrintWhenDetailOverflows="true" uuid="e5402981-7b54-4832-b6e1-ad33c121899c"/>
+				<reportElement stretchType="RelativeToTallestObject" x="476" y="0" width="45" height="20" isPrintWhenDetailOverflows="true" uuid="e5402981-7b54-4832-b6e1-ad33c121899c"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -802,6 +862,32 @@
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{bankCount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement key="" stretchType="RelativeToTallestObject" x="577" y="0" width="44" height="20" isPrintWhenDetailOverflows="true" uuid="d4f0530a-6add-4f45-905f-d9c94c6c48aa">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cardCount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="621" y="0" width="49" height="20" isPrintWhenDetailOverflows="true" uuid="83e193f2-1d92-4019-9973-5f1680e14060"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cardAmount}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

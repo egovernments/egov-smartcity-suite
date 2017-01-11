@@ -89,9 +89,10 @@ public class MarriageBillService extends BillServiceInterface {
 
     @Autowired
     private EgBillDao egBillDAO;
-    
+
     @Autowired
     private AppConfigValueService appConfigValuesService;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -115,7 +116,7 @@ public class MarriageBillService extends BillServiceInterface {
         try {
             billXml = URLEncoder.encode(getBillXML(billableRegistration), "UTF-8");
         } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException("", e);
         }
 
         return billXml;
@@ -140,7 +141,7 @@ public class MarriageBillService extends BillServiceInterface {
         try {
             billXml = URLEncoder.encode(getBillXML(billableReIssue), "UTF-8");
         } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException("", e);
         }
 
         return billXml;
@@ -148,13 +149,13 @@ public class MarriageBillService extends BillServiceInterface {
 
     @Override
     public List<EgBillDetails> getBilldetails(final Billable billObj) {
-        final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>();
+        final List<EgBillDetails> billDetails = new ArrayList<>();
         final EgDemand demand = billObj.getCurrentDemand();
         final Date currentDate = new Date();
         final StringBuilder descriptionBuilder = new StringBuilder();
-        final AppConfigValues  marriageFunctionCode = appConfigValuesService.getConfigValuesByModuleAndKey(
-        		MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEFEECOLLECTION_FUCNTION_CODE).get(0);
-      
+        final AppConfigValues marriageFunctionCode = appConfigValuesService.getConfigValuesByModuleAndKey(
+                MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEFEECOLLECTION_FUCNTION_CODE).get(0);
+
         int orderNo = 1;
         for (final EgDemandDetails demandDetail : demand.getEgDemandDetails()) {
 
@@ -165,20 +166,23 @@ public class MarriageBillService extends BillServiceInterface {
                     && demandDetail.getAmount().compareTo(demandDetail.getAmtCollected()) > 0 ? true : false;
             final EgDemandReasonMaster demandReasonMaster = reason.getEgDemandReasonMaster();
 
-            if (demandReasonMaster.getIsDebit().equalsIgnoreCase("N") && thereIsBalanceFee) {
+            if ("N".equalsIgnoreCase(demandReasonMaster.getIsDebit()) && thereIsBalanceFee) {
 
                 final EgBillDetails billdetail = new EgBillDetails();
 
                 billdetail.setDrAmount(BigDecimal.ZERO);
                 billdetail.setCrAmount(demandDetail.getAmount().subtract(demandDetail.getAmtCollected()));
 
-                if (reason.getGlcodeId() == null)
-                    LOGGER.info("MarriageBillService.getBilldetails - GLCODE does not exists for reason="
-                            + demandReasonMaster.getReasonMaster());
-                else
+                if (reason.getGlcodeId() == null) {
+                    if (LOGGER.isInfoEnabled()) {
+                        LOGGER.info("MarriageBillService.getBilldetails - GLCODE does not exists for reason="
+                                + demandReasonMaster.getReasonMaster());
+                    }
+                } else {
                     billdetail.setGlcode(reason.getGlcodeId().getGlcode());
-                
-                billdetail.setFunctionCode(marriageFunctionCode!=null ? marriageFunctionCode.getValue():"");
+                }
+
+                billdetail.setFunctionCode(marriageFunctionCode != null ? marriageFunctionCode.getValue() : "");
                 billdetail.setEgDemandReason(reason);
                 billdetail.setAdditionalFlag(Integer.valueOf(1));
                 billdetail.setCreateDate(currentDate);
@@ -188,8 +192,6 @@ public class MarriageBillService extends BillServiceInterface {
                 descriptionBuilder.append(demandReasonMaster.getReasonMaster())
                         .append(" - ")
                         .append(installment.getDescription());
-                      /*  .append(" # ")
-                        .append(billObj.getCurrentDemand().getEgInstallmentMaster().getDescription());*/
 
                 billdetail.setDescription(descriptionBuilder.toString());
                 billDetails.add(billdetail);
@@ -201,17 +203,18 @@ public class MarriageBillService extends BillServiceInterface {
 
     @Override
     public void cancelBill() {
+        //
     }
 
-    EgBillDetails createBillDet(final Integer orderNo, final BigDecimal billDetailAmount, final String glCode,
+    public EgBillDetails createBillDet(final Integer orderNo, final BigDecimal billDetailAmount, final String glCode,
             final String description, final Integer addlFlag) {
-        final AppConfigValues  marriageFunctionCode = appConfigValuesService.getConfigValuesByModuleAndKey(
-        		MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEFEECOLLECTION_FUCNTION_CODE).get(0);
-        
+        final AppConfigValues marriageFunctionCode = appConfigValuesService.getConfigValuesByModuleAndKey(
+                MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEFEECOLLECTION_FUCNTION_CODE).get(0);
+
         if (orderNo == null || billDetailAmount == null || glCode == null)
             throw new ApplicationRuntimeException("Exception in createBillDet....");
         final EgBillDetails billdetail = new EgBillDetails();
-        billdetail.setFunctionCode(marriageFunctionCode!=null ? marriageFunctionCode.getValue():"");
+        billdetail.setFunctionCode(marriageFunctionCode != null ? marriageFunctionCode.getValue() : "");
         billdetail.setOrderNo(orderNo);
         billdetail.setCreateDate(new Date());
         billdetail.setModifiedDate(new Date());
@@ -220,7 +223,9 @@ public class MarriageBillService extends BillServiceInterface {
         billdetail.setGlcode(glCode);
         billdetail.setDescription(description);
         billdetail.setAdditionalFlag(addlFlag);
-        LOGGER.info("Bill Detail object created with amount " + billDetailAmount);
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Bill Detail object created with amount " + billDetailAmount);
+        }
         return billdetail;
     }
 

@@ -42,8 +42,11 @@ package org.egov.tl.repository;
 
 import org.egov.tl.entity.License;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 @Repository
 public interface LicenseRepository extends JpaRepository<License, Long> {
 
@@ -54,4 +57,25 @@ public interface LicenseRepository extends JpaRepository<License, Long> {
     License findByLicenseNumber(String licenseNumber);
 
     License findByApplicationNumber(String applicationNumber);
+    
+    @Query("select l.applicationNumber from License l where upper(l.applicationNumber) like :applicationNumber")
+    List<String> findApplicationNumberByApplicationNumber(@Param("applicationNumber") String applicationNumber);
+    
+    @Query("select l.licenseNumber from License l where upper(l.licenseNumber) like '%'||:licenseNumber||'%'")
+    List<String> findLicenseNumberByLicenseNumber(@Param("licenseNumber") String licenseNumber);
+    
+    @Query("select l.oldLicenseNumber from License l where upper(l.oldLicenseNumber) like :oldLicenseNumber")
+    List<String> findOldLicenseNumberByOldLicenseNumber(@Param("oldLicenseNumber") String oldLicenseNumber);
+    
+    @Query("select l.nameOfEstablishment from License l where upper(l.nameOfEstablishment) like :nameOfEstablishment")
+    List<String> findNameOfEstablishmentByNameOfEstablishment(@Param("nameOfEstablishment") String nameOfEstablishment); 
+    
+    @Query("select l.licensee.applicantName from License l where l.licensee.applicantName like :applicantName")
+    List<String> findApplicantNameByApplicantName(@Param("applicantName") String applicantName);
+    
+    @Query("select l.assessmentNo from License l where upper(l.assessmentNo) like :assessmentNo")
+    List<String> findAssessmentNoByAssessmentNo(@Param("assessmentNo") String assessmentNo); 
+    
+    @Query("select l.licensee.mobilePhoneNumber from License l where l.licensee.mobilePhoneNumber like :mobilePhoneNumber")
+    List<String> findMobilePhoneNumberByMobilePhoneNumber(@Param("mobilePhoneNumber") String mobilePhoneNumber);
 }

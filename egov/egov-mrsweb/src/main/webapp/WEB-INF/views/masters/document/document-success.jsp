@@ -1,10 +1,8 @@
-<%@ page contentType="text/json" %>
-<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %> 
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2017>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -39,15 +37,13 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-{
-"ResultSet": {
-    "Result":[
-    <s:iterator var="s" value="designationList" status="status">
-    {"Text":"<s:property value="%{designationName}" />",
-    "Value":"<s:property value="%{designationId}" />"
-    }<s:if test="!#status.last">,</s:if>
-    </s:iterator>       
-    ]
-  }
-}
+<div class="alert alert-success" role="alert">
+	<strong>${message}</strong>
+</div>
+<jsp:include page="document-view.jsp"></jsp:include>
