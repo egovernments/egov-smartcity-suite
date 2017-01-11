@@ -184,9 +184,18 @@ $(document)
 										if ((action == 'Generate Estimation Notice' && status == 'VERIFIED')
 												|| (action == 'Generate WorkOrder' && status == 'APPROVED')
 												|| (status == 'ESTIMATIONAMOUNTPAID' && action == 'Forward')) {
+											if(action == 'Forward' && $('#approvalDepartment').val()==''){
+												$('#approvalDepartment').attr('required', 'required');
+											$('#approvalDesignation').attr('required', 'required');
+											$('#approvalPosition').attr('required', 'required');
+												return false;
+											}
+											else{
 											document.getElementById("mode").value = mode;
 											document.forms[0].submit();
+											}
 										}
+										
 										if ((action == 'Forward' && status == 'CLOSERINITIATED')) {
 											document.getElementById("mode").value = mode;
 											document.forms[0].submit();

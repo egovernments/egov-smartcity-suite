@@ -234,26 +234,26 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 if (getloggedinUserDesignationForEstimationAndWorkOrderGeneratedStatus(waterConnectionDetails, loggedInUserDesignation)) {
                     if (workFlowAction.equals(WaterTaxConstants.FORWARDWORKFLOWACTION) && waterConnectionDetails
                             .getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING)
-                        && (loggedInUserDesignation.equals(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
-                                || loggedInUserDesignation.equals(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
-                                || loggedInUserDesignation.equals(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN))){
+                        && (loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
+                                || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
+                                || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN))){
                             wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(),
                                     null, null, additionalRule, WaterTaxConstants.EXECUTIVEENGINEERFORWARDED, null,
                                     null, loggedInUserDesignation);
                     } else if (workFlowAction.equals(WaterTaxConstants.FORWARDWORKFLOWACTION)
                             && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)
-                            && (loggedInUserDesignation.equals(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
-                                    || loggedInUserDesignation.equals(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
-                                    || loggedInUserDesignation.equals(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN)))
+                            && (loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
+                                    || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
+                                    || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN)))
                         wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(),
                                 null, null, additionalRule, "Application Approval Pending", null, null,
                                 loggedInUserDesignation);
                     else if (workFlowAction.equals(WaterTaxConstants.APPROVEWORKFLOWACTION)
                             && waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING)
-                            && (loggedInUserDesignation.equals(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
-                                    || loggedInUserDesignation.equals(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
-                                    || loggedInUserDesignation.equals(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN)))
+                            && (loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
+                                    || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
+                                    || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN)))
                         wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(),
                                 null, null, additionalRule, WaterTaxConstants.EXECUTIVEENGINEERFORWARDED, null, null,
                                 loggedInUserDesignation);
@@ -292,11 +292,11 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
             final String loggedInUserDesignation) {
         return loggedInUserDesignation != null && !"".equals(loggedInUserDesignation) && (loggedInUserDesignation
                 .equals(WaterTaxConstants.COMMISSIONER_DESGN)
-                || loggedInUserDesignation.equals(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN)
-                || loggedInUserDesignation.equals(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
-                || loggedInUserDesignation.equals(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
-                || loggedInUserDesignation.equals(WaterTaxConstants.TAP_INSPPECTOR_DESIGN)
-                || loggedInUserDesignation.equals(WaterTaxConstants.ASSISTANT_ENGINEER_DESIGN))
+                || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN)
+                || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
+                || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
+                || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.TAP_INSPPECTOR_DESIGN)
+                || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.ASSISTANT_ENGINEER_DESIGN))
                         ;
     }
 
