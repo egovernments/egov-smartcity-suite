@@ -127,10 +127,11 @@
 							</a>
 						</div>
 						<div class="col-md-12 community-card">
-							<div class="rounded-circle">
-								<i class="fa fa-search c"></i>
+						  <a href="/pgr/complaint/citizen/anonymous/search?isMore=true" target="_blank">
+							<div class="rounded-circle"><i class="fa fa-search c"></i>
 							</div>
 							&nbsp;
+						  </a>
 							<div class="label-font" style="vertical-align: sub">
 								<spring:message code="lbl.check.comp.status"/>&nbsp;<br>
 								<input type="text" placeholder="Grievance number" id="compsearchtxt"
