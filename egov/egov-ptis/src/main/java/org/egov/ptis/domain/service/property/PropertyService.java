@@ -363,6 +363,8 @@ public class PropertyService {
             final PropertyDepartment propertyDepartment = ptDepartmentRepository.findOne(propertyDepartmentId);
             property.getPropertyDetail().setPropertyDepartment(propertyDepartment);
         }
+        else
+            property.getPropertyDetail().setPropertyDepartment(null);
         return property;
     }
 
