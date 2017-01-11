@@ -40,7 +40,7 @@
 
 package org.egov.ptis.web.controller.transactions.exemption;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
@@ -72,6 +72,7 @@ import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.TaxExemptionReason;
@@ -92,7 +93,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/exemption/update/{id}")
 public class UpdateTaxExemptionController extends GenericWorkFlowController {
 
-    protected static final String TAX_EXEMPTION_FORM = "taxExemption-form";
+    private static final String APPROVAL_POSITION = "approvalPosition";
+	protected static final String TAX_EXEMPTION_FORM = "taxExemption-form";
     protected static final String TAX_EXEMPTION_SUCCESS = "taxExemption-success";
     protected static final String TAX_EXEMPTION_VIEW = "taxExemption-view";
     public static final String EDIT = "edit";
@@ -185,20 +187,20 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
             approvalComent = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
-        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+        if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
         final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
         if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
             property.setStatus(STATUS_ISACTIVE);
             oldProperty.setStatus(STATUS_ISHISTORY);
         }
-
+        final String exemptioReason = property.getTaxExemptedReason().getCode();
         if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE) ||
                 WFLOW_ACTION_STEP_PREVIEW.equalsIgnoreCase(workFlowAction) ||
                 WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
-            return "redirect:/notice/propertyTaxNotice-generateNotice.action?basicPropId="
-                    + property.getBasicProperty().getId() + "&noticeType=" + NOTICE_TYPE_SPECIAL_NOTICE
-                    + "&noticeMode=" + APPLICATION_TYPE_TAX_EXEMTION + "&actionType=" + workFlowAction;
+            return "redirect:/notice/propertyTaxNotice-generateExemptionNotice.action?basicPropId="
+                    + property.getBasicProperty().getId() + "&noticeType=" + PropertyTaxConstants.NOTICE_TYPE_EXEMPTION
+                    + "&noticeMode=" + NOTICE_TYPE_EXEMPTION + "&actionType=" + workFlowAction + "&exemptionReason=" + exemptioReason;
         else {
 
             if (request.getParameter("mode").equalsIgnoreCase(VIEW))
