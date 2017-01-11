@@ -1207,6 +1207,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) ||
                 StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)))
             showTaxCalcBtn = Boolean.TRUE;
+        if(propTypeMstr.getCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT) && (propertyDepartmentId == null) ){
+            addActionError(getText("mandatory.property.department"));
+        }
     }
 
     @SkipValidation

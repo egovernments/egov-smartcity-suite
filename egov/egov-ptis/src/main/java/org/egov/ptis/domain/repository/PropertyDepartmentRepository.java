@@ -50,10 +50,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PropertyDepartmentRepository extends JpaRepository<PropertyDepartment, Long> {
 
-    @Query(value = "SELECT pds from PropertyDepartment pds WHERE pds.category = 'STATE'")
+    @Query(value = "SELECT pds from PropertyDepartment pds WHERE pds.category = 'STATE' order by name")
     List<PropertyDepartment> getAllStateDepartments();
 
-    @Query(value = "SELECT pds from PropertyDepartment pds WHERE pds.category = 'CENTRAL'")
+    @Query(value = "SELECT pds from PropertyDepartment pds WHERE pds.category = 'CENTRAL' order by name")
     List<PropertyDepartment> getAllCentralDepartments();
 
 }
