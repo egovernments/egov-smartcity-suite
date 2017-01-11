@@ -75,7 +75,7 @@
 				<spring:message code="lbl.payto" /> <span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:input class="form-control" id="payTo" path="egBillregistermis.payto" maxlength="50" required="required" />
+				<form:input class="form-control" id="payTo" path="egBillregistermis.payto" maxlength="350" required="required" />
 				<form:errors path="egBillregistermis.payto" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right">

@@ -145,7 +145,7 @@ public class EgBillregistermis extends AbstractPersistable<Integer> implements j
     @JoinColumn(name = "billsubtype")
     private EgBillSubType egBillSubType;
 
-    @Length(max = 250)
+    @Length(max = 350)
     private String payto;
 
     private String mbRefNo;
