@@ -41,8 +41,7 @@
 		function() {
 			if ($('#isMore').val() == "true") {
 				$(".form-group.show-searchcomp-more.display-hide").removeClass("display-hide");
-			} else
-				$(".form-group.show-searchcomp-more");
+			}
 		});
  
 var tableContainer;
