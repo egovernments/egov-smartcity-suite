@@ -74,16 +74,17 @@ public abstract class BaseContractorBillController extends GenericWorkFlowContro
         final List<CChartOfAccounts> contractorAdvanceAccountCodes = chartOfAccountsService
                 .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_ADVANCE_PURPOSE);
         final List<String> errorArgs = new ArrayList<>();
+        final Double advancePaidSoFar = contractorAdvanceService.getTotalAdvancePaid(null,
+                workOrderEstimate.getId(),
+                ContractorAdvanceRequisitionStatus.APPROVED.toString());
+        final Double advanceAdjustedSoFar = contractorBillRegisterService.getAdvanceAdjustedSoFar(
+                workOrderEstimate.getId(),
+                contractorBillRegister.getId(), contractorAdvanceAccountCodes);
         for (final EgBilldetails billdetails : contractorBillRegister.getAdvanceAdjustmentDetails())
-            if (contractorAdvanceAccountCodes != null && !contractorAdvanceAccountCodes.isEmpty()
+            if (billdetails.getGlcodeid() != null && contractorAdvanceAccountCodes != null
+                    && !contractorAdvanceAccountCodes.isEmpty()
                     && contractorAdvanceAccountCodes
                             .contains(chartOfAccountsService.findById(billdetails.getGlcodeid().longValue(), false))) {
-                final Double advancePaidSoFar = contractorAdvanceService.getTotalAdvancePaid(null,
-                        workOrderEstimate.getId(),
-                        ContractorAdvanceRequisitionStatus.APPROVED.toString());
-                final Double advanceAdjustedSoFar = contractorBillRegisterService.getAdvanceAdjustedSoFar(
-                        workOrderEstimate.getId(),
-                        contractorBillRegister.getId(), contractorAdvanceAccountCodes);
                 if (billdetails.getCreditamount().compareTo(BigDecimal.valueOf(advancePaidSoFar)) > 0)
                     resultBinder.reject("error.advance.greater.paid", "error.advance.greater.paid");
                 if (billdetails.getCreditamount().compareTo(contractorBillRegister.getBillamount()) > 0)
@@ -91,12 +92,6 @@ public abstract class BaseContractorBillController extends GenericWorkFlowContro
                 if (billdetails.getCreditamount().add(BigDecimal.valueOf(advanceAdjustedSoFar))
                         .compareTo(BigDecimal.valueOf(advancePaidSoFar)) > 0)
                     resultBinder.reject("error.adjusted.greater.paid", "error.adjusted.greater.paid");
-                if (contractorBillRegister.getBilltype().equalsIgnoreCase(WorksConstants.FINAL_BILL) && advancePaidSoFar > 0
-                        && advanceAdjustedSoFar == 0) {
-                    errorArgs.add(advancePaidSoFar.toString());
-                    resultBinder.reject("error.finalbill.adjusted.zero", errorArgs.toArray(),
-                            "error.finalbill.adjusted.zero");
-                }
                 if (contractorBillRegister.getBilltype().equalsIgnoreCase(WorksConstants.FINAL_BILL) && advancePaidSoFar > 0
                         && billdetails.getCreditamount().add(BigDecimal.valueOf(advanceAdjustedSoFar))
                                 .compareTo(BigDecimal.valueOf(advancePaidSoFar)) != 0) {
@@ -108,5 +103,11 @@ public abstract class BaseContractorBillController extends GenericWorkFlowContro
                             "error.finalbill.adjust.remaining");
                 }
             }
+        if (contractorBillRegister.getBilltype().equalsIgnoreCase(WorksConstants.FINAL_BILL) && advancePaidSoFar > 0
+                && advanceAdjustedSoFar == 0) {
+            errorArgs.add(advancePaidSoFar.toString());
+            resultBinder.reject("error.finalbill.adjusted.zero", errorArgs.toArray(),
+                    "error.finalbill.adjusted.zero");
+        }
     }
 }
