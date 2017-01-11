@@ -1617,6 +1617,9 @@ public interface PropertyTaxConstants {
     public static final String REPORT_INVENTORY_NOTICE_MUNICIPALITY = "InventoryNotice_Municipality";
     public static final String NOTICE_TYPE_INVENTORY = "Inventory Notice";
     public static final String NOTICE_TYPE_DISTRESS = "Distress Notice";
+    public static final String VALUATION_CERTIFICATE = "Valuation Certificate";
+    public static final String VALUATION_CERTIFICATE_CORPORATION  = "ValuationCertificate_Corporation";
+    public static final String VALUATION_CERTIFICATE_MUNICIPALITY = "ValuationCertificate_Municipality";
     //esd notice section act and distress section act for corporation use the same constant
     public static final String CORPORATION_ESD_NOTICE_SECTION_ACT = "(Issued under Section 269(2) of Municipal Corporations Act,1955 (formerly GHMC Act, 1955)";
     

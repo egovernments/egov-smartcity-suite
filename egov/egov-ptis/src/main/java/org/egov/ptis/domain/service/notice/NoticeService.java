@@ -47,7 +47,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -67,7 +68,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class NoticeService extends PersistenceService<PtNotice, Long> {
-    private static final Logger LOGGER = Logger.getLogger(NoticeService.class);
+    
     @Autowired
     PersistenceService<BasicProperty, Long> basicPropertyService;
     @Autowired
@@ -75,6 +76,8 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
 
     public NoticeService() {
         super(PtNotice.class);
@@ -192,5 +195,12 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
             query.setString("assessmentNo", indexNumber);
         final List<PropertyMutation> mutations = query.list();
         return mutations;
+    }
+    
+    public PtNotice getNoticeByTypeUpicNoAndFinYear(final String noticeType, final String assessementNumber) {
+        final CFinancialYear currFinYear = financialYearDAO.getFinancialYearByDate(new Date());
+        return (PtNotice) basicPropertyService.find("from PtNotice where noticeType = ? and basicProperty.upicNo = ? "
+                + " and noticeDate between ? and ? ",
+                noticeType, assessementNumber, currFinYear.getStartingDate(), currFinYear.getEndingDate());
     }
 }

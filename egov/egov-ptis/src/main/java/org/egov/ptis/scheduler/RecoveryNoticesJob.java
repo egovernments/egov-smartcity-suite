@@ -127,7 +127,7 @@ public class RecoveryNoticesJob extends QuartzJobBean {
 
     private Boolean generateNotice(final String noticeType, final String assessmentNo, final RecoveryNoticesInfo noticeInfo) {
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner(noticeType,
+        final PtNotice notice = noticeService.getNoticeByTypeUpicNoAndFinYear(noticeType,
                 basicProperty.getUpicNo());
         if (notice == null) {
             recoveryNoticesService.generateNotice(noticeType, basicProperty);
