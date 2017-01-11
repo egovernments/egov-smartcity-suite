@@ -64,8 +64,8 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Entity
 @Table(name = "egmrs_document")
-@Unique(id = "id", tableName = "egmrs_document", columnName = { "name","code" }, fields = {
-"name","code" }, enableDfltMsg = false, message = "Already Exist.Name should be unique.")
+@Unique(id = "id", tableName = "egmrs_document", columnName = { "name", "code" }, fields = {
+        "name", "code" }, enableDfltMsg = false, message = "Already Exist.Name should be unique.")
 @SequenceGenerator(name = MarriageDocument.SEQ_DOCUMENT, sequenceName = MarriageDocument.SEQ_DOCUMENT, allocationSize = 1)
 public class MarriageDocument extends AbstractAuditable {
 
@@ -168,7 +168,7 @@ public class MarriageDocument extends AbstractAuditable {
         return documentProofType;
     }
 
-    public void setDocumentProofType(DocumentProofType documentProofType) {
+    public void setDocumentProofType(final DocumentProofType documentProofType) {
         this.documentProofType = documentProofType;
     }
 

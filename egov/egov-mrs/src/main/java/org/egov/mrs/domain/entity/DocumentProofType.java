@@ -42,10 +42,10 @@ package org.egov.mrs.domain.entity;
 import org.apache.commons.lang3.StringUtils;
 
 public enum DocumentProofType {
- COMMON,AGE_PROOF,ADDRESS_PROOF;
-    
- @Override
- public String toString() {
-     return StringUtils.capitalize(name());
- }
+    COMMON, AGE_PROOF, ADDRESS_PROOF;
+
+    @Override
+    public String toString() {
+        return StringUtils.capitalize(name());
+    }
 }
