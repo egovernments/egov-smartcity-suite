@@ -240,25 +240,25 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     public List<String> getTradeLicenseForGivenParam(final String paramValue, final String paramType) {
         List<String> licenseList = new ArrayList<>();
         if (paramType.equals(Constants.SEARCH_BY_APPNO))
-            licenseList = licenseRepository.findByApplicationNumberLike(paramValue);
+            licenseList = licenseRepository.findAllApplicationNumberLike(paramValue);
 
         else if (paramType.equals(Constants.SEARCH_BY_LICENSENO))
-            licenseList = licenseRepository.findByLicenseNumberLike(paramValue);
+            licenseList = licenseRepository.findAllLicenseNumberLike(paramValue);
 
         else if (paramType.equals(Constants.SEARCH_BY_OLDLICENSENO))
-            licenseList = licenseRepository.findByOldLicenseNumberLike(paramValue);
+            licenseList = licenseRepository.findAllOldLicenseNumberLike(paramValue);
 
         else if (paramType.equals(Constants.SEARCH_BY_TRADETITLE))
-            licenseList = licenseRepository.findByNameOfEstablishmentLike(paramValue);
+            licenseList = licenseRepository.findAllNameOfEstablishmentLike(paramValue);
 
         else if (paramType.equals(Constants.SEARCH_BY_TRADEOWNERNAME))
-            licenseList = licenseRepository.findByApplicantNameLike(paramValue);
+            licenseList = licenseRepository.findAllApplicantNameLike(paramValue);
 
         else if (paramType.equals(Constants.SEARCH_BY_PROPERTYASSESSMENTNO))
-            licenseList = licenseRepository.findByAssessmentNoLike(paramValue);
+            licenseList = licenseRepository.findAllAssessmentNoLike(paramValue);
 
         else if (paramType.equals(Constants.SEARCH_BY_MOBILENO))
-            licenseList = licenseRepository.findByMobilePhoneNumberLike(paramValue);
+            licenseList = licenseRepository.findAllMobilePhoneNumberLike(paramValue);
 
         return licenseList;
     }
