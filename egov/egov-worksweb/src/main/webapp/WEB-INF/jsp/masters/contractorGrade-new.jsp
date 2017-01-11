@@ -47,7 +47,12 @@
 	<body>
 	
 		<div class="new-page-header">
-			<s:text name="contractor.grade.header" />
+			<s:if test="%{mode=='NEW'}">
+				<s:text name="contractor.grade.header.create" />
+			</s:if>
+			<s:if test="%{mode == 'view' }">
+				<s:text name="contractor.grade.header.view" />
+			</s:if>				
 		</div>
 		
     	<s:if test="%{hasErrors()}">
