@@ -546,7 +546,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         reportParams.put(LOCALITY, basicProperty.getAddress().getAreaLocalitySector());
         reportParams.put(NOTICE_DATE, formatter.format(new Date()));
         reportParams.put(COMMISSIONER, securityUtils.getCurrentUser().getName());
-        reportParams.put(EXEMPTION_REASON, exemptionReason);
+        reportParams.put(EXEMPTION_REASON, basicProperty.getProperty().getTaxExemptedReason().getName());
         final HttpServletRequest request = ServletActionContext.getRequest();
         final String url = WebUtils.extractRequestDomainURL(request, false);
         final String imagePath = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH)

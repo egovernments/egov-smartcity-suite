@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-01-10T18:17:40 -->
+<!-- 2017-01-11T17:41:41 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EduInst_ExemptionProceedings_corporations" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -81,7 +81,7 @@
 				<textElement textAlignment="Left" markup="styled">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\tSub:  <style forecolor=\"#000000\" isBold=\"true\"> Property Tax-Exemption of Property Tax – Granting of Exemption – Orders – Issued. </style>\n\n\tRead: Application dt: <style forecolor=\"#000000\" isBold=\"true\"> "+$P{applicationDate}+"</style> from Sri/Smt. <style forecolor=\"#000000\" isBold=\"true\"> "+$P{ownerName}+"</style> R/O  <style forecolor=\"#000000\" isBold=\"true\"> "+$P{cityName}+"</style>  \n\n\t\t\t\t\t <style forecolor=\"#000000\" isBold=\"true\" size=\"14\"> *  *  * </style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["\tSub:  <style forecolor=\"#000000\" isBold=\"true\"> Property Tax-Exemption of Property Tax – Granting of Exemption – Orders – Issued. </style>\n\n\tRead: Application dt: <style forecolor=\"#000000\" isBold=\"true\"> "+$P{applicationDate}+"</style> from Sri/Smt. <style forecolor=\"#000000\" isBold=\"true\"> "+JRStringUtil.xmlEncode($P{ownerName})+"</style> R/O  <style forecolor=\"#000000\" isBold=\"true\"> "+$P{cityName}+"</style>  \n\n\t\t\t\t\t <style forecolor=\"#000000\" isBold=\"true\" size=\"14\"> *  *  * </style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="46" y="110" width="442" height="188" uuid="a9696e7d-f07e-43a6-9b21-4582a267e556"/>
@@ -89,7 +89,7 @@
 				<textElement textAlignment="Justified" markup="styled">
 					<font size="8" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\tIn the reference read above, Sri <style forecolor=\"#000000\" isBold=\"true\"> "+$P{ownerName}+"</style>, (Designation)  of the premises bearing Door No:<style forecolor=\"#000000\" isBold=\"true\">"+$P{doorNumber}+"</style>, Assessment Number <style forecolor=\"#000000\" isBold=\"true\">"+$P{AssessmentNumber}+"</style> , Locality<style forecolor=\"#000000\" isBold=\"true\"> "+$P{Locality}+"</style> has applied for exemption of property tax,   under the category <style forecolor=\"#000000\" isBold=\"true\"> Recognized Educational Institutions / Charitable Institutions, as per Sec.202 of A.P.Municipal Corporations Act, 1994 (formerly known as GHMC Act, 1955)</style>  \n \t On receipt of the same, the said property is got inspected by the revenue officials and found the following:- \n a) that the Educational Institute is recognized by the Government. \n  b) that the building for which exemption is sought is owned by the Trust/Organization and is fully occupied by them and is being utilised for the charitable purpose only. \n  c) that as per the State Gazette/District Gazette, the Trust (or) Organization is notified as  Charitable Institution by the Commissioner of Endowments.  \n d) that the Trust Deed is registered under Registration Act, 1908.  \n e) that, the Trust/Organization is conducting regular Meetings and recording minutes for the last (3) years\n f) f) that the Annual Reports/ Audit Reports /Annual Accounts of  the organizations, is verified, for the last (3) years \n g) that the Trust/Organization is not collecting any amounts from the public. \n \t After careful examination of the above issue, as per the information available in the Municipal Office records and in terms of Sec.202 of A.P.Municipal Corporations Act, 1994 (formerly known as GHMC Act, 1955), the Trust/Organization is exempted from payment of property tax , as detailed below:-"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["\tIn the reference read above, Sri <style forecolor=\"#000000\" isBold=\"true\"> "+JRStringUtil.xmlEncode($P{ownerName})+"</style>, (Designation)  of the premises bearing Door No:<style forecolor=\"#000000\" isBold=\"true\">"+$P{doorNumber}+"</style>, Assessment Number <style forecolor=\"#000000\" isBold=\"true\">"+$P{AssessmentNumber}+"</style> , Locality<style forecolor=\"#000000\" isBold=\"true\"> "+$P{Locality}+"</style> has applied for exemption of property tax,   under the category <style forecolor=\"#000000\" isBold=\"true\"> Recognized Educational Institutions / Charitable Institutions, as per Sec.202 of A.P.Municipal Corporations Act, 1994 (formerly known as GHMC Act, 1955)</style>  \n \t On receipt of the same, the said property is got inspected by the revenue officials and found the following:- \n a) that the Educational Institute is recognized by the Government. \n  b) that the building for which exemption is sought is owned by the Trust/Organization and is fully occupied by them and is being utilised for the charitable purpose only. \n  c) that as per the State Gazette/District Gazette, the Trust (or) Organization is notified as  Charitable Institution by the Commissioner of Endowments.  \n d) that the Trust Deed is registered under Registration Act, 1908.  \n e) that, the Trust/Organization is conducting regular Meetings and recording minutes for the last (3) years\n f) that the Annual Reports/ Audit Reports /Annual Accounts of  the organizations, is verified, for the last (3) years \n g) that the Trust/Organization is not collecting any amounts from the public. \n \t After careful examination of the above issue, as per the information available in the Municipal Office records and in terms of Sec.202 of A.P.Municipal Corporations Act, 1994 (formerly known as GHMC Act, 1955), the Trust/Organization is exempted from payment of property tax , as detailed below:-"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="102" y="320" width="100" height="20" uuid="d02bf885-dcc9-44e9-87ff-e6ff64c6c9bb"/>
@@ -190,7 +190,7 @@
 				<text><![CDATA[To:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="46" y="87" width="168" height="16" uuid="010d479a-ce72-484b-8627-7a3edd9649cb"/>
+				<reportElement x="46" y="87" width="324" height="16" uuid="010d479a-ce72-484b-8627-7a3edd9649cb"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>

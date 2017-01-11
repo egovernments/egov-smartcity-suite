@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-01-10T17:22:31 -->
+<!-- 2017-01-11T18:02:46 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ExService_ExemptionProceedings_municipality" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -67,7 +67,7 @@
 				<textElement textAlignment="Left" markup="styled">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\tSub:  <style forecolor=\"#000000\" isBold=\"true\"> Property Tax-Exemption of Property Tax – Granting of Exemption – Orders – Issued. </style>\n\tRead: Application dt: <style forecolor=\"#000000\" isBold=\"true\"> "+$P{applicationDate}+"</style> from Sri/Smt. <style forecolor=\"#000000\" isBold=\"true\"> "+$P{ownerName}+"</style> R/O  <style forecolor=\"#000000\" isBold=\"true\"> "+$P{cityName}+"</style>  \n\t\t\t\t <style forecolor=\"#000000\" isBold=\"true\" size=\"14\"> *  *  * </style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["\tSub:  <style forecolor=\"#000000\" isBold=\"true\"> Property Tax-Exemption of Property Tax – Granting of Exemption – Orders – Issued. </style>\n\tRead: Application dt: <style forecolor=\"#000000\" isBold=\"true\"> "+$P{applicationDate}+"</style> from Sri/Smt. <style forecolor=\"#000000\" isBold=\"true\"> "+JRStringUtil.xmlEncode($P{ownerName})+"</style> R/O  <style forecolor=\"#000000\" isBold=\"true\"> "+$P{cityName}+"</style>  \n\t\t\t\t <style forecolor=\"#000000\" isBold=\"true\" size=\"14\"> *  *  * </style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="44" y="80" width="70" height="10" isPrintWhenDetailOverflows="true" uuid="e2fa4a76-b27e-4b7a-827d-f6c6a2353493"/>
@@ -92,7 +92,7 @@
 				<textFieldExpression><![CDATA["Dated : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{noticeDate}+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="331" y="260" width="120" height="20" isPrintWhenDetailOverflows="true" uuid="1cba2d89-5ada-4ad5-b8a6-a5bc8550b96f"/>
+				<reportElement stretchType="RelativeToTallestObject" x="331" y="260" width="121" height="20" isPrintWhenDetailOverflows="true" uuid="1cba2d89-5ada-4ad5-b8a6-a5bc8550b96f"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -203,7 +203,7 @@
 				<text><![CDATA[To:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="37" y="104" width="168" height="16" uuid="010d479a-ce72-484b-8627-7a3edd9649cb"/>
+				<reportElement x="37" y="104" width="363" height="16" uuid="010d479a-ce72-484b-8627-7a3edd9649cb"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
