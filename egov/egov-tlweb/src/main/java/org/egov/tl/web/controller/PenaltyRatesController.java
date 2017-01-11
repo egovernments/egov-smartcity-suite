@@ -39,7 +39,6 @@
  */
 package org.egov.tl.web.controller;
 
-import static org.egov.tl.utils.Constants.PENALTYRATE_RESULT;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -63,6 +62,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/penaltyRates")
 public class PenaltyRatesController {
+
+    public static final String PENALTYRATE_RESULT = "penaltyRates-result";
 
     @Autowired
     private PenaltyRatesService penaltyRatesService;
@@ -98,7 +99,7 @@ public class PenaltyRatesController {
 
     @RequestMapping(value = "/deleterow", method = GET, produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String deleteFee(@RequestParam final Long penaltyRateId) {
+    public String deletepenaltyfeerow(@RequestParam final Long penaltyRateId) {
         final PenaltyRates penaltyRates = penaltyRatesService.findOne(Long.valueOf(penaltyRateId));
         if (penaltyRates != null)
             penaltyRatesService.delete(penaltyRates);
