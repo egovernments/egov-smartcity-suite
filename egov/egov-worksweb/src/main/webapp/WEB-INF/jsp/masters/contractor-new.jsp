@@ -79,6 +79,7 @@ body {
 	<s:form action="contractor-save" theme="simple" name="contractor"
 		cssClass="form-horizontal form-groups-bordered">
 <s:hidden name="model.id" />
+<s:hidden name="id" id="id"/>
 <s:hidden name="mode" id="mode" />
 <input type="hidden" value="<s:text name='contractor.panNumber.alphaNumeric' />" id='panNumberMessage'>
 		<%@ include file='contractor-form.jsp'%>
