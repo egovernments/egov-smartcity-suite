@@ -140,13 +140,36 @@ $(document).ready(function(){
 			$('#adtax_search thead tr').remove();
 		}
 			prevdatatable = oTable.dataTable({
-			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+			"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
 			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 			"autoWidth": false,
 			"bDestroy": true,
+			"oTableTools" : {
+				"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+				"aButtons" : [ 
+		               {
+			             "sExtends": "pdf",
+	                     "sPdfMessage": "",
+	                     "sTitle": "Advertisement Tax Search Result",
+	                     "sPdfOrientation": "landscape",
+	                     "mColumns": [0, 1, 2, 3, 4, 5, 6, 7]	 
+		                },
+		                {
+				             "sExtends": "xls",
+	                         "sTitle": "Advertisement Tax Search Result",
+	                         "mColumns": [0, 1, 2, 3, 4, 5, 6, 7]
+			             },
+			             {
+				             "sExtends": "print",
+	                         "sTitle": "Advertisement Tax Search Result",
+	                         "mColumns": [0, 1, 2, 3, 4, 5, 6, 7]
+			             }]
+				
+			},
 			"ajax": "/adtax/hoarding/getsearch-adtax-result?"+$("#adtaxsearchform").serialize(),
 			"columns" : [
 			              { "data" : "agencyName", "title": "Agency"},
+			              { "data" : "ownerDetail", "title": "Owner Name"},
 						  { "data" : "advertisementNumber", "title":"Advertisement No."},
 						  { "data" : "applicationNumber", "title": "Application No."},
 						  { "data" : "applicationFromDate", "title": "Application Date"},
@@ -196,7 +219,7 @@ $(document).ready(function(){
 	$("#adtax_search").on('change','tbody tr td .dropchange',
 			function() {
 			//var applicationNumber = oTable.fnGetData($(this).parent().parent(), 1);
-			var adtaxid= oTable.fnGetData($(this).parent().parent(), 9);
+			var adtaxid= oTable.fnGetData($(this).parent().parent(), 10);
 			//var advertisementNumber = oTable.fnGetData($(this).parent().parent(), 0);
 						if (this.value == 0) {
 							var url = '/adtax/advertisement/permitOrder/'+ adtaxid;

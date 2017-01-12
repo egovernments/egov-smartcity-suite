@@ -97,7 +97,7 @@ public class SearchTradeController {
     
     @RequestMapping(value = "/search/tradeLicense",method = RequestMethod.GET, produces =MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<String> populateData(@RequestParam final String searchParamValue , @RequestParam final String searchParamType) {
+    public List<String> searchautocomplete(@RequestParam final String searchParamValue , @RequestParam final String searchParamType) {
         return tradeLicenseService.getTradeLicenseForGivenParam(searchParamValue, searchParamType);
                     
     }

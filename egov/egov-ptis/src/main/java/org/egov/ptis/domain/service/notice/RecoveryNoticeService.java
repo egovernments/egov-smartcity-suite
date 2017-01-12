@@ -48,6 +48,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_INVENTORY
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_INVENTORY_NOTICE_CORPORATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_INVENTORY_NOTICE_MUNICIPALITY;
+import static org.egov.ptis.constants.PropertyTaxConstants.VALUATION_CERTIFICATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.VALUATION_CERTIFICATE_CORPORATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.VALUATION_CERTIFICATE_MUNICIPALITY;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -109,6 +112,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class RecoveryNoticeService {
 
+    private static final String ADDRESS = "address";
+    private static final String LOCALITY = "locality";
+    private static final String UPIC_NO = "upicNo";
+    private static final String NOTICE_NUMBER = "noticeNumber";
     private static final String DISTRESS_NOTICE_DATE = "distressNoticeDate";
     private static final String DISTRESS_NOTICE_NUMBER = "distressNoticeNumber";
     private static final String FIN_HALF_STRAT_MONTH = "FinHalfStratMonth";
@@ -202,6 +209,8 @@ public class RecoveryNoticeService {
             validateDistressNotice(errors, basicProperty);
         else if (NOTICE_TYPE_INVENTORY.equals(noticeType))
             validateInventoryNotice(errors, basicProperty);
+        else if (VALUATION_CERTIFICATE.equals(noticeType))
+            validateValuationNotice(errors, basicProperty);
         return errors;
     }
 
@@ -228,15 +237,14 @@ public class RecoveryNoticeService {
     public ResponseEntity<byte[]> generateNotice(final String assessmentNo, final String noticeType) {
         ReportOutput reportOutput;
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        final PtNotice notice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner(noticeType,
-                basicProperty.getUpicNo());
+        final PtNotice notice = noticeService.getNoticeByTypeUpicNoAndFinYear(noticeType, basicProperty.getUpicNo());
         if (notice == null)
             reportOutput = generateNotice(noticeType, basicProperty);
         else
             reportOutput = getNotice(notice, noticeType);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=ESDNotice_" + basicProperty.getUpicNo() + ".pdf");
+        headers.add("content-disposition", "inline;filename="+noticeType+"_" + basicProperty.getUpicNo() + ".pdf");
         return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
@@ -256,6 +264,8 @@ public class RecoveryNoticeService {
             reportInput = generateEsdNotice(basicProperty, reportParams, city, noticeNo, formatter);
         else if (NOTICE_TYPE_INVENTORY.equals(noticeType))
             reportInput = generateInventoryNotice(basicProperty, reportParams, city, formatter);
+        else if (VALUATION_CERTIFICATE.equals(noticeType))
+            reportInput = generateValuationCertificate(basicProperty, reportParams,city, noticeNo);
         else
             reportInput = generateDistressNotice(basicProperty, reportParams, city, noticeNo);
         reportInput.setPrintDialogOnOpenReport(true);
@@ -326,7 +336,7 @@ public class RecoveryNoticeService {
 
     private void validateInventoryNotice(final List<String> errors, final BasicProperty basicProperty) {
         validateDemandBill(basicProperty, errors);
-        final PtNotice distressNotice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner(NOTICE_TYPE_DISTRESS,
+        final PtNotice distressNotice = noticeService.getNoticeByTypeUpicNoAndFinYear(NOTICE_TYPE_DISTRESS,
                 basicProperty.getUpicNo());
         if (distressNotice != null) {
             final DateTime noticeDate = new DateTime(distressNotice.getNoticeDate());
@@ -344,13 +354,19 @@ public class RecoveryNoticeService {
         else if (basicProperty.getProperty().getIsExemptedFromTax())
             errors.add("invalid.exempted");
         else {
-            final PtNotice esdNotice = noticeService.getNoticeByNoticeTypeAndAssessmentNumner(NOTICE_TYPE_ESD,
+            final PtNotice esdNotice = noticeService.getNoticeByTypeUpicNoAndFinYear(NOTICE_TYPE_ESD,
                     basicProperty.getUpicNo());
             if (esdNotice == null)
                 errors.add("invalid.esd.not.generated");
             else if (DateUtils.noOfDays(esdNotice.getNoticeDate(), new Date()) < 15)
                 errors.add("invalid.time.not.lapsed");
         }
+    }
+    
+    private void validateValuationNotice(final List<String> errors, final BasicProperty basicProperty) {
+        final BigDecimal totalDue = getTotalPropertyTaxDue(basicProperty);
+        if (totalDue.compareTo(BigDecimal.ZERO) == 1)
+            errors.add("valuation.has.pt.due");
     }
 
     private List<String> validateDemandBill(final BasicProperty basicProperty, final List<String> errors) {
@@ -435,7 +451,7 @@ public class RecoveryNoticeService {
         }
         return reportInput;
     }
-
+    
     private void prepareEsdReportParams(final BasicProperty basicProperty, final Map<String, Object> reportParams,
             final String noticeNo, final SimpleDateFormat formatter) {
         final Address ownerAddress = basicProperty.getAddress();
@@ -530,4 +546,26 @@ public class RecoveryNoticeService {
         return qry;
     }
 
+    private ReportRequest generateValuationCertificate(final BasicProperty basicProperty, final Map<String, Object> reportParams,
+            final City city, final String noticeNo) {
+        ReportRequest reportInput;
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        final Address ownerAddress = basicProperty.getAddress();
+        reportParams.put(NOTICE_NUMBER, noticeNo);
+        reportParams.put(REPORT_DATE, formatter.format(new Date()));
+        reportParams.put(DOOR_NO, StringUtils.isNotBlank(ownerAddress.getHouseNoBldgApt())
+                ? ownerAddress.getHouseNoBldgApt() : "N/A");
+        reportParams.put(UPIC_NO, basicProperty.getUpicNo());
+        reportParams.put(LOCALITY, ownerAddress.getAreaLocalitySector());
+        reportParams.put(ADDRESS, ownerAddress.toString());
+        final String cityGrade = city.getGrade();
+        if (StringUtils.isNotBlank(cityGrade)
+                && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
+            reportInput = new ReportRequest(VALUATION_CERTIFICATE_CORPORATION, reportParams, reportParams);
+        } else {
+            reportInput = new ReportRequest(VALUATION_CERTIFICATE_MUNICIPALITY, reportParams, reportParams);
+        }
+        return reportInput;
+    }
+    
 }

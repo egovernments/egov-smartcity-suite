@@ -54,7 +54,7 @@
 	</script>
 <body >
        <div class="new-page-header">
-			<s:text name="contractorgrade.search.contractorgrade" />
+			<s:text name='contractor.grade.header.search' />
 		</div>
 		<s:if test="%{hasErrors()}">
        		 <div class="alert alert-danger">

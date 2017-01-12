@@ -239,16 +239,16 @@ public class UpdateConnectionController extends GenericConnectionController {
         }
         appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
         if (loggedInUserDesignation != null && !"".equals(loggedInUserDesignation)
-                && loggedInUserDesignation.equals(WaterTaxConstants.COMMISSIONER_DESGN) && (waterConnectionDetails.getStatus()
+                && loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.COMMISSIONER_DESGN) && (waterConnectionDetails.getStatus()
                         .getCode().equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING) ||
                         waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)
                         || waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING)
                         ||waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING)))
             isCommissionerLoggedIn = Boolean.TRUE;
-        if (loggedInUserDesignation.equals(WaterTaxConstants.COMMISSIONER_DESGN)
-                || loggedInUserDesignation.equals(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN)
-                || loggedInUserDesignation.equals(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
-                || loggedInUserDesignation.equals(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN) &&
+        if (loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.COMMISSIONER_DESGN)
+                || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN)
+                || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
+                || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN) &&
                         waterConnectionDetails.getApprovalNumber() == null)
             isSanctionedDetailEnable = Boolean.TRUE;
 

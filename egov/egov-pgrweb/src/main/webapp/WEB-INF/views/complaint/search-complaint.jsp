@@ -104,6 +104,7 @@
 								class="btn btn-secondary"><spring:message code='lbl.more' />..</a>
 						</div>
 					</div>
+					<input type="hidden" value="${isMore }" id="isMore" />
 					<div class="form-group show-searchcomp-more display-hide">
 						<div class="col-md-3 add-margin">
 							<input type="text" name="complainantName" class="form-control patternvalidation" data-pattern="alphabetwithspace" id="ct-name"

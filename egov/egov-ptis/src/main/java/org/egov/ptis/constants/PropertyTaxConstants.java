@@ -1617,11 +1617,30 @@ public interface PropertyTaxConstants {
     public static final String REPORT_INVENTORY_NOTICE_MUNICIPALITY = "InventoryNotice_Municipality";
     public static final String NOTICE_TYPE_INVENTORY = "Inventory Notice";
     public static final String NOTICE_TYPE_DISTRESS = "Distress Notice";
+    public static final String VALUATION_CERTIFICATE = "Valuation Certificate";
+    public static final String VALUATION_CERTIFICATE_CORPORATION  = "ValuationCertificate_Corporation";
+    public static final String VALUATION_CERTIFICATE_MUNICIPALITY = "ValuationCertificate_Municipality";
     //esd notice section act and distress section act for corporation use the same constant
     public static final String CORPORATION_ESD_NOTICE_SECTION_ACT = "(Issued under Section 269(2) of Municipal Corporations Act,1955 (formerly GHMC Act, 1955)";
     
     public static final String MUNICIPALITY_ESD_NOTICE_SECTION_ACT = "(Issued under Section 91 of A.P. Municipalities Act 1965)";
     public static final String MUNICIPALITY_DISTRESS_NOTICE_SECTION_ACT = "(Issued under Rule 30(3) of Taxation & Finance Rules appended to the A.P. Municipalities Act, 1965)";
+    
+    
+    //exempted proceedings based on exempted reasons
+    public static final String NOTICE_TYPE_EXEMPTION = "exemption";
+    public static final String PUBLIC_WORSHIP = "PUBLIC_WORSHIP";
+    public static final String CHOULTRY = "CHOULTRY";
+    public static final String EXSERVICE = "EXSERVICE";
+    public static final String EDU_INST = "EDU_INST";
+    public static final String PENSIONER = "PENSIONER";
+    public static final String NGO = "NGO";
+    public static final String REPORT_NGO_EXEMPTION_NOTICE = "mainNGOExemptionNotice";
+    public static final String REPORT_RETIRED_EXEMPTION_NOTICE = "mainRetiredAssociationExemptionNotice";
+    public static final String REPORT_EDU_INST_EXEMPTION_NOTICE = "mainEduInstExemptionNotice";
+    public static final String REPORT_EXSRVICE_EXEMPTION_NOTICE = "mainExServiceManExemptionNotice";
+    public static final String REPORT_CHOULTRY_EXEMPTION_NOTICE = "mainChoultryExemptionNotice";
+    public static final String REPORT_PUBLIC_WORSHIP_EXEMPTION_NOTICE = "mainPublicWorshipExemptionNotice";
     
     @SuppressWarnings("serial")
     public static final List<String> RECOVERY_NOTICETYPES = new ArrayList<String>() {

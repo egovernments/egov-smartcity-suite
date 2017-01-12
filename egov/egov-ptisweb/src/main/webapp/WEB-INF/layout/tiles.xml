@@ -440,4 +440,9 @@
     	<put-attribute name="body" value="/WEB-INF/views/masters/apartment/apartment-success.jsp"/>
     </definition>
     
+    <definition name="valuationcertificate-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.title.valuation.certificate" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/valuationcertificate-form.jsp"/>
+    </definition>
+    
 </tiles-definitions> 

@@ -240,26 +240,26 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     public List<String> getTradeLicenseForGivenParam(final String paramValue, final String paramType) {
         List<String> licenseList = new ArrayList<>();
         if (paramType.equals(Constants.SEARCH_BY_APPNO))
-          licenseList = licenseRepository.findApplicationNumberByApplicationNumber("%"+paramValue.toUpperCase()+"%");
-         
-       else if (paramType.equals(Constants.SEARCH_BY_LICENSENO))
-           licenseList=licenseRepository.findLicenseNumberByLicenseNumber("%"+paramValue.toUpperCase()+"%");
-          
+            licenseList = licenseRepository.findAllApplicationNumberLike(paramValue);
+
+        else if (paramType.equals(Constants.SEARCH_BY_LICENSENO))
+            licenseList = licenseRepository.findAllLicenseNumberLike(paramValue);
+
         else if (paramType.equals(Constants.SEARCH_BY_OLDLICENSENO))
-            licenseList=licenseRepository.findOldLicenseNumberByOldLicenseNumber("%"+paramValue.toUpperCase()+"%");
-       
+            licenseList = licenseRepository.findAllOldLicenseNumberLike(paramValue);
+
         else if (paramType.equals(Constants.SEARCH_BY_TRADETITLE))
-             licenseList=licenseRepository.findNameOfEstablishmentByNameOfEstablishment("%"+paramValue.toUpperCase()+"%");
-          
+            licenseList = licenseRepository.findAllNameOfEstablishmentLike(paramValue);
+
         else if (paramType.equals(Constants.SEARCH_BY_TRADEOWNERNAME))
-            licenseList=licenseRepository.findApplicantNameByApplicantName("%"+paramValue.toUpperCase()+"%");
-           
+            licenseList = licenseRepository.findAllApplicantNameLike(paramValue);
+
         else if (paramType.equals(Constants.SEARCH_BY_PROPERTYASSESSMENTNO))
-            licenseList=licenseRepository.findAssessmentNoByAssessmentNo("%"+paramValue.toUpperCase()+"%");
-    
-       else if (paramType.equals(Constants.SEARCH_BY_MOBILENO))
-            licenseList=licenseRepository.findMobilePhoneNumberByMobilePhoneNumber("%"+paramValue.toUpperCase()+"%");
-          
+            licenseList = licenseRepository.findAllAssessmentNoLike(paramValue);
+
+        else if (paramType.equals(Constants.SEARCH_BY_MOBILENO))
+            licenseList = licenseRepository.findAllMobilePhoneNumberLike(paramValue);
+
         return licenseList;
     }
 

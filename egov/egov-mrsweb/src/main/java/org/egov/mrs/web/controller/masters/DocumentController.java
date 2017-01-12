@@ -100,6 +100,7 @@ public class DocumentController {
             final RedirectAttributes redirectAttributes) {
         validate(errors, marriageDocument);
         if (errors.hasErrors()) {
+            model.addAttribute("currentstate", "NEW");
             return DOCUMENT_CREATE;
         }
         marriageDocumentService.create(marriageDocument);
@@ -173,10 +174,8 @@ public class DocumentController {
             final BindingResult errors,
             final RedirectAttributes redirectAttributes) {
         validate(errors, marriageDocument);
-        if (errors.hasErrors()) {
-
+        if (errors.hasErrors())
             return DOCUMENT_UPDATE;
-        }
         marriageDocumentService
                 .updateDocument(marriageDocument);
 

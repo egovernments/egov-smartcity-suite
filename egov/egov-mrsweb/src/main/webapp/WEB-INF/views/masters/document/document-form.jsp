@@ -50,10 +50,9 @@
 				code="lbl.documentname" /><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
-			<form:input path="name" id="name" type="text"
+			<form:input path="name" id="name" type="text" required="required"
 				cssClass="form-control patternvalidation"
-				data-pattern="alphanumeric" maxlength="200"
-				autocomplete="off" />
+				data-pattern="alphanumeric" maxlength="200" autocomplete="off" />
 			<form:errors path="name" cssClass="error-msg" />
 		</div>
 
@@ -62,9 +61,8 @@
 		</label>
 		<div class="col-sm-3">
 			<form:input path="code" id="code" type="text"
-				cssClass="form-control patternvalidation"
-				data-pattern="alphanumeric" maxlength="50"
-				autocomplete="off" />
+				cssClass="form-control patternvalidation" required="required"
+				data-pattern="alphanumeric" maxlength="50" autocomplete="off" />
 			<form:errors path="code" cssClass="error-msg" />
 		</div>
 	</div>
@@ -74,7 +72,8 @@
 				code="lbl.documentproof" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">
 			<form:select path="documentProofType" id="prooftype"
-				cssClass="form-control" cssErrorClass="form-control error">
+				required="required" cssClass="form-control"
+				cssErrorClass="form-control error">
 				<form:option value="">
 					<spring:message code="lbl.default.option" />
 				</form:option>
@@ -87,7 +86,7 @@
 		</label>
 		<div class="col-sm-3 add-margin">
 			<form:select path="type" id="marriagetype" cssClass="form-control"
-				cssErrorClass="form-control error">
+				required="required" cssErrorClass="form-control error">
 				<form:option value="">
 					<spring:message code="lbl.default.option" />
 				</form:option>
@@ -119,8 +118,7 @@
 			<form:errors path="mandatory" cssClass="add-margin error-msg" />
 		</div>
 		<input type="hidden" name="marriageDocument"
-			value="${marriageDocument.id}" />
-		<input type="hidden"
+			value="${marriageDocument.id}" /> <input type="hidden"
 			id="currentstate" value="${currentstate}" />
 	</div>
 
