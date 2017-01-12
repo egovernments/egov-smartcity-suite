@@ -214,5 +214,6 @@ public class Constants {
         public static final String APPROVE_PAGE = "approve";
         public static final String GENERATE_CERTIFICATE = "tl_generateCertificate";
         public static final String CLOSURE_ADDITIONAL_RULE = "CLOSURELICENSE";
+        public static final String CITY_GRADE_CORPORATION = "Corp";
 }
 

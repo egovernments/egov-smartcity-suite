@@ -57,7 +57,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.eis.entity.Assignment;
+import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -91,7 +93,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Autowired
     private LicenseUtils licenseUtils;
-    
+
     @Autowired
     private LicenseRepository licenseRepository;
 
@@ -100,6 +102,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Autowired
     private CFinancialYearService cFinancialYearService;
+
+    @Autowired
+    private CityService cityService;
 
     @Override
     protected NatureOfBusiness getNatureOfBusiness() {
@@ -115,7 +120,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     protected void sendEmailAndSMS(final TradeLicense license, final String currentAction) {
         tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, currentAction);
     }
-
 
     @Override
     protected LicenseAppType getLicenseApplicationTypeForRenew() {
@@ -176,7 +180,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                     Constants.APPLICATION_STATUS_GENECERT_CODE);
         }
         if (BUTTONREJECT.equals(workFlowAction))
-            if (license.getLicenseAppType() != null && wfInitiator.equals(userAssignment.getPosition()) && ("Rejected".equals(license.getState().getValue())) || "License Created".equals(license.getState().getValue())) {
+            if (license.getLicenseAppType() != null && wfInitiator.equals(userAssignment.getPosition())
+                    && ("Rejected".equals(license.getState().getValue()))
+                    || "License Created".equals(license.getState().getValue())) {
                 license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_CANCELLED));
                 license = (TradeLicense) licenseUtils.applicationStatusChange(license,
                         Constants.APPLICATION_STATUS_CANCELLED);
@@ -192,19 +198,37 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     public ReportRequest prepareReportInputData(final License license) {
-        final Map<String, Object> reportParams = getReportParamsForCertificate(license, null, null);
-        return new ReportRequest("licenseCertificate", license, reportParams);
+        final String cityGrade = getCityGrade();
+        if (cityGrade != null && cityGrade.equalsIgnoreCase(Constants.CITY_GRADE_CORPORATION)) {
+            final Map<String, Object> reportParams = getReportParamsForCertificate(license, null, null);
+            return new ReportRequest("licenseCertificateForCorp", license, reportParams);
+        } else {
+            final Map<String, Object> reportParams = getReportParamsForCertificate(license, null, null);
+            return new ReportRequest("licenseCertificate", license, reportParams);
+        }
+    }
+
+    private String getCityGrade() {
+        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
+        return cityWebsite.getGrade();
     }
 
     public ReportOutput prepareReportInputDataForDig(final License license, final String districtName,
-                                                     final String cityMunicipalityName) {
-        return reportService.createReport(
-                new ReportRequest("licenseCertificate", license, getReportParamsForCertificate(license, districtName,
-                        cityMunicipalityName)));
+            final String cityMunicipalityName) {
+        final String cityGrade = getCityGrade();
+        if (cityGrade != null && cityGrade.equalsIgnoreCase(Constants.CITY_GRADE_CORPORATION)) {
+            return reportService.createReport(
+                    new ReportRequest("licenseCertificateForCorp", license, getReportParamsForCertificate(license, districtName,
+                            cityMunicipalityName)));
+        } else {
+            return reportService.createReport(
+                    new ReportRequest("licenseCertificate", license, getReportParamsForCertificate(license, districtName,
+                            cityMunicipalityName)));
+        }
     }
 
     private Map<String, Object> getReportParamsForCertificate(final License license, final String districtName,
-                                                              final String cityMunicipalityName) {
+            final String cityMunicipalityName) {
         final Map<String, Object> reportParams = new HashMap<>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final Format formatterYear = new SimpleDateFormat("YYYY");
@@ -221,8 +245,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams
                 .put("appType", license.getLicenseAppType() != null
                         ? "New".equals(license.getLicenseAppType().getName())
-                        ? "New Trade" : "Renewal"
+                                ? "New Trade" : "Renewal"
                         : "New");
+        reportParams.put("currentDate", formatter.format(new Date()));
         if (ApplicationThreadLocals.getMunicipalityName().contains("Corporation"))
             reportParams.put("carporationulbType", Boolean.TRUE);
         reportParams.put("municipality", ApplicationThreadLocals.getMunicipalityName());
