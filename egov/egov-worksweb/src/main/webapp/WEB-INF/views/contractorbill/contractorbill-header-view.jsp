@@ -70,6 +70,7 @@
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A" value="${contractorBillRegister.billtype }" />
+						<input type="hidden" id="billtype" value="${contractorBillRegister.billtype }" />
 					</div>
 				</div>
 				<div class="row add-border">

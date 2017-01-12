@@ -59,6 +59,8 @@
 			<input type="hidden"  name="workOrderEstimateId" id="workOrderEstimateId" value="${workOrderEstimate.id}" /> 
 			<input type="hidden" name="mode" id="mode" value="${mode }" />
 			<input id="errorRetentionMoney" type="hidden" value="<spring:message code="error.accountcode.retention.money" />" />
+			<input id="erroradvancecode" type="hidden" value="<spring:message code="error.advance.code.mandatory" />" />
+			<input id="erroradvanceamount" type="hidden" value="<spring:message code="error.advance.amount.mandatory" />" />
 
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading">

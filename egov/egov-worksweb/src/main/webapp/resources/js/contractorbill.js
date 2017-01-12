@@ -1054,6 +1054,17 @@ function validateContractorAdvanceDetails() {
 	var advanceAmount = $('#advanceAmount').val();
 	var billAmount = $('#billamount').val();
 	var billtype = $('#billtype').val();
+	var advanceAccountCode = $('#advanceAdjustmentDetails\\[0\\]\\.glcodeid').val();
+	
+	if (parseFloat(advanceAmount) > 0 && advanceAccountCode == '') {
+		bootbox.alert($('#erroradvancecode').val());
+		return false;
+	}
+	
+	if (advanceAccountCode != '' && (parseFloat(advanceAmount) <= 0 || advanceAmount == '')) {
+		bootbox.alert($('#erroradvanceamount').val());
+		return false;
+	}
 	
 	if (parseFloat(advanceAmount) > parseFloat(advancePaid)) {
 		bootbox.alert($('#erroradvancegreaterpaid').val());
