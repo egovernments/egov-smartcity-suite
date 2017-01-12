@@ -69,7 +69,7 @@ $(document)
 
 					}
 
-					if (status == 'DIGITALSIGNATUREPENDING') {
+					if (status == 'DIGITALSIGNATUREPENDING' || status=='CLOSUREDIGSIGNPENDING' || status=='RECONNDIGSIGNPENDING') {
 						$("#Approve").hide();
 
 					}
@@ -100,9 +100,8 @@ $(document)
 						$('#approvalDesignation').removeAttr('required');
 						$('#approvalPosition').removeAttr('required');
 					}
-					
 					if (approvalPositionExist != 0
-							&& ((mode == 'closereditForAE' || mode == 'reconEditForAE') && closerConnection != null)
+							&& ((mode == 'reconEditForAE') && closerConnection != null)
 							&& status != 'DIGITALSIGNATUREPENDING') {
 						$(".show-row").hide();
 						$('#approverDetailHeading').hide();
