@@ -64,6 +64,10 @@ public abstract class AbstractPersistable<PK extends Serializable> implements Se
         return null == getId();
     }
 
+    public boolean notEquals(AbstractPersistable persistable) {
+        return !this.equals(persistable);
+    }
+
     @Override
     public String toString() {
         return String.format("Entity of type %s with id: %s", this.getClass().getName(), getId());
