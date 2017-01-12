@@ -102,20 +102,4 @@ public class MarriageRegDataEntryController extends MarriageRegistrationControll
             return false;
         return true;
     }
-
-    /**
-     * @param serialNo
-     * @return
-     */
-    @RequestMapping(value = "/checkunique-serialno", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public boolean uniqueSerialNo(@RequestParam final String serialNo) {
-        MarriageRegistration registration = null;
-        if (serialNo != null && serialNo != "") {
-            registration = marriageRegistrationService.findBySerialNo(serialNo);
-        }
-        if (registration != null)
-            return false;
-        return true;
-    }
 }
