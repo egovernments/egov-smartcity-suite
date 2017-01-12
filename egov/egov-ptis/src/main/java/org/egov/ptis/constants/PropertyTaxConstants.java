@@ -1629,12 +1629,12 @@ public interface PropertyTaxConstants {
     
     //exempted proceedings based on exempted reasons
     public static final String NOTICE_TYPE_EXEMPTION = "exemption";
-    public static final String PUBLIC_WORSHIP = "PUBLIC_WORSHIP";
-    public static final String CHOULTRY = "CHOULTRY";
-    public static final String EXSERVICE = "EXSERVICE";
-    public static final String EDU_INST = "EDU_INST";
-    public static final String PENSIONER = "PENSIONER";
-    public static final String NGO = "NGO";
+    public static final String EXEMPTION_PUBLIC_WORSHIP = "PUBLIC_WORSHIP";
+    public static final String EXEMPTION_CHOULTRY = "CHOULTRY";
+    public static final String EXEMPTION_EXSERVICE = "EXSERVICE";
+    public static final String EXEMPTION_EDU_INST = "EDU_INST";
+    public static final String EXEMPTION_PENSIONER = "PENSIONER";
+    public static final String EXEMPTION_NGO = "NGO";
     public static final String REPORT_NGO_EXEMPTION_NOTICE = "mainNGOExemptionNotice";
     public static final String REPORT_RETIRED_EXEMPTION_NOTICE = "mainRetiredAssociationExemptionNotice";
     public static final String REPORT_EDU_INST_EXEMPTION_NOTICE = "mainEduInstExemptionNotice";
