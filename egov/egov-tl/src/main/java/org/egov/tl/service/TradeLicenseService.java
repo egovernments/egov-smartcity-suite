@@ -241,6 +241,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("licenceAddress", license.getAddress());
         reportParams.put("municipality", cityMunicipalityName);
         reportParams.put("district", districtName);
+        reportParams.put("category", license.getCategory() != null ? license.getCategory().getName() : null);
         reportParams.put("subCategory", license.getTradeName() != null ? license.getTradeName().getName() : null);
         reportParams
                 .put("appType", license.getLicenseAppType() != null

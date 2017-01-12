@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2017-01-12T16:13:02 -->
+<!-- 2017-01-12T20:45:02 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -25,6 +25,7 @@
 	<parameter name="currentDate" class="java.lang.String">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
+	<parameter name="category" class="java.lang.String"/>
 	<background>
 		<band height="780" splitType="Stretch">
 			<rectangle>
@@ -65,7 +66,7 @@
 		</band>
 	</title>
 	<detail>
-		<band height="241">
+		<band height="251">
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="68" y="17" width="126" height="20" uuid="3f3b5796-18d3-4cdb-8e10-f1307fc22c96"/>
 				<box leftPadding="5" rightPadding="5">
@@ -81,11 +82,11 @@
 				<textFieldExpression><![CDATA[$P{applicationnumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="3" y="47" width="547" height="39" uuid="fe129b4c-1eec-4825-a342-be2d9302bfa7"/>
+				<reportElement x="3" y="47" width="547" height="49" uuid="fe129b4c-1eec-4825-a342-be2d9302bfa7"/>
 				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["1.	Trade License is issued to "+$P{applicantName}+", to carry on the Trade / Operation of M/s "+$P{nameOfEstablishment}+ " "+$P{subCategory}+ " at premises No: "+$P{licenceAddress}+" Vide TIN NO: "+($P{licencenumber}==null?"_____":$P{licencenumber})+" for the year "+$P{installMentYear}+"."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["1.	Trade License is issued to "+$P{applicantName}+", to carry on the Trade / Operation of M/s "+$P{nameOfEstablishment}+ " and "+$P{category}+","+$P{subCategory}+ "(nature of business) at premises No: "+$P{licenceAddress}+" Vide TIN NO: "+($P{licencenumber}==null?"_____":$P{licencenumber})+" for the year "+$P{installMentYear}+"."]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="3" y="17" width="65" height="20" uuid="53e788d3-5a77-41ae-93a8-00760a41f0ad"/>
@@ -130,7 +131,7 @@
 				<textFieldExpression><![CDATA[$P{applicationdate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="40" y="154" width="510" height="87" isPrintWhenDetailOverflows="true" uuid="8aece0f8-5e61-4f50-826d-0eab46059551">
+				<reportElement x="40" y="164" width="510" height="87" isPrintWhenDetailOverflows="true" uuid="8aece0f8-5e61-4f50-826d-0eab46059551">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
@@ -139,7 +140,7 @@
 				<textFieldExpression><![CDATA["1. Exclusive container (Dust-bin) for storing the waste generated within the premises shall be installed and maintained by the Trader.\n"+"2. Street littering is to be avoided by the Trader.\n"+"3. Plastic carry bags less than 40 microns thickness shall not be used by the Trader for any purposes.\n"+"4. In case of eating establishments, the conditions prescribed under Prevention of Food Adulteration Act, 1954 and Food Safety and Standards Authority of India are to be followed by the Trader scrupulously. "]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1" y="123" width="549" height="31" isPrintWhenDetailOverflows="true" uuid="2ea72899-e421-4062-b1b3-12b214470500">
+				<reportElement x="1" y="133" width="549" height="31" isPrintWhenDetailOverflows="true" uuid="2ea72899-e421-4062-b1b3-12b214470500">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
@@ -148,7 +149,7 @@
 				<textFieldExpression><![CDATA["	The trader shall fulfill the following conditions; otherwise the trade license will be cancelled by the undersigned without giving any further notice."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1" y="86" width="549" height="37" isPrintWhenDetailOverflows="true" uuid="7d35a8da-8e59-47b6-929e-646aa9200987">
+				<reportElement x="1" y="96" width="549" height="37" isPrintWhenDetailOverflows="true" uuid="7d35a8da-8e59-47b6-929e-646aa9200987">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
@@ -205,20 +206,6 @@
 				<text><![CDATA[for Commissioner
 ]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="331" y="56" width="194" height="34" uuid="100e876f-d70f-4f36-936d-25d8657e34b5"/>
-				<box leftPadding="5" rightPadding="5">
-					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="12" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="1" y="34" width="46" height="20" uuid="5293554e-36ec-4151-8fee-9a3e93b997cc"/>
 				<box leftPadding="5" rightPadding="5">
