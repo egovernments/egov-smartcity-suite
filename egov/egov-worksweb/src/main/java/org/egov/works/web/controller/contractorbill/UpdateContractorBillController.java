@@ -424,7 +424,7 @@ public class UpdateContractorBillController extends BaseContractorBillController
         model.addAttribute("retentionMoneyPerForPartBill", retentionMoneyPerForPartBillApp.get(0).getValue());
         model.addAttribute("retentionMoneyPerForFinalBill", retentionMoneyPerForFinalBillApp.get(0).getValue());
 
-        final Double advancePaidTillNow = contractorAdvanceService.getTotalAdvancePaid(null,
+        final Double advancePaidTillNow = contractorAdvanceService.getTotalAdvanceBillsPaid(
                 contractorBillRegister.getWorkOrderEstimate().getId(),
                 ContractorAdvanceRequisitionStatus.APPROVED.toString());
         model.addAttribute("advancePaidTillNow", advancePaidTillNow);

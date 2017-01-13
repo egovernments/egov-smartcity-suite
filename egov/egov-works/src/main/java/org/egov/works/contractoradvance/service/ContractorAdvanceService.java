@@ -592,6 +592,10 @@ public class ContractorAdvanceService {
         return contractorAdvanceRepository.getTotalAdvancePaid(contractorAdvanceId, workOrderEstimateId, approvedCode);
     }
 
+    public Double getTotalAdvanceBillsPaid(final Long workOrderEstimateId, final String approvedCode) {
+        return contractorAdvanceRepository.getTotalAdvanceBillsPaid(workOrderEstimateId, approvedCode);
+    }
+
     public void validateInput(final ContractorAdvanceRequisition contractorAdvanceRequisition, final BindingResult errors) {
         Double advancePaidTillNow = getTotalAdvancePaid(
                 contractorAdvanceRequisition.getId() == null ? -1L : contractorAdvanceRequisition.getId(),

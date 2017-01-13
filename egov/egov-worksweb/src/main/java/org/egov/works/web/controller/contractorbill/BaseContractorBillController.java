@@ -74,15 +74,15 @@ public abstract class BaseContractorBillController extends GenericWorkFlowContro
         final List<CChartOfAccounts> contractorAdvanceAccountCodes = chartOfAccountsService
                 .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_ADVANCE_PURPOSE);
         final List<String> errorArgs = new ArrayList<>();
-        final Double advancePaidSoFar = contractorAdvanceService.getTotalAdvancePaid(null,
+        final Double advancePaidSoFar = contractorAdvanceService.getTotalAdvanceBillsPaid(
                 workOrderEstimate.getId(),
                 ContractorAdvanceRequisitionStatus.APPROVED.toString());
         final Double advanceAdjustedSoFar = contractorBillRegisterService.getAdvanceAdjustedSoFar(
                 workOrderEstimate.getId(),
                 contractorBillRegister.getId(), contractorAdvanceAccountCodes);
         for (final EgBilldetails billdetails : contractorBillRegister.getAdvanceAdjustmentDetails())
-            if (billdetails.getGlcodeid() != null && contractorAdvanceAccountCodes != null
-                    && !contractorAdvanceAccountCodes.isEmpty()
+            if (billdetails.getGlcodeid() != null && billdetails.getCreditamount() != null
+                    && contractorAdvanceAccountCodes != null
                     && contractorAdvanceAccountCodes
                             .contains(chartOfAccountsService.findById(billdetails.getGlcodeid().longValue(), false))) {
                 if (billdetails.getCreditamount().compareTo(BigDecimal.valueOf(advancePaidSoFar)) > 0)

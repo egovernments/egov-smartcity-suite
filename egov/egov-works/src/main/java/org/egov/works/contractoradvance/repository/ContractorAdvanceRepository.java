@@ -99,4 +99,8 @@ public interface ContractorAdvanceRepository extends JpaRepository<ContractorAdv
             @Param("workOrderEstimateId") final Long workOrderEstimateId,
             @Param("createdDate") final Date createdDate, @Param("status") final String status);
 
+    @Query("select COALESCE(sum(car.advanceRequisitionAmount),0) from ContractorAdvanceRequisition as car, Miscbilldetail as misc where car.status.code = :statusCode and car.workOrderEstimate.id = :workOrderEstimateId and car.egAdvanceReqMises.egBillregister.egBillregistermis.voucherHeader.id = misc.billVoucherHeader.id and misc.payVoucherHeader.status = 0")
+    Double getTotalAdvanceBillsPaid(@Param("workOrderEstimateId") final Long workOrderEstimateId,
+            @Param("statusCode") final String statusCode);
+
 }
