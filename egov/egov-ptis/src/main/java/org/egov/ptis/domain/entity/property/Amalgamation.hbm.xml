@@ -38,46 +38,28 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!DOCTYPE hibernate-mapping PUBLIC
-   "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="org.egov.ptis.domain.entity.property.StructureClassification"
-		table="EGPT_STRUC_CL">
-
+	<class name="org.egov.ptis.domain.entity.property.Amalgamation"
+		table="EGPT_AMALGAMATION">
 		<id name="id" column="ID" type="java.lang.Long">
 			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-				<param name="sequence_name">SEQ_EGPT_STRUC_CL</param>
+				<param name="sequence_name">SEQ_EGPT_AMALGAMATION</param>
 			</generator>
 		</id>
-		<property name="createdDate" type="java.util.Date">
-			<column name="CREATED_DATE" not-null="true" />
-		</property>
-		<property name="modifiedDate" type="java.util.Date">
-			<column name="MODIFIED_DATE" not-null="true" />
-		</property>
+		<many-to-one name="parentProperty" not-null="true"
+			class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" column="PARENTPROPERTY"
+			 fetch="select" />
+		<many-to-one name="amalgamatedProperty" not-null="true"
+			class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" column="AMALGAMATEDPROPERTY"
+			 fetch="select" />
 		<many-to-one name="createdBy"
-			class="org.egov.infra.admin.master.entity.User" cascade="all">
-			<column name="CREATED_BY" />
-		</many-to-one>
+			class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" />
 		<many-to-one name="modifiedBy"
-			class="org.egov.infra.admin.master.entity.User" cascade="all">
-			<column name="MODIFIED_BY" />
-		</many-to-one>
-
-		<property name="number" column="CONSTR_NUM" />
-		<property name="typeName" column="CONSTR_TYPE" />
-		<property name="description" column="CONSTR_DESCR" />
-		<property name="factor" column="CONSTR_FACTOR" />
-		<property name="IsHistory" column="IS_HISTORY" type="char" />
-		<property name="constrTypeCode" column="CODE" type="string" />
-		<property name="orderId" column="ORDER_ID" type="integer" />
-		<property name="fromDate" column="FROM_DATE" />
-		<property name="toDate" column="TO_DATE" />
-		<property name="floorNum" column="FLOOR_NUM" />
-		<many-to-one name="startInstallment" class="org.egov.commons.Installment"
-			column="ID_INSTALLMENT" />
-		<property name="isActive" column="ISACTIVE" type="boolean" />
+			class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY" />
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
+		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />
 	</class>
 </hibernate-mapping>

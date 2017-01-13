@@ -41,13 +41,23 @@
 
 package org.egov.ptis.domain.entity.property;
 
-import org.egov.commons.Installment;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.BaseModel;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import org.egov.commons.Installment;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.validation.exception.ValidationError;
 
 /**
  * <p>
@@ -67,19 +77,53 @@ import java.util.List;
  * @author srikanth Change Log : Added additional field
  *         constrTypeCode,orderId,fromDate,todate
  */
-public class StructureClassification extends BaseModel {
+@Entity
+@Table(name = "EGPT_STRUC_CL")
+@SequenceGenerator(name = StructureClassification.SEQ_STRUCTURE_CLASSIFICATION, sequenceName = StructureClassification.SEQ_STRUCTURE_CLASSIFICATION, allocationSize = 1)
+public class StructureClassification extends AbstractAuditable {
+    
+    private static final long serialVersionUID = 1L;
+    public static final String SEQ_STRUCTURE_CLASSIFICATION = "SEQ_EGPT_STRUC_CL";
 
+    @Id
+    @GeneratedValue(generator = SEQ_STRUCTURE_CLASSIFICATION, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    
+    @Column(name = "CONSTR_TYPE")
     private String typeName;
+    
+    @Column(name = "CONSTR_DESCR")
     private String description;
+    
+    @Column(name = "CODE")
     private String constrTypeCode;
+    
+    @Column(name = "ORDER_ID")
     private Integer orderId;
+    
+    @Column(name = "FLOOR_NUM")
     private Integer floorNum;
+    
+    @Column(name = "CONSTR_NUM")
     private Integer number;
+    
+    @Column(name = "CONSTR_FACTOR")
     private Float factor;
+    
+    @ManyToOne
+    @JoinColumn(name = "ID_INSTALLMENT")
     private Installment startInstallment;
+    
+    @Column(name = "IS_HISTORY")
     private char isHistory;
+    
+    @Column(name = "FROM_DATE")
     private Date fromDate;
+    
+    @Column(name = "TO_DATE")
     private Date toDate;
+    
+    @Column(name = "ISACTIVE")
     private Boolean isActive;
 
     /**
@@ -253,6 +297,16 @@ public class StructureClassification extends BaseModel {
 
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
     }
 
 }

@@ -49,6 +49,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ALTERATION_OF_ASSESSM
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.AMALGAMATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_AMALGAMATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILL_COLLECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
@@ -318,7 +320,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             LOGGER.debug("Exiting from validateProperty");
     }
 
-    private void validateVacantProperty(final PropertyDetail propertyDetail, final String eastBoundary,
+    public void validateVacantProperty(final PropertyDetail propertyDetail, final String eastBoundary,
             final String westBoundary, final String southBoundary, final String northBoundary, final String modifyRsn,
             final Date propCompletionDate) {
 
@@ -359,7 +361,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     }
 
-    private void validateBuiltUpProperty(final PropertyDetail propertyDetail, final Long floorTypeId,
+    public void validateBuiltUpProperty(final PropertyDetail propertyDetail, final Long floorTypeId,
             final Long roofTypeId, final String areaOfPlot, final Date regDocDate, final String modifyRsn) {
 
         if (LOGGER.isDebugEnabled())
@@ -385,7 +387,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             LOGGER.debug("Exiting from validateBuiltUpProperty");
     }
 
-    private void validateFloor(final PropertyTypeMaster propTypeMstr, final List<Floor> floorList,
+    public void validateFloor(final PropertyTypeMaster propTypeMstr, final List<Floor> floorList,
             final Property property, final String areaOfPlot, final Date regDocDate, final String modifyRsn,
             final Date propCompletionDate) {
         boolean buildingPlanNoValidationAdded;
@@ -710,9 +712,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         : ADDTIONAL_RULE_BIFURCATE_ASSESSMENT.equalsIgnoreCase(getAdditionalRule()) ? NATURE_BIFURCATION
                                 : DEMOLITION.equalsIgnoreCase(getAdditionalRule()) ? NATURE_DEMOLITION
                                         : EXEMPTION.equalsIgnoreCase(getAdditionalRule()) ? NATURE_TAX_EXEMPTION
-                                                : GENERAL_REVISION_PETITION.equalsIgnoreCase(getAdditionalRule())
-                                                        ? NATURE_GENERAL_REVISION_PETITION
-                                                        : "PropertyImpl";
+                                                : AMALGAMATION.equalsIgnoreCase(getAdditionalRule()) ? NATURE_AMALGAMATION
+                                                        : GENERAL_REVISION_PETITION.equalsIgnoreCase(getAdditionalRule())
+                                                            ? NATURE_GENERAL_REVISION_PETITION
+                                                            : "PropertyImpl";
         return nature;
     }
 

@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -37,41 +36,41 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-<!DOCTYPE hibernate-mapping PUBLIC
-   "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+  --%>
 
-<hibernate-mapping>
-	<class name="org.egov.ptis.domain.entity.property.PropertyUsage" table="EGPT_PROPERTY_USAGE_MASTER">
-		<id name="id" column="ID" type="java.lang.Long">
-			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-				<param name="sequence_name">SEQ_EGPT_PROPERTY_USAGE_MASTER</param>
-			</generator>
-		</id>
-		<property name="createdDate" type="java.util.Date">
-			<column name="CREATED_DATE" not-null="true" />
-		</property>
-		<property name="modifiedDate" type="java.util.Date">
-			<column name="MODIFIED_DATE" not-null="true" />
-		</property>
-		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
-			cascade="all">
-			<column name="CREATED_BY" />
-		</many-to-one>
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
-			cascade="all">
-			<column name="MODIFIED_BY" />
-		</many-to-one>
-		<property name="usageName" column="USG_NAME" type="string" />
+<%@ page language="java" pageEncoding="UTF-8"%>
+<%@ include file="/includes/taglibs.jsp"%>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-		<property name="usagePercentage" column="USAGE_FACTOR" type="float" />
-		<property name="usageCode" column="CODE" type="string" />
-		<property name="orderId" column="ORDER_ID" type="integer" />
-		<property name="fromDate" column="FROM_DATE" type="date" />
-		<property name="toDate" column="TO_DATE" type="date" />
-		<property name="isEnabled" column="IS_ENABLED" type="integer" />
-		<property name="isResidential" column="ISRESIDENTIAL" type="boolean" />
-		<property name="isActive" column="ISACTIVE" type="boolean" />
-	</class>
-</hibernate-mapping>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>
+	<s:text name="lbl.amalgamation.title" />
+</title>
+</head>
+<body>
+	<s:form name="AmalgamationForm" theme="simple">
+		<s:push value="model">
+			<s:token />
+			<s:hidden name="modifyRsn" value="%{modifyRsn}"/>
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading" align="center">
+					<div class="panel-title text-center" style="text-align:center;">
+						<strong><s:property value="%{ackMessage}" /></strong>
+						<a href='../view/viewProperty-viewForm.action?propertyId=<s:property value="%{basicProp.upicNo}"/>'> 
+										<s:property value="%{basicProp.upicNo}" />
+									</a>
+					</div>
+				</div> 
+			</div>
+			<div class="row">
+				<div class="text-center">
+					<input type="button" name="button2" id="button2"
+						value="Close" class="btn btn-default" onclick="window.close();" />
+				</div>
+			</div>
+		</s:push>
+	</s:form>
+</body>
+</html>

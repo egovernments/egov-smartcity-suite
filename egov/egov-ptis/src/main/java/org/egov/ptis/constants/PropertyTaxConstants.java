@@ -622,7 +622,7 @@ public interface PropertyTaxConstants {
     public static final String WFLOW_ACTION_NAME_MODIFY = "Modify";
     public static final String WFLOW_ACTION_NAME_ALTER = "Alter";
     public static final String WFLOW_ACTION_NAME_NEW = "New";
-    public static final String WFLOW_ACTION_NAME_AMALGAMATE = "Amalgamate";
+    public static final String WFLOW_ACTION_NAME_AMALGAMATE = "Amalgamation";
     public static final String WFLOW_ACTION_NAME_BIFURCATE = "Bifurcate";
     public static final String WFLOW_ACTION_NAME_GENERATE_NOTICE = "NoticeGeneration";
     public static final String WFLOW_ACTION_END = "END";
@@ -777,6 +777,7 @@ public interface PropertyTaxConstants {
     public static final String DEMOLITION = "DEMOLITION";
     public static final String EXEMPTION = "EXEMPTION";
     public static final String GENERAL_REVISION_PETITION = "GENERAL REVISION PETITION";
+    public static final String AMALGAMATION = "AMALGAMATION";
 
     // GIS
     public static final String GISCITY = "nmc";
@@ -1345,6 +1346,7 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_MODIFY_DATA_ENTRY = "Edit_Data_Entry";
     public static final String APPLICATION_TYPE_MEESEVA_GRP = "Meeseva_General_Revision_Petition";
     public static final String APPLICATION_TYPE_MEESEVA_RP = "Meeseva_Revision_Petition";
+    public static final String APPLICATION_TYPE_AMALGAMATION = "Amalgamation";
 
     // AppConfig values
     public static final String PROPERTYTAX_WORKFLOWDEPARTEMENT = "PROPERTYTAXDEPARTMENTFORWORKFLOW";
@@ -1433,6 +1435,7 @@ public interface PropertyTaxConstants {
     public static final String NATURE_REGISTERED_TRANSFER = "Registered Transfer";
     public static final String NATURE_FULL_TRANSFER = "Full Transfer";
     public static final String NATURE_PARTIAL_TRANSFER = "Partial Transfer";
+    public static final String NATURE_AMALGAMATION = "Amalgamation";
     public static final String CITY_GRADE_CORPORATION = "Corp";
     public static final String VACANTLAND_MIN_CUR_CAPITALVALUE = "500";
     public static final String WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING = "UD Revenue Inspector Approval Pending";

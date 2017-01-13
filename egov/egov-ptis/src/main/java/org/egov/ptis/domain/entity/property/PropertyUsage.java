@@ -41,11 +41,19 @@
 
 package org.egov.ptis.domain.entity.property;
 
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infstr.models.BaseModel;
-
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 
 /**
  * <p>
@@ -58,18 +66,44 @@ import java.util.Date;
  * @version 2.00
  * @since 2.00
  */
-@Unique(id = "id", tableName = "egpt_property_usage_master", fields = { "usageName" }, columnName = { "usg_name" }, enableDfltMsg = true, message = "propertyusage.isunique")
-public class PropertyUsage extends BaseModel {
+@Entity
+@Unique(fields = {"usageName"}, enableDfltMsg = true)
+@Table(name = "EGPT_PROPERTY_USAGE_MASTER")
+@SequenceGenerator(name = PropertyUsage.SEQ_PROPERTY_USAGE, sequenceName = PropertyUsage.SEQ_PROPERTY_USAGE, allocationSize = 1)
+public class PropertyUsage extends AbstractAuditable {
 
+    private static final long serialVersionUID = 1L;
+    public static final String SEQ_PROPERTY_USAGE = "SEQ_EGPT_PROPERTY_USAGE_MASTER";
+
+    @Id
+    @GeneratedValue(generator = SEQ_PROPERTY_USAGE, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    
+    @Column(name = "USG_NAME")
     private String usageName;
+    
+    @Column(name = "CODE")
     private String usageCode;
+    
+    @Column(name = "ORDER_ID")
     private Integer orderId;
+    
+    @Column(name = "USAGE_FACTOR")
     private Float usagePercentage;
-    private Date lastUpdatedTimeStamp;
+    
+    @Column(name = "FROM_DATE")
     private Date fromDate;
+    
+    @Column(name = "TO_DATE")
     private Date toDate;
+    
+    @Column(name = "IS_ENABLED")
     private Integer isEnabled;
+    
+    @Column(name = "ISRESIDENTIAL")
     private Boolean isResidential;
+    
+    @Column(name = "ISACTIVE")
     private Boolean isActive;
 
     /**
@@ -169,13 +203,13 @@ public class PropertyUsage extends BaseModel {
         this.usagePercentage = usagePercentage;
     }
 
-    public Date getLastUpdatedTimeStamp() {
+    /*public Date getLastUpdatedTimeStamp() {
         return lastUpdatedTimeStamp;
     }
 
     public void setLastUpdatedTimeStamp(Date lastUpdatedTimeStamp) {
         this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
-    }
+    }*/
 
     public Date getFromDate() {
         return fromDate;
@@ -215,6 +249,16 @@ public class PropertyUsage extends BaseModel {
 
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
     }
 
 }

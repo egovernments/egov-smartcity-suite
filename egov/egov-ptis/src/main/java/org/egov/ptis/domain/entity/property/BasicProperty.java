@@ -39,16 +39,16 @@
  */
 package org.egov.ptis.domain.entity.property;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.recovery.Recovery;
 import org.egov.ptis.notice.PtNotice;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This is the interface for the BasicProperty which represents the Basic, Minimum details for the Property. Every Basicproprty
@@ -292,4 +292,15 @@ public interface BasicProperty {
     public boolean isEligible();
 
     public void setEligible(boolean eligible);
+
+    public List<Amalgamation> getAmalgamations();
+    
+    public void setAmalgamations(List<Amalgamation> amalgamations);
+    
+    public List<Amalgamation> getAmalgamationsProxy();
+
+    public void setAmalgamationsProxy(List<Amalgamation> amalgamationsProxy);
+    
+    public void addAmalgamations(Amalgamation amalgamation);
+
 }

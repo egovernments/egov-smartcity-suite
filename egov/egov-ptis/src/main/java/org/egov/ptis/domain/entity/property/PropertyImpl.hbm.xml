@@ -154,6 +154,15 @@
 			<key column="MODIFICATION" not-null="true"/>			
 			<many-to-many class="org.egov.ptis.domain.entity.property.Document" column="DOCUMENT"/>
 		</bag>
+		
+		<bag name="amalgamationOwners" cascade="all-delete-orphan" table="EGPT_AMALGAMATION_OWNER"
+			inverse="true" order-by="id">
+			<key>
+				<column name="PROPERTY" not-null="true" />
+			</key>
+			<one-to-many class="org.egov.ptis.domain.entity.property.AmalgamationOwner"/>
+		</bag>
+		
  	</class>
 	
 	<query name="PROPERTYIMPL_BYID">

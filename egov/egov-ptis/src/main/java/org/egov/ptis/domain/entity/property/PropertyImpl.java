@@ -41,6 +41,26 @@
 
 package org.egov.ptis.domain.entity.property;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
+import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_ALTER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_AMALGAMATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CREATE;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.validation.Valid;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.exceptions.InvalidPropertyException;
@@ -50,24 +70,6 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
-
-import javax.validation.Valid;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
-import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_ALTER;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_GRP;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CREATE;
 
 public class PropertyImpl extends StateAware implements Property {
 
@@ -127,6 +129,8 @@ public class PropertyImpl extends StateAware implements Property {
      */
     @Valid
     private Set<UnitCalculationDetail> unitCalculationDetails = new HashSet<UnitCalculationDetail>();
+    private List<AmalgamationOwner> amalgamationOwners = new ArrayList<>();
+    private List<AmalgamationOwner> amalgamationOwnersProxy = new ArrayList<>();
 
     @Override
     public String getDocNumber() {
@@ -641,6 +645,9 @@ public class PropertyImpl extends StateAware implements Property {
         else if (getState() != null && getState().getValue() != null
                 && getState().getValue().startsWith(WFLOW_ACTION_NAME_EXEMPTION))
             url = "/ptis/exemption/update/" + getId();
+        else if (getState() != null && getState().getValue() != null
+                && getState().getValue().startsWith(WFLOW_ACTION_NAME_AMALGAMATE))
+            url = "/ptis/amalgamation/amalgamation-view.action?modelId=" + getId();
         return url;
     }
 
@@ -698,6 +705,31 @@ public class PropertyImpl extends StateAware implements Property {
     @Override
     public void setSource(final Character source) {
         this.source = source;
+    }
+
+    @Override
+    public List<AmalgamationOwner> getAmalgamationOwners() {
+        return amalgamationOwners;
+    }
+
+    @Override
+    public void setAmalgamationOwners(List<AmalgamationOwner> amalgamationOwners) {
+        this.amalgamationOwners = amalgamationOwners;
+    }
+
+    @Override
+    public List<AmalgamationOwner> getAmalgamationOwnersProxy() {
+        return amalgamationOwnersProxy;
+    }
+
+    @Override
+    public void setAmalgamationOwnersProxy(List<AmalgamationOwner> amalgamationOwnersProxy) {
+        this.amalgamationOwnersProxy = amalgamationOwnersProxy;
+    }
+    
+    @Override
+    public void addAmalgamationOwners(AmalgamationOwner ownerInfo) {
+        getAmalgamationOwners().add(ownerInfo);
     }
 
 }
