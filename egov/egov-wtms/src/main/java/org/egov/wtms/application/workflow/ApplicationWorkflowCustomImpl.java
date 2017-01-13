@@ -324,7 +324,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                         additionalRule, WaterTaxConstants.WF_STATE_RECONN_APPROVED, null, null,
                         loggedInUserDesignation);
-        } else if (wfmatrix == null)
+        } 
+        if (wfmatrix == null)
             wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                     additionalRule, waterConnectionDetails.getCurrentState().getValue(), null, null,
                     loggedInUserDesignation);
