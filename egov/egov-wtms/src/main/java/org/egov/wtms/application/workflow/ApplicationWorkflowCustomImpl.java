@@ -232,7 +232,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
             } else {
                 if (getloggedinUserDesignationForEstimationAndWorkOrderGeneratedStatus(waterConnectionDetails,
                         loggedInUserDesignation))
-                    wfmatrix = getMatrixbyStatusAndLoggedInUser(waterConnectionDetails, additionalRule, workFlowAction,
+                    wfmatrix = getMatrixbyStatusAndLoggedInUser
+                    (waterConnectionDetails, additionalRule, workFlowAction,
                             loggedInUserDesignation);
                 else
                     wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
@@ -294,17 +295,18 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
             wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                     additionalRule, WaterTaxConstants.WF_STATE_COMMISSIONER_APPROVED, null, null,
                     loggedInUserDesignation);
-        if (wfmatrix == null && WaterTaxConstants.FORWARDWORKFLOWACTION.equalsIgnoreCase(workFlowAction))
+        if (wfmatrix == null && WaterTaxConstants.FORWARDWORKFLOWACTION.equalsIgnoreCase(workFlowAction)){
             if (waterConnectionDetails.getStatus().getCode()
                     .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS))
                 wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                         additionalRule, WaterTaxConstants.WF_STATE_CLOSURE_FORWARED_APPROVER, null, null,
                         loggedInUserDesignation);
-            else if (waterConnectionDetails.getStatus().getCode()
+             if (waterConnectionDetails.getStatus().getCode()
                     .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONINPROGRESS))
                 wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                         additionalRule, WaterTaxConstants.WF_STATE_RECONN_FORWARED_APPROVER, null, null,
                         loggedInUserDesignation);
+        }
         if (wfmatrix == null
                 && (WaterTaxConstants.APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
                         || WaterTaxConstants.FORWARDWORKFLOWACTION.equalsIgnoreCase(workFlowAction))

@@ -701,8 +701,6 @@ public class WaterConnectionDetailsService {
                             || waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING)
                             || waterConnectionDetails.getStatus().getCode()
-                                    .equals(WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING)
-                            || waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING)
                             || waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONAPPROVED)
@@ -1060,7 +1058,7 @@ public class WaterConnectionDetailsService {
         }
         return balance;
     }
-
+     @Transactional(readOnly=true)
     public List<ApplicationDocuments> getApplicationDocForExceptClosureAndReConnection(
             final WaterConnectionDetails waterConnectionDetails) {
         final List<ApplicationDocuments> tempDocList = new ArrayList<ApplicationDocuments>(0);

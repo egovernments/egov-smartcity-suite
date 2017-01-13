@@ -97,6 +97,7 @@ public class ApplicationTypeService {
         return applicationTypeRepository.findAll(pageable);
     }
 
+    @Transactional(readOnly=true)
     public ApplicationType findByCode(final String code) {
         return applicationTypeRepository.findByCode(code);
     }
