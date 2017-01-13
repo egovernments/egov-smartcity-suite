@@ -122,12 +122,18 @@
 				  <s:text name="title.search.result" />
 				</div>
 				<div class="col-md-12 report-table-container">
+				<s:text var="slNo" name="%{getText('column.title.SLNo')}"></s:text>
+				<s:text var="contractorClass" name="%{getText('contractor.grade')}"></s:text>
+				<s:text var="description" name="%{getText('contractor.grade.master.description')}"></s:text>
+				<s:text var="minimumAmount" name="%{getText('contractor.grade.master.minamount')}"></s:text>
+				<s:text var="maximumAmount" name="%{getText('contractor.grade.master.maxamount')}"></s:text>
+				
 				<display:table name="searchResult" pagesize="30" uid="currentRow"
 					cellpadding="0" cellspacing="0" requestURI=""
 					class="table table-hover">
 					<input type="hidden" id="mode" name="mode">
 					<display:column headerClass="pagetableth" class="pagetabletd" 
-						title="Sl.No" titleKey="column.title.SLNo"
+						title="${slNo}" titleKey="column.title.SLNo"
 						style="width:4%;text-align:right;;cursor:pointer" >
 						<s:property value="#attr.currentRow_rowNum + (page-1)*pageSize" />
 					</display:column>
@@ -137,24 +143,24 @@
 					</display:column>
 					
 					<display:column headerClass="pagetableth" class="pagetabletd" 
-						title="Contractor Class" titleKey="contractor.grade.master.grade"
+						title="${contractorClass}" titleKey="contractor.grade.master.grade"
 						style="width:20%;text-align:left;;cursor:pointer"  >
 								<s:property value="#attr.currentRow.grade" />
 					</display:column>
 																		
 					<display:column headerClass="pagetableth" class="pagetabletd" 
-						title="Description" titleKey="contractor.grade.master.description"
+						title="${description}" titleKey="contractor.grade.master.description"
 						style="width:40%;text-align:left;;cursor:pointer" property="description"/>
 																		
 					<display:column headerClass="pagetableth" class="pagetabletd" 
-						title="Minimum Amount " titleKey="contractor.grade.master.minamount"
+						title="${minimumAmount}" titleKey="contractor.grade.master.minamount"
 						style="width:10%;text-align:right" >
 						<s:text name="contractor.format.number" >
 				   	<s:param name="rate" value='%{#attr.currentRow.minAmount}' /></s:text>
 					</display:column>
 					
 					<display:column headerClass="pagetableth" class="pagetabletd" 
-						title="Maximum Amount" titleKey="contractor.grade.master.maxamount"
+						title="${maximumAmount}" titleKey="contractor.grade.master.maxamount"
 						style="width:10%;text-align:right;;cursor:pointer"  >
 						<s:text name="contractor.format.number" >
 				   	<s:param name="rate" value='%{#attr.currentRow.maxAmount}' /></s:text>
