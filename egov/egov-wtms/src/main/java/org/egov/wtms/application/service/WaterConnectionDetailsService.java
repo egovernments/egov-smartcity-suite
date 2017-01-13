@@ -319,6 +319,10 @@ public class WaterConnectionDetailsService {
                 connectionStatus);
     }
 
+    public WaterConnectionDetails findByOldConsumerNumberAndConnectionStatus(final String oldConsumerNumber,final ConnectionStatus connectionStatus) {
+        return waterConnectionDetailsRepository.findByConnectionOldConsumerNumberAndConnectionStatus(oldConsumerNumber,connectionStatus);
+    }
+    
     public WaterConnectionDetails getActiveConnectionDetailsByConnection(final WaterConnection waterConnection) {
         return waterConnectionDetailsRepository.findByConnectionAndConnectionStatus(waterConnection,
                 ConnectionStatus.ACTIVE);
