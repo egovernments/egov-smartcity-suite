@@ -137,7 +137,7 @@
 					</display:column>
 					
 					<display:column headerClass="pagetableth" class="pagetabletd" 
-						title="Grade" titleKey="contractor.grade.master.grade"
+						title="Contractor Class" titleKey="contractor.grade.master.grade"
 						style="width:20%;text-align:left;;cursor:pointer"  >
 								<s:property value="#attr.currentRow.grade" />
 					</display:column>
