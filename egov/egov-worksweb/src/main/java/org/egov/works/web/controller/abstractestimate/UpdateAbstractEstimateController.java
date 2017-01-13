@@ -61,6 +61,7 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.masters.service.ScheduleOfRateService;
@@ -110,6 +111,9 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
 
     @Autowired
     private CityService cityService;
+
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     @ModelAttribute
     public AbstractEstimate getAbstractEstimate(@PathVariable final String abstractEstimateId) {
@@ -279,6 +283,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());
         model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(abstractEstimate.getId()));
         model.addAttribute("amountRule", abstractEstimate.getEstimateValue());
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
 
         if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()) ||
                 abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString())) {

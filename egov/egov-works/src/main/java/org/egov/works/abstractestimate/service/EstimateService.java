@@ -58,7 +58,11 @@ import javax.persistence.Query;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.assets.model.Asset;
 import org.egov.assets.service.AssetService;
+import org.egov.commons.Accountdetailkey;
+import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
+import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
@@ -96,16 +100,20 @@ import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
 import org.egov.works.abstractestimate.entity.OverheadValue;
+import org.egov.works.abstractestimate.entity.ProjectCode;
 import org.egov.works.abstractestimate.entity.SearchAbstractEstimate;
 import org.egov.works.abstractestimate.entity.SearchRequestCancelEstimate;
 import org.egov.works.abstractestimate.repository.AbstractEstimateRepository;
+import org.egov.works.autonumber.EstimateNumberGenerator;
 import org.egov.works.autonumber.TechnicalSanctionNumberGenerator;
 import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.lineestimate.service.WorkIdentificationNumberGenerator;
 import org.egov.works.masters.entity.EstimateTemplate;
 import org.egov.works.masters.service.NatureOfWorkService;
 import org.egov.works.masters.service.OverheadService;
@@ -223,6 +231,15 @@ public class EstimateService {
     @Autowired
     private TypeOfWorkService typeOfWorkService;
 
+    @Autowired
+    private WorkIdentificationNumberGenerator workIdentificationNumberGenerator;
+
+    @Autowired
+    private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
+
+    @Autowired
+    private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -287,7 +304,12 @@ public class EstimateService {
         createAssetValues(abstractEstimate);
         for (final Activity act : abstractEstimate.getActivities())
             act.setAbstractEstimate(abstractEstimate);
-        abstractEstimate.setProjectCode(abstractEstimate.getLineEstimateDetails().getProjectCode());
+        if (abstractEstimate.getLineEstimateDetails() != null)
+            abstractEstimate.setProjectCode(abstractEstimate.getLineEstimateDetails().getProjectCode());
+        final CFinancialYear financialYear = worksUtils.getFinancialYearByDate(abstractEstimate.getEstimateDate());
+        final EstimateNumberGenerator e = beanResolver.getAutoNumberServiceFor(EstimateNumberGenerator.class);
+        final String estimateNumber = e.getEstimateNumber(abstractEstimate, financialYear);
+        abstractEstimate.setEstimateNumber(estimateNumber);
         return abstractEstimateRepository.save(abstractEstimate);
     }
 
@@ -518,19 +540,24 @@ public class EstimateService {
     public FinancialDetail populateEstimateFinancialDetails(final AbstractEstimate abstractEstimate) {
         final FinancialDetail financialDetail = new FinancialDetail();
         financialDetail.setAbstractEstimate(abstractEstimate);
-        financialDetail.setFund(abstractEstimate.getLineEstimateDetails().getLineEstimate().getFund());
-        financialDetail.setFunction(abstractEstimate.getLineEstimateDetails().getLineEstimate().getFunction());
-        financialDetail.setBudgetGroup(abstractEstimate.getLineEstimateDetails().getLineEstimate().getBudgetHead());
-        financialDetail.setScheme(abstractEstimate.getLineEstimateDetails().getLineEstimate().getScheme());
-        financialDetail.setSubScheme(abstractEstimate.getLineEstimateDetails().getLineEstimate().getSubScheme());
+        if (abstractEstimate.getLineEstimateDetails() != null) {
+            financialDetail.setFund(abstractEstimate.getLineEstimateDetails().getLineEstimate().getFund());
+            financialDetail.setFunction(abstractEstimate.getLineEstimateDetails().getLineEstimate().getFunction());
+            financialDetail.setBudgetGroup(abstractEstimate.getLineEstimateDetails().getLineEstimate().getBudgetHead());
+            financialDetail.setScheme(abstractEstimate.getLineEstimateDetails().getLineEstimate().getScheme());
+            financialDetail.setSubScheme(abstractEstimate.getLineEstimateDetails().getLineEstimate().getSubScheme());
+        }
         return financialDetail;
     }
 
     public MultiYearEstimate populateMultiYearEstimate(final AbstractEstimate abstractEstimate) {
         final MultiYearEstimate multiYearEstimate = new MultiYearEstimate();
         multiYearEstimate.setAbstractEstimate(abstractEstimate);
-        multiYearEstimate.setFinancialYear(worksUtils.getFinancialYearByDate(
-                abstractEstimate.getLineEstimateDetails().getLineEstimate().getLineEstimateDate()));
+        if (abstractEstimate.getLineEstimateDetails() != null)
+            multiYearEstimate.setFinancialYear(worksUtils.getFinancialYearByDate(
+                    abstractEstimate.getLineEstimateDetails().getLineEstimate().getLineEstimateDate()));
+        else
+            multiYearEstimate.setFinancialYear(worksUtils.getFinancialYearByDate(new Date()));
         multiYearEstimate.setPercentage(100);
         return multiYearEstimate;
     }
@@ -578,9 +605,14 @@ public class EstimateService {
 
     public void loadModelValues(final LineEstimateDetails lineEstimateDetails, final Model model,
             final AbstractEstimate abstractEstimate) {
-        model.addAttribute("paymentsReleasedSoFar", getPaymentsReleasedForLineEstimate(lineEstimateDetails));
-        model.addAttribute("workOrder",
-                letterOfAcceptanceService.getWorkOrderByEstimateNumber(lineEstimateDetails.getEstimateNumber()));
+        if (lineEstimateDetails != null) {
+            model.addAttribute("paymentsReleasedSoFar", getPaymentsReleasedForLineEstimate(lineEstimateDetails));
+            model.addAttribute("workOrder",
+                    letterOfAcceptanceService.getWorkOrderByEstimateNumber(lineEstimateDetails.getEstimateNumber()));
+        } else {
+            model.addAttribute("paymentsReleasedSoFar", BigDecimal.ZERO);
+            model.addAttribute("workOrder", null);
+        }
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);
         final AppConfigValues value = values.get(0);
@@ -693,6 +725,8 @@ public class EstimateService {
                 || WorksConstants.CREATE_AND_APPROVE.equalsIgnoreCase(workFlowAction)) {
             saveTechnicalSanctionDetails(updatedAbstractEstimate);
             saveAdminSanctionDetails(updatedAbstractEstimate);
+            setProjectCode(updatedAbstractEstimate);
+            createAccountDetailKey(updatedAbstractEstimate.getProjectCode());
         }
         abstractEstimateRepository.save(updatedAbstractEstimate);
 
@@ -1077,8 +1111,29 @@ public class EstimateService {
     public void validateMandatory(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
         if (StringUtils.isBlank(abstractEstimate.getDescription()))
             bindErrors.rejectValue("description", "error.description.required");
+        if (!worksApplicationProperties.lineEstimateRequired()) {
+            if (abstractEstimate.getExecutingDepartment() == null)
+                bindErrors.rejectValue("executingdepartment", "error.executingdepartment.required");
+            if (abstractEstimate.getNatureOfWork() == null)
+                bindErrors.rejectValue("natureOfWork", "error.natureofwork.required");
+            if (abstractEstimate.getWard() == null)
+                bindErrors.rejectValue("ward", "error.electionward.required");
+            if (abstractEstimate.getName() == null)
+                bindErrors.rejectValue("name", "error.nameofwork.required");
+            if (abstractEstimate.getParentCategory() == null)
+                bindErrors.rejectValue("parentCategory", "error.typeofwork.select");
+            if (abstractEstimate.getWorkCategory() == null)
+                bindErrors.rejectValue("workCategory", "error.workcategory.select");
+
+            if (!abstractEstimate.getFinancialDetails().isEmpty()) {
+                if (abstractEstimate.getFinancialDetails().get(0).getFund() == null)
+                    bindErrors.rejectValue("financialDetails[0].fund", "error.fund.required");
+                if (abstractEstimate.getFinancialDetails().get(0).getFunction() == null)
+                    bindErrors.rejectValue("financialDetails[0].function", "error.function.required");
+            }
+        }
         final LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
-        if (abstractEstimate.getEstimateValue() != null
+        if (lineEstimateDetails != null && abstractEstimate.getEstimateValue() != null
                 && abstractEstimate.getEstimateValue().compareTo(lineEstimateDetails.getEstimateAmount()) == 1) {
             final BigDecimal diffValue = abstractEstimate.getEstimateValue()
                     .subtract(lineEstimateDetails.getEstimateAmount());
@@ -1096,8 +1151,10 @@ public class EstimateService {
                 WorksConstants.LOCATION_BOUNDARYTYPE, WorksConstants.LOCATION_HIERARCHYTYPE));
         model.addAttribute("scheduleCategories", scheduleCategoryService.getAllScheduleCategories());
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
-        model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
-        model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
+        if (worksApplicationProperties.lineEstimateRequired()) {
+            model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
+            model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
+        }
         model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("typeOfWork",
@@ -1105,6 +1162,7 @@ public class EstimateService {
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         model.addAttribute("finYear", financialYearDAO.findAll());
         model.addAttribute("uoms", uomService.findAll());
+        model.addAttribute("workCategory", WorkCategory.values());
 
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);
@@ -1576,5 +1634,35 @@ public class EstimateService {
                 qry.setParameter("status", estimateTemplateSearchRequest.getStatus());
         }
         return qry;
+    }
+
+    @Transactional
+    public void setProjectCode(final AbstractEstimate abstractEstimate) {
+        ProjectCode projectCode = null;
+        if (abstractEstimate.getProjectCode() != null) {
+            projectCode = abstractEstimate.getProjectCode();
+            projectCode.setCode(abstractEstimate.getProjectCode().getCode());
+        } else {
+            projectCode = new ProjectCode();
+            projectCode
+                    .setCode(workIdentificationNumberGenerator
+                            .generateAbstractEstimateWorkOrderIdentificationNumber(abstractEstimate));
+            abstractEstimate.setProjectCode(projectCode);
+        }
+        projectCode.setCodeName(abstractEstimate.getName());
+        projectCode.setDescription(abstractEstimate.getName());
+        projectCode.setActive(true);
+        projectCode.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
+                ProjectCode.class.getSimpleName(), WorksConstants.DEFAULT_PROJECTCODE_STATUS));
+    }
+
+    protected void createAccountDetailKey(final ProjectCode proj) {
+        final Accountdetailtype accountdetailtype = accountdetailtypeHibernateDAO.getAccountdetailtypeByName("PROJECTCODE");
+        final Accountdetailkey adk = new Accountdetailkey();
+        adk.setGroupid(1);
+        adk.setDetailkey(proj.getId().intValue());
+        adk.setDetailname(accountdetailtype.getAttributename());
+        adk.setAccountdetailtype(accountdetailtype);
+        accountdetailkeyHibernateDAO.create(adk);
     }
 }

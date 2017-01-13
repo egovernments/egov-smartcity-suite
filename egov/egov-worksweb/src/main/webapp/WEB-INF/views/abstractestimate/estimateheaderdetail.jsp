@@ -48,49 +48,49 @@
 				   </div>
 	          </spring:hasBindErrors>
 		</div>
-		<div class="row">
-			<div class="col-md-12">
-				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading"></div>
-					<div class="panel-body">
-						<div class="row add-border">
-							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.estimateno" /> : </div> 
-							<c:if test="${abstractEstimate.lineEstimateDetails != null}">
-							<div class="col-md-2 col-xs-6 add-margin view-content">
-							<c:out value="${abstractEstimate.lineEstimateDetails.estimateNumber}"></c:out>
-							</div></c:if>
-							<input type="hidden" name="mode" value="${mode}" id="mode"/>
-							<form:hidden path="estimateNumber" name="estimateNumber" value="${abstractEstimate.lineEstimateDetails.estimateNumber}"/>
-							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.lineestimateno" /> :
-							</div> 
-							<c:if test="${abstractEstimate.lineEstimateDetails != null}">
-							<div class="col-md-2 col-xs-6 add-margin view-content">
-								<a href='javascript:void(0)' onclick="viewLineEstimate('<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.id}"/>')">
-								<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.lineEstimateNumber}"/></a>
-							</div>
-							</c:if>
-							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.workidentificationo" /> : </div>
-							<div class="col-md-2 col-xs-6 add-margin view-content">${abstractEstimate.projectCode.code}</div>
-							<form:hidden path="" name="code" id="code" value="${abstractEstimate.projectCode.code}"/>
-						</div>
-						
-						<div class="row add-border">
-							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.adminsanctionestimatamount" /> : </div> 
-							<div class="col-md-2 col-xs-6 add-margin view-content">&#8377 <fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
-							minFractionDigits="2" value="${abstractEstimate.lineEstimateDetails.estimateAmount}" /></div>
-							<c:if test="workOrder != null && workOrder.id != null">
+		<c:if test="${lineEstimateRequired == true || mode != null }">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-heading"></div>
+						<div class="panel-body">
 							<div class="row add-border">
-								<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.loano" /> : </div>
-								<div class="col-md-2 col-xs-6 add-margin view-content">
-									<a href="javascript:void(0)" onclick='viewLOA(<c:out value="%{workOrder.id"/>)'><c:out value="%{workOrder.workOrderNumber}"/></a>
-								</div>
+								<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.estimateno" /> : </div> 
+								<c:choose>
+									<c:when test="${abstractEstimate.lineEstimateDetails != null}">
+										<div class="col-md-2 col-xs-6 add-margin view-content">
+											<c:out value="${abstractEstimate.lineEstimateDetails.estimateNumber}"></c:out>
+										</div>
+									</c:when>
+									<c:otherwise>
+										<div class="col-md-2 col-xs-6 add-margin view-content">
+											<c:out value="${abstractEstimate.estimateNumber}"></c:out>
+										</div>
+									</c:otherwise>
+								</c:choose>
+								
+								<c:if test="${abstractEstimate.lineEstimateDetails != null}">
+									<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.lineestimateno" /> : </div> 
+									<div class="col-md-2 col-xs-6 add-margin view-content">
+										<a href='javascript:void(0)' onclick="viewLineEstimate('<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.id}"/>')">
+										<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.lineEstimateNumber}"/></a>
+									</div>
+								</c:if>
+								<c:if test="${abstractEstimate.projectCode != null}">
+									<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.workidentificationo" /> : </div>
+									<div class="col-md-2 col-xs-6 add-margin view-content">${abstractEstimate.projectCode.code}</div>
+								</c:if>
 							</div>
-							</c:if> 
+							
+							<c:if test="${lineEstimateRequired == true }">
+								<div class="row add-border">
+									<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.adminsanctionestimatamount" /> : </div> 
+									<div class="col-md-2 col-xs-6 add-margin view-content">&#8377 <fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
+									minFractionDigits="2" value="${abstractEstimate.lineEstimateDetails.estimateAmount}" /></div>
+								</div>
+							</c:if>
 						</div>
-						
-						
-						
 					</div>
 				</div>
 			</div>
-		</div>
+		</c:if>

@@ -44,6 +44,8 @@ $subTypeOfWorkId = 0;
 $ExceptionalUOMs = "";
 $schemeId = "";
 $subSchemeId = 0;
+$functionId = 0;
+$budgetHeadId=0;
 $isEstimateDeductionGrid = $('#isEstimateDeductionGrid').val();
 var sorMsArray=new Array(200);
 var nonSorMsArray=new Array(200);
@@ -55,22 +57,20 @@ var tailend="<!--only for validity tail end -->";
 
 var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>';
 $(document).ready(function(){
-	if($('#estimateNumber').val() != '') {
+	if($('#lineEstimateRequired').val() == 'true') {
 		$('.disablefield').attr('disabled', 'disabled');
 	}
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$ExceptionalUOMs = $('#exceptionaluoms').val();  
 	$schemeId = $('#schemeValue').val();
 	$subSchemeId = $('#subSchemeValue').val();
+	$functionId = $('#functionId').val();
+	$budgetHeadId = $('#budgetHeadValue').val();
 	getSubSchemsBySchemeId($schemeId);
 	var nameOfWork = $('#nameOfWork').val();
 	$('#workName').val(nameOfWork);
 	$('#fund').trigger('change');
 	$('#parentCategory').trigger('blur');
-	var workCategory = $('#workCategory').val();
-	if(workCategory != undefined && workCategory != '') {
-		$('#workCategory').val($('#workCategory').val().replace(/_/g, ' '));
-	}
 	var beneficiary = $('#beneficiary').val(); 
 	if(beneficiary != undefined) {
 		$('#beneficiary').val($('#beneficiary').val().replace(/_C/g, '/C').replace(/_/g, ' '));
@@ -385,7 +385,8 @@ $(document).ready(function(){
 			//$('#see-more-link').show();
 		}
 	});
-	
+	replaceWorkCategoryChar();
+	getFunctionsByFundAndDepartment();
 });
 
 $overheadRowCount = 0;
@@ -2044,11 +2045,12 @@ function changeColor(tableRow, highLight)
 
 function validateWorkFlowApprover(name) {
 	document.getElementById("workFlowAction").value = name;
-	var approverPosId = document.getElementById("approvalPosition");
 	var button = document.getElementById("workFlowAction").value;
 	var flag = true;
 	
-	if ($('#location').val() == '' || $('#description').val() == '') {
+	if ($('#location').val() == '' || $('#description').val() == ''
+		|| $('#parentCategory').val() == '' || $('#fund').val() == ''
+			|| $('#function').val() == '') {
 		bootbox.alert($('#mandatoryError').val());
 		return false;
 	}
@@ -2145,12 +2147,11 @@ function validateWorkFlowApprover(name) {
 		$('#approvalPosition').attr('required', 'required');
 		$('#approvalComent').removeAttr('required');
 
-
 		var lineEstimateAmount = parseFloat($('#lineEstimateAmount').val());
 		var estimateValue = parseFloat($('#estimateValueTotal').html());
-		if(estimateValue > lineEstimateAmount) {
+		if($('#lineEstimateRequired').val() == 'true' && estimateValue > lineEstimateAmount) {
 			var diff = estimateValue - lineEstimateAmount;
-			bootbox.alert("Abstract/Detailed estimate amount is Rs."+ diff +"/- more than the administrative sanctioned amount (Rs." + lineEstimateAmount + "/-) for this estimate , please create abstract estimate with less amount");
+			bootbox.alert("Abstract/Detailed estimate amount is Rs."+ parseFloat(diff).toFixed(2) +"/- more than the administrative sanctioned amount (Rs." + lineEstimateAmount + "/-) for this estimate , please create abstract estimate with less amount");
 			return false;
 		}
 
@@ -2235,9 +2236,9 @@ function validateWorkFlowApprover(name) {
 
 		var lineEstimateAmount = parseFloat($('#lineEstimateAmount').val());
 		var estimateValue = parseFloat($('#estimateValueTotal').html());
-		if(estimateValue > lineEstimateAmount) {
+		if($('#lineEstimateRequired').val() == 'true' && estimateValue > lineEstimateAmount) {
 			var diff = estimateValue - lineEstimateAmount;
-			bootbox.alert("Abstract/Detailed estimate amount is Rs."+ diff +"/- more than the administrative sanctioned amount (Rs." + lineEstimateAmount + "/-) for this estimate , please create abstract estimate with less amount");
+			bootbox.alert("Abstract/Detailed estimate amount is Rs."+ parseFloat(diff).toFixed(2) +"/- more than the administrative sanctioned amount (Rs." + lineEstimateAmount + "/-) for this estimate , please create abstract estimate with less amount");
 			return false;
 		}
 
@@ -2370,7 +2371,8 @@ function validateSORDetails() {
 			return false;
 		}
 		deleteHiddenRows();
-		$('.disablefield').removeAttr("disabled");
+		if($('#lineEstimateRequired').val() == 'true')
+			$('.disablefield').removeAttr("disabled");
 		return true;
 	} else
 		return false;
@@ -2439,6 +2441,9 @@ function addRow(tableName,rowName) {
 			$row=jQuery("#"+tableName+" tr:eq(1)").clone();
 			nextIdx=nextIdx+1;
 			} else if(tableName.indexOf("deductionTable")>=0){
+				$row=jQuery("#"+tableName+" tr:eq(1)").clone();
+				nextIdx=nextIdx+1;
+			} else if(tableName.indexOf("tblyearestimate")>=0){
 				$row=jQuery("#"+tableName+" tr:eq(1)").clone();
 				nextIdx=nextIdx+1;
 			} else
@@ -3647,4 +3652,84 @@ function showHideAppravalDetails() {
 			console.log("failed");
 		}
 	});
-};
+}
+
+function replaceWorkCategoryChar() {
+	$('#workCategory option').each(function() {
+	   var $this = $(this);
+	   $this.text($this.text().replace(/_/g, ' '));
+	});
+}
+
+function getFunctionsByFundAndDepartment() {
+	if ($('#fund').val() === '' || $('#executingDepartment').val() === '') {
+		   $('#function').empty();
+		   $('#function').append($('<option>').text('Select from below').attr('value', ''));
+			return;
+			} else {
+				$.ajax({
+					method : "GET",
+					url : "/egworks/lineestimate/getfunctionsbyfundidanddepartmentid",
+					data : {
+						fundId : $('#fund').val(),
+						departmentId : $('#executingDepartment').val()
+					},
+					async : true
+				}).done(
+						function(response) {
+							$('#function').empty();
+							$('#function').append($("<option value=''>Select from below</option>"));
+							var output = '<option value="">Select from below</option>';
+							$.each(response, function(index, value) {
+								var selected="";
+								if($functionId)
+								{
+									if($functionId==value.id)
+									{
+										selected="selected";
+									}
+								}
+								$('#function').append($('<option '+ selected +'>').text(value.code + ' - ' + value.name).attr('value', value.id));
+							});
+				});
+			}
+}
+
+function getBudgetHeads() {
+	if($('#function').val() != '')
+		$functionId = $('#function').val();
+	 if ($('#fund').val() === '' || $('#executingDepartment').val() === '' || ($('#function').val() === '' && $functionId == 0) || $('#natureOfWork').val() === '') {
+		   $('#budgethead').empty();
+		   $('#budgethead').append($('<option>').text('Select from below').attr('value', ''));
+			return;
+			} else {
+			$.ajax({
+				type: "GET",
+				url: "/egworks/lineestimate/getbudgethead",
+				cache: true,
+				dataType: "json",
+				data:{
+					'fundId' : $('#fund').val(),
+					'functionId' : $functionId,
+					'departmentId' : $('#executingDepartment').val(),
+					'natureOfWorkId' : $('#natureOfWork').val()
+					
+					}	
+			}).done(function(value) {
+				console.log(value);
+				$('#budgethead').empty();
+				$('#budgethead').append($("<option value=''>Select from below</option>"));
+				$.each(value, function(index, val) {
+					var selected="";
+					if($budgetHeadId)
+					{
+						if($budgetHeadId==val.id)
+						{
+							selected="selected";
+						}
+					}
+				     $('#budgethead').append($('<option '+ selected +'>').text(val.name).attr('value', val.id));
+				});
+			});
+		}
+}

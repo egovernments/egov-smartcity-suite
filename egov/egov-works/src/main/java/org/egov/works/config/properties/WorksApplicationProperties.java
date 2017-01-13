@@ -22,4 +22,10 @@ public class WorksApplicationProperties {
     public String locationDetailsRequired() {
         return environment.getProperty("location.required", String.class);
     }
+
+    public Boolean lineEstimateRequired() {
+        if (!environment.containsProperty("works.lineestimate.required"))
+            return Boolean.TRUE;
+        return environment.getProperty("works.lineestimate.required", Boolean.class);
+    }
 }

@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/map-autocomplete.css?rnd=${app_release_no}' context='/egi'/>">
 	  <div class="form-group">
 			<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.department" />
+			    <spring:message code="lbl.department" /><c:if test="${abstractEstimate.lineEstimateDetails == null }"><span class="mandatory"></span></c:if>
 			</label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="executingDepartment" data-first-option="false" id="executingDepartment" class="form-control disablefield" required="required">
@@ -32,10 +32,10 @@
 		
 		<div class="form-group">
 		<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.natureofwork" />
+			    <spring:message code="lbl.natureofwork" /><c:if test="${abstractEstimate.lineEstimateDetails == null }"><span class="mandatory"></span></c:if>
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<form:select path="natureOfWork" data-first-option="false" id="natureOfWork" class="form-control disablefield" required="required">
+			<form:select path="natureOfWork" data-first-option="false" id="natureOfWork" class="form-control disablefield" onchange="getBudgetHeads();" required="required">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
@@ -45,23 +45,35 @@
 				<form:errors path="natureOfWork" cssClass="add-margin error-msg" /> 
 			</div>
 			<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.election.ward" />
+			    <spring:message code="lbl.election.ward" /><c:if test="${abstractEstimate.lineEstimateDetails == null }"><span class="mandatory"></span></c:if>
 			</label>
 			<div class="col-sm-3 add-margin ">
 			<form:hidden path="ward" class="form-control" name="ward" value="${abstractEstimate.lineEstimateDetails.lineEstimate.ward.id}"/>
 			<c:choose>
-				<c:when test="${abstractEstimate.lineEstimateDetails.lineEstimate.ward.boundaryType.name.toUpperCase() == 'CITY'}">
-					<form:input id="wardInput" path=""  value="${abstractEstimate.lineEstimateDetails.lineEstimate.ward.name}" class="form-control disablefield" type="text" required="required"/>
+				<c:when test="${abstractEstimate.lineEstimateDetails != null }">
+					<c:choose>
+						<c:when test="${abstractEstimate.lineEstimateDetails.lineEstimate.ward.boundaryType.name.toUpperCase() == 'CITY'}">
+							<form:input id="wardInput" path=""  value="${abstractEstimate.lineEstimateDetails.lineEstimate.ward.name}" class="form-control disablefield" type="text" required="required"/>
+						</c:when>
+						<c:otherwise>
+							<form:input id="wardInput" path="" value="${abstractEstimate.lineEstimateDetails.lineEstimate.ward.boundaryNum}" class="form-control disablefield" type="text" required="required"/>
+						</c:otherwise>
+					</c:choose>
 				</c:when>
 				<c:otherwise>
-					<form:input id="wardInput" path="" value="${abstractEstimate.lineEstimateDetails.lineEstimate.ward.boundaryNum}" class="form-control disablefield" type="text" required="required"/>
+					<c:choose>
+						<c:when test="${abstractEstimate.ward.boundaryType.name.toUpperCase() == 'CITY'}">
+							<form:input id="wardInput" path=""  value="${abstractEstimate.ward.name}" class="form-control disablefield" type="text" required="required"/>
+						</c:when>
+						<c:otherwise>
+							<form:input id="wardInput" path="" value="${abstractEstimate.ward.boundaryNum}" class="form-control disablefield" type="text" required="required"/>
+						</c:otherwise>
+					</c:choose>
 				</c:otherwise>
 			</c:choose>
 			</div>
-			
 		</div>
 		
-		<c:if test="${abstractEstimate.lineEstimateDetails != null && lineEstimateDetails.estimateNumber != ''}">
 		<div class="form-group">
 			
 			<label class="col-sm-2 control-label text-right">
@@ -71,10 +83,16 @@
 			<input class="form-control disablefield" name="locality"  id="" value="${abstractEstimate.lineEstimateDetails.lineEstimate.location.name}"/>
 			</div>
 			<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.workcategory" />
+			    <spring:message code="lbl.workcategory" /><c:if test="${abstractEstimate.lineEstimateDetails == null }"><span class="mandatory"></span></c:if>
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<input class="form-control disablefield" name="" id="workCategory" value="${abstractEstimate.lineEstimateDetails.lineEstimate.workCategory}"/>
+				<form:select path="workCategory" data-first-option="false" id="workCategory" cssClass="form-control disablefield" required="required">
+					<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${workCategory}" />
+				</form:select>
+				<form:errors path="workCategory" cssClass="add-margin error-msg" />
 			</div>
 		</div>
 		<div class="form-group">
@@ -96,7 +114,6 @@
                    </div>
               </div>
 		</div>
-		</c:if>
 		<div class="form-group" id="latlonDiv">
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.latitude" />
@@ -113,11 +130,18 @@
 		</div>
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.nameofwork" />
+			    <spring:message code="lbl.nameofwork" /><c:if test="${abstractEstimate.lineEstimateDetails == null }"><span class="mandatory"></span></c:if>
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<form:textarea path="name" name="name" id="workName" class="form-control disablefield patternvalidation" data-pattern="alphanumericwithallspecialcharacters"/>
-			<input type="hidden" id="nameOfWork" name="nameOfWork" value="${abstractEstimate.lineEstimateDetails.nameOfWork}"/>
+			<form:textarea path="name" name="name" id="workName" class="form-control disablefield patternvalidation" data-pattern="alphanumericwithallspecialcharacters" required="required"/>
+			<c:choose>
+				<c:when test="${abstractEstimate.lineEstimateDetails != null }">
+					<input type="hidden" id="nameOfWork" name="nameOfWork" value="${abstractEstimate.lineEstimateDetails.nameOfWork}"/>
+				</c:when>
+				<c:otherwise>
+					<input type="hidden" id="nameOfWork" name="nameOfWork" value="${abstractEstimate.name}"/>
+				</c:otherwise>
+			</c:choose>
 			<form:errors path="name" cssClass="add-margin error-msg" />
 			</div>
 			

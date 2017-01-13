@@ -84,6 +84,17 @@
 	<input type="hidden" id="exceptionaluoms" name="exceptionaluoms" value='<c:out value="${exceptionaluoms}"/>'/>
 	<input id="cancelConfirm" type="hidden" value="<spring:message code="lbl.estimate.confirm" />" />
 	<input id="mandatoryError" type="hidden" value="<spring:message code="error.mandatory.fields" />" />
+	<input type="hidden" name="lineEstimateRequired" id="lineEstimateRequired" value="${lineEstimateRequired }"/>
+	<c:choose>
+		<c:when test="${abstractEstimate.lineEstimateDetails != null }">
+			<form:hidden path="estimateNumber" name="estimateNumber" value="${abstractEstimate.lineEstimateDetails.estimateNumber}"/>
+		</c:when>
+		<c:otherwise>
+			<form:hidden path="estimateNumber" name="estimateNumber" value="${abstractEstimate.estimateNumber}"/>
+		</c:otherwise>
+	</c:choose>
+	<form:hidden path="" name="code" id="code" value="${abstractEstimate.projectCode.code}"/>
+	<input type="hidden" name="mode" value="${mode}" id="mode"/>
 	
 	<%@ include file="estimateheaderdetail.jsp"%>
 		<div class="panel-heading">

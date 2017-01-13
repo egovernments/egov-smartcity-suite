@@ -50,10 +50,10 @@
 	<div class="panel-body custom-form">
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"> <spring:message
-					code="lbl.fund" />
+					code="lbl.fund" /><c:if test="${abstractEstimate.lineEstimateDetails == null }"><span class="mandatory"></span></c:if>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="financialDetails[0].fund" data-first-option="false" id="fund"  class="form-control disablefield" onchange="getSchemsByFundId(this.value);" required="required">
+				<form:select path="financialDetails[0].fund" data-first-option="false" id="fund"  class="form-control disablefield" onchange="getFunctionsByFundAndDepartment();getBudgetHeads();getSchemsByFundId(this.value);" required="required">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
@@ -63,9 +63,9 @@
 					cssClass="add-margin error-msg" />
 			</div>
 
-			<label class="col-sm-2 control-label text-right"> <spring:message code="lbl.function" /></label>
+			<label class="col-sm-2 control-label text-right"> <spring:message code="lbl.function" /><c:if test="${abstractEstimate.lineEstimateDetails == null }"><span class="mandatory"></span></c:if></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="financialDetails[0].function" data-first-option="false" id="function" class="form-control disablefield"  required="required">
+				<form:select path="financialDetails[0].function" data-first-option="false" id="function" class="form-control disablefield" onchange="getBudgetHeads();" required="required">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
@@ -73,6 +73,7 @@
 				</form:select>
 				<form:errors path="financialDetails[0].function" cssClass="add-margin error-msg" />
 			</div>
+			<input type="hidden" id="functionId" value="${abstractEstimate.financialDetails.get(0).function.id }" />
 		</div>
 		<div class="form-group">
 				<label class="col-sm-2 control-label text-right">
@@ -87,14 +88,20 @@
 					</form:select>
 					<form:errors path="financialDetails[0].budgetGroup"	cssClass="add-margin error-msg" />
 				</div>
+				<input type="hidden" id="budgetHeadValue" value="${abstractEstimate.financialDetails.get(0).budgetGroup.id }" />
 		</div> 
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right">
 					<spring:message code="lbl.scheme" />
 				</label>
-				<c:if test="${abstractEstimate.lineEstimateDetails != null}">
-					<input type="hidden" id="schemeValue" value="${abstractEstimate.lineEstimateDetails.lineEstimate.scheme.id }" />
-				</c:if>
+				<c:choose>
+					<c:when test="${abstractEstimate.lineEstimateDetails != null}">
+						<input type="hidden" id="schemeValue" value="${abstractEstimate.lineEstimateDetails.lineEstimate.scheme.id }" />
+					</c:when>
+					<c:otherwise>
+						<input type="hidden" id="schemeValue" value="${abstractEstimate.financialDetails.get(0).scheme.id }" />
+					</c:otherwise>
+				</c:choose>
 				<div class="col-sm-3 add-margin">
 					<form:select path="financialDetails[0].scheme" data-first-option="false" id="scheme" class="form-control disablefield"  onchange="getSubSchemsBySchemeId(this.value);" >
 						<form:option value="">
@@ -106,9 +113,14 @@
 				<label class="col-sm-2 control-label text-right">
 					<spring:message code="lbl.subscheme" />
 				</label>
-				<c:if test="${abstractEstimate.lineEstimateDetails != null}">
-				<input type="hidden" id="subSchemeValue" value="${abstractEstimate.lineEstimateDetails.lineEstimate.subScheme.id }" />
-				</c:if>
+				<c:choose>
+					<c:when test="${abstractEstimate.lineEstimateDetails != null}">
+						<input type="hidden" id="subSchemeValue" value="${abstractEstimate.lineEstimateDetails.lineEstimate.subScheme.id }" />
+					</c:when>
+					<c:otherwise>
+						<input type="hidden" id="subSchemeValue" value="${abstractEstimate.financialDetails.get(0).subScheme.id }" />
+					</c:otherwise>
+				</c:choose>
 				<div class="col-sm-3 add-margin">
 					<form:select path="financialDetails[0].subScheme" data-first-option="false" id="subScheme" class="form-control disablefield">
 						<form:option value="">
@@ -116,8 +128,6 @@
 						</form:option>
 					</form:select>
 				</div>
-				
-				
 			</div>
 		</div>
 	</div>

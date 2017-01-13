@@ -48,6 +48,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -87,6 +89,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.masters.entity.DepositCode;
 import org.egov.works.masters.entity.NatureOfWork;
 import org.egov.works.models.tender.OfflineStatus;
@@ -209,7 +212,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     private BigDecimal estimateValue;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "projectcode")
     private ProjectCode projectCode;
 
@@ -246,6 +249,10 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     @Transient
     private String approvalComent;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private WorkCategory workCategory;
 
     @Valid
     @OrderBy("id")
@@ -882,6 +889,14 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     public void setCopiedFrom(final AbstractEstimate copiedFrom) {
         this.copiedFrom = copiedFrom;
+    }
+
+    public WorkCategory getWorkCategory() {
+        return workCategory;
+    }
+
+    public void setWorkCategory(final WorkCategory workCategory) {
+        this.workCategory = workCategory;
     }
 
 }

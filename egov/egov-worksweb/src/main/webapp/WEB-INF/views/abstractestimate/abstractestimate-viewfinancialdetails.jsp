@@ -78,7 +78,7 @@
 			</div> 
 		
 			<div class="col-xs-3 add-margin view-content">
-				<c:out value="${abstractEstimate.financialDetails[0].function.name}"></c:out>
+				<c:out value="${abstractEstimate.financialDetails[0].function.code }-${abstractEstimate.financialDetails[0].function.name }"></c:out>
 			</div>
 		</div>
 		<div class="row add-border">

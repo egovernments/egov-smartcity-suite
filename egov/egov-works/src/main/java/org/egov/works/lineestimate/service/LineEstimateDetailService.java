@@ -86,7 +86,7 @@ public class LineEstimateDetailService {
     private LineEstimateAppropriationService lineEstimateAppropriationService;
 
     @Autowired
-    private WorkOrderIdentificationNumberGenerator workOrderIdentificationNumberGenerator;
+    private WorkIdentificationNumberGenerator workIdentificationNumberGenerator;
 
     @Autowired
     public LineEstimateDetailService(final LineEstimateDetailsRepository lineEstimateDetailsRepository) {
@@ -126,7 +126,7 @@ public class LineEstimateDetailService {
         } else {
             projectCode = new ProjectCode();
             projectCode
-                    .setCode(workOrderIdentificationNumberGenerator.generateWorkOrderIdentificationNumber(lineEstimateDetails));
+                    .setCode(workIdentificationNumberGenerator.generateWorkOrderIdentificationNumber(lineEstimateDetails));
             lineEstimateDetails.setProjectCode(projectCode);
         }
         projectCode.setCodeName(lineEstimateDetails.getNameOfWork());

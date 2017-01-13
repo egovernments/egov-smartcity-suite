@@ -49,6 +49,7 @@ import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.hibernate.exception.SQLGrammarException;
@@ -57,7 +58,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class WorkOrderIdentificationNumberGenerator {
+public class WorkIdentificationNumberGenerator {
 
     private static final String PROJECTCODE_SEQ_PREFIX = "SEQ_PROJECTCODE";
 
@@ -91,6 +92,33 @@ public class WorkOrderIdentificationNumberGenerator {
             return String.format("%s/%s/%05d/%02d/%s", lineEstimateDetails.getLineEstimate().getExecutingDepartment().getCode(),
                     workCategory, sequenceNumber,
                     getMonthOfTransaction(lineEstimateDetails.getLineEstimate().getLineEstimateDate()),
+                    financialYear.getFinYearRange());
+        } catch (final SQLException e) {
+            throw new ApplicationRuntimeException("Error occurred while generating WIN", e);
+        }
+    }
+
+    @Transactional
+    public String generateAbstractEstimateWorkOrderIdentificationNumber(final AbstractEstimate abstractEstimate) {
+        try {
+            final CFinancialYear financialYear = financialYearHibernateDAO
+                    .getFinYearByDate(abstractEstimate.getEstimateDate());
+            final String finYearRange[] = financialYear.getFinYearRange().split("-");
+            final String sequenceName = PROJECTCODE_SEQ_PREFIX + "_" + finYearRange[0] + "_" + finYearRange[1];
+            final String workCategory;
+            if (!abstractEstimate.getWorkCategory().toString().equals(WorkCategory.NON_SLUM.toString()))
+                workCategory = "SL";
+            else
+                workCategory = "NS";
+            Serializable sequenceNumber;
+            try {
+                sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
+            } catch (final SQLGrammarException e) {
+                sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
+            }
+            return String.format("%s/%s/%05d/%02d/%s", abstractEstimate.getExecutingDepartment().getCode(),
+                    workCategory, sequenceNumber,
+                    getMonthOfTransaction(abstractEstimate.getEstimateDate()),
                     financialYear.getFinYearRange());
         } catch (final SQLException e) {
             throw new ApplicationRuntimeException("Error occurred while generating WIN", e);

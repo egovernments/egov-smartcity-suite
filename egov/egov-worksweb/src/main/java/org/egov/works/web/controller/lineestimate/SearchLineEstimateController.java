@@ -52,6 +52,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.abstractestimate.entity.EstimatePhotographSearchRequest;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimatesForAbstractEstimate;
 import org.egov.works.lineestimate.service.LineEstimateService;
@@ -95,6 +96,9 @@ public class SearchLineEstimateController {
     @Autowired
     private NatureOfWorkService natureOfWorkService;
 
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
+
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String showSearchLineEstimateForLoa(@ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest,
             final Model model) throws ApplicationException {
@@ -107,6 +111,8 @@ public class SearchLineEstimateController {
     public String searchLineEstimateForAbstractEstimate(
             @ModelAttribute final LineEstimatesForAbstractEstimate lineEstimatesForAbstractEstimate,
             final Model model) {
+        if (!worksApplicationProperties.lineEstimateRequired())
+            return "redirect:/abstractestimate/create";
         setDropDownValues(model);
         final List<User> lineEstimateCreatedByUsers = lineEstimateService.getLineEstimateCreatedByUsers();
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());

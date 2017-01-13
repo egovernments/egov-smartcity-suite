@@ -53,8 +53,10 @@ import org.egov.eis.service.DesignationService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.pims.commons.Designation;
@@ -62,9 +64,11 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateDetailService;
+import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.masters.service.ScheduleOfRateService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
@@ -117,10 +121,24 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     @Autowired
     private CityService cityService;
 
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
+
+    @Autowired
+    private LineEstimateService lineEstimateService;
+
+    @Autowired
+    private SecurityUtils securityUtils;
+
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String showAbstractEstimateForm(@ModelAttribute("abstractEstimate") final AbstractEstimate abstractEstimate,
-            @RequestParam final Long lineEstimateDetailId, final Model model) {
-        final LineEstimateDetails lineEstimateDetails = lineEstimateDetailService.getById(lineEstimateDetailId);
+            @RequestParam(required = false) final Long lineEstimateDetailId, final Model model) {
+        LineEstimateDetails lineEstimateDetails = null;
+        if (worksApplicationProperties.lineEstimateRequired() && lineEstimateDetailId == null)
+            return "redirect:/lineestimate/searchlineestimateforabstractestimate-form";
+        if (worksApplicationProperties.lineEstimateRequired())
+            lineEstimateDetails = lineEstimateDetailService.getById(lineEstimateDetailId);
+
         populateDataForAbstractEstimate(lineEstimateDetails, model, abstractEstimate);
         abstractEstimate.setEstimateDate(new Date());
         loadViewData(model, abstractEstimate, lineEstimateDetails);
@@ -131,6 +149,9 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     private void loadViewData(final Model model, final AbstractEstimate abstractEstimate,
             final LineEstimateDetails lineEstimateDetails) {
         estimateService.setDropDownValues(model);
+        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        if (departments != null && !departments.isEmpty())
+            abstractEstimate.setExecutingDepartment(departments.get(0));
 
         if (abstractEstimate.getLineEstimateDetails() != null
                 && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated()) {
@@ -167,6 +188,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
         }
         model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
@@ -348,14 +370,17 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
      */
     public void populateDataForAbstractEstimate(final LineEstimateDetails lineEstimateDetails, final Model model,
             final AbstractEstimate abstractEstimate) {
-        final LineEstimate lineEstimate = lineEstimateDetails.getLineEstimate();
-        abstractEstimate.setLineEstimateDetails(lineEstimateDetails);
-        abstractEstimate.setExecutingDepartment(lineEstimateDetails.getLineEstimate().getExecutingDepartment());
-        abstractEstimate.setWard(lineEstimateDetails.getLineEstimate().getWard());
-        abstractEstimate.setNatureOfWork(lineEstimate.getNatureOfWork());
-        abstractEstimate.setParentCategory(lineEstimate.getTypeOfWork());
-        abstractEstimate.setCategory(lineEstimate.getSubTypeOfWork());
-        abstractEstimate.setProjectCode(lineEstimateDetails.getProjectCode());
+        if (lineEstimateDetails != null) {
+            final LineEstimate lineEstimate = lineEstimateDetails.getLineEstimate();
+            abstractEstimate.setLineEstimateDetails(lineEstimateDetails);
+            abstractEstimate.setExecutingDepartment(lineEstimateDetails.getLineEstimate().getExecutingDepartment());
+            abstractEstimate.setWorkCategory(lineEstimateDetails.getLineEstimate().getWorkCategory());
+            abstractEstimate.setWard(lineEstimateDetails.getLineEstimate().getWard());
+            abstractEstimate.setNatureOfWork(lineEstimate.getNatureOfWork());
+            abstractEstimate.setParentCategory(lineEstimate.getTypeOfWork());
+            abstractEstimate.setCategory(lineEstimate.getSubTypeOfWork());
+            abstractEstimate.setProjectCode(lineEstimateDetails.getProjectCode());
+        }
         abstractEstimate.addMultiYearEstimate(estimateService.populateMultiYearEstimate(abstractEstimate));
         abstractEstimate.addFinancialDetails(estimateService.populateEstimateFinancialDetails(abstractEstimate));
         estimateService.loadModelValues(lineEstimateDetails, model, abstractEstimate);

@@ -137,7 +137,7 @@
 				</tr>
 			</tfoot>
 		</table>
-		<c:if test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.estimateNumber == '' }">
+		<c:if test="${(abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.estimateNumber == '') || abstractEstimate.lineEstimateDetails == null }">
 		<div class="col-sm-12 text-center">
 			<button id="addRowBtn" type="button" class="btn btn-primary"
 				onclick="addRow('tblyearestimate','yearEstimateRow')">
