@@ -78,8 +78,7 @@ $(document)
 									|| status == 'VERIFIED'
 									|| status == 'ESTIMATIONNOTICEGENERATED'
 									|| status == 'WORKORDERGENERATED' || status == 'APPROVED'
-										|| status == 'CLOSERINPROGRESS'
-											)) {
+										)) {
 						$(".show-row").hide();
 						$('#approverDetailHeading').hide();
 						$('#approvalDepartment').removeAttr('required');
@@ -102,8 +101,7 @@ $(document)
 					}
 					if (approvalPositionExist != 0
 							&& ( closerConnection != null)
-							&& status != 'DIGITALSIGNATUREPENDING'
-								&& status != 'RECONNECTIONINITIATED' && status !='RECONNECTIONINPROGRESS') {
+							&& (status== 'CLOSERAPPROVED' || status =='RECONNECTIONAPPROVED'))  {
 						$(".show-row").hide();
 						$('#approverDetailHeading').hide();
 						$('#approvalDepartment').removeAttr('required');
