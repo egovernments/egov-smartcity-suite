@@ -39,6 +39,11 @@
  */
 package org.egov.works.models.masters;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.commons.ContractorGrade;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Department;
@@ -48,10 +53,6 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
-
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ContractorDetail extends BaseModel {
 
@@ -72,6 +73,7 @@ public class ContractorDetail extends BaseModel {
 
     private ContractorGrade grade;
 
+    private List<ValidationError> errorList;
     @Valid
     private Period validity;
 
@@ -123,18 +125,29 @@ public class ContractorDetail extends BaseModel {
         this.validity = validity;
     }
 
+    public List<ValidationError> getErrorList() {
+        if (errorList != null)
+            return errorList;
+        else
+            return new ArrayList<ValidationError>();
+    }
+
+    public void setErrorList(final List<ValidationError> errorList) {
+        this.errorList = errorList;
+    }
+
     @Override
     public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final List<ValidationError> validationErrors = getErrorList();
         if (department == null || department.getId() == null)
             validationErrors.add(new ValidationError("department", "contractorDetails.department.required"));
         if (status == null || status.getId() == null)
             validationErrors.add(new ValidationError("status", "contractorDetails.status.required"));
         if (validity == null || validity != null && validity.getStartDate() == null)
             validationErrors.add(new ValidationError("validity", "contractorDetails.fromDate_empty"));
-        else if (validity == null
-                || validity != null && !compareDates(validity.getStartDate(), validity.getEndDate()))
+        else if (validity == null || validity != null && !compareDates(validity.getStartDate(), validity.getEndDate()))
             validationErrors.add(new ValidationError("validity", "contractorDetails.invalid_fromdate_range"));
+
         if (validationErrors.isEmpty())
             return null;
         else
@@ -152,4 +165,5 @@ public class ContractorDetail extends BaseModel {
             return false;
         return true;
     }
+
 }

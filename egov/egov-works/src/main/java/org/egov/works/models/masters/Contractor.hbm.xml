@@ -95,7 +95,7 @@
 			<type name="org.hibernate.type.EnumType">       
 				<param name="enumClass">org.egov.works.models.masters.ExemptionForm</param>     
 			</type>   
-		</property> 		
+		</property> 
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" fetch="select" not-null="true" />
 		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY" fetch="select"/>
 		<property name="createdDate" column="CREATEDDATE" type="timestamp" not-null="true" />
@@ -106,6 +106,9 @@
 	    	<list-index column="MY_CONTRACTOR_INDEX"/>
 	    	<one-to-many class="org.egov.works.models.masters.ContractorDetail" />	
     	</list>	
+    	<property name="mobileNumber" type="string">
+			<column name="MOBILE_NUMBER" length="10" />
+		</property>
 	</class>
     <query name="GET_CONTRACTORS_BY_STATUS">
     <![CDATA[

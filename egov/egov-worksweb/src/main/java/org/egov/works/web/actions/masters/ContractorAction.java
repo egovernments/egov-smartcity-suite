@@ -41,12 +41,15 @@ package org.egov.works.web.actions.masters;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -60,9 +63,11 @@ import org.egov.egf.commons.bank.service.CreateBankService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.master.service.ContractorGradeService;
 import org.egov.works.master.service.ContractorService;
 import org.egov.works.models.masters.Contractor;
@@ -72,14 +77,12 @@ import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
-@Results({
-        @Result(name = ContractorAction.NEW, location = "contractor-new.jsp"),
+@Results({ @Result(name = ContractorAction.NEW, location = "contractor-new.jsp"),
         @Result(name = ContractorAction.SEARCH_CONTRACTOR, location = "contractor-searchContractor.jsp"),
         @Result(name = ContractorAction.SEARCH, location = "contractor-search.jsp"),
         @Result(name = ContractorAction.SUCCESS, location = "contractor-success.jsp"),
         @Result(name = ContractorAction.EDIT, location = "contractor-edit.jsp"),
-        @Result(name = ContractorAction.VIEW, location = "contractor-view.jsp")
-})
+        @Result(name = ContractorAction.VIEW, location = "contractor-view.jsp") })
 public class ContractorAction extends SearchFormAction {
 
     private static final long serialVersionUID = 3167651186547987956L;
@@ -89,8 +92,6 @@ public class ContractorAction extends SearchFormAction {
     public static final String SEARCH_CONTRACTOR = "searchContractor";
     public static final String SEARCH = "search";
     public static final String SUCCESS = "success";
-    public static final String EDIT = "edit";
-    public static final String VIEW = "view";
     @Autowired
     private ContractorService contractorService;
     private Contractor contractor = new Contractor();
@@ -112,8 +113,6 @@ public class ContractorAction extends SearchFormAction {
     @Autowired
     private ContractorGradeService contractorGradeService;
 
-    @Autowired
-    private CreateBankService createBankService;
     private String contractorName;
     private String contractorCode;
     private Long departmentId;
@@ -125,8 +124,16 @@ public class ContractorAction extends SearchFormAction {
     private List<ContractorDetail> contractorDetailList = null;
     private PersistenceService<ContractorDetail, Long> contractorDetailService;
     private Integer rowId;
+    private String[] hide;
+    private String[] mandatory;
 
     private Map<String, Object> criteriaMap = null;
+
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
+
+    @Autowired
+    private CreateBankService createBankService;
 
     public ContractorAction() {
         addRelatedEntity(WorksConstants.BANK, Bank.class);
@@ -139,6 +146,8 @@ public class ContractorAction extends SearchFormAction {
 
     @Action(value = "/masters/contractor-newform")
     public String newform() {
+        contractorMasterSetMandatoryFields();
+        contractorMasterSetHiddenFields();
         return NEW;
     }
 
@@ -150,10 +159,14 @@ public class ContractorAction extends SearchFormAction {
     @Action(value = "/masters/contractor-edit")
     public String edit() {
         contractor = contractorService.findById(contractor.getId(), false);
-        if (mode.equals("edit"))
+        if (mode.equals(WorksConstants.EDIT)) {
+            contractorMasterSetMandatoryFields();
+            contractorMasterSetHiddenFields();
             return EDIT;
-        else
+        } else {
+            contractorMasterSetHiddenFields();
             return VIEW;
+        }
     }
 
     @Override
@@ -177,11 +190,13 @@ public class ContractorAction extends SearchFormAction {
 
     @Action(value = "/masters/contractor-save")
     public String save() {
+        contractorMasterSetMandatoryFields();
+        contractorMasterSetHiddenFields();
         final Bank bank = createBankService.getById(contractor.getBank().getId());
         contractor.setBank(bank);
         populateContractorDetails(mode);
         contractor = contractorService.persist(contractor);
-        if (mode == null || mode.equals(""))
+        if (mode == null || org.apache.commons.lang.StringUtils.isEmpty(mode))
             contractorService.createAccountDetailKey(contractor);
 
         // TODO:Fixme - Added temporarily since AccountDetailKey was not persisting. Need to find the fix for this and remove
@@ -221,21 +236,24 @@ public class ContractorAction extends SearchFormAction {
 
         for (final ContractorDetail contractorDetail : actionContractorDetails)
             if (validContractorDetail(contractorDetail)) {
-                contractorDetail.setDepartment(departmentService.getDepartmentById(contractorDetail.getDepartment().getId()));
+                contractorDetail
+                        .setDepartment(departmentService.getDepartmentById(contractorDetail.getDepartment().getId()));
                 contractorDetail.setStatus(egwStatusHibDAO.findById(contractorDetail.getStatus().getId(), false));
                 if (contractorDetail.getGrade().getId() == null)
                     contractorDetail.setGrade(null);
                 else
-                    contractorDetail.setGrade(contractorGradeService.getContractorGradeById(contractorDetail.getGrade().getId()));
+                    contractorDetail.setGrade(
+                            contractorGradeService.getContractorGradeById(contractorDetail.getGrade().getId()));
                 contractorDetail.setContractor(contractor);
-                if (mode.equals("edit"))
+                if (mode.equals(WorksConstants.EDIT))
                     setPrimaryDetails(contractorDetail);
                 contractor.addContractorDetail(contractorDetail);
             } else if (contractorDetail != null) {
                 if (contractorDetail.getDepartment() == null || contractorDetail.getDepartment().getId() == null)
                     contractorDetail.setDepartment(null);
                 else
-                    contractorDetail.setDepartment(departmentService.getDepartmentById(contractorDetail.getDepartment().getId()));
+                    contractorDetail.setDepartment(
+                            departmentService.getDepartmentById(contractorDetail.getDepartment().getId()));
                 if (contractorDetail.getStatus() == null || contractorDetail.getStatus().getId() == null)
                     contractorDetail.setStatus(null);
                 else
@@ -243,9 +261,10 @@ public class ContractorAction extends SearchFormAction {
                 if (contractorDetail.getGrade() == null || contractorDetail.getGrade().getId() == null)
                     contractorDetail.setGrade(null);
                 else
-                    contractorDetail.setGrade(contractorGradeService.getContractorGradeById(contractorDetail.getGrade().getId()));
+                    contractorDetail.setGrade(
+                            contractorGradeService.getContractorGradeById(contractorDetail.getGrade().getId()));
                 contractorDetail.setContractor(contractor);
-                if (mode.equals("edit"))
+                if (mode.equals(WorksConstants.EDIT))
                     setPrimaryDetails(contractorDetail);
                 contractor.addContractorDetail(contractorDetail);
             }
@@ -254,8 +273,10 @@ public class ContractorAction extends SearchFormAction {
     protected boolean validContractorDetail(final ContractorDetail contractorDetail) {
 
         if (contractorDetail != null && contractorDetail.getDepartment() != null && contractorDetail.getStatus() != null
-                && contractorDetail.getDepartment().getId() != null && contractorDetail.getStatus().getId() != null)
+                && contractorDetail.getDepartment().getId() != null && contractorDetail.getStatus().getId() != null) {
+            validateContractorMasterMandatoryFields(contractorDetail);
             return true;
+        }
         return false;
     }
 
@@ -309,8 +330,7 @@ public class ContractorAction extends SearchFormAction {
         return actionContractorDetails;
     }
 
-    public void setActionContractorDetails(
-            final List<ContractorDetail> actionContractorDetails) {
+    public void setActionContractorDetails(final List<ContractorDetail> actionContractorDetails) {
         this.actionContractorDetails = actionContractorDetails;
     }
 
@@ -404,8 +424,7 @@ public class ContractorAction extends SearchFormAction {
     /**
      * @param contractorDetailService the contractorDetailService to set
      */
-    public void setContractorDetailService(
-            final PersistenceService<ContractorDetail, Long> contractorDetailService) {
+    public void setContractorDetailService(final PersistenceService<ContractorDetail, Long> contractorDetailService) {
         this.contractorDetailService = contractorDetailService;
     }
 
@@ -445,4 +464,100 @@ public class ContractorAction extends SearchFormAction {
         return criteriaMap;
     }
 
+    public String[] getHide() {
+        return hide;
+    }
+
+    public void setHide(final String[] hide) {
+        this.hide = hide;
+    }
+
+    public String[] getMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(final String[] mandatory) {
+        this.mandatory = mandatory;
+    }
+
+    public void contractorMasterSetMandatoryFields() {
+        if (worksApplicationProperties.getContractorMasterMandatoryFields() != null
+                && worksApplicationProperties.getContractorMasterMandatoryFields().length > 0)
+            addDropdownData("contractorMasterMandatoryFields",
+                    Arrays.asList(worksApplicationProperties.getContractorMasterMandatoryFields()));
+
+    }
+
+    public void contractorMasterSetHiddenFields() {
+        if (worksApplicationProperties.getContractorMasterHideFields() != null
+                && worksApplicationProperties.getContractorMasterHideFields().length > 0)
+            addDropdownData("contractorMasterHiddenFields",
+                    Arrays.asList(worksApplicationProperties.getContractorMasterHideFields()));
+    }
+
+    public String[] getContractorMasterMandatoryFields() {
+        final TreeSet<String> set = new TreeSet<String>(
+                Arrays.asList(worksApplicationProperties.getContractorMasterMandatoryFields()));
+        set.removeAll(Arrays.asList(worksApplicationProperties.getContractorMasterHideFields()));
+        return set.toArray(new String[set.size()]);
+    }
+
+    public List<ValidationError> getContractorMasterMandatoryFieldsErrors(final Contractor contractor,
+            final String[] mandatoryFields) {
+        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final String[] contractorMasterMandatoryFields = mandatoryFields;
+
+        for (final String val : contractorMasterMandatoryFields) {
+            if (val.equals("mobileNumber") && StringUtils.isBlank(contractor.getMobileNumber()))
+                validationErrors
+                        .add(new ValidationError("contractor.mobileNumber", "depositworks.roadcut.enter.mobileno"));
+            if (val.equals("bankAccount") && StringUtils.isBlank(contractor.getBankAccount()))
+                validationErrors.add(new ValidationError("contractor.bankAccount", "contractor.bankaccount.null"));
+            if (val.equals("bank") && (contractor.getBank() == null || contractor.getBank().getId() == -1))
+                validationErrors.add(new ValidationError("contractor.bank.name", "bank.name.null"));
+            if (val.equals("ifscCode") && StringUtils.isBlank(contractor.getIfscCode()))
+                validationErrors.add(new ValidationError("contractor.ifscCode", "contractor.ifsccode.null"));
+            if (val.equals("tinNumber") && StringUtils.isBlank(contractor.getTinNumber()))
+                validationErrors.add(new ValidationError("contractor.tinNumber", "contractor.tinnumber.null"));
+            if (val.equals("panNumber") && StringUtils.isBlank(contractor.getPanNumber()))
+                validationErrors.add(new ValidationError("contractor.panNumber", "contractor.pannumber.null"));
+            if (val.equals("email") && StringUtils.isBlank(contractor.getEmail()))
+                validationErrors.add(new ValidationError("contractor.email", "depositworks.roadcut.enter.email"));
+            if (val.equals("contactPerson") && StringUtils.isBlank(contractor.getContactPerson()))
+                validationErrors.add(new ValidationError("contractor.contactPerson", "contractor.contactperson.null"));
+            if (val.equals("narration") && StringUtils.isBlank(contractor.getNarration()))
+                validationErrors.add(new ValidationError("contractor.narration", "contractor.narration.null"));
+            if (val.equals("correspondenceAddress") && StringUtils.isBlank(contractor.getCorrespondenceAddress()))
+                validationErrors.add(new ValidationError("contractor.correspondenceAddress",
+                        "contractor.correspondenceAddress.null"));
+            if (val.equals("paymentAddress") && StringUtils.isBlank(contractor.getPaymentAddress()))
+                validationErrors
+                        .add(new ValidationError("contractor.paymentAddress", "contractor.paymentAddress.null"));
+            if (val.equals("pwdApprovalCode") && StringUtils.isBlank(contractor.getPwdApprovalCode()))
+                validationErrors
+                        .add(new ValidationError("contractor.pwdApprovalCode", "contractor.pwdApprovalCode.null"));
+            if (val.equals("exemptionForm") && StringUtils.isBlank(contractor.getExemptionForm().toString()))
+                validationErrors.add(new ValidationError("contractor.exemptionForm", "contractor.exemptionForm.null"));
+
+        }
+        return validationErrors;
+    }
+
+    private void validateContractorMasterMandatoryFields(final ContractorDetail contractorDetail) {
+        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final String[] contractorMasterMandatoryFields = getContractorMasterMandatoryFields();
+
+        validationErrors.addAll(getContractorMasterMandatoryFieldsErrors(contractor, contractorMasterMandatoryFields));
+
+        for (final String val : contractorMasterMandatoryFields) {
+            if (val.equals("registrationNumber") && StringUtils.isBlank(contractorDetail.getRegistrationNumber()))
+                validationErrors.add(new ValidationError("contractorDetail.registrationNumber",
+                        "contractordetail.registrationnumber.required"));
+            if (val.equals("grade")
+                    && (contractorDetail.getGrade() == null || contractorDetail.getGrade().getId() == null))
+                validationErrors.add(new ValidationError("contractorDetail.grade", "contractordetail.grade.required"));
+        }
+        contractorDetail.setErrorList(validationErrors);
+
+    }
 }

@@ -39,6 +39,12 @@
  */
 package org.egov.works.models.masters;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.commons.Bank;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.utils.EntityType;
@@ -50,11 +56,6 @@ import org.egov.infra.validation.regex.Constants;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
-
-import javax.validation.Valid;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
 @Unique(fields = { "code" }, id = "id", tableName = "EGW_CONTRACTOR", columnName = {
         "CODE" }, message = "contractor.code.isunique")
@@ -115,6 +116,9 @@ public class Contractor extends BaseModel implements EntityType {
 
     @Valid
     private List<ContractorDetail> contractorDetails = new LinkedList<ContractorDetail>();
+
+    @Length(max = 10)
+    private String mobileNumber;
 
     @Override
     public String getCode() {
@@ -246,7 +250,8 @@ public class Contractor extends BaseModel implements EntityType {
     public List<ValidationError> validate() {
         List<ValidationError> errorList = null;
         if (contractorDetails != null && contractorDetails.isEmpty())
-            return Arrays.asList(new ValidationError("contractorDetails", "contractor.details.altleastone_details_needed"));
+            return Arrays
+                    .asList(new ValidationError("contractorDetails", "contractor.details.altleastone_details_needed"));
         else if (contractorDetails != null && !contractorDetails.isEmpty())
             for (final ContractorDetail contractorDetail : contractorDetails) {
                 errorList = contractorDetail.validate();
@@ -311,4 +316,13 @@ public class Contractor extends BaseModel implements EntityType {
 
         return null;
     }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(final String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
 }
