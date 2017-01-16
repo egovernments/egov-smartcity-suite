@@ -595,8 +595,8 @@ public class CollectionDocumentElasticSearchService {
                 QueryBuilders.rangeQuery(RECEIPT_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                         .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false)).mustNot(
                 QueryBuilders.matchQuery(STATUS, CANCELLED));
-        if (serviceDetail.isEmpty())
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(BILLING_SERVICE, serviceDetail));
+        if (!serviceDetail.isEmpty())
+            boolQuery = boolQuery.filter(QueryBuilders.termsQuery(BILLING_SERVICE, serviceDetail));
 
         final AggregationBuilder monthAggregation = AggregationBuilders.dateHistogram(DATE_AGG).field(RECEIPT_DATE)
                 .interval(DateHistogramInterval.MONTH)

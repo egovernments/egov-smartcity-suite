@@ -57,6 +57,8 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CGeneralLedger;
+import org.egov.commons.CGeneralLedgerDetail;
 import org.egov.commons.EgfAccountcodePurpose;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -65,6 +67,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.masters.AccountCodePurpose;
+import org.egov.services.voucher.GeneralLedgerService;
 import org.egov.utils.Constants;
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,6 +131,8 @@ public class ChartOfAccountsAction extends BaseFormAction {
     private CoaCache coaCache;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+    @Autowired
+    private GeneralLedgerService generalLedgerService;
 
     @Override
     public Object getModel() {
@@ -305,6 +310,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     }
 
     boolean validAddtition(final String glCode) {
+        boolean flag=true;
         final StringBuffer strQuery = new StringBuffer();
         strQuery.append("select bd.billid from  eg_billdetails bd, chartofaccounts coa,  eg_billregistermis brm where coa.glcode = '"
                 + glCode + "' and bd.glcodeid = coa.id and brm.billid = bd.billid and brm.voucherheaderid is null ");
@@ -313,23 +319,43 @@ public class ChartOfAccountsAction extends BaseFormAction {
         strQuery.append(" and sts.id not in (select id from egw_status where upper(moduletype) like '%BILL%' and upper(description) like '%CANCELLED%') ");
         final SQLQuery query = persistenceService.getSession().createSQLQuery(strQuery.toString());
         final List list = query.list();
-        if (list != null && list.size() > 0)
-            return false;
+        if (!list.isEmpty())
+            flag = false;
+        if (flag) {
+            final List<CGeneralLedger> generalLedgerList = generalLedgerService.getGeneralLedgerByGlCode(glCode);
+            if (!generalLedgerList.isEmpty())
+                flag = false;
+        }
+        return flag;
+    }
+
+    boolean validAddtition(final String glCode, Integer accountDetailTypeId) {
+        final List<CGeneralLedger> generalLedgerList = generalLedgerService.getGeneralLedgerByGlCode(glCode);
+        if (!generalLedgerList.isEmpty())
+            for (CGeneralLedger cg : generalLedgerList) {
+                if (!cg.getGeneralLedgerDetails().isEmpty())
+                    for (CGeneralLedgerDetail cgd : cg.getGeneralLedgerDetails()) {
+                        if (accountDetailTypeId.equals(cgd.getDetailTypeId().getId()))
+                            return false;
+                    }
+            }
         return true;
     }
 
     void saveCoaDetails(final CChartOfAccounts accounts) {
         final List<Accountdetailtype> rowsToBeDeleted = getAccountDetailTypeToBeDeleted(accountDetailType, accounts);
         final List<Accountdetailtype> rowsToBeAdded = getAccountDetailTypeToBeAdded(accountDetailType, accounts);
-        deleteAccountDetailType(rowsToBeDeleted, accounts);
-        if (accountDetailType.size() == 1 && rowsToBeAdded.size() == 1 && rowsToBeDeleted.size() == 0 && updateOnly)
-            if (!validAddtition(model.getGlcode()))
-            {
+        String accountDetailTypeName = "";
+        if (accounts.getChartOfAccountDetails().isEmpty() && !accountDetailType.isEmpty() && updateOnly) {
+            if (!validAddtition(model.getGlcode())) {
                 final String message = getText("chartOfAccount.accDetail.uncancelled.bills");
                 throw new ValidationException(Arrays.asList(new ValidationError(message, message)));
             }
-        for (final Accountdetailtype entry : rowsToBeAdded)
-        
+        }
+
+        else if (accounts.getChartOfAccountDetails().size() == rowsToBeDeleted.size() && rowsToBeAdded.isEmpty())
+            deleteAccountDetailType(rowsToBeDeleted, accounts);
+        for (final Accountdetailtype entry : rowsToBeAdded) {
             if (!coaHasAccountdetailtype(entry, accounts)) {
                 final CChartOfAccountDetail chartOfAccountDetail = new CChartOfAccountDetail();
                 chartOfAccountDetail.setDetailTypeId(entry);
@@ -337,8 +363,30 @@ public class ChartOfAccountsAction extends BaseFormAction {
                 accounts.getChartOfAccountDetails().add(chartOfAccountDetail);
                 chartOfAccountsService.persist(accounts);
             }
-        
-        
+        }
+        if (!accounts.getChartOfAccountDetails().isEmpty() && !rowsToBeDeleted.isEmpty()) {
+            List<Accountdetailtype> accountDetailTypeToBeDeleted = new ArrayList<>();
+            for (Accountdetailtype accountDtltyp : rowsToBeDeleted) {
+                for (CChartOfAccountDetail coaDetail : accounts.getChartOfAccountDetails()) {
+                    if (coaDetail.getDetailTypeId().getId() == accountDtltyp.getId()) {
+                        if (!validAddtition(model.getGlcode(), accountDtltyp.getId()))
+                            accountDetailTypeName = accountDetailTypeName.concat(accountDtltyp.getName() + ",");
+                        else {
+                            accountDetailTypeToBeDeleted.add(accountDtltyp);
+                        }
+                    }
+                }
+            }
+            if (!accountDetailTypeToBeDeleted.isEmpty())
+                deleteAccountDetailType(accountDetailTypeToBeDeleted, accounts);
+            if (!accountDetailTypeName.isEmpty()) {
+
+                final String message = getText("chartOfAccount.accDetail.bills",
+                        new String[] { accountDetailTypeName, accountDetailTypeName });
+                throw new ValidationException(Arrays.asList(new ValidationError(message, message)));
+            }
+        }
+
         chartOfAccountsService.getSession().flush();
     }
 

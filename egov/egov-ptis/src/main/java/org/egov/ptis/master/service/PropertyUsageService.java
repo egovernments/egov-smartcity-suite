@@ -54,6 +54,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
+import org.egov.ptis.domain.repository.master.usage.PropertyUsageRepository;
 import org.egov.ptis.report.bean.PropertyUsageSearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,6 +74,9 @@ public class PropertyUsageService {
     
     @PersistenceContext
     private EntityManager entityManager;
+    
+    @Autowired
+    private PropertyUsageRepository propertyUsageRepository;
 
     @Autowired
     public PropertyUsageService(final PropertyUsageDAO propertyUsageHibernateDAO) {
@@ -144,5 +148,13 @@ public class PropertyUsageService {
         }
         
         return propertyUsageSearchList;
+    }
+    
+    public List<PropertyUsage> getResidentialPropertyUsages(){
+        return propertyUsageRepository.findByIsResidentialTrueAndIsActiveTrueOrderByUsageName();
+    }
+    
+    public List<PropertyUsage> getNonResidentialPropertyUsages(){
+        return propertyUsageRepository.findByIsResidentialFalseAndIsActiveTrueOrderByUsageName();
     }
 }

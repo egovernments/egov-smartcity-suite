@@ -42,6 +42,7 @@ package org.egov.infra.admin.master.repository;
 
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -88,4 +89,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(" select count(*) from User usr where usr.username like :name||'%' ")
     public Integer getUserSerialNumberByName(@Param("name") final String name);
+    
+    public User findByNameAndMobileNumberAndGender(String name, String mobileNumber, Gender gender);
 }

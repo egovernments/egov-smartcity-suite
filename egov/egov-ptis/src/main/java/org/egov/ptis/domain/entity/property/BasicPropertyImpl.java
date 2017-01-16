@@ -39,15 +39,8 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.BaseModel;
-import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.entity.objection.RevisionPetition;
-import org.egov.ptis.domain.entity.recovery.Recovery;
-import org.egov.ptis.notice.PtNotice;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,8 +50,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infstr.models.BaseModel;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.recovery.Recovery;
+import org.egov.ptis.notice.PtNotice;
 
 public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     /**
@@ -105,6 +105,8 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     private Double longitude;
     private Double latitude;
     private boolean eligible;
+    private List<Amalgamation> amalgamations = new ArrayList<>();
+    private List<Amalgamation> amalgamationsProxy = new ArrayList<>();
 
     @Override
     public List<PropertyOwnerInfo> getPropertyOwnerInfo() {
@@ -819,6 +821,31 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     @Override
     public void setEligible(boolean eligible) {
         this.eligible = eligible;
+    }
+
+    @Override
+    public List<Amalgamation> getAmalgamations() {
+        return amalgamations;
+    }
+
+    @Override
+    public void setAmalgamations(List<Amalgamation> amalgamations) {
+        this.amalgamations = amalgamations;
+    }
+
+    @Override
+    public List<Amalgamation> getAmalgamationsProxy() {
+        return amalgamationsProxy;
+    }
+
+    @Override
+    public void setAmalgamationsProxy(List<Amalgamation> amalgamationsProxy) {
+        this.amalgamationsProxy = amalgamationsProxy;
+    }
+
+    @Override
+    public void addAmalgamations(Amalgamation amalgamation) {
+        getAmalgamations().add(amalgamation);
     }
 
 }

@@ -38,8 +38,12 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-
 package org.egov.ptis.domain.entity.property;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import org.egov.commons.Installment;
 import org.egov.exceptions.InvalidPropertyException;
@@ -48,11 +52,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 /**
  * This is the interface for the Property which reperesents the Status and Source of each Property. Every Property Object has some
@@ -149,9 +148,9 @@ public interface Property extends Auditable {
 
     public void setIsExemptedFromTax(Boolean isExemptedFromTax);
 
-	public TaxExemptionReason getTaxExemptedReason();
+    public TaxExemptionReason getTaxExemptedReason();
 
-	public void setTaxExemptedReason(TaxExemptionReason taxExemptedReason);
+    public void setTaxExemptedReason(TaxExemptionReason taxExemptedReason);
 
     public String getDocNumber();
 
@@ -188,13 +187,23 @@ public interface Property extends Auditable {
     public String getApplicationNo();
 
     public void setApplicationNo(String applicationNo);
-    
+
     public String getDemolitionReason();
-    
+
     public void setDemolitionReason(String demolitionReason);
 
-    public Character getSource(); 
+    public Character getSource();
 
     public void setSource(Character source);
+
+    public List<AmalgamationOwner> getAmalgamationOwners();
+
+    public void setAmalgamationOwners(List<AmalgamationOwner> amalgamationOwners);
+
+    public List<AmalgamationOwner> getAmalgamationOwnersProxy();
+
+    public void setAmalgamationOwnersProxy(List<AmalgamationOwner> amalgamationOwnersProxy);
+
+    public void addAmalgamationOwners(AmalgamationOwner ownerInfo);
 
 }

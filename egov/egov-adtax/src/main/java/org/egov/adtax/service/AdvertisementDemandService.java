@@ -831,10 +831,10 @@ public int generateDemandForNextInstallment(final List<Advertisement> advertisem
                 oldEncroachmentDetail = dmdDtl;
             }
             if (dmdDtl.getEgDemandReason().getId() == newtaxReasonInstallment.getId()) {
-                enchroachmentFeeAlreadyExistInDemand = true;
+                taxFeeAlreadyExistInDemand = true;
             }
             if (dmdDtl.getEgDemandReason().getId() == newencroachmentFeeReasonInstallment.getId()) {
-                taxFeeAlreadyExistInDemand = true;
+                enchroachmentFeeAlreadyExistInDemand = true;
             }
         }
         // Copy last financial year tax and encroachment details to new

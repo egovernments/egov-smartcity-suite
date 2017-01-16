@@ -88,6 +88,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -438,5 +439,15 @@ public class PropertyTaxCommonUtils {
             case 3 : return dayOfMonth+"rd";
             default : return dayOfMonth+"th";
         }
+    }
+    
+    /**
+     * Returns whether the ULB is Corporation or not
+     * 
+     * @return boolean
+     */
+    public Boolean isCorporation() {
+        final City city = (City) entityManager.createQuery("from City").getSingleResult();
+        return city.getGrade().equals(PropertyTaxConstants.CITY_GRADE_CORPORATION) ? true : false;
     }
 }

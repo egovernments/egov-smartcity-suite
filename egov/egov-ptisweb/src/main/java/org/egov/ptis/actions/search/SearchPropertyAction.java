@@ -59,9 +59,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVI
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
@@ -78,6 +82,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -164,7 +169,12 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
                 "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "wfType", "GRP", "applicationType", "${applicationType}" }),
         @Result(name = APPLICATION_TYPE_MEESEVA_RP, type = "redirectAction", location = "revPetition-newForm", params = {
                 "namespace", "/revPetition", "propertyId", "${assessmentNum}", "meesevaApplicationNumber",
-                "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "applicationType", "${applicationType}" ,"wfType","RP"})})
+                "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "applicationType", "${applicationType}" ,"wfType","RP"}),
+        @Result(name = APPLICATION_TYPE_AMALGAMATION, type = "redirectAction", location = "amalgamation-newForm", params = {
+                "namespace", "/amalgamation", "indexNumber", "${assessmentNum}", "applicationType", "${applicationType}", "modifyRsn", "AMALG" })})
+
+//@Result(name = APPLICATION_TYPE_AMALGAMATION, type = "redirect", location = "../amalgamation/new/${assessmentNum}")})
+
 public class SearchPropertyAction extends BaseFormAction {
     /**
      *
@@ -305,6 +315,24 @@ public class SearchPropertyAction extends BaseFormAction {
                     && !applicationType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT)
                     && !applicationType.equalsIgnoreCase(APPLICATION_TYPE_TAX_EXEMTION)) {
                 addActionError(getText("EWSHS.transaction.error"));
+                return COMMON_FORM;
+            }
+        }
+        if(APPLICATION_TYPE_AMALGAMATION.equalsIgnoreCase(applicationType)){
+            Property property = basicProperty.getProperty();
+            Map<String, BigDecimal> propertyTaxDetails = propertyService
+                    .getCurrentPropertyTaxDetails(basicProperty.getActiveProperty());
+            Map<String, BigDecimal> currentTaxAndDue = propertyService.getCurrentTaxAndBalance(propertyTaxDetails,
+                    new Date());
+            BigDecimal currentPropertyTaxDue = currentTaxAndDue.get(CURR_BAL_STR);
+            BigDecimal arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
+            BigDecimal currentWaterTaxDue = propertyService.getWaterTaxDues(basicProperty.getUpicNo());
+            if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
+                addActionError(getText("tax.dues.error"));
+                return COMMON_FORM;
+            }
+            if(property != null && property.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND)){
+                addActionError(getText("amalgamation.vlt.error"));
                 return COMMON_FORM;
             }
         }
@@ -1052,6 +1080,12 @@ public class SearchPropertyAction extends BaseFormAction {
     @Action(value = "/search/searchproperty-adddemand")
     public String AddDemand() {
         setApplicationType(APPLICATION_TYPE_ADD_DEMAND);
+        return commonForm();
+    }
+    
+    @Action(value = "/search/searchproperty-amalgamation")
+    public String amalgamation() {
+        setApplicationType(APPLICATION_TYPE_AMALGAMATION);
         return commonForm();
     }
 

@@ -156,7 +156,7 @@ public class UpdateHoardingController extends HoardingControllerSupport {
                
             if (AdvertisementTaxConstants.WF_APPROVE_BUTTON.equals(workFlowAction)){
             	 message = messageSource.getMessage("msg.success.approved",
-                        new String[] { advertisementPermitDetail.getPermissionNumber() }, null);
+                        new String[] { advertisementPermitDetail.getAdvertisement().getAdvertisementNumber(), advertisementPermitDetail.getPermissionNumber() }, null);
                     redirAttrib.addFlashAttribute("message", message);
             }
                 else if (AdvertisementTaxConstants.WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)||

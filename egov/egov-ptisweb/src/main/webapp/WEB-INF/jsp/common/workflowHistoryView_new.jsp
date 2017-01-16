@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -37,43 +36,43 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-<!DOCTYPE hibernate-mapping PUBLIC
-   "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+  --%>
 
-<hibernate-mapping>
-	<class name="org.egov.ptis.domain.entity.property.PropertyOccupation"
-		table="EGPT_OCCUPATION_TYPE_MASTER">
-		<id name="id" column="ID" type="java.lang.Long">
-			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-				<param name="sequence_name">SEQ_OCCUPATION_TYPE_MASTER</param>
-			</generator>
-		</id>
-		<property name="createdDate" type="java.util.Date">
-			<column name="CREATED_DATE" not-null="true" />
-		</property>
-		<property name="modifiedDate" type="java.util.Date">
-			<column name="MODIFIED_DATE" not-null="true" />
-		</property>
-		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
-			cascade="all">
-			<column name="CREATED_BY" />
-		</many-to-one>
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
-			cascade="all">
-			<column name="MODIFIED_BY" />
-		</many-to-one>
-		<property name="occupation" column="OCCUPATION" type="string" />
-
-		<property name="occupancyFactor" column="OCCUPANY_FACTOR"
-			type="float" />
-		<property name="occupancyCode" column="CODE" type="string" />
-		<property name="fromDate" column="FROM_DATE" />
-		<property name="toDate" column="TO_DATE" />
-		<many-to-one name="propertyUsage" column="ID_USG_MSTR"
-			class="org.egov.ptis.domain.entity.property.PropertyUsage" cascade="all"
-			unique="true" />
-
-	</class>
-</hibernate-mapping>
+<div class="panel-heading" style="text-align: left">
+	<div class="panel-title">
+		<s:text name="lbl.wfhistory" />
+	</div>
+</div>
+<div class="panel-body">
+	<table class="table table-bordered" id="nameTable">
+		<thead>
+			<tr>
+				<th class="text-center"><s:text name="lbl.date" /></th>
+				<th class="text-center"><s:text name="lbl.updatedby" /></th>
+				<th class="text-center"><s:text name="lbl.owner" /></th>
+				<th class="text-center"><s:text name="lbl.status" /></th>
+				<th class="text-center"><s:text name="lbl.comments" /></th>
+			</tr>
+		</thead>
+		<tbody>
+			<s:if test="%{!historyMap.isEmpty()}">
+				<s:iterator value="%{historyMap}" var="history">
+					<tr>
+						<td style="text-align: left"><s:date
+								name="#history.date" var="updatedDate"
+								format="dd/MM/yyyy hh:mm:ss" /> <s:property
+								value="#updatedDate" /></td>
+						<td style="text-align: left"><s:property
+								value="%{#history.updatedBy}" /></td>
+						<td style="text-align: left"><s:property
+								value="%{#history.user}" /></td>
+						<td style="text-align: left"><s:property
+								value="%{#history.status}" /></td>
+						<td style="text-align: left"><s:property
+								value="%{#history.comments}" /></td>
+					</tr>
+				</s:iterator>
+			</s:if>
+		</tbody>
+	</table>
+</div>

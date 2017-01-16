@@ -1447,11 +1447,12 @@ public class PropertyService {
                 QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE, parentBasicProperty.getUpicNo(), "Y",
                 PropertyTaxConstants.PROP_CREATE_RSN);
         LOGGER.debug("createAmalgPropStatVal: activePropStatVal: " + activePropStatVal);
-        for (final PropertyStatusValues propstatval : activePropStatVal)
-            propstatval.setIsActive("N");
+        if(!activePropStatVal.isEmpty())
+            for (final PropertyStatusValues propstatval : activePropStatVal)
+                propstatval.setIsActive("N");
 
         for (final String amalgId : amalgPropIds)
-            if (amalgId != null && !amalgId.equals("")) {
+            if (StringUtils.isNotBlank(amalgId)) {
                 final BasicProperty amalgBasicProp = (BasicProperty) getPropPerServ().findByNamedQuery(
                         PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, amalgId);
                 final PropertyStatusValues amalgPropStatVal = new PropertyStatusValues();
@@ -1462,27 +1463,18 @@ public class PropertyService {
                 amalgPropStatVal.setReferenceDate(new Date());
                 amalgPropStatVal.setReferenceNo("0001");
                 amalgPropStatVal.setRemarks("Property Amalgamated");
+                amalgPropStatVal.setReferenceBasicProperty(parentBasicProperty);
+                amalgBasicProp.setActive(FALSE);
                 amalgBasicProp.addPropertyStatusValues(amalgPropStatVal);
                 // At final approval a new PropetyStatusValues has to created
                 // with status INACTIVE and set the amalgBasicProp status as
                 // INACTIVE and ISACTIVE as 'N'
                 amalgPropStatVal.setBasicProperty(amalgBasicProp);
-
-                final PropertyStatusValues propertyStatusValueschild = new PropertyStatusValues();
-                final PropertyStatus propertyStatuschild = (PropertyStatus) getPropPerServ().find(
-                        "from PropertyStatus where statusCode=?", "CREATE");
-                propertyStatusValueschild.setIsActive("Y");
-                propertyStatusValueschild.setPropertyStatus(propertyStatuschild);
-                propertyStatusValueschild.setReferenceDate(new Date());
-                propertyStatusValueschild.setReferenceNo("0001");
-                propertyStatusValueschild.setReferenceBasicProperty(amalgBasicProp);
-                parentBasicProperty.addPropertyStatusValues(propertyStatusValueschild);
-                propertyStatusValueschild.setBasicProperty(parentBasicProperty);
-                LOGGER.debug("propertyStatusValueschild: " + propertyStatusValueschild);
+                parentBasicProperty.addPropertyStatusValues(amalgPropStatVal);
             }
         LOGGER.debug("Exiting from createAmalgPropStatVal");
     }
-
+    
     /**
      * Creates arrears demand for newly created property
      *
@@ -2020,7 +2012,7 @@ public class PropertyService {
                         .withApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().contains(WF_STATE_REJECTED)||property.getState().getValue().contains(WF_STATE_CLOSED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
                         .build();
 
-                applicationIndexService.createApplicationIndex(applicationIndex);
+                //applicationIndexService.createApplicationIndex(applicationIndex);
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
                 if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)

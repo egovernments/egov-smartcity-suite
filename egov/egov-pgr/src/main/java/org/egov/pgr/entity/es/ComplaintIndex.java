@@ -282,8 +282,8 @@ public class ComplaintIndex {
     @Field(type = FieldType.Integer)
     private int reOpened;
 
-    @Field(type = FieldType.String, index = not_analyzed)
-    private String categoryId;
+    @Field(type = FieldType.Long)
+    private Long categoryId;
 
     @Field(type = FieldType.String, index = not_analyzed)
     private String categoryName;
@@ -704,11 +704,11 @@ public class ComplaintIndex {
         return initialFunctionaryAssigneddate;
     }
 
-    public String getCategoryId() {
+    public Long getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(final String categoryId) {
+    public void setCategoryId(final Long categoryId) {
         this.categoryId = categoryId;
     }
 

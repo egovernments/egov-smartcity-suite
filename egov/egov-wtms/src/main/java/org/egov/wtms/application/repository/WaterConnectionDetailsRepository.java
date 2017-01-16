@@ -133,4 +133,6 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
 
     @Query("select D from EgDemandDetails D where D.id =:detId")
     EgDemandDetails findEgDemandDetailById(@Param("detId") Long detId);
+    
+    WaterConnectionDetails findByConnectionOldConsumerNumberAndConnectionStatus(String oldConsumerNumber,ConnectionStatus connectionStatus);
 }

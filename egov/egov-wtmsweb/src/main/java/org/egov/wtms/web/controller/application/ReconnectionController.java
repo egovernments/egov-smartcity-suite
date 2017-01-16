@@ -47,6 +47,7 @@ import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.ReconnectionService;
+import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.PipeSize;
@@ -105,9 +106,8 @@ public class ReconnectionController extends GenericConnectionController {
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
             @ModelAttribute final WaterConnectionDetails waterConnectionDetails) {
-        waterConnectionDetails.setApplicationType(applicationTypeService
-                .findByCode(WaterTaxConstants.RECONNECTIONCONNECTION));
-        return waterConnectionDetailsService.getAllActiveDocumentNames(waterConnectionDetails.getApplicationType());
+        ApplicationType applicationType= applicationTypeService.findByCode(WaterTaxConstants.RECONNECTIONCONNECTION);
+        return waterConnectionDetailsService.getAllActiveDocumentNames(applicationType);
     }
 
     

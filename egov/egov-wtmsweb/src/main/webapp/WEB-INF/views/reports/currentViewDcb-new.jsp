@@ -55,8 +55,17 @@
 				enctype="multipart/form-data">
 				<div class="page-container" id="page-container">
 					<form:hidden id="mode" path="" name="mode" value="${mode}" />
-					<input type="hidden" id="consumerCode" name="consumerCode"
-						value="${waterConnectionDetails.connection.consumerCode}" />
+					<c:choose>
+						<c:when
+							test="${not empty  waterConnectionDetails.connection.oldConsumerNumber}">
+							<input type="hidden" id="consumerCode" name="consumerCode"
+								value="${waterConnectionDetails.connection.oldConsumerNumber}" />
+						</c:when>
+						<c:otherwise>
+							<input type="hidden" id="consumerCode" name="consumerCode"
+								value="${waterConnectionDetails.connection.consumerCode}" />
+						</c:otherwise>
+					</c:choose>
 						<input type="hidden"  id="citizenRole" value="${citizenRole}" />
 						<input type="hidden"  name="applicationTypeCode" id="applicationTypeCode" value="${applicationTypeCode}" />
 						<input type="hidden"  name="waterTaxDueforParent" id="waterTaxDueforParent" value="${waterTaxDueforParent}" />

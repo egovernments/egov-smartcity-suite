@@ -181,6 +181,14 @@
 			<one-to-many class="org.egov.ptis.domain.entity.property.VacancyRemission"/>
 		</bag>
 		
+		<bag name="amalgamations" cascade="all-delete-orphan" table="EGPT_AMALGAMATION"
+			inverse="true" order-by="id">
+			<key>
+				<column name="PARENTPROPERTY" not-null="true" />
+			</key>
+			<one-to-many class="org.egov.ptis.domain.entity.property.Amalgamation"/>
+		</bag>
+		
 		<property name="partNo" column="PARTNO" />
 		<property name="allChangesCompleted" column="ALL_CHANGES_COMPLETED"/>
 		<property name="isBillCreated" column="IS_BILL_CREATED"/>

@@ -102,4 +102,6 @@ public interface BasicPropertyDAO {
     public List<BasicProperty> getBasicPropertiesForTaxDetails(String assessmentNo, String ownerName, String mobileNumber, String propertyType, String doorNo);
     
     public List<BasicProperty> getActiveBasicPropertiesForWard(Long wardId);
+    
+    public BasicProperty getBasicPropertyByProperty(Long propertyId);
 }

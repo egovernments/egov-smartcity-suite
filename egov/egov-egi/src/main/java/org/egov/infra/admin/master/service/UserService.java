@@ -43,6 +43,7 @@ package org.egov.infra.admin.master.service;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.UserRepository;
+import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -131,5 +132,9 @@ public class UserService {
 
     public List<User> getUsersByUsernameAndRolename(final String userName, final String roleName) {
         return userRepository.findUsersByUserAndRoleName(userName, roleName);
+    }
+    
+    public User getUserByNameAndMobileNumberForGender(String name, String mobileNumber, Gender gender){
+        return userRepository.findByNameAndMobileNumberAndGender(name, mobileNumber, gender);
     }
 }

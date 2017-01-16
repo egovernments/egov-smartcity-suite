@@ -537,4 +537,14 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
     	query.setLong("wardId", wardId);
     	return query.list();
     }
+    
+    @Override
+    public BasicProperty getBasicPropertyByProperty(Long propertyId){
+        BasicProperty basicProperty;
+        String queryStr = "select prop.basicProperty from PropertyImpl prop where prop.id=:propertyId ";
+        Query query = getCurrentSession().createQuery(queryStr);
+        query.setLong("propertyId", propertyId);
+        basicProperty = (BasicProperty) query.uniqueResult();
+        return basicProperty;
+    }
 }

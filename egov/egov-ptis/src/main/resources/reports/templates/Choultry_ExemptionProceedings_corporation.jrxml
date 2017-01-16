@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-01-11T17:58:02 -->
+<!-- 2017-01-12T14:01:48 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ExService_ExemptionProceedings_municipality" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -132,7 +132,7 @@
 				<text><![CDATA[Reason for exemption]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="100" y="287" width="100" height="25" isPrintWhenDetailOverflows="true" uuid="f971c561-24e2-4df9-813e-546460fdb315"/>
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="286" width="100" height="26" isPrintWhenDetailOverflows="true" uuid="f971c561-24e2-4df9-813e-546460fdb315"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -146,7 +146,7 @@
 				<textFieldExpression><![CDATA[$P{currentPropertyTax}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="200" y="287" width="129" height="25" isPrintWhenDetailOverflows="true" uuid="0be3e8ec-0e4b-4383-b693-be30795ca582"/>
+				<reportElement stretchType="RelativeToTallestObject" x="200" y="286" width="129" height="26" isPrintWhenDetailOverflows="true" uuid="0be3e8ec-0e4b-4383-b693-be30795ca582"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -160,7 +160,7 @@
 				<textFieldExpression><![CDATA[$P{currentPropertyTax}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="329" y="287" width="122" height="25" isPrintWhenDetailOverflows="true" uuid="1cba2d89-5ada-4ad5-b8a6-a5bc8550b96f"/>
+				<reportElement stretchType="RelativeToTallestObject" x="329" y="286" width="122" height="26" isPrintWhenDetailOverflows="true" uuid="1cba2d89-5ada-4ad5-b8a6-a5bc8550b96f"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>

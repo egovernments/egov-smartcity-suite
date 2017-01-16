@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-01-11T17:53:46 -->
+<!-- 2017-01-12T14:19:27 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ExService_ExemptionProceedings_municipality" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -161,7 +161,7 @@
 				<text><![CDATA[Amount of H/Y property tax now exempted from]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="330" y="290" width="121" height="20" uuid="db6877c0-31e6-46f7-9114-32f32b90c23a"/>
+				<reportElement x="329" y="290" width="122" height="20" uuid="db6877c0-31e6-46f7-9114-32f32b90c23a"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>

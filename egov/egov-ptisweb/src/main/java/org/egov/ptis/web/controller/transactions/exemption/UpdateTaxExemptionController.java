@@ -192,14 +192,12 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
             property.setStatus(STATUS_ISACTIVE);
             oldProperty.setStatus(STATUS_ISHISTORY);
         }
-        final String exemptioReason = property.getTaxExemptedReason().getCode();
         if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE) ||
                 WFLOW_ACTION_STEP_PREVIEW.equalsIgnoreCase(workFlowAction) ||
                 WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
             return "redirect:/notice/propertyTaxNotice-generateExemptionNotice.action?basicPropId="
                     + property.getBasicProperty().getId() + "&noticeType=" + NOTICE_TYPE_EXEMPTION
-                    + "&noticeMode=" + NOTICE_TYPE_EXEMPTION + "&actionType=" + workFlowAction + "&exemptionReason="
-                    + exemptioReason;
+                    + "&noticeMode=" + NOTICE_TYPE_EXEMPTION + "&actionType=" + workFlowAction;
         else {
 
             if (request.getParameter("mode").equalsIgnoreCase(VIEW))

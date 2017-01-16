@@ -145,6 +145,11 @@ public class WaterTaxConstants {
     public static final String WF_STATE_CLERK_APPROVED = "Clerk approved";
     public static final String WF_STATE_PAYMENT_DONE_AGT_ESTIMATION = "Payment done against Estimation";
     public static final String WF_STATE_COMMISSIONER_APPROVED = "Commissioner Approved";
+    public static final String WF_STATE_CLOSURE_FORWARED_APPROVER="Close forwared By Approver";
+    public static final String WF_STATE_RECONN_FORWARED_APPROVER="ReConn forwared By Approver";
+    public static final String WF_STATE_COLSURE_APPROVED="Close approve By Comm";
+    public static final String WF_STATE_RECONN_APPROVED="Reconnection approve By Comm";
+    public static final String WF_STATE_STATE_FORWARD="Application Approval Pending";
     public static final String WF_STATE_ASSISTANT_ENGINEER_APPROVED = "Asst engg approved";
     public static final String WF_STATE_WORK_ORDER_GENERETED = "Work order generated";
 

@@ -39,6 +39,9 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
@@ -64,6 +67,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Controller to correct the registration data
@@ -222,5 +226,21 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         marriageRegistrationService.updateRegistration(registration);
         model.addAttribute("message", messageSource.getMessage("msg.update.registration", null, null));
         return MRG_REGISTRATION_SUCCESS;
+    }
+    
+    /**
+     * @param serialNo
+     * @return
+     */
+    @RequestMapping(value = "/checkunique-serialno", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public boolean uniqueSerialNo(@RequestParam final String serialNo) {
+        MarriageRegistration registration = null;
+        if (serialNo != null && serialNo != "") {
+            registration = marriageRegistrationService.findBySerialNo(serialNo);
+        }
+        if (registration != null)
+            return true;
+        return false;
     }
 }

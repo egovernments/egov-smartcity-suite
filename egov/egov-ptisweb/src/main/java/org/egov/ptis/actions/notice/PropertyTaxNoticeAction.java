@@ -42,18 +42,18 @@ package org.egov.ptis.actions.notice;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.CHOULTRY;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.EDU_INST;
-import static org.egov.ptis.constants.PropertyTaxConstants.EXSERVICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION_CHOULTRY;
+import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION_EDU_INST;
+import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION_EXSERVICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION_NGO;
+import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION_PENSIONER;
+import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION_PUBLIC_WORSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.NGO;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PENSIONER;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.PUBLIC_WORSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_BASICPROPID;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_CHOULTRY_EXEMPTION_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_EDU_INST_EXEMPTION_NOTICE;
@@ -176,8 +176,6 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     private RevisionPetitionService revisionPetitionService;
     private String signedFileStoreId;
     private boolean digitalSignEnabled;
-
-    private String exemptionReason;
 
     @Autowired
     private PtDemandDao ptDemandDAO;
@@ -401,13 +399,13 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             reportId = reportViewerUtil.addReportToTempCache(reportOutput);
             endWorkFlow(basicProperty);
         } else {
-            PropertyNoticeInfo propertyNotice = null;
+            PropertyNoticeInfo propertyNotice;
             String noticeNo = null;
             if (WFLOW_ACTION_STEP_SIGN.equals(actionType) && notice == null)
                 noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(noticeType);
             propertyNotice = new PropertyNoticeInfo(property, noticeNo);
             final ReportRequest reportInput = generateExemptedNoticeReportRequest(basicProperty, propertyNotice,
-                    exemptionReason, noticeNo);
+                    noticeNo);
             reportOutput = reportService.createReport(reportInput);
             if (reportOutput != null && reportOutput.getReportOutputData() != null)
                 NoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
@@ -519,7 +517,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     }
 
     private ReportRequest generateExemptedNoticeReportRequest(final BasicPropertyImpl basicProperty,
-            final PropertyNoticeInfo propertyNotice, final String exemptionReason, final String noticeNo) {
+            final PropertyNoticeInfo propertyNotice, final String noticeNo) {
         final Map<String, Object> reportParams = new HashMap<>();
         ReportRequest reportInput;
         reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null
@@ -565,8 +563,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         reportParams.put("isCorporation", isCorporation);
         reportParams.put("actionType", actionType);
         setNoticeInfo(propertyNotice, basicProperty, noticeMode);
-        reportInput = getExemptionReason(propertyNotice, exemptionReason, reportParams);
-
+        reportInput = getReportByExemptionReason(propertyNotice, basicProperty.getProperty().getTaxExemptedReason().getCode(),
+                reportParams);
         if (reportInput != null) {
             reportInput.setPrintDialogOnOpenReport(true);
             reportInput.setReportFormat(FileFormat.PDF);
@@ -574,25 +572,25 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         return reportInput;
     }
 
-    private ReportRequest getExemptionReason(final PropertyNoticeInfo propertyNotice, final String exemptionReason,
+    private ReportRequest getReportByExemptionReason(final PropertyNoticeInfo propertyNotice, final String exemptionReason,
             final Map<String, Object> reportParams) {
         ReportRequest reportInput = null;
-        if (NGO.equalsIgnoreCase(exemptionReason))
+        if (EXEMPTION_NGO.equalsIgnoreCase(exemptionReason))
             reportInput = new ReportRequest(REPORT_NGO_EXEMPTION_NOTICE, propertyNotice,
                     reportParams);
-        else if (PENSIONER.equalsIgnoreCase(exemptionReason))
+        else if (EXEMPTION_PENSIONER.equalsIgnoreCase(exemptionReason))
             reportInput = new ReportRequest(REPORT_RETIRED_EXEMPTION_NOTICE, propertyNotice,
                     reportParams);
-        else if (EDU_INST.equalsIgnoreCase(exemptionReason))
+        else if (EXEMPTION_EDU_INST.equalsIgnoreCase(exemptionReason))
             reportInput = new ReportRequest(REPORT_EDU_INST_EXEMPTION_NOTICE, propertyNotice,
                     reportParams);
-        else if (EXSERVICE.equalsIgnoreCase(exemptionReason) || "EX-SERVICE".equalsIgnoreCase(exemptionReason))
+        else if (EXEMPTION_EXSERVICE.equalsIgnoreCase(exemptionReason) || "EX-SERVICE".equalsIgnoreCase(exemptionReason))
             reportInput = new ReportRequest(REPORT_EXSRVICE_EXEMPTION_NOTICE, propertyNotice,
                     reportParams);
-        else if (CHOULTRY.equalsIgnoreCase(exemptionReason))
+        else if (EXEMPTION_CHOULTRY.equalsIgnoreCase(exemptionReason))
             reportInput = new ReportRequest(REPORT_CHOULTRY_EXEMPTION_NOTICE, propertyNotice,
                     reportParams);
-        else if (PUBLIC_WORSHIP.equalsIgnoreCase(exemptionReason))
+        else if (EXEMPTION_PUBLIC_WORSHIP.equalsIgnoreCase(exemptionReason))
             reportInput = new ReportRequest(REPORT_PUBLIC_WORSHIP_EXEMPTION_NOTICE, propertyNotice,
                     reportParams);
         return reportInput;
@@ -933,14 +931,6 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 
     public void setDigitalSignEnabled(final boolean digitalSignEnabled) {
         this.digitalSignEnabled = digitalSignEnabled;
-    }
-
-    public String getExemptionReason() {
-        return exemptionReason;
-    }
-
-    public void setExemptionReason(final String exemptionReason) {
-        this.exemptionReason = exemptionReason;
     }
 
 }
