@@ -508,36 +508,33 @@ public class ContractorAction extends SearchFormAction {
         final String[] contractorMasterMandatoryFields = mandatoryFields;
 
         for (final String val : contractorMasterMandatoryFields) {
-            if (val.equals("mobileNumber") && StringUtils.isBlank(contractor.getMobileNumber()))
-                validationErrors
-                        .add(new ValidationError("contractor.mobileNumber", "depositworks.roadcut.enter.mobileno"));
-            if (val.equals("bankAccount") && StringUtils.isBlank(contractor.getBankAccount()))
-                validationErrors.add(new ValidationError("contractor.bankAccount", "contractor.bankaccount.null"));
-            if (val.equals("bank") && (contractor.getBank() == null || contractor.getBank().getId() == -1))
-                validationErrors.add(new ValidationError("contractor.bank.name", "bank.name.null"));
-            if (val.equals("ifscCode") && StringUtils.isBlank(contractor.getIfscCode()))
-                validationErrors.add(new ValidationError("contractor.ifscCode", "contractor.ifsccode.null"));
-            if (val.equals("tinNumber") && StringUtils.isBlank(contractor.getTinNumber()))
-                validationErrors.add(new ValidationError("contractor.tinNumber", "contractor.tinnumber.null"));
-            if (val.equals("panNumber") && StringUtils.isBlank(contractor.getPanNumber()))
-                validationErrors.add(new ValidationError("contractor.panNumber", "contractor.pannumber.null"));
-            if (val.equals("email") && StringUtils.isBlank(contractor.getEmail()))
-                validationErrors.add(new ValidationError("contractor.email", "depositworks.roadcut.enter.email"));
-            if (val.equals("contactPerson") && StringUtils.isBlank(contractor.getContactPerson()))
-                validationErrors.add(new ValidationError("contractor.contactPerson", "contractor.contactperson.null"));
-            if (val.equals("narration") && StringUtils.isBlank(contractor.getNarration()))
-                validationErrors.add(new ValidationError("contractor.narration", "contractor.narration.null"));
-            if (val.equals("correspondenceAddress") && StringUtils.isBlank(contractor.getCorrespondenceAddress()))
-                validationErrors.add(new ValidationError("contractor.correspondenceAddress",
-                        "contractor.correspondenceAddress.null"));
-            if (val.equals("paymentAddress") && StringUtils.isBlank(contractor.getPaymentAddress()))
-                validationErrors
-                        .add(new ValidationError("contractor.paymentAddress", "contractor.paymentAddress.null"));
-            if (val.equals("pwdApprovalCode") && StringUtils.isBlank(contractor.getPwdApprovalCode()))
-                validationErrors
-                        .add(new ValidationError("contractor.pwdApprovalCode", "contractor.pwdApprovalCode.null"));
-            if (val.equals("exemptionForm") && StringUtils.isBlank(contractor.getExemptionForm().toString()))
-                validationErrors.add(new ValidationError("contractor.exemptionForm", "contractor.exemptionForm.null"));
+            if ("mobileNumber".equals(val) && StringUtils.isBlank(contractor.getMobileNumber()))
+                addValidationError(validationErrors, "contractor.mobileNumber", "depositworks.roadcut.enter.mobileno");
+            if ("bankAccount".equals(val) && StringUtils.isBlank(contractor.getBankAccount()))
+                addValidationError(validationErrors, "contractor.bankAccount", "contractor.bankaccount.null");
+            if ("bank".equals(val) && (contractor.getBank() == null || contractor.getBank().getId() == -1))
+                addValidationError(validationErrors, "contractor.bank.name", "bank.name.null");
+            if ("ifscCode".equals(val) && StringUtils.isBlank(contractor.getIfscCode()))
+                addValidationError(validationErrors, "contractor.ifscCode", "contractor.ifsccode.null");
+            if ("tinNumber".equals(val) && StringUtils.isBlank(contractor.getTinNumber()))
+                addValidationError(validationErrors, "contractor.tinNumber", "contractor.tinnumber.null");
+            if ("panNumber".equals(val) && StringUtils.isBlank(contractor.getPanNumber()))
+                addValidationError(validationErrors, "contractor.panNumber", "contractor.pannumber.null");
+            if ("email".equals(val) && StringUtils.isBlank(contractor.getEmail()))
+                addValidationError(validationErrors, "contractor.email", "depositworks.roadcut.enter.email");
+            if ("contactPerson".equals(val) && StringUtils.isBlank(contractor.getContactPerson()))
+                addValidationError(validationErrors, "contractor.contactPerson", "contractor.contactperson.null");
+            if ("narration".equals(val) && StringUtils.isBlank(contractor.getNarration()))
+                addValidationError(validationErrors, "contractor.narration", "contractor.narration.null");
+            if ("correspondenceAddress".equals(val) && StringUtils.isBlank(contractor.getCorrespondenceAddress()))
+                addValidationError(validationErrors, "contractor.correspondenceAddress",
+                        "contractor.correspondenceAddress.null");
+            if ("paymentAddress".equals(val) && StringUtils.isBlank(contractor.getPaymentAddress()))
+                addValidationError(validationErrors, "contractor.paymentAddress", "contractor.paymentAddress.null");
+            if ("pwdApprovalCode".equals(val) && StringUtils.isBlank(contractor.getPwdApprovalCode()))
+                addValidationError(validationErrors, "contractor.pwdApprovalCode", "contractor.pwdApprovalCode.null");
+            if ("exemptionForm".equals(val) && StringUtils.isBlank(contractor.getExemptionForm().toString()))
+                addValidationError(validationErrors, "contractor.exemptionForm", "contractor.exemptionForm.null");
 
         }
         return validationErrors;
@@ -550,14 +547,19 @@ public class ContractorAction extends SearchFormAction {
         validationErrors.addAll(getContractorMasterMandatoryFieldsErrors(contractor, contractorMasterMandatoryFields));
 
         for (final String val : contractorMasterMandatoryFields) {
-            if (val.equals("registrationNumber") && StringUtils.isBlank(contractorDetail.getRegistrationNumber()))
-                validationErrors.add(new ValidationError("contractorDetail.registrationNumber",
-                        "contractordetail.registrationnumber.required"));
-            if (val.equals("grade")
+            if ("registrationNumber".equals(val) && StringUtils.isBlank(contractorDetail.getRegistrationNumber()))
+                addValidationError(validationErrors, "contractorDetail.registrationNumber",
+                        "contractordetail.registrationnumber.required");
+            if ("grade".equals(val)
                     && (contractorDetail.getGrade() == null || contractorDetail.getGrade().getId() == null))
-                validationErrors.add(new ValidationError("contractorDetail.grade", "contractordetail.grade.required"));
+                addValidationError(validationErrors, "contractorDetail.grade", "contractordetail.grade.required");
         }
         contractorDetail.setErrorList(validationErrors);
 
+    }
+
+    public void addValidationError(final List<ValidationError> errorList, final String errorCode,
+            final String errorValue) {
+        errorList.add(new ValidationError(errorCode, errorValue));
     }
 }

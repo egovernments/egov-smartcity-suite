@@ -317,6 +317,43 @@ function checkCodeAndName(){
   return true;
 }
 
+function checkContractorDetailsMandatoryFieldsErrors(fieldName){
+	if (fieldName == "registrationNumber")
+		checkRegistrationNumber();
+	if (fieldName == "grade")
+		checkContractorClass();
+}
+
+function checkContractorMasterMandatoryFieldsErrors(fieldName){
+	if (fieldName == "panNumber") 
+		checkPanNumber();
+	if (fieldName == "tinNumber")
+		checkTinNumber();
+	if (fieldName == "contactPerson")
+		checkContactPerson();
+	if (fieldName == "email")
+		checkEmail();
+	if (fieldName == "mobileNumber")
+		checkMobileNumber();
+	if (fieldName == "bank")
+		checkBank();
+	if (fieldName == "bankAccount")
+		checkBankAccountNumber();
+	if (fieldName == "correspondenceAddress")
+		checkCorrespondenceAddress();
+	if (fieldName == "ifscCode")
+		checkIfscCode();
+	if (fieldName == "paymentAddress")
+		checkPaymentAddress();
+	if (fieldName == "narration")
+		checkNarration();
+	if (fieldName == "exemptionForm")
+		checkExemptionForm();
+	if (fieldName == "pwdApprovalCode")
+		checkPwdApprovalCode();
+	checkContractorDetailsMandatoryFieldsErrors(fieldName);
+}
+
 function checkForMandatoryValues(){
 	if(jQuery("#mandatory").val() != null && jQuery("#hide").val() != null){
 			var mandatoryFields = jQuery("#mandatory").val().replace(/[\[\]']+/g,'').replace(/, /g, ",").split(",");
@@ -326,36 +363,7 @@ function checkForMandatoryValues(){
 				});
 			jQuery.each(contractorMasterMandatoryFields,function(){
 				var fieldName = this.toString().trim();
-				if (fieldName == "panNumber") 
-					checkPanNumber();
-				if (fieldName == "tinNumber")
-					checkTinNumber();
-				if (fieldName == "contactPerson")
-					checkContactPerson();
-				if (fieldName == "email")
-					checkEmail();
-				if (fieldName == "mobileNumber")
-					checkMobileNumber();
-				if (fieldName == "bank")
-					checkBank();
-				if (fieldName == "bankAccount")
-					checkBankAccountNumber();
-				if (fieldName == "correspondenceAddress")
-					checkCorrespondenceAddress();
-				if (fieldName == "ifscCode")
-					checkIfscCode();
-				if (fieldName == "paymentAddress")
-					checkPaymentAddress();
-				if (fieldName == "narration")
-					checkNarration();
-				if (fieldName == "exemptionForm")
-					checkExemptionForm();
-				if (fieldName == "pwdApprovalCode")
-					checkPwdApprovalCode();
-				if (fieldName == "registrationNumber")
-					checkRegistrationNumber();
-				if (fieldName == "grade")
-					checkContractorClass();
+				checkContractorMasterMandatoryFieldsErrors(fieldName);
 			});
 			window.scroll(0,0);
 			return flag;
