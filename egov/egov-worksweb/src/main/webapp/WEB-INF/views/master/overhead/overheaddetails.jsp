@@ -81,14 +81,14 @@
 									id="lumpsumamount"
 									name="tempOverheadRateValues[0].lumpsumAmount" data-idx="0"
 									onkeyup="validateLumpsumAmount();" data-optional="1"
-									class="form-control table-input text-right lumpsumAmount removeDefaultValues" />
+									class="form-control table-input text-right lumpsumAmount removeDefaultValues patternvalidation" data-pattern="decimalvalue"  />
 								<form:errors path="tempOverheadRateValues[0].lumpsumAmount"
 									cssClass="add-margin error-msg" /></td>
 							<td><form:input path="tempOverheadRateValues[0].percentage"
 									name="tempOverheadRateValues[0].percentage"
 									id="percentage" data-idx="0" onkeyup="validatePercentage();"
 									data-optional="1"
-									class="form-control table-input text-right percentage removeDefaultValues" />
+									class="form-control table-input text-right percentage removeDefaultValues patternvalidation" data-pattern="decimalvalue" />
 								<form:errors path="tempOverheadRateValues[0].percentage"
 									cssClass="add-margin error-msg" /></td>
 							<td><form:input path="tempOverheadRateValues[0].validity.startDate"
@@ -127,15 +127,15 @@
 										name="tempOverheadRateValues[${item.index}].lumpsumAmount"
 										onkeyup="validateLumpsumAmount();" data-idx="0"
 										data-optional="1"
-										class="form-control table-input text-right lumpsumAmount removeDefaultValues"
+										class="form-control table-input text-right lumpsumAmount removeDefaultValues patternvalidation" data-pattern="decimalvalue"
 										maxlength="1024" /> <form:errors
 										path="tempOverheadRateValues[${item.index}].lumpsumAmount"
 										cssClass="add-margin error-msg" /></td>
 								<td><form:input
 										path="tempOverheadRateValues[${item.index}].percentage"
 										name="tempOverheadRateValues[${item.index}].percentage" id="percentage"
-										data-idx="0" onkeyup="validatePercentage();" data-optional="1"
-										class="form-control table-input text-right percentage removeDefaultValues" />
+										data-idx="0" onkeyup="validatePercentage();" data-optional="1" data-pattern="decimalvalue"
+										class="form-control table-input text-right percentage removeDefaultValues patternvalidation" />
 									<form:errors path="overheadRates[${item.index}].percentage"
 										cssClass="add-margin error-msg" /></td>
 								<td><form:input

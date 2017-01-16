@@ -46,7 +46,7 @@
 <input type="hidden" name="mode" value="${mode}" />
 	
 		<c:if test="${ mode != 'view'}">
-			<div class="alert alert-success" id="successMessage">
+			<div class="new-page-header" id="successMessage">
 				<c:choose>
 					<c:when test="${ mode == 'edit'}">
 						${modify}
