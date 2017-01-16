@@ -71,6 +71,7 @@ import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.TaxExemptionReason;
@@ -137,7 +138,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     @RequestMapping(method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final Long id, final HttpServletRequest request) {
         isExempted = property.getBasicProperty().getActiveProperty().getIsExemptedFromTax();
-        String userDesignationList = "";
+        String userDesignationList;
         final String currState = property.getState().getValue();
         final String nextAction = property.getState().getNextAction();
         userDesignationList = propertyTaxCommonUtils.getAllDesignationsForUser(securityUtils.getCurrentUser().getId());
@@ -192,12 +193,18 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
             property.setStatus(STATUS_ISACTIVE);
             oldProperty.setStatus(STATUS_ISHISTORY);
         }
-        if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE) ||
-                WFLOW_ACTION_STEP_PREVIEW.equalsIgnoreCase(workFlowAction) ||
-                WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
-            return "redirect:/notice/propertyTaxNotice-generateExemptionNotice.action?basicPropId="
-                    + property.getBasicProperty().getId() + "&noticeType=" + NOTICE_TYPE_EXEMPTION
-                    + "&noticeMode=" + NOTICE_TYPE_EXEMPTION + "&actionType=" + workFlowAction;
+        if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)
+                || WFLOW_ACTION_STEP_PREVIEW.equalsIgnoreCase(workFlowAction)
+                || WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
+            if (property.getTaxExemptedReason() == null)
+                return "redirect:/notice/propertyTaxNotice-generateNotice.action?basicPropId="
+                        + property.getBasicProperty().getId() + "&noticeType="
+                        + PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE + "&noticeMode="
+                        + PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION + "&actionType=" + workFlowAction;
+            else
+                return "redirect:/notice/propertyTaxNotice-generateExemptionNotice.action?basicPropId="
+                        + property.getBasicProperty().getId() + "&noticeType=" + NOTICE_TYPE_EXEMPTION + "&noticeMode="
+                        + NOTICE_TYPE_EXEMPTION + "&actionType=" + workFlowAction;
         else {
 
             if (request.getParameter("mode").equalsIgnoreCase(VIEW))
@@ -209,8 +216,8 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
                         approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
             }
-            String successMessage = "";
-            Assignment assignment = new Assignment();
+            String successMessage;
+            Assignment assignment;
             if (property != null && property.getCreatedBy() != null)
                 assignment = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
             if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE))
