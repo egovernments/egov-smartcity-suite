@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2017-01-12T20:45:02 -->
+<!-- 2017-01-16T13:00:40 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -36,7 +36,7 @@
 	<title>
 		<band height="174" splitType="Stretch">
 			<staticText>
-				<reportElement x="3" y="103" width="547" height="21" isPrintInFirstWholeBand="true" uuid="c58d977b-8206-48c6-94c4-35619ef6a4a7"/>
+				<reportElement x="3" y="81" width="547" height="21" isPrintInFirstWholeBand="true" uuid="c58d977b-8206-48c6-94c4-35619ef6a4a7"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
@@ -50,7 +50,7 @@
 				<textFieldExpression><![CDATA["for the year "+$P{installMentYear}+""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="3" y="83" width="547" height="20" uuid="e55a933f-8d49-424e-b388-87a0078a2d26"/>
+				<reportElement x="3" y="60" width="547" height="20" uuid="e55a933f-8d49-424e-b388-87a0078a2d26"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
@@ -63,6 +63,13 @@
 				</textElement>
 				<textFieldExpression><![CDATA["(Issued under Section 263, 264, 272. 275 &amp; 288 etc., of APM Act, 1965)"]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="3" y="102" width="547" height="21" isPrintInFirstWholeBand="true" uuid="ef636f14-e3f2-41cb-a205-35c032d02fe2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[(For New Trade/Renewal of existing Trade License)]]></text>
+			</staticText>
 		</band>
 	</title>
 	<detail>
@@ -86,7 +93,7 @@
 				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["1.	Trade License is issued to "+$P{applicantName}+", to carry on the Trade / Operation of M/s "+$P{nameOfEstablishment}+ " and "+$P{category}+","+$P{subCategory}+ "(nature of business) at premises No: "+$P{licenceAddress}+" Vide TIN NO: "+($P{licencenumber}==null?"_____":$P{licencenumber})+" for the year "+$P{installMentYear}+"."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["1.	Trade License is issued to Sri/Smt "+$P{applicantName}+", to carry on the Trade / Operation of M/s "+$P{nameOfEstablishment}+ "("+$P{category}+","+$P{subCategory}+ ") at premises No: "+$P{licenceAddress}+" Vide TIN No: "+($P{licencenumber}==null?"-----":$P{licencenumber})+" for the year "+$P{installMentYear}+"."]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="3" y="17" width="65" height="20" uuid="53e788d3-5a77-41ae-93a8-00760a41f0ad"/>
@@ -97,7 +104,7 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[File No:]]></text>
@@ -111,7 +118,7 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Date:]]></text>
@@ -155,7 +162,7 @@
 				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["2.	License Fee Rs: "+$P{demandTotalamt}+" is paid on "+$P{demandUpdateDate}+" for running "+$P{appType}+ " of Trade License for the financial year " +$P{installMentYear}+".\n\n"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["2.	License Fee Rs: "+$P{demandTotalamt}+"/- is paid on "+$P{demandUpdateDate}+" for running "+$P{appType}+ " of Trade License for the financial year " +$P{installMentYear}+".\n\n"]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="181">
@@ -175,7 +182,7 @@
 				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["3.	This notice is deemed to be suspended / cancelled, if the under signed considers such action necessary on the grounds of public health, convenience of safety or if any of the restrictions or conditions of license or any provisions of the Act or those bye-laws are infringed or if the license has been obtained by any fraud or misrepresentation."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["3.	This notice is deemed to be suspended / cancelled, if the undersigned considers such action necessary on the grounds of public health, convenience of safety or if any of the restrictions or conditions of license or any provisions of the Act or those bye-laws are infringed or if the license has been obtained by any fraud or misrepresentation."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="3" y="82" width="547" height="44" uuid="77b66e20-af11-46dc-808e-26bb3e3a788e">
@@ -201,7 +208,7 @@
 			<staticText>
 				<reportElement x="331" y="35" width="194" height="21" uuid="d7dd9cdd-c936-471b-83df-bdc2ed64ef3d"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[for Commissioner
 ]]></text>
@@ -215,7 +222,7 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Date:]]></text>
@@ -230,7 +237,7 @@
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="12" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{currentDate}]]></textFieldExpression>
 			</textField>
