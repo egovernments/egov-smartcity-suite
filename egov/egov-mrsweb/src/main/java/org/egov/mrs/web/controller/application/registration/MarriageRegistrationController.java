@@ -46,7 +46,6 @@ import static org.egov.mrs.application.MarriageConstants.REVENUE_HIERARCHY_TYPE;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -134,20 +133,15 @@ public class MarriageRegistrationController extends GenericWorkFlowController {
         model.addAttribute("generalDocuments", marriageDocumentService.getGeneralDocuments());
         model.addAttribute("individualDocuments", marriageDocumentService.getIndividualDocuments());
         model.addAttribute("marriageRegistrationUnit", marriageRegistrationUnitService.getActiveRegistrationunit());
-        final AppConfigValues allowValidation = getDaysValidationAppConfValue(
+        final AppConfigValues allowValidation = marriageFeeService.getDaysValidationAppConfValue(
                 MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION);
         model.addAttribute("allowDaysValidation",
                 allowValidation != null && !allowValidation.getValue().isEmpty() ? allowValidation.getValue() : "NO");
     }
 
-    public AppConfigValues getDaysValidationAppConfValue(final String moduleName, final String keyName) {
-        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, keyName);
-        return !appConfigValues.isEmpty() ? appConfigValues.get(0) : null;
-    }
-
     public void validateApplicationDate(final MarriageRegistration registration,
             final BindingResult errors, final HttpServletRequest request) {
-        final AppConfigValues allowValidation = getDaysValidationAppConfValue(
+        final AppConfigValues allowValidation = marriageFeeService.getDaysValidationAppConfValue(
                 MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION);
         if (allowValidation != null && !allowValidation.getValue().isEmpty()
                 && "YES".equalsIgnoreCase(allowValidation.getValue()))

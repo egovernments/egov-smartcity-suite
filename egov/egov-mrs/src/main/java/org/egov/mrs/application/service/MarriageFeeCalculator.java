@@ -41,8 +41,14 @@ package org.egov.mrs.application.service;
 
 import java.util.Date;
 
-public interface MarriageFeeCalculator {
-    Double calculateFee(Date date);
+import org.egov.mrs.domain.entity.MarriageRegistration;
+import org.egov.mrs.domain.entity.ReIssue;
+import org.egov.mrs.masters.entity.MarriageFee;
+import org.springframework.stereotype.Service;
 
+@Service
+public interface MarriageFeeCalculator {
+    Double calculateMarriageRegistrationFee(MarriageRegistration marriageRegistration,Date date);
+    MarriageFee calculateMarriageReissueFee(ReIssue reIssue,String criteria);
     String getFeeType();
 }
