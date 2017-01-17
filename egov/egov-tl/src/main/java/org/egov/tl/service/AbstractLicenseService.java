@@ -300,6 +300,7 @@ public abstract class AbstractLicenseService<T extends License> {
         final LicenseDemand licenseDemand = new LicenseDemand();
         licenseDemand.setIsHistory("N");
         licenseDemand.setCreateDate(new Date());
+        licenseDemand.setModifiedDate(new Date());
         licenseDemand.setLicense(license);
         licenseDemand.setIsLateRenewal('0');
         final Module module = this.getModuleName();
