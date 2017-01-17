@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -10,7 +10,7 @@
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
+4 *     any later version.
  *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -37,16 +37,36 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.ptis.domain.repository.master.structureclassification;
+	jQuery(document).ready(
+		function() {
+			$("#fromDate,#toDate").on(
+					'changeDate',
+					function(ev) {
+						var fromDate = jQuery('#fromDate').val();
+						var toDate = jQuery('#toDate').val();
+						if (fromDate != "" && toDate != "") {
+							var stsplit = fromDate.split("/");
+							var ensplit = toDate.split("/");
+							fromDate = stsplit[1] + "/" + stsplit[0] + "/"
+									+ stsplit[2];
+							toDate = ensplit[1] + "/" + ensplit[0] + "/"
+									+ ensplit[2];
 
-import java.util.List;
+							var start = Date.parse(fromDate);
+							var end = Date.parse(toDate);
+							var difference = (end - start) / (86400000 * 7);
+							if (difference <= 0) {
+								jQuery('#todateerror').show();
+								jQuery('#toDate').val("");
+							} else {
+								jQuery('#todateerror').hide();
+							}
+						}
+					});
+		});
+				
 
-import org.egov.ptis.domain.entity.property.StructureClassification;
-import org.springframework.data.jpa.repository.JpaRepository;
+			
+	
 
-public interface StructureClassificationRepository extends JpaRepository<StructureClassification, Long> {
 
-    List<StructureClassification> findByIsActiveTrueOrderByTypeName();
-
-    List<StructureClassification> findByConstrTypeCodeLike(String structureCode);
-}

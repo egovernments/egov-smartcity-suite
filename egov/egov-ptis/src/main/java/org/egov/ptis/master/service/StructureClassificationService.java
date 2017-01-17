@@ -39,8 +39,14 @@
  */
 package org.egov.ptis.master.service;
 
+import java.util.Date;
 import java.util.List;
 
+import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentDao;
+import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.domain.repository.master.structureclassification.StructureClassificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +54,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class StructureClassificationService {
 
     private final StructureClassificationRepository structureClassificationRepository;
@@ -58,8 +64,25 @@ public class StructureClassificationService {
         this.structureClassificationRepository = structureClassificationRepository;
     }
 
+    @Autowired
+    private InstallmentDao installmentDao;
+
+    @Autowired
+    private ModuleService moduleService;
+
+    @Transactional
+    public StructureClassification create(final StructureClassification structureClassification) {
+        structureClassificationRepository.save(structureClassification);
+        return structureClassification;
+    }
+
+    public Installment getInstallment() {
+        final Module module = moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
+        return installment;
+    }
+
     public List<StructureClassification> getAllActiveStructureTypes() {
         return structureClassificationRepository.findByIsActiveTrueOrderByTypeName();
     }
-
 }

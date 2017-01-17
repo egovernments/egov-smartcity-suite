@@ -396,6 +396,11 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/structures/structureclassification-view.jsp"/>
     </definition>
     
+    <definition name="structureclassification-create" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.structureclassification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/structures/structureclassification-create.jsp"/>
+    </definition>
+    
     <definition name="inventorynotice-form" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.title.inventory.notice" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/reports/inventorynotice-form.jsp"/>
@@ -443,6 +448,11 @@
     <definition name="valuationcertificate-form" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.title.valuation.certificate" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/reports/valuationcertificate-form.jsp"/>
+    </definition>
+    
+     <definition name="ownershipcertificate-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.title.ownership.certificate" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/ownershipcertificate-form.jsp"/>
     </definition>
     
 </tiles-definitions> 
