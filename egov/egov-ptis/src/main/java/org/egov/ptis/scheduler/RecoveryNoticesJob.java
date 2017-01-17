@@ -55,6 +55,7 @@ import org.egov.ptis.notice.PtNotice;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.impl.JobDetailImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.transaction.TransactionDefinition;
@@ -88,8 +89,11 @@ public class RecoveryNoticesJob extends QuartzJobBean {
     @Override
     protected void executeInternal(final JobExecutionContext context) throws JobExecutionException {
         ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
-        final String assessmentNumbers = (String) context.getJobDetail().getJobDataMap().get("assessmentNumbers");
-        final String noticeType = (String) context.getJobDetail().getJobDataMap().get("noticeType");
+        final JobDetailImpl jobDetail = (JobDetailImpl) context.getJobDetail();
+        final String assessmentNumbers = (String) jobDetail.getJobDataMap().get("assessmentNumbers");
+        final String noticeType = (String) jobDetail.getJobDataMap().get("noticeType");
+        final String tenantId = jobDetail.getName().split("_")[0];
+        ApplicationThreadLocals.setTenantID(tenantId);
         final List<String> assessments = Arrays.asList(assessmentNumbers.split(", "));
         final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
         for (final String assessmentNo : assessments) {
