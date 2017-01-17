@@ -1645,7 +1645,8 @@ public interface PropertyTaxConstants {
     public static final String REPORT_EXSRVICE_EXEMPTION_NOTICE = "mainExServiceManExemptionNotice";
     public static final String REPORT_CHOULTRY_EXEMPTION_NOTICE = "mainChoultryExemptionNotice";
     public static final String REPORT_PUBLIC_WORSHIP_EXEMPTION_NOTICE = "mainPublicWorshipExemptionNotice";
-    
+    public static final String REPORT_OWNERSHIP_CERTIFICATE_MULTIPLE = "OwnershipCertificate_MultipleOwner";
+    public static final String REPORT_OWNERSHIP_CERTIFICATE_SINGLE = "OwnershipCertificate_SingleOwner";
     @SuppressWarnings("serial")
     public static final List<String> RECOVERY_NOTICETYPES = new ArrayList<String>() {
         {
