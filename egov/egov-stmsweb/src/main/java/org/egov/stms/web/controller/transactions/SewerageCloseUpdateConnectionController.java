@@ -76,6 +76,7 @@ import org.egov.stms.transactions.service.SewerageConnectionService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
+import org.egov.stms.web.controller.utils.SewerageApplicationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -126,6 +127,9 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
 
     @Autowired
     private SewerageNoticeService sewerageNoticeService;
+
+    @Autowired
+    private SewerageApplicationValidator sewerageApplicationValidator;
 
     @ModelAttribute("sewerageApplicationDetails")
     public SewerageApplicationDetails getSewerageApplicationDetails(@PathVariable final String applicationNumber) {
@@ -178,6 +182,31 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
 
+        sewerageApplicationValidator.validateUpdateClosureApplication(sewerageApplicationDetails, resultBinder, workFlowAction);
+
+        if (resultBinder.hasErrors()) {
+            final WorkflowContainer container = new WorkflowContainer();
+            model.addAttribute("sewerageApplicationDetails", sewerageApplicationDetails);
+
+            final AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices
+                    .getPropertyDetails(sewerageApplicationDetails.getConnection().getShscNumber(), request);
+            if (propertyOwnerDetails != null)
+                model.addAttribute("propertyOwnerDetails", propertyOwnerDetails);
+            model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
+            model.addAttribute("sewerageApplicationDetails", sewerageApplicationDetails);
+            model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
+            model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+            model.addAttribute("currentState", sewerageApplicationDetails.getCurrentState().getValue());
+            container.setAdditionalRule(sewerageApplicationDetails.getApplicationType().getCode());
+            prepareWorkflow(model, sewerageApplicationDetails, container);
+            model.addAttribute("additionalRule", sewerageApplicationDetails.getApplicationType().getCode());
+            model.addAttribute("propertyTypes", PropertyType.values());
+            final List<SewerageApplicationDetailsDocument> docList = sewerageConnectionService
+                    .getSewerageApplicationDoc(sewerageApplicationDetails);
+            model.addAttribute("documentNamesList", docList);
+            return "closeSewerageConnection";
+        }
+
         try {
             if (workFlowAction != null && !workFlowAction.isEmpty()
                     && workFlowAction.equalsIgnoreCase(SewerageTaxConstants.APPROVEWORKFLOWACTION)) {
@@ -214,7 +243,7 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
         if (approvalPosition != null)
             assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
         if (assignObj != null) {
-            asignList = new ArrayList<Assignment>();
+            asignList = new ArrayList<>();
             asignList.add(assignObj);
         } else if (assignObj == null && approvalPosition != null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
@@ -253,6 +282,6 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
         }
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=CloseConnectionNotice.pdf");
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 }

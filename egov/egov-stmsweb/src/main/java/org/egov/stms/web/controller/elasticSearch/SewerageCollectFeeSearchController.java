@@ -43,6 +43,7 @@ package org.egov.stms.web.controller.elasticSearch;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.COLLECTDONATIONCHARHGES;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.REVENUE_WARD;
 
@@ -116,7 +117,8 @@ public class SewerageCollectFeeSearchController {
         return "seweragecollectcharges-form";
     }
 
-    public @ModelAttribute("revenueWards") List<Boundary> revenueWardList() {
+    @ModelAttribute("revenueWards")
+    public List<Boundary> revenueWardList() {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 REVENUE_WARD, REVENUE_HIERARCHY_TYPE);
     }
@@ -143,7 +145,7 @@ public class SewerageCollectFeeSearchController {
     @ResponseBody
     public List<SewerageSearchResult> searchApplication(@ModelAttribute final SewerageCollectFeeSearchRequest searchRequest) {
         final List<SewerageSearchResult> searchResultList = new ArrayList<>();
-        List<SewerageIndex> resultList = new ArrayList<>();
+        List<SewerageIndex> resultList;
         final List<String> roleList = new ArrayList<>();
         final Map<String, String> actionMap = new HashMap<>();
         SewerageApplicationDetails sewerageApplicationDetails = null;
@@ -169,12 +171,13 @@ public class SewerageCollectFeeSearchController {
             if (sewerageIndex.getApplicationNumber() != null)
                 sewerageApplicationDetails = sewerageApplicationDetailsService
                         .findByApplicationNumber(sewerageIndex.getApplicationNumber());
-
             for (final Role role : sewerageTaxUtils.getLoginUserRoles())
                 roleList.add(role.getName());
             if (sewerageApplicationDetails != null
                     && (APPLICATION_STATUS_COLLECTINSPECTIONFEE.equals(sewerageApplicationDetails.getStatus().getCode()) ||
-                            APPLICATION_STATUS_ESTIMATENOTICEGEN.equals(sewerageApplicationDetails.getStatus().getCode()))) {
+                            APPLICATION_STATUS_ESTIMATENOTICEGEN.equals(sewerageApplicationDetails.getStatus().getCode()) ||
+                            APPLICATION_STATUS_SANCTIONED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
+                                    && sewerageApplicationDetails.getCurrentDemand() != null)) {
                 searchActions = SewerageActionDropDownUtil.getSearchResultWithActions(roleList,
                         sewerageIndex.getApplicationStatus(), sewerageApplicationDetails);
                 if (searchActions != null && searchActions.getActions() != null)

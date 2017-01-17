@@ -65,7 +65,10 @@ import org.egov.stms.masters.entity.enums.SewerageRateStatus;
 import org.egov.stms.masters.pojo.DonationMasterSearch;
 import org.egov.stms.masters.pojo.DonationRateComparatorOrderById;
 import org.egov.stms.masters.service.DonationMasterService;
+import org.egov.stms.web.controller.utils.SewerageMasterDataValidator;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -84,221 +87,253 @@ import com.google.gson.GsonBuilder;
 @Controller
 @RequestMapping(value = "/masters")
 public class DonationMasterController {
-    
+
+    private static final Logger LOG = LoggerFactory.getLogger(DonationMasterController.class);
+    private static final String DONATIONMASTER = "donationMaster";
+    private static final String REDIRECT_TO_SUCCESS_PAGE = "redirect:/masters/success/";
+    private static final String MESSAGE = "message";
+    private static final String DONATION_MASTER_UPDATE = "donation-master-update";
+
     @Autowired
     private DonationMasterService donationMasterService;
-    
+
     @Autowired
     private FinancialYearService financialYearService;
-    
+
     @Autowired
     private ApplicationProperties applicationProperties;
-    
+
+    @Autowired
+    private SewerageMasterDataValidator sewerageMasterDataValidator;
+
     @RequestMapping(value = "/donationmaster", method = RequestMethod.GET)
-    public String showForm(@ModelAttribute DonationMaster donationMaster, final Model model) {
-        donationMaster = new DonationMaster();
-        CFinancialYear financialYear = financialYearService.getCurrentFinancialYear();
-        if(financialYear!=null)
-        model.addAttribute("endDate", financialYear.getEndingDate());
-        model.addAttribute("donationmaster", donationMaster);
+    public String showForm(@ModelAttribute final DonationMaster donationMaster, final Model model,
+            final BindingResult resultBinder) {
+        final DonationMaster donationMasterObj = new DonationMaster();
+        final CFinancialYear financialYear = financialYearService.getCurrentFinancialYear();
+        if (financialYear != null)
+            model.addAttribute("endDate", financialYear.getEndingDate());
+        model.addAttribute(DONATIONMASTER, donationMasterObj);
         model.addAttribute("propertyTypes", PropertyType.values());
+
         return "donation-master";
     }
 
     @RequestMapping(value = "/donationmaster", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String createDonationMaster(@ModelAttribute DonationMaster donationMaster,
+    public String createDonationMaster(@ModelAttribute final DonationMaster donationMaster,
             final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model) {
-        List<DonationDetailMaster> donationMasterDetailList = new ArrayList<DonationDetailMaster>();
-     
-        List<DonationMaster> existingdonationMaster = donationMasterService
+        final List<DonationDetailMaster> donationMasterDetailList = new ArrayList<>();
+        DonationMaster donationMasterObj;
+        sewerageMasterDataValidator.validateDonationMaster(errors, donationMaster);
+        if (errors.hasErrors()) {
+            model.addAttribute(DONATIONMASTER, donationMaster);
+            return "donation-master";
+        }
+        final List<DonationMaster> existingdonationMaster = donationMasterService
                 .getLatestActiveRecordByPropertyTypeAndActive(donationMaster.getPropertyType(), true);
-     
-        DonationMaster donationMasterExist = donationMasterService.findByPropertyTypeAndFromDateAndActive(donationMaster.getPropertyType(),
+
+        final DonationMaster donationMasterExist = donationMasterService.findByPropertyTypeAndFromDateAndActive(
+                donationMaster.getPropertyType(),
                 donationMaster.getFromDate(), true);
-      //overwrite existing combination with propertyType, fromDate, isActive = true 
+        // overwrite existing combination with propertyType, fromDate, isActive = true
         if (donationMasterExist != null) {
-            DateTime dateTime = DateUtils.endOfGivenDate(new DateTime(donationMaster.getFromDate()));
-            Date dateformat = dateTime.toDate();
+            final DateTime dateTime = DateUtils.endOfGivenDate(new DateTime(donationMaster.getFromDate()));
+            final Date dateformat = dateTime.toDate();
             donationMasterExist.setActive(false);
             donationMasterExist.setToDate(dateformat);
             donationMaster.setActive(true);
-            for (DonationDetailMaster donationDetailMaster : donationMaster.getDonationDetail()) {
+            for (final DonationDetailMaster donationDetailMaster : donationMaster.getDonationDetail()) {
                 donationDetailMaster.setDonation(donationMaster);
                 donationMasterDetailList.add(donationDetailMaster);
             }
-            
+
             donationMaster.getDonationDetail().addAll(donationMasterDetailList);
-            donationMaster = donationMasterService.createDonationRate(donationMaster);
+            donationMasterObj = donationMasterService.createDonationRate(donationMaster);
 
         } else {
             // set todate for the record with same propertyType and isActive = true and create new record
             DonationMaster donationMasterOld = null;
-            if (!existingdonationMaster.isEmpty()) {
+            if (!existingdonationMaster.isEmpty())
                 donationMasterOld = existingdonationMaster.get(0);
-            }
             if (donationMasterOld != null) {
-                if (donationMaster.getFromDate().compareTo(new Date()) < 0) {
+                if (donationMaster.getFromDate().compareTo(new Date()) < 0)
                     donationMasterOld.setActive(false);
-                }
-                //sets the endofGiven date as 23:59:59
-                DateTime dateTime = DateUtils.endOfGivenDate(new DateTime(donationMaster.getFromDate()).minusDays(1));
-                Date  dateformat = dateTime.toDate();
+                // sets the endofGiven date as 23:59:59
+                final DateTime dateTime = DateUtils.endOfGivenDate(new DateTime(donationMaster.getFromDate()).minusDays(1));
+                final Date dateformat = dateTime.toDate();
                 donationMasterOld.setToDate(dateformat);
                 donationMasterService.update(donationMasterOld);
             }
             donationMaster.setActive(true);
-            for (DonationDetailMaster donationDetailMaster : donationMaster.getDonationDetail()) {
+            for (final DonationDetailMaster donationDetailMaster : donationMaster.getDonationDetail()) {
                 donationDetailMaster.setDonation(donationMaster);
                 donationMasterDetailList.add(donationDetailMaster);
             }
             donationMaster.getDonationDetail().clear();
             donationMaster.getDonationDetail().addAll(donationMasterDetailList);
-            donationMaster = donationMasterService.createDonationRate(donationMaster);
+            donationMasterObj = donationMasterService.createDonationRate(donationMaster);
         }
-        redirectAttrs.addFlashAttribute("message", "msg.donationrate.creation.success");
-        return "redirect:/masters/success/" +donationMaster.getId();
+        redirectAttrs.addFlashAttribute(MESSAGE, "msg.donationrate.creation.success");
+        return REDIRECT_TO_SUCCESS_PAGE + donationMasterObj.getId();
     }
 
     @RequestMapping(value = "/success/{id}", method = RequestMethod.GET)
-    public String getSeweragerates(@ModelAttribute DonationMaster donationMaster, @PathVariable("id") Long id,
-            final RedirectAttributes redirectAttrs, Model model) {
-        DonationMaster donationMaster1 = donationMasterService.findById(id);
-        for (DonationDetailMaster ddm : donationMaster1.getDonationDetail()) {
+    public String getSeweragerates(@ModelAttribute final DonationMaster donationMaster, @PathVariable("id") final Long id,
+            final RedirectAttributes redirectAttrs, final Model model) {
+        final DonationMaster donationMaster1 = donationMasterService.findById(id);
+        for (final DonationDetailMaster ddm : donationMaster1.getDonationDetail())
             ddm.setAmount(BigDecimal.valueOf(ddm.getAmount()).setScale(2, BigDecimal.ROUND_HALF_EVEN).doubleValue());
-        }
         Collections.sort(donationMaster1.getDonationDetail(), new DonationRateComparatorOrderById());
-        model.addAttribute("donationMaster", donationMaster1);
+        model.addAttribute(DONATIONMASTER, donationMaster1);
         return "donation-master-success";
     }
 
-    @RequestMapping(value="/fromDateValidationWithActiveRecord", method=RequestMethod.GET)
-    public @ResponseBody String validateFromDateWithActiveDate(@RequestParam("propertyType") PropertyType propertyType ,@RequestParam("fromDate") Date date, final Model model){
-        List<DonationMaster> donationList = donationMasterService.getLatestActiveRecordByPropertyTypeAndActive(propertyType, true);
-        if(!donationList.isEmpty()){
-        DonationMaster existingActiveDonationObject = donationList.get(0);
-            if(date.compareTo(existingActiveDonationObject.getFromDate())<0){
-           SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-           String activeDate=formatter.format(existingActiveDonationObject.getFromDate());
-           return activeDate;
+    @RequestMapping(value = "/fromDateValidationWithActiveRecord", method = RequestMethod.GET)
+    @ResponseBody
+    public String validateFromDateWithActiveDate(@RequestParam("propertyType") final PropertyType propertyType,
+            @RequestParam("fromDate") final Date date) {
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        if (date != null) {
+            final List<DonationMaster> donationList = donationMasterService.getLatestActiveRecordByPropertyTypeAndActive(
+                    propertyType,
+                    true);
+            if (!donationList.isEmpty()) {
+                final DonationMaster existingActiveDonationObject = donationList.get(0);
+                if (existingActiveDonationObject.getFromDate().compareTo(new Date()) >= 0
+                        && date.compareTo(existingActiveDonationObject.getFromDate()) < 0)
+                    return formatter.format(existingActiveDonationObject.getFromDate()).toString();
             }
         }
         return "true";
     }
-    
+
     @RequestMapping(value = "/ajaxexistingdonationvalidate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody double geWaterRatesByAllCombinatons(@RequestParam("propertyType") final PropertyType propertyType,
-            @RequestParam("fromDate") Date fromDate) {
-        DonationMaster donationMasterMaster = null;
+    @ResponseBody
+    public double geWaterRatesByAllCombinatons(@RequestParam("propertyType") final PropertyType propertyType,
+            @RequestParam("fromDate") final Date fromDate) {
+        DonationMaster donationMasterMaster;
         donationMasterMaster = donationMasterService
                 .findByPropertyTypeAndFromDateAndActive(propertyType, fromDate, true);
-        if (donationMasterMaster != null) {
+        if (donationMasterMaster != null)
             return 1;
-        } else
+        else
             return 0;
     }
-    
-    
-    @RequestMapping(value="/view" , method = RequestMethod.GET)
-    public String viewDonationMaster(final Model model, @ModelAttribute final DonationMasterSearch donationMasterSearch){
+
+    @RequestMapping(value = "/view", method = RequestMethod.GET)
+    public String viewDonationMaster(final Model model, @ModelAttribute final DonationMasterSearch donationMasterSearch) {
         model.addAttribute("propertyType", PropertyType.values());
-        model.addAttribute("statusValues",SewerageRateStatus.values());
+        model.addAttribute("statusValues", SewerageRateStatus.values());
         return "donationMaster-view";
     }
-    
-    @RequestMapping(value="/search-donation-master",method = GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody void searchDonationMaster(@ModelAttribute final DonationMasterSearch donationMasterSearch, final HttpServletResponse response) throws IOException, ParseException{
-        PropertyType type =null;
-        String effectivefromDate=null;
-        if(donationMasterSearch.getPropertyType()!=null){
-        type = PropertyType.valueOf(donationMasterSearch.getPropertyType());
-       }
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
-        if(donationMasterSearch.getFromDate()!=null){
-        effectivefromDate=myFormat.format(formatter.parse(donationMasterSearch.getFromDate()));
-        }
+
+    @RequestMapping(value = "/search-donation-master", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void searchDonationMaster(@ModelAttribute final DonationMasterSearch donationMasterSearch,
+            final HttpServletResponse response) throws IOException {
+        PropertyType type = null;
+        String effectivefromDate = null;
+        if (donationMasterSearch.getPropertyType() != null)
+            type = PropertyType.valueOf(donationMasterSearch.getPropertyType());
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
+        if (donationMasterSearch.getFromDate() != null)
+            try {
+                effectivefromDate = myFormat.format(formatter.parse(donationMasterSearch.getFromDate()));
+
+            } catch (final ParseException e) {
+                LOG.error("Parse Exception" + e);
+            }
         IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
-                .toJson(donationMasterService.getDonationMasters(type,effectivefromDate, donationMasterSearch.getStatus()))
+                .toJson(donationMasterService.getDonationMasters(type, effectivefromDate,
+                        donationMasterSearch.getStatus()))
                 + "}", response.getWriter());
+
     }
-    
-    @RequestMapping(value="/fromDate-by-propertyType", method=GET, produces=APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Date> effectiveFromDates(@RequestParam final PropertyType propertyType){
+
+    @RequestMapping(value = "/fromDate-by-propertyType", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<Date> effectiveFromDates(@RequestParam final PropertyType propertyType) {
         return donationMasterService.findFromDateByPropertyType(propertyType);
     }
-    
-    @RequestMapping(value="/donationView/{id}", method=GET)
-    public String ViewDonation( @PathVariable final Long id, final Model model, final RedirectAttributes redirectAttrs){
-       return "redirect:/masters/success/"+id;
+
+    @RequestMapping(value = "/donationView/{id}", method = GET)
+    public String viewDonation(@PathVariable final Long id, final Model model, final RedirectAttributes redirectAttrs) {
+        return REDIRECT_TO_SUCCESS_PAGE + id;
     }
-    
-    @RequestMapping(value="/donationUpdate/{id}", method=GET)
-    public String UpdateDonation(@PathVariable final Long id, final Model model){
-        DonationMaster dm = donationMasterService.findById(id);
+
+    @RequestMapping(value = "/donationUpdate/{id}", method = GET)
+    public String updateDonation(@PathVariable final Long id, final Model model) {
+        final DonationMaster dm = donationMasterService.findById(id);
         Collections.sort(dm.getDonationDetail(), new DonationRateComparatorOrderById());
-        model.addAttribute("donationMaster",dm);
+        model.addAttribute("donationMaster", dm);
         model.addAttribute("donationDetail", dm.getDonationDetail());
-        return "donation-master-update";
+        return DONATION_MASTER_UPDATE;
     }
-    
-    @RequestMapping(value="/donationUpdate/{id}", method=POST)
-    public String updateDonationValues(@ModelAttribute DonationMaster donationMaster, @PathVariable final Long id, final Model model,
-            final RedirectAttributes redirectAttrs) throws ParseException{
-      
-        DonationMaster donationMstr = donationMasterService.findById(id);
-      if(donationMstr!=null) { 
-        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
-        String todaysdate=myFormat.format(new Date());
-        String effectiveFromDate=myFormat.format(donationMstr.getFromDate());
-        
-        Date effectiveDate= myFormat.parse(effectiveFromDate);
-        Date currentDate=myFormat.parse(todaysdate);
-  
-        if(effectiveDate.compareTo(currentDate)<0){
-            model.addAttribute("message","msg.donationrate.modification.rejected");
-            return "donation-master-update";
-          }
-        donationMstr.setLastModifiedDate(new Date());
-         List<DonationDetailMaster> existingdonationDetailList=new ArrayList<DonationDetailMaster>();
-        if(!donationMaster.getDonationDetail().isEmpty()){
-        existingdonationDetailList.addAll(donationMstr.getDonationDetail());
+
+    @RequestMapping(value = "/donationUpdate/{id}", method = POST)
+    public String updateDonationValues(@ModelAttribute final DonationMaster donationMaster, @PathVariable final Long id,
+            final Model model, final BindingResult errors,
+            final RedirectAttributes redirectAttrs) throws ParseException {
+
+        sewerageMasterDataValidator.validateDonationMasterUpdate(errors, donationMaster);
+        if (errors.hasErrors()) {
+            model.addAttribute(DONATIONMASTER, donationMaster);
+            return DONATION_MASTER_UPDATE;
         }
-        if(donationMaster!=null && donationMaster.getDonationDetail()!=null){
-            if(!existingdonationDetailList.isEmpty()){
-                
-                for(DonationDetailMaster dtlObject : existingdonationDetailList){
-                    if(!donationMaster.getDonationDetail().contains(dtlObject)){
-                        donationMstr.deleteDonationDetail(dtlObject);
-                    }
-                 }
-                for(DonationDetailMaster dtlMaster : donationMaster.getDonationDetail()){
-                    if(dtlMaster.getId()==null){
-                    DonationDetailMaster donationDetailObject = new DonationDetailMaster();
+        final DonationMaster donationMstr = donationMasterService.findById(id);
+        if (donationMstr != null) {
+            final SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
+            final String todaysdate = myFormat.format(new Date());
+            final String effectiveFromDate = myFormat.format(donationMstr.getFromDate());
+
+            final Date effectiveDate = myFormat.parse(effectiveFromDate);
+            final Date currentDate = myFormat.parse(todaysdate);
+
+            if (effectiveDate.compareTo(currentDate) < 0) {
+                model.addAttribute(MESSAGE, "msg.donationrate.modification.rejected");
+                return DONATION_MASTER_UPDATE;
+            }
+            donationMstr.setLastModifiedDate(new Date());
+            final List<DonationDetailMaster> existingdonationDetailList = new ArrayList<>();
+            if (donationMaster != null && !donationMaster.getDonationDetail().isEmpty())
+                existingdonationDetailList.addAll(donationMstr.getDonationDetail());
+            if (donationMaster != null && donationMaster.getDonationDetail() != null)
+                updateDonationMaster(donationMaster, donationMstr, existingdonationDetailList);
+        } else {
+            model.addAttribute(MESSAGE, "msg.donationrate.notfound");
+            return DONATION_MASTER_UPDATE;
+        }
+        redirectAttrs.addFlashAttribute(MESSAGE, "msg.donationrate.update.success");
+        return REDIRECT_TO_SUCCESS_PAGE + id;
+    }
+
+    private void updateDonationMaster(final DonationMaster donationMaster, final DonationMaster donationMstr,
+            final List<DonationDetailMaster> existingdonationDetailList) {
+        if (!existingdonationDetailList.isEmpty()) {
+
+            for (final DonationDetailMaster dtlObject : existingdonationDetailList)
+                if (!donationMaster.getDonationDetail().contains(dtlObject))
+                    donationMstr.deleteDonationDetail(dtlObject);
+            for (final DonationDetailMaster dtlMaster : donationMaster.getDonationDetail())
+                if (dtlMaster.getId() == null) {
+                    final DonationDetailMaster donationDetailObject = new DonationDetailMaster();
                     donationDetailObject.setNoOfClosets(dtlMaster.getNoOfClosets());
                     donationDetailObject.setAmount(dtlMaster.getAmount());
                     donationDetailObject.setDonation(donationMstr);
                     donationMstr.addDonationDetail(donationDetailObject);
-                    }else if(dtlMaster.getId()!=null && existingdonationDetailList.contains(dtlMaster))
-                    {
-                        for(DonationDetailMaster dtlObject : donationMstr.getDonationDetail()){
-                        
-                             if(dtlObject.getId().equals(dtlMaster.getId()))
-                             {
-                                 dtlObject.setAmount(dtlMaster.getAmount());
-                                 dtlObject.setNoOfClosets(dtlMaster.getNoOfClosets());
-                             }
-                        }
-                    }
-                }
-            }
-            donationMasterService.update(donationMstr);  
-            } 
+                } else if (dtlMaster.getId() != null && existingdonationDetailList.contains(dtlMaster))
+                    updateDonationDetail(donationMstr, dtlMaster);
         }
-      else{
-          model.addAttribute("message","msg.donationrate.notfound");
-          return "donation-master-update";
-      }
-        redirectAttrs.addFlashAttribute("message", "msg.donationrate.update.success");
-        return "redirect:/masters/success/" +id;
+        donationMasterService.update(donationMstr);
     }
+
+    private void updateDonationDetail(final DonationMaster donationMstr, final DonationDetailMaster dtlMaster) {
+        for (final DonationDetailMaster dtlObject : donationMstr.getDonationDetail())
+            if (dtlObject.getId().equals(dtlMaster.getId())) {
+                dtlObject.setAmount(dtlMaster.getAmount());
+                dtlObject.setNoOfClosets(dtlMaster.getNoOfClosets());
+            }
+    }
+
 }

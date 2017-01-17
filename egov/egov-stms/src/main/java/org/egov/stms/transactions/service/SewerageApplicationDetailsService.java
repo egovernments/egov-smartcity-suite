@@ -103,10 +103,10 @@ import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
-import org.egov.stms.autonumber.SHSCNumberGenerator;
 import org.egov.stms.autonumber.SewerageApplicationNumberGenerator;
 import org.egov.stms.autonumber.SewerageCloseConnectionNoticeNumberGenerator;
 import org.egov.stms.autonumber.SewerageEstimationNumberGenerator;
+import org.egov.stms.autonumber.SewerageSHSCNumberGenerator;
 import org.egov.stms.autonumber.SewerageWorkOrderNumberGenerator;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.masters.service.DocumentTypeMasterService;
@@ -135,6 +135,8 @@ public class SewerageApplicationDetailsService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SewerageApplicationDetailsService.class);
     private static final String STMS_APPLICATION_VIEW = "/stms/existing/sewerage/view/%s/%s";
+    private static final String APPLICATION_WORKFLOW_INITIALIZATION_DONE = "applicationWorkflowCustomDefaultImpl initialization is done";
+    private static final String DEPARTMENT = "department";
 
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
@@ -234,7 +236,7 @@ public class SewerageApplicationDetailsService {
                 sewerageApplicationDetails.getApplicationType().getProcessingTime());
         sewerageApplicationDetails.setDisposalDate(disposalDate);
 
-        if (sewerageApplicationDetails != null && sewerageApplicationDetails.getCurrentDemand() == null) {
+        if (sewerageApplicationDetails.getCurrentDemand() == null) {
             final EgDemand demand = sewerageDemandService.createDemandOnLegacyConnection(
                     sewerageApplicationDetails.getDemandDetailBeanList(), sewerageApplicationDetails);
             if (demand != null) {
@@ -269,7 +271,7 @@ public class SewerageApplicationDetailsService {
         sewerageApplicationDetails.setDisposalDate(disposalDate);
 
         if (LOG.isDebugEnabled())
-            LOG.debug("applicationWorkflowCustomDefaultImpl initialization is done");
+            LOG.debug(APPLICATION_WORKFLOW_INITIALIZATION_DONE);
         if (!sewerageApplicationDetails.getApplicationType().getCode().equalsIgnoreCase(CLOSESEWERAGECONNECTION))
             if (sewerageApplicationDetails != null && sewerageApplicationDetails.getCurrentDemand() == null) {
                 final EgDemand demand = sewerageDemandService.createDemandOnNewConnection(
@@ -459,7 +461,7 @@ public class SewerageApplicationDetailsService {
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(sewerageApplicationDetails.getState()
                     .getOwnerPosition().getId(), new Date());
             if (assignment != null) {
-                asignList = new ArrayList<Assignment>();
+                asignList = new ArrayList<>();
                 asignList.add(assignment);
             } else if (assignment == null)
                 asignList = assignmentService.getAssignmentsForPosition(sewerageApplicationDetails.getState()
@@ -571,7 +573,7 @@ public class SewerageApplicationDetailsService {
 
     public Map<String, String> showApprovalDetailsByApplcationCurState(
             final SewerageApplicationDetails sewerageApplicationDetails) {
-        final Map<String, String> modelParams = new HashMap<String, String>();
+        final Map<String, String> modelParams = new HashMap<>();
         if (sewerageApplicationDetails.getState() != null) {
             final String currentState = sewerageApplicationDetails.getState().getValue();
             if (currentState.equalsIgnoreCase(WF_STATE_INSPECTIONFEE_PENDING)
@@ -619,8 +621,8 @@ public class SewerageApplicationDetailsService {
             }
 
             if (sewerageApplicationDetails.getConnection().getShscNumber() == null) {
-                final SHSCNumberGenerator shscNumberGenerator = beanResolver
-                        .getAutoNumberServiceFor(SHSCNumberGenerator.class);
+                final SewerageSHSCNumberGenerator shscNumberGenerator = beanResolver
+                        .getAutoNumberServiceFor(SewerageSHSCNumberGenerator.class);
                 if (shscNumberGenerator != null)
                     sewerageApplicationDetails.getConnection().setShscNumber(
                             shscNumberGenerator.generateNextSHSCNumber(sewerageApplicationDetails));
@@ -699,7 +701,7 @@ public class SewerageApplicationDetailsService {
                 .save(sewerageApplicationDetails);
 
         if (LOG.isDebugEnabled())
-            LOG.debug("applicationWorkflowCustomDefaultImpl initialization is done");
+            LOG.debug(APPLICATION_WORKFLOW_INITIALIZATION_DONE);
 
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(updatedSewerageApplicationDetails,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
@@ -710,12 +712,13 @@ public class SewerageApplicationDetailsService {
         updateIndexes(sewerageApplicationDetails);
 
         if (APPLICATION_STATUS_COLLECTINSPECTIONFEE.equalsIgnoreCase(sewerageApplicationDetails
-                .getStatus().getCode()) || APPLICATION_STATUS_DEEAPPROVED.equalsIgnoreCase(sewerageApplicationDetails.getStatus()
-                        .getCode())
+                .getStatus().getCode())
+                || APPLICATION_STATUS_DEEAPPROVED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
                 || APPLICATION_STATUS_CREATED.equalsIgnoreCase(sewerageApplicationDetails
-                        .getStatus().getCode())
-                || APPLICATION_STATUS_FINALAPPROVED.equalsIgnoreCase(sewerageApplicationDetails
-                        .getStatus().getCode())
+                        .getStatus().getCode())) {
+            sewerageApplicationDetails.setApprovalComent(approvalComent);
+            sewerageConnectionSmsAndEmailService.sendSmsAndEmail(sewerageApplicationDetails, request);
+        } else if (APPLICATION_STATUS_FINALAPPROVED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
                 || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(sewerageApplicationDetails
                         .getStatus().getCode())) {
             sewerageApplicationDetails.setApprovalComent(approvalComent);
@@ -855,7 +858,7 @@ public class SewerageApplicationDetailsService {
                 .save(sewerageApplicationDetails);
 
         if (LOG.isDebugEnabled())
-            LOG.debug("applicationWorkflowCustomDefaultImpl initialization is done");
+            LOG.debug(APPLICATION_WORKFLOW_INITIALIZATION_DONE);
 
         applicationWorkflowCustomDefaultImpl.createCloseConnectionWorkflowTransition(updatedSewerageApplicationDetails,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
@@ -877,16 +880,16 @@ public class SewerageApplicationDetailsService {
     }
 
     public List<Hashtable<String, Object>> getHistory(final SewerageApplicationDetails sewerageApplicationDetails) {
-        User user = null;
-        final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
+        User user;
+        final List<Hashtable<String, Object>> historyTable = new ArrayList<>();
         final State state = sewerageApplicationDetails.getState();
-        final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
+        final Hashtable<String, Object> map = new Hashtable<>(0);
         if (null != state) {
             if (!sewerageApplicationDetails.getStateHistory().isEmpty()
                     && sewerageApplicationDetails.getStateHistory() != null)
                 Collections.reverse(sewerageApplicationDetails.getStateHistory());
             for (final StateHistory stateHistory : sewerageApplicationDetails.getStateHistory()) {
-                final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
+                final Hashtable<String, Object> HistoryMap = new Hashtable<>(0);
                 HistoryMap.put("date", stateHistory.getDateInfo());
                 HistoryMap.put("comments", stateHistory.getComments());
                 HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
@@ -896,14 +899,14 @@ public class SewerageApplicationDetailsService {
                 user = stateHistory.getOwnerUser();
                 if (null != user) {
                     HistoryMap.put("user", user.getUsername() + "::" + user.getName());
-                    HistoryMap.put("department",
+                    HistoryMap.put(DEPARTMENT,
                             null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
                                     .getDepartmentForUser(user.getId()).getName() : "");
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     user = eisCommonService.getUserForPosition(owner.getId(), new Date());
                     HistoryMap
                             .put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                    HistoryMap.put("department", null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
+                    HistoryMap.put(DEPARTMENT, null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
                             .getDepartment().getName() : "");
                 }
                 historyTable.add(HistoryMap);
@@ -917,12 +920,12 @@ public class SewerageApplicationDetailsService {
             user = state.getOwnerUser();
             if (null != user) {
                 map.put("user", user.getUsername() + "::" + user.getName());
-                map.put("department", null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
+                map.put(DEPARTMENT, null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
                         .getDepartmentForUser(user.getId()).getName() : "");
             } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
                 user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
                 map.put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                map.put("department", null != ownerPosition.getDeptDesig().getDepartment() ? ownerPosition
+                map.put(DEPARTMENT, null != ownerPosition.getDeptDesig().getDepartment() ? ownerPosition
                         .getDeptDesig().getDepartment().getName() : "");
             }
             historyTable.add(map);
@@ -940,14 +943,16 @@ public class SewerageApplicationDetailsService {
         // TODO : update index on collection
     }
 
-    public SewerageApplicationDetails checkModifyClosetInProgress(final String shscNumber) {
+    public SewerageApplicationDetails isApplicationInProgress(final String shscNumber) {
         return sewerageApplicationDetailsRepository.getSewerageApplicationInWorkFlow(shscNumber);
     }
 
     public BigDecimal getPendingTaxAmount(final SewerageApplicationDetails sewerageApplicationDetails) {
-        BigDecimal taxPending = BigDecimal.ZERO;
-        taxPending = sewerageDemandService.checkForPendingTaxAmountToCollect(sewerageApplicationDetails.getCurrentDemand());
-        return taxPending;
+        return sewerageDemandService.checkForPendingTaxAmountToCollect(sewerageApplicationDetails.getCurrentDemand());
+    }
+
+    public String isConnectionExistsForProperty(final String propertyId) {
+        return checkConnectionPresentForProperty(propertyId);
     }
 
 }

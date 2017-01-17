@@ -140,7 +140,7 @@
         <put-attribute name="page-title" value="title.collect.SWtTax.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/collection/collectSwtTax-redirection.jsp"/>
     </definition>
-    <definition name="collectAdvtax-error" extends="base_layout">	 
+    <definition name="collectSwtTax-error" extends="base_layout">	 
         <put-attribute name="page-title" value="title.collect.SWtTax.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/collection/collectSwtTax-error.jsp"/>
     </definition>

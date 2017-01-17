@@ -39,10 +39,17 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
 	validateDemand(this);
+	propertyID=$('#propertyIdentifier').val()
+	if(propertyID != '')
+		validateSewerageConnection();
 	$('#propertyIdentifier').blur(function(){
 		validateSewerageConnection();
 	});
 	
+	if($('#executionDate').val() != ''){
+		$("#legacyDemandDetails").show();	
+	}
+			
 	$("#executionDate" ).datepicker({
 		format: "dd/mm/yyyy",
 		startDate: new Date(2005, 03, 1),

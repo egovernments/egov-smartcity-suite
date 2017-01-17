@@ -42,17 +42,17 @@ package org.egov.stms.autonumber.impl;
 import java.io.Serializable;
 
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
-import org.egov.infra.utils.DateUtils;
-import org.egov.stms.autonumber.SHSCNumberGenerator;
+import org.egov.stms.autonumber.SewerageSHSCNumberGenerator;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class SHSCNumberGeneratorImpl implements SHSCNumberGenerator {
+public class SewerageSHSCNumberGeneratorImpl implements SewerageSHSCNumberGenerator {
 
-    private static final String SHSC_NUMBER_SEQ_PREFIX = "SEQ_SHSC_NUMBER%s";
+    private static final String SHSC_NUMBER_SEQ_PREFIX = "SEQ_EGSWTAX_SHSC_NUMBER";
 
     @Autowired
     private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
@@ -60,13 +60,11 @@ public class SHSCNumberGeneratorImpl implements SHSCNumberGenerator {
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
 
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional
     @Override
     public String generateNextSHSCNumber(final SewerageApplicationDetails sewerageApplicationDetails) {
 
-        final String currentYear = DateUtils.currentDateToYearFormat();
-        final String sequenceName = String.format(SHSC_NUMBER_SEQ_PREFIX, currentYear);
-
+        final String sequenceName = SHSC_NUMBER_SEQ_PREFIX;
         final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
         return String.format("%s%06d", sewerageTaxUtils.getCityCode(), nextSequence);
     }

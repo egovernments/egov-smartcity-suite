@@ -46,7 +46,7 @@
 			code="lbl.shsc.number" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:input path="connection.shscNumber" id="shscNumber"
-			class="form-control text-left patternvalidation" data-pattern="number" maxlength="10" required="required" />
+			class="form-control text-left patternvalidation" data-pattern="number" maxlength="10" required="required"/>
 		<form:errors path="connection.shscNumber" 
 			cssClass="add-margin error-msg" />
 	</div>
@@ -70,7 +70,35 @@
 					<th class="text-right">Collection</th>
 			      </tr>
 		    </thead>
-		<tbody> 
+		<tbody>
+		<c:choose>
+			<c:when test="${not empty demandDetailList}">
+				<c:forEach var="demandDetail" items="${demandDetailList}" varStatus="status">
+					<tr>
+						<td>
+							<form:input type="text" class="form-control patternvalidation" style="text-align : left; font-size: 12px;"
+							id="demandDetailBeanList[${status.index}].installment" value="${demandDetail.installment}"
+							path="demandDetailBeanList[${status.index}].installment" readOnly="readOnly"/>
+						</td>
+						<td>
+							<form:input type="text" class="form-control patternvalidation" style="text-align : left; font-size: 12px;"
+							id="demandDetailBeanList[${status.index}].reasonMaster" value="${demandDetail.reasonMaster}"
+							path="demandDetailBeanList[${status.index}].reasonMaster" readOnly="readOnly"/>
+						</td>
+						<td>
+							<form:input type="text" class="form-control patternvalidation" style="text-align : left; font-size: 12px;"
+							id="demandDetailBeanList[${status.index}].actualAmount" value="${demandDetail.actualAmount}"
+							path="demandDetailBeanList[${status.index}].actualAmount"/>
+						</td>
+						<td>
+							<form:input type="text" class="form-control patternvalidation" style="text-align : left; font-size: 12px;"
+							id="demandDetailBeanList[${status.index}].actualCollection" value="${demandDetail.actualCollection}"
+							path="demandDetailBeanList[${status.index}].actualCollection"/>
+						</td>
+					</tr>
+				</c:forEach>
+			</c:when> 
+		</c:choose>
 		</tbody>
 		</table>
 </div>

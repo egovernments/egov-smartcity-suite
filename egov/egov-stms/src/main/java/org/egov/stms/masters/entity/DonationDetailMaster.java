@@ -56,8 +56,6 @@ import javax.validation.constraints.NotNull;
 @SequenceGenerator(name = DonationDetailMaster.SEQ_DONATIONDETAILMASTER, sequenceName = DonationDetailMaster.SEQ_DONATIONDETAILMASTER, allocationSize = 1)
 public class DonationDetailMaster {
 
-    private static final long serialVersionUID = 5166101267666134411L;
-
     public static final String SEQ_DONATIONDETAILMASTER = "SEQ_EGSWTAX_DONATIONDETAIL_MASTER";
 
     @Id
@@ -70,19 +68,17 @@ public class DonationDetailMaster {
 
     @NotNull
     @Min(value = 1)
-    private double amount;
+    private Double amount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "donation", nullable = false)
     private DonationMaster donation;
 
-  
     public Long getId() {
         return id;
     }
 
-    
     public void setId(final Long id) {
         this.id = id;
     }
@@ -95,11 +91,11 @@ public class DonationDetailMaster {
         this.noOfClosets = noOfClosets;
     }
 
-    public double getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(final double amount) {
+    public void setAmount(final Double amount) {
         this.amount = amount;
     }
 
@@ -112,14 +108,14 @@ public class DonationDetailMaster {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
             return false;
         if (getClass() != obj.getClass())
             return false;
-        DonationDetailMaster other = (DonationDetailMaster) obj;
+        final DonationDetailMaster other = (DonationDetailMaster) obj;
         if (id == null) {
             if (other.id != null)
                 return false;

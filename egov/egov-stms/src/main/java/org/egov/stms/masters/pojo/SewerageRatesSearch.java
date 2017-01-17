@@ -40,62 +40,77 @@
 package org.egov.stms.masters.pojo;
 
 public class SewerageRatesSearch {
-    
+
     private Long id;
     private String propertyType;
-    private double monthlyRate;
+    private Double monthlyRate;
     private String fromDate;
     private String status;
     private String modifiedDate;
     private boolean isActive;
     private boolean isEditable;
-    
+
     public String getPropertyType() {
         return propertyType;
     }
-    public void setPropertyType(String propertyType) {
+
+    public void setPropertyType(final String propertyType) {
         this.propertyType = propertyType;
     }
-    public double getMonthlyRate() {
+
+    public Double getMonthlyRate() {
         return monthlyRate;
     }
-    public void setMonthlyRate(double monthlyRate) {
+
+    public void setMonthlyRate(final Double monthlyRate) {
         this.monthlyRate = monthlyRate;
     }
+
     public String getFromDate() {
         return fromDate;
     }
-    public void setFromDate(String fromDate) {
+
+    public void setFromDate(final String fromDate) {
         this.fromDate = fromDate;
     }
+
     public Long getId() {
         return id;
     }
-    public void setId(Long id) {
+
+    public void setId(final Long id) {
         this.id = id;
     }
+
     public String getStatus() {
         return status;
     }
-    public void setStatus(String status) {
+
+    public void setStatus(final String status) {
         this.status = status;
     }
+
     public String getModifiedDate() {
         return modifiedDate;
     }
-    public void setModifiedDate(String modifiedDate) {
+
+    public void setModifiedDate(final String modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
+
     public boolean isActive() {
         return isActive;
     }
-    public void setActive(boolean isActive) {
+
+    public void setActive(final boolean isActive) {
         this.isActive = isActive;
     }
+
     public boolean isEditable() {
         return isEditable;
     }
-    public void setEditable(boolean isEditable) {
+
+    public void setEditable(final boolean isEditable) {
         this.isEditable = isEditable;
     }
 }

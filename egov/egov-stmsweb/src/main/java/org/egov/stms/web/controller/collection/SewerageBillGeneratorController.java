@@ -47,13 +47,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
-import org.egov.stms.transactions.entity.SewerageDemandConnection;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageDemandService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.transactions.service.collection.SewerageBillServiceImpl;
 import org.egov.stms.transactions.service.collection.SewerageBillable;
-import org.egov.stms.utils.SewerageTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -66,19 +64,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping(value = "/collection")
 public class SewerageBillGeneratorController {
-    private String SEWERAGE_BILLNUMBER = "SEQ_SEWERAGEBILL_NUMBER";
+    private final String SEWERAGE_BILLNUMBER = "SEQ_SEWERAGEBILL_NUMBER";
     @Autowired
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
-    private @Autowired SewerageBillServiceImpl sewerageBillServiceImpl;
-    private @Autowired SequenceNumberGenerator sequenceNumberGenerator;
-    private @Autowired SewerageDemandService sewerageDemandService;
-    
-    private @Autowired SewerageBillable sewerageBillable;
+
+    @Autowired
+    private SewerageBillServiceImpl sewerageBillServiceImpl;
+
+    @Autowired
+    private SequenceNumberGenerator sequenceNumberGenerator;
+
+    @Autowired
+    private SewerageDemandService sewerageDemandService;
+
+    @Autowired
+    private SewerageBillable sewerageBillable;
+
     @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
-   
-    @Autowired
-    private SewerageTaxUtils sewerageTaxUtils;
 
     @RequestMapping(value = "/generatebill/{consumernumber}/{assessmentnumber}", method = RequestMethod.GET)
     public String payTax(@PathVariable final String consumernumber, @PathVariable final String assessmentnumber,
@@ -87,23 +90,23 @@ public class SewerageBillGeneratorController {
 
         if (consumernumber != null)
             sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(consumernumber);
-        if (sewerageApplicationDetails != null){
+        if (sewerageApplicationDetails != null) {
             if (sewerageApplicationDetails.getCurrentDemand() != null
                     && !sewerageDemandService.checkAnyTaxIsPendingToCollect(sewerageApplicationDetails.getCurrentDemand())) {
                 model.addAttribute("message", "msg.collection.noPendingTax");
-                return "collectAdvtax-error";
+                return "collectSwtTax-error";
             }
 
             if (sewerageApplicationDetails.getCurrentDemand() != null && assessmentnumber != null) {
-                AssessmentDetails assessmentDetails = sewerageThirdPartyServices.getPropertyDetails(
-                         assessmentnumber, request);
+                final AssessmentDetails assessmentDetails = sewerageThirdPartyServices.getPropertyDetails(
+                        assessmentnumber, request);
                 final Serializable referenceNumber = sequenceNumberGenerator.getNextSequence(SEWERAGE_BILLNUMBER);
-    
+
                 sewerageBillable.setSewerageApplicationDetails(sewerageApplicationDetails);
                 sewerageBillable.setAssessmentDetails(assessmentDetails);
-                sewerageBillable.setReferenceNumber((String.format("%s%06d", "", referenceNumber)));
+                sewerageBillable.setReferenceNumber(String.format("%s%06d", "", referenceNumber));
                 // todo: check any pending tax ? theN redirect.
-    
+
                 model.addAttribute("collectxml", sewerageBillServiceImpl.getBillXML(sewerageBillable));
             } else {
                 model.addAttribute("message", "msg.collection.noPendingTax");

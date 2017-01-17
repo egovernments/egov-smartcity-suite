@@ -145,7 +145,7 @@ public class ApplicationSewerageSearchController {
 
         final BoolQueryBuilder boolQuery = sewerageIndexService.getQueryFilter(searchRequest);
         final List<SewerageSearchResult> searchResultFomatted = new ArrayList<>();
-        List<SewerageIndex> searchResult = new ArrayList<>();
+        List<SewerageIndex> searchResult;
         SewerageApplicationDetails sewerageApplicationDetails = null;
         SewerageSearchResult searchActions = null;
         final Map<String, String> actionMap = new HashMap<>();
@@ -174,13 +174,17 @@ public class ApplicationSewerageSearchController {
                         sewerageIndexObject.getApplicationStatus(),
                         sewerageApplicationDetails);
             if (searchActions != null && searchActions.getActions() != null)
-                for (final Map.Entry<String, String> entry : searchActions.getActions().entrySet())
-                    if (!entry.getValue().equals(COLLECTDONATIONCHARHGES))
-                        actionMap.put(entry.getKey(), entry.getValue());
+                getActions(searchActions, actionMap);
             searchResultObject.setActions(actionMap);
             searchResultFomatted.add(searchResultObject);
         }
         return searchResultFomatted;
+    }
+
+    private void getActions(final SewerageSearchResult searchActions, final Map<String, String> actionMap) {
+        for (final Map.Entry<String, String> entry : searchActions.getActions().entrySet())
+            if (!entry.getValue().equals(COLLECTDONATIONCHARHGES))
+                actionMap.put(entry.getKey(), entry.getValue());
     }
 
 }

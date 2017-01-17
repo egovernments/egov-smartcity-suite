@@ -82,6 +82,7 @@
 						</c:when>
 						<c:otherwise>
 							<form:textarea cssClass="form-control patternvalidation" path="closeConnectionReason"  cols="20" id="closeConnectionReason" data-pattern="alphanumericwithspace" maxlength="512" required="required"/>
+							<form:errors path="closeConnectionReason" cssClass="add-margin error-msg"/>
 						</c:otherwise>	
 						</c:choose>	
 				 		</div>

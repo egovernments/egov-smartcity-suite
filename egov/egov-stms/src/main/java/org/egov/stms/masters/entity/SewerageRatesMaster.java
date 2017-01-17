@@ -40,6 +40,7 @@
 package org.egov.stms.masters.entity;
 
 import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -75,7 +76,7 @@ public class SewerageRatesMaster extends AbstractAuditable {
 
     @NotNull
     @Min(value = 1)
-    private double monthlyRate;
+    private Double monthlyRate;
 
     @NotNull
     @Temporal(value = TemporalType.DATE)
@@ -104,11 +105,11 @@ public class SewerageRatesMaster extends AbstractAuditable {
         this.propertyType = propertyType;
     }
 
-    public double getMonthlyRate() {
+    public Double getMonthlyRate() {
         return monthlyRate;
     }
 
-    public void setMonthlyRate(final double monthlyRate) {
+    public void setMonthlyRate(final Double monthlyRate) {
         this.monthlyRate = monthlyRate;
     }
 

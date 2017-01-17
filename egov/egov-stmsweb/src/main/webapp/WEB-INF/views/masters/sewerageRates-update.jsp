@@ -89,6 +89,7 @@
 							<form:input path="monthlyRate" type="text" class="form-control patternvalidation"
 								data-pattern="decimalvalue" maxlength="8" 
 								id="monthlyRate" style="text-align: right" required="required" />
+							<form:errors path="monthlyRate" class="add-margin error-msg" />
 						</div>
 					</div>
 				</div>

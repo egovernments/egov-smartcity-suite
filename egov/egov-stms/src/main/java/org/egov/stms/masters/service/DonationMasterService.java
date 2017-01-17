@@ -58,6 +58,8 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -68,12 +70,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class DonationMasterService {
-    
+
     SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    private static final Logger LOG = LoggerFactory.getLogger(DonationMasterService.class);
 
     @Autowired
-    private DonationMasterRepository donationMasterRepository;
+    private final DonationMasterRepository donationMasterRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -83,7 +86,7 @@ public class DonationMasterService {
     private MessageSource stmsMessageSource;
 
     @Autowired
-    public DonationMasterService(DonationMasterRepository donationMasterRepository) {
+    public DonationMasterService(final DonationMasterRepository donationMasterRepository) {
         this.donationMasterRepository = donationMasterRepository;
     }
 
@@ -122,8 +125,8 @@ public class DonationMasterService {
         return donationMasterRepository.findByPropertyTypeAndActive(propertyType, active);
     }
 
-    public BigDecimal getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(Integer noOfClosetsResidential,
-            PropertyType propertyType) {
+    public BigDecimal getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(final Integer noOfClosetsResidential,
+            final PropertyType propertyType) {
         return donationMasterRepository.getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(noOfClosetsResidential,
                 propertyType);
     }
@@ -132,34 +135,30 @@ public class DonationMasterService {
             final boolean active) {
         return donationMasterRepository.getLatestActiveRecordByPropertyTypeAndActive(propertyType, active, new Date());
     }
-  
-    //TODO : add comments 
+
     // search record as per search parameters and set the values to variables of helper class
-    public List<DonationMasterSearch> getDonationMasters (final PropertyType propertyType, final String date,
-            final String status) throws ParseException{
-        List<DonationMasterSearch> donationMasterSearchRecords = new ArrayList<DonationMasterSearch>();
+    public List<DonationMasterSearch> getDonationMasters(final PropertyType propertyType, final String date,
+            final String status) {
+        final List<DonationMasterSearch> donationMasterSearchRecords = new ArrayList<>();
         final List<DonationMaster> donationMasterRecords = searchConnectionRecordsBySearchParams(propertyType, date, status);
-        for (DonationMaster donationMasterRecord : donationMasterRecords) {
-            DonationMasterSearch dmsearch = new DonationMasterSearch();
+        for (final DonationMaster donationMasterRecord : donationMasterRecords) {
+            final DonationMasterSearch dmsearch = new DonationMasterSearch();
             dmsearch.setPropertyType(donationMasterRecord.getPropertyType().toString());
             dmsearch.setSize(donationMasterRecord.getDonationDetail().size());
             dmsearch.setFromDate(donationMasterRecord.getFromDate().toString());
             dmsearch.setModifiedDate(donationMasterRecord.getLastModifiedDate().toString());
             dmsearch.setId(donationMasterRecord.getId());
             dmsearch.setActive(donationMasterRecord.isActive());
-            
-            String todaysdate = myFormat.format(new Date());
-            String effectiveFromDate=myFormat.format(donationMasterRecord.getFromDate());
-            
-            Date effectivedate = myFormat.parse(effectiveFromDate);
-            Date currentDate = myFormat.parse(todaysdate);
-            if(effectivedate!=null && effectivedate.compareTo(currentDate)>=0){
-                dmsearch.setEditable(true);
-            }
-            else{
+
+            try {
+                final Date effectivedate = myFormat.parse(myFormat.format(donationMasterRecord.getFromDate()));
                 dmsearch.setEditable(false);
+                if (effectivedate.compareTo(myFormat.parse(myFormat.format(new Date()))) >= 0)
+                    dmsearch.setEditable(true);
+
+            } catch (final ParseException e) {
+                LOG.error("Parse Exception " + e);
             }
-            
             donationMasterSearchRecords.add(dmsearch);
         }
         return donationMasterSearchRecords;
@@ -181,9 +180,8 @@ public class DonationMasterService {
         final Criteria connectionCriteria = entityManager.unwrap(Session.class)
                 .createCriteria(DonationMaster.class, "donation");
 
-        if (null != propertyType) {
+        if (null != propertyType)
             connectionCriteria.add(Restrictions.eq("propertyType", propertyType));
-        }
         if (null != date) {
             String formattedDate = null;
 
@@ -192,16 +190,15 @@ public class DonationMasterService {
                 formattedDate = formatter.format(myFormat.parse(date));
                 fDate = formatter.parse(formattedDate);
 
-            } catch (ParseException e) {
-
+            } catch (final ParseException e) {
+                LOG.error("Parse Exception " + e);
             }
             connectionCriteria.add(Restrictions.eq("fromDate", fDate));
         }
-        if (null != status && !status.equals("ACTIVE")) {
-                connectionCriteria.add(Restrictions.eq("active", false));
-        } else {
+        if (null != status && !status.equals("ACTIVE"))
+            connectionCriteria.add(Restrictions.eq("active", false));
+        else
             connectionCriteria.add(Restrictions.eq("active", true));
-        }
 
         connectionCriteria.addOrder(Order.asc("propertyType"));
         connectionCriteria.addOrder(Order.desc("fromDate"));
@@ -213,8 +210,7 @@ public class DonationMasterService {
     public List<Date> findFromDateByPropertyType(final PropertyType propertyType) {
         return donationMasterRepository.findFromDateByPropertyType(propertyType);
     }
-    
-    
+
     public String checkClosetsPresentForGivenCombination(final PropertyType propertyType, final Integer noofclosets) {
         String validationMessage = "";
         final DonationDetailMaster donationDetailMaster = donationMasterRepository
