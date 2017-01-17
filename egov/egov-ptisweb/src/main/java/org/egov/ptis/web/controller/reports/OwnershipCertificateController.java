@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -39,12 +39,11 @@
  */
 package org.egov.ptis.web.controller.reports;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.VALUATION_CERTIFICATE;
-
 import java.math.BigDecimal;
 import java.util.List;
 
 import org.egov.demand.model.EgBill;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.service.notice.RecoveryNoticeService;
@@ -60,45 +59,45 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/valuation")
-public class ValuationCertificateController {
+@RequestMapping("/ownershipcertificate")
+public class OwnershipCertificateController {
 
-    private static final String VALUATION_HAS_PT_DUE = "assessment.has.pt.due";
+    private static final String OWNERCERT_FORM = "ownershipcertificate-form";
+
     @Autowired
     private RecoveryNoticeService recoveryNoticeService;
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
-
-    private static final String VALUATIONCERTIFICATE_FORM = "valuationcertificate-form";
+    private static final String OWNERSHIP_HAS_PT_DUE = "assessment.has.pt.due";
 
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String searchForm(final Model model) {
         model.addAttribute("egBill", new EgBill());
-        return VALUATIONCERTIFICATE_FORM;
+        return OWNERCERT_FORM;
     }
 
     @RequestMapping(value = "/searchform", method = RequestMethod.POST)
-    public String valuationNotice(@ModelAttribute("egBill") final EgBill egBill, final Model model,
+    public String searchProperty(@ModelAttribute("egBill") final EgBill egBill, final Model model,
             final BindingResult errors) {
         final List<String> errorList = recoveryNoticeService.validateRecoveryNotices(egBill.getConsumerId(),
-                VALUATION_CERTIFICATE);
+                PropertyTaxConstants.NOTICE_TYPE_OC);
         for (final String error : errorList)
-            if (VALUATION_HAS_PT_DUE.equals(error)) {
+            if (OWNERSHIP_HAS_PT_DUE.equals(error)) {
                 final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(egBill.getConsumerId());
                 final BigDecimal totalDue = recoveryNoticeService.getTotalPropertyTaxDue(basicProperty);
                 errors.reject(error, new String[] { String.valueOf(totalDue) }, error);
             } else
                 errors.reject(error, error);
         if (errors.hasErrors()) {
-            model.addAttribute("valuationnotice", new EgBill());
-            return VALUATIONCERTIFICATE_FORM;
+            model.addAttribute("ownershipCertificate", new EgBill());
+            return OWNERCERT_FORM;
         } else
-            return "redirect:/valuation/generatenotice/" + egBill.getConsumerId();
+            return "redirect:/ownershipcertificate/generate/" + egBill.getConsumerId();
     }
 
-    @RequestMapping(value = "/generatenotice/{assessmentNo}", method = RequestMethod.GET)
+    @RequestMapping(value = "/generate/{assessmentNo}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateNotice(final Model model, @PathVariable final String assessmentNo) {
-        return recoveryNoticeService.generateNotice(assessmentNo, VALUATION_CERTIFICATE);
+        return recoveryNoticeService.generateNotice(assessmentNo, PropertyTaxConstants.NOTICE_TYPE_OC);
     }
 
 }
