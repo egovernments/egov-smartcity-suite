@@ -192,10 +192,14 @@ public class ContractorAction extends SearchFormAction {
 
     @Action(value = "/masters/contractor-save")
     public String save() {
-        final Integer id = contractor.getBank().getId();
-        entityManager.detach(contractor.getBank());
-        final Bank bank = entityManager.find(Bank.class, id);
-        contractor.setBank(bank);
+        if (contractor.getBank().getId() != -1 && contractor.getBank().getId() != 0 && contractor.getBank() != null
+                && contractor.getBank().getId() != null) {
+            final Integer id = contractor.getBank().getId();
+            entityManager.detach(contractor.getBank());
+            final Bank bank = entityManager.find(Bank.class, id);
+            contractor.setBank(bank);
+        } else
+            contractor.setBank(null);
         contractorMasterSetMandatoryFields();
         contractorMasterSetHiddenFields();
         populateContractorDetails(mode);
