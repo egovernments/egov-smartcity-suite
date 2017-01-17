@@ -156,8 +156,7 @@
 		if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_FORWARD}"/>') {
 
 			if (statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED}"/>') {
-				if (state == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@RP_CREATED}"/>'
-						|| state == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@GRP_CREATED}"/>') {
+				if (state == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NEW}"/>') {
 					if (validateRecordObjections()) {
 						action = 'revPetition.action';
 					} else
@@ -435,7 +434,7 @@
 
 							<s:if
 								test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED) &&
-        		state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@GRP_RP_CREATED)">
+        		state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NEW)">
 								<jsp:include page="recordRevisionPetition.jsp" />
         		</s:if>
 							<s:elseif
@@ -501,7 +500,7 @@
 								</s:elseif>
 								<s:elseif
 									test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED)
-							&& state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@GRP_RP_CREATED)">
+							&& state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NEW)">
 									<%-- <jsp:include page="../workflow/revisionPetition-workflow.jsp"/> --%>
 									<jsp:include page="../workflow/commonWorkflowMatrix.jsp" />
 								</s:elseif>
