@@ -112,6 +112,11 @@ public class MarriageConstants {
         }
     };
 
+    public static final String MARRIAGE_DEPARTMENT_CODE = "MARRIAGE_DEPARTMENT_CODE";
+    public static final String MARRIAGE_DEFAULT_FUNCTIONARY_CODE = "MARRIAGE_DEFAULT_FUNCTIONARY_CODE";
+    public static final String MARRIAGE_DEFAULT_FUND_SRC_CODE = "MARRIAGE_DEFAULT_FUND_SRC_CODE";
+    public static final String MARRIAGE_DEFAULT_FUND_CODE = "MARRIAGE_DEFAULT_FUND_CODE";
+
     private MarriageConstants() {
         // To hide implicit public
     }
