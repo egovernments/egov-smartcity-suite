@@ -51,6 +51,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeSet;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -135,9 +138,8 @@ public class ContractorAction extends SearchFormAction {
     @Autowired
     private CreateBankService createBankService;
 
-    public ContractorAction() {
-        addRelatedEntity(WorksConstants.BANK, Bank.class);
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public String execute() {
@@ -190,10 +192,12 @@ public class ContractorAction extends SearchFormAction {
 
     @Action(value = "/masters/contractor-save")
     public String save() {
+        final Integer id = contractor.getBank().getId();
+        entityManager.detach(contractor.getBank());
+        final Bank bank = entityManager.find(Bank.class, id);
+        contractor.setBank(bank);
         contractorMasterSetMandatoryFields();
         contractorMasterSetHiddenFields();
-        final Bank bank = createBankService.getById(contractor.getBank().getId());
-        contractor.setBank(bank);
         populateContractorDetails(mode);
         contractor = contractorService.persist(contractor);
         if (mode == null || org.apache.commons.lang.StringUtils.isEmpty(mode))

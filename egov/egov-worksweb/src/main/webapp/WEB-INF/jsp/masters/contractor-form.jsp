@@ -269,18 +269,10 @@ var makeContractorDataTable = function() {
 					name="contractor.bank" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:if test="%{mode=='edit'}">
-					<s:select headerKey="-1" headerValue="select"
-					list="dropdownData.bankList" name="bank" id="bank"
-					cssClass="form-control" listKey="id" listValue="name"
-					value="%{bank.id}" />
-				</s:if>
-				<s:else>
-					<s:select headerKey="-1" headerValue="select"
-					list="dropdownData.bankList" name="bank.id" id="bank"
-					cssClass="form-control" listKey="id" listValue="name"
-					value="%{bank.id}" />
-				</s:else>
+				<s:select headerKey="-1" headerValue="select"
+				list="dropdownData.bankList" name="bank.id" id="bank"
+				cssClass="form-control" listKey="id" listValue="name"
+				value="%{bank.id}" />
 			</div>
 			<label class="col-sm-2 control-label text-right" for="ifscCode"> <s:text
 					name="contractor.ifscCode" />
