@@ -46,6 +46,7 @@ import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.entity.DemandGenerationLog;
 import org.egov.tl.entity.DemandGenerationLogDetail;
@@ -95,7 +96,7 @@ public class DemandGenerationService {
     @Qualifier("tradeLicenseService")
     private AbstractLicenseService licenseService;
 
-    private int batchSize = 0;
+    private int batchSize;
 
     @Autowired
     public DemandGenerationService(ApplicationProperties applicationProperties) {
@@ -122,7 +123,7 @@ public class DemandGenerationService {
         Module module = moduleService.getModuleByName(TRADELICENSE_MODULENAME);
         Installment givenInstallment = installmentDao.getInsatllmentByModuleForGivenDate(module, financialYear.getStartingDate());
         if (givenInstallment == null)
-            throw new ValidationException("TL-005", "TL-005");
+            throw new ApplicationRuntimeException("TL-005");
         demandGenerationLog.setDemandGenerationStatus(ProcessStatus.INPROGRESS);
         List<License> licenses = licenseService.getAllLicensesByNatureOfBusiness(PERMANENT_NATUREOFBUSINESS);
         int batchUpdateCount = 0;

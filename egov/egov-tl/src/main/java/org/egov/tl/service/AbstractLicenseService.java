@@ -433,7 +433,7 @@ public abstract class AbstractLicenseService<T extends License> {
             EgDemandDetails licenseDemandDetail = reasonWiseDemandDetails.get(reason);
             if (licenseDemandDetail == null)
                 license.getLicenseDemand().getEgDemandDetails().add(EgDemandDetails.
-                        fromReasonAndAmounts(feeMatrixDetail.getAmount(), reason, BigDecimal.ZERO));
+                        fromReasonAndAmounts(feeMatrixDetail.getAmount(), reason, ZERO));
             else
                 licenseDemandDetail.setAmount(feeMatrixDetail.getAmount());
             license.getLicenseDemand().setEgInstallmentMaster(givenInstallment);
