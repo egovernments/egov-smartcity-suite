@@ -414,6 +414,18 @@
 		<put-attribute name="page-title" value="lbl.hdr.addMutation" cascade="true" />
 		<put-attribute name="body" value="/WEB-INF/views/masters/mutationfee/add-mutationfee.jsp" />
 	</definition>
+	<definition name="search-mutation-fee-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.mutationfee.search" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/masters/mutationfee/search-mutationfee.jsp" />
+	</definition>
+	<definition name="modify-mutation-fee-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.mutationfee.modify" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/masters/mutationfee/modify-mutationfee.jsp" />
+	</definition>
+	<definition name="view-mutation-fee-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.mutationfee.modify" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/masters/mutationfee/view-mutationfee.jsp" />
+	</definition>
 	
 	<definition name="recovery-form" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.title.recovery.notices" cascade="true"/>
@@ -454,5 +466,6 @@
     	<put-attribute name="page-title" value="lbl.title.ownership.certificate" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/reports/ownershipcertificate-form.jsp"/>
     </definition>
+    
     
 </tiles-definitions> 
