@@ -88,39 +88,51 @@ public class RecoveryNoticesJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(final JobExecutionContext context) throws JobExecutionException {
-        ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
-        final JobDetailImpl jobDetail = (JobDetailImpl) context.getJobDetail();
-        final String assessmentNumbers = (String) jobDetail.getJobDataMap().get("assessmentNumbers");
-        final String noticeType = (String) jobDetail.getJobDataMap().get("noticeType");
-        final String tenantId = jobDetail.getName().split("_")[0];
-        ApplicationThreadLocals.setTenantID(tenantId);
-        final List<String> assessments = Arrays.asList(assessmentNumbers.split(", "));
-        final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
-        for (final String assessmentNo : assessments) {
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Generating " + noticeType + " for assessment : " + assessmentNo);
-            try {
-                txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-                txTemplate.execute(result -> {
-                    final List<String> errors = recoveryNoticesService.validateRecoveryNotices(assessmentNo, noticeType);
-                    final RecoveryNoticesInfo noticeInfo = recoveryNoticesService
-                            .getRecoveryNoticeInfoByAssessmentAndNoticeType(assessmentNo, noticeType);
-                    if (errors.isEmpty())
-                        return generateNotice(noticeType, assessmentNo, noticeInfo);
-                    else {
-                        updateNoticeInfo(errors, noticeInfo);
-                        return Boolean.FALSE;
-                    }
-                });
-            } catch (final Exception e) {
-                txTemplate.execute(result -> {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.error("Exception in Generating " + noticeType + " for assessment : " + assessmentNo);
-                        LOGGER.error(e);
-                    }
-                    return Boolean.FALSE;
-                });
+        try {
+            ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
+            final JobDetailImpl jobDetail = (JobDetailImpl) context.getJobDetail();
+            final String assessmentNumbers = (String) jobDetail.getJobDataMap().get("assessmentNumbers");
+            final String noticeType = (String) jobDetail.getJobDataMap().get("noticeType");
+            final String tenantId = jobDetail.getName().split("_")[0];
+            ApplicationThreadLocals.setTenantID(tenantId);
+            final List<String> assessments = Arrays.asList(assessmentNumbers.split(", "));
+            final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
+            for (final String assessmentNo : assessments) {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Generating " + noticeType + " for assessment : " + assessmentNo);
+                generateAssessmentNotice(noticeType, txTemplate, assessmentNo);
             }
+        } catch (final Exception ex) {
+            LOGGER.error("Unable to complete execution Scheduler ", ex);
+            throw new JobExecutionException("Unable to execute batch job Scheduler", ex, false);
+        } finally {
+            ApplicationThreadLocals.clearValues();
+        }
+    }
+
+    private void generateAssessmentNotice(final String noticeType, final TransactionTemplate txTemplate,
+            final String assessmentNo) {
+        try {
+            txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+            txTemplate.execute(result -> {
+                final List<String> errors = recoveryNoticesService.validateRecoveryNotices(assessmentNo, noticeType);
+                final RecoveryNoticesInfo noticeInfo = recoveryNoticesService
+                        .getRecoveryNoticeInfoByAssessmentAndNoticeType(assessmentNo, noticeType);
+                if (errors.isEmpty())
+                    return generateNotice(noticeType, assessmentNo, noticeInfo);
+                else {
+                    updateNoticeInfo(errors, noticeInfo);
+                    return Boolean.FALSE;
+                }
+            });
+        } catch (final Exception e) {
+            txTemplate.execute(result -> {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.error("Exception in Generating " + noticeType + " for assessment : " + assessmentNo);
+                    LOGGER.error(e);
+                }
+                return Boolean.FALSE;
+            });
         }
     }
 
