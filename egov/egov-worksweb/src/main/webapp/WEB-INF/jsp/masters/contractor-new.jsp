@@ -106,7 +106,7 @@ body {
 <input type="hidden" id="tinNumberAlphaNeumericErrorMsg" value="<s:text name='contractor.tinNumber.alphaNumeric' />" />
 <input type="hidden" id="codeAlphaNeumericErrorMsg" value="<s:text name='contractor.code.alphaNumeric' />" />
 <input type="hidden" id="nameAlphaNeumericErrorMsg" value="<s:text name='contractor.name.alphaNumeric' />" />
-<input type="hidden" id="mobileNumberErrorMsg" value="<s:text name='contractor.mobilenumber.null' />" />
+<input type="hidden" id="mobileNumberErrorMsg" value="<s:text name='depositworks.roadcut.invalid.mobileno' />" />
 <input type="hidden" id="bankAccountErrorMsg" value="<s:text name='contractor.bankaccount.null' />" />
 <input type="hidden" id="registrationNumberErrorMsg" value="<s:text name='contractordetail.registrationnumber.required' />" />
 <input type="hidden" id="departmentErrorMsg" value="<s:text name='contractorDetails.department.required' />" />

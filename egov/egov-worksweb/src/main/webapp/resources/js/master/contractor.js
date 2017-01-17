@@ -59,16 +59,15 @@ jQuery(document).ready(function(){
 		})
 	}
 	
-	jQuery("#mobileNumber" ).on("keyup", function(){
-		   var valid = /\d+$/.test(this.value),
-		       val = this.value;
-		   
-		   if(!valid){
-		       console.log("Invalid input!");
-		       this.value = val.substring(0, val.length - 1);
-		   }
+	jQuery("#mobileNumber").on("input", function(){
+		var valid = /\d+$/.test(this.value),
+	       val = this.value;
+	   
+	   if(!valid){
+	       console.log("Invalid input!");
+	       this.value = val.substring(0, val.length - 1);
+	   }
 		});
-
 });
 function checkMobileNumber(){
 	if(jQuery("#mobileNumber").val().length == 0){
@@ -76,9 +75,9 @@ function checkMobileNumber(){
 		flag = true;
 		return false;
 		}
-	var regx = /\d+$/;
+	var regx = /\d{10}$/;
 	if (jQuery("#mobileNumber").val().length < 10 || !regx.test(jQuery("#mobileNumber").val())) {
-		  showMessage('contractor_error', jQuery("#mobileNumberFormatErrorMsg").val());
+		  showMessage('contractor_error', jQuery("#mobileNumberErrorMsg").val());
 		  flag = true;
 		  return false;
 	  }
@@ -320,36 +319,36 @@ function checkCodeAndName(){
 function checkContractorDetailsMandatoryFieldsErrors(fieldName){
 	if (fieldName == "registrationNumber")
 		checkRegistrationNumber();
-	if (fieldName == "grade")
+	else if (fieldName == "grade")
 		checkContractorClass();
 }
 
 function checkContractorMasterMandatoryFieldsErrors(fieldName){
 	if (fieldName == "panNumber") 
 		checkPanNumber();
-	if (fieldName == "tinNumber")
+	else if (fieldName == "tinNumber")
 		checkTinNumber();
-	if (fieldName == "contactPerson")
+	else if (fieldName == "contactPerson")
 		checkContactPerson();
-	if (fieldName == "email")
+	else if (fieldName == "email")
 		checkEmail();
-	if (fieldName == "mobileNumber")
+	else if (fieldName == "mobileNumber")
 		checkMobileNumber();
-	if (fieldName == "bank")
+	else if (fieldName == "bank")
 		checkBank();
-	if (fieldName == "bankAccount")
+	else if (fieldName == "bankAccount")
 		checkBankAccountNumber();
-	if (fieldName == "correspondenceAddress")
+	else if (fieldName == "correspondenceAddress")
 		checkCorrespondenceAddress();
-	if (fieldName == "ifscCode")
+	else if (fieldName == "ifscCode")
 		checkIfscCode();
-	if (fieldName == "paymentAddress")
+	else if (fieldName == "paymentAddress")
 		checkPaymentAddress();
-	if (fieldName == "narration")
+	else if (fieldName == "narration")
 		checkNarration();
-	if (fieldName == "exemptionForm")
+	else if (fieldName == "exemptionForm")
 		checkExemptionForm();
-	if (fieldName == "pwdApprovalCode")
+	else if (fieldName == "pwdApprovalCode")
 		checkPwdApprovalCode();
 	checkContractorDetailsMandatoryFieldsErrors(fieldName);
 }
@@ -361,7 +360,7 @@ function checkForMandatoryValues(){
 			var contractorMasterMandatoryFields = mandatoryFields.filter(function(val) {
 				  return hiddenFields.indexOf(val) == -1;
 				});
-			jQuery.each(contractorMasterMandatoryFields,function(){
+			jQuery.each(contractorMasterMandatoryFields.reverse(),function(){
 				var fieldName = this.toString().trim();
 				checkContractorMasterMandatoryFieldsErrors(fieldName);
 			});
