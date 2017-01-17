@@ -127,6 +127,7 @@ public class JpaConfiguration {
         properties.put(AUTO_CLOSE_SESSION, env.getProperty(AUTO_CLOSE_SESSION));
         properties.put(USE_STREAMS_FOR_BINARY, env.getProperty(USE_STREAMS_FOR_BINARY));
         properties.put(DEFAULT_BATCH_FETCH_SIZE, applicationProperties.getBatchUpdateSize());
+        properties.put(BATCH_VERSIONED_DATA, true);
         properties.put(ORDER_INSERTS, true);
         properties.put(ORDER_UPDATES, true);
         properties.put(AUTOCOMMIT, false);

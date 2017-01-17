@@ -40,14 +40,15 @@
 package org.egov.tl.web.controller;
 
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.service.CFinancialYearService;
 import org.egov.tl.entity.DemandGenerationLog;
 import org.egov.tl.service.DemandGenerationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -55,37 +56,38 @@ import java.util.List;
 @Controller
 @RequestMapping("/demand-generation")
 public class DemandGenerationController {
+
     @Autowired
     private DemandGenerationService demandGenerationService;
 
+    @Autowired
+    private CFinancialYearService financialYearService;
+
     @ModelAttribute("financialYearList")
     public List<CFinancialYear> financialYearList() {
-        return demandGenerationService.financialYearList();
+        return financialYearService.getAllFinancialYears();
     }
 
     @RequestMapping(value = "create", method = RequestMethod.GET)
-    public String newForm(@ModelAttribute DemandGenerationLog demandGenerationLog) {
+    public String newForm() {
         return "demand-generate";
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
-    public String demandGeneration(@ModelAttribute DemandGenerationLog demandGenerationLog,
-            final RedirectAttributes redirectAttributes) {
-        demandGenerationLog = demandGenerationService.bulkDemandGeneration(demandGenerationLog);
-        redirectAttributes.addFlashAttribute("demandGenerationLog", demandGenerationLog);
-        redirectAttributes.addFlashAttribute("message",
-                "msg.demand.generation." + demandGenerationLog.getDemandGenerationStatus());
+    public String generateDemand(@RequestParam String installmentYear, RedirectAttributes responseAttribs) {
+        DemandGenerationLog bulkDemandGenerationLog = demandGenerationService.generateDemand(installmentYear);
+        responseAttribs.addFlashAttribute("demandGenerationLog", bulkDemandGenerationLog);
+        responseAttribs.addFlashAttribute("message",
+                "msg.demand.generation." + bulkDemandGenerationLog.getDemandGenerationStatus());
         return "redirect:/demand-generation/create";
     }
 
-    @RequestMapping(value = "/regenerate", method = RequestMethod.POST)
-    public String demandRegeneration(@ModelAttribute DemandGenerationLog demandGenerationLog,
-            final RedirectAttributes redirectAttributes) {
-        demandGenerationLog = demandGenerationService.demandRegeneration(demandGenerationLog);
-        redirectAttributes.addFlashAttribute("demandGenerationLog", demandGenerationLog);
-        redirectAttributes.addFlashAttribute("message",
-                "msg.demand.generation." + demandGenerationLog.getDemandGenerationStatus());
+    @RequestMapping(value = "regenerate", method = RequestMethod.POST)
+    public String regenerateDemand(@RequestParam String installmentYear, RedirectAttributes responseAttribs) {
+        DemandGenerationLog bulkDemandGenerationLog = demandGenerationService.regenerateDemand(installmentYear);
+        responseAttribs.addFlashAttribute("demandGenerationLog", bulkDemandGenerationLog);
+        responseAttribs.addFlashAttribute("message",
+                "msg.demand.generation." + bulkDemandGenerationLog.getDemandGenerationStatus());
         return "redirect:/demand-generation/create";
     }
-
 }

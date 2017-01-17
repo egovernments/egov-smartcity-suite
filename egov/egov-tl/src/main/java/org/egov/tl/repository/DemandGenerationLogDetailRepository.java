@@ -44,4 +44,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DemandGenerationLogDetailRepository extends JpaRepository<DemandGenerationLogDetail, Long> {
 
+    DemandGenerationLogDetail findByDemandGenerationLogIdAndLicenseId(Long logId, Long licenseId);
 }

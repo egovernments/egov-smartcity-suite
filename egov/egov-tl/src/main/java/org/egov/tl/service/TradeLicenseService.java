@@ -57,7 +57,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.eis.entity.Assignment;
-import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
@@ -73,7 +72,6 @@ import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.entity.dto.SearchForm;
-import org.egov.tl.repository.LicenseRepository;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.hibernate.Criteria;
@@ -93,9 +91,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Autowired
     private LicenseUtils licenseUtils;
-
-    @Autowired
-    private LicenseRepository licenseRepository;
 
     @Autowired
     private ModuleService moduleService;
@@ -209,12 +204,11 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     private String getCityGrade() {
-        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        return cityWebsite.getGrade();
+        return cityService.getCityByURL(ApplicationThreadLocals.getDomainName()).getGrade();
     }
 
     public ReportOutput prepareReportInputDataForDig(final License license, final String districtName,
-            final String cityMunicipalityName) {
+                                                     final String cityMunicipalityName) {
         final String cityGrade = getCityGrade();
         if (cityGrade != null && cityGrade.equalsIgnoreCase(Constants.CITY_GRADE_CORPORATION)) {
             return reportService.createReport(
@@ -228,7 +222,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     private Map<String, Object> getReportParamsForCertificate(final License license, final String districtName,
-            final String cityMunicipalityName) {
+                                                              final String cityMunicipalityName) {
         final Map<String, Object> reportParams = new HashMap<>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final Format formatterYear = new SimpleDateFormat("YYYY");
@@ -246,7 +240,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams
                 .put("appType", license.getLicenseAppType() != null
                         ? "New".equals(license.getLicenseAppType().getName())
-                                ? "New Trade" : "Renewal"
+                        ? "New Trade" : "Renewal"
                         : "New");
         reportParams.put("currentDate", formatter.format(new Date()));
         if (ApplicationThreadLocals.getMunicipalityName().contains("Corporation"))

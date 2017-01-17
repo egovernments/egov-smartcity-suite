@@ -47,56 +47,51 @@ import org.egov.tl.repository.DemandGenerationLogDetailRepository;
 import org.egov.tl.repository.DemandGenerationLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class DemandGenerationLogService {
-    private final DemandGenerationLogRepository demandGenerationLogRepository;
-    private final DemandGenerationLogDetailRepository demandGenerationLogDetailRepository;
 
     @Autowired
-    public DemandGenerationLogService(final DemandGenerationLogRepository demandGenerationLogRepository,
-            final DemandGenerationLogDetailRepository demandGenerationLogDetailRepository) {
-        this.demandGenerationLogRepository = demandGenerationLogRepository;
-        this.demandGenerationLogDetailRepository = demandGenerationLogDetailRepository;
-    }
+    private DemandGenerationLogRepository demandGenerationLogRepository;
 
-    public DemandGenerationLog findByInstallmentYear(final String installmentYear) {
+    @Autowired
+    private DemandGenerationLogDetailRepository demandGenerationLogDetailRepository;
+
+    public DemandGenerationLog getDemandGenerationLogByInstallmentYear(String installmentYear) {
         return demandGenerationLogRepository.findByInstallmentYear(installmentYear);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public DemandGenerationLog createDemandGenerationLog(final DemandGenerationLog demandGenerationLog) {
-        demandGenerationLog.setExecutionStatus(ProcessStatus.INPROGRESS);
-        demandGenerationLog.setDemandGenerationStatus(ProcessStatus.INCOMPLETE);
-        return demandGenerationLogRepository.save(demandGenerationLog);
+    @Transactional
+    public DemandGenerationLog createDemandGenerationLog(String installmentYear) {
+        return demandGenerationLogRepository.saveAndFlush(new DemandGenerationLog(installmentYear));
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public DemandGenerationLogDetail createDemandGenerationLogDetail(final DemandGenerationLog demandGenerationLog,
-            final License license) {
-        final DemandGenerationLogDetail demandGenerationLogDetail = new DemandGenerationLogDetail();
-        demandGenerationLogDetail.setLicense(license);
-        demandGenerationLogDetail.setDemandGenerationLog(demandGenerationLog);
-        demandGenerationLogDetail.setStatus(ProcessStatus.INPROGRESS);
-        demandGenerationLog.getDetails().add(demandGenerationLogDetail);
-        return demandGenerationLogDetailRepository.save(demandGenerationLogDetail);
+    @Transactional
+    public DemandGenerationLog updateDemandGenerationLog(DemandGenerationLog generationLog) {
+        return demandGenerationLogRepository.saveAndFlush(generationLog);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void updateDemandGenerationLogDetail(final DemandGenerationLogDetail demandGenerationLogDetail,
-            final ProcessStatus status, final String details) {
-        demandGenerationLogDetail.setStatus(status);
-        demandGenerationLogDetail.setDetail(details);
-        demandGenerationLogDetailRepository.save(demandGenerationLogDetail);
+    @Transactional
+    public DemandGenerationLogDetail createOrGetDemandGenerationLogDetail(DemandGenerationLog generationLog, License license) {
+
+        DemandGenerationLogDetail logDetail = demandGenerationLogDetailRepository.
+                findByDemandGenerationLogIdAndLicenseId(generationLog.getId(), license.getId());
+        if (logDetail == null) {
+            logDetail = new DemandGenerationLogDetail();
+            logDetail.setLicense(license);
+            logDetail.setDemandGenerationLog(generationLog);
+            logDetail.setStatus(ProcessStatus.INPROGRESS);
+            generationLog.getDetails().add(logDetail);
+            logDetail = demandGenerationLogDetailRepository.saveAndFlush(logDetail);
+        }
+        return logDetail;
     }
 
-    public DemandGenerationLog updateDemandGenerationLog(final DemandGenerationLog demandGenerationLog,
-            final ProcessStatus executionStatus, final ProcessStatus demandGenerationStatus) {
-        demandGenerationLog.setExecutionStatus(executionStatus);
-        demandGenerationLog.setDemandGenerationStatus(demandGenerationStatus);
-        return demandGenerationLogRepository.save(demandGenerationLog);
+    @Transactional
+    public DemandGenerationLogDetail updateDemandGenerationLogDetail(DemandGenerationLogDetail logDetail) {
+        return demandGenerationLogDetailRepository.saveAndFlush(logDetail);
     }
+
 }

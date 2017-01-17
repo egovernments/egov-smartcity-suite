@@ -121,13 +121,17 @@ public class FeeMatrixService<T extends License> {
         return feeMatrixRepository.findByUniqueNo(feeMatrix.getUniqueNo());
     }
 
+    public List<FeeMatrixDetail> findFeeMatrixByLicense(T license) {
+        return findFeeMatrixByGivenDate(license, license.getApplicationDate());
+    }
+
     /**
      * @param license
      * @return Will return the list of fees for the selected combination 1.It will fetch all fee types from the system 2. Apply
      * the rule and parameters for that 3. return it by adding to the feeMatrixDetailList 4. Uses switch . So After adding feetype
      * in the system it should be coded here to say how what parameter to be applied for the fetch
      */
-    public List<FeeMatrixDetail> findFeeList(final T license) {
+    public List<FeeMatrixDetail> findFeeMatrixByGivenDate(T license, Date givenDate) {
 
         final List<AppConfigValues> newRenewAppconfigList = appConfigValueService.getConfigValuesByModuleAndKey("Trade License",
                 "Is Fee For New and Renew Same");
@@ -155,10 +159,8 @@ public class FeeMatrixService<T extends License> {
         else
             uniqueNo = generateFeeMatirixUniqueNo(license);
 
-        final Date applicationDate = license.getApplicationDate();
-
         final List<FeeMatrixDetail> feeMatrixDetailList = new ArrayList<>();
-        final CFinancialYear financialYearByDate = financialYearDAO.getFinancialYearByDate(applicationDate);
+        final CFinancialYear financialYearByDate = financialYearDAO.getFinYearByDate(givenDate);
         for (final FeeType fee : feeTypeService.findAll())
             if (fee.getFeeProcessType().equals(FeeType.FeeProcessType.RANGE))
                 switchLoop:switch (fee.getCode()) {
