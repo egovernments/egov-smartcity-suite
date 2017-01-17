@@ -62,10 +62,18 @@
 				<security:filter-chain pattern="/application/generatebillOnline/**" filters="none" />
 				
 				<security:filter-chain pattern="/reports/dCBReport/localityWise" filters="none" /> 
+				<security:filter-chain pattern="/reports/dCBReport/zoneWise" filters="none" /> 
+				<security:filter-chain pattern="/reports/dCBReport/wardWise" filters="none" /> 
+				<security:filter-chain pattern="/reports/dCBReport/blockWise" filters="none" /> 
 				<security:filter-chain pattern="/reports/dCBReportList" filters="none" /> 
 				<security:filter-chain pattern="/report/dailyWTCollectionReport/search/" filters="none" /> 
 				<security:filter-chain pattern="/reports/coonectionReport/wardWise" filters="none" /> 
 				<security:filter-chain pattern="/reports/connectionReportList" filters="none" /> 
+				
+				<security:filter-chain pattern="/report/baseRegister" filters="none" /> 
+				<security:filter-chain pattern="/report/baseRegister/result" filters="none" /> 
+				<security:filter-chain pattern="/report/defaultersWTReport/search" filters="none" /> 
+				<security:filter-chain pattern="/report/defaultersWTReport/search/result" filters="none" /> 
 				
 				<security:filter-chain pattern="/application/view/**" filters="none" /> 
 				<security:filter-chain pattern="/viewDcb/consumerCodeWis/**" filters="none" /> 
