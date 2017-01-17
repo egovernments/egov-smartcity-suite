@@ -62,7 +62,11 @@ jQuery(document).ready(function($) {
 			if ($('#mode').val() != 'ByBoundary') {
 				$('#report-backbutton').hide();
 			}
-		} else if ($('#boundary').val()) {
+		} else if ($('#locality').val()) {
+			$('#locality').val("");
+			callAjaxByLocality();
+		}
+		else if ($('#boundary').val()) {
 			console.log('true!')
 			$('#boundary').val("");
 			callajaxdatatableForDrilDownReport();
@@ -73,7 +77,8 @@ jQuery(document).ready(function($) {
 
 	$('#drilldownReportSearch').click(function(e) {
 		console.log('calling inside ajax');
-
+		
+		$('#locality').val();
 		$('#deptid').val("");
 		$('#complainttypeid').val("");
 		$('#selecteduserid').val("");
@@ -121,6 +126,7 @@ function callajaxdatatableForDrilDownReport() {
 						groupBy : modeVal,
 						deptid : $('#deptid').val(),
 						boundary : $('#boundary').val(),
+						locality : $('#locality').val(),
 						complainttypeid : $('#complainttypeid').val(),
 						selecteduserid : $('#selecteduserid').val(),
 						type : $('#type').val(),
@@ -201,7 +207,6 @@ function callajaxdatatableForDrilDownReport() {
 				} ]
 
 			});
-	//e.stopPropagation();
 
 }
 
@@ -283,6 +288,7 @@ function callAjaxByDepartment() {
 						groupBy : modeVal,
 						deptid : $('#deptid').val(),
 						boundary : $('#boundary').val(),
+						locality : $('#locality').val(),
 						complainttypeid : $('#complainttypeid').val(),
 						selecteduserid : $('#selecteduserid').val(),
 						type : $('#type').val(),
@@ -367,6 +373,121 @@ function callAjaxByDepartment() {
 	//e.stopPropagation();
 
 }
+function callAjaxByLocality(){
+
+	var startDate = "";
+	var endDate = "";
+	var modeVal = "";
+	var when_dateVal = "";
+	startDate = $('#start_date').val();
+	endDate = $('#end_date').val();
+	modeVal = $('#mode').val();
+	when_dateVal = $('#when_date').val();
+
+	var groupByobj = "";
+	groupByobj = $('input[name="groupBy"]:checked').val();
+	if ($('#start_date').val() == "")
+		startDate = "";
+
+	if ($('#end_date').val() == "")
+		endDate = "";
+
+	$('.report-section').removeClass('display-hide');
+	$('#report-footer').show();
+	$('#report-backbutton').show();
+	
+	reportdatatable = drillDowntableContainer
+			.dataTable({
+				ajax : {
+					url : "drillDown/resultList-update",
+					data : {
+						fromDate : startDate,
+						toDate : endDate,
+						groupBy : modeVal,
+						deptid : $('#deptid').val(),
+						boundary : $('#boundary').val(),
+						locality : $('#locality').val(),
+						complainttypeid : $('#complainttypeid').val(),
+						selecteduserid : $('#selecteduserid').val(),
+						type : $('#type').val(),
+						complaintDateType : when_dateVal
+					}
+				},
+				"autoWidth" : false,
+				"bDestroy" : true,
+				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
+				"oTableTools" : {
+					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+					"aButtons" : [ "xls", "pdf", "print" ]
+				},
+				columns : [
+						{
+							"data" : "name",
+							"render" : function(data, type, row) {
+								return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'LocalityWise\');" data-hiddenele="locality" data-eleval="'
+										+ data + '">' + data + '</a>';
+							},
+							"sTitle" : "Locality"
+						}, {
+							"mData" : "registered",
+							"sTitle" : "Registered",
+							"sClass" : "text-right"
+
+						}, {
+							"data" : "inprocess",
+							"sTitle" : "Inprocess",
+							"sClass" : "text-right"
+						}, {
+							"data" : "completed",
+							"sTitle" : "Disposed",
+							"sClass" : "text-right"
+						}, {
+							"data" : "rejected",
+							"sTitle" : "Rejected",
+							"sClass" : "text-right"
+
+						},{
+							"data" : "withinsla",
+							"sTitle" : "Within SLA",
+							"sClass" : "text-right"
+						},{
+							"data" : "beyondsla",
+							"sTitle" : "Beyond SLA",
+							"sClass" : "text-right"
+						},{
+							"data" : "total",
+							"sTitle" : "Total",
+							"sClass" : "text-right"
+
+						}],
+				"footerCallback" : function(row, data, start, end, display) {
+					var api = this.api(), data;
+					if (data.length == 0) {
+						$('#report-footer').hide();
+					} else {
+						$('#report-footer').show();
+					}
+					if (data.length > 0) {
+						updateTotalFooter(1, api);
+						updateTotalFooter(2, api);
+						updateTotalFooter(3, api);
+						updateTotalFooter(4, api);
+						updateTotalFooter(5, api);
+						updateTotalFooter(6, api);
+						updateTotalFooter(7, api);
+
+					}
+				},
+				"aoColumnDefs" : [ {
+					"aTargets" : [ 1, 2, 3, 4, 5 ],
+					"mRender" : function(data, type, full) {
+						return formatNumberInr(data);
+					}
+				} ]
+
+			});
+}
 function callAjaxByComplaintType() {
 
 	var startDate = "";
@@ -399,6 +520,7 @@ function callAjaxByComplaintType() {
 						groupBy : modeVal,
 						deptid : $('#deptid').val(),
 						boundary : $('#boundary').val(),
+						locality : $('#locality').val(),
 						complainttypeid : $('#complainttypeid').val(),
 						selecteduserid : $('#selecteduserid').val(),
 						type : $('#type').val(),
@@ -513,6 +635,7 @@ function callAjaxByUserNameType() {
 						groupBy : modeVal,
 						deptid : $('#deptid').val(),
 						boundary : $('#boundary').val(),
+						locality : $('#locality').val(),
 						complainttypeid : $('#complainttypeid').val(),
 						selecteduserid : $('#selecteduserid').val(),
 						type : $('#type').val(),
@@ -627,6 +750,7 @@ function callAjaxByComplaintDetail() {
 						groupBy : modeVal,
 						deptid : $('#deptid').val(),
 						boundary : $('#boundary').val(),
+						locality : $('#locality').val(),
 						complainttypeid : $('#complainttypeid').val(),
 						selecteduserid : $('#selecteduserid').val(),
 						type : $('#type').val(),
@@ -698,16 +822,19 @@ function setHiddenValueByLink(obj, paaram) {
 	$('input[name=' + $(obj).data('hiddenele') + ']')
 			.val($(obj).data('eleval'));
 	if (paaram == 'Departmentwise') {
-		//bootbox.alert('call complaint type');
+		// bootbox.alert('call complaint type');
 		callAjaxByComplaintType();
 	} else if (paaram == 'Boundarywise') {
-		//bootbox.alert('call department type');
-		callAjaxByDepartment();
+		// bootbox.alert('call locality type');
+		callAjaxByLocality();
 	} else if (paaram == 'ComplaintTypeWise') {
 		callAjaxByUserNameType();
 	} else if (paaram == 'UserNameWise') {
 		callAjaxByComplaintDetail();
 
+	} else if (paaram == 'LocalityWise') {
+		callAjaxByDepartment();
 	}
+	
 
 }

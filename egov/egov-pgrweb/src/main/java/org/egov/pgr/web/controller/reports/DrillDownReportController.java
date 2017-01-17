@@ -40,7 +40,16 @@
 
 package org.egov.pgr.web.controller.reports;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.egov.pgr.service.reports.DrillDownReportService;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
@@ -56,15 +65,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
 @Controller
-@RequestMapping(value = {"/report", "/public/report"})
+@RequestMapping(value = { "/report", "/public/report" })
 public class DrillDownReportController {
 
     @Autowired
@@ -96,22 +98,22 @@ public class DrillDownReportController {
 
     @ExceptionHandler(Exception.class)
     @RequestMapping(value = "/drillDown/resultList-update", method = RequestMethod.GET)
-    public @ResponseBody void springPaginationDataTablesUpdate(@RequestParam final String groupBy,
+    @ResponseBody
+    public void springPaginationDataTablesUpdate(@RequestParam final String groupBy,
             @RequestParam final String deptid, @RequestParam final String complainttypeid,
             @RequestParam final String selecteduserid, @RequestParam final String boundary,
             @RequestParam final String type, @RequestParam final String complaintDateType,
-            @RequestParam final DateTime fromDate, @RequestParam final DateTime toDate,
+            @RequestParam final DateTime fromDate, @RequestParam final DateTime toDate, @RequestParam final String locality,
             final HttpServletRequest request, final HttpServletResponse response) throws IOException {
 
-        SQLQuery drillDownreportQuery = null;
-        String result = null;
-        if (deptid != null && complainttypeid != null && selecteduserid != null && !"".equals(deptid)
-                && !"".equals(complainttypeid) && !"".equals(selecteduserid)) {
+        SQLQuery drillDownreportQuery ;
+        String result ;
+        if (StringUtils.isNotBlank(deptid) && StringUtils.isNotBlank(complainttypeid) && StringUtils.isNotBlank(selecteduserid)) {
             String userName = selecteduserid.split("~")[0];
-            if (userName.equals(""))
+            if ("".equals(userName))
                 userName = null;
             drillDownreportQuery = drillDownReportService.getDrillDownReportQuery(fromDate, toDate, complaintDateType,
-                    deptid, boundary, complainttypeid, userName);
+                    deptid, boundary, complainttypeid, userName, locality);
             drillDownreportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
 
             final List<DrillDownReportResult> drillDownresult = drillDownreportQuery.list();
@@ -121,7 +123,7 @@ public class DrillDownReportController {
 
         } else {
             drillDownreportQuery = drillDownReportService.getDrillDownReportQuery(fromDate, toDate, complaintDateType,
-                    groupBy, deptid, boundary, complainttypeid, selecteduserid);
+                    groupBy, deptid, boundary, complainttypeid, selecteduserid, locality);
             drillDownreportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
 
             final List<DrillDownReportResult> drillDownresult = drillDownreportQuery.list();
