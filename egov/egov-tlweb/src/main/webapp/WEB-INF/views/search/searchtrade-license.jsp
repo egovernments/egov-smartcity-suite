@@ -158,7 +158,8 @@
 					<th>Mobile Number</th>
 					<th>Property Assessment Number</th>
 					<th>Financial Year</th>
-					<th>Status</th>
+					<th>Application Status</th>
+					<th>License Active</th>
 					<th>Owner Name</th>
 					<th>Actions</th>
 				</tr>

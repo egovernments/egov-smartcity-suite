@@ -55,7 +55,7 @@ public class SearchTradeResultHelperAdaptor implements JsonSerializer<SearchForm
 
     @Override
     public JsonElement serialize(final SearchForm searchFormObj, final Type type,
-            final JsonSerializationContext jsc) {
+                                 final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (searchFormObj != null) {
             jsonObject.addProperty("licenseId", searchFormObj.getLicenseId());
@@ -69,6 +69,7 @@ public class SearchTradeResultHelperAdaptor implements JsonSerializer<SearchForm
             jsonObject.addProperty("mobileNumber", searchFormObj.getMobileNo());
             jsonObject.addProperty("propertyAssmntNo", searchFormObj.getPropertyAssessmentNo());
             jsonObject.addProperty("status", searchFormObj.getStatus());
+            jsonObject.addProperty("active", searchFormObj.getActive());
             jsonObject.addProperty("expiryYear", searchFormObj.getExpiryYear());
             jsonObject.addProperty("ownerName", searchFormObj.getOwnerName());
             // To add set of actions for search results

@@ -430,8 +430,11 @@ $("#btnsearch").click(
     							"sTitle" : "Financial Year"
     						}, {
     							"data" : "status",
-    							"sTitle" : "Status"
-    						},{
+    							"sTitle" : "Application Status"
+    						}, {
+								"data" : "active",
+								"sTitle" : "License Active"
+							},{
     							"data" : "ownerName",
     							"sTitle" : "Owner Name"
     						},{
