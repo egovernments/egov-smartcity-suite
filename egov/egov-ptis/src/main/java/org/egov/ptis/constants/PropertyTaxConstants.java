@@ -1621,6 +1621,7 @@ public interface PropertyTaxConstants {
     public static final String NOTICE_TYPE_INVENTORY = "Inventory Notice";
     public static final String NOTICE_TYPE_DISTRESS = "Distress Notice";
     public static final String VALUATION_CERTIFICATE = "Valuation Certificate";
+    public static final String NOTICE_TYPE_OCCUPIER = "Occupier Notice";
     public static final String VALUATION_CERTIFICATE_CORPORATION  = "ValuationCertificate_Corporation";
     public static final String VALUATION_CERTIFICATE_MUNICIPALITY = "ValuationCertificate_Municipality";
     public static final String NOTICE_TYPE_OC = "Ownership Certificate";
@@ -1654,6 +1655,8 @@ public interface PropertyTaxConstants {
             add(NOTICE_TYPE_INVENTORY);
             add(NOTICE_TYPE_DISTRESS);
             add(NOTICE_TYPE_OC);
+            add(NOTICE_TYPE_OCCUPIER);
+            add(VALUATION_CERTIFICATE);
         }
     };
 }

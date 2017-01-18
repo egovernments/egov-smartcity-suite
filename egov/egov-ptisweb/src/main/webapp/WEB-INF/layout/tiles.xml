@@ -472,5 +472,8 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/depreciationrate/depreciationrate-view.jsp"/>
     </definition>
     
-    
+    <definition name="occupiernotice-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.title.occupier.notice"  cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/reports/occupierNotice.jsp" />
+	</definition>
 </tiles-definitions> 
