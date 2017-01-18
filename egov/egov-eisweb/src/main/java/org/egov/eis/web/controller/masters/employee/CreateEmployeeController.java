@@ -106,7 +106,7 @@ public class CreateEmployeeController {
         if (codeExists)
             errors.rejectValue("code", "Unique.employee.code");
 
-        if (!employeeService.primaryAssignmentExists(employee))
+        if (!employeeService.primaryAssignmentExists(employee) && employee.isActive())
             errors.rejectValue("assignments", "primary.assignment");
 
         if (errors.hasErrors()) {

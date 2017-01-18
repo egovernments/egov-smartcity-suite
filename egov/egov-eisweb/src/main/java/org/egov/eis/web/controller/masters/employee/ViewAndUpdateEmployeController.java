@@ -143,7 +143,7 @@ public class ViewAndUpdateEmployeController {
             model.addAttribute("error", fieldError);
             return EMPLOYEEFORM;
         }
-        if (!employeeService.primaryAssignmentExists(employee))
+        if (!employeeService.primaryAssignmentExists(employee) && employee.isActive())
             errors.rejectValue("assignments", "primary.assignment");
 
         if (errors.hasErrors()) {
