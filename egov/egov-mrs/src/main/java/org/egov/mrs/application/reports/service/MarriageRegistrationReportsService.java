@@ -66,6 +66,7 @@ import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.entity.SearchModel;
 import org.egov.mrs.domain.entity.SearchResult;
 import org.egov.mrs.domain.enums.MaritalStatus;
+import org.egov.mrs.domain.enums.MarriageCertificateType;
 import org.egov.mrs.entity.es.MarriageRegistrationIndex;
 import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
 import org.elasticsearch.action.search.SearchResponse;
@@ -210,10 +211,10 @@ public class MarriageRegistrationReportsService {
             params.put(ZONE, String.valueOf(certificate.getRegistration().getZone().getId()));
         }
 
-        if (certificate.getCertificateType() != null && !ALL.equals(certificate.getCertificateType())) {
+        if (certificate.getCertificateType() != null && !ALL.equals(MarriageCertificateType.values())) {
             queryStrForRegistration.append(" and cert.certificatetype=:certificatetype");
-            params.put("certificatetype", certificate.getCertificateType());
-        } else if (certificate.getCertificateType() != null && ALL.equals(certificate.getCertificateType()))
+            params.put("certificatetype", certificate.getCertificateType().name());
+        } else if (certificate.getCertificateType() != null && ALL.equals(MarriageCertificateType.values()))
             queryStrForRegistration.append(" and cert.certificatetype in('REGISTRATION','REISSUE','REJECTION')");
 
         if (certificate.getFromDate() != null) {
@@ -246,9 +247,9 @@ public class MarriageRegistrationReportsService {
             params.put(ZONE, String.valueOf(certificate.getRegistration().getZone().getId()));
         }
 
-        if (certificate.getCertificateType() != null && !ALL.equals(certificate.getCertificateType())) {
+        if (certificate.getCertificateType() != null && !ALL.equals(MarriageCertificateType.values())) {
             queryStrForReissue.append(" and cert.certificatetype=:certificatetype");
-            params.put("certificatetype", certificate.getCertificateType());
+            params.put("certificatetype", certificate.getCertificateType().name());
         } else if (certificate.getCertificateType() != null && ALL.equals(certificate.getCertificateType()))
             queryStrForReissue.append(" and cert.certificatetype in('REGISTRATION','REISSUE','REJECTION')");
 
@@ -1066,7 +1067,7 @@ public class MarriageRegistrationReportsService {
         try {
             ulbWiseResponse = findAllReligionByUlbName(searchRequest,
                     getQueryFilter(searchRequest));
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             throw new ApplicationRuntimeException("Error Occured while fetching records from elastic search", e);
         }
 

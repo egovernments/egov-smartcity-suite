@@ -235,7 +235,7 @@ public class MarriageRegistrationIndexService {
                     registrationSearch.setCertificateNo(
                             certificate.getCertificateNo() != null ? certificate.getCertificateNo() : "");
                     registrationSearch.setCertificateType(
-                            certificate.getCertificateType() != null ? certificate.getCertificateType() : "");
+                            certificate.getCertificateType() != null ? certificate.getCertificateType().name() : "");
                     registrationSearch.setCertificateDate(certificate.getCertificateDate());
                     registrationSearch.setCertificateIssued(certificate.isCertificateIssued());
                 }
@@ -254,7 +254,7 @@ public class MarriageRegistrationIndexService {
         BoolQueryBuilder boolQuery = null;
         if (StringUtils.isNotBlank(ulbName) && null != ulbName)
             boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("ulbName", ulbName));
-        if (null != boolQuery) {
+        if (null != boolQuery)
             if (StringUtils.isNotBlank(applicantType) && null != applicantType)
                 if ("Husband".equalsIgnoreCase(applicantType))
                     boolQuery = boolQuery.filter(QueryBuilders.matchQuery("husbandHandicapped", true));
@@ -263,7 +263,6 @@ public class MarriageRegistrationIndexService {
                 else
                     boolQuery = boolQuery.filter(QueryBuilders.matchQuery("husbandHandicapped", true))
                             .filter(QueryBuilders.matchQuery("wifeHandicapped", true));
-        }
         return boolQuery;
     }
 

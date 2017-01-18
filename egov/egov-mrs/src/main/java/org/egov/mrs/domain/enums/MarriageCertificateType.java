@@ -40,5 +40,5 @@
 package org.egov.mrs.domain.enums;
 
 public enum MarriageCertificateType {
-        REGISTRATION, REJECTION,REISSUE
+    REGISTRATION, REISSUE, REJECTION
 }

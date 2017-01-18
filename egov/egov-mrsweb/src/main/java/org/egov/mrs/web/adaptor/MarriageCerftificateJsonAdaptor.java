@@ -42,7 +42,6 @@ package org.egov.mrs.web.adaptor;
 
 import java.lang.reflect.Type;
 
-import org.egov.infra.utils.StringUtils;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 
 import com.google.gson.JsonElement;
@@ -51,6 +50,8 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 public class MarriageCerftificateJsonAdaptor implements JsonSerializer<MarriageCertificate> {
+    private static final String REGISTRATION_NO = "registrationNo";
+
     @Override
     public JsonElement serialize(final MarriageCertificate marriageCertificate, final Type type,
             final JsonSerializationContext jsc) {
@@ -59,20 +60,24 @@ public class MarriageCerftificateJsonAdaptor implements JsonSerializer<MarriageC
             if (marriageCertificate.getCertificateNo() != null)
                 jsonObject.addProperty("certificateNo", marriageCertificate.getCertificateNo());
             else
-                jsonObject.addProperty("certificateNo", StringUtils.EMPTY);
+                jsonObject.addProperty("certificateNo", org.apache.commons.lang.StringUtils.EMPTY);
             if (marriageCertificate.getRegistration() != null)
-                jsonObject.addProperty("registrationNo", marriageCertificate.getRegistration().getRegistrationNo());
+                jsonObject.addProperty(REGISTRATION_NO, marriageCertificate.getRegistration().getRegistrationNo());
+
+            else if (marriageCertificate.getReIssue() != null)
+                jsonObject.addProperty(REGISTRATION_NO, marriageCertificate.getReIssue().getRegistration().getRegistrationNo());
             else
-                jsonObject.addProperty("registrationNo", StringUtils.EMPTY);
+                jsonObject.addProperty(REGISTRATION_NO, org.apache.commons.lang.StringUtils.EMPTY);
+
             if (marriageCertificate.getCertificateDate() != null)
                 jsonObject.addProperty("certificateDate", marriageCertificate.getCertificateDate().toString());
             else
-                jsonObject.addProperty("certificateDate", StringUtils.EMPTY);
+                jsonObject.addProperty("certificateDate", org.apache.commons.lang.StringUtils.EMPTY);
 
             if (marriageCertificate.getCertificateType() != null)
-                jsonObject.addProperty("certificateType", marriageCertificate.getCertificateType());
+                jsonObject.addProperty("certificateType", marriageCertificate.getCertificateType().toString());
             else
-                jsonObject.addProperty("certificateType", StringUtils.EMPTY);
+                jsonObject.addProperty("certificateType", org.apache.commons.lang.StringUtils.EMPTY);
 
             jsonObject.addProperty("id", marriageCertificate.getId());
         }
