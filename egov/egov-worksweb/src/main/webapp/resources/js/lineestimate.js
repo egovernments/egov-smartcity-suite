@@ -116,7 +116,7 @@ $('.btn-primary').click(function(){
 			
 			if(adminSanctionDate > technicalSanctionDate && technicalSanctionDate != '') {
 				bootbox.alert($('#errorTechDate').val());
-				$('#technicalSanctionDate').val("");
+				$('#technicalSanctionDate').val('').datepicker('update');
 				return false;
 			}
 
@@ -540,13 +540,10 @@ function validateWorkFlowApprover(name) {
 		if(lineEstimateStatus == 'BUDGET_SANCTIONED') {
 			var lineEstimateDate = new Date($('#lineEstimateDate').val());
 			var councilResolutionDate = $('#councilResolutionDate').data('datepicker').date;	
-			if (councilResolutionDate != "") {
-				if (councilResolutionDate < lineEstimateDate) {
+			if (councilResolutionDate != '' && councilResolutionDate < lineEstimateDate) {
 					bootbox.alert($('#errorCouncilResolutionDate').val());
-					$('#councilResolutionDate').val("");
+					$('#councilResolutionDate').val('').datepicker('update');
 					return false;
-				}
-				return true;
 			}
 		}
 	}

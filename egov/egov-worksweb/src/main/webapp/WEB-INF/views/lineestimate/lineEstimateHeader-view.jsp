@@ -81,7 +81,7 @@
 						<c:out default="N/A" value="${lineEstimate.lineEstimateNumber}"></c:out>
 					</div>
 					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.date" />
+						<spring:message code="lbl.dateofproposal" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<fmt:formatDate value="${lineEstimate.lineEstimateDate }"

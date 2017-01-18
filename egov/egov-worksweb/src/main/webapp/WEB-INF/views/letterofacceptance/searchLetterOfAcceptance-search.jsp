@@ -138,7 +138,7 @@
 					<th><spring:message code="lbl.estimatenumber" /></th>
 					<th><spring:message code="lbl.typeofwork" /></th>
 					<th><spring:message code="lbl.subtypeofwork" /></th>
-					<th><spring:message code="lbl.estimate.date" /></th>
+					<th><spring:message code="lbl.dateofproposal" /></th>
 					<th><spring:message code="lbl.nameofwork" /></th>
 					<th><spring:message code="lbl.workidentificationnumber" /></th>
 					<th><spring:message code="lbl.loanumber" /></th>
