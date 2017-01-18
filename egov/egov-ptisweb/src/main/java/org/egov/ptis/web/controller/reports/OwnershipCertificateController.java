@@ -96,7 +96,8 @@ public class OwnershipCertificateController {
     }
 
     @RequestMapping(value = "/generate/{assessmentNo}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> generateNotice(final Model model, @PathVariable final String assessmentNo) {
+    @ResponseBody 
+    public ResponseEntity<byte[]> generateNotice(final Model model, @PathVariable final String assessmentNo) {
         return recoveryNoticeService.generateNotice(assessmentNo, PropertyTaxConstants.NOTICE_TYPE_OC);
     }
 
