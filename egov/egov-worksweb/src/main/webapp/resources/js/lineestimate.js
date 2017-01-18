@@ -102,7 +102,8 @@ $(document).ready(function(){
 		var label = $("label[for='"+fieldName+"']");
 		label.hide();
 		$("#"+fieldName).hide();
-		$("#"+fieldName).parent().hide();
+		$("#"+fieldName+"-value").hide();
+		$("#subjectDescriptionHide").hide();
 		$('#'+fieldName).removeAttr('required')
 	});
 

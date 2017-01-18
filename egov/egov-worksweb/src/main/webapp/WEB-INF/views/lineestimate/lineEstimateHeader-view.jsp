@@ -96,6 +96,14 @@
 						<c:out default="N/A"
 							value="${lineEstimate.executingDepartment.name}"></c:out>
 					</div>
+					<div class="col-xs-3 add-margin" id = "reference">
+						<spring:message code="lbl.letter.reference" />
+					</div>
+					<div class="col-xs-3 add-margin view-content" id = "reference-value">
+						<c:out default="N/A" value="${lineEstimate.reference}"></c:out>
+					</div>
+				</div>
+				<div class="row add-border" id="subjectDescriptionHide">
 					<div class="col-xs-3 add-margin" id="subject">
 						<spring:message code="lbl.subject" />
 					</div>
@@ -103,14 +111,6 @@
 						<form:hidden path="id" name="id" value="${id}"
 							class="form-control table-input hidden-input" />
 						<c:out default="N/A" value="${lineEstimate.subject}"></c:out>
-					</div>
-				</div>
-				<div class="row add-border">
-					<div class="col-xs-3 add-margin" id = "reference">
-						<spring:message code="lbl.letter.reference" />
-					</div>
-					<div class="col-xs-3 add-margin view-content" id = "reference-value">
-						<c:out default="N/A" value="${lineEstimate.reference}"></c:out>
 					</div>
 					<div class="col-xs-3 add-margin" id = "description">
 						<spring:message code="lbl.description" />

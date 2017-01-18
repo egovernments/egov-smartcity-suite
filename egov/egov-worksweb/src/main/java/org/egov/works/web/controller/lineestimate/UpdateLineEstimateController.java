@@ -386,9 +386,8 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                 && lineEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
             model.addAttribute("mode", WorksConstants.EDIT);
         else
-
+            model.addAttribute("mode", WorksConstants.VIEW);
         lineEstimate.setApprovalDepartment(worksUtils.getDefaultDepartmentId());
-        model.addAttribute("mode", WorksConstants.VIEW);
         model.addAttribute("workflowHistory",
                 lineEstimateService.getHistory(lineEstimate.getState(), lineEstimate.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
