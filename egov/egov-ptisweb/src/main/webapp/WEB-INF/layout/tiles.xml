@@ -396,6 +396,11 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/structures/structureclassification-view.jsp"/>
     </definition>
     
+    <definition name="structureclassification-create" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.structureclassification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/structures/structureclassification-create.jsp"/>
+    </definition>
+    
     <definition name="inventorynotice-form" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.title.inventory.notice" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/reports/inventorynotice-form.jsp"/>
@@ -408,6 +413,18 @@
     <definition name="add-mutation-fee-form" extends="base_layout">
 		<put-attribute name="page-title" value="lbl.hdr.addMutation" cascade="true" />
 		<put-attribute name="body" value="/WEB-INF/views/masters/mutationfee/add-mutationfee.jsp" />
+	</definition>
+	<definition name="search-mutation-fee-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.mutationfee.search" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/masters/mutationfee/search-mutationfee.jsp" />
+	</definition>
+	<definition name="modify-mutation-fee-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.mutationfee.modify" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/masters/mutationfee/modify-mutationfee.jsp" />
+	</definition>
+	<definition name="view-mutation-fee-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.mutationfee.modify" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/masters/mutationfee/view-mutationfee.jsp" />
 	</definition>
 	
 	<definition name="recovery-form" extends="base_layout">
@@ -444,5 +461,16 @@
     	<put-attribute name="page-title" value="lbl.title.valuation.certificate" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/reports/valuationcertificate-form.jsp"/>
     </definition>
+    
+     <definition name="ownershipcertificate-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.title.ownership.certificate" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/ownershipcertificate-form.jsp"/>
+    </definition>
+    
+    <definition name="depreciationrate-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.depreciationrate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/depreciationrate/depreciationrate-view.jsp"/>
+    </definition>
+    
     
 </tiles-definitions> 

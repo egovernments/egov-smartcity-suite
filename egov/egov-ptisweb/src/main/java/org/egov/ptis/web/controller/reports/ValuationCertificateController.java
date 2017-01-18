@@ -63,7 +63,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/valuation")
 public class ValuationCertificateController {
 
-    private static final String VALUATION_HAS_PT_DUE = "valuation.has.pt.due";
+    private static final String VALUATION_HAS_PT_DUE = "assessment.has.pt.due";
     @Autowired
     private RecoveryNoticeService recoveryNoticeService;
     @Autowired
@@ -80,17 +80,15 @@ public class ValuationCertificateController {
     @RequestMapping(value = "/searchform", method = RequestMethod.POST)
     public String valuationNotice(@ModelAttribute("egBill") final EgBill egBill, final Model model,
             final BindingResult errors) {
-        List<String> errorList = recoveryNoticeService.validateRecoveryNotices(egBill.getConsumerId(),
+        final List<String> errorList = recoveryNoticeService.validateRecoveryNotices(egBill.getConsumerId(),
                 VALUATION_CERTIFICATE);
-        for (String error : errorList) {
-            if(VALUATION_HAS_PT_DUE.equals(error)) {
+        for (final String error : errorList)
+            if (VALUATION_HAS_PT_DUE.equals(error)) {
                 final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(egBill.getConsumerId());
                 final BigDecimal totalDue = recoveryNoticeService.getTotalPropertyTaxDue(basicProperty);
                 errors.reject(error, new String[] { String.valueOf(totalDue) }, error);
-            } else {
+            } else
                 errors.reject(error, error);
-            }
-        }
         if (errors.hasErrors()) {
             model.addAttribute("valuationnotice", new EgBill());
             return VALUATIONCERTIFICATE_FORM;

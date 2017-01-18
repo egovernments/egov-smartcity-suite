@@ -47,4 +47,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface StructureClassificationRepository extends JpaRepository<StructureClassification, Long> {
 
     List<StructureClassification> findByIsActiveTrueOrderByTypeName();
+
+    List<StructureClassification> findByConstrTypeCodeLike(String structureCode);
 }

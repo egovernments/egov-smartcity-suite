@@ -60,7 +60,6 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.stms.transactions.service.SewerageDemandService;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,10 +76,7 @@ public class SewerageBillServiceImpl extends BillServiceInterface {
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
-    @Autowired
-    private SewerageDemandService sewerageDemandService;
-
-    public Session getCurrentSession() {
+       public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 

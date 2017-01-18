@@ -82,6 +82,16 @@ public class DemandGenerationLog extends AbstractAuditable {
     @OneToMany(mappedBy = "demandGenerationLog", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<DemandGenerationLogDetail> details = new ArrayList<>();
 
+    protected DemandGenerationLog() {
+        //for hibernate
+    }
+
+    public DemandGenerationLog(String installmentYear) {
+        this.installmentYear = installmentYear;
+        this.executionStatus = ProcessStatus.INPROGRESS;
+        this.demandGenerationStatus = ProcessStatus.INCOMPLETE;
+    }
+
     @Override
     public Long getId() {
         return id;

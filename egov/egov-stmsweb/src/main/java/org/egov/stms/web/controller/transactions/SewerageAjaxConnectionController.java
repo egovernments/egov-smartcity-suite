@@ -85,105 +85,112 @@ public class SewerageAjaxConnectionController {
 
     @Autowired
     private DonationMasterService donationMasterService;
-   
+
     @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
-    
+
     @Autowired
     private MessageSource messageSource;
-    
+
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
-    
-    
+
     @Autowired
     private SewerageDemandService sewerageDemandService;
-    
+
     @RequestMapping(value = "/ajaxconnection/check-connection-exists", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String isConnectionPresentForProperty(@RequestParam final String propertyID) {
-        return sewerageApplicationDetailsService.checkConnectionPresentForProperty(propertyID);
+    @ResponseBody
+    public String isConnectionPresentForProperty(@RequestParam final String propertyID) {
+        return sewerageApplicationDetailsService.isConnectionExistsForProperty(propertyID);
     }
 
     @RequestMapping(value = "/ajaxconnection/check-watertax-due", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody HashMap<String,Object> getWaterTaxDueAndCurrentTax(@RequestParam("assessmentNo") final String assessmentNo,
+    @ResponseBody
+    public HashMap<String, Object> getWaterTaxDueAndCurrentTax(
+            @RequestParam("assessmentNo") final String assessmentNo,
             final HttpServletRequest request) {
         return sewerageThirdPartyServices.getWaterTaxDueAndCurrentTax(assessmentNo, request);
     }
-   
-    
+
     @RequestMapping(value = "/ajaxconnection/check-closets-exists", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String isClosetsPresent(@RequestParam final PropertyType propertyType,
+    @ResponseBody
+    public String isClosetsPresent(@RequestParam final PropertyType propertyType,
             @RequestParam final Integer noOfClosets, @RequestParam final Boolean flag) {
-        if (flag)  
+        if (flag)
             return donationMasterService.checkClosetsPresentForGivenCombination(PropertyType.RESIDENTIAL, noOfClosets);
         else
             return donationMasterService.checkClosetsPresentForGivenCombination(PropertyType.NON_RESIDENTIAL,
                     noOfClosets);
 
     }
-    
+
     @RequestMapping(value = "/ajaxconnection/check-application-inworkflow/{shscNumber}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String isModifyClosetInProgress(@PathVariable final String shscNumber) {
-        String validationMessage="";
-        SewerageApplicationDetails sewerageAppDtl = new SewerageApplicationDetails();
-        sewerageAppDtl = sewerageApplicationDetailsService.checkModifyClosetInProgress(shscNumber);
-        if(sewerageAppDtl!=null && sewerageAppDtl.getApplicationType().getCode().equalsIgnoreCase(CHANGEINCLOSETS)){
-            validationMessage = messageSource.getMessage("err.validate.changenoofclosets.application.inprogress", new String[] {sewerageAppDtl.getConnectionDetail().getPropertyIdentifier(), sewerageAppDtl.getApplicationNumber()},null);
+    @ResponseBody
+    public String checkApplicationInProgress(@PathVariable final String shscNumber) {
+        String validationMessage = "";
+        SewerageApplicationDetails sewerageAppDtl;
+        sewerageAppDtl = sewerageApplicationDetailsService.isApplicationInProgress(shscNumber);
+        if (sewerageAppDtl != null && sewerageAppDtl.getApplicationType().getCode().equalsIgnoreCase(CHANGEINCLOSETS)) {
+            validationMessage = messageSource.getMessage(
+                    "err.validate.changenoofclosets.application.inprogress", new String[] {
+                            sewerageAppDtl.getConnectionDetail().getPropertyIdentifier(), sewerageAppDtl.getApplicationNumber() },
+                    null);
             return validationMessage;
-        }
-        else if(sewerageAppDtl!=null && sewerageAppDtl.getApplicationType().getCode().equalsIgnoreCase(CLOSESEWERAGECONNECTION)){
-            validationMessage = messageSource.getMessage("err.validate.closeconnection.application.inprogress", new String[] {sewerageAppDtl.getConnectionDetail().getPropertyIdentifier(), sewerageAppDtl.getApplicationNumber()}, null);
-            return validationMessage; 
-        }
-        else
-            return validationMessage; 
+        } else if (sewerageAppDtl != null
+                && sewerageAppDtl.getApplicationType().getCode().equalsIgnoreCase(CLOSESEWERAGECONNECTION)) {
+            validationMessage = messageSource.getMessage(
+                    "err.validate.closeconnection.application.inprogress", new String[] {
+                            sewerageAppDtl.getConnectionDetail().getPropertyIdentifier(), sewerageAppDtl.getApplicationNumber() },
+                    null);
+            return validationMessage;
+        } else
+            return validationMessage;
     }
-    
 
     @RequestMapping(value = "/ajaxconnection/check-shscnumber-exists", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String isSHSCNumberUnique(@RequestParam final String shscNumber) { 
-        List<SewerageApplicationDetails> appDetailList = new ArrayList<>();
-        appDetailList=sewerageApplicationDetailsService.findByConnectionShscNumber(shscNumber);
-        if(!appDetailList.isEmpty() && appDetailList.get(0).getConnection().getShscNumber()!=null)
-            return messageSource.getMessage("err.validate.shscnumber.exists", new String[] {shscNumber},null);
-        else 
+    @ResponseBody
+    public String isSHSCNumberUnique(@RequestParam final String shscNumber) {
+        List<SewerageApplicationDetails> appDetailList;
+        appDetailList = sewerageApplicationDetailsService.findByConnectionShscNumber(shscNumber);
+        if (!appDetailList.isEmpty() && appDetailList.get(0).getConnection().getShscNumber() != null)
+            return messageSource.getMessage("err.validate.shscnumber.exists", new String[] { shscNumber }, null);
+        else
             return "";
     }
-    
+
     @RequestMapping(value = "/ajaxconnection/getlegacy-demand-details", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<SewerageDemandDetail> getLegacyDemandDetails(@RequestParam("executionDate") final String executionDate,
+    @ResponseBody
+    public List<SewerageDemandDetail> getLegacyDemandDetails(
+            @RequestParam("executionDate") final String executionDate,
             final HttpServletRequest request) {
-        
-        final List<SewerageDemandDetail> demandDetailBeanList = new ArrayList<SewerageDemandDetail>();
-        final Set<SewerageDemandDetail> tempDemandDetail = new LinkedHashSet<SewerageDemandDetail>();
-        List<Installment> allInstallments = new ArrayList<Installment>();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+        final List<SewerageDemandDetail> demandDetailBeanList = new ArrayList<>();
+        final Set<SewerageDemandDetail> tempDemandDetail = new LinkedHashSet<>();
+        List<Installment> allInstallments = new ArrayList<>();
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         try {
             allInstallments = sewerageTaxUtils.getInstallmentsForCurrYear(
                     sdf.parse(executionDate));
-            
+
         } catch (final ParseException e) {
             throw new ApplicationRuntimeException("Error while getting all installments from start date", e);
         }
         SewerageDemandDetail dmdDtl = null;
-            for (final Installment installObj : allInstallments) {
-                //check whether the from date of installment is less than current date. To eliminate future installments 
-                if(installObj.getFromDate().compareTo(new Date())<0){
-                    final EgDemandReason demandReasonObj = sewerageDemandService
-                            .getDemandReasonByCodeAndInstallment(SewerageTaxConstants.FEES_SEWERAGETAX_CODE, installObj.getId());
-                    if (demandReasonObj != null) {
-                            dmdDtl = createDemandDetailBean(installObj, demandReasonObj);
-                    }
-                    tempDemandDetail.add(dmdDtl);
-                }
+        for (final Installment installObj : allInstallments)
+            // check whether the from date of installment is less than current date. To eliminate future installments
+            if (installObj.getFromDate().compareTo(new Date()) < 0) {
+                final EgDemandReason demandReasonObj = sewerageDemandService
+                        .getDemandReasonByCodeAndInstallment(SewerageTaxConstants.FEES_SEWERAGETAX_CODE, installObj.getId());
+                if (demandReasonObj != null)
+                    dmdDtl = createDemandDetailBean(installObj, demandReasonObj);
+                tempDemandDetail.add(dmdDtl);
             }
         for (final SewerageDemandDetail demandDetList : tempDemandDetail)
             if (demandDetList != null)
                 demandDetailBeanList.add(demandDetList);
         return demandDetailBeanList;
     }
-    
-    
+
     private SewerageDemandDetail createDemandDetailBean(final Installment installment, final EgDemandReason demandReasonObj) {
         final SewerageDemandDetail demandDetail = new SewerageDemandDetail();
         demandDetail.setInstallment(installment.getDescription());
@@ -196,36 +203,38 @@ public class SewerageAjaxConnectionController {
         return demandDetail;
     }
 
-    @RequestMapping(value="/ajaxconnection/getlegacy-donation-amount", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String getLegacyDonationAmount(@RequestParam("propertytype") PropertyType propertyType, @RequestParam("noofclosetsresidential") Integer noofclosetsresidential, 
-            @RequestParam("noofclosetsnonresidential") Integer noofclosetsnonresidential){
-        
-        
-        BigDecimal legacyDonationAmount=BigDecimal.ZERO;
-        BigDecimal residentialAmount=BigDecimal.ZERO;
-        BigDecimal nonResidentialAmount=BigDecimal.ZERO;
-          if(noofclosetsresidential!=null && noofclosetsresidential!=0){
-            residentialAmount = donationMasterService.getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(noofclosetsresidential, PropertyType.RESIDENTIAL);
-                 }
-        if(noofclosetsnonresidential!=null && noofclosetsnonresidential!=0){
-            nonResidentialAmount = donationMasterService.getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(noofclosetsnonresidential, PropertyType.NON_RESIDENTIAL);
-          }
-        if(propertyType.equals(PropertyType.MIXED) && residentialAmount!=null && nonResidentialAmount!=null)
-            legacyDonationAmount=residentialAmount.add(nonResidentialAmount);
-        else if(propertyType.equals(PropertyType.RESIDENTIAL) && residentialAmount!=null)
-            legacyDonationAmount=residentialAmount;
-        else if(propertyType.equals(PropertyType.NON_RESIDENTIAL) && nonResidentialAmount!=null)
-            legacyDonationAmount=nonResidentialAmount;
-        else{
-            if(residentialAmount==null && nonResidentialAmount==null)
-            {
-                return messageSource.getMessage("err.validate.donationamount.notexistForBothcombination", new String[]{propertyType.toString()},null);
-             }
-            else if(residentialAmount==null && noofclosetsresidential!=null)
-                return messageSource.getMessage("err.validate.donationamount.notexist", new String[] {PropertyType.RESIDENTIAL.toString(), noofclosetsresidential.toString()},null);
-            else if(nonResidentialAmount==null && noofclosetsnonresidential!=null)
-                return messageSource.getMessage("err.validate.donationamount.notexist", new String[] {PropertyType.NON_RESIDENTIAL.toString(), noofclosetsnonresidential.toString()},null);
-        }
+    @RequestMapping(value = "/ajaxconnection/getlegacy-donation-amount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String getLegacyDonationAmount(@RequestParam("propertytype") final PropertyType propertyType,
+            @RequestParam("noofclosetsresidential") final Integer noofclosetsresidential,
+            @RequestParam("noofclosetsnonresidential") final Integer noofclosetsnonresidential) {
+
+        BigDecimal legacyDonationAmount = BigDecimal.ZERO;
+        BigDecimal residentialAmount = BigDecimal.ZERO;
+        BigDecimal nonResidentialAmount = BigDecimal.ZERO;
+        if (noofclosetsresidential != null && noofclosetsresidential != 0)
+            residentialAmount = donationMasterService.getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(
+                    noofclosetsresidential, PropertyType.RESIDENTIAL);
+        if (noofclosetsnonresidential != null && noofclosetsnonresidential != 0)
+            nonResidentialAmount = donationMasterService.getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(
+                    noofclosetsnonresidential, PropertyType.NON_RESIDENTIAL);
+        if (propertyType != null && propertyType.equals(PropertyType.MIXED) && residentialAmount != null
+                && nonResidentialAmount != null)
+            legacyDonationAmount = residentialAmount.add(nonResidentialAmount);
+        else if (propertyType != null && propertyType.equals(PropertyType.RESIDENTIAL) && residentialAmount != null)
+            legacyDonationAmount = residentialAmount;
+        else if (propertyType != null && propertyType.equals(PropertyType.NON_RESIDENTIAL) && nonResidentialAmount != null)
+            legacyDonationAmount = nonResidentialAmount;
+        else if (propertyType != null && residentialAmount == null && nonResidentialAmount == null)
+            return messageSource.getMessage("msg.validate.donationamount.notexistForBothcombination",
+                    new String[] { propertyType.toString() }, null);
+        else if (residentialAmount == null && noofclosetsresidential != null)
+            return messageSource.getMessage("msg.validate.donationamount.notexist",
+                    new String[] { PropertyType.RESIDENTIAL.toString(), noofclosetsresidential.toString() }, null);
+        else if (nonResidentialAmount == null && noofclosetsnonresidential != null)
+            return messageSource.getMessage("msg.validate.donationamount.notexist",
+                    new String[] { PropertyType.NON_RESIDENTIAL.toString(), noofclosetsnonresidential.toString() }, null);
         return legacyDonationAmount.toString();
     }
+
 }

@@ -61,10 +61,10 @@ public class SewerageThirdPartyServices {
     private static final String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
 
     public AssessmentDetails getPropertyDetails(final String assessmentNumber, final HttpServletRequest request) {
-        RestTemplate restTemplate = new RestTemplate();
-        String url = "http://" + request.getServerName() + ":" + request.getServerPort()
+        final RestTemplate restTemplate = new RestTemplate();
+        final String url = "http://" + request.getServerName() + ":" + request.getServerPort()
                 + "/ptis/rest/property/{assessmentNumber}";
-        AssessmentDetails propertyOwnerDetails = restTemplate.getForObject(url, AssessmentDetails.class,
+        final AssessmentDetails propertyOwnerDetails = restTemplate.getForObject(url, AssessmentDetails.class,
                 assessmentNumber);
         return propertyOwnerDetails;
     }
@@ -72,7 +72,7 @@ public class SewerageThirdPartyServices {
     public HashMap<String, Object> getWaterTaxDueAndCurrentTax(final String assessmentNo,
             final HttpServletRequest request) {
 
-        HashMap<String, Object> result = new HashMap<String, Object>();
+        final HashMap<String, Object> result = new HashMap<>();
         result.put("WATERTAXDUE", BigDecimal.ZERO);
         result.put("CURRENTWATERCHARGE", BigDecimal.ZERO);
         final String wtmsRestURL = String.format(WTMS_TAXDUE_RESTURL, WebUtils.extractRequestDomainURL(request, false),

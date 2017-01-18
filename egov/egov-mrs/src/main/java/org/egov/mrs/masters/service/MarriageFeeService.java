@@ -48,6 +48,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.mrs.domain.enums.MarriageFeeCriteriaType;
 import org.egov.mrs.masters.entity.MarriageFee;
 import org.egov.mrs.masters.repository.MarriageFeeRepository;
@@ -68,6 +70,9 @@ public class MarriageFeeService {
 
     @PersistenceContext
     private EntityManager entityManager;
+    
+    @Autowired
+    protected AppConfigValueService appConfigValuesService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -110,6 +115,11 @@ public class MarriageFeeService {
     public List<MarriageFee> searchFee(MarriageFee fee) {
         final Criteria criteria = buildSearchCriteria(fee);
         return criteria.list();
+    }
+    
+    public AppConfigValues getDaysValidationAppConfValue(final String moduleName, final String keyName) {
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, keyName);
+        return !appConfigValues.isEmpty() ? appConfigValues.get(0) : null;
     }
 
     public List<MarriageFee> getActiveGeneralTypeFeeses() {

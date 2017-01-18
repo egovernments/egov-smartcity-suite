@@ -39,7 +39,7 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp"%>
-<script src="<cdn:url value='/resources/js/works.js?rnd=${app_release_no}'/>"></script> 
+<script src="<cdn:url value='/resources/js/master/contractor.js?rnd=${app_release_no}'/>"></script> 
 <html>
 <head>
 <title><s:text name="contractor.list" /></title>
@@ -59,6 +59,7 @@ ul {
 
 <%@ include file='contractor-commonview.jsp' %>
 <s:hidden name="model.id" id="model"/>
+<s:hidden name="hide" id="hide" value = "%{dropdownData.contractorMasterHiddenFields}" />
 <div class="row text-center">
 	<div class="add-margin">
 	<s:if test="%{ mode!='edit' && mode != 'view'}">

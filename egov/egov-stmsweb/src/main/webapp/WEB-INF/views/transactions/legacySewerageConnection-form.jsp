@@ -56,6 +56,7 @@
 			<form:hidden path="connection.status" id="connection.status" value="${sewerageApplicationDetails.connection.status}"/>
 			<form:hidden id="mode" path=""  value="${mode}"/>
 			<form:hidden id="documentName" path="" value="${documentName}"/> 
+			<form:hidden id="demandDetailList" path="" value="${demandDetailList}"/>
 				<jsp:include page="applicantdetails.jsp"></jsp:include>
 				<jsp:include page="legacydetails.jsp"></jsp:include> 
 				<jsp:include page="connectiondetails.jsp"></jsp:include>

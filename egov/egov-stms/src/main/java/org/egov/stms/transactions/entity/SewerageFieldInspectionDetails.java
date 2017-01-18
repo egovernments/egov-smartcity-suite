@@ -79,10 +79,10 @@ public class SewerageFieldInspectionDetails extends AbstractAuditable {
     private Integer screwSize;
 
     @NotNull
-    private double pipeLength;
+    private Double pipeLength;
 
     @NotNull
-    private double distance;
+    private Double distance;
     private Integer roadLength;
     private boolean roadDigging;
     private String roadOwner;
@@ -96,17 +96,16 @@ public class SewerageFieldInspectionDetails extends AbstractAuditable {
     public void setId(final Long id) {
         this.id = id;
     }
-    
-  //TEMPORARY variable
+
+    // TEMPORARY variable
     @Transient
     private String mode;
-    
-    
+
     public String getMode() {
         return mode;
     }
 
-    public void setMode(String mode) {
+    public void setMode(final String mode) {
         this.mode = mode;
     }
 
@@ -142,19 +141,19 @@ public class SewerageFieldInspectionDetails extends AbstractAuditable {
         this.screwSize = screwSize;
     }
 
-    public double getPipeLength() {
+    public Double getPipeLength() {
         return pipeLength;
     }
 
-    public void setPipeLength(final double pipeLength) {
+    public void setPipeLength(final Double pipeLength) {
         this.pipeLength = pipeLength;
     }
 
-    public double getDistance() {
+    public Double getDistance() {
         return distance;
     }
 
-    public void setDistance(final double distance) {
+    public void setDistance(final Double distance) {
         this.distance = distance;
     }
 

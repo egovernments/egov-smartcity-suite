@@ -234,12 +234,6 @@ function reinitializeDatepicker()
 	});
 }
 
-function replaceExemptionFormChar() {
-	var exemption = document.getElementById('exemptionForm').innerHTML;
-	exemption = exemption.replace(/_/g, " ");
-    document.getElementById("exemptionForm").innerHTML = exemption;
-}
-
 function validateSubledgerCodeBeforeSubmit() {
     {
         var codeName = document.getElementById("codeName").value;
@@ -284,23 +278,10 @@ function disableFields() {
 	}
 }
 
-function createNewContractor() {
-	window.location = "contractor-newform.action";
-}
-
-function modifyContractorData() {
-	var model = document.getElementById('model').value;
-	window.location = 'contractor-edit.action?mode=edit&id='+model;
-}
-
 function setContractorId(val) {
 	document.getElementById('id').value = val;
 }
 
-function modifyContractorData1() {
-	var id = document.getElementById('id').value;
-	window.location = 'contractor-edit.action?mode=edit&id='+id;
-}
 function modifyContractorDataOnSearch() {
 	var id = document.getElementById('id').value;
     if (id == '' || id == null) {
@@ -312,6 +293,7 @@ function modifyContractorDataOnSearch() {
         window.location = 'contractor-edit.action?mode=edit&id=' + id;
     return true;
 }
+
 function validate(){
 	var mode=document.getElementById('mode').value;
 	document.searchContractorForm.action="contractor-viewResult.action?mode="+mode; 

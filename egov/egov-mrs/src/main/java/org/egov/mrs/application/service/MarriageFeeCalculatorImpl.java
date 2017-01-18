@@ -39,31 +39,58 @@
 
 package org.egov.mrs.application.service;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
 
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.mrs.application.MarriageConstants;
+import org.egov.mrs.domain.entity.MarriageRegistration;
+import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.enums.MarriageFeeType;
+import org.egov.mrs.masters.entity.MarriageFee;
 import org.egov.mrs.masters.service.MarriageFeeService;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RegistrationFeeCalculatorService implements MarriageFeeCalculator {
+public class MarriageFeeCalculatorImpl implements MarriageFeeCalculator {
+
     @Autowired
     private MarriageFeeService marriageFeeService;
-
-    @Override
-    public Double calculateFee(final Date date) {
-        Long daysAfterMarriage = ChronoUnit.DAYS.between(
-                date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
-                LocalDateTime.now());
-        return marriageFeeService.getFeeForDays(daysAfterMarriage).getFees();
-    }
 
     @Override
     public String getFeeType() {
         return MarriageFeeType.MRGREGISTRATION.name();
     }
+
+    @Override
+    public Double calculateMarriageRegistrationFee(final MarriageRegistration marriageRegistration, final Date dateOfMarriage) {
+        Double fee = null;
+        final AppConfigValues allowValidation = marriageFeeService.getDaysValidationAppConfValue(
+                MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION);
+        final int days = Days.daysBetween(new DateTime(dateOfMarriage), new DateTime(new Date())).getDays();
+        if (allowValidation != null && !allowValidation.getValue().isEmpty())
+            if ("NO".equalsIgnoreCase(allowValidation.getValue())) {
+                fee = checkMarriageFeeForCriteria(days);
+            } else if ("YES".equalsIgnoreCase(allowValidation.getValue()) && days <= 90) {
+                fee = checkMarriageFeeForCriteria(days);
+            }
+        return fee;
+    }
+
+    private Double checkMarriageFeeForCriteria(final int days) {
+        final List<MarriageFee> fee = marriageFeeService.getActiveGeneralTypeFeeses();
+        for (final MarriageFee marriageFee : fee)
+            if (days >= marriageFee.getFromDays() && (marriageFee.getToDays() == null || days <= marriageFee.getToDays()))
+                return marriageFee.getFees();
+        return null;
+    }
+
+    @Override
+    public MarriageFee calculateMarriageReissueFee(final ReIssue reIssue, final String criteria) {
+        return marriageFeeService.getFeeForCriteria(criteria);
+    }
+
 }

@@ -73,6 +73,7 @@
 									<input type="hidden" id="complainttypeid" name="complainttypeid" value="${complainttypeid}"/> 
 									<input type="hidden" id="selecteduserid" name="selecteduserid" value="${selecteduserid}"/> 
 									<input type="hidden" id="boundary" name="boundary" value="${boundary}"/> 
+									<input type="hidden" id="locality" name="locality" value="${locality}"/>
 									<input type="hidden" id="type" name="type" value="${type}"/> 
 									<select name="complaintDateType" id="when_date" class="form-control" data-first-option="false" 
 									onchange="showChangeDropdown(this);">

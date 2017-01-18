@@ -45,6 +45,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_DISTRESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_ESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_INVENTORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_OC;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_INVENTORY_NOTICE_CORPORATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_INVENTORY_NOTICE_MUNICIPALITY;
@@ -137,6 +138,8 @@ public class RecoveryNoticeService {
     private static final String REPORT_MON_YEAR = "reportMonYear";
     private static final String REPORT_DATE = "reportDate";
     private static final String OWNER_NAME = "ownerName";
+    private static final String OWNERSHIP_CERTIFICATE_DATE = "ownershipCertificateDate";
+    private static final String OWNERSHIP_CERTIFICATE_NO = "ownershipCertificateNo";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -209,8 +212,8 @@ public class RecoveryNoticeService {
             validateDistressNotice(errors, basicProperty);
         else if (NOTICE_TYPE_INVENTORY.equals(noticeType))
             validateInventoryNotice(errors, basicProperty);
-        else if (VALUATION_CERTIFICATE.equals(noticeType))
-            validateValuationNotice(errors, basicProperty);
+        else if (VALUATION_CERTIFICATE.equals(noticeType) || NOTICE_TYPE_OC.equals(noticeType))
+            validateCertificate(errors, basicProperty);
         return errors;
     }
 
@@ -244,7 +247,7 @@ public class RecoveryNoticeService {
             reportOutput = getNotice(notice, noticeType);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename="+noticeType+"_" + basicProperty.getUpicNo() + ".pdf");
+        headers.add("content-disposition", "inline;filename=" + noticeType + "_" + basicProperty.getUpicNo() + ".pdf");
         return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
@@ -265,7 +268,9 @@ public class RecoveryNoticeService {
         else if (NOTICE_TYPE_INVENTORY.equals(noticeType))
             reportInput = generateInventoryNotice(basicProperty, reportParams, city, formatter);
         else if (VALUATION_CERTIFICATE.equals(noticeType))
-            reportInput = generateValuationCertificate(basicProperty, reportParams,city, noticeNo);
+            reportInput = generateValuationCertificate(basicProperty, reportParams, city, noticeNo);
+        else if (NOTICE_TYPE_OC.equals(noticeType))
+            reportInput = generateOwnershipCertificate(basicProperty, reportParams, city, noticeNo);
         else
             reportInput = generateDistressNotice(basicProperty, reportParams, city, noticeNo);
         reportInput.setPrintDialogOnOpenReport(true);
@@ -362,11 +367,11 @@ public class RecoveryNoticeService {
                 errors.add("invalid.time.not.lapsed");
         }
     }
-    
-    private void validateValuationNotice(final List<String> errors, final BasicProperty basicProperty) {
+
+    private void validateCertificate(final List<String> errors, final BasicProperty basicProperty) {
         final BigDecimal totalDue = getTotalPropertyTaxDue(basicProperty);
         if (totalDue.compareTo(BigDecimal.ZERO) == 1)
-            errors.add("valuation.has.pt.due");
+            errors.add("assessment.has.pt.due");
     }
 
     private List<String> validateDemandBill(final BasicProperty basicProperty, final List<String> errors) {
@@ -451,7 +456,7 @@ public class RecoveryNoticeService {
         }
         return reportInput;
     }
-    
+
     private void prepareEsdReportParams(final BasicProperty basicProperty, final Map<String, Object> reportParams,
             final String noticeNo, final SimpleDateFormat formatter) {
         final Address ownerAddress = basicProperty.getAddress();
@@ -465,6 +470,62 @@ public class RecoveryNoticeService {
         reportParams.put(FUTURE_DATE, DateUtils.getDefaultFormattedDate(noticeDate.plusDays(2).toDate()));
         reportParams.put(ESD_NOTICE_NUMBER, noticeNo);
         reportParams.put(ESD_NOTICE_DATE, DateUtils.getDefaultFormattedDate(new Date()));
+        final String value = appConfigValues != null ? appConfigValues.getValue() : "";
+        if ("Y".equalsIgnoreCase(value)) {
+            final DemandBillService demandBillService = (DemandBillService) beanProvider
+                    .getBean("demandBillService");
+            reportParams.putAll(demandBillService.getDemandBillDetails(basicProperty));
+        } else {
+            final EgBill egBill = getBillByAssessmentNumber(basicProperty);
+            reportParams.put(BILL_DATE, DateUtils.getDefaultFormattedDate(egBill.getCreateDate()));
+            reportParams.put(BILL_NUMBER, egBill.getBillNo());
+        }
+    }
+
+    private ReportRequest generateOwnershipCertificate(final BasicProperty basicProperty, final Map<String, Object> reportParams,
+            final City city, final String noticeNo) {
+        ReportRequest reportInput;
+        prepareOwnershipCertificateParams(basicProperty, reportParams, city, noticeNo);
+        final String[] ownerName = basicProperty.getFullOwnerName().split(",");
+        if (ownerName.length > 1)
+            reportInput = new ReportRequest(PropertyTaxConstants.REPORT_OWNERSHIP_CERTIFICATE_MULTIPLE, reportParams,
+                    reportParams);
+        else
+            reportInput = new ReportRequest(PropertyTaxConstants.REPORT_OWNERSHIP_CERTIFICATE_SINGLE, reportParams,
+                    reportParams);
+
+        return reportInput;
+    }
+
+    private void prepareOwnershipCertificateParams(final BasicProperty basicProperty, final Map<String, Object> reportParams,
+            final City city, final String noticeNo) {
+        final Address ownerAddress = basicProperty.getAddress();
+        final AppConfigValues appConfigValues = appConfigValuesService.getAppConfigValueByDate(PTMODULENAME,
+                APPCONFIG_CLIENT_SPECIFIC_DMD_BILL, new Date());
+        reportParams.put(DOOR_NO, StringUtils.isNotBlank(ownerAddress.getHouseNoBldgApt())
+                ? ownerAddress.getHouseNoBldgApt() : "N/A");
+        reportParams.put(OWNERSHIP_CERTIFICATE_NO, noticeNo);
+        reportParams.put(OWNERSHIP_CERTIFICATE_DATE, DateUtils.getDefaultFormattedDate(new Date()));
+        reportParams.put("consumerId", basicProperty.getUpicNo());
+        reportParams.put("locality", ownerAddress.getAreaLocalitySector());
+        reportParams.put("ownerName", basicProperty.getFullOwnerName());
+        reportParams.put("address", basicProperty.getAddress().toString());
+        final String cityGrade = city.getGrade();
+        if (org.apache.commons.lang.StringUtils.isNotEmpty(cityGrade)
+                && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION))
+            reportParams.put("cityGrade", "Municipal Corporation");
+        else
+            reportParams.put("cityGrade", "Municipality/NP");
+
+        final StringBuilder ownerList = new StringBuilder(500);
+        final String[] ownerName = basicProperty.getFullOwnerName().split(",");
+        if (ownerName.length > 1) {
+            for (int i = 0; i < ownerName.length; i++)
+                ownerList.append(i + 1 + "." + ownerName[i] + "\n");
+            reportParams.put("ownerNameList", ownerList.toString());
+        } else
+            reportParams.put("ownerName", basicProperty.getFullOwnerName());
+
         final String value = appConfigValues != null ? appConfigValues.getValue() : "";
         if ("Y".equalsIgnoreCase(value)) {
             final DemandBillService demandBillService = (DemandBillService) beanProvider
@@ -560,12 +621,11 @@ public class RecoveryNoticeService {
         reportParams.put(ADDRESS, ownerAddress.toString());
         final String cityGrade = city.getGrade();
         if (StringUtils.isNotBlank(cityGrade)
-                && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
+                && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION))
             reportInput = new ReportRequest(VALUATION_CERTIFICATE_CORPORATION, reportParams, reportParams);
-        } else {
+        else
             reportInput = new ReportRequest(VALUATION_CERTIFICATE_MUNICIPALITY, reportParams, reportParams);
-        }
         return reportInput;
     }
-    
+
 }

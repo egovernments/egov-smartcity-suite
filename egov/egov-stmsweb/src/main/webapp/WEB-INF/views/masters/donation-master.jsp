@@ -81,6 +81,8 @@
 					<form:errors path="propertyType" cssClass="add-margin error-msg" />
 				</div>
 				
+			    <input type="hidden" id="donationDetailsize" value="${donationMaster.donationDetail.size()}"/>
+			    
 			    <fmt:formatDate var="formattedEndDate" pattern="dd-MM-yyyy"  value="${endDate}" />
 				<input type="hidden" id="effectiveEndDate" value='${formattedEndDate}'/>
 				
@@ -105,40 +107,45 @@
 					</thead>
 					<tbody><form:hidden path="id" id="id" value="${id}"/> 
 						<c:choose>
-							<c:when test="${empty donationDetail}">
+							<c:when test="${empty donationMaster.donationDetail}">
 								<tr>
 									<td>
-										<input type="text" class="form-control patternvalidation donationRatesNoOfClosets" 
+										<form:input type="text" class="form-control patternvalidation donationRatesNoOfClosets" 
 										style="text-align: left; font-size: 12px;" data-pattern="number" 
 										id="donationDetail[0].noOfClosets" 
-									    name="donationDetail[0].noOfClosets" 
+									    path="donationDetail[0].noOfClosets" 
 										maxlength="8" required="required" />
+										<form:errors path="donationDetail[0].noOfClosets" cssClass="add-margin error-msg"/>
 									</td>
 									<td>
 										<input type="text" class="form-control patternvalidation donationRatesAmount" 
 										id="donationDetail[0].amount"  
 										style="text-align: right; font-size: 12px;" data-pattern="decimalvalue" 
-										name="donationDetail[0].amount"  maxlength="8" required="required"/>
+										name="donationDetail[0].amount"  maxlength="8" required="required" />
+										<form:errors path="donationDetail[0].amount" cssClass="add-margin error-msg"/>
 									</td>
 									<td>
 									</td>
 								</tr>
 							</c:when>
 							<c:otherwise>
-								 <c:forEach var="rates" items="${donationMaster.donationDetail}" varStatus="status">
+								 <c:forEach var="rates" items="${donationMaster.donationDetail}" varStatus="status" >
 									<tr>
 										<td>
-											<input type="text" class="form-control patternvalidation donationRatesNoOfClosets" 
+											<form:input type="text" class="form-control patternvalidation donationRatesNoOfClosets" 
 											style="text-align: left; font-size: 12px;" data-pattern="number" 
 											id="donationDetail[${status.index}].noOfClosets" 
-											value="${rates.noOfClosets}"  name="donationDetail[${status.index}].noOfClosets" 
+											value="${rates.noOfClosets}"  path="donationDetail[${status.index}].noOfClosets" 
 											maxlength="8" required="required" />
+											
+											<form:errors path="donationDetail[${status.index}].noOfClosets" cssClass="add-margin error-msg"/>
 										</td>
 										<td>
 											<input type="text" class="form-control patternvalidation donationRatesAmount" 
 											id="donationDetail[${status.index}].amount"  
 											style="text-align: right; font-size: 12px;" value="${rates.amount}" data-pattern="decimalvalue" 
-											name="donationDetail[${status.index}].amount"  maxlength="8" required="required"/>
+											name="donationDetail[${status.index}].amount"  maxlength="8" required="required" />
+											<form:errors path="donationDetail[${status.index}].amount" cssClass="add-margin error-msg" />
 										</td>
 										<td>
 											<button type="button" onclick="deleteRow(this)" id="Add" 

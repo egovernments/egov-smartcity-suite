@@ -160,7 +160,7 @@ public class Contractor extends AbstractAuditable implements EntityType {
     private ExemptionForm exemptionForm;
 
     @OptionalPattern(regex = Constants.MOBILE_NUM, message = "depositworks.roadcut.invalid.mobileno")
-    @Length(max = 15)
+    @Length(max = 10)
     @Column(name = "MOBILE_NUMBER")
     private String mobileNumber;
 

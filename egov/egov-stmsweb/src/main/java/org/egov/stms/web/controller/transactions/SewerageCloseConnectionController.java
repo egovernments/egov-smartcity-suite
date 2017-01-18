@@ -34,12 +34,12 @@ package org.egov.stms.web.controller.transactions;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -58,6 +58,7 @@ import org.egov.stms.transactions.service.SewerageConnectionService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
+import org.egov.stms.web.controller.utils.SewerageApplicationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -74,44 +75,61 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value="/transactions")
+@RequestMapping(value = "/transactions")
 public class SewerageCloseConnectionController extends GenericWorkFlowController {
 
     @Autowired
-    private SewerageApplicationDetailsService  sewerageApplicationDetailsService;
-    
+    private SewerageApplicationDetailsService sewerageApplicationDetailsService;
+
     @Autowired
     private SewerageApplicationTypeService sewerageApplicationTypeService;
-    
+
     @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
-    
+
     @Autowired
     private SewerageConnectionService sewerageConnectionService;
-    
+
     @Autowired
-    private  SewerageTaxUtils sewerageTaxUtils;
-    
+    private SewerageTaxUtils sewerageTaxUtils;
+
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
-    
+
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private AssignmentService assignmentService;
-    
+
+    @Autowired
+    private SewerageApplicationValidator sewerageApplicationValidator;
+
     @RequestMapping(value = "/closeConnection/{shscNumber}", method = RequestMethod.GET)
-    public String view(@ModelAttribute SewerageApplicationDetails sewerageApplicationDetails, final Model model,
-            @PathVariable final String shscNumber, final HttpServletRequest request) {   
-        BigDecimal taxDue =BigDecimal.ZERO;
+    public String view(@ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails, final Model model,
+            @PathVariable final String shscNumber, final HttpServletRequest request) {
+        BigDecimal taxDue = BigDecimal.ZERO;
         final SewerageConnection sewerageConnection = sewerageConnectionService.findByShscNumber(shscNumber);
         final SewerageApplicationDetails sewerageApplicationDetailsFromDB = sewerageApplicationDetailsService
                 .findByConnection_ShscNumberAndIsActive(shscNumber);
         sewerageApplicationDetails.setConnection(sewerageConnection);
-        
-        if (sewerageApplicationDetailsFromDB != null){
+
+        if (StringUtils.isNotBlank(shscNumber)) {
+            final SewerageApplicationDetails applicationDetails = sewerageApplicationDetailsService
+                    .isApplicationInProgress(shscNumber);
+            if (applicationDetails != null && SewerageTaxConstants.CLOSESEWERAGECONNECTION
+                    .equalsIgnoreCase(applicationDetails.getApplicationType().getCode())) {
+                model.addAttribute("message", "msg.validate.closeconnection.application.inprogress");
+                return "common-error";
+            } else if (applicationDetails != null
+                    && SewerageTaxConstants.CHANGEINCLOSETS.equalsIgnoreCase(applicationDetails.getApplicationType().getCode())) {
+                model.addAttribute("message", "msg.validate.changenoofclosets.application.inprogress");
+                return "common-error";
+            }
+        }
+
+        if (sewerageApplicationDetailsFromDB != null) {
             taxDue = sewerageApplicationDetailsService.getPendingTaxAmount(sewerageApplicationDetailsFromDB);
             if (taxDue.compareTo(BigDecimal.ZERO) > 0) {
                 model.addAttribute("message", "msg.validate.demandamountdue");
@@ -119,10 +137,9 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
             }
         }
         final AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices.getPropertyDetails(shscNumber, request);
-        if(propertyOwnerDetails!=null){
-           model.addAttribute("propertyOwnerDetails", propertyOwnerDetails); 
-        }
-   
+        if (propertyOwnerDetails != null)
+            model.addAttribute("propertyOwnerDetails", propertyOwnerDetails);
+
         final SewerageApplicationType applicationType = sewerageApplicationTypeService
                 .findByCode(SewerageTaxConstants.CLOSESEWERAGECONNECTION);
         sewerageApplicationDetails.setApplicationType(applicationType);
@@ -140,36 +157,38 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
         model.addAttribute("typeOfConnection", SewerageTaxConstants.CLOSESEWERAGECONNECTION);
         return "closeSewerageConnection";
     }
-    
-    @RequestMapping(value="/closeConnection/{shscNumber}", method=RequestMethod.POST)
+
+    @RequestMapping(value = "/closeConnection/{shscNumber}", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
+            @PathVariable final String shscNumber,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
-           @RequestParam("files") final MultipartFile[] files,@RequestParam final String shscNumber) {
-        
+            @RequestParam("files") final MultipartFile[] files) {
+
         final SewerageApplicationDetails sewerageApplicationDetailsFromDB = sewerageApplicationDetailsService
-                .findByConnection_ShscNumberAndIsActive(shscNumber); 
-        sewerageApplicationDetails.setConnectionDetail(sewerageApplicationDetailsFromDB.getConnectionDetail()); 
-        
-        validatePropertyID(sewerageApplicationDetails, resultBinder,request);
-      
-        if (resultBinder.hasErrors()) { 
+                .findByConnection_ShscNumberAndIsActive(shscNumber);
+        if (sewerageApplicationDetailsFromDB != null
+                && StringUtils.isNotEmpty(sewerageApplicationDetailsFromDB.getConnectionDetail().toString()))
+            sewerageApplicationDetails.setConnectionDetail(sewerageApplicationDetailsFromDB.getConnectionDetail());
+
+        sewerageApplicationValidator.validateClosureApplication(sewerageApplicationDetails, resultBinder, request);
+
+        if (resultBinder.hasErrors()) {
             sewerageApplicationDetails.setApplicationDate(new Date());
             prepareWorkflow(model, sewerageApplicationDetails, new WorkflowContainer());
             final AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices.getPropertyDetails(shscNumber, request);
-            if(propertyOwnerDetails!=null){
-               model.addAttribute("propertyOwnerDetails", propertyOwnerDetails); 
-            }
+            if (propertyOwnerDetails != null)
+                model.addAttribute("propertyOwnerDetails", propertyOwnerDetails);
             model.addAttribute("additionalRule", sewerageApplicationDetails.getApplicationType().getCode());
             model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
             model.addAttribute("approvalPosOnValidate", request.getParameter("approvalPosition"));
             model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
             return "closeSewerageConnection";
         }
-  
+
         sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                 SewerageTaxConstants.APPLICATION_STATUS_CREATED, SewerageTaxConstants.MODULETYPE));
-        
+
         Long approvalPosition = 0l;
         String approvalComment = "";
         if (request.getParameter("approvalComment") != null)
@@ -179,9 +198,7 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-
-        final SewerageConnection sewerageConnection = sewerageConnectionService.findByShscNumber(request
-                .getParameter("shscNumber"));
+        final SewerageConnection sewerageConnection = sewerageConnectionService.findByShscNumber(shscNumber);
         sewerageConnection.setStatus(SewerageConnectionStatus.INPROGRESS);
         sewerageApplicationDetails.setConnection(sewerageConnection);
         sewerageConnection.addApplicantDetails(sewerageApplicationDetails);
@@ -189,7 +206,7 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
         final SewerageApplicationDetails newSewerageApplicationDetails = sewerageApplicationDetailsService
                 .createNewSewerageConnection(sewerageApplicationDetails, approvalPosition, approvalComment,
                         sewerageApplicationDetails.getApplicationType().getCode(), files, workFlowAction, request);
- 
+
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
 
@@ -199,7 +216,7 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
             assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
 
         if (assignObj != null) {
-            asignList = new ArrayList<Assignment>();
+            asignList = new ArrayList<>();
             asignList.add(assignObj);
         } else if (assignObj == null && approvalPosition != null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
@@ -243,32 +260,5 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
         model.addAttribute("nextDesign", nextDesign);
         model.addAttribute("cityName", ApplicationThreadLocals.getCityName());
         return new ModelAndView("closeConnection-success", "sewerageApplicationDetails", sewerageApplicationDetails);
-    }
-
-    private void validatePropertyID(final SewerageApplicationDetails sewerageApplicationDetails,
-            final BindingResult errors, final HttpServletRequest request) {
-        if (sewerageApplicationDetails.getConnectionDetail() != null
-                && sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier() != null
-                && !sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier().equals("")) {
-          String errorMessage = sewerageApplicationDetailsService
-                    .checkValidPropertyAssessmentNumber(sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
-            if (errorMessage != null && !errorMessage.equals(""))
-                errors.reject("err.connectionDetail.propertyIdentifier.validate",
-                        new String[] { errorMessage }, null);
-           else {
-                    HashMap<String, Object> result = sewerageThirdPartyServices.getWaterTaxDueAndCurrentTax(sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(), request);
-                    BigDecimal waterTaxDue = (BigDecimal) result.get("WATERTAXDUE");
-                    String consumerCode = result.get("CONSUMERCODE").toString(); 
-                    //Taking substring since value in consumercode is in this form [12345]
-                    if(consumerCode!="" && consumerCode!=null)
-                        consumerCode=consumerCode.substring(1, consumerCode.length()-1);
-                    if (waterTaxDue.compareTo(BigDecimal.ZERO)>0){
-                        errorMessage="Property tax Assessment number "+sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier()+
-                                " linked water tap connection demand with Consumer code:"+consumerCode+" is due Rs."+waterTaxDue+"/- . Please clear demand and close sewerage connection.";
-                        errors.reject("err.connectionDetail.propertyIdentifier.validate",
-                                new String[] { errorMessage }, null);
-                    } 
-                }
-        }
     }
 }

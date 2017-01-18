@@ -39,6 +39,13 @@
  */
 package org.egov.mrs.application.service.collection;
 
+import static org.egov.mrs.application.MarriageConstants.BOUNDARY_TYPE;
+import static org.egov.mrs.application.MarriageConstants.MARRIAGE_DEFAULT_FUNCTIONARY_CODE;
+import static org.egov.mrs.application.MarriageConstants.MARRIAGE_DEFAULT_FUND_CODE;
+import static org.egov.mrs.application.MarriageConstants.MARRIAGE_DEFAULT_FUND_SRC_CODE;
+import static org.egov.mrs.application.MarriageConstants.MARRIAGE_DEPARTMENT_CODE;
+import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,9 +57,10 @@ import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.AbstractBillable;
 import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,11 +80,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ReIssueBillable extends AbstractBillable implements Billable {
 
-    private static final String STRING_DEPARTMENT_CODE = "REV";
     private static final String STRING_SERVICE_CODE = "MRR";
-    public static final String DEFAULT_FUNCTIONARY_CODE = "1";
-    public static final String DEFAULT_FUND_SRC_CODE = "01";
-    public static final String DEFAULT_FUND_CODE = "01";
     public static final String DISPLAY_MESSAGE = "Marriage Certificate fee Collection";
     public static final String BILLTYPE_AUTO = "AUTO";
     public static final String MARRIAGE_REISSUE_MESSAGE = "Marriage_Certificate_Issue";
@@ -94,6 +98,9 @@ public class ReIssueBillable extends AbstractBillable implements Billable {
 
     @Autowired
     private ModuleService moduleService;
+    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     @Override
     public String getBillPayee() {
@@ -139,29 +146,39 @@ public class ReIssueBillable extends AbstractBillable implements Billable {
 
     @Override
     public String getBoundaryType() {
-        return "Zone";
+        return BOUNDARY_TYPE;
     }
 
     @Override
     public String getDepartmentCode() {
-        return STRING_DEPARTMENT_CODE;
+        final AppConfigValues marriageDeptCode = getAppConfigValue(MARRIAGE_DEPARTMENT_CODE);
+        return marriageDeptCode != null ? marriageDeptCode.getValue() : "";
     }
 
     @Override
     public BigDecimal getFunctionaryCode() {
-        return new BigDecimal(DEFAULT_FUNCTIONARY_CODE);
+        final AppConfigValues marriageFunctionaryCode = getAppConfigValue(MARRIAGE_DEFAULT_FUNCTIONARY_CODE);
+        return marriageFunctionaryCode != null ? new BigDecimal(marriageFunctionaryCode.getValue()) : BigDecimal.ZERO;
     }
 
     @Override
     public String getFundCode() {
-        return DEFAULT_FUND_CODE;
+        final AppConfigValues marriageFundCode = getAppConfigValue(MARRIAGE_DEFAULT_FUND_CODE);
+        return marriageFundCode != null ? marriageFundCode.getValue() : "";
     }
 
     @Override
     public String getFundSourceCode() {
-        return DEFAULT_FUND_SRC_CODE;
+        final AppConfigValues marriageFundSrcCode = getAppConfigValue(MARRIAGE_DEFAULT_FUND_SRC_CODE);
+        return marriageFundSrcCode != null ? marriageFundSrcCode.getValue() : "";
     }
 
+    public AppConfigValues getAppConfigValue(String code) {
+        List<AppConfigValues> appConfigResult = appConfigValuesService.getConfigValuesByModuleAndKey(
+                MODULE_NAME, code);
+        return !appConfigResult.isEmpty() ? appConfigResult.get(0) : null;
+    }
+    
     @Override
     public Date getIssueDate() {
         return new Date();
@@ -174,7 +191,7 @@ public class ReIssueBillable extends AbstractBillable implements Billable {
 
     @Override
     public Module getModule() {
-        return moduleService.getModuleByName(MarriageConstants.MODULE_NAME);
+        return moduleService.getModuleByName(MODULE_NAME);
     }
 
     @Override

@@ -88,40 +88,41 @@ $(document).ready(function()
 		 
 		 if(action == 'Reject' && (status=='INITIALAPPROVED' || status=='INSPECTIONFEEPAID' || status=='CREATED')) { 
 			 $('#Reject').attr('formnovalidate','true');
-			 var r = confirm("Do You Really Want to Reject The Application!");
-			 if (r == true) {
-				 var approvalComent=$('#approvalComent').val();
-				  if(approvalComent == "") {
-					  bootbox.alert("Please enter rejection comments!");
-						$('#approvalComent').focus();
-						return false; 
-				  }
-				  else {
-					  validateWorkFlowApprover(action);
-					  document.forms[0].submit();
-				  }
-			 } else {
-			     return false;
-			 }
+			 bootbox.confirm("Do you really want to Reject the application?", function(result){
+				if(result){
+					var approvalComent=$('#approvalComent').val();
+					  if(approvalComent == "") {
+						  bootbox.alert("Please enter rejection comments!");
+							$('#approvalComent').focus();
+							return false; 
+					  }
+					  else {
+						  validateWorkFlowApprover(action);
+						  document.forms[0].submit();
+					  }
+				}
+				
+			 });
+			 return false;
 		}  
 		 
 		 if(action == 'Cancel') { 
 			 $('#Cancel').attr('formnovalidate','true');
-			 var r = confirm("Do You Really Want to Cancel The Application!");
-			 if (r == true) {
-				 var approvalComent=$('#approvalComent').val();
-				  if(approvalComent == "") {
-					  bootbox.alert("Please enter cancellation comments!");
-						$('#approvalComent').focus();
-						return false; 
-				  }
-				  else {
-					  validateWorkFlowApprover(action);
-					  document.forms[0].submit();
-				  }
-			 } else {
-			     return false;
-			 }
+			 bootbox.confirm("Do you really want to Cancel the application?", function(result){
+					if(result){
+						var approvalComent=$('#approvalComent').val();
+						  if(approvalComent == "") {
+							  bootbox.alert("Please enter cancellation comments!");
+								return false; 
+						  }
+						  else {
+							  validateWorkFlowApprover(action);
+							  document.forms[0].submit();
+						  }
+					}
+					
+				 });
+				 return false;
 		}  
 		 
 		 if((action == 'Generate Estimation Notice')) {
@@ -165,6 +166,7 @@ $(document).ready(function()
 	function validateTapExecutionDate() {
 		var applicationDate = $('#appDate').val();	 
 		var executionDate = $('#executionDate').val();
+		
 		if(applicationDate !='' && executionDate != '') {
 			if(validateDateRange(applicationDate, executionDate)) {
 				validateWorkFlowApprover(action);
@@ -176,6 +178,7 @@ $(document).ready(function()
 				return false;	
 			}
 		}
+		return true;
 	}
 	
 	$('.slide-history-menu').click(function(){
@@ -247,20 +250,26 @@ $('#noOfClosetsResidential').blur(function(){
 	var propertyType = $('#propertyType').val()
 	var noOfClosetsResidential = $('#noOfClosetsResidential').val()
 	
-	if(noOfClosetsResidential != ''){
+	if(noOfClosetsResidential==="0" ){
+		bootbox.alert("Please enter number of closets value more than 0");
+	}
+	else if(noOfClosetsResidential != ''){
 		validateClosets(propertyType , noOfClosetsResidential,true);
 	} else{
-		bootbox.alert("Please Enter Closets For Property Type Residential");
+		bootbox.alert("Please enter number of closets for property type Residential");
 	}
 });
 
 $('#noOfClosetsNonResidential').blur(function(){
 	var propertyType = $('#propertyType').val()
 	var noOfClosetsNonResidential = $('#noOfClosetsNonResidential').val()
-	if(noOfClosetsNonResidential != ''){
+	if(noOfClosetsNonResidential==="0" ){
+		bootbox.alert("Please enter number of closets value more than 0");
+	}
+	else if(noOfClosetsNonResidential != ''){
 		validateClosets(propertyType , noOfClosetsNonResidential,false);
 	} else{
-		bootbox.alert("Please Enter Closets For Property Type Non Residential");
+		bootbox.alert("Please enter number of closets for property type Non Residential");
 	}
 	
 });
@@ -279,10 +288,11 @@ function validateClosets(propertyType,noOfClosets,flag)
 			dataType: "json",
 			success: function (response) { 
 				if(response != '') {
-					resetClosetDetails();
+					bootbox.alert(response);
+						resetClosetDetails();
 				}
 			}, 
-			error: function (response) {
+			error: function () {
 				
 				bootbox.alert("Oops Something Wrong!!!!!");
 			}

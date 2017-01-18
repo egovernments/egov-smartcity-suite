@@ -39,10 +39,8 @@
  */
 package org.egov.stms.web.controller.transactions;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,7 +50,6 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -71,12 +68,12 @@ import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageApplicationDetailsDocument;
 import org.egov.stms.transactions.entity.SewerageConnection;
 import org.egov.stms.transactions.entity.SewerageConnectionFee;
-import org.egov.stms.transactions.entity.SewerageDemandConnection;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageConnectionService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
+import org.egov.stms.web.controller.utils.SewerageApplicationValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,8 +113,6 @@ public class SewerageConnectionController extends GenericWorkFlowController {
     protected AssignmentService assignmentService;
 
     @Autowired
-    private AppConfigValueService appConfigValuesService;
-    @Autowired
     private PropertyExternalService propertyExternalService;
 
     @Autowired
@@ -132,7 +127,10 @@ public class SewerageConnectionController extends GenericWorkFlowController {
 
     @Autowired
     private DocumentTypeMasterService documentTypeMasterService;
-    
+
+    @Autowired
+    private SewerageApplicationValidator sewerageApplicationValidator;
+
     @Autowired
     public SewerageConnectionController(final SewerageTaxUtils sewerageTaxUtils,
             final SewerageApplicationDetailsService sewerageApplicationDetailsService) {
@@ -140,23 +138,23 @@ public class SewerageConnectionController extends GenericWorkFlowController {
         this.sewerageApplicationDetailsService = sewerageApplicationDetailsService;
     }
 
-    public @ModelAttribute("documentNamesList") List<SewerageApplicationDetailsDocument> documentTypeMasterList(
+    @ModelAttribute("documentNamesList")
+    public List<SewerageApplicationDetailsDocument> documentTypeMasterList(
             @ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails) {
-        final List<SewerageApplicationDetailsDocument> tempDocList = new ArrayList<SewerageApplicationDetailsDocument>(
+        final List<SewerageApplicationDetailsDocument> tempDocList = new ArrayList<>(
                 0);
         final SewerageApplicationType applicationType = sewerageApplicationTypeService
                 .findByCode(SewerageTaxConstants.NEWSEWERAGECONNECTION);
-        List<DocumentTypeMaster> documentTypeMasterList = documentTypeMasterService
+        final List<DocumentTypeMaster> documentTypeMasterList = documentTypeMasterService
                 .getAllActiveDocumentTypeMasterByApplicationType(applicationType);
-        if (sewerageApplicationDetails != null) {
+        if (sewerageApplicationDetails != null)
             for (final DocumentTypeMaster dtm : documentTypeMasterList) {
-                SewerageApplicationDetailsDocument sad = new SewerageApplicationDetailsDocument();
+                final SewerageApplicationDetailsDocument sad = new SewerageApplicationDetailsDocument();
                 if (dtm != null) {
                     sad.setDocumentTypeMaster(dtm);
                     tempDocList.add(sad);
                 }
             }
-        }
         return tempDocList;
     }
 
@@ -184,24 +182,22 @@ public class SewerageConnectionController extends GenericWorkFlowController {
         model.addAttribute("typeOfConnection", SewerageTaxConstants.NEWSEWERAGECONNECTION);
         final boolean inspectionFeeCollectionRequired = sewerageTaxUtils.isInspectionFeeCollectionRequired();
         model.addAttribute("inspectionFeesCollectionRequired", inspectionFeeCollectionRequired);
-        if (inspectionFeeCollectionRequired) {
+        if (inspectionFeeCollectionRequired)
             createSewerageConnectionFee(sewerageApplicationDetails, SewerageTaxConstants.FEE_INSPECTIONCHARGE);
-        }
 
         model.addAttribute("mode", null);
         return "newconnection-form";
     }
 
-    private void createSewerageConnectionFee(final SewerageApplicationDetails sewerageApplicationDetails, String feeCode) {
-        List<FeesDetailMaster> inspectionFeeList = feesDetailMasterService.findAllActiveFeesDetailByFeesCode(feeCode);
-        for (FeesDetailMaster feeDetailMaster : inspectionFeeList) {
-            SewerageConnectionFee connectionFee = new SewerageConnectionFee();
+    private void createSewerageConnectionFee(final SewerageApplicationDetails sewerageApplicationDetails, final String feeCode) {
+        final List<FeesDetailMaster> inspectionFeeList = feesDetailMasterService.findAllActiveFeesDetailByFeesCode(feeCode);
+        for (final FeesDetailMaster feeDetailMaster : inspectionFeeList) {
+            final SewerageConnectionFee connectionFee = new SewerageConnectionFee();
             connectionFee.setFeesDetail(feeDetailMaster);
             if (feeDetailMaster.getIsFixedRate())
                 connectionFee.setAmount(feeDetailMaster.getAmount().doubleValue());
             connectionFee.setApplicationDetails(sewerageApplicationDetails);
             sewerageApplicationDetails.getConnectionFees().add(connectionFee);
-
         }
     }
 
@@ -209,10 +205,9 @@ public class SewerageConnectionController extends GenericWorkFlowController {
     public String create(@Valid @ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
-            final BindingResult errors, @RequestParam("files") final MultipartFile[] files) {
-
-        validatePropertyID(sewerageApplicationDetails, resultBinder, request);
-        final List<SewerageApplicationDetailsDocument> applicationDocs = new ArrayList<SewerageApplicationDetailsDocument>();
+            @RequestParam("files") final MultipartFile[] files) {
+        sewerageApplicationValidator.validateSewerageNewApplication(sewerageApplicationDetails, resultBinder, request);
+        final List<SewerageApplicationDetailsDocument> applicationDocs = new ArrayList<>();
         int i = 0;
         if (!sewerageApplicationDetails.getAppDetailsDocument().isEmpty())
             for (final SewerageApplicationDetailsDocument applicationDocument : sewerageApplicationDetails
@@ -222,8 +217,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
             }
 
         /**
-         * If inspection fee required to be collected, then change status to fee
-         * collection pending.
+         * If inspection fee required to be collected, then change status to fee collection pending.
          */
         if (LOG.isDebugEnabled())
             LOG.error("Model Level Validation occurs = " + resultBinder);
@@ -266,7 +260,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
 
         final SewerageApplicationDetails newSewerageApplicationDetails = sewerageApplicationDetailsService
                 .createNewSewerageConnection(sewerageApplicationDetails, approvalPosition, approvalComment,
-                        sewerageApplicationDetails.getApplicationType().getCode(),files, workFlowAction, request);
+                        sewerageApplicationDetails.getApplicationType().getCode(), files, workFlowAction, request);
 
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
@@ -277,12 +271,12 @@ public class SewerageConnectionController extends GenericWorkFlowController {
             assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
 
         if (assignObj != null) {
-            asignList = new ArrayList<Assignment>();
+            asignList = new ArrayList<>();
             asignList.add(assignObj);
         } else if (assignObj == null && approvalPosition != null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
 
-        final String nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
+        final String nextDesign = asignList != null && !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
 
         final String pathVars = newSewerageApplicationDetails.getApplicationNumber() + ","
                 + sewerageTaxUtils.getApproverName(approvalPosition) + ","
@@ -349,41 +343,8 @@ public class SewerageConnectionController extends GenericWorkFlowController {
                 request);
         if (propertyOwnerDetails != null)
             modelMap.addAttribute("propertyOwnerDetails", propertyOwnerDetails);
-        final PropertyTaxDetails propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNumber,null);
+        final PropertyTaxDetails propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNumber, null);
         modelMap.addAttribute("propertyTax", propertyTaxDetails.getTotalTaxAmt());
     }
 
-    private void validatePropertyID(final SewerageApplicationDetails sewerageApplicationDetails,
-            final BindingResult errors, final HttpServletRequest request) {
-        if (sewerageApplicationDetails.getConnectionDetail() != null
-                && sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier() != null
-                && !sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier().equals("")) {
-          String errorMessage = sewerageApplicationDetailsService
-                    .checkValidPropertyAssessmentNumber(sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
-            if (errorMessage != null && !errorMessage.equals(""))
-                errors.reject("err.connectionDetail.propertyIdentifier.validate",
-                        new String[] { errorMessage }, null);
-            else {
-                errorMessage = sewerageApplicationDetailsService
-                        .checkConnectionPresentForProperty(sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
-                if (errorMessage != null && !errorMessage.equals(""))
-                    errors.reject("err.connectionDetail.propertyIdentifier.validate",
-                            new String[] { errorMessage }, null);
-                else {
-                    HashMap<String, Object> result = sewerageThirdPartyServices.getWaterTaxDueAndCurrentTax(sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(), request);
-                    BigDecimal waterTaxDue = (BigDecimal) result.get("WATERTAXDUE");
-                    String consumerCode = result.get("CONSUMERCODE").toString(); 
-                    //Taking substring since value in consumercode is in this form [12345]
-                    if(consumerCode!="" && consumerCode!=null)
-                        consumerCode=consumerCode.substring(1, consumerCode.length()-1);
-                    if (waterTaxDue.compareTo(BigDecimal.ZERO)>0){
-                        errorMessage="For Entered Property tax Assessment number "+sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier()+
-                                " linked water tap connection demand with Consumer code:"+consumerCode+" is due Rs."+waterTaxDue+"/- . Please clear demand and create new sewerage connection.";
-                        errors.reject("err.connectionDetail.propertyIdentifier.validate",
-                                new String[] { errorMessage }, null);
-                    } 
-                }
-            }
-        }
-    }
 }

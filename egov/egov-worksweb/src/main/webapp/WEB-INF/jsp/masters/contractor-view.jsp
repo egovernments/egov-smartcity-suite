@@ -39,11 +39,11 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp"%>
-<script src="<cdn:url value='/resources/js/works.js?rnd=${app_release_no}'/>"></script>
-
+<script src="<cdn:url value='/resources/js/master/contractor.js?rnd=${app_release_no}'/>"></script>
 <html>
 <body onload="replaceExemptionFormChar();">
 <div class="new-page-header"><s:text  name="contractor.viewConractor.view" /></div>
+<s:hidden name="hide" id="hide" value = "%{dropdownData.contractorMasterHiddenFields}" />
 
 <%@ include file='contractor-commonview.jsp'%>
 

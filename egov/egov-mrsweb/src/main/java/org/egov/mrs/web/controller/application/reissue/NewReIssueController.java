@@ -50,6 +50,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.utils.StringUtils;
 import org.egov.mrs.application.MarriageConstants;
+import org.egov.mrs.application.service.MarriageFeeCalculator;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.service.MarriageApplicantService;
@@ -57,7 +58,6 @@ import org.egov.mrs.domain.service.MarriageDocumentService;
 import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.egov.mrs.domain.service.ReIssueService;
 import org.egov.mrs.masters.entity.MarriageFee;
-import org.egov.mrs.masters.service.MarriageFeeService;
 import org.egov.mrs.masters.service.MarriageRegistrationUnitService;
 import org.egov.mrs.web.controller.application.registration.MarriageFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,8 +86,6 @@ public class NewReIssueController extends GenericWorkFlowController {
     @Autowired
     private ReIssueService reIssueService;
     @Autowired
-    private MarriageFeeService marriageFeeService;
-    @Autowired
     private MarriageRegistrationService marriageRegistrationService;
     @Autowired
     private MarriageApplicantService marriageApplicantService;
@@ -101,6 +99,8 @@ public class NewReIssueController extends GenericWorkFlowController {
     private MarriageFormValidator marriageFormValidator;
     @Autowired
     private MarriageRegistrationUnitService marriageRegistrationUnitService;
+    @Autowired
+    private MarriageFeeCalculator marriageFeeCalculator;
 
     public void prepareNewForm(final Model model, final ReIssue reIssue) {
         model.addAttribute("marriageRegistrationUnit",
@@ -108,7 +108,7 @@ public class NewReIssueController extends GenericWorkFlowController {
         marriageRegistrationService.prepareDocumentsForView(reIssue.getRegistration());
         marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getHusband());
         marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getWife());
-        MarriageFee marriageFee = marriageFeeService.getFeeForCriteria(MarriageConstants.REISSUE_FEECRITERIA);
+        MarriageFee marriageFee = marriageFeeCalculator.calculateMarriageReissueFee(null, MarriageConstants.REISSUE_FEECRITERIA);
         if (marriageFee != null) {
             reIssue.setFeeCriteria(marriageFee);
             reIssue.setFeePaid(marriageFee.getFees());

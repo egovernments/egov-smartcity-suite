@@ -2029,7 +2029,7 @@ public class PropertyService {
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
-        } else if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION) || applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP))) {
+        } else if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION))) {
             final RevisionPetition property = (RevisionPetition) stateAwareObject;
             ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getObjectionNumber());

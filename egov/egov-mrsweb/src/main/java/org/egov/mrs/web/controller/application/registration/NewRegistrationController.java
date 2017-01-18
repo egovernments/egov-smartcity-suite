@@ -43,23 +43,18 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.mrs.application.MarriageConstants;
+import org.egov.mrs.application.service.MarriageFeeCalculator;
 import org.egov.mrs.domain.entity.MarriageRegistration;
-import org.egov.mrs.masters.entity.MarriageFee;
 import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
-import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -82,12 +77,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/registration")
 public class NewRegistrationController extends MarriageRegistrationController {
 
+    private static final String MESSAGE = "message";
     private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String MARRIAGE_REGISTRATION = "marriageRegistration";
     @Autowired
     protected AssignmentService assignmentService;
     @Autowired
     private MarriageFormValidator marriageFormValidator;
+    @Autowired
+    private MarriageFeeCalculator marriageFeeCalculator;
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public String showRegistration(final Model model) {
@@ -95,7 +93,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
         final Integer loggedInUser = ApplicationThreadLocals.getUserId().intValue();
         currentuser = assignmentService.getPrimaryAssignmentForUser(loggedInUser.longValue());
         if (null == currentuser) {
-            model.addAttribute("message", "msg.superuser");
+            model.addAttribute(MESSAGE, "msg.superuser");
             return "marriagecommon-error";
         }
         final MarriageRegistration marriageRegistration = new MarriageRegistration();
@@ -129,14 +127,14 @@ public class NewRegistrationController extends MarriageRegistrationController {
             return "registration-form";
 
         }
-        String message = StringUtils.EMPTY;
+        String message;
         String approverName = request.getParameter("approverName");
         String nextDesignation = request.getParameter("nextDesignation");
         Assignment currentuser;
         final Integer loggedInUser = ApplicationThreadLocals.getUserId().intValue();
         currentuser = assignmentService.getPrimaryAssignmentForUser(loggedInUser.longValue());
         if (null == currentuser) {
-            model.addAttribute("message", "msg.superuser");
+            model.addAttribute(MESSAGE, "msg.superuser");
             return "marriagecommon-error";
 
         }
@@ -145,11 +143,10 @@ public class NewRegistrationController extends MarriageRegistrationController {
         final String appNo = marriageRegistrationService.createRegistration(marriageRegistration, workflowContainer);
         message = messageSource.getMessage("msg.success.forward",
                 new String[] { approverName.concat("~").concat(nextDesignation), appNo }, null);
-        model.addAttribute("message",message);
+        model.addAttribute(MESSAGE, message);
         return "registration-ack";
     }
 
-    
     @RequestMapping(value = "/workflow", method = RequestMethod.POST)
     public String handleWorkflowAction(@RequestParam final Long id,
             @ModelAttribute final MarriageRegistration marriageRegistration,
@@ -215,25 +212,6 @@ public class NewRegistrationController extends MarriageRegistrationController {
     @RequestMapping(value = "/calculatemarriagefee", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public Double calculateMarriageFee(@RequestParam final Date dateOfMarriage) {
-        Double fee = null;  
-        final AppConfigValues allowValidation = getDaysValidationAppConfValue(
-                MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION);
-        final int days = Days.daysBetween(new DateTime(dateOfMarriage), new DateTime(new Date())).getDays();
-        if (allowValidation != null && !allowValidation.getValue().isEmpty())
-            if ("NO".equalsIgnoreCase(allowValidation.getValue())) {
-                fee = checkMarriageFeeForCriteria(days);
-            } else if ("YES".equalsIgnoreCase(allowValidation.getValue()) && days <= 90) { 
-                fee = checkMarriageFeeForCriteria(days);
-            }
-        return fee;
+        return marriageFeeCalculator.calculateMarriageRegistrationFee(null, dateOfMarriage);
     }
-
-    private Double checkMarriageFeeForCriteria(final int days) {
-        final List<MarriageFee> fee = marriageFeeService.getActiveGeneralTypeFeeses();
-        for (final MarriageFee marriageFee : fee)
-            if (days >= marriageFee.getFromDays() && (marriageFee.getToDays() == null || days <= marriageFee.getToDays()))
-                return marriageFee.getFees();
-        return null;
-    }
-
 }

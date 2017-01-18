@@ -41,46 +41,49 @@
   --%>
 
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<script src="<cdn:url  value='/resources/js/app/helper.js'/>"></script>
 <script src="<cdn:url  value='/resources/app/js/demand-generate.js?rnd=${app_release_no}'/>"></script>
 <div class="row">
     <div class="col-md-12">
-      <div class="panel panel-primary" data-collapsed="0"> 
-        <div class="panel-heading">
-          <div class="panel-title">Demand Generation</div>
-        </div>
-        <div class="panel-body">
-        	<form:form role="form" action="create"  id="generatedemand" name="generatedemand" modelAttribute="demandGenerationLog"
-            cssClass="form-horizontal form-groups-bordered"  method="post">
-	            <div class="form-group">
-	              <label class="col-sm-4 control-label text-right"><spring:message code="lbl.financialyear" /> </label>
-		          <div class="col-sm-4 add-margin">
-		          	<form:select path="installmentYear" cssClass="form-control" required="required">
-		          		<form:option value="" ><spring:message code="lbl.select"/></form:option>
-		          		<form:options items="${financialYearList}" itemLabel="finYearRange" itemValue="finYearRange"/>
-		          	</form:select>
-		          </div>
-	            </div>
-	            <div class="form-group">
-					<div class="text-center">
-					<button type="submit" class='btn btn-primary' id="submit">
-	            		<spring:message code='lbl.generate.demand' />
-	         		</button>
-		            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
-		            	<spring:message code='lbl.close' /></button>
-	            	</div>
-	            </div>
-            <c:if test="${demandGenerationLog != null && not empty demandGenerationLog.details}">
-                <c:choose>
-                    <c:when test="${demandGenerationLog.demandGenerationStatus == 'INCOMPLETE'}">
-                        <div class="alert alert-success" role="alert"><spring:message code="${message}"/>, correct the data and select the license to retry demand generation.</div>
+        <div class="panel panel-primary" data-collapsed="0">
+            <div class="panel-heading">
+                <div class="panel-title">Demand Generation</div>
+            </div>
+            <div class="panel-body">
+                <form:form role="form" action="create"  id="generatedemand" name="generatedemand" cssClass="form-horizontal form-groups-bordered"  method="post">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label text-right"><spring:message code="lbl.financialyear" /> </label>
+                        <div class="col-sm-4 add-margin">
+                            <select name="installmentYear" id="installmentYear" class="form-control" required="required">
+                                <option value="" ><spring:message code="lbl.select"/></option>
+                                <c:forEach items="${financialYearList}" var="finYear">
+                                    <option value="${finYear.finYearRange}">${finYear.finYearRange}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="text-center">
+                            <button type="submit" class='btn btn-primary' id="submit">
+                                <spring:message code='lbl.generate.demand' />
+                            </button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
+                                <spring:message code='lbl.close' /></button>
+                        </div>
+                    </div>
+                    <c:if test="${demandGenerationLog != null && not empty demandGenerationLog.details}">
+                        <div class="alert alert-info" role="alert"><spring:message code="${message}"/></div>
+                        <div class="text-center add-margin">
+                            <button type="submit" class='btn btn-primary' id="regenbtn" name="regenerate">Regenerate</button>
+                        </div>
+                        <script>
+                            jQuery("#installmentYear").val('${demandGenerationLog.installmentYear}');
+                        </script>
                         <div class="col-md-12 text-center add-margin">
                             <ul class="pagination pagination-xs pager" id="myPager"></ul>
                         </div>
                         <table class="table table-bordered" style="width:97%;margin:0 auto;">
                             <thead>
                             <tr>
-                                <th valign="top">Select&nbsp;[All <input id="chkall" type="checkbox" style="vertical-align:top">]</th>
                                 <th>License Number</th>
                                 <th>Status</th>
                                 <th>Details</th>
@@ -89,31 +92,17 @@
                             <tbody id="dgdtl">
                             <c:forEach items="${demandGenerationLog.details}" var="detail">
                                 <tr>
-                                    <td><input type="checkbox" class='chkbx btn btn-primary'></td>
-                                    <td>${detail.license.licenseNumber}</td>
+                                    <td><a href="#" onclick="window.open('/tl/viewtradelicense/viewTradeLicense-view.action?id='+${detail.license.id}, '',
+                                            'scrollbars=yes,width=1000,height=700,status=yes'); return false;">${detail.license.licenseNumber}</a></td>
                                     <td>${detail.status}</td>
-                                    <td>${detail.detail}</td>
+                                    <td><spring:message code="${detail.detail}" text="${detail.detail}"/> </td>
                                 </tr>
                             </c:forEach>
                             </tbody>
                         </table>
-                        <div class="text-center add-margin">
-                            <button type="button" class='btn btn-primary' id="regenbtn2" onclick="alert('Not done')">Retry Selected</button>
-                        </div>
-                    </c:when>
-                    <c:when test="${demandGenerationLog.demandGenerationStatus == 'COMPLETED'}">
-                        <div class="alert alert-success" role="alert"><spring:message code="${message}"/> Click on Regenerate to update the generated one.</div>
-                        <div class="text-center add-margin">
-                            <button type="submit" class='btn btn-primary' id="regenbtn" name="regenerate">Regenerate</button>
-                        </div>
-                    </c:when>
-                    <c:otherwise>
-                        <div class="alert alert-success" role="alert">Please wait... <spring:message code="${message}"/></div>
-                    </c:otherwise>
-                </c:choose>
-            </c:if>
-            </form:form>
-		</div>
-	  </div>
-	</div>
+                    </c:if>
+                </form:form>
+            </div>
+        </div>
+    </div>
 </div>

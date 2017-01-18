@@ -59,6 +59,8 @@ public interface LicenseRepository extends JpaRepository<License, Long> {
 
     License findByApplicationNumber(String applicationNumber);
 
+    List<License> findByNatureOfBusinessName(String natureOfBusiness);
+
     @Query("select l.applicationNumber from License l where upper(l.applicationNumber) like upper('%'||:applicationNumber||'%')")
     List<String> findAllApplicationNumberLike(@Param("applicationNumber") String applicationNumber);
 

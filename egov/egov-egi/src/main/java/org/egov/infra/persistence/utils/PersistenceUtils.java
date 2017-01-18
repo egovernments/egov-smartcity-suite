@@ -40,13 +40,27 @@
 
 package org.egov.infra.persistence.utils;
 
+import org.hibernate.Session;
 import org.hibernate.proxy.HibernateProxy;
 
-public class PersistenceUtils {
+import javax.persistence.EntityManager;
 
-    public static <T>T unproxy(T object) {
+public final class PersistenceUtils {
+
+    private PersistenceUtils() {
+        //only static methods
+    }
+
+    public static <T> T unproxy(T object) {
         if (object instanceof HibernateProxy)
-            object = (T) ((HibernateProxy) object).getHibernateLazyInitializer().getImplementation();
+            return (T) ((HibernateProxy) object).getHibernateLazyInitializer().getImplementation();
         return object;
+    }
+
+    public static void flushBatchUpdate(EntityManager entityManager, int batchUpdateCount, int batchSize) {
+        if (batchUpdateCount % batchSize == 0) {
+            entityManager.unwrap(Session.class).flush();
+            entityManager.unwrap(Session.class).clear();
+        }
     }
 }

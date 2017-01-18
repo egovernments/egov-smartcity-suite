@@ -52,6 +52,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.Valid;
 
 import org.egov.commons.ContractorGrade;
@@ -103,6 +104,9 @@ public class ContractorDetail extends AbstractAuditable {
     @Valid
     private Period validity;
 
+    @Transient
+    private List<ValidationError> errorList;
+
     public Contractor getContractor() {
         return contractor;
     }
@@ -151,8 +155,19 @@ public class ContractorDetail extends AbstractAuditable {
         this.validity = validity;
     }
 
+    public List<ValidationError> getErrorList() {
+        if (errorList != null)
+            return errorList;
+        else
+            return new ArrayList<ValidationError>();
+    }
+
+    public void setErrorList(final List<ValidationError> errorList) {
+        this.errorList = errorList;
+    }
+
     public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final List<ValidationError> validationErrors = getErrorList();
         if (department == null || department.getId() == null)
             validationErrors.add(new ValidationError("department", "contractorDetails.department.required"));
         if (status == null || status.getId() == null)

@@ -88,6 +88,7 @@ function validateContractorFormAndSubmit() {
     	return false;
     }
 }
+
 var departmentDropdownOptions=[{label:"--- Select ---", value:"0"},
     <s:iterator var="s" value="dropdownData.departmentList" status="status">  
     {"label":"<s:property value="%{name}"/>" ,
@@ -167,11 +168,11 @@ var makeContractorDataTable = function() {
 		{key:"grade", hidden:true, formatter:gradeIdHiddenFormatter, sortable:false, resizeable:false},
 		{key:"status", hidden:true, formatter:statusIdHiddenFormatter, sortable:false, resizeable:false},
 		{key:"SlNo", label:'Sl No', sortable:false, resizeable:false},
-		{key:"departmentName", label:'<span class="mandatory1">*</span><s:text name="contractor.department"/>', formatter:"dropdown",dropdownOptions:departmentDropdownOptions, sortable:false, resizeable:false},	
-		{key:"registrationNumber", label:'<s:text name="contractor.registrationNo"/>', formatter:regNoTextboxFormatter, sortable:false, resizeable:false},		
-		{key:"gradeName", label:'<s:text name="contractor.grade" />',formatter:createDropdownFormatter('contractorGradedetails','id'), dropdownOptions:gradeDropdownOptions, sortable:false, resizeable:false},			
-		{key:"statusDesc", label:'<span class="mandatory1">*</span><s:text name="contractor.status" />',formatter:createDropdownFormatter('contractorStatusdetails','id'),dropdownOptions:statusDropdownOptions, sortable:false, resizeable:false},		
-		{key:"startDate", label:'<span class="mandatory1">*</span><s:text name="contractor.fromDate" />', formatter:dateFormatter,sortable:false, resizeable:false},
+		{key:"departmentName", label:'<s:text name="contractor.department"/><span class="mandatory1">*</span>', formatter:"dropdown",dropdownOptions:departmentDropdownOptions, sortable:false, resizeable:false},	
+		{key:"registrationNumber", label:'<label for="registrationNumber"><s:text name="contractor.registrationNo"/></label>', formatter:regNoTextboxFormatter, sortable:false, resizeable:false},		
+		{key:"gradeName", label:'<label for="grade"><s:text name="contractor.grade" /></label>',formatter:createDropdownFormatter('contractorGradedetails','id'), dropdownOptions:gradeDropdownOptions, sortable:false, resizeable:false},			
+		{key:"statusDesc", label:'<s:text name="contractor.status" /><span class="mandatory1">*</span>',formatter:createDropdownFormatter('contractorStatusdetails','id'),dropdownOptions:statusDropdownOptions, sortable:false, resizeable:false},		
+		{key:"startDate", label:'<s:text name="contractor.fromDate" /><span class="mandatory1">*</span>', formatter:dateFormatter,sortable:false, resizeable:false},
 		{key:"endDate",label:'<s:text name="contractor.toDate"/>', formatter:dateFormatter,sortable:false, resizeable:false},
 		{key:'deleteRow',label:'<s:text name="contractorDetails.row.delete"/>',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}  
 	];
@@ -216,7 +217,6 @@ var makeContractorDataTable = function() {
 	    oDT: contractorDataTable
 	};  
 }
-
 </script>
 
 <div class="alert alert-danger fade in" id="contractor_error" style="display:none"></div>
@@ -235,14 +235,14 @@ var makeContractorDataTable = function() {
 	<div class="panel-body">
 
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="code"> <s:text
 					name="contractor.code" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
 				<s:textfield name="code" disabled="%{sDisabled}" id="code"
 					maxlength="50" cssClass="form-control" value="%{code}" />
 			</div>
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="name"> <s:text
 					name="contractor.name" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -252,7 +252,7 @@ var makeContractorDataTable = function() {
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="correspondenceAddress" > <s:text
 					name="contractor.correspondenceAddress" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -260,7 +260,7 @@ var makeContractorDataTable = function() {
 					cssClass="form-control patternvalidation" id="correspondenceAddress"
 				data-pattern="alphanumericwithallspecialcharacters"	value="%{correspondenceAddress}" />
 			</div>
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="paymentAddress"> <s:text
 					name="contractor.paymentAddress" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -270,14 +270,14 @@ var makeContractorDataTable = function() {
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="contactPerson"> <s:text
 					name="contractor.contactPerson" />
 			</label>
-			<div class="col-sm-3 add-margin">
+			<div class="col-sm-3 add-margin contactPerson"> 
 				<s:textfield name="contactPerson" id="contactPerson" size="40"
 					maxlength="100" cssClass="form-control" value="%{contactPerson}" />
 			</div>
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="email"> <s:text
 					name="contractor.email" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -287,7 +287,7 @@ var makeContractorDataTable = function() {
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="narration"> <s:text
 					name="contractor.narration" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -298,20 +298,20 @@ var makeContractorDataTable = function() {
 					name="contractor.mobilenumber" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:textfield name="mobileNumber" id="mobileNumber" maxlength="15"
+				<s:textfield name="mobileNumber" id="mobileNumber" maxlength="10"
 					cssClass="form-control" value="%{mobileNumber}" />
 			</div>
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="panNumber"> <s:text
 					name="contractor.panNo" />
 			</label>
 			<div class="col-sm-3 add-margin">
 				<s:textfield name="panNumber" id="panNumber" maxlength="10"
 					cssClass="form-control" value="%{panNumber}" />
 			</div>
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="tinNumber"> <s:text
 					name="contractor.tinNo" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -321,16 +321,16 @@ var makeContractorDataTable = function() {
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="bank"> <s:text
 					name="contractor.bank" />
 			</label>
 			<div class="col-sm-3 add-margin">
 				<s:select headerKey="-1" headerValue="select"
-					list="dropdownData.bankList" name="bank.id" id="bank"
-					cssClass="form-control" listKey="id" listValue="name"
-					value="%{bank.id}" />
+				list="dropdownData.bankList" name="bank.id" id="bank"
+				cssClass="form-control" listKey="id" listValue="name"
+				value="%{bank.id}" />
 			</div>
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="ifscCode"> <s:text
 					name="contractor.ifscCode" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -340,14 +340,14 @@ var makeContractorDataTable = function() {
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="bankAccount"> <s:text
 					name="contractor.bankAccount" />
 			</label>
 			<div class="col-sm-3 add-margin">
 				<s:textfield name="bankAccount" id="bankAccount" maxlength="22"
 					size="24" cssClass="form-control" value="%{bankAccount}" />
 			</div>
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="pwdApprovalCode"> <s:text
 					name="contractor.pwdApprovalCode" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -357,7 +357,7 @@ var makeContractorDataTable = function() {
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"> 
+			<label class="col-sm-2 control-label text-right" for="exemptionForm"> 
 			<s:text	name="contractor.exemptionFrom" /></label>
 			<div class="col-sm-3 add-margin">
 

@@ -43,6 +43,6 @@ import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface SHSCNumberGenerator {
+public interface SewerageSHSCNumberGenerator {
     public String generateNextSHSCNumber(SewerageApplicationDetails sewerageApplicationDetails);
 }

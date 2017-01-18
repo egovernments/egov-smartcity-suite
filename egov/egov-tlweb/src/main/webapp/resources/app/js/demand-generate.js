@@ -143,15 +143,13 @@ $.fn.pageMe = function(opts){
 $(document).ready(function(){
 
     $('#dgdtl').pageMe({pagerSelector:'#myPager',showPrevNext:true,hidePageNumbers:false,perPage:100});
-    $('#chkall').change(function(){
-        $('.chkbx').prop('checked', $(this).is(':checked'));
-    });
-    $('.chkbx').change(function(){
-        $('#chkall').prop("checked", false);
-    });
-    
     $('#regenbtn').click(function() {
 		$('#generatedemand').attr('method', 'post');
 		$('#generatedemand').attr('action', '/tl/demand-generation/regenerate');
 	});
+
+    $(".alert-success").fadeTo(5000, 5000).slideUp(500, function(){
+        $(".alert-success").alert('close');
+    });
 });
+

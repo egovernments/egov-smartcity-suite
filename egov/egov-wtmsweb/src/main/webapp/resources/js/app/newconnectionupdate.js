@@ -182,10 +182,13 @@ $(document)
 										if ((action == 'Generate Estimation Notice' && status == 'VERIFIED')
 												|| (action == 'Generate WorkOrder' && status == 'APPROVED')
 												|| (status == 'ESTIMATIONAMOUNTPAID' && action == 'Forward')) {
-											if(action == 'Forward' && $('#approvalDepartment').val()==''){
+											if(action == 'Forward' && ($('#approvalDepartment').val()==''||
+													$('#approvalDesignation').val()=='' || $('#approvalPosition').val()=='' )){
 												$('#approvalDepartment').attr('required', 'required');
 											$('#approvalDesignation').attr('required', 'required');
 											$('#approvalPosition').attr('required', 'required');
+											bootbox.alert("Please select approver details!");
+											$('#approvalDepartment').focus();
 												return false;
 											}
 											else{

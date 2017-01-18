@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -37,37 +37,30 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.ptis.web.controller.masters.structureclassification;
 
-import org.egov.ptis.domain.entity.property.StructureClassification;
-import org.egov.ptis.master.service.StructureClassificationService;
+package org.egov.ptis.master.service;
+
+import java.util.List;
+
+import org.egov.demand.model.DepreciationMaster;
+import org.egov.ptis.domain.repository.master.depreciationrate.DepreciationRateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Controller
-@RequestMapping(value = "/structureclassification")
-public class ViewStructureClassificationController {
-
-    private final StructureClassificationService structureClassificationService;
+@Service
+@Transactional
+public class DepreciationRateService {
+    private final DepreciationRateRepository depreciationRateRepository;
 
     @Autowired
-    public ViewStructureClassificationController(final StructureClassificationService structureClassificationService) {
-        this.structureClassificationService = structureClassificationService;
+    public DepreciationRateService(final DepreciationRateRepository depreciationRateRepository) {
+        this.depreciationRateRepository = depreciationRateRepository;
     }
 
-    @ModelAttribute
-    public StructureClassification structureClassificationModel() {
-        return new StructureClassification();
-    }
+    public List<DepreciationMaster> getAllDepreciationRates() {
 
-    @RequestMapping(value = "/view", method = RequestMethod.GET)
-    public String showStructureType(final Model model) {
-        model.addAttribute("structureclassifications", structureClassificationService.getAllActiveStructureTypes());
-        return "structureclassification-view";
+        return depreciationRateRepository.findAll();
     }
 
 }

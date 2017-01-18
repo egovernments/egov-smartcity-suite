@@ -198,23 +198,16 @@ public class JournalVoucherActionHelper {
     public CVoucherHeader transitionWorkFlow(final CVoucherHeader voucherHeader, WorkflowBean workflowBean) {
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
-        final Assignment userAssignment = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date()).get(0);
         Position pos = null;
         Assignment wfInitiator = null;
         if (null != voucherHeader.getId())
             wfInitiator = getWorkflowInitiator(voucherHeader);
 
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            if (wfInitiator.equals(userAssignment)) {
-                voucherHeader.transition(true).end().withSenderName(user.getName())
-                        .withComments(workflowBean.getApproverComments())
-                        .withDateInfo(currentDate.toDate());
-            } else {
                 final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
                 voucherHeader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator.getPosition()).withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);
-            }
 
         } else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             final WorkFlowMatrix wfmatrix = voucherHeaderWorkflowService.getWfMatrix(voucherHeader.getStateType(), null,

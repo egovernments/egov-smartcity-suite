@@ -258,6 +258,63 @@
      
     <!-- END DemandActivationJob -->
     
+    <bean name="recoveryNoticesSchedular" id="recoveryNoticesSchedular" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+     	<property name="overwriteExistingJobs" value="true"/>
+        <property name="autoStartup" value="true" />   
+		<property name="schedulerName" value="recoverynotices-scheduler"/>
+        <property name="exposeSchedulerInRepository" value="true"/>
+        <property name="jobFactory" ref="jobFactory"/>
+        <property name="taskExecutor" ref="taskExecutor" />
+        <property name="waitForJobsToCompleteOnShutdown" value="false"/>
+        <property name="startupDelay" value="1500"/>
+        <property name="quartzProperties">
+        	<props>
+        		<!-- Scheduler Properties -->
+        		<prop key="org.quartz.scheduler.instanceId">AUTO</prop>
+            	<prop key="org.quartz.scheduler.instanceName">recoverynoticesScheduler</prop>
+            	<prop key="org.quartz.scheduler.wrapJobExecutionInUserTransaction">false</prop>
+        		<prop key="org.quartz.scheduler.skipUpdateCheck">true</prop>
+        		<prop key="org.quartz.scheduler.threadsInheritContextClassLoaderOfInitializer">true</prop>
+        		
+        		<!-- Job Store and Clustering Properties -->
+        		<prop key="org.quartz.jobStore.isClustered">true</prop>
+        		<prop key="org.quartz.jobStore.clusterCheckinInterval">60000</prop>
+        		<prop key="org.quartz.jobStore.acquireTriggersWithinLock">false</prop>
+        		<prop key="org.quartz.jobStore.txIsolationLevelReadCommitted">true</prop>
+        		<prop key="org.quartz.jobStore.misfireThreshold">60000</prop>
+           		<prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.PostgreSQLDelegate</prop>
+        		<prop key="org.quartz.jobStore.useProperties">true</prop>
+        		<prop key="org.quartz.jobStore.dataSource">quartzDS</prop>
+        		<prop key="org.quartz.jobStore.nonManagedTXDataSource">quartzNoTXDS</prop>
+        		<prop key="org.quartz.jobStore.tablePrefix">public.QRTZ_</prop>
+        		<prop key="org.quartz.jobStore.misfireThreshold">60000</prop>
+        		<prop key="org.quartz.jobStore.class">org.quartz.impl.jdbcjobstore.JobStoreCMT</prop>
+				<prop key="org.quartz.jobStore.dontSetNonManagedTXConnectionAutoCommitFalse">false</prop>        		
+				<prop key="org.quartz.jobStore.dontSetAutoCommitFalse">true</prop>
+        		
+        		<!-- Datasource Properties -->
+        		<prop key="org.quartz.dataSource.quartzDS.jndiURL">java:/ezgovDatabasePool</prop>
+        		<prop key="org.quartz.dataSource.quartzNoTXDS.jndiURL">java:/ezgovDatabasePoolNoTX</prop>
+        		
+        		<!-- Logger Plugin Properties -->       		
+           		<prop key="org.quartz.plugin.jobHistory.class">org.quartz.plugins.history.LoggingJobHistoryPlugin</prop>        		
+        		<prop key="org.quartz.plugin.jobHistory.jobToBeFiredMessage">Job [{1}.{0}] to be fired by trigger [{4}.{3}], re-fire: {7}</prop>
+        		<prop key="org.quartz.plugin.jobHistory.jobSuccessMessage">Job [{1}.{0}] execution complete and reports: {8}</prop>
+        		<prop key="org.quartz.plugin.jobHistory.jobFailedMessage">Job [{1}.{0}] execution failed with exception: {8}</prop>
+        		<prop key="org.quartz.plugin.jobHistory.jobWasVetoedMessage">Job [{1}.{0}] was vetoed. It was to be fired by trigger [{4}.{3}] at: {2, date, dd-MM-yyyy HH:mm:ss.SSS}</prop>
+           		<prop key="org.quartz.plugin.triggerHistory.class">org.quartz.plugins.history.LoggingTriggerHistoryPlugin</prop>
+        		<prop key="org.quartz.plugin.triggerHistory.triggerFiredMessage">Trigger [{1}.{0}] fired job [{6}.{5}] scheduled at: {2, date, dd-MM-yyyy HH:mm:ss.SSS}, next scheduled at: {3, date, dd-MM-yyyy HH:mm:ss.SSS}</prop>
+        		<prop key="org.quartz.plugin.triggerHistory.triggerCompleteMessage">Trigger [{1}.{0}] completed firing job [{6}.{5}] with resulting trigger instruction code: {9}. Next scheduled at: {3, date, dd-MM-yyyy HH:mm:ss.SSS}</prop>
+        		<prop key="org.quartz.plugin.triggerHistory.triggerMisfiredMessage">Trigger [{1}.{0}] misfired job [{6}.{5}]. Should have fired at: {3, date, dd-MM-yyyy HH:mm:ss.SSS}</prop>
+	       		
+	       		<!-- Scheduler Shutdown Hook Plugin Properties-->
+	       		<prop key="org.quartz.plugin.shutdownHook.class">org.quartz.plugins.management.ShutdownHookPlugin</prop>
+        		<prop key="org.quartz.plugin.shutdownHook.cleanShutdown">true</prop>
+        	</props>
+        </property>
+        <property name="applicationContextSchedulerContextKey" value="applicationQuartzContext-ptis" /> 
+	</bean> 
+    
     <bean name="recoveryNoticesJobDetails" id="recoveryNoticesJobDetails" class="org.springframework.scheduling.quartz.JobDetailFactoryBean"> 
 		<property name="group" value="PTIS_RECOVERY_NOTICES_JOB_GROUP"/>
 		<property name="name" value="PTISRecoveryNoticesJob"/>

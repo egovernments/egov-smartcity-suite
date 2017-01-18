@@ -50,7 +50,7 @@
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">
-					<strong><spring:message code='title.sewerageTaxSearch' />
+					<strong><spring:message code='title.sewerageTaxSearch' /></strong>
 					
 				</div>
 			</div>
@@ -66,7 +66,7 @@
 					<label  class="col-md-4 control-label"> 
 					<spring:message code="lbl.shsc.number" /></label>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="shscNumber" id="shscNumber" class="form-control is_valid_number" maxlength="10" data-inputmask="'mask': '9999999999'" id="app-appcodo" min="10"  />
+							<input type="text" name="shscNumber" id="shscNumber" class="form-control is_valid_number" maxlength="11"  id="app-appcodo" min="11"  />
 						</div>
 				</div> 
 				<div class="form-group">

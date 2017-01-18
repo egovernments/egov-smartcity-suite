@@ -55,6 +55,7 @@ import javax.validation.Valid;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.bean.NoticeRequest;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -161,9 +162,11 @@ public class RecoveryNoticesController {
             }
 
             final JobDetailImpl jobDetail = (JobDetailImpl) beanProvider.getBean("recoveryNoticesJobDetails");
-            final Scheduler scheduler = (Scheduler) beanProvider.getBean("ptisSchedular");
+            final Scheduler scheduler = (Scheduler) beanProvider.getBean("recoveryNoticesSchedular");
             try {
-                jobDetail.setName(PTIS_RECOVERY_NOTICES_JOB.concat(jobNumber.toString()));
+                jobDetail.setName(
+                        ApplicationThreadLocals.getTenantID().concat("_")
+                                .concat(PTIS_RECOVERY_NOTICES_JOB.concat(jobNumber.toString())));
                 final StringBuilder assessmentNoStr = new StringBuilder();
                 for (final String assessmentNo : assessmentNumbers)
                     assessmentNoStr.append(assessmentNo).append(", ");
@@ -173,7 +176,8 @@ public class RecoveryNoticesController {
                 jobDetail.getJobDataMap().put(ASSESSMENT_NUMBERS, assessmentNoStr.toString());
                 jobDetail.getJobDataMap().put(NOTICE_TYPE, noticeRequest.getNoticeType());
                 final SimpleTriggerImpl trigger = new SimpleTriggerImpl();
-                trigger.setName(RECOVERY_NOTICES_TRIGGER.concat(jobNumber.toString()));
+                trigger.setName(ApplicationThreadLocals.getTenantID().concat("_")
+                        .concat(RECOVERY_NOTICES_TRIGGER.concat(jobNumber.toString())));
                 trigger.setStartTime(new Date(System.currentTimeMillis() + 100000));
                 trigger.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
                 scheduler.start();

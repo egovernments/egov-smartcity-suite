@@ -40,20 +40,23 @@
 
 package org.egov.pgr.service.reports;
 
-import static org.egov.pgr.utils.constants.PGRConstants.FROMDATE;
 import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINTTYPE_SELECT_QRY;
-import static org.egov.pgr.utils.constants.PGRConstants.USER_SELECT_QRY;
 import static org.egov.pgr.utils.constants.PGRConstants.DEPT_SELECT_QRY;
+import static org.egov.pgr.utils.constants.PGRConstants.FROMDATE;
+import static org.egov.pgr.utils.constants.PGRConstants.USER_SELECT_QRY;
+
+import java.util.Date;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.Date;
 
 @Service
 @Transactional(readOnly = true)
@@ -62,33 +65,39 @@ public class DrillDownReportService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    public static final String NOT_AVAILABLE = "NOT AVAILABLE";
+    public static final String LOCALITY_SELECT_QRY = "select coalesce(cbndry.name,'GIS_LOCATION') as name, ";
+
     public SQLQuery getDrillDownReportQuery(final DateTime fromDate, final DateTime toDate,
-                                            final String complaintDateType, final String groupBy, final String department, final String boundary,
-                                            final String complainttype, final String selecteduser) {
+            final String complaintDateType, final String groupBy, final String department, final String boundary,
+            final String complainttype, final String selecteduser, final String locality) {
 
         final StringBuilder query = new StringBuilder();
+        if (StringUtils.isNotBlank(boundary)) {
+            if (StringUtils.isNotBlank(locality)) {
+                if (StringUtils.isNotBlank(department)) {
+                    if (StringUtils.isNotBlank(complainttype))
+                        query.append(USER_SELECT_QRY);
+                    // Next is userwise.
+                    else
+                        query.append(COMPLAINTTYPE_SELECT_QRY);
 
-        if (boundary != null && !"".equals(boundary)) {
-            if (department != null && !"".equals(department)) {
-                if (complainttype != null && !"".equals(complainttype))
-                    query.append(USER_SELECT_QRY);
-                /* Next is userwise. */
-                else
-                    query.append(COMPLAINTTYPE_SELECT_QRY);
-                /*
-                 * means user selected boundary and department. Next is complaint type.
-                 */
+                    // * means user selected boundary and department. Next is complaint type.
+
+                } else
+                    query.append(DEPT_SELECT_QRY);
             } else
-                query.append(DEPT_SELECT_QRY); /* Means get department list */
+                query.append(LOCALITY_SELECT_QRY);
+        }
 
-        } else if (department != null && !"".equals(department)) {
-            if (complainttype != null && !"".equals(complainttype))
+        else if (StringUtils.isNotBlank(department)) {
+            if (StringUtils.isNotBlank(complainttype))
                 query.append(USER_SELECT_QRY);
             else
                 query.append(COMPLAINTTYPE_SELECT_QRY);
-        } else if (complainttype != null && !"".equals(complainttype))
+        } else if (StringUtils.isNotBlank(complainttype))
             query.append(COMPLAINTTYPE_SELECT_QRY);
-        else if (selecteduser != null && !"".equals(selecteduser))
+        else if (StringUtils.isNotBlank(selecteduser))
             query.append(USER_SELECT_QRY);
         else if ("ByBoundary".equals(groupBy))
             query.append("SELECT bndry.name as name, ");
@@ -108,34 +117,44 @@ public class DrillDownReportService {
                 + "WHEN (state.value not in ('COMPLETED','REJECTED','WITHDRAWN') AND "
                 + "(cd.createddate - CURRENT_DATE ) > (interval '1h' * ctype.slahours)) THEN 1 ELSE 0 END) beyondsla ");
         query.append(
-                " FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype , eg_wf_states state, egpgr_complaint cd  left JOIN eg_boundary bndry on cd.location =bndry.id  left JOIN eg_department dept on cd.department =dept.id left join eg_position pos on cd.assignee=pos.id  left join view_egeis_employee emp on pos.id=emp.position ");
+                " FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype , eg_wf_states state, egpgr_complaint cd "
+                        + " left JOIN eg_boundary bndry on cd.location =bndry.id left JOIN eg_boundary cbndry on cd.childlocation=cbndry.id"
+                        + "  left JOIN eg_department dept on cd.department =dept.id left join eg_position pos on cd.assignee=pos.id "
+                        + " left join view_egeis_employee emp on pos.id=emp.position ");
 
-        buildWhereClause(fromDate, toDate, complaintDateType, query, department, boundary, complainttype);
+        buildWhereClause(fromDate, toDate, complaintDateType, query, department, boundary, complainttype, locality);
 
-        buildGroupByClause(groupBy, department, boundary, complainttype, query);
+        buildGroupByClause(groupBy, department, boundary, complainttype, query, locality);
 
         return setParameterForDrillDownReportQuery(query.toString(), fromDate, toDate, complaintDateType);
     }
 
     private void buildGroupByClause(final String groupBy, final String department, final String boundary,
-                                    final String complainttype, final StringBuilder query) {
-        if (boundary != null && !"".equals(boundary)) {
-            if (department != null && !"".equals(department)) {
-                if (complainttype != null && !"".equals(complainttype))
-                    query.append("  group by emp.name||'~'|| pos.name ");
-                else
+            final String complainttype, final StringBuilder query, final String locality) {
 
-                    query.append("  group by ctype.name ");
+        if (StringUtils.isNotBlank(boundary)) {
+            if (StringUtils.isNotBlank(locality)) {
+                if (StringUtils.isNotBlank(department)) {
+                    if (StringUtils.isNotBlank(complainttype))
+                        query.append("  group by emp.name||'~'|| pos.name ");
+                    else
 
+                        query.append("  group by ctype.name ");
+
+                } else
+                    query.append(" group by dept.name ");
             } else
-                query.append("  group by dept.name ");
-        } else if (department != null && !"".equals(department)) {
+                query.append("group by cbndry.name");
 
-            if (complainttype != null && !"".equals(complainttype))
+        }
+
+        else if (StringUtils.isNotBlank(department)) {
+
+            if (StringUtils.isNotBlank(complainttype))
                 query.append("  group by emp.name||'~'|| pos.name ");
             else
                 query.append("  group by ctype.name ");
-        } else if (complainttype != null && !"".equals(complainttype))
+        } else if (StringUtils.isNotBlank(complainttype))
             query.append(" group by ctype.name  ");
         else if ("ByBoundary".equals(groupBy))
             query.append("  group by bndry.name ");
@@ -144,32 +163,43 @@ public class DrillDownReportService {
     }
 
     private void buildWhereClause(final DateTime fromDate, final DateTime toDate, final String complaintDateType,
-                                  final StringBuilder query, final String department, final String boundary, final String complainttype) {
+            final StringBuilder query, final String department, final String boundary, final String complainttype,
+            final String locality) {
 
-        query.append(" WHERE cd.status  = cs.id and cd.complainttype= ctype.id  and cd.state_id = state.id and emp.isprimary = true");
+        query.append(
+                " WHERE cd.status  = cs.id and cd.complainttype= ctype.id  and cd.state_id = state.id and emp.isprimary = true");
 
-        if (fromDate != null || "lastsevendays".equals(complaintDateType) || "lastthirtydays".equals(complaintDateType) || "lastninetydays".equals(complaintDateType))
-            query.append(" and cd.createddate >=   :fromDates ");
-        else if (fromDate != null && toDate != null)
+        if (fromDate != null && toDate != null)
             query.append(" and ( cd.createddate BETWEEN :fromDates and :toDates) ");
+
+        else if (fromDate != null || "lastsevendays".equals(complaintDateType) || "lastthirtydays".equals(complaintDateType)
+                || "lastninetydays".equals(complaintDateType))
+            query.append(" and cd.createddate >=   :fromDates ");
         else if (toDate != null)
             query.append(" and cd.createddate <=  :toDates ");
 
-        if (boundary != null && !"".equals(boundary))
-            if ("NOT AVAILABLE".equals(boundary))
+        if (StringUtils.isNotBlank(boundary))
+            if (NOT_AVAILABLE.equals(boundary))
                 query.append(" and  bndry.name is null ");
             else {
                 query.append(" and upper(trim(bndry.name))= '");
                 query.append(boundary.toUpperCase()).append("' ");
             }
-        if (department != null && !"".equals(department))
-            if ("NOT AVAILABLE".equals(department))
+        if (StringUtils.isNotBlank(locality))
+            if ("GIS_LOCATION".equals(locality))
+                query.append("and cbndry.name is null");
+            else {
+                query.append("and upper(trim(cbndry.name))= '");
+                query.append(locality.toUpperCase()).append("' ");
+            }
+        if (StringUtils.isNotBlank(department))
+            if (NOT_AVAILABLE.equals(department))
                 query.append(" and  dept.name is null ");
             else {
                 query.append(" and upper(trim(dept.name))=  '");
                 query.append(department.toUpperCase()).append("' ");
             }
-        if (complainttype != null && !"".equals(complainttype)) {
+        if (StringUtils.isNotBlank(complainttype)) {
             query.append(" and upper(trim(ctype.name))= '");
             query.append(complainttype.toUpperCase()).append("' ");
         }
@@ -177,7 +207,7 @@ public class DrillDownReportService {
     }
 
     private SQLQuery setParameterForDrillDownReportQuery(final String querykey, final DateTime fromDate,
-                                                         final DateTime toDate, final String complaintDateType) {
+            final DateTime toDate, final String complaintDateType) {
         final SQLQuery qry = entityManager.unwrap(Session.class).createSQLQuery(querykey);
 
         if ("lastsevendays".equals(complaintDateType))
@@ -211,8 +241,8 @@ public class DrillDownReportService {
     }
 
     public SQLQuery getDrillDownReportQuery(final DateTime fromDate, final DateTime toDate,
-                                            final String complaintDateType, final String department, final String boundary, final String complainttype,
-                                            final String selecteduser) {
+            final String complaintDateType, final String department, final String boundary, final String complainttype,
+            final String selecteduser, final String locality) {
         final StringBuilder query = new StringBuilder();
 
         query.append(
@@ -223,11 +253,11 @@ public class DrillDownReportService {
                 "AND (cd.createddate - CURRENT_DATE) < (interval '1h' * ctype.slahours)) THEN 'Yes' ELSE 'No' END as issla ");
         query.append(
                 "FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype ,eg_wf_states state ,egpgr_complaint cd left JOIN eg_boundary bndry "
-                        + "on cd.location =bndry.id left JOIN eg_boundary childlocation on cd.childlocation = childlocation.id left JOIN eg_department dept "
+                        + "on cd.location =bndry.id left JOIN eg_boundary childlocation on cd.childlocation = childlocation.id  left JOIN eg_boundary cbndry on cd.childlocation=cbndry.id left JOIN eg_department dept "
                         + "on cd.department =dept.id  left join eg_position pos on cd.assignee=pos.id left join view_egeis_employee emp "
                         + "on pos.id=emp.position , egpgr_complainant complainant ");
 
-        buildWhereClause(fromDate, toDate, complaintDateType, query, department, boundary, complainttype);
+        buildWhereClause(fromDate, toDate, complaintDateType, query, department, boundary, complainttype, locality);
         query.append(" and complainant.id=cd.complainant   ");
         if (selecteduser != null && !"".equals(selecteduser)) {
             query.append(" and upper(emp.name)= '");

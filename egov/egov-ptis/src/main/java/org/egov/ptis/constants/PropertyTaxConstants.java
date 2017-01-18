@@ -1623,6 +1623,7 @@ public interface PropertyTaxConstants {
     public static final String VALUATION_CERTIFICATE = "Valuation Certificate";
     public static final String VALUATION_CERTIFICATE_CORPORATION  = "ValuationCertificate_Corporation";
     public static final String VALUATION_CERTIFICATE_MUNICIPALITY = "ValuationCertificate_Municipality";
+    public static final String NOTICE_TYPE_OC = "Ownership Certificate";
     //esd notice section act and distress section act for corporation use the same constant
     public static final String CORPORATION_ESD_NOTICE_SECTION_ACT = "(Issued under Section 269(2) of Municipal Corporations Act,1955 (formerly GHMC Act, 1955)";
     
@@ -1644,13 +1645,15 @@ public interface PropertyTaxConstants {
     public static final String REPORT_EXSRVICE_EXEMPTION_NOTICE = "mainExServiceManExemptionNotice";
     public static final String REPORT_CHOULTRY_EXEMPTION_NOTICE = "mainChoultryExemptionNotice";
     public static final String REPORT_PUBLIC_WORSHIP_EXEMPTION_NOTICE = "mainPublicWorshipExemptionNotice";
-    
+    public static final String REPORT_OWNERSHIP_CERTIFICATE_MULTIPLE = "OwnershipCertificate_MultipleOwner";
+    public static final String REPORT_OWNERSHIP_CERTIFICATE_SINGLE = "OwnershipCertificate_SingleOwner";
     @SuppressWarnings("serial")
     public static final List<String> RECOVERY_NOTICETYPES = new ArrayList<String>() {
         {
             add(NOTICE_TYPE_ESD);
             add(NOTICE_TYPE_INVENTORY);
             add(NOTICE_TYPE_DISTRESS);
+            add(NOTICE_TYPE_OC);
         }
     };
 }
