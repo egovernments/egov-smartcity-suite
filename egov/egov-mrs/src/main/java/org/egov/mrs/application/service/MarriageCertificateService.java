@@ -94,7 +94,7 @@ public class MarriageCertificateService {
     private static final String CERTIFICATE_TEMPLATE_REISSUE = "reissuecertificate";
     private static final String CERTIFICATE_TEMPLATE_REJECTION = "rejectioncertificate";
     private static final String[] MONTHNAME = { "January", "February", "March", "April", "May", "June", "July", "August",
-            "September", "October", "November", "December" };
+                                                "September", "October", "November", "December" };
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired

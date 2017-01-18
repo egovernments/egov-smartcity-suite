@@ -130,7 +130,7 @@ public class MarriageRegistrationReportsController {
     private static final String YEARLIST = "yearlist";
     private static final String REGISTRATION = "registration";
     private static final String[] RANGES = new String[] { "0-18", "19-25", "26-30", "31-35", "36-40", "40-45", "46-50",
-            "50-100" };
+                                                          "50-100" };
     private static final String KEY_AGE = "age";
     private static final String KEY_HUSBANDCOUNT = "husbandcount";
     private static final String KEY_WIFECOUNT = "wifecount";
@@ -138,7 +138,7 @@ public class MarriageRegistrationReportsController {
     private static final String KEY_REGCOUNT = "Registrationcount";
     private static final String KEY_ACT = "MarriageAct";
     private static final String[] DAYRANGE = new String[] { "0-3", "4-6", "7-9", "10-12", "13-15", "16-20", "20-25", "26-30",
-            "31-365" };
+                                                            "31-365" };
     private static final String KEY_DAY = "days";
     private static final String KEY_REGISTRATIONCOUNT = "registrationcount";
     private static final String KEY_COLLECTIONAMOUNT = "totalcollection";
