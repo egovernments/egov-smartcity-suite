@@ -148,6 +148,10 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
             final Model model) throws ApplicationException {
+        model.addAttribute("hiddenfields", lineEstimateService.getLineEstimateHiddenFields());
+        model.addAttribute("workdetailsadd",
+                WorksConstants.YES.equalsIgnoreCase(lineEstimateService.getLineEstimateMultipleWorkDetailsAllowed())
+                        ? Boolean.TRUE : Boolean.FALSE);
         setDropDownValues(model);
         model.addAttribute("lineEstimate", lineEstimate);
 
@@ -169,11 +173,10 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     public String create(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
             final RedirectAttributes redirectAttributes, final Model model, final BindingResult errors,
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request,
-            @RequestParam String workFlowAction)
-            throws ApplicationException, IOException {
+            @RequestParam String workFlowAction) throws ApplicationException, IOException {
         setDropDownValues(model);
+        validateLineEstimate(lineEstimate,errors);
         validateBudgetHead(lineEstimate, errors);
-        validateLineEstimateDetails(lineEstimate, errors);
         if (errors.hasErrors()) {
             model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
 
@@ -182,6 +185,10 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             model.addAttribute("mode", null);
             model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
+            model.addAttribute("hiddenfields", lineEstimateService.getLineEstimateHiddenFields());
+            model.addAttribute("workdetailsadd",
+                    WorksConstants.YES.equalsIgnoreCase(lineEstimateService.getLineEstimateMultipleWorkDetailsAllowed())
+                            ? Boolean.TRUE : Boolean.FALSE);
             return "newLineEstimate-form";
         } else {
 
@@ -240,13 +247,12 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     }
 
     @RequestMapping(value = "/downloadLineEstimateDoc", method = RequestMethod.GET)
-    public void getLineEstimateDoc(final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException {
+    public void getLineEstimateDoc(final HttpServletRequest request, final HttpServletResponse response)
+            throws IOException {
         final ServletContext context = request.getServletContext();
         final String fileStoreId = request.getParameter("fileStoreId");
         String fileName = "";
-        final File downloadFile = fileStoreService.fetch(fileStoreId,
-                WorksConstants.FILESTORE_MODULECODE);
+        final File downloadFile = fileStoreService.fetch(fileStoreId, WorksConstants.FILESTORE_MODULECODE);
         final FileInputStream inputStream = new FileInputStream(downloadFile);
         LineEstimate lineEstimate = lineEstimateService
                 .getLineEstimateById(Long.parseLong(request.getParameter("lineEstimateId")));
@@ -294,8 +300,8 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     }
 
     @RequestMapping(value = "/lineestimate-success", method = RequestMethod.GET)
-    public ModelAndView successView(@ModelAttribute LineEstimate lineEstimate,
-            final HttpServletRequest request, final Model model, final ModelMap modelMap) {
+    public ModelAndView successView(@ModelAttribute LineEstimate lineEstimate, final HttpServletRequest request,
+            final Model model, final ModelMap modelMap) {
 
         final String[] keyNameArray = request.getParameter("pathVars").split(",");
         Long id = 0L;
@@ -317,8 +323,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             }
 
         if (id != null)
-            lineEstimate = lineEstimateService
-                    .getLineEstimateById(id);
+            lineEstimate = lineEstimateService.getLineEstimateById(id);
         model.addAttribute("approverName", approverName);
         model.addAttribute("currentUserDesgn", currentUserDesgn);
         model.addAttribute("nextDesign", nextDesign);
@@ -334,11 +339,10 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
                 final LineEstimateAppropriation lea = lineEstimateAppropriationService
                         .findLatestByLineEstimateDetails_EstimateNumber(led.getEstimateNumber());
-                final String tempMessage = messageSource
-                        .getMessage("msg.lineestimatedetails.budgetsanction.success",
-                                new String[] { count.toString(), led.getEstimateNumber(),
-                                        lea.getBudgetUsage().getAppropriationnumber() },
-                                null);
+                final String tempMessage = messageSource.getMessage("msg.lineestimatedetails.budgetsanction.success",
+                        new String[] { count.toString(), led.getEstimateNumber(),
+                                lea.getBudgetUsage().getAppropriationnumber() },
+                        null);
                 basMessages.add(tempMessage);
                 count++;
             }
@@ -348,7 +352,8 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         return new ModelAndView("lineestimate-success", "lineEstimate", lineEstimate);
     }
 
-    private String getMessageByStatus(final LineEstimate lineEstimate, final String approverName, final String nextDesign) {
+    private String getMessageByStatus(final LineEstimate lineEstimate, final String approverName,
+            final String nextDesign) {
         String message = "";
 
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CREATED.toString())
@@ -362,14 +367,14 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             message = messageSource.getMessage("msg.lineestimate.budgetsanction.success",
                     new String[] { lineEstimate.getLineEstimateNumber(), approverName, nextDesign }, null);
         else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()))
-            message = messageSource.getMessage(
-                    "msg.lineestimate.adminsanction.success",
+            message = messageSource.getMessage("msg.lineestimate.adminsanction.success",
                     new String[] { lineEstimate.getLineEstimateNumber(), approverName, nextDesign,
                             lineEstimate.getAdminSanctionNumber() },
                     null);
         else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.TECHNICAL_SANCTIONED.toString()))
             message = messageSource.getMessage("msg.lineestimate.techsanction.success",
-                    new String[] { lineEstimate.getLineEstimateNumber(), lineEstimate.getTechnicalSanctionNumber() }, null);
+                    new String[] { lineEstimate.getLineEstimateNumber(), lineEstimate.getTechnicalSanctionNumber() },
+                    null);
         else if (lineEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
             message = messageSource.getMessage("msg.lineestimate.reject",
                     new String[] { lineEstimate.getLineEstimateNumber(), approverName, nextDesign }, null);
@@ -387,5 +392,14 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
                 errors.rejectValue("lineEstimateDetails[" + index + "].quantity", "error.quantity.required");
             index++;
         }
+    }
+
+    private void validateLineEstimate(LineEstimate lineEstimate, BindingResult errors) {
+        if (!lineEstimateService.getLineEstimateHiddenFields().contains("subject") && lineEstimate.getSubject() == null)
+            errors.reject("error.subject.required", "error.subject.required");
+        if (!lineEstimateService.getLineEstimateHiddenFields().contains("description")
+                && lineEstimate.getDescription() == null)
+            errors.reject("error.description.required", "error.description.required");
+
     }
 }

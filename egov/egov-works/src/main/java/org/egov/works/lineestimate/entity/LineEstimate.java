@@ -102,7 +102,6 @@ public class LineEstimate extends StateAware {
     @Column(unique = true)
     private String lineEstimateNumber;
 
-    @NotNull
     @SafeHtml
     @Length(max = 256)
     private String subject;
@@ -120,7 +119,6 @@ public class LineEstimate extends StateAware {
     @JoinColumn(name = "function", nullable = false)
     private CFunction function;
 
-    @NotNull
     @SafeHtml
     @Length(max = 1024)
     private String description;

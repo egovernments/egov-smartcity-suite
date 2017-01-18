@@ -49,6 +49,7 @@
 			<form:hidden path="" name="lineEstimateId" id="lineEstimateId" value="${lineEstimate.id}" class="form-control table-input hidden-input"/>
 			<input type="hidden" value="${lineEstimate.status.code }" id=lineEstimateStatus />
 			<input type="hidden" value="${mode}" id="mode"/>
+			<input type="hidden" value="${hiddenfields}" id="hiddenfields" />
 			<div class="row">
 				<div class="col-md-12">
 					<c:if test="${mode != 'view' && mode != 'readOnly' }">

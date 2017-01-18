@@ -94,7 +94,16 @@ $(document).ready(function(){
 	}
 	else
 		$('#wardInput').val($("#boundaryNumber").val());
-
+	
+	var hiddenFields = $("#hiddenfields").val().replace(/[\[\]']+/g,'').replace(/, /g, ",").split(",");
+	$.each(hiddenFields,function(){
+		var fieldName = this.toString().trim();
+		var label = $("label[for='"+fieldName+"']");
+		label.hide();
+		$("#"+fieldName).hide();
+		$("#"+fieldName).parent().hide();
+		$('#'+fieldName).removeAttr('required')
+	});
 });
 
 function renderPdf() {
@@ -143,13 +152,6 @@ $('#Save').click(function(){
 							'#estimateAmount' + index).val();
 					var actualAmount = $(
 							'#actualEstimateAmount' + index).val();
-					var quantity = $(
-							'#quantity' + index).val();
-					if(parseFloat(quantity) <= 0 ){
-						bootbox.alert($('#errorQuantityValue').val());
-						isValidationSuccess = false;
-						return false;
-					}
 					if(parseFloat(actualAmount) <= 0 ){
 						bootbox.alert($('#erroractualestimateamount').val());
 						isValidationSuccess = false;
@@ -576,18 +578,6 @@ $(document).ready(function(){
 	typeaheadWithEventsHandling(ward_typeahead,
 	'#ward');
 });
-
-function validateQuantity() {
-	$( "input[name$='quantity']" ).on("keyup", function(){
-	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
-	        val = this.value;
-	    
-	    if(!valid){
-	        console.log("Invalid input!");
-	        this.value = val.substring(0, val.length - 1);
-	    }
-	});
-}
 
 function validateadminSanctionNumber() {
 	$( "input[name$='adminSanctionNumber']" ).on("keyup", function(){

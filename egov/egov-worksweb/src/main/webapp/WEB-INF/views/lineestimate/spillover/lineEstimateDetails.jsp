@@ -70,10 +70,9 @@
 					<th><spring:message code="lbl.workidnumber"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.actualamount"/><span class="mandatory"></span></th>
 					<th class="thGrossAmount" style="display: none;"><spring:message code="lbl.grossamount"/><span class="mandatory"></th>
-					<th><spring:message code="lbl.quantity"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.uom"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.expected.outcome"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.action"/></th>
+					<c:if test="${workdetailsadd}">
+						<th><spring:message code="lbl.action"/></th>
+					</c:if>
 				</tr>
 			</thead>
 			<tbody id="lineEstimateDetailsTbl">
@@ -108,24 +107,9 @@
 								<form:input path="lineEstimateDetails[0].grossAmountBilled" name="lineEstimateDetails[0].grossAmountBilled" id="grossAmountBilled0" data-errormsg="Gross Amount Billed is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right grossAmountBilled"/>
 								<form:errors path="lineEstimateDetails[0].grossAmountBilled" cssClass="add-margin error-msg" />
 							</td>
-							<td>
-								<form:input path="lineEstimateDetails[0].quantity" name="lineEstimateDetails[0].quantity" id="quantity0" data-errormsg="quantity is mandatory!" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" maxlength="8" onkeyup="validateQuantity();" required="required"/>
-								<form:errors path="lineEstimateDetails[0].quantity" cssClass="add-margin error-msg" />
-							</td>
-							<td>
-								<form:select path="lineEstimateDetails[0].uom" name="lineEstimateDetails[0].uom" data-errormsg="UOM is mandatory!" data-idx="0" data-optional="0" class="form-control table-input"  required="required">
-									<form:option value="">
-										<spring:message code="lbl.select" />
-									</form:option>
-									<form:options items="${lineEstimateUOMs}" itemValue="name" itemLabel="name" />
-								</form:select>
-								<form:errors path="lineEstimateDetails[0].uom" cssClass="add-margin error-msg" />
-							</td>
-							<td>
-								<form:input path="lineEstimateDetails[0].beneficiary" id="quantity" name="lineEstimateDetails[0].beneficiary" data-errormsg="Beneficiary is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input" maxlength="64" required="required"/>
-								<form:errors path="lineEstimateDetails[0].beneficiary" cssClass="add-margin error-msg" />
-							</td>
-							<td> <span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
+							<c:if test="${workdetailsadd}">
+								<td> <span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
+							</c:if>
 						</tr>
 					</c:when>
 					<c:otherwise>
@@ -159,24 +143,9 @@
 									<form:input path="lineEstimateDetails[${item.index}].grossAmountBilled" name="lineEstimateDetails[${item.index}].grossAmountBilled" id="grossAmountBilled${item.index}" data-errormsg="Gross Amount Billed is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right grossAmountBilled" />
 									<form:errors path="lineEstimateDetails[${item.index}].grossAmountBilled" cssClass="add-margin error-msg" />
 								</td>
-								<td>
-									<form:input path="lineEstimateDetails[${item.index}].quantity" name="lineEstimateDetails[${item.index}].quantity" id="quantity${item.index}" data-errormsg="quantity is mandatory!" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" maxlength="8" onkeyup="validateQuantity();" required="required"/>
-									<form:errors path="lineEstimateDetails[${item.index}].quantity" cssClass="add-margin error-msg" />
-								</td>
-								<td>
-									<form:select path="lineEstimateDetails[${item.index}].uom" name="lineEstimateDetails[${item.index}].uom" data-errormsg="UOM is mandatory!" data-idx="0" data-optional="0" class="form-control table-input"  required="required">
-										<form:option value="">
-											<spring:message code="lbl.select" />
-										</form:option>
-										<form:options items="${lineEstimateUOMs}" itemValue="name" itemLabel="name" />
-									</form:select>
-									<form:errors path="lineEstimateDetails[${item.index}].uom" cssClass="add-margin error-msg" />
-								</td>
-								<td>
-									<form:input path="lineEstimateDetails[${item.index}].beneficiary" id="quantity" name="lineEstimateDetails[${item.index}].beneficiary" data-errormsg="Beneficiary is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input" maxlength="64" required="required"/>
-									<form:errors path="lineEstimateDetails[${item.index}].beneficiary" cssClass="add-margin error-msg" />
-								</td>
-								<td> <span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
+								<c:if test="${workdetailsadd}">
+									<td> <span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
+								</c:if>
 							</tr>
 						</c:forEach>
 					</c:otherwise>
@@ -198,8 +167,10 @@
 		</table>
 		<div id="documentDetails">
 		</div>
-		<div class="col-sm-12 text-center">
-			<button id="addRowBtn" type="button" class="btn btn-primary" onclick="addLineEstimate()"><spring:message code="lbl.addrow" /></button>
-		</div>
+		<c:if test="${workdetailsadd}">
+			<div class="col-sm-12 text-center">
+				<button id="addRowBtn" type="button" class="btn btn-primary" onclick="addLineEstimate()"><spring:message code="lbl.addrow" /></button>
+			</div>
+		</c:if>
 	</div>
 </div>

@@ -57,12 +57,12 @@
 
 	<div class="panel-body custom-form">
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.dateofproposal" /><span class="mandatory"></span></label>
+			<label class="col-sm-3 control-label text-right" for = "lineEstimateDate"><spring:message code="lbl.dateofproposal" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="lineEstimateDate" id="lineEstimateDate" data-errormsg="Line Estimate Date of the work is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="-1d" required="required" />
 				<form:errors path="lineEstimateDate" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /><span class="mandatory"></span></label>
+			<label class="col-sm-2 control-label text-right" for = "executingDepartments"><spring:message code="lbl.department" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="executingDepartment" data-first-option="false" id="executingDepartments" class="form-control" required="required" onchange="getFunctionsByFundAndDepartment();getBudgetHeads();">
 					<form:option value="">
@@ -74,7 +74,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.subject" /><span class="mandatory"></span></label>
+			<label class="col-sm-3 control-label text-right" for="subject"><spring:message code="lbl.subject" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:hidden path="id" name="id" value="${id}" class="form-control table-input hidden-input" />
 				<form:textarea name="subject" path="subject" id="subject" class="form-control" value="${subject}" maxlength="256" required="required"></form:textarea>
@@ -82,19 +82,19 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.letter.reference" /><span class="mandatory"></span></label>
+			<label class="col-sm-3 control-label text-right" for = "reference"><spring:message code="lbl.letter.reference" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:textarea name="reference" path="reference" id="reference" value="${reference}" class="form-control" maxlength="1024" required="required"></form:textarea>
 				<form:errors path="reference" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.description" /><span class="mandatory"></span></label>
+			<label class="col-sm-2 control-label text-right" for="description"><spring:message code="lbl.description" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:textarea name="description" path="description" id="description" class="form-control" value="${description}" maxlength="1024" required="required"></form:textarea>
 				<form:errors path="description" cssClass="add-margin error-msg" />
 			</div>
 		</div>
 			<div class="form-group">
-				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.election.ward" /><span class="mandatory"></span>
+				<label class="col-sm-3 control-label text-right" for = "wardInput"><spring:message code="lbl.election.ward" /><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
 					<form:hidden path="ward" id="ward" value="" cssClass="selectwk" />
@@ -104,7 +104,7 @@
 					<input type="hidden" name="boundaryType" id="boundaryType" value="${lineEstimate.ward.boundaryType.name}"/>
 					<form:errors path="ward" cssClass="add-margin error-msg" />
 				</div>
-				<label class="col-sm-2 control-label text-right"> <spring:message code="lbl.location" /></label>
+				<label class="col-sm-2 control-label text-right" for = "locationBoundary"> <spring:message code="lbl.location" /></label>
 				<div class="col-sm-3 add-margin">
 					<form:select path="location" data-first-option="false" id="locationBoundary" cssClass="form-control">
 						<form:option value="">
@@ -116,7 +116,7 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-3 control-label text-right"> <spring:message code="lbl.workcategory" /><span class="mandatory"></span>
+				<label class="col-sm-3 control-label text-right" for = "workCategory"> <spring:message code="lbl.workcategory" /><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
 					<form:select path="workCategory" data-first-option="false" id="workCategory" cssClass="form-control" required="required">
@@ -128,7 +128,7 @@
 					<form:errors path="workCategory" cssClass="add-margin error-msg" />
 				</div>
 				<div>
-					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.beneficiary" /><span class="mandatory"></span></label>
+					<label class="col-sm-2 control-label text-right" for = "beneficiary"><spring:message code="lbl.beneficiary" /><span class="mandatory"></span></label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="beneficiary" data-first-option="false" id="beneficiary" class="form-control" required="required">
 							<form:option value="">
@@ -141,7 +141,7 @@
 				</div>
 			</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.natureofwork" /><span class="mandatory"></span></label>
+			<label class="col-sm-3 control-label text-right" for = "natureOfWork"><spring:message code="lbl.natureofwork" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="natureOfWork" data-first-option="false" id="natureOfWork" class="form-control" required="required" onchange="getBudgetHeads();">
 					<form:option value="">
@@ -151,7 +151,7 @@
 				</form:select>
 				<form:errors path="natureOfWork" cssClass="add-margin error-msg" /> 
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.typeofwork" /><span class="mandatory"></span></label>
+			<label class="col-sm-2 control-label text-right" for = "typeofwork"><spring:message code="lbl.typeofwork" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="typeOfWork" data-first-option="false" id="typeofwork" class="form-control" required="required"  >
 					<form:option value="">
@@ -163,7 +163,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.subtypeofwork" /></label>
+			<label class="col-sm-3 control-label text-right" for = "subTypeOfWork"><spring:message code="lbl.subtypeofwork" /></label>
 			<div class="col-sm-3 add-margin">
 			<input type="hidden" id="subTypeOfWorkValue" value="${lineEstimate.subTypeOfWork.id }"/>
 				<form:select path="subTypeOfWork" data-first-option="false" id="subTypeOfWork" class="form-control" >
@@ -171,7 +171,7 @@
 				</form:select>
 				<form:errors path="subTypeOfWork" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.modeofallotment" /><span class="mandatory"></span></label>
+			<label class="col-sm-2 control-label text-right" for = "modeOfAllotment"><spring:message code="lbl.modeofallotment" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="modeOfAllotment" data-first-option="false" id="modeOfAllotment" class="form-control" required="required">
 					<form:option value="">
@@ -189,7 +189,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fund" /><span class="mandatory"></span></label>
+			<label class="col-sm-3 control-label text-right" for = "fund"><spring:message code="lbl.fund" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="fund" data-first-option="false"
 					class="form-control" id="fund" required="required" onchange="getFunctionsByFundAndDepartment();getBudgetHeads();">
@@ -200,7 +200,7 @@
 				</form:select>
 				<form:errors path="fund" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.function" /><span class="mandatory"></span></label>
+			<label class="col-sm-2 control-label text-right" for = "functionValue"><spring:message code="lbl.function" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<input type="hidden" id="functionValue" value="${lineEstimate.function.id }"/>
 				<form:select path="function" data-first-option="false" name="function" class="form-control" id="function" required="required" onchange="getBudgetHeads();">
@@ -212,7 +212,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.budgethead" /><span class="mandatory"></span></label>
+			<label class="col-sm-3 control-label text-right" for = "budgetHeadValue"><spring:message code="lbl.budgethead" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<input type="hidden" id="budgetHeadValue" value="${lineEstimate.budgetHead.id }"/>
 				<form:select path="budgetHead" data-first-option="false" id="budgetHead" class="form-control" required="required">
@@ -225,7 +225,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.scheme" /></label>
+			<label class="col-sm-3 control-label text-right" for = "scheme"><spring:message code="lbl.scheme" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="scheme" data-first-option="false" id="scheme" class="form-control">
 					<form:option value="">
@@ -236,7 +236,7 @@
 					</c:if>
 				</form:select>
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.subscheme" /></label>
+			<label class="col-sm-2 control-label text-right" for = "subSchemeValue"><spring:message code="lbl.subscheme" /></label>
 			<div class="col-sm-3 add-margin">
 				<input type="hidden" id="subSchemeValue" value="${lineEstimate.subScheme.id }"/>
 				<form:select path="subScheme" data-first-option="false"	id="subScheme" class="form-control">

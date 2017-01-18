@@ -80,42 +80,42 @@
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A" value="${lineEstimate.lineEstimateNumber}"></c:out>
 					</div>
-					<div class="col-xs-3 add-margin">
+					<div class="col-xs-3 add-margin" id = "lineEstimateDate">
 						<spring:message code="lbl.dateofproposal" />
 					</div>
-					<div class="col-xs-3 add-margin view-content">
+					<div class="col-xs-3 add-margin view-content" id = "lineEstimateDate-value">
 						<fmt:formatDate value="${lineEstimate.lineEstimateDate }"
 							pattern="dd/MM/yyyy" />
 					</div>
 				</div>
 				<div class="row add-border">
-					<div class="col-xs-3 add-margin">
+					<div class="col-xs-3 add-margin" id = "department">
 						<spring:message code="lbl.department" />
 					</div>
-					<div class="col-xs-3 add-margin view-content">
+					<div class="col-xs-3 add-margin view-content" id = "department-value">
 						<c:out default="N/A"
 							value="${lineEstimate.executingDepartment.name}"></c:out>
 					</div>
-					<div class="col-xs-3 add-margin">
+					<div class="col-xs-3 add-margin" id="subject">
 						<spring:message code="lbl.subject" />
 					</div>
-					<div class="col-xs-3 add-margin view-content">
+					<div class="col-xs-3 add-margin view-content" id = "subject-value">
 						<form:hidden path="id" name="id" value="${id}"
 							class="form-control table-input hidden-input" />
 						<c:out default="N/A" value="${lineEstimate.subject}"></c:out>
 					</div>
 				</div>
 				<div class="row add-border">
-					<div class="col-xs-3 add-margin">
+					<div class="col-xs-3 add-margin" id = "reference">
 						<spring:message code="lbl.letter.reference" />
 					</div>
-					<div class="col-xs-3 add-margin view-content">
+					<div class="col-xs-3 add-margin view-content" id = "reference-value">
 						<c:out default="N/A" value="${lineEstimate.reference}"></c:out>
 					</div>
-					<div class="col-xs-3 add-margin">
+					<div class="col-xs-3 add-margin" id = "description">
 						<spring:message code="lbl.description" />
 					</div>
-					<div class="col-xs-3 add-margin view-content">
+					<div class="col-xs-3 add-margin view-content" id = "description-value">
 						<c:out default="N/A" value="${lineEstimate.description}"></c:out>
 					</div>
 				</div>
@@ -133,21 +133,21 @@
 							</c:otherwise>
 						</c:choose>
 					</div>
-					<div class="col-xs-3 add-margin">
+					<div class="col-xs-3 add-margin" id = "locationBoundary">
 						<spring:message code="lbl.location" />
 					</div>
-					<div class="col-xs-3 add-margin view-content">
+					<div class="col-xs-3 add-margin view-content" id = "locationBoundary-value">
 						<c:out default="N/A" value="${lineEstimate.location.name}" />
 					</div>
 				</div>
 				<div class="row add-border">
-					<div class="col-xs-3 add-margin">
+					<div class="col-xs-3 add-margin" id = "workCategory">
 						<spring:message code="lbl.workcategory" />
 					</div>
-					<div id="workCategoryView" class="col-xs-3 add-margin view-content">
+					<div id="workCategoryView" class="col-xs-3 add-margin view-content" id = "workCategory-value">
 						<c:out  default="N/A" value="${lineEstimate.workCategory}" />
 					</div>
-					<div class="col-xs-3 add-margin">
+					<div class="col-xs-3 add-margin" id = "beneficiary">
 						<spring:message code="lbl.beneficiary" />
 					</div>
 					<div id="beneficiaryView" class="col-xs-3 add-margin view-content">
@@ -155,30 +155,30 @@
 					</div>
 				</div>
 				<div class="row add-border">
-					<div class="col-xs-3 add-margin">
+					<div class="col-xs-3 add-margin" id = "natureOfWork">
 						<spring:message code="lbl.natureofwork" />
 					</div>
-					<div class="col-xs-3 add-margin view-content">
+					<div class="col-xs-3 add-margin view-content" id = "natureOfWork-value">
 						<c:out default="N/A" value="${lineEstimate.natureOfWork.name}" />
 					</div>
-					<div class="col-xs-3 add-margin">
+					<div class="col-xs-3 add-margin" id = "typeofwork">
 						<spring:message code="lbl.typeofwork" />
 					</div>
-					<div class="col-xs-3 add-margin view-content">
+					<div class="col-xs-3 add-margin view-content" id = "typeofwork-value">
 						<c:out default="N/A" value="${lineEstimate.typeOfWork.description}" />
 					</div>
 				</div>
 				<div class="row add-border">
-					<div class="col-xs-3 add-margin">
+					<div class="col-xs-3 add-margin" id = "subTypeOfWork">
 						<spring:message code="lbl.subtypeofwork" />
 					</div>
-					<div class="col-xs-3 add-margin view-content">
+					<div class="col-xs-3 add-margin view-content" id = "subTypeOfWork-value">
 						<c:out default="N/A" value="${lineEstimate.subTypeOfWork.description}" />
 					</div>
-					<div class="col-xs-3 add-margin">
+					<div class="col-xs-3 add-margin" id = "modeOfAllotment">
 						<spring:message code="lbl.modeofallotment" />
 					</div>
-					<div class="col-xs-3 add-margin view-content">
+					<div class="col-xs-3 add-margin view-content" id = "modeOfAllotment-value">
 						<c:out default="N/A" value="${lineEstimate.modeOfAllotment}" />
 					</div>
 				</div>
@@ -205,38 +205,38 @@
 			</div>
 			<div class="panel-body">
 				<div class="row add-border">
-					<div class="col-xs-3 add-margin">
+					<div class="col-xs-3 add-margin" id = "fund">
 						<spring:message code="lbl.fund" />
 					</div>
-					<div class="col-xs-3 add-margin view-content">
+					<div class="col-xs-3 add-margin view-content" id = "fund-value">
 						<c:out default="N/A" value="${lineEstimate.fund.name}"></c:out>
 					</div>
-					<div class="col-xs-3 add-margin">
+					<div class="col-xs-3 add-margin" id = "function">
 						<spring:message code="lbl.function" />
 					</div>
-					<div class="col-xs-3 add-margin view-content">
+					<div class="col-xs-3 add-margin view-content" id = "function-value">
 						<c:out default="N/A" value="${lineEstimate.function.name}"></c:out>
 					</div>
 				</div>
 				<div class="row add-border">
-					<div class="col-xs-3 add-margin">
+					<div class="col-xs-3 add-margin" id = "budgetHead">
 						<spring:message code="lbl.budgethead" />
 					</div>
-					<div class="col-xs-3 add-margin view-content">
+					<div class="col-xs-3 add-margin view-content" id = "budgetHead-value">
 						<c:out default="N/A" value="${lineEstimate.budgetHead.name}" />
 					</div>
 				</div>
 				<div class="row add-border">
-					<div class="col-xs-3 add-margin">
+					<div class="col-xs-3 add-margin" id = "scheme">
 						<spring:message code="lbl.scheme" />
 					</div>
-					<div class="col-xs-3 add-margin view-content">
+					<div class="col-xs-3 add-margin view-content" id = "scheme-value">
 						<c:out default="N/A" value="${lineEstimate.scheme.name}" />
 					</div>
-					<div class="col-xs-3 add-margin">
+					<div class="col-xs-3 add-margin" id = "subSchemeValue">
 						<spring:message code="lbl.subscheme" />
 					</div>
-					<div class="col-xs-3 add-margin view-content">
+					<div class="col-xs-3 add-margin view-content" id = "subSchemeValue-value">
 						<c:out default="N/A" value="${lineEstimate.subScheme.name}"></c:out>
 					</div>
 				</div>

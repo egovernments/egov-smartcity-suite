@@ -124,25 +124,29 @@ public class CreateSpillOverLineEstimateController {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
-    
+
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
-    
+
     @Autowired
     private BoundaryService boundaryService;
-    
+
     @Autowired
     private LineEstimateDetailService lineEstimateDetailService;
-    
+
     @Autowired
     private ModeOfAllotmentService modeOfAllotmentService;
-    
+
     @Autowired
     private LineEstimateUOMService lineEstimateUOMService;
 
     @RequestMapping(value = "/newspilloverform", method = RequestMethod.GET)
     public String showNewSpillOverLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
             final Model model) throws ApplicationException {
+        model.addAttribute("hiddenfields", lineEstimateService.getLineEstimateHiddenFields());
+        model.addAttribute("workdetailsadd",
+                WorksConstants.YES.equalsIgnoreCase(lineEstimateService.getLineEstimateMultipleWorkDetailsAllowed())
+                        ? Boolean.TRUE : Boolean.FALSE);
         setDropDownValues(model);
 
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
@@ -157,12 +161,16 @@ public class CreateSpillOverLineEstimateController {
     }
 
     @RequestMapping(value = "/create-spillover", method = RequestMethod.POST)
-    public String create(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
-            final Model model, final BindingResult errors, @RequestParam("file") final MultipartFile[] files,
+    public String create(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate, final Model model,
+            final BindingResult errors, @RequestParam("file") final MultipartFile[] files,
             final RedirectAttributes redirectAttributes, final HttpServletRequest request,
-            final BindingResult resultBinder)
-            throws ApplicationException, IOException {
+            final BindingResult resultBinder) throws ApplicationException, IOException {
+        model.addAttribute("hiddenfields", lineEstimateService.getLineEstimateHiddenFields());
+        model.addAttribute("workdetailsadd",
+                WorksConstants.YES.equalsIgnoreCase(lineEstimateService.getLineEstimateMultipleWorkDetailsAllowed())
+                        ? Boolean.TRUE : Boolean.FALSE);
 
+        validateLineEstimate(lineEstimate, errors);
         validateLineEstimateDetails(lineEstimate, errors);
         validateAdminSanctionDetail(lineEstimate, errors);
         validateTechSanctionDetails(lineEstimate, errors);
@@ -170,13 +178,17 @@ public class CreateSpillOverLineEstimateController {
         if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                 .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
             validateBudgetAmount(lineEstimate, errors);
-        
+
         validateBudgetHead(lineEstimate, errors);
-        
+
         if (errors.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("mode", null);
             model.addAttribute("designation", request.getParameter("designation"));
+            model.addAttribute("hiddenfields", lineEstimateService.getLineEstimateHiddenFields());
+            model.addAttribute("workdetailsadd",
+                    WorksConstants.YES.equalsIgnoreCase(lineEstimateService.getLineEstimateMultipleWorkDetailsAllowed())
+                            ? Boolean.TRUE : Boolean.FALSE);
             return "spillOverLineEstimate-form";
         } else {
             final LineEstimate newLineEstimate = lineEstimateService.createSpillOver(lineEstimate, files);
@@ -185,18 +197,17 @@ public class CreateSpillOverLineEstimateController {
         }
     }
 
-    private void validateBudgetHead(LineEstimate lineEstimate, BindingResult errors) {
+    private void validateBudgetHead(final LineEstimate lineEstimate, final BindingResult errors) {
         if (lineEstimate.getBudgetHead() != null) {
             Boolean check = false;
-            List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
+            final List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
             accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
-            for (CChartOfAccountDetail detail : accountDetails) {
-                if (detail.getDetailTypeId() != null && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
+            for (final CChartOfAccountDetail detail : accountDetails)
+                if (detail.getDetailTypeId() != null
+                        && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
                     check = true;
-            }
-            if (!check) {
-                errors.reject("error.budgethead.validate","error.budgethead.validate");
-            }
+            if (!check)
+                errors.reject("error.budgethead.validate", "error.budgethead.validate");
 
         }
 
@@ -205,14 +216,15 @@ public class CreateSpillOverLineEstimateController {
     private void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {
         Integer index = 0;
         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-            
+
             final LineEstimateDetails estimateNumber = lineEstimateDetailService
                     .getLineEstimateDetailsByEstimateNumber(led.getEstimateNumber());
-            if(lineEstimate.getCouncilResolutionNumber() != null){
-            final LineEstimate councilResolutionNumber = lineEstimateService
-                    .getLineEstimateByCouncilResolutionNumber(lineEstimate.getCouncilResolutionNumber());
-            if (councilResolutionNumber != null)
-                errors.rejectValue("lineEstimateDetails[" + index + "].lineEstimate.councilResolutionNumber", "error.councilresolutionnumber.unique");
+            if (lineEstimate.getCouncilResolutionNumber() != null) {
+                final LineEstimate councilResolutionNumber = lineEstimateService
+                        .getLineEstimateByCouncilResolutionNumber(lineEstimate.getCouncilResolutionNumber());
+                if (councilResolutionNumber != null)
+                    errors.rejectValue("lineEstimateDetails[" + index + "].lineEstimate.councilResolutionNumber",
+                            "error.councilresolutionnumber.unique");
             }
             final LineEstimateDetails workIdentificationNumber = lineEstimateDetailService
                     .getLineEstimateDetailsByProjectCode(led.getProjectCode().getCode());
@@ -220,12 +232,11 @@ public class CreateSpillOverLineEstimateController {
                 errors.rejectValue("lineEstimateDetails[" + index + "].estimateNumber", "error.estimatenumber.unique");
             if (workIdentificationNumber != null)
                 errors.rejectValue("lineEstimateDetails[" + index + "].projectCode.code", "error.win.unique");
-            if(led.getActualEstimateAmount() != null && !(led.getActualEstimateAmount().signum() == 1))
-            	errors.rejectValue("lineEstimateDetails[" + index + "].actualEstimateAmount",  "error.actualestimateamount.required");
-            if(led.getEstimateAmount().compareTo(led.getActualEstimateAmount()) == -1)
-            	errors.rejectValue("lineEstimateDetails[" + index + "].actualEstimateAmount", "error.actualamount");
-            if (led.getQuantity() <= 0)
-                errors.rejectValue("lineEstimateDetails[" + index + "].quantity", "error.quantity.required");
+            if (led.getActualEstimateAmount() != null && !(led.getActualEstimateAmount().signum() == 1))
+                errors.rejectValue("lineEstimateDetails[" + index + "].actualEstimateAmount",
+                        "error.actualestimateamount.required");
+            if (led.getEstimateAmount().compareTo(led.getActualEstimateAmount()) == -1)
+                errors.rejectValue("lineEstimateDetails[" + index + "].actualEstimateAmount", "error.actualamount");
             index++;
         }
     }
@@ -239,8 +250,8 @@ public class CreateSpillOverLineEstimateController {
         if (lineEstimate.getTechnicalSanctionNumber() == null)
             errors.rejectValue("technicalSanctionNumber", "error.technumber.notnull");
         if (lineEstimate.getTechnicalSanctionNumber() != null) {
-            final LineEstimate existingLineEstimate = lineEstimateService.getLineEstimateByTechnicalSanctionNumber(lineEstimate
-                    .getTechnicalSanctionNumber());
+            final LineEstimate existingLineEstimate = lineEstimateService
+                    .getLineEstimateByTechnicalSanctionNumber(lineEstimate.getTechnicalSanctionNumber());
             if (existingLineEstimate != null)
                 errors.rejectValue("technicalSanctionNumber", "error.technumber.unique");
         }
@@ -258,8 +269,8 @@ public class CreateSpillOverLineEstimateController {
         if (StringUtils.isBlank(lineEstimate.getAdminSanctionBy()))
             errors.rejectValue("adminSanctionBy", "error.adminsanctionby.notnull");
         if (lineEstimate.getAdminSanctionNumber() != null) {
-            final LineEstimate checkLineEstimate = lineEstimateService.getLineEstimateByAdminSanctionNumber(lineEstimate
-                    .getAdminSanctionNumber());
+            final LineEstimate checkLineEstimate = lineEstimateService
+                    .getLineEstimateByAdminSanctionNumber(lineEstimate.getAdminSanctionNumber());
 
             if (checkLineEstimate != null)
                 errors.rejectValue("adminSanctionNumber", "error.adminsanctionnumber.unique");
@@ -290,13 +301,15 @@ public class CreateSpillOverLineEstimateController {
     }
 
     @RequestMapping(value = "/spillover-lineestimate-success", method = RequestMethod.GET)
-    public ModelAndView successView(@RequestParam("lineEstimateNumber") final String lineEstimateNumber, final Model model) {
+    public ModelAndView successView(@RequestParam("lineEstimateNumber") final String lineEstimateNumber,
+            final Model model) {
         final LineEstimate lineEstimate = lineEstimateService.getLineEstimateByLineEstimateNumber(lineEstimateNumber);
 
-        model.addAttribute("message", messageSource.getMessage("msg.spillover.lineestimate.success",
-                new String[] { lineEstimate.getLineEstimateNumber(), lineEstimate.getAdminSanctionNumber(),
-                        lineEstimate.getTechnicalSanctionNumber() },
-                null));
+        model.addAttribute("message",
+                messageSource.getMessage(
+                        "msg.spillover.lineestimate.success", new String[] { lineEstimate.getLineEstimateNumber(),
+                                lineEstimate.getAdminSanctionNumber(), lineEstimate.getTechnicalSanctionNumber() },
+                        null));
 
         return new ModelAndView("lineestimate-success");
     }
@@ -306,29 +319,26 @@ public class CreateSpillOverLineEstimateController {
         budgetheadid.add(lineEstimate.getBudgetHead().getId());
 
         try {
-            final BigDecimal budgetAvailable = budgetDetailsDAO
-                    .getPlanningBudgetAvailable(
-                            lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
-                            Integer.parseInt(lineEstimate
-                                    .getExecutingDepartment().getId().toString()),
-                            lineEstimate.getFunction().getId(),
-                            null,
-                            lineEstimate.getScheme() == null ? null : Integer.parseInt(lineEstimate.getScheme().getId()
-                                    .toString()),
-                            lineEstimate.getSubScheme() == null ? null : Integer.parseInt(lineEstimate.getSubScheme().getId()
-                                    .toString()),
-                            null, budgetheadid, Integer.parseInt(lineEstimate.getFund()
-                                    .getId().toString()));
+            final BigDecimal budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
+                    lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
+                    Integer.parseInt(lineEstimate.getExecutingDepartment().getId().toString()),
+                    lineEstimate.getFunction().getId(), null,
+                    lineEstimate.getScheme() == null ? null
+                            : Integer.parseInt(lineEstimate.getScheme().getId().toString()),
+                    lineEstimate.getSubScheme() == null ? null
+                            : Integer.parseInt(lineEstimate.getSubScheme().getId().toString()),
+                    null, budgetheadid, Integer.parseInt(lineEstimate.getFund().getId().toString()));
 
             BigDecimal totalAppropriationAmount = BigDecimal.ZERO;
 
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
                 if (lineEstimate.isBillsCreated() && led.getGrossAmountBilled() != null)
-                    totalAppropriationAmount = totalAppropriationAmount.add(led.getEstimateAmount().subtract(
-                            led.getGrossAmountBilled()));
+                    totalAppropriationAmount = totalAppropriationAmount
+                            .add(led.getEstimateAmount().subtract(led.getGrossAmountBilled()));
                 else
                     totalAppropriationAmount = totalAppropriationAmount.add(led.getEstimateAmount());
-            if (BudgetControlType.BudgetCheckOption.MANDATORY.toString().equalsIgnoreCase(budgetControlTypeService.getConfigValue()) 
+            if (BudgetControlType.BudgetCheckOption.MANDATORY.toString()
+                    .equalsIgnoreCase(budgetControlTypeService.getConfigValue())
                     && budgetAvailable.compareTo(totalAppropriationAmount) == -1)
                 errors.reject("error.budgetappropriation.amount",
                         new String[] { budgetAvailable.toString(), totalAppropriationAmount.toString() }, null);
@@ -342,5 +352,14 @@ public class CreateSpillOverLineEstimateController {
              * for (final ValidationError error : e.getErrors()) errors.reject(error.getMessage());
              */
         }
+    }
+
+    private void validateLineEstimate(final LineEstimate lineEstimate, final BindingResult errors) {
+        if (!lineEstimateService.getLineEstimateHiddenFields().contains("subject") && lineEstimate.getSubject() == null)
+            errors.reject("error.subject.required", "error.subject.required");
+        if (!lineEstimateService.getLineEstimateHiddenFields().contains("description")
+                && lineEstimate.getDescription() == null)
+            errors.reject("error.description.required", "error.description.required");
+
     }
 }

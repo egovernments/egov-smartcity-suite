@@ -87,9 +87,6 @@
 					<c:if test="${lineEstimate.billsCreated =='true' && mode == 'readOnly' && lineEstimate.spillOverFlag == 'true'}">
 					<th><spring:message code="lbl.grossamount"/></th>
 					</c:if>
-					<th><spring:message code="lbl.quantity"/></th>
-					<th><spring:message code="lbl.uom"/></th>
-					<th><spring:message code="lbl.expected.outcome"/></th>
 				</tr>
 			</thead>
 			<tbody id="lineEstimateDetailsTbl">
@@ -132,15 +129,6 @@
 								<fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${lineEstimate.lineEstimateDetails[item.index].grossAmountBilled}" />
 							</td>
 						</c:if>
-						<td class="text-right">
-							<fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${lineEstimate.lineEstimateDetails[item.index].quantity}" />
-						</td>
-						<td>
-							<c:out value="${lineEstimate.lineEstimateDetails[item.index].uom}"/>
-						</td>
-						<td>
-							<c:out value="${lineEstimate.lineEstimateDetails[item.index].beneficiary}"/>
-						</td>
 					</tr>
 				</c:forEach>
 			</tbody>
@@ -172,9 +160,6 @@
 						<c:if test="${(lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' && mode == 'view') || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
 							<td class="text-right"> <span id="actualEstimateTotal"><fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${actualEstimateTotal}" /></span> </td>
 						</c:if>
-						<td></td>
-						<td></td>
-						<td></td>
 					</c:when>
 					<c:otherwise>
 						<c:if test="${lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' 
@@ -189,9 +174,6 @@
 						<c:if test="${(lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' && mode == 'view') || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
 							<td class="text-right"> <span id="actualEstimateTotal"><fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${actualEstimateTotal}" /></span> </td>
 						</c:if>
-							<td></td>
-							<td></td>
-							<td></td>
 					</c:otherwise>
 				</c:choose>
 				</tr>

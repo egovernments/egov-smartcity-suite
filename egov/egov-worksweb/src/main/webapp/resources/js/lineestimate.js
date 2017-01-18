@@ -95,6 +95,17 @@ $(document).ready(function(){
 	
 	replaceWorkCategoryChar();
 	replaceBeneficiaryChar();
+	
+	var hiddenFields = $("#hiddenfields").val().replace(/[\[\]']+/g,'').replace(/, /g, ",").split(",");
+	$.each(hiddenFields,function(){
+		var fieldName = this.toString().trim();
+		var label = $("label[for='"+fieldName+"']");
+		label.hide();
+		$("#"+fieldName).hide();
+		$("#"+fieldName).parent().hide();
+		$('#'+fieldName).removeAttr('required')
+	});
+
 });
 
 function renderPdf() {
@@ -469,18 +480,6 @@ $(document).ready(function(){
 	typeaheadWithEventsHandling(ward_typeahead,
 	'#ward');
 });
-
-function validateQuantity() {
-	$( "input[name$='quantity']" ).on("keyup", function(){
-	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
-	        val = this.value;
-	    
-	    if(!valid){
-	        console.log("Invalid input!");
-	        this.value = val.substring(0, val.length - 1);
-	    }
-	});
-}
 
 function validateadminSanctionNumber() {
 	$( "input[name$='adminSanctionNumber']" ).on("keyup", function(){
