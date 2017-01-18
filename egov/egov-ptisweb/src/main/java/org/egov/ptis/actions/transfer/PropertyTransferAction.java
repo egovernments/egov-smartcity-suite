@@ -42,6 +42,7 @@ package org.egov.ptis.actions.transfer;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLIENT_SPECIFIC_DMD_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
@@ -58,6 +59,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_FULL_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_PARTIAL_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REGISTERED_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
@@ -207,6 +209,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     @Autowired
     private ReportViewerUtil reportViewerUtil;
+    
+    @Autowired
+    private PropertyTaxUtil propertyTaxUtil;
 
     // Model and View data
     private Long mutationId;
@@ -451,7 +456,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 new Date());
         mutationInitiatedBy = !assignment.isEmpty()
                 ? assignment.get(0).getEmployee().getName().concat("~").concat(assignment.get(0).getPosition().getName()) : "";
-        propertyTaxCommonUtils.makeExistingDemandBillInactive(basicproperty.getUpicNo());
+        final String clientSpecificDmdBill = propertyTaxCommonUtils
+                .getAppConfigValue(APPCONFIG_CLIENT_SPECIFIC_DMD_BILL, PTMODULENAME);
+        if ("Y".equalsIgnoreCase(clientSpecificDmdBill)) {
+            propertyTaxCommonUtils.makeExistingDemandBillInactive(basicproperty.getUpicNo());
+        } else {
+            propertyTaxUtil.makeTheEgBillAsHistory(basicproperty);
+        }
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
         setAckMessage("Transfer of ownership is created successfully in the system and forwarded to : ");
