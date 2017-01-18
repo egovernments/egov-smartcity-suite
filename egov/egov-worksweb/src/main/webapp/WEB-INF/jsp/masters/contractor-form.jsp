@@ -157,7 +157,7 @@ var makeContractorDataTable = function() {
         }
 	});
 	
-	contractorDataTable.addRow({SlNo:contractorDataTable.getRecordSet().getLength()+1,status:statusDropdownOptions[0].value});	
+	contractorDataTable.addRow({SlNo:contractorDataTable.getRecordSet().getLength()+1,status:statusDropdownOptions[0].value,department:"${defaultDepartmentId}"});	
 	dom.get("status"+contractorDataTable.getRecordSet().getRecord(0).getId()).value=statusDropdownOptions[0].value;
 
 	return {
