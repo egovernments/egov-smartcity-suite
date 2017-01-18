@@ -381,8 +381,7 @@ public class ContractorAdvanceService {
                         .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
             } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
-                wfmatrix = contractorAdvanceRequisitionWorkflowService.getWfMatrix(contractorAdvanceRequisition.getStateType(),
-                        null, null, additionalRule, contractorAdvanceRequisition.getCurrentState().getValue(), null);
+                pos = null;
                 contractorAdvanceRequisition.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);

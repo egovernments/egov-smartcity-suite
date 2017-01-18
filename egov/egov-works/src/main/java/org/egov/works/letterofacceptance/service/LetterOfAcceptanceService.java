@@ -301,8 +301,7 @@ public class LetterOfAcceptanceService {
                 workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
                         WorksConstants.CANCELLED_STATUS));
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
-                wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(), null, null, additionalRule,
-                        workOrder.getCurrentState().getValue(), null);
+                pos = null;
                 workOrder.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);

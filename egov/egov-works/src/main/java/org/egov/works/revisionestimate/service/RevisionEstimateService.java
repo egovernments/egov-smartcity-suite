@@ -510,10 +510,7 @@ public class RevisionEstimateService {
                         .withNatureOfTask(WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE);
             } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
-                wfmatrix = revisionAbstractEstimateWorkflowService.getWfMatrix(revisionEstimate.getStateType(), null,
-                        revisionEstimate.getEstimateValue(),
-                        additionalRule, revisionEstimate.getCurrentState().getValue(),
-                        revisionEstimate.getCurrentState().getNextAction());
+                pos = null;
                 revisionEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(pos).withNextAction("")
