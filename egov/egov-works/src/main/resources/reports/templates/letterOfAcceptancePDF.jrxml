@@ -270,7 +270,7 @@
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToBandHeight" x="92" y="126" width="255" height="20" uuid="2c574dbe-aac6-404a-a6fb-56ec05525f1a"/>
-				<text><![CDATA[6. Mode Of Entrustment                                     :]]></text>
+				<text><![CDATA[6. Recommended mode of entrustment                         :]]></text>
 			</staticText>
 			<textField>
 				<reportElement stretchType="RelativeToTallestObject" x="15" y="201" width="527" height="30" uuid="e13dc80c-5f00-4442-ba72-5123025ee505">

@@ -438,7 +438,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Mode Of Entrustment]]></text>
+				<text><![CDATA[Recommended mode of entrustment]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="834" y="0" width="63" height="47" uuid="a4fa1466-aa5f-4b47-b89a-24e1bf4643b1"/>
