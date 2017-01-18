@@ -39,8 +39,12 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
 import org.egov.works.lineestimate.service.LineEstimateService;
@@ -52,8 +56,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
@@ -69,12 +71,23 @@ public class CancelLineEstimateController {
     @Qualifier("messageSource")
     private MessageSource messageSource;
 
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
+
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
     public String showSearchLetterOfAcceptanceForm(
             @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest,
             final Model model) throws ApplicationException {
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("lineEstimateSearchRequest", lineEstimateSearchRequest);
+
+        final String defaultApproverDept = worksApplicationProperties.getDefaultApproverDepartment();
+        if (defaultApproverDept != null) {
+            final Department approverDepartment = departmentService.getDepartmentByName(defaultApproverDept);
+            if (approverDepartment != null)
+                lineEstimateSearchRequest.setExecutingDepartment(approverDepartment.getId());
+        }
+
         return "searchlineestimate-cancel";
     }
 

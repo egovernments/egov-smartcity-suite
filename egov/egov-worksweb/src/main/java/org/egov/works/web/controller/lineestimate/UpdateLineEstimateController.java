@@ -60,6 +60,7 @@ import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
@@ -68,6 +69,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.services.masters.SchemeService;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
@@ -145,6 +147,9 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
+
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     @ModelAttribute
     public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
@@ -277,19 +282,17 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         }
     }
 
-    private void validateBudgetHead(LineEstimate lineEstimate, BindingResult errors) {
+    private void validateBudgetHead(final LineEstimate lineEstimate, final BindingResult errors) {
         if (lineEstimate.getBudgetHead() != null) {
             Boolean check = false;
-            List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
+            final List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
             accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
-            for (CChartOfAccountDetail detail : accountDetails) {
+            for (final CChartOfAccountDetail detail : accountDetails)
                 if (detail.getDetailTypeId() != null
                         && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
                     check = true;
-            }
-            if (!check) {
+            if (!check)
                 errors.reject("error.budgethead.validate", "error.budgethead.validate");
-            }
 
         }
 
@@ -321,7 +324,8 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                 totalEstimateAmount = led.getEstimateAmount().add(totalEstimateAmount);
 
             if (BudgetControlType.BudgetCheckOption.MANDATORY.toString()
-                    .equalsIgnoreCase(budgetControlTypeService.getConfigValue()) && budgetAvailable.compareTo(totalEstimateAmount) == -1)
+                    .equalsIgnoreCase(budgetControlTypeService.getConfigValue())
+                    && budgetAvailable.compareTo(totalEstimateAmount) == -1)
                 errors.reject("error.budgetappropriation.amount",
                         new String[] { budgetAvailable.toString(), totalEstimateAmount.toString() }, null);
         } catch (final ValidationException e) {
@@ -395,6 +399,13 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             model.addAttribute("mode", "edit");
         else
             model.addAttribute("mode", "view");
+
+        final String defaultApproverDept = worksApplicationProperties.getDefaultApproverDepartment();
+        if (defaultApproverDept != null) {
+            final Department approverDepartment = departmentService.getDepartmentByName(defaultApproverDept);
+            if (approverDepartment != null)
+                lineEstimate.setApprovalDepartment(approverDepartment.getId());
+        }
 
         model.addAttribute("workflowHistory",
                 lineEstimateService.getHistory(lineEstimate.getState(), lineEstimate.getStateHistory()));

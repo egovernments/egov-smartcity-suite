@@ -68,6 +68,9 @@ jQuery(document).ready(function(){
 	       this.value = val.substring(0, val.length - 1);
 	   }
 		});
+
+	if(jQuery('#mode').val() != "edit")
+		setDefaultDepartment();
 });
 function checkMobileNumber(){
 	if(jQuery("#mobileNumber").val().length == 0){
@@ -387,6 +390,15 @@ function validateContractorFormAndSubmit() {
 		window.scroll(0,0);
 		return false;
 	}
+	
+	links=document.contractor.getElementsByTagName("span");
+	for(i=0;i<links.length;i++) {
+		if(links[i].innerHTML=='&nbsp;x' && links[i].style.display!='none'){
+			showMessage('contractor_error', jQuery("#vaidateError").val());
+			window.scroll(0,0);
+			return false;
+		}
+	}
 }
 
 function replaceExemptionFormChar() {
@@ -403,4 +415,10 @@ function createNewContractor() {
 function modifyContractorData() {
 	var model = document.getElementById('model').value;
 	window.location = 'contractor-edit.action?mode=edit&id='+model;
+}
+
+function setDefaultDepartment() {
+	var elements = jQuery("tbody.yui-dt-data").children();
+	var departmentElement = jQuery(jQuery(elements[0]).children()[4]).first().children().children();
+	departmentElement.val(jQuery('#defaultDepartmentId').val());
 }

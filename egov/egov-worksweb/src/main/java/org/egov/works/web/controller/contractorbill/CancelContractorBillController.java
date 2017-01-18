@@ -39,14 +39,15 @@
  */
 package org.egov.works.web.controller.contractorbill;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.SearchRequestContractorBill;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -56,34 +57,32 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/contractorbill")
 public class CancelContractorBillController extends GenericWorkFlowController {
     @Autowired
-    private LineEstimateService lineEstimateService;
-
-    @Autowired
     private ContractorBillRegisterService contractorBillRegisterService;
-
-    @Autowired
-    private SecurityUtils securityUtils;
 
     @Autowired
     @Qualifier("messageSource")
     private MessageSource messageSource;
+
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
     public String showSearchContractorBillForm(
             @ModelAttribute final SearchRequestContractorBill searchRequestContractorBill,
             final Model model) throws ApplicationException {
         model.addAttribute("departments", departmentService.getAllDepartments());
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
-        if (departments != null && !departments.isEmpty())
-            searchRequestContractorBill.setDepartment(departments.get(0).getId());
+        final String defaultApproverDept = worksApplicationProperties.getDefaultApproverDepartment();
+        if (defaultApproverDept != null) {
+            final Department approverDepartment = departmentService.getDepartmentByName(defaultApproverDept);
+            if (approverDepartment != null)
+                searchRequestContractorBill.setDepartment(approverDepartment.getId());
+        }
         model.addAttribute("searchRequestContractorBill", searchRequestContractorBill);
+
         return "searchcontractorbill-cancel";
     }
 

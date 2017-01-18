@@ -60,10 +60,12 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.services.masters.SchemeService;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
@@ -132,18 +134,24 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private LineEstimateAppropriationService lineEstimateAppropriationService;
-    
+
     @Autowired
     private BoundaryService boundaryService;
-    
+
     @Autowired
     private ModeOfAllotmentService modeOfAllotmentService;
-    
+
     @Autowired
     private LineEstimateUOMService lineEstimateUOMService;
-    
+
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
+
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
+
+    @Autowired
+    private DepartmentService departmentService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
@@ -154,6 +162,13 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             lineEstimate.setExecutingDepartment(departments.get(0));
+
+        final String defaultApproverDept = worksApplicationProperties.getDefaultApproverDepartment();
+        if (defaultApproverDept != null) {
+            final Department approverDepartment = departmentService.getDepartmentByName(defaultApproverDept);
+            if (approverDepartment != null)
+                lineEstimate.setApprovalDepartment(approverDepartment.getId());
+        }
 
         model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
         lineEstimate.setTempLineEstimateDetails(lineEstimate.getLineEstimateDetails());
@@ -208,18 +223,17 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         }
     }
 
-    private void validateBudgetHead(LineEstimate lineEstimate, BindingResult errors) {
+    private void validateBudgetHead(final LineEstimate lineEstimate, final BindingResult errors) {
         if (lineEstimate.getBudgetHead() != null) {
             Boolean check = false;
-            List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
+            final List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
             accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
-            for (CChartOfAccountDetail detail : accountDetails) {
-                if (detail.getDetailTypeId() != null && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
+            for (final CChartOfAccountDetail detail : accountDetails)
+                if (detail.getDetailTypeId() != null
+                        && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
                     check = true;
-            }
-            if (!check) {
-                errors.reject("error.budgethead.validate","error.budgethead.validate");
-            }
+            if (!check)
+                errors.reject("error.budgethead.validate", "error.budgethead.validate");
 
         }
 
@@ -326,8 +340,9 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         final String message = getMessageByStatus(lineEstimate, approverName, nextDesign);
 
         model.addAttribute("message", message);
-        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString()) && !BudgetControlType.BudgetCheckOption.NONE.toString()
-                .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
+        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())
+                && !BudgetControlType.BudgetCheckOption.NONE.toString()
+                        .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
             final List<String> basMessages = new ArrayList<String>();
             Integer count = 1;
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
@@ -378,7 +393,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
         return message;
     }
-    
+
     private void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {
         Integer index = 0;
         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {

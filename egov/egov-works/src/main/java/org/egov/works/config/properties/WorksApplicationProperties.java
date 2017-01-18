@@ -53,12 +53,16 @@ public class WorksApplicationProperties {
 
     @Autowired
     private Environment environment;
-    
-    public String[] getContractorMasterMandatoryFields(){
+
+    public String[] getContractorMasterMandatoryFields() {
         return environment.getProperty("contractormaster.fields.mandatory").split(",");
     }
-    
-    public String[] getContractorMasterHideFields(){
+
+    public String[] getContractorMasterHideFields() {
         return environment.getProperty("contractormaster.fields.hide").split(",");
+    }
+
+    public String getDefaultApproverDepartment() {
+        return environment.getProperty("default.approver.department");
     }
 }

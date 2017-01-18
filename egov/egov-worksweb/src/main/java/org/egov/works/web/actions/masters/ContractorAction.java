@@ -63,6 +63,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Bank;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.egf.commons.bank.service.CreateBankService;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
@@ -129,6 +130,7 @@ public class ContractorAction extends SearchFormAction {
     private Integer rowId;
     private String[] hide;
     private String[] mandatory;
+    private Long defaultDepartmentId;
 
     private Map<String, Object> criteriaMap = null;
 
@@ -307,7 +309,12 @@ public class ContractorAction extends SearchFormAction {
         addDropdownData("gradeList", contractorGradeService.getAllContractorGrades());
         addDropdownData("bankList", createBankService.getByIsActiveTrueOrderByName());
         addDropdownData("statusList", egwStatusHibDAO.getStatusByModule(WorksConstants.STATUS_MODULE_NAME));
-
+        final String defaultApproverDept = worksApplicationProperties.getDefaultApproverDepartment();
+        if (defaultApproverDept != null) {
+            final Department department = departmentService.getDepartmentByName(defaultApproverDept);
+            if (department != null)
+                defaultDepartmentId = department.getId();
+        }
     }
 
     public Long getId() {
@@ -569,5 +576,13 @@ public class ContractorAction extends SearchFormAction {
     public void addValidationError(final List<ValidationError> errorList, final String errorCode,
             final String errorValue) {
         errorList.add(new ValidationError(errorCode, errorValue));
+    }
+
+    public Long getDefaultDepartmentId() {
+        return defaultDepartmentId;
+    }
+
+    public void setDefaultDepartmentId(final Long defaultDepartmentId) {
+        this.defaultDepartmentId = defaultDepartmentId;
     }
 }
