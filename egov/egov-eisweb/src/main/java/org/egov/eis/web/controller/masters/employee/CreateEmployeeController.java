@@ -106,6 +106,9 @@ public class CreateEmployeeController {
         if (codeExists)
             errors.rejectValue("code", "Unique.employee.code");
 
+        if (!employeeService.primaryAssignmentExists(employee))
+            errors.rejectValue("assignments", "primary.assignment");
+
         if (errors.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("mode", "create");

@@ -128,11 +128,6 @@ public class ViewAndUpdateEmployeController {
         if (codeExists)
             errors.rejectValue("code", "Unique.employee.code");
 
-        if (errors.hasErrors()) {
-            setDropDownValues(model);
-            model.addAttribute("mode", "update");
-            return EMPLOYEEFORM;
-        }
         try {
             if (!file.isEmpty())
                 employee.setSignature(file.getBytes());
@@ -148,6 +143,15 @@ public class ViewAndUpdateEmployeController {
             model.addAttribute("error", fieldError);
             return EMPLOYEEFORM;
         }
+        if (!employeeService.primaryAssignmentExists(employee))
+            errors.rejectValue("assignments", "primary.assignment");
+
+        if (errors.hasErrors()) {
+            setDropDownValues(model);
+            model.addAttribute("mode", "update");
+            return EMPLOYEEFORM;
+        }
+
         String image = null;
         if (null != employee.getSignature())
             image = Base64.encodeBytes(employee.getSignature());
