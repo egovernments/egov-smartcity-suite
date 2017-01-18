@@ -43,15 +43,15 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -63,7 +63,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping(value = "/letterofacceptance")
-public class CancelLetterOfAcceptanceController extends GenericWorkFlowController {
+public class CancelLetterOfAcceptanceController {
     @Autowired
     private LineEstimateService lineEstimateService;
 
@@ -78,7 +78,10 @@ public class CancelLetterOfAcceptanceController extends GenericWorkFlowControlle
     private MessageSource messageSource;
 
     @Autowired
-    private WorksApplicationProperties worksApplicationProperties;
+    private DepartmentService departmentService;
+
+    @Autowired
+    private WorksUtils worksUtils;
 
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
     public String showSearchLetterOfAcceptanceForm(
@@ -89,13 +92,7 @@ public class CancelLetterOfAcceptanceController extends GenericWorkFlowControlle
         if (departments != null && !departments.isEmpty())
             searchRequestLetterOfAcceptance.setDepartmentName(departments.get(0).getId());
         model.addAttribute("searchRequestContractorBill", searchRequestLetterOfAcceptance);
-
-        final String defaultApproverDept = worksApplicationProperties.getDefaultApproverDepartment();
-        if (defaultApproverDept != null) {
-            final Department approverDepartment = departmentService.getDepartmentByName(defaultApproverDept);
-            if (approverDepartment != null)
-                searchRequestLetterOfAcceptance.setDepartmentName(approverDepartment.getId());
-        }
+        searchRequestLetterOfAcceptance.setDepartmentName(worksUtils.getDefaultDepartmentId());
 
         return "searchloa-cancel";
     }

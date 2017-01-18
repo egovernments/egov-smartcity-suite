@@ -53,6 +53,7 @@ import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.reports.entity.EstimateAbstractReport;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -82,6 +83,9 @@ public class EstimateAbstractReportController {
     @Autowired
     private WorksApplicationProperties worksApplicationProperties;
 
+    @Autowired
+    private WorksUtils worksUtils;
+
     @RequestMapping(value = "/departmentwise-searchform", method = RequestMethod.GET)
     public String departmentWiseShowSearchForm(
             @ModelAttribute final EstimateAbstractReport estimateAbstractReport,
@@ -91,12 +95,7 @@ public class EstimateAbstractReportController {
         estimateAbstractReport.setFinancialYear(currentFinancialYear.getId());
         estimateAbstractReport.setCurrentFinancialYearId(currentFinancialYear.getId());
         model.addAttribute("estimateAbstractReport", estimateAbstractReport);
-        final String defaultApproverDept = worksApplicationProperties.getDefaultApproverDepartment();
-        if (defaultApproverDept != null) {
-            final Department approverDepartment = departmentService.getDepartmentByName(defaultApproverDept);
-            if (approverDepartment != null)
-                estimateAbstractReport.setDepartment(approverDepartment.getId());
-        }
+        estimateAbstractReport.setDepartment(worksUtils.getDefaultDepartmentId());
         return "estimateAbstractReportByDepartmentWise-search";
     }
 

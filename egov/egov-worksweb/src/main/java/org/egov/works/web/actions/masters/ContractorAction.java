@@ -63,7 +63,6 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Bank;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.egf.commons.bank.service.CreateBankService;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
@@ -78,6 +77,7 @@ import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.masters.ContractorDetail;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
@@ -116,6 +116,9 @@ public class ContractorAction extends SearchFormAction {
     private EgwStatusHibernateDAO egwStatusHibDAO;
     @Autowired
     private ContractorGradeService contractorGradeService;
+
+    @Autowired
+    private WorksUtils worksUtils;
 
     private String contractorName;
     private String contractorCode;
@@ -309,12 +312,7 @@ public class ContractorAction extends SearchFormAction {
         addDropdownData("gradeList", contractorGradeService.getAllContractorGrades());
         addDropdownData("bankList", createBankService.getByIsActiveTrueOrderByName());
         addDropdownData("statusList", egwStatusHibDAO.getStatusByModule(WorksConstants.STATUS_MODULE_NAME));
-        final String defaultApproverDept = worksApplicationProperties.getDefaultApproverDepartment();
-        if (defaultApproverDept != null) {
-            final Department department = departmentService.getDepartmentByName(defaultApproverDept);
-            if (department != null)
-                defaultDepartmentId = department.getId();
-        }
+        defaultDepartmentId = worksUtils.getDefaultDepartmentId();
     }
 
     public Long getId() {

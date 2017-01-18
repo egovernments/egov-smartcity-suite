@@ -41,13 +41,12 @@ package org.egov.works.web.controller.lineestimate;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -72,7 +71,7 @@ public class CancelLineEstimateController {
     private MessageSource messageSource;
 
     @Autowired
-    private WorksApplicationProperties worksApplicationProperties;
+    private WorksUtils worksUtils;
 
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
     public String showSearchLetterOfAcceptanceForm(
@@ -80,13 +79,7 @@ public class CancelLineEstimateController {
             final Model model) throws ApplicationException {
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("lineEstimateSearchRequest", lineEstimateSearchRequest);
-
-        final String defaultApproverDept = worksApplicationProperties.getDefaultApproverDepartment();
-        if (defaultApproverDept != null) {
-            final Department approverDepartment = departmentService.getDepartmentByName(defaultApproverDept);
-            if (approverDepartment != null)
-                lineEstimateSearchRequest.setExecutingDepartment(approverDepartment.getId());
-        }
+        lineEstimateSearchRequest.setExecutingDepartment(worksUtils.getDefaultDepartmentId());
 
         return "searchlineestimate-cancel";
     }

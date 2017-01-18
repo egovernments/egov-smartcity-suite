@@ -52,7 +52,6 @@ import org.egov.egf.budget.model.BudgetControlType;
 import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationException;
@@ -60,7 +59,6 @@ import org.egov.model.bills.EgBilldetails;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.autonumber.ContractorBillNumberGenerator;
-import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
@@ -119,9 +117,6 @@ public class CreateContractorBillController extends GenericWorkFlowController {
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
 
-    @Autowired
-    private WorksApplicationProperties worksApplicationProperties;
-
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(
             @ModelAttribute("contractorBillRegister") final ContractorBillRegister contractorBillRegister,
@@ -146,13 +141,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         model.addAttribute("workOrder", workOrder);
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("contractorBillRegister", contractorBillRegister);
-
-        final String defaultApproverDept = worksApplicationProperties.getDefaultApproverDepartment();
-        if (defaultApproverDept != null) {
-            final Department approverDepartment = departmentService.getDepartmentByName(defaultApproverDept);
-            if (approverDepartment != null)
-                contractorBillRegister.setApprovalDepartment(approverDepartment.getId());
-        }
+        contractorBillRegister.setApprovalDepartment(worksUtils.getDefaultDepartmentId());
 
         return "contractorBill-form";
     }

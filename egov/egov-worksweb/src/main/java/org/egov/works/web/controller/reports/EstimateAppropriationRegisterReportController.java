@@ -42,11 +42,10 @@ package org.egov.works.web.controller.reports;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.reports.entity.EstimateAppropriationRegisterSearchRequest;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -71,7 +70,7 @@ public class EstimateAppropriationRegisterReportController {
     private FinancialYearHibernateDAO financialYearHibernateDAO;
 
     @Autowired
-    private WorksApplicationProperties worksApplicationProperties;
+    private WorksUtils worksUtils;
 
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String showEstimateAppropriationRegister(
@@ -79,12 +78,7 @@ public class EstimateAppropriationRegisterReportController {
             final Model model) throws ApplicationException {
         setDropDownValues(model);
         model.addAttribute("estimateAppropriationRegisterSearchRequest", estimateAppropriationRegisterSearchRequest);
-        final String defaultApproverDept = worksApplicationProperties.getDefaultApproverDepartment();
-        if (defaultApproverDept != null) {
-            final Department approverDepartment = departmentService.getDepartmentByName(defaultApproverDept);
-            if (approverDepartment != null)
-                estimateAppropriationRegisterSearchRequest.setDepartment(approverDepartment.getId());
-        }
+        estimateAppropriationRegisterSearchRequest.setDepartment(worksUtils.getDefaultDepartmentId());
         return "estimateAppropriationRegister-search";
     }
 

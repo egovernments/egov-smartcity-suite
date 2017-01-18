@@ -42,12 +42,11 @@ package org.egov.works.web.controller.contractorbill;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.SearchRequestContractorBill;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -68,19 +67,14 @@ public class CancelContractorBillController extends GenericWorkFlowController {
     private MessageSource messageSource;
 
     @Autowired
-    private WorksApplicationProperties worksApplicationProperties;
+    private WorksUtils worksUtils;
 
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
     public String showSearchContractorBillForm(
             @ModelAttribute final SearchRequestContractorBill searchRequestContractorBill,
             final Model model) throws ApplicationException {
         model.addAttribute("departments", departmentService.getAllDepartments());
-        final String defaultApproverDept = worksApplicationProperties.getDefaultApproverDepartment();
-        if (defaultApproverDept != null) {
-            final Department approverDepartment = departmentService.getDepartmentByName(defaultApproverDept);
-            if (approverDepartment != null)
-                searchRequestContractorBill.setDepartment(approverDepartment.getId());
-        }
+        searchRequestContractorBill.setDepartment(worksUtils.getDefaultDepartmentId());
         model.addAttribute("searchRequestContractorBill", searchRequestContractorBill);
 
         return "searchcontractorbill-cancel";
