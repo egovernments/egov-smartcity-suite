@@ -467,5 +467,10 @@
     	<put-attribute name="body" value="/WEB-INF/views/reports/ownershipcertificate-form.jsp"/>
     </definition>
     
+    <definition name="depreciationrate-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.depreciationrate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/depreciationrate/depreciationrate-view.jsp"/>
+    </definition>
+    
     
 </tiles-definitions> 
