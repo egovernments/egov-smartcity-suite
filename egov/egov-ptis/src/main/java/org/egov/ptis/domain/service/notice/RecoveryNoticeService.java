@@ -159,7 +159,7 @@ public class RecoveryNoticeService {
     private static final String OWNER_NAME = "ownerName";
     private static final String OWNERSHIP_CERTIFICATE_DATE = "ownershipCertificateDate";
     private static final String OWNERSHIP_CERTIFICATE_NO = "ownershipCertificateNo";
-    final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     private static final String OCCUPIER_NOTICE_NAGAR_PANCHAYET = "OccupierNotice_NagarPanchayet";
     private static final String OCCUPIER_NOTICE_CORPORATION = "OccupierNotice_Corporation";
     private static final String TAX_DUE_IN_WORDS = "taxDueInWords";

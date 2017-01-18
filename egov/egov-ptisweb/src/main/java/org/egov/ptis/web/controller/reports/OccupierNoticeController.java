@@ -76,7 +76,7 @@ public class OccupierNoticeController {
         final List<String> errorList = recoveryNoticeService.validateRecoveryNotices(egBill.getConsumerId(),
                 NOTICE_TYPE_OCCUPIER);
         for (final String error : errorList)
-            if (error == "common.no.property.due")
+            if ("common.no.property.due".equals(error))
                 errors.reject(error, new String[] { NOTICE_TYPE_OCCUPIER }, error);
             else
                 errors.reject(error, error);
@@ -90,6 +90,6 @@ public class OccupierNoticeController {
     @RequestMapping(value = "/generatenotice/{consumerId}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<byte[]> generateNotice(@PathVariable final String consumerId, final Model model) {
-        return recoveryNoticeService.generateNotice(consumerId, PropertyTaxConstants.NOTICE_TYPE_OCCUPIER);
+        return recoveryNoticeService.generateNotice(consumerId, NOTICE_TYPE_OCCUPIER);
     }
 }
