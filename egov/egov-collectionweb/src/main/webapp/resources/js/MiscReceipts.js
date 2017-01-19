@@ -89,7 +89,7 @@ function resetTables(){
 		{
 			if(document.getElementById('subLedgerlist['+j+'].glcode.id')!=null){
 				document.getElementById('subLedgerlist['+j+'].amount').value=0;
-				document.getElementById('subLedgerlist['+j+'].detailCode').value=codeTextMessage;
+				document.getElementById('subLedgerlist['+j+'].detailCode').placeholder=codeTextMessage;
 				document.getElementById('subLedgerlist['+j+'].detailCode').style.color='DarkGray';
 				document.getElementById('subLedgerlist['+j+'].glcode.id').value=0;
 				document.getElementById('subLedgerlist['+j+'].detailType.id').value=0;
@@ -112,7 +112,7 @@ function updateGridMisc(prefix,field,index,value){
 
 function updateSLGrid(field,index,value){
 	if(field=='detailCode' && value==''){
-		document.getElementById('subLedgerlist['+index+'].'+field).value=codeTextMessage;
+		document.getElementById('subLedgerlist['+index+'].'+field).placeholder=codeTextMessage;
 		document.getElementById('subLedgerlist['+index+'].'+field).style.color='DarkGray';
 	}
 	else{
@@ -768,7 +768,7 @@ function createDropdownFormatterDetail(prefix){
 	var selecteddetailcode;
 	var onDropdownDetailChange = function(index,obj) { 
 		
-		document.getElementById(SUBLEDGERLIST+'['+obj.value+']'+'.detailCode').value=codeTextMessage;
+		document.getElementById(SUBLEDGERLIST+'['+obj.value+']'+'.detailCode').placeholder=codeTextMessage;
 		document.getElementById(SUBLEDGERLIST+'['+obj.value+']'+'.detailCode').style.color='DarkGray';
 		document.getElementById(SUBLEDGERLIST+'['+obj.value+']'+'.detailKeyId').value='';
 		document.getElementById(SUBLEDGERLIST+'['+obj.value+']'+'.detailKey').value='';
@@ -910,7 +910,7 @@ success: function(o) {
 	}	
 	if(onload=='false')
 	{
-		document.getElementById(SUBLEDGERLIST+'['+rowid+']'+'.detailCode').value=codeTextMessage;
+		document.getElementById(SUBLEDGERLIST+'['+rowid+']'+'.detailCode').placeholder=codeTextMessage;
 		document.getElementById(SUBLEDGERLIST+'['+rowid+']'+'.detailCode').style.color='DarkGray';
 		document.getElementById(SUBLEDGERLIST+'['+rowid+']'+'.detailKeyId').value='';
 		document.getElementById(SUBLEDGERLIST+'['+rowid+']'+'.detailKey').value='';
@@ -938,7 +938,7 @@ function getDetailType(val){
 	else{
 		var detailCodeObj = document.getElementById('subLedgerlist['+val+'].detailCode');
 		if(detailCodeObj!=null){
-			detailCodeObj.value=codeTextMessage;
+			detailCodeObj.placeholder=codeTextMessage;
 			detailCodeObj.style.color='DarkGray';
 			document.getElementById(SUBLEDGERLIST+'['+val+']'+'.detailKeyId').value='';
 			document.getElementById(SUBLEDGERLIST+'['+val+']'+'.detailKey').value='';
@@ -1033,7 +1033,7 @@ success: function(o) {
 				}
 				var detailCode = document.getElementById('subLedgerlist['+j+'].detailCode');
 				if(detailCode!=null){
-					document.getElementById(SUBLEDGERLIST+'['+j+']'+'.detailCode').value=codeTextMessage;
+					document.getElementById(SUBLEDGERLIST+'['+j+']'+'.detailCode').placeholder=codeTextMessage;
 					document.getElementById(SUBLEDGERLIST+'['+j+']'+'.detailCode').style.color='DarkGray';
 					document.getElementById(SUBLEDGERLIST+'['+j+']'+'.detailKeyId').value='';
 					document.getElementById(SUBLEDGERLIST+'['+j+']'+'.detailKey').value='';
