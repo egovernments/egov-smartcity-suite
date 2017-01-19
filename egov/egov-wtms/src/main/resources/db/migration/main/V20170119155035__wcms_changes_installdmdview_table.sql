@@ -1,7 +1,7 @@
-DROP MATERIALIZED VIEW  if exists egwtr_mv_inst_dem_coll;
-DROP TABLE  if exists  egwtr_mv_inst_dem_coll  ;
 
-DROP sequence  if exists seq_egwtr_mv_inst_dem_coll;
+DROP TABLE if exists egwtr_mv_inst_dem_coll;
+
+DROP sequence if exists seq_egwtr_mv_inst_dem_coll;
 
 create sequence seq_egwtr_mv_inst_dem_coll;
 
