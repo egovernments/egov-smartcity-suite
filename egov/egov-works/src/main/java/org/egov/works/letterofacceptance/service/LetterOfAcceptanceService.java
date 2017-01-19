@@ -371,18 +371,20 @@ public class LetterOfAcceptanceService {
 
     public List<ContractorDetail> searchContractorDetails(final SearchRequestContractor searchRequestContractor) {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ContractorDetail.class, "cd")
-                .createAlias("contractor", "contractor");
+                .createAlias("contractor", "contractor").createAlias("cd.status", "status");
         if (searchRequestContractor != null) {
             if (searchRequestContractor.getDepartment() != null)
                 criteria.add(Restrictions.eq("department.id", searchRequestContractor.getDepartment()));
             if (searchRequestContractor.getContractorClass() != null)
                 criteria.add(Restrictions.ge("grade.id", searchRequestContractor.getContractorClass()));
             if (searchRequestContractor.getContractorCode() != null)
-                criteria.add(Restrictions.eq("contractor.code", searchRequestContractor.getContractorCode()).ignoreCase());
-            if (searchRequestContractor.getNameOfAgency() != null)
                 criteria.add(
-                        Restrictions.ilike("contractor.name", searchRequestContractor.getNameOfAgency(), MatchMode.ANYWHERE));
+                        Restrictions.eq("contractor.code", searchRequestContractor.getContractorCode()).ignoreCase());
+            if (searchRequestContractor.getNameOfAgency() != null)
+                criteria.add(Restrictions.ilike("contractor.name", searchRequestContractor.getNameOfAgency(),
+                        MatchMode.ANYWHERE));
         }
+        criteria.add(Restrictions.eq("status.code", WorksConstants.ACTIVE).ignoreCase());
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
