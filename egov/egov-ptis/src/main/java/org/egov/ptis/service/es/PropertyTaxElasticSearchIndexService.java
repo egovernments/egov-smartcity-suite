@@ -47,8 +47,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_DI
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_GRADEWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REGIONWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_WARDWISE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
 
 import java.math.BigDecimal;
@@ -86,7 +84,6 @@ import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,6 +98,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PropertyTaxElasticSearchIndexService {
 
+    private static final String CONSUMER_TYPE = "consumerType";
     private static final String IS_ACTIVE = "isActive";
     private static final String IS_EXEMPTED = "isExempted";
     private static final String CITY_GRADE = "cityGrade";
@@ -198,13 +196,15 @@ public class PropertyTaxElasticSearchIndexService {
                 .multiply(BigDecimal.valueOf(noOfMonths));
         collectionIndexDetails.setCytdDmd(proportionalDemand.setScale(0, BigDecimal.ROUND_HALF_UP));
 
-        // performance = (current year tilldate collection * 100)/(proportional
-        // demand)
-        collectionIndexDetails
-                .setPerformance((collectionIndexDetails.getCytdColl().multiply(PropertyTaxConstants.BIGDECIMAL_100))
-                        .divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
-        // variance = ((currentYearCollection -
-        // lastYearCollection)*100)/lastYearCollection
+        collectionIndexDetails.setTotalAssessments(collectionIndexElasticSearchService.getTotalAssessmentsCount(collectionDetailsRequest, null));
+        
+        if(proportionalDemand.compareTo(BigDecimal.ZERO) > 0){
+            // performance = (current year tilldate collection * 100)/(proportional demand)
+            collectionIndexDetails
+                    .setPerformance((collectionIndexDetails.getCytdColl().multiply(PropertyTaxConstants.BIGDECIMAL_100))
+                            .divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
+        }
+        // variance = ((currentYearCollection - lastYearCollection)*100)/lastYearCollection
         BigDecimal variation;
         if (collectionIndexDetails.getLytdColl().compareTo(BigDecimal.ZERO) == 0)
             variation = PropertyTaxConstants.BIGDECIMAL_100;
@@ -228,14 +228,7 @@ public class PropertyTaxElasticSearchIndexService {
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest)
                 .filter(QueryBuilders.matchQuery(IS_ACTIVE, true))
                 .filter(QueryBuilders.matchQuery(IS_EXEMPTED, false));
-        if (StringUtils.isNotBlank(collectionDetailsRequest.getPropertyType())) {
-            if (DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT.equalsIgnoreCase(collectionDetailsRequest.getPropertyType()))
-                boolQuery = boolQuery
-                        .filter(QueryBuilders.termsQuery("consumerType", DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST));
-            else
-                boolQuery = boolQuery
-                        .filter(QueryBuilders.matchQuery("consumerType", collectionDetailsRequest.getPropertyType()));
-        }
+                
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(PROPERTY_TAX_INDEX_NAME)
                 .withQuery(boolQuery).addAggregation(AggregationBuilders.sum(TOTALDEMAND).field(TOTAL_DEMAND))
                 .build();
@@ -445,7 +438,7 @@ public class PropertyTaxElasticSearchIndexService {
                     totalCollections.multiply(BIGDECIMAL_100).divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
             taxDetail.setCytdBalDmd(proportionalDemand.subtract(totalCollections));
             BigDecimal lastYearCollection = collectionIndexElasticSearchService
-                    .getCollectionBetweenDates(collectionDetailsRequest, lastYearFromDate, lastYearToDate, fieldName);
+                    .getCollectionBetweenDates(collectionDetailsRequest, lastYearFromDate, lastYearToDate, fieldName, "totalAmount");
             // TotalCollectionsForDatesForUlb(collectionDetailsRequest,
             // lastYearFromDate, lastYearToDate,fieldName);
             taxDetail.setLytdColl(lastYearCollection);
@@ -593,11 +586,13 @@ public class PropertyTaxElasticSearchIndexService {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_GRADE, collectionDetailsRequest.getUlbGrade()));
         if (StringUtils.isNotBlank(collectionDetailsRequest.getUlbCode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_CODE, collectionDetailsRequest.getUlbCode()));
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getPropertyType())) 
+            boolQuery = collectionIndexElasticSearchService.queryForPropertyType(collectionDetailsRequest, boolQuery, PROPERTY_TAX_INDEX_NAME);
         return boolQuery;
     }
 
     /**
-     * Prepare ward wise tax payers details - Map of ward name and tax paers bean
+     * Prepare ward wise tax payers details - Map of ward name and tax payers bean
      * 
      * @param wardWiseTaxProducers
      * @param wardWiseTaxPayersDetails
@@ -742,5 +737,7 @@ public class PropertyTaxElasticSearchIndexService {
             billCollectorWiseTaxPayerDetails.add(taxPayerDetails);
         }
     }
+    
+    
 
 }

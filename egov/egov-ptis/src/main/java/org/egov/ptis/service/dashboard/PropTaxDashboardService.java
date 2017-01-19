@@ -44,6 +44,7 @@ import static java.lang.String.format;
 import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_PT;
 import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_WTMS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_PROPERTY_TYPE_COURTCASES;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS;
 
@@ -227,12 +228,15 @@ public class PropTaxDashboardService {
     public CollectionDetails getCollectionIndexDetails(CollectionDetailsRequest collectionDetailsRequest) {
         CollectionDetails collectionIndexDetails = new CollectionDetails();
         List<CollTableData> collIndexData;
+        List<CollectionTrend> collectionTrends = new ArrayList<>();
         collectionIndexElasticSearchService.getCompleteCollectionIndexDetails(collectionDetailsRequest,
                 collectionIndexDetails);
         propertyTaxElasticSearchIndexService.getConsolidatedDemandInfo(collectionDetailsRequest,
                 collectionIndexDetails);
-        List<CollectionTrend> collectionTrends = collectionIndexElasticSearchService
-                .getMonthwiseCollectionDetails(collectionDetailsRequest);
+        if (!DASHBOARD_PROPERTY_TYPE_COURTCASES.equalsIgnoreCase(collectionDetailsRequest.getPropertyType())){
+            collectionTrends = collectionIndexElasticSearchService
+                    .getMonthwiseCollectionDetails(collectionDetailsRequest);
+        }
         if (StringUtils.isNotBlank(collectionDetailsRequest.getType()) && collectionDetailsRequest.getType()
                 .equalsIgnoreCase(PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE))
             collIndexData = collectionIndexElasticSearchService
