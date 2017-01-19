@@ -50,7 +50,6 @@ import org.egov.wtms.application.entity.WaterChargeMaterlizeView;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.CriteriaSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,14 +72,28 @@ public class ArrearRegisterReportService {
         // Get current installment
         final Installment currentInst = connectionDemandService
                 .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
-        final StringBuffer query = new StringBuffer(300);
+        final StringBuilder query = new StringBuilder();
+        List<WaterChargeMaterlizeView> propertyViewList;
+
+        query.append(
+                "select pmv  from WaterChargeMaterlizeView pmv,InstDmdCollResponse idc,Installment instmallment where "
+                        + "pmv.connectiondetailsid = idc.waterMatView.connectiondetailsid and pmv.connectionstatus = 'ACTIVE'"
+                        + " and idc.installment.id =instmallment.id  " + " and instmallment.fromDate not between  ('"
+                        + currentInst.getFromDate() + "') and ('" + currentInst.getToDate() + "') ");
 
         // Query that retrieves all the properties that has arrears.
-        query.append("select distinct pmv from WaterChargeMaterlizeView pmv,InstDmdCollResponse idc where "
-                + "pmv.id.waterConnectionDetails.id = idc.id.waterConnectionDetails.id and pmv.connectionstatus = 'ACTIVE' and idc.installment.fromDate not between  ('"
-                + currentInst.getFromDate() + "') and ('" + currentInst.getToDate() + "') ");
-
         /*
+         * query.append(
+         * "select distinct pmv  as \"hscno\" from egwtr_mv_dcb_view pmv,egwtr_mv_inst_dem_coll idc,EG_INSTALLMENT_MASTER instmallment where "
+         * +
+         * "pmv.connectiondetailsid = idc.connectiondetailsid and pmv.connectionstatus = 'ACTIVE'"
+         * + " and idc.id_installment =instmallment.id  " +
+         * " and instmallment.start_date not between  ('" +
+         * currentInst.getFromDate() + "') and ('" + currentInst.getToDate() +
+         * "') ");
+         */
+
+        /*--
          * if (localityId != null && localityId != -1) query.append(
          * " and pmv.locality.id= :localityId ");
          */
@@ -94,9 +107,9 @@ public class ArrearRegisterReportService {
          * query.append("  and pmv.block.id= :areaId ");
          */
 
-        query.append(" order by pmv.id.waterConnectionDetails.id ");
+         query.append(" order by pmv.waterChargeViewEmbedded.connectiondetailsid ");
         final Query qry = getCurrentSession().createQuery(query.toString());
-
+        propertyViewList = qry.list();
         /*
          * if (localityId != null && localityId != -1)
          * qry.setParameter("localityId", localityId); if (zoneId != null &&
@@ -107,8 +120,13 @@ public class ArrearRegisterReportService {
          * wardId); if (areaId != null && areaId != -1)
          * qry.setParameter("areaId", areaId);
          */
-        final List<WaterChargeMaterlizeView> propertyViewList = qry
-                .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY).list();
+
+        // propertyViewList=finalQuery.list();
+        /*
+         * propertyViewList = qry
+         * .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY).
+         * list();
+         */
         return propertyViewList;
     }
 }

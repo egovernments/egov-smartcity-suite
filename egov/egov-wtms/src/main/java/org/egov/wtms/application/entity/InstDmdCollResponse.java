@@ -39,67 +39,95 @@
  */
 package org.egov.wtms.application.entity;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.egov.commons.Installment;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 
-
-public class InstDmdCollResponse {
+@Entity
+@Table(name = "egwtr_mv_inst_dem_coll")
+@CompositeUnique(fields = { "waterMatView.waterChargeViewEmbedded.connectiondetailsid",
+"installment.id" }, message = "duplicate present")
+public class InstDmdCollResponse implements Serializable{
 
     
-    private WaterChargeMaterlizeView waterChargeMaterlizeView;
+
+    @Id
+    private Long id;
     
- 
+    private static final long serialVersionUID = -8679117166285878366L;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @Valid
+    @NotNull
+    @JoinColumn(name = "connectiondetailsid", nullable = false)
+    private WaterChargeMaterlizeView waterMatView;
+    
+    @ManyToOne(cascade = CascadeType.ALL)
+    @Valid
+    @NotNull
+    @JoinColumn(name = "id_installment", nullable = false)
     private Installment installment;
     
-    private BigDecimal waterCharge;
-  
-    private BigDecimal waterchargecoll;
- 
+    @Column(name = "watercharge")
+    private double waterCharge;
+    
+    @Column(name = "waterchargecoll")
+    private double waterchargecoll;
+    
+    @Column(name = "createddate")
     private Date createdDate;
-
-    public Date getCreatedDate() {
-        return createdDate;
+    
+    public WaterChargeMaterlizeView getWaterMatView() {
+        return waterMatView;
     }
-
-    public void setCreatedDate(final Date createdDate) {
-        this.createdDate = createdDate;
+    public void setWaterMatView(WaterChargeMaterlizeView waterMatView) {
+        this.waterMatView = waterMatView;
     }
-
-    public BigDecimal getWaterchargecoll() {
-        return waterchargecoll;
-    }
-
-    public void setWaterchargecoll(final BigDecimal waterchargecoll) {
-        this.waterchargecoll = waterchargecoll;
-    }
-
-   
-
-    public BigDecimal getWaterCharge() {
-        return waterCharge;
-    }
-
-    public void setWaterCharge(final BigDecimal waterCharge) {
-        this.waterCharge = waterCharge;
-    }
-
+    
     public Installment getInstallment() {
         return installment;
     }
-
-    public void setInstallment(final Installment installment) {
+    public void setInstallment(Installment installment) {
         this.installment = installment;
     }
-
-    public WaterChargeMaterlizeView getWaterChargeMaterlizeView() {
-        return waterChargeMaterlizeView;
+    
+    public Long getId() {
+        return id;
     }
-
-    public void setWaterChargeMaterlizeView(WaterChargeMaterlizeView waterChargeMaterlizeView) {
-        this.waterChargeMaterlizeView = waterChargeMaterlizeView;
+    public void setId(Long id) {
+        this.id = id;
     }
+    public double getWaterCharge() {
+        return waterCharge;
+    }
+    public void setWaterCharge(double waterCharge) {
+        this.waterCharge = waterCharge;
+    }
+    public double getWaterchargecoll() {
+        return waterchargecoll;
+    }
+    public void setWaterchargecoll(double waterchargecoll) {
+        this.waterchargecoll = waterchargecoll;
+    }
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+   
 
 
 }

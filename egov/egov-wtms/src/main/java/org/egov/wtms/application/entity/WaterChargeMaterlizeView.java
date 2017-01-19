@@ -39,16 +39,20 @@
  */
 package org.egov.wtms.application.entity;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.egov.demand.model.EgDemand;
@@ -56,69 +60,43 @@ import org.egov.infra.admin.master.entity.Boundary;
 
 @Entity
 @Table(name = "egwtr_mv_dcb_view")
-public class WaterChargeMaterlizeView {
+public class WaterChargeMaterlizeView implements Serializable {
 
-    @EmbeddedId
-    private WaterChargeViewEmbedded id;
-
+    private static final long serialVersionUID = -6146352214041057969L;
+    @Id
+    private Long connectiondetailsid;
+    private String propertyid;
     private String hscno;
     private String address;
-
     private String oldhscno;
-    private String username;
-    private String houseno;
-    @ManyToOne
-    @JoinColumn(name = "wardid")
-    private Boundary wardid;
-    @ManyToOne
-    @JoinColumn(name = "zoneid")
-    private Boundary zoneid;
-    @ManyToOne
-    @JoinColumn(name = "street")
-    private Boundary street;
-    @ManyToOne
-    @JoinColumn(name = "block")
-    private Boundary block;
-    @ManyToOne
-    @JoinColumn(name = "locality")
-    private Boundary locality;
-    private String mobileno;
-    private String aadharno;
     private String propertytype;
     private String applicationtype;
     private String usagetype;
     private String categorytype;
     private String pipesize;
     private String watersource;
-
     private String connectiontype;
     private String connectionstatus;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "demand")
     private EgDemand demand;
-    private String numberofperson;
-    private String numberofrooms;
-    private String sumpcapacity;
-    private Date executiondate;
-    private Long donationcharges;
-    private Boolean legacy;
-    private String approvalnumber;
-    @Column(name = "advance_coll")
-    private BigDecimal advancecoll;
-    @Column(name = "due_period")
-    private Long dueperiod;
+    
     @Column(name = "curr_demand")
-    private BigDecimal currentdemand;
+    private double currentdemand;
     @Column(name = "curr_coll")
-    private BigDecimal currentcoll;
+    private double currentcoll;
     @Column(name = "curr_balance")
-    private BigDecimal currentbalance;
+    private double currentbalance;
     @Column(name = "arr_demand")
-    private BigDecimal arreardemand;
+    private double arreardemand;
     @Column(name = "arr_coll")
-    private BigDecimal arrearcoll;
+    private double arrearcoll;
     @Column(name = "arr_balance")
-    private BigDecimal arrearbalance;
+    private double arrearbalance;
+
+    @OneToMany(mappedBy = "waterMatView", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<InstDmdCollResponse> instDmdColl= new ArrayList<InstDmdCollResponse>(0);
+
 
 
     public String getAddress() {
@@ -145,37 +123,7 @@ public class WaterChargeMaterlizeView {
         this.oldhscno = oldhscno;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(final String username) {
-        this.username = username;
-    }
-
-    public String getHouseno() {
-        return houseno;
-    }
-
-    public void setHouseno(final String houseno) {
-        this.houseno = houseno;
-    }
-
-    public String getMobileno() {
-        return mobileno;
-    }
-
-    public void setMobileno(final String mobileno) {
-        this.mobileno = mobileno;
-    }
-
-    public String getAadharno() {
-        return aadharno;
-    }
-
-    public void setAadharno(final String aadharno) {
-        this.aadharno = aadharno;
-    }
+   
 
     public String getPropertytype() {
         return propertytype;
@@ -241,110 +189,19 @@ public class WaterChargeMaterlizeView {
         this.connectionstatus = connectionstatus;
     }
 
-    public String getNumberofperson() {
-        return numberofperson;
+   
+
+   
+
+    public String getPropertyid() {
+        return propertyid;
     }
 
-    public void setNumberofperson(final String numberofperson) {
-        this.numberofperson = numberofperson;
+    public void setPropertyid(String propertyid) {
+        this.propertyid = propertyid;
     }
 
-    public String getNumberofrooms() {
-        return numberofrooms;
-    }
-
-    public void setNumberofrooms(final String numberofrooms) {
-        this.numberofrooms = numberofrooms;
-    }
-
-    public String getSumpcapacity() {
-        return sumpcapacity;
-    }
-
-    public void setSumpcapacity(final String sumpcapacity) {
-        this.sumpcapacity = sumpcapacity;
-    }
-
-    public Date getExecutiondate() {
-        return executiondate;
-    }
-
-    public void setExecutiondate(final Date executiondate) {
-        this.executiondate = executiondate;
-    }
-
-    public Long getDonationcharges() {
-        return donationcharges;
-    }
-
-    public void setDonationcharges(final Long donationcharges) {
-        this.donationcharges = donationcharges;
-    }
-
-    public Boolean getLegacy() {
-        return legacy;
-    }
-
-    public void setLegacy(final Boolean legacy) {
-        this.legacy = legacy;
-    }
-
-    public String getApprovalnumber() {
-        return approvalnumber;
-    }
-
-    public void setApprovalnumber(final String approvalnumber) {
-        this.approvalnumber = approvalnumber;
-    }
-
-  
-    public Boundary getWardid() {
-        return wardid;
-    }
-
-    public void setWardid(final Boundary wardid) {
-        this.wardid = wardid;
-    }
-
-    public Boundary getZoneid() {
-        return zoneid;
-    }
-
-    public void setZoneid(final Boundary zoneid) {
-        this.zoneid = zoneid;
-    }
-
-    public Boundary getStreet() {
-        return street;
-    }
-
-    public void setStreet(final Boundary street) {
-        this.street = street;
-    }
-
-    public Boundary getBlock() {
-        return block;
-    }
-
-    public void setBlock(final Boundary block) {
-        this.block = block;
-    }
-
-    public Boundary getLocality() {
-        return locality;
-    }
-
-    public void setLocality(final Boundary locality) {
-        this.locality = locality;
-    }
-
-    public WaterChargeViewEmbedded getId() {
-        return id;
-    }
-
-    public void setId(final WaterChargeViewEmbedded id) {
-        this.id = id;
-    }
+   
 
     public EgDemand getDemand() {
         return demand;
@@ -354,68 +211,72 @@ public class WaterChargeMaterlizeView {
         this.demand = demand;
     }
 
-    public BigDecimal getAdvancecoll() {
-        return advancecoll;
+   
+
+   
+  public Long getConnectiondetailsid() {
+        return connectiondetailsid;
     }
 
-    public void setAdvancecoll(final BigDecimal advancecoll) {
-        this.advancecoll = advancecoll;
+    public void setConnectiondetailsid(Long connectiondetailsid) {
+        this.connectiondetailsid = connectiondetailsid;
     }
 
-    public Long getDueperiod() {
-        return dueperiod;
+    public List<InstDmdCollResponse> getInstDmdColl() {
+        return instDmdColl;
     }
 
-    public void setDueperiod(final Long dueperiod) {
-        this.dueperiod = dueperiod;
+    public void setInstDmdColl(List<InstDmdCollResponse> instDmdColl) {
+        this.instDmdColl = instDmdColl;
     }
 
-    public BigDecimal getCurrentdemand() {
+    public double getCurrentdemand() {
         return currentdemand;
     }
 
-    public void setCurrentdemand(final BigDecimal currentdemand) {
+    public void setCurrentdemand(double currentdemand) {
         this.currentdemand = currentdemand;
     }
 
-    public BigDecimal getCurrentcoll() {
+    public double getCurrentcoll() {
         return currentcoll;
     }
 
-    public void setCurrentcoll(final BigDecimal currentcoll) {
+    public void setCurrentcoll(double currentcoll) {
         this.currentcoll = currentcoll;
     }
 
-    public BigDecimal getCurrentbalance() {
+    public double getCurrentbalance() {
         return currentbalance;
     }
 
-    public void setCurrentbalance(final BigDecimal currentbalance) {
+    public void setCurrentbalance(double currentbalance) {
         this.currentbalance = currentbalance;
     }
 
-    public BigDecimal getArreardemand() {
+    public double getArreardemand() {
         return arreardemand;
     }
 
-    public void setArreardemand(final BigDecimal arreardemand) {
+    public void setArreardemand(double arreardemand) {
         this.arreardemand = arreardemand;
     }
 
-    public BigDecimal getArrearcoll() {
+    public double getArrearcoll() {
         return arrearcoll;
     }
 
-    public void setArrearcoll(final BigDecimal arrearcoll) {
+    public void setArrearcoll(double arrearcoll) {
         this.arrearcoll = arrearcoll;
     }
 
-    public BigDecimal getArrearbalance() {
+    public double getArrearbalance() {
         return arrearbalance;
     }
 
-    public void setArrearbalance(final BigDecimal arrearbalance) {
+    public void setArrearbalance(double arrearbalance) {
         this.arrearbalance = arrearbalance;
     }
+
 
 }
