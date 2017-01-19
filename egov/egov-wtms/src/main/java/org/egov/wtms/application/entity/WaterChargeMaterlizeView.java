@@ -40,9 +40,7 @@
 package org.egov.wtms.application.entity;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -56,7 +54,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.egov.demand.model.EgDemand;
-import org.egov.infra.admin.master.entity.Boundary;
 
 @Entity
 @Table(name = "egwtr_mv_dcb_view")
@@ -74,6 +71,8 @@ public class WaterChargeMaterlizeView implements Serializable {
     private String usagetype;
     private String categorytype;
     private String pipesize;
+    private String username;
+    private String houseno;
     private String watersource;
     private String connectiontype;
     private String connectionstatus;
@@ -276,6 +275,22 @@ public class WaterChargeMaterlizeView implements Serializable {
 
     public void setArrearbalance(double arrearbalance) {
         this.arrearbalance = arrearbalance;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getHouseno() {
+        return houseno;
+    }
+
+    public void setHouseno(String houseno) {
+        this.houseno = houseno;
     }
 
 
