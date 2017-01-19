@@ -223,7 +223,7 @@ public class GenericMasterAjaxController {
         IOUtils.write(bj.toString(), response.getWriter());
     }
 
-    @RequestMapping(value = "/boundary/ajaxBoundary-blockByWard", method = RequestMethod.GET)
+    @RequestMapping(value = {"/boundary/ajaxBoundary-blockByWard","/public/boundary/ajaxBoundary-blockByWard"}, method = RequestMethod.GET)
     public void blockByWard(@RequestParam Long wardId, HttpServletResponse response) throws IOException {
         List<Boundary> blocks = boundaryService.getActiveChildBoundariesByBoundaryId(wardId);
         final List<JSONObject> jsonObjects = new ArrayList<>();
