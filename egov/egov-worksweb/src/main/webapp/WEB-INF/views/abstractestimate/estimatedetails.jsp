@@ -75,12 +75,17 @@
 		</div>
 		
 		<div class="form-group">
-			
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.locality" />
 			</label>
-			<div class="col-sm-3 add-margin ">
-			<input class="form-control disablefield" name="locality"  id="" value="${abstractEstimate.lineEstimateDetails.lineEstimate.location.name}"/>
+			<div class="col-sm-3 add-margin">
+				<form:select path="locality" data-first-option="false" id="locationBoundary" cssClass="form-control disablefield">
+					<form:option value="">
+						<spring:message code="lbl.select" />
+						<form:options items="${localities}" itemValue="id" itemLabel="name" />
+					</form:option>
+				</form:select>
+				<form:errors path="locality" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.workcategory" /><c:if test="${abstractEstimate.lineEstimateDetails == null }"><span class="mandatory"></span></c:if>
@@ -96,12 +101,28 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.beneficiary" />
-			</label>
-			<div class="col-sm-3 add-margin ">
-			<input class="form-control disablefield" name="" id="beneficiary" value="${abstractEstimate.lineEstimateDetails.lineEstimate.beneficiary}"/>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.beneficiary" /><c:if test="${abstractEstimate.lineEstimateDetails == null }"><span class="mandatory"></span></c:if></label>
+			<div class="col-sm-3 add-margin">
+				<form:select path="beneficiary" data-first-option="false" id="beneficiary" class="form-control disablefield" required="required">
+					<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${beneficiary}" />
+				</form:select>
+				<form:errors path="beneficiary" cssClass="add-margin error-msg" />
 			</div>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.modeofallotment" /><c:if test="${abstractEstimate.lineEstimateDetails == null }"><span class="mandatory"></span></c:if></label>
+			<div class="col-sm-3 add-margin">
+				<form:select path="modeOfAllotment" data-first-option="false" id="modeOfAllotment" class="form-control disablefield" required="required">
+					<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${modeOfAllotment}" itemValue="name" itemLabel="name" />
+				</form:select>
+				<form:errors path="modeOfAllotment" cssClass="add-margin error-msg" />
+			</div>
+		</div>
+		<div class="form-group">
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.location" /><span id="spanlocation" class="mandatory"></span>
 			</label>

@@ -110,11 +110,13 @@ import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.lineestimate.service.WorkIdentificationNumberGenerator;
 import org.egov.works.masters.entity.EstimateTemplate;
+import org.egov.works.masters.service.ModeOfAllotmentService;
 import org.egov.works.masters.service.NatureOfWorkService;
 import org.egov.works.masters.service.OverheadService;
 import org.egov.works.masters.service.ScheduleCategoryService;
@@ -240,6 +242,9 @@ public class EstimateService {
     @Autowired
     private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
 
+    @Autowired
+    private ModeOfAllotmentService modeOfAllotmentService;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -306,10 +311,12 @@ public class EstimateService {
             act.setAbstractEstimate(abstractEstimate);
         if (abstractEstimate.getLineEstimateDetails() != null)
             abstractEstimate.setProjectCode(abstractEstimate.getLineEstimateDetails().getProjectCode());
-        final CFinancialYear financialYear = worksUtils.getFinancialYearByDate(abstractEstimate.getEstimateDate());
-        final EstimateNumberGenerator e = beanResolver.getAutoNumberServiceFor(EstimateNumberGenerator.class);
-        final String estimateNumber = e.getEstimateNumber(abstractEstimate, financialYear);
-        abstractEstimate.setEstimateNumber(estimateNumber);
+        if (!worksApplicationProperties.lineEstimateRequired()) {
+            final CFinancialYear financialYear = worksUtils.getFinancialYearByDate(abstractEstimate.getEstimateDate());
+            final EstimateNumberGenerator e = beanResolver.getAutoNumberServiceFor(EstimateNumberGenerator.class);
+            final String estimateNumber = e.getEstimateNumber(abstractEstimate, financialYear);
+            abstractEstimate.setEstimateNumber(estimateNumber);
+        }
         return abstractEstimateRepository.save(abstractEstimate);
     }
 
@@ -1160,6 +1167,10 @@ public class EstimateService {
         model.addAttribute("finYear", financialYearDAO.findAll());
         model.addAttribute("uoms", uomService.findAll());
         model.addAttribute("workCategory", WorkCategory.values());
+        model.addAttribute("beneficiary", Beneficiary.values());
+        model.addAttribute("localities", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                WorksConstants.LOCATION_BOUNDARYTYPE, WorksConstants.LOCATION_HIERARCHYTYPE));
+        model.addAttribute("modeOfAllotment", modeOfAllotmentService.findAll());
 
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);

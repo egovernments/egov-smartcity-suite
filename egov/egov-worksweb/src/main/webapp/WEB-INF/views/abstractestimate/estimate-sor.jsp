@@ -54,7 +54,7 @@
 		<input type="hidden" id="errorsornonsor" value="<spring:message code='error.sor.nonsor.required' />">
 		<input type="hidden" value="${abstractEstimate.sorActivities.size() }" id="sorActivitiesSize" />
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"> <spring:message code="lbl.typeofwork" />
+			<label class="col-sm-3 control-label text-right"> <spring:message code="lbl.typeofwork" /><c:if test="${abstractEstimate.lineEstimateDetails == null }"><span class="mandatory"></span></c:if>
 			</label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="parentCategory" data-first-option="false" id="parentCategory" class="form-control disablefield"

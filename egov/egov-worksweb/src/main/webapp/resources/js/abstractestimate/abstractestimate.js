@@ -386,6 +386,7 @@ $(document).ready(function(){
 		}
 	});
 	replaceWorkCategoryChar();
+	replaceBeneficiaryChar();
 	getFunctionsByFundAndDepartment();
 });
 
@@ -2146,9 +2147,18 @@ function validateWorkFlowApprover(name) {
 		$('#approvalDesignation').attr('required', 'required');
 		$('#approvalPosition').attr('required', 'required');
 		$('#approvalComent').removeAttr('required');
+		
+		var modeOfEntrustment = $('#modeOfAllotment').val();
+		var estimateValue = parseFloat($('#estimateValueTotal').html());
+		var nominationLimit = $('#nominationLimit').val();
+		var nominationName = $('#nominationName').val();
+		var message = nominationName + " Recommended mode of entrustment can be awarded for the estimates with value less than Rs." + nominationLimit + "/- . Please enter proper value";
+		if(modeOfEntrustment == nominationName && parseFloat(estimateValue) > parseFloat(nominationLimit) ){
+			bootbox.alert(message);
+			return false;
+		}
 
 		var lineEstimateAmount = parseFloat($('#lineEstimateAmount').val());
-		var estimateValue = parseFloat($('#estimateValueTotal').html());
 		if($('#lineEstimateRequired').val() == 'true' && estimateValue > lineEstimateAmount) {
 			var diff = estimateValue - lineEstimateAmount;
 			bootbox.alert("Abstract/Detailed estimate amount is Rs."+ parseFloat(diff).toFixed(2) +"/- more than the administrative sanctioned amount (Rs." + lineEstimateAmount + "/-) for this estimate , please create abstract estimate with less amount");
@@ -3658,6 +3668,13 @@ function replaceWorkCategoryChar() {
 	$('#workCategory option').each(function() {
 	   var $this = $(this);
 	   $this.text($this.text().replace(/_/g, ' '));
+	});
+}
+
+function replaceBeneficiaryChar() {
+	$('#beneficiary option').each(function() {
+	   var $this = $(this);
+	   $this.text($this.text().replace(/_C/g, '/C').replace(/_/g, ' '));
 	});
 }
 

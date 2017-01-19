@@ -85,6 +85,8 @@
 	<input id="cancelConfirm" type="hidden" value="<spring:message code="lbl.estimate.confirm" />" />
 	<input id="mandatoryError" type="hidden" value="<spring:message code="error.mandatory.fields" />" />
 	<input type="hidden" name="lineEstimateRequired" id="lineEstimateRequired" value="${lineEstimateRequired }"/>
+	<input type="hidden" id="nominationLimit" value="${nominationLimit}">
+	<input type="hidden" id="nominationName" value="${nominationName}">
 	<c:choose>
 		<c:when test="${abstractEstimate.lineEstimateDetails != null }">
 			<form:hidden path="estimateNumber" name="estimateNumber" value="${abstractEstimate.lineEstimateDetails.estimateNumber}"/>
@@ -96,7 +98,7 @@
 	<form:hidden path="" name="code" id="code" value="${abstractEstimate.projectCode.code}"/>
 	<input type="hidden" name="mode" value="${mode}" id="mode"/>
 	
-	<%@ include file="estimateheaderdetail.jsp"%>
+	<jsp:include page="estimateheaderdetail.jsp" />
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab" href="#estimateheader"
@@ -113,8 +115,8 @@
 		</div>
 		<div class="tab-content">
 			<div class="tab-pane fade in active" id="estimateheader">   
-				<%@ include file="estimate-header.jsp"%>
-				<%@ include file="estimate-multiyearestimate.jsp"%>
+				<jsp:include page="estimate-header.jsp" />
+				<jsp:include page="estimate-multiyearestimate.jsp" />
 				<c:if test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true }">
 	 				<%@ include file="spilloverestimate-technicalsanction.jsp"%>
 				</c:if>

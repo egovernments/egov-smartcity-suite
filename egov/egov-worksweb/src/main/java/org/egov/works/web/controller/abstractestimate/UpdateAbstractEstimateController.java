@@ -272,6 +272,15 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
 
         estimateService.loadLocationAppConfigValue(model);
 
+        final List<AppConfigValues> nominationLimit = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_NOMINATION_AMOUNT);
+        final AppConfigValues configValues = nominationLimit.get(0);
+        if (!configValues.getValue().isEmpty())
+            model.addAttribute("nominationLimit", configValues.getValue());
+        final List<AppConfigValues> nominationName = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.NOMINATION_NAME);
+        model.addAttribute("nominationName", !nominationName.isEmpty() ? nominationName.get(0).getValue() : "");
+
         model.addAttribute("workflowHistory",
                 worksUtils.getHistory(abstractEstimate.getState(), abstractEstimate.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());

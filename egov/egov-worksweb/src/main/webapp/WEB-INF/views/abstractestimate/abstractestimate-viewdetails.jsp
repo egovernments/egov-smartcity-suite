@@ -41,40 +41,45 @@
 			</c:choose>
 		</div>
 	</div>	
-	<c:if test="${abstractEstimate.lineEstimateDetails != null}">	
-		<div class="row add-border">
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.locality" />
-			</div>
-			<div class="col-xs-3 add-margin view-content"> 
-				<c:choose>
-					<c:when test="${abstractEstimate.lineEstimateDetails.lineEstimate.location != null}">
-						<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.location.name}"></c:out>
-					</c:when>
-					<c:otherwise>
-						<c:out default="N/A" value="N/A"></c:out>
-					</c:otherwise>
-				</c:choose>
-			</div>
-		</div>
-			<div class="row add-border">
-				<div class="col-xs-3 add-margin">
-					<spring:message code="lbl.workcategory" />
-				</div> 
-			
-				<div class="col-xs-3 add-margin view-content">
-					<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.workCategory}"></c:out>
-				</div>
-				<div class="col-xs-3 add-margin">
-					<spring:message code="lbl.beneficiary" />
-				</div> 
-			
-				<div class="col-xs-3 add-margin view-content">
-					<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.beneficiary}"></c:out>
-				</div>
-			</div>
-	</c:if>	
 	<div class="row add-border">
+		<div class="col-xs-3 add-margin">
+			<spring:message code="lbl.locality" />
+		</div>
+		<div class="col-xs-3 add-margin view-content"> 
+			<c:choose>
+				<c:when test="${abstractEstimate.locality != null}">
+					<c:out value="${abstractEstimate.locality.name}"></c:out>
+				</c:when>
+				<c:otherwise>
+					<c:out default="N/A" value="N/A"></c:out>
+				</c:otherwise>
+			</c:choose>
+		</div>
+	</div>
+	<div class="row add-border">
+		<div class="col-xs-3 add-margin">
+			<spring:message code="lbl.workcategory" />
+		</div> 
+	
+		<div class="col-xs-3 add-margin view-content">
+			<c:out value="${abstractEstimate.workCategory}"></c:out>
+		</div>
+		<div class="col-xs-3 add-margin">
+			<spring:message code="lbl.beneficiary" />
+		</div> 
+	
+		<div class="col-xs-3 add-margin view-content">
+			<c:out value="${abstractEstimate.beneficiary}"></c:out>
+		</div>
+	</div>
+	<div class="row add-border">
+		<div class="col-xs-3 add-margin">
+			<spring:message code="lbl.modeofallotment" />
+		</div> 
+	
+		<div class="col-xs-3 add-margin view-content">
+			<c:out value="${abstractEstimate.modeOfAllotment}"></c:out>
+		</div>
 		<div class="col-xs-3 add-margin">
 			<spring:message code="lbl.location" />
 		</div> 

@@ -189,6 +189,15 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         }
         model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());
         model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
+
+        final List<AppConfigValues> nominationLimit = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_NOMINATION_AMOUNT);
+        final AppConfigValues value = nominationLimit.get(0);
+        if (!value.getValue().isEmpty())
+            model.addAttribute("nominationLimit", value.getValue());
+        final List<AppConfigValues> nominationName = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.NOMINATION_NAME);
+        model.addAttribute("nominationName", !nominationName.isEmpty() ? nominationName.get(0).getValue() : "");
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
@@ -373,13 +382,16 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         if (lineEstimateDetails != null) {
             final LineEstimate lineEstimate = lineEstimateDetails.getLineEstimate();
             abstractEstimate.setLineEstimateDetails(lineEstimateDetails);
-            abstractEstimate.setExecutingDepartment(lineEstimateDetails.getLineEstimate().getExecutingDepartment());
-            abstractEstimate.setWorkCategory(lineEstimateDetails.getLineEstimate().getWorkCategory());
+            abstractEstimate.setExecutingDepartment(lineEstimate.getExecutingDepartment());
+            abstractEstimate.setWorkCategory(lineEstimate.getWorkCategory());
             abstractEstimate.setWard(lineEstimateDetails.getLineEstimate().getWard());
             abstractEstimate.setNatureOfWork(lineEstimate.getNatureOfWork());
             abstractEstimate.setParentCategory(lineEstimate.getTypeOfWork());
             abstractEstimate.setCategory(lineEstimate.getSubTypeOfWork());
             abstractEstimate.setProjectCode(lineEstimateDetails.getProjectCode());
+            abstractEstimate.setBeneficiary(lineEstimate.getBeneficiary());
+            abstractEstimate.setLocality(lineEstimate.getLocation());
+            abstractEstimate.setModeOfAllotment(lineEstimate.getModeOfAllotment());
         }
         abstractEstimate.addMultiYearEstimate(estimateService.populateMultiYearEstimate(abstractEstimate));
         abstractEstimate.addFinancialDetails(estimateService.populateEstimateFinancialDetails(abstractEstimate));

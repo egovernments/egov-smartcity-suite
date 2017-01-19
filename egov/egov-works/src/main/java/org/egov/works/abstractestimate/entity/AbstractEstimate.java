@@ -89,6 +89,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.masters.entity.DepositCode;
 import org.egov.works.masters.entity.NatureOfWork;
@@ -253,6 +254,16 @@ public class AbstractEstimate extends StateAware implements Auditable {
     @NotNull
     @Enumerated(EnumType.STRING)
     private WorkCategory workCategory;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "locality")
+    private Boundary locality;
+
+    @Enumerated(EnumType.STRING)
+    private Beneficiary beneficiary;
+
+    @NotNull
+    private String modeOfAllotment;
 
     @Valid
     @OrderBy("id")
@@ -897,6 +908,30 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     public void setWorkCategory(final WorkCategory workCategory) {
         this.workCategory = workCategory;
+    }
+
+    public Boundary getLocality() {
+        return locality;
+    }
+
+    public void setLocality(final Boundary locality) {
+        this.locality = locality;
+    }
+
+    public Beneficiary getBeneficiary() {
+        return beneficiary;
+    }
+
+    public void setBeneficiary(final Beneficiary beneficiary) {
+        this.beneficiary = beneficiary;
+    }
+
+    public String getModeOfAllotment() {
+        return modeOfAllotment;
+    }
+
+    public void setModeOfAllotment(final String modeOfAllotment) {
+        this.modeOfAllotment = modeOfAllotment;
     }
 
 }
