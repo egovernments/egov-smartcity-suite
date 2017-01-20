@@ -368,6 +368,7 @@ function displayPaytModes() {
 		document.getElementById('cashradiobuttonspan').style.display = "none";
 		document.getElementById('cashdetails').style.display = 'table-row';
 	}
+	
 	if (cardAllowed == 'true') {
 		// display card radio button
 		document.getElementById('cardradiobuttonspan').style.display = "block";
@@ -390,6 +391,15 @@ function displayPaytModes() {
 	} else {
 		// do not display card radio button
 		document.getElementById('bankradiobuttonspan').style.display = "none";
+	}
+	
+	if (onlineAllowed == 'true') {
+		// display bank radio button
+		document.getElementById('onlineradiobuttonspan').style.display = "block";
+		document.getElementById('instrumentTypeCashOrCard').value = "online";
+	} else {
+		// do not display card radio button
+		document.getElementById('onlineradiobuttonspan').style.display = "none";
 	}
 	// if cash is not allowed and cheque is allowed, set cheque as the default
 	// payt
@@ -415,18 +425,15 @@ function displayPaytModes() {
 		document.getElementById('bankdetails').style.display = 'table-row';
 		document.getElementById('instrumentTypeCashOrCard').value = "bankchallan";
 	}
-	if (onlineAllowed == 'true') {
-		// display cash radio button, set it as checked and display cash details
+	if (onlineAllowed == 'true' && cashAllowed == 'false'
+		&& chequeDDAllowed == 'false' && cardAllowed == 'false' && bankAllowed=='false') {
+		// display online radio button, set it as checked and display online details
 		document.getElementById('onlineradiobuttonspan').style.display = "block";
 
 		document.getElementById('onlineradiobutton').checked = true;
 		document.getElementById('onlinedetails').style.display = 'table-row';
 		document.getElementById('instrumentTypeCashOrCard').value = "online";
-	} else {
-		// do not display online details
-		document.getElementById('onlineradiobuttonspan').style.display = "none";
-		document.getElementById('onlinedetails').style.display = 'table-row';
-	}
+	} 
 }
 
 function isChequeDDAllowed() {
