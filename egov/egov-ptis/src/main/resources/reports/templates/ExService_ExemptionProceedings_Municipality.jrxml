@@ -1,7 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-01-12T14:19:27 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ExService_ExemptionProceedings_municipality" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
+<!-- 2017-01-20T11:44:40 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ExService_ExemptionProceedings_municipality" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="100"/>
@@ -32,6 +71,7 @@
 	<parameter name="applicationDate" class="java.lang.String"/>
 	<parameter name="exemptionReason" class="java.lang.String"/>
 	<parameter name="currentPropertyTax" class="java.math.BigDecimal"/>
+	<parameter name="isCommissioner" class="java.lang.Boolean"/>
 	<title>
 		<band height="330" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
@@ -181,15 +221,15 @@
 	<pageFooter>
 		<band height="132" splitType="Prevent">
 			<printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
-			<staticText>
-				<reportElement x="410" y="52" width="92" height="18" uuid="ab68c177-dc21-4991-979d-16dbb97345e0"/>
+			<textField>
+				<reportElement x="320" y="50" width="160" height="21" uuid="dcf04571-2bc9-47df-accb-1e137dc3c859"/>
 				<textElement textAlignment="Right">
-					<font isBold="true"/>
+					<font size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Commissioner]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{isCommissioner}?"Commissioner":"For Commissioner"]]></textFieldExpression>
+			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="207" y="70" width="294" height="20" uuid="e071b86b-1647-4965-83be-0e4d01a07077"/>
+				<reportElement x="210" y="71" width="294" height="20" uuid="e071b86b-1647-4965-83be-0e4d01a07077"/>
 				<textElement textAlignment="Right" markup="none">
 					<font size="12" isBold="true"/>
 				</textElement>
@@ -217,7 +257,7 @@
 				<text><![CDATA[The Revenue Officer/Revenue Inspector of this office for necessary action.]]></text>
 			</staticText>
 			<image hAlign="Center" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
-				<reportElement x="330" y="12" width="171" height="40" uuid="aceb46cc-920a-4642-8671-9c80f16ebe29"/>
+				<reportElement x="327" y="10" width="171" height="40" uuid="aceb46cc-920a-4642-8671-9c80f16ebe29"/>
 				<imageExpression><![CDATA[$P{userSignature}]]></imageExpression>
 			</image>
 		</band>

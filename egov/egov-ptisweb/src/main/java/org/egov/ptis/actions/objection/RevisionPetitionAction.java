@@ -686,6 +686,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         InputStream specialNoticePdf = null;
         String noticeNo = null;
         String natureOfWork;
+        List<Assignment> loggedInUserAssignment;
+        String loggedInUserDesignation;
         final PtNotice notice = noticeService
                 .getNoticeByNoticeTypeAndApplicationNumber(NATURE_OF_WORK_RP.equalsIgnoreCase(objection.getType())
                         ? NOTICE_TYPE_RPPROCEEDINGS : NOTICE_TYPE_GRPPROCEEDINGS, objection.getObjectionNumber());
@@ -741,6 +743,15 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             reportInput.setPrintDialogOnOpenReport(true);
             reportInput.setReportFormat(FileFormat.PDF);
             reportOutput = reportService.createReport(reportInput);
+
+            final User user = securityUtils.getCurrentUser();
+            loggedInUserAssignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                    objection.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
+            loggedInUserDesignation = !loggedInUserAssignment.isEmpty() ? loggedInUserAssignment.get(0).getDesignation().getName() : null;
+            if (COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
+                reportParams.put("isCommissioner", true);
+            else
+                reportParams.put("isCommissioner", false);
 
             if (reportOutput != null && reportOutput.getReportOutputData() != null)
                 specialNoticePdf = new ByteArrayInputStream(reportOutput.getReportOutputData());

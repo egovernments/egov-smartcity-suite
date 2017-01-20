@@ -395,6 +395,8 @@ public class PropertyTransferService {
         PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_MUTATION_CERTIFICATE,
                 propertyMutation.getApplicationNo());
         ReportOutput reportOutput = new ReportOutput();
+        List<Assignment> loggedInUserAssignment;
+        String loggedInUserDesignation;
         if (WFLOW_ACTION_STEP_GENERATE_TRANSFER_NOTICE.equalsIgnoreCase(actionType)) {
             final FileStoreMapper fsm = notice.getFileStore();
             final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
@@ -418,7 +420,17 @@ public class PropertyTransferService {
             noticeBean.setApproverName(users.get(0).getName());
             reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : "");
             reportParams.put("isCorporation", isCorporation);
-            noticeBean.setNoticeNumber(notice!=null ? notice.getNoticeNo() : "N/A");
+
+            final User user = securityUtils.getCurrentUser();
+            loggedInUserAssignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                    propertyMutation.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
+            loggedInUserDesignation = !loggedInUserAssignment.isEmpty() ? loggedInUserAssignment.get(0).getDesignation().getName() : null;
+            if (COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
+                reportParams.put("isCommissioner", true);
+            else
+                reportParams.put("isCommissioner", false);
+
+            noticeBean.setNoticeNumber(notice != null ? notice.getNoticeNo() : "N/A");
             noticeBean.setOldOwnerName(propertyMutation.getFullTranferorName());
             noticeBean.setOldOwnerParentName(propertyMutation.getFullTransferorGuardianName());
             noticeBean.setNewOwnerName(propertyMutation.getFullTranfereeName());

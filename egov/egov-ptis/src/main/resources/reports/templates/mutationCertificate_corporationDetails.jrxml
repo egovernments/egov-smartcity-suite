@@ -38,8 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-06-24T12:32:19 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-01-20T12:56:32 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mutationCertificate_details" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a002afff-59b5-4b48-b40a-06d60ceff39d">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -63,6 +63,7 @@
 	<parameter name="userSignature" class="java.lang.Object"/>
 	<parameter name="noticeNumber" class="java.lang.String"/>
 	<parameter name="approverName" class="java.lang.String"/>
+	<parameter name="isCommissioner" class="java.lang.Boolean"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -395,20 +396,13 @@
 	</title>
 	<pageFooter>
 		<band height="134" splitType="Prevent">
-			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="380" y="64" width="160" height="15" uuid="c3918da7-2133-4b3f-8ba3-93df0f4fac49"/>
-				<box leftPadding="2">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
+			<textField>
+				<reportElement x="360" y="59" width="160" height="21" uuid="dcf04571-2bc9-47df-accb-1e137dc3c859"/>
 				<textElement textAlignment="Right">
-					<font size="11" isBold="true"/>
+					<font size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Commissioner]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{isCommissioner}?"Commissioner":"For Commissioner"]]></textFieldExpression>
+			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="280" y="81" width="263" height="25" uuid="95279cf3-2c18-4cdd-87eb-e3baaf7ddddc"/>
 				<textElement textAlignment="Right" markup="none">

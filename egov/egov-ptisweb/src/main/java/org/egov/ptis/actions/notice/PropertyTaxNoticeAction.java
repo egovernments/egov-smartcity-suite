@@ -42,6 +42,7 @@ package org.egov.ptis.actions.notice;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION_CHOULTRY;
 import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION_EDU_INST;
@@ -91,7 +92,9 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgDemandDetails;
+import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -157,6 +160,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     public static final String NOTICE = "notice";
     private static final String VACANT_LAND = "Vacant Land";
     private static final String TAXEXEMPT = "Tax_Exemption";
+    private static final String IS_COMMISSIONER = "isCommissioner";
     private PropertyImpl property;
     private ReportService reportService;
     private NoticeService noticeService;
@@ -478,6 +482,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     private ReportRequest generateNoticeReportRequest(final BasicPropertyImpl basicProperty,
             final PropertyNoticeInfo propertyNotice) {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
+        List<Assignment> loggedInUserAssignment;
+        String loggedInUserDesignation;
         ReportRequest reportInput = null;
         reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null
                 ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : "");
@@ -498,6 +504,16 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             else
                 isCorporation = false;
             reportParams.put("isCorporation", isCorporation);
+
+            final User user = securityUtils.getCurrentUser();
+            loggedInUserAssignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                    property.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
+            loggedInUserDesignation = !loggedInUserAssignment.isEmpty() ? loggedInUserAssignment.get(0).getDesignation().getName() : null;
+            if (COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
+                reportParams.put(IS_COMMISSIONER, true);
+            else
+                reportParams.put(IS_COMMISSIONER, false);
+
             if (CREATE.equalsIgnoreCase(noticeMode))
                 reportParams.put("mode", CREATE);
             else if (MODIFY.equalsIgnoreCase(noticeMode))
@@ -519,6 +535,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     private ReportRequest generateExemptedNoticeReportRequest(final BasicPropertyImpl basicProperty,
             final PropertyNoticeInfo propertyNotice, final String noticeNo) {
         final Map<String, Object> reportParams = new HashMap<>();
+        List<Assignment> loggedInUserAssignment;
+        String loggedInUserDesignation;
         ReportRequest reportInput;
         reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null
                 ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : "");
@@ -562,6 +580,16 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             isCorporation = false;
         reportParams.put("isCorporation", isCorporation);
         reportParams.put("actionType", actionType);
+
+        final User user = securityUtils.getCurrentUser();
+        loggedInUserAssignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                property.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
+        loggedInUserDesignation = !loggedInUserAssignment.isEmpty() ? loggedInUserAssignment.get(0).getDesignation().getName() : null;
+        if (COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
+            reportParams.put(IS_COMMISSIONER, true);
+        else
+            reportParams.put(IS_COMMISSIONER, false);
+
         setNoticeInfo(propertyNotice, basicProperty, noticeMode);
         reportInput = getReportByExemptionReason(propertyNotice, basicProperty.getProperty().getTaxExemptedReason().getCode(),
                 reportParams);
