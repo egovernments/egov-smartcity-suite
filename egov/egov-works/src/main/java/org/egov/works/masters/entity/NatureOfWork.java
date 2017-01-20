@@ -39,27 +39,51 @@
  */
 package org.egov.works.masters.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infstr.models.BaseModel;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.SafeHtml;
 
-public class NatureOfWork extends BaseModel {
+@Entity
+@Table(name = "EGW_NATUREOFWORK")
+@SequenceGenerator(name = NatureOfWork.SEQ_EGW_NATUREOFWORK, sequenceName = NatureOfWork.SEQ_EGW_NATUREOFWORK, allocationSize = 1)
+public class NatureOfWork {
 
-    private static final long serialVersionUID = -8350958038107099411L;
-    @NotEmpty
-    private String name;
-    @NotNull
-    private ExpenditureType expenditureType;
-    private String code;
+    public static final String SEQ_EGW_NATUREOFWORK = "SEQ_EGW_NATUREOFWORK";
 
-    public NatureOfWork() {
+    public enum ExpenditureType {
+        CAPITAL, REVENUE, OTHERS
     }
 
-    public NatureOfWork(final String name, final ExpenditureType expenditureType) {
-        super();
-        this.name = name;
-        this.expenditureType = expenditureType;
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_NATUREOFWORK, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotNull
+    @SafeHtml
+    private String name;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private ExpenditureType expenditureType;
+
+    @NotNull
+    @SafeHtml
+    private String code;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -85,4 +109,5 @@ public class NatureOfWork extends BaseModel {
     public void setCode(final String code) {
         this.code = code;
     }
+
 }

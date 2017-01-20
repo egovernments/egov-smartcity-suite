@@ -357,10 +357,10 @@ public class AjaxLineEstimateController {
             if (natureOfWorkId != null)
                 natureOfWork = natureOfWorkService.findById(natureOfWorkId);
             String accountType = null;
-            if (natureOfWork != null && natureOfWork.getExpenditureType().getValue()
+            if (natureOfWork != null && natureOfWork.getExpenditureType().toString()
                     .equalsIgnoreCase(WorksConstants.NATUREOFWORK_EXPENDITURETYPE_CAPITAL))
                 accountType = BudgetAccountType.CAPITAL_EXPENDITURE.toString();
-            else if (natureOfWork != null && natureOfWork.getExpenditureType().getValue()
+            else if (natureOfWork != null && natureOfWork.getExpenditureType().toString()
                     .equalsIgnoreCase(WorksConstants.NATUREOFWORK_EXPENDITURETYPE_REVENUE))
                 accountType = BudgetAccountType.REVENUE_EXPENDITURE.toString();
             budgetGroups = budgetGroupDAO.getBudgetGroupsByFundFunctionDeptAndAccountType(fundId, departmentId,
