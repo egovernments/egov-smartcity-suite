@@ -79,7 +79,7 @@ public class WaterChargeMaterlizeView implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "demand")
     private EgDemand demand;
-    
+
     @Column(name = "curr_demand")
     private double currentdemand;
     @Column(name = "curr_coll")
@@ -94,9 +94,7 @@ public class WaterChargeMaterlizeView implements Serializable {
     private double arrearbalance;
 
     @OneToMany(mappedBy = "waterMatView", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<InstDmdCollResponse> instDmdColl= new ArrayList<InstDmdCollResponse>(0);
-
-
+    private List<InstDmdCollResponse> instDmdColl = new ArrayList<InstDmdCollResponse>(0);
 
     public String getAddress() {
         return address;
@@ -121,8 +119,6 @@ public class WaterChargeMaterlizeView implements Serializable {
     public void setOldhscno(final String oldhscno) {
         this.oldhscno = oldhscno;
     }
-
-   
 
     public String getPropertytype() {
         return propertytype;
@@ -188,19 +184,13 @@ public class WaterChargeMaterlizeView implements Serializable {
         this.connectionstatus = connectionstatus;
     }
 
-   
-
-   
-
     public String getPropertyid() {
         return propertyid;
     }
 
-    public void setPropertyid(String propertyid) {
+    public void setPropertyid(final String propertyid) {
         this.propertyid = propertyid;
     }
-
-   
 
     public EgDemand getDemand() {
         return demand;
@@ -210,14 +200,11 @@ public class WaterChargeMaterlizeView implements Serializable {
         this.demand = demand;
     }
 
-   
-
-   
-  public Long getConnectiondetailsid() {
+    public Long getConnectiondetailsid() {
         return connectiondetailsid;
     }
 
-    public void setConnectiondetailsid(Long connectiondetailsid) {
+    public void setConnectiondetailsid(final Long connectiondetailsid) {
         this.connectiondetailsid = connectiondetailsid;
     }
 
@@ -225,7 +212,7 @@ public class WaterChargeMaterlizeView implements Serializable {
         return instDmdColl;
     }
 
-    public void setInstDmdColl(List<InstDmdCollResponse> instDmdColl) {
+    public void setInstDmdColl(final List<InstDmdCollResponse> instDmdColl) {
         this.instDmdColl = instDmdColl;
     }
 
@@ -233,7 +220,7 @@ public class WaterChargeMaterlizeView implements Serializable {
         return currentdemand;
     }
 
-    public void setCurrentdemand(double currentdemand) {
+    public void setCurrentdemand(final double currentdemand) {
         this.currentdemand = currentdemand;
     }
 
@@ -241,7 +228,7 @@ public class WaterChargeMaterlizeView implements Serializable {
         return currentcoll;
     }
 
-    public void setCurrentcoll(double currentcoll) {
+    public void setCurrentcoll(final double currentcoll) {
         this.currentcoll = currentcoll;
     }
 
@@ -249,7 +236,7 @@ public class WaterChargeMaterlizeView implements Serializable {
         return currentbalance;
     }
 
-    public void setCurrentbalance(double currentbalance) {
+    public void setCurrentbalance(final double currentbalance) {
         this.currentbalance = currentbalance;
     }
 
@@ -257,7 +244,7 @@ public class WaterChargeMaterlizeView implements Serializable {
         return arreardemand;
     }
 
-    public void setArreardemand(double arreardemand) {
+    public void setArreardemand(final double arreardemand) {
         this.arreardemand = arreardemand;
     }
 
@@ -265,7 +252,7 @@ public class WaterChargeMaterlizeView implements Serializable {
         return arrearcoll;
     }
 
-    public void setArrearcoll(double arrearcoll) {
+    public void setArrearcoll(final double arrearcoll) {
         this.arrearcoll = arrearcoll;
     }
 
@@ -273,7 +260,7 @@ public class WaterChargeMaterlizeView implements Serializable {
         return arrearbalance;
     }
 
-    public void setArrearbalance(double arrearbalance) {
+    public void setArrearbalance(final double arrearbalance) {
         this.arrearbalance = arrearbalance;
     }
 
@@ -281,7 +268,7 @@ public class WaterChargeMaterlizeView implements Serializable {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(final String username) {
         this.username = username;
     }
 
@@ -289,9 +276,8 @@ public class WaterChargeMaterlizeView implements Serializable {
         return houseno;
     }
 
-    public void setHouseno(String houseno) {
+    public void setHouseno(final String houseno) {
         this.houseno = houseno;
     }
-
 
 }
