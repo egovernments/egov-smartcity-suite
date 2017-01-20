@@ -424,7 +424,7 @@ public class PropertyTransferService {
             final User user = securityUtils.getCurrentUser();
             loggedInUserAssignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(
                     propertyMutation.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
-            loggedInUserDesignation = !loggedInUserAssignment.isEmpty() ? loggedInUserAssignment.get(0).getDesignation().getName() : null;
+            loggedInUserDesignation = !loggedInUserAssignment.isEmpty() ? loggedInUserAssignment.get(0).getDesignation().getName() :"";
             if (COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
                 reportParams.put("isCommissioner", true);
             else
