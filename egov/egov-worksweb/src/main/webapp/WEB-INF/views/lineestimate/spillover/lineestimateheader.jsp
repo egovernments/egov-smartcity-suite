@@ -231,7 +231,6 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.scheme" /></label>
 			<input type="hidden" id="schemeValue" value="${lineEstimate.scheme.id }"/>
 			<label class="col-sm-3 control-label text-right" for = "scheme"><spring:message code="lbl.scheme" /></label>
 			<div class="col-sm-3 add-margin">

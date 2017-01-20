@@ -74,24 +74,6 @@
 								<form:input path="tempLineEstimateDetails[0].estimateAmount" name="lineEstimateDetails[0].estimateAmount" value="${lineEstimateDetails[0].estimateAmount}" data-errormsg="Estimated amount is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount patternvalidation" onkeyup="calculateEstimatedAmountTotal();" onblur="calculateEstimatedAmountTotal();" required="required"/>
 								<form:errors path="tempLineEstimateDetails[0].estimateAmount" cssClass="add-margin error-msg" />
 							</td>
-							<td>
-								<form:input path="tempLineEstimateDetails[0].quantity" name="lineEstimateDetails[0].quantity" id="quantity0" value="${lineEstimateDetails[0].quantity}" data-errormsg="quantity is mandatory!" data-idx="0" data-optional="0" class="form-control table-input text-right quantity" maxlength="8" onkeyup="validateQuantity();" required="required"/>
-								<form:errors path="tempLineEstimateDetails[0].quantity" cssClass="add-margin error-msg" />
-							</td>
-							<td>
-								<form:select path="tempLineEstimateDetails[0].uom" name="lineEstimateDetails[0].uom" data-errormsg="UOM is mandatory!" data-idx="0" data-optional="0" class="form-control table-input"  required="required">
-									<form:option value="">
-										<spring:message code="lbl.select" />
-									</form:option>
-									<form:options items="${lineEstimateUOMs}" itemValue="name" itemLabel="name" />
-								</form:select>
-								<form:errors path="tempLineEstimateDetails[0].uom" cssClass="add-margin error-msg" />
-							</td>
-							<td>
-								<form:input path="tempLineEstimateDetails[0].beneficiary" id="quantity" name="lineEstimateDetails[0].beneficiary" value="${lineEstimateDetails[0].beneficiary}" data-errormsg="Expected Outcome is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input" maxlength="64" required="required"/>
-								<form:errors path="tempLineEstimateDetails[0].beneficiary" cssClass="add-margin error-msg" />
-							</td>
-							<td> <span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
 							<c:if test="${workdetailsadd}">
 								<td> <span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
 							</c:if>
@@ -112,26 +94,6 @@
 									<form:input path="tempLineEstimateDetails[${item.index}].estimateAmount" name="lineEstimateDetails[${item.index}].estimateAmount" value="${lineEstimateDtls.estimateAmount}" data-errormsg="Estimated amount is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount patternvalidation" onkeyup="calculateEstimatedAmountTotal();" required="required"/>
 									<form:errors path="tempLineEstimateDetails[${item.index}].estimateAmount" cssClass="add-margin error-msg" />
 								</td>
-								<td>
-									<form:input path="tempLineEstimateDetails[${item.index}].quantity" name="lineEstimateDetails[${item.index}].quantity" id="quantity${item.index}" value="${lineEstimateDtls.quantity}" onkeypress="" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right quantity"  onkeyup="validateQuantity();" required="required"/>
-									<form:errors path="tempLineEstimateDetails[${item.index}].quantity" cssClass="add-margin error-msg" />
-								</td>
-								<td>
-									<form:select path="tempLineEstimateDetails[${item.index}].uom" name="lineEstimateDetails[${item.index}].uom" data-errormsg="UOM is mandatory!" data-idx="0" data-optional="0" class="form-control table-input"  required="required">
-										<form:option value="">
-											<spring:message code="lbl.select" />
-										</form:option>
-										<form:options items="${lineEstimateUOMs}" itemValue="name" itemLabel="name" />
-									</form:select>
-									<form:errors path="tempLineEstimateDetails[${item.index}].uom" cssClass="add-margin error-msg" />
-								</td>
-								<td>
-									<form:input path="tempLineEstimateDetails[${item.index}].beneficiary" name="lineEstimateDetails[${item.index}].beneficiary" value="${lineEstimateDtls.beneficiary}" data-errormsg="Expected Outcome is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text" required="required"/>
-									<form:errors path="tempLineEstimateDetails[${item.index}].beneficiary" cssClass="add-margin error-msg" />
-								</td>
-								<td> 
-									<span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> 
-								</td>
 								<c:if test="${workdetailsadd}">
 									<td> 
 										<span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> 
@@ -151,8 +113,6 @@
 				</c:if>
 				<tr>
 					<td colspan="2" class="text-right"><spring:message code="lbl.total" /></td>
-					<td class="text-right view-content"> <span id="estimateTotal"><c:out value="${total}"/></span> </td>
-					<td></td><td></td><td></td><td></td>
 					<td class="text-right"> <span id="estimateTotal"><c:out value="${total}"/></span> </td>
 					<c:if test="${workdetailsadd}">
 						<td></td>

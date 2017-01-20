@@ -185,8 +185,6 @@
 						<c:if test="${(lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' && mode == 'view') || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
 							<td class="text-right"> <span id="actualEstimateTotal"><fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${actualEstimateTotal}" /></span> </td>
 						</c:if>
-							<td></td>
-							<td></td>
 						<c:if test="${ lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED'}">
 							<td></td>
 						</c:if>

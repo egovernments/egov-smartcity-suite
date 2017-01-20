@@ -152,6 +152,8 @@ function getSchemsByFundId(fundId) {
 								$('#scheme').append($('<option '+ selected +'>').text(value.name).attr('value', value.id));
 							});
 				});
+			}
+}
 
 $('.btn-primary').click(function(){
 	var button = $(this).attr('id');
@@ -170,33 +172,9 @@ $('.btn-primary').click(function(){
 				$('#technicalSanctionDate').val('').datepicker('update');
 				return false;
 			}
-
-			var message = $('#errorActualAmount').val() + " ";
-
-			if(technicalSanctionDate != '' && technicalSanctionNumber != '') {
-				$("input[name$='actualEstimateAmount']")
-				.each(
-						function() {
-							var index = getRow(this).rowIndex - 1;
-							var estimateAmount = $(
-									'#estimateAmount' + index).html();
-							var actualAmount = $(
-									'#actualEstimateAmount' + index).val();
-							if (parseFloat(estimateAmount.trim()) < parseFloat(actualAmount)) {
-								var estimateNumber = $(
-										'#estimateNumber' + index).val();
-								message += estimateNumber + ", ";
-								flag = false;
-							}
-						});
-				message = message.replace(/,\s*$/, ". ");
-				message += $('#errorActualAmountContinued').val();
-				if (!flag) {
-					bootbox.alert(message);
-					return false;
-				}
-			}
-}
+		}
+	}
+});
 function getSubSchemsBySchemeId(schemeId) {
 	if (schemeId === '') {
 		   $('#subScheme').empty();
@@ -395,17 +373,6 @@ function calculateEstimatedAmountTotal(){
 	$('#approvalDepartment').trigger('change');
 }
 
-function calculateActualEstimatedAmountTotal() {
-	validateActualEstimateAmount();
-	var actualEstimateTotal = 0;
-	$( "input[name$='actualEstimateAmount']" ).each(function(){
-		actualEstimateTotal = actualEstimateTotal + parseFloat(($(this).val()?$(this).val():"0"));
-		if(parseFloat($(this).val()) == 0)
-			$(this).val("");
-	});
-	$('#actualEstimateTotal').html(actualEstimateTotal);
-}
-
 function getLineEstimateDate() {
 	var dt = new Date(); 
 	var dd = dt.getDate() < 10 ? "0" + dt.getDate() : dt.getDate(); 
@@ -417,18 +384,6 @@ function getLineEstimateDate() {
 
 function validateEstimateAmount() {
 	$( "input[name$='estimateAmount']" ).on("keyup", function(){
-	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
-	        val = this.value;
-	    
-	    if(!valid){
-	        console.log("Invalid input!");
-	        this.value = val.substring(0, val.length - 1);
-	    }
-	});
-}
-
-function validateActualEstimateAmount() {
-	$( "input[name$='actualEstimateAmount']" ).on("keyup", function(){
 	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
 	        val = this.value;
 	    

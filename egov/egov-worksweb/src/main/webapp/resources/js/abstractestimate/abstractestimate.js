@@ -2148,14 +2148,16 @@ function validateWorkFlowApprover(name) {
 		$('#approvalPosition').attr('required', 'required');
 		$('#approvalComent').removeAttr('required');
 		
-		var modeOfEntrustment = $('#modeOfAllotment').val();
 		var estimateValue = parseFloat($('#estimateValueTotal').html());
-		var nominationLimit = $('#nominationLimit').val();
-		var nominationName = $('#nominationName').val();
-		var message = nominationName + " Recommended mode of entrustment can be awarded for the estimates with value less than Rs." + nominationLimit + "/- . Please enter proper value";
-		if(modeOfEntrustment == nominationName && parseFloat(estimateValue) > parseFloat(nominationLimit) ){
-			bootbox.alert(message);
-			return false;
+		if ($('#lineEstimateRequired').val() == 'false') {
+			var modeOfEntrustment = $('#modeOfAllotment').val();
+			var nominationLimit = $('#nominationLimit').val();
+			var nominationName = $('#nominationName').val();
+			var message = nominationName + " Recommended mode of entrustment can be awarded for the estimates with value less than Rs." + nominationLimit + "/- . Please enter proper value";
+			if(modeOfEntrustment == nominationName && parseFloat(estimateValue) > parseFloat(nominationLimit) ){
+				bootbox.alert(message);
+				return false;
+			}
 		}
 
 		var lineEstimateAmount = parseFloat($('#lineEstimateAmount').val());

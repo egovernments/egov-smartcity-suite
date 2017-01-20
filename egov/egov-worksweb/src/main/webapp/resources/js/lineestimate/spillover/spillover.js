@@ -209,58 +209,6 @@ $('#Save').click(function(){
 			return false;
 		}
 
-		var message = $('#errorActualAmount').val() + " ";
-		$("input[name$='actualEstimateAmount']")
-		.each(
-				function() {
-					var index = getRow(this).rowIndex - 1;
-					var estimateAmount = $(
-							'#estimateAmount' + index).val();
-					var actualAmount = $(
-							'#actualEstimateAmount' + index).val();
-					if(parseFloat(actualAmount) <= 0 ){
-						bootbox.alert($('#erroractualestimateamount').val());
-						isValidationSuccess = false;
-						return false;
-					}
-					if (parseFloat(estimateAmount.trim()) < parseFloat(actualAmount)) {
-						var estimateNumber = $(
-								'#estimateNumber' + index).val();
-						message += estimateNumber + ", ";
-						flag = false;
-					}
-				});
-		message = message.replace(/,\s*$/, ". ");
-		message += $('#errorActualAmountContinued').val();
-		if (!flag) {
-			bootbox.alert(message);
-			return false;
-		}
-		
-		message = $('#errorGrossBilledAmount').val() + " ";
-		
-		$("input[name$='grossAmountBilled']")
-		.each(
-				function() {
-					var index = getRow(this).rowIndex - 1;
-					var grossBilledAmount = $(
-							'#grossAmountBilled' + index).val();
-					var actualAmount = $(
-							'#actualEstimateAmount' + index).val();
-					if (parseFloat(grossBilledAmount) > parseFloat(actualAmount)) {
-						var estimateNumber = $(
-								'#estimateNumber' + index).val();
-						message += estimateNumber + ", ";
-						flag = false;
-					}
-				});
-		message = message.replace(/,\s*$/, ". ");
-		message += $('#errorActualAmountContinued').val();
-		if (!flag ) {
-			bootbox.alert(message);
-			return false;
-		}
-		
 		if($('#isBillsCreated').prop("checked") == true && $('#isWorkOrderCreated').prop("checked") == false) {
 			bootbox.alert($('#msgWorkOrderCreated').val());
 			return false;
@@ -271,6 +219,7 @@ $('#Save').click(function(){
 	}
 	else {
 		validateWorkFlowApprover(button);
+	}
 	}
 });
 
@@ -546,15 +495,6 @@ function calculateEstimatedAmountTotal(){
 		estimateTotal = estimateTotal + parseFloat(($(this).val()?$(this).val():"0"));
 	});
 	$('#estimateTotal').html(estimateTotal);
-}
-
-function calculateActualEstimatedAmountTotal(obj) {
-	decimalvalue(obj);
-	var actualEstimateTotal = 0;
-	$( "input[name$='actualEstimateAmount']" ).each(function(){
-		actualEstimateTotal = actualEstimateTotal + parseFloat(($(this).val()?$(this).val():"0"));
-	});
-	$('#actualEstimateTotal').html(actualEstimateTotal);
 }
 
 function validateEstimateAmount() {

@@ -1026,14 +1026,7 @@ public class LineEstimateService {
     }
 
     public void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {
-        Integer index = 0;
         BigDecimal estimateAmount = BigDecimal.ZERO;
-        for (final LineEstimateDetails led : lineEstimate.getTempLineEstimateDetails()) {
-            if (led.getQuantity() <= 0)
-                errors.rejectValue("lineEstimateDetails[" + index + "].quantity", "error.quantity.required");
-            estimateAmount = estimateAmount.add(led.getEstimateAmount());
-            index++;
-        }
         final List<AppConfigValues> nominationLimit = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_NOMINATION_AMOUNT);
         final AppConfigValues value = nominationLimit.get(0);

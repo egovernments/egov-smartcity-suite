@@ -241,8 +241,6 @@ public class CreateSpillOverLineEstimateController {
                 errors.rejectValue("lineEstimateDetails[" + index + "].estimateNumber", "error.estimatenumber.unique");
             if (workIdentificationNumber != null)
                 errors.rejectValue("lineEstimateDetails[" + index + "].projectCode.code", "error.win.unique");
-            if (led.getQuantity() <= 0)
-                errors.rejectValue("lineEstimateDetails[" + index + "].quantity", "error.quantity.required");
             estimateAmount = estimateAmount.add(led.getEstimateAmount());
             index++;
         }
