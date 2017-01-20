@@ -104,6 +104,14 @@ $(document)
 														"sClass" : "text-left"
 													},
 													{
+														"data" : "husbandName",
+														"sClass" : "text-left"
+													},
+													{
+														"data" : "wifeName",
+														"sClass" : "text-left"
+													},
+													{
 														"data" : "certificateType",
 														"sClass" : "text-left"
 													},{
@@ -111,15 +119,20 @@ $(document)
 													    sortable: false,
 													    "sClass" : "text-center",
 													    "render": function ( data, type, row, meta ) {
+													    	if(row.showprintcertificate)
+													    	{
 														        return '<button type="button" class="btn btn-xs btn-secondary print" value='+printcertificateurl+row.id +'><span class="glyphicon glyphicon-edit"></span>&nbsp;Print Certificate</button>';
-														        
+													    	}
 													    }
 													
 													}]
+											
 
 										});
+						
 
 					}
+					
 
 					$(document).on('click','.print',function(){
 					    var url = $(this).val();

@@ -166,6 +166,8 @@
 					<th>Registration No</th>
 					<th>Certificate No</th>
 					<th>certificateDate</th>
+					<th>Bridegroom Name</th>
+	    			<th>Bride Name</th>
 					<th>certificateType</th>
 					<th>Action</th>
 				</tr>

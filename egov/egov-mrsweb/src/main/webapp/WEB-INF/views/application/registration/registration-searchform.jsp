@@ -98,7 +98,7 @@
 	
 							<div class="col-sm-3 add-margin">
 								<form:input id="toDate" path="toDate" type="text" cssClass="form-control datepicker" data-date-today-highlight="true" data-date-end-date="0d" />
-								<form:errors path="fromDate" cssClass="error-msg"/>
+								<form:errors path="toDate" cssClass="error-msg"/>
 							</div>
 							
 					</div>

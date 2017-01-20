@@ -101,6 +101,10 @@ public class MarriageConstants {
     public static final String YEAR = "year";
     
     public static final String APPCONFKEY_DIGITALSIGNINWORKFLOW = "DIGITALSIGN_IN_WORKFLOW";
+    
+    public static final String PRINTCERTIFICATE_NO_OF_DAYS = "7";
+
+
 
     public static final List<String> venuelist = new ArrayList<String>() {
         private static final long serialVersionUID = -6112513531476444226L;

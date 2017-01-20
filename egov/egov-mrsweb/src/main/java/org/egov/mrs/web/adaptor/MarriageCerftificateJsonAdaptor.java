@@ -40,9 +40,14 @@
 
 package org.egov.mrs.web.adaptor;
 
+import static org.egov.mrs.application.MarriageConstants.PRINTCERTIFICATE_NO_OF_DAYS;
+
 import java.lang.reflect.Type;
 
+import java.util.Date;
+
 import org.egov.mrs.domain.entity.MarriageCertificate;
+import org.joda.time.DateTime;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -51,7 +56,8 @@ import com.google.gson.JsonSerializer;
 
 public class MarriageCerftificateJsonAdaptor implements JsonSerializer<MarriageCertificate> {
     private static final String REGISTRATION_NO = "registrationNo";
-
+    private static final String REGISTRATION = "REGISTRATION";
+    
     @Override
     public JsonElement serialize(final MarriageCertificate marriageCertificate, final Type type,
             final JsonSerializationContext jsc) {
@@ -73,13 +79,30 @@ public class MarriageCerftificateJsonAdaptor implements JsonSerializer<MarriageC
                 jsonObject.addProperty("certificateDate", marriageCertificate.getCertificateDate().toString());
             else
                 jsonObject.addProperty("certificateDate", org.apache.commons.lang.StringUtils.EMPTY);
+       
+            if (marriageCertificate.getCertificateType().name() == REGISTRATION) {
+                if (marriageCertificate.getRegistration().getHusband().getFullName() != null)
+                    jsonObject.addProperty("husbandName", marriageCertificate.getRegistration().getHusband().getFullName());
+            } else
+                jsonObject.addProperty("husbandName",
+                        marriageCertificate.getReIssue().getRegistration().getHusband().getFullName());
+            if (marriageCertificate.getCertificateType().name() == REGISTRATION) {
+                if (marriageCertificate.getRegistration().getWife().getFullName() != null)
+                    jsonObject.addProperty("wifeName", marriageCertificate.getRegistration().getHusband().getFullName());
+            } else
+                jsonObject.addProperty("wifeName", marriageCertificate.getReIssue().getRegistration().getHusband().getFullName());
 
             if (marriageCertificate.getCertificateType() != null)
                 jsonObject.addProperty("certificateType", marriageCertificate.getCertificateType().toString());
             else
                 jsonObject.addProperty("certificateType", org.apache.commons.lang.StringUtils.EMPTY);
-
+            
+            if (new DateTime(new Date()).isBefore(new DateTime(marriageCertificate.getCertificateDate()).plusDays(Integer
+                    .parseInt(PRINTCERTIFICATE_NO_OF_DAYS) + 1))) {
+                jsonObject.addProperty("showprintcertificate", true);
+            }
             jsonObject.addProperty("id", marriageCertificate.getId());
+
         }
         return jsonObject;
     }
