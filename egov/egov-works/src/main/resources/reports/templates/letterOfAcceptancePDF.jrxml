@@ -191,7 +191,7 @@
 			<textField>
 				<reportElement key="" stretchType="RelativeToTallestObject" x="15" y="178" width="528" height="30" uuid="2f8740f9-5c3a-4169-a4dd-45b906c44feb">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("Tendering (For below 1 Lakh)")]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("Tendering")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Justified" markup="none"/>
 				<textFieldExpression><![CDATA["	It is to inform you that the above work is assigned to you on tender basis at tender finalised rates"]]></textFieldExpression>
@@ -199,7 +199,7 @@
 			<textField>
 				<reportElement key="" stretchType="RelativeToTallestObject" x="16" y="177" width="528" height="30" uuid="1761c46d-2c30-4a44-9c41-1e287186d34d">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("E-Procurement (For above 1 Lakh)")]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("E-Procurement")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA["	It is to inform you that the above work is assigned to you by e -procurement at tender finalised rates."]]></textFieldExpression>
@@ -274,7 +274,7 @@
 			</staticText>
 			<textField>
 				<reportElement stretchType="RelativeToTallestObject" x="15" y="201" width="527" height="30" uuid="e13dc80c-5f00-4442-ba72-5123025ee505">
-					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("E-Procurement (For above 1 Lakh)")]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("E-Procurement")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA["	The above work is entrusted to you by e procurement basis and the work should be started within 3 days of receipt of this order and should be completed within........."]]></textFieldExpression>
@@ -325,7 +325,7 @@
 			</textField>
 			<textField>
 				<reportElement stretchType="RelativeToTallestObject" x="13" y="-29" width="531" height="30" uuid="e3d8772d-69af-4582-a437-7fea724cc22e">
-					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("Tendering (For below 1 Lakh)")]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("Tendering")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA["	The above work is entrusted to you on tender basis and the work should be started within 3 days of receipt of this order and should be completed within................."]]></textFieldExpression>
