@@ -44,7 +44,7 @@
 		<title>Digital Signature</title>
 		<script type="text/javascript">
 
-		jQuery(document).ready( function() {
+		$(document).ready( function() {
 			
 	 		var ulbCode = '${ulbCode}' ;
 	 		var fileStoreIds='${fileStoreIds}';

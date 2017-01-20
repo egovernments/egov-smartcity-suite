@@ -74,11 +74,11 @@
 							</div>
 						</s:if>
 						<table width="100%">
-							<%@ include file='../common/view.jsp'%>
+							<%@ include file='../common/license-detail-view.jsp'%>
 						</table>
 						<div class="panel panel-primary" id="workflowDiv" >
-							<%@ include file='../common/commonWorkflowMatrix.jsp'%>
-							<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
+							<%@ include file='../common/license-workflow-dropdown.jsp'%>
+							<%@ include file='../common/license-workflow-button.jsp'%>
 						</div>
 					</s:push>
 				</s:form>

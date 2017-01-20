@@ -38,42 +38,34 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt"%>
+<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %>
 
 <html>
-	<head>
-		<title>
-		</title>
+<head>
+    <title>
+    </title>
 
-	</head>
+</head>
 
-	<body>
-		<s:form name="certificateform" action="newTradeLicense" theme="simple">
-	<s:if test="%{hasErrors()}">
-				<div class="errorstyle">
-					<s:actionerror />
-					<s:fielderror />
-				</div>
-			</s:if>
-			<%-- <s:if test="%{hasActionMessages()}">
-				<div class="messagestyle">
-					<s:actionmessage theme="simple" />
-				</div>
-			</s:if> --%>
-			
-			<iframe src="/tl/reportViewer?reportId=<s:property value='reportId'/>" width="98%"
-		height="70%">
-	<p>Your browser does not support iframes.</p>
-	
-			<br />
-			<div class="buttonbottom">
-				<input name="buttonClose" type="button" class="button"
-					id="buttonClose" value="Close" onclick="window.close()" />
-				&nbsp;
+<body>
+<s:form name="certificateform" action="newTradeLicense" theme="simple">
+<s:if test="%{hasErrors()}">
+    <div class="errorstyle">
+        <s:actionerror/>
+        <s:fielderror/>
+    </div>
+</s:if>
+<iframe src="/tl/reportViewer?reportId=<s:property value='reportId'/>" width="98%"
+        height="70%">
+    <p>Your browser does not support iframes.</p>
 
-			</div>
-		</s:form>
-	</body>
+    <br/>
+    <div class="buttonbottom">
+        <input name="buttonClose" type="button" class="button"
+               id="buttonClose" value="Close" onclick="window.close()"/>
+        &nbsp;
+
+    </div>
+    </s:form>
+</body>
 </html>

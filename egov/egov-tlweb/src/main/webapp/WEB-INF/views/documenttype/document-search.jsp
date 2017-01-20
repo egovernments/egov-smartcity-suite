@@ -37,77 +37,77 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-  
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ include file="/includes/taglibs.jsp"%>
+
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ include file="/includes/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<form:form role="form" id="searchdocumentform" action="search" modelAttribute="documenttype" commandName="documenttype"  cssClass="form-horizontal form-groups-bordered">
-   
-   <div class="row">
-      <div class="col-md-12">
-        <div class="panel panel-primary" data-collapsed="0">
-          <div class="panel-heading">
-            <div class="panel-title"><spring:message code="title.document.search"/></div>
-          </div>
-          <div class="panel-body custom-form">
-            <div class="form-group">
-              <label class="col-sm-3 control-label text-right"><spring:message code="lbl.name" /> </label>
-              <div class="col-sm-3 add-margin">
-               <form:input path="name" id="name" class="form-control text-left patternvalidation" maxLength="100"/>
-              
-              </div>
-              <label class="col-sm-2 control-label text-right"><spring:message code="lbl.licenseAppType" /> </label>
-              <div class="col-sm-3 add-margin">
-                <form:select path="applicationType" id="applicationType_dropdown" cssClass="form-control"
-                cssErrorClass="form-control error">
-                <form:option value=""><spring:message code="lbl.select" /></form:option> 
-                <form:options items="${applicationType}" />
-                </form:select>
-              </div>
+<form:form role="form" id="searchdocumentform" action="search" modelAttribute="documenttype" commandName="documenttype" cssClass="form-horizontal form-groups-bordered">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-primary" data-collapsed="0">
+                <div class="panel-heading">
+                    <div class="panel-title"><spring:message code="title.document.search"/></div>
+                </div>
+                <div class="panel-body custom-form">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.name"/> </label>
+                        <div class="col-sm-3 add-margin">
+                            <form:input path="name" id="name" class="form-control text-left patternvalidation" maxLength="100"/>
+
+                        </div>
+                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.licenseAppType"/> </label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="applicationType" id="applicationType_dropdown" cssClass="form-control"
+                                         cssErrorClass="form-control error">
+                                <form:option value=""><spring:message code="lbl.select"/></form:option>
+                                <form:options items="${applicationType}"/>
+                            </form:select>
+                        </div>
+                    </div>
+                </div>
             </div>
-           </div>
+            <div class="form-group">
+                <div class="text-center">
+                    <button type='button' class='btn btn-primary' id="searchbtn">
+                        <spring:message code='lbl.search'/>
+                    </button>
+                    <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message
+                            code='lbl.close'/></a>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-          <div class="text-center">
-            <button type='button' class='btn btn-primary' id="searchbtn">
-              <spring:message code='lbl.search' />
-            </button>
-            <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message
-                code='lbl.close' /></a>
-          </div>
-        </div>
-      </div>
     </div>
 </form:form>
 <div class="row display-hide report-section">
-  <div class="col-md-12 table-header text-left"><spring:message code="title.document.view"/></div>
-  <div class="col-md-12 form-group report-table-container">
-    <table class="table table-bordered table-hover multiheadertbl" id="document-Table">
-      <thead>
-        <tr>
-          <th><spring:message code="lbl.name" /></th>
-          <th><spring:message code="lbl.licenseAppType" /></th>
-          <th><spring:message code="lbl.mandatory" /></th>
-          <th><spring:message code="lbl.action" /></th>
-        </tr>
-      </thead>
-    </table>
-  </div>
+    <div class="col-md-12 table-header text-left"><spring:message code="title.document.view"/></div>
+    <div class="col-md-12 form-group report-table-container">
+        <table class="table table-bordered table-hover multiheadertbl" id="document-Table">
+            <thead>
+            <tr>
+                <th><spring:message code="lbl.name"/></th>
+                <th><spring:message code="lbl.licenseAppType"/></th>
+                <th><spring:message code="lbl.mandatory"/></th>
+                <th><spring:message code="lbl.action"/></th>
+            </tr>
+            </thead>
+        </table>
+    </div>
 </div>
 
 
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
-  src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-  src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript"
-  src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript"
-  src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
-  type="text/javascript"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/document-type-search.js?rnd=${app_release_no}'/>"></script>
+        type="text/javascript"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/license-document-type.js?rnd=${app_release_no}'/>"></script>

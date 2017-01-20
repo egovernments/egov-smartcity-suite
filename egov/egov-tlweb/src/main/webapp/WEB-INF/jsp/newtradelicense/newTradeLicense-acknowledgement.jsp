@@ -38,113 +38,106 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt"%>
+<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %>
+<%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <html>
 <head>
-	<title>Acknowledgement Slip for Trade License</title>
+    <title>Acknowledgement Slip for Trade License</title>
 </head>
 <body onload="refreshInbox()">
-	<div id="main" class="printable">
-		<div class="row">
-			<div class="col-md-12">
-			<s:form name="certificateform" action="viewTradeLicense">
-			<s:push value="model">
-				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading">
-						<div class="panel-title text-center no-float">
-							<s:text name="license.acknowledgement.slip.for.tradelicense" />
-							<%-- <div><s:actionmessage /></div> --%>
-						</div>
-					</div>
-					<div class="panel-body">
-						<div class="row add-border">
-							<div class="col-sm-3 col-xs-6 add-margin">
-								<s:text name="license.applicationnumber" />
-							</div>
-							<div class="col-sm-3 col-xs-6 add-margin view-content">
-								<s:property value="applicationNumber" />
-							</div>
-							<div class="col-sm-3 col-xs-6 add-margin">
-								<s:text name="license.applicationdate" />
-							</div>
-							<div class="col-sm-3 col-xs-6 add-margin view-content">
-								<s:date name="applicationDate" format="dd-MMM-yyyy" var="applicationDateFrmttd"/>
-								<s:property value="%{applicationDateFrmttd}" />
-							</div>
-						</div>
-						<div class="row add-border">
-							<div class="col-sm-3 col-xs-6 add-margin">
-								<s:text name="license.applied.for" />
-							</div>
-							<div class="col-sm-3 col-xs-6 add-margin view-content">
-								<s:property value="tradeName.name" />
-							</div>
-							<%-- <div class="col-sm-3 col-xs-6 add-margin">
-								<s:text name="license.zone" />
-							</div>
-							<div class="col-sm-3 col-xs-6 add-margin view-content">
-								<s:property value="parentBoundary.parent.name" />
-							</div> --%>
-						</div>
-						<div class="row add-border">
-							<div class="col-sm-3 col-xs-6 add-margin">
-								<s:text name="license.division" />
-							</div>
-							<div class="col-sm-3 col-xs-6 add-margin view-content"> 
-								<s:property value="parentBoundary.name" />
-							</div>
-							<div class="col-sm-3 col-xs-6 add-margin">
-								<s:text name="licensee.applicantname" />
-							</div>
-							<div class="col-sm-3 col-xs-6 add-margin view-content">
-								<s:property value="licensee.applicantName" />
-							</div>
-						</div>
-						<div class="row add-border">
-							<div class="col-sm-3 col-xs-6 add-margin">
-								<s:text name="licensee.address" />
-							</div>
-							<div class="col-sm-3 col-xs-6 add-margin view-content">
-								<s:if test="%{licensee.address!=null}"><s:property
-											value="licensee.address" />
-								</s:if>
-							</div>
-							<div class="col-sm-3 col-xs-6 add-margin">
-								<s:text name="license.amount.to.be.paid" />
-							</div>
-							<div class="col-sm-3 col-xs-6 add-margin view-content">
-								<s:property value="getPayableAmountInWords()" />
-							</div>
-						</div>
-						
-						
-						<div class="row add-border">
-							<div class="col-sm-3 col-xs-6 add-margin">
-								<s:text name="license.startdate" />
-							</div>
-							<div class="col-sm-3 col-xs-6 add-margin view-content">
-								<s:date name="commencementDate" format="dd-MMM-yyyy" var="commencementDateFrmttd"/>
-								<s:property value="%{commencementDateFrmttd}" />
-							</div>
-						</div>
-						
-					</div>
-				</div>
-			</s:push>
-			</s:form>
-			</div>
-		</div>
-	</div>	
-		<div align="center">
-			<input type="button" id="print" class="button printbtn" value="Print"
-				/> &nbsp;&nbsp; <input
-				type="button" id="close" value="Close" class="button"
-				onclick="javascript:window.close();" />
-		</div>
-		<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>
+<div id="main" class="printable">
+    <div class="row">
+        <div class="col-md-12">
+            <s:form name="certificateform" action="viewTradeLicense">
+                <s:push value="model">
+                    <div class="panel panel-primary" data-collapsed="0">
+                        <div class="panel-heading">
+                            <div class="panel-title text-center no-float">
+                                <s:text name="license.acknowledgement.slip.for.tradelicense"/>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row add-border">
+                                <div class="col-sm-3 col-xs-6 add-margin">
+                                    <s:text name="license.applicationnumber"/>
+                                </div>
+                                <div class="col-sm-3 col-xs-6 add-margin view-content">
+                                    <s:property value="applicationNumber"/>
+                                </div>
+                                <div class="col-sm-3 col-xs-6 add-margin">
+                                    <s:text name="license.applicationdate"/>
+                                </div>
+                                <div class="col-sm-3 col-xs-6 add-margin view-content">
+                                    <s:date name="applicationDate" format="dd-MMM-yyyy" var="applicationDateFrmttd"/>
+                                    <s:property value="%{applicationDateFrmttd}"/>
+                                </div>
+                            </div>
+                            <div class="row add-border">
+                                <div class="col-sm-3 col-xs-6 add-margin">
+                                    <s:text name="license.applied.for"/>
+                                </div>
+                                <div class="col-sm-3 col-xs-6 add-margin view-content">
+                                    <s:property value="tradeName.name"/>
+                                </div>
+                            </div>
+                            <div class="row add-border">
+                                <div class="col-sm-3 col-xs-6 add-margin">
+                                    <s:text name="license.division"/>
+                                </div>
+                                <div class="col-sm-3 col-xs-6 add-margin view-content">
+                                    <s:property value="parentBoundary.name"/>
+                                </div>
+                                <div class="col-sm-3 col-xs-6 add-margin">
+                                    <s:text name="licensee.applicantname"/>
+                                </div>
+                                <div class="col-sm-3 col-xs-6 add-margin view-content">
+                                    <s:property value="licensee.applicantName"/>
+                                </div>
+                            </div>
+                            <div class="row add-border">
+                                <div class="col-sm-3 col-xs-6 add-margin">
+                                    <s:text name="licensee.address"/>
+                                </div>
+                                <div class="col-sm-3 col-xs-6 add-margin view-content">
+                                    <s:if test="%{licensee.address!=null}"><s:property
+                                            value="licensee.address"/>
+                                    </s:if>
+                                </div>
+                                <div class="col-sm-3 col-xs-6 add-margin">
+                                    <s:text name="license.amount.to.be.paid"/>
+                                </div>
+                                <div class="col-sm-3 col-xs-6 add-margin view-content">
+                                    <s:property value="getPayableAmountInWords()"/>
+                                </div>
+                            </div>
+
+
+                            <div class="row add-border">
+                                <div class="col-sm-3 col-xs-6 add-margin">
+                                    <s:text name="license.startdate"/>
+                                </div>
+                                <div class="col-sm-3 col-xs-6 add-margin view-content">
+                                    <s:date name="commencementDate" format="dd-MMM-yyyy" var="commencementDateFrmttd"/>
+                                    <s:property value="%{commencementDateFrmttd}"/>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </s:push>
+            </s:form>
+        </div>
+    </div>
+</div>
+<div align="center">
+    <input type="button" id="print" class="button printbtn" value="Print"
+    /> &nbsp;&nbsp; <input
+        type="button" id="close" value="Close" class="button"
+        onclick="javascript:window.close();"/>
+</div>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>
 </body>
 </html>

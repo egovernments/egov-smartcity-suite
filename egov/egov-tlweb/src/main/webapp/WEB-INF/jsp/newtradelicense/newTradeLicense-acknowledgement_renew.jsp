@@ -41,128 +41,118 @@
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <html>
-	<head>
-		<title>Acknowledgement Slip for Renewal of Trade License</title>
-		<script>
-	function refreshInbox() {
-		if (opener && opener.top.document.getElementById('inboxframe')) {
-			opener.top.document.getElementById('inboxframe').contentWindow.egovInbox
-					.refresh();
-		}
-	}
-</script>
-	</head>
-	<body onload="refreshInbox()">
-			<div id="message">
-				<s:actionmessage />
-			</div>
-			<div class="printable">
-				<s:form name="certificateform" action="viewTradeLicense">
-					<s:push value="model">
-						<table width="100%" border="0" style="margin-left: 25px">
-							<tr class="add-margin">
-								<td colspan="4" align="center">
-									<c:if test="${not empty sessionScope.logopath || not empty sessionScope.citylogo}">
-										<img src="<c:url value='${sessionScope.logopath == null ? sessionScope.citylogo : sessionScope.logopath}' context='/egi'/>" height="60">
-									</c:if>
-								</td>
-							</tr>
+<head>
+    <title>Acknowledgement Slip for Renewal of Trade License</title>
+    <script>
+        function refreshInbox() {
+            if (opener && opener.top.document.getElementById('inboxframe')) {
+                opener.top.document.getElementById('inboxframe').contentWindow.egovInbox
+                    .refresh();
+            }
+        }
+    </script>
+</head>
+<body onload="refreshInbox()">
+<div id="message">
+    <s:actionmessage/>
+</div>
+<div class="printable">
+    <s:form name="certificateform" action="viewTradeLicense">
+        <s:push value="model">
+            <table width="100%" border="0" style="margin-left: 25px">
+                <tr class="add-margin">
+                    <td colspan="4" align="center">
+                        <c:if test="${not empty sessionScope.logopath || not empty sessionScope.citylogo}">
+                            <img src="<c:url value='${sessionScope.logopath == null ? sessionScope.citylogo : sessionScope.logopath}' context='/egi'/>" height="60">
+                        </c:if>
+                    </td>
+                </tr>
 
-							<tr>
-								<td colspan="4" align="center" style="font-size: 15px; font-weight: bolder;">
-									${sessionScope.citymunicipalityname}
-									<br />
-								</td>
-							</tr>
-							<tr>
-								<td colspan="4" align="center" style="font-size: 15px; font-weight: bolder;">
-									<s:text name="license.acknowledgement.slip.for.renew.tradelicense" />
-									<br />
-									<br />
-									<br />
-								</td>
+                <tr>
+                    <td colspan="4" align="center" style="font-size: 15px; font-weight: bolder;">
+                            ${sessionScope.citymunicipalityname}
+                        <br/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" align="center" style="font-size: 15px; font-weight: bolder;">
+                        <s:text name="license.acknowledgement.slip.for.renew.tradelicense"/>
+                        <br/>
+                        <br/>
+                        <br/>
+                    </td>
 
-							</tr>
-							<tr>
-								<td width="40%">
-									<s:text name="license.licensenumber" />
-									:
-								</td>
-								<td colspan="3">
-									<b><s:property value="licenseNumber" />&nbsp;</b>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<s:text name="license.applied.for" />
-									:
-								</td>
-								<td colspan="3">
-									<b><s:property value="tradeName.name" />&nbsp;</b>
-								</td>
-							</tr>
-							<%-- <tr>
-								<td width="40%">
-									<s:text name="license.zone" />
-									:
-								</td>
-								<td width="40%">
-									<b><s:property value="boundary.parent.name" />&nbsp;</b>
-								</td>
-							</tr> --%>
-							<tr>
-								<td>
-									<s:text name="license.division" />
-									:
-								</td>
-								<td colspan="3">
-									<b><s:property value="boundary.name" />&nbsp;</b>
-								</td>
-							</tr>
-							<tr>
-								<td width="40%">
-									<s:text name="licensee.applicantname" />
-									:
-								</td>
-								<td width="40%">
-									<b><s:property value="licensee.applicantName" />&nbsp;</b>
-								</td>
-								<td colspan="2" />
-							</tr>
-							<tr>
-								<td width="40%">
-									<s:text name="licensee.address" />
-									:
-								</td>
-								<td width="40%">
-									<b> <s:property value="licensee.address" default="N/A" /></b>
-								</td>
-								<td colspan="2" />
-							</tr>
-							<tr>
-								<td width="20%">
-									<s:text name="license.amount.to.be.paid" />
-									:
-								</td>
-								<td colspan="3">
-									<b><s:property value="getPayableAmountInWords()" />&nbsp;</b>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="4">
-									<s:text name="license.renew.acknowledgement.bottom.text" />
-									<%-- <%=cityName%> --%>.
-								</td>
-							</tr>
-						</table>
-					</s:push>
-				</s:form>
-			</div>
-			<div align="center" >
-				<input type="button" id="print" class="button printbtn" value="Print" class="print" />
-				&nbsp;&nbsp;
-				<input type="button" id="close" value="Close" class="button" onclick="javascript:window.close();" />
-			</div>
-			<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>
-	</body>
+                </tr>
+                <tr>
+                    <td width="40%">
+                        <s:text name="license.licensenumber"/>
+                        :
+                    </td>
+                    <td colspan="3">
+                        <b><s:property value="licenseNumber"/>&nbsp;</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <s:text name="license.applied.for"/>
+                        :
+                    </td>
+                    <td colspan="3">
+                        <b><s:property value="tradeName.name"/>&nbsp;</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <s:text name="license.division"/>
+                        :
+                    </td>
+                    <td colspan="3">
+                        <b><s:property value="boundary.name"/>&nbsp;</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="40%">
+                        <s:text name="licensee.applicantname"/>
+                        :
+                    </td>
+                    <td width="40%">
+                        <b><s:property value="licensee.applicantName"/>&nbsp;</b>
+                    </td>
+                    <td colspan="2"/>
+                </tr>
+                <tr>
+                    <td width="40%">
+                        <s:text name="licensee.address"/>
+                        :
+                    </td>
+                    <td width="40%">
+                        <b> <s:property value="licensee.address" default="N/A"/></b>
+                    </td>
+                    <td colspan="2"/>
+                </tr>
+                <tr>
+                    <td width="20%">
+                        <s:text name="license.amount.to.be.paid"/>
+                        :
+                    </td>
+                    <td colspan="3">
+                        <b><s:property value="getPayableAmountInWords()"/>&nbsp;</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <s:text name="license.renew.acknowledgement.bottom.text"/>
+                    </td>
+                </tr>
+            </table>
+        </s:push>
+    </s:form>
+</div>
+<div align="center">
+    <input type="button" id="print" class="button printbtn" value="Print" class="print"/>
+    &nbsp;&nbsp;
+    <input type="button" id="close" value="Close" class="button" onclick="javascript:window.close();"/>
+</div>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>
+</body>
 </html>

@@ -85,4 +85,4 @@
 </form:form>
 <div id="resultdiv"></div>
 <script src="<cdn:url  value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script src="<cdn:url  value='/resources/app/js/penaltyRates.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/license-penalty-rates.js?rnd=${app_release_no}'/>"></script>
