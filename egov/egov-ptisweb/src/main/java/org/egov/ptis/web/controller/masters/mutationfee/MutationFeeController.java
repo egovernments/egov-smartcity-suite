@@ -48,6 +48,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.ptis.domain.model.MutationFeeDetails;
 import org.egov.ptis.master.service.MutationFeeService;
+import org.joda.time.DateTimeComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -140,7 +141,7 @@ public class MutationFeeController {
             final BindingResult resultBinder, final Model model) {
         final MutationFeeDetails mfd = mutationFeeService.getDetailsById(id);
         final Date date = new Date();
-        if (date.compareTo(toDate) <= 0) {
+        if (DateTimeComparator.getDateOnlyInstance().compare(toDate, date) >= 0) {
             mfd.setToDate(toDate);
             mutationFeeService.createMutationFee(mfd);
             redirectAttributes.addFlashAttribute(MSG, "msg.mutationfee.update.success");
