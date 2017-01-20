@@ -63,7 +63,7 @@ public class MarriageConstants {
     public static final String WFLOW_ACTION_STEP_APPROVE = "Approve";
     public static final String WFLOW_ACTION_STEP_DIGISIGN = "Sign";
     public static final String WFLOW_ACTION_STEP_PRINTCERTIFICATE = "Print Certificate";
-    
+
     // Pendingactions
     public static final String WFLOW_PENDINGACTION_PRINTCERTIFICATE = "Certificate Print Pending";
     public static final String WFLOW_PENDINGACTION_DIGISIGNPENDING = "Digital Signature Pending";
@@ -99,12 +99,8 @@ public class MarriageConstants {
     public static final String PASSPORT = "Passport";
     public static final String AADHAR = "Aadhar";
     public static final String YEAR = "year";
-    
+
     public static final String APPCONFKEY_DIGITALSIGNINWORKFLOW = "DIGITALSIGN_IN_WORKFLOW";
-    
-    public static final String PRINTCERTIFICATE_NO_OF_DAYS = "7";
-
-
 
     public static final List<String> venuelist = new ArrayList<String>() {
         private static final long serialVersionUID = -6112513531476444226L;
@@ -133,7 +129,7 @@ public class MarriageConstants {
     private MarriageConstants() {
         // To hide implicit public
     }
-    
+
     public static final String APPROVAL_COMMENT = "approvalComment";
     public static final String APPLICATION_NUMBER = "applicationNumber";
     public static final String FILE_STORE_ID_APPLICATION_NUMBER = "fileStoreIdApplicationNumber";
