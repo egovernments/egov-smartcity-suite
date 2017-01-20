@@ -55,7 +55,7 @@ jQuery(document).ready(
 				else
 					jQuery('#flatAmount').removeAttr('disabled');
 			});
-	
+
 			$("#fromDate,#toDate").datepicker({
 				format : "dd/mm/yyyy",
 				autoclose : true
@@ -67,9 +67,9 @@ jQuery(document).ready(
 						if (fromDate != "" && toDate != "") {
 							var stsplit = fromDate.split("/");
 							var ensplit = toDate.split("/");
-							fromDate = stsplit[0] + "/" + stsplit[1] + "/"
+							fromDate = stsplit[1] + "/" + stsplit[0] + "/"
 									+ stsplit[2];
-							toDate = ensplit[0] + "/" + ensplit[1] + "/"
+							toDate = ensplit[1] + "/" + ensplit[0] + "/"
 									+ ensplit[2];
 
 							var start = Date.parse(fromDate);
@@ -105,7 +105,7 @@ jQuery(document).ready(
 				if (this.value != "" || this.value.length > 0) {
 					jQuery('.btnsave').removeAttr('disabled');
 
-				} 
+				}
 			});
 
 			jQuery('.btnedit').click(
@@ -150,7 +150,7 @@ jQuery(document).ready(
 					function() {
 						$('#mutationFeeForm').attr('method', 'post');
 						$('#mutationFeeForm').attr('action',
-								'/ptis/mutationfee/modify/' +todt);
+								'/ptis/mutationfee/modify/' + todt);
 					});
 
 			function changeDatePicker() {

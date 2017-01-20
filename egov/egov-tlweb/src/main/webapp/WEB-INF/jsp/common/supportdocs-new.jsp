@@ -83,4 +83,4 @@
 </s:iterator>
 </div>
 
-<script src="<cdn:url  value='/resources/js/app/documentupload.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/license-support-docs.js?rnd=${app_release_no}'/>"></script>

@@ -211,7 +211,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         if (license() != null && license().getId() != null)
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         setDocumentTypes(tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.NEW));
-        setOwnerShipTypeMap(Constants.OWNERSHIP_TYPE);
+        setOwnerShipTypeMap(Constants.getOwnershipTypes());
         final List<Boundary> localityList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 LOCALITY, LOCATION_HIERARCHY_TYPE);
         addDropdownData("localityList", localityList);

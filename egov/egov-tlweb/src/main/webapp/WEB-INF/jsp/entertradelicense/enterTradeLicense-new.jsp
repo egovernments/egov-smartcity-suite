@@ -43,7 +43,7 @@
 <html>
 	<head>
 		<title><s:text name="page.title.entertrade" /></title>
- 	</head>
+    </head>
 	<body onload="initDetails();">
 		<div id="enterLicense_error" class="error-msg" style="display:none;"></div> 
                 <div class="row">
@@ -65,7 +65,7 @@
 					</s:if>
                  	
                  	<s:form name="registrationForm" action="enterTradeLicense-enterExisting" theme="css_xhtml"  enctype="multipart/form-data" 
-					cssClass="form-horizontal form-groups-bordered" validate="true" >    
+					cssClass="form-horizontal form-groups-bordered" >
 					<s:push value="model"> 
 							<s:token/>
 							<s:hidden name="actionName" value="create" />
@@ -91,16 +91,11 @@
 											<div class="form-group">
 											    <label class="col-sm-3 control-label text-right"><s:text name='license.oldlicensenum' /><span class="mandatory"></span></label>
 											    <div class="col-sm-3 add-margin">
-											           <s:textfield name="oldLicenseNumber"  id="oldLicenseNumber" onBlur="checkLength(this,50)"  maxlength="100" cssClass="form-control patternvalidation"  data-pattern="alphanumerichyphenbackslash" />
+											           <s:textfield name="oldLicenseNumber"  id="oldLicenseNumber" onBlur="checkLength(this,50)"  maxlength="50" cssClass="form-control patternvalidation"  data-pattern="alphanumerichyphenbackslash" />
 											    </div>
-											    <%-- <label class="col-sm-2 control-label text-right"><s:text name='license.enter.issuedate' /><span class="mandatory"></span></label>
-											     <div class="col-sm-3 add-margin">
-											      	<s:date name="dateOfCreation" id="dateOfCreationformat" format="dd/MM/yyyy" />
-													<s:textfield  name="dateOfCreation" id="dateOfCreation" class="form-control datepicker" data-date-end-date="0d" maxlength="10" size="10" value="%{dateOfCreationformat}" />
-											   </div>  --%>
-											</div>		
+											</div>
                                              <%@ include file='../common/licensee.jsp'%>
-	                                         <%@ include file='../common/address.jsp'%>
+	                                         <%@ include file='../common/license-address.jsp'%>
 	                                         <%@ include file='../common/license.jsp'%>
 	                                         
 	                                         <div class="panel-heading custom_form_panel_heading">
@@ -163,12 +158,11 @@
                     </div>
                 </div>
                 <script>
-					jQuery(".datepicker").datepicker({
+					$(".datepicker").datepicker({
 						format: "dd/mm/yyyy",
 						autoclose: true 
 					}); 
 				</script>
-        <script src="../resources/js/app/newtrade.js?rnd=${app_release_no}"></script>
         <script>
 
         	function initDetails(){
@@ -179,12 +173,12 @@
 				var adhaar = document.getElementById('adhaarId').value;
 				var mobileno= document.getElementById('mobilePhoneNumber').value;
 				if(adhaar.length > 0 && adhaar.length < 12){
-					jQuery('#adhaarError').removeClass("hide");
+					$('#adhaarError').removeClass("hide");
 					document.getElementById("adhaarId").focus();
 					return false;
 				}
 				if(mobileno.length > 0 && mobileno.length < 10){
-					jQuery('#mobileError').removeClass("hide");
+					$('#mobileError').removeClass("hide");
 					document.getElementById("mobilePhoneNumber").focus();
 					return false;
 				}
@@ -192,11 +186,7 @@
 					showMessage('enterLicense_error', '<s:text name="newlicense.oldlicensenumber.null" />');
 					document.getElementById("oldLicenseNumber").focus();
 					return false;
-				}/*  else if (document.getElementById("dateOfCreation").value == '' || document.getElementById("dateOfCreation").value == null){
-					showMessage('enterLicense_error', '<s:text name="newlicense.dateofcreation.null" />');
-					document.getElementById("dateOfCreation").focus();
-					return false;
-				}  */else if (document.getElementById("mobilePhoneNumber").value.trim() == '' || document.getElementById("mobilePhoneNumber").value == null){
+				} else if (document.getElementById("mobilePhoneNumber").value.trim() == '' || document.getElementById("mobilePhoneNumber").value == null){
 					showMessage('enterLicense_error', '<s:text name="newlicense.mobilephonenumber.null" />');
 					document.getElementById("mobilePhoneNumber").focus();
 					return false;
@@ -298,19 +288,19 @@
 				var validated = false;
 				var globalindex;
 				
-				jQuery("table.feedetails tbody tr").each(function (index) {
-					var rowval = jQuery(this).find("input.feeamount").val();
+				$("table.feedetails tbody tr").each(function (index) {
+					var rowval = $(this).find("input.feeamount").val();
 					if(parseFloat(rowval) > 0){
 						globalindex = index;
 						validated = true;					
 					}else{
 						if(index == (globalindex+1)){
-							bootbox.alert(jQuery(this).find("input.feeyear").val()+' financial year fee details amount is missing!');
+							bootbox.alert($(this).find("input.feeyear").val()+' financial year fee details amount is missing!');
 							validated = false;
 							return false;
 						}else{
-							if(jQuery(this).is(":last-child")){
-								bootbox.alert(jQuery(this).find("input.feeyear").val()+' financial year fee details amount is mandatory!');
+							if($(this).is(":last-child")){
+								bootbox.alert($(this).find("input.feeyear").val()+' financial year fee details amount is mandatory!');
 								validated = false;
 								return false;
 							}
@@ -325,25 +315,24 @@
 				var checkindex;
 				var validated = false;
 				
-				jQuery('.case:checked').each(function () {
-			        checkindex = jQuery(this).closest('tr').index();
+				$('.case:checked').each(function () {
+			        checkindex = $(this).closest('tr').index();
 			    });
 
-				console.log('checkindex'+checkindex);
 				if(checkindex != undefined){
-					jQuery("table.feedetails tbody tr").each(function (index) {
+					$("table.feedetails tbody tr").each(function (index) {
 						if(index > checkindex){
 							validated = true;
 							return;
 						}else{
-							var rowval = jQuery(this).find("input.feeamount").val();	
+							var rowval = $(this).find("input.feeamount").val();
 							if(parseFloat(rowval) > 0){
-								if(jQuery(this).is(":last-child")){
+								if($(this).is(":last-child")){
 									//leave it
 									validated = true;
 								}else{
-									if(jQuery(this).find('input[type=checkbox]:checked').val() == undefined){
-										bootbox.alert(jQuery(this).find("input.feeyear").val()+' financial year fee details paid should be checked!');
+									if($(this).find('input[type=checkbox]:checked').val() == undefined){
+										bootbox.alert($(this).find("input.feeyear").val()+' financial year fee details paid should be checked!');
 										validated = false;
 										return false;
 									}

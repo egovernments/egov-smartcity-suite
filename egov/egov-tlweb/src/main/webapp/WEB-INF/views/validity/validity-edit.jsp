@@ -122,4 +122,4 @@
     </div>
   </div>
 </form:form>
-<script type="text/javascript" src="<cdn:url  value='/resources/js/app/validityHelper.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url  value='/resources/js/app/license-validity.js?rnd=${app_release_no}'/>"></script>

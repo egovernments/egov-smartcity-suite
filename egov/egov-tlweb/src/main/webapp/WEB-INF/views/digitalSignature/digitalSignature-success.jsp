@@ -59,7 +59,7 @@
 			<div class="row">
 				<div class="text-center">
 					<c:if test='${fileStoreId != null && fileStoreId != ""}'>
-						<button type="button" id="previewButn" onclick="downloadSignedNotice('${fileStoreId}')" class="btn btn-primary">Download</button>
+						<button type="button" id="previewButn" onclick="downloadDigisignedLicenseCertificate('${fileStoreId}')" class="btn btn-primary">Download</button>
 					</c:if>
 			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a> 
 				</div>
@@ -69,4 +69,3 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="<cdn:url  value='/resources/js/app/digitalSignature.js?rnd=${app_release_no}'/>"></script>

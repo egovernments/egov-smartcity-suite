@@ -133,27 +133,28 @@
 					</div>
 
 					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message
-								code="lbl.effectiveFrom" /></label>
+						<label class="col-sm-3 control-label"> <spring:message
+								code="lbl.effectiveFrom" /><span class="mandatory"></span></label>
 						<div class="col-sm-6">
 							<form:input path="fromDate" id="fromDate" type="text"
-								class="form-control low-width datepicker" autocomplete="off" />
+								class="form-control low-width datepicker" required="required"
+								autocomplete="off" />
 							<form:errors path="fromDate" cssClass="add-margin error-msg" />
 							<div id="fromdate" class="col-sm-10"></div>
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message
-								code="lbl.effectiveTo" /></label>
+								code="lbl.effectiveTo" /><span class="mandatory"></span></label>
 						<div class="col-sm-6">
 							<form:input path="toDate" id="toDate" type="text"
-								class="form-control low-width datepicker" autocomplete="off" />
+								class="form-control low-width datepicker" required="required"
+								autocomplete="off" />
 							<form:errors path="toDate" cssClass="add-margin error-msg" />
 							<div id="todateerror" class="error-msg display-hide">To
 								Date must be greater than From date</div>
 						</div>
 					</div>
-
 				</div>
 			</div>
 			<div class="text-center">

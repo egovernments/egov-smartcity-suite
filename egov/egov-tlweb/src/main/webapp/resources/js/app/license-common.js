@@ -38,44 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-function numbersonly(myfield, e) {
-	var key;
-	var keychar;
-
-	if (window.event)
-		key = window.event.keyCode;
-	else if (e)
-		key = e.which;
-	else
-		return true;
-	keychar = String.fromCharCode(key);
-
-	// control keys
-	if ((key == null) || (key == 0) || (key == 8) || (key == 9) || (key == 13)
-			|| (key == 27))
-		return true;
-
-	// numbers
-	else if ((("0123456789").indexOf(keychar) > -1))
-		return true;
-	else
-		return false;
-}
-
-function setupAjaxDivision(elem) {
-	zone_id = elem.options[elem.selectedIndex].value;
-	populatedivision({
-		zoneId : zone_id
-	});
-}
-
-function setupLicenseeAjaxDivision(elem) {
-	zone_id = elem.options[elem.selectedIndex].value;
-	populatelicenseedivision({
-		zoneId : zone_id
-	});
-}
-function refreshInbox() {		
+function refreshInbox() {
 	if(opener && opener.top.document.getElementById('inboxframe')) {
 		opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
 	} else if (opener && opener.opener && opener.opener.top.document.getElementById('inboxframe')) {
@@ -83,55 +46,29 @@ function refreshInbox() {
 	}
 }
 
-function numbersforamount(myfield, e)
-{
-	var key;
-	var keychar;
-
-	if (window.event)
-		key = window.event.keyCode;
-	else if (e)
-		key = e.which;
-	else
-		return true;
-	keychar = String.fromCharCode(key);
-
-	// control keys
-	if ((key==null) || (key==0) || (key==8) || 
-			(key==9) || (key==13) || (key==27) )
-		return true;
-
-	// numbers
-	else if (((".0123456789").indexOf(keychar) > -1))
-		return true;
-	else
-		return false;
-}
-
-
-jQuery(document).ready(function () {
+$(document).ready(function () {
 	
-	jQuery('#subCategory').select2({
+	$('#subCategory').select2({
 		placeholder: "Select",
 		width:'100%'
 	});
-	jQuery('#category').change(function() {
-	    var val = jQuery(this).val();
+	$('#category').change(function() {
+	    var val = $(this).val();
 	    var results = [];
-	    jQuery.ajax({
+	    $.ajax({
 	        type: "GET",
 	        url: '../licensesubcategory/subcategories-by-category?name=&categoryId=' + val,
 	        dataType: "json",
 	        success: function(data) {
-	        	jQuery.each(data, function(i) {
+	        	$.each(data, function(i) {
 	                var obj = {};
 	                obj['id'] = data[i]['id']
 	                obj['text'] = data[i]['name'];
 	                results.push(obj);
 	            });
-	            jQuery("#subCategory").empty();
-            	jQuery("#subCategory").append("<option value=''>Select</option>");
-	            jQuery("#subCategory").select2({
+	            $("#subCategory").empty();
+            	$("#subCategory").append("<option value=''>Select</option>");
+	            $("#subCategory").select2({
 	                placeholder: "Select",
 	                width:'100%',
 	                data: results
@@ -143,3 +80,36 @@ jQuery(document).ready(function () {
 	    });
 	});
 });
+
+function downloadDigisignedLicenseCertificate(signedFileStoreId) {
+    var params = [
+        'height='+screen.height,
+        'width='+screen.width,
+        'fullscreen=yes'
+    ].join(',');
+    window.open('/tl/digitalSignature/tradeLicense/downloadSignedLicenseCertificate?signedFileStoreId='+signedFileStoreId, "NoticeWindow", params);
+}
+
+function showMessage(id,msg){
+    $('#'+id).show();
+    $('#'+id).text(msg);
+}
+function clearMessage(id){
+    $('#'+id).hide();
+    $('#'+id).text('');
+}
+
+function toggleFields(flag,excludedFields)
+{
+    for(var i=0;i<document.forms[0].length;i++) {
+        document.forms[0].elements[i].disabled =flag;
+    }
+    for(var j=0;j<excludedFields.length;j++) {
+        if($('#'+excludedFields[j])) {
+        	//Since id can contains space and special character jquery can find by id
+            var element = document.getElementById(excludedFields[j]);
+            $(element).removeAttr("disabled");
+        }
+    }
+}
+

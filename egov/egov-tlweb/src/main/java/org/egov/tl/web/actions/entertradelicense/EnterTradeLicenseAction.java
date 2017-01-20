@@ -167,7 +167,7 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         super.prepareNewForm();
         setDocumentTypes(tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.NEW));
-        setOwnerShipTypeMap(Constants.OWNERSHIP_TYPE);
+        setOwnerShipTypeMap(Constants.getOwnershipTypes());
         addDropdownData("localityList", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 LOCALITY, LOCATION_HIERARCHY_TYPE));
         addDropdownData("tradeTypeList", tradeLicenseService.getAllNatureOfBusinesses());

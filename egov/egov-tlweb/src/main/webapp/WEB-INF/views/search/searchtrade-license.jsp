@@ -47,9 +47,7 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<form:form class="form-horizontal form-groups-bordered" action=""
-			id="searchForm" modelAttribute="searchForm" method="get">
-			<input:hidden id="licenseId" name="licenseId" value="${licenseId}" />
+		<form:form class="form-horizontal form-groups-bordered" action="" id="searchForm" modelAttribute="searchForm" method="get">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -182,5 +180,5 @@
 <script type="text/javascript"
 	src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url  value='/resources/js/app/searchtrade-license.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url  value='/resources/js/app/trade-license-search.js?rnd=${app_release_no}'/>"></script>
 

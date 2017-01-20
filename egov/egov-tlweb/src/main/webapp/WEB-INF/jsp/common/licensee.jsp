@@ -72,7 +72,7 @@
 	<div class="form-group">
 	    <label class="col-sm-3 control-label text-right"><s:text name='licensee.emailId' /><span class="mandatory"></span></label>
 	    <div class="col-sm-3 add-margin">
-	        <s:textfield    name="licensee.emailId" id="emailId" onBlur="validateEmail(this);checkLength(this,32)" maxlength="32" cssClass="form-control" />
+	        <s:textfield    name="licensee.emailId" id="emailId" maxlength="64" type="email" cssClass="form-control" />
 	    </div>
 	    <label class="col-sm-2 control-label text-right"><s:text name='licensee.address' /><span class="mandatory"></span></label>
 	    <div class="col-sm-3 add-margin">

@@ -159,21 +159,22 @@ public class TradeLicenseSmsAndEmailService {
 
     public void sendSMsAndEmailOnCollection(License license, Date receiptDate, BigDecimal demandAmount) {
         String message;
+        String subject;
         if (license.getLicenseNumber() != null) {
+            subject = String.format(Constants.STR_FOR_EMAILSUBJECT, "TIN No.", license.getLicenseNumber());
             message = String.format(
                     "Dear %s,%nTrade License with TIN No.%s, fee collected is at the rate of Rs.%s/- per year w.e.f %s.%nThanks,%n%s",
                     license.getLicensee().getApplicantName(), license.getLicenseNumber(),
                     demandAmount.toString(),
                     toDefaultDateFormat(receiptDate), ApplicationThreadLocals.getMunicipalityName());
         } else {
+            subject = String.format(Constants.STR_FOR_EMAILSUBJECT, "Application No.", license.getApplicationNumber());
             message = String.format(
                     "Dear %s, %nYour Trade License application with number %s has been accepted, please use this number for future reference.%nThanks,%n%s",
                     license.getLicensee().getApplicantName(), license.getApplicationNumber(), ApplicationThreadLocals.getMunicipalityName());
         }
-        StringBuilder subject = new StringBuilder();
-        subject.append(Constants.STR_FOR_EMAILSUBJECT).append(license.getLicenseNumber());
         messagingService.sendSMS(license.getLicensee().getMobilePhoneNumber(), message);
-        messagingService.sendEmail(license.getLicensee().getEmailId(), subject.toString(),
+        messagingService.sendEmail(license.getLicensee().getEmailId(), subject,
                 message);
     }
 

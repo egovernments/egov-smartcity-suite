@@ -41,6 +41,8 @@
 package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.validation.regex.Constants;
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -55,6 +57,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "EGTL_LICENSEE")
@@ -80,6 +83,7 @@ public class Licensee extends AbstractAuditable {
     @SafeHtml
     @Length(max = 16)
     @Column(name = "MOBILE_PHONENUMBER")
+    @Pattern(regexp = Constants.MOBILE_NUM)
     private String mobilePhoneNumber;
 
     @SafeHtml
@@ -90,6 +94,7 @@ public class Licensee extends AbstractAuditable {
     @SafeHtml
     @Length(max = 64)
     @Column(name = "EMAIL_ID")
+    @Email(regexp = Constants.EMAIL)
     private String emailId;
 
     @NotBlank

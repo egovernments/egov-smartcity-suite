@@ -73,7 +73,7 @@
 	                    	 						</div>
 	                 							</s:if>
 												<table width="100%">
-													<%@ include file='../common/view.jsp'%>
+													<%@ include file='../common/license-detail-view.jsp'%>
 												</table>
 											</s:push>
 										</s:form>

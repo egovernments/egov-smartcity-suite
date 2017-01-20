@@ -38,24 +38,21 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<%@ page language="java"%>
+<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %>
+<%@ page language="java" %>
 <html>
-	<head>
-		<title>Trade License</title>
-	</head>
-	<body onload="refreshInbox()">
-		<s:form action="newTradeLicense" theme="simple">
-			<%-- <span class="mandatory1"> <s:actionmessage /> </span>
-			<br /> --%>
-			<div class="alert alert-success view-content">
-			  <s:actionmessage />
-			</div>
-			<div class="text-center">
-				<input type="button" value="Close" onclick="javascript:window.close()" class="button" />
-			</div>
-		</s:form>
-	</body>
+<head>
+    <title>Trade License</title>
+</head>
+<body onload="refreshInbox()">
+<s:form action="newTradeLicense" theme="simple">
+    <div class="alert alert-success view-content">
+        <s:actionmessage/>
+    </div>
+    <div class="text-center">
+        <input type="button" value="Close" onclick="javascript:window.close()" class="button"/>
+    </div>
+</s:form>
+</body>
 
 </html>
