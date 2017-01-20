@@ -1,0 +1,5 @@
+ALTER TABLE EGW_NATUREOFWORK RENAME COLUMN expenditure_type TO expendituretype;
+ALTER TABLE EGW_NATUREOFWORK ADD COLUMN version bigint DEFAULT 0;
+
+--rollback ALTER TABLE EGW_NATUREOFWORK RENAME COLUMN expendituretype TO expenditure_type;
+--rollback ALTER TABLE EGW_NATUREOFWORK DROP COLUMN version;

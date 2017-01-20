@@ -49,12 +49,15 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGW_NATUREOFWORK")
 @SequenceGenerator(name = NatureOfWork.SEQ_EGW_NATUREOFWORK, sequenceName = NatureOfWork.SEQ_EGW_NATUREOFWORK, allocationSize = 1)
-public class NatureOfWork {
+public class NatureOfWork extends AbstractPersistable<Long> {
+
+    private static final long serialVersionUID = -366602348464540736L;
 
     public static final String SEQ_EGW_NATUREOFWORK = "SEQ_EGW_NATUREOFWORK";
 
@@ -78,10 +81,12 @@ public class NatureOfWork {
     @SafeHtml
     private String code;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }
