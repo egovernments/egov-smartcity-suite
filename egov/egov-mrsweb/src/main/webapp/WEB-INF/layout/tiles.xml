@@ -457,4 +457,14 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/masters/document/document-success.jsp" />
 	</definition>
+	
+	 <definition name="marriagereg-digitalsignature" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/application/digitalsignature/marriagereg-digitalsignature.jsp"/>
+     </definition>
+     
+     <definition name="mrdigitalsignature-success" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/application/digitalsignature/mrdigitalsignature-success.jsp"/>
+     </definition>
 </tiles-definitions>

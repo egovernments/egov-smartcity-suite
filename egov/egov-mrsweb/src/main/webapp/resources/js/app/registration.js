@@ -40,6 +40,11 @@
 
 $(document).ready( function () {
 	
+	//Added to avoid submitting parent form on Preview button click
+	//Used to preview certificate in case of Digital signture
+	$("#Preview").toggleClass('btn-primary btn-default');
+	$("#Preview").prop('type','button');
+	
 	$( "#select-venue" ).change(function() {
 		var venue = $( "#select-venue option:selected" ).text();
 		if(venue == 'Residence'){
@@ -62,8 +67,8 @@ $(document).ready( function () {
 	if($('#registrationStatus').val()=='CREATED' || $('#registrationStatus').val()=='APPROVED'){
 		$('#txt-dateOfMarriage').attr('disabled', 'disabled');
 	}
-	// make form elements disabled at final level of workflow	
-	if($('#registrationStatus').val()=='APPROVED'){
+	// make form elements disabled at final level of workflow (with and without digital signature)	
+	if($('#registrationStatus').val()=='APPROVED' || $('#registrationStatus').val()=='DIGITALSIGNED'){
 		$(':input').attr('readonly','readonly');
 		$('#form-updateregistration select').attr('disabled', 'true'); 
 		$(':checkbox[readonly="readonly"]').click(function() {
@@ -71,6 +76,7 @@ $(document).ready( function () {
 			});
 		$(".file-ellipsis.upload-file").attr('disabled', 'disabled'); 
 		$('.exclude_readonly_input').removeAttr('readonly');
+		$('#approvalComent').removeAttr('readonly');
 	}
 	
 	if($('#registrationStatus').val()=='APPROVED' && $("#feeCollected").val()=='false'){ 
@@ -78,8 +84,7 @@ $(document).ready( function () {
 	 }  
 	 
 	//Removing file attachment validation from workflow and modify screen 
-	if($('#registrationStatus').val()=='APPROVED' || $('#registrationStatus').val()=='CREATED' 
-		|| $('#registrationStatus').val()=='REGISTERED' || $('#registrationStatus').val()=='REJECTED'){ 
+	if($('#registrationStatus').val()!=''){ 
 		$(".file-ellipsis.upload-file").removeAttr('required');
 	 }  
 	
@@ -110,7 +115,7 @@ $(document).ready( function () {
 		$(inputPhoto).trigger('click');
 	});
 	
-	if($('#registrationStatus').val()=='CREATED' || $('#registrationStatus').val()=='APPROVED'){  
+	if($('#registrationStatus').val() != '' && $('#registrationStatus').val() != 'REJECTED'){  
 		$(".show-row").hide(); 
 		$('#approverDetailHeading').hide();
 		$('#approvalDepartment').removeAttr('required');
@@ -171,7 +176,6 @@ $(document).ready( function () {
 		}
 	});
 	
-
 	jQuery('form').validate({
 	    ignore: ".ignore",
 	    invalidHandler: function(e, validator){
@@ -206,9 +210,14 @@ $(document).ready( function () {
 			readURL(this, $(this).data('fileto'));
 		}
 	});
+	
+	$('#Preview').click(function() {
+		var url = '/mrs/registration/viewCertificate/'+ $('#marriageRegistration').val();
+		window.open(url);
+	});
 
 });
-
+	
 
 function readURL(input, imgId) {
 	if (input.files && input.files[0]) {
@@ -291,14 +300,14 @@ function validateApplicationDate(){
 
 
 $(".btn-primary").click(function(e) { 
-	if($('#allowDaysValidation').val()=="YES"){
-		var noOfDays = validateApplicationDate();
-		if(noOfDays>90){
-			bootbox.alert("Application will not be accepted beyond 90 days from the date of marriage "+$('#txt-dateOfMarriage').val());
-			return false; 
+		if($('#allowDaysValidation').val()=="YES"){
+			var noOfDays = validateApplicationDate();
+			if(noOfDays>90){
+				bootbox.alert("Application will not be accepted beyond 90 days from the date of marriage "+$('#txt-dateOfMarriage').val());
+				return false; 
+			}
 		}
-	}
-	removeMandatory();
+		
 	var action = $('#workFlowAction').val();
 	if(action == 'Reject') { 
 		 $('#Reject').attr('formnovalidate','true');
@@ -338,13 +347,13 @@ $(".btn-primary").click(function(e) {
 		 }
 	}
 	
-	 if(action == 'Print Certificate') { 
-		 if($('form').valid()){
-				
-			}else{
-				e.preventDefault();
-			}
-	 }
+		 if(action == 'Print Certificate') { 
+			 if($('form').valid()){
+					
+				}else{
+					e.preventDefault();
+				}
+		 }
 });
 
 $('#txt-serialNo').blur(function(){

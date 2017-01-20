@@ -6,6 +6,7 @@ import static org.egov.mrs.application.MarriageConstants.MOM;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
@@ -161,7 +162,11 @@ public class MarriageFormValidator implements Validator {
                     && !registration.isFeeCollected())
                 errors.reject("validate.collect.marriageFee", null);
 
-            if (registration.getStatus() != null && "APPROVED".equals(registration.getStatus().getCode()))
+            if (registration.getStatus() != null && 
+                    (("APPROVED".equals(registration.getStatus().getCode()) && 
+                            (registration.getState().getNextAction()!=null && 
+                            registration.getState().getNextAction().equalsIgnoreCase(MarriageConstants.WFLOW_PENDINGACTION_PRINTCERTIFICATE))) || 
+                    (MarriageRegistration.RegistrationStatus.DIGITALSIGNED.name().equalsIgnoreCase(registration.getStatus().getCode()))))
                 validateSerialAndPageNo(errors);
 
         }

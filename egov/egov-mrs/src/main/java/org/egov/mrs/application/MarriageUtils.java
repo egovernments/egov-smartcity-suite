@@ -48,7 +48,9 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,8 +65,11 @@ public class MarriageUtils {
     @Autowired
     private AssignmentService assignmentService;
 
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
+
     public boolean isLoggedInUserApprover() {
-        List<Role> approvers = securityUtils.getCurrentUser().getRoles().stream()
+        final List<Role> approvers = securityUtils.getCurrentUser().getRoles().stream()
                 .filter(role -> role.getName().equalsIgnoreCase(MarriageConstants.APPROVER_ROLE_NAME))
                 .collect(Collectors.toList());
 
@@ -89,5 +94,11 @@ public class MarriageUtils {
         } else if (assignment == null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
         return !asignList.isEmpty() ? asignList.get(0).getEmployee().getName() : "";
+    }
+
+    public Boolean isDigitalSignEnabled() {
+        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                MarriageConstants.MODULE_NAME, MarriageConstants.APPCONFKEY_DIGITALSIGNINWORKFLOW).get(0);
+        return "YES".equalsIgnoreCase(appConfigValue.getValue());
     }
 }

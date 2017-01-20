@@ -278,7 +278,7 @@ public class MarriageRegistrationService {
                         new BigDecimal(marriageRegistration.getFeePaid()));
         try {
             marriageRegistration.getHusband().isCopyFilesToByteArray();
-            marriageRegistration.getWife().copyPhotoAndSignatureToByteArray();
+            marriageRegistration.getWife().copyPhotoAndSignatureToByteArray(); 
 
         } catch (final IOException e) {
             LOG.error(ERROR_WHILE_COPYING_MULTIPART_FILE_BYTES, e);
@@ -377,19 +377,45 @@ public class MarriageRegistrationService {
         marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
         marriageSmsAndEmailService.sendSMS(marriageRegistration, MarriageRegistration.RegistrationStatus.APPROVED.toString());
         marriageSmsAndEmailService.sendEmail(marriageRegistration, MarriageRegistration.RegistrationStatus.APPROVED.toString());
+        return marriageRegistration;
+    }
+    
+    @Transactional
+    public MarriageCertificate generateMarriageCertificate(final MarriageRegistration marriageRegistration,
+            final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
+        final MarriageCertificate marriageCertificate = marriageCertificateService.generateMarriageCertificate(
+                marriageRegistration, request);
+        marriageRegistration.addCertificate(marriageCertificate);
+        return marriageCertificate;
+    }
 
+    @Transactional
+    public MarriageRegistration digiSignCertificate(final MarriageRegistration marriageRegistration,
+            final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
+        marriageRegistration.setStatus(marriageUtils.getStatusByCodeAndModuleType(
+                MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString(), MarriageConstants.MODULE_NAME));
+        workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
+        marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
+        // TODO : send sms and email after digital sign is done
+        /*
+         * marriageSmsAndEmailService.sendSMS(marriageRegistration,
+         * MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString());
+         * marriageSmsAndEmailService.sendEmail(marriageRegistration,
+         * MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString());
+         */
         return marriageRegistration;
     }
 
     @Transactional
     public MarriageRegistration printCertificate(final MarriageRegistration marriageRegistration,
             final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
-        final MarriageCertificate marriageCertificate = marriageCertificateService.generateMarriageCertificate(
-                marriageRegistration, request);
-        marriageRegistration.setStatus(
-                marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.REGISTERED.toString(),
-                        MarriageConstants.MODULE_NAME));
-        marriageRegistration.addCertificate(marriageCertificate);
+        if (marriageRegistration.getMarriageCertificate().isEmpty()) {
+            final MarriageCertificate marriageCertificate = marriageCertificateService.generateMarriageCertificate(
+                    marriageRegistration, request);
+            marriageRegistration.addCertificate(marriageCertificate);
+        }
+        marriageRegistration.setStatus(marriageUtils.getStatusByCodeAndModuleType(
+                MarriageRegistration.RegistrationStatus.REGISTERED.toString(), MarriageConstants.MODULE_NAME));
         marriageRegistration.setActive(true);
         workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
         marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);

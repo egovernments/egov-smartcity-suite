@@ -51,11 +51,12 @@
 			modelAttribute="marriageRegistration" id="form-updateregistration"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<input type="hidden" name="marriageRegistration" value="${marriageRegistration.id}" />
+			<input type="hidden" id="marriageRegistration" value="${marriageRegistration.id}" />
 			<input type="hidden" id="registrationStatus"
 				value="${marriageRegistration.status.code}" />
 			<input type="hidden" id="allowDaysValidation" value="${allowDaysValidation}" />
 			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
+			<input type="hidden" id="pendingActions" value="${pendingActions}" />
 			<input type="hidden" id="feeCollected" value="${marriageRegistration.feeCollected}" />
 				<c:if test="${marriageRegistration.status.code =='CREATED' && !marriageRegistration.feeCollected}">  
 				 <div  data-collapsed="0">

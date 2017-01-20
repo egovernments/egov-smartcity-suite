@@ -89,7 +89,7 @@ public class MarriageRegistration extends StateAware {
     public static final String SEQ_REGISTRATION = "SEQ_EGMRS_REGISTRATION";
 
     public enum RegistrationStatus {
-        CREATED, APPROVED, REJECTED, REGISTERED, CANCELLED
+        CREATED, APPROVED, REJECTED, REGISTERED, CANCELLED, DIGITALSIGNED
     }
 
     @Id
