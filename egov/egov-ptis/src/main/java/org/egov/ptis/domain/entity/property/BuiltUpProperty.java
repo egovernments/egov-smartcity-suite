@@ -42,6 +42,8 @@ package org.egov.ptis.domain.entity.property;
 import org.apache.log4j.Logger;
 import org.egov.commons.Area;
 import org.egov.exceptions.InvalidPropertyException;
+import org.egov.ptis.domain.entity.property.vacantland.LayoutApprovalAuthority;
+import org.egov.ptis.domain.entity.property.vacantland.VacantLandPlotArea;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -108,6 +110,10 @@ public class BuiltUpProperty extends AbstractProperty {
     private Boolean appurtenantLandChecked;
     private Boolean corrAddressDiff;
     private PropertyDepartment propertyDepartment;
+    private VacantLandPlotArea vacantLandPlotArea;
+    private LayoutApprovalAuthority layoutApprovalAuthority;
+    private String layoutPermitNo;
+    private Date layoutPermitDate;
 
     public BuiltUpProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea, Area plinthArea,
             Area commVacantLand, Area nonResPlotArea, Boolean irregular, String surveyNumber, Character fieldVerified,
@@ -121,7 +127,8 @@ public class BuiltUpProperty extends AbstractProperty {
             boolean attachedBathRoom, boolean waterHarvesting, boolean cable, String siteOwner, Apartment apartment,
             String pattaNumber, Double currentCapitalValue, Double marketValue, String categoryType,
             String occupancyCertificationNo, Boolean appurtenantLandChecked,
-            Boolean corrAddressDiff, PropertyDepartment propertyDepartment) {
+            Boolean corrAddressDiff, PropertyDepartment propertyDepartment, VacantLandPlotArea vacantLandPlotArea,
+            LayoutApprovalAuthority layoutApprovalAuthority, String layoutPermitNo, Date layoutPermitDate) {
         super();
         this.sitalArea = sitalArea;
         this.totalBuiltupArea = totalBuiltupArea;
@@ -174,6 +181,10 @@ public class BuiltUpProperty extends AbstractProperty {
         this.appurtenantLandChecked = appurtenantLandChecked;
         this.corrAddressDiff = corrAddressDiff;
         this.propertyDepartment = propertyDepartment;
+        this.vacantLandPlotArea = vacantLandPlotArea;
+        this.layoutApprovalAuthority = layoutApprovalAuthority;
+        this.layoutPermitNo = layoutPermitNo;
+        this.layoutPermitDate = layoutPermitDate;
     }
 
     public BuiltUpProperty() {
@@ -956,6 +967,46 @@ public class BuiltUpProperty extends AbstractProperty {
     @Override
     public void setPropertyDepartment(PropertyDepartment propertyDepartment) {
         this.propertyDepartment = propertyDepartment;
+    }
+
+    @Override
+    public VacantLandPlotArea getVacantLandPlotArea() {
+        return vacantLandPlotArea;
+    }
+
+    @Override
+    public void setVacantLandPlotArea(VacantLandPlotArea vacantLandPlotArea) {
+        this.vacantLandPlotArea = vacantLandPlotArea;
+    }
+
+    @Override
+    public LayoutApprovalAuthority getLayoutApprovalAuthority() {
+        return layoutApprovalAuthority;
+    }
+
+    @Override
+    public void setLayoutApprovalAuthority(LayoutApprovalAuthority layoutApprovalAuthority) {
+        this.layoutApprovalAuthority = layoutApprovalAuthority;
+    }
+
+    @Override
+    public String getLayoutPermitNo() {
+        return layoutPermitNo;
+    }
+
+    @Override
+    public void setLayoutPermitNo(String layoutPermitNo) {
+        this.layoutPermitNo = layoutPermitNo;
+    }
+
+    @Override
+    public Date getLayoutPermitDate() {
+        return layoutPermitDate;
+    }
+
+    @Override
+    public void setLayoutPermitDate(Date layoutPermitDate) {
+        this.layoutPermitDate = layoutPermitDate;
     }
 
 }

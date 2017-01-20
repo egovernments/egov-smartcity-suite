@@ -153,8 +153,12 @@ import org.egov.ptis.domain.entity.property.TaxExemptionReason;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
+import org.egov.ptis.domain.entity.property.vacantland.LayoutApprovalAuthority;
+import org.egov.ptis.domain.entity.property.vacantland.VacantLandPlotArea;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.repository.PropertyDepartmentRepository;
+import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
+import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
@@ -278,9 +282,19 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private Boolean showTaxCalcBtn = Boolean.FALSE;
     private Long propertyDepartmentId;
     private List<PropertyDepartment> propertyDepartmentList = new ArrayList<>();
+    private List<VacantLandPlotArea> vacantLandPlotAreaList = new ArrayList<>();
+    private List<LayoutApprovalAuthority> layoutApprovalAuthorityList = new ArrayList<>();
+    private Long vacantLandPlotAreaId;
+    private Long layoutApprovalAuthorityId;
     
     @Autowired
     transient PropertyDepartmentRepository propertyDepartmentRepository;
+    
+    @Autowired
+    transient VacantLandPlotAreaRepository vacantLandPlotAreaRepository;
+    
+    @Autowired
+    transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepository;
     
     public CreatePropertyAction() {
         super();
@@ -381,7 +395,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (!loggedUserIsMeesevaUser)
             basicPropertyService.persist(basicProperty);
         else {
-            final HashMap<String, String> meesevaParams = new HashMap<String, String>();
+            final HashMap<String, String> meesevaParams = new HashMap<>();
             meesevaParams.put("ADMISSIONFEE", "0");
             meesevaParams.put("APPLICATIONNUMBER", property.getMeesevaApplicationNumber());
             basicPropertyService.createBasicProperty(basicProperty, meesevaParams);
@@ -443,7 +457,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 else if (propTypeMstr.getCode().startsWith("CENTRAL_GOVT"))
                     setPropertyDepartmentList(propertyDepartmentRepository.getAllCentralDepartments());
             }
-            
+            if (property.getPropertyDetail().getVacantLandPlotArea() != null)
+                vacantLandPlotAreaId = property.getPropertyDetail().getVacantLandPlotArea().getId();
+            if (property.getPropertyDetail().getLayoutApprovalAuthority() != null)
+                layoutApprovalAuthorityId = property.getPropertyDetail().getLayoutApprovalAuthority().getId();
         }
 
         if (basicProp != null) {
@@ -607,7 +624,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         taxExemptionId = taxExemptionId == null || taxExemptionId.isEmpty() ? "-1" : taxExemptionId;
         property = propService.createProperty(property, getAreaOfPlot(), propertyMutationMaster.getCode(), propTypeId,
                 propUsageId, propOccId, status, getDocNumber(), getNonResPlotArea(), getFloorTypeId(), getRoofTypeId(),
-                getWallTypeId(), getWoodTypeId(), Long.valueOf(taxExemptionId), getPropertyDepartmentId());
+                getWallTypeId(), getWoodTypeId(), Long.valueOf(taxExemptionId), getPropertyDepartmentId(),
+                getVacantLandPlotAreaId(), getLayoutApprovalAuthorityId());
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propCompletionDate = propService.getLowestDtOfCompFloorWise(property.getPropertyDetail().getFloorDetails());
         else
@@ -620,6 +638,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (propTypeMstr != null && propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
             property.setPropertyDetail(propService.changePropertyDetail(property, property.getPropertyDetail(), 0)
                     .getPropertyDetail());
+        if (property.getPropertyDetail().getLayoutApprovalAuthority() != null
+                && "No Approval".equals(property.getPropertyDetail().getLayoutApprovalAuthority().getName())) {
+            property.getPropertyDetail().setLayoutPermitNo(null);
+            property.getPropertyDetail().setLayoutPermitDate(null);
+        }
         property.setBasicProperty(basicProp);
         propService.updateReferenceBasicProperty(basicProp, getParentIndex());
     }
@@ -737,7 +760,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     }
 
     public List<Floor> getFloorDetails() {
-        return new ArrayList<Floor>(property.getPropertyDetail().getFloorDetails());
+        return new ArrayList<>(property.getPropertyDetail().getFloorDetails());
     }
 
     @Override
@@ -859,7 +882,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             else if(propTypeMstr.getCode().startsWith("CENTRAL_GOVT"))
                 setPropertyDepartmentList(propertyDepartmentRepository.getAllCentralDepartments());
         }
-        addDropdownData("propertyDepartmentList", propertyDepartmentList);
+        setVacantLandPlotAreaList(vacantLandPlotAreaRepository.findAll());
+        setLayoutApprovalAuthorityList(layoutApprovalAuthorityRepository.findAll());
+        addDropdownData("vacantLandPlotAreaList", vacantLandPlotAreaList);
+        addDropdownData("layoutApprovalAuthorityList", layoutApprovalAuthorityList);
         super.prepare();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("prepare: PropTypeList: "
@@ -916,9 +942,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         taxExemptionId = taxExemptionId == null || taxExemptionId.isEmpty() ? "-1" : taxExemptionId;
         property = propService.createProperty(property, getAreaOfPlot(), propertyMutationMaster.getCode(), propTypeId,
                 propUsageId, propOccId, status, getDocNumber(), getNonResPlotArea(), getFloorTypeId(), getRoofTypeId(),
-                getWallTypeId(), getWoodTypeId(), Long.valueOf(taxExemptionId), getPropertyDepartmentId());
+                getWallTypeId(), getWoodTypeId(), Long.valueOf(taxExemptionId), getPropertyDepartmentId(),
+                getVacantLandPlotAreaId(), getLayoutApprovalAuthorityId());
         property.setStatus(status);
-
         LOGGER.debug("createBasicProp: Property after call to PropertyService.createProperty: " + property);
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propCompletionDate = propService.getLowestDtOfCompFloorWise(property.getPropertyDetail().getFloorDetails());
@@ -974,7 +1000,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 propertyDetail.getCurrentCapitalValue(), propertyDetail.getMarketValue(),
                 propertyDetail.getCategoryType(), propertyDetail.getOccupancyCertificationNo(),
                 propertyDetail.isAppurtenantLandChecked(), propertyDetail.isCorrAddressDiff(),
-                propertyDetail.getPropertyDepartment());
+                propertyDetail.getPropertyDepartment(), propertyDetail.getVacantLandPlotArea(), propertyDetail.getLayoutApprovalAuthority(),
+                propertyDetail.getLayoutPermitNo(), propertyDetail.getLayoutPermitDate());
 
         vacantProperty.setManualAlv(propertyDetail.getManualAlv());
         vacantProperty.setOccupierName(propertyDetail.getOccupierName());
@@ -1156,7 +1183,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
         validateProperty(property, areaOfPlot, dateOfCompletion, eastBoundary, westBoundary, southBoundary,
                 northBoundary, propTypeId, null != zoneId && zoneId != -1 ? String.valueOf(zoneId) : "", propOccId,
-                floorTypeId, roofTypeId, wallTypeId, woodTypeId, null, null);
+                floorTypeId, roofTypeId, wallTypeId, woodTypeId, null, null, vacantLandPlotAreaId, layoutApprovalAuthorityId);
 
         if (isBlank(pinCode))
             addActionError(getText("mandatory.pincode"));
@@ -1362,7 +1389,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             taxExemptionId = taxExemptionId == null || taxExemptionId.isEmpty() ? "-1" : taxExemptionId;
             property = propService.createProperty(property, getAreaOfPlot(), propertyMutationMaster.getCode(),
                     propTypeId, propUsageId, propOccId, STATUS_DEMAND_INACTIVE, getDocNumber(), getNonResPlotArea(),
-                    getFloorTypeId(), getRoofTypeId(), getWallTypeId(), getWoodTypeId(), Long.valueOf(taxExemptionId), getPropertyDepartmentId());
+                    getFloorTypeId(), getRoofTypeId(), getWallTypeId(), getWoodTypeId(), Long.valueOf(taxExemptionId),
+                    getPropertyDepartmentId(), getVacantLandPlotAreaId(), getLayoutApprovalAuthorityId());
             if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
                 propCompletionDate = propService.getLowestDtOfCompFloorWise(property.getPropertyDetail().getFloorDetails());
             else
@@ -1956,5 +1984,37 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     public void setPropertyDepartmentList(List<PropertyDepartment> propertyDepartmentList) {
         this.propertyDepartmentList = propertyDepartmentList;
+    }
+
+    public List<VacantLandPlotArea> getVacantLandPlotAreaList() {
+        return vacantLandPlotAreaList;
+    }
+
+    public void setVacantLandPlotAreaList(List<VacantLandPlotArea> vacantLandPlotAreaList) {
+        this.vacantLandPlotAreaList = vacantLandPlotAreaList;
+    }
+
+    public List<LayoutApprovalAuthority> getLayoutApprovalAuthorityList() {
+        return layoutApprovalAuthorityList;
+    }
+
+    public void setLayoutApprovalAuthorityList(List<LayoutApprovalAuthority> layoutApprovalAuthorityList) {
+        this.layoutApprovalAuthorityList = layoutApprovalAuthorityList;
+    }
+
+    public Long getVacantLandPlotAreaId() {
+        return vacantLandPlotAreaId;
+    }
+
+    public void setVacantLandPlotAreaId(Long vacantLandPlotAreaId) {
+        this.vacantLandPlotAreaId = vacantLandPlotAreaId;
+    }
+
+    public Long getLayoutApprovalAuthorityId() {
+        return layoutApprovalAuthorityId;
+    }
+
+    public void setLayoutApprovalAuthorityId(Long layoutApprovalAuthorityId) {
+        this.layoutApprovalAuthorityId = layoutApprovalAuthorityId;
     }
 }

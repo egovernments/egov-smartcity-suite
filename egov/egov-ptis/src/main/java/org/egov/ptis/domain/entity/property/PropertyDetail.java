@@ -42,6 +42,8 @@
 package org.egov.ptis.domain.entity.property;
 
 import org.egov.commons.Area;
+import org.egov.ptis.domain.entity.property.vacantland.LayoutApprovalAuthority;
+import org.egov.ptis.domain.entity.property.vacantland.VacantLandPlotArea;
 
 import java.util.Date;
 import java.util.List;
@@ -366,4 +368,20 @@ public interface PropertyDetail extends Property {
     public PropertyDepartment getPropertyDepartment();
     
     public void setPropertyDepartment(PropertyDepartment propertyDepartment);
+    
+    public VacantLandPlotArea getVacantLandPlotArea();
+    
+    public void setVacantLandPlotArea(VacantLandPlotArea vacantLandPlotArea);
+    
+    public LayoutApprovalAuthority getLayoutApprovalAuthority();
+    
+    public void setLayoutApprovalAuthority(LayoutApprovalAuthority layoutApprovalAuthority);
+    
+    public String getLayoutPermitNo();
+    
+    public void setLayoutPermitNo(String layoutPermitNo);
+    
+    public Date getLayoutPermitDate();
+    
+    public void setLayoutPermitDate(Date layoutPermitDate);
 }

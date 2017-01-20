@@ -202,6 +202,8 @@ public class CreateAction extends PropertyTaxBaseAction{
     private Address ownerAddress = new CorrespondenceAddress();
     Date propCompletionDate = null;
     private Long propertyDepartmentId;
+    private Long vacantLandPlotAreaId;
+    private Long layoutApprovalAuthorityId;
     
     @Autowired
     private PropertyPersistenceService basicPropertyService;
@@ -430,7 +432,7 @@ public class CreateAction extends PropertyTaxBaseAction{
 
         validateProperty(property, areaOfPlot, dateOfCompletion, eastBoundary, westBoundary, southBoundary,
                 northBoundary, propTypeId, (null != zoneId && zoneId != -1) ? String.valueOf(zoneId) : "", propOccId,
-                floorTypeId, roofTypeId, wallTypeId, woodTypeId, null, null);
+                floorTypeId, roofTypeId, wallTypeId, woodTypeId, null, null, vacantLandPlotAreaId, layoutApprovalAuthorityId);
 
         if (isBlank(pinCode))
             addActionError(getText("mandatory.pincode"));
@@ -569,7 +571,8 @@ public class CreateAction extends PropertyTaxBaseAction{
         taxExemptionId = (taxExemptionId == null || taxExemptionId.isEmpty()) ? "-1" : taxExemptionId;
         property = propService.createProperty(property, getAreaOfPlot(), propertyMutationMaster.getCode(), propTypeId,
                 propUsageId, propOccId, status, getDocNumber(), getNonResPlotArea(), getFloorTypeId(), getRoofTypeId(),
-                getWallTypeId(), getWoodTypeId(), Long.valueOf(taxExemptionId), getPropertyDepartmentId());
+                getWallTypeId(), getWoodTypeId(), Long.valueOf(taxExemptionId), getPropertyDepartmentId(), vacantLandPlotAreaId,
+                layoutApprovalAuthorityId);
         property.setStatus(status);
 
         LOGGER.debug("createBasicProp: Property after call to PropertyService.createProperty: " + property);
@@ -1021,6 +1024,22 @@ public class CreateAction extends PropertyTaxBaseAction{
 
     public void setPropertyDepartmentId(Long propertyDepartmentId) {
         this.propertyDepartmentId = propertyDepartmentId;
+    }
+
+    public Long getVacantLandPlotAreaId() {
+        return vacantLandPlotAreaId;
+    }
+
+    public void setVacantLandPlotAreaId(Long vacantLandPlotAreaId) {
+        this.vacantLandPlotAreaId = vacantLandPlotAreaId;
+    }
+
+    public Long getLayoutApprovalAuthorityId() {
+        return layoutApprovalAuthorityId;
+    }
+
+    public void setLayoutApprovalAuthorityId(Long layoutApprovalAuthorityId) {
+        this.layoutApprovalAuthorityId = layoutApprovalAuthorityId;
     }
 
 }

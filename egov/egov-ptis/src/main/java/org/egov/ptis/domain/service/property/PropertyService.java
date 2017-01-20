@@ -156,6 +156,8 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.domain.repository.PropertyDepartmentRepository;
+import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
+import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
@@ -241,6 +243,12 @@ public class PropertyService {
     
     @Autowired
     private PropertyDepartmentRepository ptDepartmentRepository;
+    
+    @Autowired
+    private VacantLandPlotAreaRepository vacantLandPlotAreaRepository;
+    
+    @Autowired
+    private LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepository;
 
     /**
      * Creates a new property if property is in transient state else updates persisted property
@@ -264,7 +272,8 @@ public class PropertyService {
     public PropertyImpl createProperty(final PropertyImpl property, final String areaOfPlot, final String mutationCode,
             final String propTypeId, final String propUsageId, final String propOccId, final Character status,
             final String docnumber, final String nonResPlotArea, final Long floorTypeId, final Long roofTypeId,
-            final Long wallTypeId, final Long woodTypeId, final Long taxExemptId, final Long propertyDepartmentId) {
+            final Long wallTypeId, final Long woodTypeId, final Long taxExemptId, final Long propertyDepartmentId,
+            final Long vacantLandPlotAreaId, final Long layoutApprovalAuthorityId) {
         LOGGER.debug("Entered into createProperty");
         LOGGER.debug("createProperty: Property: " + property + ", areaOfPlot: " + areaOfPlot + ", mutationCode: "
                 + mutationCode + ",propTypeId: " + propTypeId + ", propUsageId: " + propUsageId + ", propOccId: "
@@ -365,6 +374,14 @@ public class PropertyService {
         }
         else
             property.getPropertyDetail().setPropertyDepartment(null);
+        if(vacantLandPlotAreaId != null)
+            property.getPropertyDetail().setVacantLandPlotArea(vacantLandPlotAreaRepository.findOne(vacantLandPlotAreaId));
+        else
+            property.getPropertyDetail().setVacantLandPlotArea(null);
+        if(layoutApprovalAuthorityId != null)
+            property.getPropertyDetail().setLayoutApprovalAuthority(layoutApprovalAuthorityRepository.findOne(layoutApprovalAuthorityId));
+        else
+            property.getPropertyDetail().setLayoutApprovalAuthority(null);
         return property;
     }
 

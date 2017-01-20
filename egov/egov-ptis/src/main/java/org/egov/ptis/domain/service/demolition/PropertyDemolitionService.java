@@ -202,7 +202,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         final String areaOfPlot = String.valueOf(propertyModel.getPropertyDetail().getSitalArea().getArea());
         propertyModel = propertyService.createProperty(propertyModel, areaOfPlot, PROPERTY_MODIFY_REASON_FULL_DEMOLITION,
                 propertyModel.getPropertyDetail().getPropertyTypeMaster().getId().toString(), null, null, status, null,
-                null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, null, null);
         final Map<String, Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         final Installment installmentFirstHalf = yearwiseInstMap.get(CURRENTYEAR_FIRST_HALF);
         final Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);

@@ -148,6 +148,7 @@ import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
+import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
 import org.egov.ptis.master.service.PropertyUsageService;
@@ -210,6 +211,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     protected String userDesignationList = new String();
     protected String applicationType;
     protected String initiator;
+    
+    @Autowired
+    transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepo;
 
     public List<File> getUpload() {
         return uploads;
@@ -284,7 +288,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             final String eastBoundary, final String westBoundary, final String southBoundary,
             final String northBoundary, final String propTypeId, final String zoneId, final String propOccId,
             final Long floorTypeId, final Long roofTypeId, final Long wallTypeId, final Long woodTypeId,
-            final String modifyRsn, final Date propCompletionDate) {
+            final String modifyRsn, final Date propCompletionDate, final Long vacantLandPlotAreaId, final Long layoutApprovalAuthorityId) {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into validateProperty");
@@ -304,10 +308,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
                     if (null != propertyDetail)
                         validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary,
-                                northBoundary, modifyRsn, propCompletionDate);
+                                northBoundary, modifyRsn, propCompletionDate, vacantLandPlotAreaId, layoutApprovalAuthorityId);
                 } else if (null != propertyDetail.isAppurtenantLandChecked()) {
                     validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary, northBoundary,
-                            modifyRsn, propCompletionDate);
+                            modifyRsn, propCompletionDate, vacantLandPlotAreaId, layoutApprovalAuthorityId);
                     validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate, modifyRsn);
                 } else
                     validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate, modifyRsn);
@@ -322,7 +326,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     public void validateVacantProperty(final PropertyDetail propertyDetail, final String eastBoundary,
             final String westBoundary, final String southBoundary, final String northBoundary, final String modifyRsn,
-            final Date propCompletionDate) {
+            final Date propCompletionDate, final Long vacantLandPlotAreaId, final Long layoutApprovalAuthorityId) {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into validateVacantProperty");
@@ -350,7 +354,17 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             addActionError(getText("mandatory.southBoundary"));
         if (isBlank(northBoundary))
             addActionError(getText("mandatory.northBoundary"));
-
+        if (vacantLandPlotAreaId == null || Long.valueOf(-1).equals(vacantLandPlotAreaId))
+            addActionError(getText("mandatory.vacanland.plotarea"));
+        if (layoutApprovalAuthorityId == null || Long.valueOf(-1).equals(layoutApprovalAuthorityId))
+            addActionError(getText("mandatory.layout.authority"));
+        if (!(layoutApprovalAuthorityId == null || Long.valueOf(-1).equals(layoutApprovalAuthorityId)) && !"No Approval"
+                .equals(layoutApprovalAuthorityRepo.findOne(layoutApprovalAuthorityId).getName())) {
+            if (isBlank(propertyDetail.getLayoutPermitNo()))
+                addActionError(getText("mandatory.layout.permitno"));
+            if (propertyDetail.getLayoutPermitDate() == null)
+                addActionError(getText("mandatory.layout.permitdate"));
+        }
         if (null != modifyRsn && null != propCompletionDate)
             if (null != propCompletionDate && propertyDetail.getDateOfCompletion() != null)
                 if (!DateUtils.compareDates(propertyDetail.getDateOfCompletion(), propCompletionDate))

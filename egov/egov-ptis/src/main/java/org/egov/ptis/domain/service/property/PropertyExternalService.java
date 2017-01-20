@@ -1317,7 +1317,7 @@ public class PropertyExternalService {
                     propertyTypeMaster.getId().toString(),
                     null, null, STATUS_ISACTIVE, regdDocNo, null, floorType != null ? floorType.getId() : null,
                     roofType != null ? roofType.getId() : null, wallType != null ? wallType.getId() : null,
-                    woodType != null ? woodType.getId() : null, null, null);
+                    woodType != null ? woodType.getId() : null, null, null, null, null);
         } else {
         	propertyImpl.getPropertyDetail().setDateOfCompletion(convertStringToDate(effectiveDate));
         	propertyImpl.getPropertyDetail().setCurrentCapitalValue(currentCapitalValue);
@@ -1330,7 +1330,7 @@ public class PropertyExternalService {
             property = propService.createProperty(propertyImpl, extentOfSite, mutationReasonCode,
                     propertyTypeMaster.getId().toString(),
                     null, null, STATUS_ISACTIVE, regdDocNo, null, null, null,
-                    null, null, null, null);
+                    null, null, null, null, null, null);
         }
         
         property.setStatus(STATUS_DEMAND_INACTIVE);
@@ -2212,7 +2212,7 @@ public class PropertyExternalService {
             		propMutMstr.getCode(),propertyTypeMaster.getId().toString(),
                     null, null, STATUS_WORKFLOW, propertyImpl.getDocNumber(), null, floorType != null ? floorType.getId() : null,
                     roofType != null ? roofType.getId() : null, wallType != null ? wallType.getId() : null,
-                    woodType != null ? woodType.getId() : null, null, null);
+                    woodType != null ? woodType.getId() : null, null, null, null, null);
         }else{
         	propertyImpl.getPropertyDetail().setDateOfCompletion(convertStringToDate(viewPropertyDetails.getEffectiveDate()));
         	propertyImpl.getPropertyDetail().setCurrentCapitalValue(viewPropertyDetails.getCurrentCapitalValue());
@@ -2226,7 +2226,7 @@ public class PropertyExternalService {
             propertyImpl = propService.createProperty(propertyImpl, String.valueOf(viewPropertyDetails.getVacantLandArea()), 
             		propMutMstr.getCode(), propertyTypeMaster.getId().toString(),
                     null, null, STATUS_WORKFLOW, propertyImpl.getDocNumber(), null, null, null,
-                    null, null, null, null);
+                    null, null, null, null, null, null);
         }
         if (!propertyTypeMaster.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propCompletionDate = propService.getLowestDtOfCompFloorWise(propertyImpl.getPropertyDetail()
