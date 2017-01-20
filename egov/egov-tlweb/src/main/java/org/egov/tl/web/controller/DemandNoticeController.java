@@ -42,6 +42,10 @@ package org.egov.tl.web.controller;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 import static org.egov.infra.utils.DateUtils.toYearFormat;
+import static org.egov.tl.utils.Constants.CITY_GRADE_CORPORATION;
+import static org.egov.tl.utils.Constants.TL_LICENSE_ACT_CORPORATION;
+import static org.egov.tl.utils.Constants.TL_LICENSE_ACT_DEFAULT;
+import static org.egov.tl.utils.Constants.TRADELICENSE_MODULENAME;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -53,11 +57,16 @@ import java.util.Map;
 
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.City;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.DateUtils;
+import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.service.TradeLicenseService;
@@ -77,7 +86,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 @Controller
 @RequestMapping("/demandnotice")
 public class DemandNoticeController {
@@ -92,6 +100,11 @@ public class DemandNoticeController {
     @Autowired
     private PenaltyRatesService penaltyRatesService;
     
+    @Autowired
+    private CityService cityService;
+    
+    @Autowired
+    private AppConfigValueService appConfigValueService;
     
     @Autowired
     private ReportService reportService;
@@ -107,6 +120,7 @@ public class DemandNoticeController {
     private ResponseEntity<byte[]> generateReport(TradeLicense license) {
         
         if (license != null && license.getCurrentDemand()!=null) {
+        	
           DateTimeFormatter FORMAT_DATE_TO_YEAR_YY = DateTimeFormat.forPattern("yy");  
             //Get current installment by using demand.
             Installment currentInstallment = license.getCurrentDemand().getEgInstallmentMaster();
@@ -117,7 +131,8 @@ public class DemandNoticeController {
             reportParams.put("tradeName", license.getNameOfEstablishment());
             reportParams.put("tradeAddress", license.getAddress());
             reportParams.put("cityUrl", ApplicationThreadLocals.getDomainURL());
-            reportParams.put("actDeclaration", "");//TODO: ADD ACT DETAILS BASED ON CORPORATION OR ULB WISE.
+        	   getActDeclarationDetailBasedOnCityGrade();
+        	
             reportParams.put("installmentYear", toYearFormat(currentInstallment.getFromDate()) + "-" +
                     toYearFormat(currentInstallment.getToDate()));
             reportParams.put("currentDate", currentDateToDefaultDateFormat());
@@ -140,8 +155,7 @@ public class DemandNoticeController {
             BigDecimal arrLicenseFee;
             BigDecimal arrLicensePenalty;
             
-            //TODO: CHANGE getOutstandingFee() METHOD TO GET OLD INSTALLMENTS. 
-                Map<String, Map<String, BigDecimal>> outstandingFees = tradeLicenseService
+                 Map<String, Map<String, BigDecimal>> outstandingFees = tradeLicenseService
                         .getOutstandingFeeForDemandNotice(license, currentInstallment, previousInstallment.get(0));
                 Map<String, BigDecimal> licenseFees = outstandingFees.get("License Fee");
                 if (licenseFees != null) {
@@ -169,7 +183,8 @@ public class DemandNoticeController {
             reportParams.put("penaltyFee", arrLicensePenalty);
             reportParams.put("arrearLicenseFee", arrLicenseFee);
             reportParams.put("totalLicenseFee", totalAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
-            reportParams.put("penaltyCalculationMessage","");//TODO: ADD PENALTY PERCENTAGE DATES. 
+            List<PenaltyRates> penaltyRates= penaltyRatesService.search(license.getLicenseAppType().getId());
+            reportParams.put("penaltyCalculationMessage",getPenaltyRateDetails(penaltyRates, currentInstallment)); 
             reportParams.put("currentYear", toYearFormat(currentInstallment.getFromDate()));
        
         }
@@ -182,6 +197,23 @@ public class DemandNoticeController {
         final ReportOutput reportOutput = reportService.createReport(reportInput);
         return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
+
+	private void getActDeclarationDetailBasedOnCityGrade() {
+
+		City city = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
+		
+		if (city!=null && city.getGrade().equalsIgnoreCase(CITY_GRADE_CORPORATION)) {
+			final List<AppConfigValues> corporationAct = appConfigValueService
+					.getConfigValuesByModuleAndKey(TRADELICENSE_MODULENAME, TL_LICENSE_ACT_CORPORATION);
+			reportParams.put("actDeclaration", corporationAct!=null && corporationAct.get(0) != null ? corporationAct.get(0).getValue() : " ");
+		} else {
+			final List<AppConfigValues> municipalityAct = appConfigValueService
+					.getConfigValuesByModuleAndKey(TRADELICENSE_MODULENAME,  TL_LICENSE_ACT_DEFAULT);
+
+			reportParams.put("actDeclaration",
+					municipalityAct!=null && municipalityAct.get(0) != null ? municipalityAct.get(0).getValue() : " ");
+		}
+	}
 
     private void getMonthWiseLatePenaltyFeeDetails(TradeLicense license, Installment currentInstallment,
             BigDecimal currLicenseFee, BigDecimal arrLicenseFee, BigDecimal arrLicensePenalty,
@@ -214,4 +246,38 @@ public class DemandNoticeController {
             monthWiseDemandDetails.add(demandBillDtl);
         }
     }
+    
+   	public String getPenaltyRateDetails(List<PenaltyRates> penaltyRates,Installment currentInstallment){
+       	StringBuilder penaltylist= new StringBuilder();
+		for (PenaltyRates penaltyRate : penaltyRates) {
+			LocalDate currentinstStartdate = LocalDate.fromDateFields(currentInstallment.getFromDate());
+			if (penaltyRate.getRate() <= 0 || penaltyRate.getToRange() < 0) {
+				penaltylist.append("Before "
+						+ getDefaultFormattedDate(
+								currentinstStartdate.plusDays(penaltyRate.getToRange().intValue()).toDate())
+						+ " without penalty" + "\n");
+			}
+			if (penaltyRate.getToRange() >= 0) {
+				if (penaltyRate.getToRange() >= 999) {
+					penaltylist.append("    After "
+							+ getDefaultFormattedDate(
+									currentinstStartdate.plusDays(penaltyRate.getFromRange().intValue()).toDate())
+							+ " with " + penaltyRate.getRate().intValue() + "% penalty");
+				} else {
+					penaltylist
+							.append("    From "
+									+ getDefaultFormattedDate(currentinstStartdate
+											.plusDays(penaltyRate.getFromRange().intValue()).toDate())
+									+ " to "
+									+ getDefaultFormattedDate(currentinstStartdate
+											.plusDays(penaltyRate.getToRange().intValue() - 1).toDate())
+									+ " with " + penaltyRate.getRate().intValue() + "% penalty" + "\n");
+
+				}
+
+			}
+		}
+   		return penaltylist.toString();
+       	
+       }
 }

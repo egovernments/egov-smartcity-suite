@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-01-20T12:02:10 -->
+<!-- 2017-01-20T15:26:45 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tldemandnoticereport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="28d1468c-93d7-467e-ba37-8e4c557005e0">
 	<property name="ireport.zoom" value="0.9090909090909091"/>
 	<property name="ireport.x" value="0"/>
@@ -340,7 +340,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="1" width="553" height="22" uuid="c0a5b19d-17ef-4ae6-bdd6-72c3e08af91d"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA["2. Penalty Calculation: " + $P{penaltyCalculationMessage}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["2. Penalty Calculation: \n    " + $P{penaltyCalculationMessage}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
