@@ -89,12 +89,26 @@ $('#btnSearch').click(function(e) {
 													},
 													{
 														"data" : "isActive",
-														"sClass" : "text-left"
-													},
+														sortable : false,
+														"render" : function(data, type, row, meta) {
+
+															if (row.isActive == true) {
+																return '<p>yes</p>';
+															} else {
+																return '<p>no</p>';
+															}
+														},													},
 													{
 														"data" : "isMainRegistrationUnit",
-														"sClass" : "text-left"
-													},
+														sortable : false,
+														"render" : function(data, type, row, meta) {
+
+															if (row.isMainRegistrationUnit == true) {
+																return '<p>yes</p>';
+															} else {
+																return '<p>no</p>';
+															}
+														},													},
 													{
 
 														"data" : "id",
