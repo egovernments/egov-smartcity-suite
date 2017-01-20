@@ -400,7 +400,7 @@ public class CollectionIndexElasticSearchService {
      * @param collectionDetailsRequest
      * @return List
      */
-    public List<CollTableData> getResponseTableData(CollectionDetailsRequest collectionDetailsRequest) {
+    public List<CollTableData> getResponseTableData(CollectionDetailsRequest collectionDetailsRequest, boolean isForMisReport) {
         List<CollTableData> collIndDataList = new ArrayList<>();
         Date fromDate;
         Date toDate;
@@ -408,12 +408,16 @@ public class CollectionIndexElasticSearchService {
         CollTableData collIndData;
         BigDecimal arrearColl = BigDecimal.ZERO;
         BigDecimal currentColl = BigDecimal.ZERO;
+        BigDecimal lytdArrearColl;
+        BigDecimal lytdCurrentColl;
         BigDecimal arrearDemand = BigDecimal.ZERO;
         BigDecimal currentDemand = BigDecimal.ZERO;
         BigDecimal totalAssessments = BigDecimal.ZERO;
         BigDecimal currentYearTotalDemand;
         String aggregationField = REGION_NAME;
         Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
+        Map<String, Map<String, BigDecimal>> collectionDivisionMap = new HashMap<>();
+        Map<String, Map<String, BigDecimal>> lytdCollectionDivisionMap = new HashMap<>();
         final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
 
         /**
@@ -485,15 +489,23 @@ public class CollectionIndexElasticSearchService {
             Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate, toDate,
                     COLLECTION_INDEX_NAME, TOTAL_AMOUNT, aggregationField);
             
+            // For fetching individual collections
+            StringTerms individualCollDetails = getIndividualCollections(collectionDetailsRequest, fromDate, toDate,
+                    COLLECTION_INDEX_NAME, aggregationField);
+            prepareIndividualCollMap(individualCollDetails, collectionDivisionMap);
+            
             // For last year's till today's date collections
             Map<String, BigDecimal> lytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest,
                     DateUtils.addYears(fromDate, -1), DateUtils.addYears(toDate, -1), COLLECTION_INDEX_NAME, TOTAL_AMOUNT,
                     aggregationField);
-            // For fetching individual collections
-            StringTerms individualCollDetails = getIndividualCollections(collectionDetailsRequest, fromDate, toDate,
-                    COLLECTION_INDEX_NAME, aggregationField);
-            Map<String, Map<String, BigDecimal>> collectionDivisionMap = new HashMap<>();
-            prepareIndividualCollMap(individualCollDetails, collectionDivisionMap);
+            
+            if(isForMisReport){
+                // For fetching individual collections for last year till date
+                StringTerms lytdIndividualCollDetails = getIndividualCollections(collectionDetailsRequest,
+                        DateUtils.addYears(fromDate, -1), DateUtils.addYears(toDate, -1),
+                        COLLECTION_INDEX_NAME, aggregationField);
+                prepareIndividualCollMap(lytdIndividualCollDetails, lytdCollectionDivisionMap);
+            }
     
             // Fetch ward wise Bill Collector details for ward based grouping
             if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
@@ -519,6 +531,20 @@ public class CollectionIndexElasticSearchService {
                             .add(collectionDivisionMap.get(name).get(CURRENT_CESS) == null ? BigDecimal.ZERO
                                     : collectionDivisionMap.get(name).get(CURRENT_CESS));
                 }
+                if(isForMisReport && !lytdCollectionDivisionMap.isEmpty() && lytdCollectionDivisionMap.get(name) != null){
+                    lytdArrearColl = (lytdCollectionDivisionMap.get(name).get(ARREAR_AMOUNT) == null ? BigDecimal.ZERO
+                            : lytdCollectionDivisionMap.get(name).get(ARREAR_AMOUNT))
+                            .add(lytdCollectionDivisionMap.get(name).get(ARREAR_CESS) == null ? BigDecimal.ZERO
+                                    : lytdCollectionDivisionMap.get(name).get(ARREAR_CESS));
+                    lytdCurrentColl = (lytdCollectionDivisionMap.get(name).get(CURRENT_AMOUNT) == null ? BigDecimal.ZERO
+                            : lytdCollectionDivisionMap.get(name).get(CURRENT_AMOUNT))
+                            .add(lytdCollectionDivisionMap.get(name).get(CURRENT_CESS) == null ? BigDecimal.ZERO
+                                    : lytdCollectionDivisionMap.get(name).get(CURRENT_CESS));
+                } else {
+                    lytdArrearColl = BigDecimal.ZERO;
+                    lytdCurrentColl = BigDecimal.ZERO;
+                }
+                
                 if (!demandDivisionMap.isEmpty() && demandDivisionMap.get(name) != null) {
                     arrearDemand = demandDivisionMap.get(name).get(ARREAR_DMD) == null ? BigDecimal.ZERO
                             : demandDivisionMap.get(name).get(ARREAR_DMD);
@@ -532,7 +558,7 @@ public class CollectionIndexElasticSearchService {
                 setCollTableValues(collectionDetailsRequest, collIndData, wardWiseBillCollectors, aggregationField, name, noOfMonths, 
                         todayCollMap.get(name) == null ? BigDecimal.ZERO : todayCollMap.get(name), lyTodayCollMap.get(name) == null ? BigDecimal.ZERO : lyTodayCollMap.get(name),
                                 entry.getValue(), arrearColl, currentColl, collectionDivisionMap.get(name).get(INTEREST_AMOUNT) == null ? BigDecimal.ZERO
-                                        : collectionDivisionMap.get(name).get(INTEREST_AMOUNT), arrearDemand, currentDemand, 
+                                        : collectionDivisionMap.get(name).get(INTEREST_AMOUNT), lytdArrearColl, lytdCurrentColl, arrearDemand, currentDemand, 
                         currentYearTotalDemand, totalDemandMap.get(name) == null ? BigDecimal.ZERO : totalDemandMap.get(name), 
                                 lytdCollMap.get(name) == null ? BigDecimal.ZERO : lytdCollMap.get(name), totalAssessments);
                 
@@ -565,7 +591,7 @@ public class CollectionIndexElasticSearchService {
                         : currYrTotalDemandMap.get(name);
                 
                 setCollTableValues(collectionDetailsRequest, collIndData, wardWiseBillCollectors, aggregationField, name, noOfMonths, 
-                        BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, arrearDemand, currentDemand, 
+                        BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, arrearDemand, currentDemand, 
                         currentYearTotalDemand, entry.getValue() == null ? BigDecimal.ZERO : entry.getValue(), BigDecimal.ZERO, totalAssessments);
                 collIndDataList.add(collIndData);
             }
@@ -578,7 +604,7 @@ public class CollectionIndexElasticSearchService {
     private void setCollTableValues(CollectionDetailsRequest collectionDetailsRequest, CollTableData collIndData,
             Map<String, BillCollectorIndex> wardWiseBillCollectors, String aggregationField, String name, int noOfMonths,
             BigDecimal todayColl, BigDecimal lyTodayColl, BigDecimal cytdColl, BigDecimal arrearColl, BigDecimal currentColl,
-            BigDecimal interestColl, BigDecimal arrearDemand, BigDecimal currentDemand, BigDecimal currentYearTotalDemand,
+            BigDecimal interestColl, BigDecimal lytdArrearsColl, BigDecimal lytdCurrentColl, BigDecimal arrearDemand, BigDecimal currentDemand, BigDecimal currentYearTotalDemand,
             BigDecimal totalDemand, BigDecimal lytdColl, BigDecimal totalAssessments) {
         BigDecimal variance;
         if (REGION_NAME.equals(aggregationField))
@@ -609,7 +635,8 @@ public class CollectionIndexElasticSearchService {
         collIndData.setArrearColl(arrearColl);
         collIndData.setCurrentColl(currentColl);
         collIndData.setInterestColl(interestColl);
-
+        collIndData.setLytdArrearsColl(lytdArrearsColl);
+        collIndData.setLytdCurrentColl(lytdCurrentColl);
         collIndData.setArrearDemand(arrearDemand);
         collIndData.setCurrentDemand(currentDemand);
 
@@ -1379,7 +1406,7 @@ public class CollectionIndexElasticSearchService {
      * @param collectionDetailsRequest
      * @return list
      */
-    public List<CollTableData> getResponseTableDataForBillCollector(CollectionDetailsRequest collectionDetailsRequest) {
+    public List<CollTableData> getResponseTableDataForBillCollector(CollectionDetailsRequest collectionDetailsRequest, boolean isForMisReport) {
         Map<String, CollTableData> wardReceiptDetails = new HashMap<>();
         Map<String, List<CollTableData>> billCollectorWiseMap = new LinkedHashMap<>();
         List<CollTableData> collDetails = new ArrayList<>();
@@ -1389,7 +1416,7 @@ public class CollectionIndexElasticSearchService {
         /**
          * Fetch the Ward-wise data
          */
-        List<CollTableData> wardWiseData = getResponseTableData(collectionDetailsRequest);
+        List<CollTableData> wardWiseData = getResponseTableData(collectionDetailsRequest, isForMisReport);
         for (CollTableData tableData : wardWiseData) {
             wardReceiptDetails.put(tableData.getWardName(), tableData);
         }
@@ -1446,6 +1473,8 @@ public class CollectionIndexElasticSearchService {
         BigDecimal dayTargetDmd = BigDecimal.ZERO;
         BigDecimal lyTodayColl = BigDecimal.ZERO;
         BigDecimal totalAssessments = BigDecimal.ZERO;
+        BigDecimal lytdArrearColl = BigDecimal.ZERO;
+        BigDecimal lytdCurrentColl = BigDecimal.ZERO;
         String[] billCollectorNameNumberArr = entry.getKey().split("~");
         for (CollTableData tableData : entry.getValue()) {
             currDayColl = currDayColl
@@ -1464,6 +1493,8 @@ public class CollectionIndexElasticSearchService {
             dayTargetDmd = dayTargetDmd.add(tableData.getDayTargetDemand() == null ? BigDecimal.ZERO : tableData.getDayTargetDemand());
             lyTodayColl = lyTodayColl.add(tableData.getLyTodayColl() == null ? BigDecimal.ZERO : tableData.getLyTodayColl());
             totalAssessments = totalAssessments.add(tableData.getTotalAssessments());
+            lytdArrearColl = lytdArrearColl.add(tableData.getLytdArrearsColl() == null ? BigDecimal.ZERO : tableData.getLytdArrearsColl());
+            lytdCurrentColl = lytdCurrentColl.add(tableData.getLytdCurrentColl() == null ? BigDecimal.ZERO : tableData.getLytdCurrentColl());
         }
         collTableData.setBillCollector(billCollectorNameNumberArr[0]);
         collTableData
@@ -1477,6 +1508,8 @@ public class CollectionIndexElasticSearchService {
         collTableData.setArrearColl(arrearColl);
         collTableData.setCurrentColl(currentColl);
         collTableData.setInterestColl(interestColl);
+        collTableData.setLytdArrearsColl(lytdArrearColl);
+        collTableData.setLytdCurrentColl(lytdCurrentColl);
         collTableData.setArrearDemand(arrearDmd);
         collTableData.setCurrentDemand(currentDmd);
         collTableData.setProportionalArrearDemand(proportionalArrearDmd);
