@@ -1,48 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-12-19T15:12:57 -->
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2017-01-19T17:33:02 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="online_transaction" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6c32d2bb-93b0-4b77-9de8-d1cb8d0afd9f">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Postgresql"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<style name="eGov Basic" isDefault="true" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hTextAlign="Left" hImageAlign="Left" vTextAlign="Middle" vImageAlign="Middle" rotation="None" fontName="Times New Roman" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman">
 		<box leftPadding="5" rightPadding="5"/>
@@ -101,20 +60,45 @@
 		<parameterDescription><![CDATA[Actual to date used in the query - it is calculated by adding one to the to date passed]]></parameterDescription>
 		<defaultValueExpression><![CDATA[ReportUtil.add($P{EGOV_TO_DATE}, Calendar.DAY_OF_MONTH, 1)]]></defaultValueExpression>
 	</parameter>
+	<parameter name="EGOV_PAYMENT_SERVICE_ID" class="java.lang.Long">
+		<parameterDescription><![CDATA[Payment Service ID]]></parameterDescription>
+		<defaultValueExpression><![CDATA[-1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EGOV_COUNTER_OPERATOR_ID" class="java.lang.Long">
+		<parameterDescription><![CDATA[Counter Operator ID]]></parameterDescription>
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Q_COUNTER_OPERATOR_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[Where clause for counter operator id]]></parameterDescription>
+		<defaultValueExpression><![CDATA[($P{EGOV_COUNTER_OPERATOR_ID} == null || $P{EGOV_COUNTER_OPERATOR_ID} == -1) ? "" : "AND EGCL_ONLINEPAYMENTS.CREATEDBY = " + $P{EGOV_COUNTER_OPERATOR_ID}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Q_PAYMENT_SERVICE_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[($P{EGOV_PAYMENT_SERVICE_ID} == null || $P{EGOV_PAYMENT_SERVICE_ID} == -1) ? "" : "AND EGCL_ONLINEPAYMENTS.SERVICEDETAILS = " + $P{EGOV_PAYMENT_SERVICE_ID}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EGOV_COLLECTION_TYPE" class="java.lang.String">
+		<parameterDescription><![CDATA[Collection Type]]></parameterDescription>
+		<defaultValueExpression><![CDATA[-1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Q_COLLECTION_TYPE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[($P{EGOV_COLLECTION_TYPE} == null || $P{EGOV_COLLECTION_TYPE} == "-1") ? "AND EGCL_COLLECTIONHEADER.collectiontype in ('C','O')" : "AND EGCL_COLLECTIONHEADER.collectiontype = '" + $P{EGOV_COLLECTION_TYPE} + "'"]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[SELECT EGCL_COLLECTIONHEADER.REFERENCENUMBER as referencenumber, EGCL_COLLECTIONHEADER.CONSUMERCODE as consumerCode, EGCL_COLLECTIONHEADER.RECEIPTNUMBER as receiptnumber, EGCL_COLLECTIONHEADER.CREATEDDATE as createdDate, EGCL_COLLECTIONHEADER.TOTALAMOUNT as totalAmount,
-		EGCL_SERVICEDETAILS.NAME as service, EGW_STATUS.description as status,EGCL_ONLINEPAYMENTS.transactionnumber as transactionNumber, EGCL_ONLINEPAYMENTS.transactiondate 
+		EGCL_SERVICEDETAILS.NAME as service, EGW_STATUS.description as status,EGCL_ONLINEPAYMENTS.transactionnumber as transactionNumber, EGCL_ONLINEPAYMENTS.transactiondate, (CASE WHEN EG_USER.name  in ('Anonymous','999999999') THEN 'NA' ELSE (select name from EG_USER where id=EGCL_ONLINEPAYMENTS.CREATEDBY) END) AS userName
 			FROM 
 		 		EGCL_COLLECTIONHEADER EGCL_COLLECTIONHEADER
 		  INNER JOIN EGCL_COLLECTIONMIS EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONMIS.COLLECTIONHEADER
 		  INNER JOIN EGCL_ONLINEPAYMENTS EGCL_ONLINEPAYMENTS ON EGCL_ONLINEPAYMENTS.COLLECTIONHEADER =EGCL_COLLECTIONHEADER.ID
 		  INNER JOIN EGW_STATUS EGW_STATUS ON EGCL_ONLINEPAYMENTS.STATUS = EGW_STATUS.ID 
 		  INNER JOIN EGCL_SERVICEDETAILS EGCL_SERVICEDETAILS ON EGCL_COLLECTIONHEADER.SERVICEDETAILS = EGCL_SERVICEDETAILS.ID
-	WHERE EGCL_COLLECTIONHEADER.collectiontype = 'O'
-	AND EGCL_COLLECTIONHEADER.RECEIPTDATE >= $P{EGOV_FROM_DATE}
+		  INNER JOIN EG_USER EG_USER ON EGCL_ONLINEPAYMENTS.CREATEDBY =EG_USER.ID
+	WHERE EGCL_COLLECTIONHEADER.RECEIPTDATE >= $P{EGOV_FROM_DATE}
  	AND EGCL_COLLECTIONHEADER.RECEIPTDATE <= $P{EGOV_TO_DATE_PLUS_ONE}
 	$P!{Q_DEPT_ID}
 	$P!{Q_SERVICE_ID}
+	$P!{Q_PAYMENT_SERVICE_ID}
+	$P!{Q_COUNTER_OPERATOR_ID}
+	$P!{Q_COLLECTION_TYPE}
 	$P!{Q_PAYMENTSTATUS_ID}]]>
 	</queryString>
 	<field name="referencenumber" class="java.lang.String">
@@ -142,11 +126,15 @@
 	<field name="transactionDate" class="java.util.Date">
 		<fieldDescription><![CDATA[Transaction Date]]></fieldDescription>
 	</field>
+	<field name="userName" class="java.lang.String">
+		<fieldDescription><![CDATA[User Name]]></fieldDescription>
+	</field>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="160" splitType="Stretch">
+		<band height="185" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<staticText>
 				<reportElement style="eGov TITLE" mode="Transparent" x="241" y="0" width="326" height="45" forecolor="#000000" backcolor="#FFFFFF" uuid="82666b9d-ec00-4e00-8d25-8799237237ec"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
@@ -160,7 +148,7 @@
 				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement x="495" y="121" width="100" height="20" uuid="eacb5559-c866-4327-8f6a-a3f454050537"/>
+				<reportElement x="495" y="120" width="100" height="20" uuid="eacb5559-c866-4327-8f6a-a3f454050537"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -171,10 +159,10 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[Service:]]></text>
+				<text><![CDATA[Billing Service:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="495" y="101" width="100" height="20" uuid="63720302-dd77-47e2-8680-503e1c11c5be"/>
+				<reportElement x="495" y="100" width="100" height="20" uuid="63720302-dd77-47e2-8680-503e1c11c5be"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -188,7 +176,7 @@
 				<text><![CDATA[To Date:]]></text>
 			</staticText>
 			<textField pattern="">
-				<reportElement x="595" y="121" width="140" height="20" uuid="309ef88f-3dd5-4fc2-8c98-adbd3e7db0e4"/>
+				<reportElement x="595" y="120" width="140" height="20" uuid="309ef88f-3dd5-4fc2-8c98-adbd3e7db0e4"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -202,7 +190,7 @@
 				<textFieldExpression><![CDATA[($P{EGOV_BILLING_SERVICE_ID} == null || $P{EGOV_BILLING_SERVICE_ID} == -1) ? "All Services" : (String)ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION},"SELECT sd.name FROM EGCL_SERVICEDETAILS sd WHERE sd.id = " + $P{EGOV_BILLING_SERVICE_ID})]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="595" y="101" width="140" height="20" uuid="14ccb1f8-e3a3-473a-82e1-2e376fe1c1ab"/>
+				<reportElement x="595" y="100" width="140" height="20" uuid="14ccb1f8-e3a3-473a-82e1-2e376fe1c1ab"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -272,7 +260,7 @@
 				<textFieldExpression><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "All Departments" : (String)ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION},"SELECT dept.name FROM EG_DEPARTMENT dept WHERE dept.id = " + $P{EGOV_DEPT_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="15" y="140" width="100" height="20" uuid="36d7c922-6c52-4c71-b6b2-79294ac44e15"/>
+				<reportElement x="15" y="160" width="100" height="20" uuid="36d7c922-6c52-4c71-b6b2-79294ac44e15"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -286,7 +274,7 @@
 				<text><![CDATA[Status:]]></text>
 			</staticText>
 			<textField pattern="">
-				<reportElement x="115" y="140" width="140" height="20" uuid="de1cb5ba-5fb5-45d8-8053-e62f75cabcd2"/>
+				<reportElement x="115" y="160" width="140" height="20" uuid="de1cb5ba-5fb5-45d8-8053-e62f75cabcd2"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -299,24 +287,124 @@
 				</textElement>
 				<textFieldExpression><![CDATA[($P{EGOV_ONLINETRANSACTION_STATUS_ID} == null || $P{EGOV_ONLINETRANSACTION_STATUS_ID} == -1) ? "All Status" : (String)ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION},"SELECT stat.description FROM Egw_Status stat WHERE stat.id = " + $P{EGOV_ONLINETRANSACTION_STATUS_ID})]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="15" y="140" width="100" height="20" uuid="78f933c9-7bd0-4d27-95b6-1d71e9a5d43e"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Payment Service:]]></text>
+			</staticText>
+			<textField pattern="">
+				<reportElement x="115" y="140" width="140" height="20" uuid="1b807c2d-9e31-46f9-838e-4011f73d9ca8"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_PAYMENT_SERVICE_ID} == null || $P{EGOV_PAYMENT_SERVICE_ID} == -1) ? "All Services" : (String)ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION},"SELECT sd.name FROM EGCL_SERVICEDETAILS sd WHERE sd.id = " + $P{EGOV_PAYMENT_SERVICE_ID})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="495" y="140" width="100" height="20" uuid="e1938a33-bf8c-4ea6-914f-812d101f1eb8">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
+				</textElement>
+				<text><![CDATA[Username:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="595" y="140" width="140" height="20" uuid="bb35dfe4-b131-46d9-8d0d-366fd23cc030">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_COUNTER_OPERATOR_ID} == null || $P{EGOV_COUNTER_OPERATOR_ID} == -1) ? "All Users" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_USER WHERE ID = " + $P{EGOV_COUNTER_OPERATOR_ID})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="495" y="160" width="100" height="20" uuid="c6dee1d0-7441-4b15-b727-b62a3e2f1e2d">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Collection Type:]]></text>
+			</staticText>
+			<textField pattern="">
+				<reportElement x="595" y="160" width="140" height="20" uuid="897995ab-6c82-4e1d-8944-daf197f843de">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_COLLECTION_TYPE} == null || $P{EGOV_COLLECTION_TYPE} == "-1") ? "All Collection Types" : $P{EGOV_COLLECTION_TYPE}.equals("C")?"Counter":"Online"]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<columnHeader>
 		<band height="30" splitType="Stretch">
 			<staticText>
-				<reportElement style="eGov Caption" x="30" y="0" width="71" height="30" uuid="78925747-710a-4843-99a6-65cdb4da4d50"/>
+				<reportElement style="eGov Caption" x="30" y="0" width="60" height="30" uuid="78925747-710a-4843-99a6-65cdb4da4d50">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<text><![CDATA[Bill ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="eGov Caption" x="101" y="0" width="80" height="30" uuid="8c8316ac-9533-47d8-a268-67d9d3b0530b"/>
+				<reportElement style="eGov Caption" x="90" y="0" width="70" height="30" uuid="8c8316ac-9533-47d8-a268-67d9d3b0530b">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<text><![CDATA[Consumer Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="eGov Caption" x="181" y="0" width="90" height="30" uuid="e59ee0e3-f3da-48b6-87d5-2680a567ed58"/>
+				<reportElement style="eGov Caption" x="160" y="0" width="90" height="30" uuid="e59ee0e3-f3da-48b6-87d5-2680a567ed58">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<text><![CDATA[Receipt Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="eGov Caption" x="271" y="0" width="80" height="30" uuid="393abf7e-e704-4a45-a6c7-1460cd4945b4"/>
+				<reportElement style="eGov Caption" x="250" y="0" width="70" height="30" uuid="393abf7e-e704-4a45-a6c7-1460cd4945b4">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<text><![CDATA[Receipt Date]]></text>
 			</staticText>
 			<staticText>
@@ -334,19 +422,19 @@
 				<text><![CDATA[Sl. No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="eGov Caption" x="711" y="0" width="79" height="30" uuid="f75aa3fa-0dfb-49c6-a329-8e6bbaf97091"/>
+				<reportElement style="eGov Caption" x="640" y="0" width="65" height="30" uuid="f75aa3fa-0dfb-49c6-a329-8e6bbaf97091"/>
 				<box leftPadding="5" rightPadding="5">
 					<leftPen lineWidth="0.5"/>
 				</box>
 				<text><![CDATA[Payment Status]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="eGov Caption" x="351" y="0" width="80" height="30" uuid="f775d8b6-e9dd-4629-9cd8-4d10dce746cb"/>
+				<reportElement style="eGov Caption" x="320" y="0" width="80" height="30" uuid="f775d8b6-e9dd-4629-9cd8-4d10dce746cb"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<text><![CDATA[Receipt Amount]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="eGov Caption" x="611" y="0" width="100" height="30" uuid="f012d412-6c60-4139-84bf-387e88de72dc"/>
+				<reportElement style="eGov Caption" x="540" y="0" width="100" height="30" uuid="f012d412-6c60-4139-84bf-387e88de72dc"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineColor="#000000"/>
 					<topPen lineColor="#000000"/>
@@ -357,21 +445,33 @@
 				<text><![CDATA[Billing System]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="eGov Caption" x="431" y="0" width="90" height="30" uuid="458d97e8-1876-4227-8b65-d059ff8f6eb2"/>
+				<reportElement style="eGov Caption" x="400" y="0" width="70" height="30" uuid="458d97e8-1876-4227-8b65-d059ff8f6eb2">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box leftPadding="5" rightPadding="5"/>
 				<text><![CDATA[Transaction ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="eGov Caption" x="521" y="0" width="90" height="30" uuid="6021cfe9-579d-4190-8374-b12852aab5a0"/>
+				<reportElement style="eGov Caption" x="470" y="0" width="70" height="30" uuid="6021cfe9-579d-4190-8374-b12852aab5a0"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<text><![CDATA[Transaction Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="eGov Caption" x="705" y="0" width="85" height="30" uuid="f00e3b22-50e2-412f-913f-2dc5ab8871f4">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5">
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[Receipt created By]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="20" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="30" y="0" width="71" height="20" uuid="d9f7c9c0-f696-4175-9513-cffefea62758"/>
+				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="30" y="0" width="60" height="20" uuid="d9f7c9c0-f696-4175-9513-cffefea62758"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -383,7 +483,7 @@
 				<textFieldExpression><![CDATA[$F{referencenumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="101" y="0" width="80" height="20" uuid="f7f0ef5f-2b8d-4dbb-a69f-677cbf0eaecc">
+				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="90" y="0" width="70" height="20" uuid="f7f0ef5f-2b8d-4dbb-a69f-677cbf0eaecc">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
@@ -397,7 +497,7 @@
 				<textFieldExpression><![CDATA[$F{consumerCode}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="181" y="0" width="90" height="20" uuid="362b1a83-3fc4-431c-8876-2888dcb4b410">
+				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="160" y="0" width="90" height="20" uuid="362b1a83-3fc4-431c-8876-2888dcb4b410">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
@@ -410,7 +510,7 @@
 				<textFieldExpression><![CDATA[$F{receiptnumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy" isBlankWhenNull="true">
-				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="271" y="0" width="80" height="20" uuid="2391e63c-716f-4fe5-aa07-ec53b8f9c917"/>
+				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="250" y="0" width="70" height="20" uuid="2391e63c-716f-4fe5-aa07-ec53b8f9c917"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -436,7 +536,9 @@
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="711" y="0" width="79" height="20" uuid="ac3d2230-57f1-41b7-a4e4-591a6d8be74f"/>
+				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="640" y="0" width="65" height="20" uuid="ac3d2230-57f1-41b7-a4e4-591a6d8be74f">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -448,7 +550,7 @@
 				<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="351" y="0" width="80" height="20" uuid="d9fe0e2e-356b-49d8-b6d4-7d7ccf3250e6"/>
+				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="320" y="0" width="80" height="20" uuid="d9fe0e2e-356b-49d8-b6d4-7d7ccf3250e6"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -460,7 +562,7 @@
 				<textFieldExpression><![CDATA[$F{totalAmount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="611" y="0" width="100" height="20" uuid="272e5ef4-100e-409c-8d77-b1af170e7a8f"/>
+				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="540" y="0" width="100" height="20" uuid="272e5ef4-100e-409c-8d77-b1af170e7a8f"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -472,7 +574,7 @@
 				<textFieldExpression><![CDATA[$F{service}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="431" y="0" width="90" height="20" uuid="32853a3f-eac5-4454-a1bd-55214e824220"/>
+				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="400" y="0" width="70" height="20" uuid="32853a3f-eac5-4454-a1bd-55214e824220"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -484,7 +586,9 @@
 				<textFieldExpression><![CDATA[$F{transactionNumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy" isBlankWhenNull="true">
-				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="521" y="0" width="90" height="20" uuid="4550a090-77a0-4972-be39-bb0a78fba93b"/>
+				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="470" y="0" width="70" height="20" uuid="4550a090-77a0-4972-be39-bb0a78fba93b">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -494,6 +598,20 @@
 				</box>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{transactionDate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement style="eGov Table Data" stretchType="RelativeToTallestObject" x="705" y="0" width="85" height="20" uuid="262e9979-2ce6-4427-9f3a-b297ed48858c">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{userName}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -621,34 +739,6 @@
 				<textFieldExpression><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "All Departments" : (String)ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION},"SELECT dept.name FROM EG_DEPARTMENT dept WHERE dept.id = " + $P{EGOV_DEPT_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="140" width="100" height="20" uuid="58c070be-3a31-4054-9c6d-cd86722d400e"/>
-				<box leftPadding="5" rightPadding="5">
-					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
-				</textElement>
-				<text><![CDATA[Status:]]></text>
-			</staticText>
-			<textField pattern="">
-				<reportElement x="100" y="140" width="140" height="20" uuid="c06f5993-d166-48ab-bdf8-f9685e685053"/>
-				<box leftPadding="5" rightPadding="5">
-					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[($P{EGOV_ONLINETRANSACTION_STATUS_ID} == null || $P{EGOV_ONLINETRANSACTION_STATUS_ID} == -1) ? "All Status" : (String)ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION},"SELECT stat.description FROM Egw_Status stat WHERE stat.id = " + $P{EGOV_ONLINETRANSACTION_STATUS_ID})]]></textFieldExpression>
-			</textField>
-			<staticText>
 				<reportElement x="480" y="101" width="100" height="20" uuid="82873146-5bd2-4cf1-8838-825af6a6bead"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
@@ -688,7 +778,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[Service:]]></text>
+				<text><![CDATA[Billing Service:]]></text>
 			</staticText>
 			<textField pattern="">
 				<reportElement x="580" y="121" width="140" height="20" uuid="dfb4ce84-204f-4dae-a609-5fa220a39ee2"/>
@@ -704,6 +794,126 @@
 				</textElement>
 				<textFieldExpression><![CDATA[($P{EGOV_BILLING_SERVICE_ID} == null || $P{EGOV_BILLING_SERVICE_ID} == -1) ? "All Services" : (String)ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION},"SELECT sd.name FROM EGCL_SERVICEDETAILS sd WHERE sd.id = " + $P{EGOV_BILLING_SERVICE_ID})]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="0" y="140" width="100" height="20" uuid="44f49852-2a16-4601-8f9a-a6e549da51bb"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Payment Service:]]></text>
+			</staticText>
+			<textField pattern="">
+				<reportElement x="100" y="140" width="140" height="20" uuid="997fe929-74ae-48e9-8a37-439e4b638fed"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_PAYMENT_SERVICE_ID} == null || $P{EGOV_PAYMENT_SERVICE_ID} == -1) ? "All Services" : (String)ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION},"SELECT sd.name FROM EGCL_SERVICEDETAILS sd WHERE sd.id = " + $P{EGOV_PAYMENT_SERVICE_ID})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="480" y="141" width="100" height="20" uuid="1d41b5f6-91ff-42c5-b8bb-9f5bf78b0a4e">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
+				</textElement>
+				<text><![CDATA[Username:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="580" y="141" width="140" height="20" uuid="79d89d89-45f2-4c42-ae84-6562c78067e6">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_COUNTER_OPERATOR_ID} == null || $P{EGOV_COUNTER_OPERATOR_ID} == -1) ? "All Users" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EG_USER WHERE ID = " + $P{EGOV_COUNTER_OPERATOR_ID})]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="580" y="161" width="140" height="20" uuid="66939b74-8af8-485a-bafe-2f34a706eef0">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_COLLECTION_TYPE} == null || $P{EGOV_COLLECTION_TYPE} == "-1") ? "All Collection Types" : $P{EGOV_COLLECTION_TYPE}.equals("C")?"Counter":"Online"]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="100" y="160" width="140" height="20" uuid="140f99d3-b6f7-4323-a99e-df54c4aa8cf7"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_ONLINETRANSACTION_STATUS_ID} == null || $P{EGOV_ONLINETRANSACTION_STATUS_ID} == -1) ? "All Status" : (String)ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION},"SELECT stat.description FROM Egw_Status stat WHERE stat.id = " + $P{EGOV_ONLINETRANSACTION_STATUS_ID})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="160" width="100" height="20" uuid="8cd1c1e1-da67-46a8-ae6b-c4b527451eb1"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Status:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="480" y="161" width="100" height="20" uuid="a2a974e5-0dd0-4f70-95f2-3da98f4a0768">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Collection Type:]]></text>
+			</staticText>
 		</band>
 	</noData>
 </jasperReport>

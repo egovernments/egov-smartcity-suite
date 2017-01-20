@@ -64,6 +64,12 @@
 		<property name="collectionsNumberGenerator" ref="collectionsNumberGenerator" />
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
+	
+	<bean class="org.egov.collection.service.CollectionService" id="collectionService">
+		<property name="collectionsUtil" ref="collectionsUtil" />
+		<property name="receiptHeaderService" ref="receiptHeaderService" />
+		<property name="collectionCommon" ref="collectionCommon" />
+	</bean>
 
 	<bean id="remittanceService" class="org.egov.collection.service.RemittanceServiceImpl">
 		<property name="collectionsUtil" ref="collectionsUtil" />

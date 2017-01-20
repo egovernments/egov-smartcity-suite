@@ -265,6 +265,7 @@ function validate()
 	var instrTypeDD = document.getElementById("ddradiobutton").checked;
 	var instrTypeCard = document.getElementById("cardradiobutton").checked;
 	var instrTypeBank = document.getElementById("bankradiobutton").checked;
+	var instrTypeOnline = document.getElementById("onlineradiobutton").checked;
 	var chequetable=document.getElementById('chequegrid')
 	var chequetablelen1 =chequetable.rows.length;
 
@@ -417,6 +418,29 @@ function validate()
 			}//end of for loop
 		}//end of else
 		document.getElementById('instrumentTypeCashOrCard').value="";
+	}
+	//if mode of payment is online
+	if(instrTypeOnline){
+		if(document.getElementById("instrHeaderOnline.instrumentAmount")!=null)
+		{
+			onlineamount=document.getElementById("instrHeaderOnline.instrumentAmount").value;
+			if(onlineamount==null || onlineamount=="" || isNaN(onlineamount) || onlineamount<0){
+				document.getElementById("receipt_error_area").innerHTML+=
+				'<s:text name="billreceipt.invalidcreditamount.errormessage" />'+ '<br>';
+				validation = false;
+			}
+			else
+			{
+			    onlineamount=eval(onlineamount);
+				if(onlineamount==0){
+					document.getElementById("receipt_error_area").innerHTML+=
+					'<s:text name="billreceipt.invalidcreditamount.errormessage" />'+ '<br>';
+					validation = false;
+				}
+				collectiontotal=collectiontotal+onlineamount;
+			}
+			document.getElementById('instrumentTypeCashOrCard').value="online";
+		}
 	}
 	document.getElementById("instrumenttotal").value=collectiontotal;
 	var credittotal=calculateCreditTotal();
@@ -1072,6 +1096,7 @@ function showHideMandataryMark(obj){
 		<s:hidden label="chequeAllowed" id="chequeAllowed" value="%{chequeAllowed}" name="chequeAllowed"/>
 		<s:hidden label="bankAllowed" id="bankAllowed" value="%{bankAllowed}" name="bankAllowed"/>
 		<s:hidden label="ddAllowed" id="ddAllowed" value="%{ddAllowed}" name="ddAllowed"/>
+		<s:hidden label="onlineAllowed" id="onlineAllowed" value="%{onlineAllowed}" name="onlineAllowed"/>
 		<s:hidden label="billSource" id="billSource" value="%{billSource}" name="billSource"/>
 		<s:hidden label="serviceName" id="serviceName" value="%{serviceName}" name="serviceName"/>
 		<s:hidden label="fundName" id="fundName" value="%{fundName}" name="fundName"/>

@@ -198,6 +198,7 @@ public final class CollectionConstants {
     public static final String QUERY_SERVICE_BY_CODE = "getServiceByCode";
     public static final String QUERY_INSTRUMENTTYPE_BY_TYPE = "getInstrumentTypeByType";
     public static final String QUERY_CHARTOFACCOUNT_BY_INSTRTYPE = "getChartofAccountByInstrumentType";
+    public static final String QUERY_CHARTOFACCOUNT_BY_INSTRTYPE_SERVICE = "getCOAByInstrumentTypeAndService";
     public static final String QUERY_ALLCOUNTERS = "getAllCounters";
     public static final String QUERY_ZONE_OF_RECEIPTS = "getAllReceiptBoundary";
     public static final String QUERY_SERVICE_BY_NAME = "getServicesByName";
@@ -223,6 +224,7 @@ public final class CollectionConstants {
     public static final String QUERY_GET_LOCATIONBYID = "getLocationById";
     public static final String QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID = "getContraVoucherbyVoucherHeaderId";
     public static final String QUERY_GET_INSTRUMENTHEADER_BY_ID = "INSTRUMENTHEADERBYID";
+    public static final String QUERY_CREATEDBYUSERS_OF_PAYMENT_RECEIPTS="CREATEDBYUSERS_OF_PAYMENT_RECEIPTS";
 
     // Workflow actions
     public static final String WF_ACTION_CREATE_RECEIPT = "Create Receipt";
@@ -276,8 +278,6 @@ public final class CollectionConstants {
     public static final String FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE = FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA;
     public static final String FINANCIAL_CONTRATVOUCHER_VOUCHERNAME = FinancialConstants.CONTRAVOUCHER_NAME_PAYIN;
 
-    // Name of session variable that contains currently logged in user name
-    public static final String SESSION_VAR_LOGIN_USER_NAME = "com.egov.user.LoginUserName";
     public static final String SESSION_VAR_RECEIPT_IDS = "EGOV_RECEIPT_IDS";
     public static final String SUPER_USER_NAME = "egovernments";
     public static final String SESSION_VAR_LOGIN_USER_LOCATIONID = "locationId";
