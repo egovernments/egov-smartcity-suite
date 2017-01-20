@@ -45,50 +45,6 @@
 </style>
 
 <script type="text/javascript">
-function checkPanNumber() {
-	var panNumber = document.getElementById('panNumber').value.length;
-    if(panNumber<10 && panNumber!='')
-        {
-    	showMessage('contractor_error', '<s:text name="contractor.panNumber.length" />');
-        window.scroll(0,0);
-        return false;
-        }
-    return true;
-}
-
-function checkMobileNumber() {
-	var mobileNumber = document.getElementById('mobileNumber').value;
-	var re = /^([0|\+[91]{1,3}(\-)?)?([7-9][0-9]{9})$/;
-	
-    if(mobileNumber != '' && !re.test(mobileNumber))
-        {
-    	showMessage('contractor_error', '<s:text name="contractor.mobilenumber.format" />');
-        window.scroll(0,0);
-        return false;
-        }
-    return true;
-}
-
-function validateContractorFormAndSubmit() {
-	if(!checkPanNumber() || !checkMobileNumber())
-		return false;
-	clearMessage('contractor_error');
-	links=document.contractor.getElementsByTagName("span");
-	errors=false;
-	for(i=0;i<links.length;i++) {
-        if(links[i].innerHTML=='&nbsp;x' && links[i].style.display!='none'){
-            errors=true;
-            break;
-        }
-    }
-    
-    if(errors) {
-        dom.get("contractor_error").style.display='';
-    	document.getElementById("contractor_error").innerHTML='<s:text name="contractor.validate_x.message" />';
-    	return false;
-    }
-}
-
 var departmentDropdownOptions=[{label:"--- Select ---", value:"0"},
     <s:iterator var="s" value="dropdownData.departmentList" status="status">  
     {"label":"<s:property value="%{name}"/>" ,
@@ -294,7 +250,7 @@ var makeContractorDataTable = function() {
 				<s:textarea name="narration" cols="35" cssClass="form-control patternvalidation"
 				data-pattern="alphanumericwithallspecialcharacters"	id="narration" value="%{narration}" />
 			</div>
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for = "mobileNumber"> <s:text
 					name="contractor.mobilenumber" />
 			</label>
 			<div class="col-sm-3 add-margin">
