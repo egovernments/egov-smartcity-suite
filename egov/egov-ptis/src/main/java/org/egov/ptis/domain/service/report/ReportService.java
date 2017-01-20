@@ -110,6 +110,7 @@ public class ReportService {
     private static final String EWSHS = "EWSHS";
     private static final String PRIVATE = "PRIVATE";
     private static final String PMV_QUERY = "select distinct pmv from PropertyMaterlizeView pmv where pmv.isActive = true ";
+    private static final String ABOVE_FIVE_YEARS = "Above 5 Years";
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
     private PersistenceService propPerServ;
     private Properties taxRateProps = null;
@@ -1059,65 +1060,239 @@ public class ReportService {
      * @param propertyViewList
      * @return list
      */
-    public List<DefaultersInfo> getDefaultersInformation(List<PropertyMaterlizeView> propertyViewList) {
+    public List<DefaultersInfo> getDefaultersInformation(List<PropertyMaterlizeView> propertyViewList,final String noofyrs,final Integer limit) {
         List<DefaultersInfo> defaultersList = new ArrayList<>();
+        List<DefaultersInfo> defaultersListForYrs = new ArrayList<>();
         DefaultersInfo defaultersInfo;
         BigDecimal totalDue;
         BigDecimal currPenalty;
         BigDecimal currPenaltyColl;
-        int count = 0;
-        Installment curInstallment = propertyTaxCommonUtils.getCurrentInstallment();
-        Iterator itr;
-        InstDmdCollMaterializeView idc;
-        InstDmdCollMaterializeView lastElement;
+        int count = 1;
+
+        int reqyr = 0;
+       
+        
         for (final PropertyMaterlizeView propView : propertyViewList) {
-            defaultersInfo = new DefaultersInfo();
-            totalDue = BigDecimal.ZERO;
-            currPenalty = BigDecimal.ZERO;
-            currPenaltyColl = BigDecimal.ZERO;
-            count++;
+            
+           if (isCountInLimit(limit, count))
+               break;
+                
+            
+           defaultersInfo= getInstDmdInfo(propView);
+         
             defaultersInfo.setSlNo(count);
             defaultersInfo.setAssessmentNo(propView.getPropertyId());
-            defaultersInfo.setOwnerName(propView.getOwnerName().contains(",") ? propView.getOwnerName().replace(",",
-                    " & ") : propView.getOwnerName());
+            defaultersInfo.setOwnerName(getOwerName(propView));
             defaultersInfo.setWardName(propView.getWard().getName());
             defaultersInfo.setHouseNo(propView.getHouseNo());
-            defaultersInfo.setLocality((propView.getLocality()) != null ? propView.getLocality().getName()
-                    : "NA");
-            defaultersInfo.setMobileNumber((StringUtils.isNotBlank(propView.getMobileNumber()) ? propView
-                    .getMobileNumber() : "NA"));
+            defaultersInfo.setLocality(getLocality(propView));
+            defaultersInfo.setMobileNumber(getMobileNo(propView));
             defaultersInfo.setArrearsDue(propView.getAggrArrDmd().subtract(propView.getAggrArrColl()));
             defaultersInfo.setCurrentDue((propView.getAggrCurrFirstHalfDmd().add(propView.getAggrCurrSecondHalfDmd()))
-                    .subtract((propView.getAggrCurrFirstHalfColl().add(propView.getAggrCurrSecondHalfColl()))));
-            defaultersInfo.setAggrArrearPenalyDue((propView.getAggrArrearPenaly() != null ? propView
-                    .getAggrArrearPenaly() : ZERO).subtract(propView.getAggrArrearPenalyColl() != null ? propView
-                            .getAggrArrearPenalyColl() : ZERO));
-            currPenalty = (propView.getAggrCurrFirstHalfPenaly() != null ? propView.getAggrCurrFirstHalfPenaly() : ZERO)
-                    .add(propView.getAggrCurrSecondHalfPenaly() != null ? propView.getAggrCurrSecondHalfPenaly() : ZERO);
-            currPenaltyColl = (propView.getAggrCurrFirstHalfPenalyColl() != null ? propView
-                    .getAggrCurrFirstHalfPenalyColl() : ZERO)
-                            .add(propView.getAggrCurrSecondHalfPenalyColl() != null ? propView
-                                    .getAggrCurrSecondHalfPenalyColl() : ZERO);
+                    .subtract(propView.getAggrCurrFirstHalfColl().add(propView.getAggrCurrSecondHalfColl())));
+            defaultersInfo.setAggrArrearPenalyDue(getAggArrPenaltyDue(propView));
+            currPenalty = getAggCurrFirstHalfPenalty(propView)
+                    .add(getAggCurrSecHalfPenalty(propView));
+            currPenaltyColl = getAggCurrFirstHalfPenColl(propView)
+                            .add(getAggCurrSecHalfPenColl(propView));
             defaultersInfo.setAggrCurrPenalyDue(currPenalty.subtract(currPenaltyColl));
             totalDue = defaultersInfo.getArrearsDue().add(defaultersInfo.getCurrentDue())
                     .add(defaultersInfo.getAggrArrearPenalyDue()).add(defaultersInfo.getAggrCurrPenalyDue());
             defaultersInfo.setTotalDue(totalDue);
-            if (!propView.getInstDmdColl().isEmpty()) {
-                defaultersInfo.setArrearsFrmInstallment(propView.getInstDmdColl().iterator().next().getInstallment()
-                        .getDescription());
-                itr = propView.getInstDmdColl().iterator();
-                lastElement = new InstDmdCollMaterializeView();
-                while (itr.hasNext()) {
-                    idc = (InstDmdCollMaterializeView) itr.next();
-                    if (!idc.getInstallment().equals(curInstallment))
-                        lastElement = idc;
-                }
-                if (lastElement != null && lastElement.getInstallment() != null)
-                    defaultersInfo.setArrearsToInstallment(lastElement.getInstallment().getDescription());
+            int yrs =0;
+     
+          
+            if(isNotMoreThanFiveYrs(noofyrs)){
+                reqyr=Integer.parseInt(noofyrs.substring(0,1));
+                yrs=propertyTaxUtil.getNoOfYears(defaultersInfo.getMinDate(),defaultersInfo.getMaxDate());
+                
             }
-            defaultersList.add(defaultersInfo);
+           if(isNotMoreThanFiveYrs(noofyrs) && reqyr >= yrs){
+               defaultersListForYrs.add(defaultersInfo);
+                count++;
+            }else if(noofyrs ==null || (noofyrs!=null && ABOVE_FIVE_YEARS.equalsIgnoreCase(noofyrs))){
+                defaultersList.add(defaultersInfo);
+                count++;
+           }
         }
 
-        return defaultersList;
+        return defaultersListForYrs.isEmpty()?defaultersList:defaultersListForYrs;
     }
+
+    private DefaultersInfo getInstDmdInfo(PropertyMaterlizeView propView){
+        DefaultersInfo defaultersInfo = new DefaultersInfo();
+
+        Iterator itr;
+        InstDmdCollMaterializeView idc;
+        if (!propView.getInstDmdColl().isEmpty()) {
+            itr = propView.getInstDmdColl().iterator();
+            Installment minInstallment=null;
+            Installment maxInstallment=null;
+            while (itr.hasNext()) {
+                BigDecimal dmdtot;
+                BigDecimal colltot;
+                idc = (InstDmdCollMaterializeView) itr.next();
+                 dmdtot= getGenTax(idc).add 
+                        (getEduCess(idc)).add 
+                        (getLibCess(idc)).add 
+                        (getPenaltyFines(idc)).add 
+                        (getPubSerCharge(idc)).add 
+                        (getSewTax(idc)).add 
+                        (getUnaPenalty(idc)).add 
+                        (getVacLandTax(idc));
+                     
+                 colltot= getGenTaxColl(idc).add 
+                                ( getEduCessColl(idc)).add 
+                                (getLibCessColl(idc)).add 
+                                ( getPenaltyFineColl(idc)).add 
+                                (getPubServiceColl(idc)).add 
+                                (getSewColl(idc)).add 
+                                (getUnauthPenColl(idc)).add 
+                                (getVacLColl(idc));
+               
+                minInstallment=getMinInstallment(minInstallment,idc,dmdtot,colltot);
+                maxInstallment=getMaxInstallment(maxInstallment,idc,dmdtot,colltot);
+                     
+            }
+            if(minInstallment!=null){
+            defaultersInfo.setMinDate(minInstallment.getFromDate());
+            defaultersInfo.setArrearsFrmInstallment(minInstallment.getDescription());
+            }
+            if(maxInstallment!=null){
+            defaultersInfo.setMaxDate(maxInstallment.getFromDate());
+            defaultersInfo.setArrearsToInstallment(maxInstallment.getDescription());
+            }
+        }
+        return defaultersInfo;
+    }
+    private BigDecimal getAggCurrSecHalfPenColl(final PropertyMaterlizeView propView) {
+        return propView.getAggrCurrSecondHalfPenalyColl() != null ? propView
+                .getAggrCurrSecondHalfPenalyColl() : ZERO;
+    }
+
+    private BigDecimal getAggCurrFirstHalfPenColl(final PropertyMaterlizeView propView) {
+        return propView.getAggrCurrFirstHalfPenalyColl() != null ? propView
+                .getAggrCurrFirstHalfPenalyColl() : ZERO;
+    }
+
+    private BigDecimal getAggCurrSecHalfPenalty(final PropertyMaterlizeView propView) {
+        return propView.getAggrCurrSecondHalfPenaly() != null ? propView.getAggrCurrSecondHalfPenaly() : ZERO;
+    }
+
+    private BigDecimal getAggCurrFirstHalfPenalty(final PropertyMaterlizeView propView) {
+        return propView.getAggrCurrFirstHalfPenaly() != null ? propView.getAggrCurrFirstHalfPenaly() : ZERO;
+    }
+
+    private BigDecimal getAggArrPenaltyDue(final PropertyMaterlizeView propView) {
+        return (propView.getAggrArrearPenaly() != null ? propView
+                .getAggrArrearPenaly() : ZERO).subtract(propView.getAggrArrearPenalyColl() != null ? propView
+                        .getAggrArrearPenalyColl() : ZERO);
+    }
+
+    private String getOwerName(final PropertyMaterlizeView propView) {
+        return propView.getOwnerName().contains(",") ? propView.getOwnerName().replace(",",
+                " & ") : propView.getOwnerName();
+    }
+
+    private String getLocality(final PropertyMaterlizeView propView) {
+        return (propView.getLocality()) != null ? propView.getLocality().getName()
+                : "NA";
+    }
+
+    private String getMobileNo(final PropertyMaterlizeView propView) {
+        return StringUtils.isNotBlank(propView.getMobileNumber()) ? propView
+                .getMobileNumber() : "NA";
+    }
+
+    private boolean isNotMoreThanFiveYrs(final String noofyrs) {
+        return noofyrs !=null && !ABOVE_FIVE_YEARS.equalsIgnoreCase(noofyrs);
+    }
+
+    private boolean isCountInLimit(final Integer limit, int count) {
+        return limit != null && limit != -1 && count-1==limit;
+    }
+
+    public Installment getMinInstallment(Installment minInstallment,InstDmdCollMaterializeView idc,BigDecimal dmdtot,BigDecimal colltot){
+        Installment inst=null;
+        if(minInstallment==null){
+            return idc.getInstallment();
+        }else if (dmdtot.compareTo(colltot)>0 && minInstallment.getFromDate().after(idc.getInstallment().getFromDate())){
+            inst=idc.getInstallment();
+        }
+        return inst==null?minInstallment:inst;
+    }
+    public Installment getMaxInstallment(Installment maxInstallment,InstDmdCollMaterializeView idc,BigDecimal dmdtot,BigDecimal colltot){
+        Installment inst=null;
+        if(maxInstallment==null){
+            return idc.getInstallment();
+        }else if(maxInstallment.getFromDate().before(idc.getInstallment().getFromDate()) && dmdtot.compareTo(colltot)>0){
+            inst=idc.getInstallment();
+        }
+        return inst==null?maxInstallment:inst;
+    }
+    private BigDecimal getVacLandTax(InstDmdCollMaterializeView idc) {
+        return idc.getVacantLandTax() != null ? idc.getVacantLandTax() : BigDecimal.ZERO;
+    }
+
+    private BigDecimal getUnaPenalty(InstDmdCollMaterializeView idc) {
+        return idc.getUnauthPenaltyTax() != null ? idc.getUnauthPenaltyTax() : BigDecimal.ZERO;
+    }
+
+    private BigDecimal getSewTax(InstDmdCollMaterializeView idc) {
+        return idc.getSewTax() != null ? idc.getSewTax() : BigDecimal.ZERO;
+    }
+
+    private BigDecimal getPubSerCharge(InstDmdCollMaterializeView idc) {
+        return idc.getPubSerChrgTax() != null ? idc.getPubSerChrgTax() : BigDecimal.ZERO;
+    }
+
+    private BigDecimal getPenaltyFines(InstDmdCollMaterializeView idc) {
+        return idc.getPenaltyFinesTax() != null ? idc.getPenaltyFinesTax() : BigDecimal.ZERO;
+    }
+
+    private BigDecimal getLibCess(InstDmdCollMaterializeView idc) {
+        return idc.getLibCessTax() != null ? idc.getLibCessTax() : BigDecimal.ZERO;
+    }
+
+    private BigDecimal getEduCess(InstDmdCollMaterializeView idc) {
+        return idc.getEduCessTax() != null ? idc.getEduCessTax() : BigDecimal.ZERO;
+    }
+
+    private BigDecimal getGenTax(InstDmdCollMaterializeView idc) {
+        return idc.getGeneralTax() != null ? idc.getGeneralTax() : BigDecimal.ZERO;
+    }
+
+    private BigDecimal getVacLColl(InstDmdCollMaterializeView idc) {
+        return idc.getVacantLandTaxColl() != null ? idc.getVacantLandTaxColl() : BigDecimal.ZERO;
+    }
+
+    private BigDecimal getUnauthPenColl(InstDmdCollMaterializeView idc) {
+        return idc.getUnauthPenaltyTaxColl() != null ? idc.getUnauthPenaltyTaxColl() : BigDecimal.ZERO;
+    }
+
+    private BigDecimal getSewColl(InstDmdCollMaterializeView idc) {
+        return idc.getSewTaxColl() != null ? idc.getSewTaxColl() : BigDecimal.ZERO;
+    }
+
+    private BigDecimal getPubServiceColl(InstDmdCollMaterializeView idc) {
+        return idc.getPubSerChrgTaxColl() != null ? idc.getPubSerChrgTaxColl() : BigDecimal.ZERO;
+    }
+
+    private BigDecimal getPenaltyFineColl(InstDmdCollMaterializeView idc) {
+        return idc.getPenaltyFinesTaxColl() != null ?  idc.getPenaltyFinesTaxColl() : BigDecimal.ZERO;
+    }
+
+    private BigDecimal getLibCessColl(InstDmdCollMaterializeView idc) {
+        return idc.getLibCessTaxColl() != null ? idc.getLibCessTaxColl() : BigDecimal.ZERO;
+    }
+
+    private BigDecimal getEduCessColl(InstDmdCollMaterializeView idc) {
+        return idc.getEduCessTaxColl() != null ?  idc.getEduCessTaxColl() : BigDecimal.ZERO;
+    }
+
+    private BigDecimal getGenTaxColl(InstDmdCollMaterializeView idc) {
+        return idc.getGeneralTaxColl() != null ? idc.getGeneralTaxColl() : BigDecimal.ZERO;
+    }
+    
+    
 }

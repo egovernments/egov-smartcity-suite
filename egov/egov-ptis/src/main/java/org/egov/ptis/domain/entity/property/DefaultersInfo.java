@@ -40,6 +40,7 @@
 package org.egov.ptis.domain.entity.property;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class DefaultersInfo {
 
@@ -57,7 +58,9 @@ public class DefaultersInfo {
     private String arrearsToInstallment;
     private BigDecimal aggrArrearPenalyDue;
     private BigDecimal aggrCurrPenalyDue;
-
+    private Date minDate;
+    private Date maxDate;
+    
     public Integer getSlNo() {
         return slNo;
     }
@@ -168,6 +171,22 @@ public class DefaultersInfo {
 
     public void setAggrCurrPenalyDue(BigDecimal aggrCurrPenalyDue) {
         this.aggrCurrPenalyDue = aggrCurrPenalyDue;
+    }
+
+    public Date getMinDate() {
+        return minDate;
+    }
+
+    public void setMinDate(Date minDate) {
+        this.minDate = minDate;
+    }
+
+    public Date getMaxDate() {
+        return maxDate;
+    }
+
+    public void setMaxDate(Date maxDate) {
+        this.maxDate = maxDate;
     }
 
 }
