@@ -49,6 +49,10 @@ $('#dailyCollectionReportSearchVLT').click(function(e){
 	$.post("/ptis/report/dailyCollectionVLT", $('#dailyCollectionformVLT').serialize())
 	.done(function (searchResult) {
 		//console.log(JSON.stringify(searchResult));
+		
+		$.each(searchResult, function( key, record ) {
+			record.totalLibCess=record.currentCess + record.arrearCess;
+		});
 		$('#dailyCollectionReport-header').show();
 		$("#resultDateLabel").html(fromDate+" - "+toDate);	
 		$('#report-footer').show();
@@ -76,10 +80,6 @@ $('#dailyCollectionReportSearchVLT').click(function(e){
 						             "sTitle": jQuery('#pdfTitle').val(),
 					              }],
 				
-			},
-			"fnRowCallback" : function(row, data, index) {
-				data.totalLibCess = data.currentCess + data.arrearCess;
-				$('td:eq(15)',row).html(parseFloat(data.totalLibCess));
 			},
 			searchable:true,
 			data: searchResult,
