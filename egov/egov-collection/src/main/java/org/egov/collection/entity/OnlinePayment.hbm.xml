@@ -104,5 +104,8 @@
 	
 	<query name="ONLINERECEIPTS_BY_STATUSCODE">
     <![CDATA[select receipt from org.egov.collection.entity.OnlinePayment receipt where receipt.status.code = ?]]></query> 
-	    
+	 
+	 <query name="CREATEDBYUSERS_OF_PAYMENT_RECEIPTS">
+    <![CDATA[select distinct createdBy from org.egov.collection.entity.OnlinePayment op where op.createdBy.type not in ('CITIZEN','SYSTEM') and op.service.id=?]]></query>
+       
 </hibernate-mapping>

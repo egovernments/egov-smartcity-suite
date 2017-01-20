@@ -53,10 +53,9 @@
 					<th><spring:message code="lbl.slno"/></th>
 					<th><spring:message code="lbl.nameofwork"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.estimatedamount"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.quantity"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.uom"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.expected.outcome"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.action"/></th>
+					<c:if test="${workdetailsadd}">
+						<th><spring:message code="lbl.action"/></th>
+					</c:if>
 				</tr>
 			</thead>
 			<tbody id="lineEstimateDetailsTbl">
@@ -93,6 +92,9 @@
 								<form:errors path="tempLineEstimateDetails[0].beneficiary" cssClass="add-margin error-msg" />
 							</td>
 							<td> <span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
+							<c:if test="${workdetailsadd}">
+								<td> <span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
+							</c:if>
 						</tr>
 					</c:when>
 					<c:otherwise>
@@ -130,6 +132,11 @@
 								<td> 
 									<span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> 
 								</td>
+								<c:if test="${workdetailsadd}">
+									<td> 
+										<span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> 
+									</td>
+								</c:if>
 							</tr>
 						</c:forEach>
 					</c:otherwise>
@@ -146,13 +153,19 @@
 					<td colspan="2" class="text-right"><spring:message code="lbl.total" /></td>
 					<td class="text-right view-content"> <span id="estimateTotal"><c:out value="${total}"/></span> </td>
 					<td></td><td></td><td></td><td></td>
+					<td class="text-right"> <span id="estimateTotal"><c:out value="${total}"/></span> </td>
+					<c:if test="${workdetailsadd}">
+						<td></td>
+					</c:if>
 				</tr>
 			</tfoot>
 		</table>
 		<div id="documentDetails">
 		</div>
 		<div class="col-sm-12 text-center">
-			<button id="addRowBtn" type="button" class="btn btn-primary" onclick="addLineEstimate()"><spring:message code="lbl.addrow" /></button>
+			<c:if test="${workdetailsadd}">
+				<button id="addRowBtn" type="button" class="btn btn-primary" onclick="addLineEstimate()"><spring:message code="lbl.addrow" /></button>
+			</c:if>
 		</div>
 	</div>
 </div>

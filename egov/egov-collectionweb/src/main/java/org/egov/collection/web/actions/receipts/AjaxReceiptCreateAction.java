@@ -61,6 +61,7 @@ import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -78,6 +79,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
     @Result(name = "serviceAccDtls", location = "ajaxReceiptCreate-serviceAccDtls.jsp"),
     @Result(name = "subledger", location = "ajaxReceiptCreate-subledger.jsp"),
     @Result(name = "entities", location = "ajaxReceiptCreate-entities.jsp"),
+    @Result(name = AjaxBankRemittanceAction.USERLIST, location = "ajaxReceiptCreate-userList.jsp"),
     @Result(name = AjaxReceiptCreateAction.RESULT, location = "ajaxReceiptCreate-result.jsp") })
 public class AjaxReceiptCreateAction extends BaseFormAction {
     private static final Logger LOGGER = Logger.getLogger(AjaxReceiptCreateAction.class);
@@ -97,6 +99,9 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
     private List<ServiceSubledgerInfo> subledgerDetails;
     private String serviceClass;
     private EgovCommon egovCommon;
+    private Long paymentServiceId;
+    private List<User> userList;
+    protected static final String USER_LIST = "userList";
 
     public String getAccountForService() {
         setValue(CollectionConstants.BLANK);
@@ -523,6 +528,15 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
 
         return "subledger";
     }
+    
+    @Action(value = "/receipts/ajaxReceiptCreate-ajaxOnlineReceiptCreatedByList")
+    public String ajaxOnlineReceiptCreatedByList() {
+        if (paymentServiceId != null)
+                userList = persistenceService.findAllByNamedQuery(
+                        CollectionConstants.QUERY_CREATEDBYUSERS_OF_PAYMENT_RECEIPTS, paymentServiceId);
+        return USER_LIST;
+    }
+
 
     @Override
     public Object getModel() {
@@ -591,6 +605,22 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
 
     public void setEgovCommon(final EgovCommon egovCommon) {
         this.egovCommon = egovCommon;
+    }
+
+    public Long getPaymentServiceId() {
+        return paymentServiceId;
+    }
+
+    public void setPaymentServiceId(Long paymentServiceId) {
+        this.paymentServiceId = paymentServiceId;
+    }
+
+    public List<User> getUserList() {
+        return userList;
+    }
+
+    public void setUserList(List<User> userList) {
+        this.userList = userList;
     }
 
 }

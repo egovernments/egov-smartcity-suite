@@ -51,6 +51,8 @@
 			<input type="hidden" id="nominationLimit" value="${nominationLimit}">
 			<input type="hidden" id="nominationName" value="${nominationName}" >
 			<input type="hidden" value="<spring:message code="error.quantity.required" />" id="errorQuantityValue" />
+			<input type="hidden" value="<spring:message code="error.actualestimateamount.required" />" id="erroractualestimateamount" />
+			<form:hidden id="hiddenfields" path="" value="${hiddenfields}" />
 			<div class="row">
 				<div class="col-md-12">
 					<jsp:include page="lineestimateheader.jsp"/>

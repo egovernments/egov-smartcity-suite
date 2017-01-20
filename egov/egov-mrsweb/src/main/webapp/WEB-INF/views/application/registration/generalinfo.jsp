@@ -270,9 +270,10 @@
 	<jsp:include page="applicantinfo.jsp">
 		<jsp:param value="subheading.wife.info" name="header" />
 	</jsp:include>
-
 	<c:if
-		test="${marriageRegistration.status.code =='APPROVED' || currentState == 'DATAENTRY' || marriageRegistration.status.code =='REGISTERED'}">
+		test="${(marriageRegistration.status.code =='APPROVED' && pendingActions == 'Certificate Print Pending') 
+		 || marriageRegistration.status.code =='DIGITALSIGNED'
+		 || currentState == 'DATAENTRY' || marriageRegistration.status.code =='REGISTERED'}">
 		<div class="form-group">
 			<label class="col-sm-3 control-label"> <spring:message
 					code="lbl.serial.no" /><span class="mandatory"></span>

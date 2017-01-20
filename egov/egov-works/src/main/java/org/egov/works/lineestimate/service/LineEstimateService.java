@@ -42,6 +42,7 @@ package org.egov.works.lineestimate.service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -65,7 +66,6 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -82,6 +82,7 @@ import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.autonumber.BudgetAppropriationNumberGenerator;
 import org.egov.works.autonumber.EstimateNumberGenerator;
 import org.egov.works.autonumber.LineEstimateNumberGenerator;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
@@ -171,6 +172,9 @@ public class LineEstimateService {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
+
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -1074,4 +1078,11 @@ public class LineEstimateService {
         oldDetails.setQuantity(details.getQuantity());
     }
 
+    public List getLineEstimateHiddenFields() {
+        return Arrays.asList(worksApplicationProperties.lineEstimateHideFields());
+    }
+
+    public String getLineEstimateMultipleWorkDetailsAllowed() {
+        return worksApplicationProperties.lineEstimateMultipleWorkDetailsAllowed();
+    }
 }

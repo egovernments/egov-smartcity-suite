@@ -42,6 +42,8 @@ import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -56,8 +58,8 @@ import javax.persistence.Transient;
 
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.mrs.domain.enums.MarriageCertificateType;
 import org.hibernate.validator.constraints.SafeHtml;
-
 
 @Entity
 @Table(name = "egmrs_certificate")
@@ -77,8 +79,8 @@ public class MarriageCertificate extends AbstractAuditable {
     @Temporal(value = TemporalType.DATE)
     private Date certificateDate;
 
-    @SafeHtml
-    private String certificateType;
+    @Enumerated(EnumType.STRING)
+    private MarriageCertificateType certificateType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "registration")
@@ -102,11 +104,13 @@ public class MarriageCertificate extends AbstractAuditable {
     @Transient
     private String frequency;
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -114,7 +118,7 @@ public class MarriageCertificate extends AbstractAuditable {
         return certificateNo;
     }
 
-    public void setCertificateNo(String certificateNo) {
+    public void setCertificateNo(final String certificateNo) {
         this.certificateNo = certificateNo;
     }
 
@@ -122,15 +126,15 @@ public class MarriageCertificate extends AbstractAuditable {
         return certificateDate;
     }
 
-    public void setCertificateDate(Date certificateDate) {
+    public void setCertificateDate(final Date certificateDate) {
         this.certificateDate = certificateDate;
     }
 
-    public String getCertificateType() {
+    public MarriageCertificateType getCertificateType() {
         return certificateType;
     }
 
-    public void setCertificateType(String certificateType) {
+    public void setCertificateType(final MarriageCertificateType certificateType) {
         this.certificateType = certificateType;
     }
 
@@ -138,7 +142,7 @@ public class MarriageCertificate extends AbstractAuditable {
         return registration;
     }
 
-    public void setRegistration(MarriageRegistration registration) {
+    public void setRegistration(final MarriageRegistration registration) {
         this.registration = registration;
     }
 
@@ -146,7 +150,7 @@ public class MarriageCertificate extends AbstractAuditable {
         return fileStore;
     }
 
-    public void setFileStore(FileStoreMapper fileStore) {
+    public void setFileStore(final FileStoreMapper fileStore) {
         this.fileStore = fileStore;
     }
 
@@ -154,7 +158,7 @@ public class MarriageCertificate extends AbstractAuditable {
         return reIssue;
     }
 
-    public void setReIssue(ReIssue reIssue) {
+    public void setReIssue(final ReIssue reIssue) {
         this.reIssue = reIssue;
     }
 
@@ -162,7 +166,7 @@ public class MarriageCertificate extends AbstractAuditable {
         return certificateIssued;
     }
 
-    public void setCertificateIssued(boolean certificateIssued) {
+    public void setCertificateIssued(final boolean certificateIssued) {
         this.certificateIssued = certificateIssued;
     }
 
@@ -170,7 +174,7 @@ public class MarriageCertificate extends AbstractAuditable {
         return fromDate;
     }
 
-    public void setFromDate(Date fromDate) {
+    public void setFromDate(final Date fromDate) {
         this.fromDate = fromDate;
     }
 
@@ -178,11 +182,11 @@ public class MarriageCertificate extends AbstractAuditable {
         return toDate;
     }
 
-    public void setToDate(Date toDate) {
+    public void setToDate(final Date toDate) {
         this.toDate = toDate;
     }
 
-    public void setFrequency(String frequency) {
+    public void setFrequency(final String frequency) {
         this.frequency = frequency;
     }
 

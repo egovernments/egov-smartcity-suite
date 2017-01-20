@@ -65,6 +65,8 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -72,6 +74,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.repository.DocumentDetailsRepository;
@@ -115,6 +118,12 @@ public class WorksUtils {
 
     @Autowired
     private EisCommonService eisCommonService;
+    
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
+
+    @Autowired
+    private DepartmentService departmentService;
 
     public void persistDocuments(final List<DocumentDetails> documentDetailsList) {
         if (documentDetailsList != null && !documentDetailsList.isEmpty())
@@ -395,5 +404,15 @@ public class WorksUtils {
             historyTable.add(map);
         }
         return historyTable;
+    }
+    
+    public Long getDefaultDepartmentId() {
+        final String defaultApproverDept = worksApplicationProperties.getDefaultApproverDepartment();
+        if (defaultApproverDept != null) {
+            final Department approverDepartment = departmentService.getDepartmentByName(defaultApproverDept);
+            if (approverDepartment != null)
+                return approverDepartment.getId();
+        }
+        return null;
     }
 }

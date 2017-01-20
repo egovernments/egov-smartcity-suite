@@ -55,7 +55,6 @@ import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
@@ -91,9 +90,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/contractorbill")
 public class UpdateContractorBillController extends BaseContractorBillController {
-    @Autowired
-    private DepartmentService departmentService;
-
     @Autowired
     private WorksUtils worksUtils;
 
@@ -455,6 +451,9 @@ public class UpdateContractorBillController extends BaseContractorBillController
 
         // Set MBHeaders in edit
         model.addAttribute("mbHeaders", mbHeaders);
+
+        contractorBillRegister.setApprovalDepartment(worksUtils.getDefaultDepartmentId());
+
         return "contractorBill-update";
     }
 

@@ -195,7 +195,7 @@ public class NewReIssueController extends GenericWorkFlowController {
             reIssueResult = reIssueService.forwardReIssue(reIssue.getId(), reIssue, workflowContainer);
         } else if ("Cancel ReIssue".equals(workflowContainer.getWorkFlowAction())) {
             reIssueResult = reIssueService.rejectReIssue(reIssue, workflowContainer, request);
-            message = messageSource.getMessage("msg.rejected.reissue", null, null);
+            message = messageSource.getMessage("msg.cancelled.reissue", null, null);
         }
 
         // On Cancel, output rejection certificate

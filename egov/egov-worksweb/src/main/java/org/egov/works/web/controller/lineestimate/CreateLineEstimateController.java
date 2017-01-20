@@ -154,6 +154,10 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
             final Model model) throws ApplicationException {
+        model.addAttribute("hiddenfields", lineEstimateService.getLineEstimateHiddenFields());
+        model.addAttribute("workdetailsadd",
+                WorksConstants.YES.equalsIgnoreCase(lineEstimateService.getLineEstimateMultipleWorkDetailsAllowed())
+                        ? Boolean.TRUE : Boolean.FALSE);
         setDropDownValues(model);
         model.addAttribute("lineEstimate", lineEstimate);
 
@@ -162,6 +166,8 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             lineEstimate.setExecutingDepartment(departments.get(0));
         if (lineEstimate.getState() != null && lineEstimate.getState().getNextAction() != null)
             model.addAttribute("nextAction", lineEstimate.getState().getNextAction());
+        lineEstimate.setApprovalDepartment(worksUtils.getDefaultDepartmentId());
+
         model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
         model.addAttribute("documentDetails", lineEstimate.getDocumentDetails());
         lineEstimate.setTempLineEstimateDetails(lineEstimate.getLineEstimateDetails());
@@ -181,6 +187,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request,
             @RequestParam String workFlowAction) throws ApplicationException, IOException {
         setDropDownValues(model);
+        validateLineEstimate(lineEstimate,errors);
         validateBudgetHead(lineEstimate, errors);
         lineEstimateService.validateLineEstimateDetails(lineEstimate, errors);
 
@@ -194,6 +201,10 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
             model.addAttribute("additionalRule",
                     cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+            model.addAttribute("hiddenfields", lineEstimateService.getLineEstimateHiddenFields());
+            model.addAttribute("workdetailsadd",
+                    WorksConstants.YES.equalsIgnoreCase(lineEstimateService.getLineEstimateMultipleWorkDetailsAllowed())
+                            ? Boolean.TRUE : Boolean.FALSE);
             return "newLineEstimate-form";
         } else {
 
@@ -395,4 +406,12 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         return message;
     }
 
+    private void validateLineEstimate(LineEstimate lineEstimate, BindingResult errors) {
+        if (!lineEstimateService.getLineEstimateHiddenFields().contains("subject") && lineEstimate.getSubject() == null)
+            errors.reject("error.subject.required", "error.subject.required");
+        if (!lineEstimateService.getLineEstimateHiddenFields().contains("description")
+                && lineEstimate.getDescription() == null)
+            errors.reject("error.description.required", "error.description.required");
+
+    }
 }

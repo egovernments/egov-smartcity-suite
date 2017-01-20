@@ -159,7 +159,7 @@ public class EscalationService {
                         complaint.getAssignee().getId(),
                         objectType.getId(), complaint.getComplaintType().getCode());
 
-                Position superiorPosition = null;
+                Position superiorPosition;
                 User superiorUser = null;
                 if (positionHierarchy != null) {
                     superiorPosition = positionHierarchy.getToPosition();
@@ -171,7 +171,8 @@ public class EscalationService {
                     if (!users.isEmpty())
                         superiorUser = users.iterator().next();
                     if (superiorUser != null) {
-                        List<Position> positionList = positionMasterService.getPositionsForEmployee(superiorUser.getId(), new Date());
+                        final List<Position> positionList = positionMasterService.getPositionsForEmployee(superiorUser.getId(),
+                                new Date());
                         if (!positionList.isEmpty())
                             superiorPosition = positionList.iterator().next();
                         else {
@@ -195,7 +196,7 @@ public class EscalationService {
     }
 
     public void updateOnEscalation(final Complaint complaint, final Position superiorPosition,
-                                   final User superiorUser) {
+            final User superiorUser) {
         final Position previousOwner = complaint.getAssignee();
         final List<Assignment> prevUserAssignments = assignmentService
                 .getAssignmentsForPosition(previousOwner.getId(), new Date());
@@ -240,12 +241,10 @@ public class EscalationService {
     }
 
     protected Date getExpiryDate(final Complaint complaint) {
-        Date expiryDate = complaint.getEscalationDate();
         final Designation designation = complaint.getAssignee().getDeptDesig().getDesignation();
         final Integer noOfhrs = getHrsToResolve(designation.getId(), complaint.getComplaintType().getId());
 
-        expiryDate = DateUtils.addHours(expiryDate, noOfhrs);
-        return expiryDate;
+        return DateUtils.addHours(new Date(), noOfhrs);
     }
 
     public Integer getHrsToResolve(final Long designationId, final Long complaintTypeId) {
@@ -264,7 +263,7 @@ public class EscalationService {
     }
 
     public Page<Escalation> getPageOfEscalations(final Integer pageNumber, final Integer pageSize,
-                                                 final Long complaintTypeId, final Long designationId) {
+            final Long complaintTypeId, final Long designationId) {
         final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "id");
         if (complaintTypeId != 0 && designationId != 0)
             return escalationRepository.findEscalationBycomplaintTypeAndDesignation(complaintTypeId, designationId,
@@ -279,7 +278,7 @@ public class EscalationService {
     }
 
     public List<PositionHierarchy> getEscalationObjByComplaintTypeFromPosition(final List<ComplaintType> complaintTypes,
-                                                                               final Position fromPosition) {
+            final Position fromPosition) {
         final List<String> compTypeCodes = new ArrayList<String>();
         for (final ComplaintType complaintType : complaintTypes)
             compTypeCodes.add(complaintType.getCode());

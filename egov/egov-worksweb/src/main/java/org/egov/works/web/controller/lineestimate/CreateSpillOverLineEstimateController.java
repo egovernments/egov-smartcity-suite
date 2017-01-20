@@ -148,6 +148,10 @@ public class CreateSpillOverLineEstimateController {
     @RequestMapping(value = "/newspilloverform", method = RequestMethod.GET)
     public String showNewSpillOverLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
             final Model model) throws ApplicationException {
+        model.addAttribute("hiddenfields", lineEstimateService.getLineEstimateHiddenFields());
+        model.addAttribute("workdetailsadd",
+                WorksConstants.YES.equalsIgnoreCase(lineEstimateService.getLineEstimateMultipleWorkDetailsAllowed())
+                        ? Boolean.TRUE : Boolean.FALSE);
         setDropDownValues(model);
 
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
@@ -168,6 +172,12 @@ public class CreateSpillOverLineEstimateController {
             final RedirectAttributes redirectAttributes, final HttpServletRequest request,
             final BindingResult resultBinder) throws ApplicationException, IOException {
 
+        model.addAttribute("hiddenfields", lineEstimateService.getLineEstimateHiddenFields());
+        model.addAttribute("workdetailsadd",
+                WorksConstants.YES.equalsIgnoreCase(lineEstimateService.getLineEstimateMultipleWorkDetailsAllowed())
+                        ? Boolean.TRUE : Boolean.FALSE);
+
+        validateLineEstimate(lineEstimate, errors);
         validateLineEstimateDetails(lineEstimate, errors);
         validateAdminSanctionDetail(lineEstimate, errors);
 
@@ -183,6 +193,10 @@ public class CreateSpillOverLineEstimateController {
             model.addAttribute("mode", null);
             model.addAttribute("designation", request.getParameter("designation"));
             model.addAttribute("billsCreated", lineEstimate.isBillsCreated());
+            model.addAttribute("hiddenfields", lineEstimateService.getLineEstimateHiddenFields());
+            model.addAttribute("workdetailsadd",
+                    WorksConstants.YES.equalsIgnoreCase(lineEstimateService.getLineEstimateMultipleWorkDetailsAllowed())
+                            ? Boolean.TRUE : Boolean.FALSE);
             return "spillOverLineEstimate-form";
         } else {
             final LineEstimate newLineEstimate = lineEstimateService.createSpillOver(lineEstimate, files);
@@ -358,4 +372,12 @@ public class CreateSpillOverLineEstimateController {
         }
     }
 
+    private void validateLineEstimate(final LineEstimate lineEstimate, final BindingResult errors) {
+        if (!lineEstimateService.getLineEstimateHiddenFields().contains("subject") && lineEstimate.getSubject() == null)
+            errors.reject("error.subject.required", "error.subject.required");
+        if (!lineEstimateService.getLineEstimateHiddenFields().contains("description")
+                && lineEstimate.getDescription() == null)
+            errors.reject("error.description.required", "error.description.required");
+
+    }
 }

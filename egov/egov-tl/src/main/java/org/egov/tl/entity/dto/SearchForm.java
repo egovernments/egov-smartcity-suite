@@ -40,6 +40,7 @@
 
 package org.egov.tl.entity.dto;
 
+import org.egov.infra.workflow.entity.State;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
 
@@ -66,6 +67,7 @@ public class SearchForm {
     private Long statusId;
     private Date dateOfExpiry;
     private List<String> actions;
+    private String active;
 
     public SearchForm() {
         // For form binding
@@ -83,6 +85,7 @@ public class SearchForm {
         setMobileNo(license.getLicensee().getMobilePhoneNumber());
         setPropertyAssessmentNo(license.getAssessmentNo() != null ? license.getAssessmentNo() : "");
         setStatus(license.getStatus().getName());
+        setActive(license.getIsActive() ? "YES" : "NO");
         setOwnerName(ownerName);
         setExpiryYear(expiryYear);
         setDateOfExpiry(license.getDateOfExpiry());
@@ -112,11 +115,16 @@ public class SearchForm {
                 licenseActions.add("Print Certificate");
             if (license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
                 licenseActions.add("Print Provisional Certificate");
-            if (!license.isPaid() && !license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)
-                    && license.isStatusActive())
-                licenseActions.add("Renew License");
+            State stateobj = license.getState();
+            if (!license.isPaid() && license.getIsActive())
+                addRenewalOption(licenseActions, stateobj);
         }
 
+    }
+
+    private void addRenewalOption(List<String> licenseActions, State stateobj) {
+        if (stateobj != null && ("END".equals(stateobj.getValue()) || "Closed".equals(stateobj.getValue())) || stateobj == null)
+            licenseActions.add("Renew License");
     }
 
     public String getApplicationNumber() {
@@ -261,5 +269,13 @@ public class SearchForm {
 
     public void setDateOfExpiry(final Date dateOfExpiry) {
         this.dateOfExpiry = dateOfExpiry;
+    }
+
+    public String getActive() {
+        return active;
+    }
+
+    public void setActive(String active) {
+        this.active = active;
     }
 }

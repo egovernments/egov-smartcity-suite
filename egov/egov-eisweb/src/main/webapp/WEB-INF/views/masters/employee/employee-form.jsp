@@ -472,6 +472,9 @@
 									</div>
 
 									<div class="panel-heading custom_form_panel_heading">
+										<div align="center" >
+									      <form:errors path="assignments" cssClass="error-msg"/>
+									    </div>
 										<table id="assignmentTable" class="table table-bordered">
 										<thead>
 										<div class="col-sm-12 table-div-border view-content header-color hidden-xs">

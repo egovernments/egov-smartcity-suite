@@ -81,7 +81,7 @@ function resetTables(fYearId){
 				{
 					if(document.getElementById('subLedgerlist['+j+'].glcode.id')!=null){
 						document.getElementById('subLedgerlist['+j+'].amount').value=0;
-						document.getElementById('subLedgerlist['+j+'].detailCode').value=codeTextMessage;
+						document.getElementById('subLedgerlist['+j+'].detailCode').placeholder=codeTextMessage;
 						document.getElementById('subLedgerlist['+j+'].detailCode').style.color='DarkGray';
 						document.getElementById('subLedgerlist['+j+'].glcode.id').value=0;
 						document.getElementById('subLedgerlist['+j+'].detailType.id').value=0;
@@ -406,7 +406,7 @@ function updateGrid(prefix,field,index,value){
 
 function updateSLGrid(field,index,value){
 	if(field=='detailCode' && value==''){
-		document.getElementById('subLedgerlist['+index+'].'+field).value=codeTextMessage;
+		document.getElementById('subLedgerlist['+index+'].'+field).placeholder=codeTextMessage;
 		document.getElementById('subLedgerlist['+index+'].'+field).style.color='DarkGray';
 	}
 	else{
@@ -675,7 +675,7 @@ function createDropdownFormatterDetail(prefix){
 
 var selecteddetailcode;
 var onDropdownDetailChange = function(index,obj) {
-	document.getElementById(SUBLEDGERLIST+'['+obj.value+']'+'.detailCode').value=codeTextMessage;
+	document.getElementById(SUBLEDGERLIST+'['+obj.value+']'+'.detailCode').placeholder=codeTextMessage;
 	document.getElementById('subLedgerlist['+obj.value+'].detailCode').style.color='DarkGray';
 	document.getElementById(SUBLEDGERLIST+'['+obj.value+']'+'.detailKeyId').value='';
 	document.getElementById(SUBLEDGERLIST+'['+obj.value+']'+'.detailKey').value='';
@@ -816,7 +816,7 @@ success: function(o) {
 
 	if(onload=='false')
 	{
-		document.getElementById('subLedgerlist['+rowid+'].detailCode').value=codeTextMessage;
+		document.getElementById('subLedgerlist['+rowid+'].detailCode').placeholder=codeTextMessage;
 		document.getElementById('subLedgerlist['+rowid+'].detailCode').style.color='DarkGray';
 		document.getElementById(SUBLEDGERLIST+'['+rowid+']'+'.detailKeyId').value='';
 		document.getElementById(SUBLEDGERLIST+'['+rowid+']'+'.detailKey').value='';
@@ -1007,7 +1007,7 @@ function getDetailType(val){
 			else{
 				var detailCodeObj = document.getElementById('subLedgerlist['+val+'].detailCode');
 				if(detailCodeObj!=null){
-					detailCodeObj.value=codeTextMessage;
+					detailCodeObj.placeholder=codeTextMessage;
 					detailCodeObj.style.color='DarkGray';
 					document.getElementById(SUBLEDGERLIST+'['+val+']'+'.detailKeyId').value='';
 					document.getElementById(SUBLEDGERLIST+'['+val+']'+'.detailKey').value='';
@@ -1131,7 +1131,7 @@ success: function(o) {
 					{
 						detailCode.remove(k);
 					}*/
-					document.getElementById('subLedgerlist['+j+'].detailCode').value=codeTextMessage;
+					document.getElementById('subLedgerlist['+j+'].detailCode').placeholder=codeTextMessage;
 					document.getElementById('subLedgerlist['+j+'].detailCode').style.color='DarkGray';
 					document.getElementById(SUBLEDGERLIST+'['+j+']'+'.detailKeyId').value='';
 					document.getElementById(SUBLEDGERLIST+'['+j+']'+'.detailKey').value='';

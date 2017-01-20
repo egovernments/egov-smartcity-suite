@@ -529,22 +529,11 @@ $(document).ready(function(){
 	
 	$("#submit").click(function () {
 		var count = 0;
-		var isactive_no = $("#isactive_no").prop("checked");
         jQuery(".table-bordered tr").find('input').each(function(){
                 if(jQuery(this).val() == "true"){
                         count++;
                 }
         });
-		if(($("#assignmentTable tr").length==1 || count == 0) && !isactive_no){
-			$('.assignmentserror').html('Employee should have primary assignment').show().fadeOut(7000);
-			$('.fromdateerror').hide();
-			$('.departmenterror').hide();
-			$('.designationerror').hide();
-			$('.positionerror').hide();
-			$('.todateerror').hide();
-			$('.fromdateerror').focus();
-			return false;
-		}
 	});
 
 	

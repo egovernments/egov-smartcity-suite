@@ -91,6 +91,13 @@
 
 		return valSuccess;
 	}
+
+	function onChangePaymentService(obj)
+	{
+	    if(obj!=null && obj.value!=null && obj.value!='-1'){
+	    	populateuserId({paymentServiceId:obj.value});
+	    }
+	}
 </script>
 </head>
 <body>
@@ -114,30 +121,28 @@
 							name="collectionReport.criteria.fromdate" /><span
 						class="mandatory1">*</span></td>
 					<s:date name="fromDate" var="cdFormat" format="dd/MM/yyyy" />
-					<td class="bluebox"><s:textfield id="fromDate"
-							name="fromDate" value="%{cdFormat}"
-							onfocus="javascript:vDateType='3';"
+					<td class="bluebox"><s:textfield id="fromDate" name="fromDate"
+							value="%{cdFormat}" onfocus="javascript:vDateType='3';"
 							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
 						href="javascript:show_calendar('forms[0].fromDate');"
 						onmouseover="window.status='Date Picker';return true;"
 						onmouseout="window.status='';return true;"><img
 							src="/collection/resources/images/calendaricon.gif" alt="Date"
 							width="18" height="18" border="0" align="absmiddle" /></a>
-					<div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
+						<div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
 					<td class="bluebox"><s:text
 							name="collectionReport.criteria.todate" /><span
 						class="mandatory1">*</span></td>
 					<s:date name="toDate" var="cdFormat1" format="dd/MM/yyyy" />
-					<td class="bluebox"><s:textfield id="toDate"
-							name="toDate" value="%{cdFormat1}"
-							onfocus="javascript:vDateType='3';"
+					<td class="bluebox"><s:textfield id="toDate" name="toDate"
+							value="%{cdFormat1}" onfocus="javascript:vDateType='3';"
 							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
 						href="javascript:show_calendar('forms[0].toDate');"
 						onmouseover="window.status='Date Picker';return true;"
 						onmouseout="window.status='';return true;"><img
 							src="/collection/resources/images/calendaricon.gif" alt="Date"
 							width="18" height="18" border="0" align="absmiddle" /></a>
-					<div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
+						<div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
 				</tr>
 				<tr>
 					<td class="bluebox">&nbsp;</td>
@@ -159,16 +164,41 @@
 				<tr>
 					<td class="bluebox">&nbsp;</td>
 					<td class="bluebox"><s:text
+							name="collectionReport.criteria.payment.service" /></td>
+					<td class="bluebox"><s:select headerKey="-1"
+							headerValue="%{getText('collectionReport.service.all')}"
+							name="paymentServiceId" id="payment" cssClass="selectwk"
+							list="dropdownData.paymentServiceList" listKey="id"
+							listValue="name" value="%{paymentServiceId}" onchange="onChangePaymentService(this);"/></td>
+					<egov:ajaxdropdown id="userId"
+						fields="['Text','Value']" dropdownId='userId'
+						url='receipts/ajaxReceiptCreate-ajaxOnlineReceiptCreatedByList.action' />
+					<td class="bluebox"><s:text
+							name="searchreceipts.criteria.user" /></td>
+					<td class="bluebox"><s:select headerKey="-1"
+							headerValue="%{getText('searchreceipts.user.select')}"
+							name="userId" id="userId" cssClass="selectwk"
+							list="dropdownData.userList" listKey="id" listValue="name"
+							value="%{userId}" /></td>
+
+
+				</tr>
+				<tr>
+					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox"><s:text
 							name="collectionReport.criteria.status" /></td>
-					<td class="bluebox"><s:select id="statusId"
-							name="statusId" headerKey="-1"
+					<td class="bluebox"><s:select id="statusId" name="statusId"
+							headerKey="-1"
 							headerValue="%{getText('collectionReport.status.all')}"
 							cssClass="selectwk"
 							list="dropdownData.onlineTransactionStatusList" value="%{id}"
 							listKey="id" listValue="description" /></td>
-					<td class="bluebox"></td>
-					<td class="bluebox">&nbsp;</td>
-					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox"><s:text
+							name="collectionReport.criteria.collection.type" /></td>
+					<td class="bluebox"><s:select id="collectionType"
+							name="collectionType" headerKey="-1"
+							headerValue="%{getText('collectionReport.collectiontype.all')}"
+							cssClass="selectwk" list="collectionTypeMap" /></td>
 				</tr>
 
 			</table>
@@ -184,12 +214,12 @@
 			</label>&nbsp; <label> <s:reset type="submit" cssClass="button"
 					value="%{getText('collectionReport.reset')}"
 					onclick="return clearErrors();" />
-			</label> <label> <input type="button" class="button"
-				id="buttonClose" value="<s:text name='common.buttons.close'/>"
+			</label> <label> <input type="button" class="button" id="buttonClose"
+				value="<s:text name='common.buttons.close'/>"
 				onclick="window.close()" />
 			</label>
 		</div>
-      <s:if test="%{results.isEmpty()}">
+		<s:if test="%{results.isEmpty()}">
 			<s:if test="target=='searchresult'">
 				<table width="90%" border="0" align="center" cellpadding="0"
 					cellspacing="0" class="tablebottom">

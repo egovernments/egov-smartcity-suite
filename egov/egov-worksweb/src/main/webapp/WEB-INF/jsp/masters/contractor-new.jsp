@@ -80,6 +80,7 @@ body {
 		cssClass="form-horizontal form-groups-bordered">
 <s:hidden name="model.id" />
 <s:hidden name="id" id="id"/>
+<s:hidden name="defaultDepartmentId" id="defaultDepartmentId"/>
 <s:hidden name="mode" id="mode" />
 <s:hidden name="mandatory" id="mandatory" value = "%{dropdownData.contractorMasterMandatoryFields}" />
 <s:hidden name="hide" id="hide" value = "%{dropdownData.contractorMasterHiddenFields}" />
@@ -115,6 +116,7 @@ body {
 <input type="hidden" id="mobileNumberFormatErrorMsg" value="<s:text name='depositworks.roadcut.invalid.mobileno.length' />" />
 <input type="hidden" id="contactPersonAlphaNeumericErrorMsg" value="<s:text name='contractor.contactPerson.alphaNumeric' />" />
 <input type="hidden" id="registrationNumberAlphaNeumericErrorMsg" value="<s:text name='contractorDetail.registrationNumber.alphaNumeric' />" />
+<input type="hidden" id="vaidateError" value="<s:text name='sor.validate_x.message' />" />
 
 <input type="hidden" value="<s:text name='contractor.panNumber.alphaNumeric' />" id='panNumberMessage'>
 		<%@ include file='contractor-form.jsp'%>

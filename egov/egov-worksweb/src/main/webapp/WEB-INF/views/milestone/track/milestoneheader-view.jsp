@@ -62,7 +62,7 @@
 					<div class="col-xs-3 add-margin view-content" id="estimateNumber">
 					</div>
 					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.estimate.date" />
+						<spring:message code="lbl.dateofproposal" />
 					</div>
 					<div class="col-xs-3 add-margin view-content" id="lineEstimateDate">
 					</div>

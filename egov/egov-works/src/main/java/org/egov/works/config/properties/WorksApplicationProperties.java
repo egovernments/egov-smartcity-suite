@@ -76,4 +76,16 @@ public class WorksApplicationProperties {
     public String[] getContractorMasterHideFields() {
         return environment.getProperty("contractormaster.fields.hide").split(",");
     }
+
+    public String getDefaultApproverDepartment() {
+        return environment.getProperty("default.approver.department");
+    }
+
+    public String[] lineEstimateHideFields() {
+        return environment.getProperty("lineestimate.fields.hide").split(",");
+    }
+
+    public String lineEstimateMultipleWorkDetailsAllowed() {
+        return environment.getProperty("lineestimate.workdetails.addrow");
+    }
 }

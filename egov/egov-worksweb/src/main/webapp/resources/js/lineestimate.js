@@ -100,6 +100,18 @@ $(document).ready(function(){
 	
 	replaceWorkCategoryChar();
 	replaceBeneficiaryChar();
+	
+	var hiddenFields = $("#hiddenfields").val().replace(/[\[\]']+/g,'').replace(/, /g, ",").split(",");
+	$.each(hiddenFields,function(){
+		var fieldName = this.toString().trim();
+		var label = $("label[for='"+fieldName+"']");
+		label.hide();
+		$("#"+fieldName).hide();
+		$("#"+fieldName+"-value").hide();
+		$("#subjectDescriptionHide").hide();
+		$('#'+fieldName).removeAttr('required')
+	});
+
 });
 
 function renderPdf() {
@@ -140,7 +152,49 @@ function getSchemsByFundId(fundId) {
 								$('#scheme').append($('<option '+ selected +'>').text(value.name).attr('value', value.id));
 							});
 				});
-				
+
+$('.btn-primary').click(function(){
+	var button = $(this).attr('id');
+	if (button != null && button == 'Approve') {
+		var flag = true;
+		$('#approvalComent').removeAttr('required');
+		
+		var lineEstimateStatus = $('#lineEstimateStatus').val();
+		if(lineEstimateStatus == 'ADMINISTRATIVE_SANCTIONED') {
+			var adminSanctionDate = $('#adminSanctionDate').data('datepicker').date;
+			var technicalSanctionDate = $('#technicalSanctionDate').data('datepicker').date;
+			var technicalSanctionNumber = $('#technicalSanctionNumber').val();
+			
+			if(adminSanctionDate > technicalSanctionDate && technicalSanctionDate != '') {
+				bootbox.alert($('#errorTechDate').val());
+				$('#technicalSanctionDate').val('').datepicker('update');
+				return false;
+			}
+
+			var message = $('#errorActualAmount').val() + " ";
+
+			if(technicalSanctionDate != '' && technicalSanctionNumber != '') {
+				$("input[name$='actualEstimateAmount']")
+				.each(
+						function() {
+							var index = getRow(this).rowIndex - 1;
+							var estimateAmount = $(
+									'#estimateAmount' + index).html();
+							var actualAmount = $(
+									'#actualEstimateAmount' + index).val();
+							if (parseFloat(estimateAmount.trim()) < parseFloat(actualAmount)) {
+								var estimateNumber = $(
+										'#estimateNumber' + index).val();
+								message += estimateNumber + ", ";
+								flag = false;
+							}
+						});
+				message = message.replace(/,\s*$/, ". ");
+				message += $('#errorActualAmountContinued').val();
+				if (!flag) {
+					bootbox.alert(message);
+					return false;
+				}
 			}
 }
 function getSubSchemsBySchemeId(schemeId) {
@@ -463,18 +517,6 @@ $(document).ready(function(){
 	'#ward');
 });
 
-function validateQuantity() {
-	$( "input[name$='quantity']" ).on("keyup", function(){
-	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
-	        val = this.value;
-	    
-	    if(!valid){
-	        console.log("Invalid input!");
-	        this.value = val.substring(0, val.length - 1);
-	    }
-	});
-}
-
 function validateadminSanctionNumber() {
 	$( "input[name$='adminSanctionNumber']" ).on("keyup", function(){
 		var valid = /^[a-zA-Z0-9\\/-]*$/.test(this.value),
@@ -544,13 +586,10 @@ function validateWorkFlowApprover(name) {
 		if(lineEstimateStatus == 'BUDGET_SANCTIONED') {
 			var lineEstimateDate = new Date($('#lineEstimateDate').val());
 			var councilResolutionDate = $('#councilResolutionDate').data('datepicker').date;	
-			if (councilResolutionDate != "") {
-				if (councilResolutionDate < lineEstimateDate) {
+			if (councilResolutionDate != '' && councilResolutionDate < lineEstimateDate) {
 					bootbox.alert($('#errorCouncilResolutionDate').val());
-					$('#councilResolutionDate').val("");
+					$('#councilResolutionDate').val('').datepicker('update');
 					return false;
-				}
-				return true;
 			}
 		}
 		

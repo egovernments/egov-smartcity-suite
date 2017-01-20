@@ -46,6 +46,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -69,12 +70,17 @@ public class CancelLineEstimateController {
     @Qualifier("messageSource")
     private MessageSource messageSource;
 
+    @Autowired
+    private WorksUtils worksUtils;
+
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
     public String showSearchLetterOfAcceptanceForm(
             @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest, final Model model)
             throws ApplicationException {
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("lineEstimateSearchRequest", lineEstimateSearchRequest);
+        lineEstimateSearchRequest.setExecutingDepartment(worksUtils.getDefaultDepartmentId());
+
         return "searchlineestimate-cancel";
     }
 

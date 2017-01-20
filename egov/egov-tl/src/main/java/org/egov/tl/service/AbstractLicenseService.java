@@ -46,12 +46,12 @@ import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.DELIMITER_COLON;
 import static org.egov.tl.utils.Constants.GENERATECERTIFICATE;
+import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACKNOWLEDGED;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
 import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
 import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
-import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -93,6 +93,7 @@ import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.NatureOfBusiness;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.repository.LicenseDocumentTypeRepository;
@@ -164,7 +165,9 @@ public abstract class AbstractLicenseService<T extends License> {
     protected NatureOfBusinessService natureOfBusinessService;
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
-
+    @Autowired
+    private PenaltyRatesService penaltyRatesService;
+    
     @Autowired
     private LicenseUtils licenseUtils;
 
@@ -632,7 +635,58 @@ public abstract class AbstractLicenseService<T extends License> {
         return outstandingFee;
 
     }
+    /**
+     * This method will return arrears, current tax and penalty on arrears tax.
+     * @param license
+     * @param currentInstallment
+     * @param previousInstallment
+     * @return
+     */
+    public Map<String, Map<String, BigDecimal>> getOutstandingFeeForDemandNotice(TradeLicense license,
+            Installment currentInstallment, Installment previousInstallment) {
+        final Map<String, Map<String, BigDecimal>> outstandingFee = new HashMap<>();
+    
+        final LicenseDemand licenseDemand = license.getCurrentDemand();
+        //31st december will be considered as cutoff date for penalty calculation.
+        final Date endDateOfPreviousFinancialYear = new DateTime(previousInstallment.getFromDate()).withMonthOfYear(12)
+                .withDayOfMonth(31).toDate();
 
+        for (final EgDemandDetails demandDetail : licenseDemand.getEgDemandDetails()) {
+            final String demandReason = demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
+            final Installment installmentYear = demandDetail.getEgDemandReason().getEgInstallmentMaster();
+            Map<String, BigDecimal> feeByTypes;
+            if (!demandReason.equalsIgnoreCase(Constants.PENALTY_DMD_REASON_CODE)) {
+                if (outstandingFee.containsKey(demandReason))
+                    feeByTypes = outstandingFee.get(demandReason);
+                else {
+                    feeByTypes = new HashMap<>();
+                    feeByTypes.put(ARREAR, ZERO);
+                    feeByTypes.put("current", ZERO);
+                    feeByTypes.put("penalty", ZERO);
+                }
+                final BigDecimal demandAmount = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
+
+                if (demandAmount.compareTo(BigDecimal.valueOf(0)) > 0) {
+
+                    if (installmentYear.equals(currentInstallment))
+                        feeByTypes.put("current", feeByTypes.get("current").add(demandAmount));
+                    else {
+                        feeByTypes.put(ARREAR, feeByTypes.get(ARREAR).add(demandAmount));
+                        // Calculate penalty by passing installment startdate and end of dec 31st date of previous installment
+                        // dates using penalty master.
+                        BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(installmentYear.getFromDate(),
+                                endDateOfPreviousFinancialYear, demandAmount, license);
+                        feeByTypes.put("penalty", feeByTypes.get("penalty").add(penaltyAmt));
+                    }
+                }
+                outstandingFee.put(demandReason, feeByTypes);
+            }
+        }
+
+        return outstandingFee;
+
+    }
+    
     public List<License> getAllLicensesByNatureOfBusiness(final String natureOfBusiness) {
         return licenseRepository.findByNatureOfBusinessName(natureOfBusiness);
     }

@@ -514,19 +514,9 @@ public class EmployeeService implements EntityTypeService {
             }
         }
         assignmentService.removeDeletedAssignments(employee, removedassignIds);
-        // user role mapping based on designation
         employee.setAssignments(employee.getAssignments().parallelStream()
                 .filter(assignment -> assignment.getPosition() != null).collect(Collectors.toList()));
-        List<User> user = new ArrayList<User>();
-        for (final Assignment assign : employee.getAssignments()) {
-            final Set<Role> roles = designationService.getRolesByDesignation(assign.getDesignation().getName());
-            for (final Role role : roles) {
-                user = userService.getUsersByUsernameAndRolename(employee.getUsername(),
-                        roleService.getRoleByName(role.getName()).getName());
-                if (assign.getFromDate().before(new Date()) && assign.getToDate().after(new Date()) && user.isEmpty())
-                    employee.addRole(roleService.getRoleByName(role.getName()));
-            }
-        }
+
         employee.setJurisdictions(employee.getJurisdictions().parallelStream()
                 .filter(Jurisdictions -> Jurisdictions.getBoundaryType() != null && Jurisdictions.getBoundary() != null)
                 .collect(Collectors.toList()));
@@ -560,6 +550,13 @@ public class EmployeeService implements EntityTypeService {
                     return true;
 
             }
+        return false;
+    }
+
+    public Boolean primaryAssignmentExists(final Employee employee) {
+        for (final Assignment assignment : employee.getAssignments())
+            if (assignment.getPrimary())
+                return true;
         return false;
     }
 

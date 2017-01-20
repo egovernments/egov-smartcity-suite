@@ -590,6 +590,8 @@ function validate()
 				name="bankAllowed" />
 			<s:hidden label="ddAllowed" id="ddAllowed" value="%{ddAllowed}"
 				name="ddAllowed" />
+			<s:hidden label="onlineAllowed" id="onlineAllowed" value="%{onlineAllowed}" name="onlineAllowed"/>
+				
 			<s:hidden id="receiptId" name="receiptId" value='%{model.id}' />
 
 			<div class="subheadnew">

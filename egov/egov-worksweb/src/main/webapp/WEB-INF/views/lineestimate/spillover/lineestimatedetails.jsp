@@ -78,10 +78,9 @@
 					<th><spring:message code="lbl.estimatedamount"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.workidnumber"/><span class="mandatory"></span></th>
 					<th class="thGrossAmount" style="display: none;"><spring:message code="lbl.grossamount"/><span class="mandatory"></th>
-					<th><spring:message code="lbl.quantity"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.uom"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.expected.outcome"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.action"/></th>
+					<c:if test="${workdetailsadd}">
+						<th><spring:message code="lbl.action"/></th>
+					</c:if>
 				</tr>
 			</thead>
 			<tbody id="lineEstimateDetailsTbl">
@@ -130,6 +129,9 @@
 								<form:errors path="lineEstimateDetails[0].beneficiary" cssClass="add-margin error-msg" />
 							</td>
 							<td> <span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
+							<c:if test="${workdetailsadd}">
+								<td> <span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
+							</c:if>
 						</tr>
 					</c:when>
 					<c:otherwise>
@@ -177,6 +179,9 @@
 									<form:errors path="lineEstimateDetails[${item.index}].beneficiary" cssClass="add-margin error-msg" />
 								</td>
 								<td> <span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
+								<c:if test="${workdetailsadd}">
+									<td> <span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
+								</c:if>
 							</tr>
 						</c:forEach>
 					</c:otherwise>
@@ -204,5 +209,10 @@
 		<div class="col-sm-12 text-center">
 			<button id="addRowBtn" type="button" class="btn btn-primary" onclick="addLineEstimate()"><spring:message code="lbl.addrow" /></button>
 		</div>
+		<c:if test="${workdetailsadd}">
+			<div class="col-sm-12 text-center">
+				<button id="addRowBtn" type="button" class="btn btn-primary" onclick="addLineEstimate()"><spring:message code="lbl.addrow" /></button>
+			</div>
+		</c:if>
 	</div>
 </div>

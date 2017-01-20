@@ -563,6 +563,7 @@ public class PropertyService {
         ptDemand = new Ptdemand();
         ptDemand.setBaseDemand(taxCalcInfo.getTotalTaxPayable());
         ptDemand.setCreateDate(new Date());
+        ptDemand.setModifiedDate(new Date());
         ptDemand.setEgInstallmentMaster(installmentFirstHalf);
 
         ptDemand.setEgDemandDetails(dmdDetailSet);

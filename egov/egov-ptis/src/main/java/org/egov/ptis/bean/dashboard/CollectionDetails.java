@@ -53,6 +53,9 @@ public class CollectionDetails {
     private BigDecimal lytdColl = BigDecimal.ZERO;
     private BigDecimal performance = BigDecimal.ZERO;
     private BigDecimal lyVar = BigDecimal.ZERO;
+    private BigDecimal dmdColl = BigDecimal.ZERO;
+    private BigDecimal pntlyColl = BigDecimal.ZERO;
+    private Long totalAssessments = 0L;
     private List<CollectionTrend> collTrends;
     private List<CollTableData> responseDetails;
     private ErrorDetails errorDetails;
@@ -143,5 +146,29 @@ public class CollectionDetails {
 
     public void setLyVar(BigDecimal lyVar) {
         this.lyVar = lyVar;
+    }
+    
+    public BigDecimal getDmdColl() {
+        return dmdColl;
+    }
+
+    public void setDmdColl(BigDecimal dmdColl) {
+        this.dmdColl = dmdColl;
+    }
+
+    public BigDecimal getPntlyColl() {
+        return pntlyColl;
+    }
+
+    public void setPntlyColl(BigDecimal pntlyColl) {
+        this.pntlyColl = pntlyColl;
+    }
+
+    public Long getTotalAssessments() {
+        return totalAssessments;
+    }
+
+    public void setTotalAssessments(Long totalAssessments) {
+        this.totalAssessments = totalAssessments;
     }
 }

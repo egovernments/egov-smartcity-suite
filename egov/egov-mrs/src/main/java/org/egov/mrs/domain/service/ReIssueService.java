@@ -145,13 +145,12 @@ public class ReIssueService {
             reIssue.setFeeCriteria(marriageFeeService.getFee(reIssue.getFeeCriteria().getId()));
         reIssue.setStatus(marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.CREATED.toString(),
                 MarriageConstants.MODULE_NAME));
-        if (reIssue.getFeePaid() != null && reIssue.getDemand() == null) {
+        if (reIssue.getFeePaid() != null && reIssue.getDemand() == null)
             reIssue.setDemand(reIssueDemandService.createDemand(new BigDecimal(reIssue.getFeePaid())));
-        }
 
         final Map<Long, MarriageDocument> applicantDocumentAndId = new HashMap<>();
         marriageDocumentService.getIndividualDocuments()
-        .forEach(document -> applicantDocumentAndId.put(document.getId(), document));
+                .forEach(document -> applicantDocumentAndId.put(document.getId(), document));
 
         marriageApplicantService.addDocumentsToFileStore(reIssue.getApplicant(), applicantDocumentAndId);
 
@@ -177,11 +176,11 @@ public class ReIssueService {
     }
 
     @Transactional
-    public ReIssue approveReIssue(ReIssue reissue, final WorkflowContainer workflowContainer) {
+    public ReIssue approveReIssue(final ReIssue reissue, final WorkflowContainer workflowContainer) {
         reissue.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.APPROVED.toString(),
                         MarriageConstants.MODULE_NAME));
-        ReIssue reissue1 = update(reissue);
+        final ReIssue reissue1 = update(reissue);
         workflowService.transition(reissue1, workflowContainer, workflowContainer.getApproverComments());
         marriageSmsAndEmailService.sendSMSForReIssueApplication(reissue1);
         marriageSmsAndEmailService.sendEmailForReIssueApplication(reissue1);
@@ -190,7 +189,8 @@ public class ReIssueService {
     }
 
     @Transactional
-    public ReIssue rejectReIssue(ReIssue reissue, final WorkflowContainer workflowContainer, final HttpServletRequest request)
+    public ReIssue rejectReIssue(final ReIssue reissue, final WorkflowContainer workflowContainer,
+            final HttpServletRequest request)
             throws IOException {
         reissue.setStatus(
                 workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT) ? marriageUtils
@@ -199,14 +199,14 @@ public class ReIssueService {
                                 MarriageConstants.MODULE_NAME));
 
         if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL_REISSUE)) {
-            List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(
+            final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(
                     MarriageConstants.MODULE_NAME, MarriageConstants.REISSUE_PRINTREJECTIONCERTIFICATE);
             // As per configuration, save rejection certificate.
             if (appConfigValues != null && !appConfigValues.isEmpty()
                     && "YES".equalsIgnoreCase(appConfigValues.get(0).getValue())) {
 
-                MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(reissue, request,
-                        MarriageCertificateType.REJECTION.toString());
+                final MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(reissue, request,
+                        MarriageCertificateType.REJECTION);
                 reissue.addCertificate(marriageCertificate);
             }
         }
@@ -223,13 +223,11 @@ public class ReIssueService {
         if (reissue.getFeeCriteria() != null)
             reissue.setFeeCriteria(marriageFeeService.getFee(reissue.getFeeCriteria().getId()));
         reissue.setFeePaid(reissue.getFeePaid());
-        if (reissue.getFeePaid() != null) {
-            if (reissue.getDemand() == null) {
+        if (reissue.getFeePaid() != null)
+            if (reissue.getDemand() == null)
                 reissue.setDemand(reIssueDemandService.createDemand(new BigDecimal(reissue.getFeePaid())));
-            } else {
+            else
                 reIssueDemandService.updateDemand(reissue.getDemand(), new BigDecimal(reissue.getFeePaid()));
-            }
-        }
         reissue.setStatus(marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.CREATED.toString(),
                 MarriageConstants.MODULE_NAME));
 
@@ -240,16 +238,17 @@ public class ReIssueService {
 
         final Map<Long, MarriageDocument> individualDocumentAndId = new HashMap<>();
         marriageDocumentService.getIndividualDocuments()
-        .forEach(document -> individualDocumentAndId.put(document.getId(), document));
+                .forEach(document -> individualDocumentAndId.put(document.getId(), document));
 
         marriageApplicantService.addDocumentsToFileStore(reissue.getApplicant(), individualDocumentAndId);
     }
 
     @Transactional
-    public ReIssue printCertificate(ReIssue reIssue, final WorkflowContainer workflowContainer, final HttpServletRequest request)
+    public ReIssue printCertificate(final ReIssue reIssue, final WorkflowContainer workflowContainer,
+            final HttpServletRequest request)
             throws IOException {
-        MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(reIssue, request,
-                MarriageCertificateType.REJECTION.REISSUE.toString());
+        final MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(reIssue, request,
+                MarriageCertificateType.REISSUE);
         reIssue.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.CERTIFICATEREISSUED.toString(),
                         MarriageConstants.MODULE_NAME));
@@ -290,7 +289,7 @@ public class ReIssueService {
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     user = eisCommonService.getUserForPosition(owner.getId(), new Date());
                     historyMap
-                    .put(USER, null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+                            .put(USER, null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
                     historyMap.put(DEPARTMENT, null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
                             .getDepartment().getName() : "");
                 }
@@ -318,7 +317,7 @@ public class ReIssueService {
         return historyTable;
     }
 
-    public boolean checkAnyWorkFlowInProgressForRegistration(MarriageRegistration registration) {
+    public boolean checkAnyWorkFlowInProgressForRegistration(final MarriageRegistration registration) {
         if (reIssueRepository.findReIssueInProgressForRegistration(registration.getRegistrationNo()) == null)
             return false;
         return true;

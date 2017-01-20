@@ -78,6 +78,7 @@ import org.egov.works.masters.service.ContractorGradeService;
 import org.egov.works.masters.service.ContractorService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -121,6 +122,9 @@ public class ContractorAction extends SearchFormAction {
     @Qualifier("contractorGradeService")
     private ContractorGradeService contractorGradeService;
 
+    @Autowired
+    private WorksUtils worksUtils;
+
     private String contractorName;
     private String contractorCode;
     private Long departmentId;
@@ -134,6 +138,7 @@ public class ContractorAction extends SearchFormAction {
     private Integer rowId;
     private String[] hide;
     private String[] mandatory;
+    private Long defaultDepartmentId;
 
     private Map<String, Object> criteriaMap = null;
 
@@ -319,7 +324,7 @@ public class ContractorAction extends SearchFormAction {
         addDropdownData("gradeList", contractorGradeService.getAllContractorGrades());
         addDropdownData("bankList", createBankService.getByIsActiveTrueOrderByName());
         addDropdownData("statusList", egwStatusHibDAO.getStatusByModule(WorksConstants.STATUS_MODULE_NAME));
-
+        defaultDepartmentId = worksUtils.getDefaultDepartmentId();
     }
 
     public Long getId() {
@@ -591,5 +596,13 @@ public class ContractorAction extends SearchFormAction {
     public void addValidationError(final List<ValidationError> errorList, final String errorCode,
             final String errorValue) {
         errorList.add(new ValidationError(errorCode, errorValue));
+    }
+
+    public Long getDefaultDepartmentId() {
+        return defaultDepartmentId;
+    }
+
+    public void setDefaultDepartmentId(final Long defaultDepartmentId) {
+        this.defaultDepartmentId = defaultDepartmentId;
     }
 }

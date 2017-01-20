@@ -67,6 +67,9 @@ public class CollTableData {
     private BigDecimal currentDemand = BigDecimal.ZERO;
     private BigDecimal proportionalArrearDemand = BigDecimal.ZERO;
     private BigDecimal proportionalCurrentDemand = BigDecimal.ZERO;
+    private BigDecimal totalAssessments = BigDecimal.ZERO;
+    private BigDecimal lyTodayColl = BigDecimal.ZERO;
+    private BigDecimal dayTargetDemand = BigDecimal.ZERO;
     private BigDecimal lyVar = BigDecimal.ZERO;
 
     public String getRegionName() {
@@ -243,6 +246,30 @@ public class CollTableData {
 
     public void setProportionalCurrentDemand(BigDecimal proportionalCurrentDemand) {
         this.proportionalCurrentDemand = proportionalCurrentDemand;
+    }
+
+    public BigDecimal getTotalAssessments() {
+        return totalAssessments;
+    }
+
+    public void setTotalAssessments(BigDecimal totalAssessments) {
+        this.totalAssessments = totalAssessments;
+    }
+
+    public BigDecimal getLyTodayColl() {
+        return lyTodayColl;
+    }
+
+    public void setLyTodayColl(BigDecimal lyTodayColl) {
+        this.lyTodayColl = lyTodayColl;
+    }
+
+    public BigDecimal getDayTargetDemand() {
+        return dayTargetDemand;
+    }
+
+    public void setDayTargetDemand(BigDecimal dayTargetDemand) {
+        this.dayTargetDemand = dayTargetDemand;
     }
 
 }

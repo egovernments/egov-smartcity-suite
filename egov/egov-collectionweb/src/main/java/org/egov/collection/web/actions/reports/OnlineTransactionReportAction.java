@@ -40,8 +40,11 @@
 
 package org.egov.collection.web.actions.reports;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -56,11 +59,10 @@ import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 
 /**
- * Action class for Online Trasaction Report
+ * Action class for Online Transaction Report
  */
-@Results({
-        @Result(name = OnlineTransactionReportAction.INDEX, location = "onlineTransactionReport-index.jsp"),
-        @Result(name = OnlineTransactionReportAction.REPORT, location = "receiptRegisterReport-report.jsp") })
+@Results({ @Result(name = OnlineTransactionReportAction.INDEX, location = "onlineTransactionReport-index.jsp"),
+    @Result(name = OnlineTransactionReportAction.REPORT, location = "onlineTransactionReport-report.jsp") })
 public class OnlineTransactionReportAction extends ReportFormAction {
     private static final long serialVersionUID = 1L;
     // Report parameter names
@@ -69,8 +71,11 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     private static final String EGOV_TO_DATE = "EGOV_TO_DATE";
     private static final String EGOV_BILLING_SERVICE_ID = "EGOV_BILLING_SERVICE_ID";
     private static final String EGOV_ONLINETRANSACTION_STATUS_ID = "EGOV_ONLINETRANSACTION_STATUS_ID";
-
+    private static final String EGOV_PAYMENT_SERVICE_ID = "EGOV_PAYMENT_SERVICE_ID";
+    private static final String EGOV_COUNTER_OPERATOR_ID = "EGOV_COUNTER_OPERATOR_ID";
+    private static final String EGOV_COLLECTION_TYPE = "EGOV_COLLECTION_TYPE";
     private CollectionsUtil collectionsUtil;
+    private Map<Character, String> collectionTypeMap = new TreeMap<>();
 
     @Override
     public void prepare() {
@@ -88,14 +93,17 @@ public class OnlineTransactionReportAction extends ReportFormAction {
         setupDropdownDataExcluding();
 
         // Add dropdown data for billing services (serviceList)
-        addDropdownData(CollectionConstants.DROPDOWN_DATA_SERVICE_LIST,
-                collectionsUtil.getBillingServiceList());
-        addDropdownData(CollectionConstants.DROPDOWN_DATA_ONLINETRANSACTIONSTATUS_LIST, getOnlineReceiptStatuses());
-
-        // default value for from/to date = today
+        addDropdownData(CollectionConstants.DROPDOWN_DATA_SERVICE_LIST, collectionsUtil.getBillingServiceList());
         setReportParam(EGOV_FROM_DATE, new Date());
         setReportParam(EGOV_TO_DATE, new Date());
-
+        // Add dropdown data for payment services (paymentServiceList)
+        addDropdownData("paymentServiceList", persistenceService.findAllByNamedQuery(
+                CollectionConstants.QUERY_SERVICES_BY_TYPE, CollectionConstants.SERVICE_TYPE_PAYMENT));
+        addDropdownData(CollectionConstants.DROPDOWN_DATA_ONLINETRANSACTIONSTATUS_LIST, getOnlineReceiptStatuses());
+        addDropdownData("userList",Collections.emptyList());
+        collectionTypeMap.put(CollectionConstants.COLLECTION_TYPE_COUNTER, "Counter");
+        collectionTypeMap.put(CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION, "Online");
+        // default value for from/to date = today
         return INDEX;
     }
 
@@ -106,8 +114,7 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     }
 
     private List<EgwStatus> getOnlineReceiptStatuses() {
-        return persistenceService.findAllByNamedQuery(
-                CollectionConstants.QUERY_ALL_STATUSES_FOR_MODULE,
+        return persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_STATUSES_FOR_MODULE,
                 OnlinePayment.class.getSimpleName());
     }
 
@@ -117,7 +124,8 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     }
 
     /**
-     * @param collectionsUtil The collections util object
+     * @param collectionsUtil
+     *            The collections util object
      */
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
@@ -131,7 +139,8 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     }
 
     /**
-     * @param deptId the department id to set
+     * @param deptId
+     *            the department id to set
      */
     public void setDepartmentId(final Integer deptId) {
         setReportParam(EGOV_DEPT_ID, deptId);
@@ -145,7 +154,8 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     }
 
     /**
-     * @param fromDate the from date to set
+     * @param fromDate
+     *            the from date to set
      */
     public void setFromDate(final Date fromDate) {
         setReportParam(EGOV_FROM_DATE, fromDate);
@@ -159,7 +169,8 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     }
 
     /**
-     * @param toDate the to date to set
+     * @param toDate
+     *            the to date to set
      */
     public void setToDate(final Date toDate) {
         setReportParam(EGOV_TO_DATE, toDate);
@@ -173,10 +184,11 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     }
 
     /**
-     * @param billingServiceId The Billing service id to set
+     * @param billingServiceId
+     *            The Billing service id to set
      */
-    public void setBillingServiceId(final Long challanServiceId) {
-        setReportParam(EGOV_BILLING_SERVICE_ID, challanServiceId);
+    public void setBillingServiceId(final Long billingServiceId) {
+        setReportParam(EGOV_BILLING_SERVICE_ID, billingServiceId);
     }
 
     public Long getStatusId() {
@@ -185,6 +197,52 @@ public class OnlineTransactionReportAction extends ReportFormAction {
 
     public void setStatusId(final Long statusId) {
         setReportParam(EGOV_ONLINETRANSACTION_STATUS_ID, statusId);
+    }
+
+    /**
+     * @return The billing service id
+     */
+    public Long getPaymentServiceId() {
+        return (Long) getReportParam(EGOV_PAYMENT_SERVICE_ID);
+    }
+
+    /**
+     * @param paymentServiceId
+     *            The Billing service id to set
+     */
+    public void setPaymentServiceId(final Long paymentServiceId) {
+        setReportParam(EGOV_PAYMENT_SERVICE_ID, paymentServiceId);
+    }
+
+    /**
+     * @return the user id
+     */
+    public Long getUserId() {
+        return (Long) getReportParam(EGOV_COUNTER_OPERATOR_ID);
+    }
+
+    /**
+     * @param userId
+     *            the user id to set
+     */
+    public void setUserId(final Long userId) {
+        setReportParam(EGOV_COUNTER_OPERATOR_ID, userId);
+    }
+
+    public String getCollectionType() {
+        return (String) getReportParam(EGOV_COLLECTION_TYPE);
+    }
+
+    public void setCollectionType(final String collectionType) {
+        setReportParam(EGOV_COLLECTION_TYPE, collectionType);
+    }
+
+    public Map<Character, String> getCollectionTypeMap() {
+        return collectionTypeMap;
+    }
+
+    public void setCollectionTypeMap(Map<Character, String> collectionTypeMap) {
+        this.collectionTypeMap = collectionTypeMap;
     }
 
 }

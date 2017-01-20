@@ -164,6 +164,7 @@ public class ChallanAction extends BaseFormAction {
     private Boolean chequeAllowed = Boolean.TRUE;
     private Boolean ddAllowed = Boolean.TRUE;
     private Boolean bankAllowed = Boolean.TRUE;
+    private Boolean onlineAllowed = Boolean.TRUE;
 
     /**
      * An instance of <code>InstrumentHeader</code> representing the cash
@@ -202,7 +203,7 @@ public class ChallanAction extends BaseFormAction {
      */
     private String voucherNumber;
 
-    private List<ValidationError> errors = new ArrayList<ValidationError>(0);
+    private final List<ValidationError> errors = new ArrayList<>(0);
 
     private String reportId;
 
@@ -246,14 +247,6 @@ public class ChallanAction extends BaseFormAction {
     private Date cutOffDate;
     private String instrumentType;
 
-    /**
-     * An array of <code>ReceiptHeader</code> instances which have to be
-     * displayed for view/print/cancel purposes
-     */
-    // private ReceiptHeader[] receipts;
-
-    // private String reasonForCancellation;
-
     public ChallanAction() {
         addRelatedEntity("receiptMisc.fund", Fund.class);
         addRelatedEntity("challan.service", ServiceDetails.class);
@@ -279,12 +272,12 @@ public class ChallanAction extends BaseFormAction {
     @SkipValidation
     public String newform() {
         setLoginDept();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         try {
             cutOffDate = sdf.parse(collectionsUtil.getAppConfigValue(
                     CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                     CollectionConstants.APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE));
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             LOGGER.error(getText("Error parsing Cut Off Date") + e.getMessage());
         }
         return NEW;
@@ -292,10 +285,9 @@ public class ChallanAction extends BaseFormAction {
 
     private void setLoginDept() {
         final Department loginUserDepartment = collectionsUtil.getDepartmentOfLoggedInUser();
-        if (loginUserDepartment == null) {
+        if (loginUserDepartment == null)
             throw new ValidationException(Arrays.asList(new ValidationError("Department does not exists",
                     "viewchallan.validation.error.user.notexists")));
-        }
         setDeptId(loginUserDepartment.getId().toString());
         setDept(loginUserDepartment);
         addDropdownData("approverDepartmentList", collectionsUtil.getDepartmentsAllowedForChallanApproval());
@@ -434,7 +426,7 @@ public class ChallanAction extends BaseFormAction {
                 collectionCommon.cancelChallanReceiptOnCreation(receiptHeader);
 
             boolean setInstrument = true;
-            List<InstrumentHeader> receiptInstrList = new ArrayList<InstrumentHeader>();
+            List<InstrumentHeader> receiptInstrList = new ArrayList<>();
 
             receiptHeader.setIsReconciled(Boolean.FALSE);
             receiptHeader.setIsModifiable(Boolean.TRUE);
@@ -482,10 +474,12 @@ public class ChallanAction extends BaseFormAction {
         } catch (final StaleObjectStateException exp) {
             errors.add(new ValidationError(getText("challanreceipt.created.staleobjectstate"),
                     "Receipt Already Created For this Challan.Go to Search Receipt screen to Re-print the receipt."));
+            LOGGER.error("Receipt Already Created For this Challan", exp);
             throw new ValidationException(errors);
         } catch (final Exception exp) {
             errors.add(new ValidationError(getText("challanreceipt.create.errorincreate"),
                     "Error occured in Challan Receipt creation, please try again."));
+            LOGGER.error("Error occured in Challan Receipt creation, please try again", exp);
             throw new ValidationException(errors);
         }
     }
@@ -564,8 +558,6 @@ public class ChallanAction extends BaseFormAction {
                 receiptHeaderService.persist(receiptHeader);
 
                 receiptHeader = collectionCommon.createPendingReceiptFromCancelledChallanReceipt(receiptHeader);
-                // receiptPayeeDetailsService.persist(receiptHeader.getReceiptPayeeDetails());
-
                 LOGGER.info(" Created a receipt in PENDING status in lieu of the cancelled receipt ");
 
                 loadReceiptDetails();
@@ -613,8 +605,7 @@ public class ChallanAction extends BaseFormAction {
         Challan challan = receiptHeader.getChallan();
         if (challan == null)
             challan = new Challan();
-        final List<WorkflowAction> workflowActions = challanWorkflowService.getValidActions(challan);
-        return workflowActions;
+        return challanWorkflowService.getValidActions(challan);
     }
 
     /**
@@ -623,7 +614,7 @@ public class ChallanAction extends BaseFormAction {
      * @return the list
      */
     private List<InstrumentHeader> populateInstrumentDetails() {
-        List<InstrumentHeader> instrumentHeaderList = new ArrayList<InstrumentHeader>();
+        List<InstrumentHeader> instrumentHeaderList = new ArrayList<>();
 
         if (CollectionConstants.INSTRUMENTTYPE_CASH.equals(instrumentTypeCashOrCard)) {
             instrHeaderCash.setInstrumentType(financialsUtil
@@ -712,12 +703,6 @@ public class ChallanAction extends BaseFormAction {
             receiptHeader.getChallan().setVoucherHeader(voucherHeader);
         }
 
-        /*
-         * receiptHeader.setService((ServiceDetails)
-         * getPersistenceService().findByNamedQuery(
-         * CollectionConstants.QUERY_SERVICE_BY_CODE,
-         * CollectionConstants.SERVICE_CODE_COLLECTIONS));
-         */
         receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_PENDING));
 
@@ -735,9 +720,9 @@ public class ChallanAction extends BaseFormAction {
         receiptHeader.getReceiptMisc().setFund(
                 fundDAO.fundById(receiptHeader.getReceiptMisc().getFund().getId(), false));
 
-        final Department dept = (Department) getPersistenceService().findByNamedQuery(
+        final Department depart = (Department) getPersistenceService().findByNamedQuery(
                 CollectionConstants.QUERY_DEPARTMENT_BY_ID, Long.valueOf(deptId));
-        receiptHeader.getReceiptMisc().setDepartment(dept);
+        receiptHeader.getReceiptMisc().setDepartment(depart);
         if (boundaryId != null)
             receiptHeader.getReceiptMisc().setBoundary(boundaryService.getBoundaryById(boundaryId));
         receiptHeader.getReceiptMisc().setReceiptHeader(receiptHeader);
@@ -753,10 +738,10 @@ public class ChallanAction extends BaseFormAction {
 
         for (final ReceiptDetailInfo rDetails : billDetailslist) {
             final CChartOfAccounts account = chartOfAccountsDAO.getCChartOfAccountsByGlCode(rDetails.getGlcodeDetail());
-            CFunction function = null;
+            CFunction funcn = null;
             if (functionId != null)
-                function = functionDAO.getFunctionById(functionId);
-            ReceiptDetail receiptDetail = new ReceiptDetail(account, function, rDetails.getCreditAmountDetail(),
+                funcn = functionDAO.getFunctionById(functionId);
+            ReceiptDetail receiptDetail = new ReceiptDetail(account, funcn, rDetails.getCreditAmountDetail(),
                     rDetails.getDebitAmountDetail(), null, Long.valueOf(m), null, null, receiptHeader,
                     PURPOSE.OTHERS.toString());
             receiptDetail.setCramount(rDetails.getCreditAmountDetail());
@@ -784,13 +769,6 @@ public class ChallanAction extends BaseFormAction {
         }
 
         receiptHeader.setTotalAmount(totalAmt);
-
-        /*
-         * if (receiptHeader.getChallan().getCreatedBy() == null)
-         * receiptHeader.getChallan
-         * ().setCreatedBy(collectionsUtil.getLoggedInUser());
-         */
-
         receiptHeader.getChallan().setStatus(
                 collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_CHALLAN,
                         CollectionConstants.CHALLAN_STATUS_CODE_CREATED));
@@ -799,12 +777,12 @@ public class ChallanAction extends BaseFormAction {
             receiptHeader.getChallan().setService(
                     (ServiceDetails) getPersistenceService().findByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_ID,
                             receiptHeader.getChallan().getService().getId()));
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         try {
             cutOffDate = sdf.parse(collectionsUtil.getAppConfigValue(
                     CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                     CollectionConstants.APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE));
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             LOGGER.error(getText("Error parsing Cut Off Date") + e.getMessage());
         }
         if (receiptHeader.getChallan().getChallanDate().before(cutOffDate))
@@ -841,7 +819,7 @@ public class ChallanAction extends BaseFormAction {
     protected void validateAccountDetails() {
         BigDecimal totalDrAmt = BigDecimal.ZERO;
         BigDecimal totalCrAmt = BigDecimal.ZERO;
-        int index = 0;
+        Integer index = 0;
 
         for (final ReceiptDetailInfo rDetails : billDetailslist) {
             index = index + 1;
@@ -852,7 +830,7 @@ public class ChallanAction extends BaseFormAction {
                     && rDetails.getCreditAmountDetail().compareTo(BigDecimal.ZERO) == 0
                     && rDetails.getGlcodeDetail().trim().length() == 0)
                 errors.add(new ValidationError("challan.accdetail.emptyaccrow",
-                        "No data entered in Account Details grid row : {0}", new String[] { "" + index }));
+                        "No data entered in Account Details grid row : {0}", new String[] { index.toString() }));
             else if (rDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) == 0
                     && rDetails.getCreditAmountDetail().compareTo(BigDecimal.ZERO) == 0
                     && rDetails.getGlcodeDetail().trim().length() != 0)
@@ -884,7 +862,7 @@ public class ChallanAction extends BaseFormAction {
     protected void validateSubledgerDetails() {
 
         Map<String, Object> accountDetailMap;
-        final Map<String, BigDecimal> subledAmtmap = new HashMap<String, BigDecimal>();
+        final Map<String, BigDecimal> subledAmtmap = new HashMap<>();
         // this list will contain the details about the account code those are
         // detail codes.
         List<Map<String, Object>> subLegAccMap = null;
@@ -895,7 +873,7 @@ public class ChallanAction extends BaseFormAction {
                     rDetails.getGlcodeDetail());
 
             if (null != chartOfAccountDetail) {
-                accountDetailMap = new HashMap<String, Object>();
+                accountDetailMap = new HashMap<>();
                 accountDetailMap.put("glcodeId", rDetails.getGlcodeIdDetail());
                 accountDetailMap.put("glcode", rDetails.getGlcodeDetail());
                 if (rDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) == 0)
@@ -903,7 +881,7 @@ public class ChallanAction extends BaseFormAction {
                 else if (rDetails.getCreditAmountDetail().compareTo(BigDecimal.ZERO) == 0)
                     accountDetailMap.put("amount", rDetails.getDebitAmountDetail());
                 if (null == subLegAccMap) {
-                    subLegAccMap = new ArrayList<Map<String, Object>>();
+                    subLegAccMap = new ArrayList<>();
                     subLegAccMap.add(accountDetailMap);
                 } else
                     subLegAccMap.add(accountDetailMap);
@@ -911,7 +889,7 @@ public class ChallanAction extends BaseFormAction {
         }
 
         if (null != subLegAccMap) {
-            final Map<String, String> subLedgerMap = new HashMap<String, String>();
+            final Map<String, String> subLedgerMap = new HashMap<>();
 
             for (final ReceiptDetailInfo rDetails : subLedgerlist)
                 if (rDetails.getGlcode() != null && rDetails.getGlcode().getId() != 0) {
@@ -923,7 +901,7 @@ public class ChallanAction extends BaseFormAction {
                         subledAmtmap.put(rDetails.getGlcode().getId().toString(), debitTotalAmount);
                     }
 
-                    final StringBuffer subledgerDetailRow = new StringBuffer();
+                    final StringBuilder subledgerDetailRow = new StringBuilder();
                     subledgerDetailRow.append(rDetails.getGlcode().getId().toString())
                             .append(rDetails.getDetailType().getId().toString())
                             .append(rDetails.getDetailKeyId().toString());
@@ -967,10 +945,10 @@ public class ChallanAction extends BaseFormAction {
         setDeptId(receiptHeader.getReceiptMisc().getDepartment().getId().toString());
         setDept(receiptHeader.getReceiptMisc().getDepartment());
         if (!receiptHeader.getReceiptDetails().isEmpty()) {
-            final CFunction function = receiptHeader.getReceiptDetails().iterator().next().getFunction();
-            if (function != null) {
-                setFunctionId(function.getId());
-                setFunction(function);
+            final CFunction functn = receiptHeader.getReceiptDetails().iterator().next().getFunction();
+            if (functn != null) {
+                setFunctionId(functn.getId());
+                setFunction(functn);
             }
         }
         setBoundary(receiptHeader.getReceiptMisc().getBoundary());
@@ -983,14 +961,13 @@ public class ChallanAction extends BaseFormAction {
                             .getServiceCategory().getId(), CollectionConstants.SERVICE_TYPE_CHALLAN_COLLECTION,
                     Boolean.TRUE));
         else
-            addDropdownData("serviceList", Collections.EMPTY_LIST);
+            addDropdownData("serviceList", Collections.emptyList());
         setBillDetailslist(collectionCommon.setReceiptDetailsList(receiptHeader,
                 CollectionConstants.COLLECTIONSAMOUNTTPE_BOTH));
         setSubLedgerlist(collectionCommon.setAccountPayeeList(receiptHeader));
         for (final ReceiptDetail rDetails : receiptHeader.getReceiptDetails())
             if (rDetails.getFunction() != null)
                 setFunction(rDetails.getFunction());
-        // break;
 
         if (receiptHeader.getReceiptMisc().getBoundary() != null)
             setBoundaryId(receiptHeader.getReceiptMisc().getBoundary().getId());
@@ -1019,6 +996,7 @@ public class ChallanAction extends BaseFormAction {
         // if
         // (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_BANK))
         setBankAllowed(Boolean.FALSE);
+        setOnlineAllowed(Boolean.FALSE);
     }
 
     /*
@@ -1038,8 +1016,8 @@ public class ChallanAction extends BaseFormAction {
                     && receiptHeader.getChallan().getService().getId() == -1)
                 receiptHeader.getChallan().setService(null);
         }
-        addDropdownData("designationMasterList", Collections.EMPTY_LIST);
-        addDropdownData("postionUserList", Collections.EMPTY_LIST);
+        addDropdownData("designationMasterList", Collections.emptyList());
+        addDropdownData("postionUserList", Collections.emptyList());
         setCurrentFinancialYearId(collectionCommon.getFinancialYearIdByDate(new Date()));
         /**
          * super class prepare is called at the end to ensure that the modified
@@ -1054,8 +1032,8 @@ public class ChallanAction extends BaseFormAction {
      * Setup challan page.
      */
     public void setupChallanPage() {
-        headerFields = new ArrayList<String>();
-        mandatoryFields = new ArrayList<String>();
+        headerFields = new ArrayList<>();
+        mandatoryFields = new ArrayList<>();
         getHeaderMandateFields();
 
         if (headerFields.contains(CollectionConstants.FUND)) {
@@ -1073,7 +1051,7 @@ public class ChallanAction extends BaseFormAction {
                     CollectionConstants.QUERY_SERVICE_BY_CATEGORY_FOR_TYPE, serviceCategoryId,
                     CollectionConstants.SERVICE_TYPE_CHALLAN_COLLECTION, Boolean.TRUE));
         else
-            addDropdownData("serviceList", Collections.EMPTY_LIST);
+            addDropdownData("serviceList", Collections.emptyList());
         if (headerFields.contains(CollectionConstants.DEPARTMENT))
             addDropdownData("departmentList",
                     persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_DEPARTMENTS));
@@ -1098,8 +1076,8 @@ public class ChallanAction extends BaseFormAction {
             instrumentCount = 0;
         else
             instrumentCount = instrumentProxyList.size();
-        addDropdownData("bankBranchList", Collections.EMPTY_LIST);
-        addDropdownData("accountNumberList", Collections.EMPTY_LIST);
+        addDropdownData("bankBranchList", Collections.emptyList());
+        addDropdownData("accountNumberList", Collections.emptyList());
     }
 
     public boolean isFieldMandatory(final String field) {
@@ -1489,7 +1467,7 @@ public class ChallanAction extends BaseFormAction {
         return cutOffDate;
     }
 
-    public void setCutOffDate(Date cutOffDate) {
+    public void setCutOffDate(final Date cutOffDate) {
         this.cutOffDate = cutOffDate;
     }
 
@@ -1497,7 +1475,7 @@ public class ChallanAction extends BaseFormAction {
         return bankAllowed;
     }
 
-    public void setBankAllowed(Boolean bankAllowed) {
+    public void setBankAllowed(final Boolean bankAllowed) {
         this.bankAllowed = bankAllowed;
     }
 
@@ -1505,7 +1483,7 @@ public class ChallanAction extends BaseFormAction {
         return chequeAllowed;
     }
 
-    public void setChequeAllowed(Boolean chequeAllowed) {
+    public void setChequeAllowed(final Boolean chequeAllowed) {
         this.chequeAllowed = chequeAllowed;
     }
 
@@ -1513,7 +1491,7 @@ public class ChallanAction extends BaseFormAction {
         return ddAllowed;
     }
 
-    public void setDdAllowed(Boolean ddAllowed) {
+    public void setDdAllowed(final Boolean ddAllowed) {
         this.ddAllowed = ddAllowed;
     }
 
@@ -1521,17 +1499,24 @@ public class ChallanAction extends BaseFormAction {
         return instrumentType;
     }
 
-    public void setInstrumentType(String instrumentType) {
+    public void setInstrumentType(final String instrumentType) {
         this.instrumentType = instrumentType;
+    }
+
+    public Boolean getOnlineAllowed() {
+        return onlineAllowed;
+    }
+
+    public void setOnlineAllowed(final Boolean onlineAllowed) {
+        this.onlineAllowed = onlineAllowed;
     }
 
     @Override
     public void validate() {
         super.validate();
         final Department loginUserDepartment = collectionsUtil.getDepartmentOfLoggedInUser();
-        if (loginUserDepartment != null) {
+        if (loginUserDepartment != null)
             setLoginDept();
-        }
         if (receiptHeader.getReceiptdate() != null
                 && receiptHeader.getReceiptdate().before(
                         financialYearDAO.getFinancialYearByDate(new Date()).getStartingDate()))

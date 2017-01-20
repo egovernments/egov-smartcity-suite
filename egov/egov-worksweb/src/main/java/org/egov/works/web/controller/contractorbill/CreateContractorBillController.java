@@ -176,6 +176,7 @@ public class CreateContractorBillController extends BaseContractorBillController
             model.addAttribute("billDetailsMap",
                     contractorBillRegisterService.getBillDetailsMap(contractorBillRegister, model));
         }
+        contractorBillRegister.setApprovalDepartment(worksUtils.getDefaultDepartmentId());
 
         return "contractorBill-form";
     }

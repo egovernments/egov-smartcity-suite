@@ -47,8 +47,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
@@ -56,6 +56,7 @@ import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.revisionestimate.service.RevisionWorkOrderService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +70,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping(value = "/letterofacceptance")
-public class CancelLetterOfAcceptanceController extends GenericWorkFlowController {
+public class CancelLetterOfAcceptanceController {
 
     private static final String ERROR_MESSAGE = "errorMessage";
     private static final String LETTEROFACCEPTANCE_SUCCESS = "letterofacceptance-success";
@@ -93,6 +94,12 @@ public class CancelLetterOfAcceptanceController extends GenericWorkFlowControlle
     @Autowired
     private RevisionWorkOrderService revisionWorkOrderService;
 
+    @Autowired
+    private DepartmentService departmentService;
+
+    @Autowired
+    private WorksUtils worksUtils;
+
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
     public String showSearchLetterOfAcceptanceForm(
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final Model model)
@@ -111,6 +118,8 @@ public class CancelLetterOfAcceptanceController extends GenericWorkFlowControlle
                 newEgwStatuses.add(egwStatus);
         model.addAttribute("egwStatus", newEgwStatuses);
         model.addAttribute("searchRequestContractorBill", searchRequestLetterOfAcceptance);
+        searchRequestLetterOfAcceptance.setDepartmentName(worksUtils.getDefaultDepartmentId());
+
         return "searchloa-cancel";
     }
 

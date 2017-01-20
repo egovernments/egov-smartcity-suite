@@ -39,12 +39,17 @@
  */
 package org.egov.tl.service;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
+import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.repository.LicenseAppTypeRepository;
 import org.egov.tl.repository.PenaltyRatesRepository;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -96,5 +101,21 @@ public class PenaltyRatesService {
     @Transactional
     public void delete(final PenaltyRates penaltyRates) {
         penaltyRatesRepository.delete(penaltyRates);
+    }
+    
+    public BigDecimal calculatePenalty(final Date commencementDate, final Date penaltyCalculationEndDate, final BigDecimal amount, License license) {
+        if (commencementDate != null) {
+            final int paymentDueDays = Days
+                    .daysBetween(new LocalDate(commencementDate.getTime()), new LocalDate(penaltyCalculationEndDate.getTime()))
+                    .getDays();
+            final PenaltyRates penaltyRates = findByDaysAndLicenseAppType(Long.valueOf(paymentDueDays),
+                    license.getLicenseAppType());
+            if (penaltyRates == null) {
+                return BigDecimal.ZERO;
+            }
+
+            return amount.multiply(BigDecimal.valueOf(penaltyRates.getRate() / 100));
+        }
+        return BigDecimal.ZERO;
     }
 }

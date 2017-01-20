@@ -149,18 +149,7 @@
 					<table
 						class="table table-bordered datatable dt-responsive table-hover"
 						id="drilldownReport-table">
-						<thead></thead>
-						<tfoot id="report-footer">
-							<tr>
-								<td><b><spring:message code="lbl.total" /></b></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-							</tr>
-						</tfoot>
+					
 					</table>
 				</div>
 			</div>

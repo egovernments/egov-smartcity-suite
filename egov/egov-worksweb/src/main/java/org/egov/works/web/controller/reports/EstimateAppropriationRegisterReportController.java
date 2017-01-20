@@ -45,6 +45,7 @@ import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.reports.entity.EstimateAppropriationRegisterSearchRequest;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,12 +69,16 @@ public class EstimateAppropriationRegisterReportController {
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
 
+    @Autowired
+    private WorksUtils worksUtils;
+    
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String showEstimateAppropriationRegister(
             @ModelAttribute final EstimateAppropriationRegisterSearchRequest estimateAppropriationRegisterSearchRequest,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
         model.addAttribute("estimateAppropriationRegisterSearchRequest", estimateAppropriationRegisterSearchRequest);
+        estimateAppropriationRegisterSearchRequest.setDepartment(worksUtils.getDefaultDepartmentId());
         return "estimateAppropriationRegister-search";
     }
 

@@ -49,6 +49,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.pims.commons.Position;
@@ -142,8 +143,18 @@ public class RegistrationWorkflowService {
             } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_CANCEL) || 
                     workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_PRINT_CERTIFICATE)) {
                 nextAction = STATE_END;
-            } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_APPROVE)) { 
-
+            } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_APPROVE)) {
+                //On Approve, pick workflow matrix based on digital signature configuration
+                if(workflowContainer.getPendingActions().equalsIgnoreCase(MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN))
+                    nextStateOwner = this.assignmentService.getPrimaryAssignmentForUser(user.getId()).getPosition();
+                else
+                    nextStateOwner = assignmentService.getPrimaryAssignmentForUser(registration.getCreatedBy().getId()).getPosition();
+                workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null, null,
+                        REGISTRATION_ADDNL_RULE, registration.getCurrentState().getValue(), workflowContainer.getPendingActions());
+                 
+                nextState = workflowMatrix.getNextState();
+                nextAction = workflowMatrix.getNextAction();
+            } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_DIGISIGN)) { 
                 nextStateOwner = assignmentService.getPrimaryAssignmentForUser(registration.getCreatedBy().getId()).getPosition();
                 workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null, null,
                         REGISTRATION_ADDNL_RULE, registration.getCurrentState().getValue(), null);

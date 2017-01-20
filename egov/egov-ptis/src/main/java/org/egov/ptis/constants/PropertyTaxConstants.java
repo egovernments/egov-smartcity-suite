@@ -1604,13 +1604,28 @@ public interface PropertyTaxConstants {
     public static final String DASHBOARD_PROPERTY_TYPE_VACANT_LAND = "Vacant Land";
     public static final String DASHBOARD_PROPERTY_TYPE_STATE_GOVT = "State Government";
     public static final String DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT = "CENTRAL_GOVT";
+    public static final String DASHBOARD_PROPERTY_TYPE_COURTCASES = "Courtcases";
+    public static final String DASHBOARD_PROPERTY_TYPE_BUILT_UP = "BuiltUp";
     
     @SuppressWarnings("serial")
     public static final List<String> DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST = new ArrayList<String>() {
         {
-            add("Central Government 33.5%");
-            add("Central Government 50%");
-            add("Central Government 75%");
+            add(OWNERSHIP_TYPE_CENTRAL_GOVT_335_STR);
+            add(OWNERSHIP_TYPE_CENTRAL_GOVT_50_STR);
+            add(OWNERSHIP_TYPE_CENTRAL_GOVT_75_STR);
+        }
+    };
+    
+    @SuppressWarnings("serial")
+    public static final List<String> DASHBOARD_BUILT_UP_PROPERTY_TYPES = new ArrayList<String>() {
+        {
+            
+            add(OWNERSHIP_TYPE_PRIVATE_STR);
+            add(OWNERSHIP_TYPE_STATE_GOVT_STR);
+            add(OWNERSHIP_TYPE_CENTRAL_GOVT_335_STR);
+            add(OWNERSHIP_TYPE_CENTRAL_GOVT_50_STR);
+            add(OWNERSHIP_TYPE_CENTRAL_GOVT_75_STR);
+            add(OWNERSHIP_TYPE_EWSHS);
         }
     };
     
@@ -1621,6 +1636,7 @@ public interface PropertyTaxConstants {
     public static final String NOTICE_TYPE_INVENTORY = "Inventory Notice";
     public static final String NOTICE_TYPE_DISTRESS = "Distress Notice";
     public static final String VALUATION_CERTIFICATE = "Valuation Certificate";
+    public static final String NOTICE_TYPE_OCCUPIER = "Occupier Notice";
     public static final String VALUATION_CERTIFICATE_CORPORATION  = "ValuationCertificate_Corporation";
     public static final String VALUATION_CERTIFICATE_MUNICIPALITY = "ValuationCertificate_Municipality";
     public static final String NOTICE_TYPE_OC = "Ownership Certificate";
@@ -1654,6 +1670,8 @@ public interface PropertyTaxConstants {
             add(NOTICE_TYPE_INVENTORY);
             add(NOTICE_TYPE_DISTRESS);
             add(NOTICE_TYPE_OC);
+            add(NOTICE_TYPE_OCCUPIER);
+            add(VALUATION_CERTIFICATE);
         }
     };
 }

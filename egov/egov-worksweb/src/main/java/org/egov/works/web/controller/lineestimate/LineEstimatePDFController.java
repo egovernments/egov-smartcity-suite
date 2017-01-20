@@ -84,6 +84,7 @@ public class LineEstimatePDFController {
     private LineEstimateService lineEstimateService;
 
     public static final String LINEESTIMATEPDF = "lineEstimatePDF";
+    public static final String LINEESTIMATE_SUBJECT = "Request for Administrative Sanction";
 
     @RequestMapping(value = "/lineEstimatePDF/{lineEstimateId}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateLineEstimatePDF(final HttpServletRequest request,
@@ -107,7 +108,7 @@ public class LineEstimatePDFController {
 
             reportParams.put("cityName", ApplicationThreadLocals.getMunicipalityName());
             reportParams.put("proNo", lineEstimate.getAdminSanctionNumber() != null ? lineEstimate.getAdminSanctionNumber() : "");
-            reportParams.put("sub", lineEstimate.getSubject());
+            reportParams.put("sub", lineEstimate.getSubject() != null ? lineEstimate.getSubject() : LINEESTIMATE_SUBJECT);
             reportParams.put("ref", lineEstimate.getReference());
             reportParams.put("dated",
                     lineEstimate.getAdminSanctionDate() != null

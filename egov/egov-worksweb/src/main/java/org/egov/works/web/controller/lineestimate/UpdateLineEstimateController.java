@@ -62,7 +62,6 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -116,9 +115,6 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     private SchemeService schemeService;
 
     @Autowired
-    private DepartmentService departmentService;
-
-    @Autowired
     private WorksUtils worksUtils;
 
     @Autowired
@@ -170,8 +166,11 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/update/{lineEstimateId}", method = RequestMethod.GET)
     public String updateLineEstimate(final Model model, @PathVariable final String lineEstimateId,
-            final HttpServletRequest request)
-            throws ApplicationException {
+            final HttpServletRequest request) throws ApplicationException {
+        model.addAttribute("hiddenfields", lineEstimateService.getLineEstimateHiddenFields());
+        model.addAttribute("workdetailsadd",
+                WorksConstants.YES.equalsIgnoreCase(lineEstimateService.getLineEstimateMultipleWorkDetailsAllowed())
+                        ? Boolean.TRUE : Boolean.FALSE);
         final LineEstimate lineEstimate = getLineEstimate(lineEstimateId);
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString()))
             setDropDownValues(model);
@@ -182,8 +181,8 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/view/{lineEstimateId}", method = RequestMethod.GET)
     public String viewLineEstimate(final Model model, @PathVariable final String lineEstimateId,
-            final HttpServletRequest request)
-            throws ApplicationException {
+            final HttpServletRequest request) throws ApplicationException {
+        model.addAttribute("hiddenfields", lineEstimateService.getLineEstimateHiddenFields());
         final LineEstimate lineEstimate = getLineEstimate(lineEstimateId);
 
         final String responsePage = loadViewData(model, request, lineEstimate);
@@ -198,10 +197,10 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     }
 
     @RequestMapping(value = "/update/{lineEstimateId}", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute("lineEstimate") final LineEstimate lineEstimate, final BindingResult errors,
-            final RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request,
-            @RequestParam final String removedLineEstimateDetailsIds, @RequestParam("file") final MultipartFile[] files)
-            throws ApplicationException, IOException {
+    public String update(@Valid @ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
+            final BindingResult errors, final RedirectAttributes redirectAttributes, final Model model,
+            final HttpServletRequest request, @RequestParam final String removedLineEstimateDetailsIds,
+            @RequestParam("file") final MultipartFile[] files) throws ApplicationException, IOException {
 
         String mode = "";
         String workFlowAction = "";
@@ -344,7 +343,8 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                 errors.reject("error.budgetappropriation.amount",
                         new String[] { budgetAvailable.toString(), totalEstimateAmount.toString() }, null);
         } catch (final ValidationException e) {
-            // TODO: Used ApplicationRuntimeException for time being since there is issue in session after
+            // TODO: Used ApplicationRuntimeException for time being since there
+            // is issue in session after
             // budgetDetailsDAO.getPlanningBudgetAvailable API call
             // TODO: needs to replace with errors.reject
             for (final ValidationError error : e.getErrors())
@@ -359,8 +359,8 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         if (StringUtils.isBlank(lineEstimate.getAdminSanctionNumber()))
             errors.rejectValue("adminSanctionNumber", "error.adminsanctionnumber.notnull");
         if (lineEstimate.getAdminSanctionNumber() != null) {
-            final LineEstimate checkLineEstimate = lineEstimateService.getLineEstimateByAdminSanctionNumber(lineEstimate
-                    .getAdminSanctionNumber());
+            final LineEstimate checkLineEstimate = lineEstimateService
+                    .getLineEstimateByAdminSanctionNumber(lineEstimate.getAdminSanctionNumber());
 
             if (checkLineEstimate != null)
                 errors.rejectValue("adminSanctionNumber", "error.adminsanctionnumber.unique");
@@ -406,11 +406,13 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         }
         workflowContainer.setAmountRule(lineEstimate.getTotalEstimateAmount());
         prepareWorkflow(model, lineEstimate, workflowContainer);
-        if (lineEstimate.getState() != null && lineEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
-            model.addAttribute("mode", "edit");
-        else
-            model.addAttribute("mode", "view");
 
+        if (lineEstimate.getState() != null
+                && lineEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
+            model.addAttribute("mode", WorksConstants.EDIT);
+        else
+            model.addAttribute("mode", WorksConstants.VIEW);
+        lineEstimate.setApprovalDepartment(worksUtils.getDefaultDepartmentId());
         model.addAttribute("workflowHistory",
                 worksUtils.getHistory(lineEstimate.getState(), lineEstimate.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
@@ -420,7 +422,8 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         final LineEstimate newLineEstimate = getEstimateDocuments(lineEstimate);
         model.addAttribute("documentDetails", newLineEstimate.getDocumentDetails());
         model.addAttribute("lineEstimate", newLineEstimate);
-        if (request != null && request.getParameter("message") != null && request.getParameter("message").equals("update"))
+        if (request != null && request.getParameter("message") != null
+                && request.getParameter("message").equals("update"))
             model.addAttribute("message", WorksConstants.LINEESTIMATE_UPDATE);
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString()) ||
                 lineEstimate.getStatus().getCode().equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString())) {

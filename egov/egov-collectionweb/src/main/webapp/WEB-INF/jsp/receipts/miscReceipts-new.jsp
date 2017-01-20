@@ -293,10 +293,12 @@ function getSchemelist(fund)
 }
 
 function getBankBranchList(){
+	setTimeout(function(){
         var serviceId=dom.get("serviceId").value;
         var fundId=dom.get("fundId").value;
         if(fundId!="-1" && serviceId!="-1"){
             populatebankBranchMaster({serviceId:serviceId,fundId:fundId});
+            document.getElementById("accountNumberMaster").options.length = 1;
         }
         else{
             if(document.getElementById("bankBranchMaster")!=null){
@@ -306,6 +308,7 @@ function getBankBranchList(){
                 document.getElementById("accountNumberMaster").options.length = 1;
             }
         }
+	 }, 1000);
 }
 
 function getSubSchemelist(scheme)

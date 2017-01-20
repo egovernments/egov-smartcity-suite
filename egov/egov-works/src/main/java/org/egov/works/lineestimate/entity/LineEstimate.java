@@ -105,7 +105,6 @@ public class LineEstimate extends StateAware {
     @Column(unique = true)
     private String lineEstimateNumber;
 
-    @NotNull
     @SafeHtml
     @Length(max = 256)
     @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "lineestimate.subject.alphaNumeric")
@@ -125,7 +124,6 @@ public class LineEstimate extends StateAware {
     @JoinColumn(name = "function", nullable = false)
     private CFunction function;
 
-    @NotNull
     @SafeHtml
     @Length(max = 1024)
     @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "lineestimate.description.alphaNumeric")

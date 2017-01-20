@@ -179,6 +179,7 @@ function showInstrumentDetails(obj){
 		document.getElementById('carddetails').style.display='none';
 		document.getElementById('bankdetails').style.display='none';
 		document.getElementById('instrumentTypeCashOrCard').value="cash";
+		document.getElementById('onlinedetails').style.display='none';
  		document.getElementById('instrHeaderCash.instrumentAmount').value=document.getElementById('totalamountdisplay').value;
  		clearCardDetails();
 		clearChequeDDDetails();
@@ -189,6 +190,7 @@ function showInstrumentDetails(obj){
 		document.getElementById('chequeDDdetails').style.display='table-row';
 		document.getElementById('carddetails').style.display='none';
 		document.getElementById('bankdetails').style.display='none';
+		document.getElementById('onlinedetails').style.display='none';
 		document.getElementById('instrumentTypeCashOrCard').value="";
 		clearCashDetails();
 		clearCardDetails();
@@ -199,6 +201,7 @@ function showInstrumentDetails(obj){
 		document.getElementById('chequeDDdetails').style.display='table-row';
 		document.getElementById('carddetails').style.display='none';
 		document.getElementById('bankdetails').style.display='none';
+		document.getElementById('onlinedetails').style.display='none';
 		document.getElementById('instrumentTypeCashOrCard').value="";
 		clearCashDetails();
 		clearCardDetails();
@@ -209,6 +212,7 @@ function showInstrumentDetails(obj){
 		document.getElementById('chequeDDdetails').style.display='none';
 		document.getElementById('carddetails').style.display='table-row';
 		document.getElementById('bankdetails').style.display='none';
+		document.getElementById('onlinedetails').style.display='none';
 		document.getElementById('instrumentTypeCashOrCard').value="card";
 		clearCashDetails();
 		clearBankDetails();
@@ -219,6 +223,7 @@ function showInstrumentDetails(obj){
 		document.getElementById('chequeDDdetails').style.display='none';
 		document.getElementById('carddetails').style.display='none';
 		document.getElementById('bankdetails').style.display='table-row';
+		document.getElementById('onlinedetails').style.display='none';
 		document.getElementById('instrumentTypeCashOrCard').value="bankchallan";
 		clearCashDetails();
 		clearCardDetails();
@@ -228,6 +233,18 @@ function showInstrumentDetails(obj){
 				getBankBranchList(document.getElementById('fundId'));
 			}
 		</s:if>
+	}
+	else if(obj.id=='onlineradiobutton'){
+		document.getElementById('onlinedetails').style.display='table-row';
+		document.getElementById('cashdetails').style.display='none';
+		document.getElementById('chequeDDdetails').style.display='none';
+		document.getElementById('carddetails').style.display='none';
+		document.getElementById('bankdetails').style.display='none';
+		document.getElementById('instrumentTypeCashOrCard').value="cash";
+ 		document.getElementById('instrHeaderCash.instrumentAmount').value=document.getElementById('totalamountdisplay').value;
+ 		clearCardDetails();
+		clearChequeDDDetails();
+		clearBankDetails();
 	}
 }
 </script>
@@ -251,10 +268,15 @@ function showInstrumentDetails(obj){
 			name="paytradiobutton" value="dd" /> DD &nbsp;
 	</span> <span style="float: left;" id="cardradiobuttonspan"> <input
 			onClick="showInstrumentDetails(this)" type="radio" align="absmiddle"
-			id="cardradiobutton" name="paytradiobutton" /> Credit/Debit card &nbsp;
+			id="cardradiobutton" name="paytradiobutton" /> Credit/Debit card
+			&nbsp;
 	</span> <span style="float: left;" id="bankradiobuttonspan"> <input
 			onClick="showInstrumentDetails(this)" type="radio" align="absmiddle"
 			id="bankradiobutton" name="paytradiobutton" /> Direct Bank &nbsp;
+	</span> </span> <span style="float: left;" id="onlineradiobuttonspan"> <input
+			onClick="showInstrumentDetails(this)" type="radio" align="absmiddle"
+			id="onlineradiobutton" name="paytradiobutton" /> SBI MOPS Bank
+			challan &nbsp;
 	</span></td>
 </tr>
 
@@ -576,6 +598,28 @@ function showInstrumentDetails(obj){
 									onkeyup="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);" /></td>
 						</tr>
 					</table> <!-- End of bank grid table -->
+				</td>
+			</tr>
+			<tr id="onlinedetails" style="display: none">
+				<td class="bluebox2cheque" width="11%">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0"
+						name="onlinegrid" id="onlinegrid"
+						style="padding: 0px; margin: 0px;">
+						<tr id="onlinedetailsrow">
+							<td class="bluebox" width="3%"></td>
+							<td class="bluebox" width="22%"><s:text
+									name="billreceipt.payment.instrumentAmount" /><span
+								class="mandatory1">*</span></td>
+							<td class="bluebox" ><s:textfield
+									label="instrumentAmount"
+									id="instrHeaderOnline.instrumentAmount"
+									name="instrHeaderOnline.instrumentAmount" maxlength="14"
+									size="18" cssClass="form-control patternvalidation text-right"
+									data-pattern="number" placeholder="0"
+									onblur="callpopulateapportioningamountforbills();setOnlineInstrumentDetails(this);"
+									onkeyup="callpopulateapportioningamountforbills();setOnlineInstrumentDetails(this);" /></td>
+						</tr>
+					</table>
 				</td>
 			</tr>
 		</table>

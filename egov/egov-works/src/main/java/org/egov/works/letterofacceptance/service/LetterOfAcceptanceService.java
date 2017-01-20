@@ -684,7 +684,7 @@ public class LetterOfAcceptanceService {
 
     public List<ContractorDetail> searchContractorDetails(final SearchRequestContractor searchRequestContractor) {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ContractorDetail.class, "cd")
-                .createAlias("contractor", "contractor");
+                .createAlias("contractor", "contractor").createAlias("cd.status", "status");
         if (searchRequestContractor != null) {
             if (searchRequestContractor.getDepartment() != null)
                 criteria.add(Restrictions.eq("department.id", searchRequestContractor.getDepartment()));
@@ -697,6 +697,7 @@ public class LetterOfAcceptanceService {
                 criteria.add(Restrictions.ilike("contractor.name", searchRequestContractor.getNameOfAgency(),
                         MatchMode.ANYWHERE));
         }
+        criteria.add(Restrictions.eq("status.code", WorksConstants.ACTIVE).ignoreCase());
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }

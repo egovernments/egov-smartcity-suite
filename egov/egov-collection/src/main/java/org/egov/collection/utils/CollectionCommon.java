@@ -195,8 +195,8 @@ public class CollectionCommon {
                         .getBankAccountId().getChartofaccounts());
             else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_ONLINE))
                 newReceiptDetail.setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
-                        CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
-                        CollectionConstants.INSTRUMENTTYPE_ONLINE));
+                        CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE_SERVICE,
+                        CollectionConstants.INSTRUMENTTYPE_ONLINE,receiptHeader.getOnlinePayment().getService().getId() ));
             newReceiptDetail.setDramount(debitAmount);
             newReceiptDetail.setCramount(BigDecimal.ZERO);
             newReceiptDetail.setReceiptHeader(receiptHeader);

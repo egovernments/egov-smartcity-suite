@@ -39,18 +39,14 @@
  */
 package org.egov.works.web.controller.contractorbill;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.SearchRequestContractorBill;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
-import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -64,27 +60,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/contractorbill")
 public class CancelContractorBillController extends GenericWorkFlowController {
     @Autowired
-    private LineEstimateService lineEstimateService;
-
-    @Autowired
     private ContractorBillRegisterService contractorBillRegisterService;
-
-    @Autowired
-    private SecurityUtils securityUtils;
 
     @Autowired
     @Qualifier("messageSource")
     private MessageSource messageSource;
+
+    @Autowired
+    private WorksUtils worksUtils;
 
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
     public String showSearchContractorBillForm(
             @ModelAttribute final SearchRequestContractorBill searchRequestContractorBill,
             final Model model) throws ApplicationException {
         model.addAttribute("departments", departmentService.getAllDepartments());
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
-        if (departments != null && !departments.isEmpty())
-            searchRequestContractorBill.setDepartment(departments.get(0).getId());
+        searchRequestContractorBill.setDepartment(worksUtils.getDefaultDepartmentId());
         model.addAttribute("searchRequestContractorBill", searchRequestContractorBill);
+
         return "searchcontractorbill-cancel";
     }
 
