@@ -64,6 +64,7 @@
     <script src="<cdn:url  value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
     <script src="<cdn:url  value='/resources/global/js/jquery/plugins/select2/4.0.3/select2.min.js' context='/egi'/>"></script>
     <script src="<cdn:url  value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
+    <script src="<cdn:url  value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script>
 
     <decorator:head/>
 </head>
@@ -108,45 +109,6 @@
 </div>
 
 <script>
-
-    // To prevent double submission of forms
-    $.fn.preventDoubleSubmission = function () {
-        $(this).on('submit', function (e) {
-            var $form = $(this);
-            if ($form.data('submitted') === true) {
-                // Previously submitted - don't submit again
-                e.preventDefault();
-            } else {
-                // Mark it so that the next submit can be ignored
-                $form.data('submitted', true);
-            }
-        });
-        // Keep chainability
-        return this;
-    };
-
-    $("form").submit(function (event) {
-        $('.loader-class').modal('show', {backdrop: 'static'});
-    });
-
-    $('form').preventDoubleSubmission();
-
-    try {
-        $(".datepicker").datepicker({
-            format: "dd/mm/yyyy",
-            autoclose: true
-        });
-
-        var d = new Date();
-        var currDate = d.getDate();
-        var currMonth = d.getMonth();
-        var currYear = d.getFullYear();
-        var startDate = new Date(currYear, currMonth, currDate);
-        $('.today').datepicker('setDate', startDate);
-
-    } catch (e) {
-        console.warn("No Date Picker");
-    }
 
     /*Restrict back button*/
     history.pushState({page: 1}, "Title 1", "#no-back");
