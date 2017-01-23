@@ -59,7 +59,6 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.ComplaintStatus;
-import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pgr.service.es.ComplaintIndexService;
 import org.egov.pgr.utils.constants.PGRConstants;
@@ -92,14 +91,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import static org.egov.pgr.entity.enums.ComplaintStatus.FORWARDED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.PROCESSING;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REGISTERED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REOPENED;
 import static org.egov.pgr.utils.constants.PGRConstants.COMMENT;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REGISTERED;
 import static org.egov.pgr.utils.constants.PGRConstants.DATE;
 import static org.egov.pgr.utils.constants.PGRConstants.DELIMITER_COLON;
 import static org.egov.pgr.utils.constants.PGRConstants.DEPT;
@@ -115,17 +115,6 @@ import static org.egov.pgr.utils.constants.PGRConstants.USERTYPE;
 public class ComplaintService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ComplaintService.class);
-    public final String COMPLAINT_ALL = "ALL";
-    public final String COMPLAINT_PENDING = "PENDING";
-    public final String COMPLAINT_COMPLETED = "COMPLETED";
-    public final String COMPLAINT_REJECTED = "REJECTED";
-    public final String COMPLAINTS_FILED = "FILED";
-    public final String COMPLAINTS_RESOLVED = "RESOLVED";
-    public final String COMPLAINTS_UNRESOLVED = "UNRESOLVED";
-    final String[] pendingStatus = {"REGISTERED", "FORWARDED", "PROCESSING", "NOTCOMPLETED", "REOPENED"};
-    final String[] completedStatus = {"COMPLETED", "WITHDRAWN", "CLOSED"};
-    final String[] rejectedStatus = {"REJECTED"};
-    final String[] resolvedStatus = {"COMPLETED", "WITHDRAWN", "CLOSED", "REJECTED"};
     @Autowired
     private ComplaintRepository complaintRepository;
     @Autowired
@@ -158,7 +147,7 @@ public class ComplaintService {
     private ComplaintIndexService complaintIndexService;
 
     @Transactional
-    public Complaint createComplaint(final Complaint complaint) throws ValidationException {
+    public Complaint createComplaint(final Complaint complaint) {
 
         if (StringUtils.isBlank(complaint.getCrn()))
             complaint.setCrn(applicationNumberGenerator.generate());
@@ -169,8 +158,8 @@ public class ComplaintService {
             complaint.getComplainant().setName(user.getName());
             complaint.getComplainant().setMobile(user.getMobileNumber());
         }
-        complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
-        if (complaint.getLocation() == null && complaint.getLat() != 0.0 && complaint.getLng() != 0.0)
+        complaint.setStatus(complaintStatusService.getByName(COMPLAINT_REGISTERED));
+        if (complaint.getLocation() == null && complaint.getLat() > 0 && complaint.getLng() > 0)
             try {
                 final Long bndryId = boundaryService.getBoundaryIdFromShapefile(complaint.getLat(), complaint.getLng());
                 if (bndryId != null && bndryId != 0) {
@@ -179,6 +168,7 @@ public class ComplaintService {
                 } else
                     throw new ValidationException("gis.location.info.not.found");
             } catch (final Exception e) {
+                LOG.error("No GIS data found", e);
                 throw new ValidationException("gis.location.info.not.found");
             }
 
@@ -217,7 +207,7 @@ public class ComplaintService {
     @Transactional
     public Complaint update(final Complaint complaint, final Long approvalPosition, final String approvalComent) {
         final Role goRole = roleService.getRoleByName(PGRConstants.GO_ROLE_NAME);
-        String userName = null;
+        String userName;
         if (securityUtils.getCurrentUser().getType().equals(UserType.CITIZEN))
             userName = securityUtils.getCurrentUser().getName();
         else
@@ -259,8 +249,8 @@ public class ComplaintService {
         }
 
         complaintRepository.saveAndFlush(complaint);
+        complaintIndexService.updateComplaintIndex(complaint, approvalPosition, approvalComent);
         pushMessage(complaint);
-
         if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString()) ||
                 complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString()))
             sendSmsOnCompletion(complaint);
@@ -268,8 +258,6 @@ public class ComplaintService {
                 !complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString())
                 && !complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString()))
             sendSmsToOfficials(complaint);
-        
-        complaintIndexService.updateComplaintIndex(complaint, approvalPosition, approvalComent);
 
         return complaint;
     }
@@ -321,7 +309,7 @@ public class ComplaintService {
 
     private String getHeaderMessage(final Complaint savedComplaint) {
         final StringBuilder headerMessage = new StringBuilder();
-        if (savedComplaint.getStatus().getName().equals("REGISTERED"))
+        if (COMPLAINT_REGISTERED.equals(savedComplaint.getStatus().getName()))
             headerMessage.append("Grievance Recorded");
         else
             headerMessage.append("Grievance Redressal");
@@ -336,11 +324,10 @@ public class ComplaintService {
         return detailedMessage.toString();
     }
 
-    public List<Hashtable<String, Object>> getHistory(final Complaint complaint) {
-        User user = null;
-        final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
+    public List<HashMap<String, Object>> getHistory(final Complaint complaint) {
+        final List<HashMap<String, Object>> historyTable = new ArrayList<>();
         final State state = complaint.getState();
-        final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
+        final HashMap<String, Object> map = new HashMap<>(0);
         map.put(DATE, state.getDateInfo());
         map.put(COMMENT, state.getComments() != null ? state.getComments() : StringUtils.EMPTY);
         if (state.getLastModifiedBy().getType().equals(UserType.CITIZEN)
@@ -352,8 +339,8 @@ public class ComplaintService {
         map.put(UPDATEDUSERTYPE, state.getLastModifiedBy().getType());
         map.put(STATUS, state.getValue());
         final Position ownerPosition = state.getOwnerPosition();
-        user = state.getOwnerUser();
-        if (null != user) {
+        User user = state.getOwnerUser();
+        if (user != null) {
             map.put(USER, user.getUsername() + DELIMITER_COLON + user.getName());
             map.put(USERTYPE, null != user ? user.getType() : StringUtils.EMPTY);
             map.put(DEPT, null != eisCommonService.getDepartmentForUser(user.getId())
@@ -375,39 +362,39 @@ public class ComplaintService {
             final List<StateHistory> complaintStateHistory = complaint.getStateHistory();
             Collections.reverse(complaintStateHistory);
             for (final StateHistory stateHistory : complaintStateHistory) {
-                final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
-                HistoryMap.put(DATE, stateHistory.getDateInfo());
-                HistoryMap.put(COMMENT, stateHistory.getComments() != null ? stateHistory.getComments()
+                final HashMap<String, Object> complaintHistory = new HashMap<>(0);
+                complaintHistory.put(DATE, stateHistory.getDateInfo());
+                complaintHistory.put(COMMENT, stateHistory.getComments() != null ? stateHistory.getComments()
                         : StringUtils.EMPTY);
                 if (stateHistory.getLastModifiedBy().getType().equals(UserType.CITIZEN)
                         || stateHistory.getLastModifiedBy().getType().equals(UserType.SYSTEM))
-                    HistoryMap.put(UPDATEDBY, complaint.getComplainant().getName());
+                    complaintHistory.put(UPDATEDBY, complaint.getComplainant().getName());
                 else
-                    HistoryMap.put(UPDATEDBY, stateHistory.getSenderName());
-                HistoryMap.put(UPDATEDUSERTYPE, stateHistory.getLastModifiedBy().getType());
-                HistoryMap.put(STATUS, stateHistory.getValue());
+                    complaintHistory.put(UPDATEDBY, stateHistory.getSenderName());
+                complaintHistory.put(UPDATEDUSERTYPE, stateHistory.getLastModifiedBy().getType());
+                complaintHistory.put(STATUS, stateHistory.getValue());
                 final Position owner = stateHistory.getOwnerPosition();
                 user = stateHistory.getOwnerUser();
                 if (null != user) {
-                    HistoryMap.put(USER, user.getUsername() + DELIMITER_COLON + user.getName());
-                    HistoryMap.put(USERTYPE, null != user ? user.getType() : StringUtils.EMPTY);
-                    HistoryMap.put(DEPT, null != eisCommonService.getDepartmentForUser(user.getId())
+                    complaintHistory.put(USER, user.getUsername() + DELIMITER_COLON + user.getName());
+                    complaintHistory.put(USERTYPE, null != user ? user.getType() : StringUtils.EMPTY);
+                    complaintHistory.put(DEPT, null != eisCommonService.getDepartmentForUser(user.getId())
                             ? eisCommonService.getDepartmentForUser(user.getId()).getName()
                             : StringUtils.EMPTY);
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(owner.getId(), new Date());
                     user = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
-                    HistoryMap
+                    complaintHistory
                             .put(USER,
                                     null != user
                                             ? user.getUsername() + DELIMITER_COLON + user.getName() + DELIMITER_COLON
                                             + owner.getDeptDesig().getDesignation().getName()
                                             : NOASSIGNMENT + DELIMITER_COLON + owner.getName());
-                    HistoryMap.put(USERTYPE, null != user ? user.getType() : StringUtils.EMPTY);
-                    HistoryMap.put(DEPT, null != owner.getDeptDesig().getDepartment()
+                    complaintHistory.put(USERTYPE, null != user ? user.getType() : StringUtils.EMPTY);
+                    complaintHistory.put(DEPT, null != owner.getDeptDesig().getDepartment()
                             ? owner.getDeptDesig().getDepartment().getName() : StringUtils.EMPTY);
                 }
-                historyTable.add(HistoryMap);
+                historyTable.add(complaintHistory);
             }
         }
         return historyTable;
@@ -417,7 +404,7 @@ public class ComplaintService {
         final String formattedCreatedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm")
                 .format(complaint.getCreatedDate());
 
-        final StringBuffer emailBody = new StringBuffer().append("Dear ").append(complaint.getComplainant().getName())
+        final StringBuilder emailBody = new StringBuilder().append("Dear ").append(complaint.getComplainant().getName())
                 .append(",\n \n \tThank you for registering a grievance (").append(complaint.getCrn())
                 .append("). Your grievance is registered successfully.\n \tPlease use this number for all future references.")
                 .append("\n \n Grievance Details - \n \n Complaint type - ")
@@ -427,9 +414,9 @@ public class ComplaintService {
         emailBody.append("\n Grievance description - ").append(complaint.getDetails()).append("\n Grievance status -")
                 .append(complaint.getStatus().getName()).append("\n Grievance Registration Date - ")
                 .append(formattedCreatedDate);
-        final StringBuffer emailSubject = new StringBuffer().append("Registered Grievance -").append(complaint.getCrn())
+        final StringBuilder emailSubject = new StringBuilder().append("Registered Grievance -").append(complaint.getCrn())
                 .append(" successfuly");
-        final StringBuffer smsBody = new StringBuffer().append("Your grievance for ")
+        final StringBuilder smsBody = new StringBuilder().append("Your grievance for ")
                 .append(complaint.getComplaintType().getName())
                 .append(" has been registered successfully with tracking number (").append(complaint.getCrn())
                 .append("). Please use this number for all future references.");
@@ -441,7 +428,7 @@ public class ComplaintService {
             if (!assignments.isEmpty()) {
                 final User user = assignments.get(0).getEmployee();
                 if (null != user) {
-                    final StringBuffer smsBodyOfficial = new StringBuffer().append("New Grievance for ")
+                    final StringBuilder smsBodyOfficial = new StringBuilder().append("New Grievance for ")
                             .append(complaint.getComplaintType().getName())
                             .append(" is registered by ").append(complaint.getComplainant().getName() == null ? "Anonymous User"
                                     : complaint.getComplainant().getName())
@@ -464,7 +451,7 @@ public class ComplaintService {
     }
 
     public void sendSmsOnCompletion(final Complaint complaint) {
-        final StringBuffer smsBody = new StringBuffer().append("Your Grievance regarding ")
+        final StringBuilder smsBody = new StringBuilder().append("Your Grievance regarding ")
                 .append(complaint.getComplaintType().getName())
                 .append(" with tracking number '").append(complaint.getCrn())
                 .append("' is updated to ").append(complaint.getStatus().getName());
@@ -474,14 +461,13 @@ public class ComplaintService {
 
     public void sendSmsToOfficials(final Complaint complaint) {
         final Position owner = complaint.getState().getOwnerPosition();
-        String senderName = StringUtils.EMPTY;
-        senderName = complaint.getState().getSenderName().contains(DELIMITER_COLON)
+        String senderName = complaint.getState().getSenderName().contains(DELIMITER_COLON)
                 ? complaint.getState().getSenderName().split(DELIMITER_COLON)[1]
                 : complaint.getState().getSenderName();
         if (null != owner && null != owner.getDeptDesig()) {
             final User user = eisCommonService.getUserForPosition(owner.getId(), new Date());
             if (null != user) {
-                final StringBuffer smsBodyOfficial = new StringBuffer().append(user.getName() + ", ")
+                final StringBuilder smsBodyOfficial = new StringBuilder().append(user.getName() + ", ")
                         .append(complaint.getCrn() + " by ")
                         .append(complaint.getComplainant().getName() == null ? "Anonymous User"
                                 : complaint.getComplainant().getName())
@@ -504,10 +490,6 @@ public class ComplaintService {
         }
     }
 
-    public List<ReceivingMode> getAllReceivingModes() {
-        return Arrays.asList(ReceivingMode.values());
-    }
-
     public Page<Complaint> getLatest(final int page, final int pageSize) {
         final int offset = page - 1;
         return complaintRepository.findByLatestComplaint(securityUtils.getCurrentUser(), new PageRequest(offset, pageSize));
@@ -520,16 +502,16 @@ public class ComplaintService {
 
     public List<Complaint> getNearByComplaint(final int page, final float lat, final float lng, final int distance,
                                               final int pageSize) {
-        final Long offset = new Long((page - 1) * pageSize);
-        final Long limit = new Long(pageSize + 1);
-        return complaintRepository.findByNearestComplaint(securityUtils.getCurrentUser().getId(), new Float(lat),
-                new Float(lng), new Long(distance), limit, offset);
+        final Long offset = (page - 1L) * pageSize;
+        final Long limit = pageSize + 1L;
+        return complaintRepository.findByNearestComplaint(securityUtils.getCurrentUser().getId(), Float.valueOf(lat),
+                Float.valueOf(lng), Long.valueOf(distance), limit, offset);
     }
 
     public String getEmailBody(final Complaint complaint) {
         final String formattedCreatedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm")
                 .format(complaint.getCreatedDate());
-        final StringBuffer emailBody = new StringBuffer()
+        final StringBuilder emailBody = new StringBuilder()
                 .append(" %0D%0A Grievance Details -  %0D%0A %0D%0A CRN - ").append(complaint.getCrn())
                 .append(" %0D%0A Grievance Type -")
                 .append(complaint.getComplaintType().getName());
@@ -550,7 +532,7 @@ public class ComplaintService {
 
     public List<Complaint> getPendingGrievances() {
         final User user = securityUtils.getCurrentUser();
-        final String[] pendingStatus = {"REGISTERED", "FORWARDED", "PROCESSING", "NOTCOMPLETED", "REOPENED"};
+        final String[] pendingStatus = {COMPLAINT_REGISTERED, "FORWARDED", "PROCESSING", "NOTCOMPLETED", "REOPENED"};
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint")
                 .createAlias("complaint.state", "state").createAlias("complaint.status", "status");
         criteria.add(Restrictions.in("status.name", pendingStatus));
@@ -560,45 +542,45 @@ public class ComplaintService {
 
     public Page<Complaint> getMyPendingGrievances(final int page, final int pageSize) {
         final int offset = page - 1;
-        return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), pendingStatus,
+        return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), PGRConstants.PENDING_STATUS,
                 new PageRequest(offset, pageSize));
     }
 
     public Page<Complaint> getMyCompletedGrievances(final int page, final int pageSize) {
         final int offset = page - 1;
-        return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), completedStatus,
+        return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), PGRConstants.COMPLETED_STATUS,
                 new PageRequest(offset, pageSize));
     }
 
     public Page<Complaint> getMyRejectedGrievances(final int page, final int pageSize) {
         final int offset = page - 1;
-        return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), rejectedStatus,
+        return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), PGRConstants.REJECTED_STATUS,
                 new PageRequest(offset, pageSize));
     }
 
-    public HashMap<String, Integer> getMyComplaintsCount() {
-        final HashMap<String, Integer> complaintsCount = new HashMap<String, Integer>();
-        complaintsCount.put(COMPLAINT_ALL,
+    public Map<String, Integer> getMyComplaintsCount() {
+        final HashMap<String, Integer> complaintsCount = new HashMap<>();
+        complaintsCount.put(PGRConstants.COMPLAINT_ALL,
                 complaintRepository.getMyComplaintsTotalCount(securityUtils.getCurrentUser()).intValue());
-        complaintsCount.put(COMPLAINT_PENDING,
-                complaintRepository.getMyComplaintCountByStatus(securityUtils.getCurrentUser(), pendingStatus).intValue());
-        complaintsCount.put(COMPLAINT_COMPLETED,
-                complaintRepository.getMyComplaintCountByStatus(securityUtils.getCurrentUser(), completedStatus).intValue());
-        complaintsCount.put(COMPLAINT_REJECTED,
-                complaintRepository.getMyComplaintCountByStatus(securityUtils.getCurrentUser(), rejectedStatus).intValue());
+        complaintsCount.put(PGRConstants.COMPLAINT_PENDING,
+                complaintRepository.getMyComplaintCountByStatus(securityUtils.getCurrentUser(), PGRConstants.PENDING_STATUS).intValue());
+        complaintsCount.put(PGRConstants.COMPLAINT_COMPLETED,
+                complaintRepository.getMyComplaintCountByStatus(securityUtils.getCurrentUser(), PGRConstants.COMPLETED_STATUS).intValue());
+        complaintsCount.put(PGRConstants.COMPLAINT_REJECTED,
+                complaintRepository.getMyComplaintCountByStatus(securityUtils.getCurrentUser(), PGRConstants.REJECTED_STATUS).intValue());
         return complaintsCount;
     }
 
-    public HashMap<String, Integer> getComplaintsTotalCount() {
-        final HashMap<String, Integer> complaintsCount = new HashMap<String, Integer>();
-        complaintsCount.put(COMPLAINTS_FILED, complaintRepository.getTotalComplaintsCount().intValue());
-        complaintsCount.put(COMPLAINTS_RESOLVED, complaintRepository.getComplaintsTotalCountByStatus(resolvedStatus).intValue());
-        complaintsCount.put(COMPLAINTS_UNRESOLVED, complaintRepository.getComplaintsTotalCountByStatus(pendingStatus).intValue());
+    public Map<String, Integer> getComplaintsTotalCount() {
+        final HashMap<String, Integer> complaintsCount = new HashMap<>();
+        complaintsCount.put(PGRConstants.COMPLAINTS_FILED, complaintRepository.getTotalComplaintsCount().intValue());
+        complaintsCount.put(PGRConstants.COMPLAINTS_RESOLVED, complaintRepository.getComplaintsTotalCountByStatus(PGRConstants.RESOLVED_STATUS).intValue());
+        complaintsCount.put(PGRConstants.COMPLAINTS_UNRESOLVED, complaintRepository.getComplaintsTotalCountByStatus(PGRConstants.PENDING_STATUS).intValue());
         return complaintsCount;
     }
 
     public List<Complaint> getOpenComplaints() {
-        final List<String> statusList = Arrays.asList("REGISTERED", "FORWARDED", "REOPENED", "PROCESSING");
+        final List<String> statusList = Arrays.asList(COMPLAINT_REGISTERED, "FORWARDED", "REOPENED", "PROCESSING");
         return complaintRepository.findByStatusNameIn(statusList);
     }
 

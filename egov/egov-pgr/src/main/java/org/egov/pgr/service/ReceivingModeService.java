@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,13 +38,33 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.persistence.entity.enums;
+package org.egov.pgr.service;
 
-public enum UserType {
-    CITIZEN, EMPLOYEE, SYSTEM;
+import org.egov.pgr.entity.ReceivingMode;
+import org.egov.pgr.repository.ReceivingModeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-    @Override
-    public String toString() {
-        return this.name().toLowerCase();
+import java.util.List;
+
+@Service
+@Transactional(readOnly = true)
+public class ReceivingModeService {
+
+    @Autowired
+    private ReceivingModeRepository receivingModeRepository;
+
+    public List<ReceivingMode> getReceivingModes() {
+        return receivingModeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    }
+
+    public List<ReceivingMode> getVisibleReceivingModes() {
+        return receivingModeRepository.findByVisibleTrue(new Sort(Sort.Direction.ASC, "name"));
+    }
+
+    public ReceivingMode getReceivingModeByCode(String code) {
+        return receivingModeRepository.findByCode(code);
     }
 }

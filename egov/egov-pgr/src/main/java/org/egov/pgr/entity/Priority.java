@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,13 +38,77 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.persistence.entity.enums;
+package org.egov.pgr.entity;
 
-public enum UserType {
-    CITIZEN, EMPLOYEE, SYSTEM;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import static org.egov.pgr.entity.Priority.SEQ_PRIORITY;
+
+@Entity
+@Table(name = "egpgr_priority")
+@SequenceGenerator(name = SEQ_PRIORITY, sequenceName = SEQ_PRIORITY, allocationSize = 1)
+@Unique(fields = {"name", "code"}, enableDfltMsg = true)
+public class Priority extends AbstractPersistable<Long> {
+
+    protected static final String SEQ_PRIORITY = "seq_egpgr_receivingmode";
+
+    @Id
+    @GeneratedValue(generator = SEQ_PRIORITY, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @SafeHtml
+    @Length(min = 1, max = 64)
+    private String name;
+
+    @SafeHtml
+    @Length(min = 1, max = 50)
+    private String code;
+
+    @NotNull
+    private Integer weight;
 
     @Override
-    public String toString() {
-        return this.name().toLowerCase();
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(final String code) {
+        this.code = code;
+    }
+
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public void setWeight(final Integer weight) {
+        this.weight = weight;
     }
 }

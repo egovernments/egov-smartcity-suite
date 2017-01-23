@@ -157,6 +157,7 @@
 								<span class="input-group-addon map-class btn-secondary" data-toggle="tooltip" title="Locate on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="fa fa-map-marker specific"></i></span>
 								<form:hidden path="location" id="locationid"/>
 								<form:hidden path="crossHierarchyId" id="crosshierarchyId"/>
+								<form:hidden path="receivingMode" id="receivingMode"/>
 								<form:hidden path="lat" id="lat"/>
                    				<form:hidden path="lng" id="lng"/>
 							</div>

@@ -57,8 +57,8 @@
 				<div class="panel-body custom-form ">
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.receivingmode"/></label>
-						<div class="col-sm-9 col-xs-12 dynamic-span capitalize">
-							<form:radiobuttons path="receivingMode" items="${receivingModes}" element="span"/>
+						<div class="col-sm-9 col-xs-12 dynamic-span">
+							<form:radiobuttons path="receivingMode" items="${receivingModes}" itemValue="id" itemLabel="name" element="span"/>
 						</div>
 					</div>
 					
@@ -275,8 +275,8 @@
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/complaint.js?rnd=${app_release_no}'/>"></script>
 <script>
-	var receivingMode = '${complaint.receivingMode}';
-	if(receivingMode === 'MANUAL') {
+	var receivingMode = '${complaint.receivingMode.name}';
+	if(receivingMode === 'Manual') {
 		enableRC();
 		enabledCRN();
 	}

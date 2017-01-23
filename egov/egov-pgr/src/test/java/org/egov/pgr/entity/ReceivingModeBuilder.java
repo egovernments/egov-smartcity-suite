@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -37,14 +37,43 @@
  *
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.pgr.entity;
 
-package org.egov.infra.persistence.entity.enums;
+public class ReceivingModeBuilder {
 
-public enum UserType {
-    CITIZEN, EMPLOYEE, SYSTEM;
+    public static int count;
+    private final ReceivingMode receivingMode;
 
-    @Override
-    public String toString() {
-        return this.name().toLowerCase();
+    public ReceivingModeBuilder() {
+        receivingMode = new ReceivingMode();
+        count++;
+    }
+
+    public ReceivingModeBuilder withName(final String name) {
+        receivingMode.setName(name);
+        return this;
+    }
+
+    public ReceivingModeBuilder withCode(final String code) {
+        receivingMode.setCode(code);
+        return this;
+    }
+
+    public ReceivingModeBuilder withId(final long id) {
+        receivingMode.setId(id);
+        return this;
+    }
+
+    public ReceivingModeBuilder withDefaults() {
+        withId(count);
+        if (receivingMode.getName() == null)
+            withName("Test-ReceivingMode-" + count);
+        if (receivingMode.getCode() == null)
+            withCode("TEST" + count);
+        return this;
+    }
+
+    public ReceivingMode build() {
+        return receivingMode;
     }
 }

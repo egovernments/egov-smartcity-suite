@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,13 +38,22 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.persistence.entity.enums;
+package org.egov.pgr.service;
 
-public enum UserType {
-    CITIZEN, EMPLOYEE, SYSTEM;
+import org.egov.pgr.entity.Priority;
+import org.egov.pgr.repository.PriorityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-    @Override
-    public String toString() {
-        return this.name().toLowerCase();
+@Service
+@Transactional(readOnly = true)
+public class PriorityService {
+
+    @Autowired
+    private PriorityRepository priorityRepository;
+
+    public Priority getPriorityByCode(String code) {
+        return priorityRepository.findByCode(code);
     }
 }

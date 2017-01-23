@@ -115,8 +115,8 @@ jQuery(document).ready(function($)
 	
 	$('input[type=radio][name=receivingMode]').change(function() {
 		$('#receivingCenter').prop('selectedIndex',0);
-		disableCRN(); 
-		if ($("input[name=receivingMode]:checked").val() == 'MANUAL') {
+		disableCRN();
+		if ($($(this).prop("labels")).text() == 'Manual') {
 			enableRC();
 		} else {
 			disableRC();

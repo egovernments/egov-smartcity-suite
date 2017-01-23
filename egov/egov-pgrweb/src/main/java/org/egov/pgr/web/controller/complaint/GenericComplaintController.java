@@ -50,6 +50,7 @@ import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.service.ReceivingCenterService;
+import org.egov.pgr.service.ReceivingModeService;
 import org.egov.pgr.utils.constants.PGRConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -82,6 +83,9 @@ public class GenericComplaintController {
     protected ReceivingCenterService receivingCenterService;
 
     @Autowired
+    protected ReceivingModeService receivingModeService;
+
+    @Autowired
     protected ComplaintTypeCategoryService complaintTypeCategoryService;
 
     @Autowired
@@ -112,6 +116,10 @@ public class GenericComplaintController {
     @RequestMapping(value = "/complaint/downloadfile/{fileStoreId}")
     public void download(@PathVariable final String fileStoreId, final HttpServletResponse response) throws IOException {
         fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, PGRConstants.MODULE_NAME, false, response);
+    }
+
+    protected void setReceivingMode(Complaint complaint, String receivingModeCode) {
+        complaint.setReceivingMode(receivingModeService.getReceivingModeByCode(receivingModeCode));
     }
 
 }

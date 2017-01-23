@@ -47,7 +47,6 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.contract.StateInfoBuilder;
 import org.egov.pgr.entity.enums.CitizenFeedback;
-import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -95,8 +94,8 @@ public class Complaint extends StateAware {
     @JoinColumn(name = "assignee")
     private Position assignee;
 
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "location", nullable = true)
+    @ManyToOne
+    @JoinColumn(name = "location")
     private Boundary location;
 
     @ManyToOne
@@ -112,12 +111,17 @@ public class Complaint extends StateAware {
     @SafeHtml
     private String landmarkDetails;
 
-    @Enumerated(EnumType.ORDINAL)
+    @ManyToOne
+    @JoinColumn(name = "receivingMode")
     @NotNull
-    private ReceivingMode receivingMode = ReceivingMode.WEBSITE;
+    private ReceivingMode receivingMode;
 
     @ManyToOne
-    @JoinColumn(name = "receivingCenter", nullable = true)
+    @JoinColumn(name = "priority")
+    private Priority priority;
+
+    @ManyToOne
+    @JoinColumn(name = "receivingCenter")
     private ReceivingCenter receivingCenter;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
@@ -215,6 +219,14 @@ public class Complaint extends StateAware {
 
     public void setReceivingMode(ReceivingMode receivingMode) {
         this.receivingMode = receivingMode;
+    }
+
+    public Priority getPriority() {
+        return this.priority;
+    }
+
+    public void setPriority(Priority priority) {
+        this.priority = priority;
     }
 
     public ReceivingCenter getReceivingCenter() {
@@ -328,7 +340,8 @@ public class Complaint extends StateAware {
 
     @Override
     protected StateInfoBuilder buildStateInfo() {
-        return super.buildStateInfo().citizenName(this.getComplainant().getName()).refDate(this.getCreatedDate()).citizenPhoneno(this.getComplainant().getMobile())
-                .citizenAddress(this.getComplainant().getAddress()).refNum(this.getCrn()).location(this.getLocation().getName()).task("Grievance").status(this.getStatus().getName());
+        return super.buildStateInfo().citizenName(this.getComplainant().getName()).refDate(this.getCreatedDate()).
+                citizenPhoneno(this.getComplainant().getMobile()).citizenAddress(this.getComplainant().getAddress()).
+                refNum(this.getCrn()).location(this.getLocation().getName()).task("Grievance").status(this.getStatus().getName());
     }
 }

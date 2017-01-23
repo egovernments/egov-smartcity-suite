@@ -40,24 +40,6 @@
 
 package org.egov.pgr.service.es;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
-import static org.egov.pgr.utils.constants.PGRConstants.CITY_CODE;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_CITY;
-import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
-import static org.elasticsearch.index.query.QueryBuilders.termQuery;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -68,11 +50,9 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.es.CityIndexService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.mapper.BeanMapperConfiguration;
-import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.Escalation;
 import org.egov.pgr.entity.enums.ComplaintStatus;
-import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.entity.es.ComplaintDashBoardRequest;
 import org.egov.pgr.entity.es.ComplaintDashBoardResponse;
 import org.egov.pgr.entity.es.ComplaintIndex;
@@ -98,6 +78,24 @@ import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
+import static org.egov.pgr.utils.constants.PGRConstants.CITY_CODE;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_CITY;
+import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 
 @Service
 public class ComplaintIndexService {
@@ -142,34 +140,11 @@ public class ComplaintIndexService {
         complaintIndex.setCityDomainUrl(city.getDomainURL());
         complaintIndex.setCityName(city.getName());
         complaintIndex.setCityRegionName(city.getRegionName());
-        if (complaint.getReceivingMode().equals(ReceivingMode.MOBILE)
-                && complaint.getCreatedBy().getType().equals(UserType.CITIZEN))
-            complaintIndex.setSource(environment.getProperty("complaint.source.citizen.app"));
-        if (complaint.getReceivingMode().equals(ReceivingMode.MOBILE)
-                && complaint.getCreatedBy().getType().equals(UserType.EMPLOYEE))
-            complaintIndex.setSource(environment.getProperty("complaint.source.emp.app"));
-        else if (complaint.getReceivingMode().equals(ReceivingMode.WEBSITE)
-                && complaint.getCreatedBy().getType().equals(UserType.CITIZEN))
-            complaintIndex.setSource(environment.getProperty("complaint.source.portal.citizen"));
-        else if (complaint.getReceivingMode().equals(ReceivingMode.WEBSITE)
-                && complaint.getCreatedBy().getType().equals(UserType.SYSTEM))
-            complaintIndex.setSource(environment.getProperty("complaint.source.portal.anonymous"));
-        else if (complaint.getReceivingMode().equals(ReceivingMode.CDMA)
-                && complaint.getCreatedBy().getType().equals(UserType.SYSTEM))
-            complaintIndex.setSource(environment.getProperty("complaint.source.cdma.anonymous"));
-        else if (complaint.getReceivingMode().equals(ReceivingMode.WEBSITE)
-                && complaint.getCreatedBy().getType().equals(UserType.EMPLOYEE))
-            complaintIndex.setSource(environment.getProperty("complaint.source.emp.website"));
-        else if (complaint.getReceivingMode().equals(ReceivingMode.CALL)
-                && complaint.getCreatedBy().getType().equals(UserType.EMPLOYEE))
-            complaintIndex.setSource(environment.getProperty("complaint.source.website.emp.phone"));
-        else if (complaint.getReceivingMode().equals(ReceivingMode.EMAIL)
-                && complaint.getCreatedBy().getType().equals(UserType.EMPLOYEE))
-            complaintIndex.setSource(environment.getProperty("complaint.source.website.emp.email"));
-        else if (complaint.getReceivingMode().equals(ReceivingMode.MANUAL)
-                && complaint.getCreatedBy().getType().equals(UserType.EMPLOYEE))
-            complaintIndex.setSource(environment.getProperty("complaint.source.website.emp.manual"));
-
+        complaintIndex.setSource(
+                environment.getProperty(
+                        String.format("complaint.source.%s.%s",
+                                complaint.getCreatedBy().getType().toString(),
+                                complaint.getReceivingMode().getCode().toLowerCase())));
         complaintIndex.setClosed(false);
         complaintIndex.setComplaintIsClosed("N");
         complaintIndex.setIfClosed(0);
@@ -215,7 +190,7 @@ public class ComplaintIndexService {
     }
 
     public void updateComplaintIndex(final Complaint complaint, final Long approvalPosition,
-            final String approvalComment) {
+                                     final String approvalComment) {
         // fetch the complaint from index and then update the new fields
         ComplaintIndex complaintIndex = complaintIndexRepository.findByCrnAndCityCode(complaint.getCrn(), getCityCode());
         final String status = complaintIndex.getComplaintStatusName();
@@ -1074,8 +1049,8 @@ public class ComplaintIndexService {
     }
 
     private ComplaintDashBoardResponse populateResponse(final ComplaintDashBoardRequest complaintDashBoardRequest,
-            final Bucket bucket,
-            final String groupByField) {
+                                                        final Bucket bucket,
+                                                        final String groupByField) {
         ComplaintDashBoardResponse responseDetail = new ComplaintDashBoardResponse();
 
         responseDetail = setDefaultValues(responseDetail);

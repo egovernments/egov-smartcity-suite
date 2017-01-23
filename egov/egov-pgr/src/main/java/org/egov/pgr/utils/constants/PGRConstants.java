@@ -86,4 +86,17 @@ public class PGRConstants {
     public static final String WARD_NAME = "wardName";
     public static final String CITY_NAME = "cityName";
     public static final String DISTRICT_NAME = "cityDistrictName";
+    public static final String COMPLAINT_ALL = "ALL";
+    public static final String COMPLAINT_PENDING = "PENDING";
+    public static final String COMPLAINT_COMPLETED = "COMPLETED";
+    public static final String COMPLAINT_REJECTED = "REJECTED";
+    public static final String COMPLAINTS_FILED = "FILED";
+    public static final String COMPLAINTS_RESOLVED = "RESOLVED";
+    public static final String COMPLAINTS_UNRESOLVED = "UNRESOLVED";
+    public static final String COMPLAINT_REGISTERED = "REGISTERED";
+    public static final String[] PENDING_STATUS = {"REGISTERED", "FORWARDED", "PROCESSING", "NOTCOMPLETED", "REOPENED"};
+    public static final String[] COMPLETED_STATUS = {"COMPLETED", "WITHDRAWN", "CLOSED"};
+    public static final String[] REJECTED_STATUS = {"REJECTED"};
+    public static final String[] RESOLVED_STATUS = {"COMPLETED", "WITHDRAWN", "CLOSED", "REJECTED"};
+    public static final String DEFAULT_RECEIVING_MODE = "WEBSITE";
 }

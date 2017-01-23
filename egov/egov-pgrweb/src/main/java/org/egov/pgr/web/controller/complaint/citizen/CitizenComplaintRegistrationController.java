@@ -40,11 +40,9 @@
 
 package org.egov.pgr.web.controller.complaint.citizen;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.CrossHierarchy;
 import org.egov.infra.security.utils.RecaptchaUtils;
 import org.egov.pgr.entity.Complaint;
-import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.utils.constants.PGRConstants;
 import org.egov.pgr.web.controller.complaint.GenericComplaintController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +59,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.pgr.utils.constants.PGRConstants.DEFAULT_RECEIVING_MODE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -72,23 +72,24 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
     private RecaptchaUtils recaptchaUtils;
 
     @RequestMapping(value = "show-reg-form", method = GET)
-    public String showComplaintRegistrationForm(@ModelAttribute final Complaint complaint) {
+    public String showComplaintRegistrationForm(@ModelAttribute Complaint complaint) {
+        setReceivingMode(complaint, DEFAULT_RECEIVING_MODE);
         return "complaint/citizen/registration-form";
     }
 
     @RequestMapping(value = "anonymous/show-reg-form", method = GET)
-    public String showAnonymousComplaintRegistrationForm(@ModelAttribute final Complaint complaint, final HttpServletRequest request) {
-        if (request.getParameter("source") != null && !request.getParameter("source").trim().isEmpty())
-            complaint.setReceivingMode(ReceivingMode.CDMA);
+    public String showAnonymousComplaintRegistrationForm(@ModelAttribute Complaint complaint,
+                                                         @RequestParam(required = false) String source) {
+        setReceivingMode(complaint, isBlank(source) ? DEFAULT_RECEIVING_MODE : source);
         return "complaint/citizen/anonymous-registration-form";
     }
 
     @RequestMapping(value = "register", method = POST)
-    public String registerComplaint(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder,
-                                    final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files, final Model model) {
+    public String registerComplaint(@Valid @ModelAttribute Complaint complaint, BindingResult resultBinder,
+                                    RedirectAttributes redirectAttributes, @RequestParam("files") MultipartFile[] files, Model model) {
 
         if (null != complaint.getCrossHierarchyId()) {
-            final CrossHierarchy crosshierarchy = crossHierarchyService.findById(complaint.getCrossHierarchyId());
+            CrossHierarchy crosshierarchy = crossHierarchyService.findById(complaint.getCrossHierarchyId());
             complaint.setLocation(crosshierarchy.getParent());
             complaint.setChildLocation(crosshierarchy.getChild());
         }
@@ -114,22 +115,22 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
     }
 
     @RequestMapping(value = "anonymous/register", method = POST)
-    public String registerComplaintAnonymous(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder,
-                                             final RedirectAttributes redirectAttributes, final HttpServletRequest request,
-                                             @RequestParam("files") final MultipartFile[] files, final Model model) {
+    public String registerComplaintAnonymous(@Valid @ModelAttribute Complaint complaint, BindingResult resultBinder,
+                                             RedirectAttributes redirectAttributes, HttpServletRequest request,
+                                             @RequestParam("files") MultipartFile[] files, Model model) {
 
         if (!recaptchaUtils.captchaIsValid(request))
             resultBinder.reject("captcha.not.valid");
 
-        if (StringUtils.isBlank(complaint.getComplainant().getEmail())
-                && StringUtils.isBlank(complaint.getComplainant().getMobile()))
+        if (isBlank(complaint.getComplainant().getEmail())
+                && isBlank(complaint.getComplainant().getMobile()))
             resultBinder.rejectValue("complainant.email", "email.or.mobile.ismandatory");
 
-        if (StringUtils.isBlank(complaint.getComplainant().getName()))
+        if (isBlank(complaint.getComplainant().getName()))
             resultBinder.rejectValue("complainant.name", "complainant.name.ismandatory");
 
         if (null != complaint.getCrossHierarchyId()) {
-            final CrossHierarchy crosshierarchy = crossHierarchyService.findById(complaint.getCrossHierarchyId());
+            CrossHierarchy crosshierarchy = crossHierarchyService.findById(complaint.getCrossHierarchyId());
             complaint.setLocation(crosshierarchy.getParent());
             complaint.setChildLocation(crosshierarchy.getChild());
         }
