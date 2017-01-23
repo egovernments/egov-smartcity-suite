@@ -58,12 +58,12 @@ import org.egov.ptis.domain.entity.property.vacantland.VacantLandPlotArea;
 public class BuiltUpProperty extends AbstractProperty {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(BuiltUpProperty.class);
-    transient Area sitalArea;
-    transient Area totalBuiltupArea;
-    transient Area commBuiltUpArea;
-    transient Area plinthArea;
-    transient Area commVacantLand;
-    transient Area nonResPlotArea;
+    private transient Area sitalArea;
+    private transient Area totalBuiltupArea;
+    private transient Area commBuiltUpArea;
+    private transient Area plinthArea;
+    private transient Area commVacantLand;
+    private transient Area nonResPlotArea;
     private Boolean irregular;
     private String surveyNumber;
     private Character fieldVerified;
@@ -75,14 +75,14 @@ public class BuiltUpProperty extends AbstractProperty {
     private String elec_Meter_Num;
     private Integer noofFloors;
     private char fieldIrregular = 'N';
-    transient Property property;
+    private transient Property property;
     private Date updatedTime;
     private PropertyUsage propertyUsage;
     private Date dateOfCompletion;
     private PropertyCreationReason creationReason;
     private PropertyTypeMaster propertyTypeMaster;
     private String propertyType;
-    transient PropertyMutationMaster propertyMutationMaster;
+    private transient PropertyMutationMaster propertyMutationMaster;
     private Character comZone = 'N';
     private Character cornerPlot = 'N';
     private PropertyOccupation propertyOccupation;
@@ -122,12 +122,12 @@ public class BuiltUpProperty extends AbstractProperty {
             PropertyUsage propertyUsage, Date dateOfCompletion, PropertyCreationReason creationReason,
             PropertyTypeMaster propertyTypeMaster, String propertyType, PropertyMutationMaster propertyMutationMaster,
             Character comZone, Character cornerPlot, PropertyOccupation propertyOccupation, Double extentSite,
-            Double extentAppartenauntLand, FloorType floorType, RoofType roofType, WallType wallType,
-            WoodType woodType, boolean lift, boolean toilets, boolean waterTap, boolean structure, boolean electricity,
+            Double extentAppartenauntLand, FloorType floorType, RoofType roofType, WallType wallType, WoodType woodType,
+            boolean lift, boolean toilets, boolean waterTap, boolean structure, boolean electricity,
             boolean attachedBathRoom, boolean waterHarvesting, boolean cable, String siteOwner, Apartment apartment,
             String pattaNumber, Double currentCapitalValue, Double marketValue, String categoryType,
-            String occupancyCertificationNo, Boolean appurtenantLandChecked,
-            Boolean corrAddressDiff, PropertyDepartment propertyDepartment, VacantLandPlotArea vacantLandPlotArea,
+            String occupancyCertificationNo, Boolean appurtenantLandChecked, Boolean corrAddressDiff,
+            PropertyDepartment propertyDepartment, VacantLandPlotArea vacantLandPlotArea,
             LayoutApprovalAuthority layoutApprovalAuthority, String layoutPermitNo, Date layoutPermitDate) {
         super();
         this.sitalArea = sitalArea;
@@ -656,7 +656,8 @@ public class BuiltUpProperty extends AbstractProperty {
         if (getProperty() == null)
             throw new InvalidPropertyException("BuiltUpProperty.validate : Property is NULL, Please Check !!");
         else if (getProperty().validateProperty() == false)
-            throw new InvalidPropertyException("BuiltUpProperty.validate : Property Validate() failed, Please Check !!");
+            throw new InvalidPropertyException(
+                    "BuiltUpProperty.validate : Property Validate() failed, Please Check !!");
 
         // can't use validate, not implemented
         /*
@@ -755,8 +756,8 @@ public class BuiltUpProperty extends AbstractProperty {
         StringBuilder objStr = new StringBuilder();
 
         objStr.append("Id: ").append(getId()).append("|").append("Sital Area: ");
-        objStr = (getSitalArea() != null) ? objStr.append(getSitalArea().getArea()) : objStr.append("NULL")
-                .append("|NoOfFloors: ").append(getNoofFloors());
+        objStr = (getSitalArea() != null) ? objStr.append(getSitalArea().getArea())
+                : objStr.append("NULL").append("|NoOfFloors: ").append(getNoofFloors());
 
         return objStr.toString();
     }
@@ -1010,12 +1011,12 @@ public class BuiltUpProperty extends AbstractProperty {
     public void setCorrAddressDiff(Boolean corrAddressDiff) {
         this.corrAddressDiff = corrAddressDiff;
     }
-    
+
     @Override
     public PropertyDepartment getPropertyDepartment() {
         return propertyDepartment;
     }
-    
+
     @Override
     public void setPropertyDepartment(PropertyDepartment propertyDepartment) {
         this.propertyDepartment = propertyDepartment;

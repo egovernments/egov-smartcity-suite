@@ -60,12 +60,12 @@ public class VacantProperty extends AbstractProperty {
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(VacantProperty.class);
-    transient Area sitalArea;
-    transient Area totalBuiltupArea;
-    transient Area commBuiltUpArea;
-    transient Area plinthArea;
-    transient Area commVacantLand;
-    transient Area nonResPlotArea;
+    private transient Area sitalArea;
+    private transient Area totalBuiltupArea;
+    private transient Area commBuiltUpArea;
+    private transient Area plinthArea;
+    private transient Area commVacantLand;
+    private transient Area nonResPlotArea;
     private Boolean irregular;
     private String surveyNumber;
     private Character fieldVerified;
@@ -78,14 +78,14 @@ public class VacantProperty extends AbstractProperty {
     private Integer noofFloors;
     private char fieldIrregular = 'N';
     private Date dateOfCompletion;
-    transient Property property;
+    private transient Property property;
     private Date updatedTime;
     private PropertyUsage propertyUsage;
     private PropertyCreationReason creationReason;
     private PropertyTypeMaster propertyTypeMaster;
     private String propertyType;
     private PropertyOccupation propertyOccupation;
-    transient PropertyMutationMaster propertyMutationMaster;
+    private transient PropertyMutationMaster propertyMutationMaster;
     private Character comZone = 'N';
     private Character cornerPlot = 'N';
     private boolean lift = false;
@@ -128,8 +128,8 @@ public class VacantProperty extends AbstractProperty {
             RoofType roofType, WallType wallType, WoodType woodType, boolean lift, boolean toilets, boolean waterTap,
             boolean structure, boolean electricity, boolean attachedBathRoom, boolean waterHarvesting, boolean cable,
             String siteOwner, String pattaNumber, Double currentCapitalValue, Double marketValue, String categoryType,
-            String occupancyCertificationNo, Boolean appurtenantLandChecked,
-            Boolean corrAddressDiff, PropertyDepartment propertyDepartment, VacantLandPlotArea vacantLandPlotArea,
+            String occupancyCertificationNo, Boolean appurtenantLandChecked, Boolean corrAddressDiff,
+            PropertyDepartment propertyDepartment, VacantLandPlotArea vacantLandPlotArea,
             LayoutApprovalAuthority layoutApprovalAuthority, String layoutPermitNo, Date layoutPermitDate) {
         super();
         this.sitalArea = sitalArea;
@@ -980,7 +980,7 @@ public class VacantProperty extends AbstractProperty {
     public void setPropertyDepartment(PropertyDepartment propertyDepartment) {
         this.propertyDepartment = propertyDepartment;
     }
-    
+
     @Override
     public VacantLandPlotArea getVacantLandPlotArea() {
         return vacantLandPlotArea;
