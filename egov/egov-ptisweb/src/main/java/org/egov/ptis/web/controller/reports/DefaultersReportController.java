@@ -74,6 +74,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/report")
 public class DefaultersReportController {
 
+    private static final String ONE_YEAR = "1 Year";
+    private static final String TWO_YEARS = "2 Years";
+    private static final String THREE_YEARS = "3 Years";
+    private static final String FOUR_YEARS = "4 Years";
+    private static final String FIVE_YEARS = "5 Years";
+    private static final String ABOVE_FIVE_YEARS = "Above 5 Years";
+    
     @Autowired
     private BoundaryService boundaryService;
     @Autowired
@@ -97,7 +104,19 @@ public class DefaultersReportController {
         limitList.add(1000);
         return limitList;
     }
-
+    
+   @ModelAttribute("noofyrs")
+   public List<String> noofyrsList() {
+        List<String> noofyrsList = new ArrayList<>();
+        noofyrsList.add(ONE_YEAR);
+        noofyrsList.add(TWO_YEARS);
+        noofyrsList.add(THREE_YEARS);
+        noofyrsList.add(FOUR_YEARS);
+        noofyrsList.add(FIVE_YEARS);
+        noofyrsList.add(ABOVE_FIVE_YEARS);
+       return noofyrsList;
+    }
+    
     @ModelAttribute("categories")
     public Map<String, String> ownershipCategories() {
         return PropertyTaxConstants.OWNERSHIP_OF_PROPERTY_FOR_DEFAULTERS_REPORT;
@@ -124,12 +143,13 @@ public class DefaultersReportController {
     public String defaultersReportSearchResult(@RequestParam final String wardId,
             @RequestParam final String fromAmount,
             @RequestParam final String toAmount, @RequestParam final String limit, @RequestParam final String category,
+            @RequestParam final String noofyr,
             final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
         Query query = propertyTaxUtil.prepareQueryforDefaultersReport(Long.valueOf(wardId), fromAmount, toAmount,
                 StringUtils.isBlank(limit) ? null : Integer.valueOf(limit), category);
         List<PropertyMaterlizeView> properties = query.list();
-        List<DefaultersInfo> defaultersList = reportService.getDefaultersInformation(properties);
+        List<DefaultersInfo> defaultersList = reportService.getDefaultersInformation(properties,noofyr,StringUtils.isBlank(limit) ? null : Integer.valueOf(limit));
         return new StringBuilder("{ \"data\":").append(toJSON(defaultersList, DefaultersInfo.class,
                 DefaultersReportHelperAdaptor.class)).append("}").toString();
     }

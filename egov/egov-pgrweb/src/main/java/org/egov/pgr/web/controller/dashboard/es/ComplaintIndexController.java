@@ -192,4 +192,9 @@ public class ComplaintIndexController {
     public List<ComplaintIndex> getFunctionaryWiseComplaints(@RequestParam final String functionaryName) {
         return complaintIndexService.getFunctionaryWiseComplaints(functionaryName);
     }
+
+    @RequestMapping(value = "/localityWiseComplaints", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ComplaintIndex> getLocalityWiseComplaints(@RequestParam final String localityName) {
+        return complaintIndexService.getLocalityWiseComplaints(localityName);
+    }
 }

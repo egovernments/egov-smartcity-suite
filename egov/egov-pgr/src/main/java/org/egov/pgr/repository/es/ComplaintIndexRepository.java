@@ -47,6 +47,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ComplaintIndexRepository extends ElasticsearchRepository<ComplaintIndex, String>, ComplaintIndexCustomRepository {
 
-    ComplaintIndex findByCrn(String crn);
+    ComplaintIndex findByCrnAndCityCode(String crn, String cityCode);
 
 }

@@ -78,6 +78,17 @@
 								<form:options items="${wards}" itemValue="id" itemLabel="name" />
 							</form:select>
 						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.yrsDefaulters" /> : </label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="" data-first-option="false" id="noofyr"
+								class="form-control">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${noofyrs}" />
+							</form:select>
+						</div>
 					</div>
 					<div class="form-group">
 						<label for="field-1" class="col-sm-2 control-label"><spring:message

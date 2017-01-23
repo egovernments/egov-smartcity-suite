@@ -66,17 +66,44 @@
 						<spring:message code="lbl.active" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						${marriageDocument.active}</div>
+						<c:choose>
+							<c:when test="${marriageDocument.active}">
+						yes
+                       </c:when>
+							<c:otherwise>
+							no
+						</c:otherwise>
+						</c:choose>
+					</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.documentype.individual" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						<c:choose>
+							<c:when test="${marriageDocument.individual}">
+						yes
+                       </c:when>
+							<c:otherwise>
+							no
+						</c:otherwise>
+						</c:choose>
+					</div>
 
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.documentproof" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
 						${marriageDocument.documentProofType}</div>
+
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.registrationtype" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${marriageDocument.type}</div>
 				</div>
 
 			</div>
-
+	</div>
 		</div>
 	</div>
 </div>

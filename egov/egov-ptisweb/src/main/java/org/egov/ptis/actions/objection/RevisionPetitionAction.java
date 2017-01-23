@@ -686,6 +686,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         InputStream specialNoticePdf = null;
         String noticeNo = null;
         String natureOfWork;
+        List<Assignment> loggedInUserAssignment;
+        String loggedInUserDesignation;
         final PtNotice notice = noticeService
                 .getNoticeByNoticeTypeAndApplicationNumber(NATURE_OF_WORK_RP.equalsIgnoreCase(objection.getType())
                         ? NOTICE_TYPE_RPPROCEEDINGS : NOTICE_TYPE_GRPPROCEEDINGS, objection.getObjectionNumber());
@@ -741,6 +743,15 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             reportInput.setPrintDialogOnOpenReport(true);
             reportInput.setReportFormat(FileFormat.PDF);
             reportOutput = reportService.createReport(reportInput);
+
+            final User user = securityUtils.getCurrentUser();
+            loggedInUserAssignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                    objection.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
+            loggedInUserDesignation = !loggedInUserAssignment.isEmpty() ? loggedInUserAssignment.get(0).getDesignation().getName() : "";
+            if (COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
+                reportParams.put("isCommissioner", true);
+            else
+                reportParams.put("isCommissioner", false);
 
             if (reportOutput != null && reportOutput.getReportOutputData() != null)
                 specialNoticePdf = new ByteArrayInputStream(reportOutput.getReportOutputData());
@@ -1598,7 +1609,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                         .getPropertyDetail().getWoodType() != null ? objection.getProperty().getPropertyDetail()
                                 .getWoodType().getId() : null,
                 taxExemptedReason, objection.getProperty().getPropertyDetail().getPropertyDepartment() != null ?
-                        objection.getProperty().getPropertyDetail().getPropertyDepartment().getId() : null);
+                        objection.getProperty().getPropertyDetail().getPropertyDepartment().getId() : null, null, null);
 
         updatePropertyID(objection.getBasicProperty());
         final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
@@ -1663,7 +1674,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 objection.getProperty().getPropertyDetail()
                         .getWoodType() != null ? objection.getProperty().getPropertyDetail().getWoodType().getId()
                                 : null,
-                null, null);
+                null, null, null, null);
 
     }
 

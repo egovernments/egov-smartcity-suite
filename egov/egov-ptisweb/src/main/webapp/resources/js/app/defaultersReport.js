@@ -70,6 +70,7 @@ function callAjaxForDefaultersReport() {
 	var fromAmount=jQuery('#fromAmount').val();
 	var toAmount=jQuery('#toAmount').val();
 	var limit=jQuery('#limit').val();
+	var noofyr=jQuery('#noofyr').val();
 	jQuery('.report-section').removeClass('display-hide');
 	
 	if(jQuery('#mode').val() == 'VLT'){
@@ -86,7 +87,8 @@ function callAjaxForDefaultersReport() {
 						fromAmount : fromAmount,
 						toAmount : toAmount,
 						limit : limit,
-						category : categoryVal
+						category : categoryVal,
+						noofyr : noofyr
 					}
 				},
 				"bDestroy" : true,

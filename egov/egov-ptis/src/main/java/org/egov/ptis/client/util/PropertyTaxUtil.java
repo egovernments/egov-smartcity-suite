@@ -103,6 +103,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MOD
 import java.io.IOException;
 import java.io.StringReader;
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -2508,6 +2509,14 @@ public class PropertyTaxUtil {
                     .setParameter("startdate", effectiveInstallment.getFromDate()).list();
         }
         return installmentList;
+    }
+    
+    public int getNoOfYears(Date fromDate,Date toDate){
+        
+        DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+        int d1 = Integer.parseInt(formatter.format(fromDate));
+        int d2 = Integer.parseInt(formatter.format(toDate));
+         return (d2-d1)/10000;
     }
 
 }

@@ -39,8 +39,8 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp"%>
+<div align="center" class="overflow-x-scroll floors-tbl-freeze-column-div">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="vacantLandTable">
-	
 	<tr>
 	    <th class="bluebgheadtd"><s:text name="surveyNumber" /><span class="mandatory1">*</span></th>
 	    <th class="bluebgheadtd"><s:text name="pattaNumber" /><span class="mandatory1">*</span></th>
@@ -48,6 +48,10 @@
 		<th class="bluebgheadtd"><s:text name="MarketValue" /><span class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="currentCapitalValue" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="constCompl.date" /><span	class="mandatory1">*</span></th>
+		<th class="bluebgheadtd"><s:text name="lbl.vl.plotarea" /><span	class="mandatory1">*</span></th>
+		<th class="bluebgheadtd"><s:text name="lbl.layout.authority" /><span	class="mandatory1">*</span></th>
+		<th class="bluebgheadtd"><s:text name="lbl.layout.permitno" /><span	class="mandatory1">*</span></th>
+		<th class="bluebgheadtd"><s:text name="lbl.layout.permitdate" /><span	class="mandatory1">*</span></th>
     </tr>
 	
 	<tr id="vacantLandRow">
@@ -79,9 +83,27 @@
         <td class="blueborderfortd">
 		   <s:date name="%{propertyDetail.dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" /> <s:textfield
 				name="propertyDetail.dateOfCompletion" id="propertyDetail.dateOfCompletion" value="%{#occupationDate}" autocomplete="off" cssClass="datepicker"
-				size="10" maxlength="10"></s:textfield>
+				 maxlength="10"></s:textfield>
+		</td>
+		<td class="greybox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="vacantLandPlotAreaId"
+				id="vacantLandPlotAreaId" listKey="id" listValue="name" list="dropdownData.vacantLandPlotAreaList" value="%{vacantLandPlotAreaId}"
+				cssClass="selectnew" onchange="makeMandatory();" /></td>
+		<td class="greybox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="layoutApprovalAuthorityId"
+				id="layoutApprovalAuthorityId" listKey="id" listValue="name" list="dropdownData.layoutApprovalAuthorityList" value="%{layoutApprovalAuthorityId}"
+				cssClass="selectnew" onchange="makeMandatory();" /></td>
+		<td class="blueborderfortd" align="center">
+		 <s:textfield name="propertyDetail.layoutPermitNo" id="layoutPermitNo"
+				maxlength="15" value="%{propertyDetail.layoutPermitNo}"/>
+		</td>
+		<td class="blueborderfortd">
+		   <s:date name="%{propertyDetail.layoutPermitDate}" var="layoutPermitDate" format="dd/MM/yyyy" /> <s:textfield
+				name="propertyDetail.layoutPermitDate" id="layoutPermitDate" value="%{#layoutPermitDate}" autocomplete="off" cssClass="datepicker"
+				 maxlength="10"></s:textfield>
 		</td>
     </tr>
+    </table>
+   </div>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="vacantLandTable">
     <tr>
      <tr>
 		<td colspan="6">
@@ -115,3 +137,4 @@
 			</td>
 	</tr>
 </table>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/vacantland.js?rnd=${app_release_no}'/>"></script>

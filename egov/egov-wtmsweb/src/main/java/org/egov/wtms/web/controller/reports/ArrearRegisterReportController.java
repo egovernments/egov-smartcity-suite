@@ -85,8 +85,6 @@ public class ArrearRegisterReportController {
     @Autowired
     private ArrearRegisterReportService arrearRegisterReportService;
 
-
-    
     @Autowired
     private ApplicationProperties applicationProperties;
 
@@ -111,8 +109,8 @@ public class ArrearRegisterReportController {
 
     @ModelAttribute("localitys")
     public List<Boundary> localitys() {
-        return boundaryService
-                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE);
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY,
+                LOCATION_HIERARCHY_TYPE);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/arrearReportList")
@@ -124,38 +122,23 @@ public class ArrearRegisterReportController {
     @ExceptionHandler(Exception.class)
     @RequestMapping(value = "/arrearReport", method = RequestMethod.POST)
     public @ResponseBody void springPaginationDataTablesUpdate(final HttpServletRequest request,
-            final @ModelAttribute ArrearRegisterReport reportHealperObj ,final HttpSession session,
-            final HttpServletResponse response)
-            throws IOException {
+            final @ModelAttribute ArrearRegisterReport reportHealperObj, final HttpSession session,
+            final HttpServletResponse response) throws IOException {
         final List<ArrearRegisterReport> propertyWiseInfoList = new ArrayList<ArrearRegisterReport>();
-        final ArrearReportInfo arrearreportInfo = new ArrearReportInfo();
-        final String strZoneNum = "";
-        final String strWardNum = "";
-        final String strBlockNum = "";
-        final String strLocalityNum = "";
-        /*
-         * if (localityId == null && zoneId != null) strZoneNum = boundaryService.getBoundaryById(Long.valueOf(zoneId)).getName();
-         * else if (localityId != null) { strLocalityNum = boundaryService.getBoundaryById(Long.valueOf(localityId)).getName(); if
-         * (zoneId != null) strZoneNum = boundaryService.getBoundaryById(Long.valueOf(zoneId)).getName(); } if (wardId != null)
-         * strWardNum = boundaryService.getBoundaryById(Long.valueOf(wardId)).getName(); if (areaId != null) strBlockNum =
-         * boundaryService.getBoundaryById(Long.valueOf(areaId)).getName();
-         */
-     
+        new ArrearReportInfo();
         final List<WaterChargeMaterlizeView> propertyViewList = arrearRegisterReportService
                 .prepareQueryforArrearRegisterReport(null, null);
 
         for (final WaterChargeMaterlizeView propMatView : propertyViewList)
             // If there is only one Arrear Installment
             if (propMatView.getInstDmdColl().size() == 1) {
-                final InstDmdCollResponse currIDCMatView = propMatView.getInstDmdColl()
-                        .iterator().next();
+                final InstDmdCollResponse currIDCMatView = propMatView.getInstDmdColl().iterator().next();
                 final ArrearRegisterReport propertyWiseInfo = preparePropertyWiseInfo(currIDCMatView);
                 if (propertyWiseInfo != null)
                     propertyWiseInfoList.add(propertyWiseInfo);
             } else {
                 // if there are more than one arrear Installments
-                final List<InstDmdCollResponse> idcList = new ArrayList<>(
-                        propMatView.getInstDmdColl());
+                final List<InstDmdCollResponse> idcList = new ArrayList<>(propMatView.getInstDmdColl());
                 final List unitList = new ArrayList();
                 ArrearRegisterReport propertyWiseInfoTotal = null;
 
@@ -182,13 +165,10 @@ public class ArrearRegisterReportController {
                         propertyWiseInfoList.add(propertyWiseInfoTotal);
                 }
             }
-        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
-                .toJson(propertyWiseInfoList)
-                + "}", response.getWriter());
-    
-    }
+        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern())
+                .create().toJson(propertyWiseInfoList) + "}", response.getWriter());
 
-  
+    }
 
     /**
      * @param propertyWiseInfoTotal
@@ -197,11 +177,12 @@ public class ArrearRegisterReportController {
      */
     private ArrearRegisterReport addPropertyWiseInfo(final ArrearRegisterReport propertyWiseInfoTotal,
             final ArrearRegisterReport propertyInfo) {
-        propertyWiseInfoTotal.setArrearLibraryCess(propertyWiseInfoTotal.getWaterCharge().add(
-                propertyInfo.getWaterCharge()));
-        propertyWiseInfoTotal.setArrearPropertyTax(propertyWiseInfoTotal.getWaterChargeColl().add(
-                propertyInfo.getWaterChargeColl()));
-        propertyWiseInfoTotal.setTotalArrearTax(propertyWiseInfoTotal.getTotalArrearTax().add(propertyInfo.getTotalArrearTax()));
+        propertyWiseInfoTotal
+                .setArrearLibraryCess(propertyWiseInfoTotal.getWaterCharge().add(propertyInfo.getWaterCharge()));
+        propertyWiseInfoTotal.setArrearPropertyTax(
+                propertyWiseInfoTotal.getWaterChargeColl().add(propertyInfo.getWaterChargeColl()));
+        propertyWiseInfoTotal
+                .setTotalArrearTax(propertyWiseInfoTotal.getTotalArrearTax().add(propertyInfo.getTotalArrearTax()));
         return propertyWiseInfoTotal;
     }
 
@@ -218,7 +199,7 @@ public class ArrearRegisterReportController {
         propertyWiseInfo.setArrearInstallmentDesc(currInstDmdColMatView.getInstallment().getDescription());
         propertyWiseInfo.setWaterCharge(BigDecimal.valueOf(currInstDmdColMatView.getWaterCharge()));
         propertyWiseInfo.setWaterChargeColl(BigDecimal.valueOf(currInstDmdColMatView.getWaterchargecoll()));
-       
+
         /*
          * Total of Arrear Librarycess tax,general tax and penalty tax
          */
@@ -236,7 +217,7 @@ public class ArrearRegisterReportController {
         propertyWiseInfo.setBasicPropId(propMatView.getConnectiondetailsid());
         propertyWiseInfo.setIndexNumber(propMatView.getHscno());
         propertyWiseInfo.setOwnerName(propMatView.getUsername());
-       propertyWiseInfo.setHouseNo(propMatView.getHouseno());
+        propertyWiseInfo.setHouseNo(propMatView.getHouseno());
         return propertyWiseInfo;
     }
 }

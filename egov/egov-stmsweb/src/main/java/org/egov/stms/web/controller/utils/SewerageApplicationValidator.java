@@ -62,6 +62,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
 import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.stms.masters.entity.enums.PropertyType;
+import org.egov.stms.masters.service.DonationMasterService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageConnectionEstimationDetails;
 import org.egov.stms.transactions.entity.SewerageDemandDetail;
@@ -93,6 +95,7 @@ public class SewerageApplicationValidator extends SewerageApplicationCommonValid
     private static final String CONNECTIONDTL_PROPERTYTYPE = "connectionDetail.propertyType";
     private static final String CONNECTIONDTL_PROPERTYID_ISVALID = "err.connectionDetail.propertyIdentifier.validate";
     private static final String REJECTION_COMMENTS_REQUIRED = "err.application.reject.comments.required";
+    private static final String NUMBEROFCLOSETS_INVALID = "err.numberofclosets.invalid";
 
     @Autowired
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
@@ -102,6 +105,9 @@ public class SewerageApplicationValidator extends SewerageApplicationCommonValid
 
     @Autowired
     private SewerageDemandService sewerageDemandService;
+
+    @Autowired
+    private DonationMasterService donationMasterService;
 
     public void validateSewerageNewApplication(final SewerageApplicationDetails sewerageApplicationDetails, final Errors errors,
             final HttpServletRequest request) {
@@ -125,6 +131,8 @@ public class SewerageApplicationValidator extends SewerageApplicationCommonValid
         if (sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsNonResidential() != null
                 && sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsNonResidential() == 0)
             errors.rejectValue(CONNECTIONDTL_NOOFCLOSETS_NONRESIDENTIAL, SEWERAGE_NOOFCLOSETS_NONZERO);
+        checkNumberOfClosetsValid(errors, sewerageApplicationDetails);
+
     }
 
     private void isNumberOfClosetsEntered(final Errors errors, final SewerageApplicationDetails sewerageApplicationDetails) {
@@ -143,6 +151,30 @@ public class SewerageApplicationValidator extends SewerageApplicationCommonValid
                 errors.rejectValue(CONNECTIONDTL_NOOFCLOSETS_RESIDENTIAL, RESIDENTIALCLOSETSREQUIRED);
             else if (sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsNonResidential() == null)
                 errors.rejectValue(CONNECTIONDTL_NOOFCLOSETS_NONRESIDENTIAL, NONRESIDENTIALCLOSETSREQUIRED);
+    }
+
+    private void checkNumberOfClosetsValid(final Errors errors, final SewerageApplicationDetails sewerageApplicationDetails) {
+        String validationMessage;
+        if (sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsNonResidential() != null) {
+            validationMessage = donationMasterService.checkClosetsPresentForGivenCombination(
+                    PropertyType.NON_RESIDENTIAL,
+                    sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsNonResidential());
+            if (!validationMessage.isEmpty())
+                errors.rejectValue(CONNECTIONDTL_NOOFCLOSETS_NONRESIDENTIAL, NUMBEROFCLOSETS_INVALID,
+                        new String[] {
+                                sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsNonResidential().toString() },
+                        NUMBEROFCLOSETS_INVALID);
+        }
+        if (sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsResidential() != null) {
+            validationMessage = donationMasterService.checkClosetsPresentForGivenCombination(
+                    PropertyType.RESIDENTIAL,
+                    sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsResidential());
+            if (!validationMessage.isEmpty())
+                errors.rejectValue(CONNECTIONDTL_NOOFCLOSETS_RESIDENTIAL, NUMBEROFCLOSETS_INVALID,
+                        new String[] { sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsResidential().toString() },
+                        NUMBEROFCLOSETS_INVALID);
+        }
+
     }
 
     public void validatePropertyID(final SewerageApplicationDetails sewerageApplicationDetails,
@@ -270,6 +302,7 @@ public class SewerageApplicationValidator extends SewerageApplicationCommonValid
         }
     }
 
+    // validate donation amount present or not
     public void getDonationAmount(final SewerageApplicationDetails sewerageApplicationDetails, final Errors errors) {
         final String legacyDonationAmount = getDonationAmount(
                 sewerageApplicationDetails.getConnectionDetail().getPropertyType(),
@@ -286,7 +319,6 @@ public class SewerageApplicationValidator extends SewerageApplicationCommonValid
         else
             validateNumberOfClosets(errors, sewerageApplicationDetails);
 
-        getDonationAmount(sewerageApplicationDetails, errors);
         if (sewerageApplicationDetails.getConnectionDetail() != null
                 && sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier() != null
                 && !sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier().equals("")) {
@@ -451,25 +483,15 @@ public class SewerageApplicationValidator extends SewerageApplicationCommonValid
         if (sewerageApplicationDetails.getConnectionDetail().getPropertyType() != null)
             if (RESIDENTIAL.equalsIgnoreCase(sewerageApplicationDetails.getConnectionDetail().getPropertyType().toString()) &&
                     sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsResidential() != null)
-                isDonationAmount(sewerageApplicationDetails, errors);
+                getDonationAmount(sewerageApplicationDetails, errors);
             else if (NONRESIDENTIAL
                     .equalsIgnoreCase(sewerageApplicationDetails.getConnectionDetail().getPropertyType().toString())
                     && sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsNonResidential() != null)
-                isDonationAmount(sewerageApplicationDetails, errors);
+                getDonationAmount(sewerageApplicationDetails, errors);
             else if (MIXED.equalsIgnoreCase(sewerageApplicationDetails.getConnectionDetail().getPropertyType().toString()) &&
                     sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsNonResidential() != null &&
                     sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsResidential() != null)
-                isDonationAmount(sewerageApplicationDetails, errors);
-    }
-
-    // validate donation amount present or not
-    public void isDonationAmount(final SewerageApplicationDetails sewerageApplicationDetails, final Errors errors) {
-        final String legacyDonationAmount = getDonationAmount(
-                sewerageApplicationDetails.getConnectionDetail().getPropertyType(),
-                sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsResidential(),
-                sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsNonResidential());
-        if (legacyDonationAmount == null)
-            errors.reject("err.donationamount.notexists");
+                getDonationAmount(sewerageApplicationDetails, errors);
     }
 
     // validate closure of application remarks

@@ -198,7 +198,6 @@ function calculateCreditTotal(){
 function validate()
 {
 	callpopulateapportioningamountforbills();	
-
 	if (document.getElementById("bankChallanDate").value=='DD/MM/YYYY')	{
 		document.getElementById("bankChallanDate").value="";
 	}
@@ -302,6 +301,16 @@ function validate()
 		    	document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.missingcardtransactionno.errormessage" /> ' + '<br>';
 		    	validation=false;
 		    }
+		}
+		if(document.getElementById("confirmtransactionNumber")!=null){
+
+	    	var confirmtransNo=document.getElementById("confirmtransactionNumber").value;
+		    if(confirmtransNo==null || confirmtransNo==""){
+		    	document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.missingcard.confirmtransactionno.errormessage" /> ' + '<br>';
+		    	validation=false;
+		    }
+		    else
+		    	validateTransactionNumber();
 		}
 		if(document.getElementById("instrHeaderCard.instrumentNumber")!=null){
 		    var cardNo=document.getElementById("instrHeaderCard.instrumentNumber").value;

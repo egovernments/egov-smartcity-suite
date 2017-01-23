@@ -612,7 +612,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
             if (propertyDetail != null)
                 validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary,
-                        northBoundary, modifyRsn, propCompletionDate);
+                        northBoundary, modifyRsn, propCompletionDate, null, null);
         } else {
             validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate, modifyRsn);
             validateFloor(propTypeMstr, propertyModel.getPropertyDetail().getFloorDetailsProxy(), propertyModel, areaOfPlot,
@@ -673,7 +673,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         createAmalgamationOwners(propertyModel, basicProp, basicProp.getAddress());
         setProperty(propService.createProperty(propertyModel, getAreaOfPlot(), modifyRsn, proptypeMstr.getId().toString(), null,
                 null, status, propertyModel.getDocNumber(), null, floorTypeId, roofTypeId, wallTypeId, woodTypeId,
-                null, null));
+                null, null, null, null));
         updatePropertyID(basicProp);
         propertyModel.setPropertyModifyReason(modifyRsn);
         propertyModel.setBasicProperty(basicProp);

@@ -42,6 +42,7 @@ jQuery('#btnsearch').click(function(e) {
 });
 
 $(document).ready(function(){
+	$('#departments').trigger('change');
     var lineEstimateNumber = new Bloodhound({
         datumTokenizer: function (datum) {
             return Bloodhound.tokenizers.whitespace(datum.value);

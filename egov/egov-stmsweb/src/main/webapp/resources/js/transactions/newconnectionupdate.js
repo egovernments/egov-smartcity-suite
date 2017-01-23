@@ -94,7 +94,7 @@ $(document).ready(function()
 					  if(approvalComent == "") {
 						  bootbox.alert("Please enter rejection comments!");
 							$('#approvalComent').focus();
-							return false; 
+							return true; 
 					  }
 					  else {
 						  validateWorkFlowApprover(action);
@@ -113,7 +113,7 @@ $(document).ready(function()
 						var approvalComent=$('#approvalComent').val();
 						  if(approvalComent == "") {
 							  bootbox.alert("Please enter cancellation comments!");
-								return false; 
+							  return true; 
 						  }
 						  else {
 							  validateWorkFlowApprover(action);

@@ -66,15 +66,7 @@
                             <form:errors path="name" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label">
-							<spring:message code="lbl.full.address"/>
-						</label>
-						<div class="col-sm-6">
-							<form:textarea path="address" id="address" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="100" placeholder="" autocomplete="off" />
-                            <form:errors path="address" cssClass="add-margin error-msg"/>
-						</div>
-					</div>
+
 					<div class="form-group">
 					<label class="col-sm-3 control-label">
 						<spring:message code="lbl.zone"/>
@@ -96,13 +88,7 @@
 							<form:errors path="isActive" cssClass="error-msg" />
 						</div>
 					</div>
-						<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.IsMainRegistrationUnit" /></label>
-						<div class="col-sm-3 add-margin">
-							<form:checkbox path="isMainRegistrationUnit" />
-							<form:errors path="isMainRegistrationUnit" cssClass="error-msg" />
-						</div>
+
 				<input type="hidden" id="mode" name="mode" value="${mode}" />
 				</div>
 				<div class="row">
@@ -113,6 +99,7 @@
 					</div>
 				</div>
 	    </div>
+	</div>
 	</div>
 </form:form>
 

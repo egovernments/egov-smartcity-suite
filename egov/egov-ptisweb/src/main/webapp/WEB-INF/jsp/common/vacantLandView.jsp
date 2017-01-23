@@ -39,6 +39,7 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp"%>
+<!-- <div align="center" class="overflow-x-scroll"> -->
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="vacantLandTable">
 	
 	<tr>
@@ -48,6 +49,10 @@
 		<th class="bluebgheadtd"><s:text name="MarketValue" /></th>
 		<th class="bluebgheadtd"><s:text name="currentCapitalValue"/></th>
 		<th class="bluebgheadtd"><s:text name="constCompl.date"/></th>
+		<th class="bluebgheadtd"><s:text name="lbl.vl.plotarea"/></th>
+		<th class="bluebgheadtd"><s:text name="lbl.layout.authority"/></th>
+		<th class="bluebgheadtd"><s:text name="lbl.layout.permitno"/></th>
+		<th class="bluebgheadtd"><s:text name="lbl.layout.permitdate"/></th>
     </tr>
      <s:if test="%{property != null}">
      <tr id="vacantLandRow">
@@ -63,12 +68,25 @@
         <td class="blueborderfortd" align="center">
         	<span class="bold"><s:property value="%{propertyDetail.marketValue}" default="N/A"/></span>
 		</td>
-        <td class="blueborderfortd">
+        <td class="blueborderfortd" align="center">
         	<span class="bold"><s:property value="%{propertyDetail.currentCapitalValue}" default="N/A"/></span>
         </td>
-        <td class="blueborderfortd">
+        <td class="blueborderfortd" align="center">
         <s:date name="%{property.propertyDetail.dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" />
         	<span class="bold"><s:property value="%{#occupationDate}" default="N/A"/></span>
+        </td>
+        <td class="blueborderfortd" align="center">
+        	<span class="bold"><s:property value="%{propertyDetail.vacantLandPlotArea.name}" default="N/A"/></span>
+        </td>
+        <td class="blueborderfortd" align="center">
+        	<span class="bold"><s:property value="%{propertyDetail.layoutApprovalAuthority.name}" default="N/A"/></span>
+        </td>
+        <td class="blueborderfortd" align="center">
+        	<span class="bold"><s:property value="%{propertyDetail.layoutPermitNo}" default="N/A"/></span>
+        </td>
+        <td class="blueborderfortd" align="center">
+        <s:date name="%{propertyDetail.layoutPermitDate}" var="layoutPermitDate" format="dd/MM/yyyy" />
+        	<span class="bold"><s:property value="%{#layoutPermitDate}" default="N/A"/></span>
         </td>
     </tr>
      </s:if>
@@ -93,10 +111,24 @@
         <s:date name="%{basicProperty.property.propertyDetail.dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" />
         	<span class="bold"><s:property value="%{#occupationDate}" default="N/A"/></span>
         </td>
+         <td class="blueborderfortd">
+        	<span class="bold"><s:property value="%{basicProperty.property.propertyDetail.vacantLandPlotArea.name}" default="N/A"/></span>
+        </td>
+        <td class="blueborderfortd">
+        	<span class="bold"><s:property value="%{basicProperty.property.propertyDetail.layoutApprovalAuthority.name}" default="N/A"/></span>
+        </td>
+        <td class="blueborderfortd">
+        	<span class="bold"><s:property value="%{basicProperty.property.propertyDetail.layoutPermitNo}" default="N/A"/></span>
+        </td>
+        <td class="blueborderfortd">
+        <s:date name="%{basicProperty.property.propertyDetail.layoutPermitDate}" var="layoutPermitDate" format="dd/MM/yyyy" />
+        	<span class="bold"><s:property value="%{#layoutPermitDate}" default="N/A"/></span>
+        </td>
     </tr>
      </s:else>
-   	
-    
+   	</table>
+   	<!-- </div> -->
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="vacantLandTable">
    <tr>
    <td colspan="6">
       <table class="tablebottom" style="width: 100%;">

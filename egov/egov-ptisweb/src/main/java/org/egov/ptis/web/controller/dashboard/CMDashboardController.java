@@ -63,6 +63,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -127,7 +129,7 @@ public class CMDashboardController {
                 + ", fromDate = " + collectionDetailsRequest.getFromDate() + ", toDate = "
                 + collectionDetailsRequest.getToDate() + ", type = " + collectionDetailsRequest.getType());
         CollectionDetails collectionDetails = propTaxDashboardService
-                .getCollectionIndexDetails(collectionDetailsRequest);
+                .getCollectionIndexDetails(collectionDetailsRequest, false);
         Long timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken to serve collectiondashboard is : " + timeTaken + " (millisecs)");
         return collectionDetails;
@@ -212,6 +214,47 @@ public class CMDashboardController {
         Long timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken to serve topdefaulters is : " + timeTaken + " (millisecs)");
         return taxDefaulters;
+    }
+    
+    /**
+     * Provides Collection Index details across all ULBs for MIS Reports
+     * 
+     * @return response JSON
+     * @throws IOException
+     */
+    @RequestMapping(value = "/targetmis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody public CollectionDetails getCollectionDetailsForTargetMIS(@RequestParam("regionName") String regionName, @RequestParam("districtName") String districtName,
+            @RequestParam("ulbGrade") String ulbGrade, @RequestParam("ulbCode") String ulbCode, @RequestParam("fromDate") String fromDate,
+            @RequestParam("toDate") String toDate, @RequestParam("type") String type, @RequestParam("propertyType") String propertyType)
+            throws IOException {
+        CollectionDetailsRequest collectionDetailsRequest = new CollectionDetailsRequest();
+        populateCollectionDetailsRequest(collectionDetailsRequest, regionName, districtName, ulbGrade, ulbCode, fromDate, toDate,
+                type, propertyType);
+
+        Long startTime = System.currentTimeMillis();
+        LOGGER.debug("CollectionDetailsRequest input : regionName = " + collectionDetailsRequest.getRegionName()
+                + ", districtName = " + collectionDetailsRequest.getDistrictName() + ", ulbGrade = "
+                + collectionDetailsRequest.getUlbGrade() + ", ulbCode = " + collectionDetailsRequest.getUlbCode()
+                + ", fromDate = " + collectionDetailsRequest.getFromDate() + ", toDate = "
+                + collectionDetailsRequest.getToDate() + ", type = " + collectionDetailsRequest.getType());
+        CollectionDetails collectionDetails = propTaxDashboardService
+                .getCollectionIndexDetails(collectionDetailsRequest, true);
+        Long timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug("Time taken to serve targetmis is : " + timeTaken + " (millisecs)");
+        return collectionDetails;
+    }
+
+    private void populateCollectionDetailsRequest(CollectionDetailsRequest collectionDetailsRequest, String regionName,
+            String districtName, String ulbGrade, String ulbCode,
+            String fromDate, String toDate, String type, String propertyType) {
+        collectionDetailsRequest.setRegionName(regionName);
+        collectionDetailsRequest.setDistrictName(districtName);
+        collectionDetailsRequest.setUlbGrade(ulbGrade);
+        collectionDetailsRequest.setUlbCode(ulbCode);
+        collectionDetailsRequest.setFromDate(fromDate);
+        collectionDetailsRequest.setToDate(toDate);
+        collectionDetailsRequest.setType(type);
+        collectionDetailsRequest.setPropertyType(propertyType);
     }
 
 }

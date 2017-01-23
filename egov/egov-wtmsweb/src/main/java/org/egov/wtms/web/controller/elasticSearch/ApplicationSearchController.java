@@ -202,15 +202,16 @@ public class ApplicationSearchController {
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .addAggregation(AggregationBuilders.count("application_count").field("applicationNumber"))
                 .withIndices(WaterTaxConstants.APPLICATION_TAX_INDEX_NAME).withQuery(query).build();
-        
+
         final Aggregations applicationCountAggr = elasticsearchTemplate.query(searchQuery,
                 response -> response.getAggregations());
         final ValueCount aggr = applicationCountAggr.get("application_count");
-        
-        searchQuery = new NativeSearchQueryBuilder().withIndices(WaterTaxConstants.APPLICATION_TAX_INDEX_NAME).withQuery(query)
+
+        searchQuery = new NativeSearchQueryBuilder().withIndices(WaterTaxConstants.APPLICATION_TAX_INDEX_NAME)
+                .withQuery(query)
                 .addAggregation(AggregationBuilders.count("application_count").field("applicationNumber"))
-                .withPageable(new PageRequest(0,
-                        Long.valueOf(aggr.getValue()).intValue() == 0 ? 1 : Long.valueOf(aggr.getValue()).intValue()))
+                .withPageable(new PageRequest(0, Long.valueOf(aggr.getValue()).intValue() == 0 ? 1
+                        : Long.valueOf(aggr.getValue()).intValue()))
                 .build();
         final List<ApplicationDocument> sampleEntities = elasticsearchTemplate.queryForList(searchQuery,
                 ApplicationDocument.class);

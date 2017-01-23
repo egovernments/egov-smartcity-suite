@@ -91,7 +91,16 @@ function callupdateAjaxSearch() {
 								},
 								{
 									"data" : "individual",
-									"sClass" : "text-left"
+									sortable : false,
+									"render" : function(data, type, row, meta) {
+
+										if (row.individual == true) {
+											return '<p>yes</p>';
+										} else {
+											return '<p>no</p>';
+										}
+									},
+
 								},
 								{
 									"data" : "documentprooftype",

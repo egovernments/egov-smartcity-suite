@@ -70,13 +70,30 @@
 							<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.isactive" />
 						</div>
+						
 						<div class="col-sm-3 add-margin view-content">
-							${marriageRegistrationUnit.isActive}</div>
+												<c:choose>
+						<c:when test="${marriageRegistrationUnit.isActive}">
+						yes
+                       </c:when>
+						<c:otherwise>
+							no
+						</c:otherwise>
+					</c:choose>
+						</div>
 							<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.IsMainRegistrationUnit" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							${marriageRegistrationUnit.isMainRegistrationUnit}</div>
+						<c:choose>
+						<c:when test="${marriageRegistrationUnit.isMainRegistrationUnit}">
+						yes
+                       </c:when>
+						<c:otherwise>
+							no
+						</c:otherwise>
+					</c:choose>
+							</div>
 					</div>
 				</div>
 			</div>

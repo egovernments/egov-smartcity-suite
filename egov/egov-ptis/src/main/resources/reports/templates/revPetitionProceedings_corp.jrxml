@@ -38,8 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-12-28T23:22:22 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-01-19T15:11:58 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="revPetitionProceedings_corp" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -65,6 +65,7 @@
 	<parameter name="userSignature" class="java.lang.Object"/>
 	<parameter name="commName" class="java.lang.String"/>
 	<parameter name="natureOfWork" class="java.lang.String"/>
+	<parameter name="isCommissioner" class="java.lang.Boolean"/>
 	<field name="buildingClassification" class="java.lang.String"/>
 	<field name="natureOfUsage" class="java.lang.String"/>
 	<field name="plinthArea" class="java.math.BigDecimal"/>
@@ -351,13 +352,13 @@
 				<reportElement x="329" y="3" width="171" height="51" uuid="9e3c6655-0d01-4860-9e68-26109d59f39f"/>
 				<imageExpression><![CDATA[$P{userSignature}]]></imageExpression>
 			</image>
-			<staticText>
-				<reportElement x="381" y="52" width="92" height="18" uuid="ab68c177-dc21-4991-979d-16dbb97345e0"/>
+			<textField>
+				<reportElement x="316" y="54" width="160" height="21" uuid="dcf04571-2bc9-47df-accb-1e137dc3c859"/>
 				<textElement textAlignment="Right">
-					<font isBold="true"/>
+					<font size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Commissioner]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{isCommissioner}?"Commissioner":"For Commissioner"]]></textFieldExpression>
+			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="204" y="69" width="294" height="20" uuid="e071b86b-1647-4965-83be-0e4d01a07077"/>
 				<textElement textAlignment="Right" markup="none">
