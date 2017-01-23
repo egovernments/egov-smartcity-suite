@@ -195,7 +195,7 @@
 										<c:set var="totalArrearAmount" value="${totalArrearAmount+dcb.arrearAmount}"/>
 										<c:set var="totalDemandAmount" value="${totalDemandAmount+dcb.demandAmount }"/>
 										<c:set var="totalPenaltyAmount" value="${totalPenltyAmount+dcb.penaltyAmount}"/>
-										<c:set var="totalAdvanceAmount" value="${dcb.advanceAmount-dcb.collectedAdvanceAmount}" />
+										<c:set var="totalAdvanceAmount" value="${dcb.collectedAdvanceAmount}" />
 										<c:set var="totalCollectedArrearAmount" value="${totalCollectedArrearAmount+dcb.collectedArrearAmount}"/>
 										<c:set var="totalCollectedDemandAmount" value="${totalCollectedDemandAmount+dcb.collectedDemandAmount}"/>
 										<c:set var="totalCollectedPenaltyAmount" value="${totalCollectedPenaltyAmount+dcb.collectedPenaltyAmount}"/>         
