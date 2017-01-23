@@ -679,10 +679,6 @@ CollectionIntegrationService {
                 debitAmount = debitAmount.add(receiptDetail.getCramount());
                 debitAmount = debitAmount.subtract(receiptDetail.getDramount());
             }
-            // end of outer for loop
-            receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(debitAmount, receiptHeader,
-                    BigDecimal.ZERO, receiptHeader.getTotalAmount(), CollectionConstants.INSTRUMENTTYPE_ONLINE));
-
             // Add Online Payment Details
             final OnlinePayment onlinePayment = new OnlinePayment();
 
@@ -693,6 +689,10 @@ CollectionIntegrationService {
             onlinePayment.setService(paymentService);
 
             receiptHeader.setOnlinePayment(onlinePayment);
+            // end of outer for loop
+            receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(debitAmount, receiptHeader,
+                    BigDecimal.ZERO, receiptHeader.getTotalAmount(), CollectionConstants.INSTRUMENTTYPE_ONLINE));
+
         }
         receiptHeaderService.persistReceiptObject(receiptHeader);
 
