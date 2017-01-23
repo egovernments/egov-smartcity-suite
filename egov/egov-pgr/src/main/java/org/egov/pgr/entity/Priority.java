@@ -61,7 +61,7 @@ import static org.egov.pgr.entity.Priority.SEQ_PRIORITY;
 @Unique(fields = {"name", "code"}, enableDfltMsg = true)
 public class Priority extends AbstractPersistable<Long> {
 
-    protected static final String SEQ_PRIORITY = "seq_egpgr_receivingmode";
+    protected static final String SEQ_PRIORITY = "seq_egpgr_priority";
 
     @Id
     @GeneratedValue(generator = SEQ_PRIORITY, strategy = GenerationType.SEQUENCE)
