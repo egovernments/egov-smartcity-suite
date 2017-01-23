@@ -1151,4 +1151,17 @@ public class ComplaintIndexService {
             }
         return complaints;
     }
+
+    public List<ComplaintIndex> getLocalityWiseComplaints(final String localityName) {
+        final List<ComplaintIndex> complaints = complaintIndexRepository.findAllComplaintsBySource("localityName",
+                localityName);
+        String searchUrl;
+        for (final ComplaintIndex complaint : complaints)
+            if (isNotBlank(complaint.getCityCode())) {
+                final CityIndex city = cityIndexService.findOne(complaint.getCityCode());
+                searchUrl = city.getDomainurl() + "/pgr/complaint/view/" + complaint.getCrn();
+                complaint.setUrl(searchUrl);
+            }
+        return complaints;
+    }
 }
