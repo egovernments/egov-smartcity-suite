@@ -247,6 +247,30 @@ function showInstrumentDetails(obj){
 		clearBankDetails();
 	}
 }
+function validateTransactionNumber()
+{
+	document.getElementById("receipt_error_area").innerHTML="";    
+	document.getElementById("receipt_error_area").style.display="none";
+	 if(document.getElementById("cardradiobutton").checked)
+		 {    
+		 	 var instrumentNum="";
+		 	 var confirmInstrumentNo="";
+			 if(document.getElementById("instrHeaderCard.transactionNumber")!=null)
+			 	 instrumentNum = document.getElementById("instrHeaderCard.transactionNumber").value;
+			 if(document.getElementById("confirmtransactionNumber")!=null)
+			 	 confirmInstrumentNo =  document.getElementById("confirmtransactionNumber").value;
+			 if(confirmInstrumentNo!=null && confirmInstrumentNo !="" && confirmInstrumentNo !=null && confirmInstrumentNo !=""){
+					 if (instrumentNum !=confirmInstrumentNo)	
+			        {		
+				         document.getElementById("confirmtransactionNumber").value="";
+				         document.getElementById("receipt_error_area").style.display="block";
+				         document.getElementById("receipt_error_area").innerHTML+=
+				 			'<s:text name="billreceipt.missingcard.confirmtransactionno.validationmessage" />'+ '<br>';
+				 		 return(false);
+					}
+			}
+		 }
+}
 </script>
 <tr>
 	<td class="bluebox" width="3%"></td>
@@ -499,7 +523,12 @@ function showInstrumentDetails(obj){
 									label="instrHeaderCard.transactionNumber"
 									id="instrHeaderCard.transactionNumber" maxlength="14"
 									name="instrHeaderCard.transactionNumber" size="18"
-									value="%{instrHeaderCard.transactionNumber}" /></td>
+									value="%{instrHeaderCard.transactionNumber}" onblur="validateTransactionNumber();" /></td>
+								<td class="bluebox"><s:text
+									name="billreceipt.payment.reenter.transactionnumber" /><span
+								class="mandatory1">*</span></td>									
+							<td class="bluebos"> <s:password id="confirmtransactionNumber"  maxlength="14"
+							                   name ="confirmtransactionNumber"  size="18" onblur="validateTransactionNumber();" /></td>		
 						</tr>
 
 						<tr id="carddetailsrow">
