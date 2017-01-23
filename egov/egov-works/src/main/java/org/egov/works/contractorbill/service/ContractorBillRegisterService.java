@@ -349,7 +349,8 @@ public class ContractorBillRegisterService {
                     .withNextAction("")
                     .withNatureOfTask(natureOfwork);
         } else {
-            if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
+            if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0))
+                    && !WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction))
                 pos = positionMasterService.getPositionById(approvalPosition);
             WorkFlowMatrix wfmatrix = null;
             if (null == contractorBillRegister.getState()) {

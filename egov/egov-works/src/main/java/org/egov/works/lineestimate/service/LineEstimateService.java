@@ -499,7 +499,7 @@ public class LineEstimateService {
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString())) {
             updatedLineEstimate = update(lineEstimate, removedLineEstimateDetailsIds, files, financialYear);
             try {
-                if (workFlowAction.equals(WorksConstants.FORWARD_ACTION))
+                if (workFlowAction.equals(WorksConstants.FORWARD_ACTION) || workFlowAction.equals(WorksConstants.CANCEL_ACTION))
                     lineEstimateStatusChange(updatedLineEstimate, workFlowAction, mode);
             } catch (final ValidationException e) {
                 throw new ValidationException(e.getErrors());
@@ -666,7 +666,8 @@ public class LineEstimateService {
                     .withOwner(wfInitiator.getPosition()).withNextAction("").withNatureOfTask(natureOfwork);
 
         } else {
-            if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
+            if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0))
+                    && !WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction))
                 pos = positionMasterService.getPositionById(approvalPosition);
             WorkFlowMatrix wfmatrix = null;
             if (null == lineEstimate.getState()) {
@@ -677,8 +678,6 @@ public class LineEstimateService {
                         .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
             } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
-                wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null, null,
-                        additionalRule, lineEstimate.getCurrentState().getValue(), null);
                 lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);
