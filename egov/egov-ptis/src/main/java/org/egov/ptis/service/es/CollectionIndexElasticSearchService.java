@@ -517,6 +517,9 @@ public class CollectionIndexElasticSearchService {
             startTime = System.currentTimeMillis();
             for (Map.Entry<String, BigDecimal> entry : cytdCollMap.entrySet()) {
                 collIndData = new CollTableData();
+                totalAssessments = BigDecimal.ZERO;
+                arrearDemand = BigDecimal.ZERO;
+                currentDemand = BigDecimal.ZERO;
                 name = entry.getKey();
                 if(!assessmentsCountMap.isEmpty() && assessmentsCountMap.get(name) != null)
                     totalAssessments = assessmentsCountMap.get(name) == null ? BigDecimal.ZERO : assessmentsCountMap.get(name);
