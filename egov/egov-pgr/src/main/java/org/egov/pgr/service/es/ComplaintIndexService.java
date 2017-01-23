@@ -42,6 +42,7 @@ package org.egov.pgr.service.es;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 import static org.egov.pgr.utils.constants.PGRConstants.CITY_CODE;
 import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_CITY;
 import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
@@ -216,7 +217,7 @@ public class ComplaintIndexService {
     public void updateComplaintIndex(final Complaint complaint, final Long approvalPosition,
             final String approvalComment) {
         // fetch the complaint from index and then update the new fields
-        ComplaintIndex complaintIndex = complaintIndexRepository.findByCrn(complaint.getCrn());
+        ComplaintIndex complaintIndex = complaintIndexRepository.findByCrnAndCityCode(complaint.getCrn(), getCityCode());
         final String status = complaintIndex.getComplaintStatusName();
         beanMapperConfiguration.map(complaint, complaintIndex);
 
@@ -293,7 +294,7 @@ public class ComplaintIndexService {
     public void updateComplaintEscalationIndexValues(final Complaint complaint) {
 
         // fetch the complaint from index and then update the new fields
-        ComplaintIndex complaintIndex = complaintIndexRepository.findByCrn(complaint.getCrn());
+        ComplaintIndex complaintIndex = complaintIndexRepository.findByCrnAndCityCode(complaint.getCrn(), getCityCode());
         beanMapperConfiguration.map(complaint, complaintIndex);
 
         final Position position = complaint.getAssignee();
@@ -367,7 +368,7 @@ public class ComplaintIndexService {
 
     public void updateOpenComplaintIndex(final Complaint complaint) {
         // fetch the complaint from index and then update the new fields
-        ComplaintIndex complaintIndex = complaintIndexRepository.findByCrn(complaint.getCrn());
+        ComplaintIndex complaintIndex = complaintIndexRepository.findByCrnAndCityCode(complaint.getCrn(), getCityCode());
         beanMapperConfiguration.map(complaint, complaintIndex);
 
         complaintIndex = updateComplaintLevelIndexFields(complaintIndex);
@@ -1153,7 +1154,7 @@ public class ComplaintIndexService {
     }
 
     public List<ComplaintIndex> getLocalityWiseComplaints(final String localityName) {
-        final List<ComplaintIndex> complaints = complaintIndexRepository.findAllComplaintsBySource("localityName",
+        final List<ComplaintIndex> complaints = complaintIndexRepository.findAllComplaintsBySource(LOCALITY_NAME,
                 localityName);
         String searchUrl;
         for (final ComplaintIndex complaint : complaints)
