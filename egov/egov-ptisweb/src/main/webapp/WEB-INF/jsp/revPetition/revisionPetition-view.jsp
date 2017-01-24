@@ -156,7 +156,7 @@
 		if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_FORWARD}"/>') {
 
 			if (statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED}"/>') {
-				if (state == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NEW}"/>') {
+				if (state != null && state.endsWith('<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NEW}"/>')) {
 					if (validateRecordObjections()) {
 						action = 'revPetition.action';
 					} else
