@@ -39,6 +39,11 @@
  */
 package org.egov.adtax.web.controller.hoarding;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
@@ -58,20 +63,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
 @Controller
 @RequestMapping("/hoarding")
 public class UpdateHoardingController extends HoardingControllerSupport {
-	
-   @Autowired
-   @Qualifier("messageSource")
-   private MessageSource messageSource;
 
-   private   WorkflowContainer workFlowContainer=null ;
+    @Autowired
+    @Qualifier("messageSource")
+    private MessageSource messageSource;
+
+    private WorkflowContainer workFlowContainer = null;
 
     @ModelAttribute("advertisementPermitDetail")
     public AdvertisementPermitDetail advertisementPermitDetail(@PathVariable final String id) {
@@ -80,23 +80,22 @@ public class UpdateHoardingController extends HoardingControllerSupport {
 
     @RequestMapping(value = "/update/{id}", method = GET)
     public String updateHoarding(@PathVariable final String id, final Model model) {
-        workFlowContainer =new WorkflowContainer();
+        workFlowContainer = new WorkflowContainer();
         final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(id));
         model.addAttribute("dcPending", advertisementDemandService.anyDemandPendingForCollection(advertisementPermitDetail));
         model.addAttribute("advertisementPermitDetail", advertisementPermitDetail);
-      //  model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
-        if(advertisementPermitDetail!=null && advertisementPermitDetail.getPreviousapplicationid()!=null){
+        // model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+        if (advertisementPermitDetail != null && advertisementPermitDetail.getPreviousapplicationid() != null) {
             model.addAttribute("additionalRule", AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
             workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
+        } else {
+            model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+            workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
         }
-            else{
-                model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
-                workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
-            }
-        
+
         model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
         model.addAttribute("currentState", advertisementPermitDetail.getCurrentState().getValue());
-        prepareWorkflow(model, advertisementPermitDetail,workFlowContainer);
+        prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
         model.addAttribute("agency", advertisementPermitDetail.getAgency());
         model.addAttribute("advertisementDocuments", advertisementPermitDetail.getAdvertisement().getDocuments());
         return "hoarding-update";
@@ -111,18 +110,16 @@ public class UpdateHoardingController extends HoardingControllerSupport {
         validateHoardingDocsOnUpdate(advertisementPermitDetail, resultBinder, redirAttrib);
 
         if (resultBinder.hasErrors()) {
-            workFlowContainer =new WorkflowContainer();
-            
-            
-            if(advertisementPermitDetail!=null && advertisementPermitDetail.getPreviousapplicationid()!=null){
-            model.addAttribute("additionalRule", AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
-            workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
-            }
-            else {
+            workFlowContainer = new WorkflowContainer();
+
+            if (advertisementPermitDetail != null && advertisementPermitDetail.getPreviousapplicationid() != null) {
+                model.addAttribute("additionalRule", AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
+                workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
+            } else {
                 model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
                 workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
             }
-            prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);    
+            prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
             model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
             model.addAttribute("currentState", advertisementPermitDetail.getCurrentState().getValue());
             return "hoarding-update";
@@ -143,52 +140,65 @@ public class UpdateHoardingController extends HoardingControllerSupport {
                 workFlowAction = request.getParameter("workFlowAction");
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-            
-               
+
             if (AdvertisementTaxConstants.WF_DEMANDNOTICE_BUTTON.equalsIgnoreCase(workFlowAction))
                 return "redirect:/advertisement/demandNotice?pathVar=" + advertisementPermitDetail.getId();
             else {
                 updateHoardingDocuments(advertisementPermitDetail);
-                
-            advertisementPermitDetailService.updateAdvertisementPermitDetail(advertisementPermitDetail, approvalPosition,
-                        approvalComment, (advertisementPermitDetail!=null && advertisementPermitDetail.getPreviousapplicationid()!=null)?AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE: AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE, workFlowAction);
-            redirAttrib.addFlashAttribute("advertisementNumber", advertisementPermitDetail.getAdvertisement().getAdvertisementNumber());
-               
-            if (AdvertisementTaxConstants.WF_APPROVE_BUTTON.equals(workFlowAction)){
-            	 message = messageSource.getMessage("msg.success.approved",
-                        new String[] { advertisementPermitDetail.getAdvertisement().getAdvertisementNumber(), advertisementPermitDetail.getPermissionNumber() }, null);
+
+                advertisementPermitDetailService.updateAdvertisementPermitDetail(advertisementPermitDetail, approvalPosition,
+                        approvalComment,
+                        advertisementPermitDetail != null && advertisementPermitDetail.getPreviousapplicationid() != null
+                                ? AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE
+                                : AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE,
+                        workFlowAction);
+                redirAttrib.addFlashAttribute("advertisementNumber",
+                        advertisementPermitDetail.getAdvertisement().getAdvertisementNumber());
+
+                if (AdvertisementTaxConstants.WF_APPROVE_BUTTON.equals(workFlowAction)) {
+                    if (advertisementPermitDetail.getPreviousapplicationid() != null)
+                        message = messageSource.getMessage("msg.renewal.success.approved",
+                                new String[] { advertisementPermitDetail.getAdvertisement().getAdvertisementNumber(),
+                                        advertisementPermitDetail.getPermissionNumber() },
+                                null);
+                    else
+                        message = messageSource.getMessage("msg.success.approved",
+                                new String[] { advertisementPermitDetail.getAdvertisement().getAdvertisementNumber(),
+                                        advertisementPermitDetail.getPermissionNumber() },
+                                null);
                     redirAttrib.addFlashAttribute("message", message);
-            }
-                else if (AdvertisementTaxConstants.WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)||
-                        AdvertisementTaxConstants.WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction)||
+                } else if (AdvertisementTaxConstants.WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction) ||
+                        AdvertisementTaxConstants.WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction) ||
                         AdvertisementTaxConstants.WF_CANCELRENEWAL_BUTTON.equalsIgnoreCase(workFlowAction)) {
                     final Assignment wfInitiator = advertisementPermitDetailService
                             .getWfInitiator(advertisementPermitDetail);
-                    if (ApplicationThreadLocals.getUserId().equals(wfInitiator.getEmployee().getId())){
-                    	 message = messageSource.getMessage("msg.success.cancelled",
-                                 new String[] { advertisementPermitDetail.getApplicationNumber() }, null);
-                    	redirAttrib.addFlashAttribute("message", message);
-                    }
-                    else {
-                    	approverName = wfInitiator.getEmployee().getName();
-                    	nextDesignation = wfInitiator.getDesignation().getName();
-                    	message = messageSource.getMessage("msg.success.reject",
-                                new String[] { advertisementPermitDetail.getApplicationNumber(),approverName.concat("~").concat(nextDesignation)}, null);
+                    if (ApplicationThreadLocals.getUserId().equals(wfInitiator.getEmployee().getId())) {
+                        message = messageSource.getMessage("msg.success.cancelled",
+                                new String[] { advertisementPermitDetail.getApplicationNumber() }, null);
+                        redirAttrib.addFlashAttribute("message", message);
+                    } else {
+                        approverName = wfInitiator.getEmployee().getName();
+                        nextDesignation = wfInitiator.getDesignation().getName();
+                        message = messageSource.getMessage("msg.success.reject",
+                                new String[] { advertisementPermitDetail.getApplicationNumber(),
+                                        approverName.concat("~").concat(nextDesignation) },
+                                null);
                         redirAttrib.addFlashAttribute("message", message);
                     }
                 } else if (AdvertisementTaxConstants.WF_PERMITORDER_BUTTON.equalsIgnoreCase(workFlowAction))
                     return "redirect:/advertisement/permitOrder?pathVar=" + advertisementPermitDetail.getId();
                 else {
-                	message = messageSource.getMessage("msg.success.forward.on.reject",
-                            new String[] { approverName.concat("~").concat(nextDesignation)},advertisementPermitDetail.getApplicationNumber(), null);
-                    redirAttrib.addFlashAttribute("message",message);
+                    message = messageSource.getMessage("msg.success.forward.on.reject",
+                            new String[] { approverName.concat("~").concat(nextDesignation) },
+                            advertisementPermitDetail.getApplicationNumber(), null);
+                    redirAttrib.addFlashAttribute("message", message);
                 }
-            
+
                 return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
             }
         } catch (final HoardingValidationError e) {
             resultBinder.rejectValue(e.fieldName(), e.errorCode());
-            return "hoarding-update"; 
+            return "hoarding-update";
         }
     }
 }
