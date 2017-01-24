@@ -367,6 +367,8 @@ public class SewerageIndexService {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("ulbName", ulbName));
         boolQuery = boolQuery.filter(QueryBuilders.termsQuery("propertyType", propertyTypeList));
         boolQuery = boolQuery.filter(QueryBuilders.termsQuery("ward", wardList));
+        boolQuery = boolQuery.filter(QueryBuilders.matchQuery("active", true));
+
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
                 .withPageable(new PageRequest(0, 250)).withSort(new FieldSortBuilder("applicationDate").order(SortOrder.DESC))
                 .build();
@@ -399,7 +401,7 @@ public class SewerageIndexService {
         boolQuery = boolQuery.filter(QueryBuilders.termsQuery("propertyType", propertyTypeList));
         if (StringUtils.isNotBlank(ward))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ward", ward));
-
+        boolQuery = boolQuery.filter(QueryBuilders.matchQuery("active", true));
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
                 .withPageable(new PageRequest(0, 250)).withSort(new FieldSortBuilder("applicationDate").order(SortOrder.DESC))
                 .build();

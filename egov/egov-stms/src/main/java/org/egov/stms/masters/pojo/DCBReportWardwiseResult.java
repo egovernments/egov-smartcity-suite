@@ -38,17 +38,14 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-
 package org.egov.stms.masters.pojo;
-
-import org.egov.infra.admin.master.entity.Boundary;
-import org.jboss.logging.Logger;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.egov.infra.admin.master.entity.Boundary;
+
 public class DCBReportWardwiseResult {
-    private static final Logger logger = Logger.getLogger(DCBReportWardwiseResult.class);
     private String searchText;
     private List<Boundary> wards;
     private Long wardId;
@@ -64,6 +61,7 @@ public class DCBReportWardwiseResult {
     private String applicationNumber;
     private String ownerName;
 
+    private BigDecimal advanceAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
     private BigDecimal curr_demand = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
     private BigDecimal arr_demand = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
     private BigDecimal curr_collection = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_EVEN);
@@ -78,7 +76,7 @@ public class DCBReportWardwiseResult {
         return wards;
     }
 
-    public void setWards(List<Boundary> wards) {
+    public void setWards(final List<Boundary> wards) {
         this.wards = wards;
     }
 
@@ -86,7 +84,7 @@ public class DCBReportWardwiseResult {
         return propertyType;
     }
 
-    public void setPropertyType(String propertyType) {
+    public void setPropertyType(final String propertyType) {
         this.propertyType = propertyType;
     }
 
@@ -94,7 +92,7 @@ public class DCBReportWardwiseResult {
         return curr_demand;
     }
 
-    public void setCurr_demand(BigDecimal curr_demand) {
+    public void setCurr_demand(final BigDecimal curr_demand) {
         this.curr_demand = curr_demand;
     }
 
@@ -102,7 +100,7 @@ public class DCBReportWardwiseResult {
         return arr_demand;
     }
 
-    public void setArr_demand(BigDecimal arr_demand) {
+    public void setArr_demand(final BigDecimal arr_demand) {
         this.arr_demand = arr_demand;
     }
 
@@ -110,7 +108,7 @@ public class DCBReportWardwiseResult {
         return curr_collection;
     }
 
-    public void setCurr_collection(BigDecimal curr_collection) {
+    public void setCurr_collection(final BigDecimal curr_collection) {
         this.curr_collection = curr_collection;
     }
 
@@ -118,7 +116,7 @@ public class DCBReportWardwiseResult {
         return arr_collection;
     }
 
-    public void setArr_collection(BigDecimal arr_collection) {
+    public void setArr_collection(final BigDecimal arr_collection) {
         this.arr_collection = arr_collection;
     }
 
@@ -126,7 +124,7 @@ public class DCBReportWardwiseResult {
         return curr_balance;
     }
 
-    public void setCurr_balance(BigDecimal curr_balance) {
+    public void setCurr_balance(final BigDecimal curr_balance) {
         this.curr_balance = curr_balance;
     }
 
@@ -134,32 +132,19 @@ public class DCBReportWardwiseResult {
         return arr_balance;
     }
 
-    public void setArr_balance(BigDecimal arr_balance) {
+    public void setArr_balance(final BigDecimal arr_balance) {
         this.arr_balance = arr_balance;
     }
 
     public String searchQuery() {
         return searchText;
     }
-    /*public Filters searchFilters() {
-        final List<Filter> andFilters = new ArrayList<>(0);
-        if(propertyType!=null && !propertyType.equalsIgnoreCase("ALL")){
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_PROPERTY_TYPE, propertyType));
-        }
-        if(revenueWard!=null){
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_REVWARD_NAME, revenueWard));
-        }
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_ISACTIVE,"true"));
-        if (logger.isDebugEnabled())
-            logger.debug("finished filters");
-        return Filters.withAndFilters(andFilters);
-    }*/
 
     public String getSearchText() {
         return searchText;
     }
 
-    public void setSearchText(String searchText) {
+    public void setSearchText(final String searchText) {
         this.searchText = searchText;
     }
 
@@ -167,7 +152,7 @@ public class DCBReportWardwiseResult {
         return ulbName;
     }
 
-    public void setUlbName(String ulbName) {
+    public void setUlbName(final String ulbName) {
         this.ulbName = ulbName;
     }
 
@@ -175,7 +160,7 @@ public class DCBReportWardwiseResult {
         return revenueWard;
     }
 
-    public void setRevenueWard(String revenueWard) {
+    public void setRevenueWard(final String revenueWard) {
         this.revenueWard = revenueWard;
     }
 
@@ -183,7 +168,7 @@ public class DCBReportWardwiseResult {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         this.status = status;
     }
 
@@ -191,7 +176,7 @@ public class DCBReportWardwiseResult {
         return installmentYearDescription;
     }
 
-    public void setInstallmentYearDescription(String installmentYearDescription) {
+    public void setInstallmentYearDescription(final String installmentYearDescription) {
         this.installmentYearDescription = installmentYearDescription;
     }
 
@@ -199,7 +184,7 @@ public class DCBReportWardwiseResult {
         return noofassessments;
     }
 
-    public void setNoofassessments(int noofassessments) {
+    public void setNoofassessments(final int noofassessments) {
         this.noofassessments = noofassessments;
     }
 
@@ -207,7 +192,7 @@ public class DCBReportWardwiseResult {
         return total_collection;
     }
 
-    public void setTotal_collection(BigDecimal total_collection) {
+    public void setTotal_collection(final BigDecimal total_collection) {
         this.total_collection = total_collection;
     }
 
@@ -215,7 +200,7 @@ public class DCBReportWardwiseResult {
         return total_demand;
     }
 
-    public void setTotal_demand(BigDecimal total_demand) {
+    public void setTotal_demand(final BigDecimal total_demand) {
         this.total_demand = total_demand;
     }
 
@@ -223,7 +208,7 @@ public class DCBReportWardwiseResult {
         return total_balance;
     }
 
-    public void setTotal_balance(BigDecimal total_balance) {
+    public void setTotal_balance(final BigDecimal total_balance) {
         this.total_balance = total_balance;
     }
 
@@ -231,7 +216,7 @@ public class DCBReportWardwiseResult {
         return wardId;
     }
 
-    public void setWardId(Long wardId) {
+    public void setWardId(final Long wardId) {
         this.wardId = wardId;
     }
 
@@ -239,7 +224,7 @@ public class DCBReportWardwiseResult {
         return shscnumber;
     }
 
-    public void setShscnumber(String shscnumber) {
+    public void setShscnumber(final String shscnumber) {
         this.shscnumber = shscnumber;
     }
 
@@ -247,7 +232,7 @@ public class DCBReportWardwiseResult {
         return applicationNumber;
     }
 
-    public void setApplicationNumber(String applicationNumber) {
+    public void setApplicationNumber(final String applicationNumber) {
         this.applicationNumber = applicationNumber;
     }
 
@@ -255,7 +240,7 @@ public class DCBReportWardwiseResult {
         return mode;
     }
 
-    public void setMode(String mode) {
+    public void setMode(final String mode) {
         this.mode = mode;
     }
 
@@ -263,8 +248,16 @@ public class DCBReportWardwiseResult {
         return ownerName;
     }
 
-    public void setOwnerName(String ownerName) {
+    public void setOwnerName(final String ownerName) {
         this.ownerName = ownerName;
+    }
+
+    public BigDecimal getAdvanceAmount() {
+        return advanceAmount;
+    }
+
+    public void setAdvanceAmount(final BigDecimal advanceAmount) {
+        this.advanceAmount = advanceAmount;
     }
 
 }
