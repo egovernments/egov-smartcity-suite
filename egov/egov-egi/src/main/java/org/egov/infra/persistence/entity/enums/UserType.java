@@ -42,9 +42,4 @@ package org.egov.infra.persistence.entity.enums;
 
 public enum UserType {
     CITIZEN, EMPLOYEE, SYSTEM;
-
-    @Override
-    public String toString() {
-        return this.name().toLowerCase();
-    }
 }

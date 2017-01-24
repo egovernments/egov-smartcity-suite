@@ -143,7 +143,7 @@ public class ComplaintIndexService {
         complaintIndex.setSource(
                 environment.getProperty(
                         String.format("complaint.source.%s.%s",
-                                complaint.getCreatedBy().getType().toString(),
+                                complaint.getCreatedBy().getType().name().toLowerCase(),
                                 complaint.getReceivingMode().getCode().toLowerCase())));
         complaintIndex.setClosed(false);
         complaintIndex.setComplaintIsClosed("N");
