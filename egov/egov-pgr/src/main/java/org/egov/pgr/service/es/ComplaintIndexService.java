@@ -158,7 +158,7 @@ public class ComplaintIndexService {
         complaintIndex.setComplaintAgeingFromDue(0);
         complaintIndex.setIsSLA("Y");
         complaintIndex.setIfSLA(1);
-        complaintIndex.setCurrentFunctionaryName(
+        complaintIndex.setInitialFunctionaryName(
                 assignedUser != null ? assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName()
                         : NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName());
         complaintIndex.setInitialFunctionaryAssigneddate(new Date());
@@ -778,7 +778,7 @@ public class ComplaintIndexService {
                     responseDetail.setUlbName(hit[0].field("cityName").getValue());
                     responseDetail.setDistrictName(hit[0].field("cityDistrictName").getValue());
                     responseDetail.setDepartmentName(hit[0].field("departmentName").getValue());
-                    responseDetail.setFunctionaryMobileNumber(hit[0].field("currentFunctionaryMobileNumber").getValue());
+                    responseDetail.setFunctionaryMobileNumber(hit[0].field("initialFunctionaryMobileNumber").getValue());
 
                     final Terms openAndClosedTerms = functionaryBucket.getAggregations().get("closedComplaintCount");
                     for (final Bucket closedCountbucket : openAndClosedTerms.getBuckets())
@@ -974,7 +974,7 @@ public class ComplaintIndexService {
                 complaintSouce.setWardName(bucket.getKeyAsString());
             if (LOCALITY_NAME.equals(groupByField))
                 complaintSouce.setLocalityName(bucket.getKeyAsString());
-            if ("currentFunctionaryName".equals(groupByField)) {
+            if ("initialFunctionaryName".equals(groupByField)) {
                 complaintSouce.setFunctionaryName(bucket.getKeyAsString());
                 final String mobileNumber = complaintIndexRepository.getFunctionryMobileNumber(bucket.getKeyAsString());
                 complaintSouce.setFunctionaryMobileNumber(mobileNumber);
@@ -1088,7 +1088,7 @@ public class ComplaintIndexService {
             responseDetail.setWardName(bucket.getKeyAsString());
         if (LOCALITY_NAME.equals(groupByField))
             responseDetail.setLocalityName(bucket.getKeyAsString());
-        if ("currentFunctionaryName".equals(groupByField)) {
+        if ("initialFunctionaryName".equals(groupByField)) {
             responseDetail.setFunctionaryName(bucket.getKeyAsString());
             final String mobileNumber = complaintIndexRepository.getFunctionryMobileNumber(bucket.getKeyAsString());
             responseDetail.setFunctionaryMobileNumber(mobileNumber);
@@ -1116,7 +1116,7 @@ public class ComplaintIndexService {
     }
 
     public List<ComplaintIndex> getFunctionaryWiseComplaints(final String functionaryName) {
-        final List<ComplaintIndex> complaints = complaintIndexRepository.findAllComplaintsBySource("currentFunctionaryName",
+        final List<ComplaintIndex> complaints = complaintIndexRepository.findAllComplaintsBySource("initialFunctionaryName",
                 functionaryName);
         String searchUrl;
         for (final ComplaintIndex complaint : complaints)

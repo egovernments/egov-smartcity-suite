@@ -141,9 +141,9 @@ public class ComplaintElasticsearchUtils {
         	aggregationField = "localityName";
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode()) &&
         		StringUtils.isNotBlank(complaintDashBoardRequest.getDepartmentCode()))
-        	aggregationField = "currentFunctionaryName";
+        	aggregationField = "initialFunctionaryName";
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getLocalityName()))
-                aggregationField = "currentFunctionaryName";
+                aggregationField = "initialFunctionaryName";
         
         return aggregationField;
 	}

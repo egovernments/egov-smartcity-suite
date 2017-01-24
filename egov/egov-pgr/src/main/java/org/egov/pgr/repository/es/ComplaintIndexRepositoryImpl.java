@@ -241,12 +241,12 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     public String getFunctionryMobileNumber(final String functionaryName) {
         final SearchResponse response = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                 .setSize(1)
-                .setQuery(QueryBuilders.matchQuery("currentFunctionaryName", functionaryName))
+                .setQuery(QueryBuilders.matchQuery("initialFunctionaryName", functionaryName))
                 .execute().actionGet();
 
         for (final SearchHit hit : response.getHits()) {
             final Map<String, Object> fields = hit.getSource();
-            return fields.get("currentFunctionaryMobileNumber").toString();
+            return fields.get("initialFunctionaryMobileNumber").toString();
         }
         return StringUtils.EMPTY;
     }
@@ -275,14 +275,14 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                                 .subAggregation(
                                                         AggregationBuilders
                                                                 .terms("functionarywise")
-                                                                .field("currentFunctionaryName")
+                                                                .field("initialFunctionaryName")
                                                                 .size(size)
                                                                 .subAggregation(
                                                                         AggregationBuilders.topHits("complaintrecord")
                                                                                 .addField(CITY_NAME)
                                                                                 .addField(CITY_CODE).addField(DISTRICT_NAME)
                                                                                 .addField("departmentName")
-                                                                                .addField("currentFunctionaryMobileNumber")
+                                                                                .addField("initialFunctionaryMobileNumber")
                                                                                 .setSize(1))
                                                                 .subAggregation(
                                                                         getCountWithGrouping("closedComplaintCount", "ifClosed",
