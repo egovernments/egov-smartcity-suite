@@ -369,7 +369,7 @@ function displayPaytModes() {
 		document.getElementById('cashdetails').style.display = 'table-row';
 	}
 	
-	if (cardAllowed == 'true') {
+	if (cardAllowed == 'true' && cashAllowed == 'false') {
 		// display card radio button
 		document.getElementById('cardradiobuttonspan').style.display = "block";
 		document.getElementById('instrumentTypeCashOrCard').value = "card";
