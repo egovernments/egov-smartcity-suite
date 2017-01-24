@@ -40,6 +40,24 @@
 
 package org.egov.pgr.service.es;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
+import static org.egov.pgr.utils.constants.PGRConstants.CITY_CODE;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_CITY;
+import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termQuery;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -78,24 +96,6 @@ import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
-import static org.egov.pgr.utils.constants.PGRConstants.CITY_CODE;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_CITY;
-import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
-import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 
 @Service
 public class ComplaintIndexService {
@@ -158,7 +158,7 @@ public class ComplaintIndexService {
         complaintIndex.setComplaintAgeingFromDue(0);
         complaintIndex.setIsSLA("Y");
         complaintIndex.setIfSLA(1);
-        complaintIndex.setInitialFunctionaryName(
+        complaintIndex.setCurrentFunctionaryName(
                 assignedUser != null ? assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName()
                         : NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName());
         complaintIndex.setInitialFunctionaryAssigneddate(new Date());
@@ -190,7 +190,7 @@ public class ComplaintIndexService {
     }
 
     public void updateComplaintIndex(final Complaint complaint, final Long approvalPosition,
-                                     final String approvalComment) {
+            final String approvalComment) {
         // fetch the complaint from index and then update the new fields
         ComplaintIndex complaintIndex = complaintIndexRepository.findByCrnAndCityCode(complaint.getCrn(), getCityCode());
         final String status = complaintIndex.getComplaintStatusName();
@@ -1049,8 +1049,8 @@ public class ComplaintIndexService {
     }
 
     private ComplaintDashBoardResponse populateResponse(final ComplaintDashBoardRequest complaintDashBoardRequest,
-                                                        final Bucket bucket,
-                                                        final String groupByField) {
+            final Bucket bucket,
+            final String groupByField) {
         ComplaintDashBoardResponse responseDetail = new ComplaintDashBoardResponse();
 
         responseDetail = setDefaultValues(responseDetail);
@@ -1131,6 +1131,24 @@ public class ComplaintIndexService {
     public List<ComplaintIndex> getLocalityWiseComplaints(final String localityName) {
         final List<ComplaintIndex> complaints = complaintIndexRepository.findAllComplaintsBySource(LOCALITY_NAME,
                 localityName);
+        String searchUrl;
+        for (final ComplaintIndex complaint : complaints)
+            if (isNotBlank(complaint.getCityCode())) {
+                final CityIndex city = cityIndexService.findOne(complaint.getCityCode());
+                searchUrl = city.getDomainurl() + "/pgr/complaint/view/" + complaint.getCrn();
+                complaint.setUrl(searchUrl);
+            }
+        return complaints;
+    }
+
+    // This is a generic method to fetch all complaints based on fieldName and its value
+    public List<ComplaintIndex> getFilteredComplaints(final ComplaintDashBoardRequest complaintDashBoardRequest,
+            final String fieldName, final String fieldValue) {
+        final BoolQueryBuilder boolQuery = getFilterQuery(complaintDashBoardRequest);
+        boolQuery.filter(matchQuery(fieldName, fieldValue));
+
+        final List<ComplaintIndex> complaints = complaintIndexRepository.findAllComplaintsByField(complaintDashBoardRequest,
+                boolQuery);
         String searchUrl;
         for (final ComplaintIndex complaint : complaints)
             if (isNotBlank(complaint.getCityCode())) {

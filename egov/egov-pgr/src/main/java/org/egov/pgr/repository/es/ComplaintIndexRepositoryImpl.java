@@ -67,6 +67,8 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -348,6 +350,17 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     public List<ComplaintIndex> findAllComplaintsBySource(final String fieldName, final String paramValue) {
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(QueryBuilders.matchQuery(fieldName, paramValue))
                 .withPageable(new PageRequest(0, 5000))
+                .build();
+        return elasticsearchTemplate.queryForList(searchQuery, ComplaintIndex.class);
+    }
+
+    @Override
+    public List<ComplaintIndex> findAllComplaintsByField(final ComplaintDashBoardRequest complaintDashBoardRequest,
+            final BoolQueryBuilder query) {
+        final SortOrder sortOrder = complaintDashBoardRequest.getSortDirection().equals("ASC") ? SortOrder.ASC : SortOrder.DESC;
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(query)
+                .withSort(new FieldSortBuilder(complaintDashBoardRequest.getSortField()).order(sortOrder))
+                .withPageable(new PageRequest(0, complaintDashBoardRequest.getSize()))
                 .build();
         return elasticsearchTemplate.queryForList(searchQuery, ComplaintIndex.class);
     }
