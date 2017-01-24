@@ -1985,6 +1985,9 @@ public class PropertyService {
         documents.forEach(document -> {
             if (!(document.getUploads().isEmpty() || document.getUploadsContentType().isEmpty())) {
                 int fileCount = 0;
+                if(!document.getFiles().isEmpty()) {
+                    document.getFiles().clear();
+                }
                 for (final File file : document.getUploads()) {
                     final FileStoreMapper fileStore = fileStoreService.store(file,
                             document.getUploadsFileName().get(fileCount),

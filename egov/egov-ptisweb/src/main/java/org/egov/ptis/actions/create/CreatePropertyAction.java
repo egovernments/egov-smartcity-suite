@@ -291,6 +291,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private List<LayoutApprovalAuthority> layoutApprovalAuthorityList = new ArrayList<>();
     private Long vacantLandPlotAreaId;
     private Long layoutApprovalAuthorityId;
+    private boolean allowEditDocument = Boolean.FALSE;
 
     @Autowired
     private transient PropertyDepartmentRepository propertyDepartmentRepository;
@@ -535,6 +536,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     || StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
                 showTaxCalcBtn = Boolean.TRUE;
             mode = EDIT;
+            setAllowEditDocument(Boolean.TRUE);
             return RESULT_NEW;
         } else {
             mode = VIEW;
@@ -575,6 +577,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     || StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT)
                     || StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))) {
                 showTaxCalcBtn = Boolean.TRUE;
+                setAllowEditDocument(Boolean.TRUE);
                 return RESULT_NEW;
             } else if (hasErrors())
                 return RESULT_NEW;
@@ -2016,5 +2019,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     public void setLayoutApprovalAuthorityId(Long layoutApprovalAuthorityId) {
         this.layoutApprovalAuthorityId = layoutApprovalAuthorityId;
+    }
+    
+    public boolean isAllowEditDocument() {
+        return allowEditDocument;
+    }
+
+    public void setAllowEditDocument(boolean allowEditDocument) {
+        this.allowEditDocument = allowEditDocument;
     }
 }

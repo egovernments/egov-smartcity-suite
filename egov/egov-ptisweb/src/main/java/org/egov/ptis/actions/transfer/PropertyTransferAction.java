@@ -253,6 +253,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private boolean digitalSignEnabled;
     private boolean mutationFeePaid = Boolean.FALSE;
     private boolean receiptCanceled = Boolean.FALSE;
+    private boolean allowEditDocument = Boolean.FALSE;
 
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -345,9 +346,10 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         propertyMutation.getTransfereeInfosProxy().addAll(propertyMutation.getTransfereeInfos());
         if (currState.endsWith(WF_STATE_REJECTED)
                 || nextAction != null && nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)
-                || currState.equals(WFLOW_ACTION_NEW))
+                || currState.equals(WFLOW_ACTION_NEW)) {
+            setAllowEditDocument(Boolean.TRUE);
             mode = EDIT;
-        else
+        } else
             mode = VIEW;
         return mode;
     }
@@ -395,6 +397,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         if (mode.equals(EDIT)) {
             validate();
             if (hasErrors()) {
+                setAllowEditDocument(Boolean.TRUE);
                 mode = EDIT;
                 return EDIT;
             }
@@ -1170,5 +1173,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                                 propertyMutation.getCurrentState().getOwnerPosition().getId(),
                                 securityUtils.getCurrentUser().getId())
                         : null;
+    }
+
+    public boolean isAllowEditDocument() {
+        return allowEditDocument;
+    }
+
+    public void setAllowEditDocument(boolean allowEditDocument) {
+        this.allowEditDocument = allowEditDocument;
     }
 }

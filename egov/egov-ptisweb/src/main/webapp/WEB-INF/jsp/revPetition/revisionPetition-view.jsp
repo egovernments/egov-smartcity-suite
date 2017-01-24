@@ -367,7 +367,7 @@
 </head>
 <body onload="loadOnStartUp();">
 	<s:form action="revPetition-view" method="post"
-		name="objectionViewForm" theme="simple">
+		name="objectionViewForm" theme="simple" enctype="multipart/form-data">
 		<s:push value="model">
 			<s:if test="%{hasActionMessages()}">
 				<div class="messagestyle">
@@ -466,11 +466,14 @@
 							">
 
 							</s:elseif>
-							<s:if test="%{!documentTypes.isEmpty()}">
+							<s:if test="%{!documentTypes.isEmpty() && allowEditDocument}">
+								<%@ include file="../common/DocumentUploadForm.jsp"%>
+							</s:if>
+							<s:elseif test="%{!documentTypes.isEmpty()}">
 
 								<%@ include file="../common/DocumentUploadView.jsp"%>
 
-							</s:if>
+							</s:elseif>
 						</div>
 					</td>
 				</tr>

@@ -96,10 +96,17 @@
 						</s:elseif> <s:else>
 							<s:iterator value="%{documents[#status.index].files}">
 								<s:hidden name="documents[%{#status.index}].id" />
-								<a
-									href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
-									<s:property value="%{fileName}" />
-								</a>
+									<s:if test="%{allowEditDocument}">
+										<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button"/>
+										<a href="javascript:viewDocument('<s:property value="fileStoreId"/>')"> 
+					 						<s:property value="%{fileName}"/>
+					 					</a>
+									</s:if>
+									<s:else>
+										<a href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
+											<s:property value="%{fileName}" />
+										</a>
+									</s:else>
 							</s:iterator>
 						</s:else></td>
 				</tr>
