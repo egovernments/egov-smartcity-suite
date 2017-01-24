@@ -65,16 +65,19 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeCategory;
+import org.egov.pgr.entity.ReceivingMode;
 import org.egov.pgr.entity.enums.CitizenFeedback;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusMappingService;
 import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.egov.pgr.service.ComplaintTypeService;
+import org.egov.pgr.service.PriorityService;
 import org.egov.pgr.service.ReceivingModeService;
 import org.egov.pgr.utils.constants.PGRConstants;
 import org.json.simple.JSONObject;
@@ -140,6 +143,9 @@ public class ComplaintController extends ApiController {
 
     @Autowired
     private ReceivingModeService receivingModeService;
+    
+    @Autowired
+    private PriorityService priorityService;
     // --------------------------------------------------------------------------------//
 
     /**
@@ -338,7 +344,33 @@ public class ComplaintController extends ApiController {
                 final ComplaintType complaintType = complaintTypeService.findBy(complaintTypeId);
                 complaint.setComplaintType(complaintType);
             }
-            complaint.setReceivingMode(receivingModeService.getReceivingModeByCode("MOBILE"));
+            
+            
+            String receivingModeKey="receivingMode";
+            ReceivingMode receivingMode;
+            String[] highPriorityComplaintSource={"VMC", "TLC", "DRONE"};
+            
+            String priorityCode="NORMAL";
+            
+            if(complaintRequest.get(receivingModeKey)!=null && StringUtils.isNotBlank(complaintRequest.get(receivingModeKey).toString()))
+            {	
+            	String receivingModeVal=complaintRequest.get(receivingModeKey).toString();
+            	receivingMode=receivingModeService.getReceivingModeByCode(receivingModeVal);
+            	if(Arrays.asList(highPriorityComplaintSource).contains(receivingModeVal))
+            	{
+            		priorityCode="HIGH";
+            	}
+            }
+            else{
+            	receivingMode=receivingModeService.getReceivingModeByCode("MOBILE");
+            }
+                        
+            if(receivingMode==null)
+            	return getResponseHandler().error(getMessage("msg.invalid.receiving.mode"));
+            
+            complaint.setPriority(priorityService.getPriorityByCode(priorityCode));
+        	complaint.setReceivingMode(receivingMode);
+            
             if (files.length > 0)
                 complaint.setSupportDocs(addToFileStore(files));
             complaintService.createComplaint(complaint);

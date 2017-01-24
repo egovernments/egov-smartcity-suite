@@ -70,6 +70,23 @@ public class ComplaintAdapter extends DataAdapter<Complaint> {
         jo.addProperty("complainantEmail", StringUtils.isNotBlank(complaint.getComplainant().getEmail())?complaint.getComplainant().getEmail():"");
         jo.addProperty("citizenFeedback", complaint.getCitizenFeedback()!=null?complaint.getCitizenFeedback().name():"");
         
+        if(complaint.getReceivingMode()!=null)
+        {
+        	JsonObject receivingMode=new JsonObject();
+        	receivingMode.addProperty("name", complaint.getReceivingMode().getName());
+        	receivingMode.addProperty("code", complaint.getReceivingMode().getCode());
+        	jo.add("receivingMode", receivingMode);
+        }
+        
+        if(complaint.getPriority()!=null)
+        {
+        	JsonObject priority=new JsonObject();
+        	priority.addProperty("name", complaint.getPriority().getName());
+        	priority.addProperty("code", complaint.getPriority().getCode());
+        	priority.addProperty("weight", complaint.getPriority().getWeight());
+        	jo.add("priority", priority);
+        }
+        
         if (complaint.getLat() > 0 && complaint.getLng() > 0) {
             jo.addProperty("lat", complaint.getLat());
             jo.addProperty("lng", complaint.getLng());

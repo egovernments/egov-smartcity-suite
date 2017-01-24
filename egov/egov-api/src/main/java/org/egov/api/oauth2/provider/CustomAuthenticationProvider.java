@@ -74,7 +74,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             user = userService.getUserByUsername(userName);
         }
         if (user == null) {
-            throw new OAuth2Exception("Invalid login credentials");
+            throw new OAuth2Exception("Entered mobile no is not registered. Create an account for your mobile no");
         }
 
         BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
