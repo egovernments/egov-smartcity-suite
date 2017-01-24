@@ -255,4 +255,12 @@
         <put-attribute name="page-title" value="title.baseregister" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/baseregister/baseregister-report.jsp"/>
     </definition>
+    	<definition name="penaltyRates-search" extends="base_layout">
+		<put-attribute name="page-title" value="title.searchpenaltyRate" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-search.jsp" />
+	</definition>
+	    	<definition name="penaltyRates-viewResult" extends="base_layout">
+		<put-attribute name="page-title" value="title.searchpenaltyRate" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-viewResult.jsp" />
+	</definition>
 </tiles-definitions>

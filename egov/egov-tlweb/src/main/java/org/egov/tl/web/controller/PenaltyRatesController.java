@@ -87,8 +87,14 @@ public class PenaltyRatesController {
         redirectAttributes.addFlashAttribute("message", "msg.penaltyRate.created");
         return "penaltyRates-view";
     }
+    
+    @RequestMapping(value = "/view", method = RequestMethod.GET)
+    public String searchForm(@ModelAttribute final PenaltyForm penaltyForm, final Model model) {
+       
+        return "penaltyRates-search";
+    }
 
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
+   @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String search(@ModelAttribute final PenaltyForm penaltyForm, final BindingResult errors, final Model model) {
         if (errors.hasErrors())
             return PENALTYRATE_RESULT;
@@ -96,6 +102,17 @@ public class PenaltyRatesController {
         model.addAttribute("penaltyForm", penaltyForm);
         return PENALTYRATE_RESULT;
     }
+   
+   @RequestMapping(value = "/searchview", method = RequestMethod.GET)
+    public String searchview(@ModelAttribute final PenaltyForm penaltyForm, final BindingResult errors, final Model model) {
+        if (errors.hasErrors())
+            return "penaltyRates-search";
+        penaltyForm.setPenaltyRatesList(penaltyRatesService.search(penaltyForm.getLicenseAppType().getId()));
+        model.addAttribute("penaltyForm", penaltyForm);
+
+        return "penaltyRates-viewResult";
+    }
+
 
     @RequestMapping(value = "/deleterow", method = GET, produces = TEXT_PLAIN_VALUE)
     @ResponseBody
