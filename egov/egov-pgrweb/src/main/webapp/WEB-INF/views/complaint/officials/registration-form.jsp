@@ -59,6 +59,7 @@
 						<label class="col-sm-3 control-label"><spring:message code="lbl.receivingmode"/></label>
 						<div class="col-sm-9 col-xs-12 dynamic-span">
 							<form:radiobuttons path="receivingMode" items="${receivingModes}" itemValue="id" itemLabel="name" element="span"/>
+							<form:errors path="receivingMode" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
 					

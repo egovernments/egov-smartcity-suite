@@ -57,6 +57,7 @@ import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.pgr.config.properties.PgrApplicationProperties;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.ComplaintStatus;
 import org.egov.pgr.repository.ComplaintRepository;
@@ -145,7 +146,12 @@ public class ComplaintService {
     private EntityManager entityManager;
     @Autowired
     private ComplaintIndexService complaintIndexService;
-
+    
+    @Autowired
+    private PgrApplicationProperties pgrApplicationProperties;
+    
+    @Autowired
+    private PriorityService priorityService;
     @Transactional
     public Complaint createComplaint(final Complaint complaint) {
 
@@ -185,7 +191,8 @@ public class ComplaintService {
             complaint.setDepartment(complaint.getComplaintType().getDepartment());
         else if (null != assignee)
             complaint.setDepartment(assignee.getDeptDesig().getDepartment());
-
+        if (complaint.getPriority() == null)
+            complaint.setPriority(priorityService.getPriorityByCode(pgrApplicationProperties.defaultComplaintPriority()));
         complaintRepository.save(complaint);
         pushMessage(complaint);
         sendEmailandSms(complaint);

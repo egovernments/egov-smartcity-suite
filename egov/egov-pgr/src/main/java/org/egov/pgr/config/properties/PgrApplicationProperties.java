@@ -61,4 +61,8 @@ public class PgrApplicationProperties {
     public String getValue(String key) {
         return environment.getProperty(key);
     }
+    
+    public String defaultComplaintPriority() {
+        return environment.getProperty("complaint.default.priority");
+    }
 }
