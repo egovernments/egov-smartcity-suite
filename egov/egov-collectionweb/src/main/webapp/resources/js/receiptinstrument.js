@@ -368,11 +368,12 @@ function displayPaytModes() {
 		document.getElementById('cashradiobuttonspan').style.display = "none";
 		document.getElementById('cashdetails').style.display = 'table-row';
 	}
-	
-	if (cardAllowed == 'true' && cashAllowed == 'false') {
+	if (cardAllowed == 'true' ) {
 		// display card radio button
 		document.getElementById('cardradiobuttonspan').style.display = "block";
-		document.getElementById('instrumentTypeCashOrCard').value = "card";
+		if(cashAllowed == 'false'){  
+			document.getElementById('instrumentTypeCashOrCard').value = "card";  
+		}
 	} else {
 		// do not display card radio button
 		document.getElementById('cardradiobuttonspan').style.display = "none";
