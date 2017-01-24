@@ -1044,6 +1044,9 @@ public class ComplaintIndexService {
         if (isNotBlank(complaintDashBoardRequest.getLocalityName()))
             boolQuery = boolQuery.filter(matchQuery("localityName",
                     complaintDashBoardRequest.getLocalityName()));
+        if (isNotBlank(complaintDashBoardRequest.getFunctionaryName()))
+            boolQuery = boolQuery.filter(matchQuery("initialFunctionaryName",
+                    complaintDashBoardRequest.getFunctionaryName()));
 
         return boolQuery;
     }
