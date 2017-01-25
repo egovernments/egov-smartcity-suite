@@ -2156,10 +2156,10 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public BudgetDetail getBudgetDetail(final Integer fundId, final Long functionId, final Long deptId,
-            final Long budgetGroupId, final Long budgetId) {
+            final Long budgetGroupId) {
         return find(
-                "from BudgetDetail bd where bd.fund.id = ? and bd.function.id = ? and bd.executingDepartment.id = ? and bd.budgetGroup.id= ? and bd.budget.id = ?",
-                fundId, functionId, deptId, budgetGroupId, budgetId);
+                "from BudgetDetail bd where bd.fund.id = ? and bd.function.id = ? and bd.executingDepartment.id = ? and bd.budgetGroup.id= ?",
+                fundId, functionId, deptId, budgetGroupId);
     }
 
     public List<BudgetDetail> getDepartmentFromBudgetDetailByFundId(final Integer fundId) {
