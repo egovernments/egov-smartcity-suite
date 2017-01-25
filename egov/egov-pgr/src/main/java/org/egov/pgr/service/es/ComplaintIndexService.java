@@ -176,6 +176,8 @@ public class ComplaintIndexService {
                         : NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName());
         complaintIndex.setCurrentFunctionaryMobileNumber(Objects.nonNull(assignedUser)
                 ? assignedUser.getMobileNumber() : EMPTY);
+        complaintIndex.setInitialFunctionaryMobileNumber(Objects.nonNull(assignedUser)
+                ? assignedUser.getMobileNumber() : EMPTY);
         complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
         complaintIndex.setCurrentFunctionarySLADays(getFunctionarySlaDays(complaint));
         complaintIndex.setCurrentFunctionaryAgeingFromDue(0);
@@ -783,7 +785,12 @@ public class ComplaintIndexService {
                     responseDetail.setUlbName(hit[0].field("cityName").getValue());
                     responseDetail.setDistrictName(hit[0].field("cityDistrictName").getValue());
                     responseDetail.setDepartmentName(hit[0].field("departmentName").getValue());
-                    responseDetail.setFunctionaryMobileNumber(hit[0].field("initialFunctionaryMobileNumber").getValue());
+                    String initialFunctionaryNumber;
+                    if (hit[0].field("initialFunctionaryMobileNumber") == null)
+                        initialFunctionaryNumber = "N/A";
+                    else
+                        initialFunctionaryNumber = hit[0].field("initialFunctionaryMobileNumber").getValue();
+                    responseDetail.setFunctionaryMobileNumber(initialFunctionaryNumber);
 
                     final Terms openAndClosedTerms = functionaryBucket.getAggregations().get("closedComplaintCount");
                     for (final Bucket closedCountbucket : openAndClosedTerms.getBuckets())
