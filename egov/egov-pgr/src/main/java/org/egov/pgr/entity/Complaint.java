@@ -333,9 +333,9 @@ public class Complaint extends StateAware {
     @Override
     public String getStateDetails() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh:mm a");
-        return String.format("Complaint Number %s for %s filed on %s. Date of resolution %s", this.getCrn(),
+        return String.format("Complaint Number %s for %s filed on %s. Date of resolution %s. Priority is %s", this.getCrn(),
                 this.getComplaintType().getName(), formatter.format(this.getCreatedDate()),
-                formatter.format(this.getEscalationDate()));
+                formatter.format(this.getEscalationDate()), this.getPriority()!=null?this.getPriority().getName():"-");
     }
 
     @Override
