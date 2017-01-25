@@ -52,6 +52,7 @@ public class CollectionTableData {
     private String ulbName = StringUtils.EMPTY;
     private String wardName = StringUtils.EMPTY;
     private BigDecimal totalCollection = BigDecimal.ZERO;
+    private BigDecimal todaysCollection=BigDecimal.ZERO;
 
     public String getRegionName() {
         return regionName;
@@ -99,6 +100,14 @@ public class CollectionTableData {
 
     public void setTotalCollection(BigDecimal totalCollection) {
         this.totalCollection = totalCollection;
+    }
+
+    public BigDecimal getTodaysCollection() {
+        return todaysCollection;
+    }
+
+    public void setTodaysCollection(BigDecimal todaysCollection) {
+        this.todaysCollection = todaysCollection;
     }
 
 }
