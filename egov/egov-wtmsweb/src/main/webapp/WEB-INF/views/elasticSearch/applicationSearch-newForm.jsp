@@ -91,7 +91,7 @@
 										code="lbl.application.no" />
 								</label>
 						<div class="col-sm-3 add-margin">
-						<input type="text" name="applicationNumber" class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" maxlength="16" id="app-mobno"
+						<input type="text" name="applicationNumber" class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" maxlength="32" id="app-mobno"
 								 /></div>
 						
 						<c:if test="${ !citizenRole }">
