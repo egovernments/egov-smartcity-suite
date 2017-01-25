@@ -72,6 +72,9 @@ public class CollTableData {
     private BigDecimal dayTargetDemand = BigDecimal.ZERO;
     private BigDecimal lytdArrearsColl = BigDecimal.ZERO;
     private BigDecimal lytdCurrentColl = BigDecimal.ZERO;
+    private BigDecimal arrearInterestDemand = BigDecimal.ZERO;
+    private BigDecimal currentInterestDemand = BigDecimal.ZERO;
+    private BigDecimal rebate = BigDecimal.ZERO;
     private BigDecimal lyVar = BigDecimal.ZERO;
 
     public String getRegionName() {
@@ -288,6 +291,30 @@ public class CollTableData {
 
     public void setLytdCurrentColl(BigDecimal lytdCurrentColl) {
         this.lytdCurrentColl = lytdCurrentColl;
+    }
+
+    public BigDecimal getArrearInterestDemand() {
+        return arrearInterestDemand;
+    }
+
+    public void setArrearInterestDemand(BigDecimal arrearInterestDemand) {
+        this.arrearInterestDemand = arrearInterestDemand;
+    }
+
+    public BigDecimal getCurrentInterestDemand() {
+        return currentInterestDemand;
+    }
+
+    public void setCurrentInterestDemand(BigDecimal currentInterestDemand) {
+        this.currentInterestDemand = currentInterestDemand;
+    }
+
+    public BigDecimal getRebate() {
+        return rebate;
+    }
+
+    public void setRebate(BigDecimal rebate) {
+        this.rebate = rebate;
     }
 
 }

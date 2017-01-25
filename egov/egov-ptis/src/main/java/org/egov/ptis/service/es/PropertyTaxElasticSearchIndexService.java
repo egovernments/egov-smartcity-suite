@@ -81,6 +81,7 @@ import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
@@ -98,6 +99,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class PropertyTaxElasticSearchIndexService {
 
+    private static final String CURR_INTEREST_DMD = "curr_interest_dmd";
+    private static final String ARREAR_INTEREST_DMD = "arrear_interest_dmd";
+    private static final String CURR_DMD = "curr_dmd";
+    private static final String ARREAR_DMD_STR = "arrear_dmd";
+    private static final String CURRENT_INTEREST_COLLECTION = "currentInterestCollection";
+    private static final String ARREAR_INTEREST_COLLECTION = "arrearInterestCollection";
+    private static final String ANNUAL_COLLECTION = "annualCollection";
+    private static final String ARREAR_COLLECTION = "arrearCollection";
     private static final String CONSUMER_TYPE = "consumerType";
     private static final String IS_ACTIVE = "isActive";
     private static final String IS_EXEMPTED = "isExempted";
@@ -232,7 +241,6 @@ public class PropertyTaxElasticSearchIndexService {
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(PROPERTY_TAX_INDEX_NAME)
                 .withQuery(boolQuery).addAggregation(AggregationBuilders.sum(TOTALDEMAND).field(TOTAL_DEMAND))
                 .build();
-
         Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl, new ResultsExtractor<Aggregations>() {
             @Override
             public Aggregations extract(SearchResponse response) {
@@ -342,6 +350,19 @@ public class PropertyTaxElasticSearchIndexService {
      */
     public List<TaxPayerDetails> returnUlbWiseAggregationResults(CollectionDetailsRequest collectionDetailsRequest,
             String indexName, Boolean order, String orderingAggregationName, int size, boolean isBillCollectorWise) {
+        BigDecimal proportionalArrearDmd;
+        BigDecimal proportionalCurrDmd;
+        BigDecimal variation;
+        Sum totalDemandAggregation;
+        Sum totalCollectionAggregation;
+        Sum arrearDmd;
+        Sum currentDmd;
+        Sum arrearInterestDmd;
+        Sum currentInterestDmd;
+        Sum arrearCollAmt;
+        Sum currentCollAmt;
+        Sum arrearIntColl;
+        Sum currentIntColl;
         List<TaxPayerDetails> taxPayers = new ArrayList<>();
         Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest)
@@ -368,16 +389,12 @@ public class PropertyTaxElasticSearchIndexService {
         // Apply the ordering and max results size only if the type is not
         // billcollector
         if (!isBillCollectorWise) {
-            aggregation = AggregationBuilders.terms(BY_AGGREGATION_FIELD).field(groupingField).size(size)
-                    .order(Terms.Order.aggregation(orderingAggregationName, order))
-                    .subAggregation(AggregationBuilders.sum(TOTALDEMAND).field(TOTAL_DEMAND))
-                    .subAggregation(AggregationBuilders.sum(TOTAL_COLLECTION).field("totalCollection"));
+            aggregation = prepareAggregationForTaxPayers(orderingAggregationName, size, groupingField)
+                            .order(Terms.Order.aggregation(orderingAggregationName, order));
             searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName).withQuery(boolQuery)
                     .addAggregation(aggregation).build();
         } else {
-            aggregation = AggregationBuilders.terms(BY_AGGREGATION_FIELD).field(groupingField).size(250)
-                    .subAggregation(AggregationBuilders.sum(TOTALDEMAND).field(TOTAL_DEMAND))
-                    .subAggregation(AggregationBuilders.sum(TOTAL_COLLECTION).field("totalCollection"));
+            aggregation = prepareAggregationForTaxPayers(orderingAggregationName, 250, groupingField);
             searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName).withQuery(boolQuery)
                     .withPageable(new PageRequest(0, 250)).addAggregation(aggregation).build();
         }
@@ -389,6 +406,11 @@ public class PropertyTaxElasticSearchIndexService {
             }
         });
 
+        final Date fromDate = DateUtils.startOfDay(currFinYear.getStartingDate());
+        Date toDate = DateUtils.addDays(new Date(), 1);
+        Date lastYearFromDate = DateUtils.addYears(fromDate, -1);
+        Date lastYearToDate = DateUtils.addYears(toDate, -1);
+        
         //Fetch ward wise Bill Collector details for ward based grouping
         if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
             wardWiseBillCollectors = collectionIndexElasticSearchService.getWardWiseBillCollectors(collectionDetailsRequest);
@@ -398,12 +420,9 @@ public class PropertyTaxElasticSearchIndexService {
 
         TaxPayerDetails taxDetail;
         startTime = System.currentTimeMillis();
-        final Date fromDate = DateUtils.startOfDay(currFinYear.getStartingDate());
-        Date toDate = DateUtils.addDays(new Date(), 1);
-        Date lastYearFromDate = DateUtils.addYears(fromDate, -1);
-        Date lastYearToDate = DateUtils.addYears(toDate, -1);
         StringTerms totalAmountAggr = collAggr.get(BY_AGGREGATION_FIELD);
         for (Terms.Bucket entry : totalAmountAggr.getBuckets()) {
+            variation = BigDecimal.ZERO;
             taxDetail = new TaxPayerDetails();
             taxDetail.setRegionName(collectionDetailsRequest.getRegionName());
             taxDetail.setDistrictName(collectionDetailsRequest.getDistrictName());
@@ -421,10 +440,20 @@ public class PropertyTaxElasticSearchIndexService {
                 }
             } else
                 taxDetail.setUlbName(fieldName);
+            
             // Proportional Demand = (totalDemand/12)*noOfmonths
             int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
-            Sum totalDemandAggregation = entry.getAggregations().get(TOTALDEMAND);
-            Sum totalCollectionAggregation = entry.getAggregations().get(TOTAL_COLLECTION);
+            totalDemandAggregation = entry.getAggregations().get(TOTALDEMAND);
+            totalCollectionAggregation = entry.getAggregations().get(TOTAL_COLLECTION);
+            arrearDmd = entry.getAggregations().get(ARREAR_DMD_STR);
+            currentDmd = entry.getAggregations().get(CURR_DMD);
+            arrearInterestDmd = entry.getAggregations().get(ARREAR_INTEREST_DMD);
+            currentInterestDmd = entry.getAggregations().get(CURR_INTEREST_DMD);
+            arrearCollAmt = entry.getAggregations().get(ARREAR_COLLECTION);
+            currentCollAmt = entry.getAggregations().get(ANNUAL_COLLECTION);
+            arrearIntColl = entry.getAggregations().get(ARREAR_INTEREST_COLLECTION);
+            currentIntColl = entry.getAggregations().get(CURRENT_INTEREST_COLLECTION);
+            
             BigDecimal totalDemandValue = BigDecimal.valueOf(totalDemandAggregation.getValue()).setScale(0,
                     BigDecimal.ROUND_HALF_UP);
             BigDecimal totalCollections = BigDecimal.valueOf(totalCollectionAggregation.getValue()).setScale(0,
@@ -439,12 +468,33 @@ public class PropertyTaxElasticSearchIndexService {
             taxDetail.setCytdBalDmd(proportionalDemand.subtract(totalCollections));
             BigDecimal lastYearCollection = collectionIndexElasticSearchService
                     .getCollectionBetweenDates(collectionDetailsRequest, lastYearFromDate, lastYearToDate, fieldName, "totalAmount");
-            // TotalCollectionsForDatesForUlb(collectionDetailsRequest,
-            // lastYearFromDate, lastYearToDate,fieldName);
             taxDetail.setLytdColl(lastYearCollection);
+            taxDetail.setArrearColl(BigDecimal.valueOf(arrearCollAmt.getValue()).setScale(0,
+                    BigDecimal.ROUND_HALF_UP));
+            taxDetail.setCurrentColl(BigDecimal.valueOf(currentCollAmt.getValue()).setScale(0,
+                    BigDecimal.ROUND_HALF_UP));
+            taxDetail.setInterestColl(BigDecimal.valueOf(arrearIntColl.getValue()).setScale(0,
+                    BigDecimal.ROUND_HALF_UP).add(BigDecimal.valueOf(currentIntColl.getValue()).setScale(0,
+                            BigDecimal.ROUND_HALF_UP)));
+            taxDetail.setArrearDemand(BigDecimal.valueOf(arrearDmd.getValue()).setScale(0,
+                    BigDecimal.ROUND_HALF_UP));
+            taxDetail.setCurrentDemand(BigDecimal.valueOf(currentDmd.getValue()).setScale(0,
+                    BigDecimal.ROUND_HALF_UP));
+            taxDetail.setArrearInterestDemand(BigDecimal.valueOf(arrearInterestDmd.getValue()).setScale(0,
+                    BigDecimal.ROUND_HALF_UP));
+            taxDetail.setCurrentInterestDemand(BigDecimal.valueOf(currentInterestDmd.getValue()).setScale(0,
+                    BigDecimal.ROUND_HALF_UP));
+            proportionalArrearDmd = (taxDetail.getArrearDemand().divide(BigDecimal.valueOf(12),
+                    BigDecimal.ROUND_HALF_UP))
+                            .multiply(BigDecimal.valueOf(noOfMonths));
+            proportionalCurrDmd = (taxDetail.getCurrentDemand().divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP))
+                    .multiply(BigDecimal.valueOf(noOfMonths));
+            taxDetail.setProportionalArrearDemand(proportionalArrearDmd);
+            taxDetail.setProportionalCurrentDemand(proportionalCurrDmd);
+            
             // variance = ((currentYearCollection -
             // lastYearCollection)*100)/lastYearCollection
-            BigDecimal variation = BigDecimal.ZERO;
+            
             if (lastYearCollection.compareTo(BigDecimal.ZERO) == 0)
                 variation = PropertyTaxConstants.BIGDECIMAL_100;
             else
@@ -463,6 +513,21 @@ public class PropertyTaxElasticSearchIndexService {
             return taxPayers;
         else
             return returnTopResults(taxPayers, size, order);
+    }
+
+    private TermsBuilder prepareAggregationForTaxPayers(String orderingAggregationName, int size,
+            String groupingField) {
+        return AggregationBuilders.terms(BY_AGGREGATION_FIELD).field(groupingField).size(size)
+                .subAggregation(AggregationBuilders.sum(TOTALDEMAND).field(TOTAL_DEMAND))
+                .subAggregation(AggregationBuilders.sum(TOTAL_COLLECTION).field("totalCollection"))
+                .subAggregation(AggregationBuilders.sum(ARREAR_COLLECTION).field(ARREAR_COLLECTION))
+                .subAggregation(AggregationBuilders.sum(ANNUAL_COLLECTION).field(ANNUAL_COLLECTION))
+                .subAggregation(AggregationBuilders.sum(ARREAR_INTEREST_COLLECTION).field(ARREAR_INTEREST_COLLECTION))
+                .subAggregation(AggregationBuilders.sum(CURRENT_INTEREST_COLLECTION).field(CURRENT_INTEREST_COLLECTION))
+                .subAggregation(AggregationBuilders.sum(ARREAR_DMD_STR).field("arrearDemand"))
+                .subAggregation(AggregationBuilders.sum(CURR_DMD).field("annualDemand"))
+                .subAggregation(AggregationBuilders.sum(ARREAR_INTEREST_DMD).field("arrearInterestDemand"))
+                .subAggregation(AggregationBuilders.sum(CURR_INTEREST_DMD).field("currentInterestDemand"));
     }
 
     private List<TaxPayerDetails> returnTopResults(List<TaxPayerDetails> taxPayers, int size, Boolean order) {

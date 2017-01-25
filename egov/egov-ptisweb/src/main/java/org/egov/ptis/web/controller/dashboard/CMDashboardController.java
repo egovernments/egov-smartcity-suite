@@ -157,7 +157,7 @@ public class CMDashboardController {
     }
 
     /**
-     * Returns Top Ten Tax Performers Across all ULB's
+     * Returns Top Ten Tax Payers Across all ULB's
      * 
      * @param collDetailsRequestStr
      * @return
@@ -180,7 +180,7 @@ public class CMDashboardController {
     }
 
     /**
-     * Returns Top Ten Tax Performers Across all ULB's
+     * Returns Bottom Ten Tax Payers Across all ULB's
      * 
      * @param collDetailsRequestStr
      * @return
