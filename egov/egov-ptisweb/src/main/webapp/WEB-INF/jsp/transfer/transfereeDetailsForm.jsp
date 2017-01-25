@@ -167,13 +167,11 @@
           function getAadharDetailsForTransferee(obj) {
 	    	   var aadharNo = jQuery(obj).val();
 	    	   var rowidx= jQuery(obj).data('idx');
-	    	   console.log('calling :) ->'+rowidx + ' ->'+ aadharNo);
 	    	   jQuery.ajax({
 					type: "GET",
 					url: "/egi/aadhaar/"+aadharNo,
 					cache: true,
 				}).done(function(value) {
-					console.log('response received!')
 					var userInfoObj = jQuery.parseJSON(value);
 					if(userInfoObj.valid == true) {
 						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.name']").val(userInfoObj.name);
@@ -218,7 +216,6 @@
           function getUserDetailsForMobileNo(obj) {
        	   var mobileNo = jQuery(obj).val();
        	   var rowidx= jQuery(obj).data('idx');
-       	   console.log('calling :) ->'+rowidx + ' ->'+ mobileNo);
         if(jQuery("input[name='editMobileno["+ rowidx +"]']").is(':checked') ==  true) {
         	jQuery("input[name='editMobileno["+ rowidx +"]']").prop('checked', false);
         } else {

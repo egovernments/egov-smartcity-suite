@@ -146,13 +146,11 @@
        function getAadharDetails(obj) {
     	   var aadharNo = jQuery(obj).val();
     	   var rowidx= jQuery(obj).data('idx');
-    	   console.log('calling :) ->'+rowidx + ' ->'+ aadharNo);
     	   jQuery.ajax({
 				type: "GET",
 				url: "/egi/aadhaar/"+aadharNo,
 				cache: true
 			}).done(function(value) {
-				console.log('response received!')
 				var userInfoObj = jQuery.parseJSON(value);
 				if(userInfoObj.uid == aadharNo) {
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.name']").val(userInfoObj.name);
@@ -193,7 +191,6 @@
            if(jQuery("input[name='editMobileno["+ rowidx +"]']").is(':checked') ==  true) {
         	   jQuery("input[name='editMobileno["+ rowidx +"]']").prop('checked', false);
            } else {
-    	   console.log('calling :) ->'+rowidx + ' ->'+ mobileNo);
     	   jQuery.ajax({
 				type: "GET",
 				url: "/ptis/public/common/ajaxCommon-getUserByMobileNo.action",

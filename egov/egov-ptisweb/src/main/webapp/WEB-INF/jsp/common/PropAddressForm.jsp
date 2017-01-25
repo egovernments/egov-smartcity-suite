@@ -47,7 +47,6 @@
 });
 
 function populateBoundaries() {
-	console.log("came jursidiction"+jQuery('#locality').val());
 	jQuery.ajax({
 		url: "/egi/public/boundary/ajaxBoundary-blockByLocality.action",
 		type: "GET",
@@ -80,7 +79,6 @@ function populateBoundaries() {
 			</s:if>
 		}, 
 		error: function (response) {
-			console.log("failed");
 			jQuery('#wardId').html("");
 			jQuery('#blockId').html("");
 			jQuery('#streetId').html("");
@@ -109,7 +107,6 @@ function populateBlock() {
 			</s:if>
 		}, 
 		error: function (response) {
-			console.log("failed");
 			jQuery('#blockId').html("");
 			bootbox.alert("No block details mapped for ward")
 		}

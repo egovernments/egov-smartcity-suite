@@ -80,7 +80,7 @@
 								<s:if test="%{documents.isEmpty()}">
 									<s:hidden name="documents[%{#status.index}].type.id" value="%{id}"></s:hidden>
 					       			<s:if test="mandatory">
-										<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button" required="true"/>
+										<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button validateDocs" required="true"/>
 									</s:if>
 									<s:else>
 										<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button"/>
@@ -92,7 +92,7 @@
 									</s:if>
 									<s:hidden name="documents[%{#status.index}].id"/>
 									<s:if test="mandatory">
-										<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button" required="true"/>
+										<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button validateDocs" required="true"/>
 									</s:if>
 									<s:else>
 										<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button"/>

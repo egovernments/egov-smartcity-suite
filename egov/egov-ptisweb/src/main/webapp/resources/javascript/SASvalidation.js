@@ -961,8 +961,6 @@ function addOwner() {
 								}
 							}
 							
-							console.log('data index -> '+jQuery(this).html());
-							
 							jQuery(this).attr('readonly', false);
 							jQuery(this).removeAttr('disabled');
 							jQuery(this).prop('checked', false);
@@ -1284,7 +1282,6 @@ function addFloor()
 	    			if((jQuery(this).data('optional') === 0) && (!jQuery(this).val()))
 	    			{
 	    				jQuery(this).focus();
-	    				console.log('called =>' + jQuery(this).attr('id'));
 	    				bootbox.alert(jQuery(this).data('errormsg'));
 	    				isValid=0;//set validation failure
 	    				return false;
@@ -1403,8 +1400,6 @@ function delFloor(obj)
 
 //calculate area in floor details table
 function calculateArea(obj) {
-	console.log(jQuery(obj)[0].attributes['data-result'].nodeValue);
-	//
 	var field1 = jQuery(obj).val();
 	var field2 = jQuery('input[name="'+ jQuery(obj)[0].attributes['data-calculate'].nodeValue +'"]').val();
 	jQuery('input[name="'+ jQuery(obj)[0].attributes['data-result'].nodeValue +'"]').val((field1*field2));

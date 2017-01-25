@@ -179,7 +179,6 @@ function resetFloorsDetails() {
 
 function loadUsages(req, res)
 {
-	console.log('called Response ->'+ JSON.stringify(res));
 	jQuery('select[id="floorUsage"]').find('option:not(:first)').remove();
 	jQuery.each(res.results, function( index, option ) {
         jQuery('select[id="floorUsage"]').append(jQuery('<option>').text(option.Text).attr('value', option.Value));

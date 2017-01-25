@@ -48,7 +48,6 @@ $('#dailyCollectionReportSearchVLT').click(function(e){
 	var toDate = $("#toDate").val(); 
 	$.post("/ptis/report/dailyCollectionVLT", $('#dailyCollectionformVLT').serialize())
 	.done(function (searchResult) {
-		//console.log(JSON.stringify(searchResult));
 		
 		$.each(searchResult, function( key, record ) {
 			record.totalLibCess=record.currentCess + record.arrearCess;

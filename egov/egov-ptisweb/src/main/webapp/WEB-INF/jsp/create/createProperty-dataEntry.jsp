@@ -125,7 +125,6 @@ jQuery(function ($) {
 
 
 		$('#Create').click(function(e){
-			console.log('called :)!');
 			return validateProperty();
 		}); 
 		
@@ -150,7 +149,6 @@ function validateProperty() {
 		cache: false,
 		dataType: "json",
 		success: function (response) {
-			console.log("success"+response);
 			if(response.exists) {
                 bootbox.alert("Entered old assessment number is not unique and is already present in the system. Please enter unique old assessment number");
 				isSubmit = false;
@@ -180,7 +178,6 @@ function loadOnStartUp() {
 	document.forms[0].propTypeCategoryId.options[document.forms[0].propTypeCategoryId.selectedIndex].value = category;
 	toggleFloorDetails();
      var aadhartextboxes = jQuery('.txtaadhar');
-     console.log(aadhartextboxes);
      aadhartextboxes.each(function() {
 	   	if(jQuery(this).val())
 	   	{

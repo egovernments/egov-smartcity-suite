@@ -87,7 +87,6 @@
 			var trClones = new Array();
 			var instDetailsTable = document.getElementById("instDetails");
 
-			console.log(newDemandRsnsCount, rowIndex);
 		   		   
 			if (newInstallmentCount == 0) { 
 				for (var i = 0; i < noOfDemandRsns; i++) {
@@ -252,7 +251,6 @@
 			{
 				isAddedFirstNewInsRow=true;
 				noOfDemandRsns=rowTemplateCount;
-				console.log('Template row count is ->'+noOfDemandRsns);
 			}
 			else if(rowTemplateCount === 0)
 			{

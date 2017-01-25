@@ -114,7 +114,6 @@ $('#baseRegisterReportSearch').click(function(e){
 
 
 $('#ward').change(function(){
-	console.log("came on change of ward"+$('#ward').val());
 	jQuery.ajax({
 		url: "/egi/boundary/ajaxBoundary-blockByWard.action",
 		type: "GET",
@@ -124,7 +123,6 @@ $('#ward').change(function(){
 		cache: false,
 		dataType: "json",
 		success: function (response) {
-			console.log("success"+response);
 			jQuery('#block').html("");
 			jQuery('#block').append("<option value=''>Select</option>");
 			jQuery.each(response, function(index, value) {
@@ -134,7 +132,6 @@ $('#ward').change(function(){
 		error: function (response) {
 			jQuery('#block').html("");
 			jQuery('#block').append("<option value=''>Select</option>");
-			console.log("failed");
 		}
 	});
 });

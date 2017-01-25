@@ -170,7 +170,6 @@
         function reCalculateTotalFooterWhenExport(tableIdWithOutPrefix)
         {
         	
-        	console.log('length ->'+jQuery("#"+tableIdWithOutPrefix+" tfoot tr").length);
         	jQuery("#"+tableIdWithOutPrefix+" tfoot td").each(function( index ) {
            		 if(index!==0)
            		 {
