@@ -76,6 +76,12 @@ function grievance(src){
 	$('#getiframe').attr('src', 'http://www.egovernments.org/docs/usermanuals/ap/pgrs.pdf');
 }
 
+function council(src){
+	//bootbox.alert(src);
+	$('#getiframe').attr('src', 'http://www.egovernments.org/docs/usermanuals/ap/council.pdf');
+}
+
+
 </script>
 <div class="row text-center" style="height:calc(100%);">
 
@@ -100,6 +106,12 @@ function grievance(src){
 						<span class="hidden-xs">Public Grievance and Redressal System</span>
 					</a>
 				</li>
+				<li class="source" data-src="council"><a
+					href="javascript:void(0);">
+						<div class="text-center">
+							<i class="fa fa-university"></i>
+						</div> <span class="hidden-xs">Council Management</span>
+				</a></li>
 			</ul>
 		</nav>
 	</div>
