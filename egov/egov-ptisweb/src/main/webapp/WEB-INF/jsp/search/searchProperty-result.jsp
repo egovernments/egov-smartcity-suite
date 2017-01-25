@@ -270,8 +270,11 @@
 									value="Records" />
 								<display:setProperty name="export.pdf" value="false" />
 								<display:setProperty name="export.rtf" value="false" />
+								<display:setProperty name="export.xml.filename" value="SearchProperty.xml" />
 								<display:setProperty name="export.xml" value="true" />
+								<display:setProperty name="export.csv.filename" value="SearchProperty.csv" />
 								<display:setProperty name="export.csv" value="true" />
+								<display:setProperty name="export.excel.filename" value="SearchProperty.xls" />
 								<display:setProperty name="export.excel" value="true" />
 							</display:table>
 						</tr>
