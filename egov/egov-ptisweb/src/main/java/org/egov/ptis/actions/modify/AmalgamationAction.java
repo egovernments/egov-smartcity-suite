@@ -180,6 +180,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private Map<String, String> guardianRelationMap;
     private transient PropertyService propService;
     private Map<String, String> propTypeCategoryMap;
+    private boolean allowEditDocument = Boolean.FALSE;
 
     @Autowired
     private transient PropertyPersistenceService basicPropertyService;
@@ -433,6 +434,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         validateVacantLandConversion();
         if (hasErrors())
             if (checkDesignationsForEdit()) {
+                allowEditDocument = Boolean.TRUE;
                 return NEW;
             } else if (checkDesignationsForView())
                 return VIEW;
@@ -526,6 +528,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         }
         if (checkDesignationsForEdit()) {
             mode = EDIT;
+            allowEditDocument = Boolean.TRUE;
         } else if (checkDesignationsForView()) {
             mode = VIEW;
         }
@@ -1195,6 +1198,14 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
 
     public void setPropTypeCategoryMap(Map<String, String> propTypeCategoryMap) {
         this.propTypeCategoryMap = propTypeCategoryMap;
+    }
+
+    public boolean isAllowEditDocument() {
+        return allowEditDocument;
+    }
+
+    public void setAllowEditDocument(boolean allowEditDocument) {
+        this.allowEditDocument = allowEditDocument;
     }
 
 }

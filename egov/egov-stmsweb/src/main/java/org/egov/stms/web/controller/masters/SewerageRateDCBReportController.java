@@ -160,7 +160,8 @@ public class SewerageRateDCBReportController {
     }
 
     @RequestMapping(value = "/dcbReportWardwiseList", method = RequestMethod.GET)
-    public @ResponseBody void searchApplication(@ModelAttribute final DCBReportWardwiseResult searchRequest, final Model model,
+    @ResponseBody
+    public void searchApplication(@ModelAttribute final DCBReportWardwiseResult searchRequest, final Model model,
             final HttpServletResponse response) throws IOException {
         final List<Boundary> wardList = new ArrayList<>();
         List<DCBReportWardwiseResult> wardwiseResultList;
@@ -242,10 +243,10 @@ public class SewerageRateDCBReportController {
         ulbName = cityWebsite.getName();
 
         wardConnectionMap = sewerageIndexService.wardWiseConnectionQueryFilter(propertyTypeList, revenueWard, ulbName);
-
+        model.addAttribute("currentDate", new Date());
         model.addAttribute("revenueWard", revenueWard);
         model.addAttribute("dcbResultList",
-                sewerageDCBReporService.getSewerageDCBWardConnections(wardConnectionMap, propType, request));
+                sewerageDCBReporService.getSewerageDCBWardConnections(wardConnectionMap, propType));
         return "sewerage-dcbWardConnections";
     }
 }

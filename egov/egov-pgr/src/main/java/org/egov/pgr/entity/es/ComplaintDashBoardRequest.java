@@ -57,6 +57,7 @@ public class ComplaintDashBoardRequest {
     private int size;
     private String type;
     private String localityName;
+    private String functionaryName;
 
     public String getDistrictName() {
         return districtName;
@@ -176,5 +177,13 @@ public class ComplaintDashBoardRequest {
 
     public void setLocalityName(final String localityName) {
         this.localityName = localityName;
+    }
+
+    public String getFunctionaryName() {
+        return functionaryName;
+    }
+
+    public void setFunctionaryName(final String functionaryName) {
+        this.functionaryName = functionaryName;
     }
 }

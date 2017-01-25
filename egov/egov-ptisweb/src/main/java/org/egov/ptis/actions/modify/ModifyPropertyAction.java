@@ -97,6 +97,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -314,6 +315,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private Long layoutApprovalAuthorityId;
     private List<VacantLandPlotArea> vacantLandPlotAreaList = new ArrayList<>();
     private List<LayoutApprovalAuthority> layoutApprovalAuthorityList = new ArrayList<>();
+    private boolean allowEditDocument = Boolean.FALSE;
 
     @Autowired
     transient PropertyPersistenceService basicPropertyService;
@@ -544,21 +546,22 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             showTaxCalcBtn = Boolean.TRUE;
         final String currWfState = propertyModel.getState().getValue();
         populateFormData(Boolean.TRUE);
+        isEligibleForDocEdit();
         corrsAddress = PropertyTaxUtil.getOwnerAddress(propertyModel.getBasicProperty().getPropertyOwnerInfo());
         amalgPropIds = new String[10];
-        if (propertyModel.getPropertyDetail().getFloorDetails().size() > 0)
+        if (!propertyModel.getPropertyDetail().getFloorDetails().isEmpty())
             setFloorDetails(propertyModel);
         if (!currWfState.endsWith(WF_STATE_COMMISSIONER_APPROVED)) {
             int i = 0;
             for (final PropertyStatusValues propstatval : basicProp.getPropertyStatusValuesSet()) {
-                if (propstatval.getIsActive().equals("W")) {
+                if ("W".equals(propstatval.getIsActive())) {
                     setPropStatValForView(propstatval);
                     LOGGER.debug("view: PropertyStatusValues for new modify screen: " + propstatval);
                 }
                 // setting the amalgamated properties
                 LOGGER.debug("view: Amalgamated property ids:");
                 if (PROP_CREATE_RSN.equals(propstatval.getPropertyStatus().getStatusCode())
-                        && propstatval.getIsActive().equals("Y"))
+                        && "Y".equals(propstatval.getIsActive()))
                     if (propstatval.getReferenceBasicProperty() != null) {
                         amalgPropIds[i] = propstatval.getReferenceBasicProperty().getUpicNo();
                         LOGGER.debug(amalgPropIds[i] + ", ");
@@ -574,14 +577,14 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
             int i = 0;
             for (final PropertyStatusValues propstatval : basicProp.getPropertyStatusValuesSet()) {
-                if (propstatval.getIsActive().equals("Y")) {
+                if ("Y".equals(propstatval.getIsActive())) {
                     setPropStatValForView(propstatval);
                     LOGGER.debug("PropertyStatusValues for view modify screen: " + propstatval);
                 }
                 // setting the amalgamated properties
                 LOGGER.debug("view: Amalgamated property ids:");
                 if (PROP_CREATE_RSN.equals(propstatval.getPropertyStatus().getStatusCode())
-                        && propstatval.getIsActive().equals("Y"))
+                        && "Y".equals(propstatval.getIsActive()))
                     if (propstatval.getReferenceBasicProperty() != null) {
                         amalgPropIds[i] = propstatval.getReferenceBasicProperty().getUpicNo();
                         LOGGER.debug(amalgPropIds[i] + ", ");
@@ -596,6 +599,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         LOGGER.debug("view: ModifyReason: " + getModifyRsn());
         LOGGER.debug("Exiting from view");
         return VIEW;
+    }
+    
+    private void isEligibleForDocEdit() {
+        String nextAction = propertyModel.getState().getNextAction();
+        if (WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING.equals(nextAction)
+                || WF_STATE_ASSISTANT_APPROVAL_PENDING.equals(nextAction))
+            setAllowEditDocument(Boolean.TRUE);
     }
 
     /**
@@ -612,8 +622,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         if (hasErrors() && (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN) ||
                 StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT) ||
                 StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
-                && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn))
+                && PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn)) {
             showTaxCalcBtn = Boolean.TRUE;
+            allowEditDocument = Boolean.TRUE;
+        }
         final long startTimeMillis = System.currentTimeMillis();
         isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
 
@@ -2265,5 +2277,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     public void setLayoutApprovalAuthorityList(List<LayoutApprovalAuthority> layoutApprovalAuthorityList) {
         this.layoutApprovalAuthorityList = layoutApprovalAuthorityList;
+    }
+    
+    public boolean isAllowEditDocument() {
+        return allowEditDocument;
+    }
+
+    public void setAllowEditDocument(boolean allowEditDocument) {
+        this.allowEditDocument = allowEditDocument;
     }
 }

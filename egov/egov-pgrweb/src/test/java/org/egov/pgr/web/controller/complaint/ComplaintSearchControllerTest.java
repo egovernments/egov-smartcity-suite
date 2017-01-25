@@ -47,10 +47,10 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
-import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeService;
+import org.egov.pgr.service.ReceivingModeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,7 +59,6 @@ import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -90,6 +89,9 @@ public class ComplaintSearchControllerTest extends AbstractContextControllerTest
     @Mock
     private DepartmentService departmentService;
 
+    @Mock
+    private ReceivingModeService receivingModeService;
+
     @InjectMocks
     private ComplaintSearchController complaintSearchController;
 
@@ -102,14 +104,14 @@ public class ComplaintSearchControllerTest extends AbstractContextControllerTest
     @Before
     public void before() {
         mockMvc = mvcBuilder.build();
-        final List<Department> departmentList = new ArrayList<Department>();
+        final List<Department> departmentList = new ArrayList<>();
         when(departmentService.getAllDepartments()).thenReturn(departmentList);
 
-        final List<ComplaintStatus> complaintStatusList = new ArrayList<ComplaintStatus>();
+        final List<ComplaintStatus> complaintStatusList = new ArrayList<>();
         when(complaintStatusService.getAllComplaintStatus()).thenReturn(complaintStatusList);
 
-        final List receivingModes = Arrays.asList(ReceivingMode.values());
-        when(complaintService.getAllReceivingModes()).thenReturn(receivingModes);
+        final List receivingModes = new ArrayList();
+        when(receivingModeService.getReceivingModes()).thenReturn(receivingModes);
 
         final List complaintTypeList = new ArrayList<ComplaintType>();
         when(complaintTypeService.findActiveComplaintTypes()).thenReturn(complaintTypeList);

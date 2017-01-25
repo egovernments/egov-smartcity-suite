@@ -66,6 +66,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.OBJECTION_RECORD_INSP
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_OBJ;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISIONPETITION_STATUS_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
@@ -306,6 +307,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private Boolean isMeesevaUser = Boolean.FALSE;
     private String meesevaApplicationNumber;
     private String wfType;
+    private boolean allowEditDocument = Boolean.FALSE;
 
     public RevisionPetitionAction() {
 
@@ -599,8 +601,14 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     + objection.getInspections().get(objection.getInspections().size() - 1));
         vaidatePropertyDetails();
 
-        if (hasErrors())
+        if (hasErrors()) {
+            checkIfEligibleForDocEdit();
             return "view";
+        }
+        String designation = propService.getDesignationForPositionAndUser(objection.getCurrentState().getOwnerPosition().getId(),
+                securityUtils.getCurrentUser().getId());
+        if(REVENUE_INSPECTOR_DESGN.equals(designation))
+            propService.processAndStoreDocument(objection.getDocuments());
         updateStateAndStatus(objection);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("ObjectionAction | recordInspectionDetails | End "
@@ -1163,6 +1171,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             westBoundary = propertyID.getWestBoundary();
         }
         populatePropertyTypeCategory();
+        checkIfEligibleForDocEdit();
 
         if (objection != null && objection.getProperty() != null) {
             setReasonForModify(objection.getProperty().getPropertyDetail().getPropertyMutationMaster().getCode());
@@ -1193,6 +1202,13 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("ObjectionAction | view | End");
         return "view";
+    }
+    
+    private void checkIfEligibleForDocEdit() {
+        String designation = propService.getDesignationForPositionAndUser(objection.getCurrentState().getOwnerPosition().getId(),
+                securityUtils.getCurrentUser().getId());
+        if (objection.getCurrentState().getValue().endsWith(STATUS_REJECTED) || REVENUE_INSPECTOR_DESGN.equals(designation))
+            setAllowEditDocument(Boolean.TRUE);
     }
 
     public String viewObjectionDetails() {
@@ -2068,5 +2084,13 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         } else
             return null;
 
+    }
+
+    public boolean isAllowEditDocument() {
+        return allowEditDocument;
+    }
+
+    public void setAllowEditDocument(boolean allowEditDocument) {
+        this.allowEditDocument = allowEditDocument;
     }
 }

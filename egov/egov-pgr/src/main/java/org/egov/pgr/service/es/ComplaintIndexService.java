@@ -68,11 +68,9 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.es.CityIndexService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.mapper.BeanMapperConfiguration;
-import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.Escalation;
 import org.egov.pgr.entity.enums.ComplaintStatus;
-import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.entity.es.ComplaintDashBoardRequest;
 import org.egov.pgr.entity.es.ComplaintDashBoardResponse;
 import org.egov.pgr.entity.es.ComplaintIndex;
@@ -142,34 +140,11 @@ public class ComplaintIndexService {
         complaintIndex.setCityDomainUrl(city.getDomainURL());
         complaintIndex.setCityName(city.getName());
         complaintIndex.setCityRegionName(city.getRegionName());
-        if (complaint.getReceivingMode().equals(ReceivingMode.MOBILE)
-                && complaint.getCreatedBy().getType().equals(UserType.CITIZEN))
-            complaintIndex.setSource(environment.getProperty("complaint.source.citizen.app"));
-        if (complaint.getReceivingMode().equals(ReceivingMode.MOBILE)
-                && complaint.getCreatedBy().getType().equals(UserType.EMPLOYEE))
-            complaintIndex.setSource(environment.getProperty("complaint.source.emp.app"));
-        else if (complaint.getReceivingMode().equals(ReceivingMode.WEBSITE)
-                && complaint.getCreatedBy().getType().equals(UserType.CITIZEN))
-            complaintIndex.setSource(environment.getProperty("complaint.source.portal.citizen"));
-        else if (complaint.getReceivingMode().equals(ReceivingMode.WEBSITE)
-                && complaint.getCreatedBy().getType().equals(UserType.SYSTEM))
-            complaintIndex.setSource(environment.getProperty("complaint.source.portal.anonymous"));
-        else if (complaint.getReceivingMode().equals(ReceivingMode.CDMA)
-                && complaint.getCreatedBy().getType().equals(UserType.SYSTEM))
-            complaintIndex.setSource(environment.getProperty("complaint.source.cdma.anonymous"));
-        else if (complaint.getReceivingMode().equals(ReceivingMode.WEBSITE)
-                && complaint.getCreatedBy().getType().equals(UserType.EMPLOYEE))
-            complaintIndex.setSource(environment.getProperty("complaint.source.emp.website"));
-        else if (complaint.getReceivingMode().equals(ReceivingMode.CALL)
-                && complaint.getCreatedBy().getType().equals(UserType.EMPLOYEE))
-            complaintIndex.setSource(environment.getProperty("complaint.source.website.emp.phone"));
-        else if (complaint.getReceivingMode().equals(ReceivingMode.EMAIL)
-                && complaint.getCreatedBy().getType().equals(UserType.EMPLOYEE))
-            complaintIndex.setSource(environment.getProperty("complaint.source.website.emp.email"));
-        else if (complaint.getReceivingMode().equals(ReceivingMode.MANUAL)
-                && complaint.getCreatedBy().getType().equals(UserType.EMPLOYEE))
-            complaintIndex.setSource(environment.getProperty("complaint.source.website.emp.manual"));
-
+        complaintIndex.setSource(
+                environment.getProperty(
+                        String.format("complaint.source.%s.%s",
+                                complaint.getCreatedBy().getType().name().toLowerCase(),
+                                complaint.getReceivingMode().getCode().toLowerCase())));
         complaintIndex.setClosed(false);
         complaintIndex.setComplaintIsClosed("N");
         complaintIndex.setIfClosed(0);
@@ -803,7 +778,7 @@ public class ComplaintIndexService {
                     responseDetail.setUlbName(hit[0].field("cityName").getValue());
                     responseDetail.setDistrictName(hit[0].field("cityDistrictName").getValue());
                     responseDetail.setDepartmentName(hit[0].field("departmentName").getValue());
-                    responseDetail.setFunctionaryMobileNumber(hit[0].field("currentFunctionaryMobileNumber").getValue());
+                    responseDetail.setFunctionaryMobileNumber(hit[0].field("initialFunctionaryMobileNumber").getValue());
 
                     final Terms openAndClosedTerms = functionaryBucket.getAggregations().get("closedComplaintCount");
                     for (final Bucket closedCountbucket : openAndClosedTerms.getBuckets())
@@ -999,7 +974,7 @@ public class ComplaintIndexService {
                 complaintSouce.setWardName(bucket.getKeyAsString());
             if (LOCALITY_NAME.equals(groupByField))
                 complaintSouce.setLocalityName(bucket.getKeyAsString());
-            if ("currentFunctionaryName".equals(groupByField)) {
+            if ("initialFunctionaryName".equals(groupByField)) {
                 complaintSouce.setFunctionaryName(bucket.getKeyAsString());
                 final String mobileNumber = complaintIndexRepository.getFunctionryMobileNumber(bucket.getKeyAsString());
                 complaintSouce.setFunctionaryMobileNumber(mobileNumber);
@@ -1069,6 +1044,9 @@ public class ComplaintIndexService {
         if (isNotBlank(complaintDashBoardRequest.getLocalityName()))
             boolQuery = boolQuery.filter(matchQuery("localityName",
                     complaintDashBoardRequest.getLocalityName()));
+        if (isNotBlank(complaintDashBoardRequest.getFunctionaryName()))
+            boolQuery = boolQuery.filter(matchQuery("initialFunctionaryName",
+                    complaintDashBoardRequest.getFunctionaryName()));
 
         return boolQuery;
     }
@@ -1113,7 +1091,7 @@ public class ComplaintIndexService {
             responseDetail.setWardName(bucket.getKeyAsString());
         if (LOCALITY_NAME.equals(groupByField))
             responseDetail.setLocalityName(bucket.getKeyAsString());
-        if ("currentFunctionaryName".equals(groupByField)) {
+        if ("initialFunctionaryName".equals(groupByField)) {
             responseDetail.setFunctionaryName(bucket.getKeyAsString());
             final String mobileNumber = complaintIndexRepository.getFunctionryMobileNumber(bucket.getKeyAsString());
             responseDetail.setFunctionaryMobileNumber(mobileNumber);
@@ -1141,7 +1119,7 @@ public class ComplaintIndexService {
     }
 
     public List<ComplaintIndex> getFunctionaryWiseComplaints(final String functionaryName) {
-        final List<ComplaintIndex> complaints = complaintIndexRepository.findAllComplaintsBySource("currentFunctionaryName",
+        final List<ComplaintIndex> complaints = complaintIndexRepository.findAllComplaintsBySource("initialFunctionaryName",
                 functionaryName);
         String searchUrl;
         for (final ComplaintIndex complaint : complaints)
@@ -1156,6 +1134,24 @@ public class ComplaintIndexService {
     public List<ComplaintIndex> getLocalityWiseComplaints(final String localityName) {
         final List<ComplaintIndex> complaints = complaintIndexRepository.findAllComplaintsBySource(LOCALITY_NAME,
                 localityName);
+        String searchUrl;
+        for (final ComplaintIndex complaint : complaints)
+            if (isNotBlank(complaint.getCityCode())) {
+                final CityIndex city = cityIndexService.findOne(complaint.getCityCode());
+                searchUrl = city.getDomainurl() + "/pgr/complaint/view/" + complaint.getCrn();
+                complaint.setUrl(searchUrl);
+            }
+        return complaints;
+    }
+
+    // This is a generic method to fetch all complaints based on fieldName and its value
+    public List<ComplaintIndex> getFilteredComplaints(final ComplaintDashBoardRequest complaintDashBoardRequest,
+            final String fieldName, final String fieldValue) {
+        final BoolQueryBuilder boolQuery = getFilterQuery(complaintDashBoardRequest);
+        boolQuery.filter(matchQuery(fieldName, fieldValue));
+
+        final List<ComplaintIndex> complaints = complaintIndexRepository.findAllComplaintsByField(complaintDashBoardRequest,
+                boolQuery);
         String searchUrl;
         for (final ComplaintIndex complaint : complaints)
             if (isNotBlank(complaint.getCityCode())) {

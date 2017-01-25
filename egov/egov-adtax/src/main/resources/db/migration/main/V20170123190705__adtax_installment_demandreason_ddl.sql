@@ -1,0 +1,15 @@
+-----------------Installment Master and Demand Reason for finyear 2017-18 --------------------
+
+Insert into eg_installment_master (ID,INSTALLMENT_NUM,INSTALLMENT_YEAR,START_DATE,END_DATE,ID_MODULE,LASTUPDATEDTIMESTAMP,DESCRIPTION,INSTALLMENT_TYPE,FINANCIAL_YEAR) values (nextval('SEQ_EG_INSTALLMENT_MASTER'),042017,to_date('01-04-17','DD-MM-YY'),to_date('01-04-17','DD-MM-YY'),to_date('31-03-18','DD-MM-YY'),(select id from eg_module where name = 'Advertisement Tax' and parentmodule is null),current_timestamp,'2017-18','Yearly','2017-18'); 
+
+Insert into EG_DEMAND_REASON (ID,ID_DEMAND_REASON_MASTER,ID_INSTALLMENT,PERCENTAGE_BASIS,ID_BASE_REASON,create_date,modified_date,GLCODEID) 
+(select (nextval('seq_eg_demand_reason')), (select id from eg_demand_reason_master where reasonmaster='Advertisement Tax' and module=(select id from eg_module where name='Advertisement Tax')), (select inst.id from eg_installment_master inst where inst.id_module=(select id from eg_module where name='Advertisement Tax') and INSTALLMENT_NUM=042017 and DESCRIPTION='2017-18'), null, null, current_timestamp, current_timestamp, (select ID from CHARTOFACCOUNTS where GLCODE = '1101101'));
+
+Insert into EG_DEMAND_REASON (ID,ID_DEMAND_REASON_MASTER,ID_INSTALLMENT,PERCENTAGE_BASIS,ID_BASE_REASON,create_date,modified_date,GLCODEID) 
+(select (nextval('seq_eg_demand_reason')), (select id from eg_demand_reason_master where reasonmaster='Enchroachment Fee' and module=(select id from eg_module where name='Advertisement Tax')), (select inst.id from eg_installment_master inst where inst.id_module=(select id from eg_module where name='Advertisement Tax') and INSTALLMENT_NUM=042017 and DESCRIPTION='2017-18'), null, null, current_timestamp, current_timestamp, (select ID from CHARTOFACCOUNTS where GLCODE = '1101101'));
+
+Insert into EG_DEMAND_REASON (ID,ID_DEMAND_REASON_MASTER,ID_INSTALLMENT,PERCENTAGE_BASIS,ID_BASE_REASON,create_date,modified_date,GLCODEID) 
+(select (nextval('seq_eg_demand_reason')), (select id from eg_demand_reason_master where reasonmaster='Penalty' and module=(select id from eg_module where name='Advertisement Tax')), (select inst.id from eg_installment_master inst where inst.id_module=(select id from eg_module where name='Advertisement Tax') and INSTALLMENT_NUM=042017 and DESCRIPTION='2017-18'), null, null, current_timestamp, current_timestamp, (select id from chartofaccounts where glcode='1402002'));
+
+Insert into EG_DEMAND_REASON (ID,ID_DEMAND_REASON_MASTER,ID_INSTALLMENT,PERCENTAGE_BASIS,ID_BASE_REASON,create_date,modified_date,GLCODEID) 
+(select (nextval('seq_eg_demand_reason')), (select id from eg_demand_reason_master where reasonmaster='Arrears Tax' and module=(select id from eg_module where name='Advertisement Tax')), (select inst.id from eg_installment_master inst where inst.id_module=(select id from eg_module where name='Advertisement Tax') and INSTALLMENT_NUM=042017 and DESCRIPTION='2017-18'), null, null, current_timestamp, current_timestamp, (select ID from CHARTOFACCOUNTS where GLCODE = '1101101'));

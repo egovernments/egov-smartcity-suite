@@ -44,6 +44,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.egov.pgr.service.ComplaintTypeService;
+import org.egov.pgr.service.ReceivingModeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,6 +67,9 @@ public class CitizenComplaintRegistrationControllerTest extends AbstractContextC
     
     @Mock
     private ComplaintTypeCategoryService complaintTypeCategoryService;
+
+    @Mock
+    private ReceivingModeService receivingModeService;
     
     @Mock
     private SecurityUtils securityUtils;

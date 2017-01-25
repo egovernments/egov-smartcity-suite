@@ -50,7 +50,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 
 @Controller
@@ -68,7 +68,7 @@ public class ViewComplaintController {
         Complaint complaint = complaintService.getComplaintByCRN(crnNo);
         if (complaint == null)
             throw new ApplicationRuntimeException("PGR.002");
-        List<Hashtable<String, Object>> historyTable = complaintService.getHistory(complaint);
+        List<HashMap<String, Object>> historyTable = complaintService.getHistory(complaint);
         model.addAttribute("complaintHistory", historyTable);
         model.addAttribute("complaint", complaint);
         return "view-complaint";

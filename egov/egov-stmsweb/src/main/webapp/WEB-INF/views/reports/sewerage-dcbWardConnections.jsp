@@ -60,6 +60,12 @@
 	                	 ${revenueWard} 
 	                </div>
 					<br/><br/>
+					<br/><br/>
+					<div id="dcbconnections-report-header" class="col-md-12 table header text-left">
+						<fmt:formatDate value="${currentDate}" var="currDate" pattern="dd-MM-yyyy"/>
+						<spring:message  code = "lbl.sewerage.dcb.connection.report"/>
+						<c:out value="${currDate}"/> 
+					</div>
 					<table class="table table-bordered datatable dt-responsive multiheadertbl" role="grid" id="sewerageWardDCBTable" >
 							<thead>
 								<tr>
@@ -68,6 +74,7 @@
 									<th colspan="3"><spring:message code="lbl.demand"/></th>
 									<th colspan="3"><spring:message code="lbl.collection"/></th>
 									<th colspan="3"><spring:message code="lbl.balance"/></th>
+									<th colspan="1"/>
 								</tr>
 								<tr role="row">
 									<th><spring:message code="lbl.shsc.number"/></th>
@@ -81,6 +88,7 @@
 									<th><spring:message code="lbl.arrear"/></th>
 									<th><spring:message code="lbl.current"/></th>
 									<th><spring:message code="lbl.total"/></th>
+									<th><spring:message code="lbl.advance"/></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -93,22 +101,25 @@
 								<c:set var="totalArrearCollectedAmount" value="${0}"/>
 								<c:set var="totalCurrentCollectedAmount" value="${0}" />
 								<c:set var="totalCollectedAmount" value="${0}" />
+								<c:set var="advanceAmount" value="${0}"/>
 								<c:set var="totalArrearBalanceAmount" value="${0}" />
 								<c:set var="totalCurrentBalanceAmount" value="${0}" />
 								<c:set var="totalBalanceAmount" value="${0}" />
+								<c:set var="totalAdvanceAmount" value="${0}" />
 								<c:forEach var="dcb" items="${dcbResultList}" varStatus="status">
 									<tr role="row">
-										<td align="center">${dcb.shscnumber}</td>
-										<td align="center">${dcb.ownerName}</td>
-										<td align="right">${dcb.arr_demand}</td>
-										<td align="right">${dcb.curr_demand}</td>
-										<td align="right">${dcb.arr_demand+dcb.curr_demand}</td>
-										<td align="right">${dcb.arr_collection}</td>
-										<td align="right">${dcb.curr_collection}</td>
-										<td align="right">${dcb.arr_collection+dcb.curr_collection}</td>
-										<td align="right">${dcb.arr_balance}</td>
-										<td align="right">${dcb.curr_balance}</td>
-										<td align="right">${dcb.arr_balance+dcb.curr_balance}</td>
+										<td class="text-center">${dcb.shscnumber}</td>
+										<td class="text-center">${dcb.ownerName}</td>
+										<td class="text-right">${dcb.arr_demand}</td>
+										<td class="text-right">${dcb.curr_demand}</td>
+										<td class="text-right">${dcb.arr_demand+dcb.curr_demand}</td>
+										<td class="text-right">${dcb.arr_collection}</td>
+										<td class="text-right">${dcb.curr_collection}</td>
+										<td class="text-right">${dcb.arr_collection+dcb.curr_collection}</td>
+										<td class="text-right">${dcb.arr_balance}</td>
+										<td class="text-right">${dcb.curr_balance}</td>
+										<td class="text-right">${dcb.arr_balance+dcb.curr_balance}</td>
+										<td class="text-right">${dcb.advanceAmount}</td>
 									</tr>
 									<c:set var="totalArrearDemandAmount" value="${totalArrearDemandAmount+dcb.arr_demand}"/>
 									<c:set var="totalCurrentDemandAmount" value="${totalCurrentDemandAmount+dcb.curr_demand}" />
@@ -119,21 +130,23 @@
 									<c:set var="totalArrearBalanceAmount" value="${totalArrearBalanceAmount+dcb.arr_balance}" />
 									<c:set var="totalCurrentBalanceAmount" value="${totalCurrentBalanceAmount+dcb.curr_balance}" />
 									<c:set var="totalBalanceAmount" value="${totalBalanceAmount+dcb.arr_balance+dcb.curr_balance}" />
+									<c:set var="totalAdvanceAmount" value="${totalAdvanceAmount+dcb.advanceAmount}" />
 								</c:forEach>
 							</tbody>
 							<tfoot>
 								<tr>
 									<td></td>
-									<td align="right" style="font-size : small; font-weight: bold"><spring:message code="lbl.grandtotal"/></td>
-									<td align="right" style="font-size: small;font-weight: bold;">${totalArrearDemandAmount}</td>
-									<td align="right" style="font-size: small;font-weight: bold;">${totalCurrentDemandAmount}</td>
-									<td align="right" style="font-size: small;font-weight: bold;">${totalDemandAmount}</td>
-									<td align="right" style="font-size: small;font-weight: bold;">${totalArrearCollectedAmount}</td>
-									<td align="right" style="font-size: small;font-weight: bold;">${totalCurrentCollectedAmount}</td>
-									<td align="right" style="font-size: small;font-weight: bold;">${totalCollectedAmount}</td>
-									<td align="right" style="font-size: small;font-weight: bold;">${totalArrearBalanceAmount}</td>
-									<td align="right" style="font-size: small;font-weight: bold;">${totalCurrentBalanceAmount}</td>
-									<td align="right" style="font-size: small;font-weight: bold;">${totalBalanceAmount}</td>
+									<td class="text-right"><spring:message code="lbl.grandtotal"/></td>
+									<td class="text-right">${totalArrearDemandAmount}</td>
+									<td class="text-right">${totalCurrentDemandAmount}</td>
+									<td class="text-right">${totalDemandAmount}</td>
+									<td class="text-right">${totalArrearCollectedAmount}</td>
+									<td class="text-right">${totalCurrentCollectedAmount}</td>
+									<td class="text-right">${totalCollectedAmount}</td>
+									<td class="text-right">${totalArrearBalanceAmount}</td>
+									<td class="text-right">${totalCurrentBalanceAmount}</td>
+									<td class="text-right">${totalBalanceAmount}</td>
+									<td class="text-right">${totalAdvanceAmount}</td>
 								</tr>
 							</tfoot>
 					</table>	

@@ -1190,8 +1190,8 @@ public class ReportService {
     }
 
     private String getOwerName(final PropertyMaterlizeView propView) {
-        return propView.getOwnerName().contains(",") ? propView.getOwnerName().replace(",",
-                " & ") : propView.getOwnerName();
+        return propView.getOwnerName() != null ? propView.getOwnerName().contains(",") ? propView.getOwnerName().replace(",",
+                " & ") : propView.getOwnerName():"NA";
     }
 
     private String getLocality(final PropertyMaterlizeView propView) {

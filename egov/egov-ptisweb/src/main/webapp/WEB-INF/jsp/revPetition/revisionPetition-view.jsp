@@ -156,7 +156,7 @@
 		if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_FORWARD}"/>') {
 
 			if (statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED}"/>') {
-				if (state == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NEW}"/>') {
+				if (state != null && state.endsWith('<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NEW}"/>')) {
 					if (validateRecordObjections()) {
 						action = 'revPetition.action';
 					} else
@@ -367,7 +367,7 @@
 </head>
 <body onload="loadOnStartUp();">
 	<s:form action="revPetition-view" method="post"
-		name="objectionViewForm" theme="simple">
+		name="objectionViewForm" theme="simple" enctype="multipart/form-data">
 		<s:push value="model">
 			<s:if test="%{hasActionMessages()}">
 				<div class="messagestyle">
@@ -466,11 +466,14 @@
 							">
 
 							</s:elseif>
-							<s:if test="%{!documentTypes.isEmpty()}">
+							<s:if test="%{!documentTypes.isEmpty() && allowEditDocument}">
+								<%@ include file="../common/DocumentUploadForm.jsp"%>
+							</s:if>
+							<s:elseif test="%{!documentTypes.isEmpty()}">
 
 								<%@ include file="../common/DocumentUploadView.jsp"%>
 
-							</s:if>
+							</s:elseif>
 						</div>
 					</td>
 				</tr>

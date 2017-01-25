@@ -62,6 +62,7 @@ import org.egov.pgr.entity.es.ComplaintIndex;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeService;
+import org.egov.pgr.service.ReceivingModeService;
 import org.egov.pgr.service.es.ComplaintIndexService;
 import org.egov.pgr.web.contract.ComplaintSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +96,9 @@ public class ComplaintSearchController {
     @Autowired
     private ComplaintIndexService complaintIndexService;
 
+    @Autowired
+    private ReceivingModeService receivingModeService;
+
     @ModelAttribute("complaintTypedropdown")
     public List<ComplaintType> complaintTypes() {
         return complaintTypeService.findActiveComplaintTypes();
@@ -112,7 +116,7 @@ public class ComplaintSearchController {
 
     @ModelAttribute("complaintReceivingModes")
     public List complaintReceivingModes() {
-        return complaintService.getAllReceivingModes();
+        return receivingModeService.getReceivingModes();
     }
 
     @ModelAttribute("currentLoggedUser")

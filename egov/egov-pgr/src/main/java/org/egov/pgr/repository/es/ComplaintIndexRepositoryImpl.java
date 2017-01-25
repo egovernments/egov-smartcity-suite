@@ -67,6 +67,8 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -239,12 +241,12 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     public String getFunctionryMobileNumber(final String functionaryName) {
         final SearchResponse response = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                 .setSize(1)
-                .setQuery(QueryBuilders.matchQuery("currentFunctionaryName", functionaryName))
+                .setQuery(QueryBuilders.matchQuery("initialFunctionaryName", functionaryName))
                 .execute().actionGet();
 
         for (final SearchHit hit : response.getHits()) {
             final Map<String, Object> fields = hit.getSource();
-            return fields.get("currentFunctionaryMobileNumber").toString();
+            return fields.get("initialFunctionaryMobileNumber").toString();
         }
         return StringUtils.EMPTY;
     }
@@ -273,14 +275,14 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                                 .subAggregation(
                                                         AggregationBuilders
                                                                 .terms("functionarywise")
-                                                                .field("currentFunctionaryName")
+                                                                .field("initialFunctionaryName")
                                                                 .size(size)
                                                                 .subAggregation(
                                                                         AggregationBuilders.topHits("complaintrecord")
                                                                                 .addField(CITY_NAME)
                                                                                 .addField(CITY_CODE).addField(DISTRICT_NAME)
                                                                                 .addField("departmentName")
-                                                                                .addField("currentFunctionaryMobileNumber")
+                                                                                .addField("initialFunctionaryMobileNumber")
                                                                                 .setSize(1))
                                                                 .subAggregation(
                                                                         getCountWithGrouping("closedComplaintCount", "ifClosed",
@@ -348,6 +350,17 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     public List<ComplaintIndex> findAllComplaintsBySource(final String fieldName, final String paramValue) {
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(QueryBuilders.matchQuery(fieldName, paramValue))
                 .withPageable(new PageRequest(0, 5000))
+                .build();
+        return elasticsearchTemplate.queryForList(searchQuery, ComplaintIndex.class);
+    }
+
+    @Override
+    public List<ComplaintIndex> findAllComplaintsByField(final ComplaintDashBoardRequest complaintDashBoardRequest,
+            final BoolQueryBuilder query) {
+        final SortOrder sortOrder = complaintDashBoardRequest.getSortDirection().equals("ASC") ? SortOrder.ASC : SortOrder.DESC;
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(query)
+                .withSort(new FieldSortBuilder(complaintDashBoardRequest.getSortField()).order(sortOrder))
+                .withPageable(new PageRequest(0, complaintDashBoardRequest.getSize()))
                 .build();
         return elasticsearchTemplate.queryForList(searchQuery, ComplaintIndex.class);
     }

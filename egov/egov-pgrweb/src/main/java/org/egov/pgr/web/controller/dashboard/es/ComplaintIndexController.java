@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -71,7 +72,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 @RestController
 @RequestMapping(value = "/complaint/aggregate")
 public class ComplaintIndexController {
-
     @Autowired
     private ComplaintIndexService complaintIndexService;
 
@@ -196,5 +196,19 @@ public class ComplaintIndexController {
     @RequestMapping(value = "/localityWiseComplaints", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ComplaintIndex> getLocalityWiseComplaints(@RequestParam final String localityName) {
         return complaintIndexService.getLocalityWiseComplaints(localityName);
+    }
+
+    // This is a common api where a fieldName and value will be accepted additionally to return matching complaints
+    // with existing filters
+    @RequestMapping(value = "/complaints", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ComplaintIndex> getFilteredComplaints(@RequestBody final ComplaintDashBoardRequest complaintRequest,
+            @RequestParam final String fieldName, @RequestParam final String fieldValue) {
+        if (StringUtils.isEmpty(complaintRequest.getSortField()))
+            complaintRequest.setSortField("createdDate");
+        if (StringUtils.isEmpty(complaintRequest.getSortDirection()))
+            complaintRequest.setSortDirection("DESC");
+        if (complaintRequest.getSize() == 0)
+            complaintRequest.setSize(10000);
+        return complaintIndexService.getFilteredComplaints(complaintRequest, fieldName, fieldValue);
     }
 }

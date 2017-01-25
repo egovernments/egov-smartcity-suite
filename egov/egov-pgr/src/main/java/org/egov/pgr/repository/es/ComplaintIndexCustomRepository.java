@@ -73,4 +73,6 @@ public interface ComplaintIndexCustomRepository {
 
     List<ComplaintIndex> findAllComplaintsBySource(String fieldName, String paramValue);
 
+    List<ComplaintIndex> findAllComplaintsByField(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query);
+
 }

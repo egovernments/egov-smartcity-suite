@@ -536,6 +536,9 @@ public class PropertyTransferService {
             if (!document.getUploads().isEmpty()) {
                 int fileCount = 0;
                 for (final File file : document.getUploads()) {
+                    if(!document.getFiles().isEmpty()) {
+                        document.getFiles().clear();
+                    }
                     final FileStoreMapper fileStore = fileStoreService.store(file,
                             document.getUploadsFileName().get(fileCount),
                             document.getUploadsContentType().get(fileCount++), FILESTORE_MODULE_NAME);

@@ -130,11 +130,11 @@ public class SewerageDCBReporService {
     public static final String SEWERAGEDEMANDBILL = "sewerageDemandBill";
 
     public List<SewerageRateDCBResult> getSewerageRateDCBReport(final SewerageApplicationDetails sewerageApplicationDetails) {
-        final List<SewerageRateDCBResult> rateResultList = new ArrayList<SewerageRateDCBResult>();
-        Map<String, Map<Date, BigDecimal>> receiptMap = null;
-        Map<Date, BigDecimal> receiptDtlMap = null;
-        Map<String, Map<String, Map<Date, BigDecimal>>> receiptApplDtlMap = null;
-        final HashMap<String, SewerageRateDCBResult> sewerageReportMap = new HashMap<String, SewerageRateDCBResult>();
+        final List<SewerageRateDCBResult> rateResultList = new ArrayList<>();
+        Map<String, Map<Date, BigDecimal>> receiptMap;
+        Map<Date, BigDecimal> receiptDtlMap;
+        Map<String, Map<String, Map<Date, BigDecimal>>> receiptApplDtlMap;
+        final HashMap<String, SewerageRateDCBResult> sewerageReportMap = new HashMap<>();
         if (sewerageApplicationDetails.getConnection() != null) {
 
             SewerageRateDCBResult dcbResult = new SewerageRateDCBResult();
@@ -196,13 +196,13 @@ public class SewerageDCBReporService {
                     }
                 }
 
-            receiptApplDtlMap = new TreeMap<String, Map<String, Map<Date, BigDecimal>>>();
+            receiptApplDtlMap = new TreeMap<>();
 
             for (final SewerageApplicationDetails detail : sewerageApplicationDetails.getConnection().getApplicationDetails()) {
-                receiptMap = new TreeMap<String, Map<Date, BigDecimal>>();
+                receiptMap = new TreeMap<>();
                 if (detail.getCurrentDemand() != null && !detail.getCurrentDemand().getEgDemandDetails().isEmpty())
                     for (final EgDemandDetails demandDetail : detail.getCurrentDemand().getEgDemandDetails()) {
-                        receiptDtlMap = new HashMap<Date, BigDecimal>();
+                        receiptDtlMap = new HashMap<>();
                         for (final EgdmCollectedReceipt receipt : demandDetail.getEgdmCollectedReceipts()) {
                             receiptDtlMap.put(receipt.getReceiptDate(),
                                     receipt.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
@@ -229,15 +229,15 @@ public class SewerageDCBReporService {
 
     public List<DCBReportWardwiseResult> getSewerageRateDCBWardwiseReport(
             final Map<String, List<SewerageApplicationDetails>> applicationDtlMap, final String propertyType) {
-        final List<DCBReportWardwiseResult> dcbReportList = new ArrayList<DCBReportWardwiseResult>();
-        final Map<String, DCBReportWardwiseResult> dcbReportMap = new HashMap<String, DCBReportWardwiseResult>();
-        final Map<String, DCBReportWardwiseResult> dcbMap = new HashMap<String, DCBReportWardwiseResult>();
-        DCBReportWardwiseResult dcbResult = new DCBReportWardwiseResult();
+        final List<DCBReportWardwiseResult> dcbReportList = new ArrayList<>();
+        final Map<String, DCBReportWardwiseResult> dcbReportMap = new HashMap<>();
+        final Map<String, DCBReportWardwiseResult> dcbMap = new HashMap<>();
+        DCBReportWardwiseResult dcbResult;
 
         for (final Map.Entry<String, List<SewerageApplicationDetails>> entry : applicationDtlMap.entrySet()) {
             Boundary boundary = null;
-            BoundaryType boundaryType = null;
-            final List<Boundary> boundaryList = new ArrayList<Boundary>();
+            BoundaryType boundaryType;
+            final List<Boundary> boundaryList = new ArrayList<>();
             dcbResult = new DCBReportWardwiseResult();
             for (final SewerageApplicationDetails appDetails : entry.getValue())
                 if (appDetails != null && appDetails.getCurrentDemand() != null
@@ -308,16 +308,15 @@ public class SewerageDCBReporService {
     }
 
     public List<DCBReportWardwiseResult> getSewerageDCBWardConnections(
-            final Map<String, List<SewerageApplicationDetails>> applicationDtlMap, final String propertyType,
-            final HttpServletRequest request) {
+            final Map<String, List<SewerageApplicationDetails>> applicationDtlMap, final String propertyType) {
 
-        final List<DCBReportWardwiseResult> dcbReportList = new ArrayList<DCBReportWardwiseResult>();
-        final Map<String, DCBReportWardwiseResult> dcbReportMap = new HashMap<String, DCBReportWardwiseResult>();
-        DCBReportWardwiseResult dcbResult = new DCBReportWardwiseResult();
+        final List<DCBReportWardwiseResult> dcbReportList = new ArrayList<>();
+        final Map<String, DCBReportWardwiseResult> dcbReportMap = new HashMap<>();
+        DCBReportWardwiseResult dcbResult;
 
         for (final Map.Entry<String, List<SewerageApplicationDetails>> entry : applicationDtlMap.entrySet()) {
 
-            final List<SewerageApplicationDetails> applicationList = new ArrayList<SewerageApplicationDetails>();
+            final List<SewerageApplicationDetails> applicationList = new ArrayList<>();
             if (entry.getValue() != null)
                 applicationList.addAll(entry.getValue());
 
@@ -350,6 +349,9 @@ public class SewerageDCBReporService {
                                         .add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()).setScale(2,
                                                 BigDecimal.ROUND_HALF_UP)));
                             } else if (demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                                    .equalsIgnoreCase(FEES_ADVANCE_CODE))
+                                dcbResult.setAdvanceAmount(demandDetails.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP));
+                            else if (demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()
                                     .equalsIgnoreCase(FEES_SEWERAGETAX_CODE)) {
                                 dcbResult.setCurr_demand(dcbResult.getCurr_demand()
                                         .add(demandDetails.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP)));
@@ -382,10 +384,10 @@ public class SewerageDCBReporService {
     @Transactional
     public ReportOutput generateAndSaveDemandBillNotice(final SewerageApplicationDetails sewerageApplicationDetails,
             final AssessmentDetails propertyOwnerDetails, final HttpServletRequest request, final HttpSession session) {
-        ReportOutput reportOutput = null;
+        ReportOutput reportOutput;
         SewerageNotice sewerageNotice = null;
-        String demandBillNumber = null;
-        InputStream generateNoticePDF = null;
+        String demandBillNumber;
+        InputStream generateNoticePDF;
         final SewerageDemandBillNumberGenerator demandBillNumberGenerator = beanResolver
                 .getAutoNumberServiceFor(SewerageDemandBillNumberGenerator.class);
         demandBillNumber = demandBillNumberGenerator.generateSewerageDemandBillNumber(sewerageApplicationDetails);
@@ -408,8 +410,8 @@ public class SewerageDCBReporService {
     public ReportOutput generateSewerageDemandBillNotice(final SewerageApplicationDetails sewerageApplicationDetails,
             final String demandBillNumber, final AssessmentDetails propertyOwnerDetails,
             final HttpSession session, final HttpServletRequest request) {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
-        ReportRequest reportInput = null;
+        final Map<String, Object> reportParams = new HashMap<>();
+        ReportRequest reportInput;
         BigDecimal sewerageTax = BigDecimal.ZERO;
         final Installment currentInstallment = installmentDao
                 .getInsatllmentByModuleForGivenDate(moduleService.getModuleByName(MODULE_NAME), new Date());
@@ -448,8 +450,8 @@ public class SewerageDCBReporService {
 
     public List<SewerageRateDCBResult> getPendingSewerageTaxForCurrentYearInstallment(
             final SewerageApplicationDetails sewerageApplicationDetails) {
-        final List<SewerageRateDCBResult> rateResultList = new ArrayList<SewerageRateDCBResult>();
-        final HashMap<String, SewerageRateDCBResult> sewerageReportMap = new HashMap<String, SewerageRateDCBResult>();
+        final List<SewerageRateDCBResult> rateResultList = new ArrayList<>();
+        final HashMap<String, SewerageRateDCBResult> sewerageReportMap = new HashMap<>();
         if (sewerageApplicationDetails.getConnection() != null) {
 
             final CFinancialYear financialYear = financialYearService.getCurrentFinancialYear();
@@ -459,7 +461,7 @@ public class SewerageDCBReporService {
                 if (intallment.getFromDate().after(new Date()))
                     installmentList.remove(intallment);
 
-            SewerageRateDCBResult dcbResult = new SewerageRateDCBResult();
+            SewerageRateDCBResult dcbResult;
             if (sewerageApplicationDetails.getCurrentDemand() != null
                     && sewerageApplicationDetails.getCurrentDemand().getEgDemandDetails() != null)
                 for (final EgDemandDetails demandDtl : sewerageApplicationDetails.getCurrentDemand().getEgDemandDetails())

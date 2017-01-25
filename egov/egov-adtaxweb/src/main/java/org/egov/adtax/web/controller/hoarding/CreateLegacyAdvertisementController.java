@@ -39,6 +39,14 @@
  */
 package org.egov.adtax.web.controller.hoarding;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import javax.validation.Valid;
+
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
@@ -55,20 +63,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
 @Controller
 @RequestMapping("/hoarding")
 public class CreateLegacyAdvertisementController extends HoardingControllerSupport {
-	
-	@Autowired
+
+    @Autowired
     @Qualifier("messageSource")
-	private MessageSource messageSource;
+    private MessageSource messageSource;
 
     @RequestMapping(value = "adtaxCreateLegacy", method = GET)
     public String createLegacyHoardingForm(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail) {
@@ -121,8 +122,10 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
             }
 
         advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail, null, null, null, null);
-        String message = messageSource.getMessage("hoarding.create.success",
-                new String[] { advertisementPermitDetail.getApplicationNumber(),advertisementPermitDetail.getPermissionNumber()}, null);
+        final String message = messageSource.getMessage("hoarding.create.success",
+                new String[] { advertisementPermitDetail.getAdvertisement().getAdvertisementNumber(),
+                        advertisementPermitDetail.getApplicationNumber(), advertisementPermitDetail.getPermissionNumber() },
+                null);
         redirAttrib.addFlashAttribute("message", message);
         // return "redirect:/hoarding/createLegacy";
         return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
