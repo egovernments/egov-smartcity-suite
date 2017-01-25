@@ -534,7 +534,7 @@ public class RecoveryNoticeService {
         reportParams.put(DOOR_NO, StringUtils.isNotBlank(ownerAddress.getHouseNoBldgApt())
                 ? ownerAddress.getHouseNoBldgApt() : "N/A");
         reportParams.put(FIN_YEAR, formatter.format(new Date()));
-        reportParams.put(TOTAL_TAX_DUE, getTotalPropertyTaxDue(basicProperty));
+        reportParams.put(TOTAL_TAX_DUE, getTotalPropertyTaxDueIncludingPenalty(basicProperty));
         reportParams.put(FUTURE_DATE, DateUtils.getDefaultFormattedDate(noticeDate.plusDays(2).toDate()));
         reportParams.put(ESD_NOTICE_NUMBER, noticeNo);
         reportParams.put(ESD_NOTICE_DATE, DateUtils.getDefaultFormattedDate(new Date()));
