@@ -111,7 +111,7 @@ $(document).ready(function(){
 		$("#subjectDescriptionHide").hide();
 		$('#'+fieldName).removeAttr('required')
 	});
-
+	$('#approvalDepartment').trigger('change');
 });
 
 function renderPdf() {
