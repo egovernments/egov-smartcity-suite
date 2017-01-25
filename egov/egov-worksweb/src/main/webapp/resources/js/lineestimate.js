@@ -369,7 +369,6 @@ function calculateEstimatedAmountTotal(){
 	});
 	$('#estimateTotal').html(estimateTotal);
 	$('#amountRule').val(estimateTotal);
-	$('#approvalDepartment').val('');
 	$('#approvalDepartment').trigger('change');
 }
 
