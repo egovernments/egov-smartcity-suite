@@ -112,9 +112,10 @@ public class GenericLegalCaseController {
         final List<Integer> wPYearList = new ArrayList<Integer>();
         int startYear = Integer.parseInt("1980");
         final Calendar cal = Calendar.getInstance();
-        while (startYear <= cal.get(Calendar.YEAR)) {
-            wPYearList.add(Integer.valueOf(startYear));
-            startYear++;
+        int currentYear =cal.get(Calendar.YEAR);
+        while (startYear <= currentYear) {
+            wPYearList.add(Integer.valueOf(currentYear));
+            currentYear--;
         }
         return wPYearList;
     }
