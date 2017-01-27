@@ -437,32 +437,32 @@ function checkForMandatoryValues(){
 }
 
 function validateContractorFormAndSubmit() {
-//	clearMessage('contractor_error');
-//	if (!checkCodeAndName()){
-//		window.scroll(0,0);
-//		return false;
-//	}
-//	if (checkForMandatoryValues()){
-//		flag = false;
-//		return false; 
-//	}	
-//	if (!checkDepartment()){
-//		window.scroll(0,0);
-//		return false;
-//	}
-//	if (!checkStartDate()){
-//		window.scroll(0,0);
-//		return false;
-//	}
-//	
-//	links=document.contractor.getElementsByTagName("span");
-//	for(i=0;i<links.length;i++) {
-//		if(links[i].innerHTML=='&nbsp;x' && links[i].style.display!='none'){
-//			showMessage('contractor_error', jQuery("#vaidateError").val());
-//			window.scroll(0,0);
-//			return false;
-//		}
-//	}
+	clearMessage('contractor_error');
+	if (!checkCodeAndName()){
+		window.scroll(0,0);
+		return false;
+	}
+	if (checkForMandatoryValues()){
+		flag = false;
+		return false; 
+	}	
+	if (!checkDepartment()){
+		window.scroll(0,0);
+		return false;
+	}
+	if (!checkStartDate()){
+		window.scroll(0,0);
+		return false;
+	}
+	
+	links=document.contractor.getElementsByTagName("span");
+	for(i=0;i<links.length;i++) {
+		if(links[i].innerHTML=='&nbsp;x' && links[i].style.display!='none'){
+			showMessage('contractor_error', jQuery("#vaidateError").val());
+			window.scroll(0,0);
+			return false;
+		}
+	}
 }
 
 function replaceExemptionFormChar() {
