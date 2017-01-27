@@ -94,7 +94,7 @@ public class PenaltyRatesController {
         return "penaltyRates-search";
     }
 
-   @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @RequestMapping(value = "/search", method = GET)
     public String search(@ModelAttribute final PenaltyForm penaltyForm, final BindingResult errors, final Model model) {
         if (errors.hasErrors())
             return PENALTYRATE_RESULT;
@@ -103,7 +103,7 @@ public class PenaltyRatesController {
         return PENALTYRATE_RESULT;
     }
    
-   @RequestMapping(value = "/searchview", method = RequestMethod.GET)
+    @RequestMapping(value = "/searchview", method = GET)
     public String searchview(@ModelAttribute final PenaltyForm penaltyForm, final BindingResult errors, final Model model) {
         if (errors.hasErrors())
             return "penaltyRates-search";
