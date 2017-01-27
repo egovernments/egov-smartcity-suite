@@ -155,8 +155,11 @@ public class LetterOfAcceptanceSearchController {
         for (final EgwStatus egwStatus : egwStatuses)
             if (!egwStatus.getCode().equalsIgnoreCase(WorksConstants.CREATED_STATUS)
                     && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.REJECTED)
-                    && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.CANCELLED))
+                    && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.CANCELLED)
+                    && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.CHECKED_STATUS)
+                    && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.RESUBMITTED_STATUS))
                 newEgwStatuses.add(egwStatus);
+
         model.addAttribute("egwStatus", newEgwStatuses);
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
         return "setofflinestatus-search";
