@@ -44,7 +44,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <input type="hidden" id="errorCouncilResolutionDate" value="<spring:message code='error.councilresolutiondate' />" />
 <input type="hidden" id="lineEstimateDate" value='<fmt:formatDate value="${lineEstimate.lineEstimateDate }" pattern="yyyy-MM-dd"/>' />
-<c:if test="${mode != 'readOnly' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }" >
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
@@ -62,8 +61,7 @@
 					</c:if>
 				</tr>
 			</thead>
-			<tbody >
-			</c:if>
+			<tbody>
 				<tr>
 					<c:if test="${mode != 'readOnly' && nextStatus == 'ADMINISTRATIVE_SANCTIONED' }">
 						<td>

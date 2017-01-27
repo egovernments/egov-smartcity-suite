@@ -53,17 +53,18 @@
 	<table class="table table-bordered" id="councilresolutiontbl">
 		<thead>
 			<tr>
-				<th><spring:message code="lbl.councilresolutionnumber"/><span class="mandatory"></span></th>
-				<th><spring:message code="lbl.councilresolutiondate"/><span class="mandatory"></span></th>
+				<th><spring:message code="lbl.councilresolutionnumber"/></th>
+				<th><spring:message code="lbl.councilresolutiondate"/></th>
 			</tr>
 		</thead>
 		<tbody>
 		<tr>
 			<td>
-				<c:out value="${lineEstimate.councilResolutionNumber }"></c:out>
+				<c:out default="N/A" value="${lineEstimate.councilResolutionNumber }"></c:out>
 			</td>
 			<td>
-				<fmt:formatDate value="${lineEstimate.councilResolutionDate }" pattern="dd/MM/yyyy"/>
+				<c:if test="${lineEstimate.councilResolutionDate == null }">N/A</c:if>
+				<c:if test="${lineEstimate.councilResolutionDate != null }"><fmt:formatDate value="${lineEstimate.councilResolutionDate }" pattern="dd/MM/yyyy"/></c:if>
 			</td>
 		</tr>
 		</tbody>

@@ -50,11 +50,11 @@
 		<table class="table table-bordered" id="tblestimate">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.slno"/></th>
+					<th width="5%"><spring:message code="lbl.slno"/></th>
 					<th><spring:message code="lbl.nameofwork"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.estimatedamount"/><span class="mandatory"></span></th>
+					<th width="20%"><spring:message code="lbl.estimatedamount"/><span class="mandatory"></span></th>
 					<c:if test="${workdetailsadd}">
-						<th><spring:message code="lbl.action"/></th>
+						<th width="5%"><spring:message code="lbl.action"/></th>
 					</c:if>
 				</tr>
 			</thead>
