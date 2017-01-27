@@ -115,7 +115,7 @@
 									<spring:message code="lbl.select" />
 								</form:option>
 								<form:options items="${advanceRequisitionCreatedByUsers}"
-									itemValue="id" itemLabel="username" />
+									itemValue="id" itemLabel="name" />
 							</form:select>
 							<form:errors path="createdBy"
 								cssClass="add-margin error-msg" />
