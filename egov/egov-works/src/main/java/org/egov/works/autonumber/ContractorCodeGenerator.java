@@ -45,5 +45,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface ContractorCodeGenerator {
-    public String getNextNumber(Contractor contractor);
+    String getNextNumber(final Contractor contractor);
 }

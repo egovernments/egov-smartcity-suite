@@ -85,7 +85,6 @@ body {
 <s:hidden name="mandatory" id="mandatory" value = "%{dropdownData.contractorMasterMandatoryFields}" />
 <s:hidden name="hide" id="hide" value = "%{dropdownData.contractorMasterHiddenFields}" />
 <input type="hidden" name="codeautogeneration" id="codeautogeneration" value = "<s:property value='contractorCodeAutoGeneration' />" />
-<s:hidden type="hidden" name="contractordetailcategoryfield" id="contractordetailcategoryfield" value = "%{dropdownData.contractorDetailsCategoryValues}" />
 
 <input type="hidden" id="codeErrorMsg" value="<s:text name='contractor.code.null' />" />
 <input type="hidden" id="nameErrorMsg" value="<s:text name='contractor.name.null' />" />

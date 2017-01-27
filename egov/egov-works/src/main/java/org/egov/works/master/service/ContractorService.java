@@ -77,6 +77,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class ContractorService extends PersistenceService<Contractor, Long> implements EntityTypeService {
 
+    @Autowired
+    private AutonumberServiceBeanResolver beanResolver;
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
+
     public ContractorService() {
         super(Contractor.class);
     }
@@ -86,10 +91,6 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
     private WorksService worksService;
     @Autowired
     private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
-    @Autowired
-    private AutonumberServiceBeanResolver beanResolver;
-    @Autowired
-    private WorksApplicationProperties worksApplicationProperties;
 
     @Override
     public List<Contractor> getAllActiveEntities(final Integer accountDetailTypeId) {
@@ -338,7 +339,7 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
         final String[] contractorMasterCategoryValues = worksApplicationProperties.contractorMasterCategoryValues();
         if (contractorMasterCategoryValues != null && contractorMasterCategoryValues.length > 0)
             return contractorMasterCategoryValues;
-        return contractorMasterCategoryValues;
+        return null;
     }
 
     public String getContractorClassShortName(final String contractorGrade) {

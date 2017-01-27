@@ -100,17 +100,7 @@ jQuery(document).ready(function(){
 		});
 	setDropDownsAlignment();
 	setTextFieldsAlignment();
-	
-	if(jQuery("#contractordetailcategoryfield").val() == null || jQuery("#contractordetailcategoryfield").val() == "[]"){
-		jQuery("#contractorTable").find("th#yui-dt0-th-categoryName").remove();
-		jQuery("#contractorTable").find("table").find("thead").find("tr").find("th:nth-child(4)").remove();
-		var elements = jQuery("#contractorTable").find("tbody.yui-dt-data").find("tr");
-		for(var i=0;i<elements.length;i++){
-			jQuery(elements[i]).find("td:nth-child(3)").remove();
-			jQuery(elements[i]).find("td:nth-child(7)").remove();
-		}
-	}
-	
+
 	if(jQuery("#codeautogeneration").val() == "true" && jQuery("#mode").val() != "edit"){
 		jQuery("label[for='code']").remove();
 		jQuery("#contractor-save_code").parent().remove();
@@ -447,32 +437,32 @@ function checkForMandatoryValues(){
 }
 
 function validateContractorFormAndSubmit() {
-	clearMessage('contractor_error');
-	if (!checkCodeAndName()){
-		window.scroll(0,0);
-		return false;
-	}
-	if (checkForMandatoryValues()){
-		flag = false;
-		return false; 
-	}	
-	if (!checkDepartment()){
-		window.scroll(0,0);
-		return false;
-	}
-	if (!checkStartDate()){
-		window.scroll(0,0);
-		return false;
-	}
-	
-	links=document.contractor.getElementsByTagName("span");
-	for(i=0;i<links.length;i++) {
-		if(links[i].innerHTML=='&nbsp;x' && links[i].style.display!='none'){
-			showMessage('contractor_error', jQuery("#vaidateError").val());
-			window.scroll(0,0);
-			return false;
-		}
-	}
+//	clearMessage('contractor_error');
+//	if (!checkCodeAndName()){
+//		window.scroll(0,0);
+//		return false;
+//	}
+//	if (checkForMandatoryValues()){
+//		flag = false;
+//		return false; 
+//	}	
+//	if (!checkDepartment()){
+//		window.scroll(0,0);
+//		return false;
+//	}
+//	if (!checkStartDate()){
+//		window.scroll(0,0);
+//		return false;
+//	}
+//	
+//	links=document.contractor.getElementsByTagName("span");
+//	for(i=0;i<links.length;i++) {
+//		if(links[i].innerHTML=='&nbsp;x' && links[i].style.display!='none'){
+//			showMessage('contractor_error', jQuery("#vaidateError").val());
+//			window.scroll(0,0);
+//			return false;
+//		}
+//	}
 }
 
 function replaceExemptionFormChar() {
