@@ -343,13 +343,13 @@
                     <input type="button" name="closeBtn" id="closeBtn" value="Close"
                            class="button" onclick="window.close();" style="margin:0 5px"/>
                 </div>
-                <s:if test="%{state!=null && state.value !='License Created'}">
+                <s:if test="%{state!=null && state.value!='License Created' && egwStatus.code!='SECONDLVLCOLLECTIONPENDING'}">
                     <div class="panel panel-primary" id="workflowDiv">
                         <%@ include file='../common/license-workflow-dropdown.jsp' %>
                         <%@ include file='../common/license-workflow-button.jsp' %>
                     </div>
                 </s:if>
-                <s:elseif test="%{state!=null && state.value=='License Created'}">
+                <s:elseif test="%{state!=null && (state.value=='License Created' || egwStatus.code=='SECONDLVLCOLLECTIONPENDING')}">
                     <div class="text-center">
                         <s:hidden id="workFlowAction" name="workFlowAction"/>
                         <button type="submit" id="btncancel" class="btn btn-primary" onclick="return onCancelSubmit();">

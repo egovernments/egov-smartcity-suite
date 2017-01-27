@@ -40,9 +40,6 @@
 
 package org.egov.tl.service;
 
-import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.BUTTONREJECT;
-
 import java.math.BigDecimal;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -79,6 +76,11 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.BUTTONREJECT;
 
 @Transactional(readOnly = true)
 public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
@@ -118,12 +120,12 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Override
     protected LicenseAppType getLicenseApplicationTypeForRenew() {
-        return licenseAppTypeService.getLicenseAppTypeByName(Constants.RENEWAL_LIC_APPTYPE);
+        return licenseAppTypeService.getLicenseAppTypeByName(RENEWAL_LIC_APPTYPE);
     }
 
     @Override
     protected LicenseAppType getLicenseApplicationType() {
-        return licenseAppTypeService.getLicenseAppTypeByName(Constants.NEW_LIC_APPTYPE);
+        return licenseAppTypeService.getLicenseAppTypeByName(NEW_LIC_APPTYPE);
     }
 
     @Transactional
@@ -142,7 +144,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         final Position wfInitiator = getWorkflowInitiator(license);
         if (BUTTONAPPROVE.equals(workFlowAction)) {
             if (license.getLicenseAppType() != null
-                    && !license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
+                    && !license.getLicenseAppType().getName().equals(RENEWAL_LIC_APPTYPE)) {
                 validityService.applyLicenseValidity(license);
                 if (license.getTempLicenseNumber() == null)
                     license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
@@ -181,6 +183,8 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                 license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_CANCELLED));
                 license = (TradeLicense) licenseUtils.applicationStatusChange(license,
                         Constants.APPLICATION_STATUS_CANCELLED);
+                if (NEW_LIC_APPTYPE.equalsIgnoreCase(license.getLicenseAppType().getName()))
+                    license.setActive(false);
             } else {
                 license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_REJECTED));
                 license = (TradeLicense) licenseUtils.applicationStatusChange(license,
@@ -239,7 +243,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("subCategory", license.getTradeName() != null ? license.getTradeName().getName() : null);
         reportParams
                 .put("appType", license.getLicenseAppType() != null
-                        ? "New".equals(license.getLicenseAppType().getName())
+                        ? NEW_LIC_APPTYPE.equals(license.getLicenseAppType().getName())
                         ? "New Trade" : "Renewal"
                         : "New");
         reportParams.put("currentDate", formatter.format(new Date()));
