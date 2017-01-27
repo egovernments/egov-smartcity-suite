@@ -83,7 +83,7 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.mpnumber" /> :<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">       
-							<form:input path="mpNumber"
+							<form:input path="mpNumber"  
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumerichyphenbackslash" maxlength="50"  required="required" />      
 							<form:errors path="mpNumber" cssClass="error-msg" />
