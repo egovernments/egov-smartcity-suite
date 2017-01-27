@@ -83,9 +83,9 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.mpnumber" /> :<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">       
-							<input type="text" name="mpNumber" 
+							<form:input path="mpNumber"
 								class="form-control text-left patternvalidation"
-								data-pattern="numericslashhyphen" maxlength="50"  id="mpNumber" required="required" />      
+								data-pattern="alphanumerichyphenbackslash" maxlength="50"  required="required" />      
 							<form:errors path="mpNumber" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
