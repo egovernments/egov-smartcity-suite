@@ -84,6 +84,8 @@ body {
 <s:hidden name="mode" id="mode" />
 <s:hidden name="mandatory" id="mandatory" value = "%{dropdownData.contractorMasterMandatoryFields}" />
 <s:hidden name="hide" id="hide" value = "%{dropdownData.contractorMasterHiddenFields}" />
+<input type="hidden" name="codeautogeneration" id="codeautogeneration" value = "<s:property value='contractorCodeAutoGeneration' />" />
+<s:hidden type="hidden" name="contractordetailcategoryfield" id="contractordetailcategoryfield" value = "%{dropdownData.contractorDetailsCategoryValues}" />
 
 <input type="hidden" id="codeErrorMsg" value="<s:text name='contractor.code.null' />" />
 <input type="hidden" id="nameErrorMsg" value="<s:text name='contractor.name.null' />" />
@@ -117,6 +119,8 @@ body {
 <input type="hidden" id="contactPersonAlphaNeumericErrorMsg" value="<s:text name='contractor.contactPerson.alphaNumeric' />" />
 <input type="hidden" id="registrationNumberAlphaNeumericErrorMsg" value="<s:text name='contractorDetail.registrationNumber.alphaNumeric' />" />
 <input type="hidden" id="vaidateError" value="<s:text name='sor.validate_x.message' />" />
+<input type="hidden" id="contractorCategoryErrorMsg" value="<s:text name='contractordetail.category.required' />" />
+<input type="hidden" id="nameErrorLengthMsg" value="<s:text name='contractor.name.length' />" />
 
 <input type="hidden" value="<s:text name='contractor.panNumber.alphaNumeric' />" id='panNumberMessage'>
 		<%@ include file='contractor-form.jsp'%>

@@ -63,7 +63,6 @@ public class Contractor extends BaseModel implements EntityType {
 
     private static final long serialVersionUID = 6858362239507609219L;
 
-    @Required(message = "contractor.code.null")
     @Length(max = 50, message = "contractor.code.length")
     @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractor.code.alphaNumeric")
     private String code;

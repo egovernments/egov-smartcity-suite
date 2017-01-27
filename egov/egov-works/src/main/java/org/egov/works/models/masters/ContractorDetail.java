@@ -76,6 +76,8 @@ public class ContractorDetail extends BaseModel {
     private List<ValidationError> errorList;
     @Valid
     private Period validity;
+    
+    private String category;
 
     public Contractor getContractor() {
         return contractor;
@@ -135,6 +137,15 @@ public class ContractorDetail extends BaseModel {
     public void setErrorList(final List<ValidationError> errorList) {
         this.errorList = errorList;
     }
+    
+    
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
     @Override
     public List<ValidationError> validate() {
@@ -147,7 +158,7 @@ public class ContractorDetail extends BaseModel {
             validationErrors.add(new ValidationError("validity", "contractorDetails.fromDate_empty"));
         else if (validity == null || validity != null && !compareDates(validity.getStartDate(), validity.getEndDate()))
             validationErrors.add(new ValidationError("validity", "contractorDetails.invalid_fromdate_range"));
-
+        
         if (validationErrors.isEmpty())
             return null;
         else

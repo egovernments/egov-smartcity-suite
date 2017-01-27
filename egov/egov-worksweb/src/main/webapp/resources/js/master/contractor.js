@@ -37,6 +37,36 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+function setDropDownsAlignment(){
+	var elements = jQuery("#contractorTable").find("tbody.yui-dt-data").find("tr");
+		elements.find("td.yui-dt-col-departmentName").css('width', '15%');
+		elements.find("td.yui-dt-col-categoryName").css('width', '15%');
+		elements.find("td.yui-dt-col-gradeName").css('width', '15%');
+		elements.find("td.yui-dt-col-statusDesc").css('width', '15%');
+		elements.find("td.yui-dt-col-departmentName").find("select").css('width', '100%');
+		elements.find("td.yui-dt-col-categoryName").find("select").css('width', '100%');
+		elements.find("td.yui-dt-col-gradeName").find("select").css('width', '100%');
+		elements.find("td.yui-dt-col-statusDesc").find("select").css('width', '100%');
+}
+
+function setTextFieldsAlignment(){
+	var elements = jQuery("#contractorTable").find("tbody.yui-dt-data").find("tr")
+		elements.find("td.yui-dt-col-registrationNumber").css('width', '15%');
+		elements.find("td.yui-dt-col-startDate").css('width', '15%');
+		elements.find("td.yui-dt-col-endDate").css('width', '15%');
+		elements.find("td.yui-dt-col-registrationNumber").find("input").css('width', '100%');
+		elements.find("td.yui-dt-col-startDate").find("input").css('width', '100%');
+		elements.find("td.yui-dt-col-endDate").find("input").css('width', '100%');
+}
+
+function setDefaultDepartment() {
+	var elements = jQuery("#contractorTable").find("tbody.yui-dt-data").find("tr")
+	for(var i=0;i<elements.length;i++){
+		var departmentElement = jQuery(jQuery(elements[i]).find("select")[0])
+		departmentElement.val(jQuery('#defaultDepartmentId').val());
+	}
+}
+
 jQuery(document).ready(function(){
 	flag = false;
 	if(jQuery("#mandatory").val() != null){
@@ -68,10 +98,32 @@ jQuery(document).ready(function(){
 	       this.value = val.substring(0, val.length - 1);
 	   }
 		});
-
-	if(jQuery('#mode').val() != "edit")
+	setDropDownsAlignment();
+	setTextFieldsAlignment();
+	
+	if(jQuery("#contractordetailcategoryfield").val() == null || jQuery("#contractordetailcategoryfield").val() == "[]"){
+		jQuery("#contractorTable").find("th#yui-dt0-th-categoryName").remove();
+		jQuery("#contractorTable").find("table").find("thead").find("tr").find("th:nth-child(4)").remove();
+		var elements = jQuery("#contractorTable").find("tbody.yui-dt-data").find("tr");
+		for(var i=0;i<elements.length;i++){
+			jQuery(elements[i]).find("td:nth-child(3)").remove();
+			jQuery(elements[i]).find("td:nth-child(7)").remove();
+		}
+	}
+	
+	if(jQuery("#codeautogeneration").val() == "true" && jQuery("#mode").val() != "edit"){
+		jQuery("label[for='code']").remove();
+		jQuery("#contractor-save_code").parent().remove();
+	}
+	if(jQuery("#mode").val() != "edit"){
 		setDefaultDepartment();
+	}
+	jQuery("#addContractorDetails").on("click",function(){
+		setDropDownsAlignment();
+		setTextFieldsAlignment();
+	});
 });
+
 function checkMobileNumber(){
 	if(jQuery("#mobileNumber").val().length == 0){
 		showMessage('contractor_error', jQuery("#mobileNumberErrorMsg").val());
@@ -286,9 +338,9 @@ function checkStartDate(){
 }
 
 function checkDepartment(){
-	var elements = jQuery("tbody.yui-dt-data").children();
+	var elements = jQuery("#contractorTable").find("tbody.yui-dt-data").find("tr");
 	for(var i=0 ; i < elements.length ; i++){
-		var departmentElement = jQuery(jQuery(elements[i]).children()[4]).first().children().children()
+		var departmentElement = jQuery(jQuery(elements[i]).find("select")[0])
 		if(departmentElement.val() == 0){
 			showMessage('contractor_error', jQuery("#departmentErrorMsg").val());
 			return false;
@@ -298,20 +350,29 @@ function checkDepartment(){
 }
 
 function checkCodeAndName(){  
-	if(jQuery("#code").val().length == 0){
-	showMessage('contractor_error', jQuery("#codeErrorMsg").val());
-	return false;
+	if(!(jQuery("#codeautogeneration").val() == "true")){
+		if(jQuery("#contractor-save_code").val().length == 0){
+			showMessage('contractor_error', jQuery("#codeErrorMsg").val());
+			return false;
+		}
+		  var regxCode = /^[A-Za-z0-9]+$/;
+		  if (!regxCode.test(jQuery("#contractor-save_code").val())) {
+			  showMessage('contractor_error', jQuery("#codeAlphaNeumericErrorMsg").val());
+			  return false;
+		  }
 	}
-  var regxCode = /^[A-Za-z0-9]+$/;
-  if (!regxCode.test(jQuery("#code").val())) {
-	  showMessage('contractor_error', jQuery("#codeAlphaNeumericErrorMsg").val());
-	  return false;
-  }
+	else{
+		 if(jQuery("#name").val().length < 4){
+				showMessage('contractor_error', jQuery("#nameErrorLengthMsg").val());
+				return false;
+		 }
+	}
   var regxName = /^[A-Za-z0-9 ]+$/;
   if(jQuery("#name").val().length == 0){
 		showMessage('contractor_error', jQuery("#nameErrorMsg").val());
 		return false;
 		}
+  
   if (!regxName.test(jQuery("#name").val())) {
 	  showMessage('contractor_error', jQuery("#nameAlphaNeumericErrorMsg").val());
 	  return false;
@@ -319,11 +380,24 @@ function checkCodeAndName(){
   return true;
 }
 
+function checkContractorCategory(){
+	var elements = jQuery("#contractorTable").find("tbody.yui-dt-data").find("tr")
+	for(var i=0;i < elements.length;i++){
+		if(jQuery(elements[i]).find("td:nth-child(8)").find("select").val() == 0){
+			showMessage('contractor_error', jQuery("#contractorCategoryErrorMsg").val());
+			return false;
+		}
+	}
+	return true;
+}
+
 function checkContractorDetailsMandatoryFieldsErrors(fieldName){
 	if (fieldName == "registrationNumber")
 		checkRegistrationNumber();
 	else if (fieldName == "grade")
 		checkContractorClass();
+	else if (fieldName == "category")
+		checkContractorCategory();
 }
 
 function checkContractorMasterMandatoryFieldsErrors(fieldName){
@@ -415,10 +489,4 @@ function createNewContractor() {
 function modifyContractorData() {
 	var model = document.getElementById('model').value;
 	window.location = 'contractor-edit.action?mode=edit&id='+model;
-}
-
-function setDefaultDepartment() {
-	var elements = jQuery("tbody.yui-dt-data").children();
-	var departmentElement = jQuery(jQuery(elements[0]).children()[4]).first().children().children();
-	departmentElement.val(jQuery('#defaultDepartmentId').val());
 }

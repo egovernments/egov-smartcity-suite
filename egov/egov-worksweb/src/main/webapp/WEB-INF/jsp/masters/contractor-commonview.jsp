@@ -167,6 +167,7 @@
 					<th><s:text name="column.title.SLNo" /></th>
 					<th id = "department"><s:text name="contractor.department" /></th>
 					<th id = "registrationNo"><s:text name="contractor.registrationNo" /></th>
+					<th id = "category"><s:text name="contractor.category" /></th>
 					<th id = "grade"><s:text name="contractor.grade" /></th>
 					<th id = "status"><s:text name="contractor.status" /></th>
 					<th id = "fromDate"><s:text name="contractor.fromDate" /></th>
@@ -179,6 +180,7 @@
 					<td><s:property value="#row_status.count" /></td>
 					<td id = "department-value"><s:property value="%{department.name}" /></td>
 					<td id = "registrationNumber-value"><s:property value="%{registrationNumber}" /></td>
+					<td id = "category-value"><s:property value="%{category}" /></td>
 					<td id = "grade-value"><s:property value="%{grade.grade}" /></td>
 					<td id = "status-value"><s:property value="%{status.description}" /></td>
 					<td id = "startDate-value"><s:date name="validity.startDate" format="dd/MM/yyyy" /></td>
