@@ -105,6 +105,8 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
     protected MarriageUtils marriageUtils;
     @Autowired
     protected FileStoreMapperRepository fileStoreMapperRepository;
+    
+    private static final Logger LOGGER = Logger.getLogger(UpdateMarriageRegistrationController.class);
 
     @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
     public String showRegistration(@PathVariable final Long id, final Model model) {
@@ -268,17 +270,23 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
      */
     @RequestMapping(value = "/digiSignWorkflow", method = RequestMethod.POST)
     public String digiSignTransitionWorkflow(final HttpServletRequest request, final Model model) throws IOException {
+        LOGGER.debug("..........Inside Digital Signature Transition : Registration........");
         final String fileStoreIds = request.getParameter("fileStoreId");
+        LOGGER.info("........fileStoreIds.........."+fileStoreIds);
         final String[] fileStoreIdArr = fileStoreIds.split(",");
+        LOGGER.info("........fileStoreIdArr.........."+fileStoreIdArr.length);
         final HttpSession session = request.getSession();
         final String approvalComent = (String) session.getAttribute(MarriageConstants.APPROVAL_COMMENT);
         //Gets the digitally signed applicationNo and its filestoreid from session
         final Map<String, String> appNoFileStoreIdsMap = (Map<String, String>) session
                 .getAttribute(MarriageConstants.FILE_STORE_ID_APPLICATION_NUMBER);
+        LOGGER.info("........appNoFileStoreIdsMap....size......"+appNoFileStoreIdsMap.size());
         MarriageRegistration marriageRegistrationObj = null;
         WorkflowContainer workflowContainer;
         for (final String fileStoreId : fileStoreIdArr) {
+            LOGGER.info("........Inside for loop......");
             final String applicationNumber = appNoFileStoreIdsMap.get(fileStoreId);
+            LOGGER.info("........applicationNumber......"+applicationNumber);
             if (null != applicationNumber && !applicationNumber.isEmpty()) {
                 workflowContainer = new WorkflowContainer();
                 workflowContainer.setApproverComments(approvalComent);
@@ -288,6 +296,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                 marriageRegistrationService.digiSignCertificate(marriageRegistrationObj, workflowContainer, request);
             }
         }
+        LOGGER.info("........outside for loop......");
         final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(marriageRegistrationObj
                 .getCreatedBy().getId());
         final String message = messageSource.getMessage("msg.digisign.success.registration", new String[] { wfInitiator
@@ -295,6 +304,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         model.addAttribute("successMessage", message);
         model.addAttribute("objectType", MarriageCertificateType.REGISTRATION.toString());
         model.addAttribute("fileStoreId", fileStoreIdArr.length == 1 ? fileStoreIdArr[0] : "");
+        LOGGER.debug("..........END of Digital Signature Transition : Registration........");
         return "mrdigitalsignature-success";
     }
 
@@ -366,6 +376,4 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
             final HttpServletRequest request) throws IOException {
         return marriageUtils.viewReport(id, MarriageCertificateType.REGISTRATION.toString(), session, request);
     }
-
-   
 }
