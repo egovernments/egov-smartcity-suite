@@ -218,9 +218,19 @@ public class RegistrationWorkflowService {
                     workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_PRINT_CERTIFICATE)) {
                 nextAction = STATE_END;
             } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_APPROVE)) {
-
+                //On Approve, pick workflow matrix based on digital signature configuration
+                if(workflowContainer.getPendingActions().equalsIgnoreCase(MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN))
+                    nextStateOwner = this.assignmentService.getPrimaryAssignmentForUser(user.getId()).getPosition();
+                else
+                    nextStateOwner = assignmentService.getPrimaryAssignmentForUser(reIssue.getCreatedBy().getId()).getPosition();
+                workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null, null,
+                        REGISTRATION_ADDNL_RULE, reIssue.getCurrentState().getValue(), workflowContainer.getPendingActions());
+                 
+                nextState = workflowMatrix.getNextState();
+                nextAction = workflowMatrix.getNextAction();
+            } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_DIGISIGN)) { 
                 nextStateOwner = assignmentService.getPrimaryAssignmentForUser(reIssue.getCreatedBy().getId()).getPosition();
-                workflowMatrix = reIssueWorkflowService.getWfMatrix(WorkflowType.ReIssue.name(), null, null,
+                workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null, null,
                         REGISTRATION_ADDNL_RULE, reIssue.getCurrentState().getValue(), null);
                 
                 nextState = workflowMatrix.getNextState();

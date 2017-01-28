@@ -59,7 +59,14 @@
 			<div class="row">
 				<div class="text-center">
 					<c:if test='${fileStoreId != null && fileStoreId != ""}'>
-						<button type="button" id="previewButn" onclick="downloadSignedNotice('${fileStoreId}')" class="btn btn-primary">Download</button>
+						<c:choose>
+							<c:when test='${objectType != null && objectType != "" && objectType == "REGISTRATION" }'>
+								<button type="button" id="previewButn" onclick="downloadSignedNotice('${fileStoreId}')" class="btn btn-primary">Download</button>
+							</c:when>
+							<c:otherwise>
+								<button type="button" id="previewButn" onclick="downloadSignedReIssueNotice('${fileStoreId}')" class="btn btn-primary">Download</button>
+							</c:otherwise>
+						</c:choose>
 					</c:if>
 			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a> 
 				</div>

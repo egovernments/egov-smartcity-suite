@@ -39,6 +39,11 @@
  */
 
 $(document).ready( function () {
+	//Added to avoid submitting parent form on Preview button click
+	//Used to preview certificate in case of Digital signture
+	$("#Preview").toggleClass('btn-primary btn-default');
+	$("#Preview").prop('type','button');
+	
 	 if($('#reIssueStatus').val()=='APPROVED' && $("#feeCollected").val()=='false'){
 		 $("[id='Print Certificate']").hide();
 	 }  
@@ -69,9 +74,14 @@ $(document).ready( function () {
 		}
 	});
 	
-	$('#select-registrationunit').change( function () {
-		showRegistrationUnit();
+	$('#select-registrationunit').change( function () { 
+		showRegistrationUnit(); 
 	})
+	
+	$('#Preview').click(function() {
+		var url = '/mrs/reissue/viewCertificate/'+ $('#reIssue').val();
+		window.open(url);
+	});
 	
 	function showRegistrationUnit()
 	{

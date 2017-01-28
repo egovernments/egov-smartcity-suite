@@ -79,7 +79,7 @@ import org.egov.mrs.domain.entity.MrApplicant;
 public class ReIssue extends StateAware {
 
     public enum ReIssueStatus {
-        CREATED, APPROVED, REJECTED, CANCELLED, CERTIFICATEREISSUED
+        CREATED, APPROVED, REJECTED, CANCELLED, CERTIFICATEREISSUED, DIGITALSIGNED
     }
 
     private static final long serialVersionUID = 7398043339748917008L;
@@ -294,7 +294,7 @@ public class ReIssue extends StateAware {
     }
 
     public boolean isFeeCollected() {
-        return demand.getBaseDemand().compareTo(demand.getAmtCollected()) <= 0 ? true : false;
+        return demand.getBaseDemand().compareTo(demand.getAmtCollected()) <= 0 ? true : false; 
     }
 
     public Boundary getZone() {
