@@ -40,6 +40,13 @@
 
 package org.egov.infra.validation;
 
+import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.regex.Pattern;
+
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.validation.regex.Constants.LOW_PASSWORD;
@@ -47,42 +54,35 @@ import static org.egov.infra.validation.regex.Constants.MEDIUM_PASSWORD;
 import static org.egov.infra.validation.regex.Constants.NONE_PASSWORD;
 import static org.egov.infra.validation.regex.Constants.STRONG_PASSWORD;
 
-import java.util.regex.Pattern;
-
-import org.egov.infra.config.properties.ApplicationProperties;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 @Service("validatorUtils")
 public class ValidatorUtils {
 
-    private static Pattern PASSWORD_PATTERN;
+    private static Pattern passwordPattern;
 
     @Autowired
-    public ValidatorUtils(final ApplicationProperties applicationProperties) {
-        final String passwordStrength = applicationProperties.passwordStrength();
+    public ValidatorUtils(ApplicationProperties applicationProperties) {
+        String passwordStrength = applicationProperties.passwordStrength();
         if ("high".equals(passwordStrength))
-            PASSWORD_PATTERN = Pattern.compile(STRONG_PASSWORD);
+            passwordPattern = Pattern.compile(STRONG_PASSWORD);
         else if ("medium".equals(passwordStrength))
-            PASSWORD_PATTERN = Pattern.compile(MEDIUM_PASSWORD);
+            passwordPattern = Pattern.compile(MEDIUM_PASSWORD);
         else if ("low".equals(passwordStrength))
-            PASSWORD_PATTERN = Pattern.compile(LOW_PASSWORD);
+            passwordPattern = Pattern.compile(LOW_PASSWORD);
         else
-            PASSWORD_PATTERN = Pattern.compile(NONE_PASSWORD);
+            passwordPattern = Pattern.compile(NONE_PASSWORD);
     }
 
-    public static void assertNotNull(final Object value, final String message) {
+    public static void assertNotNull(Object value, String message) {
         if (value == null)
             throw new ApplicationRuntimeException(message);
     }
 
-    public static void assertNotNull(final String value, final String message) {
+    public static void assertNotNull(String value, String message) {
         if (isBlank(value))
             throw new ApplicationRuntimeException(message);
     }
 
-    public boolean isValidPassword(final String pwd) {
-        return isNotBlank(pwd) && PASSWORD_PATTERN.matcher(pwd).find();
+    public boolean isValidPassword(String pwd) {
+        return isNotBlank(pwd) && passwordPattern.matcher(pwd).find();
     }
 }

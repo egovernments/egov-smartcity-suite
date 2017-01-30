@@ -76,27 +76,29 @@ public class DBMigrationConfiguration {
     @Bean
     @DependsOn("dataSource")
     public Flyway flyway(DataSource dataSource, @Qualifier("cities") List<String> cities) {
-        if (applicationProperties.isMasterServer()) {
+        if (applicationProperties.dbMigrationEnabled()) {
             boolean devMode = applicationProperties.devMode();
             cities.parallelStream().forEach(schema -> {
                 if (devMode)
-                    migrateDatabase(schema, dataSource, MAIN_MIGRATION_FILE_PATH, SAMPLE_MIGRATION_FILE_PATH,
+                    migrateDatabase(dataSource, schema, MAIN_MIGRATION_FILE_PATH, SAMPLE_MIGRATION_FILE_PATH,
                             format(TENANT_MIGRATION_FILE_PATH, schema));
                 else
-                    migrateDatabase(schema, dataSource, MAIN_MIGRATION_FILE_PATH, format(TENANT_MIGRATION_FILE_PATH, schema));
+                    migrateDatabase(dataSource, schema, MAIN_MIGRATION_FILE_PATH,
+                            format(TENANT_MIGRATION_FILE_PATH, schema));
             });
 
             if (applicationProperties.statewideMigrationRequired() && !devMode)
-                migrateDatabase(PUBLIC_SCHEMA, dataSource, MAIN_MIGRATION_FILE_PATH, STATEWIDE_MIGRATION_FILE_PATH,
+                migrateDatabase(dataSource, PUBLIC_SCHEMA, MAIN_MIGRATION_FILE_PATH, STATEWIDE_MIGRATION_FILE_PATH,
                         format(TENANT_MIGRATION_FILE_PATH, PUBLIC_SCHEMA));
             else if (!devMode)
-                migrateDatabase(PUBLIC_SCHEMA, dataSource, MAIN_MIGRATION_FILE_PATH, format(TENANT_MIGRATION_FILE_PATH, PUBLIC_SCHEMA));
+                migrateDatabase(dataSource, PUBLIC_SCHEMA, MAIN_MIGRATION_FILE_PATH,
+                        format(TENANT_MIGRATION_FILE_PATH, PUBLIC_SCHEMA));
         }
 
         return new Flyway();
     }
 
-    private void migrateDatabase(String schema, DataSource dataSource, String... locations) {
+    private void migrateDatabase(DataSource dataSource, String schema, String... locations) {
         Flyway flyway = new Flyway();
         flyway.setBaselineOnMigrate(true);
         flyway.setValidateOnMigrate(applicationProperties.flywayValidateonMigrate());

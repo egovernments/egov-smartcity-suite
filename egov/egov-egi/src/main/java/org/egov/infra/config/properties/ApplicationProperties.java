@@ -99,7 +99,8 @@ public class ApplicationProperties {
     public static final String REDIS_HOST_NAME = "redis.host.name";
     public static final String REDIS_HOST_PORT = "redis.host.port";
     public static final String MASTER_SERVER = "master.server";
-    public static final String FLYWAY_VALIDATEON_MIGRATE = "flyway.validateon.migrate";
+    public static final String DB_MIGRATION_ENABLED = "db.migration.enabled";
+    public static final String FLYWAY_VALIDATEON_MIGRATE = "db.flyway.validateon.migrate";
     private static final String SEARCH_HOSTS = "elasticsearch.hosts";
     private static final String SEARCH_PORT = "elasticsearch.port";
     private static final String SEARCH_CLUSTER_NAME = "elasticsearch.cluster.name";
@@ -266,6 +267,10 @@ public class ApplicationProperties {
 
     public boolean isMasterServer() {
         return this.environment.getProperty(MASTER_SERVER, Boolean.class);
+    }
+
+    public boolean dbMigrationEnabled() {
+        return this.environment.getProperty(DB_MIGRATION_ENABLED, Boolean.class);
     }
 
     public boolean flywayValidateonMigrate() {
