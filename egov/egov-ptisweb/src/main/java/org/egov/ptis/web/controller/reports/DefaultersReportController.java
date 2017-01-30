@@ -144,10 +144,11 @@ public class DefaultersReportController {
             @RequestParam final String fromAmount,
             @RequestParam final String toAmount, @RequestParam final String limit, @RequestParam final String category,
             @RequestParam final String noofyr,
+            @RequestParam final String proptype,
             final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
         Query query = propertyTaxUtil.prepareQueryforDefaultersReport(Long.valueOf(wardId), fromAmount, toAmount,
-                StringUtils.isBlank(limit) ? null : Integer.valueOf(limit), category);
+                StringUtils.isBlank(limit) ? null : Integer.valueOf(limit), category,proptype);
         List<PropertyMaterlizeView> properties = query.list();
         List<DefaultersInfo> defaultersList = reportService.getDefaultersInformation(properties,noofyr,StringUtils.isBlank(limit) ? null : Integer.valueOf(limit));
         return new StringBuilder("{ \"data\":").append(toJSON(defaultersList, DefaultersInfo.class,
