@@ -51,7 +51,10 @@
 <input id="erroradjustedgreaterpaid" type="hidden" value="<spring:message code="error.adjusted.greater.paid" />" />
 <input id="errorfinaladjustedzero" type="hidden" value="<spring:message code="error.finalbill.adjusted.zero" />" />
 <input id="errorfinaladjustremaining" type="hidden" value="<spring:message code="error.finalbill.adjust.remaining" />" />
-
+<c:set var="isStatutaryDeductionsPresent" value="${false}" scope="session" />
+<c:set var="isOtherDeductionsPresent" value="${false}" scope="session" />
+<c:set var="isRetentionMoneyDeductionsPresent" value="${false}" scope="session" />
+<c:set var="isContractorAdvanceDeductionPresent" value="${false}" scope="session" />
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
 		<spring:message code="lbl.credit.details" />
@@ -75,11 +78,7 @@
 			</thead>
 			<tbody>
 				<c:choose>
-					<c:when test="${billDetailsMap != null && billDetailsMap.size() >= 2}">			
-						<c:set var="isStatutaryDeductionsPresent" value="${false}" scope="session" />
-						<c:set var="isOtherDeductionsPresent" value="${false}" scope="session" />
-						<c:set var="isRetentionMoneyDeductionsPresent" value="${false}" scope="session" />
-						<c:set var="isContractorAdvanceDeductionPresent" value="${false}" scope="session" />
+					<c:when test="${billDetailsMap != null && billDetailsMap.size() >= 1}">			
 						<c:forEach items="${billDetailsMap}" var="billDetail" varStatus="item" >	
 							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isRetentionMoneyDeduction && billDetail.isStatutoryDeduction && !billDetail.isContractorAdvanceDeduction}">
 								<c:set var="isStatutaryDeductionsPresent" value="${true}" scope="session" />
