@@ -77,9 +77,10 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
     List<String> findEstimateNumberForContractorBill(@Param("estimateNumber") String estimateNumber,
             @Param("workOrderStatus") String workOrderStatus, @Param("status") String status, @Param("billtype") String billtype);
 
-    @Query("select distinct(wo.contractor.name) from WorkOrder as wo where upper(wo.contractor.name) like upper(:contractorname) and wo.egwStatus.code = :workOrderStatus and not exists (select distinct(cbr.workOrder) from ContractorBillRegister as cbr where wo.id = cbr.workOrder.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype)")
+    @Query("select distinct(wo.contractor.name) from WorkOrder as wo where (upper(wo.contractor.name) like upper(:contractorname) or upper(wo.contractor.code) like upper(:contractorname)) and wo.egwStatus.code = :workOrderStatus and not exists (select distinct(cbr.workOrder) from ContractorBillRegister as cbr where wo.id = cbr.workOrder.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype)")
     List<String> findContractorForContractorBill(@Param("contractorname") String contractorname,
-            @Param("workOrderStatus") String workOrderStatus, @Param("status") String status, @Param("billtype") String billtype);
+            @Param("workOrderStatus") String workOrderStatus, @Param("status") String status,
+            @Param("billtype") String billtype);
 
     @Query("select distinct(cbr.workOrder.workOrderNumber) from ContractorBillRegister as cbr where upper(cbr.billstatus) != :status and cbr.billtype = :billtype")
     List<String> getDistinctNonCancelledWorkOrderNumbersByBillType(@Param("status") String billstatus,
