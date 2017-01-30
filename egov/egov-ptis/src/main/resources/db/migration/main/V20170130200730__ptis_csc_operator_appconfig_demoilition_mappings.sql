@@ -1,0 +1,6 @@
+insert into eg_roleaction(roleid, actionid) values ((select id from eg_role where name = 'CSC Operator'),(select id from eg_action where name = 'Demolition'));
+
+INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, VERSION, MODULE ) VALUES (nextval('SEQ_EG_APPCONFIG'),'PROPERTYTAXDESIGNATIONFORCSCOPERATORWORKFLOW', 'Designation for Csc Workflow',0, (select id from eg_module where name='Property Tax'));
+INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, VERSION, MODULE ) VALUES (nextval('SEQ_EG_APPCONFIG'), 'PROPERTYTAXDEPARTMENTFORCSCOPERATORWORKFLOW', 'Department for Csc Workflow',0, (select id from eg_module where name='Property Tax'));
+INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES (nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='PROPERTYTAXDESIGNATIONFORCSCOPERATORWORKFLOW'), current_date, 'Junior Assistant,Senior Assistant',0);
+INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES (nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='PROPERTYTAXDEPARTMENTFORCSCOPERATORWORKFLOW'), current_date, 'Revenue',0);

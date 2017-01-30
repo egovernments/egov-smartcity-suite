@@ -298,8 +298,8 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         Position pos = null;
-        Assignment wfInitiator = null;
-        Assignment assignment = null;
+        Assignment wfInitiator;
+        Assignment assignment;
         String approverDesignation = "";
         String nextAction = "";
 

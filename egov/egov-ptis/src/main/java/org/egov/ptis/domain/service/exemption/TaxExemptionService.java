@@ -274,15 +274,19 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         Position pos = null;
-        String currentState = "";
+        String currentState;
         Assignment wfInitiator = null;
-        Assignment assignment = null;
+        Assignment assignment;
         String approverDesignation = "";
         String nextAction = "";
 
         if (!propertyByEmployee) {
             currentState = "Created";
-            assignment = propertyService.getUserPositionByZone(property.getBasicProperty(), false);
+            if (propertyService.isCscOperator(user)) {
+                assignment = propertyService.getMappedAssignmentForCscOperator(property.getBasicProperty());
+                wfInitiator = assignment;
+            } else
+                assignment = propertyService.getUserPositionByZone(property.getBasicProperty(), false);
             if (null != assignment)
                 approverPosition = assignment.getPosition().getId();
         } else {
@@ -323,7 +327,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             }
         if (property.getId() != null && property.getState() != null)
             wfInitiator = propertyService.getWorkflowInitiator(property);
-        else
+        else if (wfInitiator == null)
             wfInitiator = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(user.getId());
 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
@@ -351,7 +355,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                 pos = property.getCurrentState().getOwnerPosition();
             else if (null != approverPosition && approverPosition != -1 && !approverPosition.equals(Long.valueOf(0)))
                 pos = positionMasterService.getPositionById(approverPosition);
-            WorkFlowMatrix wfmatrix = null;
+            WorkFlowMatrix wfmatrix;
             if (null == property.getState()) {
                 wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null, additionalRule,
                         currentState, null);
