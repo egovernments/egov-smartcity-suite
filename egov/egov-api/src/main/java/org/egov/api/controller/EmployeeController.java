@@ -297,6 +297,7 @@ public class EmployeeController extends ApiController {
         query.setParameter("userId", userId);
 
         final List<Object[]> result = query.list();
+        Map<String, Long> prioritiesListCount = new LinkedHashMap<>();
         for (final Object[] rowObj : result) {
             String workFlowTypeStr = String.valueOf(rowObj[0]);
             final Long wftitemscount = (Long) getWorkflowItemsCountByWFType(userId, ownerPostitions, workFlowTypeStr, "");
@@ -308,8 +309,7 @@ public class EmployeeController extends ApiController {
                 workFlowType.put("workflowtypename", workFlowTypeObj.getDisplayName());
                 workFlowType.put("workflowgroupYN", workFlowTypeObj.isGrouped() ? Y : N);
 
-                if (workFlowTypeStr.toString().equals(Complaint.class.getSimpleName())) {
-                    Map<String, Long> prioritiesListCount = new LinkedHashMap<>();
+                if (workFlowTypeStr.equals(Complaint.class.getSimpleName())) {
                     for (Priority priority : priorityService.getAllPriorities()) {
                         prioritiesListCount.put(priority.getCode(), (Long) getWorkflowItemsCountByWFType(userId, ownerPostitions,
                                 workFlowTypeStr, priority.getCode()));
