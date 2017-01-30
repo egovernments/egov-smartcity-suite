@@ -339,6 +339,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
             final Date date1 = sdf1.parse(vdate);
             final String voucherDate = formatter1.format(date1);
             String cutOffDate1 = null;
+            prepareListRemitBean(selectedRows);
             validateFields();
             voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
             voucherHeader.setName(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE);
@@ -769,7 +770,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
         else if (commonBean.getAccountNumberId() != null && !commonBean.getAccountNumberId().equals("-1")
                 && !commonBean.getAccountNumberId().equals(""))
             bankaccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
-                    Integer.valueOf(commonBean.getAccountNumberId()));
+                    Long.valueOf(commonBean.getAccountNumberId()));
         if (bankaccount.getBankbranch().getId() != null)
             addDropdownData("accNumList",
                     bankAccountService.getBankAccounts(voucherHeader.getFundId().getId(),

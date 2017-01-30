@@ -160,6 +160,7 @@ function printVoucher(){
 			 var myform = jQuery('#remittanceForm');
 			// re-disabled the set of inputs that you previously
 			var disabled = myform.find(':input:disabled').removeAttr('disabled'); 
+			disableRemitRecoverView();
 			document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-sendForApproval.action';
 			document.remittanceForm.submit();
 		}
@@ -443,6 +444,7 @@ function printVoucher(){
 
 			</div>
 			<div class="buttonbottom" id="buttondiv">
+				<s:hidden type="hidden" id="selectedRows" name="selectedRows" />
 				<s:hidden name="paymentid" value="%{paymentheader.id}" />
 				<s:hidden name="actionname" id="actionName" value="%{action}" />
 				<s:if test="%{showMode!='view'}">

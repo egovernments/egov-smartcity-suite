@@ -305,6 +305,46 @@ function validateRemit(){
 String.prototype.trim = function () {
     return this.replace(/^\s*/, "").replace(/\s*$/, "");
 }
+
+function disableAll()
+{
+	var frmIndex=0;
+	for(var i=0;i<document.forms[frmIndex].length;i++)
+		{
+			for(var i=0;i<document.forms[0].length;i++)
+				{
+					if(document.forms[0].elements[i].name != 'voucherDate' && document.forms[0].elements[i].name != 'fundId'
+						&& document.forms[0].elements[i].name != 'vouchermis.departmentid' && document.forms[0].elements[i].name != 'vouchermis.function' 
+						&& document.forms[0].elements[i].name != 'bank' && document.forms[0].elements[i].name != 'commonBean.accountNumberId'
+						&& document.forms[0].elements[i].name != 'commonBean.availableBalance' && document.forms[0].elements[i].name != 'modeOfPayment' 
+						&& document.forms[0].elements[i].name != 'remittedTo' && document.forms[0].elements[i].name != 'description'
+						&& document.forms[0].elements[i].name != 'typeOfAccount' && document.forms[0].elements[i].name != 'remittanceBean.totalAmount' 
+						&& document.forms[0].elements[i].name != 'selectedRows' && document.forms[0].elements[i].name != 'cutOffDate'
+						&& document.forms[0].elements[i].name != 'bankBalanceCheck' && document.forms[0].elements[i].name != 'approverName' 
+						&& document.forms[0].elements[i].name != 'approverDepartment' && document.forms[0].elements[i].name != 'approverDesignation'									
+						&& document.forms[0].elements[i].name != 'approverPositionId' && document.forms[0].elements[i].name != 'approverComments'
+						&& document.forms[0].elements[i].name != 'workFlowAction' && document.forms[0].elements[i].name != 'remittanceBean.recoveryId'){
+						document.forms[frmIndex].elements[i].disabled =true;   
+					}						
+				}	
+		}
+}
+function disableRemitRecoverView()
+{
+	var frmIndex=0;
+	for(var i=0;i<document.forms[frmIndex].length;i++)
+		{
+			for(var i=0;i<document.forms[0].length;i++)
+				{
+					if(document.forms[0].elements[i].name != 'approverPositionId' && document.forms[0].elements[i].name != 'approverComments'
+						&& document.forms[0].elements[i].name != 'workFlowAction' && document.forms[0].elements[i].name != 'currentState' 
+						&& document.forms[0].elements[i].name != 'paymentid' ){
+						document.forms[frmIndex].elements[i].disabled =true;   
+					}						
+				}	
+		}
+	}
+
 </script>
 <style type="text/css">
 #codescontainer {

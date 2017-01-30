@@ -105,9 +105,9 @@ public class AccountdetailtypeController {
 		accountdetailtype.setNbroflevels(BigDecimal.ONE);
 		accountdetailtype.setColumnname("id");
 		accountdetailtype.setFullQualifiedName("org.egov.masters.model.AccountEntity");
-		accountdetailtype.setCreated(new Date());
-		accountdetailtype.setLastmodified(new Date());
-		accountdetailtype.setModifiedby(securityUtils.getCurrentUser().getId());
+		accountdetailtype.setCreatedDate(new Date());
+		accountdetailtype.setLastModifiedDate(new Date());
+		accountdetailtype.setLastModifiedBy(securityUtils.getCurrentUser().getId());
 		accountdetailtypeService.create(accountdetailtype);
 		redirectAttrs.addFlashAttribute("message",messageSource.getMessage("msg.accountdetailtype.success", null, null));
 		return "redirect:/accountdetailtype/result/"+ accountdetailtype.getId();
@@ -136,8 +136,8 @@ public class AccountdetailtypeController {
 		accountdetailtype.setColumnname("id");
 		accountdetailtype.setFullQualifiedName("org.egov.masters.model.AccountEntity");
 		//accountdetailtype.setCreated(new Date());
-		accountdetailtype.setLastmodified(new Date());
-		accountdetailtype.setModifiedby(securityUtils.getCurrentUser().getId());
+		accountdetailtype.setLastModifiedDate(new Date());
+		accountdetailtype.setLastModifiedBy(securityUtils.getCurrentUser().getId());
 		accountdetailtypeService.update(accountdetailtype);
 		redirectAttrs.addFlashAttribute("message",messageSource.getMessage("msg.accountdetailtype.success", null, Locale.ENGLISH));
 		return "redirect:/accountdetailtype/result/"
