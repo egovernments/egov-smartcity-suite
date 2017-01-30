@@ -71,14 +71,17 @@
 								</s:if>
 								<s:else>
 								<td colspan="5" style="font-size: 15px;" align="center">
-							      <s:property value="%{ackMessage}" /><span class="bold"><s:property value="%{approverName}"/><s:property value="%{mutationInitiatedBy}"/></span><s:property value="%{assessmentNoMessage}"/><span class="bold"><s:property value="%{basicProperty.upicNo}" /></span></td> 
+							      <s:property value="%{ackMessage}" /><span class="bold"><s:property value="%{approverName}"/><s:property value="%{mutationInitiatedBy}"/></span><s:property value="%{assessmentNoMessage}"/><span class="bold">
+							      <s:if test="%{initiatorIsActive}" ><s:property value="%{basicProperty.upicNo}" /></s:if></span></td> 
 								</s:else>
 							</td>
 						</tr>
 					</table>
 					<div class="buttonbottom" align="center">
 					<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_ASSISTANT_APPROVED.equalsIgnoreCase(model.state.value)}">
+					    <s:if test="%{initiatorIsActive}">
 						<input type="button" name="button2" id="button2" value="Generate Acknowledgement" class="buttonsubmit" onclick="printAcknowledgement()" />
+						</s:if>
 						</s:if>
 						<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
 					</div>
