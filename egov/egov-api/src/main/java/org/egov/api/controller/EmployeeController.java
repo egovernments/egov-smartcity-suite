@@ -60,6 +60,8 @@ import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
 import org.egov.infra.workflow.service.WorkflowTypeService;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.entity.Priority;
 import org.egov.pgr.service.PriorityService;
 import org.hibernate.FetchMode;
 import org.hibernate.FlushMode;
@@ -86,7 +88,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -134,8 +138,8 @@ public class EmployeeController extends ApiController {
 
     @RequestMapping(value = ApiUrl.EMPLOYEE_INBOX_LIST_FILTER_BY_WFT, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getInboxListByWorkFlowType(@PathVariable final String workFlowType,
-                                                             @PathVariable final int resultsFrom, @PathVariable final int resultsTo,
-                                                             @RequestParam(value="priority", required = false) final String priority) {
+            @PathVariable final int resultsFrom, @PathVariable final int resultsTo,
+            @RequestParam(value = "priority", required = false) final String priority) {
         final ApiResponse res = ApiResponse.newInstance();
         try {
             return res.setDataAdapter(new UserAdapter())
@@ -149,62 +153,25 @@ public class EmployeeController extends ApiController {
             return res.error(getMessage("server.error"));
         }
     }
-/*
-    @RequestMapping(value = ApiUrl.EMPLOYEE_SEARCH_INBOX, method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> searchEmployeeInbox(@PathVariable final Integer pageno, @PathVariable final Integer limit,
-            @RequestBody final ComplaintSearchRequest searchRequest) {
-        try {
-
-            final org.egov.search.domain.Page page = org.egov.search.domain.Page.at(pageno);
-            page.ofSize(limit);
-
-            final SearchResult searchResult = searchService.search(
-                    asList(Index.PGR.toString()),
-                    asList(IndexType.COMPLAINT.toString()),
-                    searchRequest.searchQuery(), searchRequest.searchFilters(),
-                    Sort.by().field("common.createdDate", SortOrder.DESC), page);
-
-            final String jsonString = searchResult.rawResponse();
-
-            final JSONObject respObj = (JSONObject) new JSONParser().parse(jsonString);
-
-            final JSONObject jObjHits = (JSONObject) respObj.get("hits");
-
-            final Long total = (Long) jObjHits.get("total");
-
-            final boolean hasNextPage = total > pageno * limit;
-
-            final ArrayList<Document> inboxItems = new ArrayList<>();
-
-            for (final Document document : searchResult.getDocuments()) {
-                final JSONObject jResourceObj = document.getResource();
-
-                final LinkedHashMap<String, Object> jSearchableObj = (LinkedHashMap<String, Object>) jResourceObj
-                        .get("searchable");
-
-                final LinkedHashMap<String, Object> jOwnerObj = (LinkedHashMap<String, Object>) jSearchableObj.get("owner");
-
-                if ((int) jOwnerObj.get("id") == posMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId())
-                        .getId())
-                    inboxItems.add(document);
-            }
-
-            final JsonArray result = (JsonArray) new Gson().toJsonTree(inboxItems,
-                    new TypeToken<List<Document>>() {
-                    }.getType());
-
-            final JsonObject jsonResp = new JsonObject();
-            jsonResp.add("searchItems", result);
-            jsonResp.addProperty("hasNextPage", hasNextPage);
-
-            return getResponseHandler().success(jsonResp);
-
-        } catch (final Exception e) {
-            LOGGER.error(EGOV_API_ERROR, e);
-            return getResponseHandler().error(getMessage("server.error"));
-        }
-
-    }*/
+    /*
+     * @RequestMapping(value = ApiUrl.EMPLOYEE_SEARCH_INBOX, method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+     * public ResponseEntity<String> searchEmployeeInbox(@PathVariable final Integer pageno, @PathVariable final Integer limit,
+     * @RequestBody final ComplaintSearchRequest searchRequest) { try { final org.egov.search.domain.Page page =
+     * org.egov.search.domain.Page.at(pageno); page.ofSize(limit); final SearchResult searchResult = searchService.search(
+     * asList(Index.PGR.toString()), asList(IndexType.COMPLAINT.toString()), searchRequest.searchQuery(),
+     * searchRequest.searchFilters(), Sort.by().field("common.createdDate", SortOrder.DESC), page); final String jsonString =
+     * searchResult.rawResponse(); final JSONObject respObj = (JSONObject) new JSONParser().parse(jsonString); final JSONObject
+     * jObjHits = (JSONObject) respObj.get("hits"); final Long total = (Long) jObjHits.get("total"); final boolean hasNextPage =
+     * total > pageno * limit; final ArrayList<Document> inboxItems = new ArrayList<>(); for (final Document document :
+     * searchResult.getDocuments()) { final JSONObject jResourceObj = document.getResource(); final LinkedHashMap<String, Object>
+     * jSearchableObj = (LinkedHashMap<String, Object>) jResourceObj .get("searchable"); final LinkedHashMap<String, Object>
+     * jOwnerObj = (LinkedHashMap<String, Object>) jSearchableObj.get("owner"); if ((int) jOwnerObj.get("id") ==
+     * posMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId()) .getId()) inboxItems.add(document); } final
+     * JsonArray result = (JsonArray) new Gson().toJsonTree(inboxItems, new TypeToken<List<Document>>() { }.getType()); final
+     * JsonObject jsonResp = new JsonObject(); jsonResp.add("searchItems", result); jsonResp.addProperty("hasNextPage",
+     * hasNextPage); return getResponseHandler().success(jsonResp); } catch (final Exception e) { LOGGER.error(EGOV_API_ERROR, e);
+     * return getResponseHandler().error(getMessage("server.error")); } }
+     */
 
     // --------------------------------------------------------------------------------//
 
@@ -274,16 +241,14 @@ public class EmployeeController extends ApiController {
 
     @SuppressWarnings("unchecked")
     public List<StateAware> getWorkflowItemsByUserAndWFType(final Long userId, final List<Long> owners, final String workFlowType,
-                                                            final int resultsFrom, final int resultsTo, String priority) throws HibernateException, ClassNotFoundException {
-    	
-    	Criterion criterion=Restrictions.not(Restrictions.conjunction().add(Restrictions.eq("state.status", StateStatus.STARTED))
-                .add(Restrictions.eq("createdBy.id", userId)));
-    	
-    	if(StringUtils.isNotBlank(priority))
-    	{
-    		criterion=Restrictions.conjunction(criterion).add(Restrictions.eq("priority.id", priorityService.getPriorityByCode(priority).getId()));
-    	}
-    	
+            final int resultsFrom, final int resultsTo, String priority) throws HibernateException, ClassNotFoundException {
+
+        Criterion criterion = Restrictions
+                .not(Restrictions.conjunction().add(Restrictions.eq("state.status", StateStatus.STARTED))
+                        .add(Restrictions.eq("createdBy.id", userId)));
+
+        criterion = addPriorityCondition(criterion, priority);
+
         return entityQueryService.getSession()
                 .createCriteria(Class.forName(workflowTypeService.getEnabledWorkflowTypeByType(workFlowType).getTypeFQN()))
                 .setFirstResult(resultsFrom)
@@ -300,8 +265,15 @@ public class EmployeeController extends ApiController {
     }
 
     @SuppressWarnings("unchecked")
-    public Number getWorkflowItemsCountByWFType(final Long userId, final List<Long> owners, final String workFlowType)
+    public Number getWorkflowItemsCountByWFType(final Long userId, final List<Long> owners, final String workFlowType,
+            final String priority)
             throws HibernateException, ClassNotFoundException {
+
+        Criterion criterion = Restrictions
+                .not(Restrictions.conjunction().add(Restrictions.eq("state.status", StateStatus.STARTED))
+                        .add(Restrictions.eq("createdBy.id", userId)));
+        criterion = addPriorityCondition(criterion, priority);
+
         return (Number) entityQueryService.getSession()
                 .createCriteria(Class.forName(workflowTypeService.getEnabledWorkflowTypeByType(workFlowType).getTypeFQN()))
                 .setFetchMode("state", FetchMode.JOIN).createAlias("state", "state")
@@ -310,8 +282,7 @@ public class EmployeeController extends ApiController {
                 .add(Restrictions.eq("state.type", workFlowType))
                 .add(Restrictions.in("state.ownerPosition.id", owners))
                 .add(Restrictions.ne("state.status", StateStatus.ENDED))
-                .add(Restrictions.not(Restrictions.conjunction().add(Restrictions.eq("state.status", StateStatus.STARTED))
-                        .add(Restrictions.eq("createdBy.id", userId))))
+                .add(criterion)
                 .uniqueResult();
     }
 
@@ -327,17 +298,36 @@ public class EmployeeController extends ApiController {
 
         final List<Object[]> result = query.list();
         for (final Object[] rowObj : result) {
-            final Long wftitemscount = (Long) getWorkflowItemsCountByWFType(userId, ownerPostitions, String.valueOf(rowObj[0]));
+            String workFlowTypeStr = String.valueOf(rowObj[0]);
+            final Long wftitemscount = (Long) getWorkflowItemsCountByWFType(userId, ownerPostitions, workFlowTypeStr, "");
             if (wftitemscount > 0) {
                 final HashMap<String, Object> workFlowType = new HashMap<>();
-                final WorkflowTypes workFlowTypeObj = workflowTypeService.getEnabledWorkflowTypeByType(String.valueOf(rowObj[0]));
-                workFlowType.put("workflowtype", rowObj[0]);
+                final WorkflowTypes workFlowTypeObj = workflowTypeService.getEnabledWorkflowTypeByType(workFlowTypeStr);
+                workFlowType.put("workflowtype", workFlowTypeStr);
                 workFlowType.put("inboxlistcount", wftitemscount);
                 workFlowType.put("workflowtypename", workFlowTypeObj.getDisplayName());
                 workFlowType.put("workflowgroupYN", workFlowTypeObj.isGrouped() ? Y : N);
+
+                if (workFlowTypeStr.toString().equals(Complaint.class.getSimpleName())) {
+                    Map<String, Long> prioritiesListCount = new LinkedHashMap<>();
+                    for (Priority priority : priorityService.getAllPriorities()) {
+                        prioritiesListCount.put(priority.getName(), (Long) getWorkflowItemsCountByWFType(userId, ownerPostitions,
+                                workFlowTypeStr, priority.getCode()));
+                    }
+                    workFlowType.put("prioritylistcount", prioritiesListCount);
+                }
+
                 workFlowTypesWithItemsCount.add(workFlowType);
             }
         }
         return workFlowTypesWithItemsCount;
+    }
+
+    private Criterion addPriorityCondition(Criterion existingCondition, String priority) {
+        if (StringUtils.isNotBlank(priority)) {
+            return Restrictions.conjunction(existingCondition)
+                    .add(Restrictions.eq("priority.id", priorityService.getPriorityByCode(priority).getId()));
+        }
+        return existingCondition;
     }
 }
