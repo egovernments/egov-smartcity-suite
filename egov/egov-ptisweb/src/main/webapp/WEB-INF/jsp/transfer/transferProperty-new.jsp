@@ -68,7 +68,6 @@
 		}
 
 		var aadhartextboxes = jQuery('.txtaadhar');
-		console.log(aadhartextboxes);
 		aadhartextboxes.each(function() {
 			if (jQuery(this).val()) {
 				getAadharDetailsForTransferee(this);
@@ -349,18 +348,27 @@
 			if (document.getElementById("partyValue").value == '') {
 				bootbox.alert("Please enter the Parties consideration value");
 				return false;
-			}
-			if (document.getElementById("departmentValue").value == '') {
+			}else if (document.getElementById("departmentValue").value == '') {
 				bootbox.alert("Please enter the Department guidelines value");
 				return false;
-			}
-			if(document.getElementById("mutationFee").value == ''){
+			}else if(document.getElementById("mutationFee").value == ''){
 				bootbox.alert("Please enter valid values in Parties consideration value and Department guidelines value for Mutation Fee calculations");
 				return false;
 			}
-			return true;
-		} 
-		
+		var tosubmit = true;
+			jQuery(".validateDocs").each(function() {
+				if (jQuery(this).val() == '') {
+					bootbox.alert("attach the document");
+					tosubmit = false;
+					return false;
+				}
+			});
+
+			if (tosubmit)
+				return true;
+			else
+				return false;
+		}
 	</script>
     <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
     <script type="text/javascript"

@@ -132,7 +132,6 @@
 		document.forms[0].propTypeCategoryId.options[document.forms[0].propTypeCategoryId.selectedIndex].value = category;
 		toggleFloorDetails();
 	     var aadhartextboxes = jQuery('.txtaadhar');
-	     console.log(aadhartextboxes);
 	     aadhartextboxes.each(function() {
 		   	if(jQuery(this).val())
 		   	{

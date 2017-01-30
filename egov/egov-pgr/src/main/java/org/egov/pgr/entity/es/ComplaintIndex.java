@@ -287,8 +287,11 @@ public class ComplaintIndex {
 
     @Field(type = FieldType.String, index = not_analyzed)
     private String categoryName;
-
+    
     private String url;
+    
+    @Field(type = FieldType.String, index = not_analyzed)
+    private String initialFunctionaryMobileNumber;
 
     public String getId() {
         return id;
@@ -994,5 +997,13 @@ public class ComplaintIndex {
 
     public void setUrl(final String url) {
         this.url = url;
+    }
+    
+    public String getInitialFunctionaryMobileNumber() {
+        return initialFunctionaryMobileNumber;
+    }
+
+    public void setInitialFunctionaryMobileNumber(String initialFunctionaryMobileNumber) {
+        this.initialFunctionaryMobileNumber = initialFunctionaryMobileNumber;
     }
 }

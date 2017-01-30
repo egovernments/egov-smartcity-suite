@@ -104,6 +104,8 @@ public class ContractorDetail extends AbstractAuditable {
     @Valid
     private Period validity;
 
+    private String category;
+
     @Transient
     private List<ValidationError> errorList;
 
@@ -164,6 +166,14 @@ public class ContractorDetail extends AbstractAuditable {
 
     public void setErrorList(final List<ValidationError> errorList) {
         this.errorList = errorList;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(final String category) {
+        this.category = category;
     }
 
     public List<ValidationError> validate() {

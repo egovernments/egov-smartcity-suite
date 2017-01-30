@@ -66,7 +66,6 @@ $(document).ready(function()
 			},
 			dataType: "json",
 			success: function (response) {
-				console.log("success"+response);
 				$('#approvalDesignation').empty();
 				$('#approvalDesignation').append($("<option value=''>Select from below</option>"));
 				$.each(response, function(index, value) {
@@ -76,7 +75,6 @@ $(document).ready(function()
 			}, 
 			error: function (response) {
 				bootbox.alert('json fail');
-				console.log("failed");
 			}
 		});
 	});
@@ -92,7 +90,6 @@ $(document).ready(function()
 			},
 			dataType: "json",
 			success: function (response) {
-				console.log("success"+response);
 				$('#approvalPosition').empty();
 				$('#approvalPosition').append($("<option value=''>Select from below</option>"));
 				$.each(response, function(index, value) {
@@ -101,7 +98,6 @@ $(document).ready(function()
 				
 			}, 
 			error: function (response) {
-				console.log("failed");
 			}
 		});
 	});

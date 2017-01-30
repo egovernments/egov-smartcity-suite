@@ -52,6 +52,8 @@ public interface ReIssueRepository extends JpaRepository<ReIssue, Long> {
     ReIssue findById(Long id);
     
     ReIssue findByRegistration(MarriageRegistration registration);
+    
+    ReIssue findByApplicationNo(String applicationNo); 
    
     @Query("select scd from ReIssue scd where scd.registration.registrationNo =:registrationNo and scd.isActive='f' and upper(scd.status.code) not in ('CANCELLED','CERTIFICATEREISSUED')")
     ReIssue findReIssueInProgressForRegistration(@Param("registrationNo") String registrationNo);

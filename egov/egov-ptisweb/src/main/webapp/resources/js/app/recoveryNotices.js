@@ -72,7 +72,6 @@ $(document).ready(function() {
 						});
 					},
 					error : function(response) {
-						console.log("failed");
 						jQuery('#block').prop("disabled", false);
 						jQuery('#block').html("");
 						jQuery('#block').append(
@@ -116,7 +115,6 @@ $(document).ready(function() {
 						});
 					},
 					error : function(response) {
-						console.log("failed");
 						jQuery('#categoryType').prop("disabled", false);
 						jQuery('#categoryType').html("");
 						jQuery('#categoryType').append(

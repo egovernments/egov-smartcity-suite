@@ -326,6 +326,8 @@ public class RemitRecoveryService {
                                 + remitBean.getVoucherNumber())));
             }
             // Exception here
+            if(voucherHeader==null)
+                remitBean.setPartialAmount(remitBean.getDeductionAmount());
             remitBean.setPartyCode(entity.getCode());
             remitBean.setPartyName(entity.getName());
             remitBean.setPanNo(entity.getPanno());

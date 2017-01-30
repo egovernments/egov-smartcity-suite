@@ -38,76 +38,12 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.collection.bean.dashboard;
+package org.egov.works.autonumber;
 
-import java.math.BigDecimal;
+import org.egov.works.masters.entity.Contractor;
+import org.springframework.stereotype.Service;
 
-import org.apache.commons.lang3.StringUtils;
-
-public class CollectionTableData {
-
-    private String regionName = StringUtils.EMPTY;
-    private String districtName = StringUtils.EMPTY;
-    private String ulbGrade = StringUtils.EMPTY;
-    private String ulbName = StringUtils.EMPTY;
-    private String wardName = StringUtils.EMPTY;
-    private BigDecimal totalCollection = BigDecimal.ZERO;
-    private BigDecimal todaysCollection=BigDecimal.ZERO;
-
-    public String getRegionName() {
-        return regionName;
-    }
-
-    public void setRegionName(String regionName) {
-        this.regionName = regionName;
-    }
-
-    public String getDistrictName() {
-        return districtName;
-    }
-
-    public void setDistrictName(String districtName) {
-        this.districtName = districtName;
-    }
-
-    public String getUlbGrade() {
-        return ulbGrade;
-    }
-
-    public void setUlbGrade(String ulbGrade) {
-        this.ulbGrade = ulbGrade;
-    }
-
-    public String getUlbName() {
-        return ulbName;
-    }
-
-    public void setUlbName(String ulbName) {
-        this.ulbName = ulbName;
-    }
-
-    public String getWardName() {
-        return wardName;
-    }
-
-    public void setWardName(String wardName) {
-        this.wardName = wardName;
-    }
-
-    public BigDecimal getTotalCollection() {
-        return totalCollection;
-    }
-
-    public void setTotalCollection(BigDecimal totalCollection) {
-        this.totalCollection = totalCollection;
-    }
-
-    public BigDecimal getTodaysCollection() {
-        return todaysCollection;
-    }
-
-    public void setTodaysCollection(BigDecimal todaysCollection) {
-        this.todaysCollection = todaysCollection;
-    }
-
+@Service
+public interface ContractorCodeGenerator {
+    String getNextNumber(final Contractor contractor);
 }

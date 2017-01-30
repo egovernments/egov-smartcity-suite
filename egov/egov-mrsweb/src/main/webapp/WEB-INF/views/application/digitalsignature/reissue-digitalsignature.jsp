@@ -48,13 +48,13 @@
 	 	jQuery(document).ready( function() {
 	 		var fileStoreIds = '${fileStoreIds}';
 	 		var ulbCode = '${ulbCode}';
-	 		var callBackUrl = '/mrs/registration/digiSignWorkflow?fileStoreId='+fileStoreIds;
+	 		var callBackUrl = '/mrs/reissue/digiSignWorkflow?fileStoreId='+fileStoreIds;
 	 		var actionUrl = null;
 	 		var isDigitalSignatureEnabled = $('#isDigitalSignatureEnabled').val();
 			if (isDigitalSignatureEnabled == 'true') {
 				actionUrl = '/digisign/reports/selectCertificate.jsp?fileStoreId='+fileStoreIds+'&moduleName=MRS&ulbCode='+ulbCode+'&callBackUrl='+callBackUrl;
 			} else {
-				actionUrl = '/mrs/registration/digiSignWorkflow?fileStoreId='+fileStoreIds;
+				actionUrl = '/mrs/reissue/digiSignWorkflow?fileStoreId='+fileStoreIds;
 			}
 			jQuery('<form>.').attr({
 				method: 'post',

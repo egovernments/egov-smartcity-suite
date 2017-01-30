@@ -110,6 +110,7 @@ import org.egov.ptis.domain.entity.property.BuiltUpProperty;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.FloorType;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
+import org.egov.ptis.domain.entity.property.PropertyDepartment;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
@@ -123,6 +124,11 @@ import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.domain.entity.property.TaxExemptionReason;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
+import org.egov.ptis.domain.entity.property.vacantland.LayoutApprovalAuthority;
+import org.egov.ptis.domain.entity.property.vacantland.VacantLandPlotArea;
+import org.egov.ptis.domain.repository.PropertyDepartmentRepository;
+import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
+import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
@@ -135,16 +141,17 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @Validations
 @ResultPath("/WEB-INF/jsp/")
 @Results({ @Result(name = CreateAction.NEW, location = "citizen/create/create-new.jsp"),
-	@Result(name = CreateAction.RESULT_ACK, location = "citizen/create/create-ack.jsp"),
-	@Result(name = CreateAction.PRINTACK, location = "citizen/create/create-printAck.jsp")})
-public class CreateAction extends PropertyTaxBaseAction{
+        @Result(name = CreateAction.RESULT_ACK, location = "citizen/create/create-ack.jsp"),
+        @Result(name = CreateAction.PRINTACK, location = "citizen/create/create-printAck.jsp") })
+public class CreateAction extends PropertyTaxBaseAction {
 
-	private static final long serialVersionUID = -2329719786287615452L;
+    private static final long serialVersionUID = -2329719786287615452L;
     public static final String RESULT_ACK = "ack";
     public static final String PRINTACK = "printAck";
-	private final Logger LOGGER = Logger.getLogger(getClass());
+    private static final String PROPTYPEMASTER_QUERY = "from PropertyTypeMaster ptm where ptm.id = ?";
+    private final Logger LOGGER = Logger.getLogger(getClass());
     private PropertyImpl property = new PropertyImpl();
-    
+
     private Long zoneId;
     private Long wardId;
     private Long blockId;
@@ -204,7 +211,10 @@ public class CreateAction extends PropertyTaxBaseAction{
     private Long propertyDepartmentId;
     private Long vacantLandPlotAreaId;
     private Long layoutApprovalAuthorityId;
-    
+    private List<PropertyDepartment> propertyDepartmentList = new ArrayList<>();
+    private List<VacantLandPlotArea> vacantLandPlotAreaList = new ArrayList<>();
+    private List<LayoutApprovalAuthority> layoutApprovalAuthorityList = new ArrayList<>();
+
     @Autowired
     private PropertyPersistenceService basicPropertyService;
     @Autowired
@@ -213,6 +223,13 @@ public class CreateAction extends PropertyTaxBaseAction{
     private BoundaryService boundaryService;
     @Autowired
     private ReportViewerUtil reportViewerUtil;
+    @Autowired
+    private transient PropertyDepartmentRepository propertyDepartmentRepository;
+    @Autowired
+    private transient VacantLandPlotAreaRepository vacantLandPlotAreaRepository;
+
+    @Autowired
+    private transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepository;
 
     public CreateAction() {
         super();
@@ -233,12 +250,12 @@ public class CreateAction extends PropertyTaxBaseAction{
         addRelatedEntity("property.propertyDetail.woodType", WoodType.class);
         addRelatedEntity("property.taxExemptedReason", TaxExemptionReason.class);
     }
-    
+
     @Override
     public StateAware getModel() {
         return property;
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     @SkipValidation
@@ -253,12 +270,12 @@ public class CreateAction extends PropertyTaxBaseAction{
         if (isNotBlank(getModelId())) {
             property = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
                     Long.valueOf(getModelId()));
-            
+
             basicProp = property.getBasicProperty();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("prepare: Property by ModelId: " + property + "BasicProperty on property: " + basicProp);
         }
-        
+
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE);
         final List<FloorType> floorTypeList = getPersistenceService().findAllBy("from FloorType order by name");
         final List<RoofType> roofTypeList = getPersistenceService().findAllBy("from RoofType order by name");
@@ -315,7 +332,7 @@ public class CreateAction extends PropertyTaxBaseAction{
         addDropdownData("taxExemptionReasonList", taxExemptionReasonList);
         if (propTypeId != null && !propTypeId.trim().isEmpty() && !propTypeId.equals("-1")) {
             propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
-                    "from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
+                    PROPTYPEMASTER_QUERY, Long.valueOf(propTypeId));
             if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
                 setPropTypeCategoryMap(VAC_LAND_PROPERTY_TYPE_CATEGORY);
             else
@@ -339,6 +356,20 @@ public class CreateAction extends PropertyTaxBaseAction{
         // tax exempted properties
         addDropdownData("taxExemptedList", CommonServices.getTaxExemptedList());
 
+        // Loading Property Department based on ownership of property
+
+        if (propTypeId != null && !propTypeId.trim().isEmpty() && !"-1".equals(propTypeId)) {
+            propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(PROPTYPEMASTER_QUERY,
+                    Long.valueOf(propTypeId));
+            if (propTypeMstr.getCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT))
+                setPropertyDepartmentList(propertyDepartmentRepository.getAllStateDepartments());
+            else if (propTypeMstr.getCode().startsWith("CENTRAL_GOVT"))
+                setPropertyDepartmentList(propertyDepartmentRepository.getAllCentralDepartments());
+        }
+        setVacantLandPlotAreaList(vacantLandPlotAreaRepository.findAll());
+        setLayoutApprovalAuthorityList(layoutApprovalAuthorityRepository.findAll());
+        addDropdownData("vacantLandPlotAreaList", vacantLandPlotAreaList);
+        addDropdownData("layoutApprovalAuthorityList", layoutApprovalAuthorityList);
         super.prepare();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("prepare: PropTypeList: "
@@ -357,7 +388,7 @@ public class CreateAction extends PropertyTaxBaseAction{
 
         LOGGER.debug("Exiting from prepare");
     }
-    
+
     @Override
     public void validate() {
         if (LOGGER.isDebugEnabled())
@@ -369,7 +400,7 @@ public class CreateAction extends PropertyTaxBaseAction{
 
         if (null != propTypeId && !propTypeId.equals("-1")) {
             propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
-                    "from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
+                    PROPTYPEMASTER_QUERY, Long.valueOf(propTypeId));
         }
         if (zoneId == null || zoneId == -1)
             addActionError(getText("mandatory.zone"));
@@ -387,14 +418,14 @@ public class CreateAction extends PropertyTaxBaseAction{
                             .equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING))
                 addActionError(getText("mandatory.doorNo"));
 
-        //if (!property.getPropertyDetail().isStructure()) {
-            if (null == property.getBasicProperty().getRegdDocDate()) {
-                addActionError(getText("mandatory.regdocdate"));
-            }
-            if (StringUtils.isBlank(property.getBasicProperty().getRegdDocNo())) {
-                addActionError(getText("mandatory.regdocno"));
-            }
-        //}
+        // if (!property.getPropertyDetail().isStructure()) {
+        if (null == property.getBasicProperty().getRegdDocDate()) {
+            addActionError(getText("mandatory.regdocdate"));
+        }
+        if (StringUtils.isBlank(property.getBasicProperty().getRegdDocNo())) {
+            addActionError(getText("mandatory.regdocno"));
+        }
+        // }
 
         if (electionWardId == null || electionWardId == -1) {
             addActionError(getText("mandatory.election.ward"));
@@ -476,21 +507,21 @@ public class CreateAction extends PropertyTaxBaseAction{
         propertyid.setElectionBoundary(boundaryService.getBoundaryById(getElectionWardId()));
         property.getBasicProperty().setPropertyID(propertyid);
         if (null != getElectionWardId() && getElectionWardId() != -1 && null != property.getBasicProperty()
-        		&& null == propService.getUserPositionByZone(property.getBasicProperty(), false)) {
-        	addActionError(getText("notexists.position"));
+                && null == propService.getUserPositionByZone(property.getBasicProperty(), false)) {
+            addActionError(getText("notexists.position"));
         }
         super.validate();
     }
-    
+
     @SkipValidation
     @Action(value = "/create-newForm")
     public String newForm() {
-    	if(StringUtils.isBlank(applicationSource) || !applicationSource.equalsIgnoreCase("online")){
-    		addActionError(getText("citizen.unAuthorized.user.error"));
-    	}
+        if (StringUtils.isBlank(applicationSource) || !applicationSource.equalsIgnoreCase("online")) {
+            addActionError(getText("citizen.unAuthorized.user.error"));
+        }
         return NEW;
     }
-    
+
     @Action(value = "/create-create")
     public String create() {
         if (LOGGER.isDebugEnabled())
@@ -498,12 +529,12 @@ public class CreateAction extends PropertyTaxBaseAction{
                     + ", wardId: " + wardId + ", blockId: " + blockId + ", areaOfPlot: " + areaOfPlot
                     + ", dateOfCompletion: " + dateOfCompletion + ", propTypeId: " + propTypeId + ", propUsageId: "
                     + propUsageId + ", propOccId: " + propOccId);
-        if(StringUtils.isBlank(applicationSource) || !applicationSource.equalsIgnoreCase("online")){
-        	throw new ValidationException(new ValidationError("authenticationError",
-        			getText("citizen.unAuthorized.user.error")));
-        	//addActionError(getText("citizen.unAuthorized.user.error"));
-    	}
-        
+        if (StringUtils.isBlank(applicationSource) || !applicationSource.equalsIgnoreCase("online")) {
+            throw new ValidationException(new ValidationError("authenticationError",
+                    getText("citizen.unAuthorized.user.error")));
+            // addActionError(getText("citizen.unAuthorized.user.error"));
+        }
+
         final long startTimeMillis = System.currentTimeMillis();
 
         final BasicProperty basicProperty = createBasicProp(STATUS_DEMAND_INACTIVE);
@@ -528,7 +559,7 @@ public class CreateAction extends PropertyTaxBaseAction{
         setBasicProp(basicProperty);
         setAckMessage("Property Data Saved Successfully in the System and forwarded to the official ");
         setApplicationNoMessage(" with application number : ");
-        
+
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         if (LOGGER.isDebugEnabled()) {
             LOGGER.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);
@@ -536,7 +567,7 @@ public class CreateAction extends PropertyTaxBaseAction{
         }
         return RESULT_ACK;
     }
-    
+
     private BasicProperty createBasicProp(final Character status) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into createBasicProp, Property: " + property + ", status: " + status + ", wardId: "
@@ -583,15 +614,15 @@ public class CreateAction extends PropertyTaxBaseAction{
         basicProperty.setPropOccupationDate(propCompletionDate);
         basicProperty.addProperty(property);
         try {
-              if (property != null && !property.getDocuments().isEmpty())
-                    propService.processAndStoreDocument(property.getDocuments());
+            if (property != null && !property.getDocuments().isEmpty())
+                propService.processAndStoreDocument(property.getDocuments());
 
-                propService.createDemand(property, propCompletionDate);
+            propService.createDemand(property, propCompletionDate);
         } catch (TaxCalculatorExeption e) {
             throw new TaxCalculatorExeption();
         }
     }
-    
+
     private PropertyAddress createPropAddress() {
 
         if (LOGGER.isDebugEnabled())
@@ -649,7 +680,7 @@ public class CreateAction extends PropertyTaxBaseAction{
         LOGGER.debug("PropertyID: " + propertyId + "\nExiting from createPropertyID");
         return propertyId;
     }
-    
+
     @SkipValidation
     @Action(value = "/create-printAck")
     public String printAck() {
@@ -662,361 +693,470 @@ public class CreateAction extends PropertyTaxBaseAction{
                 basicPropertyService.propertyAcknowledgement(property, cityLogo, cityName));
         return PRINTACK;
     }
-    
-	public PropertyImpl getProperty() {
-		return property;
-	}
-	public void setProperty(PropertyImpl property) {
-		this.property = property;
-	}
-	public Long getZoneId() {
-		return zoneId;
-	}
-	public void setZoneId(Long zoneId) {
-		this.zoneId = zoneId;
-	}
-	public Long getWardId() {
-		return wardId;
-	}
-	public void setWardId(Long wardId) {
-		this.wardId = wardId;
-	}
-	public Long getBlockId() {
-		return blockId;
-	}
-	public void setBlockId(Long blockId) {
-		this.blockId = blockId;
-	}
-	public Long getStreetId() {
-		return streetId;
-	}
-	public void setStreetId(Long streetId) {
-		this.streetId = streetId;
-	}
-	public Long getLocality() {
-		return locality;
-	}
-	public void setLocality(Long locality) {
-		this.locality = locality;
-	}
-	public Long getFloorTypeId() {
-		return floorTypeId;
-	}
-	public void setFloorTypeId(Long floorTypeId) {
-		this.floorTypeId = floorTypeId;
-	}
-	public Long getRoofTypeId() {
-		return roofTypeId;
-	}
-	public void setRoofTypeId(Long roofTypeId) {
-		this.roofTypeId = roofTypeId;
-	}
-	public Long getWallTypeId() {
-		return wallTypeId;
-	}
-	public void setWallTypeId(Long wallTypeId) {
-		this.wallTypeId = wallTypeId;
-	}
-	public Long getWoodTypeId() {
-		return woodTypeId;
-	}
-	public void setWoodTypeId(Long woodTypeId) {
-		this.woodTypeId = woodTypeId;
-	}
-	public Long getOwnershipType() {
-		return ownershipType;
-	}
-	public void setOwnershipType(Long ownershipType) {
-		this.ownershipType = ownershipType;
-	}
-	public Long getElectionWardId() {
-		return electionWardId;
-	}
-	public void setElectionWardId(Long electionWardId) {
-		this.electionWardId = electionWardId;
-	}
-	public String getWardName() {
-		return wardName;
-	}
-	public void setWardName(String wardName) {
-		this.wardName = wardName;
-	}
-	public String getZoneName() {
-		return zoneName;
-	}
-	public void setZoneName(String zoneName) {
-		this.zoneName = zoneName;
-	}
-	public String getBlockName() {
-		return blockName;
-	}
-	public void setBlockName(String blockName) {
-		this.blockName = blockName;
-	}
-	public String getHouseNumber() {
-		return houseNumber;
-	}
-	public void setHouseNumber(String houseNumber) {
-		this.houseNumber = houseNumber;
-	}
-	public String getAddressStr() {
-		return addressStr;
-	}
-	public void setAddressStr(String addressStr) {
-		this.addressStr = addressStr;
-	}
-	public String getPinCode() {
-		return pinCode;
-	}
-	public void setPinCode(String pinCode) {
-		this.pinCode = pinCode;
-	}
-	public String getAreaOfPlot() {
-		return areaOfPlot;
-	}
-	public void setAreaOfPlot(String areaOfPlot) {
-		this.areaOfPlot = areaOfPlot;
-	}
-	public String getDateOfCompletion() {
-		return dateOfCompletion;
-	}
-	public void setDateOfCompletion(String dateOfCompletion) {
-		this.dateOfCompletion = dateOfCompletion;
-	}
-	public String getApplicationNo() {
-		return applicationNo;
-	}
-	public void setApplicationNo(String applicationNo) {
-		this.applicationNo = applicationNo;
-	}
-	public String getCorrAddress1() {
-		return corrAddress1;
-	}
-	public void setCorrAddress1(String corrAddress1) {
-		this.corrAddress1 = corrAddress1;
-	}
-	public String getCorrAddress2() {
-		return corrAddress2;
-	}
-	public void setCorrAddress2(String corrAddress2) {
-		this.corrAddress2 = corrAddress2;
-	}
-	public String getCorrPinCode() {
-		return corrPinCode;
-	}
-	public void setCorrPinCode(String corrPinCode) {
-		this.corrPinCode = corrPinCode;
-	}
-	public String getUpicNo() {
-		return upicNo;
-	}
-	public void setUpicNo(String upicNo) {
-		this.upicNo = upicNo;
-	}
-	public String getTaxExemptionId() {
-		return taxExemptionId;
-	}
-	public void setTaxExemptionId(String taxExemptionId) {
-		this.taxExemptionId = taxExemptionId;
-	}
-	public String getParentIndex() {
-		return parentIndex;
-	}
-	public void setParentIndex(String parentIndex) {
-		this.parentIndex = parentIndex;
-	}
-	public String getAmenities() {
-		return amenities;
-	}
-	public void setAmenities(String amenities) {
-		this.amenities = amenities;
-	}
-	public String[] getFloorNoStr() {
-		return floorNoStr;
-	}
-	public void setFloorNoStr(String[] floorNoStr) {
-		this.floorNoStr = floorNoStr;
-	}
-	public String getPropTypeId() {
-		return propTypeId;
-	}
-	public void setPropTypeId(String propTypeId) {
-		this.propTypeId = propTypeId;
-	}
-	public String getPropUsageId() {
-		return propUsageId;
-	}
-	public void setPropUsageId(String propUsageId) {
-		this.propUsageId = propUsageId;
-	}
-	public String getPropOccId() {
-		return propOccId;
-	}
-	public void setPropOccId(String propOccId) {
-		this.propOccId = propOccId;
-	}
-	public String getPropertyCategory() {
-		return propertyCategory;
-	}
-	public void setPropertyCategory(String propertyCategory) {
-		this.propertyCategory = propertyCategory;
-	}
-	public String getDocNumber() {
-		return docNumber;
-	}
-	public void setDocNumber(String docNumber) {
-		this.docNumber = docNumber;
-	}
-	public String getNonResPlotArea() {
-		return nonResPlotArea;
-	}
-	public void setNonResPlotArea(String nonResPlotArea) {
-		this.nonResPlotArea = nonResPlotArea;
-	}
-	public String getApplicationNoMessage() {
-		return applicationNoMessage;
-	}
-	public void setApplicationNoMessage(String applicationNoMessage) {
-		this.applicationNoMessage = applicationNoMessage;
-	}
-	public String getAssessmentNoMessage() {
-		return assessmentNoMessage;
-	}
-	public void setAssessmentNoMessage(String assessmentNoMessage) {
-		this.assessmentNoMessage = assessmentNoMessage;
-	}
-	public String getPropertyInitiatedBy() {
-		return propertyInitiatedBy;
-	}
-	public void setPropertyInitiatedBy(String propertyInitiatedBy) {
-		this.propertyInitiatedBy = propertyInitiatedBy;
-	}
-	public String getNorthBoundary() {
-		return northBoundary;
-	}
-	public void setNorthBoundary(String northBoundary) {
-		this.northBoundary = northBoundary;
-	}
-	public String getSouthBoundary() {
-		return southBoundary;
-	}
-	public void setSouthBoundary(String southBoundary) {
-		this.southBoundary = southBoundary;
-	}
-	public String getEastBoundary() {
-		return eastBoundary;
-	}
-	public void setEastBoundary(String eastBoundary) {
-		this.eastBoundary = eastBoundary;
-	}
-	public String getWestBoundary() {
-		return westBoundary;
-	}
-	public void setWestBoundary(String westBoundary) {
-		this.westBoundary = westBoundary;
-	}
-	public Long getMutationId() {
-		return mutationId;
-	}
-	public void setMutationId(Long mutationId) {
-		this.mutationId = mutationId;
-	}
-	public Map<String, String> getPropTypeCategoryMap() {
-		return propTypeCategoryMap;
-	}
-	public void setPropTypeCategoryMap(Map<String, String> propTypeCategoryMap) {
-		this.propTypeCategoryMap = propTypeCategoryMap;
-	}
-	public TreeMap<Integer, String> getFloorNoMap() {
-		return floorNoMap;
-	}
-	public void setFloorNoMap(TreeMap<Integer, String> floorNoMap) {
-		this.floorNoMap = floorNoMap;
-	}
-	public Map<String, String> getDeviationPercentageMap() {
-		return deviationPercentageMap;
-	}
-	public void setDeviationPercentageMap(Map<String, String> deviationPercentageMap) {
-		this.deviationPercentageMap = deviationPercentageMap;
-	}
-	public Map<String, String> getGuardianRelationMap() {
-		return guardianRelationMap;
-	}
-	public void setGuardianRelationMap(Map<String, String> guardianRelationMap) {
-		this.guardianRelationMap = guardianRelationMap;
-	}
-	public List<DocumentType> getDocumentTypes() {
-		return documentTypes;
-	}
-	public void setDocumentTypes(List<DocumentType> documentTypes) {
-		this.documentTypes = documentTypes;
-	}
-	public String getReportId() {
-		return reportId;
-	}
-	public void setReportId(String reportId) {
-		this.reportId = reportId;
-	}
-	public boolean isApproved() {
-		return approved;
-	}
-	public void setApproved(boolean approved) {
-		this.approved = approved;
-	}
-	public BasicProperty getBasicProp() {
-		return basicProp;
-	}
-	public void setBasicProp(BasicProperty basicProp) {
-		this.basicProp = basicProp;
-	}
-	public PropertyTypeMaster getPropTypeMstr() {
-		return propTypeMstr;
-	}
-	public void setPropTypeMstr(PropertyTypeMaster propTypeMstr) {
-		this.propTypeMstr = propTypeMstr;
-	}
-	public PropertyImpl getNewProperty() {
-		return newProperty;
-	}
-	public void setNewProperty(PropertyImpl newProperty) {
-		this.newProperty = newProperty;
-	}
-	public Address getOwnerAddress() {
-		return ownerAddress;
-	}
-	public void setOwnerAddress(Address ownerAddress) {
-		this.ownerAddress = ownerAddress;
-	}
-	public Date getPropCompletionDate() {
-		return propCompletionDate;
-	}
-	public void setPropCompletionDate(Date propCompletionDate) {
-		this.propCompletionDate = propCompletionDate;
-	}
-	
-	public void setPropService(PropertyService propService) {
-		this.propService = propService;
-	}
-	
-	public PropertyService getPropService() {
-		return propService;
-	}
 
-	public String getAckMessage() {
-		return ackMessage;
-	}
+    public PropertyImpl getProperty() {
+        return property;
+    }
 
-	public void setAckMessage(String ackMessage) {
-		this.ackMessage = ackMessage;
-	}
+    public void setProperty(PropertyImpl property) {
+        this.property = property;
+    }
 
-	public String getApplicationSource() {
-		return applicationSource;
-	}
+    public Long getZoneId() {
+        return zoneId;
+    }
 
-	public void setApplicationSource(String applicationSource) {
-		this.applicationSource = applicationSource;
-	}
+    public void setZoneId(Long zoneId) {
+        this.zoneId = zoneId;
+    }
+
+    public Long getWardId() {
+        return wardId;
+    }
+
+    public void setWardId(Long wardId) {
+        this.wardId = wardId;
+    }
+
+    public Long getBlockId() {
+        return blockId;
+    }
+
+    public void setBlockId(Long blockId) {
+        this.blockId = blockId;
+    }
+
+    public Long getStreetId() {
+        return streetId;
+    }
+
+    public void setStreetId(Long streetId) {
+        this.streetId = streetId;
+    }
+
+    public Long getLocality() {
+        return locality;
+    }
+
+    public void setLocality(Long locality) {
+        this.locality = locality;
+    }
+
+    public Long getFloorTypeId() {
+        return floorTypeId;
+    }
+
+    public void setFloorTypeId(Long floorTypeId) {
+        this.floorTypeId = floorTypeId;
+    }
+
+    public Long getRoofTypeId() {
+        return roofTypeId;
+    }
+
+    public void setRoofTypeId(Long roofTypeId) {
+        this.roofTypeId = roofTypeId;
+    }
+
+    public Long getWallTypeId() {
+        return wallTypeId;
+    }
+
+    public void setWallTypeId(Long wallTypeId) {
+        this.wallTypeId = wallTypeId;
+    }
+
+    public Long getWoodTypeId() {
+        return woodTypeId;
+    }
+
+    public void setWoodTypeId(Long woodTypeId) {
+        this.woodTypeId = woodTypeId;
+    }
+
+    public Long getOwnershipType() {
+        return ownershipType;
+    }
+
+    public void setOwnershipType(Long ownershipType) {
+        this.ownershipType = ownershipType;
+    }
+
+    public Long getElectionWardId() {
+        return electionWardId;
+    }
+
+    public void setElectionWardId(Long electionWardId) {
+        this.electionWardId = electionWardId;
+    }
+
+    public String getWardName() {
+        return wardName;
+    }
+
+    public void setWardName(String wardName) {
+        this.wardName = wardName;
+    }
+
+    public String getZoneName() {
+        return zoneName;
+    }
+
+    public void setZoneName(String zoneName) {
+        this.zoneName = zoneName;
+    }
+
+    public String getBlockName() {
+        return blockName;
+    }
+
+    public void setBlockName(String blockName) {
+        this.blockName = blockName;
+    }
+
+    public String getHouseNumber() {
+        return houseNumber;
+    }
+
+    public void setHouseNumber(String houseNumber) {
+        this.houseNumber = houseNumber;
+    }
+
+    public String getAddressStr() {
+        return addressStr;
+    }
+
+    public void setAddressStr(String addressStr) {
+        this.addressStr = addressStr;
+    }
+
+    public String getPinCode() {
+        return pinCode;
+    }
+
+    public void setPinCode(String pinCode) {
+        this.pinCode = pinCode;
+    }
+
+    public String getAreaOfPlot() {
+        return areaOfPlot;
+    }
+
+    public void setAreaOfPlot(String areaOfPlot) {
+        this.areaOfPlot = areaOfPlot;
+    }
+
+    public String getDateOfCompletion() {
+        return dateOfCompletion;
+    }
+
+    public void setDateOfCompletion(String dateOfCompletion) {
+        this.dateOfCompletion = dateOfCompletion;
+    }
+
+    public String getApplicationNo() {
+        return applicationNo;
+    }
+
+    public void setApplicationNo(String applicationNo) {
+        this.applicationNo = applicationNo;
+    }
+
+    public String getCorrAddress1() {
+        return corrAddress1;
+    }
+
+    public void setCorrAddress1(String corrAddress1) {
+        this.corrAddress1 = corrAddress1;
+    }
+
+    public String getCorrAddress2() {
+        return corrAddress2;
+    }
+
+    public void setCorrAddress2(String corrAddress2) {
+        this.corrAddress2 = corrAddress2;
+    }
+
+    public String getCorrPinCode() {
+        return corrPinCode;
+    }
+
+    public void setCorrPinCode(String corrPinCode) {
+        this.corrPinCode = corrPinCode;
+    }
+
+    public String getUpicNo() {
+        return upicNo;
+    }
+
+    public void setUpicNo(String upicNo) {
+        this.upicNo = upicNo;
+    }
+
+    public String getTaxExemptionId() {
+        return taxExemptionId;
+    }
+
+    public void setTaxExemptionId(String taxExemptionId) {
+        this.taxExemptionId = taxExemptionId;
+    }
+
+    public String getParentIndex() {
+        return parentIndex;
+    }
+
+    public void setParentIndex(String parentIndex) {
+        this.parentIndex = parentIndex;
+    }
+
+    public String getAmenities() {
+        return amenities;
+    }
+
+    public void setAmenities(String amenities) {
+        this.amenities = amenities;
+    }
+
+    public String[] getFloorNoStr() {
+        return floorNoStr;
+    }
+
+    public void setFloorNoStr(String[] floorNoStr) {
+        this.floorNoStr = floorNoStr;
+    }
+
+    public String getPropTypeId() {
+        return propTypeId;
+    }
+
+    public void setPropTypeId(String propTypeId) {
+        this.propTypeId = propTypeId;
+    }
+
+    public String getPropUsageId() {
+        return propUsageId;
+    }
+
+    public void setPropUsageId(String propUsageId) {
+        this.propUsageId = propUsageId;
+    }
+
+    public String getPropOccId() {
+        return propOccId;
+    }
+
+    public void setPropOccId(String propOccId) {
+        this.propOccId = propOccId;
+    }
+
+    public String getPropertyCategory() {
+        return propertyCategory;
+    }
+
+    public void setPropertyCategory(String propertyCategory) {
+        this.propertyCategory = propertyCategory;
+    }
+
+    public String getDocNumber() {
+        return docNumber;
+    }
+
+    public void setDocNumber(String docNumber) {
+        this.docNumber = docNumber;
+    }
+
+    public String getNonResPlotArea() {
+        return nonResPlotArea;
+    }
+
+    public void setNonResPlotArea(String nonResPlotArea) {
+        this.nonResPlotArea = nonResPlotArea;
+    }
+
+    public String getApplicationNoMessage() {
+        return applicationNoMessage;
+    }
+
+    public void setApplicationNoMessage(String applicationNoMessage) {
+        this.applicationNoMessage = applicationNoMessage;
+    }
+
+    public String getAssessmentNoMessage() {
+        return assessmentNoMessage;
+    }
+
+    public void setAssessmentNoMessage(String assessmentNoMessage) {
+        this.assessmentNoMessage = assessmentNoMessage;
+    }
+
+    public String getPropertyInitiatedBy() {
+        return propertyInitiatedBy;
+    }
+
+    public void setPropertyInitiatedBy(String propertyInitiatedBy) {
+        this.propertyInitiatedBy = propertyInitiatedBy;
+    }
+
+    public String getNorthBoundary() {
+        return northBoundary;
+    }
+
+    public void setNorthBoundary(String northBoundary) {
+        this.northBoundary = northBoundary;
+    }
+
+    public String getSouthBoundary() {
+        return southBoundary;
+    }
+
+    public void setSouthBoundary(String southBoundary) {
+        this.southBoundary = southBoundary;
+    }
+
+    public String getEastBoundary() {
+        return eastBoundary;
+    }
+
+    public void setEastBoundary(String eastBoundary) {
+        this.eastBoundary = eastBoundary;
+    }
+
+    public String getWestBoundary() {
+        return westBoundary;
+    }
+
+    public void setWestBoundary(String westBoundary) {
+        this.westBoundary = westBoundary;
+    }
+
+    public Long getMutationId() {
+        return mutationId;
+    }
+
+    public void setMutationId(Long mutationId) {
+        this.mutationId = mutationId;
+    }
+
+    public Map<String, String> getPropTypeCategoryMap() {
+        return propTypeCategoryMap;
+    }
+
+    public void setPropTypeCategoryMap(Map<String, String> propTypeCategoryMap) {
+        this.propTypeCategoryMap = propTypeCategoryMap;
+    }
+
+    public TreeMap<Integer, String> getFloorNoMap() {
+        return floorNoMap;
+    }
+
+    public void setFloorNoMap(TreeMap<Integer, String> floorNoMap) {
+        this.floorNoMap = floorNoMap;
+    }
+
+    public Map<String, String> getDeviationPercentageMap() {
+        return deviationPercentageMap;
+    }
+
+    public void setDeviationPercentageMap(Map<String, String> deviationPercentageMap) {
+        this.deviationPercentageMap = deviationPercentageMap;
+    }
+
+    public Map<String, String> getGuardianRelationMap() {
+        return guardianRelationMap;
+    }
+
+    public void setGuardianRelationMap(Map<String, String> guardianRelationMap) {
+        this.guardianRelationMap = guardianRelationMap;
+    }
+
+    public List<DocumentType> getDocumentTypes() {
+        return documentTypes;
+    }
+
+    public void setDocumentTypes(List<DocumentType> documentTypes) {
+        this.documentTypes = documentTypes;
+    }
+
+    public String getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(String reportId) {
+        this.reportId = reportId;
+    }
+
+    public boolean isApproved() {
+        return approved;
+    }
+
+    public void setApproved(boolean approved) {
+        this.approved = approved;
+    }
+
+    public BasicProperty getBasicProp() {
+        return basicProp;
+    }
+
+    public void setBasicProp(BasicProperty basicProp) {
+        this.basicProp = basicProp;
+    }
+
+    public PropertyTypeMaster getPropTypeMstr() {
+        return propTypeMstr;
+    }
+
+    public void setPropTypeMstr(PropertyTypeMaster propTypeMstr) {
+        this.propTypeMstr = propTypeMstr;
+    }
+
+    public PropertyImpl getNewProperty() {
+        return newProperty;
+    }
+
+    public void setNewProperty(PropertyImpl newProperty) {
+        this.newProperty = newProperty;
+    }
+
+    public Address getOwnerAddress() {
+        return ownerAddress;
+    }
+
+    public void setOwnerAddress(Address ownerAddress) {
+        this.ownerAddress = ownerAddress;
+    }
+
+    public Date getPropCompletionDate() {
+        return propCompletionDate;
+    }
+
+    public void setPropCompletionDate(Date propCompletionDate) {
+        this.propCompletionDate = propCompletionDate;
+    }
+
+    public void setPropService(PropertyService propService) {
+        this.propService = propService;
+    }
+
+    public PropertyService getPropService() {
+        return propService;
+    }
+
+    public String getAckMessage() {
+        return ackMessage;
+    }
+
+    public void setAckMessage(String ackMessage) {
+        this.ackMessage = ackMessage;
+    }
+
+    public String getApplicationSource() {
+        return applicationSource;
+    }
+
+    public void setApplicationSource(String applicationSource) {
+        this.applicationSource = applicationSource;
+    }
 
     public Long getPropertyDepartmentId() {
         return propertyDepartmentId;
@@ -1040,6 +1180,30 @@ public class CreateAction extends PropertyTaxBaseAction{
 
     public void setLayoutApprovalAuthorityId(Long layoutApprovalAuthorityId) {
         this.layoutApprovalAuthorityId = layoutApprovalAuthorityId;
+    }
+
+    public List<PropertyDepartment> getPropertyDepartmentList() {
+        return propertyDepartmentList;
+    }
+
+    public void setPropertyDepartmentList(List<PropertyDepartment> propertyDepartmentList) {
+        this.propertyDepartmentList = propertyDepartmentList;
+    }
+
+    public List<VacantLandPlotArea> getVacantLandPlotAreaList() {
+        return vacantLandPlotAreaList;
+    }
+
+    public void setVacantLandPlotAreaList(List<VacantLandPlotArea> vacantLandPlotAreaList) {
+        this.vacantLandPlotAreaList = vacantLandPlotAreaList;
+    }
+
+    public List<LayoutApprovalAuthority> getLayoutApprovalAuthorityList() {
+        return layoutApprovalAuthorityList;
+    }
+
+    public void setLayoutApprovalAuthorityList(List<LayoutApprovalAuthority> layoutApprovalAuthorityList) {
+        this.layoutApprovalAuthorityList = layoutApprovalAuthorityList;
     }
 
 }

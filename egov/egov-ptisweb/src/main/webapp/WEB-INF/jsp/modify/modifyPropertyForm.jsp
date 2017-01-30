@@ -299,7 +299,6 @@
 	jQuery(document).ready(function() {
 		var propType = jQuery('#propTypeId :selected').text();
 		var doorno = jQuery("#houseNo").val() != '';
-		console.log("doorno"+doorno);
 		if(doorno && propType=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND_STR}"/>'){
 			jQuery("#houseNo").prop("readonly", true);
 		}

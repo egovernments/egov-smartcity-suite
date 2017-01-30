@@ -390,6 +390,26 @@ public class CollectionDocumentElasticSearchService {
         // total
         final Map<String, BigDecimal> totalCollMap = getCollectionAndDemandValues(collectionDashBoardRequest, fromDate,
                 toDate, TOTAL_AMOUNT, aggregationField, serviceDetail);
+        
+        /**
+         * As per Elastic Search functionality, to get the total collections
+         * between 2 dates, add a day to the endDate and fetch the results For
+         * Current day's collection if dates are sent in the request, consider
+         * the toDate, else take date range between current date +1 day
+         */
+        if (StringUtils.isNotBlank(collectionDashBoardRequest.getFromDate())
+                && StringUtils.isNotBlank(collectionDashBoardRequest.getToDate())) {
+            fromDate = DateUtils.getDate(collectionDashBoardRequest.getToDate(), DATE_FORMAT_YYYYMMDD);
+            toDate = org.apache.commons.lang3.time.DateUtils.addDays(
+                    DateUtils.getDate(collectionDashBoardRequest.getToDate(), DATE_FORMAT_YYYYMMDD), 1);
+        } else {
+            fromDate = new Date();
+            toDate = org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1);
+        }
+        
+        final Map<String, BigDecimal> todaysCollMap = getCollectionAndDemandValues(collectionDashBoardRequest, fromDate,
+                toDate, TOTAL_AMOUNT, aggregationField, serviceDetail);
+        
         Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken by getCollectionAndDemandValues() is : " + timeTaken + MILLISECS);
@@ -412,6 +432,7 @@ public class CollectionDocumentElasticSearchService {
             else if (aggregationField.equals(REVENUE_WARD))
                 collTableData.setWardName(name);
             collTableData.setTotalCollection(totalCollMap.get(name) == null ? BigDecimal.ZERO : totalCollMap.get(name));
+            collTableData.setTodaysCollection(todaysCollMap.get(name) == null ? BigDecimal.ZERO : todaysCollMap.get(name));
             collIndDataList.add(collTableData);
         }
         timeTaken = System.currentTimeMillis() - startTime;

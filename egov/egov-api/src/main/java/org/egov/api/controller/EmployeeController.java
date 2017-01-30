@@ -52,6 +52,7 @@ import org.egov.api.model.ForwardDetails;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
@@ -59,10 +60,12 @@ import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
 import org.egov.infra.workflow.service.WorkflowTypeService;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.pgr.service.PriorityService;
 import org.hibernate.FetchMode;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -112,6 +115,8 @@ public class EmployeeController extends ApiController {
     private SecurityUtils securityUtils;
     @Autowired
     private EISServeable eisService;
+    @Autowired
+    private PriorityService priorityService;
 
     @RequestMapping(value = ApiUrl.EMPLOYEE_INBOX_LIST_WFT_COUNT, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getWorkFlowTypesWithItemsCount(final HttpServletRequest request) {
@@ -129,7 +134,8 @@ public class EmployeeController extends ApiController {
 
     @RequestMapping(value = ApiUrl.EMPLOYEE_INBOX_LIST_FILTER_BY_WFT, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getInboxListByWorkFlowType(@PathVariable final String workFlowType,
-                                                             @PathVariable final int resultsFrom, @PathVariable final int resultsTo) {
+                                                             @PathVariable final int resultsFrom, @PathVariable final int resultsTo,
+                                                             @RequestParam(value="priority", required = false) final String priority) {
         final ApiResponse res = ApiResponse.newInstance();
         try {
             return res.setDataAdapter(new UserAdapter())
@@ -137,7 +143,7 @@ public class EmployeeController extends ApiController {
                             posMasterService.getPositionsForEmployee(securityUtils.getCurrentUser().getId(), new Date())
                                     .parallelStream()
                                     .map(position -> position.getId()).collect(Collectors.toList()),
-                            workFlowType, resultsFrom, resultsTo)));
+                            workFlowType, resultsFrom, resultsTo, priority)));
         } catch (final Exception ex) {
             LOGGER.error(EGOV_API_ERROR, ex);
             return res.error(getMessage("server.error"));
@@ -268,7 +274,16 @@ public class EmployeeController extends ApiController {
 
     @SuppressWarnings("unchecked")
     public List<StateAware> getWorkflowItemsByUserAndWFType(final Long userId, final List<Long> owners, final String workFlowType,
-                                                            final int resultsFrom, final int resultsTo) throws HibernateException, ClassNotFoundException {
+                                                            final int resultsFrom, final int resultsTo, String priority) throws HibernateException, ClassNotFoundException {
+    	
+    	Criterion criterion=Restrictions.not(Restrictions.conjunction().add(Restrictions.eq("state.status", StateStatus.STARTED))
+                .add(Restrictions.eq("createdBy.id", userId)));
+    	
+    	if(StringUtils.isNotBlank(priority))
+    	{
+    		criterion=Restrictions.conjunction(criterion).add(Restrictions.eq("priority.id", priorityService.getPriorityByCode(priority).getId()));
+    	}
+    	
         return entityQueryService.getSession()
                 .createCriteria(Class.forName(workflowTypeService.getEnabledWorkflowTypeByType(workFlowType).getTypeFQN()))
                 .setFirstResult(resultsFrom)
@@ -278,8 +293,7 @@ public class EmployeeController extends ApiController {
                 .add(Restrictions.eq("state.type", workFlowType))
                 .add(Restrictions.in("state.ownerPosition.id", owners))
                 .add(Restrictions.ne("state.status", StateStatus.ENDED))
-                .add(Restrictions.not(Restrictions.conjunction().add(Restrictions.eq("state.status", StateStatus.STARTED))
-                        .add(Restrictions.eq("createdBy.id", userId))))
+                .add(criterion)
                 .addOrder(Order.desc("state.createdDate"))
                 .list();
 

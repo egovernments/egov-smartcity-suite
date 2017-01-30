@@ -231,6 +231,7 @@ function onSubmit()
 		
 		 if(jQuery("#bankBalanceCheck").val()==noBalanceCheck)
 		{
+			disableAll();
 			document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
 		  return true;
 		}
@@ -241,6 +242,7 @@ function onSubmit()
 	else if(!balanceCheck() && jQuery("#bankBalanceCheck").val()==balanceCheckWarning){
 		 var msg = confirm("Insufficient Bank Balance. Do you want to process ?");
 		 if (msg == true) {
+			 disableAll();
 			 document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
 			 document.remittanceForm.submit();
 			return true;
@@ -250,6 +252,7 @@ function onSubmit()
 			}
 		}
 	else{
+		disableAll();
 		document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
 	 	document.remittanceForm.submit();
 	}
@@ -478,6 +481,7 @@ else{
 					</table>
 
 				</div>
+				<s:hidden type="hidden" id="selectedRows" name="selectedRows" />
 				<s:hidden name="cutOffDate" id="cutOffDate" />
 				<s:hidden name="bankBalanceCheck" id="bankBalanceCheck" value="%{bankBalanceCheck}" />
 				<%@ include file='../payment/commonWorkflowMatrix.jsp'%>

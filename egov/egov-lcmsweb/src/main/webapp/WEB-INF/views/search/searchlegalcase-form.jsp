@@ -189,7 +189,7 @@
 							code="lbl.exclude.closed.case" />:</label>
 					 <div class="col-sm-1 add-margin">
 						<input type="checkbox" name="isStatusExcluded"
-							value="isStatusExcluded" />
+							value="isStatusExcluded"  checked="checked" />
 					</div> 
 				</div>
 				<div class="row">

@@ -123,7 +123,7 @@ public class SearchForm {
     }
 
     private void addRenewalOption(List<String> licenseActions, State stateobj) {
-        if (stateobj != null && ("END".equals(stateobj.getValue()) || "Closed".equals(stateobj.getValue())) || stateobj == null)
+        if (stateobj == null || "END".equals(stateobj.getValue()) || "Closed".equals(stateobj.getValue()))
             licenseActions.add("Renew License");
     }
 

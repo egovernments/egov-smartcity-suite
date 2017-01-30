@@ -51,7 +51,6 @@ jQuery( document ).ready(function() {
 			}
 		}).success(function (response) {
 			jQuery('.popup').addClass('popup-show');
-			console.log(JSON.stringify(response));
 			jQuery('#fpoptbl tbody').html("");
 			if(response.startsWith("Please")) {
 				jQuery('#fpoptbl tbody').append(response);

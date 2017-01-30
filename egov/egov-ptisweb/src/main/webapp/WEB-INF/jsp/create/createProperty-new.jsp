@@ -142,7 +142,6 @@
 					autoclose:true
 				});
 			} catch (e) {
-				console.warn("No Date Picker " + e);
 			}
 		});
 
@@ -157,7 +156,6 @@
     			}
     		}).success(function (response) {
     			jQuery('.popup').addClass('popup-show');
-    			console.log(JSON.stringify(response));
     			jQuery('#fpoptbl tbody').html("");
     			if(response.startsWith("Please")) {
     				jQuery('#fpoptbl tbody').append(response);
@@ -200,7 +198,6 @@
 			toggleFloorDetails();
 			
 			var aadhartextboxes = jQuery('.txtaadhar');
-			console.log(aadhartextboxes);
 			aadhartextboxes.each(function() {
 				if (jQuery(this).val()) {
 					getAadharDetails(this);

@@ -111,6 +111,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class CollectionIndexElasticSearchService {
 
+    private static final String REBATE_AMOUNT = "rebateAmount";
+    private static final String CURRENT_INT_DMD = "currentIntDmd";
+    private static final String ARREAR_INT_DMD = "arrearIntDmd";
     private static final String IS_EXEMPTED = "isExempted";
     private static final String IS_ACTIVE = "isActive";
     private static final String IS_UNDER_COURTCASE = "isUnderCourtcase";
@@ -408,11 +411,16 @@ public class CollectionIndexElasticSearchService {
         CollTableData collIndData;
         BigDecimal arrearColl = BigDecimal.ZERO;
         BigDecimal currentColl = BigDecimal.ZERO;
+        BigDecimal interestColl = BigDecimal.ZERO;
         BigDecimal lytdArrearColl;
         BigDecimal lytdCurrentColl;
         BigDecimal arrearDemand = BigDecimal.ZERO;
         BigDecimal currentDemand = BigDecimal.ZERO;
+        BigDecimal arrearInterestDemand = BigDecimal.ZERO;
+        BigDecimal currentInterestDemand = BigDecimal.ZERO;
         BigDecimal totalAssessments = BigDecimal.ZERO;
+        BigDecimal rebate = BigDecimal.ZERO;
+        BigDecimal variance = BigDecimal.ZERO;
         BigDecimal currentYearTotalDemand;
         String aggregationField = REGION_NAME;
         Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
@@ -520,6 +528,8 @@ public class CollectionIndexElasticSearchService {
                 totalAssessments = BigDecimal.ZERO;
                 arrearDemand = BigDecimal.ZERO;
                 currentDemand = BigDecimal.ZERO;
+                arrearInterestDemand = BigDecimal.ZERO;
+                currentInterestDemand = BigDecimal.ZERO;
                 name = entry.getKey();
                 if(!assessmentsCountMap.isEmpty() && assessmentsCountMap.get(name) != null)
                     totalAssessments = assessmentsCountMap.get(name) == null ? BigDecimal.ZERO : assessmentsCountMap.get(name);
@@ -533,6 +543,10 @@ public class CollectionIndexElasticSearchService {
                             : collectionDivisionMap.get(name).get(CURRENT_AMOUNT))
                             .add(collectionDivisionMap.get(name).get(CURRENT_CESS) == null ? BigDecimal.ZERO
                                     : collectionDivisionMap.get(name).get(CURRENT_CESS));
+                    interestColl = collectionDivisionMap.get(name).get(INTEREST_AMOUNT) == null ? BigDecimal.ZERO
+                            : collectionDivisionMap.get(name).get(INTEREST_AMOUNT);
+                    rebate = collectionDivisionMap.get(name).get(REBATE_AMOUNT) == null ? BigDecimal.ZERO
+                            : collectionDivisionMap.get(name).get(REBATE_AMOUNT);
                 }
                 if(isForMisReport && !lytdCollectionDivisionMap.isEmpty() && lytdCollectionDivisionMap.get(name) != null){
                     lytdArrearColl = (lytdCollectionDivisionMap.get(name).get(ARREAR_AMOUNT) == null ? BigDecimal.ZERO
@@ -553,18 +567,26 @@ public class CollectionIndexElasticSearchService {
                             : demandDivisionMap.get(name).get(ARREAR_DMD);
                     currentDemand = demandDivisionMap.get(name).get(CURRENT_DMD) == null ? BigDecimal.ZERO
                             : demandDivisionMap.get(name).get(CURRENT_DMD);
+                    arrearInterestDemand = demandDivisionMap.get(name).get(ARREAR_INT_DMD) == null ? BigDecimal.ZERO
+                            : demandDivisionMap.get(name).get(ARREAR_INT_DMD);
+                    currentInterestDemand = demandDivisionMap.get(name).get(CURRENT_INT_DMD) == null ? BigDecimal.ZERO
+                            : demandDivisionMap.get(name).get(CURRENT_INT_DMD);
+                    
                 }
                 // Proportional Demand = (totalDemand/12)*noOfmonths
                 currentYearTotalDemand = currYrTotalDemandMap.get(name) == null ? BigDecimal.valueOf(0)
                         : currYrTotalDemandMap.get(name);
                 
-                setCollTableValues(collectionDetailsRequest, collIndData, wardWiseBillCollectors, aggregationField, name, noOfMonths, 
-                        todayCollMap.get(name) == null ? BigDecimal.ZERO : todayCollMap.get(name), lyTodayCollMap.get(name) == null ? BigDecimal.ZERO : lyTodayCollMap.get(name),
-                                entry.getValue(), arrearColl, currentColl, collectionDivisionMap.get(name).get(INTEREST_AMOUNT) == null ? BigDecimal.ZERO
-                                        : collectionDivisionMap.get(name).get(INTEREST_AMOUNT), lytdArrearColl, lytdCurrentColl, arrearDemand, currentDemand, 
-                        currentYearTotalDemand, totalDemandMap.get(name) == null ? BigDecimal.ZERO : totalDemandMap.get(name), 
-                                lytdCollMap.get(name) == null ? BigDecimal.ZERO : lytdCollMap.get(name), totalAssessments);
-                
+                setBoundaryDateForTable(collectionDetailsRequest, name, collIndData, aggregationField, wardWiseBillCollectors);
+                setCollAmountsForTableData(collIndData, rebate,
+                        todayCollMap.get(name) == null ? BigDecimal.ZERO : todayCollMap.get(name),
+                        lyTodayCollMap.get(name) == null ? BigDecimal.ZERO : lyTodayCollMap.get(name), entry.getValue(),
+                        lytdCollMap.get(name) == null ? BigDecimal.ZERO : lytdCollMap.get(name));
+                setCollBreakUpForTableData(collIndData, arrearColl, currentColl, interestColl, lytdArrearColl, lytdCurrentColl);
+                setDemandBreakUpForTableData(collIndData, arrearDemand, currentDemand, arrearInterestDemand,
+                        currentInterestDemand, noOfMonths);
+                setDemandAmountsForTableData(name, collIndData, totalAssessments, currentYearTotalDemand, noOfMonths,
+                        totalDemandMap);
                 collIndDataList.add(collIndData);
             }
         } else {
@@ -588,14 +610,22 @@ public class CollectionIndexElasticSearchService {
                             : demandDivisionMap.get(name).get(ARREAR_DMD);
                     currentDemand = demandDivisionMap.get(name).get(CURRENT_DMD) == null ? BigDecimal.ZERO
                             : demandDivisionMap.get(name).get(CURRENT_DMD);
+                    arrearInterestDemand = demandDivisionMap.get(name).get(ARREAR_INT_DMD) == null ? BigDecimal.ZERO
+                            : demandDivisionMap.get(name).get(ARREAR_INT_DMD);
+                    currentInterestDemand = demandDivisionMap.get(name).get(CURRENT_INT_DMD) == null ? BigDecimal.ZERO
+                            : demandDivisionMap.get(name).get(CURRENT_INT_DMD);
                 }
                 // Proportional Demand = (totalDemand/12)*noOfmonths
                 currentYearTotalDemand = currYrTotalDemandMap.get(name) == null ? BigDecimal.valueOf(0)
                         : currYrTotalDemandMap.get(name);
                 
-                setCollTableValues(collectionDetailsRequest, collIndData, wardWiseBillCollectors, aggregationField, name, noOfMonths, 
-                        BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, arrearDemand, currentDemand, 
-                        currentYearTotalDemand, entry.getValue() == null ? BigDecimal.ZERO : entry.getValue(), BigDecimal.ZERO, totalAssessments);
+                setBoundaryDateForTable(collectionDetailsRequest, name, collIndData, aggregationField, wardWiseBillCollectors);
+                setCollAmountsForTableData(collIndData, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+                setDemandBreakUpForTableData(collIndData, arrearDemand, currentDemand, arrearInterestDemand,
+                        currentInterestDemand, noOfMonths);
+                setDemandAmountsForTableData(name, collIndData, totalAssessments, currentYearTotalDemand, noOfMonths,
+                        totalDemandMap);
+                
                 collIndDataList.add(collIndData);
             }
         }
@@ -604,12 +634,71 @@ public class CollectionIndexElasticSearchService {
         return collIndDataList;
     }
 
-    private void setCollTableValues(CollectionDetailsRequest collectionDetailsRequest, CollTableData collIndData,
-            Map<String, BillCollectorIndex> wardWiseBillCollectors, String aggregationField, String name, int noOfMonths,
-            BigDecimal todayColl, BigDecimal lyTodayColl, BigDecimal cytdColl, BigDecimal arrearColl, BigDecimal currentColl,
-            BigDecimal interestColl, BigDecimal lytdArrearsColl, BigDecimal lytdCurrentColl, BigDecimal arrearDemand, BigDecimal currentDemand, BigDecimal currentYearTotalDemand,
-            BigDecimal totalDemand, BigDecimal lytdColl, BigDecimal totalAssessments) {
+    private void setDemandAmountsForTableData(String name, CollTableData collIndData, BigDecimal totalAssessments,
+            BigDecimal currentYearTotalDemand, int noOfMonths, Map<String, BigDecimal> totalDemandMap) {
         BigDecimal variance;
+        // Proportional Demand = (totalDemand/12)*noOfmonths
+        BigDecimal cytdDmd = (currentYearTotalDemand.divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP))
+                .multiply(BigDecimal.valueOf(noOfMonths));
+        collIndData.setCytdDmd(cytdDmd);
+        if (cytdDmd != BigDecimal.valueOf(0)) {
+            BigDecimal balance = cytdDmd.subtract(collIndData.getCytdColl());
+            BigDecimal performance = (collIndData.getCytdColl().multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(cytdDmd,
+                    1, BigDecimal.ROUND_HALF_UP);
+            collIndData.setPerformance(performance);
+            collIndData.setCytdBalDmd(balance);
+        }
+        collIndData.setTotalDmd(totalDemandMap.get(name) == null ? BigDecimal.ZERO : totalDemandMap.get(name));
+        collIndData.setDayTargetDemand(collIndData.getTotalDmd().compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO
+                : collIndData.getTotalDmd().divide(new BigDecimal("365"), 0,
+                        BigDecimal.ROUND_HALF_UP));
+        collIndData.setTotalAssessments(totalAssessments);
+        // variance = ((currentYearCollection - lastYearCollection)*100)/lastYearCollection
+        if (collIndData.getLytdColl().compareTo(BigDecimal.ZERO) == 0)
+            variance = PropertyTaxConstants.BIGDECIMAL_100;
+        else
+            variance = ((collIndData.getCytdColl().subtract(collIndData.getLytdColl()))
+                    .multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(collIndData.getLytdColl(), 1,
+                            BigDecimal.ROUND_HALF_UP);
+        collIndData.setLyVar(variance);
+    }
+
+    private void setDemandBreakUpForTableData(CollTableData collIndData, BigDecimal arrearDemand, BigDecimal currentDemand,
+            BigDecimal arrearInterestDemand, BigDecimal currentInterestDemand, int noOfMonths) {
+        collIndData.setArrearDemand(arrearDemand);
+        collIndData.setCurrentDemand(currentDemand);
+        collIndData.setArrearInterestDemand(arrearInterestDemand);
+        collIndData.setCurrentInterestDemand(currentInterestDemand);
+
+        BigDecimal proportionalArrearDmd = (collIndData.getArrearDemand().divide(BigDecimal.valueOf(12),
+                BigDecimal.ROUND_HALF_UP))
+                        .multiply(BigDecimal.valueOf(noOfMonths));
+        BigDecimal proportionalCurrDmd = (collIndData.getCurrentDemand().divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP))
+                .multiply(BigDecimal.valueOf(noOfMonths));
+        collIndData.setProportionalArrearDemand(proportionalArrearDmd);
+        collIndData.setProportionalCurrentDemand(proportionalCurrDmd);
+    }
+
+    private void setCollBreakUpForTableData(CollTableData collIndData, BigDecimal arrearColl, BigDecimal currentColl,
+            BigDecimal interestColl, BigDecimal lytdArrearColl, BigDecimal lytdCurrentColl) {
+        collIndData.setArrearColl(arrearColl);
+        collIndData.setCurrentColl(currentColl);
+        collIndData.setInterestColl(interestColl);
+        collIndData.setLytdArrearsColl(lytdArrearColl);
+        collIndData.setLytdCurrentColl(lytdCurrentColl);
+    }
+
+    private void setCollAmountsForTableData(CollTableData collIndData, BigDecimal rebate,
+            BigDecimal todayColl, BigDecimal lyTodayColl, BigDecimal cytdColl, BigDecimal lytdColl) {
+        collIndData.setTodayColl(todayColl);
+        collIndData.setLyTodayColl(lyTodayColl);
+        collIndData.setCytdColl(cytdColl);
+        collIndData.setRebate(rebate.abs());
+        collIndData.setLytdColl(lytdColl);
+    }
+
+    private void setBoundaryDateForTable(CollectionDetailsRequest collectionDetailsRequest, String name,
+            CollTableData collIndData, String aggregationField, Map<String, BillCollectorIndex> wardWiseBillCollectors) {
         if (REGION_NAME.equals(aggregationField))
             collIndData.setRegionName(name);
         else if (DISTRICT_NAME.equals(aggregationField)) {
@@ -632,52 +721,8 @@ public class CollectionIndexElasticSearchService {
                         : wardWiseBillCollectors.get(name).getMobileNumber());
             }
         }
-        collIndData.setTodayColl(todayColl);
-        collIndData.setLyTodayColl(lyTodayColl);
-        collIndData.setCytdColl(cytdColl);
-        collIndData.setArrearColl(arrearColl);
-        collIndData.setCurrentColl(currentColl);
-        collIndData.setInterestColl(interestColl);
-        collIndData.setLytdArrearsColl(lytdArrearsColl);
-        collIndData.setLytdCurrentColl(lytdCurrentColl);
-        collIndData.setArrearDemand(arrearDemand);
-        collIndData.setCurrentDemand(currentDemand);
-
-        BigDecimal proportionalArrearDmd = (collIndData.getArrearDemand().divide(BigDecimal.valueOf(12),
-                BigDecimal.ROUND_HALF_UP))
-                        .multiply(BigDecimal.valueOf(noOfMonths));
-        BigDecimal proportionalCurrDmd = (collIndData.getCurrentDemand().divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP))
-                .multiply(BigDecimal.valueOf(noOfMonths));
-        collIndData.setProportionalArrearDemand(proportionalArrearDmd);
-        collIndData.setProportionalCurrentDemand(proportionalCurrDmd);
-
-        // Proportional Demand = (totalDemand/12)*noOfmonths
-        BigDecimal cytdDmd = (currentYearTotalDemand.divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP))
-                .multiply(BigDecimal.valueOf(noOfMonths));
-        collIndData.setCytdDmd(cytdDmd);
-        if (cytdDmd != BigDecimal.valueOf(0)) {
-            BigDecimal balance = cytdDmd.subtract(collIndData.getCytdColl());
-            BigDecimal performance = (collIndData.getCytdColl().multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(cytdDmd,
-                    1, BigDecimal.ROUND_HALF_UP);
-            collIndData.setPerformance(performance);
-            collIndData.setCytdBalDmd(balance);
-        }
-        collIndData.setTotalDmd(totalDemand);
-        collIndData.setDayTargetDemand(collIndData.getTotalDmd().compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO
-                : collIndData.getTotalDmd().divide(new BigDecimal("365"), 0,
-                        BigDecimal.ROUND_HALF_UP));
-        collIndData.setLytdColl(lytdColl);
-        collIndData.setTotalAssessments(totalAssessments);
-        // variance = ((currentYearCollection - lastYearCollection)*100)/lastYearCollection
-        if (collIndData.getLytdColl().compareTo(BigDecimal.ZERO) == 0)
-            variance = PropertyTaxConstants.BIGDECIMAL_100;
-        else
-            variance = ((collIndData.getCytdColl().subtract(collIndData.getLytdColl()))
-                    .multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(collIndData.getLytdColl(), 1,
-                            BigDecimal.ROUND_HALF_UP);
-        collIndData.setLyVar(variance);
     }
-    
+
     private String getAggregrationField(CollectionDetailsRequest collectionDetailsRequest) {
         String aggregationField = REGION_NAME;
         if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_REGIONWISE))
@@ -699,21 +744,29 @@ public class CollectionIndexElasticSearchService {
      * @param individualDmdDetails
      * @param demandDivisionMap
      */
-    private void prepareIndividualDemandsMap(StringTerms individualDmdDetails,
+    public void prepareIndividualDemandsMap(StringTerms individualDmdDetails,
             Map<String, Map<String, BigDecimal>> demandDivisionMap) {
         Map<String, BigDecimal> individualDmdMap;
         Sum arrearDmd;
         Sum currentDmd;
+        Sum arrearInterestDmd;
+        Sum currentInterestDmd;
         if (individualDmdDetails != null) {
             for (Terms.Bucket entry : individualDmdDetails.getBuckets()) {
                 individualDmdMap = new HashMap<>();
                 arrearDmd = entry.getAggregations().get("arrear_dmd");
                 currentDmd = entry.getAggregations().get("curr_dmd");
+                arrearInterestDmd = entry.getAggregations().get("arrear_interest_dmd");
+                currentInterestDmd = entry.getAggregations().get("curr_interest_dmd");      
 
                 individualDmdMap.put(ARREAR_DMD,
                         BigDecimal.valueOf(arrearDmd.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
                 individualDmdMap.put(CURRENT_DMD,
                         BigDecimal.valueOf(currentDmd.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                individualDmdMap.put(ARREAR_INT_DMD,
+                        BigDecimal.valueOf(arrearInterestDmd.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                individualDmdMap.put(CURRENT_INT_DMD,
+                        BigDecimal.valueOf(currentInterestDmd.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
 
                 demandDivisionMap.put(String.valueOf(entry.getKey()), individualDmdMap);
             }
@@ -725,7 +778,7 @@ public class CollectionIndexElasticSearchService {
      * @param individualCollDetails
      * @param collectionDivisionMap
      */
-    private void prepareIndividualCollMap(StringTerms individualCollDetails,
+    public void prepareIndividualCollMap(StringTerms individualCollDetails,
             Map<String, Map<String, BigDecimal>> collectionDivisionMap) {
         Map<String, BigDecimal> individualCollMap;
         Sum arrearAmt;
@@ -733,6 +786,7 @@ public class CollectionIndexElasticSearchService {
         Sum arrearCess;
         Sum currentCess;
         Sum interestAmt;
+        Sum rebate;
         if (individualCollDetails != null) {
             for (Terms.Bucket entry : individualCollDetails.getBuckets()) {
                 individualCollMap = new HashMap<>();
@@ -741,6 +795,7 @@ public class CollectionIndexElasticSearchService {
                 arrearCess = entry.getAggregations().get("arrear_cess");
                 currentCess = entry.getAggregations().get("curr_cess");
                 interestAmt = entry.getAggregations().get("interest");
+                rebate = entry.getAggregations().get("rebate");
 
                 individualCollMap.put(ARREAR_AMOUNT,
                         BigDecimal.valueOf(arrearAmt.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
@@ -752,6 +807,8 @@ public class CollectionIndexElasticSearchService {
                         BigDecimal.valueOf(currentCess.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
                 individualCollMap.put(INTEREST_AMOUNT,
                         BigDecimal.valueOf(interestAmt.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                individualCollMap.put(REBATE_AMOUNT,
+                        BigDecimal.valueOf(rebate.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
 
                 collectionDivisionMap.put(String.valueOf(entry.getKey()), individualCollMap);
             }
@@ -831,7 +888,8 @@ public class CollectionIndexElasticSearchService {
                     .subAggregation(AggregationBuilders.sum(CURR_AMOUNT).field(CURRENT_AMOUNT))
                     .subAggregation(AggregationBuilders.sum(ARREAR_CESS_CONST).field(ARREAR_CESS))
                     .subAggregation(AggregationBuilders.sum(CURR_CESS).field(CURRENT_CESS))
-                    .subAggregation(AggregationBuilders.sum(INTEREST).field(LATE_PAYMENT_CHARGES));
+                    .subAggregation(AggregationBuilders.sum(INTEREST).field(LATE_PAYMENT_CHARGES))
+                    .subAggregation(AggregationBuilders.sum("rebate").field("reductionAmount"));
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName).withQuery(boolQuery)
                 .addAggregation(aggregation).build();
 
@@ -856,7 +914,9 @@ public class CollectionIndexElasticSearchService {
 
         AggregationBuilder aggregation = AggregationBuilders.terms(BY_CITY).field(aggregationField).size(120)
                 .subAggregation(AggregationBuilders.sum("arrear_dmd").field("arrearDemand"))
-                .subAggregation(AggregationBuilders.sum("curr_dmd").field("annualDemand"));
+                .subAggregation(AggregationBuilders.sum("curr_dmd").field("annualDemand"))
+                .subAggregation(AggregationBuilders.sum("arrear_interest_dmd").field("arrearInterestDemand"))
+                .subAggregation(AggregationBuilders.sum("curr_interest_dmd").field("currentInterestDemand"));
 
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName).withQuery(boolQuery)
                 .addAggregation(aggregation).build();
@@ -1478,6 +1538,9 @@ public class CollectionIndexElasticSearchService {
         BigDecimal totalAssessments = BigDecimal.ZERO;
         BigDecimal lytdArrearColl = BigDecimal.ZERO;
         BigDecimal lytdCurrentColl = BigDecimal.ZERO;
+        BigDecimal arrearInterestDemand = BigDecimal.ZERO;
+        BigDecimal currentInterestDemand = BigDecimal.ZERO;
+        BigDecimal rebate = BigDecimal.ZERO;
         String[] billCollectorNameNumberArr = entry.getKey().split("~");
         for (CollTableData tableData : entry.getValue()) {
             currDayColl = currDayColl
@@ -1498,6 +1561,9 @@ public class CollectionIndexElasticSearchService {
             totalAssessments = totalAssessments.add(tableData.getTotalAssessments());
             lytdArrearColl = lytdArrearColl.add(tableData.getLytdArrearsColl() == null ? BigDecimal.ZERO : tableData.getLytdArrearsColl());
             lytdCurrentColl = lytdCurrentColl.add(tableData.getLytdCurrentColl() == null ? BigDecimal.ZERO : tableData.getLytdCurrentColl());
+            arrearInterestDemand = arrearInterestDemand.add(tableData.getArrearInterestDemand() == null ? BigDecimal.ZERO : tableData.getArrearInterestDemand());
+            currentInterestDemand = currentInterestDemand.add(tableData.getCurrentInterestDemand() == null ? BigDecimal.ZERO : tableData.getCurrentInterestDemand());
+            rebate = rebate.add(tableData.getRebate() == null ? BigDecimal.ZERO : tableData.getRebate());
         }
         collTableData.setBillCollector(billCollectorNameNumberArr[0]);
         collTableData
@@ -1508,17 +1574,16 @@ public class CollectionIndexElasticSearchService {
         collTableData.setCytdBalDmd(cytdDmd.subtract(cytdColl));
         collTableData.setTotalDmd(totalDmd);
         collTableData.setLytdColl(lytdColl);
-        collTableData.setArrearColl(arrearColl);
-        collTableData.setCurrentColl(currentColl);
-        collTableData.setInterestColl(interestColl);
-        collTableData.setLytdArrearsColl(lytdArrearColl);
-        collTableData.setLytdCurrentColl(lytdCurrentColl);
+        setCollBreakUpForTableData(collTableData, arrearColl, currentColl, interestColl, lytdArrearColl, lytdCurrentColl);
         collTableData.setArrearDemand(arrearDmd);
         collTableData.setCurrentDemand(currentDmd);
         collTableData.setProportionalArrearDemand(proportionalArrearDmd);
         collTableData.setProportionalCurrentDemand(proportionalCurrentDmd);
         collTableData.setDayTargetDemand(dayTargetDmd);
         collTableData.setLyTodayColl(lyTodayColl);
+        collTableData.setArrearInterestDemand(arrearInterestDemand);
+        collTableData.setCurrentInterestDemand(currentInterestDemand);
+        collTableData.setRebate(rebate);
         collTableData.setTotalAssessments(totalAssessments);
         if (cytdDmd != BigDecimal.valueOf(0)) {
             performance = (collTableData.getCytdColl().multiply(PropertyTaxConstants.BIGDECIMAL_100))

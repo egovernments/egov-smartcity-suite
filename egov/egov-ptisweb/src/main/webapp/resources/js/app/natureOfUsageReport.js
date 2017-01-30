@@ -154,7 +154,6 @@ jQuery('#ward').change(
 						});
 					},
 					error : function(response) {
-						console.log("failed");
 						jQuery('#block').prop("disabled", false);
 						jQuery('#block').html("");
 						jQuery('#block').append(

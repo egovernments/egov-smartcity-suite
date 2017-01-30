@@ -238,7 +238,6 @@ $(document)
 							},
 							dataType: "json",
 							success: function (response) {
-								console.log("success"+response);
 								$('#districtId').empty();
 								$('#districtId').append($("<option value=''>All</option>"));
 								$('#cityId').empty();
@@ -251,7 +250,6 @@ $(document)
 							}, 
 							error: function (response) {
 								
-								console.log("failed");
 							}
 						});
 					});
@@ -266,7 +264,6 @@ $(document)
 							},
 							dataType: "json",
 							success: function (response) {
-								console.log("success"+response);
 								$('#cityId').empty();
 								$('#cityId').append($("<option value=''>All</option>"));
 								$.each(response, function(index, value) {
@@ -275,7 +272,6 @@ $(document)
 								
 							}, 
 							error: function (response) {
-								console.log("failed");
 							}
 						});
 					});

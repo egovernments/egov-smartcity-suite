@@ -70,6 +70,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.mapper.BeanMapperConfiguration;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.Escalation;
+import org.egov.pgr.entity.ReceivingMode;
 import org.egov.pgr.entity.enums.ComplaintStatus;
 import org.egov.pgr.entity.es.ComplaintDashBoardRequest;
 import org.egov.pgr.entity.es.ComplaintDashBoardResponse;
@@ -79,6 +80,7 @@ import org.egov.pgr.repository.es.ComplaintIndexRepository;
 import org.egov.pgr.repository.es.util.ComplaintElasticsearchUtils;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.EscalationService;
+import org.egov.pgr.service.ReceivingModeService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.elasticsearch.action.search.SearchResponse;
@@ -127,6 +129,9 @@ public class ComplaintIndexService {
 
     @Autowired
     private ComplaintService complaintService;
+    
+    @Autowired
+    private ReceivingModeService receivingModeService;
 
     public void createComplaintIndex(final Complaint complaint) {
         final ComplaintIndex complaintIndex = new ComplaintIndex();
@@ -170,6 +175,8 @@ public class ComplaintIndexService {
                 assignedUser != null ? assignedUser.getName() + " : " + position.getDeptDesig().getDesignation().getName()
                         : NOASSIGNMENT + " : " + position.getDeptDesig().getDesignation().getName());
         complaintIndex.setCurrentFunctionaryMobileNumber(Objects.nonNull(assignedUser)
+                ? assignedUser.getMobileNumber() : EMPTY);
+        complaintIndex.setInitialFunctionaryMobileNumber(Objects.nonNull(assignedUser)
                 ? assignedUser.getMobileNumber() : EMPTY);
         complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
         complaintIndex.setCurrentFunctionarySLADays(getFunctionarySlaDays(complaint));
@@ -778,7 +785,12 @@ public class ComplaintIndexService {
                     responseDetail.setUlbName(hit[0].field("cityName").getValue());
                     responseDetail.setDistrictName(hit[0].field("cityDistrictName").getValue());
                     responseDetail.setDepartmentName(hit[0].field("departmentName").getValue());
-                    responseDetail.setFunctionaryMobileNumber(hit[0].field("initialFunctionaryMobileNumber").getValue());
+                    String initialFunctionaryNumber;
+                    if (hit[0].field("initialFunctionaryMobileNumber") == null)
+                        initialFunctionaryNumber = "N/A";
+                    else
+                        initialFunctionaryNumber = hit[0].field("initialFunctionaryMobileNumber").getValue();
+                    responseDetail.setFunctionaryMobileNumber(initialFunctionaryNumber);
 
                     final Terms openAndClosedTerms = functionaryBucket.getAggregations().get("closedComplaintCount");
                     for (final Bucket closedCountbucket : openAndClosedTerms.getBuckets())
@@ -1115,7 +1127,12 @@ public class ComplaintIndexService {
     }
 
     public List<String> getSourceNameList() {
-        return Arrays.asList(environment.getProperty("all.complaint.sources").split(","));
+        List<String> sourceList = new ArrayList<>();
+        List<ReceivingMode> receivingModes = receivingModeService.getReceivingModes();
+        for(ReceivingMode receivingMode : receivingModes){
+            sourceList.add(receivingMode.getName());
+        }
+        return sourceList;
     }
 
     public List<ComplaintIndex> getFunctionaryWiseComplaints(final String functionaryName) {

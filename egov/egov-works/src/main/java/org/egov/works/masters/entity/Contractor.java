@@ -93,7 +93,6 @@ public class Contractor extends AbstractAuditable implements EntityType {
     @GeneratedValue(generator = SEQ_EGW_CONTRACTOR, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Required(message = "contractor.code.null")
     @Length(max = 50, message = "contractor.code.length")
     @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHSPECIALCHAR, message = "contractor.code.alphaNumeric")
     private String code;

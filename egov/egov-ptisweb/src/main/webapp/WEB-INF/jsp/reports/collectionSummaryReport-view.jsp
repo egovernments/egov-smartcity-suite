@@ -85,7 +85,6 @@
 					</s:if>
 				}, 
 				error: function (response) {
-					console.log("failed");
 					jQuery('#blockId').html("");
 					bootbox.alert("No block details mapped for ward")
 				}

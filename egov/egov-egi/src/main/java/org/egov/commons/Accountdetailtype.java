@@ -55,7 +55,6 @@ import javax.validation.constraints.NotNull;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
@@ -71,52 +70,40 @@ public class Accountdetailtype extends AbstractPersistable<Integer> implements j
 
     @Id
     @GeneratedValue(generator = SEQ_ACCOUNTDETAILTYPE, strategy = GenerationType.SEQUENCE)
-    @NotAudited
     private Integer id;
 
     @Column(nullable = false, unique = true)
     @Length(max = 50)
-    @NotAudited
     private String name;
 
     @NotNull
     @Length(max = 50)
-    @NotAudited
     private String description;
 
     @Length(max = 25)
-    @NotAudited
     private String tablename;
 
     @Length(max = 25)
-    @NotAudited
     private String columnname;
 
     @Column(nullable = false, unique = true)
     @Length(max = 50)
-    @NotAudited
     private String attributename;
 
     @NotNull
-    @NotAudited
     private BigDecimal nbroflevels = BigDecimal.ZERO;
 
-    @NotAudited
     private Boolean isactive;
 
     @Column(name = "FULL_QUALIFIED_NAME")
     @Length(max = 250)
-    @NotAudited
     private String fullQualifiedName;
 
-    @NotAudited
-    private Date created;
+    private Date createdDate;
 
-    @NotAudited
-    private Date lastmodified;
+    private Date lastModifiedDate;
 
-    @NotAudited
-    private Long modifiedby;
+    private Long lastModifiedBy;
 
     public Accountdetailtype() {
         // For hibernate to work
@@ -216,28 +203,28 @@ public class Accountdetailtype extends AbstractPersistable<Integer> implements j
         this.fullQualifiedName = fullQualifiedName;
     }
 
-    public Date getCreated() {
-        return created;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreated(final Date created) {
-        this.created = created;
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
     }
 
-    public Date getLastmodified() {
-        return lastmodified;
+    public Long getLastModifiedBy() {
+        return lastModifiedBy;
     }
 
-    public void setLastmodified(final Date lastmodified) {
-        this.lastmodified = lastmodified;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
-    public Long getModifiedby() {
-        return modifiedby;
+    public void setLastModifiedDate(Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
-    public void setModifiedby(final Long modifiedby) {
-        this.modifiedby = modifiedby;
+    public void setLastModifiedBy(Long lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
     }
 
 }

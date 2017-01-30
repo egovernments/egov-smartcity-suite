@@ -42,25 +42,16 @@ package org.egov.mrs.web.controller.application.registration;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.ValidationException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -68,20 +59,14 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.MarriageUtils;
-import org.egov.mrs.application.service.MarriageCertificateService;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
+import org.egov.mrs.domain.enums.MarriageCertificateType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -93,12 +78,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfWriter;
 
 /**
  * Controller to correct the registration data
@@ -125,9 +104,9 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
     @Autowired
     protected MarriageUtils marriageUtils;
     @Autowired
-    protected MarriageCertificateService marriageCertificateService;
-    @Autowired
     protected FileStoreMapperRepository fileStoreMapperRepository;
+    
+    private static final Logger LOGGER = Logger.getLogger(UpdateMarriageRegistrationController.class);
 
     @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
     public String showRegistration(@PathVariable final Long id, final Model model) {
@@ -258,7 +237,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                 fileStoreIdsApplicationNoMap.put(marriageCertificate.getFileStore().getFileStoreId(),
                         marriageCertificate.getRegistration().getApplicationNo());
                 session.setAttribute(MarriageConstants.FILE_STORE_ID_APPLICATION_NUMBER, fileStoreIdsApplicationNoMap);
-                 model.addAttribute("isDigitalSignatureEnabled", marriageUtils.isDigitalSignEnabled());
+                model.addAttribute("isDigitalSignatureEnabled", marriageUtils.isDigitalSignEnabled());
                 return "marriagereg-digitalsignature";
             } else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE)) {
                 marriageRegistrationService.printCertificate(marriageRegistration, workflowContainer, request);
@@ -291,17 +270,23 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
      */
     @RequestMapping(value = "/digiSignWorkflow", method = RequestMethod.POST)
     public String digiSignTransitionWorkflow(final HttpServletRequest request, final Model model) throws IOException {
+        LOGGER.debug("..........Inside Digital Signature Transition : Registration........");
         final String fileStoreIds = request.getParameter("fileStoreId");
+        LOGGER.info("........fileStoreIds.........."+fileStoreIds);
         final String[] fileStoreIdArr = fileStoreIds.split(",");
+        LOGGER.info("........fileStoreIdArr.........."+fileStoreIdArr.length);
         final HttpSession session = request.getSession();
         final String approvalComent = (String) session.getAttribute(MarriageConstants.APPROVAL_COMMENT);
         //Gets the digitally signed applicationNo and its filestoreid from session
         final Map<String, String> appNoFileStoreIdsMap = (Map<String, String>) session
                 .getAttribute(MarriageConstants.FILE_STORE_ID_APPLICATION_NUMBER);
+        LOGGER.info("........appNoFileStoreIdsMap....size......"+appNoFileStoreIdsMap.size());
         MarriageRegistration marriageRegistrationObj = null;
         WorkflowContainer workflowContainer;
         for (final String fileStoreId : fileStoreIdArr) {
+            LOGGER.info("........Inside for loop......");
             final String applicationNumber = appNoFileStoreIdsMap.get(fileStoreId);
+            LOGGER.info("........applicationNumber......"+applicationNumber);
             if (null != applicationNumber && !applicationNumber.isEmpty()) {
                 workflowContainer = new WorkflowContainer();
                 workflowContainer.setApproverComments(approvalComent);
@@ -311,12 +296,15 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                 marriageRegistrationService.digiSignCertificate(marriageRegistrationObj, workflowContainer, request);
             }
         }
+        LOGGER.info("........outside for loop......");
         final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(marriageRegistrationObj
                 .getCreatedBy().getId());
         final String message = messageSource.getMessage("msg.digisign.success.registration", new String[] { wfInitiator
                 .getEmployee().getName().concat("~").concat(wfInitiator.getDesignation().getName()) }, null);
         model.addAttribute("successMessage", message);
+        model.addAttribute("objectType", MarriageCertificateType.REGISTRATION.toString());
         model.addAttribute("fileStoreId", fileStoreIdArr.length == 1 ? fileStoreIdArr[0] : "");
+        LOGGER.debug("..........END of Digital Signature Transition : Registration........");
         return "mrdigitalsignature-success";
     }
 
@@ -326,102 +314,15 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
      * @param response
      */
     @RequestMapping(value = "/downloadSignedCertificate")
-    public void downloadSignedCertificate(final HttpServletRequest request, final HttpServletResponse response) {
+    public void downloadRegDigiSignedCertificate(final HttpServletRequest request, final HttpServletResponse response) {
         final String signedFileStoreId = request.getParameter("signedFileStoreId");
-        final File file = fileStoreService.fetch(signedFileStoreId, MarriageConstants.FILESTORE_MODULECODE);
         try {
-            final FileStoreMapper fileStoreMapper = fileStoreMapperRepository.findByFileStoreId(signedFileStoreId);
-            final List<InputStream> pdfs = new ArrayList<InputStream>();
-            final byte[] bFile = FileUtils.readFileToByteArray(file);
-            pdfs.add(new ByteArrayInputStream(bFile));
-            getServletResponse(response, pdfs, fileStoreMapper.getFileName());
-        } catch (final FileNotFoundException fileNotFoundExcep) {
-            throw new ApplicationRuntimeException("Exception while loading file : " + fileNotFoundExcep);
-        } catch (final IOException ioExcep) {
-            throw new ApplicationRuntimeException("Exception while generating work order : " + ioExcep);
+          marriageUtils.downloadSignedCertificate(signedFileStoreId, response);
+        } catch (final ApplicationRuntimeException ex) {
+            throw new ApplicationRuntimeException("Exception while downloading file : " + ex);
         }
     }
 
-    private HttpServletResponse getServletResponse(final HttpServletResponse response, final List<InputStream> pdfs,
-            final String filename) {
-        try {
-            final ByteArrayOutputStream output = new ByteArrayOutputStream();
-            final byte[] data = concatPDFs(pdfs, output);
-            response.setHeader("Content-disposition", "attachment;filename=" + filename + ".pdf");
-            response.setContentType("application/pdf");
-            response.setContentLength(data.length);
-            response.getOutputStream().write(data);
-            return response;
-        } catch (final IOException e) {
-            throw new ValidationException(e.getMessage());
-        }
-    }
-
-    /**
-     * @description download digitally signed certificate in pdf format.
-     * @param streamOfPDFFiles
-     * @param outputStream
-     * @return
-     */
-    private byte[] concatPDFs(final List<InputStream> streamOfPDFFiles, final ByteArrayOutputStream outputStream) {
-        Document document = null;
-        try {
-            final List<InputStream> pdfs = streamOfPDFFiles;
-            final List<PdfReader> readers = new ArrayList<PdfReader>();
-            final Iterator<InputStream> iteratorPDFs = pdfs.iterator();
-
-            // Create Readers for the pdfs.
-            while (iteratorPDFs.hasNext()) {
-                final InputStream pdf = iteratorPDFs.next();
-                final PdfReader pdfReader = new PdfReader(pdf);
-                readers.add(pdfReader);
-                if (null == document)
-                    document = new Document(pdfReader.getPageSize(1));
-            }
-            // Create a writer for the outputstream
-            final PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-
-            document.open();
-            final PdfContentByte cb = writer.getDirectContent(); // Holds the
-            // PDF
-            // data
-
-            PdfImportedPage page;
-            int pageOfCurrentReaderPDF = 0;
-            final Iterator<PdfReader> iteratorPDFReader = readers.iterator();
-
-            // Loop through the PDF files and add to the output.
-            while (iteratorPDFReader.hasNext()) {
-                final PdfReader pdfReader = iteratorPDFReader.next();
-
-                // Create a new page in the target for each source page.
-                while (pageOfCurrentReaderPDF < pdfReader.getNumberOfPages()) {
-                    document.newPage();
-                    pageOfCurrentReaderPDF++;
-                    page = writer.getImportedPage(pdfReader, pageOfCurrentReaderPDF);
-                    cb.addTemplate(page, 0, 0);
-                }
-                pageOfCurrentReaderPDF = 0;
-            }
-            outputStream.flush();
-            document.close();
-            outputStream.close();
-
-        } catch (final Exception e) {
-
-            throw new ValidationException(e.getMessage());
-        } finally {
-            if (document.isOpen())
-                document.close();
-            try {
-                if (outputStream != null)
-                    outputStream.close();
-            } catch (final IOException ioe) {
-                throw new ValidationException(ioe.getMessage());
-            }
-        }
-        return outputStream.toByteArray();
-    }
 
     /**
      * @description Modify registered marriage applications
@@ -471,33 +372,8 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
      * @throws IOException
      */
     @RequestMapping(value = "/viewCertificate/{id}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> viewReport(@PathVariable final Long id, final HttpSession session,
+    public @ResponseBody ResponseEntity<byte[]> viewMarriageRegistrationReport(@PathVariable final Long id, final HttpSession session,
             final HttpServletRequest request) throws IOException {
-        ReportOutput reportOutput;
-        final HttpHeaders headers = new HttpHeaders();
-        final MarriageRegistration marriageRegistrationObj = marriageRegistrationService.get(id);
-        final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-        final String url = WebUtils.extractRequestDomainURL(request, false);
-        final String cityLogo = url.concat(MarriageConstants.IMAGE_CONTEXT_PATH).concat(
-                (String) request.getSession().getAttribute("citylogo"));
-        reportOutput = marriageCertificateService.generate(marriageRegistrationObj, cityName, cityLogo, "");
-        if (reportOutput != null && reportOutput.getReportOutputData() != null) {
-            headers.setContentType(MediaType.parseMediaType("application/pdf"));
-            headers.add("content-disposition", "inline;filename=WorkOrderNotice.pdf");
-            return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
-        } else
-            return redirect();
-    }
-
-    /**
-     * @description display error message if certificate preview fails
-     * @return
-     */
-    private ResponseEntity<byte[]> redirect() {
-        String errorMessage = "Error Generating Certificate Preview.";
-        errorMessage = "<html><body><p style='color:red;border:1px solid gray;padding:15px;'>" + errorMessage
-                + "</p></body></html>";
-        final byte[] byteData = errorMessage.getBytes();
-        return new ResponseEntity<byte[]>(byteData, HttpStatus.CREATED);
+        return marriageUtils.viewReport(id, MarriageCertificateType.REGISTRATION.toString(), session, request);
     }
 }

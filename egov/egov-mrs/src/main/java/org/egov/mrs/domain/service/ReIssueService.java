@@ -133,6 +133,10 @@ public class ReIssueService {
     public ReIssue get(final Long id) {
         return reIssueRepository.findById(id);
     }
+    
+    public ReIssue findByApplicationNo(final String applicationNo) {
+        return reIssueRepository.findByApplicationNo(applicationNo);
+    }
 
     @Transactional
     public String createReIssueApplication(final ReIssue reIssue, final WorkflowContainer workflowContainer) {
@@ -242,17 +246,38 @@ public class ReIssueService {
 
         marriageApplicantService.addDocumentsToFileStore(reissue.getApplicant(), individualDocumentAndId);
     }
+    
+    @Transactional
+    public MarriageCertificate generateReIssueCertificate(final ReIssue reIssue,
+            final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
+        final MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(
+                reIssue, request, MarriageCertificateType.REISSUE);
+        reIssue.addCertificate(marriageCertificate);
+        return marriageCertificate;
+    }
+    
+    @Transactional
+    public ReIssue digiSignCertificate(final ReIssue reIssue,
+            final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
+        reIssue.setStatus(marriageUtils.getStatusByCodeAndModuleType(
+                MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString(), MarriageConstants.MODULE_NAME));
+        workflowService.transition(reIssue, workflowContainer, workflowContainer.getApproverComments());
+        reiSsueUpdateIndexesService.updateReIssueAppIndex(reIssue);
+        return reIssue;
+    }
 
     @Transactional
     public ReIssue printCertificate(final ReIssue reIssue, final WorkflowContainer workflowContainer,
             final HttpServletRequest request)
             throws IOException {
-        final MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(reIssue, request,
-                MarriageCertificateType.REISSUE);
+        if (reIssue.getMarriageCertificate().isEmpty()) {
+                  final MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(
+                          reIssue, request, MarriageCertificateType.REISSUE);
+                  reIssue.addCertificate(marriageCertificate);
+        }
         reIssue.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.CERTIFICATEREISSUED.toString(),
                         MarriageConstants.MODULE_NAME));
-        reIssue.addCertificate(marriageCertificate);
         reIssue.setActive(true);
         workflowService.transition(reIssue, workflowContainer, workflowContainer.getApproverComments());
         return reIssue;
