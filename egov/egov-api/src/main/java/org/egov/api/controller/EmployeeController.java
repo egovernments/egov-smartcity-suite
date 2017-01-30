@@ -311,7 +311,7 @@ public class EmployeeController extends ApiController {
                 if (workFlowTypeStr.toString().equals(Complaint.class.getSimpleName())) {
                     Map<String, Long> prioritiesListCount = new LinkedHashMap<>();
                     for (Priority priority : priorityService.getAllPriorities()) {
-                        prioritiesListCount.put(priority.getName(), (Long) getWorkflowItemsCountByWFType(userId, ownerPostitions,
+                        prioritiesListCount.put(priority.getCode(), (Long) getWorkflowItemsCountByWFType(userId, ownerPostitions,
                                 workFlowTypeStr, priority.getCode()));
                     }
                     workFlowType.put("prioritylistcount", prioritiesListCount);
