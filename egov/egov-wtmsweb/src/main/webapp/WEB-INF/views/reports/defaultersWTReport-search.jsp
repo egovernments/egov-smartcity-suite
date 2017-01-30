@@ -83,7 +83,7 @@
 				<div class="panel-body custom-form">
 					<div class="form-group">
 						<label for="field-1" class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.fromAmount" /></label>
+								code="lbl.fromAmount" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input class="form-control patternvalidation"
 								data-pattern="number" maxlength="10" id="fromAmount"
@@ -91,7 +91,7 @@
 							<form:errors path="fromAmount" cssClass="add-margin error-msg" />
 						</div>
 						<label for="field-1" class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.toAmount" /></label>
+								code="lbl.toAmount" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input class="form-control patternvalidation"
 								data-pattern="number" maxlength="10" id="toAmount"
