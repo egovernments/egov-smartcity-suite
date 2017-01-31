@@ -263,4 +263,8 @@
 		<put-attribute name="page-title" value="title.searchpenaltyRate" cascade="true" />
 		<put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-viewResult.jsp" />
 	</definition>
+	<definition name="search-demandnotice" extends="base_layout">
+	    <put-attribute name="page-title" value="title.document.new" cascade="true"/>
+	    <put-attribute name="body" value="/WEB-INF/views/search/search-demandnotice.jsp"/>
+	</definition>
 </tiles-definitions>
