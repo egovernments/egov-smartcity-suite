@@ -129,7 +129,7 @@ public class CMDashboardController {
                 + ", fromDate = " + collectionDetailsRequest.getFromDate() + ", toDate = "
                 + collectionDetailsRequest.getToDate() + ", type = " + collectionDetailsRequest.getType());
         CollectionDetails collectionDetails = propTaxDashboardService
-                .getCollectionIndexDetails(collectionDetailsRequest, false);
+                .getCollectionIndexDetails(collectionDetailsRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken to serve collectiondashboard is : " + timeTaken + " (millisecs)");
         return collectionDetails;
@@ -238,7 +238,7 @@ public class CMDashboardController {
                 + ", fromDate = " + collectionDetailsRequest.getFromDate() + ", toDate = "
                 + collectionDetailsRequest.getToDate() + ", type = " + collectionDetailsRequest.getType());
         CollectionDetails collectionDetails = propTaxDashboardService
-                .getCollectionIndexDetails(collectionDetailsRequest, true);
+                .getCollectionIndexDetails(collectionDetailsRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken to serve targetmis is : " + timeTaken + " (millisecs)");
         return collectionDetails;

@@ -111,7 +111,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class CollectionIndexElasticSearchService {
 
-    private static final String REBATE_AMOUNT = "rebateAmount";
+    private static final String LY_ADVANCE = "lyAdvance";
+    private static final String LY_REBATE = "lyRebate";
+    private static final String LY_CURRENT_CESS = "lyCurrentCess";
+    private static final String LY_CURRENT_AMOUNT = "lyCurrentAmount";
+    private static final String LY_ARREAR_CESS = "lyArrearCess";
+    private static final String LY_ARREAR_AMOUNT = "lyArrearAmount";
+    private static final String LY_PENALTY = "lyPenalty";
+    private static final String LY_LATE_PAYMENT_PENALTY = "lyLatePaymentPenalty";
+    private static final String CY_ADVANCE = "cyAdvance";
+    private static final String CY_REBATE = "cyRebate";
+    private static final String CY_PENALTY = "cyPenalty";
+    private static final String CY_LATE_PAYMENT_PENALTY = "cyLatePaymentPenalty";
+    private static final String CY_CURRENT_CESS = "cyCurrentCess";
+    private static final String CY_CURRENT_AMOUNT = "cyCurrentAmount";
+    private static final String CY_ARREAR_CESS = "cyArrearCess";
+    private static final String CY_ARREAR_AMOUNT = "cyArrearAmount";
     private static final String CURRENT_INT_DMD = "currentIntDmd";
     private static final String ARREAR_INT_DMD = "arrearIntDmd";
     private static final String IS_EXEMPTED = "isExempted";
@@ -403,29 +418,32 @@ public class CollectionIndexElasticSearchService {
      * @param collectionDetailsRequest
      * @return List
      */
-    public List<CollTableData> getResponseTableData(CollectionDetailsRequest collectionDetailsRequest, boolean isForMisReport) {
+    public List<CollTableData> getResponseTableData(CollectionDetailsRequest collectionDetailsRequest) {
         List<CollTableData> collIndDataList = new ArrayList<>();
         Date fromDate;
         Date toDate;
         String name;
         CollTableData collIndData;
-        BigDecimal arrearColl = BigDecimal.ZERO;
-        BigDecimal currentColl = BigDecimal.ZERO;
-        BigDecimal interestColl = BigDecimal.ZERO;
-        BigDecimal lytdArrearColl;
-        BigDecimal lytdCurrentColl;
+        BigDecimal cyArrearColl = BigDecimal.ZERO;
+        BigDecimal cyCurrentColl = BigDecimal.ZERO;
+        BigDecimal cyPenaltyColl = BigDecimal.ZERO;
+        BigDecimal cyRebate = BigDecimal.ZERO;
+        BigDecimal cyAdvance = BigDecimal.ZERO;
+        BigDecimal lyArrearColl = BigDecimal.ZERO;
+        BigDecimal lyCurrentColl = BigDecimal.ZERO;
+        BigDecimal lyPenaltyColl = BigDecimal.ZERO;
+        BigDecimal lyRebate = BigDecimal.ZERO;
+        BigDecimal lyAdvance = BigDecimal.ZERO;
         BigDecimal arrearDemand = BigDecimal.ZERO;
         BigDecimal currentDemand = BigDecimal.ZERO;
         BigDecimal arrearInterestDemand = BigDecimal.ZERO;
         BigDecimal currentInterestDemand = BigDecimal.ZERO;
         BigDecimal totalAssessments = BigDecimal.ZERO;
-        BigDecimal rebate = BigDecimal.ZERO;
-        BigDecimal variance = BigDecimal.ZERO;
         BigDecimal currentYearTotalDemand;
         String aggregationField = REGION_NAME;
         Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
-        Map<String, Map<String, BigDecimal>> collectionDivisionMap = new HashMap<>();
-        Map<String, Map<String, BigDecimal>> lytdCollectionDivisionMap = new HashMap<>();
+        Map<String, Map<String, BigDecimal>> currYrCollDivisionMap = new HashMap<>();
+        Map<String, Map<String, BigDecimal>> lastYrCollDivisionMap = new HashMap<>();
         final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
 
         /**
@@ -498,23 +516,18 @@ public class CollectionIndexElasticSearchService {
                     COLLECTION_INDEX_NAME, TOTAL_AMOUNT, aggregationField);
             
             // For fetching individual collections
-            StringTerms individualCollDetails = getIndividualCollections(collectionDetailsRequest, fromDate, toDate,
+            StringTerms collBreakupForCurrYear = getIndividualCollections(collectionDetailsRequest, fromDate, toDate,
                     COLLECTION_INDEX_NAME, aggregationField);
-            prepareIndividualCollMap(individualCollDetails, collectionDivisionMap);
+            StringTerms collBreakupForLastYear = getIndividualCollections(collectionDetailsRequest, DateUtils.addYears(fromDate, -1), DateUtils.addYears(toDate, -1),
+                    COLLECTION_INDEX_NAME, aggregationField);
+            prepareIndividualCollMap(collBreakupForCurrYear, currYrCollDivisionMap, true);
+            prepareIndividualCollMap(collBreakupForLastYear, lastYrCollDivisionMap, false);
             
             // For last year's till today's date collections
             Map<String, BigDecimal> lytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest,
                     DateUtils.addYears(fromDate, -1), DateUtils.addYears(toDate, -1), COLLECTION_INDEX_NAME, TOTAL_AMOUNT,
                     aggregationField);
             
-            if(isForMisReport){
-                // For fetching individual collections for last year till date
-                StringTerms lytdIndividualCollDetails = getIndividualCollections(collectionDetailsRequest,
-                        DateUtils.addYears(fromDate, -1), DateUtils.addYears(toDate, -1),
-                        COLLECTION_INDEX_NAME, aggregationField);
-                prepareIndividualCollMap(lytdIndividualCollDetails, lytdCollectionDivisionMap);
-            }
-    
             // Fetch ward wise Bill Collector details for ward based grouping
             if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
                 wardWiseBillCollectors = getWardWiseBillCollectors(collectionDetailsRequest);
@@ -534,32 +547,41 @@ public class CollectionIndexElasticSearchService {
                 if(!assessmentsCountMap.isEmpty() && assessmentsCountMap.get(name) != null)
                     totalAssessments = assessmentsCountMap.get(name) == null ? BigDecimal.ZERO : assessmentsCountMap.get(name);
                 
-                if (!collectionDivisionMap.isEmpty()) {
-                    arrearColl = (collectionDivisionMap.get(name).get(ARREAR_AMOUNT) == null ? BigDecimal.ZERO
-                            : collectionDivisionMap.get(name).get(ARREAR_AMOUNT))
-                            .add(collectionDivisionMap.get(name).get(ARREAR_CESS) == null ? BigDecimal.ZERO
-                                    : collectionDivisionMap.get(name).get(ARREAR_CESS));
-                    currentColl = (collectionDivisionMap.get(name).get(CURRENT_AMOUNT) == null ? BigDecimal.ZERO
-                            : collectionDivisionMap.get(name).get(CURRENT_AMOUNT))
-                            .add(collectionDivisionMap.get(name).get(CURRENT_CESS) == null ? BigDecimal.ZERO
-                                    : collectionDivisionMap.get(name).get(CURRENT_CESS));
-                    interestColl = collectionDivisionMap.get(name).get(INTEREST_AMOUNT) == null ? BigDecimal.ZERO
-                            : collectionDivisionMap.get(name).get(INTEREST_AMOUNT);
-                    rebate = collectionDivisionMap.get(name).get(REBATE_AMOUNT) == null ? BigDecimal.ZERO
-                            : collectionDivisionMap.get(name).get(REBATE_AMOUNT);
+                if (!currYrCollDivisionMap.isEmpty() && currYrCollDivisionMap.get(name) != null) {
+                    cyArrearColl = (currYrCollDivisionMap.get(name).get(CY_ARREAR_AMOUNT) == null ? BigDecimal.ZERO
+                            : currYrCollDivisionMap.get(name).get(CY_ARREAR_AMOUNT))
+                            .add(currYrCollDivisionMap.get(name).get(CY_ARREAR_CESS) == null ? BigDecimal.ZERO
+                                    : currYrCollDivisionMap.get(name).get(CY_ARREAR_CESS));
+                    cyCurrentColl = (currYrCollDivisionMap.get(name).get(CY_CURRENT_AMOUNT) == null ? BigDecimal.ZERO
+                            : currYrCollDivisionMap.get(name).get(CY_CURRENT_AMOUNT))
+                            .add(currYrCollDivisionMap.get(name).get(CY_CURRENT_CESS) == null ? BigDecimal.ZERO
+                                    : currYrCollDivisionMap.get(name).get(CY_CURRENT_CESS));
+                    cyPenaltyColl = (currYrCollDivisionMap.get(name).get(CY_PENALTY) == null ? BigDecimal.ZERO
+                            : currYrCollDivisionMap.get(name).get(CY_PENALTY))
+                            .add(currYrCollDivisionMap.get(name).get(CY_LATE_PAYMENT_PENALTY) == null ? BigDecimal.ZERO
+                                    : currYrCollDivisionMap.get(name).get(CY_LATE_PAYMENT_PENALTY)); 
+                    cyRebate = currYrCollDivisionMap.get(name).get(CY_REBATE) == null ? BigDecimal.ZERO
+                            : currYrCollDivisionMap.get(name).get(CY_REBATE);
+                    cyAdvance = currYrCollDivisionMap.get(name).get(CY_ADVANCE) == null ? BigDecimal.ZERO
+                            : currYrCollDivisionMap.get(name).get(CY_ADVANCE);
                 }
-                if(isForMisReport && !lytdCollectionDivisionMap.isEmpty() && lytdCollectionDivisionMap.get(name) != null){
-                    lytdArrearColl = (lytdCollectionDivisionMap.get(name).get(ARREAR_AMOUNT) == null ? BigDecimal.ZERO
-                            : lytdCollectionDivisionMap.get(name).get(ARREAR_AMOUNT))
-                            .add(lytdCollectionDivisionMap.get(name).get(ARREAR_CESS) == null ? BigDecimal.ZERO
-                                    : lytdCollectionDivisionMap.get(name).get(ARREAR_CESS));
-                    lytdCurrentColl = (lytdCollectionDivisionMap.get(name).get(CURRENT_AMOUNT) == null ? BigDecimal.ZERO
-                            : lytdCollectionDivisionMap.get(name).get(CURRENT_AMOUNT))
-                            .add(lytdCollectionDivisionMap.get(name).get(CURRENT_CESS) == null ? BigDecimal.ZERO
-                                    : lytdCollectionDivisionMap.get(name).get(CURRENT_CESS));
-                } else {
-                    lytdArrearColl = BigDecimal.ZERO;
-                    lytdCurrentColl = BigDecimal.ZERO;
+                if(!lastYrCollDivisionMap.isEmpty() && lastYrCollDivisionMap.get(name) != null){
+                    lyArrearColl = (lastYrCollDivisionMap.get(name).get(LY_ARREAR_AMOUNT) == null ? BigDecimal.ZERO
+                            : lastYrCollDivisionMap.get(name).get(LY_ARREAR_AMOUNT))
+                            .add(lastYrCollDivisionMap.get(name).get(LY_ARREAR_CESS) == null ? BigDecimal.ZERO
+                                    : lastYrCollDivisionMap.get(name).get(LY_ARREAR_CESS));
+                    lyCurrentColl = (lastYrCollDivisionMap.get(name).get(LY_CURRENT_AMOUNT) == null ? BigDecimal.ZERO
+                            : lastYrCollDivisionMap.get(name).get(LY_CURRENT_AMOUNT))
+                            .add(lastYrCollDivisionMap.get(name).get(LY_CURRENT_CESS) == null ? BigDecimal.ZERO
+                                    : lastYrCollDivisionMap.get(name).get(LY_CURRENT_CESS));
+                    lyPenaltyColl = (lastYrCollDivisionMap.get(name).get(LY_PENALTY) == null ? BigDecimal.ZERO
+                            : lastYrCollDivisionMap.get(name).get(LY_PENALTY))
+                            .add(lastYrCollDivisionMap.get(name).get(LY_LATE_PAYMENT_PENALTY) == null ? BigDecimal.ZERO
+                                    : lastYrCollDivisionMap.get(name).get(LY_LATE_PAYMENT_PENALTY));
+                    lyRebate = lastYrCollDivisionMap.get(name).get(LY_REBATE) == null ? BigDecimal.ZERO
+                            : lastYrCollDivisionMap.get(name).get(LY_REBATE);
+                    lyAdvance = lastYrCollDivisionMap.get(name).get(LY_ADVANCE) == null ? BigDecimal.ZERO
+                            : lastYrCollDivisionMap.get(name).get(LY_ADVANCE);
                 }
                 
                 if (!demandDivisionMap.isEmpty() && demandDivisionMap.get(name) != null) {
@@ -578,11 +600,11 @@ public class CollectionIndexElasticSearchService {
                         : currYrTotalDemandMap.get(name);
                 
                 setBoundaryDateForTable(collectionDetailsRequest, name, collIndData, aggregationField, wardWiseBillCollectors);
-                setCollAmountsForTableData(collIndData, rebate,
-                        todayCollMap.get(name) == null ? BigDecimal.ZERO : todayCollMap.get(name),
+                setCollAmountsForTableData(collIndData, todayCollMap.get(name) == null ? BigDecimal.ZERO : todayCollMap.get(name),
                         lyTodayCollMap.get(name) == null ? BigDecimal.ZERO : lyTodayCollMap.get(name), entry.getValue(),
                         lytdCollMap.get(name) == null ? BigDecimal.ZERO : lytdCollMap.get(name));
-                setCollBreakUpForTableData(collIndData, arrearColl, currentColl, interestColl, lytdArrearColl, lytdCurrentColl);
+                setCurrYearCollBreakUpForTableData(collIndData, cyArrearColl, cyCurrentColl, cyPenaltyColl, cyRebate, cyAdvance);
+                setLastYearCollBreakUpForTableData(collIndData, lyArrearColl, lyCurrentColl, lyPenaltyColl, lyRebate, lyAdvance);
                 setDemandBreakUpForTableData(collIndData, arrearDemand, currentDemand, arrearInterestDemand,
                         currentInterestDemand, noOfMonths);
                 setDemandAmountsForTableData(name, collIndData, totalAssessments, currentYearTotalDemand, noOfMonths,
@@ -620,7 +642,8 @@ public class CollectionIndexElasticSearchService {
                         : currYrTotalDemandMap.get(name);
                 
                 setBoundaryDateForTable(collectionDetailsRequest, name, collIndData, aggregationField, wardWiseBillCollectors);
-                setCollAmountsForTableData(collIndData, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+                setCurrYearCollBreakUpForTableData(collIndData, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+                setLastYearCollBreakUpForTableData(collIndData, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
                 setDemandBreakUpForTableData(collIndData, arrearDemand, currentDemand, arrearInterestDemand,
                         currentInterestDemand, noOfMonths);
                 setDemandAmountsForTableData(name, collIndData, totalAssessments, currentYearTotalDemand, noOfMonths,
@@ -679,21 +702,29 @@ public class CollectionIndexElasticSearchService {
         collIndData.setProportionalCurrentDemand(proportionalCurrDmd);
     }
 
-    private void setCollBreakUpForTableData(CollTableData collIndData, BigDecimal arrearColl, BigDecimal currentColl,
+    private void setCurrYearCollBreakUpForTableData(CollTableData collIndData, BigDecimal arrearColl, BigDecimal currentColl,
             BigDecimal interestColl, BigDecimal lytdArrearColl, BigDecimal lytdCurrentColl) {
-        collIndData.setArrearColl(arrearColl);
-        collIndData.setCurrentColl(currentColl);
-        collIndData.setInterestColl(interestColl);
-        collIndData.setLytdArrearsColl(lytdArrearColl);
-        collIndData.setLytdCurrentColl(lytdCurrentColl);
+        collIndData.setCyArrearColl(arrearColl);
+        collIndData.setCyCurrentColl(currentColl);
+        collIndData.setCyPenaltyColl(interestColl);
+        collIndData.setCyRebate(lytdArrearColl.abs());
+        collIndData.setCyAdvanceColl(lytdCurrentColl);
     }
-
-    private void setCollAmountsForTableData(CollTableData collIndData, BigDecimal rebate,
+    
+    private void setLastYearCollBreakUpForTableData(CollTableData collIndData, BigDecimal arrearColl, BigDecimal currentColl,
+            BigDecimal interestColl, BigDecimal lytdArrearColl, BigDecimal lytdCurrentColl) {
+        collIndData.setLyArrearColl(arrearColl);
+        collIndData.setLyCurrentColl(currentColl);
+        collIndData.setLyPenaltyColl(interestColl);
+        collIndData.setLyRebate(lytdArrearColl.abs());
+        collIndData.setLyAdvanceColl(lytdCurrentColl);
+    }
+    
+    private void setCollAmountsForTableData(CollTableData collIndData, 
             BigDecimal todayColl, BigDecimal lyTodayColl, BigDecimal cytdColl, BigDecimal lytdColl) {
         collIndData.setTodayColl(todayColl);
         collIndData.setLyTodayColl(lyTodayColl);
         collIndData.setCytdColl(cytdColl);
-        collIndData.setRebate(rebate.abs());
         collIndData.setLytdColl(lytdColl);
     }
 
@@ -778,40 +809,80 @@ public class CollectionIndexElasticSearchService {
      * @param individualCollDetails
      * @param collectionDivisionMap
      */
-    public void prepareIndividualCollMap(StringTerms individualCollDetails,
-            Map<String, Map<String, BigDecimal>> collectionDivisionMap) {
+    public void prepareIndividualCollMap(StringTerms collBreakup,
+            Map<String, Map<String, BigDecimal>> collectionDivisionMap, boolean isForCurrYear) {
+        if (collBreakup != null) 
+            prepareCollBreakupMap(collBreakup, collectionDivisionMap, isForCurrYear);
+    }
+
+    private void prepareCollBreakupMap(StringTerms collBreakup,
+            Map<String, Map<String, BigDecimal>> collectionDivisionMap, boolean isForCurrYear) {
         Map<String, BigDecimal> individualCollMap;
         Sum arrearAmt;
         Sum currentAmt;
         Sum arrearCess;
         Sum currentCess;
-        Sum interestAmt;
+        Sum penaltyAmt;
+        Sum latePaymentPenaltyAmt;
         Sum rebate;
-        if (individualCollDetails != null) {
-            for (Terms.Bucket entry : individualCollDetails.getBuckets()) {
-                individualCollMap = new HashMap<>();
-                arrearAmt = entry.getAggregations().get("arrear_amount");
-                currentAmt = entry.getAggregations().get("curr_amount");
-                arrearCess = entry.getAggregations().get("arrear_cess");
-                currentCess = entry.getAggregations().get("curr_cess");
-                interestAmt = entry.getAggregations().get("interest");
-                rebate = entry.getAggregations().get("rebate");
+        Sum advance;
+        String arrearAmtKey;
+        String currentAmtKey;
+        String arrearCessKey;
+        String currentCessKey;
+        String penaltyAmtKey;
+        String latePaymentPenaltyAmtKey;
+        String rebateAmtKey;
+        String advanceAmtKey;
+        if(isForCurrYear){
+            arrearAmtKey = CY_ARREAR_AMOUNT;
+            currentAmtKey = CY_CURRENT_AMOUNT;
+            arrearCessKey = CY_ARREAR_CESS;
+            currentCessKey = CY_CURRENT_CESS;
+            penaltyAmtKey = CY_PENALTY;
+            latePaymentPenaltyAmtKey = CY_LATE_PAYMENT_PENALTY;
+            rebateAmtKey = CY_REBATE;
+            advanceAmtKey = CY_ADVANCE;
+        } else {
+            arrearAmtKey = LY_ARREAR_AMOUNT;
+            currentAmtKey = LY_CURRENT_AMOUNT;
+            arrearCessKey = LY_ARREAR_CESS;
+            currentCessKey = LY_CURRENT_CESS;
+            penaltyAmtKey = LY_PENALTY;
+            latePaymentPenaltyAmtKey = LY_LATE_PAYMENT_PENALTY;
+            rebateAmtKey = LY_REBATE;
+            advanceAmtKey = LY_ADVANCE;
+        }
+        for (Terms.Bucket entry : collBreakup.getBuckets()) {
+            individualCollMap = new HashMap<>();
+            
+            arrearAmt = entry.getAggregations().get("arrear_amount");
+            currentAmt = entry.getAggregations().get("curr_amount");
+            arrearCess = entry.getAggregations().get("arrear_cess");
+            currentCess = entry.getAggregations().get("curr_cess");
+            penaltyAmt = entry.getAggregations().get("penalty");
+            latePaymentPenaltyAmt = entry.getAggregations().get("latePaymentPenalty");
+            rebate = entry.getAggregations().get("rebate");
+            advance = entry.getAggregations().get("advance");
 
-                individualCollMap.put(ARREAR_AMOUNT,
-                        BigDecimal.valueOf(arrearAmt.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
-                individualCollMap.put(CURRENT_AMOUNT,
-                        BigDecimal.valueOf(currentAmt.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
-                individualCollMap.put(ARREAR_CESS,
-                        BigDecimal.valueOf(arrearCess.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
-                individualCollMap.put(CURRENT_CESS,
-                        BigDecimal.valueOf(currentCess.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
-                individualCollMap.put(INTEREST_AMOUNT,
-                        BigDecimal.valueOf(interestAmt.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
-                individualCollMap.put(REBATE_AMOUNT,
-                        BigDecimal.valueOf(rebate.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            individualCollMap.put(arrearAmtKey,
+                    BigDecimal.valueOf(arrearAmt.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            individualCollMap.put(currentAmtKey,
+                    BigDecimal.valueOf(currentAmt.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            individualCollMap.put(arrearCessKey,
+                    BigDecimal.valueOf(arrearCess.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            individualCollMap.put(currentCessKey,
+                    BigDecimal.valueOf(currentCess.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            individualCollMap.put(penaltyAmtKey,
+                    BigDecimal.valueOf(penaltyAmt.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            individualCollMap.put(latePaymentPenaltyAmtKey,
+                    BigDecimal.valueOf(latePaymentPenaltyAmt.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            individualCollMap.put(rebateAmtKey,
+                    BigDecimal.valueOf(rebate.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            individualCollMap.put(advanceAmtKey,
+                    BigDecimal.valueOf(advance.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
 
-                collectionDivisionMap.put(String.valueOf(entry.getKey()), individualCollMap);
-            }
+            collectionDivisionMap.put(String.valueOf(entry.getKey()), individualCollMap);
         }
     }
     
@@ -888,8 +959,10 @@ public class CollectionIndexElasticSearchService {
                     .subAggregation(AggregationBuilders.sum(CURR_AMOUNT).field(CURRENT_AMOUNT))
                     .subAggregation(AggregationBuilders.sum(ARREAR_CESS_CONST).field(ARREAR_CESS))
                     .subAggregation(AggregationBuilders.sum(CURR_CESS).field(CURRENT_CESS))
-                    .subAggregation(AggregationBuilders.sum(INTEREST).field(LATE_PAYMENT_CHARGES))
-                    .subAggregation(AggregationBuilders.sum("rebate").field("reductionAmount"));
+                    .subAggregation(AggregationBuilders.sum("penalty").field("penaltyAmount"))
+                    .subAggregation(AggregationBuilders.sum("latePaymentPenalty").field(LATE_PAYMENT_CHARGES))
+                    .subAggregation(AggregationBuilders.sum("rebate").field("reductionAmount"))
+                    .subAggregation(AggregationBuilders.sum("advance").field("advanceAmount"));
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName).withQuery(boolQuery)
                 .addAggregation(aggregation).build();
 
@@ -1469,7 +1542,7 @@ public class CollectionIndexElasticSearchService {
      * @param collectionDetailsRequest
      * @return list
      */
-    public List<CollTableData> getResponseTableDataForBillCollector(CollectionDetailsRequest collectionDetailsRequest, boolean isForMisReport) {
+    public List<CollTableData> getResponseTableDataForBillCollector(CollectionDetailsRequest collectionDetailsRequest) {
         Map<String, CollTableData> wardReceiptDetails = new HashMap<>();
         Map<String, List<CollTableData>> billCollectorWiseMap = new LinkedHashMap<>();
         List<CollTableData> collDetails = new ArrayList<>();
@@ -1479,7 +1552,7 @@ public class CollectionIndexElasticSearchService {
         /**
          * Fetch the Ward-wise data
          */
-        List<CollTableData> wardWiseData = getResponseTableData(collectionDetailsRequest, isForMisReport);
+        List<CollTableData> wardWiseData = getResponseTableData(collectionDetailsRequest);
         for (CollTableData tableData : wardWiseData) {
             wardReceiptDetails.put(tableData.getWardName(), tableData);
         }
@@ -1526,9 +1599,16 @@ public class CollectionIndexElasticSearchService {
         BigDecimal performance;
         BigDecimal totalDmd = BigDecimal.ZERO;
         BigDecimal variance;
-        BigDecimal arrearColl = BigDecimal.ZERO;
-        BigDecimal currentColl = BigDecimal.ZERO;
-        BigDecimal interestColl = BigDecimal.ZERO;
+        BigDecimal cyArrearColl = BigDecimal.ZERO;
+        BigDecimal cyCurrentColl = BigDecimal.ZERO;
+        BigDecimal cyPenaltyColl = BigDecimal.ZERO;
+        BigDecimal cyRebate = BigDecimal.ZERO;
+        BigDecimal cyAdvance = BigDecimal.ZERO;
+        BigDecimal lyArrearColl = BigDecimal.ZERO;
+        BigDecimal lyCurrentColl = BigDecimal.ZERO;
+        BigDecimal lyPenaltyColl = BigDecimal.ZERO;
+        BigDecimal lyRebate = BigDecimal.ZERO;
+        BigDecimal lyAdvance = BigDecimal.ZERO;
         BigDecimal arrearDmd = BigDecimal.ZERO;
         BigDecimal currentDmd = BigDecimal.ZERO;
         BigDecimal proportionalArrearDmd = BigDecimal.ZERO;
@@ -1536,11 +1616,9 @@ public class CollectionIndexElasticSearchService {
         BigDecimal dayTargetDmd = BigDecimal.ZERO;
         BigDecimal lyTodayColl = BigDecimal.ZERO;
         BigDecimal totalAssessments = BigDecimal.ZERO;
-        BigDecimal lytdArrearColl = BigDecimal.ZERO;
-        BigDecimal lytdCurrentColl = BigDecimal.ZERO;
         BigDecimal arrearInterestDemand = BigDecimal.ZERO;
         BigDecimal currentInterestDemand = BigDecimal.ZERO;
-        BigDecimal rebate = BigDecimal.ZERO;
+        
         String[] billCollectorNameNumberArr = entry.getKey().split("~");
         for (CollTableData tableData : entry.getValue()) {
             currDayColl = currDayColl
@@ -1549,9 +1627,19 @@ public class CollectionIndexElasticSearchService {
             cytdDmd = cytdDmd.add(tableData.getCytdDmd() == null ? BigDecimal.ZERO : tableData.getCytdDmd());
             totalDmd = totalDmd.add(tableData.getTotalDmd() == null ? BigDecimal.ZERO : tableData.getTotalDmd());
             lytdColl = lytdColl.add(tableData.getLytdColl() == null ? BigDecimal.ZERO : tableData.getLytdColl());
-            arrearColl = arrearColl.add(tableData.getArrearColl() == null ? BigDecimal.ZERO : tableData.getArrearColl());
-            currentColl = currentColl.add(tableData.getCurrentColl() == null ? BigDecimal.ZERO : tableData.getCurrentColl());
-            interestColl = interestColl.add(tableData.getInterestColl() == null ? BigDecimal.ZERO : tableData.getInterestColl());
+            
+            cyArrearColl = cyArrearColl.add(tableData.getCyArrearColl() == null ? BigDecimal.ZERO : tableData.getCyArrearColl());
+            cyCurrentColl = cyCurrentColl.add(tableData.getCyCurrentColl() == null ? BigDecimal.ZERO : tableData.getCyCurrentColl());
+            cyPenaltyColl = cyPenaltyColl.add(tableData.getCyPenaltyColl() == null ? BigDecimal.ZERO : tableData.getCyPenaltyColl());
+            cyRebate = cyRebate.add(tableData.getCyRebate() == null ? BigDecimal.ZERO : tableData.getCyRebate());
+            cyAdvance = cyAdvance.add(tableData.getCyAdvanceColl() == null ? BigDecimal.ZERO : tableData.getCyAdvanceColl());
+            
+            lyArrearColl = lyArrearColl.add(tableData.getLyArrearColl() == null ? BigDecimal.ZERO : tableData.getLyArrearColl());
+            lyCurrentColl = lyCurrentColl.add(tableData.getLyCurrentColl() == null ? BigDecimal.ZERO : tableData.getLyCurrentColl());
+            lyPenaltyColl = lyPenaltyColl.add(tableData.getLyPenaltyColl() == null ? BigDecimal.ZERO : tableData.getLyPenaltyColl());
+            lyRebate = lyRebate.add(tableData.getLyRebate() == null ? BigDecimal.ZERO : tableData.getLyRebate());
+            lyAdvance = lyAdvance.add(tableData.getLyAdvanceColl() == null ? BigDecimal.ZERO : tableData.getLyAdvanceColl());
+            
             arrearDmd = arrearDmd.add(tableData.getArrearDemand() == null ? BigDecimal.ZERO : tableData.getArrearDemand());
             currentDmd = currentDmd.add(tableData.getCurrentDemand() == null ? BigDecimal.ZERO : tableData.getCurrentDemand());
             proportionalArrearDmd = proportionalArrearDmd.add(tableData.getProportionalArrearDemand() == null ? BigDecimal.ZERO : tableData.getProportionalArrearDemand());
@@ -1559,11 +1647,9 @@ public class CollectionIndexElasticSearchService {
             dayTargetDmd = dayTargetDmd.add(tableData.getDayTargetDemand() == null ? BigDecimal.ZERO : tableData.getDayTargetDemand());
             lyTodayColl = lyTodayColl.add(tableData.getLyTodayColl() == null ? BigDecimal.ZERO : tableData.getLyTodayColl());
             totalAssessments = totalAssessments.add(tableData.getTotalAssessments());
-            lytdArrearColl = lytdArrearColl.add(tableData.getLytdArrearsColl() == null ? BigDecimal.ZERO : tableData.getLytdArrearsColl());
-            lytdCurrentColl = lytdCurrentColl.add(tableData.getLytdCurrentColl() == null ? BigDecimal.ZERO : tableData.getLytdCurrentColl());
             arrearInterestDemand = arrearInterestDemand.add(tableData.getArrearInterestDemand() == null ? BigDecimal.ZERO : tableData.getArrearInterestDemand());
             currentInterestDemand = currentInterestDemand.add(tableData.getCurrentInterestDemand() == null ? BigDecimal.ZERO : tableData.getCurrentInterestDemand());
-            rebate = rebate.add(tableData.getRebate() == null ? BigDecimal.ZERO : tableData.getRebate());
+            
         }
         collTableData.setBillCollector(billCollectorNameNumberArr[0]);
         collTableData
@@ -1574,7 +1660,8 @@ public class CollectionIndexElasticSearchService {
         collTableData.setCytdBalDmd(cytdDmd.subtract(cytdColl));
         collTableData.setTotalDmd(totalDmd);
         collTableData.setLytdColl(lytdColl);
-        setCollBreakUpForTableData(collTableData, arrearColl, currentColl, interestColl, lytdArrearColl, lytdCurrentColl);
+        setCurrYearCollBreakUpForTableData(collTableData, cyArrearColl, cyCurrentColl, cyPenaltyColl, cyRebate, cyAdvance);
+        setLastYearCollBreakUpForTableData(collTableData, lyArrearColl, lyCurrentColl, lyPenaltyColl, lyRebate, lyAdvance);
         collTableData.setArrearDemand(arrearDmd);
         collTableData.setCurrentDemand(currentDmd);
         collTableData.setProportionalArrearDemand(proportionalArrearDmd);
@@ -1583,7 +1670,6 @@ public class CollectionIndexElasticSearchService {
         collTableData.setLyTodayColl(lyTodayColl);
         collTableData.setArrearInterestDemand(arrearInterestDemand);
         collTableData.setCurrentInterestDemand(currentInterestDemand);
-        collTableData.setRebate(rebate);
         collTableData.setTotalAssessments(totalAssessments);
         if (cytdDmd != BigDecimal.valueOf(0)) {
             performance = (collTableData.getCytdColl().multiply(PropertyTaxConstants.BIGDECIMAL_100))

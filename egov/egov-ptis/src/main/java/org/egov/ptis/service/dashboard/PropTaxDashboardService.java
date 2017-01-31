@@ -225,7 +225,7 @@ public class PropTaxDashboardService {
      * @param collectionDetailsRequest
      * @return CollectionIndexDetails
      */
-    public CollectionDetails getCollectionIndexDetails(CollectionDetailsRequest collectionDetailsRequest, boolean isForMisReport) {
+    public CollectionDetails getCollectionIndexDetails(CollectionDetailsRequest collectionDetailsRequest) {
         CollectionDetails collectionIndexDetails = new CollectionDetails();
         List<CollTableData> collIndexData;
         List<CollectionTrend> collectionTrends = new ArrayList<>();
@@ -240,9 +240,9 @@ public class PropTaxDashboardService {
         if (StringUtils.isNotBlank(collectionDetailsRequest.getType()) && collectionDetailsRequest.getType()
                 .equalsIgnoreCase(PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE))
             collIndexData = collectionIndexElasticSearchService
-                    .getResponseTableDataForBillCollector(collectionDetailsRequest, isForMisReport);
+                    .getResponseTableDataForBillCollector(collectionDetailsRequest);
         else
-            collIndexData = collectionIndexElasticSearchService.getResponseTableData(collectionDetailsRequest, isForMisReport);
+            collIndexData = collectionIndexElasticSearchService.getResponseTableData(collectionDetailsRequest);
         collectionIndexDetails.setCollTrends(collectionTrends);
         collectionIndexDetails.setResponseDetails(collIndexData);
         ErrorDetails errorDetails = new ErrorDetails();
