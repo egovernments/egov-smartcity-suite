@@ -367,7 +367,7 @@ $("#btnsearch").click(
     	    	var ownerName = $('#ownerName').val();
     	    	var status = $('#status').val();
                 var expiryYear=$('#expiryYear').val();
-    			
+				var inactive	= $('#inactive').is(":checked");
     		   reportdatatable = drillDowntableContainer
     					.dataTable({
     						ajax : {
@@ -384,8 +384,8 @@ $("#btnsearch").click(
     								mobileNo : mobileNo ,
     								ownerName : ownerName,
     								statusId : status,
-    								expiryYear : expiryYear
-    								
+    								expiryYear : expiryYear,
+									inactive : inactive
     							}
     						},
     						"bDestroy" : true,

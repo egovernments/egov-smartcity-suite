@@ -291,7 +291,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")
                 .createAlias("tradeName", "subcat").createAlias("status", "licstatus");
-
         if (StringUtils.isNotBlank(searchForm.getApplicationNumber()))
             searchCriteria.add(Restrictions.eq("applicationNumber", searchForm.getApplicationNumber()).ignoreCase());
         if (StringUtils.isNotBlank(searchForm.getLicenseNumber()))
@@ -312,8 +311,11 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             searchCriteria.add(Restrictions.eq("licc.mobilePhoneNumber", searchForm.getMobileNo()));
         if (searchForm.getStatusId() != null)
             searchCriteria.add(Restrictions.eq("status.id", searchForm.getStatusId()));
+        if (searchForm.getInactive() != null && searchForm.getInactive().equals(Boolean.TRUE))
+            searchCriteria.add(Restrictions.eq("isActive", false));
         else
-            searchCriteria.add(Restrictions.ne("licstatus.statusCode", StringUtils.upperCase("CAN")));
+            searchCriteria.add(Restrictions.eq("isActive", true));
+
         searchCriteria.add(Restrictions.isNotNull("applicationNumber"));
         searchCriteria.addOrder(Order.asc("id"));
         final String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
