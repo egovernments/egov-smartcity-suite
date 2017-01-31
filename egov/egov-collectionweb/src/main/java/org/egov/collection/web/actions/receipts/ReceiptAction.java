@@ -1228,11 +1228,10 @@ public class ReceiptAction extends BaseFormAction {
                 instrumentHeader.setStatusId(statusDAO.getStatusByModuleAndCode(
                         CollectionConstants.MODULE_NAME_INSTRUMENTHEADER,
                         CollectionConstants.INSTRUMENTHEADER_STATUS_CANCELLED));
-                instType = instrumentHeader.getInstrumentType().getType();
 
             }
             for (final ReceiptVoucher receiptVoucher : receiptHeaderToBeCancelled.getReceiptVoucher())
-                receiptHeaderService.createReversalVoucher(receiptVoucher, instType);
+                receiptHeaderService.createReversalVoucher(receiptVoucher);
 
             receiptHeaderService.persist(receiptHeaderToBeCancelled);
 

@@ -84,7 +84,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
      */
     private final Set<ReceiptInstrumentInfo> bouncedInstruments = new HashSet<>(0);
     private final Set<ChallanInfo> challanDetails = new HashSet<>(0);
-    private ChallanInfo challan = null;
+    private ChallanInfo challan;
     /**
      * Billing system invokes this URL to view the receipt
      */

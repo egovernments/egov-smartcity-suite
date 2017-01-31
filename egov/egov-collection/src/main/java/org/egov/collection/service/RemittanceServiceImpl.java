@@ -110,8 +110,8 @@ public class RemittanceServiceImpl extends RemittanceService {
             final String[] fundCodeArray, final String[] departmentCodeArray, final Integer accountNumberId,
             final Integer positionUser, final String[] receiptNumberArray, final Date remittanceDate) {
 
-        final List<ReceiptHeader> bankRemittanceList = new ArrayList<ReceiptHeader>(0);
-        final List<ReceiptHeader> bankRemitList = new ArrayList<ReceiptHeader>();
+        final List<ReceiptHeader> bankRemittanceList = new ArrayList<>(0);
+        final List<ReceiptHeader> bankRemitList = new ArrayList<>();
         final SimpleDateFormat dateFomatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         financialsUtil.prepareForUpdateInstrumentDepositSQL();
         final String instrumentGlCodeQueryString = "SELECT COA.GLCODE FROM CHARTOFACCOUNTS COA,EGF_INSTRUMENTACCOUNTCODES IAC,EGF_INSTRUMENTTYPE IT "
@@ -136,7 +136,8 @@ public class RemittanceServiceImpl extends RemittanceService {
         final Query chequeInHand = persistenceService.getSession().createSQLQuery(chequeInHandQueryString);
         final Query cardPaymentAccount = persistenceService.getSession().createSQLQuery(cardPaymentQueryString);
 
-        String cashInHandGLCode = null, chequeInHandGlcode = null;
+        String cashInHandGLCode = null;
+        String chequeInHandGlcode = null;
 
         final String createVoucher = collectionsUtil.getAppConfigValue(
                 CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
@@ -163,8 +164,8 @@ public class RemittanceServiceImpl extends RemittanceService {
         BigDecimal totalChequeVoucherAmt = BigDecimal.ZERO;
         String fundCode = "";
         Date voucherDate = null;
-        List<InstrumentHeader> instrumentHeaderListCash = new ArrayList<InstrumentHeader>();
-        List<InstrumentHeader> instrumentHeaderListCheque = new ArrayList<InstrumentHeader>();
+        List<InstrumentHeader> instrumentHeaderListCash;
+        List<InstrumentHeader> instrumentHeaderListCheque;
         if (collectionsUtil
                 .getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                         CollectionConstants.APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWREMITDATE)
@@ -289,8 +290,8 @@ public class RemittanceServiceImpl extends RemittanceService {
             final String serviceGLCode, final String functionCode, final BigDecimal totalCashVoucherAmt,
             final BigDecimal totalChequeVoucherAmt, final Date voucherDate, final String fundCode) {
         CVoucherHeader voucherHeader;
-        final List<HashMap<String, Object>> accountCodeList = new ArrayList<HashMap<String, Object>>(0);
-        HashMap<String, Object> accountcodedetailsHashMap = new HashMap<>();
+        final List<HashMap<String, Object>> accountCodeList = new ArrayList<>(0);
+        HashMap<String, Object> accountcodedetailsHashMap;
         if (totalCashVoucherAmt.compareTo(BigDecimal.ZERO) > 0 && !cashInHandGLCode.isEmpty()) {
             accountcodedetailsHashMap = prepareAccountCodeDetails(cashInHandGLCode, functionCode, totalCashVoucherAmt,
                     BigDecimal.ZERO);
@@ -315,10 +316,10 @@ public class RemittanceServiceImpl extends RemittanceService {
     @SuppressWarnings("unchecked")
     public List<ReceiptHeader> getRemittanceList(final ServiceDetails serviceDetails,
             final List<InstrumentHeader> instrumentHeaderList) {
-        final List<Long> instHeaderList = new ArrayList<Long>();
+        final List<Long> instHeaderList = new ArrayList<>();
         for (final InstrumentHeader instHead : instrumentHeaderList)
             instHeaderList.add(instHead.getId());
-        final List<ReceiptHeader> bankRemittanceList = new ArrayList<ReceiptHeader>();
+        final List<ReceiptHeader> bankRemittanceList = new ArrayList<>();
         final List<ReceiptHeader> receiptHeaders = persistenceService.findAllByNamedQuery(
                 CollectionConstants.QUERY_RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE, serviceDetails.getCode(),
                 instHeaderList);
@@ -332,11 +333,11 @@ public class RemittanceServiceImpl extends RemittanceService {
             final String serviceGLCode, final String functionCode, final List<ReceiptHeader> receiptHeadList,
             final String createVoucher, final Date voucherDate, final Bankaccount depositedBankAccount,
             final BigDecimal totalCashVoucherAmt, final BigDecimal totalChequeVoucherAmt) {
-        CVoucherHeader voucherHeader = null;
+        CVoucherHeader voucherHeader;
         final CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(new Date());
         BigDecimal totalAmount = BigDecimal.ZERO;
         final Remittance remittance = new Remittance();
-        final List<RemittanceDetail> remittanceDetailsList = new ArrayList<RemittanceDetail>();
+        final List<RemittanceDetail> remittanceDetailsList = new ArrayList<>();
         remittance.setReferenceDate(new Date());
         final EgwStatus receiptStatusApproved = collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_REMITTANCE, CollectionConstants.REMITTANCE_STATUS_CODE_APPROVED);
@@ -378,7 +379,7 @@ public class RemittanceServiceImpl extends RemittanceService {
     }
 
     @Transactional
-    private void persistRemittanceInstrument(Remittance remittance, InstrumentHeader instrumentHeader) {
+    public void persistRemittanceInstrument(Remittance remittance, InstrumentHeader instrumentHeader) {
         RemittanceInstrument remittanceInstrument = new RemittanceInstrument();
         remittanceInstrument.setRemittance(remittance);
         remittanceInstrument.setInstrumentHeader(instrumentHeader);
@@ -388,7 +389,7 @@ public class RemittanceServiceImpl extends RemittanceService {
 
     public HashMap<String, Object> prepareAccountCodeDetails(final String glCode, final String functionCode,
             final BigDecimal creditAmount, final BigDecimal debitAmount) {
-        final HashMap<String, Object> accountcodedetailsHashMap = new HashMap<String, Object>(0);
+        final HashMap<String, Object> accountcodedetailsHashMap = new HashMap<>(0);
         accountcodedetailsHashMap.put(VoucherConstant.GLCODE, glCode);
         accountcodedetailsHashMap.put(VoucherConstant.FUNCTIONCODE, functionCode);
         accountcodedetailsHashMap.put(VoucherConstant.CREDITAMOUNT, creditAmount);
@@ -397,7 +398,7 @@ public class RemittanceServiceImpl extends RemittanceService {
     }
 
     public HashMap<String, Object> prepareHeaderDetails(final String fundCode, final Date voucherDate) {
-        final HashMap<String, Object> headerdetails = new HashMap<String, Object>(0);
+        final HashMap<String, Object> headerdetails = new HashMap<>(0);
         if (collectionsUtil.getVoucherType()) {
             headerdetails.put(VoucherConstant.VOUCHERNAME, CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERNAME);
             headerdetails.put(VoucherConstant.VOUCHERTYPE, CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE);
@@ -425,7 +426,7 @@ public class RemittanceServiceImpl extends RemittanceService {
 
     public List<RemittanceDetail> getRemittanceDetailsList(final BigDecimal creditAmount, final BigDecimal debitAmount,
             final String glCode, final Remittance remittance) {
-        final List<RemittanceDetail> remittanceDetailsList = new ArrayList<RemittanceDetail>();
+        final List<RemittanceDetail> remittanceDetailsList = new ArrayList<>();
         final RemittanceDetail remittanceDetail = new RemittanceDetail();
         remittanceDetail.setCreditAmount(creditAmount);
         remittanceDetail.setDebitAmount(debitAmount);
@@ -446,7 +447,7 @@ public class RemittanceServiceImpl extends RemittanceService {
             final String serviceCodes, final String fundCodes, final Date startDate, final Date endDate,
             final String paymentMode) {
 
-        final List<HashMap<String, Object>> paramList = new ArrayList<HashMap<String, Object>>();
+        final List<HashMap<String, Object>> paramList = new ArrayList<>();
         // TODO: Fix the sum(ih.instrumentamount) the amount is wrong because of
         // the ujl.boundary in (" + boundaryIdList + ")"
         final String queryBuilder = "SELECT sum(ih.instrumentamount) as INSTRUMENTMAOUNT,date(ch.RECEIPTDATE) AS RECEIPTDATE,"
@@ -501,7 +502,7 @@ public class RemittanceServiceImpl extends RemittanceService {
 
         for (int i = 0; i < queryResults.size(); i++) {
             final Object[] arrayObjectInitialIndex = queryResults.get(i);
-            HashMap<String, Object> objHashMap = new HashMap<String, Object>(0);
+            HashMap<String, Object> objHashMap = new HashMap<>(0);
 
             if (i == 0) {
                 objHashMap.put(CollectionConstants.BANKREMITTANCE_RECEIPTDATE, arrayObjectInitialIndex[1]);
