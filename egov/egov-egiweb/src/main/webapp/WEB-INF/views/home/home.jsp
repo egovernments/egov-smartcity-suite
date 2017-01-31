@@ -113,7 +113,7 @@
 		</div>
 		<div class="page-container horizontal-menu">
 			<div class="search">
-				<input type="text" id="searchtree" placeholder="Quick Find"><span class="fa fa-search searchicon tooltip-secondary" data-toggle="tooltip" data-original-title="Search menu item"></span>
+				<input type="text" id="searchtree" autofocus="" placeholder="Quick Find"><span class="fa fa-search searchicon tooltip-secondary" data-toggle="tooltip" data-original-title="Search menu item"></span>
 				<span class="applyanimation"></span>
 			</div>
 			<div class="search_list">
@@ -510,15 +510,6 @@
 		        document.getElementById("loading").style.display = "none";
 				document.getElementById("loadingMask").style.display = "none";
 		    });
-			$('#new-pass').popover({ trigger: "focus",placement: "bottom"});
-			$(document).on("keydown", disableRefreshAndBack);
-
-			window.location.hash = "nbk";
-	        window.location.hash = "Again-nbk";//again because google chrome does not insert first hash into history
-	        window.onhashchange = function() {
-	            window.location.hash = "nbk";
-	        }
-	        
 		</script>
 	</body>
 </html>																						

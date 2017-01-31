@@ -429,13 +429,18 @@ function cleardependentfield(dependentfield){
 	}
 }
 
-function disableRefreshAndBack(e) {
+function disableRefresh(e) {
 	var key = (e.which || e.keyCode);
-	if (key == 116 || (key == 8 && !$(':focus').length))//F5 and Backspace
-		e.preventDefault();
 	if (e.ctrlKey)
-		if (key == 82)
+		if (key == 82 || key == 116)
 			e.preventDefault();
+}
+
+function preventBack(){
+	history.pushState(null, null, document.URL);
+    window.addEventListener('popstate', function () {
+        history.pushState(null, null, document.URL);
+    });
 }
 
 function select2initialize(obj,data,multiple){
