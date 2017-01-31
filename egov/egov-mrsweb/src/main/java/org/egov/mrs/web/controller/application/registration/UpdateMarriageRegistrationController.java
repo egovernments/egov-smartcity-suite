@@ -272,21 +272,21 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
     public String digiSignTransitionWorkflow(final HttpServletRequest request, final Model model) throws IOException {
         LOGGER.debug("..........Inside Digital Signature Transition : Registration........");
         final String fileStoreIds = request.getParameter("fileStoreId");
-        LOGGER.info("........fileStoreIds.........."+fileStoreIds);
+        LOGGER.debug("........fileStoreIds.........."+fileStoreIds);
         final String[] fileStoreIdArr = fileStoreIds.split(",");
-        LOGGER.info("........fileStoreIdArr.........."+fileStoreIdArr.length);
+        LOGGER.debug("........fileStoreIdArr.........."+fileStoreIdArr.length);
         final HttpSession session = request.getSession();
         final String approvalComent = (String) session.getAttribute(MarriageConstants.APPROVAL_COMMENT);
         //Gets the digitally signed applicationNo and its filestoreid from session
         final Map<String, String> appNoFileStoreIdsMap = (Map<String, String>) session
                 .getAttribute(MarriageConstants.FILE_STORE_ID_APPLICATION_NUMBER);
-        LOGGER.info("........appNoFileStoreIdsMap....size......"+appNoFileStoreIdsMap.size());
+        LOGGER.debug("........appNoFileStoreIdsMap....size......"+appNoFileStoreIdsMap.size());
         MarriageRegistration marriageRegistrationObj = null;
         WorkflowContainer workflowContainer;
         for (final String fileStoreId : fileStoreIdArr) {
-            LOGGER.info("........Inside for loop......");
+            LOGGER.debug("........Inside for loop......");
             final String applicationNumber = appNoFileStoreIdsMap.get(fileStoreId);
-            LOGGER.info("........applicationNumber......"+applicationNumber);
+            LOGGER.debug("........applicationNumber......"+applicationNumber);
             if (null != applicationNumber && !applicationNumber.isEmpty()) {
                 workflowContainer = new WorkflowContainer();
                 workflowContainer.setApproverComments(approvalComent);
@@ -296,7 +296,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                 marriageRegistrationService.digiSignCertificate(marriageRegistrationObj, workflowContainer, request);
             }
         }
-        LOGGER.info("........outside for loop......");
+        LOGGER.debug("........outside for loop......");
         final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(marriageRegistrationObj
                 .getCreatedBy().getId());
         final String message = messageSource.getMessage("msg.digisign.success.registration", new String[] { wfInitiator

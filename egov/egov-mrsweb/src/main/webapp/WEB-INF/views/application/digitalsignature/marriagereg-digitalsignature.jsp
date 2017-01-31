@@ -48,7 +48,7 @@
 	 	jQuery(document).ready( function() {
 	 		var fileStoreIds = '${fileStoreIds}';
 	 		var ulbCode = '${ulbCode}';
-	 		var callBackUrl = '/mrs/registration/digiSignWorkflow?fileStoreId='+fileStoreIds;
+	 		var callBackUrl = '/mrs/registration/digiSignWorkflow';
 	 		var actionUrl = null;
 	 		var isDigitalSignatureEnabled = $('#isDigitalSignatureEnabled').val();
 			if (isDigitalSignatureEnabled == 'true') {

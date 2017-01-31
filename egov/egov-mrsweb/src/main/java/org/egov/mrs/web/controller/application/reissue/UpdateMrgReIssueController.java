@@ -243,23 +243,23 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
     
     @RequestMapping(value = "/digiSignWorkflow", method = RequestMethod.POST)
     public String digiSignTransitionWorkflow(final HttpServletRequest request, final Model model) throws IOException {
-        LOGGER.info("..........Inside Digital Signature Transition : ReIssue........");
+        LOGGER.debug("..........Inside Digital Signature Transition : ReIssue........");
         final String fileStoreIds = request.getParameter("fileStoreId");
-        LOGGER.info("........fileStoreIds.........."+fileStoreIds);
+        LOGGER.debug("........fileStoreIds.........."+fileStoreIds);
         final String[] fileStoreIdArr = fileStoreIds.split(",");
-        LOGGER.info("........fileStoreIdArr.........."+fileStoreIdArr.length);
+        LOGGER.debug("........fileStoreIdArr.........."+fileStoreIdArr.length);
         final HttpSession session = request.getSession();
         final String approvalComent = (String) session.getAttribute(MarriageConstants.APPROVAL_COMMENT);
         //Gets the digitally signed applicationNo and its filestoreid from session
         final Map<String, String> appNoFileStoreIdsMap = (Map<String, String>) session
                 .getAttribute(MarriageConstants.FILE_STORE_ID_APPLICATION_NUMBER);
-        LOGGER.info("........appNoFileStoreIdsMap....size......"+appNoFileStoreIdsMap.size());
+        LOGGER.debug("........appNoFileStoreIdsMap....size......"+appNoFileStoreIdsMap.size());
         ReIssue reIssueObj = null;
         WorkflowContainer workflowContainer;
         for (final String fileStoreId : fileStoreIdArr) {
-            LOGGER.info("........Inside for loop......");
+            LOGGER.debug("........Inside for loop......");
             final String applicationNumber = appNoFileStoreIdsMap.get(fileStoreId);
-            LOGGER.info("........applicationNumber......"+applicationNumber);
+            LOGGER.debug("........applicationNumber......"+applicationNumber);
             if (null != applicationNumber && !applicationNumber.isEmpty()) {
                 workflowContainer = new WorkflowContainer();
                 workflowContainer.setApproverComments(approvalComent);
@@ -269,7 +269,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
                 reIssueService.digiSignCertificate(reIssueObj, workflowContainer, request);
             }
         }
-        LOGGER.info("........outside for loop......");
+        LOGGER.debug("........outside for loop......");
         final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(reIssueObj
                 .getCreatedBy().getId());
         final String message = messageSource.getMessage("msg.digisign.success.reissue", new String[] { wfInitiator
@@ -277,7 +277,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
         model.addAttribute("successMessage", message);
         model.addAttribute("objectType", MarriageCertificateType.REISSUE.toString());
         model.addAttribute("fileStoreId", fileStoreIdArr.length == 1 ? fileStoreIdArr[0] : "");
-        LOGGER.info("..........End of Digital Signature Transition : ReIssue........");
+        LOGGER.debug("..........End of Digital Signature Transition : ReIssue........");
         return "mrdigitalsignature-success";
     }
 
