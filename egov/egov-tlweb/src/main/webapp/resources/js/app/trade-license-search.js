@@ -322,14 +322,9 @@ $(document).ready(function() {
 		                obj['text'] = data[i]['name'];
 		                results.push(obj);
 		            });
-		            $("#subCategory").empty();
-	            	$("#subCategory").append("<option value=''>Select</option>");
-		            $("#subCategory").select2({
-		                allowClear: true,
-		                placeholder: "Select",
-		                width:'100%',
-		                data: results
-		            });
+		           
+		            select2initialize($("#subCategory"),results,false);
+		            
 		        },
 		        error: function() {
 		        	bootbox.alert('something went wrong on server');
@@ -348,7 +343,7 @@ $("#btnsearch").click(
 					if($(this).is(":checked")) 
 						valid+=1;
 				}else{
-					if($(this).val() != "")
+					if($.trim($(this).val()))
 						valid+=1;
 				}
 	        });
