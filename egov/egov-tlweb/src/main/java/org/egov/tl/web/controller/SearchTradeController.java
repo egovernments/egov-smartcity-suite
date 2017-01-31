@@ -40,10 +40,25 @@
 
 package org.egov.tl.web.controller;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.tl.utils.Constants.LOCALITY;
+import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
+
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.tl.entity.LicenseStatus;
+import org.egov.tl.entity.dto.DemandnoticeForm;
 import org.egov.tl.entity.dto.SearchForm;
+import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.TradeLicenseService;
-import org.egov.tl.service.LicenseCategoryService;
+import org.egov.tl.utils.Constants;
+import org.egov.tl.web.response.adaptor.DemandNoticeAdaptor;
 import org.egov.tl.web.response.adaptor.SearchTradeResultHelperAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -54,13 +69,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
 @Controller
 public class SearchTradeController {
 
@@ -73,11 +81,14 @@ public class SearchTradeController {
     @Autowired
     private LicenseStatusService licenseStatusService;
 
+    @Autowired
+    private BoundaryService boundaryService;
+    
     @ModelAttribute("searchForm")
     public SearchForm searchForm() {
         return new SearchForm();
     }
-
+    
     @RequestMapping(value = "/search/searchtrade-form", method = RequestMethod.GET)
     public String searchForm(final Model model) {
         model.addAttribute("categoryList", licenseCategoryService.getCategories());
@@ -102,4 +113,28 @@ public class SearchTradeController {
                     
     }
 
+	@RequestMapping(value = "/search/demandnotice", method = RequestMethod.GET)
+	public String searchFormforNotice(final Model model) {
+		model.addAttribute("demandnoticesearchForm", new DemandnoticeForm());
+		model.addAttribute("categoryList", licenseCategoryService.getCategories());
+		model.addAttribute("subCategoryList", Collections.emptyList());
+		List<LicenseStatus> statuslist = licenseStatusService.findAll();
+		statuslist.remove(licenseStatusService.getLicenseStatusByCode(STATUS_CANCELLED));
+		model.addAttribute("statusList", statuslist);
+		model.addAttribute("localityList", boundaryService
+				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE));
+		model.addAttribute("wardList", boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
+				Constants.REVENUE_WARD, Constants.REVENUE_HIERARCHY_TYPE));
+		return "search-demandnotice";
+	}
+
+	@RequestMapping(value = "/search/demandnotice-result", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public String searchResult(@ModelAttribute final DemandnoticeForm demandnoticeForm) throws IOException {
+		return new StringBuilder("{ \"data\":")
+				.append(toJSON(tradeLicenseService.searchLicensefordemandnotice(demandnoticeForm),
+						DemandnoticeForm.class, DemandNoticeAdaptor.class))
+				.append("}").toString();
+	}
+	
 }

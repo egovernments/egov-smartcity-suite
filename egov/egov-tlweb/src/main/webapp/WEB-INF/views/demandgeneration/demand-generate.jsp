@@ -1,5 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ include file="/includes/taglibs.jsp"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ include file="/includes/taglibs.jsp" %>
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -41,20 +41,19 @@
   --%>
 
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<script src="<cdn:url  value='/resources/app/js/trade-license-demand-generation.js?rnd=${app_release_no}'/>"></script>
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-primary" data-collapsed="0">
             <div class="panel-heading">
-                <div class="panel-title">Demand Generation</div>
+                <div class="panel-title"><spring:message code="title.demand.generation"/></div>
             </div>
             <div class="panel-body">
-                <form:form role="form" action="create"  id="generatedemand" name="generatedemand" cssClass="form-horizontal form-groups-bordered"  method="post">
+                <form:form role="form" action="generate" id="generatedemand" name="generatedemand" cssClass="form-horizontal form-groups-bordered" method="post">
                     <div class="form-group">
-                        <label class="col-sm-4 control-label text-right"><spring:message code="lbl.financialyear" /> </label>
+                        <label class="col-sm-4 control-label text-right"><spring:message code="lbl.financialyear"/> </label>
                         <div class="col-sm-4 add-margin">
                             <select name="installmentYear" id="installmentYear" class="form-control" required="required">
-                                <option value="" ><spring:message code="lbl.select"/></option>
+                                <option value=""><spring:message code="lbl.select"/></option>
                                 <c:forEach items="${financialYearList}" var="finYear">
                                     <option value="${finYear.finYearRange}">${finYear.finYearRange}</option>
                                 </c:forEach>
@@ -64,20 +63,18 @@
                     <div class="form-group">
                         <div class="text-center">
                             <button type="submit" class='btn btn-primary' id="submit">
-                                <spring:message code='lbl.generate.demand' />
+                                <spring:message code='lbl.generate.demand'/>
                             </button>
                             <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
-                                <spring:message code='lbl.close' /></button>
+                                <spring:message code='lbl.close'/></button>
                         </div>
                     </div>
                     <c:if test="${demandGenerationLog != null && not empty demandGenerationLog.details}">
                         <div class="alert alert-info" role="alert"><spring:message code="${message}"/></div>
-                        <div class="text-center add-margin">
-                            <button type="submit" class='btn btn-primary' id="regenbtn" name="regenerate">Regenerate</button>
+                        <div class="text-center add-margin hidden" id="regeneratediv">
+                            <button type="submit" class='btn btn-primary' id="regenbtn" name="regenerate"><spring:message code="lbl.retry.failed.demand"/></button>
                         </div>
-                        <script>
-                            jQuery("#installmentYear").val('${demandGenerationLog.installmentYear}');
-                        </script>
+                        <script>$("#installmentYear").val('${demandGenerationLog.installmentYear}');</script>
                         <div class="col-md-12 text-center add-margin">
                             <ul class="pagination pagination-xs pager" id="myPager"></ul>
                         </div>
@@ -91,11 +88,14 @@
                             </thead>
                             <tbody id="dgdtl">
                             <c:forEach items="${demandGenerationLog.details}" var="detail">
+                                <c:if test="${detail.status == 'INCOMPLETE'}">
+                                    <script>$('#regeneratediv').removeClass('hidden');</script>
+                                </c:if>
                                 <tr>
                                     <td><a href="#" onclick="window.open('/tl/viewtradelicense/viewTradeLicense-view.action?id='+${detail.license.id}, '',
                                             'scrollbars=yes,width=1000,height=700,status=yes'); return false;">${detail.license.licenseNumber}</a></td>
                                     <td>${detail.status}</td>
-                                    <td><spring:message code="${detail.detail}" text="${detail.detail}"/> </td>
+                                    <td><spring:message code="${detail.detail}" text="${detail.detail}"/></td>
                                 </tr>
                             </c:forEach>
                             </tbody>
@@ -106,3 +106,4 @@
         </div>
     </div>
 </div>
+<script src="<cdn:url  value='/resources/js/app/trade-license-demand-generation.js?rnd=${app_release_no}'/>"></script>

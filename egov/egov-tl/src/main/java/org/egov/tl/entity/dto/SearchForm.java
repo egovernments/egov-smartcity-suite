@@ -68,6 +68,7 @@ public class SearchForm {
     private Date dateOfExpiry;
     private List<String> actions;
     private String active;
+    private Boolean inactive;
 
     public SearchForm() {
         // For form binding
@@ -277,5 +278,13 @@ public class SearchForm {
 
     public void setActive(String active) {
         this.active = active;
+    }
+
+    public Boolean getInactive() {
+        return inactive;
+    }
+
+    public void setInactive(Boolean inactive) {
+        this.inactive = inactive;
     }
 }

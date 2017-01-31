@@ -341,6 +341,30 @@ public class AssignmentService {
         return assignments;
     }
 
+    /**
+     * Gets all assignments for a particular department, designation and given boundary
+     *
+     * @param deptId
+     * @param desigId
+     * @param boundaryId
+     * @return List of assignment objects
+     */
+    public List<Assignment> findAssignmentByDepartmentDesignationAndBoundary(final Long deptId, final Long desigId,
+            final Long boundaryId) {
+
+        List<Assignment> assignments;
+        Set<Long> boundaries = new HashSet<>();
+        boundaries.add(boundaryId);
+        if (null == deptId)
+            assignments = assignmentRepository.findByDesignationAndBoundary(desigId, boundaries);
+        else if (null == desigId)
+            assignments = assignmentRepository.findByDepartmentAndBoundary(deptId, boundaries);
+        else
+            assignments = assignmentRepository.findByDepartmentDesignationAndBoundary(deptId, desigId,
+                    boundaries);
+        return assignments;
+    }
+    
     private Set<Long> getBoundaries(final Long boundaryId) {
         final Set<Long> bndIds = new HashSet<Long>();
         final List<Boundary> boundaries = boundaryService.findActiveChildrenWithParent(boundaryId);

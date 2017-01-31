@@ -63,24 +63,24 @@ import java.util.List;
 
 @Service
 public class RecaptchaUtils {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(RecaptchaUtils.class);
-    
+
     private static final String RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
 
     @Autowired
     private ApplicationProperties applicationProperties;
 
-    public boolean captchaIsValid(final HttpServletRequest request) {
+    public boolean captchaIsValid(HttpServletRequest request) {
         try {
             if ("high".equals(applicationProperties.getProperty("captcha.strength"))) {
-                final HttpPost post = new HttpPost(RECAPTCHA_VERIFY_URL);
-                final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+                HttpPost post = new HttpPost(RECAPTCHA_VERIFY_URL);
+                List<NameValuePair> urlParameters = new ArrayList<>();
                 urlParameters.add(new BasicNameValuePair("secret", (String) request.getSession().getAttribute("siteSecret")));
                 urlParameters.add(new BasicNameValuePair("response", request.getParameter("g-recaptcha-response")));
                 urlParameters.add(new BasicNameValuePair("remoteip", request.getRemoteAddr()));
                 post.setEntity(new UrlEncodedFormEntity(urlParameters));
-                final String responseJson = IOUtils.toString(HttpClientBuilder.create().build().execute(post).getEntity().getContent(), Charset.defaultCharset());
+                String responseJson = IOUtils.toString(HttpClientBuilder.create().build().execute(post).getEntity().getContent(), Charset.defaultCharset());
                 return Boolean.valueOf(new GsonBuilder().create().fromJson(responseJson, HashMap.class).get("success").toString());
             } else {
                 String remoteAddr = request.getRemoteAddr();

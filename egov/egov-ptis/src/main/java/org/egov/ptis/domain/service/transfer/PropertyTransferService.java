@@ -397,6 +397,7 @@ public class PropertyTransferService {
         ReportOutput reportOutput = new ReportOutput();
         List<Assignment> loggedInUserAssignment;
         String loggedInUserDesignation;
+        String noticeNo = null;
         if (WFLOW_ACTION_STEP_GENERATE_TRANSFER_NOTICE.equalsIgnoreCase(actionType)) {
             final FileStoreMapper fsm = notice.getFileStore();
             final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
@@ -451,13 +452,17 @@ public class PropertyTransferService {
             }
             PropertyID propertyId = basicProp.getPropertyID();
             noticeBean.setLocalityName(propertyId.getLocality().getName());
+            if (WFLOW_ACTION_STEP_SIGN.equals(actionType)) {
+                noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(NOTICE_TYPE_MUTATION_CERTIFICATE);
+            }
+            noticeBean.setNoticeNumber(noticeNo != null ? noticeNo : " ");
+
             final ReportRequest reportInput = new ReportRequest(
                     PropertyTaxConstants.REPORT_TEMPLATENAME_TRANSFER_CERTIFICATE, noticeBean, reportParams);
             reportInput.setReportFormat(FileFormat.PDF);
             reportOutput = reportService.createReport(reportInput);
             if (WFLOW_ACTION_STEP_SIGN.equals(actionType)) {
-                if (notice == null) {
-                    String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(NOTICE_TYPE_MUTATION_CERTIFICATE);
+                if (notice == null) {                   
                     noticeService.saveNotice(propertyMutation.getApplicationNo(), noticeNo,
                             NOTICE_TYPE_MUTATION_CERTIFICATE, basicProperty,
                             new ByteArrayInputStream(reportOutput.getReportOutputData()));

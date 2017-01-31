@@ -61,7 +61,6 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.interceptor.ServletRequestAware;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptDetail;
@@ -97,7 +96,7 @@ import org.springframework.beans.factory.annotation.Autowired;
     @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
     @Result(name = OnlineReceiptAction.RECONRESULT, location = "onlineReceipt-reconresult.jsp"),
     @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
-public class OnlineReceiptAction extends BaseFormAction implements ServletRequestAware {
+public class OnlineReceiptAction extends BaseFormAction {
 
     private static final Logger LOGGER = Logger.getLogger(OnlineReceiptAction.class);
     public static final String REDIRECT = "redirect";
@@ -180,7 +179,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
             paymentService = (ServiceDetails) getPersistenceService().findByNamedQuery(
                     CollectionConstants.QUERY_SERVICE_BY_ID, paymentServiceId.longValue());
         setPaymentRequest(collectionService.populateAndPersistReceipts(paymentService, receiptHeader,
-                getReceiptDetailList(), paymentAmount,CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION));
+                getReceiptDetailList(), paymentAmount, CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION));
         return REDIRECT;
     }
 
@@ -459,7 +458,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
                             BigDecimal.ROUND_UP);
                 setReceiptDetailList(new ArrayList<ReceiptDetail>(receiptHeader.getReceiptDetails()));
 
-                if (totalAmountToBeCollected.compareTo(BigDecimal.ZERO) < 0) {
+                if (totalAmountToBeCollected.compareTo(BigDecimal.ZERO) == -1) {
                     addActionError(getText("billreceipt.totalamountlessthanzero.error"));
                     LOGGER.info(getText("billreceipt.totalamountlessthanzero.error"));
                 } else
@@ -843,10 +842,6 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         this.callbackForApportioning = callbackForApportioning;
     }
 
-    @Override
-    public void setServletRequest(final HttpServletRequest arg0) {
-    }
-
     /**
      * @return the receiptNumber
      */
@@ -924,7 +919,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         this.onlinePayPending = onlinePayPending;
     }
 
-    public void setCollectionService(CollectionService collectionService) {
+    public void setCollectionService(final CollectionService collectionService) {
         this.collectionService = collectionService;
     }
 }

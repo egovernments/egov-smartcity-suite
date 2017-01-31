@@ -605,9 +605,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             checkIfEligibleForDocEdit();
             return "view";
         }
-        String designation = propService.getDesignationForPositionAndUser(objection.getCurrentState().getOwnerPosition().getId(),
+        final String designation = propService.getDesignationForPositionAndUser(
+                objection.getCurrentState().getOwnerPosition().getId(),
                 securityUtils.getCurrentUser().getId());
-        if(REVENUE_INSPECTOR_DESGN.equals(designation))
+        if (REVENUE_INSPECTOR_DESGN.equals(designation))
             propService.processAndStoreDocument(objection.getDocuments());
         updateStateAndStatus(objection);
         if (LOGGER.isDebugEnabled())
@@ -755,7 +756,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             final User user = securityUtils.getCurrentUser();
             loggedInUserAssignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(
                     objection.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
-            loggedInUserDesignation = !loggedInUserAssignment.isEmpty() ? loggedInUserAssignment.get(0).getDesignation().getName() : "";
+            loggedInUserDesignation = !loggedInUserAssignment.isEmpty() ? loggedInUserAssignment.get(0).getDesignation().getName()
+                    : "";
             if (COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
                 reportParams.put("isCommissioner", true);
             else
@@ -1203,9 +1205,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             LOGGER.debug("ObjectionAction | view | End");
         return "view";
     }
-    
+
     private void checkIfEligibleForDocEdit() {
-        String designation = propService.getDesignationForPositionAndUser(objection.getCurrentState().getOwnerPosition().getId(),
+        final String designation = propService.getDesignationForPositionAndUser(
+                objection.getCurrentState().getOwnerPosition().getId(),
                 securityUtils.getCurrentUser().getId());
         if (objection.getCurrentState().getValue().endsWith(STATUS_REJECTED) || REVENUE_INSPECTOR_DESGN.equals(designation))
             setAllowEditDocument(Boolean.TRUE);
@@ -1275,7 +1278,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     .toString();
         else
             pendingAction = getPendingActions();
-        
+
         if (null == objection.getState()) {
             if (loggedUserIsEmployee)
                 wfmatrix = revisionPetitionWorkFlowService.getWfMatrix(objection.getStateType(), null, null,
@@ -1301,9 +1304,12 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     getAdditionalRule(), objection.getCurrentState().getValue(),
                     pendingAction != null ? pendingAction : null, null, null);
         if (revPetition.getState() == null) {
-            // Get the default revenue cleark from admin boundary.
             if (position == null && (approverPositionId == null || approverPositionId != -1)) {
-                final Assignment assignment = propService.getUserPositionByZone(objection.getBasicProperty(), false);
+                Assignment assignment;
+                if (propService.isCscOperator(user))
+                    assignment = propService.getMappedAssignmentForCscOperator(objection.getBasicProperty());
+                else
+                    assignment = propService.getUserPositionByZone(objection.getBasicProperty(), false);
                 if (assignment != null)
                     position = assignment.getPosition();
             }
@@ -1319,7 +1325,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
                     .withNatureOfTask(NATURE_OF_WORK_RP.equalsIgnoreCase(wfType) ? NATURE_REVISION_PETITION
                             : NATURE_GENERAL_REVISION_PETITION);
-          
+
             if (loggedUserIsEmployee && user != null)
                 addActionMessage(getText(OBJECTION_FORWARD,
                         new String[] { user.getName().concat("~").concat(position.getName()) }));
@@ -1494,7 +1500,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     position = stateHistoryObj.getOwnerPosition();
                     break;
                 }
-        
+
             objection.setEgwStatus(egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE,
                     PropertyTaxConstants.OBJECTION_HEARING_COMPLETED));
 
@@ -1624,8 +1630,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 objection.getProperty()
                         .getPropertyDetail().getWoodType() != null ? objection.getProperty().getPropertyDetail()
                                 .getWoodType().getId() : null,
-                taxExemptedReason, objection.getProperty().getPropertyDetail().getPropertyDepartment() != null ?
-                        objection.getProperty().getPropertyDetail().getPropertyDepartment().getId() : null, null, null);
+                taxExemptedReason, objection.getProperty().getPropertyDetail().getPropertyDepartment() != null
+                        ? objection.getProperty().getPropertyDetail().getPropertyDepartment().getId() : null,
+                null, null);
 
         updatePropertyID(objection.getBasicProperty());
         final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
@@ -2090,7 +2097,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         return allowEditDocument;
     }
 
-    public void setAllowEditDocument(boolean allowEditDocument) {
+    public void setAllowEditDocument(final boolean allowEditDocument) {
         this.allowEditDocument = allowEditDocument;
     }
 }

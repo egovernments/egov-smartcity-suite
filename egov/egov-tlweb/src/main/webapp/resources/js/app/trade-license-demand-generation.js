@@ -140,11 +140,10 @@ $.fn.pageMe = function(opts){
 };
 
 $(document).ready(function(){
-
     $('#dgdtl').pageMe({pagerSelector:'#myPager',showPrevNext:true,hidePageNumbers:false,perPage:100});
     $('#regenbtn').click(function() {
 		$('#generatedemand').attr('method', 'post');
-		$('#generatedemand').attr('action', '/tl/demand-generation/regenerate');
+		$('#generatedemand').attr('action', '/tl/demand/regenerate');
 	});
 
     $(".alert-success").fadeTo(5000, 5000).slideUp(500, function(){

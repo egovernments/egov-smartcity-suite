@@ -1222,9 +1222,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId, modifyRsn, propCompletionDate, vacantLandPlotAreaId, 
                 layoutApprovalAuthorityId);
         validateApproverDetails();
-        if (!propertyByEmployee)
-            if (null != basicProp && null == propService.getUserPositionByZone(basicProp, false))
+        if (!propertyByEmployee && null != basicProp) {
+            final Assignment assignment = propService.isCscOperator(securityUtils.getCurrentUser())
+                    ? propService.getAssignmentByDeptDesigElecWard(basicProp)
+                    : null;
+            if (assignment == null && propService.getUserPositionByZone(basicProp, false) == null)
                 addActionError(getText("notexists.position"));
+        }
         LOGGER.debug("Exiting from validate, BasicProperty: " + getBasicProp());
     }
 

@@ -93,7 +93,7 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
     List<String> findEstimateNumberForContractorBillWithMB(@Param("estimateNumber") String estimateNumber,
             @Param("approvedStatus") String approvedStatus, @Param("status") String status, @Param("billtype") String billtype);
 
-    @Query("select distinct(woe.workOrder.contractor.name) from WorkOrderEstimate as woe where upper(woe.workOrder.contractor.name) like upper(:contractorname) and woe.workOrder.egwStatus.code = :approvedStatus and not exists (select distinct(cbr.workOrderEstimate) from ContractorBillRegister as cbr where woe.id = cbr.workOrderEstimate.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype) ")
+    @Query("select distinct(woe.workOrder.contractor.name) from WorkOrderEstimate as woe where (upper(woe.workOrder.contractor.name) like upper(:contractorname) or upper(woe.workOrder.contractor.code) like upper(:contractorname)) and woe.workOrder.egwStatus.code = :approvedStatus and not exists (select distinct(cbr.workOrderEstimate) from ContractorBillRegister as cbr where woe.id = cbr.workOrderEstimate.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype) ")
     List<String> findContractorForContractorBill(@Param("contractorname") String contractorname,
             @Param("approvedStatus") String approvedStatus, @Param("status") String status, @Param("billtype") String billtype);
 

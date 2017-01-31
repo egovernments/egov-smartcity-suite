@@ -126,24 +126,18 @@ public class FinancialsUtil {
     public CVoucherHeader createVoucher(final Map<String, Object> headerdetails,
             final List<HashMap<String, Object>> accountcodedetails,
             final List<HashMap<String, Object>> subledgerdetails, final Boolean isVoucherApproved) {
-        CVoucherHeader voucherHeader = null;
+        CVoucherHeader voucherHeader;
 
         LOGGER.debug("Logs For HandHeldDevice Permance Test : Voucher Creation Started....");
 
-        /* if (!receiptBulkUpload) { */
         if (isVoucherApproved != null && isVoucherApproved)
             voucherHeader = financialsVoucherUtil.createApprovedVoucher(headerdetails, accountcodedetails,
                     subledgerdetails);
         else
             voucherHeader = financialsVoucherUtil.createPreApprovalVoucher(headerdetails, accountcodedetails,
                     subledgerdetails);
-        /*
-         * } else voucherHeader = createApprovedVoucher(headerdetails,
-         * accountcodedetails, subledgerdetails);
-         */
         LOGGER.info("Logs For HandHeldDevice Permance Test : Voucher Creation Ended...");
         return voucherHeader;
-
     }
 
     /**
@@ -174,9 +168,7 @@ public class FinancialsUtil {
      */
 
     public List<InstrumentVoucher> updateInstrumentVoucher(final List<Map<String, Object>> paramList) {
-        final List<InstrumentVoucher> instrumentVoucherList = instrumentService
-                .updateInstrumentVoucherReference(paramList);
-        return instrumentVoucherList;
+        return instrumentService.updateInstrumentVoucherReference(paramList);
     }
 
     /**
@@ -187,8 +179,7 @@ public class FinancialsUtil {
      * @return List of InstrumentHeader
      */
     public List<InstrumentHeader> createInstrument(final List<Map<String, Object>> paramList) {
-        final List<InstrumentHeader> instrumentHeaderList = instrumentService.addToInstrument(paramList);
-        return instrumentHeaderList;
+        return instrumentService.addToInstrument(paramList);
     }
 
     /**
@@ -200,14 +191,14 @@ public class FinancialsUtil {
      */
 
     @Transactional
-    public void updateCheque_DD_Card_Deposit(Map<String, Object> instrumentMap) {
+    public void updateCheque_DD_Card_Deposit(final Map<String, Object> instrumentMap) {
         contraService.updateCheque_DD_Card_Deposit(instrumentMap);
     }
 
     @Transactional
-    public void updateCheque_DD_Card_Deposit(final Map instrumentMap, CVoucherHeader cVoucherHeader,
-            InstrumentHeader instrumentHeader, Bankaccount bankaccount) {
-        contraService.updateCheque_DD_Card_Deposit(instrumentMap,cVoucherHeader,instrumentHeader,bankaccount);
+    public void updateCheque_DD_Card_Deposit(final Map instrumentMap, final CVoucherHeader cVoucherHeader,
+            final InstrumentHeader instrumentHeader, final Bankaccount bankaccount) {
+        contraService.updateCheque_DD_Card_Deposit(instrumentMap, cVoucherHeader, instrumentHeader, bankaccount);
     }
 
     /**
@@ -219,25 +210,25 @@ public class FinancialsUtil {
      */
 
     @Transactional
-    public void updateCheque_DD_Card_Deposit_Receipt(Map<String, Object> instrumentMap) {
+    public void updateCheque_DD_Card_Deposit_Receipt(final Map<String, Object> instrumentMap) {
         contraService.updateCheque_DD_Card_Deposit_Receipt(instrumentMap);
     }
 
     /**
      * Update Cash Instrument Status after creating Pay in Slip Voucher
-     * 
+     *
      * @param Map
      *            containing Instrument and PayInSlip voucher information
      */
     @Deprecated
     @Transactional
-    public void updateCashDeposit(Map<String, Object> instrumentMap) {
+    public void updateCashDeposit(final Map<String, Object> instrumentMap) {
         contraService.updateCashDeposit(instrumentMap);
     }
 
     @Transactional
-    public void updateCashDeposit(Map<String, Object> instrumentMap, CVoucherHeader cVoucherHeader,
-            InstrumentHeader instrumentHeader, Bankaccount bankaccount) {
+    public void updateCashDeposit(final Map<String, Object> instrumentMap, final CVoucherHeader cVoucherHeader,
+            final InstrumentHeader instrumentHeader, final Bankaccount bankaccount) {
         contraService.updateCashDeposit(instrumentMap, cVoucherHeader, instrumentHeader, bankaccount);
     }
 

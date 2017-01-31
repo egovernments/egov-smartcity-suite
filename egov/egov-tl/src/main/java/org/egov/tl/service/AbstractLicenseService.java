@@ -40,31 +40,6 @@
 
 package org.egov.tl.service;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_CREATED_CODE;
-import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.BUTTONREJECT;
-import static org.egov.tl.utils.Constants.DELIMITER_COLON;
-import static org.egov.tl.utils.Constants.GENERATECERTIFICATE;
-import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACKNOWLEDGED;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
-import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
-import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
-import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
-
-import java.io.File;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.egov.commons.Installment;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.InstallmentHibDao;
@@ -108,11 +83,38 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.tl.utils.Constants.APPLICATION_STATUS_CREATED_CODE;
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.BUTTONREJECT;
+import static org.egov.tl.utils.Constants.DELIMITER_COLON;
+import static org.egov.tl.utils.Constants.GENERATECERTIFICATE;
+import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACKNOWLEDGED;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
+import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
+import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
+import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
+
 @Transactional(readOnly = true)
 public abstract class AbstractLicenseService<T extends License> {
 
     public static final String ARREAR = "arrear";
     public static final BigDecimal ONE_HUNDRED = new BigDecimal(100);
+    private static final String CURRENT = "current";
+    private static final String PENALTY = "penalty";
     @Autowired
     @Qualifier("entityQueryService")
     protected PersistenceService entityQueryService;
@@ -167,7 +169,7 @@ public abstract class AbstractLicenseService<T extends License> {
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
     @Autowired
     private PenaltyRatesService penaltyRatesService;
-    
+
     @Autowired
     private LicenseUtils licenseUtils;
 
@@ -422,25 +424,26 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void raiseDemand(T licenze, Module module, Installment givenInstallment) {
+    public void raiseDemand(T licenze, Module module, Installment installment) {
         //Refetching license in this txn to avoid lazy initialization issue
         License license = licenseRepository.findOne(licenze.getId());
         Map<EgDemandReason, EgDemandDetails> reasonWiseDemandDetails = getReasonWiseDemandDetails(license.getLicenseDemand());
-        for (FeeMatrixDetail feeMatrixDetail : feeMatrixService.findFeeMatrixByGivenDate(license, givenInstallment.getFromDate())) {
+        for (FeeMatrixDetail feeMatrixDetail : feeMatrixService.findFeeMatrixByGivenDate(license, installment.getFromDate())) {
             String feeType = feeMatrixDetail.getFeeMatrix().getFeeType().getName();
             if (feeType.contains("Late"))
                 continue;
             EgDemandReason reason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
-                    demandGenericDao.getDemandReasonMasterByCode(feeType, module), givenInstallment, module);
+                    demandGenericDao.getDemandReasonMasterByCode(feeType, module), installment, module);
             if (reason == null)
-                throw new ValidationException("TL-004", "TL-003");
+                throw new ValidationException("TL-007", "TL-007");
             EgDemandDetails licenseDemandDetail = reasonWiseDemandDetails.get(reason);
             if (licenseDemandDetail == null)
                 license.getLicenseDemand().getEgDemandDetails().add(EgDemandDetails.
                         fromReasonAndAmounts(feeMatrixDetail.getAmount(), reason, ZERO));
-            else
+            else if (licenseDemandDetail.getBalance().compareTo(ZERO) != 0)
                 licenseDemandDetail.setAmount(feeMatrixDetail.getAmount());
-            license.getLicenseDemand().setEgInstallmentMaster(givenInstallment);
+            if (license.getCurrentDemand().getEgInstallmentMaster().getInstallmentYear().before(installment.getInstallmentYear()))
+                license.getLicenseDemand().setEgInstallmentMaster(installment);
         }
         recalculateBaseDemand(license.getLicenseDemand());
         licenseRepository.save(license);
@@ -622,11 +625,11 @@ public abstract class AbstractLicenseService<T extends License> {
             else {
                 feeByTypes = new HashMap<>();
                 feeByTypes.put(ARREAR, ZERO);
-                feeByTypes.put("current", ZERO);
+                feeByTypes.put(CURRENT, ZERO);
             }
             final BigDecimal demandAmount = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
             if (installmentYear.equals(currentInstallmentYear))
-                feeByTypes.put("current", demandAmount);
+                feeByTypes.put(CURRENT, demandAmount);
             else
                 feeByTypes.put(ARREAR, feeByTypes.get(ARREAR).add(demandAmount));
             outstandingFee.put(demandReason, feeByTypes);
@@ -635,17 +638,19 @@ public abstract class AbstractLicenseService<T extends License> {
         return outstandingFee;
 
     }
+
     /**
      * This method will return arrears, current tax and penalty on arrears tax.
+     *
      * @param license
      * @param currentInstallment
      * @param previousInstallment
      * @return
      */
     public Map<String, Map<String, BigDecimal>> getOutstandingFeeForDemandNotice(TradeLicense license,
-            Installment currentInstallment, Installment previousInstallment) {
+                                                                                 Installment currentInstallment, Installment previousInstallment) {
         final Map<String, Map<String, BigDecimal>> outstandingFee = new HashMap<>();
-    
+
         final LicenseDemand licenseDemand = license.getCurrentDemand();
         //31st december will be considered as cutoff date for penalty calculation.
         final Date endDateOfPreviousFinancialYear = new DateTime(previousInstallment.getFromDate()).withMonthOfYear(12)
@@ -661,22 +666,22 @@ public abstract class AbstractLicenseService<T extends License> {
                 else {
                     feeByTypes = new HashMap<>();
                     feeByTypes.put(ARREAR, ZERO);
-                    feeByTypes.put("current", ZERO);
-                    feeByTypes.put("penalty", ZERO);
+                    feeByTypes.put(CURRENT, ZERO);
+                    feeByTypes.put(PENALTY, ZERO);
                 }
                 final BigDecimal demandAmount = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
 
                 if (demandAmount.compareTo(BigDecimal.valueOf(0)) > 0) {
 
                     if (installmentYear.equals(currentInstallment))
-                        feeByTypes.put("current", feeByTypes.get("current").add(demandAmount));
+                        feeByTypes.put(CURRENT, feeByTypes.get(CURRENT).add(demandAmount));
                     else {
                         feeByTypes.put(ARREAR, feeByTypes.get(ARREAR).add(demandAmount));
                         // Calculate penalty by passing installment startdate and end of dec 31st date of previous installment
                         // dates using penalty master.
                         BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(installmentYear.getFromDate(),
                                 endDateOfPreviousFinancialYear, demandAmount, license);
-                        feeByTypes.put("penalty", feeByTypes.get("penalty").add(penaltyAmt));
+                        feeByTypes.put(PENALTY, feeByTypes.get(PENALTY).add(penaltyAmt));
                     }
                 }
                 outstandingFee.put(demandReason, feeByTypes);
@@ -686,7 +691,7 @@ public abstract class AbstractLicenseService<T extends License> {
         return outstandingFee;
 
     }
-    
+
     public List<License> getAllLicensesByNatureOfBusiness(final String natureOfBusiness) {
         return licenseRepository.findByNatureOfBusinessName(natureOfBusiness);
     }

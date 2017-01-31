@@ -62,6 +62,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -219,10 +220,13 @@ public class TaxExemptionController extends GenericWorkFlowController {
         String approvalComent = "";
         String taxExemptedReason = "";
         final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
-        String target = "";
+        String target;
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
-        if ((!propertyByEmployee || loggedUserIsMeesevaUser)
-                && null == propertyService.getUserPositionByZone(property.getBasicProperty(), false)) {
+        final Assignment assignment = propertyService.isCscOperator(securityUtils.getCurrentUser())
+                ? propertyService.getAssignmentByDeptDesigElecWard(property.getBasicProperty())
+                : null;
+        if ((!propertyByEmployee || loggedUserIsMeesevaUser) && assignment == null
+                && propertyService.getUserPositionByZone(property.getBasicProperty(), false) == null) {
             model.addAttribute("errorMsg", "No Senior or Junior assistants exists,Please check");
             model.addAttribute("stateType", propertyImpl.getClass().getSimpleName());
             taxExemptionService.addModelAttributes(model, basicProperty);
@@ -240,7 +244,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
             if (loggedUserIsMeesevaUser) {
-                final HashMap<String, String> meesevaParams = new HashMap<String, String>();
+                final HashMap<String, String> meesevaParams = new HashMap<>();
                 meesevaParams.put("APPLICATIONNUMBER", ((PropertyImpl) property).getMeesevaApplicationNumber());
 
                 if (StringUtils.isBlank(property.getApplicationNo())){

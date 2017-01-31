@@ -116,6 +116,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -212,6 +213,7 @@ import org.egov.ptis.wtms.ConsumerConsumption;
 import org.egov.ptis.wtms.PropertyWiseConsumptions;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.joda.time.DateTime;
@@ -2074,25 +2076,25 @@ public class PropertyTaxUtil {
                 + "pmv.basicPropertyID = idc.propMatView.basicPropertyID and pmv.isActive = true and idc.installment.fromDate not between  ('"
                 + currentInst.getFromDate() + "') and ('" + currentInst.getToDate() + "') ");
 
-        if (localityId != null && localityId != -1)
+        if (isWard(localityId))
             query.append(" and pmv.locality.id= :localityId ");
-        if (zoneId != null && zoneId != -1)
+        if (isWard(zoneId))
             query.append(" and pmv.zone.id= :zoneId ");
-        if (wardId != null && wardId != -1)
+        if (isWard(wardId))
             query.append("  and pmv.ward.id= :wardId ");
-        if (areaId != null && areaId != -1)
+        if (isWard(areaId))
             query.append("  and pmv.block.id= :areaId ");
 
         query.append(" order by pmv.basicPropertyID ");
         final Query qry = persistenceService.getSession().createQuery(query.toString());
 
-        if (localityId != null && localityId != -1)
+        if (isWard(localityId))
             qry.setParameter("localityId", localityId);
-        if (zoneId != null && zoneId != -1)
+        if (isWard(zoneId))
             qry.setParameter("zoneId", zoneId);
-        if (wardId != null && wardId != -1)
+        if (isWard(wardId))
             qry.setParameter("wardId", wardId);
-        if (areaId != null && areaId != -1)
+        if (isWard(areaId))
             qry.setParameter("areaId", areaId);
         final List<PropertyMaterlizeView> propertyViewList = qry.setResultTransformer(
                 CriteriaSpecification.DISTINCT_ROOT_ENTITY).list();
@@ -2114,11 +2116,11 @@ public class PropertyTaxUtil {
         String boundaryCond = "";
         String boundaryWhrCond = "";
 
-        if (zoneId != null && zoneId != -1)
+        if (isWard(zoneId))
             boundaryCond = " and pi.zone.id= " + zoneId;
-        if (wardId != null && wardId != -1)
+        if (isWard(wardId))
             boundaryCond = boundaryCond + " and pi.ward.id= " + wardId;
-        if (areaId != null && areaId != -1)
+        if (isWard(areaId))
             boundaryCond = boundaryCond + " and pi.area.id= " + areaId;
         if (boundaryCond != "")
             boundaryWhrCond = ",PropertyID pi where pm.basicProperty.id=pi.basicProperty.id "
@@ -2336,45 +2338,104 @@ public class PropertyTaxUtil {
      * @return
      */
     public Query prepareQueryforDefaultersReport(final Long wardId, final String fromDemand, final String toDemand,
-            final Integer limit, final String ownerShipType) {
-        final StringBuffer query = new StringBuffer(300);
+            final Integer limit, final String ownerShipType,final String proptype) {
+        final StringBuilder query = new StringBuilder(300);
+        final Map<String, Object> params = new HashMap();
         query.append(
                 "select pmv from PropertyMaterlizeView pmv where pmv.propertyId is not null and pmv.isActive = true and pmv.isExempted=false ");
         String arrearBalanceCond = " ((pmv.aggrArrDmd - pmv.aggrArrColl) + ((pmv.aggrCurrFirstHalfDmd + pmv.aggrCurrSecondHalfDmd) - (pmv.aggrCurrFirstHalfColl + pmv.aggrCurrSecondHalfColl))) ";
         String arrearBalanceNotZeroCond = " and ((pmv.aggrArrDmd - pmv.aggrArrColl) + ((pmv.aggrCurrFirstHalfDmd + pmv.aggrCurrSecondHalfDmd) - (pmv.aggrCurrFirstHalfColl + pmv.aggrCurrSecondHalfColl)))>0 ";
         String orderByClause = " order by ";
+        String and=" and ";
+        String ownerType="ownerType";
         query.append(arrearBalanceNotZeroCond);
-        if (StringUtils.isNotBlank(fromDemand) && StringUtils.isBlank(toDemand)) {
-            query.append(" and " + arrearBalanceCond + " >= ").append(fromDemand);
-        } else if (StringUtils.isNotBlank(fromDemand) && StringUtils.isNotBlank(toDemand)) {
-            query.append(" and " + arrearBalanceCond + " >= ").append(fromDemand);
-            query.append(" and " + arrearBalanceCond + " <= ").append(toDemand);
+        appendFromToDmd(fromDemand, toDemand, query, params, arrearBalanceCond, and);
+        if (isWard(wardId)) {
+            query.append(" and pmv.ward.id = :wardId");
+            params.put("wardId", wardId);
         }
-        if (wardId != null && wardId != -1) {
-            query.append(" and pmv.ward.id = ").append(wardId);
-        }
-        if (StringUtils.isNotBlank(ownerShipType)) {
-            if (ownerShipType.equals(OWNERSHIP_TYPE_PRIVATE)) {
-                query.append(" and (pmv.propTypeMstrID.code = '"
-                        + ownerShipType
-                        + "' or pmv.propTypeMstrID.code = 'EWSHS') and cast(pmv.propertyId as integer) not in (select propertyId from PropertyCourtCase) ");
-            } else if (ownerShipType.equals(OWNERSHIP_TYPE_STATE_GOVT) || ownerShipType.equals(OWNERSHIP_TYPE_VAC_LAND)) {
-                query.append(" and (pmv.propTypeMstrID.code = '" + ownerShipType
-                        + "') and  cast(pmv.propertyId as integer) not in (select propertyId from PropertyCourtCase) ");
-            } else if (ownerShipType.equals(OWNERSHIP_TYPE_CENTRAL_GOVT)) {
-                query.append(" and (pmv.propTypeMstrID.code like  '" + ownerShipType
-                        + "%') and cast(pmv.propertyId as integer) not in (select propertyId from PropertyCourtCase) ");
-            } else if (ownerShipType.equals(OWNERSHIP_TYPE_COURT_CASE)) {
+         
+        if (isOwnerShipType(ownerShipType)) {
+            if (isOwnershipPrivate(ownerShipType)) {
+                query.append(" and (pmv.propTypeMstrID.code = :ownerType or pmv.propTypeMstrID.code = 'EWSHS') and cast(pmv.propertyId as integer) not in (select propertyId from PropertyCourtCase) ");
+                params.put(ownerType, ownerShipType);
+            } else if (isOwnerShipTypeStateOrVacLand(ownerShipType)) {
+                query.append(" and (pmv.propTypeMstrID.code = :ownerType) and  cast(pmv.propertyId as integer) not in (select propertyId from PropertyCourtCase) ");
+                params.put(ownerType, ownerShipType);
+            } else if (isOwnerShipCentral(ownerShipType)) {
+                query.append(" and (pmv.propTypeMstrID.code like :ownerType) and cast(pmv.propertyId as integer) not in (select propertyId from PropertyCourtCase) ");
+                params.put(ownerType, ownerShipType+"%");
+            } else if (isOwnerShipCourtCase(ownerShipType)) {
                 query.append(" and cast(pmv.propertyId as integer) in (select propertyId from PropertyCourtCase)");
             }
+        }else if(isNonVacantLand(proptype)){
+            query.append(" and (pmv.propTypeMstrID.code <> :ownerType) and  cast(pmv.propertyId as integer) not in (select propertyId from PropertyCourtCase) ");
+            params.put(ownerType, OWNERSHIP_TYPE_VAC_LAND);
         }
+       
         orderByClause = orderByClause.concat(arrearBalanceCond + " desc, pmv.ward.id asc ");
         query.append(orderByClause);
 
         final Query qry = persistenceService.getSession().createQuery(query.toString());
-        if (limit != null && limit != -1)
+     
+        for(final Entry<String, Object> entry : params.entrySet())
+            qry.setParameter(entry.getKey(), entry.getValue());
+        if (isLimit(limit))
             qry.setMaxResults(limit);
         return qry;
+    }
+
+    private void appendFromToDmd(final String fromDemand, final String toDemand, final StringBuilder query,
+            final Map<String, Object> params, String arrearBalanceCond, String and) {
+        if (isFromDemand(fromDemand, toDemand)) {
+            query.append(and + arrearBalanceCond + " >= :fromDemand");
+            params.put("fromDemand", BigDecimal.valueOf(Long.valueOf(fromDemand)));
+        } else if (isFromDmdToDmd(fromDemand, toDemand)) {
+            query.append(and + arrearBalanceCond + " >= :fromDemand");
+            params.put("fromDemand", BigDecimal.valueOf(Long.valueOf(fromDemand)));
+            query.append(and + arrearBalanceCond + " <= :toDemand");
+            params.put("toDemand", BigDecimal.valueOf(Long.valueOf(toDemand)));
+        }
+    }
+
+    private boolean isLimit(final Integer limit) {
+        return limit != null && limit != -1;
+    }
+
+    private boolean isOwnerShipCourtCase(final String ownerShipType) {
+        return ownerShipType.equals(OWNERSHIP_TYPE_COURT_CASE);
+    }
+
+    private boolean isOwnerShipCentral(final String ownerShipType) {
+        return ownerShipType.equals(OWNERSHIP_TYPE_CENTRAL_GOVT);
+    }
+
+    private boolean isOwnerShipTypeStateOrVacLand(final String ownerShipType) {
+        return ownerShipType.equals(OWNERSHIP_TYPE_STATE_GOVT) || ownerShipType.equals(OWNERSHIP_TYPE_VAC_LAND);
+    }
+
+    private boolean isOwnershipPrivate(final String ownerShipType) {
+        return ownerShipType.equals(OWNERSHIP_TYPE_PRIVATE);
+    }
+
+    private boolean isNonVacantLand(final String proptype) {
+        return isOwnerShipType(proptype) && proptype.equals(PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX);
+    }
+
+    private boolean isOwnerShipType(final String ownerShipType) {
+        return StringUtils.isNotBlank(ownerShipType);
+    }
+
+    private boolean isWard(final Long wardId) {
+        return wardId != null && wardId != -1;
+    }
+
+    private boolean isFromDmdToDmd(final String fromDemand, final String toDemand) {
+        return isOwnerShipType(fromDemand) && isOwnerShipType(toDemand);
+    }
+
+    private boolean isFromDemand(final String fromDemand, final String toDemand) {
+        return isOwnerShipType(fromDemand) && StringUtils.isBlank(toDemand);
     }
 
     @SuppressWarnings("unchecked")

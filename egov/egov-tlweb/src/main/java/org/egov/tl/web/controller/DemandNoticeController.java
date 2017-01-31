@@ -47,13 +47,21 @@ import static org.egov.tl.utils.Constants.TL_LICENSE_ACT_CORPORATION;
 import static org.egov.tl.utils.Constants.TL_LICENSE_ACT_DEFAULT;
 import static org.egov.tl.utils.Constants.TRADELICENSE_MODULENAME;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
@@ -66,8 +74,11 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.entity.dto.DemandnoticeForm;
 import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.LicenseUtils;
@@ -82,173 +93,178 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 @Controller
 @RequestMapping("/demandnotice")
 public class DemandNoticeController {
-    private final Map<String, Object> reportParams = new HashMap<>();
-    @Autowired
-    private TradeLicenseService tradeLicenseService;
-    @Autowired
-    private LicenseUtils licenseUtils;
-    @Autowired
-    private InstallmentHibDao installmentDao;
-    
-    @Autowired
-    private PenaltyRatesService penaltyRatesService;
-    
-    @Autowired
-    private CityService cityService;
-    
-    @Autowired
-    private AppConfigValueService appConfigValueService;
-    
-    @Autowired
-    private ReportService reportService;
-    private Map<Integer, String> monthMap = new LinkedHashMap<Integer, String>();
-    
-    @RequestMapping(value = "/report", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<byte[]> generateDemandNotice(@RequestParam Long licenseId) {
-        final TradeLicense license = tradeLicenseService.getLicenseById(licenseId);
-        return generateReport(license);
-    }
+	private final Map<String, Object> reportParams = new HashMap<>();
+	@Autowired
+	private TradeLicenseService tradeLicenseService;
+	@Autowired
+	private LicenseUtils licenseUtils;
+	@Autowired
+	private InstallmentHibDao installmentDao;
 
-    private ResponseEntity<byte[]> generateReport(TradeLicense license) {
-        
-        if (license != null && license.getCurrentDemand()!=null) {
-        	
-          DateTimeFormatter FORMAT_DATE_TO_YEAR_YY = DateTimeFormat.forPattern("yy");  
-            //Get current installment by using demand.
-            Installment currentInstallment = license.getCurrentDemand().getEgInstallmentMaster();
-            reportParams.put("cityName", ApplicationThreadLocals.getMunicipalityName());
-            reportParams.put("licenseNumber", license.getLicenseNumber());
-            reportParams.put("ownerName", license.getLicensee().getApplicantName());
-            reportParams.put("tradeNature", license.getTradeName().getName());
-            reportParams.put("tradeName", license.getNameOfEstablishment());
-            reportParams.put("tradeAddress", license.getAddress());
-            reportParams.put("cityUrl", ApplicationThreadLocals.getDomainURL());
-        	   getActDeclarationDetailBasedOnCityGrade();
-        	
-            reportParams.put("installmentYear", toYearFormat(currentInstallment.getFromDate()) + "-" +
-                    toYearFormat(currentInstallment.getToDate()));
-            reportParams.put("currentDate", currentDateToDefaultDateFormat());
-            
-            // GET PREVIOUS INSTALLMENTS BASED ON CURRENT INSTALLMENT.
-            List<Installment> previousInstallment = installmentDao.fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(
-                    licenseUtils.getModule("Trade License"),
-                    currentInstallment.getToDate(), 1);
-  
-            if (previousInstallment != null && previousInstallment.size() > 0) {
-                reportParams.put("lastyear", toYearFormat(previousInstallment.get(0).getFromDate()) + "-" +
-                        FORMAT_DATE_TO_YEAR_YY.print(new LocalDate(previousInstallment.get(0).getToDate())));
-               //31-december-financialyear  will be considered as last date for renewal.
-                Date endDateOfPreviousFinancialYear = new DateTime(previousInstallment.get(0).getFromDate()).withMonthOfYear(12)
-                        .withDayOfMonth(31).toDate();
+	@Autowired
+	private PenaltyRatesService penaltyRatesService;
 
-                reportParams.put("endDateOfPreviousFinancialYear", getDefaultFormattedDate(endDateOfPreviousFinancialYear));   
-             
-            BigDecimal currLicenseFee;
-            BigDecimal arrLicenseFee;
-            BigDecimal arrLicensePenalty;
-            
-                 Map<String, Map<String, BigDecimal>> outstandingFees = tradeLicenseService
-                        .getOutstandingFeeForDemandNotice(license, currentInstallment, previousInstallment.get(0));
-                Map<String, BigDecimal> licenseFees = outstandingFees.get("License Fee");
-                if (licenseFees != null) {
-                    currLicenseFee = licenseFees.get("current") == null ? BigDecimal.ZERO
-                            : licenseFees.get("current").setScale(0, BigDecimal.ROUND_HALF_UP);
-                    arrLicenseFee = licenseFees.get("arrear") == null ? BigDecimal.ZERO
-                            : licenseFees.get("arrear").setScale(0, BigDecimal.ROUND_HALF_UP);
-                    arrLicensePenalty = licenseFees.get("penalty") == null ? BigDecimal.ZERO
-                            : licenseFees.get("penalty").setScale(0, BigDecimal.ROUND_HALF_UP);
-                } else {
-                    currLicenseFee = BigDecimal.ZERO;
-                    arrLicenseFee = BigDecimal.ZERO;
-                    arrLicensePenalty = BigDecimal.ZERO;
-                }
-            
-            
-                BigDecimal totalAmount = currLicenseFee.add(arrLicenseFee).add(arrLicensePenalty);
-                monthMap = DateUtils.getAllMonths();
-                List<TradeLicenseDemandBillHelper> monthWiseDemandDetails = new LinkedList<TradeLicenseDemandBillHelper>();
-                 getMonthWiseLatePenaltyFeeDetails(license, currentInstallment, currLicenseFee, arrLicenseFee, arrLicensePenalty,
-                        monthWiseDemandDetails);
-                
-            reportParams.put("monthWiseDemandDetails", monthWiseDemandDetails);
-            reportParams.put("licenseFee", currLicenseFee);
-            reportParams.put("penaltyFee", arrLicensePenalty);
-            reportParams.put("arrearLicenseFee", arrLicenseFee);
-            reportParams.put("totalLicenseFee", totalAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
-            List<PenaltyRates> penaltyRates= penaltyRatesService.search(license.getLicenseAppType().getId());
-            reportParams.put("penaltyCalculationMessage",getPenaltyRateDetails(penaltyRates, currentInstallment)); 
-            reportParams.put("currentYear", toYearFormat(currentInstallment.getFromDate()));
-       
-        }
-        }
-        final ReportRequest reportInput = new ReportRequest("tldemandnotice", license, reportParams);
+	@Autowired
+	private CityService cityService;
 
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=License Demand Notice.pdf");
-        final ReportOutput reportOutput = reportService.createReport(reportInput);
-        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
-    }
+	@Autowired
+	private AppConfigValueService appConfigValueService;
+
+	@Autowired
+	private ReportService reportService;
+	private Map<Integer, String> monthMap = new LinkedHashMap<Integer, String>();
+
+	@RequestMapping(value = "/report", method = RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<byte[]> generateDemandNotice(@RequestParam Long licenseId) {
+		final TradeLicense license = tradeLicenseService.getLicenseById(licenseId);
+		return generateReport(license);
+	}
+
+	private ResponseEntity<byte[]> generateReport(TradeLicense license) {
+
+		if (license != null && license.getCurrentDemand() != null) {
+
+			DateTimeFormatter FORMAT_DATE_TO_YEAR_YY = DateTimeFormat.forPattern("yy");
+			// Get current installment by using demand.
+			Installment currentInstallment = license.getCurrentDemand().getEgInstallmentMaster();
+			reportParams.put("cityName", ApplicationThreadLocals.getMunicipalityName());
+			reportParams.put("licenseNumber", license.getLicenseNumber());
+			reportParams.put("ownerName", license.getLicensee().getApplicantName());
+			reportParams.put("tradeNature", license.getTradeName().getName());
+			reportParams.put("tradeName", license.getNameOfEstablishment());
+			reportParams.put("tradeAddress", license.getAddress());
+			reportParams.put("cityUrl", ApplicationThreadLocals.getDomainURL());
+			getActDeclarationDetailBasedOnCityGrade();
+
+			reportParams.put("installmentYear", toYearFormat(currentInstallment.getFromDate()) + "-"
+					+ toYearFormat(currentInstallment.getToDate()));
+			reportParams.put("currentDate", currentDateToDefaultDateFormat());
+
+			// GET PREVIOUS INSTALLMENTS BASED ON CURRENT INSTALLMENT.
+			List<Installment> previousInstallment = installmentDao
+					.fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(licenseUtils.getModule("Trade License"),
+							currentInstallment.getToDate(), 1);
+
+			if (previousInstallment != null && previousInstallment.size() > 0) {
+				reportParams.put("lastyear", toYearFormat(previousInstallment.get(0).getFromDate()) + "-"
+						+ FORMAT_DATE_TO_YEAR_YY.print(new LocalDate(previousInstallment.get(0).getToDate())));
+				// 31-december-financialyear will be considered as last date for
+				// renewal.
+				Date endDateOfPreviousFinancialYear = new DateTime(previousInstallment.get(0).getFromDate())
+						.withMonthOfYear(12).withDayOfMonth(31).toDate();
+
+				reportParams.put("endDateOfPreviousFinancialYear",
+						getDefaultFormattedDate(endDateOfPreviousFinancialYear));
+
+				BigDecimal currLicenseFee;
+				BigDecimal arrLicenseFee;
+				BigDecimal arrLicensePenalty;
+
+				Map<String, Map<String, BigDecimal>> outstandingFees = tradeLicenseService
+						.getOutstandingFeeForDemandNotice(license, currentInstallment, previousInstallment.get(0));
+				Map<String, BigDecimal> licenseFees = outstandingFees.get("License Fee");
+				if (licenseFees != null) {
+					currLicenseFee = licenseFees.get("current") == null ? BigDecimal.ZERO
+							: licenseFees.get("current").setScale(0, BigDecimal.ROUND_HALF_UP);
+					arrLicenseFee = licenseFees.get("arrear") == null ? BigDecimal.ZERO
+							: licenseFees.get("arrear").setScale(0, BigDecimal.ROUND_HALF_UP);
+					arrLicensePenalty = licenseFees.get("penalty") == null ? BigDecimal.ZERO
+							: licenseFees.get("penalty").setScale(0, BigDecimal.ROUND_HALF_UP);
+				} else {
+					currLicenseFee = BigDecimal.ZERO;
+					arrLicenseFee = BigDecimal.ZERO;
+					arrLicensePenalty = BigDecimal.ZERO;
+				}
+
+				BigDecimal totalAmount = currLicenseFee.add(arrLicenseFee).add(arrLicensePenalty);
+				monthMap = DateUtils.getAllMonths();
+				List<TradeLicenseDemandBillHelper> monthWiseDemandDetails = new LinkedList<TradeLicenseDemandBillHelper>();
+				getMonthWiseLatePenaltyFeeDetails(license, currentInstallment, currLicenseFee, arrLicenseFee,
+						arrLicensePenalty, monthWiseDemandDetails);
+
+				reportParams.put("monthWiseDemandDetails", monthWiseDemandDetails);
+				reportParams.put("licenseFee", currLicenseFee);
+				reportParams.put("penaltyFee", arrLicensePenalty);
+				reportParams.put("arrearLicenseFee", arrLicenseFee);
+				reportParams.put("totalLicenseFee", totalAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
+				List<PenaltyRates> penaltyRates = penaltyRatesService.search(license.getLicenseAppType().getId());
+				reportParams.put("penaltyCalculationMessage", getPenaltyRateDetails(penaltyRates, currentInstallment));
+				reportParams.put("currentYear", toYearFormat(currentInstallment.getFromDate()));
+
+			}
+		}
+		final ReportRequest reportInput = new ReportRequest("tldemandnotice", license, reportParams);
+
+		final HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.parseMediaType("application/pdf"));
+		headers.add("content-disposition", "inline;filename=License Demand Notice.pdf");
+		final ReportOutput reportOutput = reportService.createReport(reportInput);
+		return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+	}
 
 	private void getActDeclarationDetailBasedOnCityGrade() {
 
 		City city = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
-		
-		if (city!=null && city.getGrade().equalsIgnoreCase(CITY_GRADE_CORPORATION)) {
+
+		if (city != null && city.getGrade().equalsIgnoreCase(CITY_GRADE_CORPORATION)) {
 			final List<AppConfigValues> corporationAct = appConfigValueService
 					.getConfigValuesByModuleAndKey(TRADELICENSE_MODULENAME, TL_LICENSE_ACT_CORPORATION);
-			reportParams.put("actDeclaration", corporationAct!=null && corporationAct.get(0) != null ? corporationAct.get(0).getValue() : " ");
+			reportParams.put("actDeclaration",
+					corporationAct != null && corporationAct.get(0) != null ? corporationAct.get(0).getValue() : " ");
 		} else {
 			final List<AppConfigValues> municipalityAct = appConfigValueService
-					.getConfigValuesByModuleAndKey(TRADELICENSE_MODULENAME,  TL_LICENSE_ACT_DEFAULT);
+					.getConfigValuesByModuleAndKey(TRADELICENSE_MODULENAME, TL_LICENSE_ACT_DEFAULT);
 
-			reportParams.put("actDeclaration",
-					municipalityAct!=null && municipalityAct.get(0) != null ? municipalityAct.get(0).getValue() : " ");
+			reportParams.put("actDeclaration", municipalityAct != null && municipalityAct.get(0) != null
+					? municipalityAct.get(0).getValue() : " ");
 		}
 	}
 
-    private void getMonthWiseLatePenaltyFeeDetails(TradeLicense license, Installment currentInstallment,
-            BigDecimal currLicenseFee, BigDecimal arrLicenseFee, BigDecimal arrLicensePenalty,
-            List<TradeLicenseDemandBillHelper> monthWiseDemandDetails) {
-        
-        Date currentInstallment_March_thirtyFirst = new DateTime(currentInstallment.getFromDate()).withMonthOfYear(3)
-                .withDayOfMonth(31).toDate();
-        String installmentYear = toYearFormat(currentInstallment.getFromDate());
+	private void getMonthWiseLatePenaltyFeeDetails(TradeLicense license, Installment currentInstallment,
+			BigDecimal currLicenseFee, BigDecimal arrLicenseFee, BigDecimal arrLicensePenalty,
+			List<TradeLicenseDemandBillHelper> monthWiseDemandDetails) {
 
-        // GET LICENSE FEE TYPES AND DECIDE PENALTY. Monthwise, show penalty details
-        for (int i = 1; i <= 12; i++) {
-            TradeLicenseDemandBillHelper demandBillDtl = new TradeLicenseDemandBillHelper();
+		Date currentInstallment_March_thirtyFirst = new DateTime(currentInstallment.getFromDate()).withMonthOfYear(3)
+				.withDayOfMonth(31).toDate();
+		String installmentYear = toYearFormat(currentInstallment.getFromDate());
 
-            DateTime financialYearDate = new DateTime(currentInstallment.getFromDate()).withMonthOfYear(i);
-            Date monthEndDate = new DateTime(financialYearDate)
-                    .withDayOfMonth(financialYearDate.dayOfMonth().getMaximumValue()).toDate();
-       
-            // Eg: 31/03/2016 vs 31/01/2016 days penalty 0%
-            // 31/03/2016 vs 29/02/2016 days penalty 0%
-            // 31/03/2016 vs 31/03/2016 days penalty 25%
-            BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(currentInstallment_March_thirtyFirst,
-                    monthEndDate,currLicenseFee, license);
-            
-            demandBillDtl.setMonth(monthMap.get(i).concat(", ").concat(installmentYear));
-            demandBillDtl.setArrersWithPenalty(arrLicenseFee.add(arrLicensePenalty));
-            demandBillDtl.setLicenseFee(currLicenseFee);
-            demandBillDtl.setPenalty(penaltyAmt.setScale(0, BigDecimal.ROUND_HALF_UP));
-            demandBillDtl.setTotalDues((arrLicenseFee.add(arrLicensePenalty).add(currLicenseFee).add(penaltyAmt))
-                    .setScale(0, BigDecimal.ROUND_HALF_UP));
-            monthWiseDemandDetails.add(demandBillDtl);
-        }
-    }
-    
-   	public String getPenaltyRateDetails(List<PenaltyRates> penaltyRates,Installment currentInstallment){
-       	StringBuilder penaltylist= new StringBuilder();
+		// GET LICENSE FEE TYPES AND DECIDE PENALTY. Monthwise, show penalty
+		// details
+		for (int i = 1; i <= 12; i++) {
+			TradeLicenseDemandBillHelper demandBillDtl = new TradeLicenseDemandBillHelper();
+
+			DateTime financialYearDate = new DateTime(currentInstallment.getFromDate()).withMonthOfYear(i);
+			Date monthEndDate = new DateTime(financialYearDate)
+					.withDayOfMonth(financialYearDate.dayOfMonth().getMaximumValue()).toDate();
+
+			// Eg: 31/03/2016 vs 31/01/2016 days penalty 0%
+			// 31/03/2016 vs 29/02/2016 days penalty 0%
+			// 31/03/2016 vs 31/03/2016 days penalty 25%
+			BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(currentInstallment_March_thirtyFirst,
+					monthEndDate, currLicenseFee, license);
+
+			demandBillDtl.setMonth(monthMap.get(i).concat(", ").concat(installmentYear));
+			demandBillDtl.setArrersWithPenalty(arrLicenseFee.add(arrLicensePenalty));
+			demandBillDtl.setLicenseFee(currLicenseFee);
+			demandBillDtl.setPenalty(penaltyAmt.setScale(0, BigDecimal.ROUND_HALF_UP));
+			demandBillDtl.setTotalDues((arrLicenseFee.add(arrLicensePenalty).add(currLicenseFee).add(penaltyAmt))
+					.setScale(0, BigDecimal.ROUND_HALF_UP));
+			monthWiseDemandDetails.add(demandBillDtl);
+		}
+	}
+
+	public String getPenaltyRateDetails(List<PenaltyRates> penaltyRates, Installment currentInstallment) {
+		StringBuilder penaltylist = new StringBuilder();
 		for (PenaltyRates penaltyRate : penaltyRates) {
 			LocalDate currentinstStartdate = LocalDate.fromDateFields(currentInstallment.getFromDate());
 			if (penaltyRate.getRate() <= 0 || penaltyRate.getToRange() < 0) {
@@ -277,7 +293,41 @@ public class DemandNoticeController {
 
 			}
 		}
-   		return penaltylist.toString();
-       	
-       }
+		return penaltylist.toString();
+
+	}
+
+	@RequestMapping(value = "/generate", method = RequestMethod.GET)
+	@ResponseBody
+	public String mergeAndDownload(@ModelAttribute final DemandnoticeForm searchRequest,
+			final HttpServletResponse response) throws Exception {
+		final List<DemandnoticeForm> noticeList = tradeLicenseService.searchLicensefordemandnotice(searchRequest);
+		final List<InputStream> demandNotice_pdf = new ArrayList<InputStream>();
+
+		if (noticeList != null && noticeList.size() > 0) {
+			for (final DemandnoticeForm tlNotice : noticeList) {
+				if (tlNotice != null) {
+					ResponseEntity<byte[]> demandNotice = generateReport(
+							tradeLicenseService.getLicenseById(tlNotice.getLicenseId()));
+
+					final byte[] bFile = demandNotice.getBody();
+					demandNotice_pdf.add(new ByteArrayInputStream(bFile));
+				}
+			}
+
+			try {
+				if (demandNotice_pdf.size() > 0) {
+					final ByteArrayOutputStream output = new ByteArrayOutputStream();
+					final byte[] data = tradeLicenseService.mergePdfFiles(demandNotice_pdf, output);
+					response.setHeader("content-disposition", "inline;filename=License Demand Notice.pdf");
+					response.setContentType("application/pdf");
+					response.setContentLength(data.length);
+					response.getOutputStream().write(data);
+				}
+			} catch (final IOException e) {
+				throw new ValidationException(Arrays.asList(new ValidationError("error", e.getMessage())));
+			}
+		}
+		return null;
+	}
 }

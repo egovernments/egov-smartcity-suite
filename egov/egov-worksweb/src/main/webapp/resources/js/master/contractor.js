@@ -340,33 +340,46 @@ function checkDepartment(){
 }
 
 function checkCodeAndName(){  
+	var regxCode = /^[A-Za-z0-9]+$/;
+	var regxName = /^[A-Za-z0-9 ]+$/;
 	if(!(jQuery("#codeautogeneration").val() == "true")){
 		if(jQuery("#contractor-save_code").val().length == 0){
 			showMessage('contractor_error', jQuery("#codeErrorMsg").val());
 			return false;
 		}
-		  var regxCode = /^[A-Za-z0-9]+$/;
+		  
 		  if (!regxCode.test(jQuery("#contractor-save_code").val())) {
 			  showMessage('contractor_error', jQuery("#codeAlphaNeumericErrorMsg").val());
 			  return false;
 		  }
-	}
-	else{
+
+		  if(jQuery("#name").val().length == 0){
+				showMessage('contractor_error', jQuery("#nameErrorMsg").val());
+				return false;
+		  }
+		  
+		  if (!regxName.test(jQuery("#name").val())) {
+			  showMessage('contractor_error', jQuery("#nameAlphaNeumericErrorMsg").val());
+			  return false;
+		  }
+	}else{
+
+		  if(jQuery("#name").val().length == 0){
+				showMessage('contractor_error', jQuery("#nameErrorMsg").val());
+				return false;
+			}
+		  
+		  if (!regxName.test(jQuery("#name").val())) {
+			  showMessage('contractor_error', jQuery("#nameAlphaNeumericErrorMsg").val());
+			  return false;
+		  }
+			  
 		 if(jQuery("#name").val().length < 4){
 				showMessage('contractor_error', jQuery("#nameErrorLengthMsg").val());
 				return false;
 		 }
 	}
-  var regxName = /^[A-Za-z0-9 ]+$/;
-  if(jQuery("#name").val().length == 0){
-		showMessage('contractor_error', jQuery("#nameErrorMsg").val());
-		return false;
-		}
   
-  if (!regxName.test(jQuery("#name").val())) {
-	  showMessage('contractor_error', jQuery("#nameAlphaNeumericErrorMsg").val());
-	  return false;
-}
   return true;
 }
 

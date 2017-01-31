@@ -40,6 +40,12 @@
 
 $(document).ready(function()
 {	
+	$('#new-pass').popover({ trigger: "focus",placement: "bottom"});
+	
+	$(document).on("keydown", disableRefresh);
+
+	preventBack();
+    
 	$.fn.dataTable.moment( 'DD/MM/YYYY h:mm a' );
 	
 	$('.page-container.horizontal-menu header.navbar .navbar-right > li, .page-container.horizontal-menu header.navbar .navbar-right > li ul li').hover(

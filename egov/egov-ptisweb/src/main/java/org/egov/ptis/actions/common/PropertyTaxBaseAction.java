@@ -46,11 +46,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSION
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ALTERATION_OF_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.AMALGAMATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.AMALGAMATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_AMALGAMATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILL_COLLECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
@@ -71,6 +70,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_ALTERATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_AMALGAMATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_BIFURCATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_GENERAL_REVISION_PETITION;
@@ -211,7 +211,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     protected String userDesignationList = new String();
     protected String applicationType;
     protected String initiator;
-    
+
     @Autowired
     transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepo;
 
@@ -288,7 +288,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             final String eastBoundary, final String westBoundary, final String southBoundary,
             final String northBoundary, final String propTypeId, final String zoneId, final String propOccId,
             final Long floorTypeId, final Long roofTypeId, final Long wallTypeId, final Long woodTypeId,
-            final String modifyRsn, final Date propCompletionDate, final Long vacantLandPlotAreaId, final Long layoutApprovalAuthorityId) {
+            final String modifyRsn, final Date propCompletionDate, final Long vacantLandPlotAreaId,
+            final Long layoutApprovalAuthorityId) {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into validateProperty");
@@ -586,14 +587,17 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         Position pos;
         Assignment wfInitiator = null;
         final String nature = getNatureOfTask();
-        Assignment assignment = null;
+        Assignment assignment;
         String nextAction = "";
         String approverDesignation = "";
-        WorkFlowMatrix wfmatrix = null;
+        WorkFlowMatrix wfmatrix;
 
         if (!propertyByEmployee) {
             currentState = "Created";
-            assignment = propertyService.getUserPositionByZone(property.getBasicProperty(), false);
+            if (propertyService.isCscOperator(user)) 
+                assignment = propertyService.getMappedAssignmentForCscOperator(property.getBasicProperty());
+            else
+                assignment = propertyService.getUserPositionByZone(property.getBasicProperty(), false);
             if (null != assignment) {
                 approverPositionId = assignment.getPosition().getId();
                 approverName = assignment.getEmployee().getName().concat("~").concat(
@@ -612,12 +616,12 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             }
         }
 
-        List<Assignment> loggedInUserAssign = null;
+        List<Assignment> loggedInUserAssign;
         String loggedInUserDesignation = "";
         if (property.getState() != null) {
             loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
                     property.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
-            loggedInUserDesignation = (!loggedInUserAssign.isEmpty()) ? loggedInUserAssign.get(0).getDesignation().getName() : null;
+            loggedInUserDesignation = !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName() : null;
         }
 
         if (loggedInUserDesignation.equals(JUNIOR_ASSISTANT) || loggedInUserDesignation.equals(SENIOR_ASSISTANT))
@@ -728,8 +732,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                         : EXEMPTION.equalsIgnoreCase(getAdditionalRule()) ? NATURE_TAX_EXEMPTION
                                                 : AMALGAMATION.equalsIgnoreCase(getAdditionalRule()) ? NATURE_AMALGAMATION
                                                         : GENERAL_REVISION_PETITION.equalsIgnoreCase(getAdditionalRule())
-                                                            ? NATURE_GENERAL_REVISION_PETITION
-                                                            : "PropertyImpl";
+                                                                ? NATURE_GENERAL_REVISION_PETITION
+                                                                : "PropertyImpl";
         return nature;
     }
 

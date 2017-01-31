@@ -126,6 +126,22 @@ $(document).ready(function()
 		}catch(e){
 		//console.warn("No tooltip");
 	}
+		
+	try{
+		
+		$('.select2').select2({
+			placeholder: "Select",
+			minimumResultsForSearch: 1,
+			width:'100%'
+		});
+		
+		$('select').on('select2:close', function (evt) {
+		  	$(this).focus();
+		});
+		
+	}catch(e){
+		//console.log('No select2');
+	}
 	
 	$("a.open-popup").click(function(e) {
 		window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=260,scrollbars=yes'); 
@@ -413,11 +429,34 @@ function cleardependentfield(dependentfield){
 	}
 }
 
-function disableRefreshAndBack(e) {
+function disableRefresh(e) {
 	var key = (e.which || e.keyCode);
-	if (key == 116 || (key == 8 && !$(':focus').length))//F5 and Backspace
-		e.preventDefault();
 	if (e.ctrlKey)
-		if (key == 82)
+		if (key == 82 || key == 116)
 			e.preventDefault();
+}
+
+function preventBack(){
+	history.pushState(null, null, document.URL);
+    window.addEventListener('popstate', function () {
+        history.pushState(null, null, document.URL);
+    });
+}
+
+function select2initialize(obj,data,multiple){
+	
+	obj.empty();
+	
+	if(!multiple)
+		obj.append("<option value=''>Select</option>");
+	
+	$('.select2').select2({
+		allowClear: true,
+        placeholder: "Select",
+        minimumResultsForSearch: 1,
+		data : data,
+		multiple : multiple,
+		width:'100%'
+	});
+	
 }

@@ -61,6 +61,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.Installment;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -275,6 +276,9 @@ public class VacanyRemissionController extends GenericWorkFlowController {
         List<Document> documents = new ArrayList<>();
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(vacancyRemissionService.getLoggedInUser());
         validateDates(vacancyRemission, resultBinder, request);
+        final Assignment assignment = propertyService.isCscOperator(vacancyRemissionService.getLoggedInUser())
+                ? propertyService.getAssignmentByDeptDesigElecWard(basicProperty)
+                : null;
         if (resultBinder.hasErrors()) {
             if (basicProperty != null) {
                 prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
@@ -282,8 +286,8 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                 vacancyRemissionService.addModelAttributes(model, basicProperty);
             }
             return VACANCYREMISSION_FORM;
-        } else if ((!propertyByEmployee || loggedUserIsMeesevaUser) && null != basicProperty
-                && null == propertyService.getUserPositionByZone(basicProperty, false)) {
+        } else if ((!propertyByEmployee || loggedUserIsMeesevaUser) && assignment == null
+                && propertyService.getUserPositionByZone(basicProperty, false) == null) {
             prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
             model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
             model.addAttribute("errorMsg", "No Senior or Junior assistants exists,Please check");

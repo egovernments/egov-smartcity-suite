@@ -229,14 +229,18 @@ public class VacancyRemissionService {
         final DateTime currentDate = new DateTime();
         Position pos = null;
         Assignment wfInitiator = null;
-        String currentState = "";
-        Assignment assignment = null;
+        String currentState;
+        Assignment assignment;
         String approverDesignation = "";
         String nextAction = "";
 
         if (!propertyByEmployee) {
             currentState = "Created";
-            assignment = propertyService.getUserPositionByZone(vacancyRemission.getBasicProperty(), false);
+            if (propertyService.isCscOperator(user)) {
+                assignment = propertyService.getMappedAssignmentForCscOperator(vacancyRemission.getBasicProperty());
+                wfInitiator = assignment;
+            } else
+                assignment = propertyService.getUserPositionByZone(vacancyRemission.getBasicProperty(), false);
             if (null != assignment)
                 approvalPosition = assignment.getPosition().getId();
         } else {
@@ -269,7 +273,7 @@ public class VacancyRemissionService {
         if (vacancyRemission.getId() != null && (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)
                 || workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)))
             wfInitiator = getWorkflowInitiator(vacancyRemission);
-        else
+        else if (wfInitiator == null)
             wfInitiator = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(user.getId());
 
         if (StringUtils.isBlank(vacancyRemission.getApplicationNumber()))
@@ -426,7 +430,7 @@ public class VacancyRemissionService {
     }
 
     public List<VacancyRemissionDetails> getMonthlyDetailsHistory(final VacancyRemission vacancyRemission) {
-        List<VacancyRemissionDetails> historyList = new ArrayList<VacancyRemissionDetails>();
+        List<VacancyRemissionDetails> historyList = new ArrayList<>();
         if (!vacancyRemission.getVacancyRemissionDetails().isEmpty()) {
             historyList = vacancyRemission.getVacancyRemissionDetails();
             Collections.reverse(historyList);
@@ -448,7 +452,7 @@ public class VacancyRemissionService {
         final DateTime currentDate = new DateTime();
         Position pos = null;
         Assignment wfInitiator = null;
-        Assignment assignment = null;
+        Assignment assignment;
         String approverDesignation = "";
         String nextAction = "";
 
@@ -470,7 +474,7 @@ public class VacancyRemissionService {
             approverDesignation = assignment.getDesignation().getName();
         }
 
-        List<Assignment> loggedInUserAssign = null;
+        List<Assignment> loggedInUserAssign;
         String loggedInUserDesignation = "";
         if (vacancyRemissionApproval.getState() != null) {
             loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(

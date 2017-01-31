@@ -42,6 +42,7 @@ package org.egov.works.autonumber.impl;
 import java.io.Serializable;
 
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.utils.StringUtils;
 import org.egov.works.autonumber.ContractorCodeGenerator;
 import org.egov.works.masters.entity.Contractor;
 import org.egov.works.masters.entity.ContractorDetail;
@@ -65,28 +66,29 @@ public class ContractorCodeGeneratorImpl implements ContractorCodeGenerator {
         final ContractorDetail contractorDetail = contractor.getContractorDetails().get(0);
         final Serializable sequenceNumber = applicationSequenceNumberGenerator
                 .getNextSequence(CONTRACTOR_CODE_SEQ_PREFIX);
-        if (validateGrade(contractorDetail) && !org.apache.commons.lang.StringUtils.isBlank(contractorDetail.getCategory())
-                && !org.apache.commons.lang.StringUtils.isBlank(contractor.getName()) && contractor.getName().length() >= 4)
-            return String.format("%s%s%s%04d",
-                    contractorService.getContractorClassShortName(contractorDetail.getGrade().getGrade()),
+
+        if (validateGrade(contractorDetail) && !StringUtils.isBlank(contractorDetail.getCategory())
+                && !StringUtils.isBlank(contractor.getName()) && contractor.getName().length() >= 4) {
+            final String contractorClass = contractorService
+                    .getContractorClassShortName(contractorDetail.getGrade().getGrade());
+
+            return String.format("%s%s%s%04d", !StringUtils.isBlank(contractorClass) ? contractorClass : "",
                     contractorDetail.getCategory().substring(0, 1), contractor.getName().substring(0, 4),
                     sequenceNumber);
-
-        if (!org.apache.commons.lang.StringUtils.isBlank(contractorDetail.getCategory())
-                && !org.apache.commons.lang.StringUtils.isBlank(contractor.getName())
+        } else if (!StringUtils.isBlank(contractorDetail.getCategory()) && !StringUtils.isBlank(contractor.getName())
                 && contractor.getName().length() >= 4)
             return String.format("%s%s%04d", contractorDetail.getCategory().substring(0, 1),
                     contractor.getName().substring(0, 4), sequenceNumber);
-
-        if (validateGrade(contractorDetail) && !org.apache.commons.lang.StringUtils.isBlank(contractor.getName())
-                && contractor.getName().length() >= 4)
-            return String.format("%s%s%04d",
-                    contractorService.getContractorClassShortName(contractorDetail.getGrade().getGrade()),
+        else if (validateGrade(contractorDetail) && !StringUtils.isBlank(contractor.getName())
+                && contractor.getName().length() >= 4) {
+            final String contractorClass = contractorService
+                    .getContractorClassShortName(contractorDetail.getGrade().getGrade());
+            return String.format("%s%s%04d", !StringUtils.isBlank(contractorClass) ? contractorClass : "",
                     contractor.getName().substring(0, 4), sequenceNumber);
-
-        if (!org.apache.commons.lang.StringUtils.isBlank(contractor.getName()) && contractor.getName().length() >= 4)
+        } else if (!StringUtils.isBlank(contractor.getName()) && contractor.getName().length() >= 4)
             return String.format("%s%04d", contractor.getName().substring(0, 4), sequenceNumber);
-        return null;
+        else
+            return null;
     }
 
     private boolean validateGrade(final ContractorDetail contractorDetail) {

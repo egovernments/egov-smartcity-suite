@@ -71,6 +71,7 @@ function callAjaxForDefaultersReport() {
 	var toAmount=jQuery('#toAmount').val();
 	var limit=jQuery('#limit').val();
 	var noofyr=jQuery('#noofyr').val();
+	var proptype=jQuery('#mode').val();
 	jQuery('.report-section').removeClass('display-hide');
 	
 	if(jQuery('#mode').val() == 'VLT'){
@@ -78,6 +79,7 @@ function callAjaxForDefaultersReport() {
 	} else {
 		categoryVal = jQuery('#ownershipCategory').val();
 	}
+	
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
@@ -88,7 +90,8 @@ function callAjaxForDefaultersReport() {
 						toAmount : toAmount,
 						limit : limit,
 						category : categoryVal,
-						noofyr : noofyr
+						noofyr : noofyr,
+						proptype : proptype
 					}
 				},
 				"bDestroy" : true,

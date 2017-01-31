@@ -545,7 +545,6 @@ CollectionIntegrationService {
     @Override
     public String cancelReceipt(final PaymentInfoSearchRequest cancelReq) {
         String statusMessage;
-        String instrumentType = "";
         boolean isInstrumentDeposited = false;
         final ReceiptHeader receiptHeaderToBeCancelled = (ReceiptHeader) persistenceService.findByNamedQuery(
                 CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM, cancelReq.getReceiptNo());
@@ -588,11 +587,10 @@ CollectionIntegrationService {
                 instrumentHeader.setStatusId(statusDAO.getStatusByModuleAndCode(
                         CollectionConstants.MODULE_NAME_INSTRUMENTHEADER,
                         CollectionConstants.INSTRUMENTHEADER_STATUS_CANCELLED));
-                instrumentType = instrumentHeader.getInstrumentType().getType();
 
             }
             for (final ReceiptVoucher receiptVoucher : receiptHeaderToBeCancelled.getReceiptVoucher())
-                receiptHeaderService.createReversalVoucher(receiptVoucher, instrumentType);
+                receiptHeaderService.createReversalVoucher(receiptVoucher);
 
             receiptHeaderService.persist(receiptHeaderToBeCancelled);
 

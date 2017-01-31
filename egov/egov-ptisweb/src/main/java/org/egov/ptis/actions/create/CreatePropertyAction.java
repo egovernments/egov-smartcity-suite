@@ -332,7 +332,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     @Action(value = "/createProperty-newForm")
     public String newForm() {
 
-        loggedUserIsMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
         if (loggedUserIsMeesevaUser) {
             final HttpServletRequest request = ServletActionContext.getRequest();
             if (request.getParameter("applicationNo") == null || request.getParameter(MEESEVA_SERVICE_CODE) == null) {
@@ -370,7 +369,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     + ", DateOfCompletion: " + dateOfCompletion + ", PropTypeId: " + propTypeId + ", PropUsageId: "
                     + propUsageId + ", PropOccId: " + propOccId);
         final long startTimeMillis = System.currentTimeMillis();
-        loggedUserIsMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
 
         if (loggedUserIsMeesevaUser && property.getMeesevaApplicationNumber() != null) {
             property.setApplicationNo(property.getMeesevaApplicationNumber());
@@ -778,6 +776,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         setUserInfo();
         setUserDesignations();
         propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser());
+        loggedUserIsMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
         if (isNotBlank(getModelId())) {
             property = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
                     Long.valueOf(getModelId()));
@@ -966,8 +965,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     }
 
     /**
-     * Changes the property details from {@link BuiltUpProperty} to
-     * {@link VacantProperty}
+     * Changes the property details from {@link BuiltUpProperty} to {@link VacantProperty}
      *
      * @return vacant property details
      * @see org.egov.ptis.domain.entity.property.VacantProperty
@@ -1224,9 +1222,15 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             final PropertyID propertyid = new PropertyID();
             propertyid.setElectionBoundary(boundaryService.getBoundaryById(getElectionWardId()));
             property.getBasicProperty().setPropertyID(propertyid);
-            if (null != getElectionWardId() && getElectionWardId() != -1 && null != property.getBasicProperty()
-                    && null == propService.getUserPositionByZone(property.getBasicProperty(), false))
-                addActionError(getText("notexists.position"));
+
+            if (null != getElectionWardId() && getElectionWardId() != -1 && null != property.getBasicProperty()) {
+                final Assignment assignment = propService.isCscOperator(securityUtils.getCurrentUser())
+                        ? propService.getAssignmentByDeptDesigElecWard(property.getBasicProperty())
+                        : null;
+                if (assignment == null && propService.getUserPositionByZone(property.getBasicProperty(), false) == null)
+                    addActionError(getText("notexists.position"));
+            }
+
         }
         validateApproverDetails();
         super.validate();
@@ -1235,9 +1239,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 || StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)))
             showTaxCalcBtn = Boolean.TRUE;
         if (propTypeMstr.getCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT)
-                && (propertyDepartmentId == null)) {
+                && propertyDepartmentId == null)
             addActionError(getText("mandatory.property.department"));
-        }
     }
 
     @SkipValidation
@@ -1538,8 +1541,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     }
 
     /**
-     * This implementation transitions the <code>PropertyImpl</code> to the next
-     * workflow state.
+     * This implementation transitions the <code>PropertyImpl</code> to the next workflow state.
      */
     /*
      * @Override protected PropertyImpl property() { return property; }
@@ -1977,7 +1979,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         return propertyDepartmentId;
     }
 
-    public void setPropertyDepartmentId(Long propertyDepartmentId) {
+    public void setPropertyDepartmentId(final Long propertyDepartmentId) {
         this.propertyDepartmentId = propertyDepartmentId;
     }
 
@@ -1985,7 +1987,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         return propertyDepartmentList;
     }
 
-    public void setPropertyDepartmentList(List<PropertyDepartment> propertyDepartmentList) {
+    public void setPropertyDepartmentList(final List<PropertyDepartment> propertyDepartmentList) {
         this.propertyDepartmentList = propertyDepartmentList;
     }
 
@@ -1993,7 +1995,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         return vacantLandPlotAreaList;
     }
 
-    public void setVacantLandPlotAreaList(List<VacantLandPlotArea> vacantLandPlotAreaList) {
+    public void setVacantLandPlotAreaList(final List<VacantLandPlotArea> vacantLandPlotAreaList) {
         this.vacantLandPlotAreaList = vacantLandPlotAreaList;
     }
 
@@ -2001,7 +2003,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         return layoutApprovalAuthorityList;
     }
 
-    public void setLayoutApprovalAuthorityList(List<LayoutApprovalAuthority> layoutApprovalAuthorityList) {
+    public void setLayoutApprovalAuthorityList(final List<LayoutApprovalAuthority> layoutApprovalAuthorityList) {
         this.layoutApprovalAuthorityList = layoutApprovalAuthorityList;
     }
 
@@ -2009,7 +2011,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         return vacantLandPlotAreaId;
     }
 
-    public void setVacantLandPlotAreaId(Long vacantLandPlotAreaId) {
+    public void setVacantLandPlotAreaId(final Long vacantLandPlotAreaId) {
         this.vacantLandPlotAreaId = vacantLandPlotAreaId;
     }
 
@@ -2017,15 +2019,15 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         return layoutApprovalAuthorityId;
     }
 
-    public void setLayoutApprovalAuthorityId(Long layoutApprovalAuthorityId) {
+    public void setLayoutApprovalAuthorityId(final Long layoutApprovalAuthorityId) {
         this.layoutApprovalAuthorityId = layoutApprovalAuthorityId;
     }
-    
+
     public boolean isAllowEditDocument() {
         return allowEditDocument;
     }
 
-    public void setAllowEditDocument(boolean allowEditDocument) {
+    public void setAllowEditDocument(final boolean allowEditDocument) {
         this.allowEditDocument = allowEditDocument;
     }
 }

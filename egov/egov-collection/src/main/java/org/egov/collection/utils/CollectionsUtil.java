@@ -248,8 +248,8 @@ public class CollectionsUtil {
         if (locationId != null && !locationId.isEmpty())
             location = getLocationById(Long.valueOf(locationId));
         if (location == null)
-            throw new ValidationException(Arrays.asList(
-                    new ValidationError("Location Not Found", "submitcollections.validation.error.location.notfound")));
+            throw new ValidationException(Arrays.asList(new ValidationError("Location Not Found",
+                    "submitcollections.validation.error.location.notfound")));
         return location;
     }
 
@@ -304,10 +304,10 @@ public class CollectionsUtil {
      *         the mode of payments supported.
      */
     public List<String> getCollectionModesNotAllowed(final User loggedInUser) {
-        final List<String> collectionsModeNotAllowed = new ArrayList<String>(0);
-        final List<AppConfigValues> deptCodesApp = appConfigValuesService.getConfigValuesByModuleAndKey(
-                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                CollectionConstants.COLLECTION_DEPARTMENT_COLLMODES);
+        final List<String> collectionsModeNotAllowed = new ArrayList<>(0);
+        final List<AppConfigValues> deptCodesApp = appConfigValuesService
+                .getConfigValuesByModuleAndKey(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                        CollectionConstants.COLLECTION_DEPARTMENT_COLLMODES);
         final List<String> deptCodes = new ArrayList<>();
         for (final AppConfigValues deptCode : deptCodesApp)
             deptCodes.add(deptCode.getValue());
@@ -322,8 +322,8 @@ public class CollectionsUtil {
         }
 
         if (isEmp && !isDeptAllowed)
-            throw new ValidationException(
-                    Arrays.asList(new ValidationError("Department", "billreceipt.counter.deptcode.null")));
+            throw new ValidationException(Arrays.asList(new ValidationError("Department",
+                    "billreceipt.counter.deptcode.null")));
         return collectionsModeNotAllowed;
     }
 
@@ -353,6 +353,7 @@ public class CollectionsUtil {
     }
 
     public Position getPositionByDeptDesgAndBoundary(final Boundary boundary) {
+        Position position = null;
         final String designationStr = getDesignationForThirdPartyUser();
         final String departmentStr = getDepartmentForWorkFlow();
         final String[] department = departmentStr.split(",");
@@ -360,16 +361,18 @@ public class CollectionsUtil {
         List<Assignment> assignment = new ArrayList<>();
         for (final String dept : department) {
             for (final String desg : designation) {
-                assignment = assignmentService.findByDepartmentDesignationAndBoundary(
-                        departmentService.getDepartmentByName(dept).getId(),
-                        designationService.getDesignationByName(desg).getId(), boundary.getId());
+                assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
+                        .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),
+                        boundary.getId());
                 if (!assignment.isEmpty())
                     break;
             }
             if (!assignment.isEmpty())
                 break;
         }
-        return !assignment.isEmpty() ? assignment.get(0).getPosition() : null;
+        if (!assignment.isEmpty())
+            position = assignment.get(0).getPosition();
+        return position;
     }
 
     public String getDesignationForThirdPartyUser() {
@@ -416,10 +419,12 @@ public class CollectionsUtil {
      *         the given date
      */
     public CFinancialYear getFinancialYearforDate(final Date date) {
-        return (CFinancialYear) persistenceService.getSession()
-                .createQuery("from CFinancialYear cfinancialyear where ? between "
-                        + "cfinancialyear.startingDate and cfinancialyear.endingDate")
-                .setDate(0, date).list().get(0);
+        return (CFinancialYear) persistenceService
+                .getSession()
+                .createQuery(
+                        "from CFinancialYear cfinancialyear where ? between "
+                                + "cfinancialyear.startingDate and cfinancialyear.endingDate").setDate(0, date).list()
+                                .get(0);
     }
 
     /**
@@ -548,8 +553,8 @@ public class CollectionsUtil {
      * @return Position object for Employee Id passed as parameter
      */
 
-    public Position getPositionforEmp(final Integer employeeId) {
-        return EisManagersUtill.getEmployeeService().getPositionforEmp(employeeId);
+    public Position getPositionforEmp(final Long employeeId) {
+        return posService.getPositionByUserId(employeeId);
     }
 
     /**
@@ -627,10 +632,9 @@ public class CollectionsUtil {
     }
 
     public List<Designation> getDesignationsAllowedForChallanApproval(final Integer departmentId) {
-        List<Designation> designations = new ArrayList<>(0);
-        designations = designationService.getAllDesignationByDepartment(Long.valueOf(departmentId), new Date());
+        final List<Designation> designations = designationService.getAllDesignationByDepartment(
+                Long.valueOf(departmentId), new Date());
         final List<Designation> designation = new ArrayList<>(0);
-
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.COLLECTION_DESIG_CHALLAN_WORKFLOW);
@@ -648,8 +652,8 @@ public class CollectionsUtil {
                 CollectionConstants.COLLECTION_DESIG_CHALLAN_WORKFLOW);
         if (null != appConfigValue && !appConfigValue.isEmpty())
             for (final AppConfigValues app : appConfigValue) {
-                final List<Assignment> assignments = assignmentService
-                        .findPrimaryAssignmentForDesignationName(app.getValue());
+                final List<Assignment> assignments = assignmentService.findPrimaryAssignmentForDesignationName(app
+                        .getValue());
                 for (final Assignment assign : assignments)
                     if (!departments.contains(assign.getDepartment()))
                         departments.add(assign.getDepartment());
@@ -670,11 +674,11 @@ public class CollectionsUtil {
      *          account head
      */
     public boolean isPropertyTaxArrearAccountHead(final String glcode, final String description) {
-        final List<AppConfigValues> list = appConfigValuesService
-                .getConfigValuesByModuleAndKey(CollectionConstants.MODULE_NAME_PROPERTYTAX, "ISARREARACCOUNT");
-        final AppConfigValues penaltyGlCode = appConfigValuesService
-                .getAppConfigValueByDate(CollectionConstants.MODULE_NAME_PROPERTYTAX, "PTPENALTYGLCODE", new Date());
-        boolean retValue = false;
+        final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(
+                CollectionConstants.MODULE_NAME_PROPERTYTAX, "ISARREARACCOUNT");
+        final AppConfigValues penaltyGlCode = appConfigValuesService.getAppConfigValueByDate(
+                CollectionConstants.MODULE_NAME_PROPERTYTAX, "PTPENALTYGLCODE", new Date());
+        boolean retValue;
         LOGGER.debug("isPropertyTaxArrearAccountHead glcode " + glcode + " description " + description);
         if (penaltyGlCode != null && penaltyGlCode.getValue().equals(glcode)) {
             final Module module = moduleService.getModuleByName(CollectionConstants.MODULE_NAME_PROPERTYTAX);
@@ -685,7 +689,7 @@ public class CollectionsUtil {
             else
                 retValue = true;
         } else {
-            final ArrayList<String> accValues = new ArrayList<String>(0);
+            final ArrayList<String> accValues = new ArrayList<>(0);
             for (final AppConfigValues value : list)
                 accValues.add(value.getValue());
             if (accValues.contains(glcode))
@@ -736,18 +740,6 @@ public class CollectionsUtil {
         return userService.getUserById(userId);
     }
 
-    public void setUserService(final UserService userService) {
-        this.userService = userService;
-    }
-
-    public void setPersistenceService(final PersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
-    }
-
-    public void setReportService(final ReportService reportService) {
-        this.reportService = reportService;
-    }
-
     public boolean isValidTemplate(final String templateName) {
         return reportService.isValidTemplate(templateName);
     }
@@ -765,11 +757,11 @@ public class CollectionsUtil {
             instrumentType = receiptHeader.getReceiptInstrument().iterator().next().getInstrumentType().getType();
 
         if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL) {
-            final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(
-                    billingService.getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
+            final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService
+                    .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
             try {
-                receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(
-                        new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService, null));
+                receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(new BillReceiptInfoImpl(receiptHeader,
+                        chartOfAccountsHibernateDAO, persistenceService, null));
             } catch (final Exception e) {
                 final String errMsg = "Exception while constructing collection index for receipt number ["
                         + receiptHeader.getReceiptnumber() + "]!";
@@ -777,27 +769,32 @@ public class CollectionsUtil {
                 throw new ApplicationRuntimeException(errMsg, e);
             }
         }
-        final CollectionIndex collectionIndex = CollectionIndex.builder()
-                .withReceiptDate(receiptHeader.getReceiptdate()).withReceiptnumber(receiptHeader.getReceiptnumber())
-                .withBillingservice(billingService.getName()).withPaymentMode(instrumentType)
-                .withTotalamount(receiptHeader.getTotalAmount()).withChannel(receiptHeader.getSource())
+        final CollectionIndex collectionIndex = CollectionIndex
+                .builder()
+                .withReceiptDate(receiptHeader.getReceiptdate())
+                .withReceiptnumber(receiptHeader.getReceiptnumber())
+                .withBillingservice(billingService.getName())
+                .withPaymentMode(instrumentType)
+                .withTotalamount(receiptHeader.getTotalAmount())
+                .withChannel(receiptHeader.getSource())
                 .withStatus(receiptHeader.getStatus().getDescription())
                 .withConsumerCode(receiptHeader.getConsumerCode() != null ? receiptHeader.getConsumerCode() : "")
                 .withBillNumber(receiptHeader.getReferencenumber() != null ? receiptHeader.getReferencenumber() : null)
-                .withPaymentGateway(receiptHeader.getOnlinePayment() != null
-                        ? receiptHeader.getOnlinePayment().getService().getName() : "")
-                .withConsumerName(receiptHeader.getPayeeName() != null ? receiptHeader.getPayeeName() : "")
-                .withReceiptCreator(receiptHeader.getCreatedBy() != null ? receiptHeader.getCreatedBy().getName() : "")
-                .withArrearAmount(receiptAmountInfo.getArrearsAmount())
-                .withAdvanceAmount(receiptAmountInfo.getAdvanceAmount())
-                .withCurrentAmount(receiptAmountInfo.getCurrentInstallmentAmount())
-                .withPenaltyAmount(receiptAmountInfo.getPenaltyAmount())
-                .withArrearCess(receiptAmountInfo.getArrearCess())
-                .withLatePaymentChargesAmount(receiptAmountInfo.getLatePaymentCharges())
-                .withCurrentCess(receiptAmountInfo.getCurrentCess())
-                .withReductionAmount(receiptAmountInfo.getReductionAmount())
-                .withInstallmentFrom(
-                        receiptAmountInfo.getInstallmentFrom() != null ? receiptAmountInfo.getInstallmentFrom() : "")
+                .withPaymentGateway(
+                        receiptHeader.getOnlinePayment() != null ? receiptHeader.getOnlinePayment().getService()
+                                .getName() : "")
+                                .withConsumerName(receiptHeader.getPayeeName() != null ? receiptHeader.getPayeeName() : "")
+                                .withReceiptCreator(receiptHeader.getCreatedBy() != null ? receiptHeader.getCreatedBy().getName() : "")
+                                .withArrearAmount(receiptAmountInfo.getArrearsAmount())
+                                .withAdvanceAmount(receiptAmountInfo.getAdvanceAmount())
+                                .withCurrentAmount(receiptAmountInfo.getCurrentInstallmentAmount())
+                                .withPenaltyAmount(receiptAmountInfo.getPenaltyAmount())
+                                .withArrearCess(receiptAmountInfo.getArrearCess())
+                                .withLatePaymentChargesAmount(receiptAmountInfo.getLatePaymentCharges())
+                                .withCurrentCess(receiptAmountInfo.getCurrentCess())
+                                .withReductionAmount(receiptAmountInfo.getReductionAmount())
+                                .withInstallmentFrom(
+                                        receiptAmountInfo.getInstallmentFrom() != null ? receiptAmountInfo.getInstallmentFrom() : "")
                 .withInstallmentTo(
                         receiptAmountInfo.getInstallmentTo() != null ? receiptAmountInfo.getInstallmentTo() : "")
                 .withRevenueWard(receiptAmountInfo.getRevenueWard())
@@ -812,16 +809,16 @@ public class CollectionsUtil {
                 && receiptHeader.getReceiptDate().compareTo(receiptHeader.getService().getVoucherCutOffDate()) > 0) {
             if (receiptHeader.getService().getVoucherCreation() != null)
                 createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
-        } else if (receiptHeader.getService().getVoucherCutOffDate() == null)
-            if (receiptHeader.getService().getVoucherCreation() != null)
-                createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
+        } else if (receiptHeader.getService().getVoucherCutOffDate() == null
+                && receiptHeader.getService().getVoucherCreation() != null)
+            createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
         return createVoucherForBillingService;
     }
 
     public Designation getDesignationForApprover() {
-        return designationService
-                .getDesignationByName(getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                        CollectionConstants.COLLECTION_DESIGNATIONFORAPPROVER));
+        return designationService.getDesignationByName(getAppConfigValue(
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.COLLECTION_DESIGNATIONFORAPPROVER));
     }
 
     public String getApproverName(final Position position) {
@@ -836,8 +833,8 @@ public class CollectionsUtil {
 
     public List<ReceiptDetail> reconstructReceiptDetail(final ReceiptHeader receiptHeader,
             final List<ReceiptDetail> receiptDetailList) {
-        final BillingIntegrationService billingService = (BillingIntegrationService) getBean(
-                receiptHeader.getService().getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
+        final BillingIntegrationService billingService = (BillingIntegrationService) getBean(receiptHeader.getService()
+                .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
         return billingService.reconstructReceiptDetail(receiptHeader.getReferencenumber(),
                 receiptHeader.getTotalAmount(), receiptDetailList);
     }
@@ -875,8 +872,8 @@ public class CollectionsUtil {
     public Boolean getVoucherType() {
         Boolean voucherTypeForChequeDDCard = false;
         if (getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD)
-                        .equals(CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
+                CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD).equals(
+                        CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
             voucherTypeForChequeDDCard = true;
         return voucherTypeForChequeDDCard;
     }
@@ -923,13 +920,25 @@ public class CollectionsUtil {
 
     public void emailReceiptAsAttachment(final ReceiptHeader receiptHeader, final byte[] attachment) {
         String emailBody = collectionApplicationProperties.getEmailBody();
-        emailBody = String.format(emailBody, ApplicationThreadLocals.getCityName(),
-                receiptHeader.getTotalAmount().toString(), receiptHeader.getService().getName(),
-                receiptHeader.getConsumerCode(), receiptHeader.getReceiptdate().toString(),
-                ApplicationThreadLocals.getCityName());
+        emailBody = String.format(emailBody, ApplicationThreadLocals.getCityName(), receiptHeader.getTotalAmount()
+                .toString(), receiptHeader.getService().getName(), receiptHeader.getConsumerCode(), receiptHeader
+                .getReceiptdate().toString(), ApplicationThreadLocals.getCityName());
         String emailSubject = collectionApplicationProperties.getEmailSubject();
         emailSubject = String.format(emailSubject, receiptHeader.getService().getName());
         messagingService.sendEmailWithAttachment(receiptHeader.getPayeeEmail(), emailSubject, emailBody,
                 "application/pdf", "Receipt" + receiptHeader.getReceiptdate().toString(), attachment);
     }
+
+    public void setUserService(final UserService userService) {
+        this.userService = userService;
+    }
+
+    public void setPersistenceService(final PersistenceService persistenceService) {
+        this.persistenceService = persistenceService;
+    }
+
+    public void setReportService(final ReportService reportService) {
+        this.reportService = reportService;
+    }
+
 }

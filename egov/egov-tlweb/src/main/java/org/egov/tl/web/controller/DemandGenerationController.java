@@ -54,7 +54,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 
 @Controller
-@RequestMapping("/demand-generation")
+@RequestMapping("/demand")
 public class DemandGenerationController {
 
     @Autowired
@@ -68,26 +68,26 @@ public class DemandGenerationController {
         return financialYearService.getAllFinancialYears();
     }
 
-    @RequestMapping(value = "create", method = RequestMethod.GET)
+    @RequestMapping(value = "generate", method = RequestMethod.GET)
     public String newForm() {
         return "demand-generate";
     }
 
-    @RequestMapping(value = "create", method = RequestMethod.POST)
+    @RequestMapping(value = "generate", method = RequestMethod.POST)
     public String generateDemand(@RequestParam String installmentYear, RedirectAttributes responseAttribs) {
         DemandGenerationLog bulkDemandGenerationLog = demandGenerationService.generateDemand(installmentYear);
         responseAttribs.addFlashAttribute("demandGenerationLog", bulkDemandGenerationLog);
         responseAttribs.addFlashAttribute("message",
                 "msg.demand.generation." + bulkDemandGenerationLog.getDemandGenerationStatus());
-        return "redirect:/demand-generation/create";
+        return "redirect:/demand/generate";
     }
 
     @RequestMapping(value = "regenerate", method = RequestMethod.POST)
     public String regenerateDemand(@RequestParam String installmentYear, RedirectAttributes responseAttribs) {
-        DemandGenerationLog bulkDemandGenerationLog = demandGenerationService.regenerateDemand(installmentYear);
+        DemandGenerationLog bulkDemandGenerationLog = demandGenerationService.retryFailedDemandGeneration(installmentYear);
         responseAttribs.addFlashAttribute("demandGenerationLog", bulkDemandGenerationLog);
         responseAttribs.addFlashAttribute("message",
                 "msg.demand.generation." + bulkDemandGenerationLog.getDemandGenerationStatus());
-        return "redirect:/demand-generation/create";
+        return "redirect:/demand/generate";
     }
 }
