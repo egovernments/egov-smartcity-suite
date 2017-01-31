@@ -143,19 +143,31 @@ $('#ContractorMeasurements').click(function(event) {
 		async : true
 	}).done(
 			function(response) {
-				$('#contractorMbs tbody').empty();
-				var output = '';
-				$.each(response, function(index, value) {
-					var mbDate = new Date(value.mbDate);
-					var date = (mbDate.getDate() > 9) ? mbDate.getDate() : 0 + "" + mbDate.getDate();
-					var month = (mbDate.getMonth() > 8) ? mbDate.getMonth() + 1 : 0 + "" + mbDate.getMonth();
+				if(response.length > 0){
+					$('#contractorMbs tbody').empty();
+					var output = '';
+					$.each(response, function(index, value) {
+						var mbDate = new Date(value.mbDate);
+						var monthVal = mbDate.getMonth() + 1;
+						var date = (mbDate.getDate() > 9) ? mbDate.getDate() : 0 + "" + mbDate.getDate();
+						var month = (monthVal > 9) ? monthVal : 0 + "" + monthVal;
+						output = '<tr>';
+						output = output + '<td class="text-left"> <a href="javascript:void(0);" onclick="viewContractorMB('+value.id+')">' + value.mbRefNo + '</a></td>'
+						output = output + '<td class="text-left">' + date + "/" + month + "/" + mbDate.getFullYear() + '</td>'
+						output = output + '<td class="text-right">' + parseFloat(Math.round(value.mbAmount * 100) / 100).toFixed(2) + '</td>'
+						output = output + '</tr>';
+						$('#contractorMbs tbody').append(output);
+					});
+				}else{
+					$('#contractorMbs tbody').empty();
+					var output = '';
 					output = '<tr>';
-					output = output + '<td class="text-left"> <a href="javascript:void(0);" onclick="viewContractorMB('+value.id+')">' + value.mbRefNo + '</a></td>'
-					output = output + '<td class="text-left">' + date + "/" + month + "/" + mbDate.getFullYear() + '</td>'
-					output = output + '<td class="text-right">' + parseFloat(Math.round(value.mbAmount * 100) / 100).toFixed(2) + '</td>'
+					output = output + '<td class="text-center">NA</td>'
+					output = output + '<td class="text-center">NA</td>'
+					output = output + '<td class="text-right">NA</td>'
 					output = output + '</tr>';
 					$('#contractorMbs tbody').append(output);
-				});
+				}
 		});
 });
 
