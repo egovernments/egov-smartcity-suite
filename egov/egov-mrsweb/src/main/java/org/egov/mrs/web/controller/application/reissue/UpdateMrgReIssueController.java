@@ -241,7 +241,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
         return "reissue-ack";
     }
     
-    @RequestMapping(value = "/digiSignWorkflow", method = RequestMethod.POST)
+    @RequestMapping(value = "/digiSignWorkflow")
     public String digiSignTransitionWorkflow(final HttpServletRequest request, final Model model) throws IOException {
         LOGGER.debug("..........Inside Digital Signature Transition : ReIssue........");
         final String fileStoreIds = request.getParameter("fileStoreId");

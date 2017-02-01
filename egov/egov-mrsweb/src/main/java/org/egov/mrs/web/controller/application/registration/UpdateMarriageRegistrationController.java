@@ -267,8 +267,8 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
      * @param model
      * @return
      * @throws IOException
-     */
-    @RequestMapping(value = "/digiSignWorkflow", method = RequestMethod.POST)
+     */ 
+    @RequestMapping(value = "/digiSignWorkflow")
     public String digiSignTransitionWorkflow(final HttpServletRequest request, final Model model) throws IOException {
         LOGGER.debug("..........Inside Digital Signature Transition : Registration........");
         final String fileStoreIds = request.getParameter("fileStoreId");
