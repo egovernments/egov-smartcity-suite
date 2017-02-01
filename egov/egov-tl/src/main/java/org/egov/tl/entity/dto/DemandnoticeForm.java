@@ -249,10 +249,14 @@ public class DemandnoticeForm {
 		setCategoryName(license.getCategory().getName());
 		setSubCategoryName(license.getTradeName().getName());
 		setTradeTitle(license.getNameOfEstablishment());
-		setTradeOwnerName(license.getLicensee().getApplicantName());
+		if (null != license.getLicensee()) {
+			setTradeOwnerName(license.getLicensee().getApplicantName());
+		}
 		setStatus(license.getStatus().getName());
 		setOwnerName(ownerName);
-		setWarName(license.getParentBoundary().getName());
+		if (null != license.getParentBoundary()) {
+			setWarName(license.getParentBoundary().getName());
+		}
 		setApplicationNumber(license.getApplicationNumber());
 		if (licenseFees != null) {
 			setTlCurrentFee(licenseFees.get("current") == null ? balance
