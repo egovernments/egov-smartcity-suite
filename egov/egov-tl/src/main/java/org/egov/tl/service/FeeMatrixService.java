@@ -121,8 +121,8 @@ public class FeeMatrixService<T extends License> {
         return feeMatrixRepository.findByUniqueNo(feeMatrix.getUniqueNo());
     }
 
-    public List<FeeMatrixDetail> findFeeMatrixByLicense(T license) {
-        return findFeeMatrixByGivenDate(license, license.getApplicationDate());
+    public List<FeeMatrixDetail> findFeeMatrixByLicense(T license, Date date) {
+        return findFeeMatrixByGivenDate(license, date);
     }
 
     /**
