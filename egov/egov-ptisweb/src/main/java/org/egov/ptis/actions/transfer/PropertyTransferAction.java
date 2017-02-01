@@ -478,7 +478,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 setAckMessage("Transfer of ownership data rejected successfuly and forwarded to : ");
             setAssessmentNoMessage(" with assessment number : ");
         } else if (wfInitiatorUser != null)
-            setAckMessage("Can not reject the application as ".concat(wfInitiatorUser.getUsername()).concat(" is not active"));
+            mutationInitiatedBy = wfInitiator.getDesignation().getName().concat("~")
+            .concat(wfInitiatorUser.getName());
         return ACK;
     }
 
