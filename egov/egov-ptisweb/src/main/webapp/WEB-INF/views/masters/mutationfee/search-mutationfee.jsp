@@ -50,7 +50,11 @@
 				<spring:message code="${message}" />
 			</div>
 		</c:if>
-
+		<c:if test="${not empty error}">
+			<div class="alert alert-danger" role="alert">
+				<spring:message code="${error}" />
+			</div>
+		</c:if>
 		<form:form id="mutationFeeForm" modelAttribute="mutationFeeDetails"
 			class="form-horizontal form-groups-bordered">
 			<div class="panel panel-primary" data-collapsed="0">
@@ -82,7 +86,7 @@
 			<div class="form-group">
 				<div class="text-center">
 					<button type="submit" id="view" class="btn btn-primary">
-						<spring:message code="lbl.button.view" />
+						<spring:message code="lbl.button.search" />
 					</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal"
 						onclick="self.close()">

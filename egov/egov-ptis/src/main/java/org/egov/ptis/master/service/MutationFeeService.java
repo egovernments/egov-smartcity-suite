@@ -85,6 +85,10 @@ public class MutationFeeService {
         return !mutationFeeRepository.findIfSlabNameExists(slabName).isEmpty() ? true : false;
     }
 
+    public Date getLatestToDateForSlabName(final String slabName) {
+        return mutationFeeRepository.findLatestToDateForSlabName(slabName);
+    }
+
     public List<MutationFeeDetails> findSlabName() {
         return mutationFeeRepository.getDistinctSlabNamesList();
     }

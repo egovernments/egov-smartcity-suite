@@ -157,7 +157,7 @@
 														pattern="dd/MM/yyyy" var="todate" />
 
 													<td><input type="text" name="toDate" id="toDt"
-														class="form-control effToDate" value="${todate}" disabled /></td>
+														class="form-control effToDate" value="${todate}"  disabled /></td>
 
 													<td><Button class="btn btn-primary btnedit"
 															data-idx='${loop.index}'>
@@ -177,6 +177,9 @@
 				<div class="text-center">
 					<Button class="btn btn-primary btnsave" id="save" disabled>
 						<spring:message code="lbl.button.save" />
+					</Button>
+					<Button class="btn btn-primary btnaddnewslab" id="addnewslab" >
+						<spring:message code="lbl.button.add" />
 					</Button>
 					<a href="javascript:void(0)" class="btn btn-default"
 						onclick="self.close()"><spring:message code="lbl.close" /></a>

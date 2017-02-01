@@ -40,8 +40,7 @@
 
 jQuery(document).ready(
 		function() {
-
-			var todt;
+			var todtid;
 			jQuery('#flatAmount').blur(function() {
 				if (jQuery(this).val() != "" || jQuery(this).val().length > 0)
 					jQuery('#percentage').attr('disabled', 'disabled');
@@ -101,19 +100,20 @@ jQuery(document).ready(
 
 				}
 			});
-			jQuery('.effToDate').blur(function() {
-				if (this.value != "" || this.value.length > 0) {
+			jQuery('.effToDate').change(function() {
+				var toDt = jQuery('.effToDate').val();
+				if (toDt != "" || toDt.length > 0)
 					jQuery('.btnsave').removeAttr('disabled');
-
-				}
 			});
 
 			jQuery('.btnedit').click(
 					function(e) {
+						todtid = $(this).closest('tr').find('#key').val();
 						var effToDateTextBox = $(
 								'#tblViewMutation tbody tr:eq('
 										+ jQuery(this).attr('data-idx') + ')')
 								.find('.effToDate');
+
 						var effToDateValue = effToDateTextBox.val();
 						var todaysDate = new Date();
 						var currentDate = todaysDate.getDate() + "/"
@@ -150,7 +150,14 @@ jQuery(document).ready(
 					function() {
 						$('#mutationFeeForm').attr('method', 'post');
 						$('#mutationFeeForm').attr('action',
-								'/ptis/mutationfee/modify/' + todt);
+								'/ptis/mutationfee/modify/' + todtid);
+					});
+
+			$('#addnewslab').click(
+					function() {
+						$('#mutationFeeForm').attr('method', 'get');
+						$('#mutationFeeForm').attr('action',
+								'/ptis/mutationfee/create');
 					});
 
 			function changeDatePicker() {
@@ -158,7 +165,7 @@ jQuery(document).ready(
 					format : "dd/mm/yyyy",
 					autoclose : true
 				}).on('changeDate', function(ev) {
-					todt = $(this).closest('tr').find('#key').val();
+					todtid = $(this).closest('tr').find('#key').val();
 				});
 			}
 		});
