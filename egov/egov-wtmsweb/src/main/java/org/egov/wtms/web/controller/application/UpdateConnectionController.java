@@ -258,7 +258,16 @@ public class UpdateConnectionController extends GenericConnectionController {
 
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
-        model.addAttribute("currentDesignation", loggedInUserDesignation);
+        if(loggedInUserDesignation!=null && ((loggedInUserDesignation.equals(WaterTaxConstants.SENIOR_ASSISTANT_DESIGN)||
+        		loggedInUserDesignation.equals(WaterTaxConstants.JUNIOR_ASSISTANT_DESIGN)) && waterConnectionDetails.getStatus()!=null && 
+        		waterConnectionDetails.getStatus().getCode().
+        		equals(WaterTaxConstants.APPLICATION_STATUS_CREATED))){
+        model.addAttribute("currentDesignation", "");
+        }
+        else
+        {
+        	model.addAttribute("currentDesignation", loggedInUserDesignation);
+        }
         model.addAttribute("isCommissionerLoggedIn", isCommissionerLoggedIn);
         model.addAttribute("isSanctionedDetailEnable", isSanctionedDetailEnable);
         model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
