@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -37,33 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.adtax.entity.enums;
 
-package org.egov.adtax.service.scheduler.jobs;
-
-import org.apache.log4j.Logger;
-import org.egov.adtax.service.AdvertisementBatchDemandGenService;
-import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
-import org.springframework.beans.factory.annotation.Autowired;
-
-public class GenerateDemandForAdvertisementTaxJob extends AbstractQuartzJob {
-
-    private static final long serialVersionUID = 603128245038844916L;
-
-    private static final Logger LOGGER = Logger.getLogger(GenerateDemandForAdvertisementTaxJob.class);
-
-    @Autowired
-    private transient AdvertisementBatchDemandGenService advertisementBatchDemandGenService;
+public enum ProcessStatus {
+    INPROGRESS, COMPLETED, INCOMPLETE;
 
     @Override
-    public void executeJob() {
-
-        LOGGER.info("*************************************** GenerateDemandForAdvertisementTaxJob started ");
-
-        final int totalRecordsProcessed = advertisementBatchDemandGenService.generateDemandForNextFinYear();
-
-        LOGGER.info("*************************************** End GenerateDemandForAdvertisementTaxJob. Total records "
-                + totalRecordsProcessed);
-
+    public String toString() {
+        return name().toLowerCase();
     }
-
 }

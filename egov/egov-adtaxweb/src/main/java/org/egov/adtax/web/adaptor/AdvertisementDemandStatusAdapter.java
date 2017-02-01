@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -38,32 +38,36 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.adtax.service.scheduler.jobs;
+package org.egov.adtax.web.adaptor;
 
-import org.apache.log4j.Logger;
-import org.egov.adtax.service.AdvertisementBatchDemandGenService;
-import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.lang.reflect.Type;
 
-public class GenerateDemandForAdvertisementTaxJob extends AbstractQuartzJob {
+import org.egov.adtax.search.contract.AdvertisementDemandStatus;
 
-    private static final long serialVersionUID = 603128245038844916L;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-    private static final Logger LOGGER = Logger.getLogger(GenerateDemandForAdvertisementTaxJob.class);
-
-    @Autowired
-    private transient AdvertisementBatchDemandGenService advertisementBatchDemandGenService;
+public class AdvertisementDemandStatusAdapter implements JsonSerializer<AdvertisementDemandStatus> {
 
     @Override
-    public void executeJob() {
-
-        LOGGER.info("*************************************** GenerateDemandForAdvertisementTaxJob started ");
-
-        final int totalRecordsProcessed = advertisementBatchDemandGenService.generateDemandForNextFinYear();
-
-        LOGGER.info("*************************************** End GenerateDemandForAdvertisementTaxJob. Total records "
-                + totalRecordsProcessed);
-
+    public JsonElement serialize(final AdvertisementDemandStatus advertisementDemandStatus, final Type type,
+            final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (advertisementDemandStatus.getFinancialYear() != null)
+            jsonObject.addProperty("financialyear", advertisementDemandStatus.getFinancialYear());
+        if (advertisementDemandStatus.getNoOfSuccess() != null)
+            jsonObject.addProperty("noOfSuccess", advertisementDemandStatus.getNoOfSuccess().toString());
+        if (advertisementDemandStatus.getNoOfFailure() != null)
+            jsonObject.addProperty("noOfFailure", advertisementDemandStatus.getNoOfFailure().toString());
+        if (advertisementDemandStatus.getDetails() != null)
+            jsonObject.addProperty("details", advertisementDemandStatus.getDetails());
+        if (advertisementDemandStatus.getAdvertisementNumber() != null)
+            jsonObject.addProperty("advertisementnumber", advertisementDemandStatus.getAdvertisementNumber());
+        if (advertisementDemandStatus.getStatus() != null)
+            jsonObject.addProperty("status", advertisementDemandStatus.getStatus());
+        return jsonObject;
     }
 
 }

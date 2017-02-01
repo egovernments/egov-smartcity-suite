@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -38,32 +38,65 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.adtax.service.scheduler.jobs;
+jQuery(document).ready(function($) {
 
-import org.apache.log4j.Logger;
-import org.egov.adtax.service.AdvertisementBatchDemandGenService;
-import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
-import org.springframework.beans.factory.annotation.Autowired;
+	$('#submit').click(function(e){
+		if($("#adtaxdemandstatussearchform").valid()){
+		jQuery('.report-section').removeClass('display-hide');
+			$("#resultTable").dataTable({
+				ajax : {
+					url : "/adtax/advertisement/demand-status",      
+					type: "POST",
+					beforeSend : function() {
+						$('.loader-class').modal('show', {
+							backdrop : 'static'
+						});
+					},
+					"data" : getFormData(jQuery('form')),
+					complete : function() {
+						$('.loader-class').modal('hide');
+					}
+				},
+				
+				"bDestroy" : true,
+				"autoWidth": false,
+				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",				"columns" : [{  "data" : "financialyear"} ,
+							{  "data" : "noOfSuccess",
+								"render" : function(data, type, row){
+									return '<a onclick="openPopup(\'/adtax/advertisement/demand-status-records-view/'
+									+"0"+"~"+row.financialyear+'\')" href = javascript:void(0);">'
+									+row.noOfSuccess
+									+'</a>';
+								}
+							
+							} ,
+							{  "data" : "noOfFailure",
+								"render" : function(data, type, row){
+									return '<a onclick="openPopup(\'/adtax/advertisement/demand-status-records-view/'
+									+"1"+"~"+row.financialyear+'\')" href = javascript:void(0);">'
+									+row.noOfFailure
+									+'</a>';
+								}
+							},
+							
+								]		
+					});
+	}
+			
+	});
+});
 
-public class GenerateDemandForAdvertisementTaxJob extends AbstractQuartzJob {
+function openPopup(url){
+	window.open(url,'window',"scrollbars=1, resizable=yes, height=600, width=800, status=yes");
+}
 
-    private static final long serialVersionUID = 603128245038844916L;
+function getFormData($form){
+    var unindexed_array = $form.serializeArray();
+    var indexed_array = {};
 
-    private static final Logger LOGGER = Logger.getLogger(GenerateDemandForAdvertisementTaxJob.class);
+    $.map(unindexed_array, function(n, i){
+        indexed_array[n['name']] = n['value'];
+    });
 
-    @Autowired
-    private transient AdvertisementBatchDemandGenService advertisementBatchDemandGenService;
-
-    @Override
-    public void executeJob() {
-
-        LOGGER.info("*************************************** GenerateDemandForAdvertisementTaxJob started ");
-
-        final int totalRecordsProcessed = advertisementBatchDemandGenService.generateDemandForNextFinYear();
-
-        LOGGER.info("*************************************** End GenerateDemandForAdvertisementTaxJob. Total records "
-                + totalRecordsProcessed);
-
-    }
-
+    return indexed_array;
 }

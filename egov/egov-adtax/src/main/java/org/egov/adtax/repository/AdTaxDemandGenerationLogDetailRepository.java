@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -38,32 +38,20 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.adtax.service.scheduler.jobs;
+package org.egov.adtax.repository;
 
-import org.apache.log4j.Logger;
-import org.egov.adtax.service.AdvertisementBatchDemandGenService;
-import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
 
-public class GenerateDemandForAdvertisementTaxJob extends AbstractQuartzJob {
+import org.egov.adtax.entity.AdvertisementDemandGenerationLogDetail;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-    private static final long serialVersionUID = 603128245038844916L;
+@Repository
+public interface AdTaxDemandGenerationLogDetailRepository extends JpaRepository<AdvertisementDemandGenerationLogDetail, Long> {
 
-    private static final Logger LOGGER = Logger.getLogger(GenerateDemandForAdvertisementTaxJob.class);
+    public AdvertisementDemandGenerationLogDetail findByDemandGenerationLogIdAndAdvertisementId(Long logId, Long advertisementId);
 
-    @Autowired
-    private transient AdvertisementBatchDemandGenService advertisementBatchDemandGenService;
+    public List<AdvertisementDemandGenerationLogDetail> findByDemandGenerationLogIdOrderByIdDesc(Long demandGenerationLogId);
 
-    @Override
-    public void executeJob() {
-
-        LOGGER.info("*************************************** GenerateDemandForAdvertisementTaxJob started ");
-
-        final int totalRecordsProcessed = advertisementBatchDemandGenService.generateDemandForNextFinYear();
-
-        LOGGER.info("*************************************** End GenerateDemandForAdvertisementTaxJob. Total records "
-                + totalRecordsProcessed);
-
-    }
-
+    public List<AdvertisementDemandGenerationLogDetail> findByAdvertisementIdOrderByIdDesc(Long advertisementId);
 }

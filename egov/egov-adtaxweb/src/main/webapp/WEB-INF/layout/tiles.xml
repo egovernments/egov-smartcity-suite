@@ -320,4 +320,13 @@
         <put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRate-success.jsp"/>
     </definition>
     
+    <definition name="demand-status-form" extends="base_layout">
+    	<put-attribute name="page-title" value="title.adtax.viewdemandstatus" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/demand/adtax-demand-status.jsp"/>
+    </definition>
+    
+    <definition name="adtax-demand-status-view" extends="base_layout">
+    	<put-attribute name="page-title" value="title.adtax.viewdemandstatus" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/demand/adtax-demand-status-view.jsp"/>
+    </definition>
 </tiles-definitions>

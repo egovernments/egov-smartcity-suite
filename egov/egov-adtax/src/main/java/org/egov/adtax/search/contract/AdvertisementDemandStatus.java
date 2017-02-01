@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -38,32 +38,62 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.adtax.service.scheduler.jobs;
+package org.egov.adtax.search.contract;
 
-import org.apache.log4j.Logger;
-import org.egov.adtax.service.AdvertisementBatchDemandGenService;
-import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
-import org.springframework.beans.factory.annotation.Autowired;
+public class AdvertisementDemandStatus {
+    private String financialYear;
+    private String advertisementNumber;
+    private String status;
+    private String details;
+    private Long noOfSuccess;
+    private Long noOfFailure;
 
-public class GenerateDemandForAdvertisementTaxJob extends AbstractQuartzJob {
+    public Long getNoOfSuccess() {
+        return noOfSuccess;
+    }
 
-    private static final long serialVersionUID = 603128245038844916L;
+    public void setNoOfSuccess(final Long noOfSuccess) {
+        this.noOfSuccess = noOfSuccess;
+    }
 
-    private static final Logger LOGGER = Logger.getLogger(GenerateDemandForAdvertisementTaxJob.class);
+    public Long getNoOfFailure() {
+        return noOfFailure;
+    }
 
-    @Autowired
-    private transient AdvertisementBatchDemandGenService advertisementBatchDemandGenService;
+    public void setNoOfFailure(final Long noOfFailure) {
+        this.noOfFailure = noOfFailure;
+    }
 
-    @Override
-    public void executeJob() {
+    public String getDetails() {
+        return details;
+    }
 
-        LOGGER.info("*************************************** GenerateDemandForAdvertisementTaxJob started ");
+    public void setDetails(final String details) {
+        this.details = details;
+    }
 
-        final int totalRecordsProcessed = advertisementBatchDemandGenService.generateDemandForNextFinYear();
+    public String getStatus() {
+        return status;
+    }
 
-        LOGGER.info("*************************************** End GenerateDemandForAdvertisementTaxJob. Total records "
-                + totalRecordsProcessed);
+    public void setStatus(final String status) {
+        this.status = status;
+    }
 
+    public String getAdvertisementNumber() {
+        return advertisementNumber;
+    }
+
+    public void setAdvertisementNumber(final String advertisementNumber) {
+        this.advertisementNumber = advertisementNumber;
+    }
+
+    public String getFinancialYear() {
+        return financialYear;
+    }
+
+    public void setFinancialYear(final String financialYear) {
+        this.financialYear = financialYear;
     }
 
 }
