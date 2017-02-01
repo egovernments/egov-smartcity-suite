@@ -315,7 +315,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             searchCriteria.add(Restrictions.eq("cat.id", searchForm.getCategoryId()));
         if (searchForm.getSubCategoryId() != null)
             searchCriteria.add(Restrictions.eq("subcat.id", searchForm.getSubCategoryId()));
-        if (searchForm.getTradeTitle() != null && !searchForm.getTradeTitle().isEmpty())
+        if (StringUtils.isNotBlank(searchForm.getTradeTitle()))
             searchCriteria.add(Restrictions.eq("nameOfEstablishment", searchForm.getTradeTitle()).ignoreCase());
         if (StringUtils.isNotBlank(searchForm.getTradeOwnerName()))
             searchCriteria.add(Restrictions.eq("licc.applicantName", searchForm.getTradeOwnerName()).ignoreCase());
@@ -327,8 +327,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             searchCriteria.add(Restrictions.eq("status.id", searchForm.getStatusId()));
         if (searchForm.getInactive() != null && searchForm.getInactive().equals(Boolean.TRUE))
             searchCriteria.add(Restrictions.eq("isActive", false));
-        else
-            searchCriteria.add(Restrictions.eq("isActive", true));
 
         searchCriteria.add(Restrictions.isNotNull("applicationNumber"));
         searchCriteria.addOrder(Order.asc("id"));
@@ -343,102 +341,102 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return finalList;
     }
 
-	public List<DemandnoticeForm> searchLicensefordemandnotice(final DemandnoticeForm demandnoticeForm) {
-		final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
-		searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat").createAlias("tradeName", "subcat")
-				.createAlias("status", "licstatus");
-		if (StringUtils.isNotBlank(demandnoticeForm.getLicenseNumber()))
-			searchCriteria.add(Restrictions.eq("licenseNumber", demandnoticeForm.getLicenseNumber()).ignoreCase());
-		if (StringUtils.isNotBlank(demandnoticeForm.getOldLicenseNumber()))
-			searchCriteria
-					.add(Restrictions.eq("oldLicenseNumber", demandnoticeForm.getOldLicenseNumber()).ignoreCase());
-		if (demandnoticeForm.getCategoryId() != null)
-			searchCriteria.add(Restrictions.eq("cat.id", demandnoticeForm.getCategoryId()));
-		if (demandnoticeForm.getSubCategoryId() != null)
-			searchCriteria.add(Restrictions.eq("subcat.id", demandnoticeForm.getSubCategoryId()));
-		if (demandnoticeForm.getWardId() != null)
-			searchCriteria.createAlias("parentBoundary", "wards")
-					.add(Restrictions.eq("wards.id", demandnoticeForm.getWardId()));
-		if (demandnoticeForm.getLocalityId() != null)
-			searchCriteria.createAlias("boundary", "locality")
-					.add(Restrictions.eq("locality.id", demandnoticeForm.getLocalityId()));
-		if (demandnoticeForm.getStatusId() != null)
-			searchCriteria.add(Restrictions.eq("status.id", demandnoticeForm.getStatusId()));
-		else
-			searchCriteria.add(Restrictions.ne("licstatus.statusCode", StringUtils.upperCase("CAN")));
+    public List<DemandnoticeForm> searchLicensefordemandnotice(final DemandnoticeForm demandnoticeForm) {
+        final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
+        searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat").createAlias("tradeName", "subcat")
+                .createAlias("status", "licstatus");
+        if (StringUtils.isNotBlank(demandnoticeForm.getLicenseNumber()))
+            searchCriteria.add(Restrictions.eq("licenseNumber", demandnoticeForm.getLicenseNumber()).ignoreCase());
+        if (StringUtils.isNotBlank(demandnoticeForm.getOldLicenseNumber()))
+            searchCriteria
+                    .add(Restrictions.eq("oldLicenseNumber", demandnoticeForm.getOldLicenseNumber()).ignoreCase());
+        if (demandnoticeForm.getCategoryId() != null)
+            searchCriteria.add(Restrictions.eq("cat.id", demandnoticeForm.getCategoryId()));
+        if (demandnoticeForm.getSubCategoryId() != null)
+            searchCriteria.add(Restrictions.eq("subcat.id", demandnoticeForm.getSubCategoryId()));
+        if (demandnoticeForm.getWardId() != null)
+            searchCriteria.createAlias("parentBoundary", "wards")
+                    .add(Restrictions.eq("wards.id", demandnoticeForm.getWardId()));
+        if (demandnoticeForm.getLocalityId() != null)
+            searchCriteria.createAlias("boundary", "locality")
+                    .add(Restrictions.eq("locality.id", demandnoticeForm.getLocalityId()));
+        if (demandnoticeForm.getStatusId() != null)
+            searchCriteria.add(Restrictions.eq("status.id", demandnoticeForm.getStatusId()));
+        else
+            searchCriteria.add(Restrictions.ne("licstatus.statusCode", StringUtils.upperCase("CAN")));
 
-		searchCriteria.addOrder(Order.asc("id"));
-		final List<DemandnoticeForm> finalList = new LinkedList<>();
+        searchCriteria.addOrder(Order.asc("id"));
+        final List<DemandnoticeForm> finalList = new LinkedList<>();
 
-		for (final TradeLicense license : (List<TradeLicense>) searchCriteria.list()) {
-			Installment currentInstallment = license.getCurrentDemand().getEgInstallmentMaster();
-			List<Installment> previousInstallment = installmentDao
-					.fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(
-							licenseUtils.getModule(TRADELICENSE_MODULENAME), currentInstallment.getToDate(), 1);
-			Map<String, Map<String, BigDecimal>> outstandingFees = getOutstandingFeeForDemandNotice(license,
-					currentInstallment, previousInstallment.get(0));
-			Map<String, BigDecimal> licenseFees = outstandingFees.get(LICENSE_FEE_TYPE);
-			finalList.add(new DemandnoticeForm(license, licenseFees, getOwnerName(license)));
-		}
-		return finalList;
-	}
+        for (final TradeLicense license : (List<TradeLicense>) searchCriteria.list()) {
+            Installment currentInstallment = license.getCurrentDemand().getEgInstallmentMaster();
+            List<Installment> previousInstallment = installmentDao
+                    .fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(
+                            licenseUtils.getModule(TRADELICENSE_MODULENAME), currentInstallment.getToDate(), 1);
+            Map<String, Map<String, BigDecimal>> outstandingFees = getOutstandingFeeForDemandNotice(license,
+                    currentInstallment, previousInstallment.get(0));
+            Map<String, BigDecimal> licenseFees = outstandingFees.get(LICENSE_FEE_TYPE);
+            finalList.add(new DemandnoticeForm(license, licenseFees, getOwnerName(license)));
+        }
+        return finalList;
+    }
 
-	public String getOwnerName(License license) {
-		String ownerName;
-		if (license.getState() != null) {
-			final List<Assignment> assignmentList = assignmentService
-					.getAssignmentsForPosition(license.getState().getOwnerPosition().getId(), new Date());
-			ownerName = !assignmentList.isEmpty() ? assignmentList.get(0).getEmployee().getName()
-					: license.getLastModifiedBy().getName();
-		} else
-			ownerName = license.getLastModifiedBy().getName();
-		return ownerName;
+    public String getOwnerName(License license) {
+        String ownerName;
+        if (license.getState() != null) {
+            final List<Assignment> assignmentList = assignmentService
+                    .getAssignmentsForPosition(license.getState().getOwnerPosition().getId(), new Date());
+            ownerName = !assignmentList.isEmpty() ? assignmentList.get(0).getEmployee().getName()
+                    : license.getLastModifiedBy().getName();
+        } else
+            ownerName = license.getLastModifiedBy().getName();
+        return ownerName;
 
-	}
+    }
 
-	public byte[] mergePdfFiles(final List<InputStream> inputPdfList, final OutputStream outputStream)
-			throws Exception {
-		// Create document and pdfReader objects.
-		final Document document = new Document();
-		final List<PdfReader> readers = new ArrayList<PdfReader>();
-		int totalPages = 0;
-		// Create pdf Iterator object using inputPdfList.
-		final Iterator<InputStream> pdfIterator = inputPdfList.iterator();
-		// Create reader list for the input pdf files.
-		while (pdfIterator.hasNext()) {
-			final InputStream pdf = pdfIterator.next();
-			if (pdf != null) {
-				final PdfReader pdfReader = new PdfReader(pdf);
-				readers.add(pdfReader);
-				totalPages = totalPages + pdfReader.getNumberOfPages();
-			} else
-				break;
-		}
-		// Create writer for the outputStream
-		final PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-		// Open document.
-		document.open();
-		// Contain the pdf data.
-		final PdfContentByte pageContentByte = writer.getDirectContent();
-		PdfImportedPage pdfImportedPage;
-		int currentPdfReaderPage = 1;
-		final Iterator<PdfReader> iteratorPDFReader = readers.iterator();
-		// Iterate and process the reader list.
-		while (iteratorPDFReader.hasNext()) {
-			final PdfReader pdfReader = iteratorPDFReader.next();
-			// Create page and add content.
-			while (currentPdfReaderPage <= pdfReader.getNumberOfPages()) {
-				document.newPage();
-				pdfImportedPage = writer.getImportedPage(pdfReader, currentPdfReaderPage);
-				pageContentByte.addTemplate(pdfImportedPage, 0, 0);
-				currentPdfReaderPage++;
-			}
-			currentPdfReaderPage = 1;
-		}
-		// Close document and outputStream.
-		outputStream.flush();
-		document.close();
-		outputStream.close();
-		return ((ByteArrayOutputStream) outputStream).toByteArray();
-	}
+    public byte[] mergePdfFiles(final List<InputStream> inputPdfList, final OutputStream outputStream)
+            throws Exception {
+        // Create document and pdfReader objects.
+        final Document document = new Document();
+        final List<PdfReader> readers = new ArrayList<>();
+        int totalPages = 0;
+        // Create pdf Iterator object using inputPdfList.
+        final Iterator<InputStream> pdfIterator = inputPdfList.iterator();
+        // Create reader list for the input pdf files.
+        while (pdfIterator.hasNext()) {
+            final InputStream pdf = pdfIterator.next();
+            if (pdf != null) {
+                final PdfReader pdfReader = new PdfReader(pdf);
+                readers.add(pdfReader);
+                totalPages = totalPages + pdfReader.getNumberOfPages();
+            } else
+                break;
+        }
+        // Create writer for the outputStream
+        final PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+        // Open document.
+        document.open();
+        // Contain the pdf data.
+        final PdfContentByte pageContentByte = writer.getDirectContent();
+        PdfImportedPage pdfImportedPage;
+        int currentPdfReaderPage = 1;
+        final Iterator<PdfReader> iteratorPDFReader = readers.iterator();
+        // Iterate and process the reader list.
+        while (iteratorPDFReader.hasNext()) {
+            final PdfReader pdfReader = iteratorPDFReader.next();
+            // Create page and add content.
+            while (currentPdfReaderPage <= pdfReader.getNumberOfPages()) {
+                document.newPage();
+                pdfImportedPage = writer.getImportedPage(pdfReader, currentPdfReaderPage);
+                pageContentByte.addTemplate(pdfImportedPage, 0, 0);
+                currentPdfReaderPage++;
+            }
+            currentPdfReaderPage = 1;
+        }
+        // Close document and outputStream.
+        outputStream.flush();
+        document.close();
+        outputStream.close();
+        return ((ByteArrayOutputStream) outputStream).toByteArray();
+    }
 }
