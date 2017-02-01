@@ -72,11 +72,12 @@
 					<jsp:include page="../common/uploaddocuments.jsp"/>
 				</div>
 			</div>
-		<jsp:include page="lineestimateadminsanctiondetails.jsp"></jsp:include>
 		<c:if test="${nextStatus == 'ADMINISTRATIVE_SANCTIONED'}" >
+			<jsp:include page="lineestimateadminsanctiondetails.jsp"></jsp:include>
 			<jsp:include page="lineestimate-workflowfields.jsp"></jsp:include>
 		</c:if>
 		<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
+			<jsp:include page="lineestimateadminsanctiondetails.jsp"></jsp:include>
 			<jsp:include page="lineestimatetechnicalsanctiondetails.jsp"/>
 			<jsp:include page="lineestimateworkflowfields-view.jsp"/>
 		</c:if>
