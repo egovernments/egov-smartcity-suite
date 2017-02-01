@@ -60,7 +60,7 @@
 			<spring:message code="lbl.fee"/><span class="mandatory"></span>
 		</div>
 		<div class="col-sm-3 view-content">
-			<form:input path="feePaid" id="txt-feepaid" type="text" class="form-control low-width patternvalidation" data-pattern="number" maxlength="4" autocomplete="off" required="required"/>
+			<form:input path="feePaid" value="${feepaid}" id="txt-feepaid" type="text" class="form-control low-width patternvalidation" data-pattern="number" maxlength="4" autocomplete="off" required="required"/>
             <form:errors path="feePaid" cssClass="add-margin error-msg"/>
 		</div>
 </div>
