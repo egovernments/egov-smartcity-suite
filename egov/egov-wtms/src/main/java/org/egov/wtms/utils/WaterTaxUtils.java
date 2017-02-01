@@ -381,6 +381,12 @@ public class WaterTaxUtils {
         return (EgwStatus) persistenceService.find("from EgwStatus where moduleType=? and code=?", moduleName, code);
     }
 
+	public String getRevenueWardForConsumerCode(final String code) {
+		return (String) persistenceService.find(
+				"select bp.propertyID.ward.name from BasicPropertyImpl "
+						+ "bp where bp.upicNo in(select conn.propertyIdentifier from WaterConnection conn where conn.consumerCode = ?",
+				code);
+	}
     public Long getApproverPosition(final String designationName, final WaterConnectionDetails waterConnectionDetails) {
 
         final List<StateHistory> stateHistoryList = waterConnectionDetails.getStateHistory();
