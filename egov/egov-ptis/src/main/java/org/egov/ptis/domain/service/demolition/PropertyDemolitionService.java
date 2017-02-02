@@ -289,21 +289,42 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         propertyPerService.update(newProperty.getBasicProperty());
         getSession().flush();
     }
+    
+    public Assignment getUserAssignment(User user,Property property) {
+        Assignment assignment;
+        if (propertyService.isCscOperator(user)) 
+            assignment = propertyService.getMappedAssignmentForCscOperator(property.getBasicProperty());
+        else
+            assignment = propertyService.getUserPositionByZone(property.getBasicProperty(), false);
+        return assignment;
+    }
 
     private void transitionWorkFlow(final PropertyImpl property, final String approvarComments, final String workFlowAction,
-            final Long approverPosition, final String additionalRule) {
+             Long approverPosition, final String additionalRule) {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("WorkFlow Transition For Demolition Started  ...");
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         Position pos = null;
-        Assignment wfInitiator;
+        Assignment wfInitiator = null;
         Assignment assignment;
         String approverDesignation = "";
         String nextAction = "";
+        String currentState = "";
 
-        if (null != approverPosition && approverPosition != 0) {
+        if(!propertyService.isEmployee(securityUtils.getCurrentUser())) {
+            currentState = "Created";
+            assignment = getUserAssignment(user,property);
+            if (null != assignment) {
+                approverPosition = assignment.getPosition().getId();
+                assignment.getEmployee().getName().concat("~").concat(
+                        assignment.getPosition().getName());
+                approverDesignation = assignment.getDesignation().getName();
+                wfInitiator = assignment;
+            }
+        } else if (null != approverPosition && approverPosition != 0) {
+            currentState = null;
             assignment = assignmentService.getAssignmentsForPosition(approverPosition, new Date())
                     .get(0);
             assignment.getEmployee().getName().concat("~")
@@ -313,7 +334,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
 
         if (property.getId() != null)
             wfInitiator = propertyService.getWorkflowInitiator(property);
-        else
+        else if (wfInitiator == null)
             wfInitiator = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(user.getId());
 
         if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)
@@ -374,7 +395,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             WorkFlowMatrix wfmatrix = null;
             if (null == property.getState()) {
                 wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null, additionalRule,
-                        null, null);
+                        currentState, null);
                 property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvarComments).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(new Date()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
@@ -432,7 +453,17 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             errors.rejectValue("basicProperty.propertyID.southBoundary", "southBoundary.required");
         if (StringUtils.isBlank(property.getDemolitionReason()))
             errors.rejectValue("demolitionReason", "demolitionReason.required");
-
+        validateAssignmentForCscUser(property,errors);
+    }
+    
+    public void validateAssignmentForCscUser(final Property property, final BindingResult errors) {
+        if (!propertyService.isEmployee(securityUtils.getCurrentUser()) && property.getBasicProperty() != null) {
+            final Assignment assignment = propertyService.isCscOperator(securityUtils.getCurrentUser())
+                    ? propertyService.getAssignmentByDeptDesigElecWard(property.getBasicProperty())
+                    : null;
+            if (assignment == null && propertyService.getUserPositionByZone(property.getBasicProperty(), false) == null)
+                errors.reject("notexists.position", "notexists.position");
+        }
     }
 
     public void addModelAttributes(final Model model, final BasicProperty basicProperty) {

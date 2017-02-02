@@ -75,6 +75,7 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.demolition.PropertyDemolitionService;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,6 +93,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/demolition/update/{id}")
 public class UpdatePropertyDemolitionController extends GenericWorkFlowController {
 
+    private static final String DEMOLITION_STATE_NEW = "Demolition:NEW";
     protected static final String DEMOLITION_FORM = "demolition-form";
     protected static final String DEMOLITION_VIEW = "demolition-view";
     protected static final String DEMOLITION_SUCCESS = "demolition-success";
@@ -121,6 +123,9 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
 
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    
+    @Autowired
+    private transient PropertyService propService;
 
     @ModelAttribute
     public Property propertyModel(@PathVariable final String id) {
@@ -134,6 +139,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     public String view(final Model model, @PathVariable final Long id, final HttpServletRequest request) {
 
         String userDesignationList = "";
+        String currentDesignation = null;
         final String currState = property.getState().getValue();
         final String nextAction = property.getState().getNextAction();
 
@@ -142,9 +148,11 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
         model.addAttribute("currentState", property.getCurrentState().getValue());
         model.addAttribute("pendingActions", nextAction);
         model.addAttribute("additionalRule", DEMOLITION);
-        final String currentDesignation = propertyDemolitionService.getLoggedInUserDesignation(
+        if (!DEMOLITION_STATE_NEW.equals(currState)) {
+            currentDesignation = propertyDemolitionService.getLoggedInUserDesignation(
                 property.getCurrentState().getOwnerPosition().getId(),
                 securityUtils.getCurrentUser());
+        }
         if (!currState.endsWith(STATUS_REJECTED))
             model.addAttribute("currentDesignation", currentDesignation);
         final WorkflowContainer workflowContainer = new WorkflowContainer();
@@ -157,6 +165,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
         model.addAttribute("designation", COMMISSIONER_DESGN);
         if (currState.endsWith(WF_STATE_REJECTED) || nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)
                 || currState.endsWith(WFLOW_ACTION_NEW)) {
+            model.addAttribute("isEmployee", propService.isEmployee(securityUtils.getCurrentUser()));
             model.addAttribute("mode", EDIT);
             return DEMOLITION_FORM;
         } else {
@@ -236,13 +245,25 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
                                     + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName())
                                     + " with application number "
                                     + property.getApplicationNo());
-                } else
+                } else {
+                    Assignment cscAssignment =  getCscUserAssignment(property);
+                    approvalPosition = cscAssignment != null ?  cscAssignment.getPosition().getId() : approvalPosition;
+
                     model.addAttribute("successMessage",
                             "Successfully forwarded to " + propertyTaxUtil.getApproverUserName(approvalPosition)
-                                    + " with application number " + property.getApplicationNo());
+                            + " with application number " + property.getApplicationNo());
+                }
                 return DEMOLITION_SUCCESS;
             }
         }
+    }
+    
+    private Assignment getCscUserAssignment(Property property) {
+        Assignment cscAssignment = null;
+        if(!propService.isEmployee(securityUtils.getCurrentUser())) {
+            cscAssignment =  propertyDemolitionService.getUserAssignment(securityUtils.getCurrentUser(), property);
+        }
+        return cscAssignment;
     }
 
 }

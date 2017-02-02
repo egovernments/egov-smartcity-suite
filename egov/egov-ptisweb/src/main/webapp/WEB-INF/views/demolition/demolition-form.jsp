@@ -58,7 +58,13 @@ body
 	class="form-horizontal form-groups-bordered" modelAttribute="property">
 	<div class="page-container" id="page-container">
 		<div class="main-content">
-
+			<div>
+				<spring:hasBindErrors name="property"> 
+		 			<div class="alert alert-danger col-md-10 col-md-offset-1">
+		  				<form:errors path="*" cssClass="error-msg add-margin" /><br/>
+		      		</div>
+				</spring:hasBindErrors>
+			</div>
 			<jsp:include page="../common/commonPropertyDetailsView.jsp"></jsp:include>
 			<jsp:include page="../common/ownerDetailsView.jsp"></jsp:include>
 
@@ -213,7 +219,9 @@ body
 					</div>
 				</div>
 			</div>
-			<jsp:include page="../common/commonWorkflowMatrix.jsp" />
+			<c:if test="${isEmployee}">
+				<jsp:include page="../common/commonWorkflowMatrix.jsp" />
+			</c:if>
 			<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 
 		</div>
