@@ -251,14 +251,12 @@ public abstract class AbstractLicenseService<T extends License> {
     public License updateDemandForChangeTradeArea(final T license) {
         final LicenseDemand licenseDemand = license.getLicenseDemand();
         final Module moduleName = this.getModuleName();
-        final Installment installment = this.installmentDao.getInsatllmentByModuleForGivenDate(moduleName,
-                license.getApplicationDate());
         final Set<EgDemandDetails> demandDetails = licenseDemand.getEgDemandDetails();
         Date licenseDate = license.getLicenseAppType().getName().equals(NEW_LIC_APPTYPE) ? license.getCommencementDate() : license.getLicenseDemand().getEgInstallmentMaster().getFromDate();
         final List<FeeMatrixDetail> feeList = this.feeMatrixService.findFeeMatrixByLicense(license, licenseDate);
         for (final EgDemandDetails dmd : demandDetails)
             for (final FeeMatrixDetail fm : feeList)
-                if (installment.getId().equals(dmd.getEgDemandReason().getEgInstallmentMaster().getId()) &&
+                if (licenseDemand.getEgInstallmentMaster().equals(dmd.getEgDemandReason().getEgInstallmentMaster()) &&
                         dmd.getEgDemandReason().getEgDemandReasonMaster().getCode()
                                 .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName())) {
                     dmd.setAmount(fm.getAmount());
@@ -271,13 +269,12 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Transactional
     public BigDecimal recalculateDemand(final List<FeeMatrixDetail> feeList, final T license) {
-        final Installment installment = this.installmentDao.getInsatllmentByModuleForGivenDate(this.getModuleName(), new Date());
         BigDecimal totalAmount = ZERO;
         final LicenseDemand licenseDemand = license.getCurrentDemand();
         // Recalculating current demand detail according to fee matrix
         for (final EgDemandDetails dmd : licenseDemand.getEgDemandDetails())
             for (final FeeMatrixDetail fm : feeList)
-                if (installment.getId().equals(dmd.getEgDemandReason().getEgInstallmentMaster().getId()) &&
+                if (licenseDemand.getEgInstallmentMaster().equals(dmd.getEgDemandReason().getEgInstallmentMaster()) &&
                         dmd.getEgDemandReason().getEgDemandReasonMaster().getCode()
                                 .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName())) {
                     dmd.setAmount(fm.getAmount().setScale(0, RoundingMode.HALF_UP));
