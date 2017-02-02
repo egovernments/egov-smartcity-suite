@@ -108,10 +108,7 @@ $(document).ready(function () {
 
         })
     });
-    $('#subCategory').select2({
-        placeholder: "Select",
-        width: '100%'
-    });
+
     $('#licenseCategory').change(function () {
         var results = [];
         $('#feeType').empty();
@@ -134,14 +131,7 @@ $(document).ready(function () {
                     obj['text'] = data[i]['name'];
                     results.push(obj);
                 });
-                $("#subCategory").empty();
-                $("#subCategory").append("<option value=''>Select</option>");
-                $("#subCategory").select2({
-                    placeholder: "Select",
-                    width: '100%',
-                    data: results
-                });
-
+                select2initialize($("#subCategory"),results,false);
             },
 
             error: function () {

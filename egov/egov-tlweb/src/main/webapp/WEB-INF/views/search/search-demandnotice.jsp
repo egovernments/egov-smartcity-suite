@@ -80,7 +80,7 @@
 					</div>
 					<label class="col-sm-2 control-label text-right"> <spring:message code='search.license.subCategory' /></label>
 					<div class="col-sm-3 add-margin">
-						<select id="subCategory" class="form-control">
+						<select id="subCategory" class="form-control select2">
 						</select> <label id="subCategory-error" class="error display-hide"
 							for="subCategory">Required</label>
 					</div>

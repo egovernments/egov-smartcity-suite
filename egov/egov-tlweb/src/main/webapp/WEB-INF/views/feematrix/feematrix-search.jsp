@@ -69,7 +69,7 @@
                                 code="lbl.subcategory"/></label>
                         <div class="col-sm-3 add-margin">
                             <form:select path="subCategory" id="subCategory"
-                                         cssClass="form-control" cssErrorClass="form-control error">
+                                         cssClass="form-control select2" cssErrorClass="form-control error select2">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
                                 </form:option>
