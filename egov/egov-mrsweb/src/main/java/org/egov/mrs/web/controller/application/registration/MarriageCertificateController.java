@@ -114,7 +114,7 @@ public class MarriageCertificateController {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=" + file.getName());
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.OK);
+        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
 }
