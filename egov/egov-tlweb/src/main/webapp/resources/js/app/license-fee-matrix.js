@@ -38,234 +38,310 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-$(document).ready(function()
-{
+$(document).ready(function () {
 
-$('#unitOfMeasurement').attr("disabled", true); 
-	
-$('#feeType').click(function(){
-	if($('#subCategory').val()==""){
-		bootbox.alert("Please Choose Sub Category");
-		return false;
-	}
+    $('#feeType').click(function () {
+        if ($('#subCategory').val() == "") {
+            bootbox.alert("Please Choose Sub Category");
+            return false;
+        }
+    });
+
+    $('#unitOfMeasurement').click(function () {
+        if ($('#feeType').val() == "") {
+            bootbox.alert("Please Choose Fee Type");
+            return false;
+        }
+    });
+
+    $('#financialYear').change(function () {
+        var finId = $(this).val();
+        var finRange = $("#fin" + finId).val().split("-");
+        var frmDate = finRange[0].split("/");
+        var toDate = finRange[1].split("/");
+        var effectiveFrom = new Date(frmDate[2], parseInt(frmDate[1]) - 1, parseInt(frmDate[0]));
+        var effectiveTo = new Date(toDate[2], parseInt(toDate[1]) - 1, parseInt(toDate[0]));
+        $("#effectiveFrom").datepicker('setDate', effectiveFrom);
+        $("#effectiveTo").datepicker('setDate', effectiveTo);
+    });
+
+    $('#feeType').change(function () {
+        $.ajax({
+            url: "/tl/feeType/uom-by-subcategory?feeTypeId=" + $('#feeType').val() + "&subCategoryId=" + $('#subCategory').val() + "",
+            type: "GET",
+            async: false,
+            dataType: "json",
+            success: function (response) {
+                $('#unitOfMeasurement').empty();
+                $('#unitOfMeasurement').append($("<option value=''>Select</option>"));
+                $.each(response, function (index, value) {
+                    $('#unitOfMeasurement').append("<option value=" + value.uom.id + ">" + value.uom.name + "</option>");
+                    $('#rateType').val(value.rateType);
+                });
+                $("#unitOfMeasurement").prop("selectedIndex", 1);
+            },
+            error: function () {
+            }
+        });
+    });
+
+    $('#subCategory').change(function () {
+        $('#unitOfMeasurement').empty();
+        $('#unitOfMeasurement').append($("<option value=''>Select</option>"));
+        $('#rateType').val("");
+        $.ajax({
+            url: "/tl/feeType/feetype-by-subcategory",
+            type: "GET",
+            async: false,
+            data: {
+                subCategoryId: $('#subCategory').val()
+            },
+            dataType: "json",
+            success: function (response) {
+                var feeType = $('#feeType')
+                feeType.find("option:gt(0)").remove();
+                $.each(response, function (index, value) {
+                    feeType.append($('<option>').text(value.feeType.name).attr('value', value.feeType.id));
+                });
+
+            },
+
+        })
+    });
+    $('#subCategory').select2({
+        placeholder: "Select",
+        width: '100%'
+    });
+    $('#licenseCategory').change(function () {
+        var results = [];
+        $('#feeType').empty();
+        $('#feeType').append($("<option value=''>Select</option>"));
+        $('#unitOfMeasurement').empty();
+        $('#unitOfMeasurement').append($("<option value=''>Select</option>"));
+        $('#rateType').val("");
+        $.ajax({
+            url: "/tl/licensesubcategory/subcategories-by-category",
+            type: "GET",
+            async: false,
+            data: {
+                categoryId: $('#licenseCategory').val()
+            },
+            dataType: "json",
+            success: function (data) {
+                $.each(data, function (i) {
+                    var obj = {};
+                    obj['id'] = data[i]['id']
+                    obj['text'] = data[i]['name'];
+                    results.push(obj);
+                });
+                $("#subCategory").empty();
+                $("#subCategory").append("<option value=''>Select</option>");
+                $("#subCategory").select2({
+                    placeholder: "Select",
+                    width: '100%',
+                    data: results
+                });
+
+            },
+
+            error: function () {
+                bootbox.alert('something went wrong on server');
+            }
+        })
+    });
+
+    $('#result tbody').on('click', 'tr td .delete-row', function () {
+        var id = $(this).closest('tr').find('td:eq(0) .detailId').val();
+        var idx = $(this).closest('tr').index();
+        var obj = $(this);
+        if (idx == 0) {
+            bootbox.alert('Cannot delete first row!');
+        } else if ((idx < ($('#result tbody tr').length - 1))) {
+            bootbox.alert('Try to delete from last row!');
+        } else {
+            bootbox.confirm("Do you want to delete this fee data ? ", function (result) {
+                if (result) {
+                    if (obj.closest('tr').data('create') == 'yes')
+                        obj.closest('tr').remove();
+                    else
+                        obj.closest('tr').hide().find('input.markedForRemoval').val('true');
+                }
+            });
+        }
+    });
+
+    $("#addrow").click(
+        function (event) {
+            var rowCount = $('#result tbody tr').length;
+            var valid = true;
+            //validate all rows before adding new row
+            $('#result tbody tr').each(function (index, value) {
+                $('#result tbody tr:eq(' + index + ') td input[type="text"]').each(function (i, v) {
+                    if (!$.trim($(v).val())) {
+                        valid = false;
+                        bootbox.alert("Enter all values for existing rows!", function () {
+                            $(v).focus();
+                        });
+                        return false;
+                    }
+                });
+            });
+            if (valid) {
+                //Create new row
+                var newRow = $('#result tbody tr:first').clone();
+                newRow.find("input").each(function () {
+                    $(this).attr({
+                        'name': function (_, name) {
+                            return name.replace(/\[.\]/g, '[' + rowCount + ']');
+                        }
+                    });
+                });
+                $('#result tbody').append(newRow);
+                var prev_tovalue = $('#result tbody tr:eq(' + (rowCount - 1) + ')').find('input.tovalue').val();
+                $('#result tbody tr:last').find('input').val('');
+                $('#result tbody tr:last').find('input.fromvalue').val(prev_tovalue);
+                patternvalidation();
+            }
+        });
+
+    var oTable;
+    $('#search').click(function (e) {
+        $('.report-section').removeClass('display-hide');
+        oTable = $('#resultTable').DataTable({
+            ajax: {
+                url: "search?categoryId=" + $('#licenseCategory').val()
+                + "&subcategoryId=" + $("#subCategory").val()
+                + "&financialYearId=" + $("#financialYear").val(),
+                type: "POST"
+            },
+            dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l>" +
+            "<'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
+            "autoWidth": false,
+            "bDestroy": true,
+            buttons: [{
+                extend: 'pdf',
+                title: 'License Fee Matrix',
+                filename: 'License Fee Matrix',
+                orientation: 'landscape',
+                footer: true,
+                pageSize: 'A3',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            }, {
+                extend: 'excel',
+                filename: 'License Fee Matrix',
+                footer: true,
+                exportOptions: {
+                    columns: ':visible'
+                }
+            }, {
+                extend: 'print',
+                title: 'License Fee Matrix',
+                filename: 'License Fee Matrix',
+                footer: true,
+                exportOptions: {
+                    columns: ':visible'
+                }
+            }],
+            columns: [
+                {
+                    "bSortable": false,
+                    "visible": false
+                },
+                {
+                    "className": 'details-control',
+                    "sOrderable": false,
+                    "bSortable": false,
+                    "data": null,
+                    "defaultContent": '<i class="fa fa-plus-circle fa-lg"></i>'
+                },
+                {
+                    "data": "natureOfBussiness",
+                    "sClass": "text-left"
+                }, {
+                    "data": "licenseAppType",
+                    "sClass": "text-left"
+                }, {
+                    "data": "licenseCategory",
+                    "sClass": "text-left"
+                }, {
+                    "data": "subCategory",
+                    "sClass": "text-left"
+                }, {
+                    "data": "uom",
+                    "sClass": "text-left"
+                }, {
+                    "data": "feeType",
+                    "sClass": "text-right"
+                }, {
+                    "data": "financialYear",
+                    "sClass": "text-right"
+                }, {
+                    "data": "details",
+                    "visible": false,
+                    "sort": false
+                }, {
+                    "data": null,
+                    'sClass': "text-center",
+                    "bSortable": false,
+                    "target": -1,
+                    "defaultContent": '<span class="add-padding"><i class="fa fa-pencil-square-o fa-lg edit"></i></span><span class="add-padding"><i class="fa fa-eye fa-lg view"></i></span>'
+                }, {
+                    "data": "id",
+                    "visible": false,
+                    "bSortable": false
+                }
+            ]
+        });
+    });
+
+    $("#resultTable").on('click', 'tbody tr td span i.edit', function (event) {
+        var id = oTable.row($(this).closest('tr')).data().id;
+        var url = '/tl/feematrix/update/' + id;
+        window.open(url, id, 'width=900, height=700, top=300, left=260,scrollbars=yes');
+
+    });
+
+    $("#resultTable").on('click', 'tbody tr td span i.view', function (event) {
+        var id = oTable.row($(this).closest('tr')).data().id;
+        var url = '/tl/feematrix/view/' + id;
+        window.open(url, id, 'width=900, height=700, top=300, left=260,scrollbars=yes');
+
+    });
+
+    // Add event listener for opening and closing details
+    $('#resultTable').on('click', 'tbody tr td.details-control', function () {
+        var tr = $(this).closest('tr');
+        var row = oTable.row(tr);
+        if (row.child.isShown()) {
+            row.child.hide();
+            tr.removeClass('shown');
+        }
+        else {
+            row.child(populateChildTable(row.data())).show();
+            tr.addClass('shown');
+        }
+    });
+
+    function populateChildTable(d) {
+        // `d` is the original data object for the row
+        var tablerows = '';
+        $.each(d.details, function (index, value) {
+            var tr = '<tr><td class="text-right">' + value["uomFrom"] + '</td><td class="text-right">' + value["uomTo"] + '</td><td class="text-right">' + value["amount"] + '</tr>';
+            tablerows += tr;
+        });
+        return '<table class="table table-bordered" style="width: 90%;margin: 0 auto;">' +
+            '<thead><th>UOM From</th><th>UOM To</th><th>Amount</th></thead><tbody>' + tablerows + '</tbody></table>';
+    }
+
+    if ($("#licenseCategory").val() != '') {
+        $("#licenseCategory").trigger('change');
+        $("#subCategory").val(subCategory).trigger('change');
+        $('#subCategory').trigger('change');
+        $('#feeType').val(feeType);
+        $('#feeType').trigger('change');
+        $('#unitOfMeasurement').val(uom);
+    }
 });
 
-$('#unitOfMeasurement').click(function(){
-	if($('#feeType').val()==""){
-		bootbox.alert("Please Choose Fee Type");
-		return false;
-	}
-});
-$('#feeType').change(function(){
-	$.ajax({
-		url: "/tl/feeType/uom-by-subcategory?feeTypeId="+$('#feeType').val()+"&subCategoryId="+$('#subCategory').val()+"",    
-		type: "GET",
-		dataType: "json",
-		success: function (response) {
-			$('#unitOfMeasurement').empty();
-			$('#unitOfMeasurement').append($("<option value=''>Select</option>"));
-			$.each(response, function(index, value) {
-			     $('#unitOfMeasurement').append("<option value="+value.uom.id+">"+value.uom.name+"</option>");
-			     $('#rateType').val(value.rateType);
-			});
-			$("#unitOfMeasurement").prop("selectedIndex",1);
-		}, 
-		error: function () {
-		} 
-	});
-});
-$('#subCategory').change(function(){
-	$('#unitOfMeasurement').empty();
-	$('#unitOfMeasurement').append($("<option value=''>Select</option>"));
-	$('#rateType').val("");
-	$.ajax({
-		url: "/tl/feeType/feetype-by-subcategory",    
-		type: "GET",
-		data: {
-			subCategoryId : $('#subCategory').val()   
-		},
-		dataType: "json",
-		success: function (response) {
-			var feeType = $('#feeType')
-			feeType.find("option:gt(0)").remove();
-			$.each(response, function(index, value) {
-				feeType.append($('<option>').text(value.feeType.name).attr('value', value.feeType.id));
-			});
-			
-		}, 
-		
-	})
-});
-$('#subCategory').select2({
-	placeholder: "Select",
-	width:'100%'
-});
-$('#licenseCategory').change(function(){
-	var results = [];
-	$('#feeType').empty();
-	$('#feeType').append($("<option value=''>Select</option>"));
-	$('#unitOfMeasurement').empty();
-	$('#unitOfMeasurement').append($("<option value=''>Select</option>"));
-	$('#rateType').val("");
-	$.ajax({
-		url: "/tl/licensesubcategory/subcategories-by-category",    
-		type: "GET",
-		data: {
-			categoryId : $('#licenseCategory').val()   
-		},
-		dataType: "json",
-		 success: function(data) {
-	            $.each(data, function(i) {
-	                var obj = {};
-	                obj['id'] = data[i]['id']
-	                obj['text'] = data[i]['name'];
-	                results.push(obj);
-	            });
-	            $("#subCategory").empty();
-	            $("#subCategory").append("<option value=''>Select</option>");
-	            $("#subCategory").select2({
-	                placeholder: "Select",
-	                width:'100%',
-	                data: results
-	            });
-	        },
-	        error: function() {
-	        	bootbox.alert('something went wrong on server');
-	        } 
-	})
-});
-
-$( "#save" ).click(function() {
-	
-	if($('#feematrix-new').valid()){
-		var natureOfBusinessDisabled=$('#natureOfBusiness').is(':disabled');
-		var licenseAppTypeDisabled=$('#licenseAppType').is(':disabled');
-		var unitOfMeasurementDisabled=$('#unitOfMeasurement').is(':disabled');
-		$('#natureOfBusiness').removeAttr("disabled");
-		$('#licenseAppType').removeAttr("disabled");
-		$('#unitOfMeasurement').removeAttr("disabled");
-		var fd=$('#feematrix-new').serialize();
-		
-		  $.ajax({
-				url: "/tl/feematrix/create",
-				type: "POST",
-				data: fd,
-			    beforeSend: function() {
-			    	$("#save").attr('disabled',true);
-			    },
-				//dataType: "text",
-				success: function (response) {
-					 $('#resultdiv').html(response);
-					 if(natureOfBusinessDisabled)
-						 $('#natureOfBusiness').attr("disabled", true); 
-					 if(licenseAppTypeDisabled)
-						 $('#licenseAppType').attr("disabled", true); 
-					 if(unitOfMeasurementDisabled)
-						 $('#unitOfMeasurement').attr("disabled", true); 
-					 bootbox.alert("Details saved Successfully");
-				}, 
-				error: function () {
-					if(natureOfBusinessDisabled)
-						$('#natureOfBusiness').attr("disabled", true); 
-					if(licenseAppTypeDisabled)
-						$('#licenseAppType').attr("disabled", true);
-					if(unitOfMeasurementDisabled)
-						 $('#unitOfMeasurement').attr("disabled", true); 
-					bootbox.alert("Failed to Save Details");
-				},
-			    complete: function() {
-			  	  $("#save").removeAttr('disabled');
-			    }
-			});
-		}
- });
-$( "#search" ).click(function() {
-	$('#resultdiv').empty();
-	var valid = $('#feematrix-new').validate().form();
-	if(!valid)
-		{
-		bootbox.alert("Please fill mandatory fields");
-		return false;
-		}
-	  var param="uniqueNo=";
-	  param=param+$('#natureOfBusiness').val()+"-";
-	  param=param+$('#licenseAppType').val()+"-";
-	  param=param+$('#licenseCategory').val()+"-";
-	  param=param+$('#subCategory').val()+"-";
-	  param=param+$('#feeType').val()+"-";
-	  param=param+$('#unitOfMeasurement').val()+"-";
-	  param=param+$('#financialYear').val(); 
-	   $.ajax({
-			url: "/tl/feematrix/search?"+param,
-			type: "GET",
-			//dataType: "json",
-			success: function (response) {
-				 $('#resultdiv').html(response);
-			}, 
-			error: function () {
-			}
-		});
-   });
-$("#add-row").click(
-		function(event) {
-			var rowCount = $('#result tbody tr').length;
-			var valid = true;
-			//validate all rows before adding new row
-			$('#result tbody tr').each(function(index,value){
-				$('#result tbody tr:eq('+index+') td input[type="text"]').each(function(i,v){
-					if(!$.trim($(v).val())){
-						valid = false;
-						bootbox.alert("Enter all values for existing rows!",function(){
-							$(v).focus();
-						});
-						return false;
-					}
-				});
-			});
-			if(valid){
-				//Create new row
-				var newRow = $('#result tbody tr:first').clone();
-				newRow.find("input").each(function(){
-	    	        $(this).attr({
-	    	        	'name': function(_, name) { return name.replace(/\[.\]/g, '['+ rowCount +']'); }
-	    	        });
-	    	    });
-				$('#result tbody').append(newRow);
-				var prev_tovalue = $('#result tbody tr:eq('+(rowCount-1)+')').find('input.tovalue').val();
-				$('#result tbody tr:last').find('input').val('');
-				$('#result tbody tr:last').find('input.fromvalue').val(prev_tovalue);
-				patternvalidation();
-			}
-		});
-
-
-$('#result tbody').on('click','tr td .delete-row',function(e){
-	var id = $(this).closest('tr').find('td:eq(0) .detailId').val();
-	//console.log(id)
-	var idx = $(this).closest('tr').index();
-	if(idx == 0){
-		bootbox.alert('Cannot delete first row!');
-	}else if((idx < ($('#result tbody tr').length - 1))){
-		bootbox.alert('Try to delete from last row!');
-	}else{
-		bootbox.confirm("This will delete the row permanently. Press OK to Continue. ",function(result) {
-			if(result){
-				if(!id){
-					$('#result tbody tr:last').remove();
-				}else{
-					$.ajax({
-						url: '../feematrix/deleterow?feeMatrixDetailId='+id,
-						type : "GET",
-						success : function(response) {
-							$('#result tbody tr:last').remove();
-						},
-						error : function(response) {
-							bootbox.alert("Unable to delete this row.");
-						}
-					});
-				}
-			}
-		});
-	}
- });
-});

@@ -40,13 +40,6 @@
 
 package org.egov.tl.service;
 
-import static org.egov.tl.utils.Constants.DELIMITER_HYPEN;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -58,7 +51,6 @@ import org.egov.tl.entity.FeeMatrixDetail;
 import org.egov.tl.entity.FeeType;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
-import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.UnitOfMeasurement;
@@ -66,15 +58,22 @@ import org.egov.tl.repository.FeeMatrixRepository;
 import org.egov.tl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import static org.egov.tl.utils.Constants.DELIMITER_HYPEN;
 
 @Service
 @Transactional(readOnly = true)
 public class FeeMatrixService<T extends License> {
 
-    private final FeeMatrixRepository feeMatrixRepository;
+    @Autowired
+    private FeeMatrixRepository feeMatrixRepository;
 
     @Autowired
     private FeeTypeService feeTypeService;
@@ -92,37 +91,29 @@ public class FeeMatrixService<T extends License> {
     @Autowired
     private FinancialYearDAO financialYearDAO;
 
-    @Autowired
-    public FeeMatrixService(final FeeMatrixRepository feeMatrixRepository) {
-        this.feeMatrixRepository = feeMatrixRepository;
-    }
-
     @Transactional
-    public FeeMatrix create(final FeeMatrix feeMatrix) {
-        feeMatrix.setUniqueNo(feeMatrix.genUniqueNo());
-        if (!feeMatrix.getFeeMatrixDetail().isEmpty())
-            for (final FeeMatrixDetail fd : feeMatrix.getFeeMatrixDetail())
-                fd.setFeeMatrix(feeMatrix);
+    public FeeMatrix create(FeeMatrix feeMatrix) {
+        feeMatrix.generateAndSetUniqueNumber();
+        for (FeeMatrixDetail fd : feeMatrix.getFeeMatrixDetail())
+            fd.setFeeMatrix(feeMatrix);
         return feeMatrixRepository.save(feeMatrix);
     }
 
     @Transactional
-    public FeeMatrix update(final FeeMatrix feeMatrix) {
-        feeMatrix.setUniqueNo(feeMatrix.genUniqueNo());
-        return feeMatrixRepository.save(feeMatrix);
+    public FeeMatrix update(FeeMatrix feeMatrix) {
+        feeMatrix.generateAndSetUniqueNumber();
+        feeMatrix.getFeeMatrixDetail().removeIf(FeeMatrixDetail::isMarkedForRemoval);
+        for (FeeMatrixDetail feeMatrixDetail : feeMatrix.getFeeMatrixDetail())
+            feeMatrixDetail.setFeeMatrix(feeMatrix);
+        return feeMatrixRepository.saveAndFlush(feeMatrix);
     }
 
-    public List<FeeMatrix> findAll() {
-        return feeMatrixRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    public List<FeeMatrix> searchFeeMatrix(Long licenseCategory, Long subCategory, Long financialYear) {
+        return feeMatrixRepository.searchFeeMatrix(licenseCategory, subCategory, financialYear);
     }
 
-    public FeeMatrix search(final FeeMatrix feeMatrix) {
-
-        return feeMatrixRepository.findByUniqueNo(feeMatrix.getUniqueNo());
-    }
-
-    public List<FeeMatrixDetail> findFeeMatrixByLicense(T license, Date date) {
-        return findFeeMatrixByGivenDate(license, date);
+    public FeeMatrix getFeeMatrixById(Long id) {
+        return feeMatrixRepository.findOne(id);
     }
 
     /**
@@ -161,30 +152,24 @@ public class FeeMatrixService<T extends License> {
 
         final List<FeeMatrixDetail> feeMatrixDetailList = new ArrayList<>();
         final CFinancialYear financialYearByDate = financialYearDAO.getFinYearByDate(givenDate);
-        for (final FeeType fee : feeTypeService.findAll())
-            if (fee.getFeeProcessType().equals(FeeType.FeeProcessType.RANGE))
-                switchLoop:switch (fee.getCode()) {
-                    // First find License Fee with UOM
-                    case "LF":
-                        final FeeMatrix feeMatrix = feeMatrixRepository
-                                .findByUniqueNo(uniqueNo + DELIMITER_HYPEN + fee.getId() + DELIMITER_HYPEN + uom.getId()
-                                        + DELIMITER_HYPEN + financialYearByDate.getId());
-                        if (feeMatrix == null)
-                            throw new ValidationException("TL-002", "TL-002");
-                        final Optional<FeeMatrixDetail> feeMatrixDetail = feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,
-                                license.getTradeArea_weight());
-                        if (!feeMatrixDetail.isPresent())
-                            throw new ValidationException("TL-003", "TL-003");
-                        feeMatrixDetailList.add(feeMatrixDetail.get());
-                        break switchLoop;
-
-                }
+        for (final FeeType fee : feeTypeService.findAll()) {
+            if (fee.getFeeProcessType().equals(FeeType.FeeProcessType.RANGE) && "LF".equals(fee.getCode())) {
+                // First find License Fee with UOM
+                final FeeMatrix feeMatrix = feeMatrixRepository
+                        .findByUniqueNo(uniqueNo + DELIMITER_HYPEN + fee.getId() + DELIMITER_HYPEN + uom.getId()
+                                + DELIMITER_HYPEN + financialYearByDate.getId());
+                if (feeMatrix == null)
+                    throw new ValidationException("TL-002", "TL-002");
+                final Optional<FeeMatrixDetail> feeMatrixDetail = feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,
+                        license.getTradeArea_weight());
+                if (!feeMatrixDetail.isPresent())
+                    throw new ValidationException("TL-003", "TL-003");
+                feeMatrixDetailList.add(feeMatrixDetail.get());
+                break;
+            }
+        }
 
         return feeMatrixDetailList;
-    }
-
-    public List<FeeMatrix> findBySubCategory(final LicenseSubCategory subCategory) {
-        return feeMatrixRepository.findBySubCategory(subCategory);
     }
 
     private String generateFeeMatirixUniqueNo(final T license, final NatureOfBusiness permanent) {

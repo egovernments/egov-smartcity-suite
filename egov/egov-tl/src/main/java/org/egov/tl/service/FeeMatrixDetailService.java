@@ -44,12 +44,10 @@ import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.FeeMatrixDetail;
 import org.egov.tl.repository.FeeMatrixDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -63,28 +61,7 @@ public class FeeMatrixDetailService {
         this.feeMatrixDetailRepository = feeMatrixDetailRepository;
     }
 
-    public List<FeeMatrixDetail> findAll() {
-        return feeMatrixDetailRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
-    }
-
-    public Optional<FeeMatrixDetail> findByLicenseFeeByRange(final FeeMatrix feeMatrix,
-                                                            final BigDecimal uom) {
+    public Optional<FeeMatrixDetail> findByLicenseFeeByRange(FeeMatrix feeMatrix, BigDecimal uom) {
         return feeMatrixDetailRepository.findFeeDetailList(feeMatrix, uom.intValue());
-
     }
-
-    public FeeMatrixDetail findByFeeMatrixDetailId(final Long feeMatrixDetailId) {
-        return feeMatrixDetailRepository.findOne(feeMatrixDetailId);
-    }
-
-    @Transactional
-    public void delete(final FeeMatrixDetail feeMatrixDetail) {
-        feeMatrixDetailRepository.delete(feeMatrixDetail);
-    }
-
-    public List<FeeMatrixDetail> searchFeeMatrix(final Long licenseCategory, final Long subCategory, final Long financialYear) {
-        return feeMatrixDetailRepository.findByParams(licenseCategory, subCategory, financialYear);
-
-    }
-
 }

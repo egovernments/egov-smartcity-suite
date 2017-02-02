@@ -227,7 +227,7 @@ public abstract class AbstractLicenseService<T extends License> {
         ld.setIsLateRenewal('0');
         ld.setCreateDate(new Date());
         ld.setModifiedDate(new Date());
-        final List<FeeMatrixDetail> feeMatrixDetails = this.feeMatrixService.findFeeMatrixByLicense(license, license.getCommencementDate());
+        final List<FeeMatrixDetail> feeMatrixDetails = this.feeMatrixService.findFeeMatrixByGivenDate(license, license.getCommencementDate());
         for (final FeeMatrixDetail fm : feeMatrixDetails) {
             final EgDemandReasonMaster reasonMaster = this.demandGenericDao
                     .getDemandReasonMasterByCode(fm.getFeeMatrix().getFeeType().getName(), moduleName);
@@ -252,8 +252,9 @@ public abstract class AbstractLicenseService<T extends License> {
         final LicenseDemand licenseDemand = license.getLicenseDemand();
         final Module moduleName = this.getModuleName();
         final Set<EgDemandDetails> demandDetails = licenseDemand.getEgDemandDetails();
-        Date licenseDate = license.getLicenseAppType().getName().equals(NEW_LIC_APPTYPE) ? license.getCommencementDate() : license.getLicenseDemand().getEgInstallmentMaster().getFromDate();
-        final List<FeeMatrixDetail> feeList = this.feeMatrixService.findFeeMatrixByLicense(license, licenseDate);
+        Date licenseDate = license.getLicenseAppType().getName().equals(NEW_LIC_APPTYPE) ? license.getCommencementDate()
+                : license.getLicenseDemand().getEgInstallmentMaster().getFromDate();
+        final List<FeeMatrixDetail> feeList = this.feeMatrixService.findFeeMatrixByGivenDate(license, licenseDate);
         for (final EgDemandDetails dmd : demandDetails)
             for (final FeeMatrixDetail fm : feeList)
                 if (licenseDemand.getEgInstallmentMaster().equals(dmd.getEgDemandReason().getEgInstallmentMaster()) &&
@@ -410,7 +411,7 @@ public abstract class AbstractLicenseService<T extends License> {
         final Assignment wfInitiator = this.assignmentService
                 .getPrimaryAssignmentForUser(this.securityUtils.getCurrentUser().getId());
         license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
-        recalculateDemand(this.feeMatrixService.findFeeMatrixByLicense(license, license.getLicenseDemand().getEgInstallmentMaster().getFromDate()), license);
+        recalculateDemand(this.feeMatrixService.findFeeMatrixByGivenDate(license, license.getLicenseDemand().getEgInstallmentMaster().getFromDate()), license);
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         license.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
         license.setLicenseAppType(this.getLicenseApplicationTypeForRenew());
@@ -704,8 +705,9 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     public BigDecimal calculateFeeAmount(final License license) {
-        Date licenseDate = license.getLicenseAppType().getName().equals(NEW_LIC_APPTYPE) ? license.getCommencementDate() : license.getLicenseDemand().getEgInstallmentMaster().getFromDate();
-        final List<FeeMatrixDetail> feeList = this.feeMatrixService.findFeeMatrixByLicense(license, licenseDate);
+        Date licenseDate = license.getLicenseAppType().getName().equals(NEW_LIC_APPTYPE) ? license.getCommencementDate()
+                : license.getLicenseDemand().getEgInstallmentMaster().getFromDate();
+        final List<FeeMatrixDetail> feeList = this.feeMatrixService.findFeeMatrixByGivenDate(license, licenseDate);
         BigDecimal totalAmount = ZERO;
         for (final FeeMatrixDetail fm : feeList)
             totalAmount = totalAmount.add(fm.getAmount());

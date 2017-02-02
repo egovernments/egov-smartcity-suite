@@ -39,46 +39,40 @@
  */
 package org.egov.tl.web.response.adaptor;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.FeeMatrixDetail;
-import org.egov.tl.entity.FeeType;
-import org.egov.tl.entity.LicenseSubCategoryDetails;
 
 import java.lang.reflect.Type;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
-public class FeeMatrixResponseAdaptor implements JsonSerializer<FeeMatrixDetail> {
+public class FeeMatrixResponseAdaptor implements JsonSerializer<FeeMatrix> {
     @Override
-    public JsonElement serialize(FeeMatrixDetail feeMatrixDetail, Type type, JsonSerializationContext jsc) {
-        JsonObject feematrixResponse = new JsonObject();
-        if (feeMatrixDetail != null) {
-            feematrixResponse.addProperty("id", feeMatrixDetail.getId());
-            feematrixResponse.addProperty("licenseCategory", feeMatrixDetail.getFeeMatrix().getLicenseCategory() == null ? EMPTY
-                    : feeMatrixDetail.getFeeMatrix().getLicenseCategory().getName());
-            feematrixResponse.addProperty("subCategory", feeMatrixDetail.getFeeMatrix().getSubCategory() == null ? EMPTY
-                    : feeMatrixDetail.getFeeMatrix().getSubCategory().getName());
-            feematrixResponse.addProperty("uom", feeMatrixDetail.getFeeMatrix().getUnitOfMeasurement() == null ? EMPTY
-                    : feeMatrixDetail.getFeeMatrix().getUnitOfMeasurement().getName());
-            FeeType feeType = feeMatrixDetail.getFeeMatrix().getFeeType();
-            for (LicenseSubCategoryDetails licenseSubCategoryDetails : feeMatrixDetail.getFeeMatrix().getSubCategory()
-                    .getLicenseSubCategoryDetails())
-                if (feeType.getCode().equals(licenseSubCategoryDetails.getFeeType().getCode())) {
-                    feematrixResponse.addProperty("rateType", licenseSubCategoryDetails.getRateType() == null ? EMPTY
-                            : licenseSubCategoryDetails.getRateType().toString());
-                    break;
-                }
-            feematrixResponse.addProperty("financialYear", feeMatrixDetail.getFeeMatrix().getFinancialYear() == null ? EMPTY
-                    : feeMatrixDetail.getFeeMatrix().getFinancialYear().getFinYearRange());
-            feematrixResponse.addProperty("uomfrom",
-                    feeMatrixDetail.getUomFrom() == null ? EMPTY : feeMatrixDetail.getUomFrom().toString());
-            feematrixResponse.addProperty("uomto", feeMatrixDetail.getUomTo() == null ? EMPTY : feeMatrixDetail.getUomTo().toString());
-            feematrixResponse.addProperty("rate", feeMatrixDetail.getAmount());
+    public JsonElement serialize(FeeMatrix feeMatrix, Type type, JsonSerializationContext jsc) {
+        JsonObject feeMatrixResponse = new JsonObject();
+        if (feeMatrix != null) {
+            feeMatrixResponse.addProperty("id", feeMatrix.getId());
+            feeMatrixResponse.addProperty("licenseCategory", feeMatrix.getLicenseCategory().getName());
+            feeMatrixResponse.addProperty("subCategory", feeMatrix.getSubCategory().getName());
+            feeMatrixResponse.addProperty("uom", feeMatrix.getUnitOfMeasurement().getName());
+            feeMatrixResponse.addProperty("feeType", feeMatrix.getFeeType().getName());
+            feeMatrixResponse.addProperty("financialYear", feeMatrix.getFinancialYear().getFinYearRange());
+            feeMatrixResponse.addProperty("natureOfBussiness", feeMatrix.getNatureOfBusiness().getName());
+            feeMatrixResponse.addProperty("licenseAppType", feeMatrix.getLicenseAppType().getName());
+            JsonArray details = new JsonArray();
+            for (FeeMatrixDetail detail : feeMatrix.getFeeMatrixDetail()) {
+                JsonObject detailJson = new JsonObject();
+                detailJson.addProperty("uomFrom", detail.getUomFrom());
+                detailJson.addProperty("uomTo", detail.getUomTo());
+                detailJson.addProperty("amount", detail.getAmount());
+                details.add(detailJson);
+            }
+            feeMatrixResponse.add("details", details);
 
         }
-        return feematrixResponse;
+        return feeMatrixResponse;
     }
 }

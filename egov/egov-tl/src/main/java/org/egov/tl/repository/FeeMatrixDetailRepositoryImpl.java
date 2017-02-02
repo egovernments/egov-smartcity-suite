@@ -43,21 +43,15 @@ package org.egov.tl.repository;
 import org.apache.log4j.Logger;
 import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.FeeMatrixDetail;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
 import java.util.ArrayList;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -89,24 +83,6 @@ public class FeeMatrixDetailRepositoryImpl implements FeeMatrixDetailRepositoryC
             return Optional.empty();
 
         }
-    }
-
-    @Override
-    public List<FeeMatrixDetail> findByParams(final Long licenseCategory, final Long subCategory, final Long financialYear) {
-        final Criteria feeMatrixDetailCriteria = entityManager.unwrap(Session.class)
-                .createCriteria(FeeMatrixDetail.class, "feeMatrixDetail")
-                .createAlias("feeMatrixDetail.feeMatrix", "feeMatrix")
-                .createAlias("feeMatrixDetail.feeMatrix.licenseCategory", "licenseCategory")
-                .createAlias("feeMatrixDetail.feeMatrix.subCategory", "subCategory")
-                .createAlias("feeMatrixDetail.feeMatrix.financialYear", "financialYear");
-        if (licenseCategory != null)
-            feeMatrixDetailCriteria.add(Restrictions.eq("licenseCategory.id", licenseCategory));
-        if (subCategory != null)
-            feeMatrixDetailCriteria.add(Restrictions.eq("subCategory.id", subCategory));
-        if (financialYear != null)
-            feeMatrixDetailCriteria.add(Restrictions.eq("financialYear.id", financialYear));
-
-        return feeMatrixDetailCriteria.list();
     }
 
 }
