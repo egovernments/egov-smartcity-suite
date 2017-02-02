@@ -156,18 +156,19 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
         model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
         model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
         model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(revisionEstimate.getId()));
+        model.addAttribute("defaultDepartmentId", worksUtils.getDefaultDepartmentId());
 
         if (WorksConstants.SAVE_ACTION.equalsIgnoreCase(mode))
-            model.addAttribute("message",
-                    messageSource.getMessage("msg.revisionestimate.saved", new String[] { revisionEstimate.getEstimateNumber() },
-                            null));
-        if (EstimateStatus.NEW.toString().equals(revisionEstimate.getEgwStatus().getCode()) ||
-                EstimateStatus.REJECTED.toString().equals(revisionEstimate.getEgwStatus().getCode())) {
-            model.addAttribute("mode", "edit");
+            model.addAttribute("message", messageSource.getMessage("msg.revisionestimate.saved",
+                    new String[] { revisionEstimate.getEstimateNumber() }, null));
+        if (EstimateStatus.NEW.toString().equals(revisionEstimate.getEgwStatus().getCode())
+                || EstimateStatus.REJECTED.toString().equals(revisionEstimate.getEgwStatus().getCode())) {
+            model.addAttribute(WorksConstants.MODE, WorksConstants.EDIT);
             return "revisionEstimate-form";
         } else {
-            model.addAttribute("estimateValue", revisionEstimate.getEstimateValue().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-            model.addAttribute("mode", "workflowView");
+            model.addAttribute("estimateValue",
+                    revisionEstimate.getEstimateValue().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+            model.addAttribute(WorksConstants.MODE, "workflowView");
             return "revisionEstimate-view";
         }
 

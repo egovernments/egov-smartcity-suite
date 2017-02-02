@@ -49,6 +49,7 @@
       }
 </style>
 <form:form id="contractorAdvanceForm" class="form-horizontal form-groups-bordered" modelAttribute="contractorAdvanceRequisition" role="form" action="" method="post" enctype="multipart/form-data">
+	<input type="hidden" id="defaultDepartmentId" value="${defaultDepartmentId }" />
 	<input id="cancelConfirm" type="hidden" value="<spring:message code="msg.cancel.arf.confirm" />" />
 	<input id="errorAdvanceExceeded" type="hidden" value="<spring:message code="error.advance.exceeded" />" />
 	<input id="errorAdvanceZero" type="hidden" value="<spring:message code="error.creditordebitamount.zero" />" />

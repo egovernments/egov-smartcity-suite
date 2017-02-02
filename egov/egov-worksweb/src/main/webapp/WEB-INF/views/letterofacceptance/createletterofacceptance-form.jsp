@@ -59,6 +59,7 @@
 }
 </style>
 <form:form id="createLetterOfAcceptanceForm" class="form-horizontal form-groups-bordered" modelAttribute="workOrder" role="form" action="loa-save" method="post" enctype="multipart/form-data">
+	<input type="hidden" id="defaultDepartmentId" value="${defaultDepartmentId }" />
 	<input id="cancelConfirm" type="hidden" value="<spring:message code="msg.cancel.loa.confirm" />" />
 	<div class="new-page-header"><spring:message code="title.loa.create" /></div>
 	<input type="hidden" name="mode" id ="mode" value ="${mode}">

@@ -76,6 +76,9 @@ $(document).ready(function(){
 		  }
 		  
 	  }).data('datepicker');
+	 var defaultDepartmentId = $("#defaultDepartmentId").val();
+	if(defaultDepartmentId != "")
+		$("#approvalDepartment").val(defaultDepartmentId);
 });
 
 function clearAllTenderedAndNonTenderedItems(){

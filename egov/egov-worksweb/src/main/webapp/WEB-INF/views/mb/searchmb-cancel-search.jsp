@@ -45,6 +45,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <input type="hidden" value="<spring:message code='error.mb.required' />" id='selectMB'>
+<input type="hidden" id="defaultDepartmentId" value ="${defaultDepartmentId}" />
 <form:form name="SearchRequest" role="form" action="" modelAttribute="searchRequestCancelMB" id="searchRequestCancelMB" class="form-horizontal form-groups-bordered">
 	<div class="row">
 		<div class="col-md-12">

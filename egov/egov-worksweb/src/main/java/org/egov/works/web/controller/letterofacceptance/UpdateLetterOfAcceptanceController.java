@@ -156,6 +156,7 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
             model.addAttribute("workflowHistory",
                     worksUtils.getHistory(workOrder.getState(), workOrder.getStateHistory()));
             model.addAttribute("amountRule", workOrder.getWorkOrderAmount());
+            model.addAttribute("defaultDepartmentId", worksUtils.getDefaultDepartmentId());
             return "letterOfAcceptance-view";
         }
     }

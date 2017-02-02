@@ -97,6 +97,10 @@ $(document).ready(function(){
 			
 	});
 	
+	var defaultDepartmentId = $("#defaultDepartmentId").val();
+	if(defaultDepartmentId != "")
+		$("#approvalDepartment").val(defaultDepartmentId);
+	
 });
 
 function getRow(obj) {

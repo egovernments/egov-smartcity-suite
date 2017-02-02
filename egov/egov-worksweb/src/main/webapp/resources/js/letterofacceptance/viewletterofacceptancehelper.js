@@ -118,6 +118,10 @@ $(document).ready(function() {
 	
 	if($('#revisedValue').val() != '')
 		$('#revisedValue').trigger('blur');
+
+	var defaultDepartmentId = $("#defaultDepartmentId").val();
+	if(defaultDepartmentId != "")
+		$("#approvalDepartment").val(defaultDepartmentId);
 });
 
 

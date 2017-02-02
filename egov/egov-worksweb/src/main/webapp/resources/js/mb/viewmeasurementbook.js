@@ -127,7 +127,10 @@ $(document).ready(function() {
 	 if($('#isMeasurementsExist').val() == 'false') {
 		$('.openCloseAll').hide();
 	 }
-	 
+
+	var defaultDepartmentId = $("#defaultDepartmentId").val();
+	if(defaultDepartmentId != "")
+		$("#approvalDepartment").val(defaultDepartmentId);
 });
 
 $('#ContractorMeasurements').click(function(event) {

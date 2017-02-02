@@ -71,6 +71,7 @@
 <form:form name="mbHeaderSearchForm" action="" role="form" modelAttribute="mbHeader" id="mbHeader" class="form-horizontal form-groups-bordered"
 	accept-charset="utf-8"
 	enctype="multipart/form-data">
+<input type="hidden" id="defaultDepartmentId" value="${defaultDepartmentId }" />
 <input type="hidden" name="removedDetailIds" id="removedDetailIds" value="${removedDetailIds }" class="form-control table-input hidden-input"/>
 <input type="hidden" id="mode" name="mode" value="${mode }">
 <input name="mbHeader" type="hidden" id="id" value="${mbHeader.id }" />

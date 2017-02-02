@@ -47,6 +47,7 @@ import org.egov.works.contractorbill.entity.ContractorBillRegister.BillStatus;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.entity.SearchRequestCancelMB;
 import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -69,6 +70,9 @@ public class CancelMBController {
 
     @Autowired
     private MBHeaderService mbHeaderService;
+    
+    @Autowired
+    private WorksUtils worksUtils;
 
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
     public String showSearchMBForm(
@@ -76,6 +80,7 @@ public class CancelMBController {
             final Model model) throws ApplicationException {
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("searchRequestCancelMB", searchRequestCancelMB);
+        model.addAttribute("defaultDepartmentId", worksUtils.getDefaultDepartmentId());
         return "searchmb-cancel";
     }
 

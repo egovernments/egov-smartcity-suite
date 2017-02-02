@@ -196,6 +196,9 @@ $(document).ready(function(){
 			  }
 			  return stringValue;
 			}
+	 var defaultDepartmentId = $("#defaultDepartmentId").val();
+	if(defaultDepartmentId != "")
+		$("#approvalDepartment").val(defaultDepartmentId);
 });
 
 function setTenderFinalizedPerSignInBOQ(tenderFinalizedPercentage) {

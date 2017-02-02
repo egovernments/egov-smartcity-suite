@@ -105,6 +105,7 @@ public class UpdateContractorAdvanceController extends GenericWorkFlowController
         final ContractorAdvanceRequisition contractorAdvanceRequisition = getContractorAdvanceRequisition(
                 contractorAdvanceRequisitionId);
         setDropDownValues(model);
+        model.addAttribute("defaultDepartmentId", worksUtils.getDefaultDepartmentId());
         return loadViewData(model, request, contractorAdvanceRequisition);
     }
 
@@ -141,10 +142,9 @@ public class UpdateContractorAdvanceController extends GenericWorkFlowController
         prepareWorkflow(model, contractorAdvanceRequisition, workflowContainer);
         if (contractorAdvanceRequisition.getState() != null
                 && contractorAdvanceRequisition.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
-            model.addAttribute("mode", "edit");
+            model.addAttribute(WorksConstants.MODE, WorksConstants.EDIT);
         else
-            model.addAttribute("mode", "view");
-
+            model.addAttribute(WorksConstants.MODE, WorksConstants.VIEW);
         model.addAttribute("workflowHistory", worksUtils.getHistory(contractorAdvanceRequisition.getState(),
                 contractorAdvanceRequisition.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());

@@ -143,7 +143,7 @@ public class UpdateMBController extends GenericWorkFlowController {
         if (mode != null && mode.equalsIgnoreCase(WorksConstants.SAVE_ACTION))
             model.addAttribute("message",
                     messageSource.getMessage("msg.mbheader.saved", new String[] { mbHeader.getMbRefNo() }, null));
-
+        model.addAttribute("defaultDepartmentId", worksUtils.getDefaultDepartmentId());
         return loadViewData(model, request, mbHeader);
     }
 

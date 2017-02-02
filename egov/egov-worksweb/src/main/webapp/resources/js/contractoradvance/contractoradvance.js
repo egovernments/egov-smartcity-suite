@@ -88,6 +88,9 @@ $(document).ready(function(){
 	
 	$('#debitGlcodeId').trigger('change');
 	$('#creditGlcodeId').trigger('change');
+	var defaultDepartmentId = $("#defaultDepartmentId").val();
+	if(defaultDepartmentId != "")
+		$("#approvalDepartment").val(defaultDepartmentId);
 });
 
 function validateWorkFlowApprover(name) {

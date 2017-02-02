@@ -52,6 +52,7 @@ import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -71,6 +72,9 @@ public class SearchWorkOrderForMBHeaderController extends GenericWorkFlowControl
 
     @Autowired
     protected CustomizedWorkFlowService customizedWorkFlowService;
+    
+    @Autowired
+    private WorksUtils worksUtils;
 
     @RequestMapping(method = RequestMethod.GET)
     public String showSearchWorkOrder(
@@ -100,6 +104,7 @@ public class SearchWorkOrderForMBHeaderController extends GenericWorkFlowControl
         model.addAttribute("currentDate", new Date());
         model.addAttribute("mbHeader", mbHeader);
         model.addAttribute("documentDetails", mbHeader.getDocumentDetails());
+        model.addAttribute("defaultDepartmentId", worksUtils.getDefaultDepartmentId());
         return "workorder-search";
     }
 

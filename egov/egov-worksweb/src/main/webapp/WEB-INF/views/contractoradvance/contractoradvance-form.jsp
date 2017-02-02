@@ -51,6 +51,7 @@
 </style>
 <form:form id="contractorAdvanceForm" class="form-horizontal form-groups-bordered" modelAttribute="contractorAdvanceRequisition" role="form" method="post" enctype="multipart/form-data">
 	<form:hidden path="id" />
+	<input type="hidden" id="defaultDepartmentId" value="${defaultDepartmentId }" />
 	<input type="hidden" name="woeId" id="woeId" value="${woeId}" />
 	<form:hidden path="workOrderEstimate" id="workOrderEstimate" value="${workOrderEstimate.id}" /> 
 	<input type="hidden" name="mode" id="mode" value="${mode }" />

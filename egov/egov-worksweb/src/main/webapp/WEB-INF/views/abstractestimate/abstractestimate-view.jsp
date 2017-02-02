@@ -75,6 +75,7 @@
 <form:form name="abstractEstimateForm" role="form" method="post" modelAttribute="abstractEstimate" id="abstractEstimate"
 	class="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
+	<input type="hidden" id="defaultDepartmentId" value="${defaultDepartmentId }" />
 	<form:hidden path="" name="removedActivityIds" id="removedActivityIds" value="" class="form-control table-input hidden-input"/>
 	<input type="hidden" id="isEstimateDeductionGrid" value="${isEstimateDeductionGrid}">
 	<div class="new-page-header"><spring:message code="lbl.viewae" /></div>

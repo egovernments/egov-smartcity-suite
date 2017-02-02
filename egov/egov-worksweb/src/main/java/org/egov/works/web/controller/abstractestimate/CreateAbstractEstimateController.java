@@ -138,7 +138,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             return "redirect:/lineestimate/searchlineestimateforabstractestimate-form";
         if (worksApplicationProperties.lineEstimateRequired())
             lineEstimateDetails = lineEstimateDetailService.getById(lineEstimateDetailId);
-
+        model.addAttribute("defaultDepartmentId", worksUtils.getDefaultDepartmentId());
         populateDataForAbstractEstimate(lineEstimateDetails, model, abstractEstimate);
         abstractEstimate.setEstimateDate(new Date());
         loadViewData(model, abstractEstimate, lineEstimateDetails);

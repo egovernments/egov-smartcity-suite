@@ -135,6 +135,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         if (mode != null && mode.equalsIgnoreCase(WorksConstants.SAVE_ACTION))
             model.addAttribute("message",
                     messageSource.getMessage("msg.estimate.saved", new String[] { abstractEstimate.getEstimateNumber() }, null));
+        model.addAttribute("defaultDepartmentId", worksUtils.getDefaultDepartmentId());
 
         return loadViewData(model, request, abstractEstimate, lineEstimateDetails);
     }
@@ -296,12 +297,12 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         model.addAttribute("amountRule", abstractEstimate.getEstimateValue());
         model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
 
-        if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()) ||
-                abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString())) {
-            model.addAttribute("mode", "edit");
+        if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString())
+                || abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString())) {
+            model.addAttribute(WorksConstants.MODE, WorksConstants.EDIT);
             return "newAbstractEstimate-form";
         } else {
-            model.addAttribute("mode", "workflowView");
+            model.addAttribute(WorksConstants.MODE, "workflowView");
             model.addAttribute("amountRule", abstractEstimate.getEstimateValue());
             return "abstractestimate-view";
         }

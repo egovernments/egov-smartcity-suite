@@ -156,6 +156,7 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
         model.addAttribute("workOrder", workOrder);
         model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(abstractEstimate.getId()));
         model.addAttribute("workflowHistory", worksUtils.getHistory(workOrder.getState(), workOrder.getStateHistory()));
+        model.addAttribute("defaultDepartmentId", worksUtils.getDefaultDepartmentId());
         return "createLetterOfAcceptance-form";
     }
 

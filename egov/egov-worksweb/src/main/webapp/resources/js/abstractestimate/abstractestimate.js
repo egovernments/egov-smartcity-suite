@@ -388,6 +388,10 @@ $(document).ready(function(){
 	replaceWorkCategoryChar();
 	replaceBeneficiaryChar();
 	getFunctionsByFundAndDepartment();
+	
+	var defaultDepartmentId = $("#defaultDepartmentId").val();
+	if(defaultDepartmentId != "")
+		$("#approvalDepartment").val(defaultDepartmentId);
 });
 
 $overheadRowCount = 0;

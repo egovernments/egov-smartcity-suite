@@ -70,6 +70,7 @@
 <form:form name="revisionEstimateForm" role="form" method="post" modelAttribute="revisionEstimate" id="revisionEstimate"
 	class="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
+	<input type="hidden" id="defaultDepartmentId" value="${defaultDepartmentId }" />
 	<input type="hidden" id="errorlocation" value="<spring:message code='error.locationdetails.required' />">
 	<form:hidden path="" name="removedActivityIds" id="removedActivityIds" value="${removedActivityIds }" class="form-control table-input hidden-input"/>
 	<input type="hidden" name="locationAppConfig" id="locationAppConfig" value="${isLocationDetailsRequired}"/>

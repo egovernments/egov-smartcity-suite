@@ -76,6 +76,7 @@
 	class="form-horizontal form-groups-bordered"
 	accept-charset="utf-8"
 	enctype="multipart/form-data">
+	<input type="hidden" id="defaultDepartmentId" value="${defaultDepartmentId }" />
 	<input name="showHistory" type="hidden" id="showHistory" value="${showHistory}" />
 	<input name="isMBHeaderEditable" type="hidden" id="isMBHeaderEditable" value="${isMBHeaderEditable}" />
 	<input name="mbHeader" type="hidden" id="id" value="${mbHeader.id }" />

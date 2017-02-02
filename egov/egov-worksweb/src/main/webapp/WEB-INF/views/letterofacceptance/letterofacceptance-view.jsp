@@ -59,7 +59,7 @@
 }
 </style>
 <form:form name="loaViewForm" action="" role="form" modelAttribute="workOrder" id="workOrder" class="form-horizontal form-groups-bordered" method="post">
-
+		<input type="hidden" id="defaultDepartmentId" value="${defaultDepartmentId }" />
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active">

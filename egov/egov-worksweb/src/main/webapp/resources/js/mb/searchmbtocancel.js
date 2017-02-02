@@ -250,4 +250,5 @@ $(document).ready(function() {
 		}
 		return false;
 	});
+	$("#departments").val($("#defaultDepartmentId").val());
 });

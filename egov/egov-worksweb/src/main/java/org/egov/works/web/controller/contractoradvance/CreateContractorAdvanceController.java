@@ -101,6 +101,7 @@ public class CreateContractorAdvanceController extends GenericWorkFlowController
         model.addAttribute("workOrderEstimate", workOrderEstimate);
         contractorAdvanceRequisition.setWorkOrderEstimate(workOrderEstimate);
         setModelValues(contractorAdvanceRequisition, model);
+        model.addAttribute("defaultDepartmentId", worksUtils.getDefaultDepartmentId());
         return "contractorAdvance-form";
     }
 

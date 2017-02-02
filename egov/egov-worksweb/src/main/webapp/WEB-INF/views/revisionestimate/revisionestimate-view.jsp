@@ -70,6 +70,7 @@
 <form:form name="revisionEstimateForm" role="form" method="post" modelAttribute="revisionEstimate" id="revisionEstimate"
 	class="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
+	<input type="hidden" id="defaultDepartmentId" value="${defaultDepartmentId }" />
 	<input type="hidden" name="removedActivityIds" id="removedActivityIds" value="${removedActivityIds }" class="form-control table-input hidden-input"/>
 	<div class="new-page-header"><spring:message code="lbl.re" /></div> 
 	<input type="hidden" name="revisionEstimateId" id="revisionEstimateId" value="${revisionEstimate.id}"/>

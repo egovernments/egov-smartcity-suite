@@ -142,8 +142,8 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
         if (revisionEstimate.getState() != null && revisionEstimate.getState().getNextAction() != null)
             model.addAttribute("nextAction", revisionEstimate.getState().getNextAction());
         model.addAttribute("validActionList", validActions);
-        model.addAttribute("mode", null);
-
+        model.addAttribute(WorksConstants.MODE, null);
+        model.addAttribute("defaultDepartmentId", worksUtils.getDefaultDepartmentId());
         return "revisionEstimate-form";
     }
 
