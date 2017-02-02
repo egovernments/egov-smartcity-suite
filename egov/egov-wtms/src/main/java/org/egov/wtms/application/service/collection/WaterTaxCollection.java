@@ -691,7 +691,7 @@ public class WaterTaxCollection extends TaxCollection {
                 break;
             }
         }
-        String revenueWard = waterTaxUtils.getRevenueWardForConsumerCode(reciptDetailList.get(0).getReceiptHeader().getConsumerCode());
+        String revenueWard = waterTaxUtils.getRevenueWardForConsumerCode(reciptDetailList.get(0).getReceiptHeader().getConsumerCode(),waterConnectionDetails);
         receiptAmountInfo.setArrearsAmount(arrearAmount);
         receiptAmountInfo.setAdvanceAmount(advanceInstallmentAmount);
         receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount);
