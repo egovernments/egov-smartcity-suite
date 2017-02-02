@@ -147,7 +147,44 @@ $(document).ready(function(){
 		
 	});
     
+    
+    var assignPosition = new Bloodhound({
+		datumTokenizer : function(datum) {
+			return Bloodhound.tokenizers
+					.whitespace(datum.value);
+		},
+		queryTokenizer : Bloodhound.tokenizers.whitespace,
+		remote : {
+			url : '/lcms/ajax/getpositionEmployee',
+			replace : function(url, uriEncodedQuery) {
+				return url + '?positionName=' + uriEncodedQuery;
+
+			},
+			filter : function(data) {
+		
+				return $.map(data, function(value, key) {
+					
+					return {
+						name : value,
+						value : key
+					};
+					
+				});
+			}
+		}
+	});
 	
+	assignPosition.initialize();
+	var typeaheadobj = $('#positionEmpName').typeahead({
+		hint: false,
+		highlight: false,
+		minLength: 1
+	},  {
+		displayKey : 'name',
+		source : assignPosition.ttAdapter()
+	});
+	
+	typeaheadWithEventsHandling(typeaheadobj, '#positionEmpId'); 
 });
 function validCaseRecievingAndFillingRange(start, end) {
     var startDate = Date.parse(start);
@@ -383,6 +420,8 @@ $(document).on('click',"#pet_delete_row",function (){
 		return true;
 	}
 });
+
+
 
 function onChangeofPetitioncheck(obj)
 {
