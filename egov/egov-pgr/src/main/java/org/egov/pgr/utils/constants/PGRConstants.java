@@ -54,6 +54,10 @@ public class PGRConstants {
     public static final String DASHBOARD_GROUPING_ULBGRADE = "ulbGrade";
     public static final String DASHBOARD_GROUPING_DISTRICT = "district";
     public static final String DASHBOARD_GROUPING_CITY = "ulb";
+    public static final String DASHBOARD_GROUPING_ALL_ULB = "allulb";
+    public static final String DASHBOARD_GROUPING_ALL_WARDS = "allwards";
+    public static final String DASHBOARD_GROUPING_ALL_LOCALITIES = "alllocalities";
+    public static final String DASHBOARD_GROUPING_ALL_FUNCTIONARY = "allfunctionary";
     public static final String DELIMITER_COLON = "::";
     public static final String NOASSIGNMENT = "NO ASSIGNMENT";
 

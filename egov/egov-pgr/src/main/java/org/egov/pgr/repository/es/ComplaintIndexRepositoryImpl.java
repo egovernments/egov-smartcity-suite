@@ -49,6 +49,9 @@ import static org.egov.pgr.repository.es.util.ComplaintElasticsearchUtils.getCou
 import static org.egov.pgr.repository.es.util.ComplaintElasticsearchUtils.getCountWithGroupingAndOrder;
 import static org.egov.pgr.utils.constants.PGRConstants.CITY_CODE;
 import static org.egov.pgr.utils.constants.PGRConstants.CITY_NAME;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_FUNCTIONARY;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_LOCALITIES;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_WARDS;
 import static org.egov.pgr.utils.constants.PGRConstants.DISTRICT_NAME;
 import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_DATE_FORMAT;
 import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_NAME;
@@ -132,43 +135,200 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                         fromDate.toString(formatter), toDate.toString(formatter)))
                 .execute().actionGet();
 
-        final SearchResponse tableResponse = elasticsearchTemplate
-                .getClient()
-                .prepareSearch(PGR_INDEX_NAME)
-                .setQuery(query)
-                .setSize(0)
-                .addAggregation(
-                        getCountWithGroupingAndOrder("complaintTypeWise", "complaintTypeName", size,
-                                complaintDashBoardRequest.getSortField(), complaintDashBoardRequest.getSortDirection())
-                                        .subAggregation(
-                                                getAverageWithExclusion("complaintTypeSatisfactionAverage", "satisfactionIndex"))
-                                        .subAggregation(
-                                                getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", "ifClosed", 2)
-                                                        .subAggregation(
-                                                                AggregationBuilders.range("ComplaintTypeAgeing")
-                                                                        .field("complaintAgeingdaysFromDue")
-                                                                        .addRange("1week", 0, 8).addRange("1month", 8, 32)
-                                                                        .addRange("3months", 32, 91)
-                                                                        .addUnboundedFrom("remainingMonths", 91))
-                                                        .subAggregation(getCountWithGrouping("complaintTypeSla", "ifSLA", 2))))
-                .addAggregation(
-                        getCountWithGroupingAndOrder("groupByField", grouByField, size,
-                                complaintDashBoardRequest.getSortField(), complaintDashBoardRequest.getSortDirection())
-                                        .subAggregation(
-                                                getAverageWithExclusion("groupByFieldSatisfactionAverage", "satisfactionIndex"))
-                                        .subAggregation(
-                                                getCountWithGrouping("groupFieldWiseOpenAndClosedCount", "ifClosed", 2)
-                                                        .subAggregation(
-                                                                AggregationBuilders.range("groupByFieldAgeing")
-                                                                        .field("complaintAgeingdaysFromDue")
-                                                                        .addRange("1week", 0, 8).addRange("1month", 8, 32)
-                                                                        .addRange("3months", 32, 91)
-                                                                        .addUnboundedFrom("remainingMonths", 91))
-                                                        .subAggregation(getCountWithGrouping("groupByFieldSla", "ifSLA", 2))))
-                .execute().actionGet();
+        SearchResponse tableResponse = null;
+        if (complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_WARDS))
+            tableResponse = elasticsearchTemplate
+                    .getClient()
+                    .prepareSearch(PGR_INDEX_NAME)
+                    .setQuery(query)
+                    .setSize(0)
+                    .addAggregation(
+                            getCountWithGroupingAndOrder("complaintTypeWise", "complaintTypeName", size,
+                                    complaintDashBoardRequest.getSortField(), complaintDashBoardRequest.getSortDirection())
+                                            .subAggregation(
+                                                    getAverageWithExclusion("complaintTypeSatisfactionAverage",
+                                                            "satisfactionIndex"))
+                                            .subAggregation(
+                                                    getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", "ifClosed", 2)
+                                                            .subAggregation(
+                                                                    AggregationBuilders.range("ComplaintTypeAgeing")
+                                                                            .field("complaintAgeingdaysFromDue")
+                                                                            .addRange("1week", 0, 8).addRange("1month", 8, 32)
+                                                                            .addRange("3months", 32, 91)
+                                                                            .addUnboundedFrom("remainingMonths", 91))
+                                                            .subAggregation(
+                                                                    getCountWithGrouping("complaintTypeSla", "ifSLA", 2))))
+                    .addAggregation(AggregationBuilders.terms("ulbwise").field(CITY_CODE).size(120)
+                            .subAggregation(
+                                    getCountWithGroupingAndOrder("groupByField", grouByField, size,
+                                            complaintDashBoardRequest.getSortField(),
+                                            complaintDashBoardRequest.getSortDirection())
+                                                    .subAggregation(
+                                                            getAverageWithExclusion("groupByFieldSatisfactionAverage",
+                                                                    "satisfactionIndex"))
+                                                    .subAggregation(
+                                                            AggregationBuilders.topHits("complaintrecord").addField(CITY_CODE)
+                                                                    .addField(DISTRICT_NAME).addField(CITY_NAME)
+                                                                    .addField(WARD_NAME).setSize(1))
+                                                    .subAggregation(
+                                                            getCountWithGrouping("groupFieldWiseOpenAndClosedCount", "ifClosed",
+                                                                    2)
+                                                                            .subAggregation(
+                                                                                    AggregationBuilders
+                                                                                            .range("groupByFieldAgeing")
+                                                                                            .field("complaintAgeingdaysFromDue")
+                                                                                            .addRange("1week", 0, 8)
+                                                                                            .addRange("1month", 8, 32)
+                                                                                            .addRange("3months", 32, 91)
+                                                                                            .addUnboundedFrom("remainingMonths",
+                                                                                                    91))
+                                                                            .subAggregation(getCountWithGrouping(
+                                                                                    "groupByFieldSla", "ifSLA", 2)))))
+
+                    .execute().actionGet();
+        else if (complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_LOCALITIES))
+            tableResponse = elasticsearchTemplate
+                    .getClient()
+                    .prepareSearch(PGR_INDEX_NAME)
+                    .setQuery(query)
+                    .setSize(0)
+                    .addAggregation(
+                            getCountWithGroupingAndOrder("complaintTypeWise", "complaintTypeName", size,
+                                    complaintDashBoardRequest.getSortField(), complaintDashBoardRequest.getSortDirection())
+                                            .subAggregation(
+                                                    getAverageWithExclusion("complaintTypeSatisfactionAverage",
+                                                            "satisfactionIndex"))
+                                            .subAggregation(
+                                                    getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", "ifClosed", 2)
+                                                            .subAggregation(
+                                                                    AggregationBuilders.range("ComplaintTypeAgeing")
+                                                                            .field("complaintAgeingdaysFromDue")
+                                                                            .addRange("1week", 0, 8).addRange("1month", 8, 32)
+                                                                            .addRange("3months", 32, 91)
+                                                                            .addUnboundedFrom("remainingMonths", 91))
+                                                            .subAggregation(
+                                                                    getCountWithGrouping("complaintTypeSla", "ifSLA", 2))))
+                    .addAggregation(AggregationBuilders.terms("ulbwise").field(CITY_CODE).size(120)
+                            .subAggregation(AggregationBuilders.terms("wardwise").field(WARD_NUMBER).size(size)
+                                    .subAggregation(
+                                            getCountWithGroupingAndOrder("groupByField", grouByField, size,
+                                                    complaintDashBoardRequest.getSortField(),
+                                                    complaintDashBoardRequest.getSortDirection())
+                                                            .subAggregation(
+                                                                    getAverageWithExclusion("groupByFieldSatisfactionAverage",
+                                                                            "satisfactionIndex"))
+                                                            .subAggregation(AggregationBuilders.topHits("complaintrecord")
+                                                                    .addField(CITY_CODE)
+                                                                    .addField("cityDistrictName").addField(CITY_NAME)
+                                                                    .addField(WARD_NAME).addField(LOCALITY_NAME).setSize(1))
+                                                            .subAggregation(
+                                                                    getCountWithGrouping("groupFieldWiseOpenAndClosedCount",
+                                                                            "ifClosed", 2)
+                                                                                    .subAggregation(
+                                                                                            AggregationBuilders
+                                                                                                    .range("groupByFieldAgeing")
+                                                                                                    .field("complaintAgeingdaysFromDue")
+                                                                                                    .addRange("1week", 0, 8)
+                                                                                                    .addRange("1month", 8, 32)
+                                                                                                    .addRange("3months", 32, 91)
+                                                                                                    .addUnboundedFrom(
+                                                                                                            "remainingMonths",
+                                                                                                            91))
+                                                                                    .subAggregation(getCountWithGrouping(
+                                                                                            "groupByFieldSla", "ifSLA", 2))))))
+                    .execute().actionGet();
+        else if (complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_FUNCTIONARY))
+            tableResponse = elasticsearchTemplate
+                    .getClient()
+                    .prepareSearch(PGR_INDEX_NAME)
+                    .setQuery(query)
+                    .setSize(0)
+                    .addAggregation(
+                            getCountWithGroupingAndOrder("complaintTypeWise", "complaintTypeName", size,
+                                    complaintDashBoardRequest.getSortField(), complaintDashBoardRequest.getSortDirection())
+                                            .subAggregation(
+                                                    getAverageWithExclusion("complaintTypeSatisfactionAverage",
+                                                            "satisfactionIndex"))
+                                            .subAggregation(
+                                                    getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", "ifClosed", 2)
+                                                            .subAggregation(
+                                                                    AggregationBuilders.range("ComplaintTypeAgeing")
+                                                                            .field("complaintAgeingdaysFromDue")
+                                                                            .addRange("1week", 0, 8).addRange("1month", 8, 32)
+                                                                            .addRange("3months", 32, 91)
+                                                                            .addUnboundedFrom("remainingMonths", 91))
+                                                            .subAggregation(
+                                                                    getCountWithGrouping("complaintTypeSla", "ifSLA", 2))))
+                    .addAggregation(AggregationBuilders.terms("ulbwise").field(CITY_CODE).size(120)
+                            .subAggregation(AggregationBuilders.terms("departmentwise").field("departmentCode").size(size)
+                                    .subAggregation(
+                                            getCountWithGroupingAndOrder("groupByField", grouByField, size,
+                                                    complaintDashBoardRequest.getSortField(),
+                                                    complaintDashBoardRequest.getSortDirection())
+                                                            .subAggregation(
+                                                                    getAverageWithExclusion("groupByFieldSatisfactionAverage",
+                                                                            "satisfactionIndex"))
+                                                            .subAggregation(AggregationBuilders.topHits("complaintrecord")
+                                                                    .addField(CITY_CODE)
+                                                                    .addField("cityDistrictName").addField(CITY_NAME)
+                                                                    .addField("departmentName")
+                                                                    .addField("initialFunctionaryMobileNumber").setSize(1))
+                                                            .subAggregation(
+                                                                    getCountWithGrouping("groupFieldWiseOpenAndClosedCount",
+                                                                            "ifClosed", 2)
+                                                                                    .subAggregation(
+                                                                                            AggregationBuilders
+                                                                                                    .range("groupByFieldAgeing")
+                                                                                                    .field("complaintAgeingdaysFromDue")
+                                                                                                    .addRange("1week", 0, 8)
+                                                                                                    .addRange("1month", 8, 32)
+                                                                                                    .addRange("3months", 32, 91)
+                                                                                                    .addUnboundedFrom(
+                                                                                                            "remainingMonths",
+                                                                                                            91))
+                                                                                    .subAggregation(getCountWithGrouping(
+                                                                                            "groupByFieldSla", "ifSLA", 2))))))
+                    .execute().actionGet();
+        else
+            tableResponse = elasticsearchTemplate
+                    .getClient()
+                    .prepareSearch(PGR_INDEX_NAME)
+                    .setQuery(query)
+                    .setSize(0)
+                    .addAggregation(
+                            getCountWithGroupingAndOrder("complaintTypeWise", "complaintTypeName", size,
+                                    complaintDashBoardRequest.getSortField(), complaintDashBoardRequest.getSortDirection())
+                                            .subAggregation(
+                                                    getAverageWithExclusion("complaintTypeSatisfactionAverage",
+                                                            "satisfactionIndex"))
+                                            .subAggregation(
+                                                    getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", "ifClosed", 2)
+                                                            .subAggregation(
+                                                                    AggregationBuilders.range("ComplaintTypeAgeing")
+                                                                            .field("complaintAgeingdaysFromDue")
+                                                                            .addRange("1week", 0, 8).addRange("1month", 8, 32)
+                                                                            .addRange("3months", 32, 91)
+                                                                            .addUnboundedFrom("remainingMonths", 91))
+                                                            .subAggregation(
+                                                                    getCountWithGrouping("complaintTypeSla", "ifSLA", 2))))
+                    .addAggregation(
+                            getCountWithGroupingAndOrder("groupByField", grouByField, size,
+                                    complaintDashBoardRequest.getSortField(), complaintDashBoardRequest.getSortDirection())
+                                            .subAggregation(
+                                                    getAverageWithExclusion("groupByFieldSatisfactionAverage",
+                                                            "satisfactionIndex"))
+                                            .subAggregation(
+                                                    getCountWithGrouping("groupFieldWiseOpenAndClosedCount", "ifClosed", 2)
+                                                            .subAggregation(
+                                                                    AggregationBuilders.range("groupByFieldAgeing")
+                                                                            .field("complaintAgeingdaysFromDue")
+                                                                            .addRange("1week", 0, 8).addRange("1month", 8, 32)
+                                                                            .addRange("3months", 32, 91)
+                                                                            .addUnboundedFrom("remainingMonths", 91))
+                                                            .subAggregation(getCountWithGrouping("groupByFieldSla", "ifSLA", 2))))
+                    .execute().actionGet();
 
         final HashMap<String, SearchResponse> result = new HashMap<>();
-
         if (grouByField.equals(LOCALITY_NAME)) {
             final SearchResponse localityMissingResponse = elasticsearchTemplate
                     .getClient()
@@ -303,7 +463,17 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                 .addAggregation(AggregationBuilders.terms("ulbwise").field(CITY_CODE).size(size)
                         .subAggregation(AggregationBuilders.topHits("complaintrecord").addField(CITY_CODE)
                                 .addField(DISTRICT_NAME).addField(CITY_NAME).setSize(1))
-                        .subAggregation(getCountWithGrouping("complaintCount", "ifClosed", 2))
+                        .subAggregation(
+                                getAverageWithExclusion("groupByFieldSatisfactionAverage", "satisfactionIndex"))
+                        .subAggregation(
+                                getCountWithGrouping("groupFieldWiseOpenAndClosedCount", "ifClosed", 2)
+                                        .subAggregation(
+                                                AggregationBuilders.range("groupByFieldAgeing")
+                                                        .field("complaintAgeingdaysFromDue")
+                                                        .addRange("1week", 0, 8).addRange("1month", 8, 32)
+                                                        .addRange("3months", 32, 91)
+                                                        .addUnboundedFrom("remainingMonths", 91))
+                                        .subAggregation(getCountWithGrouping("groupByFieldSla", "ifSLA", 2)))
                         .subAggregation(getCountWithGrouping(RE_OPENED_COMPLAINT_COUNT, RE_OPENED, 2)))
                 .execute().actionGet();
     }
