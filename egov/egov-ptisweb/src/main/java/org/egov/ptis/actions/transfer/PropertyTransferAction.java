@@ -107,7 +107,6 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.EisCommonService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -214,9 +213,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
-
-    @Autowired
-    private EisCommonService eisCommonService;
 
     // Model and View data
     private Long mutationId;
@@ -463,42 +459,45 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             } else
                 setAckMessage("Transfer of ownership data rejected successfuly and forwarded to : ");
             setAssessmentNoMessage(" with assessment number : ");
-        } else 
+        } else
             setAckMessage("Intiator is not active so can not do rejection with the assessmnet number : ");
         return ACK;
     }
+
     private boolean isRejectionNotAllowed() {
         return ("Rejected".equals(propertyMutation.getState().getValue())
                 || propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
                 && propertyMutation.getReceiptNum() != null && !receiptCanceled;
     }
 
-    private boolean isRoOrCommissioner(String loggedInUserDesignation) {
+    private boolean isRoOrCommissioner(final String loggedInUserDesignation) {
         boolean isany;
-        if(!REVENUE_OFFICER_DESGN.equalsIgnoreCase(loggedInUserDesignation)){
-             isany = isCommissioner(loggedInUserDesignation);
-        } else
-            isany=true;
+        if (!REVENUE_OFFICER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
+            isany = isCommissioner(loggedInUserDesignation);
+        else
+            isany = true;
         return isany;
     }
 
-    private boolean isCommissioner(String loggedInUserDesignation) {
+    private boolean isCommissioner(final String loggedInUserDesignation) {
         boolean isanyone;
-        if(!ASSISTANT_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation) || !ADDITIONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)){
+        if (!ASSISTANT_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
+                || !ADDITIONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
             isanyone = isDeputyOrAbove(loggedInUserDesignation);
-         }else
-             isanyone=true;
+        else
+            isanyone = true;
         return isanyone;
     }
 
-    private boolean isDeputyOrAbove(String loggedInUserDesignation) {
-        boolean isanyone=false;
-        if(DEPUTY_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation) || COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation) || ZONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)){
-            isanyone=true;
-         }
+    private boolean isDeputyOrAbove(final String loggedInUserDesignation) {
+        boolean isanyone = false;
+        if (DEPUTY_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
+                || COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation)
+                || ZONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
+            isanyone = true;
         return isanyone;
     }
-    
+
     @ValidationErrorPage(value = EDIT)
     @Action(value = "/approve")
     public String approve() {
