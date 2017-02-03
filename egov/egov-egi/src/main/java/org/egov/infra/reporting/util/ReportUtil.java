@@ -40,20 +40,6 @@
 
 package org.egov.infra.reporting.util;
 
-import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_PATH_KEY;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.struts2.ServletActionContext;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -63,6 +49,17 @@ import org.egov.infra.utils.NumberUtil;
 import org.egov.infra.web.utils.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.Properties;
 
 /**
  * Provides utility methods related to reports
@@ -145,14 +142,12 @@ public final class ReportUtil {
             reportProps.load(getFileAsStream(ReportConstants.REPORT_CONFIG_FILE));
             return reportProps;
         } catch (final IOException e) {
-            LOGGER.warn(
-                    "Exception while loading report configuration file [" + ReportConstants.REPORT_CONFIG_FILE + "]",
-                    e);
+            LOGGER.warn("Exception while loading report configuration file [" + ReportConstants.REPORT_CONFIG_FILE
+                    + "]", e);
             return null;
         } catch (final ApplicationRuntimeException e) {
-            LOGGER.warn(
-                    "Exception while loading report configuration file [" + ReportConstants.REPORT_CONFIG_FILE + "]",
-                    e);
+            LOGGER.warn("Exception while loading report configuration file [" + ReportConstants.REPORT_CONFIG_FILE
+                    + "]", e);
             return null;
         }
     }
@@ -276,8 +271,8 @@ public final class ReportUtil {
     public static String logoBasePath() {
         final HttpServletRequest request = ServletActionContext.getRequest();
         final String url = WebUtils.extractRequestDomainURL(request, false);
-        final String imagePath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
-                .concat((String) request.getSession().getAttribute(CITY_LOGO_PATH_KEY));
+        final String imagePath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH).concat(
+                (String) request.getSession().getAttribute("citylogo"));
         return imagePath;
     }
 
@@ -289,8 +284,8 @@ public final class ReportUtil {
     public static String cancelledWatermarkAbsolutePath() {
         final HttpServletRequest request = ServletActionContext.getRequest();
         final String url = WebUtils.extractRequestDomainURL(request, false);
-        final String imagePath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
-                .concat("/resources/global/images/cancelled_watermark.png");
+        final String imagePath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH).concat(
+                "/resources/global/images/cancelled_watermark.png");
         return imagePath;
     }
 
