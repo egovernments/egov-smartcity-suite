@@ -754,19 +754,24 @@ public class PropertyTransferService {
     
     public Assignment getWorkflowInitiator(PropertyMutation propertyMutation) {
         Assignment wfInitiator;
+        List<Assignment> assignment;
         if (propertyService.isEmployee(propertyMutation.getCreatedBy())) {
-            if (propertyMutation.getState() != null && propertyMutation.getState().getInitiatorPosition() != null) {
+            if (isStateNotNull(propertyMutation)) {
                 wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(
-                        propertyMutation.getCreatedBy(), propertyMutation.getState().getInitiatorPosition());
-                if (wfInitiator == null)
-                    wfInitiator = assignmentService.getAssignmentsForPosition(
-                            propertyMutation.getState().getInitiatorPosition().getId(), new Date()).get(0);
+                        propertyMutation.getCreatedBy(), propertyMutation.getState().getInitiatorPosition()).getEmployee().isActive()?
+                                propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(
+                                        propertyMutation.getCreatedBy(), propertyMutation.getState().getInitiatorPosition()):null;
+                if (wfInitiator == null){
+                    assignment = assignmentService.getAssignmentsForPosition(
+                            propertyMutation.getState().getInitiatorPosition().getId(), new Date());
+                    wfInitiator = getWfInitiator(assignment);
+                }
             } else
                 wfInitiator = assignmentService.getPrimaryAssignmentForUser(propertyMutation.getCreatedBy().getId());
         } else if (propertyMutation.getState().getInitiatorPosition() != null) {
-            wfInitiator = assignmentService
-                    .getAssignmentsForPosition(propertyMutation.getState().getInitiatorPosition().getId(), new Date())
-                    .get(0);
+            assignment = assignmentService
+                    .getAssignmentsForPosition(propertyMutation.getState().getInitiatorPosition().getId(), new Date());
+            wfInitiator = getWfInitiator(assignment);
             if (wfInitiator == null && !propertyMutation.getStateHistory().isEmpty())
                 wfInitiator = assignmentService.getPrimaryAssignmentForPositon(
                         propertyMutation.getStateHistory().get(0).getOwnerPosition().getId());
@@ -776,6 +781,21 @@ public class PropertyTransferService {
         }
 
         return wfInitiator;
+    }
+
+    private boolean isStateNotNull(PropertyMutation propertyMutation) {
+        return propertyMutation.getState() != null && propertyMutation.getState().getInitiatorPosition() != null;
+    }
+
+    private Assignment getWfInitiator(List<Assignment> assignment) {
+        Assignment wfInitor=null;
+        for(Assignment assign:assignment){
+              if(assign.getEmployee().isActive()){
+                  wfInitor=assign;
+                  break;
+              }
+        }
+        return wfInitor;
     }
     
     
