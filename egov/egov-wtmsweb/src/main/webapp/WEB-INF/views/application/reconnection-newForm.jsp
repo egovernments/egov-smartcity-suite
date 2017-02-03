@@ -113,7 +113,6 @@
 					
 </form:form>
 <script>
-alert($('#loggedInCSCUser').val());
 if($('#noJAORSAMessage').val()!='')
 	bootbox.alert($('#noJAORSAMessage').val());
 
