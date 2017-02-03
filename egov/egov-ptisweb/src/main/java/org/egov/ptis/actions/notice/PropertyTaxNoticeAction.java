@@ -556,10 +556,10 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         reportParams.put(CURRENT_PROPERTY_TAX, currentPropertyTax);
         reportParams.put(APPLICATION_DATE, formatter.format(basicProperty.getActiveProperty().getCreatedDate()));
-        reportParams.put(OWNER_NAME, basicProperty.getFullOwnerName());
+        reportParams.put(OWNER_NAME, basicProperty.getFullOwnerName().trim());
         reportParams.put(DOOR_NUMBER, basicProperty.getAddress().getHouseNoBldgApt());
         reportParams.put(ASSESSMENT_NUMBER, basicProperty.getUpicNo());
-        reportParams.put(LOCALITY, basicProperty.getAddress().getAreaLocalitySector());
+        reportParams.put(LOCALITY, basicProperty.getAddress().getAreaLocalitySector().trim());
         reportParams.put(NOTICE_DATE, formatter.format(new Date()));
         reportParams.put(COMMISSIONER, securityUtils.getCurrentUser().getName());
         reportParams.put(EXEMPTION_REASON, basicProperty.getProperty().getTaxExemptedReason().getName());
