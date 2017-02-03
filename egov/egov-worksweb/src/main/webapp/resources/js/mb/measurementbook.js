@@ -1951,6 +1951,8 @@ function calculateTotalValue() {
 	mbAmount = parseFloat(parseFloat(mbAmount) + parseFloat(nonTenderedTotal) + parseFloat(lumpSumTotal)).toFixed(2);
 	$('#mbAmount').val(mbAmount);
 	$('#mbAmountSpan').html(mbAmount);
+	if(!isNaN(mbAmount))
+		$('#amountRule').val(mbAmount);
 }
 
 function getFormData($form) {
@@ -2014,6 +2016,7 @@ function validateFormData() {
 	var totalMBAmountOfMBs = $('#totalMBAmountOfMBs').val();
 	var mbAmount = $('#mbAmount').val();
 	var workOrderAmount = $('#workOrderAmount').val();
+	$('#amountRule').val(mbAmount);
 	
 	$(".required").each(function() {
 		if ($(this).val() == '') {
@@ -2174,4 +2177,81 @@ function viewMBHistory() {
 }
 function viewContractorMB(id) {
 	window.open("/egworks//contractorportal/mb/view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
+function showHideAppravalDetails(workFlowAction) {
+	var isValidAction=true;
+	var sorTotal = $('#sorTotal').html();
+	var nonSorTotal = $('#nonSorTotal').html();
+	var nonTenderedTotal = $('#nonTenderedTotal').html();
+	var lumpSumTotal = $('#lumpSumTotal').html();
+	if(sorTotal == '')
+		sorTotal = 0.0;
+	if(nonSorTotal == '')
+		nonSorTotal = 0.0;
+	if(nonTenderedTotal == '')
+		nonTenderedTotal = 0.0;
+	if(lumpSumTotal == '')
+		lumpSumTotal = 0.0;
+	
+	var total = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal)).toFixed(2);
+	
+	$('#pageTotal').html(parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal)).toFixed(2));
+	$('#nonTenderedPageTotal').html(parseFloat(parseFloat(nonTenderedTotal) + parseFloat(lumpSumTotal)).toFixed(2));
+	
+	var tenderFinalisedPercentage = 0;
+	if($('#tenderFinalisedPercentage').html().trim() != '')
+		tenderFinalisedPercentage = parseFloat($('#tenderFinalisedPercentage').html());
+	var mbAmount = parseFloat(parseFloat(total) + (parseFloat(parseFloat(tenderFinalisedPercentage) / 100) * parseFloat(total))).toFixed(2);
+	mbAmount = parseFloat(parseFloat(mbAmount) + parseFloat(nonTenderedTotal) + parseFloat(lumpSumTotal)).toFixed(2);
+	if(!isNaN(mbAmount)) {
+		$('#amountRule').val(mbAmount);
+	}
+
+	$.ajax({
+		url: "/egworks/mbheader/ajax-showhidembappravaldetails",     
+		type: "GET",
+		async: false,
+		data: {
+			amountRule : mbAmount,
+			additionalRule : $('#additionalRule').val()
+		},
+		dataType: "json",
+		success: function (response) {
+			if(response) {
+				$('#approvalDepartment').removeAttr('required');
+				$('#approvalDesignation').removeAttr('required');
+				$('#approvalPosition').removeAttr('required');
+				if(workFlowAction == 'Forward') {
+					bootbox.alert($('#errorAmountRuleApprove').val());
+					isValidAction = false;
+				} else {
+					isValidAction = true;
+				}
+				
+			} else {
+				$('#approvalDepartment').attr('required', 'required');
+				$('#approvalDesignation').attr('required', 'required');
+				$('#approvalPosition').attr('required', 'required');
+				if(workFlowAction == 'Create And Approve') {
+					bootbox.alert($('#errorAmountRuleForward').val());
+					isValidAction = false;
+				} else {
+					isValidAction = true;
+				}
+
+			}
+			
+		}, 
+		error: function (response) {
+			console.log("failed");
+		},
+		complete : function(){
+			$('.loader-class').modal('hide');
+		}
+	});
+	if(isValidAction)
+		return true;
+	else
+		return false;
 }

@@ -41,14 +41,18 @@ package org.egov.works.web.controller.mb;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.works.contractorportal.entity.ContractorMBHeader;
 import org.egov.works.contractorportal.service.ContractorMBHeaderService;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
@@ -57,6 +61,7 @@ import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.entity.SearchRequestCancelMB;
 import org.egov.works.mb.entity.SearchRequestMBHeader;
 import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.adaptor.SearchMBHeaderJsonAdaptor;
 import org.egov.works.web.adaptor.SearchMBToCancelJson;
 import org.egov.works.web.adaptor.SearchWorkOrderActivityJsonAdaptor;
@@ -100,6 +105,9 @@ public class AjaxMBController {
 
     @Autowired
     private ContractorMBHeaderService contractorMBHeaderService;
+
+    @Autowired
+    private ScriptService scriptService;
 
     @RequestMapping(value = "/workorder/validatemb/{workOrderEstimateId}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String validateWorkOrder(@PathVariable final Long workOrderEstimateId,
@@ -284,6 +292,18 @@ public class AjaxMBController {
             return result.toString();
         else
             return "";
+    }
+
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/mbheader/ajax-showhidembappravaldetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody boolean findWorkFlowMatrix(
+            @RequestParam final BigDecimal amountRule, @RequestParam final String additionalRule) {
+        final Map<String, Object> map = new HashMap<String, Object>();
+
+        map.putAll((Map<String, Object>) scriptService.executeScript(WorksConstants.MB_APPROVALRULES,
+                ScriptService.createContext("mbAmount", amountRule,
+                        "cityGrade", additionalRule)));
+        return (boolean) map.get("createAndApproveFieldsRequired");
     }
 
 }

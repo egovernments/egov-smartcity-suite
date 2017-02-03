@@ -101,6 +101,8 @@
     <input type="hidden" value="${spillOverFlag}" id=spillOverFlag /> 
     <input id="cuttoffdateerrormsg1" type="hidden" value="<spring:message code="error.mbdate.cutoffdate.errmsg1" />" />
     <input id="cuttoffdateerrormsg2" type="hidden" value="<spring:message code="error.mbdate.cutoffdate.errmsg2" />" />
+    <input id="errorAmountRuleForward" type="hidden" value="<spring:message code="error.forward.approve" />" />
+    <input id="errorAmountRuleApprove" type="hidden" value="<spring:message code="error.create.approve" />" />
 	
 	<div class="new-page-header"><spring:message code="lbl.createmb" /></div> 
 	

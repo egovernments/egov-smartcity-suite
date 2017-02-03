@@ -56,12 +56,15 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.mb.entity.MBDetails;
 import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.mb.entity.MBHeader.MeasurementBookStatus;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.offlinestatus.service.OfflineStatusService;
@@ -89,6 +92,9 @@ import com.google.gson.JsonObject;
 @Controller
 @RequestMapping(value = "/measurementbook")
 public class UpdateMBController extends GenericWorkFlowController {
+
+    public static final String MB_SUCCESS_MESSAGE = "message";
+
     @Autowired
     private MBHeaderService mbHeaderService;
 
@@ -113,6 +119,9 @@ public class UpdateMBController extends GenericWorkFlowController {
 
     @Autowired
     private MeasurementSheetService measurementSheetService;
+
+    @Autowired
+    private CityService cityService;
 
     @ModelAttribute
     public MBHeader getMBHeader(@PathVariable final String mbHeaderId) {
@@ -185,10 +194,10 @@ public class UpdateMBController extends GenericWorkFlowController {
                 removedDetailIds, files);
         mbHeaderService.fillWorkflowData(jsonObject, request, updatedMBHeader);
         if (workFlowAction.equalsIgnoreCase(WorksConstants.SAVE_ACTION))
-            jsonObject.addProperty("message",
+            jsonObject.addProperty(MB_SUCCESS_MESSAGE,
                     messageSource.getMessage("msg.mbheader.saved", new String[] { mbHeader.getMbRefNo() }, null));
         else if (workFlowAction.equalsIgnoreCase(WorksConstants.CANCEL_ACTION))
-            jsonObject.addProperty("message",
+            jsonObject.addProperty(MB_SUCCESS_MESSAGE,
                     messageSource.getMessage("msg.mbheader.cancelled", new String[] { mbHeader.getMbRefNo() }, null));
         else {
             final String pathVars = worksUtils.getPathVars(mbHeader.getEgwStatus(), mbHeader.getState(),
@@ -204,9 +213,12 @@ public class UpdateMBController extends GenericWorkFlowController {
                     approverName = keyNameArray[1];
                     nextDesign = keyNameArray[3];
                 }
-
-            jsonObject.addProperty("message", messageSource.getMessage("msg.mbheader.created",
-                    new String[] { approverName, nextDesign, mbHeader.getMbRefNo() }, null));
+            if (mbHeader.getEgwStatus().getCode().equalsIgnoreCase(MeasurementBookStatus.APPROVED.toString()))
+                jsonObject.addProperty(MB_SUCCESS_MESSAGE, messageSource.getMessage("msg.mbheader.approved",
+                        new String[] { mbHeader.getMbRefNo() }, null));
+            else
+                jsonObject.addProperty(MB_SUCCESS_MESSAGE, messageSource.getMessage("msg.mbheader.created",
+                        new String[] { approverName, nextDesign, mbHeader.getMbRefNo() }, null));
         }
         return jsonObject.toString();
     }
@@ -286,19 +298,25 @@ public class UpdateMBController extends GenericWorkFlowController {
         model.addAttribute("stateType", mbHeader.getClass().getSimpleName());
         if (mbHeader.getCurrentState() != null && !mbHeader.getCurrentState().getValue().equals(WorksConstants.NEW))
             model.addAttribute("currentState", mbHeader.getCurrentState().getValue());
+        final WorkflowContainer workflowContainer = new WorkflowContainer();
         if (mbHeader.getState() != null && mbHeader.getState().getNextAction() != null) {
             model.addAttribute("nextAction", mbHeader.getState().getNextAction());
-            model.addAttribute("amountRule", mbHeader.getMbAmount());
             model.addAttribute("pendingActions", mbHeader.getState().getNextAction());
+            workflowContainer.setCurrentDesignation(worksUtils.getLoggedInUserDesignation(mbHeader.getState()));
         }
+        model.addAttribute("amountRule", mbHeader.getMbAmount());
 
-        final WorkflowContainer workflowContainer = new WorkflowContainer();
         workflowContainer.setAmountRule(mbHeader.getMbAmount());
         workflowContainer.setPendingActions(mbHeader.getState().getNextAction());
+        workflowContainer.setAdditionalRule(
+                (String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+        model.addAttribute(WorksConstants.ADDITIONAL_RULE,
+                cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
         prepareWorkflow(model, mbHeader, workflowContainer);
         List<String> validActionList = Collections.emptyList();
         validActionList = new ArrayList<String>(getValidActions(mbHeader, workflowContainer));
         validActionList.add(WorksConstants.CONTRACTOR_MEASUREMENTS);
+
         model.addAttribute("validActionList", validActionList);
         if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString())) {
             List<String> validActions = Collections.emptyList();
@@ -308,6 +326,7 @@ public class UpdateMBController extends GenericWorkFlowController {
                     workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
                     mbHeader.getCreatedDate());
             model.addAttribute("validActionList", validActions);
+
         }
 
         List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -372,10 +391,10 @@ public class UpdateMBController extends GenericWorkFlowController {
         if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString()) ||
                 updatedMBHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.REJECTED.toString())
                 || isMBEditable) {
-            model.addAttribute("mode", "edit");
+            model.addAttribute(WorksConstants.MODE, WorksConstants.EDIT);
             return "mbHeader-form";
         } else {
-            model.addAttribute("mode", "workflowView");
+            model.addAttribute(WorksConstants.MODE, "workflowView");
             return "mbheader-view";
         }
     }

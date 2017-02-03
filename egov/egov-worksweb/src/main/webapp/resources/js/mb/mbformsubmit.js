@@ -109,7 +109,19 @@ function validateWorkFlowApprover(name) {
 		
 		validateSORDetails();
 	}
-	
+
+	if (button != null && button == 'Create And Approve') {
+		$('#approvalComent').removeAttr('required');
+		
+		if($('#mbHeader').valid()) {
+			flag = validateFormData();
+			if(!flag)
+				return false;
+		}
+		
+		validateSORDetails();
+	}
+
 	if(flag && $('#mbHeader').valid()) {
 		deleteEmptyRows();
 		$("#mbHeaderTab").find('input,button,textarea').prop('disabled',false);

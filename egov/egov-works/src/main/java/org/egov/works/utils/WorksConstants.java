@@ -435,6 +435,8 @@ public class WorksConstants {
     public static final String ADDITIONAL_RULE = "additionalRule";
 
     public static final String ABSTRACTESTIMATE_APPROVALRULES = "ABSTRACTESTIMATE-APPROVALRULES";
-    
+
     public final static String ACTIVE = "Active";
+
+    public static final String MB_APPROVALRULES = "MB-APPROVALRULES";
 }

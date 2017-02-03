@@ -47,6 +47,8 @@ import java.util.List;
 
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.mb.entity.MBHeader;
@@ -83,6 +85,9 @@ public class MeasurementBookJsonAdaptor implements JsonSerializer<WorkOrderEstim
 
     @Autowired
     private WorksUtils worksUtils;
+
+    @Autowired
+    private CityService cityService;
 
     @Override
     public JsonElement serialize(final WorkOrderEstimate workOrderEstimate, final Type type,
@@ -165,6 +170,10 @@ public class MeasurementBookJsonAdaptor implements JsonSerializer<WorkOrderEstim
             }
             jsonObject.addProperty("spillOverFlag",
                     workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isSpillOverFlag());
+            
+            jsonObject.addProperty("additionalRule",
+                    (String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+
         }
         return jsonObject;
     }

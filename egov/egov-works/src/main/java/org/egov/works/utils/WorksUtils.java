@@ -63,9 +63,9 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -118,7 +118,7 @@ public class WorksUtils {
 
     @Autowired
     private EisCommonService eisCommonService;
-    
+
     @Autowired
     private WorksApplicationProperties worksApplicationProperties;
 
@@ -405,7 +405,7 @@ public class WorksUtils {
         }
         return historyTable;
     }
-    
+
     public Long getDefaultDepartmentId() {
         final String defaultApproverDept = worksApplicationProperties.getDefaultApproverDepartment();
         if (defaultApproverDept != null) {
@@ -415,4 +415,18 @@ public class WorksUtils {
         }
         return null;
     }
+
+    public String getLoggedInUserDesignation(final State state) {
+        String loggedInUserDesignation = "";
+        final User user = securityUtils.getCurrentUser();
+        List<Assignment> loggedInUserAssign;
+        if (state != null && state.getOwnerPosition() != null) {
+            loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                    state.getOwnerPosition().getId(), user.getId(), new Date());
+            loggedInUserDesignation = !loggedInUserAssign.isEmpty()
+                    ? loggedInUserAssign.get(0).getDesignation().getName() : null;
+        }
+        return loggedInUserDesignation;
+    }
+
 }

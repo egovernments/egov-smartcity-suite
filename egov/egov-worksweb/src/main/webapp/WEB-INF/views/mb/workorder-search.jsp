@@ -48,6 +48,8 @@
 	<form:form name="abstractEstimateForm" role="form" modelAttribute="searchRequestLetterOfAcceptance"
 		id="searchRequestLetterOfAcceptance"	class="form-horizontal form-groups-bordered">
 		<div class="alert text-left" style="color: red;" id="errorMessage" hidden="true"></div>
+		<input type="hidden" id="errorselectloa" value="<spring:message code='error.loa.required' />">
+		<input type="hidden" value="<spring:message code="error.date.todate.fromdate" />" id="errorToDateAndFromDate" />
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel-heading"></div>

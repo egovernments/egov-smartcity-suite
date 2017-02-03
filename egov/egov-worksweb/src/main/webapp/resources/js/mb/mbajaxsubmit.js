@@ -110,6 +110,11 @@ $('#Forward').click(function() {
 
 	document.getElementById("workFlowAction").value = "Forward";
 	
+	flag = showHideAppravalDetails("Forward");
+	if(!flag) {
+		return false;
+	}
+	
 	$('#approvalDepartment').attr('required', 'required');
 	$('#approvalDesignation').attr('required', 'required');
 	$('#approvalPosition').attr('required', 'required');
@@ -161,6 +166,49 @@ $('#Cancel').click(function() {
 			}
 		});
 		
+	}
+	else
+		return false;
+	
+	return false;
+});
+
+$('#Create\\ And\\ Approve').click(function() {
+	
+	var flag = true;
+
+	document.getElementById("workFlowAction").value = "Create And Approve";
+	
+	flag = showHideAppravalDetails("Create And Approve");
+	if(!flag) {
+		return false;
+	}
+	$('#approvalDepartment').removeAttr('required');
+	$('#approvalDesignation').removeAttr('required');
+	$('#approvalPosition').removeAttr('required');
+	$('#approvalComent').removeAttr('required');
+	
+	if($('#mbHeader').valid()) {
+		flag = validateFormData();
+		if(!flag)
+			return false;
+	}
+
+	var mbDate = $('#mbDate').data('datepicker').date;
+	var cutOffDate = $('#cutOffDate').val(); 
+	var cutOffDateDisplay = $('#cutOffDateDisplay').val();
+	if(cutOffDate != '' && $('#mbDate').val() != '') {
+	if(mbDate.getTime() > new Date(cutOffDate).getTime()) {
+		bootbox.alert($('#cuttoffdateerrormsg1').val() + ' ' +cutOffDateDisplay+ '.'+'</br>'+$('#cuttoffdateerrormsg2').val());
+		$('#mbDate').val('');
+		return false;
+	 }
+	}
+	
+	validateSORDetails();
+	
+	if($('#mbHeader').valid() && flag) {
+		submitForm("");
 	}
 	else
 		return false;
@@ -249,6 +297,7 @@ function submitForm(workFlowAction) {
 				$('#forwardMessage').html(json.message);
 				$('#successPage').show();
 			}
+			window.scrollTo(0, 0);
 		},
 		error: function (error) {
 			$('#tblsor').find('input, textarea').each(function() {
@@ -274,6 +323,7 @@ function submitForm(workFlowAction) {
 			$.each(json, function(key, value){
 				$('#errorMessage').append(value + '</br>');
 			});
+			window.scrollTo(0, 0);
 		},
 		complete : function(){
 			$('.loader-class').modal('hide');

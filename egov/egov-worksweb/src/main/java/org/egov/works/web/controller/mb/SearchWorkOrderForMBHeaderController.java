@@ -39,6 +39,7 @@
  */
 package org.egov.works.web.controller.mb;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,7 +47,9 @@ import java.util.List;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.lineestimate.service.LineEstimateService;
@@ -72,9 +75,12 @@ public class SearchWorkOrderForMBHeaderController extends GenericWorkFlowControl
 
     @Autowired
     protected CustomizedWorkFlowService customizedWorkFlowService;
-    
+
     @Autowired
     private WorksUtils worksUtils;
+
+    @Autowired
+    private CityService cityService;
 
     @RequestMapping(method = RequestMethod.GET)
     public String showSearchWorkOrder(
@@ -88,23 +94,29 @@ public class SearchWorkOrderForMBHeaderController extends GenericWorkFlowControl
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
         final MBHeader mbHeader = new MBHeader();
         final WorkflowContainer workflowContainer = new WorkflowContainer();
-        workflowContainer.setAmountRule(mbHeader.getMbAmount());
+        workflowContainer.setAmountRule(mbHeader.getMbAmount() != null
+                ? mbHeader.getMbAmount() : BigDecimal.ZERO);
+        workflowContainer.setAdditionalRule(
+                (String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
         prepareWorkflow(model, mbHeader, workflowContainer);
         final List<String> validActions = new ArrayList<String>();
+        validActions.add(WorksConstants.CREATE_AND_APPROVE);
         validActions.add(WorksConstants.SAVE_ACTION);
         validActions.add(WorksConstants.FORWARD_ACTION.toString());
-        validActions.add(WorksConstants.CONTRACTOR_MEASUREMENTS.toString());
+        validActions.add(WorksConstants.CONTRACTOR_MEASUREMENTS);
         model.addAttribute("stateType", mbHeader.getClass().getSimpleName());
         if (mbHeader.getState() != null && mbHeader.getState().getNextAction() != null) {
             model.addAttribute("nextAction", mbHeader.getState().getNextAction());
             model.addAttribute("pendingActions", mbHeader.getState().getNextAction());
         }
-
         model.addAttribute("validActionList", validActions);
         model.addAttribute("currentDate", new Date());
         model.addAttribute("mbHeader", mbHeader);
         model.addAttribute("documentDetails", mbHeader.getDocumentDetails());
         model.addAttribute("defaultDepartmentId", worksUtils.getDefaultDepartmentId());
+        model.addAttribute("amountRule", mbHeader.getMbAmount());
+        model.addAttribute(WorksConstants.ADDITIONAL_RULE,
+                cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
         return "workorder-search";
     }
 

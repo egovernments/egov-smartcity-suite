@@ -42,6 +42,8 @@ import com.google.gson.JsonObject;
 @RequestMapping(value = "/measurementbook")
 public class CreateMBController {
 
+    public static final String MB_SUCCESS_MESSAGE = "message";
+
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
 
@@ -90,13 +92,16 @@ public class CreateMBController {
         Long approvalPosition = 0l;
         String approvalComment = "";
         String workFlowAction = "";
+        String additionalRule = "";
         String mode = "";
-        if (request.getParameter("mode") != null)
-            mode = request.getParameter("mode");
+        if (request.getParameter(WorksConstants.MODE) != null)
+            mode = request.getParameter(WorksConstants.MODE);
         if (request.getParameter("approvalComent") != null)
             approvalComment = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
+        if (request.getParameter(WorksConstants.ADDITIONAL_RULE) != null)
+            additionalRule = request.getParameter(WorksConstants.ADDITIONAL_RULE);
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
@@ -108,9 +113,11 @@ public class CreateMBController {
         mbHeaderService.validateMBInDrafts(mbHeader.getWorkOrderEstimate().getId(), jsonObject, errors);
         mbHeaderService.validateMBInWorkFlow(mbHeader.getWorkOrderEstimate().getId(), jsonObject, errors);
         mbHeaderService.validateMBHeader(mbHeader, jsonObject, resultBinder, mode);
+        mbHeaderService.validateWorkflowActionButton(mbHeader, jsonObject, errors, additionalRule, workFlowAction);
+
         workOrderEstimateService
                 .getContratorBillForWorkOrderEstimateAndBillType(mbHeader.getWorkOrderEstimate().getId(), jsonObject);
-        if (StringUtils.isBlank(workFlowAction))
+        if (StringUtils.isBlank(workFlowAction) || WorksConstants.CREATE_AND_APPROVE.equalsIgnoreCase(workFlowAction))
             validateMBDateToSkipWorkflow(mbHeader, jsonObject, errors);
         if (jsonObject.toString().length() > 2) {
             sendAJAXResponse(jsonObject.toString(), response);
@@ -118,12 +125,12 @@ public class CreateMBController {
         }
 
         final MBHeader savedMBHeader = mbHeaderService.create(mbHeader, files, approvalPosition, approvalComment,
-                workFlowAction);
+                workFlowAction, additionalRule);
 
         mbHeaderService.fillWorkflowData(jsonObject, request, savedMBHeader);
 
         if (workFlowAction.equalsIgnoreCase(WorksConstants.SAVE_ACTION))
-            jsonObject.addProperty("message",
+            jsonObject.addProperty(MB_SUCCESS_MESSAGE,
                     messageSource.getMessage("msg.mbheader.saved", new String[] { mbHeader.getMbRefNo() }, null));
         else {
             final String pathVars = worksUtils.getPathVars(mbHeader.getEgwStatus(), mbHeader.getState(),
@@ -140,10 +147,13 @@ public class CreateMBController {
                     nextDesign = keyNameArray[3];
                 }
             if (StringUtils.isBlank(workFlowAction))
-                jsonObject.addProperty("message", messageSource.getMessage("msg.mbheader.createdandapprove",
+                jsonObject.addProperty(MB_SUCCESS_MESSAGE, messageSource.getMessage("msg.mbheader.createdandapprove",
+                        new String[] { mbHeader.getMbRefNo() }, null));
+            else if (WorksConstants.CREATE_AND_APPROVE.equalsIgnoreCase(workFlowAction))
+                jsonObject.addProperty(MB_SUCCESS_MESSAGE, messageSource.getMessage("msg.mbheader.approved",
                         new String[] { mbHeader.getMbRefNo() }, null));
             else
-                jsonObject.addProperty("message", messageSource.getMessage("msg.mbheader.created",
+                jsonObject.addProperty(MB_SUCCESS_MESSAGE, messageSource.getMessage("msg.mbheader.created",
                         new String[] { approverName, nextDesign, mbHeader.getMbRefNo() }, null));
         }
 
@@ -197,7 +207,7 @@ public class CreateMBController {
 
         final String message = getMessageByStatus(mbHeader, approverName, nextDesign);
 
-        model.addAttribute("message", message);
+        model.addAttribute(MB_SUCCESS_MESSAGE, message);
 
         return new ModelAndView("mb-success", "mbHeader", mbHeader);
     }

@@ -44,9 +44,11 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -61,7 +63,10 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
@@ -147,6 +152,12 @@ public class MBHeaderService {
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
+    @Autowired
+    private CityService cityService;
+
+    @Autowired
+    private ScriptService scriptService;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -206,12 +217,12 @@ public class MBHeaderService {
     @Transactional
     public MBHeader create(final MBHeader mbHeader, final MultipartFile[] files, final Long approvalPosition,
             final String approvalComent,
-            final String workFlowAction) throws IOException {
+            final String workFlowAction, final String additionalRule) throws IOException {
         if (mbHeader.getState() == null)
             if (workFlowAction.equals(WorksConstants.FORWARD_ACTION))
                 mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(
                         WorksConstants.MBHEADER, MBHeader.MeasurementBookStatus.CREATED.toString()));
-            else if (StringUtils.isBlank(workFlowAction))
+            else if (StringUtils.isBlank(workFlowAction) || WorksConstants.CREATE_AND_APPROVE.equalsIgnoreCase(workFlowAction))
                 mbHeader.setEgwStatus(worksUtils
                         .getStatusByModuleAndCode(WorksConstants.MBHEADER, MBHeader.MeasurementBookStatus.APPROVED.toString()));
             else
@@ -221,7 +232,7 @@ public class MBHeaderService {
         MBHeader savedMBHeader = mbHeaderRepository.save(mbHeader);
 
         if (StringUtils.isNotBlank(workFlowAction))
-            createMBHeaderWorkflowTransition(savedMBHeader, approvalPosition, approvalComent, null,
+            createMBHeaderWorkflowTransition(savedMBHeader, approvalPosition, approvalComent, additionalRule,
                     workFlowAction);
 
         savedMBHeader = mbHeaderRepository.save(savedMBHeader);
@@ -240,7 +251,7 @@ public class MBHeaderService {
     public MBHeader update(final MBHeader mbHeader, final Long approvalPosition, final String approvalComent,
             final String workFlowAction, final String removedDetailIds, final MultipartFile[] files) throws IOException {
         Boolean isMBEditable = false;
-
+        final String addtionalRule = (String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY);
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_MB_SECOND_LEVEL_EDIT);
         final AppConfigValues value = values.get(0);
@@ -275,7 +286,7 @@ public class MBHeaderService {
         if (updatedMBHeader.getEgwStatus().getCode().equalsIgnoreCase(MBHeader.MeasurementBookStatus.APPROVED.toString()))
             updatedMBHeader.setApprovedDate(new Date());
 
-        createMBHeaderWorkflowTransition(updatedMBHeader, approvalPosition, approvalComent, null,
+        createMBHeaderWorkflowTransition(updatedMBHeader, approvalPosition, approvalComent, addtionalRule,
                 workFlowAction);
 
         updatedMBHeader = mbHeaderRepository.save(updatedMBHeader);
@@ -406,10 +417,12 @@ public class MBHeaderService {
                     && mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString()))
                 mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
                         MBHeader.MeasurementBookStatus.CANCELLED.toString()));
-            else if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString()))
+            else if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString())
+                    && !WorksConstants.CREATE_AND_APPROVE.equalsIgnoreCase(workFlowAction))
                 mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
                         MBHeader.MeasurementBookStatus.CREATED.toString()));
-            else if (workFlowAction.equals(WorksConstants.APPROVE_ACTION))
+            else if (workFlowAction.equals(WorksConstants.APPROVE_ACTION)
+                    || WorksConstants.CREATE_AND_APPROVE.equalsIgnoreCase(workFlowAction))
                 mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
                         MBHeader.MeasurementBookStatus.APPROVED.toString()));
             else if (workFlowAction.equals(WorksConstants.REJECT_ACTION))
@@ -574,7 +587,7 @@ public class MBHeaderService {
                         .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition()).withNextAction("")
                         .withNatureOfTask(natureOfwork);
         } else if (WorksConstants.SAVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
-            wfmatrix = mbHeaderWorkflowService.getWfMatrix(mbHeader.getStateType(), null, null,
+            wfmatrix = mbHeaderWorkflowService.getWfMatrix(mbHeader.getStateType(), null, mbHeader.getMbAmount(),
                     additionalRule, WorksConstants.NEW, null);
             if (mbHeader.getState() == null)
                 mbHeader.transition(true).start().withSenderName(user.getUsername() + "::" + user.getName())
@@ -618,13 +631,14 @@ public class MBHeaderService {
             jsonObject.addProperty("nextAction", mbHeader.getState().getNextAction());
             jsonObject.addProperty("pendingActions", mbHeader.getState().getNextAction());
         }
+        jsonObject.addProperty(WorksConstants.ADDITIONAL_RULE, request.getParameter(WorksConstants.ADDITIONAL_RULE));
 
         jsonObject.addProperty("id", mbHeader.getId());
 
         if (!mbHeader.getMbDetails().isEmpty()) {
             final JsonArray detailIds = new JsonArray();
+            final JsonObject mbDetail = new JsonObject();
             for (final MBDetails mbDetails : mbHeader.getMbDetails()) {
-                final JsonObject mbDetail = new JsonObject();
                 mbDetail.addProperty("id", mbDetails.getId());
                 if (mbDetails.getWorkOrderActivity().getActivity().getSchedule() != null)
                     mbDetail.addProperty("sorType", "SOR");
@@ -992,5 +1006,28 @@ public class MBHeaderService {
         return mbHeaderRepository.findMBHeadersForRevisionEstimate(revisionEstimate.getParent().getId(), revisionEstimate.getId(),
                 workOrderEstimate.getId(),
                 RevisionType.NON_TENDERED_ITEM, RevisionType.LUMP_SUM_ITEM, MBHeader.MeasurementBookStatus.CANCELLED.toString());
+    }
+
+    @SuppressWarnings("unchecked")
+    public void validateWorkflowActionButton(final MBHeader mbHeader, final JsonObject jsonObject, final BindingResult errors,
+            final String additionalRule, final String workFlowAction) {
+        final Map<String, Object> map = new HashMap<String, Object>();
+
+        map.putAll((Map<String, Object>) scriptService.executeScript(WorksConstants.MB_APPROVALRULES,
+                ScriptService.createContext("mbAmount", mbHeader.getMbAmount(),
+                        "cityGrade", additionalRule)));
+        String message = "";
+        final boolean validateWorkflowButton = (boolean) map.get("createAndApproveFieldsRequired");
+        if (validateWorkflowButton && WorksConstants.FORWARD_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+            message = messageSource.getMessage("error.create.approve",
+                    new String[] { null }, null);
+            jsonObject.addProperty("workFlowError", message);
+        } else if (!validateWorkflowButton && WorksConstants.CREATE_AND_APPROVE.toString().equalsIgnoreCase(workFlowAction)) {
+            message = messageSource.getMessage("error.forward.approve",
+                    new String[] { null }, null);
+            jsonObject.addProperty("workFlowError", message);
+        }
+        if (errors != null)
+            errors.reject("workFlowError", message);
     }
 }

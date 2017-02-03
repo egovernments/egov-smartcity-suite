@@ -53,7 +53,7 @@ jQuery('#btnsearch').click(function(e) {
 	if(toDate != '' && fromDate != '') {
 		if(fromDate > toDate) {
 			flag = false;
-			bootbox.alert('To Date should be greater than From Date');
+			bootbox.alert($('#errorToDateAndFromDate').val());
 		}
 	}
 	if(flag)
@@ -246,7 +246,7 @@ var workIdentificationNumber_typeahead = $('#workIdentificationNumber').typeahea
 $('#btncreatemb').click(function(e) {
 	var workOrderEstimateId = $('input[name=selectCheckbox]:checked').val();
 	if(workOrderEstimateId == null) {
-		bootbox.alert("Please select atleast one Letter of Acceptance to create Measurement book");
+		bootbox.alert($('#errorselectloa').val());
 	}
 	else {
 		$.ajax({
@@ -304,6 +304,7 @@ $('#btncreatemb').click(function(e) {
 					$('#errorMessage').append(value + '</br>');
 				});
 				$('#errorMessage').show();
+				window.scrollTo(0, 0);
 			}
 		});
 	}
