@@ -82,13 +82,10 @@ $(document).ready( function () {
 	        	$('div#' + elem.id).addClass('in active');	
 	    	}
 	    	
-	    	console.log('target' + e.target.id);
 	    	var imgAttach = e.target.id;
 	    }  
 	});
 
-	/*$("input[id$='religionPractice1']").prop("checked", true);*/
-	
 	$('#table_search').keyup(function(){
     	$('#registration_table').fnFilter(this.value);
     });
@@ -109,10 +106,8 @@ $(document).ready( function () {
 		if($(this).parent().find('#toggle-his-icon').hasClass('fa fa-angle-down'))
 		{
 			$(this).parent().find('#toggle-his-icon').removeClass('fa fa-angle-down').addClass('fa fa-angle-up');
-			//$('#see-more-link').hide();
 			}else{
 			$(this).parent().find('#toggle-his-icon').removeClass('fa fa-angle-up').addClass('fa fa-angle-down');
-			//$('#see-more-link').show();
 		}
 	});
 
@@ -133,7 +128,7 @@ $(document).ready( function () {
 
 	
 	function validateApplicationNumber(){
-		appNo=$('#applicationNum').val();
+		var appNo=$('#applicationNum').val();
 		if(appNo != '') {
 			$.ajax({
 				url: "/mrs/registration/checkUniqueAppl-RegNo",      
@@ -144,7 +139,7 @@ $(document).ready( function () {
 				},
 				dataType: "json",
 				success: function (response) { 
-					if(response != true) {
+					if(!response) {
 							$('#applicationNum').val('');
 							bootbox.alert("Entered Application Number already exists. Please Enter Unique Number.");
 					}
@@ -168,7 +163,7 @@ $(document).ready( function () {
 				},
 				dataType: "json",
 				success: function (response) { 
-					if(response != true) {
+					if(response) {
 							bootbox.alert("Entered Serial Number already exists. Please Enter Unique Number.");
 							$('#txt-serialNo').val('');
 					}
@@ -182,7 +177,7 @@ $(document).ready( function () {
 	}
 	
 	function validateRegistrationNumber(){
-		regNo=$('#registrationNum').val();
+		var regNo=$('#registrationNum').val();
 		if(regNo != '') {
 			$.ajax({
 				url: "/mrs/registration/checkUniqueAppl-RegNo",      
@@ -193,7 +188,7 @@ $(document).ready( function () {
 				},
 				dataType: "json",
 				success: function (response) { 
-					if(response != true) {
+					if(!response) {
 							$('#registrationNum').val('');
 							bootbox.alert("Entered Registration Number already exists. Please Enter Unique Number.");
 					}
@@ -235,7 +230,7 @@ function validateChecklists() {
 				 if(item.value!="")
 					 ageAddrProofAttached = true;
 			 });
-			 if (ageAddrProofAttached == false) {
+			 if (!ageAddrProofAttached) {
 				bootbox.alert("Any one Age Proof for Husband is mandatory");
 				return false;
 			}
@@ -245,7 +240,7 @@ function validateChecklists() {
 				 if(item.value!="")
 					 ageAddrProofAttached = true;
 			 });
-			 if (ageAddrProofAttached == false) {
+			 if (!ageAddrProofAttached) {
 				 bootbox.alert("Any one Residence Proof for Husband is mandatory");
 					return false;
 			 }
@@ -256,7 +251,7 @@ function validateChecklists() {
 				 if(item.value!="")
 					 ageAddrProofAttached = true;
 			 });
-			 if (ageAddrProofAttached == false) {
+			 if (!ageAddrProofAttached) {
 				bootbox.alert("Any one Age Proof for Wife is mandatory");
 				return false;
 			}
@@ -266,7 +261,7 @@ function validateChecklists() {
 				 if(item.value!="")
 					 ageAddrProofAttached = true;
 			 });
-			 if (ageAddrProofAttached == false) {
+			 if (!ageAddrProofAttached) {
 				 bootbox.alert("Any one Residence Proof for Wife is mandatory");
 					return false;
 			 }
