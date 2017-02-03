@@ -618,8 +618,9 @@ public class ConnectionDemandService {
             demandObj.setEgInstallmentMaster(installment);
             demandObj.getEgDemandDetails().addAll(dmdDetailSet);
             demandObj.setModifiedDate(new Date());
-            if (demandObj.getId() != null && waterDemandConnectionService
-                    .findByWaterConnectionDetailsAndDemand(waterConnectionDetails, demandObj) == null) {
+            WaterDemandConnection waterDemandConnection=waterDemandConnectionService
+                    .findByWaterConnectionDetailsAndDemand(waterConnectionDetails, demandObj) ;
+            if (demandObj.getId() != null && waterDemandConnection== null) {
                 final WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
                 waterdemandConnection.setDemand(demandObj);
                 waterdemandConnection.setWaterConnectionDetails(waterConnectionDetails);

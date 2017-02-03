@@ -59,6 +59,7 @@
 				</div>
 				<input type="hidden" name="validateIfPTDueExists" id="validateIfPTDueExists" value="${validateIfPTDueExists}"> 
 				<form:hidden path="connection" id="connection" value="${changeOfUse.connection.id}"/>
+				<input type="hidden" name="noJAORSAMessage" id="noJAORSAMessage" value="${noJAORSAMessage}">
 				<form:hidden path="" name="approvalPosOnValidate" id="approvalPosOnValidate" value="${approvalPosOnValidate}"/> 
 				<input type="hidden" name="validationMessage" id="validationMessage" value="${validationMessage}">
 				<input type="hidden" id="currentUser" value="${currentUser}" name="currentUser"/>  

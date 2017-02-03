@@ -134,9 +134,10 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         final String natureOfwork = getNatureOfTask(waterConnectionDetails);
         if (recordCreatedBYNonEmployee) {
             currState = WFLOW_ACTION_STEP_THIRDPARTY_CREATED;
-            if (!waterConnectionDetails.getStateHistory().isEmpty())
-                wfInitiator = assignmentService.getPrimaryAssignmentForPositon(
+            if (!waterConnectionDetails.getStateHistory().isEmpty() ){
+            		wfInitiator = assignmentService.getPrimaryAssignmentForPositon(
                         waterConnectionDetails.getStateHistory().get(0).getOwnerPosition().getId());
+            }
         } else if (null != waterConnectionDetails.getId()) {
             currentUser = userService.getUserById(waterConnectionDetails.getCreatedBy().getId());
             if (currentUser != null && waterConnectionDetails.getLegacy().equals(true)) {
@@ -161,7 +162,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 waterConnectionDetails.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
                 waterConnectionSmsAndEmailService.sendSmsAndEmailOnRejection(waterConnectionDetails, approvalComent);
-                waterConnectionDetailsService.updateIndexes(waterConnectionDetails, null);
+               waterConnectionDetailsService.updateIndexes(waterConnectionDetails, null);
             } else {
                 final String stateValue = WF_STATE_REJECTED;
                 waterConnectionDetails.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
@@ -222,6 +223,10 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     || additionalRule.equals(WaterTaxConstants.RECONNECTIONCONNECTION))
                     && (waterConnectionDetails.getCurrentState().getValue().equals("Closed")
                             || waterConnectionDetails.getCurrentState().getValue().equals("END"))) {
+            	if(currState!=null && waterTaxUtils.getCurrentUserRole())
+            		wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
+                            additionalRule, currState, null);
+            	else
                 wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                         additionalRule, null, null);
                 if (wfmatrix != null && !wfmatrix.getNextAction().equalsIgnoreCase("END"))

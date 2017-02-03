@@ -39,6 +39,8 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_THIRDPARTY_CREATED;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,8 +52,13 @@ import javax.validation.Valid;
 
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.CloserConnectionService;
@@ -67,7 +74,10 @@ import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
@@ -97,8 +107,17 @@ public class CloserConnectionController extends GenericConnectionController {
 
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    private UserService userService;
+    
     @Autowired
     private ApplicationTypeService applicationTypeService;
+    
+    @Autowired
+    @Qualifier("parentMessageSource")
+    private MessageSource wcmsMessageSource;
+
 
     @Autowired
     public CloserConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
@@ -145,8 +164,9 @@ public class CloserConnectionController extends GenericConnectionController {
 
         return loadViewData(model, request, waterConnectionDetails);
     }
-
-    private String loadViewData(final Model model, final HttpServletRequest request,
+    
+    @Transactional(readOnly=true)
+    public String loadViewData(final Model model, final HttpServletRequest request,
             final WaterConnectionDetails waterConnectionDetails) {
         waterConnectionDetails.setPreviousApplicationType(waterConnectionDetails.getApplicationType().getCode());
         model.addAttribute("previousApplicationType", waterConnectionDetails.getPreviousApplicationType());
@@ -159,6 +179,7 @@ public class CloserConnectionController extends GenericConnectionController {
         workflowContainer.setAdditionalRule(WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE);
         prepareWorkflow(model, waterConnectionDetails, workflowContainer);
         model.addAttribute("radioButtonMap", Arrays.asList(ClosureType.values()));
+        model.addAttribute("loggedInCSCUser",waterTaxUtils.getCurrentUserRole());
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
         model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
@@ -177,7 +198,7 @@ public class CloserConnectionController extends GenericConnectionController {
     @RequestMapping(value = "/close/{applicationCode}", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model, @RequestParam("files") final MultipartFile[] files) {
+            final HttpServletRequest request, final Model model,final BindingResult errors, @RequestParam("files") final MultipartFile[] files) {
         final String sourceChannel = request.getParameter("Source");
         String workFlowAction = "";
 
@@ -192,6 +213,19 @@ public class CloserConnectionController extends GenericConnectionController {
 
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");
+        
+        final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole();
+
+        if (applicationByOthers != null && applicationByOthers.equals(true)) {
+            final Position userPosition = waterTaxUtils
+                    .getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier());
+            if (userPosition == null) {
+                model.addAttribute("noJAORSAMessage" ,"No JA/SA exists to forward the application.");
+                return  "connection-closeForm";
+            } else
+                approvalPosition = userPosition.getId();
+
+        }
 
         waterConnectionDetails.setPreviousApplicationType(request.getParameter("previousApplicationType"));
 

@@ -58,6 +58,8 @@
 			</div>
 			<form:hidden path="applicationType" id="applicationType.id" value="${waterConnectionDetails.applicationType.id}"/>
 			<input type="hidden" name="validationMessage" id="validationMessage" value="${validationMessage}">
+			<input type="hidden" name="loggedInCSCUser" id="loggedInCSCUser" value="${loggedInCSCUser}">
+			<input type="hidden" name="noJAORSAMessage" id="noJAORSAMessage" value="${noJAORSAMessage}">
 			<input id="applicationCode" type="hidden" value="<c:out value="${waterConnectionDetails.applicationNumber}" />" />  						
 				<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
@@ -100,8 +102,10 @@
 
 </div>			
 				
-				
+				<c:if test="${!loggedInCSCUser || loggedInCSCUser=='false'}">
 						<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+						</c:if>
+						
 							<div class="buttonbottom" align="center">
 							<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 					</div>
@@ -109,6 +113,10 @@
 					
 </form:form>
 <script>
+alert($('#loggedInCSCUser').val());
+if($('#noJAORSAMessage').val()!='')
+	bootbox.alert($('#noJAORSAMessage').val());
+
 if($('#validationMessage').val()!='')
 	bootbox.alert($('#validationMessage').val());
 function validate(){

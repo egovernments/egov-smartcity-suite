@@ -62,6 +62,7 @@
 				<input type="hidden" id="currentUser" name="currentUser" value="${currentUser}"/>  
 				<input type="hidden" name="validateIfPTDueExists" id="validateIfPTDueExists" value="${validateIfPTDueExists}"> 
 				<form:hidden id="mode" path=""  value="${mode}"/>
+				<input type="hidden" name="noJAORSAMessage" id="noJAORSAMessage" value="${noJAORSAMessage}">
 				<form:hidden path="" name="approvalPosOnValidate" id="approvalPosOnValidate" value="${approvalPosOnValidate}"/> 
 				<form:hidden id="documentName" path="" value="${documentName}"/>
 				<form:hidden path="applicationType" id="applicationType.id" value="${addConnection.applicationType.id}"/>

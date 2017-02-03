@@ -93,6 +93,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Service
@@ -173,6 +174,22 @@ public class WaterTaxUtils {
                     ? loggedInUserAssign.get(0).getDesignation().getName() : null;
         }
         return loggedInUserDesignation;
+    }
+    public Boolean getCurrentUserRole() {
+        Boolean cscUserRole =Boolean.FALSE;
+        User currentUser = null;
+
+        if (ApplicationThreadLocals.getUserId() != null)
+            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
+        else
+            currentUser = securityUtils.getCurrentUser();
+
+        for (final Role userrole : currentUser.getRoles())
+            if (userrole.getName().equals(WaterTaxConstants.ROLE_CSCOPERTAOR)) {
+                cscUserRole = Boolean.TRUE;
+                break;
+            }
+        return cscUserRole;
     }
 
     public Boolean isSmsEnabled() {
@@ -462,7 +479,7 @@ public class WaterTaxUtils {
         return approverPosition;
 
     }
-
+    @Transactional(readOnly=true)
     public Position getZonalLevelClerkForLoggedInUser(final String asessmentNumber) {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
@@ -498,6 +515,7 @@ public class WaterTaxUtils {
      * @param boundaryObj
      * @return Assignment
      */
+    @Transactional(readOnly=true)
     public Assignment getUserPositionByZone(final String asessmentNumber, final AssessmentDetails assessmentDetails,
             final Boundary boundaryObj) {
         final String designationStr = getDesignationForThirdPartyUser();

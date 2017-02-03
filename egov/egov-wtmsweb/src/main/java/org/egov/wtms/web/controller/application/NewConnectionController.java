@@ -187,8 +187,8 @@ public class NewConnectionController extends GenericConnectionController {
             final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
             final BindingResult errors) {
         final String sourceChannel = request.getParameter("Source");
-        validatePropertyID(waterConnectionDetails, resultBinder);
-        waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails, resultBinder);
+     //   validatePropertyID(waterConnectionDetails, resultBinder);
+        //waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails, resultBinder);
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         int i = 0;
         final String documentRequired = waterTaxUtils.documentRequiredForBPLCategory();
@@ -236,7 +236,7 @@ public class NewConnectionController extends GenericConnectionController {
         if (applicationByOthers != null && applicationByOthers.equals(true)) {
             final Position userPosition = waterTaxUtils
                     .getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier());
-            if (userPosition == null) {
+            if (userPosition != null) {
                 model.addAttribute("validateIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
                 final WorkflowContainer workflowContainer = new WorkflowContainer();
                 workflowContainer.setAdditionalRule(waterConnectionDetails.getApplicationType().getCode());
@@ -247,6 +247,7 @@ public class NewConnectionController extends GenericConnectionController {
                 model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
                 errors.rejectValue("connection.propertyIdentifier", "err.validate.connection.user.mapping",
                         "err.validate.connection.user.mapping");
+                model.addAttribute("noJAORSAMessage" ,"No JA/SA exists to forward the application.");
                 return "newconnection-form";
             } else
                 approvalPosition = userPosition.getId();

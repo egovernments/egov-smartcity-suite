@@ -60,6 +60,8 @@
 			<form:hidden id="mode" path=""  value="${mode}"/>
 			<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>
 			<input type="hidden" name="validationMessage" id="validationMessage" value="${validationMessage}">
+			<input type="hidden" name="loggedInCSCUser" id="loggedInCSCUser" value="${loggedInCSCUser}">
+			<input type="hidden" name="noJAORSAMessage" id="noJAORSAMessage" value="${noJAORSAMessage}">
 			
 			<input type="hidden" id="previousApplicationType" value="${previousApplicationType}" name="previousApplicationType"/>
 			<input id="applicationCode" type="hidden" value="<c:out value="${waterConnectionDetails.applicationNumber}" />" />  						
@@ -67,6 +69,7 @@
 				<jsp:include page="connectiondetails-view.jsp"></jsp:include>
 				
 		</div>
+		
 		<c:if test="${validationMessage==''}">
 	<div class="panel panel-primary" data-collapsed="0">
 								<div class="panel-heading">
@@ -123,14 +126,20 @@
 </div>			
 				
 				<c:if test="${validationMessage==''}">
+				<c:if test="${!loggedInCSCUser || loggedInCSCUser=='false'}">
 						<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-							<div class="buttonbottom" align="center">
+						</c:if>
+					<div class="buttonbottom" align="center">
 							<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
-					</div></c:if>
+					</div>
+					
+					</c:if>
 				
 					
 </form:form>
 <script>
+if($('#noJAORSAMessage').val()!='')
+	bootbox.alert($('#noJAORSAMessage').val());
 
 if($('#validationMessage').val()!='')
 	bootbox.alert($('#validationMessage').val());

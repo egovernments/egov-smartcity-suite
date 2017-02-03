@@ -127,6 +127,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
                 additionalConnectionService.validateAdditionalConnection(parentConnectionDetails));
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(parentConnectionDetails);
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
+        model.addAttribute("noJAORSAMessage" ,"No JA/SA exists to forward the application.");
         model.addAttribute("typeOfConnection", WaterTaxConstants.ADDNLCONNECTION);
     }
 

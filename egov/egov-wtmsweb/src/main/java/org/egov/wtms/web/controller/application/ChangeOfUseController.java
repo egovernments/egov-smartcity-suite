@@ -113,6 +113,7 @@ public class ChangeOfUseController extends GenericConnectionController {
         WorkflowContainer workflowContainer= new WorkflowContainer();
         workflowContainer.setAdditionalRule(changeOfUse.getApplicationType().getCode());
         prepareWorkflow(model, changeOfUse, workflowContainer);
+        model.addAttribute("noJAORSAMessage" ,"No JA/SA exists to forward the application.");
         return "changeOfUse-form";
     }
 
