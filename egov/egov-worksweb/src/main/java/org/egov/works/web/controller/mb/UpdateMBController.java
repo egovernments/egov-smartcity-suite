@@ -302,7 +302,6 @@ public class UpdateMBController extends GenericWorkFlowController {
         if (mbHeader.getState() != null && mbHeader.getState().getNextAction() != null) {
             model.addAttribute("nextAction", mbHeader.getState().getNextAction());
             model.addAttribute("pendingActions", mbHeader.getState().getNextAction());
-            workflowContainer.setCurrentDesignation(worksUtils.getLoggedInUserDesignation(mbHeader.getState()));
         }
         model.addAttribute("amountRule", mbHeader.getMbAmount());
 

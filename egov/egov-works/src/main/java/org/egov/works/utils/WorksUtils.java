@@ -416,17 +416,4 @@ public class WorksUtils {
         return null;
     }
 
-    public String getLoggedInUserDesignation(final State state) {
-        String loggedInUserDesignation = "";
-        final User user = securityUtils.getCurrentUser();
-        List<Assignment> loggedInUserAssign;
-        if (state != null && state.getOwnerPosition() != null) {
-            loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
-                    state.getOwnerPosition().getId(), user.getId(), new Date());
-            loggedInUserDesignation = !loggedInUserAssign.isEmpty()
-                    ? loggedInUserAssign.get(0).getDesignation().getName() : null;
-        }
-        return loggedInUserDesignation;
-    }
-
 }
