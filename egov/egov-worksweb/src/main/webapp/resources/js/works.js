@@ -304,9 +304,7 @@ function modifyContractorDataOnSearch() {
 }
 
 function validate(){
-	document.searchContractorForm.action='contractor-viewResult.action'; 
-   	document.searchContractorForm.submit();
-	
+	jQuery('#id').val('');
 }
 
 function viewContractorDataOnSearch() {
