@@ -73,9 +73,11 @@ public class Contractor extends BaseModel implements EntityType {
     private String name;
 
     @Length(max = 250, message = "contractor.correspondenceAddress.length")
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "contractor.correspondenceAddress.alphaNumeric")
     private String correspondenceAddress;
 
     @Length(max = 250, message = "contractor.paymentAddress.length")
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "contractor.paymentAddress.alphaNumeric")
     private String paymentAddress;
 
     @Length(max = 100, message = "contractor.contactPerson.length")
@@ -87,6 +89,7 @@ public class Contractor extends BaseModel implements EntityType {
     private String email;
 
     @Length(max = 1024, message = "contractor.narration.length")
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "contractor.narration.alphaNumeric")
     private String narration;
 
     @Length(max = 10, message = "contractor.panNumber.length")

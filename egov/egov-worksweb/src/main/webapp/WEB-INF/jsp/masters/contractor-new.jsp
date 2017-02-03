@@ -102,8 +102,6 @@ body {
 <input type="hidden" id="exemptionFormErrorMsg" value="<s:text name='contractor.exemptionForm.null' />" />
 <input type="hidden" id="emailInvalidErrorMsg" value="<s:text name='contractor.email.null' />" />
 <input type="hidden" id="bankAccountAlphaNeumericErrorMsg" value="<s:text name='contractor.bankAccount.alphaNumeric' />" />
-<input type="hidden" id="paymentAddressAlphaNeumericErrorMsg" value="<s:text name='contractor.paymentAddress.alphaNumeric' />" />
-<input type="hidden" id="correspondenceAddressAlphaNeumericErrorMsg" value="<s:text name='contractor.correspondenceAddress.alphaNumeric' />" />
 <input type="hidden" id="ifscCodeAlphaNeumericErrorMsg" value="<s:text name='contractor.ifscCode.alphaNumeric' />" />
 <input type="hidden" id="tinNumberAlphaNeumericErrorMsg" value="<s:text name='contractor.tinNumber.alphaNumeric' />" />
 <input type="hidden" id="codeAlphaNeumericErrorMsg" value="<s:text name='contractor.code.alphaNumeric' />" />
@@ -120,6 +118,7 @@ body {
 <input type="hidden" id="vaidateError" value="<s:text name='sor.validate_x.message' />" />
 <input type="hidden" id="contractorCategoryErrorMsg" value="<s:text name='contractordetail.category.required' />" />
 <input type="hidden" id="nameErrorLengthMsg" value="<s:text name='contractor.name.length' />" />
+<input type="hidden" id="pwdApprovalCodeAlphaNeumericErrorMsg" value="<s:text name='contractor.pwdApprovalCode.alphaNumeric' />" />
 
 <input type="hidden" value="<s:text name='contractor.panNumber.alphaNumeric' />" id='panNumberMessage'>
 		<%@ include file='contractor-form.jsp'%>

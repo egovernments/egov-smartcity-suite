@@ -332,6 +332,8 @@ public class WorksConstants {
     public final static String WORKSMILESTONE_MILESTONESTATUS_COLUMN_NAME = "milestonestatus";
 
     public final static String WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME = "lineestimatedetailid";
-    
+
     public final static String ACTIVE = "Active";
+
+    public static final String ALPHANUMERICWITHALLSPECIALCHAR = "[0-9a-zA-Z_@./#&+-/!(){}\",^$%*|=;:<>?`~ ]+";
 }

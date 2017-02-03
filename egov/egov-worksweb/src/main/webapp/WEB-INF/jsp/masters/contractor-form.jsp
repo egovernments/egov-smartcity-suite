@@ -251,14 +251,14 @@ var makeContractorDataTable = function() {
 			</label>
 			<div class="col-sm-3 add-margin">
 				<s:textarea name="correspondenceAddress" cols="35"
-					cssClass="form-control" id="correspondenceAddress"
+					cssClass="form-control textfieldsvalidate" id="correspondenceAddress"
 					value="%{correspondenceAddress}" maxlength = "250" />
 			</div>
 			<label class="col-sm-2 control-label text-right" for="paymentAddress"> <s:text
 					name="contractor.paymentAddress" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:textarea name="paymentAddress" cols="35" cssClass="form-control"
+				<s:textarea name="paymentAddress" cols="35" cssClass="form-control textfieldsvalidate"
 					id="paymentAddress" value="%{paymentAddress}" maxlength = "250" />
 			</div>
 		</div>
@@ -285,7 +285,7 @@ var makeContractorDataTable = function() {
 					name="contractor.narration" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:textarea name="narration" cols="35" cssClass="form-control"
+				<s:textarea name="narration" cols="35" cssClass="form-control textfieldsvalidate"
 					id="narration" value="%{narration}" maxlength = "250" />
 			</div>
 			<label class="col-sm-2 control-label text-right" for="mobileNumber"> <s:text
