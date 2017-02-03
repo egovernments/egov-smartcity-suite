@@ -1,0 +1,5 @@
+----------- WF Matrix for Spillover Abstract Estimate----------------------
+INSERT INTO EG_WF_MATRIX (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction,nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (nextval('seq_eg_wf_matrix'), 'ANY', 'AbstractEstimate', 'NEW', NULL, NULL, 'Assistant engineer', 'Spillover', 'Technical Sanctioned', 'END', NULL, 'Technical_Sanctioned', 'Save, Create And Approve', 0, NULL, now(), now());
+INSERT INTO EG_WF_MATRIX (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction,nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (nextval('seq_eg_wf_matrix'), 'ANY', 'AbstractEstimate', 'NEW', NULL, 'Pending Submission', 'Assistant engineer', 'Spillover', 'Technical Sanctioned', 'Technical Sanctioned', NULL, NULL, 'Save,Create And Approve,Cancel', 0, NULL, now(), now());
+
+UPDATE EG_WF_MATRIX SET nextstatus = 'Technical_Sanctioned' where nextaction = 'END' and objecttype = 'AbstractEstimate';

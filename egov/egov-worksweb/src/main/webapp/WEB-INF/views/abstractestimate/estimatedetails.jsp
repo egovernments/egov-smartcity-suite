@@ -1,4 +1,14 @@
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<input type="hidden" id="msgWorkOrderCreated" value="<spring:message code="error.workordercreated.required" />" />
+<c:if test="${(abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true) || abstractEstimate.spillOverFlag }">
+	<input type="hidden" id="cuttOffDate"
+							value='<fmt:formatDate value="${cuttOffDate}"
+							pattern="yyyy-MM-dd" />' />
+	<input type="hidden" id="currFinDate"
+							value='<fmt:formatDate value="${currFinDate}"
+							pattern="yyyy-MM-dd" />' />
+</c:if>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/map-autocomplete.css?rnd=${app_release_no}' context='/egi'/>">
 	  <div class="form-group">
 			<label class="col-sm-2 control-label text-right">
@@ -175,7 +185,32 @@
 				<form:errors path="description" cssClass="add-margin error-msg" />
 			</div>
 		</div>
-		<c:if test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true }">
+		<c:if test="${abstractEstimate.spillOverFlag && !lineEstimateRequired }">
+			<div class="form-group" >
+				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.workorder.created" /></label>
+				<div class="col-sm-1 add-margin">
+					<form:checkbox path="workOrderCreated" id="isWorkOrderCreated" />
+				</div>
+				<div id="billsCreatedCheckbox">
+					<label class="col-sm-1 control-label text-right"><spring:message code="lbl.bills.created" /></span>
+					</label>
+					<div class="col-sm-1 add-margin">
+						<form:checkbox path="billsCreated" id="isBillsCreated" />
+						<input id="isBillsCreatedInput" type="hidden" value="${abstractEstimate.billsCreated }" />
+					</div>
+				</div>
+				<div id="tdGrossAmount">
+					<label class="col-sm-2 control-label text-right">
+					    <spring:message code="lbl.grossamount" /><span class="mandatory"></span>
+					</label>
+					<div class="col-sm-3 add-margin">
+						<form:input path="grossAmountBilled" id="grossAmountBilled" name="grossAmountBilled" class="form-control patternvalidation" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" maxlength="1024" required="required"/>
+						<form:errors path="grossAmountBilled" cssClass="add-margin error-msg" />
+					</div>
+				</div>
+			</div>
+		</c:if>
+		<c:if test="${(abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true) || abstractEstimate.spillOverFlag }">
 			<div class="form-group">
 				<label class="col-sm-4 control-label text-right view-content">
 				    <spring:message code="lbl.spilloverwork" />

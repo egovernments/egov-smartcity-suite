@@ -146,6 +146,24 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         return "newAbstractEstimate-form";
     }
 
+    @RequestMapping(value = "/createspillover", method = RequestMethod.GET)
+    public String showSpillOverAbstractEstimateForm(@ModelAttribute("abstractEstimate") final AbstractEstimate abstractEstimate,
+            @RequestParam(required = false) final Long lineEstimateDetailId, final Model model) {
+        LineEstimateDetails lineEstimateDetails = null;
+        if (worksApplicationProperties.lineEstimateRequired() && lineEstimateDetailId == null)
+            return "redirect:/lineestimate/searchlineestimateforabstractestimate-form";
+        if (worksApplicationProperties.lineEstimateRequired())
+            lineEstimateDetails = lineEstimateDetailService.getById(lineEstimateDetailId);
+        abstractEstimate.setSpillOverFlag(true);
+        populateDataForAbstractEstimate(lineEstimateDetails, model, abstractEstimate);
+        abstractEstimate.setEstimateDate(new Date());
+        loadViewData(model, abstractEstimate, lineEstimateDetails);
+        model.addAttribute("cuttOffDate", worksUtils.getCutOffDate());
+        model.addAttribute("currFinDate", worksUtils.getFinancialYearByDate(new Date()).getStartingDate());
+
+        return "newAbstractEstimate-form";
+    }
+
     private void loadViewData(final Model model, final AbstractEstimate abstractEstimate,
             final LineEstimateDetails lineEstimateDetails) {
         estimateService.setDropDownValues(model);
@@ -154,7 +172,8 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             abstractEstimate.setExecutingDepartment(departments.get(0));
 
         if (abstractEstimate.getLineEstimateDetails() != null
-                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated()) {
+                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated()
+                || abstractEstimate.isSpillOverFlag()) {
             final List<Designation> designations = new ArrayList<Designation>();
 
             final List<AppConfigValues> configValues = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -164,29 +183,34 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
                 designations.add(designationService.getDesignationByName(valuesFordesignation.getValue()));
             model.addAttribute("designations", designations);
 
-        } else {
+        }
 
-            final WorkflowContainer workflowContainer = new WorkflowContainer();
-            workflowContainer.setAmountRule(abstractEstimate.getEstimateValue() != null
-                    ? abstractEstimate.getEstimateValue() : BigDecimal.ZERO);
+        final WorkflowContainer workflowContainer = new WorkflowContainer();
+        workflowContainer.setAmountRule(abstractEstimate.getEstimateValue() != null
+                ? abstractEstimate.getEstimateValue() : BigDecimal.ZERO);
+        if (abstractEstimate.isSpillOverFlag()) {
+            workflowContainer.setAdditionalRule(WorksConstants.SPILLOVER);
+            model.addAttribute(WorksConstants.ADDITIONAL_RULE,
+                    WorksConstants.SPILLOVER);
+        } else {
             workflowContainer.setAdditionalRule(
                     (String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
-            prepareWorkflow(model, abstractEstimate, workflowContainer);
-            List<String> validActions = Collections.emptyList();
-            validActions = customizedWorkFlowService.getNextValidActions(abstractEstimate.getStateType(),
-                    workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
-                    workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
-                    abstractEstimate.getCreatedDate());
-            if (abstractEstimate.getState() != null && abstractEstimate.getState().getNextAction() != null) {
-                model.addAttribute("nextAction", abstractEstimate.getState().getNextAction());
-                model.addAttribute("pendingActions", abstractEstimate.getState().getNextAction());
-            }
             model.addAttribute(WorksConstants.ADDITIONAL_RULE,
                     cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
-            model.addAttribute("validActionList", validActions);
-            model.addAttribute("mode", null);
-            model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
         }
+        prepareWorkflow(model, abstractEstimate, workflowContainer);
+        List<String> validActions = Collections.emptyList();
+        validActions = customizedWorkFlowService.getNextValidActions(abstractEstimate.getStateType(),
+                workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
+                workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
+                abstractEstimate.getCreatedDate());
+        if (abstractEstimate.getState() != null && abstractEstimate.getState().getNextAction() != null) {
+            model.addAttribute("nextAction", abstractEstimate.getState().getNextAction());
+            model.addAttribute("pendingActions", abstractEstimate.getState().getNextAction());
+        }
+        model.addAttribute("validActionList", validActions);
+        model.addAttribute("mode", null);
+        model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
         model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());
         model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
 
@@ -200,7 +224,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         model.addAttribute("nominationName", !nominationName.isEmpty() ? nominationName.get(0).getValue() : "");
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(value = { "/create", "/createspillover" }, method = RequestMethod.POST)
     public String saveAbstractEstimate(@ModelAttribute final AbstractEstimate abstractEstimate,
             final RedirectAttributes redirectAttributes, final Model model, final BindingResult bindErrors,
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request,
@@ -222,6 +246,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         estimateService.validateAssetDetails(abstractEstimate, bindErrors);
         estimateService.validateActivities(abstractEstimate, bindErrors);
         estimateService.validateOverheads(abstractEstimate, bindErrors);
+        estimateService.validateBudgetHead(abstractEstimate, bindErrors);
 
         // Added server side validation for selected abstract estimate created flag
         if (abstractEstimate.getLineEstimateDetails() != null
@@ -331,11 +356,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     private String getMessageByStatus(final AbstractEstimate abstractEstimate, final String approverName,
             final String nextDesign) {
         String message = "";
-        if (abstractEstimate.getLineEstimateDetails() != null
-                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated())
-            message = messageSource.getMessage("msg.estimate.spilladminsanctioned",
-                    new String[] { abstractEstimate.getEstimateNumber() }, null);
-        else if (EstimateStatus.NEW.toString().equals(abstractEstimate.getEgwStatus().getCode()))
+        if (EstimateStatus.NEW.toString().equals(abstractEstimate.getEgwStatus().getCode()))
             message = messageSource.getMessage("msg.estimate.saved",
                     new String[] { abstractEstimate.getEstimateNumber() }, null);
         else if (EstimateStatus.CREATED.toString().equals(abstractEstimate.getEgwStatus().getCode())

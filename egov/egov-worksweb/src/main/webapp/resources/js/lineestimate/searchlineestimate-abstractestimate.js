@@ -67,7 +67,10 @@ jQuery('#btncreateae').click(function(e) {
 		bootbox.alert(message);
 	}
 	else {
-		window.location = "/egworks/abstractestimate/create?lineEstimateDetailId="+lineEstimateDetailId;
+		if (!$('#spillOverFlag').is(':checked'))
+			window.location = "/egworks/abstractestimate/create?lineEstimateDetailId="+lineEstimateDetailId;
+		else
+			window.location = "/egworks/abstractestimate/createspillover?lineEstimateDetailId="+lineEstimateDetailId;
 	}
 });
 	

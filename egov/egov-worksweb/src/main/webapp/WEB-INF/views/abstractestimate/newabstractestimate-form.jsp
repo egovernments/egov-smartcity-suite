@@ -73,7 +73,8 @@
 	<input type="hidden" id="errorlocation" value="<spring:message code='error.locationdetails.required' />">
 	<form:hidden path="" name="removedActivityIds" id="removedActivityIds" value="${removedActivityIds }" class="form-control table-input hidden-input"/>
 	<input type="hidden" name="locationAppConfig" id="locationAppConfig" value="${isLocationDetailsRequired}"/>
-	<input type="hidden" id="isEstimateDeductionGrid" value="${isEstimateDeductionGrid}">
+	<input type="hidden" id="isEstimateDeductionGrid" value="${isEstimateDeductionGrid}" >
+	<form:hidden path="spillOverFlag" value="${abstractEstimate.spillOverFlag }" id="spillOverFlag" />
 	<div class="new-page-header"><spring:message code="lbl.createae" /></div> 
 	
 	<div class="panel-title text-center" style="color: green;">
@@ -118,7 +119,10 @@
 			<div class="tab-pane fade in active" id="estimateheader">   
 				<jsp:include page="estimate-header.jsp" />
 				<jsp:include page="estimate-multiyearestimate.jsp" />
-				<c:if test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true }">
+				<c:if test="${lineEstimateRequired == 'false' && abstractEstimate.lineEstimateDetails == null && abstractEstimate.spillOverFlag }">
+					<jsp:include page="estimateadminsanctiondetails.jsp" />
+				</c:if>
+				<c:if test="${(abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true) || abstractEstimate.spillOverFlag }">
 	 				<%@ include file="spilloverestimate-technicalsanction.jsp"%>
 				</c:if>
  				<%@ include file="../common/uploaddocuments.jsp"%>
@@ -137,25 +141,13 @@
 				<%@ include file="estimate-financialdetails.jsp"%>
 				<%@ include file="estimate-asset.jsp"%>
 			</div>
-		<c:choose>
-			<c:when test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true }">
-			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
-				<div class="col-sm-12 text-center">
-					<form:button type="submit" name="submit" id="saveSpillAbstractEstimate" class="btn btn-primary" value="Save"  ><spring:message code="lbl.save"/></form:button>
-					<form:button type="button" class="btn btn-default" id="button2" onclick="window.close();"><spring:message code="lbl.close"/></form:button>
-				</div>
-		    </c:when>
-			<c:otherwise>
-				<c:if test="${!workflowHistory.isEmpty() && mode != null }">
-					<jsp:include page="../common/commonworkflowhistory-view.jsp"></jsp:include>
-				</c:if>
-				<jsp:include page="../common/commonworkflowmatrix.jsp"/>
-				<div class="buttonbottom" align="center">
-					<jsp:include page="../common/commonworkflowmatrix-button.jsp" />
-                     
-				</div>
-		    </c:otherwise>
-	  </c:choose>
+			<c:if test="${!workflowHistory.isEmpty() && mode != null }">
+				<jsp:include page="../common/commonworkflowhistory-view.jsp"></jsp:include>
+			</c:if>
+			<jsp:include page="../common/commonworkflowmatrix.jsp"/>
+		  	<div class="buttonbottom" align="center">
+				<jsp:include page="../common/commonworkflowmatrix-button.jsp" />
+			</div>
 		</div>
   
 
@@ -164,7 +156,7 @@
 <script type="text/javascript" src="<cdn:url value='/resources/js/abstractestimate/abstractestimate.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/js/loadmaps.js?rnd=${app_release_no}'/>"></script>
-<c:if test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated}">
+<c:if test="${(abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated) || abstractEstimate.spillOverFlag}">
 <script type="text/javascript"
 	src="<cdn:url value='/resources/js/abstractestimate/spilloverabstractestimate.js?rnd=${app_release_no}'/>"></script>
 </c:if>

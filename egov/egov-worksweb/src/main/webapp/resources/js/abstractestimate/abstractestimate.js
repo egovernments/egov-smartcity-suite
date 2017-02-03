@@ -997,7 +997,8 @@ function calculateEstimateValue() {
 	$('#workValue').val(workValue);
 	$('#estimateValueTotal').html(estimateValue);
 	$('#workValueTotal').html(workValue);
-	showHideAppravalDetails();
+	if ($('#spillOverFlag').val() == 'false')
+		showHideAppravalDetails();
 }
 
 
@@ -2055,7 +2056,7 @@ function validateWorkFlowApprover(name) {
 	
 	if ($('#location').val() == '' || $('#description').val() == ''
 		|| $('#parentCategory').val() == '' || $('#fund').val() == ''
-			|| $('#function').val() == '') {
+			|| $('#function').val() == '' || $('#budgethead').val() == '') {
 		bootbox.alert($('#mandatoryError').val());
 		return false;
 	}
@@ -2069,6 +2070,27 @@ function validateWorkFlowApprover(name) {
 		flag = validateSORDetails();
 		
 		if(flag && $('#abstractEstimate').valid()) {
+			if($('#isWorkOrderCreated').prop("checked") == true) {
+				var isValidationSuccess=true;
+				
+				var adminSanctionDate = $('#adminSanctionDate').data('datepicker').date;
+				var technicalSanctionDate = $('#technicalSanctionDate').data('datepicker').date;
+				var technicalSanctionNumber = $('#technicalSanctionNumber').val();
+				
+				if(adminSanctionDate > technicalSanctionDate && technicalSanctionDate != '') {
+					bootbox.alert($('#errorTechDate').val());
+					$('#technicalSanctionDate').val("");
+					return false;
+				}
+	
+				if($('#isBillsCreated').prop("checked") == true && $('#isWorkOrderCreated').prop("checked") == false) {
+					bootbox.alert($('#msgWorkOrderCreated').val());
+					return false;
+				}
+				
+				if(!flag)
+					return false;
+			}
 			var hiddenRowCount = $("#tblsor tbody tr[sorinvisible='true']").length;
 			if(hiddenRowCount != 1) {
 				
@@ -2111,6 +2133,9 @@ function validateWorkFlowApprover(name) {
 		}		
 	}
 	if (button != null && button == 'Approve') {
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
 		$('#approvalComent').removeAttr('required');
 	}
 	if (button != null && button == 'Submit') {
@@ -2124,6 +2149,9 @@ function validateWorkFlowApprover(name) {
 		$('#approvalDesignation').removeAttr('required');
 		$('#approvalPosition').removeAttr('required');
 		$('#approvalComent').attr('required', 'required');
+		$('#councilResolutionNumber').removeAttr('required');
+		$('#councilResolutionDate').removeAttr('required');
+		$('#adminSanctionNumber').removeAttr('required');
 	}
 	if (button != null && button == 'Cancel') {
 		$('#approvalDepartment').removeAttr('required');
@@ -2248,6 +2276,9 @@ function validateWorkFlowApprover(name) {
 	}
 	
 	if (button != null && button == 'Create And Approve') {
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
 		$('#approvalComent').removeAttr('required');
 
 		var lineEstimateAmount = parseFloat($('#lineEstimateAmount').val());

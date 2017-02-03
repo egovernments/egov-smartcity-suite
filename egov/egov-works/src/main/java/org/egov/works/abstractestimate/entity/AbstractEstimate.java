@@ -265,6 +265,28 @@ public class AbstractEstimate extends StateAware implements Auditable {
     @NotNull
     private String modeOfAllotment;
 
+    @SafeHtml
+    @Length(max = 50)
+    private String adminSanctionNumber;
+
+    @Temporal(TemporalType.DATE)
+    private Date adminSanctionDate;
+
+    private String adminSanctionBy;
+
+    private String councilResolutionNumber;
+
+    @Temporal(TemporalType.DATE)
+    private Date councilResolutionDate;
+
+    private boolean spillOverFlag;
+
+    private boolean workOrderCreated;
+
+    private boolean billsCreated;
+
+    private BigDecimal grossAmountBilled;
+
     @Valid
     @OrderBy("id")
     @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = OverheadValue.class)
@@ -934,4 +956,75 @@ public class AbstractEstimate extends StateAware implements Auditable {
         this.modeOfAllotment = modeOfAllotment;
     }
 
+    public String getAdminSanctionNumber() {
+        return adminSanctionNumber;
+    }
+
+    public void setAdminSanctionNumber(final String adminSanctionNumber) {
+        this.adminSanctionNumber = adminSanctionNumber;
+    }
+
+    public Date getAdminSanctionDate() {
+        return adminSanctionDate;
+    }
+
+    public void setAdminSanctionDate(final Date adminSanctionDate) {
+        this.adminSanctionDate = adminSanctionDate;
+    }
+
+    public String getAdminSanctionBy() {
+        return adminSanctionBy;
+    }
+
+    public void setAdminSanctionBy(final String adminSanctionBy) {
+        this.adminSanctionBy = adminSanctionBy;
+    }
+
+    public String getCouncilResolutionNumber() {
+        return councilResolutionNumber;
+    }
+
+    public void setCouncilResolutionNumber(final String councilResolutionNumber) {
+        this.councilResolutionNumber = councilResolutionNumber;
+    }
+
+    public Date getCouncilResolutionDate() {
+        return councilResolutionDate;
+    }
+
+    public void setCouncilResolutionDate(final Date councilResolutionDate) {
+        this.councilResolutionDate = councilResolutionDate;
+    }
+
+    public boolean isSpillOverFlag() {
+        return spillOverFlag;
+    }
+
+    public void setSpillOverFlag(final boolean spillOverFlag) {
+        this.spillOverFlag = spillOverFlag;
+    }
+
+    public boolean isWorkOrderCreated() {
+        return workOrderCreated;
+    }
+
+    public void setWorkOrderCreated(final boolean workOrderCreated) {
+        this.workOrderCreated = workOrderCreated;
+    }
+
+    public boolean isBillsCreated() {
+        return billsCreated;
+    }
+
+    public void setBillsCreated(final boolean billsCreated) {
+        this.billsCreated = billsCreated;
+    }
+
+    public BigDecimal getGrossAmountBilled() {
+        return grossAmountBilled;
+    }
+
+    public void setGrossAmountBilled(final BigDecimal grossAmountBilled) {
+        this.grossAmountBilled = grossAmountBilled;
+    }
 }

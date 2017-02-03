@@ -79,6 +79,8 @@
 	<form:hidden path="" name="removedActivityIds" id="removedActivityIds" value="" class="form-control table-input hidden-input"/>
 	<input type="hidden" id="isEstimateDeductionGrid" value="${isEstimateDeductionGrid}">
 	<div class="new-page-header"><spring:message code="lbl.viewae" /></div>
+	<form:hidden path="spillOverFlag" value="${abstractEstimate.spillOverFlag }" id="spillOverFlag" />
+	<input type="hidden" name="lineEstimateRequired" id="lineEstimateRequired" value="${lineEstimateRequired }"/>
 
 	<%@ include file="abstractestimate-vewheaderdetail.jsp"%>
 		<div class="panel-heading">
@@ -100,7 +102,10 @@
 			<div class="tab-pane fade in active" id="estimateheader">
 				<%@ include file="abstractestimate-viewheader.jsp"%>
 				<%@ include file="abstractestimate-viewmultiyearestimate.jsp"%>
-				<c:if test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true}">
+				<c:if test="${lineEstimateRequired == 'false' && abstractEstimate.lineEstimateDetails == null }">
+					<jsp:include page="estimateadminsanctiondetails.jsp" />
+				</c:if>
+				<c:if test="${(abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true) || abstractEstimate.spillOverFlag}">
 					<%@ include file="spilloverestimate-viewtechnicalsanction.jsp"%>
 				</c:if>
 				<%@ include file="../common/uploaddocuments.jsp"%>

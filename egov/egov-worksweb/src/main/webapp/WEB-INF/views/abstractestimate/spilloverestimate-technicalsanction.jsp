@@ -54,8 +54,11 @@
 						class="mandatory"></span></th>
 					<th><spring:message code="lbl.technicalsanctiondate" /><span
 						class="mandatory"></span></th>
-					<th><spring:message code="lbl.technical.authority" /><span
-						class="mandatory"></span></th>
+					<th><spring:message code="lbl.technical.authority" />
+						<c:if test="${(abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true) }">
+							<span class="mandatory"></span>
+						</c:if>
+					</th>
 					<th><spring:message code="lbl.authority" /></th>
 				</tr>
 			</thead>
@@ -79,18 +82,36 @@
 							data-date-end-date="0d" required="required" /> <form:errors
 							path="estimateTechnicalSanctions[0].technicalSanctionDate"
 							cssClass="add-margin error-msg" /></td>
-					<td><input type="hidden" id="designationValue"
-						value="${designation }" /> <select name="designation"
-						id="designation" data-first-option="false" class="form-control"
-						required="required">
-							<option value="">
-								<spring:message code="lbl.select" />
-							</option>
-							<options items="${designations}" itemValue="id" itemLabel="name" />
-							<c:forEach items="${designations}" var="designation">
-								<option value="${designation.id }">${designation.name }</option>
-							</c:forEach>
-					</select></td>
+					<td>
+						<c:choose>
+							<c:when test="${(abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true) }">
+								<select name="designation"
+									id="designation" data-first-option="false" class="form-control"
+									required="required">
+										<option value="">
+											<spring:message code="lbl.select" />
+										</option>
+										<options items="${designations}" itemValue="id" itemLabel="name" />
+										<c:forEach items="${designations}" var="designation">
+											<option value="${designation.id }">${designation.name }</option>
+										</c:forEach>
+								</select>
+							</c:when>
+							<c:otherwise>
+								<select name="designation"
+									id="designation" data-first-option="false" class="form-control">
+										<option value="">
+											<spring:message code="lbl.select" />
+										</option>
+										<options items="${designations}" itemValue="id" itemLabel="name" />
+										<c:forEach items="${designations}" var="designation">
+											<option value="${designation.id }">${designation.name }</option>
+										</c:forEach>
+								</select>
+							</c:otherwise>
+						</c:choose>
+						<input type="hidden" id="designationValue"
+							value="${designation }" /></td>
 					<td><input type="hidden" id="authorityValue"
 						value="${technicalSanctionBy}" /> <form:select
 							path="estimateTechnicalSanctions[0].technicalSanctionBy"

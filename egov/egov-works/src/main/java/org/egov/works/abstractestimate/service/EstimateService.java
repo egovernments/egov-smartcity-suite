@@ -60,6 +60,7 @@ import org.egov.assets.model.Asset;
 import org.egov.assets.service.AssetService;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
+import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
 import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
@@ -278,13 +279,15 @@ public class EstimateService {
         else
             newAbstractEstimate = updateAbstractEstimate(abstractEstimateFromDB, abstractEstimate);
 
-        if (newAbstractEstimate.getLineEstimateDetails() != null
-                && newAbstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated())
-            newAbstractEstimate.setEgwStatus(egwStatusHibernateDAO
-                    .getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE, EstimateStatus.APPROVED.toString()));
-        else
-            createAbstractEstimateWorkflowTransition(newAbstractEstimate, approvalPosition, approvalComent,
-                    additionalRule, workFlowAction);
+        if (newAbstractEstimate.isSpillOverFlag()) {
+            for (final EstimateTechnicalSanction ets : newAbstractEstimate.getEstimateTechnicalSanctions())
+                ets.setAbstractEstimate(newAbstractEstimate);
+            setProjectCode(newAbstractEstimate);
+            createAccountDetailKey(newAbstractEstimate.getProjectCode());
+        }
+
+        createAbstractEstimateWorkflowTransition(newAbstractEstimate, approvalPosition, approvalComent,
+                additionalRule, workFlowAction);
 
         abstractEstimateRepository.save(newAbstractEstimate);
 
@@ -294,6 +297,7 @@ public class EstimateService {
             newAbstractEstimate.setDocumentDetails(documentDetails);
             worksUtils.persistDocuments(documentDetails);
         }
+        abstractEstimateRepository.save(newAbstractEstimate);
         return newAbstractEstimate;
 
     }
@@ -729,7 +733,7 @@ public class EstimateService {
                 additionalRule, workFlowAction);
 
         if (WorksConstants.ACTION_APPROVE.equalsIgnoreCase(workFlowAction)
-                || WorksConstants.CREATE_AND_APPROVE.equalsIgnoreCase(workFlowAction)) {
+                || WorksConstants.CREATE_AND_APPROVE.equalsIgnoreCase(workFlowAction) && !abstractEstimate.isSpillOverFlag()) {
             saveTechnicalSanctionDetails(updatedAbstractEstimate);
             saveAdminSanctionDetails(updatedAbstractEstimate);
             setProjectCode(updatedAbstractEstimate);
@@ -782,6 +786,8 @@ public class EstimateService {
     }
 
     public void saveAdminSanctionDetails(final AbstractEstimate abstractEstimate) {
+        abstractEstimate.setAdminSanctionBy(securityUtils.getCurrentUser().getUsername());
+        abstractEstimate.setAdminSanctionDate(new Date());
         abstractEstimate.setApprovedBy(securityUtils.getCurrentUser());
         abstractEstimate.setApprovedDate(new Date());
     }
@@ -1091,6 +1097,23 @@ public class EstimateService {
             }
     }
 
+    public void validateBudgetHead(final AbstractEstimate abstractEstimate, final BindingResult errors) {
+        if (!abstractEstimate.getFinancialDetails().isEmpty()) {
+            Boolean check = false;
+            final List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
+            accountDetails.addAll(
+                    abstractEstimate.getFinancialDetails().get(0).getBudgetGroup().getMaxCode().getChartOfAccountDetails());
+            for (final CChartOfAccountDetail detail : accountDetails)
+                if (detail.getDetailTypeId() != null
+                        && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
+                    check = true;
+            if (!check)
+                errors.reject("error.budgethead.validate", "error.budgethead.validate");
+
+        }
+
+    }
+
     public void validateMultiYearEstimates(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
         CFinancialYear cFinancialYear = null;
         Double totalPercentage = 0d;
@@ -1134,6 +1157,8 @@ public class EstimateService {
                     bindErrors.rejectValue("financialDetails[0].fund", "error.fund.required");
                 if (abstractEstimate.getFinancialDetails().get(0).getFunction() == null)
                     bindErrors.rejectValue("financialDetails[0].function", "error.function.required");
+                if (abstractEstimate.getFinancialDetails().get(0).getBudgetGroup() == null)
+                    bindErrors.rejectValue("financialDetails[0].budgetGroup", "error.budgethead.required");
             }
         }
         final LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
@@ -1296,7 +1321,7 @@ public class EstimateService {
         List<AbstractEstimate> abstractEstimateList = new ArrayList<AbstractEstimate>();
         final StringBuilder queryStr = new StringBuilder(500);
         queryStr.append(
-                "select distinct(ae) from AbstractEstimate ae where ae.parent is null and ae.egwStatus.code =:abstractEstimateStatus and ae.lineEstimateDetails.lineEstimate.modeOfAllotment != :modeOfAllotment and not exists (select distinct(woe.estimate) from WorkOrderEstimate as woe where woe.estimate.id = ae.id and woe.workOrder.egwStatus.code != :workOrderStatus )");
+                "select distinct(ae) from AbstractEstimate ae where ae.parent is null and ae.egwStatus.code =:abstractEstimateStatus and ae.modeOfAllotment != :modeOfAllotment and not exists (select distinct(woe.estimate) from WorkOrderEstimate as woe where woe.estimate.id = ae.id and woe.workOrder.egwStatus.code != :workOrderStatus )");
 
         if (abstractEstimateForLoaSearchRequest != null) {
             if (abstractEstimateForLoaSearchRequest.getAbstractEstimateNumber() != null)

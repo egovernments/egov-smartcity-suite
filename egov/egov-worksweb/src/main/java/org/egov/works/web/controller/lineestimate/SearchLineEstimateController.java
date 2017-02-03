@@ -116,6 +116,23 @@ public class SearchLineEstimateController {
         setDropDownValues(model);
         final List<User> lineEstimateCreatedByUsers = lineEstimateService.getLineEstimateCreatedByUsers();
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        lineEstimatesForAbstractEstimate.setSpillOverFlag(false);
+        model.addAttribute("lineEstimatesForAbstractEstimate", lineEstimatesForAbstractEstimate);
+        model.addAttribute("lineEstimateCreatedByUsers", lineEstimateCreatedByUsers);
+        model.addAttribute("departments", departments);
+        return "searchLineEstimateForAbstractEstimate-search";
+    }
+
+    @RequestMapping(value = "/searchleforspilloverae-form", method = RequestMethod.GET)
+    public String searchLineEstimateForSpillOverAbstractEstimate(
+            @ModelAttribute final LineEstimatesForAbstractEstimate lineEstimatesForAbstractEstimate,
+            final Model model) {
+        if (!worksApplicationProperties.lineEstimateRequired())
+            return "redirect:/abstractestimate/createspillover";
+        setDropDownValues(model);
+        final List<User> lineEstimateCreatedByUsers = lineEstimateService.getLineEstimateCreatedByUsers();
+        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        lineEstimatesForAbstractEstimate.setSpillOverFlag(true);
         model.addAttribute("lineEstimatesForAbstractEstimate", lineEstimatesForAbstractEstimate);
         model.addAttribute("lineEstimateCreatedByUsers", lineEstimateCreatedByUsers);
         model.addAttribute("departments", departments);

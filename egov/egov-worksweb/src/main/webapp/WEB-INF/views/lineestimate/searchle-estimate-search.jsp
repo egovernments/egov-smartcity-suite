@@ -105,10 +105,17 @@
 									<form:errors path="workIdentificationNumber" cssClass="add-margin error-msg" />
 								</div>
 							</div>
-							<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message code="lbl.spilloverwork" /></label>
+							<div class="form-group" hidden="hidden">
+								<label class="col-sm-3 control-label text-right"><spring:message code="lbl.spilloverwork" /></label>
 								<div class="col-sm-3 add-margin">
-								<form:checkbox path="spillOverFlag" id="spillOverFlag" />
+								<c:choose>
+									<c:when test="${lineEstimatesForAbstractEstimate.spillOverFlag == true }">
+										<form:checkbox path="spillOverFlag" id="spillOverFlag" checked="true" />
+									</c:when>
+									<c:otherwise>
+										<form:checkbox path="spillOverFlag" id="spillOverFlag" />
+									</c:otherwise>
+								</c:choose>
 								</div>
 							</div>
 						</div>

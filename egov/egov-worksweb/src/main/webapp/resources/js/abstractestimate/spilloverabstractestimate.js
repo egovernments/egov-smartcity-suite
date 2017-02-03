@@ -37,15 +37,44 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
+var cuttOffDate = new Date(($('#cuttOffDate').val().split('/').reverse().join('-'))).getTime();
+var currFinDate = new Date(($('#currFinDate').val().split('/').reverse().join('-'))).getTime();
 $(document).ready(function(){
+	$('#approverDetailHeading').hide();
+	initializeDatePicker();
 	$('#designation').val($('#designationValue').val());
 	$('#designation').trigger('change');
+	
+	var estimateDate = new Date(($('#estimateDate').val().split('/').reverse().join('-'))).getTime();
+	if(estimateDate < currFinDate){
+		$('#billsCreatedCheckbox').show();
+		$("#grossAmountBilled").val('');
+    	$("#tdGrossAmount").hide();
+    	$("#grossAmountBilled").removeAttr('required');
+    	$('#isBillsCreated').prop('checked', false);
+	} else {
+		$('#billsCreatedCheckbox').hide();
+		$("#grossAmountBilled").val('');
+    	$("#tdGrossAmount").hide();
+    	$("#grossAmountBilled").removeAttr('required');
+    	$('#isBillsCreated').prop('checked', false);
+	}
+	
+	if($('#billsCreated').val() == 'true'){
+		$('#billsCreatedCheckbox').show();
+	}
+	
+	if($("#isBillsCreatedInput").val() == 'true') {
+		$("#tdGrossAmount").find('input').attr('required', 'required');
+		$("#tdGrossAmount").find('input').attr('data-optional', '0');
+		$("#tdGrossAmount").show();
+	}
+	$('#estimateDate').trigger('change');
 });
 
 $('#designation').change(function(){
 	$.ajax({
-		url: "../lineestimate/ajax-assignmentByDepartmentAndDesignation",     
+		url: "/egworks/lineestimate/ajax-assignmentByDepartmentAndDesignation",     
 		type: "GET",
 		dataType: "json",
 		data: {
@@ -126,7 +155,7 @@ function validateAbstractEstimateDate(obj){
 		
 	if(technicalSanctionDate != '')
 		validateTechinicalSanctionDate(obj);
-	if(adminSanctionDate != '')
+	if(adminSanctionDate != '' && adminSanctionDate != undefined)
 		validateAdminSanctionDate(obj);
 	
 }
@@ -208,6 +237,19 @@ function initializeDatePicker(){
 								clearActivities();
 								clearOverHeads();
 								resetAddedOverheads();
+								if(estimateDate < currFinDate){
+					        		$('#billsCreatedCheckbox').show();
+					        		$("#grossAmountBilled").val('');
+						        	$("#tdGrossAmount").hide();
+						        	$("#grossAmountBilled").removeAttr('required');
+						        	$('#isBillsCreated').prop('checked', false);
+					        	} else {
+				        			$('#billsCreatedCheckbox').hide();
+				        			$("#grossAmountBilled").val('');
+				        	    	$("#tdGrossAmount").hide();
+				        	    	$("#grossAmountBilled").removeAttr('required');
+				        	    	$('#isBillsCreated').prop('checked', false);
+				        		}
 					        }else{
 					        	if(estimateDateArray.length > 1)
 					        		$('#estimateDate').datepicker('setDate',new Date((estimateDateArray[(estimateDateArray.length) - 2].split('/').reverse().join('-'))));
@@ -222,6 +264,17 @@ function initializeDatePicker(){
 			    			}
 					    }
 					});
+				} else{
+					if(cuttOffDate != '' && estimateDate > currFinDate && estimateDate < cuttOffDate){
+	        			$('#billsCreatedCheckbox').hide();
+	        			$("#grossAmountBilled").val('');
+	        	    	$("#tdGrossAmount").hide();
+	        	    	$("#grossAmountBilled").removeAttr('required');
+	        	    	$('#isBillsCreated').prop('checked', false);
+	        			return false
+	        		} else if(estimateDate < currFinDate){
+	        			$('#billsCreatedCheckbox').show();
+	        		}
 				}
 				$('#estimateDate').datepicker('hide');
 			}
@@ -268,3 +321,18 @@ function resetFormOnSubmit(){
 	$('#designation').trigger('change');
 		
 }
+
+$('#isBillsCreated').click(function() {
+	if($(this).prop("checked") == true) {
+		$('#footNoteMsg').show();
+		$("#tdGrossAmount").find('input').attr('required', 'required');
+		$("#tdGrossAmount").find('input').attr('data-optional', '0');
+		$("#tdGrossAmount").show();
+	} else {
+		$('#footNoteMsg').hide();
+		$("#tdGrossAmount").find('input').val("");
+		$("#tdGrossAmount").find('input').removeAttr('required');
+		$("#tdGrossAmount").find('input').attr('data-optional', '1');
+		$("#tdGrossAmount").hide();
+	}
+});

@@ -43,11 +43,13 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -56,6 +58,9 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.utils.ApplicationConstant;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.pims.commons.Designation;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
@@ -114,6 +119,13 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
 
     @Autowired
     private WorksApplicationProperties worksApplicationProperties;
+
+    @Autowired
+    private DesignationService designationService;
+
+    @Autowired
+    @Qualifier("workflowService")
+    private SimpleWorkflowService<AbstractEstimate> abstractEstimateWorkflowService;
 
     @ModelAttribute
     public AbstractEstimate getAbstractEstimate(@PathVariable final String abstractEstimateId) {
@@ -194,6 +206,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             estimateService.validateAssetDetails(abstractEstimate, errors);
             estimateService.validateActivities(abstractEstimate, errors);
             estimateService.validateOverheads(abstractEstimate, errors);
+            estimateService.validateBudgetHead(abstractEstimate, errors);
             if (!estimateService.checkForDuplicateAccountCodesInEstimateDeductions(abstractEstimate))
                 errors.reject("error.abstractestimate.duplicate.accountcodes",
                         "error.abstractestimate.duplicate.accountcodes");
@@ -230,22 +243,57 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
 
     private String loadViewData(final Model model, final HttpServletRequest request,
             final AbstractEstimate abstractEstimate, final LineEstimateDetails lineEstimateDetails) {
+        WorkFlowMatrix wfmatrix = null;
         estimateService.setDropDownValues(model);
         model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
         if (abstractEstimate.getCurrentState() != null
                 && !abstractEstimate.getCurrentState().getValue().equals(WorksConstants.NEW))
             model.addAttribute("currentState", abstractEstimate.getCurrentState().getValue());
-        if (abstractEstimate.getState() != null && abstractEstimate.getState().getNextAction() != null) {
-            model.addAttribute("nextAction", abstractEstimate.getState().getNextAction());
-            model.addAttribute("pendingActions", abstractEstimate.getState().getNextAction());
+
+        if (abstractEstimate.getLineEstimateDetails() != null
+                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated()
+                || abstractEstimate.isSpillOverFlag()) {
+            final List<Designation> designations = new ArrayList<Designation>();
+
+            final List<AppConfigValues> configValues = appConfigValuesService.getConfigValuesByModuleAndKey(
+                    WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_DESIGNATION_TECHSANCTION_AUTHORITY);
+
+            for (final AppConfigValues valuesFordesignation : configValues)
+                designations.add(designationService.getDesignationByName(valuesFordesignation.getValue()));
+            model.addAttribute("designations", designations);
+
+        }
+        if (!abstractEstimate.getEstimateTechnicalSanctions().isEmpty()) {
+            final Designation designation = assignmentService.findByEmployeeAndGivenDate(
+                    abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionBy().getId(), new Date()).get(0)
+                    .getDesignation();
+            model.addAttribute("designation", designation.getId());
+            model.addAttribute("technicalSanctionBy",
+                    abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionBy().getId());
         }
 
         final WorkflowContainer workflowContainer = new WorkflowContainer();
-        workflowContainer.setAdditionalRule((String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
-        model.addAttribute(WorksConstants.ADDITIONAL_RULE,
-                cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+        if (abstractEstimate.isSpillOverFlag()) {
+            workflowContainer.setAdditionalRule(WorksConstants.SPILLOVER);
+            model.addAttribute(WorksConstants.ADDITIONAL_RULE,
+                    WorksConstants.SPILLOVER);
+        } else {
+            workflowContainer.setAdditionalRule(
+                    (String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+            model.addAttribute(WorksConstants.ADDITIONAL_RULE,
+                    cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+        }
         workflowContainer.setAmountRule(abstractEstimate.getEstimateValue());
         workflowContainer.setPendingActions(abstractEstimate.getState().getNextAction());
+        if (abstractEstimate.getState() != null && abstractEstimate.getState().getNextAction() != null) {
+            model.addAttribute("pendingActions", abstractEstimate.getState().getNextAction());
+            wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
+                    abstractEstimate.getEstimateValue(), workflowContainer.getAdditionalRule(),
+                    abstractEstimate.getCurrentState().getValue(),
+                    abstractEstimate.getCurrentState().getNextAction());
+            if (wfmatrix != null)
+                model.addAttribute("nextStatus", wfmatrix.getNextStatus().toUpperCase());
+        }
         prepareWorkflow(model, abstractEstimate, workflowContainer);
         if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString())) {
             List<String> validActions = Collections.emptyList();

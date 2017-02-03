@@ -339,8 +339,7 @@ public class LineEstimateService {
             filterConditions.append(" and lineEstimate.createdBy.id =:createdBy ");
         if (lineEstimatesForAbstractEstimate.getWorkIdentificationNumber() != null)
             filterConditions.append(" and upper(projectCode.code) =:projectCode ");
-        if (lineEstimatesForAbstractEstimate.isSpillOverFlag())
-            filterConditions.append(" and lineEstimate.spillOverFlag =:spillOverFlag ");
+        filterConditions.append(" and lineEstimate.spillOverFlag =:spillOverFlag ");
 
         // Getting LineEstimateDetails where LineEstimate status is
         // ADMINISTRATIVE_SANCTIONED or TECHNICAL_SANCTIONED and
@@ -393,8 +392,7 @@ public class LineEstimateService {
             final LineEstimatesForAbstractEstimate lineEstimatesForAbstractEstimate, final Query query) {
         query.setParameter("wostatus", WorksConstants.CANCELLED_STATUS);
         query.setParameter("aestatus", WorksConstants.CANCELLED_STATUS);
-        if (lineEstimatesForAbstractEstimate.isSpillOverFlag())
-            query.setParameter("spillOverFlag", lineEstimatesForAbstractEstimate.isSpillOverFlag());
+        query.setParameter("spillOverFlag", lineEstimatesForAbstractEstimate.isSpillOverFlag());
         if (lineEstimatesForAbstractEstimate.getAdminSanctionNumber() != null)
             query.setParameter("adminSanctionNumber", lineEstimatesForAbstractEstimate.getAdminSanctionNumber());
         if (lineEstimatesForAbstractEstimate.getExecutingDepartment() != null)
@@ -1026,7 +1024,7 @@ public class LineEstimateService {
     }
 
     public void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {
-        BigDecimal estimateAmount = BigDecimal.ZERO;
+        final BigDecimal estimateAmount = BigDecimal.ZERO;
         final List<AppConfigValues> nominationLimit = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_NOMINATION_AMOUNT);
         final AppConfigValues value = nominationLimit.get(0);

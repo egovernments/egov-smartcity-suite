@@ -77,10 +77,10 @@
 		</div>
 		<div class="form-group">
 				<label class="col-sm-2 control-label text-right">
-					<spring:message code="lbl.budgethead" />
+					<spring:message code="lbl.budgethead" /><c:if test="${abstractEstimate.lineEstimateDetails == null }"><span class="mandatory"></span></c:if>
 				</label>
 				<div class="col-xs-3 add-margin">
-					<form:select path="financialDetails[0].budgetGroup" data-first-option="false" id="budgethead" class="form-control disablefield"  >
+					<form:select path="financialDetails[0].budgetGroup" data-first-option="false" id="budgethead" class="form-control disablefield" required="required" >
 						<form:option value="">
 							<spring:message code="lbl.select" />
 						</form:option>
