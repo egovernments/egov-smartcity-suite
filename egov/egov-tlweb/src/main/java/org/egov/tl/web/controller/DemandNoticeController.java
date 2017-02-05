@@ -42,6 +42,7 @@ package org.egov.tl.web.controller;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 import static org.egov.infra.utils.DateUtils.toYearFormat;
+import static org.egov.infra.utils.PdfUtils.appendFiles;
 import static org.egov.tl.utils.Constants.CITY_GRADE_CORPORATION;
 import static org.egov.tl.utils.Constants.TL_LICENSE_ACT_CORPORATION;
 import static org.egov.tl.utils.Constants.TL_LICENSE_ACT_DEFAULT;
@@ -318,7 +319,7 @@ public class DemandNoticeController {
 			try {
 				if (demandNotice_pdf.size() > 0) {
 					final ByteArrayOutputStream output = new ByteArrayOutputStream();
-					final byte[] data = tradeLicenseService.mergePdfFiles(demandNotice_pdf, output);
+					final byte[] data = appendFiles(demandNotice_pdf, output);
 					response.setHeader("content-disposition", "inline;filename=License Demand Notice.pdf");
 					response.setContentType("application/pdf");
 					response.setContentLength(data.length);

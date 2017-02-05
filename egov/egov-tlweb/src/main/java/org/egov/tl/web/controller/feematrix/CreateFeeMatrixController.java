@@ -89,7 +89,7 @@ public class CreateFeeMatrixController {
 
     @ModelAttribute
     public List<NatureOfBusiness> natureOfBusinesses() {
-        return natureOfBusinessService.findAll();
+        return natureOfBusinessService.getNatureOfBusinesses();
     }
 
     @ModelAttribute("financialYears")

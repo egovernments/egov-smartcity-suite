@@ -40,20 +40,6 @@
 
 package org.egov.tl.web.actions;
 
-import static org.egov.tl.utils.Constants.APPROVE_PAGE;
-import static org.egov.tl.utils.Constants.GENERATE_CERTIFICATE;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -103,6 +89,19 @@ import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.tl.utils.Constants.APPROVE_PAGE;
+import static org.egov.tl.utils.Constants.GENERATE_CERTIFICATE;
+
 @ParentPackage("egov")
 @Results({
         @Result(name = "collection", type = "redirectAction", location = "licenseBillCollect", params = {"namespace",
@@ -121,53 +120,53 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public abstract class BaseLicenseAction<T extends License> extends GenericWorkFlowAction {
     private static final long serialVersionUID = 1L;
 
-    protected WorkflowBean workflowBean = new WorkflowBean();
-    protected List<String> buildingTypeList;
+    protected transient WorkflowBean workflowBean = new WorkflowBean();
+    protected transient List<String> buildingTypeList;
     protected String roleName;
     protected String reportId;
     protected boolean showAgreementDtl;
     @Autowired
-    protected LicenseUtils licenseUtils;
+    protected transient LicenseUtils licenseUtils;
     @Autowired
-    protected PositionMasterService positionMasterService;
+    protected transient PositionMasterService positionMasterService;
     @Autowired
-    protected SecurityUtils securityUtils;
+    protected transient SecurityUtils securityUtils;
     @Autowired
-    protected AssignmentService assignmentService;
+    protected transient AssignmentService assignmentService;
     @Autowired
-    protected BoundaryService boundaryService;
+    protected transient BoundaryService boundaryService;
     @Autowired
-    protected DesignationService designationService;
+    protected transient DesignationService designationService;
     @Autowired
-    protected EisCommonService eisCommonService;
+    protected transient EisCommonService eisCommonService;
     @Autowired
-    protected UserService userService;
+    protected transient UserService userService;
     @Autowired
     @Qualifier("licenseCategoryService")
-    protected LicenseCategoryService licenseCategoryService;
+    protected transient LicenseCategoryService licenseCategoryService;
     @Autowired
     @Qualifier("licenseSubCategoryService")
-    protected LicenseSubCategoryService licenseSubCategoryService;
+    protected transient LicenseSubCategoryService licenseSubCategoryService;
     @Autowired
     @Qualifier("unitOfMeasurementService")
-    protected UnitOfMeasurementService unitOfMeasurementService;
+    protected transient UnitOfMeasurementService unitOfMeasurementService;
     @Autowired
     @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
+    protected transient FileStoreService fileStoreService;
     private Long feeTypeId;
     private String fileStoreIds;
     private String ulbCode;
     private String signedFileStoreId;
-    private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
+    private transient TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
     @Autowired
-    private TradeLicenseService tradeLicenseService;
+    private transient TradeLicenseService tradeLicenseService;
     @Autowired
-    private ReportService reportService;
+    private transient ReportService reportService;
     @Autowired
     @Qualifier("feeTypeService")
-    private FeeTypeService feeTypeService;
+    private transient FeeTypeService feeTypeService;
     @Autowired
-    private ReportViewerUtil reportViewerUtil;
+    private transient ReportViewerUtil reportViewerUtil;
 
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
@@ -352,8 +351,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         User user = getInitiatorUserObj();
         if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED)) {
             Position creatorPosition = license().getState().getInitiatorPosition();
-            addActionMessage(this.getText("license.rejectedfirst") + (creatorPosition.getDeptDesig().getDesignation().getName() + " - ") + " "
-                    + user != null ? user.getName() : "");
+            addActionMessage(this.getText("license.rejectedfirst") + (creatorPosition.getDeptDesig().getDesignation().getName() + " - ")
+                    + (user != null ? user.getName() : ""));
 
         } else
             addActionMessage(this.getText("license.rejected") + license().getApplicationNumber());
@@ -386,10 +385,11 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         getSession().put("model.id", license().getId());
         String result = APPROVE_PAGE;
         setRoleName(securityUtils.getCurrentUser().getRoles().toString());
-        if (license().getLicenseAppType().getName().equals(Constants.NEW_LIC_APPTYPE)) {
+        if (license().isNewApplication()) {
             if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
                 result = GENERATE_CERTIFICATE;
-            else result = APPROVE_PAGE;
+            else
+                result = APPROVE_PAGE;
 
         }
         return result;

@@ -40,27 +40,6 @@
 
 package org.egov.tl.service;
 
-import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.BUTTONREJECT;
-import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
-import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.TRADELICENSE_MODULENAME;
-
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
@@ -90,11 +69,23 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfWriter;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
+import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
+import static org.egov.infra.utils.DateUtils.toYearFormat;
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.BUTTONREJECT;
+import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
+import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.TRADELICENSE_MODULENAME;
 
 @Transactional(readOnly = true)
 public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
@@ -157,28 +148,25 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
         final Position wfInitiator = getWorkflowInitiator(license);
         if (BUTTONAPPROVE.equals(workFlowAction)) {
-            if (license.getLicenseAppType() != null
-                    && !license.getLicenseAppType().getName().equals(RENEWAL_LIC_APPTYPE)) {
-                validityService.applyLicenseValidity(license);
-                if (license.getTempLicenseNumber() == null)
-                    license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
-            }
             license.setActive(true);
+            if (license.getTempLicenseNumber() == null && license.isNewApplication())
+                license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
+
             if (license.getCurrentDemand().getBaseDemand().compareTo(license.getCurrentDemand().getAmtCollected()) <= 0)
-                license = (TradeLicense) licenseUtils.applicationStatusChange(license,
+                licenseUtils.applicationStatusChange(license,
                         Constants.APPLICATION_STATUS_APPROVED_CODE);
             else
-                license = (TradeLicense) licenseUtils.applicationStatusChange(license,
+                licenseUtils.applicationStatusChange(license,
                         Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE);
 
         }
         if (BUTTONAPPROVE.equals(workFlowAction) || Constants.BUTTONFORWARD.equals(workFlowAction)) {
             license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_UNDERWORKFLOW));
             if (license.getState().getValue().equals(Constants.WF_REVENUECLERK_APPROVED))
-                license = (TradeLicense) licenseUtils.applicationStatusChange(license,
+                licenseUtils.applicationStatusChange(license,
                         Constants.APPLICATION_STATUS_INSPE_CODE);
             if (license.getState().getValue().equals(Constants.WORKFLOW_STATE_REJECTED))
-                license = (TradeLicense) licenseUtils.applicationStatusChange(license,
+                licenseUtils.applicationStatusChange(license,
                         Constants.APPLICATION_STATUS_CREATED_CODE);
         }
 
@@ -187,7 +175,8 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             // setting license to non-legacy, old license number will be the only tracking
             // to check a license created as legacy or new hereafter.
             license.setLegacy(false);
-            license = (TradeLicense) licenseUtils.applicationStatusChange(license,
+            validityService.applyLicenseValidity(license);
+            licenseUtils.applicationStatusChange(license,
                     Constants.APPLICATION_STATUS_GENECERT_CODE);
         }
         if (BUTTONREJECT.equals(workFlowAction))
@@ -195,16 +184,16 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                     && ("Rejected".equals(license.getState().getValue()))
                     || "License Created".equals(license.getState().getValue())) {
                 license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_CANCELLED));
-                license = (TradeLicense) licenseUtils.applicationStatusChange(license,
+                licenseUtils.applicationStatusChange(license,
                         Constants.APPLICATION_STATUS_CANCELLED);
-                if (NEW_LIC_APPTYPE.equalsIgnoreCase(license.getLicenseAppType().getName()))
+                if (license.isNewApplication())
                     license.setActive(false);
             } else {
                 license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_REJECTED));
-                license = (TradeLicense) licenseUtils.applicationStatusChange(license,
+                licenseUtils.applicationStatusChange(license,
                         Constants.APPLICATION_STATUS_REJECTED);
             }
-        if (null != license && null != license.getState()
+        if (license.hasState()
                 && license.getState().getValue().contains(Constants.WF_REVENUECLERK_APPROVED)
                 && recalDemandAmount.compareTo(currentDemandAmount) > 0)
             updateDemandForChangeTradeArea(license);
@@ -242,35 +231,29 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     private Map<String, Object> getReportParamsForCertificate(final License license, final String districtName,
                                                               final String cityMunicipalityName) {
         final Map<String, Object> reportParams = new HashMap<>();
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        final Format formatterYear = new SimpleDateFormat("YYYY");
         reportParams.put("applicationnumber", license.getApplicationNumber());
         reportParams.put("applicantName", license.getLicensee().getApplicantName());
         reportParams.put("licencenumber", license.getLicenseNumber());
         reportParams.put("wardName", license.getBoundary().getName());
         reportParams.put("cscNumber", "");
-        reportParams.put("nameOfEstablishment", license.getNameOfEstablishment() != null ? license.getNameOfEstablishment() : "");
+        reportParams.put("nameOfEstablishment", license.getNameOfEstablishment());
         reportParams.put("licenceAddress", license.getAddress());
         reportParams.put("municipality", cityMunicipalityName);
         reportParams.put("district", districtName);
-        reportParams.put("category", license.getCategory() != null ? license.getCategory().getName() : null);
-        reportParams.put("subCategory", license.getTradeName() != null ? license.getTradeName().getName() : null);
-        reportParams
-                .put("appType", license.getLicenseAppType() != null
-                        ? NEW_LIC_APPTYPE.equals(license.getLicenseAppType().getName())
-                        ? "New Trade" : "Renewal"
-                        : "New");
-        reportParams.put("currentDate", formatter.format(new Date()));
+        reportParams.put("category", license.getCategory().getName());
+        reportParams.put("subCategory", license.getTradeName().getName());
+        reportParams.put("appType", license.isNewApplication() ? "New Trade" : "Renewal");
+        reportParams.put("currentDate", currentDateToDefaultDateFormat());
         if (ApplicationThreadLocals.getMunicipalityName().contains("Corporation"))
             reportParams.put("carporationulbType", Boolean.TRUE);
         reportParams.put("municipality", ApplicationThreadLocals.getMunicipalityName());
         final LicenseDemand licenseDemand = license.getLicenseDemand();
-        final String startYear = formatterYear.format(licenseDemand.getEgInstallmentMaster().getFromDate());
-        final String endYear = formatterYear.format(licenseDemand.getEgInstallmentMaster().getToDate());
+        final String startYear = toYearFormat(licenseDemand.getEgInstallmentMaster().getFromDate());
+        final String endYear = toYearFormat(licenseDemand.getEgInstallmentMaster().getToDate());
         final String installMentYear = startYear + "-" + endYear;
         reportParams.put("installMentYear", installMentYear);
-        reportParams.put("applicationdate", formatter.format(license.getApplicationDate()));
-        reportParams.put("demandUpdateDate", formatter.format(license.getCurrentDemand().getModifiedDate()));
+        reportParams.put("applicationdate", getDefaultFormattedDate(license.getApplicationDate()));
+        reportParams.put("demandUpdateDate", getDefaultFormattedDate(license.getCurrentDemand().getModifiedDate()));
         reportParams.put("demandTotalamt", license.getCurrentLicenseFee());
         return reportParams;
     }
@@ -392,51 +375,5 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             ownerName = license.getLastModifiedBy().getName();
         return ownerName;
 
-    }
-
-    public byte[] mergePdfFiles(final List<InputStream> inputPdfList, final OutputStream outputStream)
-            throws Exception {
-        // Create document and pdfReader objects.
-        final Document document = new Document();
-        final List<PdfReader> readers = new ArrayList<>();
-        int totalPages = 0;
-        // Create pdf Iterator object using inputPdfList.
-        final Iterator<InputStream> pdfIterator = inputPdfList.iterator();
-        // Create reader list for the input pdf files.
-        while (pdfIterator.hasNext()) {
-            final InputStream pdf = pdfIterator.next();
-            if (pdf != null) {
-                final PdfReader pdfReader = new PdfReader(pdf);
-                readers.add(pdfReader);
-                totalPages = totalPages + pdfReader.getNumberOfPages();
-            } else
-                break;
-        }
-        // Create writer for the outputStream
-        final PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-        // Open document.
-        document.open();
-        // Contain the pdf data.
-        final PdfContentByte pageContentByte = writer.getDirectContent();
-        PdfImportedPage pdfImportedPage;
-        int currentPdfReaderPage = 1;
-        final Iterator<PdfReader> iteratorPDFReader = readers.iterator();
-        // Iterate and process the reader list.
-        while (iteratorPDFReader.hasNext()) {
-            final PdfReader pdfReader = iteratorPDFReader.next();
-            // Create page and add content.
-            while (currentPdfReaderPage <= pdfReader.getNumberOfPages()) {
-                document.newPage();
-                pdfImportedPage = writer.getImportedPage(pdfReader, currentPdfReaderPage);
-                pageContentByte.addTemplate(pdfImportedPage, 0, 0);
-                currentPdfReaderPage++;
-            }
-            currentPdfReaderPage = 1;
-        }
-        // Close document and outputStream.
-        outputStream.flush();
-        document.close();
-        outputStream.close();
-        return ((ByteArrayOutputStream) outputStream).toByteArray();
     }
 }

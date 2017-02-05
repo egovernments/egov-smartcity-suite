@@ -76,6 +76,7 @@ import java.util.Map;
 
 import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 
 @ParentPackage("egov")
 @Results({@Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
@@ -158,12 +159,10 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String approve() {
         final BigDecimal newTradeAreWt = tradeLicense.getTradeArea_weight();
         tradeLicense = tradeLicenseService.getLicenseById((Long) getSession().get("model.id"));
-        if (null != license().getState()
-                && license().getState().getValue().contains(Constants.WF_REVENUECLERK_APPROVED))
+        if (license().hasState() && license().getState().getValue().contains(Constants.WF_REVENUECLERK_APPROVED))
             tradeLicense.setTradeArea_weight(newTradeAreWt);
         if ("Submit".equals(workFlowAction) && mode.equalsIgnoreCase(VIEW)
                 && tradeLicense.getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR)
-                && tradeLicense != null
                 && !tradeLicense.isPaid() &&
                 !workFlowAction.equalsIgnoreCase(Constants.BUTTONREJECT)) {
             prepareNewForm();
@@ -181,8 +180,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         setDocumentTypes(tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.NEW));
         if (tradeLicense.getEgwStatus() != null
                 && !tradeLicense.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE)
-                && tradeLicense.getLicenseAppType() != null
-                && tradeLicense.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
+                && tradeLicense.isReNewApplication()) {
             ServletActionContext.getResponse().setContentType("text/html");
             ServletActionContext.getResponse().getWriter()
                     .write("<center style='color:red;font-weight:bolder'>Renewal workflow is in progress !</center>");
@@ -190,7 +188,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         }
         if (!tradeLicense.hasState() || "Closed".equals(tradeLicense.getCurrentState().getValue()))
             currentState = "";
-        renewAppType = Constants.RENEWAL_LIC_APPTYPE;
+        renewAppType = RENEWAL_LIC_APPTYPE;
         return super.beforeRenew();
     }
 
@@ -273,9 +271,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     @Override
     public String getAdditionalRule() {
-        if (renewAppType != null && renewAppType.equals(Constants.RENEWAL_LIC_APPTYPE)
-                || tradeLicense != null && tradeLicense.getLicenseAppType() != null
-                && tradeLicense.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
+        if (RENEWAL_LIC_APPTYPE.equals(renewAppType) || tradeLicense != null && tradeLicense.isReNewApplication())
             return Constants.RENEW_ADDITIONAL_RULE;
         else
             return Constants.NEW_ADDITIONAL_RULE;

@@ -1,5 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ include file="/includes/taglibs.jsp"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ include file="/includes/taglibs.jsp" %>
 
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
@@ -42,70 +42,70 @@
   --%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <form:form role="form" action="search" modelAttribute="validity" id="validitysearchform"
-  cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+           cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
     <div class="row">
-      <div class="col-md-12">
-        <div class="panel panel-primary" data-collapsed="0">
-          <div class="panel-heading">
-            <div class="panel-title"><spring:message code="title.validity.search"/></div>
-          </div>
-          <div class="panel-body custom-form">
-            <div class="form-group">
-              <label class="col-sm-3 control-label text-right"><spring:message code="lbl.natureofbusiness" /> </label>
-              <div class="col-sm-3 add-margin">
-                <form:select path="natureOfBusiness" id="natureOfBusiness" cssClass="form-control"
-                  cssErrorClass="form-control error">
-                  <form:option value="">
-                    <spring:message code="lbl.select" />
-                  </form:option>
-                  <form:options items="${natureOfBusinesss}" itemValue="id" itemLabel="name" />
-                </form:select>
-              </div>
-              <label class="col-sm-2 control-label text-right"><spring:message code="lbl.licensecategory" /> </label>
-              <div class="col-sm-3 add-margin">
-                <form:select path="licenseCategory" id="licenseCategory" cssClass="form-control"
-                  cssErrorClass="form-control error">
-                  <form:option value="">
-                    <spring:message code="lbl.select" />
-                  </form:option>
-                  <form:options items="${licenseCategorys}" itemValue="id" itemLabel="name" />
-                </form:select>
-              </div>
+        <div class="col-md-12">
+            <div class="panel panel-primary" data-collapsed="0">
+                <div class="panel-heading">
+                    <div class="panel-title"><spring:message code="title.validity.search"/></div>
+                </div>
+                <div class="panel-body custom-form">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.natureofbusiness"/> </label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="natureOfBusiness" id="natureOfBusiness" cssClass="form-control"
+                                         cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                                <form:options items="${natureOfBusinessList}" itemValue="id" itemLabel="name"/>
+                            </form:select>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.licensecategory"/> </label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="licenseCategory" id="licenseCategory" cssClass="form-control"
+                                         cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                                <form:options items="${licenseCategoryList}" itemValue="id" itemLabel="name"/>
+                            </form:select>
+                        </div>
+                    </div>
+                    <input type="hidden" id="mode" name="mode" value="${mode}"/>
+
+                </div>
             </div>
-            <input type="hidden" id="mode" name="mode" value="${mode}" />
-            
-          </div>
+            <div class="form-group">
+                <div class="text-center">
+                    <button type='button' class='btn btn-primary' id="btnsearch">
+                        <spring:message code='lbl.search'/>
+                    </button>
+                    <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message
+                            code='lbl.close'/></a>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-          <div class="text-center">
-            <button type='button' class='btn btn-primary' id="btnsearch">
-              <spring:message code='lbl.search' />
-            </button>
-            <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message
-                code='lbl.close' /></a>
-          </div>
-        </div>
-      </div>
     </div>
 </form:form>
 <div class="row display-hide report-section">
-  <div class="col-md-12 table-header text-left"><spring:message code="title.validity.result"/></div>
-  <div class="col-md-12 form-group report-table-container">
-    <table class="table table-bordered table-hover multiheadertbl" id="resultTable">
-      <thead>
-        <tr>
-          <th><spring:message code="lbl.natureofbusiness" /></th>
-          <th><spring:message code="lbl.licensecategory" /></th>
-          <th><spring:message code="lbl.basedon.finyear" /></th>
-          <th><spring:message code="lbl.day" /></th>
-          <th><spring:message code="lbl.week" /></th>
-          <th><spring:message code="lbl.month" /></th>
-          <th><spring:message code="lbl.year" /></th>
-          <th>&nbsp;</th>
-        </tr>
-      </thead>
-    </table>
-  </div>
+    <div class="col-md-12 table-header text-left"><spring:message code="title.validity.result"/></div>
+    <div class="col-md-12 form-group report-table-container">
+        <table class="table table-bordered table-hover multiheadertbl" id="resultTable">
+            <thead>
+            <tr>
+                <th><spring:message code="lbl.natureofbusiness"/></th>
+                <th><spring:message code="lbl.licensecategory"/></th>
+                <th><spring:message code="lbl.basedon.finyear"/></th>
+                <th><spring:message code="lbl.day"/></th>
+                <th><spring:message code="lbl.week"/></th>
+                <th><spring:message code="lbl.month"/></th>
+                <th><spring:message code="lbl.year"/></th>
+                <th>&nbsp;</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
 </div>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">

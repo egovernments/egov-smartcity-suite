@@ -38,54 +38,47 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.web.controller.feematrix;
+package org.egov.tl.web.controller.validity;
 
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.tl.entity.FeeMatrix;
-import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.NatureOfBusiness;
-import org.egov.tl.service.FeeMatrixService;
-import org.egov.tl.service.LicenseAppTypeService;
+import org.egov.tl.entity.Validity;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.NatureOfBusinessService;
+import org.egov.tl.service.ValidityService;
+import org.egov.tl.web.response.adaptor.ValidityResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.validation.Valid;
 import java.util.List;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
-@RequestMapping("/feematrix/update/{id}")
-public class UpdateFeeMatrixController {
+@RequestMapping("/validity")
+public class ViewValidityController {
 
     @Autowired
-    private LicenseCategoryService licenseCategoryService;
+    private ValidityService validityService;
 
     @Autowired
     private NatureOfBusinessService natureOfBusinessService;
 
     @Autowired
-    private FinancialYearDAO financialYearDAO;
-
-    @Autowired
-    private LicenseAppTypeService licenseAppTypeService;
-
-    @Autowired
-    private FeeMatrixService feeMatrixService;
+    private LicenseCategoryService licenseCategoryService;
 
     @ModelAttribute
-    public FeeMatrix feeMatrix(@PathVariable Long id) {
-        return feeMatrixService.getFeeMatrixById(id);
+    public List<NatureOfBusiness> natureOfBusinesses() {
+        return natureOfBusinessService.getNatureOfBusinesses();
     }
 
     @ModelAttribute
@@ -93,32 +86,25 @@ public class UpdateFeeMatrixController {
         return licenseCategoryService.getCategoriesOrderByName();
     }
 
-    @ModelAttribute
-    public List<NatureOfBusiness> natureOfBusinesses() {
-        return natureOfBusinessService.getNatureOfBusinesses();
+    @RequestMapping(value = "/view/{id}", method = GET)
+    public String viewValidity(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("validity", validityService.findOne(id));
+        return "validity-view";
     }
 
-    @ModelAttribute("financialYears")
-    public List<CFinancialYear> financialYears() {
-        return financialYearDAO.getAllActiveFinancialYearList();
+    @RequestMapping(value = "/search", method = GET)
+    public String showValiditySearchForm(Model model) {
+        model.addAttribute("validity", new Validity());
+        return "validity-search";
+
     }
 
-    @ModelAttribute
-    public List<LicenseAppType> licenseAppTypes() {
-        return licenseAppTypeService.getLicenseAppTypes();
-    }
-
-    @RequestMapping(method = GET)
-    public String edit() {
-        return "feematrix-update";
-    }
-
-    @RequestMapping(method = POST)
-    public String update(@Valid @ModelAttribute FeeMatrix feeMatrix, BindingResult bindingResult, RedirectAttributes responseAttribs) {
-        if (bindingResult.hasErrors())
-            return "feematrix-update";
-        feeMatrixService.update(feeMatrix);
-        responseAttribs.addFlashAttribute("message", "msg.feematrix.update.success");
-        return "redirect:/feematrix/view/" + feeMatrix.getId();
+    @RequestMapping(value = "/search", method = POST, produces = TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String searchValidity(@RequestParam(required = false) Long natureOfBusiness,
+                                 @RequestParam(required = false) Long licenseCategory) {
+        return new StringBuilder("{ \"data\":").
+                append(toJSON(validityService.search(natureOfBusiness, licenseCategory), Validity.class,
+                        ValidityResponseAdaptor.class)).append("}").toString();
     }
 }

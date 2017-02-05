@@ -119,14 +119,9 @@
         <put-attribute name="body" value="/WEB-INF/views/feematrix/feematrix-search.jsp"/>
     </definition>
 
-    <definition name="validity-new" extends="base_layout">
+    <definition name="validity-create" extends="base_layout">
         <put-attribute name="page-title" value="title.validity.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/validity/validity-new.jsp"/>
-    </definition>
-
-    <definition name="validity-result" extends="base_layout">
-        <put-attribute name="page-title" value="title.validity.result" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/validity/validity-result.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/validity/validity-create.jsp"/>
     </definition>
 
     <definition name="validity-view" extends="base_layout">
@@ -134,9 +129,9 @@
         <put-attribute name="body" value="/WEB-INF/views/validity/validity-view.jsp"/>
     </definition>
 
-    <definition name="validity-edit" extends="base_layout">
+    <definition name="validity-update" extends="base_layout">
         <put-attribute name="page-title" value="title.validity.edit" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/validity/validity-edit.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/validity/validity-update.jsp"/>
     </definition>
 
     <definition name="validity-search" extends="base_layout">

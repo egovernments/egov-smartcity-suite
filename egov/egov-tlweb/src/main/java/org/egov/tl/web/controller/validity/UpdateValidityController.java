@@ -38,18 +38,14 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.web.controller.feematrix;
+package org.egov.tl.web.controller.validity;
 
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.tl.entity.FeeMatrix;
-import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.NatureOfBusiness;
-import org.egov.tl.service.FeeMatrixService;
-import org.egov.tl.service.LicenseAppTypeService;
+import org.egov.tl.entity.Validity;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.NatureOfBusinessService;
+import org.egov.tl.service.ValidityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -65,27 +61,21 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
-@RequestMapping("/feematrix/update/{id}")
-public class UpdateFeeMatrixController {
+@RequestMapping("/validity/update/{id}")
+public class UpdateValidityController {
 
     @Autowired
-    private LicenseCategoryService licenseCategoryService;
+    private ValidityService validityService;
 
     @Autowired
     private NatureOfBusinessService natureOfBusinessService;
 
     @Autowired
-    private FinancialYearDAO financialYearDAO;
-
-    @Autowired
-    private LicenseAppTypeService licenseAppTypeService;
-
-    @Autowired
-    private FeeMatrixService feeMatrixService;
+    private LicenseCategoryService licenseCategoryService;
 
     @ModelAttribute
-    public FeeMatrix feeMatrix(@PathVariable Long id) {
-        return feeMatrixService.getFeeMatrixById(id);
+    public List<NatureOfBusiness> natureOfBusinesses() {
+        return natureOfBusinessService.getNatureOfBusinesses();
     }
 
     @ModelAttribute
@@ -94,31 +84,25 @@ public class UpdateFeeMatrixController {
     }
 
     @ModelAttribute
-    public List<NatureOfBusiness> natureOfBusinesses() {
-        return natureOfBusinessService.getNatureOfBusinesses();
-    }
-
-    @ModelAttribute("financialYears")
-    public List<CFinancialYear> financialYears() {
-        return financialYearDAO.getAllActiveFinancialYearList();
-    }
-
-    @ModelAttribute
-    public List<LicenseAppType> licenseAppTypes() {
-        return licenseAppTypeService.getLicenseAppTypes();
+    public Validity validity(@PathVariable Long id) {
+        return validityService.findOne(id);
     }
 
     @RequestMapping(method = GET)
-    public String edit() {
-        return "feematrix-update";
+    public String showValidityUpdateForm() {
+        return "validity-update";
     }
 
     @RequestMapping(method = POST)
-    public String update(@Valid @ModelAttribute FeeMatrix feeMatrix, BindingResult bindingResult, RedirectAttributes responseAttribs) {
-        if (bindingResult.hasErrors())
-            return "feematrix-update";
-        feeMatrixService.update(feeMatrix);
-        responseAttribs.addFlashAttribute("message", "msg.feematrix.update.success");
-        return "redirect:/feematrix/view/" + feeMatrix.getId();
+    public String updateValidity(@Valid @ModelAttribute Validity validity, BindingResult bindingResult,
+                                 RedirectAttributes responseAttribs) {
+        if (!validity.hasValidValues())
+            bindingResult.rejectValue("basedOnFinancialYear", "validity.value.notset");
+        if (bindingResult.hasErrors()) {
+            return "validity-update";
+        }
+        validityService.update(validity);
+        responseAttribs.addFlashAttribute("message", "msg.validity.success");
+        return "redirect:/validity/view/" + validity.getId();
     }
 }

@@ -104,7 +104,6 @@ import static org.egov.tl.utils.Constants.GENERATECERTIFICATE;
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACKNOWLEDGED;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
-import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
 import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
@@ -250,9 +249,8 @@ public abstract class AbstractLicenseService<T extends License> {
 
     public License updateDemandForChangeTradeArea(final T license) {
         final LicenseDemand licenseDemand = license.getLicenseDemand();
-        final Module moduleName = this.getModuleName();
         final Set<EgDemandDetails> demandDetails = licenseDemand.getEgDemandDetails();
-        Date licenseDate = license.getLicenseAppType().getName().equals(NEW_LIC_APPTYPE) ? license.getCommencementDate()
+        Date licenseDate = license.isNewApplication() ? license.getCommencementDate()
                 : license.getLicenseDemand().getEgInstallmentMaster().getFromDate();
         final List<FeeMatrixDetail> feeList = this.feeMatrixService.findFeeMatrixByGivenDate(license, licenseDate);
         for (final EgDemandDetails dmd : demandDetails)
@@ -331,8 +329,7 @@ public abstract class AbstractLicenseService<T extends License> {
                                         installment, module),
                                 amtCollected));
                 licenseDemand.setBaseDemand(demandAmount.add(licenseDemand.getBaseDemand()).setScale(0, RoundingMode.HALF_UP));
-                licenseDemand
-                        .setAmtCollected(amtCollected.add(licenseDemand.getAmtCollected()).setScale(0, RoundingMode.HALF_UP));
+                licenseDemand.setAmtCollected(amtCollected.add(licenseDemand.getAmtCollected()).setScale(0, RoundingMode.HALF_UP));
             }
         license.setLicenseDemand(licenseDemand);
 
@@ -343,6 +340,7 @@ public abstract class AbstractLicenseService<T extends License> {
                                     final Map<Integer, Boolean> legacyFeePayStatus) {
         processAndStoreDocument(license.getDocuments(), license);
         this.updateLegacyDemand(license, updatedInstallmentFees, legacyFeePayStatus);
+        this.validityService.applyLicenseValidity(license);
         licenseRepository.save(license);
     }
 
@@ -406,7 +404,7 @@ public abstract class AbstractLicenseService<T extends License> {
     @Transactional
     public void renew(final T license, final WorkflowBean workflowBean) {
         license.setLicenseAppType(getLicenseApplicationTypeForRenew());
-        final String natureOfWork = license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)
+        final String natureOfWork = license.isReNewApplication()
                 ? Constants.RENEWAL_NATUREOFWORK : Constants.NEW_NATUREOFWORK;
         final Assignment wfInitiator = this.assignmentService
                 .getPrimaryAssignmentForUser(this.securityUtils.getCurrentUser().getId());
@@ -473,7 +471,7 @@ public abstract class AbstractLicenseService<T extends License> {
         final Assignment userAssignment = this.assignmentService.getPrimaryAssignmentForUser(user.getId());
         Position pos = null;
         Position wfInitiator = null;
-        final String natureOfWork = license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)
+        final String natureOfWork = license.isReNewApplication()
                 ? Constants.RENEWAL_NATUREOFWORK : Constants.NEW_NATUREOFWORK;
         if (null != license.getId())
             wfInitiator = this.getWorkflowInitiator(license);
@@ -483,8 +481,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 license.transition(true).end().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
-                if (license.getLicenseAppType() != null
-                        && license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
+                if (license.isReNewApplication())
                     license.setLicenseAppType(this.getLicenseApplicationType());
 
             } else {
@@ -599,7 +596,7 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     public List<NatureOfBusiness> getAllNatureOfBusinesses() {
-        return natureOfBusinessService.findAll();
+        return natureOfBusinessService.getNatureOfBusinesses();
     }
 
     public T getLicenseByLicenseNumber(final String licenseNumber) {
@@ -705,7 +702,7 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     public BigDecimal calculateFeeAmount(final License license) {
-        Date licenseDate = license.getLicenseAppType().getName().equals(NEW_LIC_APPTYPE) ? license.getCommencementDate()
+        Date licenseDate = license.isNewApplication() ? license.getCommencementDate()
                 : license.getLicenseDemand().getEgInstallmentMaster().getFromDate();
         final List<FeeMatrixDetail> feeList = this.feeMatrixService.findFeeMatrixByGivenDate(license, licenseDate);
         BigDecimal totalAmount = ZERO;
