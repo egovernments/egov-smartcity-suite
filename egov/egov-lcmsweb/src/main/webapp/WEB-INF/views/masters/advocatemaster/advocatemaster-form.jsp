@@ -54,13 +54,13 @@
 							<form:option value="">
 								<spring:message code="lbl.select" />
 							</form:option>
-							<form:option value="MR.">
+							<form:option value="Mr.">
 													Mr.
 											</form:option>
-							<form:option value="MS.">
+							<form:option value="Ms.">
 													Ms.
 											</form:option>
-							<form:option value="MRS.">
+							<form:option value="Mrs.">
 													Mrs.
 											</form:option>
 						</form:select>
