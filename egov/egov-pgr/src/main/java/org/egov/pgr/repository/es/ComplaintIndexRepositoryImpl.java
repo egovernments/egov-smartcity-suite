@@ -516,6 +516,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                 .addField(DISTRICT_NAME).addField(CITY_NAME).setSize(1))
                         .subAggregation(
                                 getAverageWithExclusion("groupByFieldSatisfactionAverage", "satisfactionIndex"))
+                        .subAggregation(getCountWithGrouping("complaintCount", IF_CLOSED, 2))        
                         .subAggregation(
                                 getCountWithGrouping("groupFieldWiseOpenAndClosedCount", IF_CLOSED, 2)
                                         .subAggregation(
