@@ -118,7 +118,7 @@
 		<input type="button" class="btn btn-default" value="Close" id="closeButton" name="button" onclick="window.close();" />
 	</div>
 </div>
-	<input type="hidden" id="mode" value="${mode}" />
+	<input type="hidden" id="mode" value="${mode}" name = "mode" />
 	<s:if test="%{mode != 'view'}"> 
 		<s:text var="modify"	name="%{getText('column.title.modify')}"></s:text>
  	</s:if>
