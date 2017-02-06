@@ -292,7 +292,8 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
         if (propertyImpl.getState() != null) {
             loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
                     propertyImpl.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
-            loggedInUserDesignation = !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName() : null;
+            if(!loggedInUserAssign.isEmpty())
+            loggedInUserDesignation = loggedInUserAssign.get(0).getDesignation().getName();
         }
         return loggedInUserDesignation;
     }

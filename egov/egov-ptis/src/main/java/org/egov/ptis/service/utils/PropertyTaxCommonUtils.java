@@ -427,14 +427,14 @@ public class PropertyTaxCommonUtils {
      */
     public String getDateWithSufix(final int dayOfMonth) {
         switch (dayOfMonth < 20 ? dayOfMonth : dayOfMonth % 10) {
-        case 1:
-            return dayOfMonth + "st";
-        case 2:
-            return dayOfMonth + "nd";
-        case 3:
-            return dayOfMonth + "rd";
-        default:
-            return dayOfMonth + "th";
+            case 1:
+                return dayOfMonth + "st";
+            case 2:
+                return dayOfMonth + "nd";
+            case 3:
+                return dayOfMonth + "rd";
+            default:
+                return dayOfMonth + "th";
         }
     }
 
