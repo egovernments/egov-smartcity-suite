@@ -61,8 +61,10 @@
 					
 				</tr>
 			</thead>
-			<tbody class="no-pointer">
-			</tbody>
+			<c:if test="${lineEstimateRequired }">
+				<tbody class="no-pointer">
+				</tbody>
+			</c:if>
 		</table>
 	</div>
 </div>

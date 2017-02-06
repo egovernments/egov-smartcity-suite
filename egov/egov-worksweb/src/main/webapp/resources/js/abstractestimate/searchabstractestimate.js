@@ -112,6 +112,17 @@ function callAjaxSearch() {
 			             }],
 				},
 				"fnRowCallback" : function(row, data, index) {
+					if($('#lineEstimateRequired').val() == 'false') {
+						$(row).on(
+								'click',
+								function() {
+									window.open('/egworks/abstractestimate/view/'
+											+ data.id, '',
+											'width=800, height=600');
+								});
+					} else {
+						$('td:eq(1)',row).html('<a href="javascript:void(0);" onclick="openAbstractEstimate(\''+ data.id +'\')">' + data.estimateNumberAndDate + '</a>');
+					}
 					return row;
 				},
 				aaSorting: [],				
@@ -123,14 +134,8 @@ function callAjaxSearch() {
 									+ data + '">' + data + '</a>';
 							}
 					} ,
-					{
-						"data" : "estimateNumberAndDate",
-						"render" : function(data, type, row) {
-							return '<a href="javascript:void(0);" onclick="openAbstractEstimate('+row.id+');" data-hiddenele="estimateNumberAndDate" data-eleval="'
-									+ data + '">' + data + '</a>';
-							}
-						} ,{	
-							"data" : "nameofwork"} ,
+					{"data" : "estimateNumberAndDate"} ,{	
+					"data" : "nameofwork"} ,
 					{"data" : "workIdentificationNumber"} ,{ 
 					"data" : "estimateAmount", "sClass" : "text-right"} ,{
 					"data" : "departmentName"} ,{
@@ -147,6 +152,10 @@ function callAjaxSearch() {
 			oTable.column(4).visible(false);
 		}
 		
+		if($('#lineEstimateRequired').val() == 'false') {
+			var oTable = $('#resultTable').DataTable();
+			oTable.column(0).visible(false);
+		}
 		//show/hide department
 		var status = $("#status").val();
 

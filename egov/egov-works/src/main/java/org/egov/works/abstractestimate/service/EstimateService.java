@@ -935,6 +935,8 @@ public class EstimateService {
                 criteria.add(Restrictions.ge("estimateDate", searchAbstractEstimate.getFromDate()));
             if (searchAbstractEstimate.getToDate() != null)
                 criteria.add(Restrictions.le("estimateDate", searchAbstractEstimate.getToDate()));
+            if (searchAbstractEstimate.getSpillOverFlag())
+                criteria.add(Restrictions.eq("spillOverFlag", searchAbstractEstimate.getSpillOverFlag()));
 
             criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
             return criteria.list();

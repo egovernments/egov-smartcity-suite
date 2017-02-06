@@ -57,6 +57,7 @@ public class SearchAbstractEstimate {
     private String departmentName;
     private String ward;
     private String currentOwner;
+    private Boolean spillOverFlag;
 
     public String getAbstractEstimateNumber() {
         return abstractEstimateNumber;
@@ -170,4 +171,11 @@ public class SearchAbstractEstimate {
         this.id = id;
     }
 
+    public Boolean getSpillOverFlag() {
+        return spillOverFlag;
+    }
+
+    public void setSpillOverFlag(final Boolean spillOverFlag) {
+        this.spillOverFlag = spillOverFlag;
+    }
 }

@@ -58,6 +58,7 @@ import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchReques
 import org.egov.works.abstractestimate.entity.SearchAbstractEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
@@ -106,6 +107,9 @@ public class SearchAbstractEstimateController {
     @Autowired
     private TypeOfWorkService typeOfWorkService;
 
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
+
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String searchForm(@ModelAttribute final SearchAbstractEstimate searchAbstractEstimate, final Model model)
             throws ApplicationException {
@@ -127,6 +131,7 @@ public class SearchAbstractEstimateController {
                 newEgwStatuses.add(egwStatus);
         model.addAttribute("abstractEstimateStatus", newEgwStatuses);
         model.addAttribute("searchAbstractEstimate", searchAbstractEstimate);
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
         return "abstractestimate-search";
     }
 

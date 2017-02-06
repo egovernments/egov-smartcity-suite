@@ -45,6 +45,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 		<form:form name="searchAbstractEstimate" role="form" action="" modelAttribute="searchAbstractEstimate" id="searchAbstractEstimate" class="form-horizontal form-groups-bordered" >
+			<input type="hidden" id="lineEstimateRequired" value="${lineEstimateRequired }" />
 			<div class="row">
 				<div class="col-md-12">
 					<div class="panel panel-primary" data-collapsed="0">
@@ -110,6 +111,12 @@
 										<form:options items="${abstractEstimateStatus}" itemValue="id" itemLabel="description"/>
 									</form:select>
 									<form:errors path="status" cssClass="add-margin error-msg" />
+								</div>
+								<label class="col-sm-2 control-label text-right">
+								    <spring:message code="lbl.spilloverwork" /></span>
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:checkbox path="spillOverFlag" id="spillOverFlag" />
 								</div>
 							</div>
 						</div>
