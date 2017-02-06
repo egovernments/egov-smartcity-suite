@@ -211,6 +211,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
                 model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
                 errors.rejectValue("connection.propertyIdentifier", "err.validate.connection.user.mapping",
                         "err.validate.connection.user.mapping");
+                model.addAttribute("noJAORSAMessage" ,"No JA/SA exists to forward the application.");
                 return "addconnection-form";
             } else
                 approvalPosition = userPosition.getId();

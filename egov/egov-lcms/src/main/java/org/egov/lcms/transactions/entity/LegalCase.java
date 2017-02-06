@@ -190,10 +190,9 @@ public class LegalCase extends AbstractAuditable {
     @Audited
     private String stampNumber;
 
-    @Length(max = 50)
-    @Column(name = "officerincharge")
-    @Audited
-    private String officerIncharge;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "officerincharge")
+    private Position officerIncharge;
 
     @NotNull
     @Temporal(TemporalType.DATE)
@@ -270,12 +269,10 @@ public class LegalCase extends AbstractAuditable {
     // TODO:need to enable when we start work on PaperBook and ProcessRegister
     // object
     /*
-     * @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade =
-     * CascadeType.ALL, orphanRemoval = true) private List<PaperBook>
-     * paperBookSet = new ArrayList<PaperBook>(0);
-     * @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade =
-     * CascadeType.ALL, orphanRemoval = true) private List<ProcessRegister>
-     * processRegisterSet = new ArrayList<ProcessRegister>(0);
+     * @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) private
+     * List<PaperBook> paperBookSet = new ArrayList<PaperBook>(0);
+     * @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) private
+     * List<ProcessRegister> processRegisterSet = new ArrayList<ProcessRegister>(0);
      */
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -365,16 +362,14 @@ public class LegalCase extends AbstractAuditable {
     }
 
     /**
-     * @param errors
-     *            Validation Check for Batch case:
+     * @param errors Validation Check for Batch case:
      */
     protected void batchCaseValidation(final List<ValidationError> errors) {
         Boolean duplicateCaseNumberCheck = false;
         int i = 0;
         for (final BatchCase batchcase : getBatchCaseSet()) {
             /*
-             * Both the batch case number and primary case number should not be
-             * same
+             * Both the batch case number and primary case number should not be same
              */
             if (StringUtils.isNotBlank(getCaseNumber()) && StringUtils.isNotBlank(batchcase.getCasenumber())
                     && getCaseNumber().equals(batchcase.getCasenumber())) {
@@ -654,18 +649,15 @@ public class LegalCase extends AbstractAuditable {
     }
 
     /*
-     * public List<PaperBook> getPaperBookSet() { return paperBookSet; } public
-     * void setPaperBookSet(final List<PaperBook> paperBookSet) {
-     * this.paperBookSet = paperBookSet; } public List<ProcessRegister>
-     * getProcessRegisterSet() { return processRegisterSet; } public void
-     * setProcessRegisterSet(final List<ProcessRegister> processRegisterSet) {
+     * public List<PaperBook> getPaperBookSet() { return paperBookSet; } public void setPaperBookSet(final List<PaperBook>
+     * paperBookSet) { this.paperBookSet = paperBookSet; } public List<ProcessRegister> getProcessRegisterSet() { return
+     * processRegisterSet; } public void setProcessRegisterSet(final List<ProcessRegister> processRegisterSet) {
      * this.processRegisterSet = processRegisterSet; }
      */
 
     /*
-     * public Long getDocumentNum() { return documentNum; } public void
-     * setDocumentNum(final Long documentNum) { this.documentNum = documentNum;
-     * }
+     * public Long getDocumentNum() { return documentNum; } public void setDocumentNum(final Long documentNum) { this.documentNum
+     * = documentNum; }
      */
 
     public List<BipartisanDetails> getBipartisanDetails() {
@@ -693,9 +685,8 @@ public class LegalCase extends AbstractAuditable {
     }
 
     /*
-     * public Date getPetFirstAppDate() { return petFirstAppDate; } public void
-     * setPetFirstAppDate(final Date petFirstAppDate) { this.petFirstAppDate =
-     * petFirstAppDate; }
+     * public Date getPetFirstAppDate() { return petFirstAppDate; } public void setPetFirstAppDate(final Date petFirstAppDate) {
+     * this.petFirstAppDate = petFirstAppDate; }
      */
 
     public String getStampNumber() {
@@ -894,14 +885,6 @@ public class LegalCase extends AbstractAuditable {
         this.bipartisanPetitionerDetailsList = bipartisanPetitionerDetailsList;
     }
 
-    public String getOfficerIncharge() {
-        return officerIncharge;
-    }
-
-    public void setOfficerIncharge(final String officerIncharge) {
-        this.officerIncharge = officerIncharge;
-    }
-
     public Date getNoticeDate() {
         return noticeDate;
     }
@@ -940,6 +923,14 @@ public class LegalCase extends AbstractAuditable {
 
     public void setReportStatus(final ReportStatus reportStatus) {
         this.reportStatus = reportStatus;
+    }
+
+    public Position getOfficerIncharge() {
+        return officerIncharge;
+    }
+
+    public void setOfficerIncharge(Position officerIncharge) {
+        this.officerIncharge = officerIncharge;
     }
 
 }

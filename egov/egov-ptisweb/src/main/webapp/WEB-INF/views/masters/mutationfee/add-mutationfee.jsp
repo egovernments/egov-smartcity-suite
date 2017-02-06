@@ -60,6 +60,7 @@
 					<br />
 				</div>
 			</spring:hasBindErrors>
+
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">

@@ -1,0 +1,2 @@
+alter table egtl_demandgenerationlog ADD CONSTRAINT unq_egtl_demandgenlog_year UNIQUE(installmentyear);
+alter table egtl_demandgenerationlogdetail ADD CONSTRAINT unq_egtl_demandgenlog_license UNIQUE(demandgenerationlog, license);

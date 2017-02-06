@@ -373,7 +373,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
 
                 if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(axisResponse.getAuthStatus())) {
                     axisResponse.setTxnReferenceNo(responseAxisMap.get(CollectionConstants.AXIS_TXN_NO));
-                    axisResponse.setTxnAmount(new BigDecimal(responseAxisMap.get(CollectionConstants.AXIS_AMOUNT)));
+                    axisResponse.setTxnAmount(new BigDecimal(responseAxisMap.get(CollectionConstants.AXIS_AMOUNT)).divide(PAISE_RUPEE_CONVERTER));
                     axisResponse.setAdditionalInfo2(responseAxisMap.get(CollectionConstants.AXIS_ORDER_INFO));
                     axisResponse.setTxnDate(getTransactionDate(responseAxisMap.get(CollectionConstants.AXIS_BATCH_NO)));
                 }

@@ -58,10 +58,6 @@ public class FeeType extends AbstractAuditable {
 
     public static final String SEQ = "seq_egtl_mstr_fee_type";
     private static final long serialVersionUID = -766315755023031686L;
-    public enum FeeProcessType {
-        RANGE
-    }
-
     @Id
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -108,12 +104,15 @@ public class FeeType extends AbstractAuditable {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         final FeeType feeType = (FeeType) o;
 
-        if (getName() != null ? !getName().equals(feeType.getName()) : feeType.getName() != null) return false;
+        if (getName() != null ? !getName().equals(feeType.getName()) : feeType.getName() != null)
+            return false;
         return getCode() != null ? getCode().equals(feeType.getCode()) : feeType.getCode() == null;
 
     }
@@ -123,5 +122,9 @@ public class FeeType extends AbstractAuditable {
         int result = getName() != null ? getName().hashCode() : 0;
         result = 31 * result + (getCode() != null ? getCode().hashCode() : 0);
         return result;
+    }
+
+    public enum FeeProcessType {
+        RANGE
     }
 }

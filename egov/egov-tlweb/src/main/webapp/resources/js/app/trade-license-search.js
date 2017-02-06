@@ -303,11 +303,6 @@ $(document).ready(function() {
 		
  });
 	
-	$('#subCategory').select2({
-			placeholder: "Select",
-			width:'100%'
-		});
-
 	$('#category').change(function() {
 		    var val = $(this).val();
 		    var results = [];

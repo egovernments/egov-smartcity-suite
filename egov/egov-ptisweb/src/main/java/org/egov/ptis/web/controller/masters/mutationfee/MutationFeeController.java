@@ -41,6 +41,7 @@
 package org.egov.ptis.web.controller.masters.mutationfee;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -65,7 +66,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class MutationFeeController {
     private static final String MUTATION_FORM = "add-mutation-fee-form";
     private static final String MSG = "message";
-
+    private static final String ERROR = "error";
     private final MutationFeeService mutationFeeService;
 
     @Autowired
@@ -85,16 +86,13 @@ public class MutationFeeController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@ModelAttribute final MutationFeeDetails mutationFeeDetails,
-            final BindingResult resultBinder,
+            final BindingResult resultBinder, @RequestParam("fromDate") final Date fromDate,
             final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model) {
 
         mutationFeeService.generateSlabName(mutationFeeDetails);
         if (mutationFeeService.findExistingSlabName(mutationFeeDetails.getSlabName())) {
-
             if (mutationFeeService.getToDateBySlabName(mutationFeeDetails.getSlabName())) {
-                mutationFeeService.createMutationFee(mutationFeeDetails);
-                redirectAttributes.addFlashAttribute(MSG, "msg.mutationfee.create.success");
-                return "redirect:/mutationfee/create";
+                return validateDateForSlabName(mutationFeeDetails, resultBinder, fromDate, redirectAttributes);
             } else {
                 resultBinder.reject("error.mutationfee.datevalidation.fail", "error.mutationfee.datevalidation.fail");
                 return MUTATION_FORM;
@@ -114,6 +112,23 @@ public class MutationFeeController {
                 redirectAttributes.addFlashAttribute(MSG, "msg.mutationfee.create.success");
                 return "redirect:/mutationfee/create";
             }
+        }
+    }
+    
+    public String validateDateForSlabName(@ModelAttribute final MutationFeeDetails mutationFeeDetails,
+            final BindingResult resultBinder, @RequestParam("fromDate") final Date fromDate,
+            final RedirectAttributes redirectAttributes) {
+        if (fromDate.compareTo(mutationFeeService.getLatestToDateForSlabName(mutationFeeDetails.getSlabName())) >= 0) {
+            mutationFeeService.createMutationFee(mutationFeeDetails);
+            redirectAttributes.addFlashAttribute(MSG, "msg.mutationfee.create.success");
+            return "redirect:/mutationfee/create";
+        } else {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(mutationFeeService.getLatestToDateForSlabName(mutationFeeDetails.getSlabName()));
+            cal.add(Calendar.DATE, 1);
+            resultBinder.reject("error.mutationfee.fromdatevalidation.fail", new String[] { cal.getTime().toString() },
+                    "error.mutationfee.fromdatevalidation.fail");
+            return MUTATION_FORM;
         }
     }
 
@@ -147,8 +162,8 @@ public class MutationFeeController {
             redirectAttributes.addFlashAttribute(MSG, "msg.mutationfee.update.success");
             return "redirect:/mutationfee/modify";
         } else {
-            resultBinder.reject("error.mutationfee.update.fail", "error.mutationfee.update.fail");
-            return "modify-mutation-fee-form";
+            redirectAttributes.addFlashAttribute(ERROR, "error.mutationfee.update.fail");
+            return "redirect:/mutationfee/modify";
         }
     }
 

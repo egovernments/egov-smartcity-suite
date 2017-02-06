@@ -78,7 +78,7 @@
     <label class="col-sm-2 control-label text-right"><s:text name='license.subCategory.lbl'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:select name="tradeName" id="subCategory" list="dropdownData.subCategoryList" listKey="id" listValue="name"
-                  headerKey="-1" headerValue="%{getText('default.select')}" value="%{tradeName.id}" class="form-control"/>
+                  headerKey="-1" headerValue="%{getText('default.select')}" value="%{tradeName.id}" class="form-control select2"/>
     </div>
 </div>
 

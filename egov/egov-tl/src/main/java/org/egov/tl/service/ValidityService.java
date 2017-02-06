@@ -40,8 +40,7 @@
 
 package org.egov.tl.service;
 
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.Validity;
@@ -52,30 +51,24 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
 public class ValidityService {
 
-    private final ValidityRepository validityRepository;
-
     @Autowired
-    private FinancialYearHibernateDAO financialYearHibernateDAO;
-
-    @Autowired
-    public ValidityService(final ValidityRepository validityRepository) {
-        this.validityRepository = validityRepository;
-    }
+    private ValidityRepository validityRepository;
 
     @Transactional
-    public Validity create(final Validity validity) {
+    public Validity create(Validity validity) {
         return validityRepository.save(validity);
     }
 
     @Transactional
-    public Validity update(final Validity validity) {
+    public Validity update(Validity validity) {
         return validityRepository.save(validity);
     }
 
@@ -83,11 +76,11 @@ public class ValidityService {
         return validityRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 
-    public Validity findOne(final Long id) {
+    public Validity findOne(Long id) {
         return validityRepository.findOne(id);
     }
 
-    public List<Validity> search(final Long natureOfBusiness, final Long licenseCategory) {
+    public List<Validity> search(Long natureOfBusiness, Long licenseCategory) {
         if (natureOfBusiness != null && licenseCategory != null)
             return validityRepository.findByNatureOfBusinessIdAndLicenseCategoryId(natureOfBusiness, licenseCategory);
         else if (natureOfBusiness != null)
@@ -98,45 +91,59 @@ public class ValidityService {
             return validityRepository.findAll();
     }
 
-    public void applyLicenseValidity(final License license) {
-
+    public Optional<Validity> getApplicableLicenseValidity(final License license) {
         List<Validity> validityList = validityRepository.findByNatureOfBusinessIdAndLicenseCategoryId(
                 license.getNatureOfBusiness().getId(), license.getTradeName().getCategory().getId());
-
         if (validityList.isEmpty())
             validityList = validityRepository.findByNatureOfBusinessId(license.getNatureOfBusiness().getId());
+        return validityList.isEmpty() ? Optional.empty() : Optional.ofNullable(validityList.get(0));
+    }
 
-        if (validityList.isEmpty())
+
+    public void applyLicenseValidity(License license) {
+        Optional<Validity> validity = getApplicableLicenseValidity(license);
+        if (!validity.isPresent())
             throw new ValidationException("TL-001", "License validity not defined.");
-        else {
-            final Validity validity = validityList.get(0);
-
-            if (validity.isBasedOnFinancialYear()) {
-                Date nextExpiryDate;
-                if (license.getDateOfExpiry() == null)
-                    nextExpiryDate = new Date();
-                else
-                    nextExpiryDate = new LocalDate(license.getDateOfExpiry()).plusDays(1).toDate();
-                final CFinancialYear currentFinancialYear = financialYearHibernateDAO.getFinancialYearByDate(nextExpiryDate);
-                license.setDateOfExpiry(currentFinancialYear.getEndingDate());
-            } else {
-                LocalDate nextExpiryDate;
-                if (license.getDateOfExpiry() == null)
-                    nextExpiryDate = new LocalDate();
-                else
-                    nextExpiryDate = new LocalDate(license.getDateOfExpiry());
-                if (validity.getYear() != null && validity.getYear() > 0)
-                    nextExpiryDate = nextExpiryDate.plusYears(validity.getYear());
-                if (validity.getMonth() != null && validity.getMonth() > 0)
-                    nextExpiryDate = nextExpiryDate.plusMonths(validity.getMonth());
-                if (validity.getWeek() != null && validity.getWeek() > 0)
-                    nextExpiryDate = nextExpiryDate.plusWeeks(validity.getWeek());
-                if (validity.getDay() != null && validity.getDay() > 0)
-                    nextExpiryDate = nextExpiryDate.plusDays(validity.getDay());
-                license.setDateOfExpiry(nextExpiryDate.toDate());
-            }
+        if (license.isLegacy()) {
+            applyValidityToLegacyLicense(license, validity.get());
+        } else {
+            applyValidityToLicense(license, validity.get());
         }
+    }
 
+    private void applyValidityToLicense(License license, Validity validity) {
+        if (validity.isBasedOnFinancialYear()) {
+            license.setDateOfExpiry(license.getCurrentDemand().getEgInstallmentMaster().getToDate());
+        } else {
+            applyLicenseValidityBasedOnCustomValidity(license, validity);
+        }
+    }
+
+    private void applyValidityToLegacyLicense(License license, Validity validity) {
+        license.getCurrentDemand().getEgDemandDetails().stream().
+                sorted(Comparator.comparing(EgDemandDetails::getInstallmentEndDate)).
+                filter(demandDetail -> demandDetail.getAmount().subtract(demandDetail.getAmtCollected()).doubleValue() <= 0).
+                forEach(demandDetail -> {
+                            if (validity.isBasedOnFinancialYear()) {
+                                license.setDateOfExpiry(demandDetail.getInstallmentEndDate());
+                            } else {
+                                applyLicenseValidityBasedOnCustomValidity(license, validity);
+                            }
+                        }
+                );
+    }
+
+    private void applyLicenseValidityBasedOnCustomValidity(License license, Validity validity) {
+        LocalDate nextExpiryDate = new LocalDate();
+        if (validity.getYear() != null && validity.getYear() > 0)
+            nextExpiryDate = nextExpiryDate.plusYears(validity.getYear());
+        if (validity.getMonth() != null && validity.getMonth() > 0)
+            nextExpiryDate = nextExpiryDate.plusMonths(validity.getMonth());
+        if (validity.getWeek() != null && validity.getWeek() > 0)
+            nextExpiryDate = nextExpiryDate.plusWeeks(validity.getWeek());
+        if (validity.getDay() != null && validity.getDay() > 0)
+            nextExpiryDate = nextExpiryDate.plusDays(validity.getDay());
+        license.setDateOfExpiry(nextExpiryDate.toDate());
     }
 
 }

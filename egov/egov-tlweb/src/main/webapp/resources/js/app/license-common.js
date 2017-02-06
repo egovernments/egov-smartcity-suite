@@ -48,10 +48,6 @@ function refreshInbox() {
 
 $(document).ready(function () {
 	
-	$('#subCategory').select2({
-		placeholder: "Select",
-		width:'100%'
-	});
 	$('#category').change(function() {
 	    var val = $(this).val();
 	    var results = [];
@@ -66,13 +62,7 @@ $(document).ready(function () {
 	                obj['text'] = data[i]['name'];
 	                results.push(obj);
 	            });
-	            $("#subCategory").empty();
-            	$("#subCategory").append("<option value=''>Select</option>");
-	            $("#subCategory").select2({
-	                placeholder: "Select",
-	                width:'100%',
-	                data: results
-	            });
+                select2initialize($("#subCategory"),results,false);
 	        },
 	        error: function() {
 	        	bootbox.alert('something went wrong on server');

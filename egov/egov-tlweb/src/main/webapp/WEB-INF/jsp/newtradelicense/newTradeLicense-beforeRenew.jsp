@@ -94,7 +94,7 @@
                         <div class="col-sm-3 add-margin">
                             <s:select name="tradeName" id="subCategory" list="dropdownData.subCategoryList"
                                       listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{tradeName.id}"
-                                      class="form-control"/>
+                                      class="form-control select2"/>
                         </div>
                     </div>
 

@@ -1,45 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-01-20T12:58:21 -->
+<!-- 2017-02-02T23:22:32 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NGO_ExemptionProceedings_corporationDetails" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -79,10 +40,10 @@
 				<textElement markup="styled">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Roc.No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{noticeNo}+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Roc.No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+($P{noticeNo}!=null?$P{noticeNo}:" ")+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="85" y="12" width="407" height="26" uuid="d86d2b1b-ba2f-4e05-b014-8542efbdbe8d"/>
+				<reportElement x="85" y="12" width="407" height="18" uuid="d86d2b1b-ba2f-4e05-b014-8542efbdbe8d"/>
 				<textElement textAlignment="Center" markup="none">
 					<font size="10" isBold="true"/>
 				</textElement>
@@ -96,33 +57,33 @@
 				<textFieldExpression><![CDATA[$P{copyType}=="citizen"?"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Party’s Copy:-</style>":"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Office Copy:-</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="170" y="34" width="258" height="18" uuid="4966c7b0-dee1-470a-ae73-85fd8fb7dede"/>
+				<reportElement x="170" y="31" width="258" height="18" uuid="4966c7b0-dee1-470a-ae73-85fd8fb7dede"/>
 				<textElement textAlignment="Left" markup="none">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" Present: Sri/Smt."+$P{commissioner}+"\n\tCommissioner"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="45" y="68" width="456" height="30" isPrintWhenDetailOverflows="true" uuid="008832cd-63e3-485a-a98f-07bad1bc762a"/>
+				<reportElement stretchType="RelativeToTallestObject" x="45" y="64" width="456" height="30" isPrintWhenDetailOverflows="true" uuid="008832cd-63e3-485a-a98f-07bad1bc762a"/>
 				<textElement textAlignment="Left" markup="styled">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\tSub:  <style forecolor=\"#000000\" isBold=\"true\"> Property Tax-Exemption of Property Tax – Granting of Exemption – Orders – Issued. </style>\n\n\tRead: Application dt: <style forecolor=\"#000000\" isBold=\"true\"> "+$P{applicationDate}+"</style> from Sri/Smt. <style forecolor=\"#000000\" isBold=\"true\"> "+JRStringUtil.xmlEncode($P{ownerName})+"</style> R/O  <style forecolor=\"#000000\" isBold=\"true\"> "+$P{cityName}+"</style>  \n\n\t\t\t\t\t <style forecolor=\"#000000\" isBold=\"true\" size=\"14\"> *  *  * </style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["\tSub:  <style forecolor=\"#000000\" isBold=\"true\"> Property Tax-Exemption of Property Tax – Granting of Exemption – Orders – Issued. </style>\n\n\tRead: Application dt: <style forecolor=\"#000000\" isBold=\"true\"> "+$P{applicationDate}+"</style> from Sri/Smt. <style forecolor=\"#000000\" isBold=\"true\"> "+JRStringUtil.xmlEncode($P{ownerName})+"</style> R/O  <style forecolor=\"#000000\" isBold=\"true\"> "+$P{cityName}+"</style>  \n\t\t\t\t\t <style forecolor=\"#000000\" isBold=\"true\" size=\"14\"> *  *  * </style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="45" y="108" width="70" height="10" isPrintWhenDetailOverflows="true" uuid="e2fa4a76-b27e-4b7a-827d-f6c6a2353493"/>
+				<reportElement positionType="Float" x="45" y="99" width="70" height="10" isPrintWhenDetailOverflows="true" uuid="e2fa4a76-b27e-4b7a-827d-f6c6a2353493"/>
 				<textElement markup="styled">
 					<font size="8" isBold="true" isUnderline="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["ORDER:"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="46" y="119" width="452" height="151" uuid="a9696e7d-f07e-43a6-9b21-4582a267e556"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="45" y="110" width="452" height="151" uuid="a9696e7d-f07e-43a6-9b21-4582a267e556"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
 				<textElement textAlignment="Justified" markup="styled">
 					<font size="8" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\tIn the reference read above, President/Secretary of the NGO Home/ Teachers Association of  premises bearing Door No: <style forecolor=\"#000000\" isBold=\"true\">"+$P{doorNumber}+"</style> , Assessment Number <style forecolor=\"#000000\" isBold=\"true\">"+$P{AssessmentNumber}+"</style> , Locality <style forecolor=\"#000000\" isBold=\"true\">"+$P{Locality}+"</style> has applied for exemption of property tax,<style forecolor=\"#000000\" isBold=\"true\"> as per G.O.Ms.No.552 MA, dt:25.10.1994 of MA &amp; UD Dept., </style> since the said Building is owned by the <style forecolor=\"#000000\" isBold=\"true\"> NGO Home/ Teachers Association.</style>  \n \t On receipt of the same, the said property is got inspected by the revenue officials and found the following:- \n a) that the building for which exemption is sought is owned by the Association \n b) that the Association is recognized by the Government. \n c) that the premises is not let-out by the Owner to Tenant. \n d) That a resolution for making a request for exemption of property tax is passed in the Association   \n \t After careful examination of the above issue, as per the information available in the Municipal Office records and in terms of G.O.Ms.No.552 MA, dt:25.10.1994 of MA &amp; UD Dept., the President/Secretary of the above premises, is exempted from payment of property tax , as detailed below:-"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["\tIn the reference read above, President/Secretary of the NGO Home/ Teachers Association of  premises bearing Door No: <style forecolor=\"#000000\" isBold=\"true\">"+($P{doorNumber}!=null?$P{doorNumber}:" ")+"</style>, Assessment Number <style forecolor=\"#000000\" isBold=\"true\">"+$P{AssessmentNumber}+"</style>, Locality <style forecolor=\"#000000\" isBold=\"true\">"+($P{Locality}!=null?$P{Locality}:" ")+"</style>  has applied for exemption of property tax,<style forecolor=\"#000000\" isBold=\"true\"> as per G.O.Ms.No.552 MA, dt:25.10.1994 of MA &amp; UD Dept.,</style> since the said Building is owned by the<style forecolor=\"#000000\" isBold=\"true\"> NGO Home/ Teachers Association.</style>  \n\n \t On receipt of the same, the said property is got inspected by the revenue officials and found the following:- \n a) that the building for which exemption is sought is owned by the Association \n b) that the Association is recognized by the Government. \n c) that the premises is not let-out by the Owner to Tenant. \n d) That a resolution for making a request for exemption of property tax is passed in the Association   \n\n \t After careful examination of the above issue, as per the information available in the Municipal Office records and in terms of G.O.Ms.No.552 MA, dt:25.10.1994 of MA &amp; UD Dept., the President/Secretary of the above premises, is exempted from payment of property tax , as detailed below:-"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="380" y="52" width="114" height="11" isPrintWhenDetailOverflows="true" uuid="18f6f9d1-387a-4abc-a31c-46ff862d5bb0"/>
@@ -132,7 +93,7 @@
 				<textFieldExpression><![CDATA["Dated : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{noticeDate}+"</style>"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="100" y="280" width="100" height="20" uuid="97197263-71a0-492b-a81b-da0a39725596"/>
+				<reportElement x="100" y="285" width="100" height="20" uuid="97197263-71a0-492b-a81b-da0a39725596"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -146,7 +107,7 @@
 ]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="100" y="300" width="100" height="25" isPrintWhenDetailOverflows="true" uuid="329ddb2e-0e66-47fe-95b6-8ae6010db70f"/>
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="305" width="100" height="20" isPrintWhenDetailOverflows="true" uuid="329ddb2e-0e66-47fe-95b6-8ae6010db70f"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -160,7 +121,7 @@
 				<textFieldExpression><![CDATA[$P{currentPropertyTax}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="200" y="280" width="129" height="20" uuid="ab5e55ab-4726-4117-95f6-bf65e04be5d3"/>
+				<reportElement x="200" y="285" width="129" height="20" uuid="ab5e55ab-4726-4117-95f6-bf65e04be5d3"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -173,7 +134,7 @@
 				<text><![CDATA[Amount of H/Y property tax now exempted from]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="200" y="300" width="129" height="25" isPrintWhenDetailOverflows="true" uuid="0c785872-c040-40e2-b57c-4fac523cdef8"/>
+				<reportElement stretchType="RelativeToTallestObject" x="200" y="305" width="129" height="20" isPrintWhenDetailOverflows="true" uuid="0c785872-c040-40e2-b57c-4fac523cdef8"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -187,7 +148,7 @@
 				<textFieldExpression><![CDATA[$P{currentPropertyTax}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="329" y="280" width="122" height="20" uuid="10b3cea6-be15-4de0-a78f-f8e7a4f624d3"/>
+				<reportElement x="329" y="285" width="122" height="20" uuid="10b3cea6-be15-4de0-a78f-f8e7a4f624d3"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -200,7 +161,7 @@
 				<text><![CDATA[Reason for exemption]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="329" y="300" width="122" height="25" isPrintWhenDetailOverflows="true" uuid="a3eee6a2-9d19-4313-b2d7-3ca0c152e411"/>
+				<reportElement stretchType="RelativeToTallestObject" x="329" y="305" width="122" height="20" isPrintWhenDetailOverflows="true" uuid="a3eee6a2-9d19-4313-b2d7-3ca0c152e411"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>

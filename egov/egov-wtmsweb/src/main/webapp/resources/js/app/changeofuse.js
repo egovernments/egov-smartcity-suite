@@ -39,7 +39,9 @@
  */
 $(document).ready(function(){
 	loadPropertyDetails();
-	
+	if($('#noJAORSAMessage').val()!='')
+		bootbox.alert($('#noJAORSAMessage').val());
+
 	var mode =$('#mode').val();
 	var validateIfPTDueExists=$('#validateIfPTDueExists').val();
 	var currentloggedInUser=$('#currentUser').val();

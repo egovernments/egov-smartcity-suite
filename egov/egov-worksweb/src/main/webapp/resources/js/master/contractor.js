@@ -112,6 +112,14 @@ jQuery(document).ready(function(){
 		setDropDownsAlignment();
 		setTextFieldsAlignment();
 	});
+	
+
+	jQuery('.textfieldsvalidate').on('input',function(){
+		var regexp_textfields = /[^0-9a-zA-Z_@./#&+-/!(){}\",^$%*|=;:<>?`~ ]/g;
+		if(jQuery(this).val().match(regexp_textfields)){
+			jQuery(this).val( jQuery(this).val().replace(regexp_textfields,'') );
+		}
+	})
 });
 
 function checkMobileNumber(){
@@ -164,7 +172,7 @@ function checkContactPerson(){
 		flag = true;
 		return false;
 	}
-	var regx = /^[A-Za-z ]+$/;
+	var regx = /^[A-Za-z0-9 ]+$/;
 	  if (!regx.test(jQuery("#contactPerson").val())) {
 		  showMessage('contractor_error', jQuery("#contactPersonAlphaNeumericErrorMsg").val());
 		  flag = true;
@@ -195,12 +203,6 @@ function checkCorrespondenceAddress(){
 		flag = true;
 		return false;
 		}
-	  var regx = /^[A-Za-z0-9 ]+$/;
-	  if (!regx.test(jQuery("#correspondenceAddress").val())) {
-		  showMessage('contractor_error', jQuery("#correspondenceAddressAlphaNeumericErrorMsg").val());
-		  flag = true;
-		  return false;
-	  }
   return true;
 }
 
@@ -210,12 +212,6 @@ function checkPaymentAddress(){
 		flag = true;
 		return false;
 		}
-  var regx = /^[A-Za-z0-9]+$/;
-  if (!regx.test(jQuery("#paymentAddress").val())) {
-	  showMessage('contractor_error', jQuery("#paymentAddressAlphaNeumericErrorMsg").val());
-	  flag = true;
-	  return false;
-  }
   return true;
 }
 
@@ -273,6 +269,12 @@ function checkPwdApprovalCode(){
 		flag = true;
 		return false;
 		}
+	var regx = /^[A-Za-z0-9\-\/]+$/;
+	if (!regx.test(jQuery("#pwdApprovalCode").val())) {
+		  showMessage('contractor_error', jQuery("#pwdApprovalCodeAlphaNeumericErrorMsg").val());
+		  flag = true;
+		  return false;
+	  }
 	return true;
 }
 
@@ -293,7 +295,7 @@ function checkRegistrationNumber(){
 			flag = true;
 			return false;
 			}
-		var regx = /^[A-Za-z0-9]+$/;
+		var regx = /^[A-Za-z0-9\-\/]+$/;
 		  if (!regx.test(jQuery("#registrationNumberyui-rec"+i).val())) {
 			  showMessage('contractor_error', jQuery("#registrationNumberAlphaNeumericErrorMsg").val());
 			  flag = true;
@@ -340,8 +342,8 @@ function checkDepartment(){
 }
 
 function checkCodeAndName(){  
-	var regxCode = /^[A-Za-z0-9]+$/;
-	var regxName = /^[A-Za-z0-9 ]+$/;
+	var regxCode = /^[A-Za-z0-9\-\/]+$/
+	var regxName = /^[A-Za-z0-9\-\& \:\,\/\.()\@]+$/;
 	if(!(jQuery("#codeautogeneration").val() == "true")){
 		if(jQuery("#contractor-save_code").val().length == 0){
 			showMessage('contractor_error', jQuery("#codeErrorMsg").val());

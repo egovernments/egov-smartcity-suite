@@ -94,10 +94,8 @@ public class TradeLicenseSmsAndEmailService {
         String cityname = strarr[0];
         String smsCode;
         String emailCode;
-        if (license.getState().getHistory().isEmpty()
-                && Constants.STATUS_ACKNOLEDGED.equalsIgnoreCase(license.getStatus().getStatusCode())) {
-            if (license.getLicenseAppType() != null
-                    && license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
+        if (license.getState().getHistory().isEmpty() && license.isAcknowledged()) {
+            if (license.isReNewApplication()) {
                 smsCode = "msg.renewTradeLicensecreator.sms";
                 emailCode = "msg.renewTradeLicensecreate.email.body";
             } else {
@@ -121,8 +119,7 @@ public class TradeLicenseSmsAndEmailService {
                 .getStatusCode())) {
             BigDecimal demAmt = license.getCurrentLicenseFee();
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            if (license.getLicenseAppType() != null
-                    && license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
+            if (license.isReNewApplication())
                 emailCode = "msg.renewTradeLicenseapproval.email.body";
             else
                 emailCode = "msg.newTradeLicenseapproval.email.body";

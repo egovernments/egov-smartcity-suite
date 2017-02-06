@@ -43,6 +43,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
@@ -154,6 +155,7 @@ public class ReconnectionController extends GenericConnectionController {
                 .findByCode(WaterTaxConstants.RECONNECTIONCONNECTION));
         model.addAttribute("applicationHistory", waterConnectionDetailsService.getHistory(waterConnectionDetails));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
+        model.addAttribute("loggedInCSCUser",waterTaxUtils.getCurrentUserRole());
         model.addAttribute("typeOfConnection", WaterTaxConstants.RECONNECTIONCONNECTION);
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
@@ -175,6 +177,19 @@ public class ReconnectionController extends GenericConnectionController {
 
         Long approvalPosition = 0l;
         String approvalComent = "";
+        
+        final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole();
+
+        if (applicationByOthers != null && applicationByOthers.equals(true)) {
+            final Position userPosition = waterTaxUtils
+                    .getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier());
+            if (userPosition == null) {
+                model.addAttribute("noJAORSAMessage" ,"No JA/SA exists to forward the application.");
+                return  "reconnection-newForm";
+            } else
+                approvalPosition = userPosition.getId();
+
+        }
 
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");

@@ -50,12 +50,13 @@ import java.util.Set;
 
 /**
  * EgDemandDetails entity.
- * 
+ *
  * @author Sathish Reddy K
  */
 
 public class EgDemandDetails implements Serializable, Cloneable {
 
+    private static final BigDecimal ONE_PAISA_TOLERANCE_FOR_ADDCOLLECTED = new BigDecimal("0.01");
     private Long id;
     private EgDemandReason egDemandReason;
     private EgwStatus egwStatus;
@@ -65,10 +66,23 @@ public class EgDemandDetails implements Serializable, Cloneable {
     private Date modifiedDate;
     private Date createDate;
     private BigDecimal amtCollected = BigDecimal.ZERO;
-    private Set<EgdmCollectedReceipt> egdmCollectedReceipts = new HashSet<EgdmCollectedReceipt>();
+    private transient Set<EgdmCollectedReceipt> egdmCollectedReceipts = new HashSet<>();
     private BigDecimal amtRebate = BigDecimal.ZERO;
     private EgDemand egDemand;
-    private static final BigDecimal ONE_PAISA_TOLERANCE_FOR_ADDCOLLECTED = new BigDecimal("0.01");
+
+    /**
+     * Factory method for convenient creation.
+     */
+    public static EgDemandDetails fromReasonAndAmounts(BigDecimal demandAmount,
+                                                       EgDemandReason egDemandReason, BigDecimal collectedAmount) {
+        EgDemandDetails dd = new EgDemandDetails();
+        dd.setAmount(demandAmount);
+        dd.setEgDemandReason(egDemandReason);
+        dd.setAmtCollected(collectedAmount);
+        dd.setModifiedDate(new Date());
+        dd.setCreateDate(new Date());
+        return dd;
+    }
 
     @Override
     public int hashCode() {
@@ -115,18 +129,12 @@ public class EgDemandDetails implements Serializable, Cloneable {
             clone = (EgDemandDetails) super.clone();
         } catch (CloneNotSupportedException e) {
             // this should never happen
-            throw new InternalError(e.toString());
+            throw new InternalError(e);
         }
 
         clone.setId(null);
         clone.setEgwStatus(null);
-        clone.setEgdmCollectedReceipts(new HashSet<EgdmCollectedReceipt>());
-        //Commented as it is trying to update the actual EgdmCollectedReceipt while persisting the cloned demand details
-        /*for (EgdmCollectedReceipt receipt : getEgdmCollectedReceipts()) {
-            EgdmCollectedReceipt cloneCollectedReceipt = (EgdmCollectedReceipt) receipt.clone();
-            cloneCollectedReceipt.setEgdemandDetail(clone);
-            clone.addEgdmCollectedReceipt(cloneCollectedReceipt);
-        }*/
+        clone.setEgdmCollectedReceipts(new HashSet<>());
         return clone;
     }
 
@@ -135,11 +143,7 @@ public class EgDemandDetails implements Serializable, Cloneable {
      * <code>false</code> otherwise.
      */
     public boolean hasOutstandingCollection() {
-        if (getAmtCollected() == null || getAmount().compareTo(getAmtCollected()) > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return getAmtCollected() == null || getAmount().compareTo(getAmtCollected()) > 0;
     }
 
     public Long getId() {
@@ -214,6 +218,7 @@ public class EgDemandDetails implements Serializable, Cloneable {
         getEgdmCollectedReceipts().remove(egdmCollectedReceipt);
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("").append(amount).append("*").append(amtCollected).append("*").append(
@@ -222,33 +227,19 @@ public class EgDemandDetails implements Serializable, Cloneable {
     }
 
     public Date getModifiedDate() {
-		return modifiedDate;
-	}
+        return modifiedDate;
+    }
 
-	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
-	}
+    public void setModifiedDate(Date modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
 
-	public Date getCreateDate() {
-		return createDate;
-	}
+    public Date getCreateDate() {
+        return createDate;
+    }
 
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-	}
-
-	/**
-     * Factory method for convenient creation.
-     */
-    public static EgDemandDetails fromReasonAndAmounts(BigDecimal demandAmount,
-            EgDemandReason egDemandReason, BigDecimal collectedAmount) {
-        EgDemandDetails dd = new EgDemandDetails();
-        dd.setAmount(demandAmount);
-        dd.setEgDemandReason(egDemandReason);
-        dd.setAmtCollected(collectedAmount);
-        dd.setModifiedDate(new Date());
-        dd.setCreateDate(new Date());
-        return dd;
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     /**
@@ -256,9 +247,9 @@ public class EgDemandDetails implements Serializable, Cloneable {
      */
     public void addCollectedWithTolerance(BigDecimal amount, BigDecimal tolerance) {
         BigDecimal collected = getAmtCollected() != null ? getAmtCollected() : BigDecimal.ZERO;
-        if (amount.compareTo( getAmount().subtract(collected).add(tolerance) ) > 0) {
-			throw new ApplicationRuntimeException("Amount being added " + amount + " is greater than " + getAmount() + " - "
-					+ collected + " + tolerance " + tolerance + ", for demand detail " + this.toString());
+        if (amount.compareTo(getAmount().subtract(collected).add(tolerance)) > 0) {
+            throw new ApplicationRuntimeException("Amount being added " + amount + " is greater than " + getAmount() + " - "
+                    + collected + " + tolerance " + tolerance + ", for demand detail " + this.toString());
         } else {
             setAmtCollected(collected.add(amount));
         }
@@ -274,7 +265,7 @@ public class EgDemandDetails implements Serializable, Cloneable {
     /**
      * Add an amount to the existing collected amount, with a tolerance of one paisa i.e. balance can be
      * exceeded by 1 paisa. This can be used when split amounts are being calculated by MoneyUtils.allocate(), where
-     * amounts may be off by 1 paisa. 
+     * amounts may be off by 1 paisa.
      */
     public void addCollectedWithOnePaisaTolerance(BigDecimal amount) {
         addCollectedWithTolerance(amount, ONE_PAISA_TOLERANCE_FOR_ADDCOLLECTED);
@@ -296,13 +287,13 @@ public class EgDemandDetails implements Serializable, Cloneable {
         }
     }
 
-	public EgDemand getEgDemand() {
-		return egDemand;
-	}
+    public EgDemand getEgDemand() {
+        return egDemand;
+    }
 
-	public void setEgDemand(EgDemand egDemand) {
-		this.egDemand = egDemand;
-	}
+    public void setEgDemand(EgDemand egDemand) {
+        this.egDemand = egDemand;
+    }
 
     public BigDecimal getBalance() {
         return getAmount().subtract(getAmtCollected() != null ? getAmtCollected() : BigDecimal.ZERO);
@@ -317,7 +308,7 @@ public class EgDemandDetails implements Serializable, Cloneable {
     public Date getInstallmentEndDate() {
         return getEgDemandReason().getEgInstallmentMaster().getToDate();
     }
-    
+
     public String getReasonCategory() {
         return getEgDemandReason().getEgDemandReasonMaster().getEgReasonCategory().getCode();
     }

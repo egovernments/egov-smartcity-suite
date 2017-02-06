@@ -42,6 +42,7 @@ package org.egov.tl.entity.enums;
 public enum ProcessStatus {
     INPROGRESS, COMPLETED, INCOMPLETE;
 
+    @Override
     public String toString() {
         return this.name().toLowerCase();
     }

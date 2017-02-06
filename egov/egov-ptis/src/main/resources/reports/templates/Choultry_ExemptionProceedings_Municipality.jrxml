@@ -1,45 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-01-19T19:10:07 -->
+<!-- 2017-02-03T08:54:44 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ExService_ExemptionProceedings_municipality" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -75,11 +36,11 @@
 	<title>
 		<band height="320" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="46" y="52" width="175" height="11" isPrintWhenDetailOverflows="true" uuid="b90e4a9e-3262-4a87-a97d-ff498a62c2dd"/>
+				<reportElement x="46" y="57" width="175" height="11" isPrintWhenDetailOverflows="true" uuid="b90e4a9e-3262-4a87-a97d-ff498a62c2dd"/>
 				<textElement markup="styled">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Roc.No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{noticeNo}+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Roc.No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+($P{noticeNo}!=null?$P{noticeNo}:" ")+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="85" y="12" width="407" height="18" uuid="d86d2b1b-ba2f-4e05-b014-8542efbdbe8d"/>
@@ -103,36 +64,36 @@
 				<textFieldExpression><![CDATA[" Present: Sri/Smt."+$P{commissioner}+"\n\tCommissioner"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="45" y="68" width="456" height="30" isPrintWhenDetailOverflows="true" uuid="008832cd-63e3-485a-a98f-07bad1bc762a"/>
+				<reportElement x="45" y="68" width="456" height="30" isPrintWhenDetailOverflows="true" uuid="008832cd-63e3-485a-a98f-07bad1bc762a"/>
 				<textElement textAlignment="Left" markup="styled">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA["\tSub:  <style forecolor=\"#000000\" isBold=\"true\"> Property Tax-Exemption of Property Tax – Granting of Exemption – Orders – Issued. </style>\n\n\tRead: Application dt: <style forecolor=\"#000000\" isBold=\"true\"> "+$P{applicationDate}+"</style> from Sri/Smt. <style forecolor=\"#000000\" isBold=\"true\"> "+JRStringUtil.xmlEncode($P{ownerName})+"</style> R/O  <style forecolor=\"#000000\" isBold=\"true\"> "+$P{cityName}+"</style>  \n\n\t\t\t\t\t <style forecolor=\"#000000\" isBold=\"true\" size=\"14\"> *  *  * </style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="45" y="108" width="70" height="10" isPrintWhenDetailOverflows="true" uuid="e2fa4a76-b27e-4b7a-827d-f6c6a2353493"/>
+				<reportElement positionType="Float" x="45" y="103" width="70" height="10" isPrintWhenDetailOverflows="true" uuid="e2fa4a76-b27e-4b7a-827d-f6c6a2353493"/>
 				<textElement markup="styled">
 					<font size="8" isBold="true" isUnderline="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["ORDER:"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="46" y="119" width="452" height="121" uuid="a9696e7d-f07e-43a6-9b21-4582a267e556"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="46" y="117" width="452" height="121" uuid="a9696e7d-f07e-43a6-9b21-4582a267e556"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
 				<textElement textAlignment="Justified" markup="styled">
 					<font size="8" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\tIn the reference read above, the owner  of the premises bearing Door No:<style forecolor=\"#000000\" isBold=\"true\">"+$P{doorNumber}+"</style>, Assessment Number <style forecolor=\"#000000\" isBold=\"true\">"+$P{AssessmentNumber}+"</style> , Locality<style forecolor=\"#000000\" isBold=\"true\"> "+$P{Locality}+"</style> has applied for exemption of property tax,  <style forecolor=\"#000000\" isBold=\"true\"> under the category of “Places set apart for Choultry” as per Section 88 of AP Municipalities Act 1965.</style>  \n \t On receipt of the same, the said property is got inspected by the revenue officials and found the following:- \n a) that the entire building is exclusively used for choultry purpose only.  \n  b) that no rent is being collected for occupation of the choultry.  \n \t After careful examination of the above issue, as per the information available in the Municipal Office records, the Owner of the above premises, is exempted from payment of property tax , as detailed below:-"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["\tIn the reference read above, the owner  of the premises bearing Door No:<style forecolor=\"#000000\" isBold=\"true\">"+($P{doorNumber}!=null?$P{doorNumber}:" ")+"</style>, Assessment Number <style forecolor=\"#000000\" isBold=\"true\">"+$P{AssessmentNumber}+"</style> , Locality<style forecolor=\"#000000\" isBold=\"true\"> "+($P{Locality}!=null?$P{Locality}:" ")+"</style> has applied for exemption of property tax,  <style isBold=\"true\"> under the category of “Places set apart for Choultry” as per Section 88 of AP Municipalities Act 1965.</style>  \n\n \t On receipt of the same, the said property is got inspected by the revenue officials and found the following:- \n  a) that the entire building is exclusively used for choultry purpose only.  \n  b) that no rent is being collected for occupation of the choultry.  \n\n \t After careful examination of the above issue, as per the information available in the Municipal Office records, the Owner of the above premises, is exempted from payment of property tax , as detailed below:-"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="380" y="52" width="114" height="11" isPrintWhenDetailOverflows="true" uuid="18f6f9d1-387a-4abc-a31c-46ff862d5bb0"/>
+				<reportElement x="380" y="57" width="114" height="11" isPrintWhenDetailOverflows="true" uuid="18f6f9d1-387a-4abc-a31c-46ff862d5bb0"/>
 				<textElement markup="styled">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Dated : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{noticeDate}+"</style>"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="100" y="250" width="100" height="36" uuid="d02bf885-dcc9-44e9-87ff-e6ff64c6c9bb"/>
+				<reportElement x="100" y="255" width="100" height="36" uuid="d02bf885-dcc9-44e9-87ff-e6ff64c6c9bb"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -146,7 +107,7 @@
 ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="200" y="250" width="129" height="36" uuid="4c02a2b5-ada0-46f1-bf7b-b3434ffc396f"/>
+				<reportElement x="200" y="255" width="129" height="36" uuid="4c02a2b5-ada0-46f1-bf7b-b3434ffc396f"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -159,7 +120,7 @@
 				<text><![CDATA[Amount of H/Y property tax now exempted from]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="329" y="250" width="122" height="36" uuid="db6877c0-31e6-46f7-9114-32f32b90c23a"/>
+				<reportElement x="329" y="255" width="122" height="36" uuid="db6877c0-31e6-46f7-9114-32f32b90c23a"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -172,7 +133,7 @@
 				<text><![CDATA[Reason for exemption]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="100" y="286" width="100" height="26" isPrintWhenDetailOverflows="true" uuid="f971c561-24e2-4df9-813e-546460fdb315"/>
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="291" width="100" height="26" isPrintWhenDetailOverflows="true" uuid="f971c561-24e2-4df9-813e-546460fdb315"/>
 				<box leftPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -186,7 +147,7 @@
 				<textFieldExpression><![CDATA[$P{currentPropertyTax}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="200" y="286" width="129" height="26" isPrintWhenDetailOverflows="true" uuid="0be3e8ec-0e4b-4383-b693-be30795ca582"/>
+				<reportElement stretchType="RelativeToTallestObject" x="200" y="291" width="129" height="26" isPrintWhenDetailOverflows="true" uuid="0be3e8ec-0e4b-4383-b693-be30795ca582"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -200,7 +161,7 @@
 				<textFieldExpression><![CDATA[$P{currentPropertyTax}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="329" y="286" width="122" height="26" isPrintWhenDetailOverflows="true" uuid="1cba2d89-5ada-4ad5-b8a6-a5bc8550b96f"/>
+				<reportElement stretchType="RelativeToTallestObject" x="329" y="291" width="122" height="26" isPrintWhenDetailOverflows="true" uuid="1cba2d89-5ada-4ad5-b8a6-a5bc8550b96f"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>

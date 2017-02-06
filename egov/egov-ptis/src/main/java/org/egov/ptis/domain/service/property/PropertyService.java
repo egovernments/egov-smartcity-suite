@@ -3422,12 +3422,14 @@ public class PropertyService {
         for(StateHistory state: history) {   
             List<Assignment> assignments = assignmentService.getAssignmentsForPosition(state.getOwnerPosition().getId());
             for(Assignment assignment:assignments) {
-            if(assignment != null && assignment.getDesignation().getName().equals(PropertyTaxConstants.REVENUE_INSPECTOR_DESGN)) {
+            if(assignment != null && assignment.getDesignation().getName().equals(PropertyTaxConstants.REVENUE_INSPECTOR_DESGN) &&  assignment.getEmployee().isActive()) {
                 userAssignment = assignment;
                 exists = true;
+                break;
             }
            }
-            if(exists) break;
+            if(exists) 
+                break;
         }
         return userAssignment;
     }

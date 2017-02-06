@@ -203,9 +203,13 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.officerincharge" />:</label>
 	<div class="col-sm-3 add-margin">
-		<form:input class="form-control" maxlength="50" id="officerIncharge"
-			path="officerIncharge" />
-		<form:errors path="officerIncharge" cssClass="add-margin error-msg" />
+	<form:input  path="officerIncharge.name" id="positionEmpName" type="text"  name="officerIncharge.name"
+					class="form-control typeahead " autocomplete="off" 
+					 placeholder=""/> 
+    <form:hidden path="officerIncharge" name ="officerIncharge.id"
+				id="positionEmpId" value="" /> 
+	  <form:errors path="officerIncharge" cssClass="add-margin error-msg" />
+	  			
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.noticedate" /><span class="mandatory">:</span></label>

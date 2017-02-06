@@ -121,8 +121,8 @@ public class DemandGenerationService {
             throw new ApplicationRuntimeException("TL-006");
 
         demandGenerationLog = demandGenerationLogService.createDemandGenerationLog(installmentYearRange);
-
         return generateDemand(demandGenerationLog, installmentYear);
+
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, timeout = 7200)
@@ -139,11 +139,11 @@ public class DemandGenerationService {
                     detail.setDetail(SUCCESSFUL);
                     detail.setStatus(COMPLETED);
                     demandGenerationLogService.completeDemandGenerationLogDetail(detail);
-                    flushBatchUpdate(entityManager, ++batchUpdateCount, batchSize);
                 } catch (RuntimeException e) {
                     LOGGER.warn("Error occurred while generating demand for license {}", detail.getLicense().getLicenseNumber(), e);
                     demandGenerationLogService.updateDemandGenerationLogDetailOnException(detail, e);
                 }
+                flushBatchUpdate(entityManager, ++batchUpdateCount, batchSize);
             }
         }
         return demandGenerationLogService.completeDemandGenerationLog(demandGenerationLog);
@@ -180,11 +180,11 @@ public class DemandGenerationService {
                 }
                 demandGenerationLogDetail.setStatus(COMPLETED);
                 demandGenerationLogService.completeDemandGenerationLogDetail(demandGenerationLogDetail);
-                flushBatchUpdate(entityManager, ++batchUpdateCount, batchSize);
             } catch (RuntimeException e) {
                 LOGGER.warn("Error occurred while generating demand for license {}", license.getLicenseNumber(), e);
                 demandGenerationLogService.updateDemandGenerationLogDetailOnException(demandGenerationLogDetail, e);
             }
+            flushBatchUpdate(entityManager, ++batchUpdateCount, batchSize);
         }
 
         return demandGenerationLogService.completeDemandGenerationLog(demandGenerationLog);

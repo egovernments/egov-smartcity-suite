@@ -50,7 +50,6 @@ import org.apache.log4j.Logger;
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementBatchDemandGenerate;
 import org.egov.adtax.repository.AdvertisementBatchDemandGenRepository;
-import org.egov.adtax.service.es.AdvertisementPermitDetailUpdateIndexService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.Installment;
 import org.egov.demand.dao.EgDemandDao;
@@ -59,14 +58,16 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @Transactional(readOnly = true)
 public class AdvertisementBatchDemandGenService {
-    
+
     private static final Logger LOGGER = Logger.getLogger(AdvertisementBatchDemandGenService.class);
-    
+
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
@@ -79,12 +80,12 @@ public class AdvertisementBatchDemandGenService {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
-    
+
     @Autowired
     private AdvertisementBatchDemandGenRepository batchDemandGenRepository;
-    
+
     @Autowired
-    private AdvertisementPermitDetailUpdateIndexService advertisementPermitDetailUpdateIndexService;
+    private TransactionTemplate transactionTemplate;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -99,71 +100,77 @@ public class AdvertisementBatchDemandGenService {
     }
 
     @Transactional
-    public AdvertisementBatchDemandGenerate createAdvertisementBatchDemandGenerate(final AdvertisementBatchDemandGenerate advBatchDmd) {
-          return batchDemandGenRepository.save(advBatchDmd);
+    public AdvertisementBatchDemandGenerate createAdvertisementBatchDemandGenerate(
+            final AdvertisementBatchDemandGenerate advBatchDmd) {
+        return batchDemandGenRepository.save(advBatchDmd);
     }
+
     @Transactional
-    public AdvertisementBatchDemandGenerate updateAdvertisementBatchDemandGenerate(final AdvertisementBatchDemandGenerate advBatchDmd) {
-          return batchDemandGenRepository.save(advBatchDmd);
+    public AdvertisementBatchDemandGenerate updateAdvertisementBatchDemandGenerate(
+            final AdvertisementBatchDemandGenerate advBatchDmd) {
+        return batchDemandGenRepository.save(advBatchDmd);
     }
-    
-    @Transactional
+
     public int generateDemandForNextFinYear() {
         int totalRecordsProcessed = 0;
 
-        List<AdvertisementBatchDemandGenerate> advBatchDmdGenResult = findActiveBatchDemands();
-        LOGGER.info("advBatchDmdGenResult "+advBatchDmdGenResult.size());  
-        List<Advertisement> advertisements = new ArrayList<Advertisement>();
-        if (advBatchDmdGenResult != null && !advBatchDmdGenResult.isEmpty()) {
+        final List<AdvertisementBatchDemandGenerate> advBatchDmdGenResult = findActiveBatchDemands();
 
+        List<Advertisement> advertisements = new ArrayList<>();
+        if (advBatchDmdGenResult != null && !advBatchDmdGenResult.isEmpty()) {
+            LOGGER.info("advBatchDmdGenResult " + advBatchDmdGenResult.size());
             final AppConfigValues totalRecordToFeatch = appConfigValuesService.getConfigValuesByModuleAndKey(
                     AdvertisementTaxConstants.MODULE_NAME, AdvertisementTaxConstants.TOTALRESULTTOBEFETCH).get(0);
             LOGGER.info("*************************************** totalRecordToFeatch records "
                     + totalRecordToFeatch.getValue());
 
-            AdvertisementBatchDemandGenerate advDmdGen = advBatchDmdGenResult.get(0);
+            final AdvertisementBatchDemandGenerate advDmdGen = advBatchDmdGenResult.get(0);
 
             /*
-             * GET LIST OF DEMANDS WHICH ARE PERMANENT AND BASED ON FINANCIAL
-             * YEAR, GET ADVERTISEMENTS. Check count, if count greater than 300
-             * then
+             * GET LIST OF DEMANDS WHICH ARE PERMANENT AND BASED ON FINANCIAL YEAR, GET ADVERTISEMENTS. Check count, if count
+             * greater than 300 then
              */
             if (advDmdGen != null && advDmdGen.getInstallment() != null) {
 
-                List<Installment> previousInstallment = advertisementDemandService.getPreviousInstallment(advDmdGen
+                final List<Installment> previousInstallment = advertisementDemandService.getPreviousInstallment(advDmdGen
                         .getInstallment().getToDate());
 
-                Installment advDmdGenerationInstallment = advertisementDemandService
+                final Installment advDmdGenerationInstallment = advertisementDemandService
                         .getInsatllmentByModuleForGivenDate(advDmdGen.getInstallment().getToDate());
 
                 /*
-                 * Assumption : selected installment data not present in
-                 * advertisement demand.
+                 * Assumption : selected installment data not present in advertisement demand.
                  */
-                if (advDmdGenerationInstallment != null) {
-                    if (previousInstallment != null && previousInstallment.size() > 0) {
+                if (advDmdGenerationInstallment != null && previousInstallment != null && !previousInstallment.isEmpty()) {
+                    advertisements = advertisementService
+                            .findActivePermanentAdvertisementsByCurrentInstallmentAndNumberOfResultToFetch(
+                                    previousInstallment.get(0), Integer.valueOf(totalRecordToFeatch.getValue()));
 
-                       advertisements = advertisementService
-                                .findActivePermanentAdvertisementsByCurrentInstallmentAndNumberOfResultToFetch(
-                                        previousInstallment.get(0), Integer.valueOf(totalRecordToFeatch.getValue()));
-                        // totalRecordsProcessed= advertisements.size();
+                    for (final Advertisement advertisement : advertisements)
+                        advertisement.setDemandId(egDemandDao.findById(advertisement.getDemandId().getId(), false));
 
-                        for (Advertisement advertisement : advertisements) {
-                            advertisement.setDemandId(egDemandDao.findById(advertisement.getDemandId().getId(), false));
-                        }
+                    totalRecordsProcessed = advertisementDemandService.generateDemandForNextInstallment(
+                            advertisements, previousInstallment, advDmdGenerationInstallment);
 
-                        totalRecordsProcessed = advertisementDemandService.generateDemandForNextInstallment(
-                                advertisements, previousInstallment, advDmdGenerationInstallment);
-
-                    }
-                } 
+                }
+                advDmdGen.setActive(false);
+                advDmdGen.setTotalRecords(totalRecordsProcessed);
             }
-            advDmdGen.setActive(false);
-            advDmdGen.setTotalRecords(totalRecordsProcessed);
-            updateAdvertisementBatchDemandGenerate(advDmdGen);
-            for (Advertisement advertisement : advertisements) {
-            	advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisement.getActiveAdvertisementPermit());
-            }
+
+            final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
+            txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+            txTemplate.execute(result -> {
+                updateAdvertisementBatchDemandGenerate(advDmdGen);
+                return Boolean.TRUE;
+            });
+
+            // commented: Update advertisement index not required at this point. There is no demand updation happening in permit
+            // index update.
+            /*
+             * for (final Advertisement advertisement : advertisements) advertisementPermitDetailUpdateIndexService
+             * .updateAdvertisementPermitDetailIndexes(advertisement.getActiveAdvertisementPermit());
+             */
         }
         return totalRecordsProcessed;
     }

@@ -39,16 +39,6 @@
  */
 package org.egov.tl.web.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.io.FileUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -70,6 +60,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/digitalSignature")
@@ -116,9 +115,8 @@ public class DigitalSignatureTradeLicenseController {
                         .getId());
                 final DateTime currentDate = new DateTime();
                 license = licenseUtils.applicationStatusChange(license, Constants.APPLICATION_STATUS_APPROVED_CODE);
-                WorkFlowMatrix wfmatrix = null;
-                if (license.getLicenseAppType() != null
-                        && license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
+                WorkFlowMatrix wfmatrix;
+                if (license.isReNewApplication())
                     wfmatrix = tradeLicenseWorkflowService.getWfMatrix(Constants.TRADELICENSE, null, null,
                             Constants.RENEW_ADDITIONAL_RULE,
                             Constants.WF_DIGI_SIGNED, null);
@@ -150,17 +148,14 @@ public class DigitalSignatureTradeLicenseController {
         response.setHeader("content-disposition",
                 "attachment; filename=\"" + (fileStoreMapper != null ? fileStoreMapper.getFileName() : null) + "\"");
 
-        try {
-            final FileInputStream inStream = new FileInputStream(file);
-            final OutputStream outStream = response.getOutputStream();
-            int bytesRead = -1;
+        try (FileInputStream inStream = new FileInputStream(file);
+             OutputStream outStream = response.getOutputStream()) {
+            int bytesRead;
             final byte[] buffer = FileUtils.readFileToByteArray(file);
             while ((bytesRead = inStream.read(buffer)) != -1)
                 outStream.write(buffer, 0, bytesRead);
-            inStream.close();
-            outStream.close();
         } catch (final IOException e) {
-            throw new ApplicationRuntimeException("Exception while downloading license certificate file");
+            throw new ApplicationRuntimeException("Exception while downloading license certificate file", e);
         }
     }
 

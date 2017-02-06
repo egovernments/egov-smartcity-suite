@@ -70,7 +70,7 @@
                         <spring:message code="lbl.subcategory"/> <span class="mandatory"></span>
                     </label>
                     <div class="col-sm-3 add-margin">
-                        <form:select path="code" id="subCategory" cssClass="form-control" required="required" cssErrorClass="form-control error">
+                        <form:select path="code" id="subCategory" cssClass="form-control select2" required="required" cssErrorClass="form-control error select2">
                             <form:option value="">
                                 <spring:message code="lbl.category.select"/>
                             </form:option>

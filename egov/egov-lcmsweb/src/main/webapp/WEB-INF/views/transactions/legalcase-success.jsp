@@ -153,7 +153,7 @@
 								<spring:message code="lbl.officerincharge" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${legalCase.officerIncharge}" />
+								<c:out value="${legalCase.officerIncharge.name}" />
 							</div>
 
 

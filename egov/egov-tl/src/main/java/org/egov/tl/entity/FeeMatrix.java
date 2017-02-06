@@ -42,6 +42,7 @@ package org.egov.tl.entity;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -55,15 +56,21 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "egtl_feematrix")
 @SequenceGenerator(name = FeeMatrix.SEQ, sequenceName = FeeMatrix.SEQ, allocationSize = 1)
+@CompositeUnique(fields = {"natureOfBusiness", "licenseCategory", "subCategory", "licenseAppType",
+        "financialYear", "feeType", "unitOfMeasurement"}, enableDfltMsg = true, message = "{feematrix.exist}")
 public class FeeMatrix extends AbstractAuditable {
     public static final String SEQ = "seq_egtl_feematrix";
     private static final long serialVersionUID = 3119126267277124321L;
@@ -109,10 +116,33 @@ public class FeeMatrix extends AbstractAuditable {
 
     private String uniqueNo;
 
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date effectiveFrom;
+
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date effectiveTo;
+
+    private boolean sameForNewAndRenew;
+
+    private boolean sameForPermanentAndTemporary;
+
     @Valid
     @OrderBy("uomFrom")
-    @OneToMany(mappedBy = "feeMatrix", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<FeeMatrixDetail> feeMatrixDetail = new ArrayList<FeeMatrixDetail>(0);
+    @OneToMany(mappedBy = "feeMatrix", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<FeeMatrixDetail> feeMatrixDetail = new ArrayList<>();
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public FeeType getFeeType() {
         return feeType;
@@ -162,16 +192,6 @@ public class FeeMatrix extends AbstractAuditable {
         this.unitOfMeasurement = unitOfMeasurement;
     }
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public BigDecimal getAmount() {
         return null;
     }
@@ -200,7 +220,39 @@ public class FeeMatrix extends AbstractAuditable {
         this.financialYear = financialYear;
     }
 
-    public String genUniqueNo() {
+    public Date getEffectiveFrom() {
+        return this.effectiveFrom;
+    }
+
+    public void setEffectiveFrom(final Date effectiveFrom) {
+        this.effectiveFrom = effectiveFrom;
+    }
+
+    public Date getEffectiveTo() {
+        return effectiveTo;
+    }
+
+    public void setEffectiveTo(final Date effectiveTo) {
+        this.effectiveTo = effectiveTo;
+    }
+
+    public boolean isSameForNewAndRenew() {
+        return sameForNewAndRenew;
+    }
+
+    public void setSameForNewAndRenew(final boolean sameForNewAndRenew) {
+        this.sameForNewAndRenew = sameForNewAndRenew;
+    }
+
+    public boolean isSameForPermanentAndTemporary() {
+        return sameForPermanentAndTemporary;
+    }
+
+    public void setSameForPermanentAndTemporary(final boolean sameForPermanentAndTemporary) {
+        this.sameForPermanentAndTemporary = sameForPermanentAndTemporary;
+    }
+
+    public String generateAndSetUniqueNumber() {
         final StringBuilder sb = new StringBuilder();
         if (natureOfBusiness != null)
             sb.append(natureOfBusiness.getId());
@@ -216,7 +268,29 @@ public class FeeMatrix extends AbstractAuditable {
             sb.append("-" + unitOfMeasurement.getId());
         if (financialYear != null)
             sb.append("-" + financialYear.getId());
-        return sb.toString();
+        this.setUniqueNo(sb.toString());
+        return this.getUniqueNo();
+    }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof FeeMatrix))
+            return false;
+        final FeeMatrix feeMatrix = (FeeMatrix) o;
+        return Objects.equals(natureOfBusiness.getId(), feeMatrix.natureOfBusiness.getId()) &&
+                Objects.equals(licenseCategory.getId(), feeMatrix.licenseCategory.getId()) &&
+                Objects.equals(subCategory.getId(), feeMatrix.subCategory.getId()) &&
+                Objects.equals(licenseAppType.getId(), feeMatrix.licenseAppType.getId()) &&
+                Objects.equals(feeType.getId(), feeMatrix.feeType.getId()) &&
+                Objects.equals(financialYear.getId(), feeMatrix.financialYear.getId()) &&
+                Objects.equals(unitOfMeasurement.getId(), feeMatrix.unitOfMeasurement.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(natureOfBusiness.getId(), licenseCategory.getId(), subCategory.getId(),
+                licenseAppType.getId(), feeType.getId(), financialYear.getId(), unitOfMeasurement.getId());
     }
 }

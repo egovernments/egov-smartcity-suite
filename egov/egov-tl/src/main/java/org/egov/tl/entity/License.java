@@ -71,7 +71,6 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.tl.utils.Constants;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Length;
@@ -79,6 +78,14 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import com.google.gson.annotations.Expose;
+
+import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
+import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.STATUS_ACKNOLEDGED;
+import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
+import static org.egov.tl.utils.Constants.WF_STATE_COMMISSIONER_APPROVED_STR;
+import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
 
 @Entity
 @Table(name = "EGTL_LICENSE")
@@ -466,30 +473,6 @@ public class License extends StateAware {
         this.digiSignedCertFileStoreId = digiSignedCertFileStoreId;
     }
 
-    public LicenseDemand getCurrentDemand() {
-        return getLicenseDemand();
-    }
-
-    public BigDecimal getCurrentLicenseFee() {
-        Optional<EgDemandDetails> demandDetails = getCurrentDemand().getEgDemandDetails().stream()
-                .filter(dd -> dd.getEgDemandReason().getEgInstallmentMaster().equals(getCurrentDemand().getEgInstallmentMaster()))
-                .filter(dd -> dd.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(Constants.LICENSE_FEE_TYPE))
-                .findAny();
-        return demandDetails.isPresent() ? demandDetails.get().getAmount() : BigDecimal.ZERO;
-    }
-
-    public boolean isPaid() {
-        return getTotalBalance().compareTo(BigDecimal.ZERO) == 0;
-    }
-
-    public BigDecimal getTotalBalance() {
-        return licenseDemand.getBaseDemand().subtract(licenseDemand.getAmtCollected());
-    }
-
-    public boolean isRejected() {
-        return hasState() && getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED);
-    }
-
     public String getAssessmentNo() {
         return assessmentNo;
     }
@@ -511,12 +494,36 @@ public class License extends StateAware {
         return "";
     }
 
+    public LicenseDemand getCurrentDemand() {
+        return getLicenseDemand();
+    }
+
+    public BigDecimal getCurrentLicenseFee() {
+        Optional<EgDemandDetails> demandDetails = getCurrentDemand().getEgDemandDetails().stream()
+                .filter(dd -> dd.getEgDemandReason().getEgInstallmentMaster().equals(getCurrentDemand().getEgInstallmentMaster()))
+                .filter(dd -> dd.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(LICENSE_FEE_TYPE))
+                .findAny();
+        return demandDetails.isPresent() ? demandDetails.get().getAmount() : BigDecimal.ZERO;
+    }
+
+    public boolean isPaid() {
+        return getTotalBalance().compareTo(BigDecimal.ZERO) == 0;
+    }
+
+    public BigDecimal getTotalBalance() {
+        return licenseDemand.getBaseDemand().subtract(licenseDemand.getAmtCollected());
+    }
+
+    public boolean isRejected() {
+        return hasState() && getState().getValue().contains(WORKFLOW_STATE_REJECTED);
+    }
+
     public boolean isApproved() {
-        return hasState() && getState().getValue().equals(Constants.WF_STATE_COMMISSIONER_APPROVED_STR);
+        return hasState() && WF_STATE_COMMISSIONER_APPROVED_STR.equals(getState().getValue());
     }
 
     public boolean isAcknowledged() {
-        return getStatus().getStatusCode().equals(Constants.STATUS_ACKNOLEDGED);
+        return getStatus() != null && STATUS_ACKNOLEDGED.equals(getStatus().getStatusCode());
     }
 
     public boolean canCollectFee() {
@@ -524,6 +531,14 @@ public class License extends StateAware {
     }
 
     public boolean isStatusActive() {
-        return getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE);
+        return getStatus() != null && STATUS_ACTIVE.equals(getStatus().getStatusCode());
+    }
+
+    public boolean isNewApplication() {
+        return getLicenseAppType() != null && NEW_LIC_APPTYPE.equals(getLicenseAppType().getName());
+    }
+
+    public boolean isReNewApplication() {
+        return getLicenseAppType() != null && RENEWAL_LIC_APPTYPE.equals(getLicenseAppType().getName());
     }
 }

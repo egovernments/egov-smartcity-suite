@@ -367,6 +367,9 @@ public class WaterTaxConstants {
     public static final String ASSISTANT_ENGINEER_DESIGN = "Assistant engineer";
     public static final String JUNIOR_OR_SENIOR_ASSISTANT_DESIGN = "Senior Assistant,Junior Assistant";
 
+    public static final String SENIOR_ASSISTANT_DESIGN = "Senior Assistant";
+    public static final String JUNIOR_ASSISTANT_DESIGN = "Junior Assistant";
+
 
 
 }

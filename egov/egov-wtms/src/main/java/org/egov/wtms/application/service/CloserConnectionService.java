@@ -50,6 +50,7 @@ import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -129,7 +130,7 @@ public class CloserConnectionService {
      */
     @Transactional
     public WaterConnectionDetails updatecloserConnection(final WaterConnectionDetails waterConnectionDetails,
-            final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final Long approvalPosition, final String approvalComent,  String additionalRule,
             final String workFlowAction, final String sourceChannel) {
 
         waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, "",
@@ -139,6 +140,7 @@ public class CloserConnectionService {
 
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                 .getInitialisedWorkFlowBean();
+        additionalRule=WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE;
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedwaterConnectionDetails,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
         waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails, sourceChannel);

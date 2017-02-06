@@ -50,10 +50,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "egtl_feematrix_detail")
@@ -70,17 +70,19 @@ public class FeeMatrixDetail extends AbstractPersistable<Long> {
     @JoinColumn(name = "feeMatrix")
     private FeeMatrix feeMatrix;
 
+    @NotNull
     private Integer uomFrom;
 
+    @NotNull
     private Integer uomTo;
 
-    private Double percentage;
-
-    @Temporal(value = TemporalType.DATE)
-    private Date fromDate;
-
+    @NotNull
     private BigDecimal amount;
 
+    @Transient
+    private boolean markedForRemoval;
+
+    @Override
     public Long getId() {
         return this.id;
     }
@@ -106,22 +108,6 @@ public class FeeMatrixDetail extends AbstractPersistable<Long> {
         this.uomTo = uomTo;
     }
 
-    public Double getPercentage() {
-        return percentage;
-    }
-
-    public void setPercentage(Double percentage) {
-        this.percentage = percentage;
-    }
-
-    public Date getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(Date fromDate) {
-        this.fromDate = fromDate;
-    }
-
     public BigDecimal getAmount() {
         return amount;
     }
@@ -138,4 +124,29 @@ public class FeeMatrixDetail extends AbstractPersistable<Long> {
         this.feeMatrix = feeMatrix;
     }
 
+    public boolean isMarkedForRemoval() {
+        return markedForRemoval;
+    }
+
+    public void setMarkedForRemoval(final boolean markedForRemoval) {
+        this.markedForRemoval = markedForRemoval;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof FeeMatrixDetail))
+            return false;
+        final FeeMatrixDetail that = (FeeMatrixDetail) o;
+        return Objects.equals(feeMatrix, that.feeMatrix) &&
+                Objects.equals(uomFrom, that.uomFrom) &&
+                Objects.equals(uomTo, that.uomTo);
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(feeMatrix, uomFrom, uomTo);
+    }
 }

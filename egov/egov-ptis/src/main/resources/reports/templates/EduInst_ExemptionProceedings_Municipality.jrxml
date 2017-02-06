@@ -1,45 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-01-20T12:48:06 -->
+<!-- 2017-02-03T09:02:42 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EdiInst_ExemptionProceedings_Municipality" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -79,7 +40,7 @@
 				<textElement markup="styled">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Roc.No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{noticeNo}+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Roc.No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+($P{noticeNo}!=null?$P{noticeNo}:" ")+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="85" y="12" width="407" height="18" uuid="d86d2b1b-ba2f-4e05-b014-8542efbdbe8d"/>
@@ -124,12 +85,12 @@
 				<textFieldExpression><![CDATA["ORDER:"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="44" y="100" width="452" height="190" uuid="98a27ce7-5155-4f94-b3ae-38bfdd3a051f"/>
+				<reportElement positionType="FixRelativeToBottom" isPrintRepeatedValues="false" x="44" y="100" width="452" height="190" uuid="98a27ce7-5155-4f94-b3ae-38bfdd3a051f"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
 				<textElement textAlignment="Justified" markup="styled">
 					<font size="8" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\tIn the reference read above, Sri <style forecolor=\"#000000\" isBold=\"true\"> "+JRStringUtil.xmlEncode($P{ownerName})+"</style>, (Designation)  of the premises bearing Door No:<style forecolor=\"#000000\" isBold=\"true\">"+$P{doorNumber}+"</style>, Assessment Number <style forecolor=\"#000000\" isBold=\"true\">"+$P{AssessmentNumber}+"</style> , Locality<style forecolor=\"#000000\" isBold=\"true\"> "+$P{Locality}+"</style> has applied for exemption of property tax,   under the category <style forecolor=\"#000000\" isBold=\"true\"> Recognized Educational Institutions / Charitable Institutions, as per Sec.88 of A.P.Municipalites Act, 1965.</style>  \n \t On receipt of the same, the said property is got inspected by the revenue officials and found the following:- \n a) that the Educational Institute is recognized by the Government. \n b) that the building for which exemption is sought is owned by the Trust/Organization and is fully occupied by them and is being utilised for the charitable purpose only. \n c) that as per the State Gazette/District Gazette, the Trust (or) Organization is notified as  Charitable Institution by the Commissioner of Endowments. \n d) that the Trust Deed is registered under Registration Act, 1908. \n e) that, the Trust/Organization is conducting regular Meetings and recording minutes for the last (3) years \n f) that the Annual Reports/ Audit Reports /Annual Accounts of  the organizations, is verified, for the last (3) years \n g) that the Trust/Organization is not collecting any amounts from the public. \n \t After careful examination of the above issue, as per the information available in the Municipal Office records and in terms of Sec. 88 of A.P. Municipalities Act, 1965,  the Trust/Organization is exempted from payment of property tax , as detailed below:-"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["\tIn the reference read above, Sri <style forecolor=\"#000000\" isBold=\"true\"> "+JRStringUtil.xmlEncode($P{ownerName})+"</style>, (Designation)  of the premises bearing Door No:<style forecolor=\"#000000\" isBold=\"true\">"+($P{doorNumber}!=null?$P{doorNumber}:" ")+"</style>, Assessment Number <style forecolor=\"#000000\" isBold=\"true\">"+$P{AssessmentNumber}+"</style>, Locality<style forecolor=\"#000000\" isBold=\"true\"> "+($P{Locality}!=null?$P{Locality}:" ")+"</style> has applied for exemption of property tax,   under the category <style forecolor=\"#000000\" isBold=\"true\"> Recognized Educational Institutions / Charitable Institutions, as per Sec.88 of A.P.Municipalites Act, 1965.</style>  \n\n\t On receipt of the same, the said property is got inspected by the revenue officials and found the following:- \n a) that the Educational Institute is recognized by the Government. \n b) that the building for which exemption is sought is owned by the Trust/Organization and is fully occupied by them and is being utilised for the charitable purpose only. \n c) that as per the State Gazette/District Gazette, the Trust (or) Organization is notified as  Charitable Institution by the Commissioner of Endowments. \n d) that the Trust Deed is registered under Registration Act, 1908. \n e) that, the Trust/Organization is conducting regular Meetings and recording minutes for the last (3) years \n f) that the Annual Reports/ Audit Reports /Annual Accounts of  the organizations, is verified, for the last (3) years \n g) that the Trust/Organization is not collecting any amounts from the public. \n\n\t After careful examination of the above issue, as per the information available in the Municipal Office records and in terms of Sec. 88 of A.P. Municipalities Act, 1965,  the Trust/Organization is exempted from payment of property tax , as detailed below:-"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="100" y="330" width="100" height="10" uuid="42e2d5d7-1aa6-4303-a92f-7de3e6884f9a"/>

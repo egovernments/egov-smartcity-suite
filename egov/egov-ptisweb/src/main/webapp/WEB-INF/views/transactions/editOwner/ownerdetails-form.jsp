@@ -62,7 +62,7 @@ body {
 	<div class="col-md-12">
 		<form:form class="form-horizontal form-groups-bordered" method="post"
 			name="ownerDetailsForm" id="ownerDetailsForm" action=""
-			modelAttribute="property">
+			modelAttribute="propertyOwner">
 			<div class="panel panel-primary" data-collapsed="0"
 				style="text-align: left">
 				<div class="row">
@@ -80,7 +80,8 @@ body {
 										<spring:message code="lbl.assmtno" />
 									</div>
 									<div class="col-xs-3 add-margin view-content">
-										<c:out value="${property.basicProperty.upicNo}"></c:out>
+										<c:out value="${propertyOwner.property.basicProperty.upicNo}">
+										</c:out>
 									</div>
 									<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.assmtno.parentproperty" />
@@ -92,13 +93,13 @@ body {
 										<spring:message code="lbl.propertytype" />
 									</div>
 									<div class="col-xs-3 add-margin view-content">
-										<c:out value="${property.propertyDetail.categoryType}"></c:out>
+										<c:out value="${propertyOwner.property.propertyDetail.categoryType}"></c:out>
 									</div>
 									<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.excemption" />
 									</div>
 									<div class="col-xs-3 add-margin view-content">
-										<c:out value="${property.taxExemptedReason.name}"
+										<c:out value="${propertyOwner.property.taxExemptedReason.name}"
 											default="N/A"></c:out>
 									</div>
 								</div>
@@ -108,14 +109,14 @@ body {
 									</div>
 									<div class="col-xs-3 add-margin view-content">
 										<c:out default="N/A"
-											value="${property.propertyDetail.propertyTypeMaster.type}"></c:out>
+											value="${propertyOwner.property.propertyDetail.propertyTypeMaster.type}"></c:out>
 									</div>
 								<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.effectivedate" />
 									</div>
 									<div class="col-xs-3 add-margin view-content">
 										<fmt:formatDate pattern="dd/MM/yyyy"
-											value="${property.basicProperty.propOccupationDate}" />
+											value="${propertyOwner.property.basicProperty.propOccupationDate}" />
 									</div>
 								</div>
 								<div class="row add-border">
@@ -125,14 +126,14 @@ body {
 									</div>
 									<div class="col-xs-3 add-margin view-content">
 										<c:out
-											value="${property.propertyDetail.extentAppartenauntLand}"
+											value="${propertyOwner.property.propertyDetail.extentAppartenauntLand}"
 											default="N/A"></c:out>
 									</div>
 									<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.superstructure" />
 									</div>
 									<c:choose>
-										<c:when test="${property.propertyDetail.structure == 'true'}">
+										<c:when test="${propertyOwner.property.propertyDetail.structure == 'true'}">
 											<div class="col-xs-3 add-margin view-content">Yes</div>
 										</c:when>
 										<c:otherwise>
@@ -148,7 +149,7 @@ body {
 										<spring:message code="lbl.registrationDoc.no" />
 									</div>
 									<div class="col-xs-3 add-margin view-content">
-										<c:out value="${property.basicProperty.regdDocNo}"
+										<c:out value="${propertyOwner.property.basicProperty.regdDocNo}"
 											default="N/A"></c:out>
 									</div>
 									<div class="col-xs-3 add-margin">
@@ -156,7 +157,7 @@ body {
 									</div>
 									<div class="col-xs-3 add-margin view-content">
 										<fmt:formatDate pattern="dd/MM/yyyy"
-											value="${property.basicProperty.regdDocDate}" />
+											value="${propertyOwner.property.basicProperty.regdDocDate}" />
 									</div>
 								</div>
 								<div class="row add-border">
@@ -165,7 +166,7 @@ body {
 									</div>
 									<div class="col-xs-3 add-margin view-content">
 										<c:out
-											value="${property.propertyDetail.propertyMutationMaster.mutationName}"></c:out>
+											value="${propertyOwner.property.propertyDetail.propertyMutationMaster.mutationName}"></c:out>
 									</div>
 								</div>
 							</div>
@@ -173,7 +174,7 @@ body {
 						</div>
 					</div>
 				</div>
-				<div class="row">
+			<div class="row">
 					<div class="col-md-12">
 						<div class="panel panel-primary" data-collapsed="0"
 							style="text-align: left">
@@ -189,14 +190,14 @@ body {
 									</div>
 									<div class="col-sm-3 add-margin view-content">
 										<c:out
-											value="${property.basicProperty.propertyID.locality.name}" />
+											value="${propertyOwner.property.basicProperty.propertyID.locality.name}" />
 									</div>
 
 									<div class="col-sm-3 add-margin">
 										<spring:message code="lbl.zone" />
 									</div>
 									<div class="col-sm-3 add-margin view-content">
-										<c:out value="${property.basicProperty.propertyID.zone.name}" />
+										<c:out value="${propertyOwner.property.basicProperty.propertyID.zone.name}" />
 									</div>
 								</div>
 
@@ -205,19 +206,19 @@ body {
 										<spring:message code="lbl.property.address" />
 									</div>
 									<div class="col-sm-3 add-margin view-content">
-										<c:out value="${property.basicProperty.address}" />
+										<c:out value="${propertyOwner.property.basicProperty.address}" />
 									</div>
 									<div class="col-sm-3 add-margin">
 										<spring:message code="lbl.revwardno" />
 									</div>
 									<div class="col-sm-3 add-margin view-content">
-										<c:out value="${property.basicProperty.propertyID.ward.name}" />
+										<c:out value="${propertyOwner.property.basicProperty.propertyID.ward.name}" />
 									</div>
 									<div class="col-sm-3 add-margin">
 										<spring:message code="lbl.blockno" />
 									</div>
 									<div class="col-sm-3 add-margin view-content">
-										<c:out value="${property.basicProperty.propertyID.area.name}" />
+										<c:out value="${propertyOwner.property.basicProperty.propertyID.area.name}" />
 									</div>
 								</div>
 								<div class="row">
@@ -226,7 +227,7 @@ body {
 									</div>
 									<div class="col-sm-3 add-margin view-content">
 										<c:out
-											value="${property.basicProperty.propertyID.street.name}"
+											value="${propertyOwner.property.basicProperty.propertyID.street.name}"
 											default="N/A" />
 									</div>
 									<div class="col-sm-3 add-margin">
@@ -234,7 +235,7 @@ body {
 									</div>
 									<div class="col-sm-3 add-margin view-content">
 										<c:out
-											value="${property.basicProperty.propertyID.electionBoundary.name}" />
+											value="${propertyOwner.property.basicProperty.propertyID.electionBoundary.name}" />
 									</div>
 								</div>
 								<div class="row">
@@ -271,7 +272,7 @@ body {
 						</div>
 					</div>
 
-					<table width="100%" border="0" cellspacing="0" cellpadding="0"
+					 <table width="100%" border="0" cellspacing="0" cellpadding="0"
 						class="table table-bordered" id="vacantLandTable">
 
 						<tbody>
@@ -291,50 +292,109 @@ body {
 							</tr>
 							<c:choose>
 								<c:when
-									test="${!property.basicProperty.propertyOwnerInfo.isEmpty()}">
+									test="${!propertyOwner.property.basicProperty.propertyOwnerInfo.isEmpty()}">
 									<c:forEach var="ownerInfo"
-										items="${property.basicProperty.propertyOwnerInfo}"
+										items="${propertyOwner.property.basicProperty.propertyOwnerInfo}"
 										varStatus="status">
 										<tr id="ownerDetailsRow">
+										<form:hidden path="ownerAudit[${status.index}].basicproperty" />
+						                <form:hidden path="ownerAudit[${status.index}].doorNo" />
+						                <form:hidden path="ownerAudit[${status.index}].userId" />
+										
 											<form:hidden
-												path="basicProperty.propertyOwnerInfo[${status.index}].owner.id" />
+												path="propertyOwnerInfo[${status.index}].owner.id" />
 											<form:hidden
-												path="basicProperty.propertyOwnerInfo[${status.index}].owner.username" />
+												path="propertyOwnerInfo[${status.index}].owner.username" />
 											<form:hidden
-												path="basicProperty.propertyOwnerInfo[${status.index}].owner.password" />
+												path="propertyOwnerInfo[${status.index}].owner.password" />
+												<c:choose>
+											<c:when test="${propertyOwner.property.basicProperty.propertyOwnerInfo[status.index].owner.aadhaarNumber!=null ||  not empty propertyOwner.property.basicProperty.propertyOwnerInfo[status.index].owner.aadhaarNumber}" >
 											<td class="blueborderfortd" align="center"><form:input
-													path="basicProperty.propertyOwnerInfo[${status.index}].owner.aadhaarNumber"
-													id="aadharNumber" maxlength="12" cssClass="form-control"/>
+													path="propertyOwnerInfo[${status.index}].owner.aadhaarNumber"
+													id="aadharNumber" maxlength="12" cssClass="form-control" readonly="true"/>
+													<form:hidden path="ownerAudit[${status.index}].aadhaarNo" />
+													</td>
+											
+											<td class="blueborderfortd" align="center"><form:input
+													path="propertyOwnerInfo[${status.index}].owner.mobileNumber"
+													id="mobileNumber" maxlength="10" cssClass="form-control" readonly="true"/>
+													<form:hidden path="ownerAudit[${status.index}].mobileNo" /> 
 											</td>
 											<td class="blueborderfortd" align="center"><form:input
-													path="basicProperty.propertyOwnerInfo[${status.index}].owner.mobileNumber"
+													path="propertyOwnerInfo[${status.index}].owner.name"
+													id="name" maxlength="74" cssClass="form-control" readonly="true"/>
+													<form:hidden path="ownerAudit[${status.index}].ownerName" />
+													</td> 
+
+											<td class="blueborderfortd" align="center"><form:input
+													path="propertyOwnerInfo[${status.index}].owner.gender"
+													id="sgender" name="gender" data-first-option="false"
+													cssClass="form-control" readonly="true" />
+													<form:hidden path="ownerAudit[${status.index}].gender" />
+													</td>
+											<td class="blueborderfortd" align="center"><form:input
+													path="propertyOwnerInfo[${status.index}].owner.emailId"
+													id="emailId" maxlength="32" cssClass="form-control" readonly="true"/>
+													<form:hidden path="ownerAudit[${status.index}].emailId" />
+													</td>
+											<td class="blueborderfortd" align="center"><form:input
+													path="propertyOwnerInfo[${status.index}].owner.guardianRelation"
+													id="guardianRelation" name="guardianRelation"
+													data-first-option="false" cssClass="form-control" readonly="true"/>
+													<form:hidden path="ownerAudit[${status.index}].guardianRelation" />
+													</td>
+											<td class="blueborderfortd" align="center"><form:input
+													path="propertyOwnerInfo[${status.index}].owner.guardian"
+													id="guardianName" maxlength="32" cssClass="form-control" readonly="true"/>
+													 <form:hidden path="ownerAudit[${status.index}].guardianName" /> 
+											</td> 
+											</c:when>
+											<c:otherwise>
+											<td class="blueborderfortd" align="center"><form:input
+													path="propertyOwnerInfo[${status.index}].owner.aadhaarNumber"
+													id="aadharNumber" maxlength="12" cssClass="form-control" data-idx="0" onblur="getOwnerByAadharDetails(this);"/>
+											<form:hidden path="ownerAudit[${status.index}].aadhaarNo" />
+											</td>
+											<td class="blueborderfortd" align="center"><form:input
+													path="propertyOwnerInfo[${status.index}].owner.mobileNumber"
 													id="mobileNumber" maxlength="10" cssClass="form-control" />
+													<form:hidden path="ownerAudit[${status.index}].mobileNo" /> 
 											</td>
-											<td class="blueborderfortd" align="center"><form:input
-													path="basicProperty.propertyOwnerInfo[${status.index}].owner.name"
-													id="name" maxlength="74" cssClass="form-control" /></td>
+											 <td class="blueborderfortd" align="center"><form:input
+													path="propertyOwnerInfo[${status.index}].owner.name"
+													id="name" maxlength="74" cssClass="form-control" />
+													 <form:hidden path="ownerAudit[${status.index}].ownerName" />
+											</td>
 
 											<td class="blueborderfortd" align="center"><form:select
-													path="basicProperty.propertyOwnerInfo[${status.index}].owner.gender"
+													path="propertyOwnerInfo[${status.index}].owner.gender"
 													id="sgender" name="gender" data-first-option="false"
 													cssClass="form-control">
 													<option value="">--select--</option>
 													<form:options items="${gender}" />
-												</form:select></td>
+												</form:select>
+												<form:hidden path="ownerAudit[${status.index}].gender" />
+												</td>
 											<td class="blueborderfortd" align="center"><form:input
-													path="basicProperty.propertyOwnerInfo[${status.index}].owner.emailId"
-													id="emailId" maxlength="32" cssClass="form-control" /></td>
+													path="propertyOwnerInfo[${status.index}].owner.emailId"
+													id="emailId" maxlength="32" cssClass="form-control" />
+													<form:hidden path="ownerAudit[${status.index}].emailId" />
+													</td>
 											<td class="blueborderfortd" align="center"><form:select
-													path="basicProperty.propertyOwnerInfo[${status.index}].owner.guardianRelation"
+													path="propertyOwnerInfo[${status.index}].owner.guardianRelation"
 													id="guardianRelation" name="guardianRelation"
 													data-first-option="false" cssClass="form-control">
 													<option value="">--select--</option>
 													<form:options items="${guardianRelationMap}" />
-												</form:select></td>
+												</form:select>
+												<form:hidden path="ownerAudit[${status.index}].guardianRelation" /></td>
 											<td class="blueborderfortd" align="center"><form:input
-													path="basicProperty.propertyOwnerInfo[${status.index}].owner.guardian"
+													path="propertyOwnerInfo[${status.index}].owner.guardian"
 													id="guardianName" maxlength="32" cssClass="form-control" />
+												 <form:hidden path="ownerAudit[${status.index}].guardianName" />
 											</td>
+											</c:otherwise>
+											</c:choose>
 
 										</tr>
 									</c:forEach>
@@ -361,7 +421,6 @@ body {
 	src="<cdn:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script>
 	jQuery('#submitform').click(function(e) {
-
 		
 		if (!jQuery('#doorNumber').val()) {
 			bootbox.alert('Door number is mandatory');
@@ -392,4 +451,47 @@ body {
 		return true;
 		
 	})
+	
+	function getOwnerByAadharDetails(obj) {
+    	   var aadharNo = jQuery(obj).val();
+    	   var rowidx= jQuery(obj).data('idx');
+    	   jQuery.ajax({
+				type: "GET",
+				url: "/egi/aadhaar/"+aadharNo,
+				cache: true
+			}).done(function(value) {
+				console.log('response received!')
+				var userInfoObj = jQuery.parseJSON(value);
+				if(userInfoObj.uid == aadharNo) {
+					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.name']").val(userInfoObj.name);
+					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.name']").attr('readonly', true);
+					if(userInfoObj.gender == 'M' || userInfoObj.gender == 'Male') {
+						jQuery("select[name='propertyOwnerInfo["+ rowidx +"].owner.gender']").val("MALE");
+					} else if (userInfoObj.gender == 'F' || userInfoObj.gender == 'Female') {
+						jQuery("select[name='propertyOwnerInfo["+ rowidx +"].owner.gender']").val("FEMALE");
+					} else {
+						jQuery("select[name='propertyOwnerInfo["+ rowidx +"].owner.gender']").val("OTHERS");
+					} 
+					jQuery("select[name='propertyOwnerInfo["+ rowidx +"].owner.gender']").attr('disabled','disabled');
+					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.mobileNumber']").val(userInfoObj.phone);
+					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.mobileNumber']").attr('readonly', true);
+					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.emailId']").attr('readonly', true);
+					jQuery("select[name='propertyOwnerInfo["+ rowidx +"].owner.guardianRelation']").attr('disabled', 'disabled');
+					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.guardian']").attr('readonly', true);
+				} else {
+					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.aadhaarNumber']").val("");
+					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.name']").val("");
+					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.name']").attr('readonly', false);
+					jQuery("select[name='propertyOwnerInfo["+ rowidx +"].owner.gender']").removeAttr('disabled');
+					jQuery("select[name='propertyOwnerInfo["+ rowidx +"].owner.gender']").val("");
+					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.mobileNumber']").val("").attr('readonly', false);
+					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.emailId']").attr('readonly', false);
+					jQuery("select[name='propertyOwnerInfo["+ rowidx +"].owner.guardianRelation']").removeAttr('disabled');
+					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.guardian']").attr('readonly', false);
+					if(aadharNo != "NaN") {
+					bootbox.alert("Aadhar number is not valid");
+					}
+			   }
+			});
+       }
 </script>

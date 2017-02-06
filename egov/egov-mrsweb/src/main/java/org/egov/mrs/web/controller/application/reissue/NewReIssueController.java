@@ -115,6 +115,7 @@ public class NewReIssueController extends GenericWorkFlowController {
         }
         prepareWorkFlowForReIssue(reIssue, model);
         model.addAttribute("reIssue", reIssue);
+        model.addAttribute("feepaid", reIssue.getFeePaid().intValue());
         model.addAttribute("documents", marriageDocumentService.getIndividualDocuments());
     }
 
@@ -174,7 +175,7 @@ public class NewReIssueController extends GenericWorkFlowController {
                 new String[] { approverName.concat("~").concat(nextDesignation), appNo }, null);
         model.addAttribute(MESSAGE, message);
         model.addAttribute("ackNumber", appNo);
-
+        model.addAttribute("feepaid", reIssue.getFeePaid().doubleValue());
         return "reissue-ack";
     }
 

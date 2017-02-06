@@ -296,67 +296,6 @@ $.fn.getCursorPosition = function() {
     return [pos, posEnd];
 };
 
-function typeaheadWithEventsHandling(typeaheadobj, hiddeneleid)
-{
-	  typeaheadobj.on('typeahead:selected', function(event, data){
-		//setting hidden value
-		$(hiddeneleid).val(data.value);    
-	    }).on('keydown', this, function (event) {
-	    	var e = event;
-	    	
-	    	var position = $(this).getCursorPosition();
-	        var deleted = '';
-	        var val = $(this).val();
-	        if (e.which == 8) {
-	            if (position[0] == position[1]) {
-	                if (position[0] == 0)
-	                    deleted = '';
-	                else
-	                    deleted = val.substr(position[0] - 1, 1);
-	            }
-	            else {
-	                deleted = val.substring(position[0], position[1]);
-	            }
-	        }
-	        else if (e.which == 46) {
-	            var val = $(this).val();
-	            if (position[0] == position[1]) {
-	                
-	                if (position[0] === val.length)
-	                    deleted = '';
-	                else
-	                    deleted = val.substr(position[0], 1);
-	            }
-	            else {
-	                deleted = val.substring(position[0], position[1]);
-	            }
-	        }
-	        
-	        if(deleted){ 
-	        	$(hiddeneleid).val(''); 
-        	}
-
-        }).on('keypress', this, function (event) {
-        	//getting charcode by independent browser
-        	var evt = (evt) ? evt : event;
-        	var charCode = (evt.which) ? evt.which : 
-                ((evt.charCode) ? evt.charCode : 
-                  ((evt.keyCode) ? evt.keyCode : 0));
-        	//only characters keys condition
-	    	if((charCode >= 32 && charCode <= 127)){
-	    		//clearing input hidden value on keyup
-	    	    $(hiddeneleid).val('');
-	    	    $(dependentfield).empty();
-	    	}
-        }).on('focusout', this, function (event) { 
-    	    //focus out clear textbox, when no values selected from suggestion list
-    	    if(!$(hiddeneleid).val())
-    	    {	
-    	    	$(this).typeahead('val', '');
-    	    }
-       });
-}
-
 function typeaheadWithEventsHandling(typeaheadobj, hiddeneleid, dependentfield)
 {
 	  typeaheadobj.on('typeahead:selected', function(event, data){
@@ -415,12 +354,15 @@ function typeaheadWithEventsHandling(typeaheadobj, hiddeneleid, dependentfield)
     	    if(!$(hiddeneleid).val())
     	    {	
     	    	$(this).typeahead('val', '');
-    	    	cleardependentfield(dependentfield);
+        		cleardependentfield(dependentfield);
     	    }
        });
 }
 
 function cleardependentfield(dependentfield){
+	if(!dependentfield){
+		return;
+	}
 	console.log($(dependentfield).prop("type"));
 	if($(dependentfield).prop("type") == 'select-one' || $(dependentfield).prop("type") == 'select-multiple'){
 		$(dependentfield).empty();

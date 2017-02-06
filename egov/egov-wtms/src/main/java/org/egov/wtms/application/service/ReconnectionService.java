@@ -42,6 +42,7 @@ package org.egov.wtms.application.service;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,7 +71,7 @@ public class ReconnectionService {
      */
     @Transactional
     public WaterConnectionDetails updateReConnection(final WaterConnectionDetails waterConnectionDetails,
-            final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final Long approvalPosition, final String approvalComent,  String additionalRule,
             final String workFlowAction, final String sourceChannel) {
 
         waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, "",
@@ -80,6 +81,8 @@ public class ReconnectionService {
 
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                 .getInitialisedWorkFlowBean();
+        additionalRule=WaterTaxConstants.RECONNECTIONCONNECTION;
+
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedwaterConnectionDetails,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
         waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails, sourceChannel);

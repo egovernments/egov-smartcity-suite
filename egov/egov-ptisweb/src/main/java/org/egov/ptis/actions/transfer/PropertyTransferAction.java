@@ -107,7 +107,6 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.EisCommonService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -214,9 +213,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
-
-    @Autowired
-    private EisCommonService eisCommonService;
 
     // Model and View data
     private Long mutationId;
@@ -421,9 +417,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @SkipValidation
     @Action(value = "/reject")
     public String reject() {
-        if ((propertyMutation.getState().getValue().equals("Rejected")
-                || propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
-                && propertyMutation.getReceiptNum() != null && !receiptCanceled) {
+        if (isRejectionNotAllowed()) {
             addActionError(getText("error.mutation.reject.notallowed"));
             if (propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
                 return VIEW;
@@ -434,32 +428,20 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         Assignment wfInitiator = null;
         String loggedInUserDesignation = "";
         List<Assignment> loggedInUserAssign;
-        User wfInitiatorUser = null;
         final User user = transferOwnerService.getLoggedInUser();
         if (propertyMutation.getState() != null) {
             loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
                     propertyMutation.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
             loggedInUserDesignation = !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName() : null;
         }
-        if (REVENUE_OFFICER_DESGN.equalsIgnoreCase(loggedInUserDesignation)
-                || ASSISTANT_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation) ||
-                ADDITIONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
-                || DEPUTY_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation) ||
-                COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation) ||
-                ZONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)) {
+        if (isRoOrCommissioner(loggedInUserDesignation)) {
             final Assignment assignmentOnreject = propertyService.getUserOnRejection(propertyMutation);
             wfInitiator = assignmentOnreject;
         } else if (BILL_COLLECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation)
                 || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation))
             wfInitiator = transferOwnerService.getWorkflowInitiator(propertyMutation);
-        if (wfInitiator != null)
-            wfInitiatorUser = eisCommonService.getUserForPosition(wfInitiator.getPosition().getId(), new Date());
-        if (wfInitiatorUser != null)
-            initiatorIsActive = wfInitiatorUser.isActive();
-        else if (JUNIOR_ASSISTANT.equals(loggedInUserDesignation) || SENIOR_ASSISTANT.equals(loggedInUserDesignation))
-            initiatorIsActive = true;
 
-        if (initiatorIsActive) {
+        if (wfInitiator != null) {
             transitionWorkFlow(propertyMutation);
             transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
             buildSMS(propertyMutation);
@@ -477,9 +459,43 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             } else
                 setAckMessage("Transfer of ownership data rejected successfuly and forwarded to : ");
             setAssessmentNoMessage(" with assessment number : ");
-        } else if (wfInitiatorUser != null)
-            setAckMessage("Can not reject the application as ".concat(wfInitiatorUser.getUsername()).concat(" is not active"));
+        } else
+            setAckMessage("Intiator is not active so can not do rejection with the assessmnet number : ");
         return ACK;
+    }
+
+    private boolean isRejectionNotAllowed() {
+        return ("Rejected".equals(propertyMutation.getState().getValue())
+                || propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
+                && propertyMutation.getReceiptNum() != null && !receiptCanceled;
+    }
+
+    private boolean isRoOrCommissioner(final String loggedInUserDesignation) {
+        boolean isany;
+        if (!REVENUE_OFFICER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
+            isany = isCommissioner(loggedInUserDesignation);
+        else
+            isany = true;
+        return isany;
+    }
+
+    private boolean isCommissioner(final String loggedInUserDesignation) {
+        boolean isanyone;
+        if (!ASSISTANT_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
+                || !ADDITIONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
+            isanyone = isDeputyOrAbove(loggedInUserDesignation);
+        else
+            isanyone = true;
+        return isanyone;
+    }
+
+    private boolean isDeputyOrAbove(final String loggedInUserDesignation) {
+        boolean isanyone = false;
+        if (DEPUTY_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
+                || COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation)
+                || ZONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
+            isanyone = true;
+        return isanyone;
     }
 
     @ValidationErrorPage(value = EDIT)

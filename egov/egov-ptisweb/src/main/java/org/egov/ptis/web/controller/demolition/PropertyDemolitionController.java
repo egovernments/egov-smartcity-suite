@@ -39,9 +39,30 @@
  */
 package org.egov.ptis.web.controller.demolition;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
+import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.commons.Installment;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -51,6 +72,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.demolition.PropertyDemolitionService;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -63,24 +85,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Map;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
-import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
-import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
 
 @Controller
 @RequestMapping(value = "/property/demolition/{assessmentNo}")
@@ -101,6 +105,13 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
 
     @Autowired
     private PropertyDemolitionService propertyDemolitionService;
+    
+    @Autowired
+    private transient PropertyService propService;
+    
+    @Autowired
+    private transient SecurityUtils securityUtils;
+    
     BasicProperty basicProperty;
     PropertyImpl propertyImpl = new PropertyImpl();
     PropertyImpl oldProperty;
@@ -156,6 +167,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             model.addAttribute("taxDuesErrorMsg", "Please clear property tax due for property demolition ");
             return TARGET_TAX_DUES;
         }
+        model.addAttribute("isEmployee", propService.isEmployee(securityUtils.getCurrentUser()));
         propertyDemolitionService.addModelAttributes(model, basicProperty);
         model.addAttribute("stateType", propertyImpl.getClass().getSimpleName());
         prepareWorkflow(model, propertyImpl, new WorkflowContainer());
@@ -173,6 +185,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
         if (errors.hasErrors()) {
             prepareWorkflow(model, (PropertyImpl) property, new WorkflowContainer());
             model.addAttribute("stateType", property.getClass().getSimpleName());
+            model.addAttribute("isEmployee", propService.isEmployee(securityUtils.getCurrentUser()));
             propertyDemolitionService.addModelAttributes(model, basicProperty);
             return DEMOLITION_FORM;
         } else {
@@ -190,6 +203,12 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
 
             propertyDemolitionService.saveProperty(oldProperty, property, status, approvalComent, workFlowAction,
                     approvalPosition, DEMOLITION);
+            
+            if(!propService.isEmployee(securityUtils.getCurrentUser())) {
+                Assignment assignment =  propertyDemolitionService.getUserAssignment(securityUtils.getCurrentUser(), property);
+                if(assignment != null)
+                    approvalPosition = assignment.getPosition().getId();
+            }
 
             model.addAttribute(
                     "successMessage",
