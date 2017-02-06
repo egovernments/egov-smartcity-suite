@@ -58,7 +58,7 @@
                     <div class="col-xs-3 add-margin">
                         <spring:message code="lbl.licensecategory"/>
                     </div>
-                    <div class="col-sm-3 add-margin view-content">${validity.licenseCategory.name}</div>
+                    <div class="col-sm-3 add-margin view-content"><c:out value="${validity.licenseCategory.name}" default="NA"/></div>
                 </div>
                 <div class="row add-border">
                     <label class="col-sm-3 add-margin"><spring:message code="lbl.basedon.finyear"/></label>

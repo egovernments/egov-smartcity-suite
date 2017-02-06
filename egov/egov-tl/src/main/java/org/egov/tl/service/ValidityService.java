@@ -51,6 +51,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -82,7 +83,7 @@ public class ValidityService {
 
     public List<Validity> search(Long natureOfBusiness, Long licenseCategory) {
         if (natureOfBusiness != null && licenseCategory != null)
-            return validityRepository.findByNatureOfBusinessIdAndLicenseCategoryId(natureOfBusiness, licenseCategory);
+            return Arrays.asList(validityRepository.findByNatureOfBusinessIdAndLicenseCategoryId(natureOfBusiness, licenseCategory));
         else if (natureOfBusiness != null)
             return validityRepository.findByNatureOfBusinessId(natureOfBusiness);
         else if (licenseCategory != null)
@@ -91,23 +92,23 @@ public class ValidityService {
             return validityRepository.findAll();
     }
 
-    public Optional<Validity> getApplicableLicenseValidity(final License license) {
-        List<Validity> validityList = validityRepository.findByNatureOfBusinessIdAndLicenseCategoryId(
-                license.getNatureOfBusiness().getId(), license.getTradeName().getCategory().getId());
-        if (validityList.isEmpty())
-            validityList = validityRepository.findByNatureOfBusinessId(license.getNatureOfBusiness().getId());
-        return validityList.isEmpty() ? Optional.empty() : Optional.ofNullable(validityList.get(0));
+    public Validity getApplicableLicenseValidity(final License license) {
+        return Optional.
+                ofNullable(validityRepository.findByNatureOfBusinessIdAndLicenseCategoryId(
+                        license.getNatureOfBusiness().getId(), license.getCategory().getId())).
+                orElse(validityRepository.findByNatureOfBusinessIdAndLicenseCategoryIsNull(
+                        license.getNatureOfBusiness().getId()));
     }
 
 
     public void applyLicenseValidity(License license) {
-        Optional<Validity> validity = getApplicableLicenseValidity(license);
-        if (!validity.isPresent())
+        Validity validity = getApplicableLicenseValidity(license);
+        if (validity == null)
             throw new ValidationException("TL-001", "License validity not defined.");
         if (license.isLegacy()) {
-            applyValidityToLegacyLicense(license, validity.get());
+            applyValidityToLegacyLicense(license, validity);
         } else {
-            applyValidityToLicense(license, validity.get());
+            applyValidityToLicense(license, validity);
         }
     }
 
