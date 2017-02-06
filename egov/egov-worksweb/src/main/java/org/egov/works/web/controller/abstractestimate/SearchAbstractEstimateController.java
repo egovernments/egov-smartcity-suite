@@ -173,6 +173,7 @@ public class SearchAbstractEstimateController {
         model.addAttribute("technicalsanctionbydesignation", techSanctionBy);
         model.addAttribute("workflowHistory",
                 worksUtils.getHistory(abstractEstimate.getState(), abstractEstimate.getStateHistory()));
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
 
         return "abstractestimate-view";
     }

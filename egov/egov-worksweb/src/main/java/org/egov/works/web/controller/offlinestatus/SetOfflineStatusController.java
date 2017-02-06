@@ -51,6 +51,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.OfflineStatusesForAbstractEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.offlinestatus.service.OfflineStatusService;
@@ -87,6 +88,9 @@ public class SetOfflineStatusController {
 
     @Autowired
     private EstimateService estimateService;
+
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     @RequestMapping(value = "/setstatus-loa/{workOrderId}", method = RequestMethod.GET)
     public String setOffLineStatus(final Model model, @PathVariable final Long workOrderId,
@@ -198,6 +202,7 @@ public class SetOfflineStatusController {
         setDropDownValues(model);
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("offlineStatusSize", offlineStatusSize);
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
 
         return "setabstractestimatestatus-form";
     }

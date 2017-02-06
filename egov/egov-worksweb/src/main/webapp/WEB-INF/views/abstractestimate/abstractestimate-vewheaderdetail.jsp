@@ -64,7 +64,7 @@
 							<c:out value="${abstractEstimate.estimateNumber}"></c:out>
 							</div>
 								
-							<c:if test="${abstractEstimate.lineEstimateDetails != null}">
+							<c:if test="${abstractEstimate.lineEstimateDetails != null && lineEstimateRequired}">
 								<div class="col-md-2 col-xs-6 add-margin">
 									<spring:message code="lbl.lineestimateno" /> : 
 								</div> 

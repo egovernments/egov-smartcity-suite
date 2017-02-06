@@ -74,16 +74,18 @@
 		</div>
 		<div class="panel-body">
 		<div class="form-group">
-			<div class="col-sm-2 add-margin text-right"><spring:message code="lbl.lineestimatenumber"/></div>
-			<div class="col-sm-2 add-margin view-content">
-			<c:if test="${abstractEstimate.lineEstimateDetails != null }" >
-				<a style="cursor: pointer;" onclick="openLineEstimate();">
-				<c:out
-						default="N/A"
-						value="${abstractEstimate.lineEstimateDetails.lineEstimate.lineEstimateNumber}"></c:out></a> <input type="hidden" value="${abstractEstimate.lineEstimateDetails.lineEstimate.id}"
-					name="lineEstimateId" id="lineEstimateId" />
-					</c:if>
-			</div>
+			<c:if test="${lineEstimateRequired }">
+				<div class="col-sm-2 add-margin text-right"><spring:message code="lbl.lineestimatenumber"/></div>
+				<div class="col-sm-2 add-margin view-content">
+				<c:if test="${abstractEstimate.lineEstimateDetails != null }" >
+					<a style="cursor: pointer;" onclick="openLineEstimate();">
+					<c:out
+							default="N/A"
+							value="${abstractEstimate.lineEstimateDetails.lineEstimate.lineEstimateNumber}"></c:out></a> <input type="hidden" value="${abstractEstimate.lineEstimateDetails.lineEstimate.id}"
+						name="lineEstimateId" id="lineEstimateId" />
+						</c:if>
+				</div>
+			</c:if>
 			<div class="col-sm-2 add-margin text-right"><spring:message code="lbl.abstractestimatenumber"/></div>
 			<div class="col-sm-2 add-margin view-content">
 				<a style="cursor: pointer;" onclick="openAbstractEstimate();"><c:out
