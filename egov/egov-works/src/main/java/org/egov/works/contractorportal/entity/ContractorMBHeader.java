@@ -69,6 +69,7 @@ import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.validator.constraints.Length;
 
@@ -160,15 +161,17 @@ public class ContractorMBHeader extends AbstractAuditable {
     }
 
     public BigDecimal getTotalMBAmount() {
-        double amount = 0.0;
+        double amount;
         BigDecimal resultAmount = BigDecimal.ZERO;
         for (final ContractorMBDetails mbd : contractorMBDetails) {
-            if (mbd.getWorkOrderActivity().getActivity().getNonSor() == null)
-                amount = mbd.getWorkOrderActivity().getApprovedRate() * mbd.getQuantity()
-                        * mbd.getWorkOrderActivity().getConversionFactor();
-            else
-                amount = mbd.getWorkOrderActivity().getApprovedRate() * mbd.getQuantity();
-            resultAmount = resultAmount.add(BigDecimal.valueOf(amount));
+            WorkOrderActivity woa = mbd.getWorkOrderActivity();
+            if (woa != null) {
+                if (woa.getActivity().getNonSor() == null)
+                    amount = woa.getApprovedRate() * mbd.getQuantity() * woa.getConversionFactor();
+                else
+                    amount = woa.getApprovedRate() * mbd.getQuantity();
+                resultAmount = resultAmount.add(BigDecimal.valueOf(amount));
+            }
         }
         return resultAmount;
     }

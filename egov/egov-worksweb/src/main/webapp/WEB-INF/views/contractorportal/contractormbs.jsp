@@ -57,13 +57,24 @@
 							<th><spring:message code="lbl.contractor.mb.date" /></th>
 							<th><spring:message code="lbl.contractor.mbamount" /></th>
 						</tr>
-						<c:forEach items="${contractorMBHeaders }" var="mbHeader">
-							<tr>
-								<td><a href="javascript:void(0);" onclick="viewContractorMB(${mbHeader.id })">${mbHeader.mbRefNo }</a></td>
-								<td><fmt:formatDate value="${mbHeader.mbDate }" pattern="dd/MM/yyyy" /></td>
-								<td align="right"><fmt:formatNumber value="${mbHeader.mbAmount }" groupingUsed="false" maxFractionDigits="2" minFractionDigits="2"></fmt:formatNumber></td>
-							</tr>
-						</c:forEach>
+						<c:choose>
+							<c:when test="${empty contractorMBHeaders }">
+								<tr>
+									<td><c:out value="NA" /></td>
+									<td><c:out value="NA" /></td>
+									<td><c:out value="NA" /></td>
+								</tr>
+							</c:when>
+							<c:otherwise>
+								<c:forEach items="${contractorMBHeaders }" var="mbHeader">
+									<tr>
+										<td><a href="javascript:void(0);" onclick="viewContractorMB(${mbHeader.id })">${mbHeader.mbRefNo }</a></td>
+										<td><fmt:formatDate value="${mbHeader.mbDate }" pattern="dd/MM/yyyy" /></td>
+										<td align="right"><fmt:formatNumber value="${mbHeader.mbAmount }" groupingUsed="false" maxFractionDigits="2" minFractionDigits="2"></fmt:formatNumber></td>
+									</tr>
+								</c:forEach>
+							</c:otherwise>
+						</c:choose>
 					</thead>
 					<tbody>
 					</tbody>
