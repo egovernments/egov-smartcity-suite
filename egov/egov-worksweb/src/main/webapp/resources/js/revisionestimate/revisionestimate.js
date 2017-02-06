@@ -80,7 +80,7 @@ $(document).ready(function(){
 		calculateEstimateAmountTotal();
 		calculateVatAmountTotal();
 		total();
-	
+		calculateEstimateValue();
 		calculateLumpSumEstimateAmountTotal();
 		calculateLumpSumVatAmountTotal();
 		lumpSumTotal();
@@ -98,8 +98,10 @@ $(document).ready(function(){
 	});
 	
 	var defaultDepartmentId = $("#defaultDepartmentId").val();
-	if(defaultDepartmentId != "")
+	if(defaultDepartmentId != "") {
 		$("#approvalDepartment").val(defaultDepartmentId);
+		$('#approvalDepartment').trigger('change');
+	}
 	
 });
 
@@ -918,6 +920,7 @@ var sorSearch = new Bloodhound({
 		$('#estimateValue').val(estimateValue);
 		$('#workValue').val(workValue);
 		$('#estimateValueTotal').html(estimateValue);
+		$('#amountRule').val(estimateValue);
 		$('#workValueTotal').html(workValue);
 	}
 	
@@ -1635,9 +1638,7 @@ function validateWorkFlowApprover(name) {
 	var flag = true;
 
 	if (button != null && button == 'Save') {
-		$('#approvalDepartment').removeAttr('required');
-		$('#approvalDesignation').removeAttr('required');
-		$('#approvalPosition').removeAttr('required');
+		removeApprovalMandatoryAttribue();
 		$('#approvalComent').removeAttr('required');
 		
 		flag = validateRevisionEstimate();
@@ -1646,23 +1647,17 @@ function validateWorkFlowApprover(name) {
 		$('#approvalComent').removeAttr('required');
 	}
 	if (button != null && button == 'Submit') {
-		$('#approvalDepartment').attr('required', 'required');
-		$('#approvalDesignation').attr('required', 'required');
-		$('#approvalPosition').attr('required', 'required');
+		addApprovalMandatoryAttribue();
 		$('#approvalComent').removeAttr('required');
 		
 		flag = validateRevisionEstimate();
 	}
 	if (button != null && button == 'Reject') {
-		$('#approvalDepartment').removeAttr('required');
-		$('#approvalDesignation').removeAttr('required');
-		$('#approvalPosition').removeAttr('required');
+		removeApprovalMandatoryAttribue();
 		$('#approvalComent').attr('required', 'required');
 	}
 	if (button != null && button == 'Cancel') {
-		$('#approvalDepartment').removeAttr('required');
-		$('#approvalDesignation').removeAttr('required');
-		$('#approvalPosition').removeAttr('required');
+		removeApprovalMandatoryAttribue();
 		$('#approvalComent').attr('required', 'required');
 		
 		flag = validateRevisionEstimate();
@@ -1682,15 +1677,25 @@ function validateWorkFlowApprover(name) {
 		return false;
 	}
 	if (button != null && button == 'Forward') {
-		$('#approvalDepartment').attr('required', 'required');
-		$('#approvalDesignation').attr('required', 'required');
-		$('#approvalPosition').attr('required', 'required');
+		addApprovalMandatoryAttribue();
+		flag = showHideAppravalDetails('Forward');
+		if(!flag)
+			return false;
 		$('#approvalComent').removeAttr('required');
 
 		flag = validateRevisionEstimate();
 	}
+	
+	if (button != null && button == 'Create And Approve') {
+		removeApprovalMandatoryAttribue();
+		$('#approvalComent').removeAttr('required');
+		flag = showHideAppravalDetails('Create And Approve');
+		if(!flag)
+			return false;
+		flag = validateRevisionEstimate();
+	}
 
-	if(flag) {
+	if($('#revisionEstimate').valid() && flag) {
 		deleteHiddenRows();
 		document.forms[0].submit;
 		return true;
@@ -2199,4 +2204,66 @@ $(document).on('click','.reset-cq',function () {
 function renderPDF() {
 	var revisionEstimateId = $('#revisionEstimateId').val();
 	window.open("/egworks/revisionestimate/revisionagreementPDF/" + revisionEstimateId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
+function showHideAppravalDetails(workFlowAction) {
+	var isValidAction=true;
+	var nonTenderedTotal = $('#nonTenderedTotal').html();
+	var lumpSumTotal = $('#lumpSumTotal').html();
+	var reActivityTotal = $('#reActivityTotal').html();
+	if(nonTenderedTotal == '')
+		nonTenderedTotal = 0.0;
+	if(lumpSumTotal == '')
+		lumpSumTotal = 0.0;
+	if(reActivityTotal == '')
+		activityTotal = 0.0;
+
+	var workValue = parseFloat(parseFloat(nonTenderedTotal) + parseFloat(lumpSumTotal) + parseFloat(reActivityTotal)).toFixed(2);
+	var estimateValue =  parseFloat(workValue).toFixed(2);
+	if(!isNaN(estimateValue)) {
+		$('#amountRule').val(estimateValue);
+	}
+
+	$.ajax({
+		url: "/egworks/revisionestimate/ajax-showhideappravaldetails",     
+		type: "GET",
+		async: false,
+		data: {
+			amountRule : estimateValue,
+			additionalRule : $('#additionalRule').val()
+		},
+		dataType: "json",
+		success: function (response) {
+			if(response) {
+				removeApprovalMandatoryAttribue();
+				if(workFlowAction == 'Forward') {
+					bootbox.alert($('#errorAmountRuleApprove').val());
+					isValidAction = false;
+				} else {
+					isValidAction = true;
+				}
+				
+			} else {
+				addApprovalMandatoryAttribue();
+				if(workFlowAction == 'Create And Approve') {
+					bootbox.alert($('#errorAmountRuleForward').val());
+					isValidAction = false;
+				} else {
+					isValidAction = true;
+				}
+
+			}
+			
+		}, 
+		error: function (response) {
+			console.log("failed");
+		},
+		complete : function(){
+			$('.loader-class').modal('hide');
+		}
+	});
+	if(isValidAction)
+		return true;
+	else
+		return false;
 }

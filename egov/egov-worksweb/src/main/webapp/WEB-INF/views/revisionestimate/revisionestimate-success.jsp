@@ -53,7 +53,6 @@
 			<div class="panel-heading">
 				<div class="panel-title text-center">
 					<c:out value="${message}" /><br />
-					<c:out value="${basMessage}" /><br />
 				</div>
 			</div>
 		</div>

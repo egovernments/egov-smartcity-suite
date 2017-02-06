@@ -93,6 +93,8 @@
 	<input type="hidden" name="removedActivityIds" id="removedActivityIds" value="${removedActivityIds }" class="form-control table-input hidden-input"/>
 	<input type="hidden" id="erroractivitymandatory" value="<spring:message code='error.re.activity.mandatory' />">
 	<input type="hidden" id="errorworkvaluenegative" value="<spring:message code='error.workvalue.negative' />">
+	<input id="errorAmountRuleForward" type="hidden" value="<spring:message code="error.forward.approve" />" />
+    <input id="errorAmountRuleApprove" type="hidden" value="<spring:message code="error.create.approve" />" />
 	<%@ include file="estimateheaderdetail.jsp"%>
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">

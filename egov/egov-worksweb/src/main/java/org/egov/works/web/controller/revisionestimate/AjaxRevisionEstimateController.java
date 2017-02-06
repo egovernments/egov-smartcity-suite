@@ -39,20 +39,27 @@
  */
 package org.egov.works.web.controller.revisionestimate;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
+
 import java.io.IOException;
 import java.io.Writer;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.SearchRevisionEstimate;
 import org.egov.works.revisionestimate.service.RevisionEstimateService;
+import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.adaptor.RevisionEstimateJsonAdaptor;
 import org.egov.works.web.adaptor.SearchActivityJsonAdaptor;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
@@ -73,8 +80,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
 @Controller
 @RequestMapping(value = "/revisionestimate")
 public class AjaxRevisionEstimateController {
@@ -90,6 +95,9 @@ public class AjaxRevisionEstimateController {
 
     @Autowired
     private MessageSource messageSource;
+
+    @Autowired
+    private ScriptService scriptService;
 
     @RequestMapping(value = "/getrevisionestimatesbynumber", method = RequestMethod.GET)
     public @ResponseBody List<String> findAbstractEstimateNumbersForAbstractEstimate(
@@ -231,4 +239,17 @@ public class AjaxRevisionEstimateController {
             throw new ApplicationRuntimeException("error.validate.re");
         }
     }
+
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/ajax-showhideappravaldetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody boolean findWorkFlowMatrix(
+            @RequestParam final BigDecimal amountRule, @RequestParam final String additionalRule) {
+        final Map<String, Object> map = new HashMap<String, Object>();
+
+        map.putAll((Map<String, Object>) scriptService.executeScript(WorksConstants.REVISIONESTIMATE_APPROVALRULES,
+                ScriptService.createContext("estimateValue", amountRule,
+                        "cityGrade", additionalRule)));
+        return (boolean) map.get("createAndApproveFieldsRequired");
+    }
+
 }

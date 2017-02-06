@@ -440,4 +440,6 @@ public class WorksConstants {
     public final static String ACTIVE = "Active";
 
     public static final String MB_APPROVALRULES = "MB-APPROVALRULES";
+
+    public static final String REVISIONESTIMATE_APPROVALRULES = "REVISIONESTIMATE-APPROVALRULES";
 }

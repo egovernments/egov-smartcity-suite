@@ -49,7 +49,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
@@ -115,6 +117,9 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
     @Autowired
     private MBHeaderService mbHeaderService;
 
+    @Autowired
+    private CityService cityService;
+
     @ModelAttribute("revisionEstimate")
     public RevisionAbstractEstimate getRevisionEstimate(@PathVariable final String revisionEstimateId) {
         final RevisionAbstractEstimate revisionEstimate = revisionEstimateService
@@ -140,6 +145,10 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         workflowContainer.setAmountRule(revisionEstimate.getEstimateValue());
         workflowContainer.setPendingActions(revisionEstimate.getCurrentState().getNextAction());
+        workflowContainer.setAdditionalRule(
+                (String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+        model.addAttribute(WorksConstants.ADDITIONAL_RULE,
+                cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
         prepareWorkflow(model, revisionEstimate, workflowContainer);
         if (EstimateStatus.NEW.toString().equals(revisionEstimate.getEgwStatus().getCode())) {
             List<String> validActions = Collections.emptyList();
@@ -199,10 +208,11 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
 
         String mode = "";
         String workFlowAction = "";
-        RevisionAbstractEstimate updatedRevisionEstimate = null;
+        RevisionAbstractEstimate updatedRevisionEstimate = new RevisionAbstractEstimate();
+        String additionalRule = "";
 
-        if (request.getParameter("mode") != null)
-            mode = request.getParameter("mode");
+        if (request.getParameter(WorksConstants.MODE) != null)
+            mode = request.getParameter(WorksConstants.MODE);
 
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
@@ -215,6 +225,9 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
 
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+
+        if (request.getParameter(WorksConstants.ADDITIONAL_RULE) != null)
+            additionalRule = request.getParameter(WorksConstants.ADDITIONAL_RULE);
 
         // For Get Configured ApprovalPosition from workflow history
         if (approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
@@ -252,6 +265,11 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
                 }
             }
             final WorkflowContainer workflowContainer = new WorkflowContainer();
+            workflowContainer.setAdditionalRule(
+                    (String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+            model.addAttribute(WorksConstants.ADDITIONAL_RULE,
+                    cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+            workflowContainer.setAmountRule(revisionEstimate.getEstimateValue());
             prepareWorkflow(model, revisionEstimate, workflowContainer);
             List<String> validActions = Collections.emptyList();
             validActions = customizedWorkFlowService.getNextValidActions(revisionEstimate.getStateType(),
@@ -272,7 +290,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
             try {
                 if (null != workFlowAction)
                     updatedRevisionEstimate = revisionEstimateService.updateRevisionEstimate(revisionEstimate, approvalPosition,
-                            approvalComment, null, workFlowAction, removedActivityIds, workOrderEstimate);
+                            approvalComment, additionalRule, workFlowAction, removedActivityIds, workOrderEstimate);
             } catch (final ValidationException e) {
                 final String errorMessage = messageSource.getMessage("error.budgetappropriation.insufficient.amount",
                         new String[] {}, null);

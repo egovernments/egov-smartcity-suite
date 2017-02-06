@@ -112,3 +112,15 @@ function callAlertForDesignation() {
 		return false;
 	}
 }
+
+function removeApprovalMandatoryAttribue() {
+	$('#approvalDepartment').removeAttr('required');
+	$('#approvalDesignation').removeAttr('required');
+	$('#approvalPosition').removeAttr('required');
+}
+
+function addApprovalMandatoryAttribue() {
+	$('#approvalDepartment').attr('required', 'required');
+	$('#approvalDesignation').attr('required', 'required');
+	$('#approvalPosition').attr('required', 'required');
+}

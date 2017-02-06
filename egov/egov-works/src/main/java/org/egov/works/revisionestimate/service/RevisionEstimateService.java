@@ -64,6 +64,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.component.Money;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationException;
@@ -197,6 +198,9 @@ public class RevisionEstimateService {
     private BudgetControlTypeService budgetControlTypeService;
 
     @Autowired
+    private ScriptService scriptService;
+
+    @Autowired
     public RevisionEstimateService(final RevisionEstimateRepository revisionEstimateRepository) {
         this.revisionEstimateRepository = revisionEstimateRepository;
     }
@@ -260,15 +264,6 @@ public class RevisionEstimateService {
         return revisionEstimate;
     }
 
-    private void releaseBudgetOnReject(final RevisionAbstractEstimate revisionEstimate) {
-
-        final String appropriationNumber = lineEstimateAppropriationService
-                .generateBudgetAppropriationNumber(revisionEstimate.getParent().getLineEstimateDetails());
-        lineEstimateService.releaseBudgetOnReject(revisionEstimate.getParent().getLineEstimateDetails(),
-                revisionEstimate.getEstimateValue().doubleValue(),
-                appropriationNumber);
-    }
-
     private void doBudgetoryAppropriation(final String workFlowAction, final RevisionAbstractEstimate revisionEstimate) {
         final List<Long> budgetheadid = new ArrayList<Long>();
         budgetheadid.add(revisionEstimate.getParent().getLineEstimateDetails().getLineEstimate().getBudgetHead().getId());
@@ -313,16 +308,11 @@ public class RevisionEstimateService {
             activities = removeDeletedActivities(activities, removedActivityIds);
             revisionEstimate.setActivities(activities);
         }
-        if (RevisionEstimateStatus.TECH_SANCTIONED.toString().equals(revisionEstimate.getEgwStatus().getCode())
-                && !WorksConstants.REJECT_ACTION.equals(workFlowAction))
-            if (!BudgetControlType.BudgetCheckOption.NONE.toString()
-                    .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
-                doBudgetoryAppropriation(workFlowAction, revisionEstimate);
-        if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction) &&
-                RevisionEstimateStatus.TECH_SANCTIONED.toString().equals(revisionEstimate.getEgwStatus().getCode()))
-            if (!BudgetControlType.BudgetCheckOption.NONE.toString()
-                    .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
-                releaseBudgetOnReject(revisionEstimate);
+        if ((WorksConstants.APPROVE_ACTION.toString().equalsIgnoreCase(workFlowAction)
+                || WorksConstants.CREATE_AND_APPROVE.toString().equalsIgnoreCase(workFlowAction))
+                && !BudgetControlType.BudgetCheckOption.NONE.toString()
+                        .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
+            doBudgetoryAppropriation(workFlowAction, revisionEstimate);
         revisionEstimate
                 .setApprovedBy(entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
         revisionEstimate.setApprovedDate(new Date());
@@ -333,7 +323,8 @@ public class RevisionEstimateService {
         createRevisionEstimateWorkflowTransition(updateRevisionEstimate, approvalPosition, approvalComent, additionalRule,
                 workFlowAction);
 
-        if (WorksConstants.APPROVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+        if (WorksConstants.APPROVE_ACTION.toString().equalsIgnoreCase(workFlowAction)
+                || WorksConstants.CREATE_AND_APPROVE.toString().equalsIgnoreCase(workFlowAction)) {
             RevisionWorkOrder revisionWorkOrder = new RevisionWorkOrder();
             revisionWorkOrder = createRevisionWorkOrder(updateRevisionEstimate, revisionWorkOrder, workOrderEstimate);
             revisionWorkOrderService.create(revisionWorkOrder);
@@ -515,7 +506,8 @@ public class RevisionEstimateService {
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(pos).withNextAction("")
                         .withNatureOfTask(WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE);
-            } else if (WorksConstants.APPROVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+            } else if (WorksConstants.APPROVE_ACTION.toString().equalsIgnoreCase(workFlowAction)
+                    || WorksConstants.CREATE_AND_APPROVE.equalsIgnoreCase(workFlowAction)) {
                 wfmatrix = revisionAbstractEstimateWorkflowService.getWfMatrix(revisionEstimate.getStateType(), null,
                         revisionEstimate.getEstimateValue(),
                         additionalRule, revisionEstimate.getCurrentState().getValue(),
@@ -524,8 +516,6 @@ public class RevisionEstimateService {
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE);
-                revisionEstimate.transition(true).end().withSenderName(user.getName()).withComments(approvalComent)
-                        .withDateInfo(currentDate.toDate());
             } else {
                 wfmatrix = revisionAbstractEstimateWorkflowService.getWfMatrix(revisionEstimate.getStateType(), null,
                         revisionEstimate.getEstimateValue(),
@@ -855,63 +845,29 @@ public class RevisionEstimateService {
 
     public void revisionEstimateStatusChange(final RevisionAbstractEstimate revisionEstimate,
             final String workFlowAction) {
-        if (revisionEstimate != null && revisionEstimate.getEgwStatus() != null
-                && revisionEstimate.getEgwStatus().getCode() != null)
-            if (WorksConstants.SAVE_ACTION.equals(workFlowAction))
-                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
-                        WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.NEW.toString()));
-            else if (WorksConstants.CANCEL_ACTION.equals(workFlowAction))
-                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
-                        WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.CANCELLED.toString()));
-            else if (RevisionEstimateStatus.NEW.toString().equals(revisionEstimate.getEgwStatus().getCode()))
-                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
-                        WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.CREATED.toString()));
-            else if (WorksConstants.APPROVE_ACTION.equals(workFlowAction) &&
-                    RevisionEstimateStatus.BUDGET_SANCTIONED.toString().equals(revisionEstimate.getEgwStatus().getCode()))
-                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
-                        WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.APPROVED.toString()));
-            else if (WorksConstants.REJECT_ACTION.equals(workFlowAction))
-                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
-                        WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.REJECTED.toString()));
-            else if (RevisionEstimateStatus.REJECTED.toString().equals(revisionEstimate.getEgwStatus().getCode())
-                    && WorksConstants.CANCEL_ACTION.equals(workFlowAction))
-                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
-                        WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.CANCELLED.toString()));
-            else if (RevisionEstimateStatus.REJECTED.toString().equals(revisionEstimate.getEgwStatus().getCode())
-                    && WorksConstants.FORWARD_ACTION.equals(workFlowAction))
-                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
-                        WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.RESUBMITTED.toString()));
-            else if (RevisionEstimateStatus.CREATED.toString().equals(revisionEstimate.getEgwStatus().getCode())
-                    && !revisionEstimate.getState().getNextAction()
-                            .equals(WorksConstants.REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION)
-                    && WorksConstants.SUBMIT_ACTION.equals(workFlowAction))
-                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
-                        WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.CHECKED.toString()));
-            else if (RevisionEstimateStatus.RESUBMITTED.toString().equals(revisionEstimate.getEgwStatus().getCode())
-                    && !revisionEstimate.getState().getNextAction()
-                            .equals(WorksConstants.REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION))
-                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
-                        WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.CHECKED.toString()));
-            else if (RevisionEstimateStatus.CHECKED.toString().equals(revisionEstimate.getEgwStatus().getCode())
-                    && !WorksConstants.REJECT_ACTION.equals(workFlowAction)
-                    && revisionEstimate.getState().getNextAction()
-                            .equals(WorksConstants.REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION)
-                    || revisionEstimate.getEgwStatus().getCode().equals(RevisionEstimateStatus.CREATED.toString())
-                            && !WorksConstants.REJECT_ACTION.equals(workFlowAction)
-                            && revisionEstimate.getState().getNextAction()
-                                    .equals(WorksConstants.REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION)
-                    || revisionEstimate.getEgwStatus().getCode().equals(RevisionEstimateStatus.RESUBMITTED.toString())
-                            && !WorksConstants.REJECT_ACTION.equals(workFlowAction) && revisionEstimate.getState()
-                                    .getNextAction()
-                                    .equals(WorksConstants.REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION))
-                revisionEstimate
-                        .setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
-                                RevisionEstimateStatus.TECH_SANCTIONED.toString()));
-            else if (revisionEstimate.getEgwStatus().getCode().equals(RevisionEstimateStatus.TECH_SANCTIONED.toString())
-                    && !WorksConstants.REJECT_ACTION.equals(workFlowAction))
-                revisionEstimate
-                        .setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
-                                RevisionEstimateStatus.BUDGET_SANCTIONED.toString()));
+        if (WorksConstants.SAVE_ACTION.equals(workFlowAction))
+            revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
+                    WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.NEW.toString()));
+        else if (RevisionEstimateStatus.NEW.toString().equals(revisionEstimate.getEgwStatus().getCode())
+                && WorksConstants.FORWARD_ACTION.equals(workFlowAction))
+            revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
+                    WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.CREATED.toString()));
+        else if (WorksConstants.APPROVE_ACTION.equals(workFlowAction) || WorksConstants.CREATE_AND_APPROVE.equals(workFlowAction))
+            revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
+                    WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.APPROVED.toString()));
+        else if (WorksConstants.REJECT_ACTION.equals(workFlowAction))
+            revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
+                    WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.REJECTED.toString()));
+        else if (WorksConstants.CANCEL_ACTION.equals(workFlowAction))
+            revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
+                    WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.CANCELLED.toString()));
+        else if (RevisionEstimateStatus.REJECTED.toString().equals(revisionEstimate.getEgwStatus().getCode())
+                && WorksConstants.FORWARD_ACTION.equals(workFlowAction))
+            revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
+                    WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.RESUBMITTED.toString()));
+        else if (WorksConstants.SUBMIT_ACTION.equals(workFlowAction))
+            revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
+                    WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.CHECKED.toString()));
 
     }
 
@@ -1424,4 +1380,21 @@ public class RevisionEstimateService {
                 bindErrors.reject("error.rates.zero", "error.rates.zero");
         }
     }
+
+    @SuppressWarnings("unchecked")
+    public void validateWorkflowActionButton(final RevisionAbstractEstimate revisionAbstractEstimate,
+            final BindingResult bindErrors,
+            final String additionalRule, final String workFlowAction) {
+        final Map<String, Object> map = new HashMap<String, Object>();
+
+        map.putAll((Map<String, Object>) scriptService.executeScript(WorksConstants.REVISIONESTIMATE_APPROVALRULES,
+                ScriptService.createContext("estimateValue", revisionAbstractEstimate.getEstimateValue(),
+                        "cityGrade", additionalRule)));
+        final boolean validateWorkflowButton = (boolean) map.get("createAndApproveFieldsRequired");
+        if (validateWorkflowButton && WorksConstants.FORWARD_ACTION.toString().equalsIgnoreCase(workFlowAction))
+            bindErrors.reject("error.create.approve", "error.create.approve");
+        else if (!validateWorkflowButton && WorksConstants.CREATE_AND_APPROVE.toString().equalsIgnoreCase(workFlowAction))
+            bindErrors.reject("error.forward.approve", "error.forward.approve");
+    }
+
 }
