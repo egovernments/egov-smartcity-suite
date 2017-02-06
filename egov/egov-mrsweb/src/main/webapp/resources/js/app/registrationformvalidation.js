@@ -81,7 +81,7 @@ $( "#select-venue" ).change(function() {
 
 
 $('#txt-dateOfMarriage').datepicker()
-    .on('changeDate', function(e) {
+    .blur('changeDate', function(e) {
     	
     	var str=$('#txt-dateOfMarriage').val().toString(); 
     	
