@@ -109,6 +109,8 @@ public class LegalCaseService {
 
     @Transactional
     public LegalCase persist(LegalCase legalcase, final MultipartFile[] files) throws IOException {
+        if(null != legalcase.getOfficerIncharge() && legalcase.getOfficerIncharge().getId() ==null)
+            legalcase.setOfficerIncharge(null);
         legalcase.setCaseNumber(
                 legalcase.getCaseNumber() + (legalcase.getWpYear() != null ? "/" + legalcase.getWpYear() : ""));
         legalcase.setStatus(legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,

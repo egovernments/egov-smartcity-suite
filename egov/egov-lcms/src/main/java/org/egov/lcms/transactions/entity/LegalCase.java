@@ -190,7 +190,7 @@ public class LegalCase extends AbstractAuditable {
     @Audited
     private String stampNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "officerincharge")
     private Position officerIncharge;
 

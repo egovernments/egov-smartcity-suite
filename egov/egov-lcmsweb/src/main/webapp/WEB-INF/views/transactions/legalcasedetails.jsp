@@ -203,18 +203,16 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.officerincharge" />:</label>
 	<div class="col-sm-3 add-margin">
-	<form:input  path="officerIncharge.name" id="positionEmpName" type="text"  name="officerIncharge.name"
+	<form:input  path="officerIncharge.name"  id="positionName" type="text"  value="" 
 					class="form-control typeahead " autocomplete="off" 
-					 placeholder=""/> 
-    <form:hidden path="officerIncharge" name ="officerIncharge.id"
-				id="positionEmpId" value="" /> 
-	  <form:errors path="officerIncharge" cssClass="add-margin error-msg" />
-	  			
+					 placeholder=""/> 					 
+	<form:hidden path="officerIncharge" id='positionId'/>																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																													
+	 <form:errors path="officerIncharge" cssClass="add-margin error-msg" /> 
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.noticedate" /><span class="mandatory">:</span></label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="noticeDate" class="form-control datepicker"
+		<form:input path="noticeDate" class="form-control datepicker"																																																																						
 			title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
 			data-date-end-date="-1d" id="noticeDate"
 			data-inputmask="'mask': 'd/m/y'" />
