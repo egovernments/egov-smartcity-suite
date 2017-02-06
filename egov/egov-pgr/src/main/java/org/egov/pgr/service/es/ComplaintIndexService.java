@@ -105,6 +105,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class ComplaintIndexService {
 
+    private static final String INITIAL_FUNCTIONARY_MOBILE_NUMBER = "initialFunctionaryMobileNumber";
+
     private static final String DOMAIN_URL = "domainURL";
 
     private static final String ULB_NAME = "ulbName";
@@ -727,9 +729,9 @@ public class ComplaintIndexService {
                         responseDetail.setUlbName(hit[0].field("cityName").getValue());
                         responseDetail.setDistrictName(hit[0].field("cityDistrictName").getValue());
                         responseDetail.setDepartmentName(hit[0].field("departmentName").getValue());
-                        if (hit[0].field("initialFunctionaryMobileNumber") == null) {
+                        if (hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER) == null) {
                         } else
-                            hit[0].field("initialFunctionaryMobileNumber").getValue();
+                            hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).getValue();
                         satisfactionAverage = bucket.getAggregations().get("excludeZero");
                         final Avg groupByFieldAverageSatisfaction = satisfactionAverage.getBuckets().get(0).getAggregations()
                                 .get("groupByFieldSatisfactionAverage");
@@ -991,10 +993,10 @@ public class ComplaintIndexService {
                     responseDetail.setDistrictName(hit[0].field("cityDistrictName").getValue());
                     responseDetail.setDepartmentName(hit[0].field("departmentName").getValue());
                     String initialFunctionaryNumber;
-                    if (hit[0].field("initialFunctionaryMobileNumber") == null)
+                    if (hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER) == null)
                         initialFunctionaryNumber = "N/A";
                     else
-                        initialFunctionaryNumber = hit[0].field("initialFunctionaryMobileNumber").getValue();
+                        initialFunctionaryNumber = hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).getValue();
                     responseDetail.setFunctionaryMobileNumber(initialFunctionaryNumber);
 
                     final Terms openAndClosedTerms = functionaryBucket.getAggregations().get("closedComplaintCount");
@@ -1227,6 +1229,15 @@ public class ComplaintIndexService {
             final List<ComplaintSourceResponse> responseDetailsList, final ComplaintDashBoardRequest complaintDashBoardRequest) {
         for (final Bucket bucket : terms.getBuckets()) {
             final ComplaintSourceResponse complaintSouce = new ComplaintSourceResponse();
+            final TopHits topHits = bucket.getAggregations().get("complaintrecord");
+            final SearchHit[] hit = topHits.getHits().getHits();
+            complaintSouce.setUlbName(hit[0].field("cityName").getValue());
+            complaintSouce.setDistrictName(hit[0].field("cityDistrictName").getValue());
+            complaintSouce.setWardName(hit[0].field("wardName").getValue());
+            complaintSouce.setFunctionaryName(hit[0].field(INITIAL_FUNCTIONARY_NAME).getValue());
+            if (hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER) == null) {
+            } else
+                hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).getValue();
             CityIndex city;
             if (CITY_REGION_NAME.equals(groupByField))
                 complaintSouce.setRegionName(bucket.getKeyAsString());
