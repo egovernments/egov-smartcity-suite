@@ -40,7 +40,8 @@
 $(document).ready(function(){
 	
 	loadPropertyDetails();
-	if($('#noJAORSAMessage').val()!='')
+	
+	if($('#noJAORSAMessage') && $('#noJAORSAMessage').val())
 		bootbox.alert($('#noJAORSAMessage').val());
 
 	var mode =$('#mode').val();
@@ -59,7 +60,6 @@ $(document).ready(function(){
 	
 	$('#cardHolderDiv').hide();
 	$('#bplCardHolderName').removeAttr('required');
-	
 	changecategory();
 	
 	$('#connectionType').change(function(){
