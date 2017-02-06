@@ -204,8 +204,7 @@
 			code="lbl.officerincharge" />:</label>
 	<div class="col-sm-3 add-margin">
 	<form:input  path="officerIncharge.name"  id="positionName" type="text"  value="" 
-					class="form-control typeahead " autocomplete="off" 
-					 placeholder=""/> 					 
+	class="form-control typeahead " autocomplete="off" placeholder=""/> 					 
 	<form:hidden path="officerIncharge" id='positionId'/>																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																													
 	 <form:errors path="officerIncharge" cssClass="add-margin error-msg" /> 
 	</div>
