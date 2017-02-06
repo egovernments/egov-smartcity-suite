@@ -38,9 +38,9 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2017-01-20T14:37:14 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="letterOfAcceptance" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="c1d5c7e8-57e5-4396-98bf-17f9bb000b84">
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-02-06T19:23:22 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="letterOfAcceptance" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="c1d5c7e8-57e5-4396-98bf-17f9bb000b84">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -198,7 +198,7 @@
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToBandHeight" x="89" y="301" width="211" height="20" uuid="4afe7315-d2bc-46c9-a40d-bf62828b4edc"/>
-				<text><![CDATA[1. WIN Code                                        :]]></text>
+				<text><![CDATA[1. WIN Code                                            :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="286" y="322" width="238" height="21" uuid="e7092ed1-f0d2-4ea0-8ef3-1e261731d68d"/>
@@ -212,18 +212,18 @@
 				<reportElement stretchType="RelativeToBandHeight" x="89" y="321" width="210" height="20" uuid="b84838d5-bd7d-4c49-b9cc-ae1d3019c097">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
-				<text><![CDATA[2. Amount of estimate (Rs)                 :]]></text>
+				<text><![CDATA[2. Amount of estimate (Rs)                      :]]></text>
 			</staticText>
 			<staticText>
 				<reportElement stretchType="RelativeToBandHeight" x="88" y="342" width="210" height="20" uuid="fed3e46b-e61f-465c-87e8-64ebc81afa23"/>
-				<text><![CDATA[3. Agreement Amount (Rs)                  :]]></text>
+				<text><![CDATA[3. Agreement Amount (Rs)                       :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="###0.00#">
 				<reportElement stretchType="RelativeToTallestObject" x="182" y="383" width="138" height="21" uuid="269bdd98-a0be-4fe4-aac6-037f5e5e34ca"/>
 				<textFieldExpression><![CDATA[($P{emd}.equals("0.00") || $P{emd}.equals("0"))?"N/A":"Rs. "+$P{emd}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="88" y="382" width="79" height="20" uuid="fe5ee1c0-5f0c-48c4-9e11-b9817cd91415"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="88" y="370" width="79" height="20" uuid="fe5ee1c0-5f0c-48c4-9e11-b9817cd91415"/>
 				<textElement markup="styled">
 					<font isBold="false"/>
 				</textElement>
@@ -231,18 +231,18 @@
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToBandHeight" x="88" y="403" width="210" height="20" uuid="c5cab8ba-c704-4774-9064-6079e99a86d1"/>
-				<text><![CDATA[6. Head of account                              :]]></text>
+				<text><![CDATA[6. Head of account                                   :]]></text>
 			</staticText>
 			<staticText>
 				<reportElement stretchType="RelativeToBandHeight" x="89" y="425" width="211" height="20" uuid="2c574dbe-aac6-404a-a6fb-56ec05525f1a"/>
-				<text><![CDATA[7. Mode of Entrustment                        :]]></text>
+				<text><![CDATA[7. Recommended Mode of Entrustment  :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="287" y="425" width="264" height="20" uuid="54bd8dd1-7a07-4515-95e5-66fdb78f827f"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="287" y="404" width="264" height="20" uuid="54bd8dd1-7a07-4515-95e5-66fdb78f827f"/>
 				<textFieldExpression><![CDATA[$P{modeOfAllotment}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="286" y="403" width="265" height="20" uuid="e8cad337-4112-41e5-bd9d-21139c01b5ed"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="286" y="385" width="265" height="20" uuid="e8cad337-4112-41e5-bd9d-21139c01b5ed"/>
 				<textFieldExpression><![CDATA[$P{headOfAccount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#0.000">
@@ -332,7 +332,7 @@
 			</staticText>
 			<staticText>
 				<reportElement stretchType="RelativeToBandHeight" x="88" y="360" width="210" height="20" uuid="fe0bb09b-1061-4c87-963f-3a38cd7d05c1"/>
-				<text><![CDATA[4. Work value (Rs)                               :]]></text>
+				<text><![CDATA[4. Work value (Rs)                                    :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="#0.00#">
 				<reportElement x="287" y="361" width="239" height="21" uuid="07d583e1-973d-4597-982a-c1e2472e8ca6"/>
