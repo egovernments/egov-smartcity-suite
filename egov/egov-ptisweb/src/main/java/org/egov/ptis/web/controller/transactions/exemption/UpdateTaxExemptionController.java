@@ -40,11 +40,15 @@
 
 package org.egov.ptis.web.controller.transactions.exemption;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_WORKFLOW_PROPERTYIMPL_BYID;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
@@ -57,8 +61,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJ
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 
-import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,8 +73,8 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.Property;
@@ -98,6 +103,8 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     protected static final String TAX_EXEMPTION_VIEW = "taxExemption-view";
     public static final String EDIT = "edit";
     public static final String VIEW = "view";
+    private static final String SUCCESSMESSAGE = "successMessage";
+    private static final String TAXEXEMPTIONREASON = "taxExemptedReason";
 
     private final TaxExemptionService taxExemptionService;
 
@@ -173,80 +180,148 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     @RequestMapping(method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final Property property, final BindingResult errors,
             final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model,
-            @RequestParam String workFlowAction) {
+            @RequestParam final String workFlowAction) {
 
         final Character status = STATUS_WORKFLOW;
         Long approvalPosition = 0l;
         String approvalComent = "";
-        String taxExemptedReason = "";
-
+        String workFlowAct = workFlowAction;
         final Property oldProperty = property.getBasicProperty().getActiveProperty();
 
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
-            workFlowAction = request.getParameter("workFlowAction");
+            workFlowAct = request.getParameter("workFlowAction");
         if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
             approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
-        final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
-        if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
+
+        if (workFlowAct.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
             property.setStatus(STATUS_ISACTIVE);
             oldProperty.setStatus(STATUS_ISHISTORY);
         }
-        if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)
-                || WFLOW_ACTION_STEP_PREVIEW.equalsIgnoreCase(workFlowAction)
-                || WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
+        if (workFlowAct.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)
+                || WFLOW_ACTION_STEP_PREVIEW.equalsIgnoreCase(workFlowAct)
+                || WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAct))
             if (property.getTaxExemptedReason() == null)
                 return "redirect:/notice/propertyTaxNotice-generateNotice.action?basicPropId="
                         + property.getBasicProperty().getId() + "&noticeType="
                         + PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE + "&noticeMode="
-                        + PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION + "&actionType=" + workFlowAction;
+                        + PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION + "&actionType=" + workFlowAct;
             else
                 return "redirect:/notice/propertyTaxNotice-generateExemptionNotice.action?basicPropId="
                         + property.getBasicProperty().getId() + "&noticeType=" + NOTICE_TYPE_EXEMPTION + "&noticeMode="
-                        + NOTICE_TYPE_EXEMPTION + "&actionType=" + workFlowAction;
-        else {
-
-            if (request.getParameter("mode").equalsIgnoreCase(VIEW))
-                taxExemptionService.updateProperty(property, approvalComent, workFlowAction, approvalPosition,
-                        propertyByEmployee, EXEMPTION);
-            else {
-                if (request.getParameter("taxExemptedReason") != null)
-                    taxExemptedReason = request.getParameter("taxExemptedReason");
-                taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
-                        approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
-            }
-            String successMessage;
-            Assignment assignment;
-            if (property != null && property.getCreatedBy() != null)
-                assignment = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
-            if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE))
-                successMessage = "Property Exemption approved successfully and forwarded to "
-                        + propertyTaxUtil.getApproverUserName(((PropertyImpl) property).getState().getOwnerPosition().getId())
-                        + " with assessment number "
-                        + property.getBasicProperty().getUpicNo();
-            else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
-                final PropertyImpl propertyImpl = (PropertyImpl) property;
-                final List<StateHistory> history = propertyImpl.getStateHistory();
-                Collections.reverse(history);
-                final String designation = taxExemptionService.getLoggedInUserDesignation(
-                        history.get(0).getOwnerPosition().getId(),
-                        securityUtils.getCurrentUser());
-                assignment = taxExemptionService.getUserAssignmentOnReject(designation, (PropertyImpl) property);
-                if (assignment == null)
-                    assignment = taxExemptionService.getWfInitiator((PropertyImpl) property);
-
-                successMessage = "Property Exemption rejected successfully and forwared to "
-                        + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName())
-                        + " with application number "
-                        + property.getApplicationNo();
-            } else
-                successMessage = "Successfully forwarded to " + propertyTaxUtil.getApproverUserName(approvalPosition)
-                        + " with application number " + property.getApplicationNo();
-
-            model.addAttribute("successMessage", successMessage);
-            return TAX_EXEMPTION_SUCCESS;
-        }
+                        + NOTICE_TYPE_EXEMPTION + "&actionType=" + workFlowAct;
+        else
+            return wfApproveReject(property, request, model, status, approvalPosition, approvalComent,
+                    workFlowAct);
     }
 
+    private String wfApproveReject(final Property property, final HttpServletRequest request, final Model model,
+            final Character status, final Long approvalPosition, final String approvalComent, final String workFlowAct) {
+        final Property oldProperty = property.getBasicProperty().getActiveProperty();
+        final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
+        String taxExemptedReason;
+        if (!workFlowAct.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))
+            if (request.getParameter("mode").equalsIgnoreCase(VIEW))
+                taxExemptionService.updateProperty(property, approvalComent, workFlowAct, approvalPosition,
+                        propertyByEmployee, EXEMPTION);
+            else if (request.getParameter(TAXEXEMPTIONREASON) != null) {
+
+                taxExemptedReason = request.getParameter(TAXEXEMPTIONREASON);
+                taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAct,
+                        approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
+            }
+        String successMessage;
+        if (property.getCreatedBy() != null)
+            assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
+        if (workFlowAct.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE))
+            successMessage = "Property Exemption approved successfully and forwarded to "
+                    + propertyTaxUtil.getApproverUserName(((PropertyImpl) property).getState().getOwnerPosition().getId())
+                    + " with assessment number "
+                    + property.getBasicProperty().getUpicNo();
+        else if (workFlowAct.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))
+            successMessage = wFReject(property, request, status, approvalPosition, approvalComent,
+                    workFlowAct);
+        else
+            successMessage = "Successfully forwarded to " + propertyTaxUtil.getApproverUserName(approvalPosition)
+                    + " with application number " + property.getApplicationNo();
+
+        model.addAttribute(SUCCESSMESSAGE, successMessage);
+        return TAX_EXEMPTION_SUCCESS;
+    }
+
+    private String wFReject(final Property property, final HttpServletRequest request, final Character status,
+            final Long approvalPosition, final String approvalComent, final String workFlowAct) {
+        final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
+        String taxExemptedReason = null;
+        final Property oldProperty = property.getBasicProperty().getActiveProperty();
+        String successMessage = null;
+        Assignment assignment = null;
+        final PropertyImpl propertyImpl = (PropertyImpl) property;
+        boolean isNotToReject = true;
+        final User user = securityUtils.getCurrentUser();
+        String loggedInUserDesignation;
+        loggedInUserDesignation = loggedInUserDesignation(propertyImpl, user);
+        if (loggedInUserDesignation != null && isRoOrCommissioner(loggedInUserDesignation))
+            assignment = taxExemptionService.getUserAssignmentOnReject(loggedInUserDesignation, (PropertyImpl) property);
+        if (loggedInUserDesignation != null && !isRoOrCommissioner(loggedInUserDesignation))
+            assignment = taxExemptionService.getWfInitiator((PropertyImpl) property);
+        if (assignment != null && assignment.getId() != null) {
+            if (request.getParameter("mode").equalsIgnoreCase(VIEW))
+                taxExemptionService.updateProperty(property, approvalComent, workFlowAct, approvalPosition,
+                        propertyByEmployee, EXEMPTION);
+            else
+                taxExemptedReason = request.getParameter(TAXEXEMPTIONREASON);
+            taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAct,
+                    approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
+
+            successMessage = "Property Exemption rejected successfully and forwared to "
+                    + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName())
+                    + " with application number "
+                    + property.getApplicationNo();
+            isNotToReject = false;
+        }
+        if (isNotToReject)
+            successMessage = "Intiator is not active so can not do rejection. ";
+        return successMessage;
+    }
+
+    private String loggedInUserDesignation(final PropertyImpl propertyImpl, final User user) {
+        String loggedInUserDesignation = null;
+        List<Assignment> loggedInUserAssign;
+        if (propertyImpl.getState() != null) {
+            loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                    propertyImpl.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
+            loggedInUserDesignation = !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName() : null;
+        }
+        return loggedInUserDesignation;
+    }
+
+    private boolean isRoOrCommissioner(final String loggedInUserDesignation) {
+        boolean isany;
+        if (!REVENUE_OFFICER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
+            isany = isCommissioner(loggedInUserDesignation);
+        else
+            isany = true;
+        return isany;
+    }
+
+    private boolean isCommissioner(final String loggedInUserDesignation) {
+        boolean isanyone;
+        if (!ASSISTANT_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
+                || !ADDITIONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
+            isanyone = isDeputyOrAbove(loggedInUserDesignation);
+        else
+            isanyone = true;
+        return isanyone;
+    }
+
+    private boolean isDeputyOrAbove(final String loggedInUserDesignation) {
+        boolean isanyone = false;
+        if (DEPUTY_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
+                || COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation)
+                || ZONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
+            isanyone = true;
+        return isanyone;
+    }
 }

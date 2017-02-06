@@ -2705,27 +2705,55 @@ public class PropertyService {
 
     public Assignment getWorkflowInitiator(final PropertyImpl property) {
         Assignment wfInitiator;
+        List<Assignment> assignment;
         if (isEmployee(property.getCreatedBy())){
-            if(property.getState() != null  && property.getState().getInitiatorPosition() != null){
-                wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(property
-                        .getCreatedBy(),property.getState().getInitiatorPosition());
-                if(wfInitiator==null)
-                    wfInitiator = assignmentService.getAssignmentsForPosition(property.getState().getInitiatorPosition().getId(), new Date()).get(0);
+            if(isStateNotNull(property)){
+                wfInitiator = getWfInitiatorIfStateNotNull(property);
             }
             else
                 wfInitiator = assignmentService.getPrimaryAssignmentForUser(property
                         .getCreatedBy().getId());
         }
         else if (property.getState().getInitiatorPosition() != null){
-            wfInitiator = assignmentService.getAssignmentsForPosition(property.getState().getInitiatorPosition().getId(), new Date()).get(0);
-            if(wfInitiator==null && !property.getStateHistory().isEmpty())
+            assignment=assignmentService.getAssignmentsForPosition(property.getState().getInitiatorPosition().getId(), new Date());
+            wfInitiator = getActiveAssignment(assignment);
+            if(wfInitiator==null && !property.getStateHistory().isEmpty()){
                 wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
                         .getOwnerPosition().getId());
+            }
         }
         else{
             wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getState().getOwnerPosition()
                     .getId());
         }
+        return wfInitiator;
+    }
+
+    private Assignment getWfInitiatorIfStateNotNull(final PropertyImpl property) {
+        List<Assignment> assignment;
+        Assignment wfInitiator=null;
+        Assignment assgmnt=propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(property
+                .getCreatedBy(),property.getState().getInitiatorPosition());
+            if(assgmnt.getEmployee().isActive())
+           wfInitiator = assgmnt;
+        if(wfInitiator==null){
+          assignment=assignmentService.getAssignmentsForPosition(property.getState().getInitiatorPosition().getId(), new Date());
+          wfInitiator = getActiveAssignment(assignment);
+        }
+        return wfInitiator;
+    }
+
+    private boolean isStateNotNull(final PropertyImpl property) {
+        return property.getState() != null  && property.getState().getInitiatorPosition() != null;
+    }
+
+    private Assignment getActiveAssignment(List<Assignment> assignment) {
+        Assignment wfInitiator=null;
+        for (final Assignment assign : assignment)
+              if (assign.getEmployee().isActive()) {
+                  wfInitiator = assign;
+                  break;
+              }
         return wfInitiator;
     }
 

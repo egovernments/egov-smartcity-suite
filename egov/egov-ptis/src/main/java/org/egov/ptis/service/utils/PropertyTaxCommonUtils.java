@@ -118,31 +118,29 @@ public class PropertyTaxCommonUtils {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
-    
+
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
-    
+
     @Autowired
     private ApplicationContext beanProvider;
 
     @Autowired
     private PositionMasterService positionMasterService;
-    
+
     @Autowired
     private ModuleService moduleService;
-    
+
     @Autowired
     private InstallmentDao installmentDao;
-    
+
     @Autowired
     private AssignmentService assignmentService;
-    
 
     /**
      * Gives the first half of the current financial year
      *
-     * @return Installment - the first half of the current financial year for PT
-     *         module
+     * @return Installment - the first half of the current financial year for PT module
      */
     public Installment getCurrentInstallment() {
         final Query query = entityManager
@@ -152,18 +150,15 @@ public class PropertyTaxCommonUtils {
                                 + " and cast(installment.fromDate as date) >= cast(finYear.startingDate as date) and cast(installment.toDate as date) <= cast(finYear.endingDate as date) order by installment.fromDate asc ");
         query.setString("moduleName", PropertyTaxConstants.PTMODULENAME);
         query.setDate("currDate", new Date());
-        List<Installment> installments = query.list();
+        final List<Installment> installments = query.list();
         return installments.get(0);
     }
 
     /**
-     * Returns AppConfig Value for given key and module.Key needs to exact as in
-     * the Database,otherwise empty string will send
+     * Returns AppConfig Value for given key and module.Key needs to exact as in the Database,otherwise empty string will send
      *
-     * @param key
-     *            - Key value for which AppConfig Value is required
-     * @param moduleName
-     *            - Value for the User Id
+     * @param key - Key value for which AppConfig Value is required
+     * @param moduleName - Value for the User Id
      * @return String.
      */
     public String getAppConfigValue(final String key, final String moduleName) {
@@ -176,22 +171,22 @@ public class PropertyTaxCommonUtils {
         }
         return value;
     }
-    
+
     /**
      * Fetches the tax details for workflow property
      * @param basicProperty
      * @return Map<String, Object>
      */
-    public Map<String, Object> getTaxDetailsForWorkflowProperty(BasicProperty basicProperty) {
+    public Map<String, Object> getTaxDetailsForWorkflowProperty(final BasicProperty basicProperty) {
         Map<String, Map<String, BigDecimal>> demandCollMap = new TreeMap<String, Map<String, BigDecimal>>();
-        Map<String, Object> wfPropTaxDetailsMap = new HashMap<String, Object>();
-        Property property = basicProperty.getWFProperty();
+        final Map<String, Object> wfPropTaxDetailsMap = new HashMap<String, Object>();
+        final Property property = basicProperty.getWFProperty();
         try {
             demandCollMap = propertyTaxUtil.prepareDemandDetForView(property, getCurrentInstallment());
-            if (!demandCollMap.isEmpty()) {
-                for (Entry<String, Map<String, BigDecimal>> entry : demandCollMap.entrySet()) {
-                    String key = entry.getKey();
-                    Map<String, BigDecimal> reasonDmd = entry.getValue();
+            if (!demandCollMap.isEmpty())
+                for (final Entry<String, Map<String, BigDecimal>> entry : demandCollMap.entrySet()) {
+                    final String key = entry.getKey();
+                    final Map<String, BigDecimal> reasonDmd = entry.getValue();
                     if (key.equals(CURRENTYEAR_FIRST_HALF)) {
                         wfPropTaxDetailsMap.put("firstHalf", CURRENTYEAR_FIRST_HALF);
                         wfPropTaxDetailsMap.put("firstHalfGT",
@@ -227,21 +222,22 @@ public class PropertyTaxCommonUtils {
                         wfPropTaxDetailsMap
                                 .put("secondHalfTotal",
                                         reasonDmd.get(CURR_SECONDHALF_DMD_STR) != null
-                                        ? reasonDmd.get(CURR_SECONDHALF_DMD_STR) : BigDecimal.ZERO);
+                                                ? reasonDmd.get(CURR_SECONDHALF_DMD_STR) : BigDecimal.ZERO);
                         wfPropTaxDetailsMap.put("secondHalfTaxDue",
                                 (reasonDmd.get(CURR_SECONDHALF_DMD_STR) != null
-                                ? reasonDmd.get(CURR_SECONDHALF_DMD_STR) : BigDecimal.ZERO)
-                                        .subtract(reasonDmd.get(CURR_SECONDHALF_COLL_STR)));
+                                        ? reasonDmd.get(CURR_SECONDHALF_DMD_STR) : BigDecimal.ZERO)
+                                                .subtract(reasonDmd.get(CURR_SECONDHALF_COLL_STR)));
 
                     } else {
                         wfPropTaxDetailsMap.put("arrears", ARREARS);
-                        wfPropTaxDetailsMap.put("arrearTax", reasonDmd.get(ARR_DMD_STR) != null ? reasonDmd.get(ARR_DMD_STR) : BigDecimal.ZERO);
+                        wfPropTaxDetailsMap.put("arrearTax",
+                                reasonDmd.get(ARR_DMD_STR) != null ? reasonDmd.get(ARR_DMD_STR) : BigDecimal.ZERO);
                         wfPropTaxDetailsMap.put("totalArrDue",
-                                (reasonDmd.get(ARR_DMD_STR) != null ? reasonDmd.get(ARR_DMD_STR) : BigDecimal.ZERO).subtract(reasonDmd.get(ARR_COLL_STR)));
+                                (reasonDmd.get(ARR_DMD_STR) != null ? reasonDmd.get(ARR_DMD_STR) : BigDecimal.ZERO)
+                                        .subtract(reasonDmd.get(ARR_COLL_STR)));
                     }
                 }
-            }
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             LOGGER.error("Exception in getTaxDetailsForWorkflowProperty: ", e);
             throw new ApplicationRuntimeException("Exception in getTaxDetailsForWorkflowProperty : " + e);
         }
@@ -249,7 +245,7 @@ public class PropertyTaxCommonUtils {
     }
 
     public boolean isDigitalSignatureEnabled() {
-        List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
                 APPCONFIG_DIGITAL_SIGNATURE);
         return !appConfigValues.isEmpty() && "Y".equals(appConfigValues.get(0).getValue()) ? true : false;
     }
@@ -259,115 +255,116 @@ public class PropertyTaxCommonUtils {
      * @param startDate
      * @return List of Installment
      */
-    public List<Installment> getAdvanceInstallmentsList(Date startDate){
-    	List<Installment> advanceInstallments = new ArrayList<Installment>();
-    	String query = "select inst from Installment inst where inst.module.name = '" + PTMODULENAME
+    public List<Installment> getAdvanceInstallmentsList(final Date startDate) {
+        List<Installment> advanceInstallments = new ArrayList<Installment>();
+        final String query = "select inst from Installment inst where inst.module.name = '" + PTMODULENAME
                 + "' and inst.fromDate >= :startdate order by inst.fromDate asc ";
-    	advanceInstallments = entityManager.unwrap(Session.class).createQuery(query)
+        advanceInstallments = entityManager.unwrap(Session.class).createQuery(query)
                 .setParameter("startdate", startDate)
                 .setMaxResults(PropertyTaxConstants.MAX_ADVANCES_ALLOWED).list();
-    	return advanceInstallments;
+        return advanceInstallments;
     }
-    
+
     /**
-     * API to make the existing DemandBill inactive 
+     * API to make the existing DemandBill inactive
      * @param assessmentNo
      */
-    public void makeExistingDemandBillInactive(String assessmentNo){
-    	DemandBillService demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
-    	demandBillService.makeDemandBillInactive(assessmentNo);
+    public void makeExistingDemandBillInactive(final String assessmentNo) {
+        final DemandBillService demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
+        demandBillService.makeDemandBillInactive(assessmentNo);
     }
 
     /**
      * Fetches a list of all the designations for the given userId
-     * 
+     *
      * @param userId
      * @return designations for the given userId
      */
     public String getAllDesignationsForUser(final Long userId) {
         List<Position> positions = null;
-        List<String> designationList = new ArrayList<String>();
-        StringBuilder listString = new StringBuilder();
+        final List<String> designationList = new ArrayList<String>();
+        final StringBuilder listString = new StringBuilder();
         if (userId != null && userId.intValue() != 0) {
             positions = positionMasterService.getPositionsForEmployee(userId);
-            if (positions != null){
-                for (Position position : positions)
+            if (positions != null) {
+                for (final Position position : positions)
                     designationList.add(position.getDeptDesig().getDesignation().getName());
 
-                for (String s : designationList)
-                listString.append(s + ", ");
+                for (final String s : designationList)
+                    listString.append(s + ", ");
             }
         }
 
         return listString.toString();
     }
-    
+
     /**
-     * API to check if a receipt is cancelled or not 
+     * API to check if a receipt is cancelled or not
      * @param receiptNumber
      * @return boolean
      */
-    public boolean isReceiptCanceled(String receiptNumber) {
+    public boolean isReceiptCanceled(final String receiptNumber) {
         final javax.persistence.Query qry = entityManager.createNamedQuery(QUERY_RECEIPTS_BY_RECEIPTNUM);
         qry.setParameter(1, receiptNumber);
-        ReceiptHeader receiptHeader = (ReceiptHeader) qry.getSingleResult();
+        final ReceiptHeader receiptHeader = (ReceiptHeader) qry.getSingleResult();
         return receiptHeader.getStatus().getCode().equals(CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED)
                 ? Boolean.TRUE : Boolean.FALSE;
     }
-    
+
     /**
      * API to get the current installment period
-     * 
+     *
      * @return installment
      */
     public Installment getCurrentPeriodInstallment() {
         final Module module = moduleService.getModuleByName(PTMODULENAME);
         return installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
     }
-    
+
     /**
      * API to get user assignment by passing user and position
-     * 
+     *
      * @return assignment
      */
-    public Assignment getUserAssignmentByPassingPositionAndUser(final User user, Position position) {
+    public Assignment getUserAssignmentByPassingPositionAndUser(final User user, final Position position) {
 
         Assignment userAssignment = null;
 
         if (user != null && position != null) {
-            List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date());
-            for (final Assignment assignment : assignmentList) {
-                if (position.getId() == assignment.getPosition().getId()) {
+            final List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date());
+            for (final Assignment assignment : assignmentList)
+                if (position.getId() == assignment.getPosition().getId())
                     userAssignment = assignment;
-                }
-            }
         }
         return userAssignment;
     }
 
     /**
      * API to get workflow initiator assignment in Property Tax.
-     * 
+     *
      * @return assignment
      */
-    public Assignment getWorkflowInitiatorAssignment(Long userId) {
+    public Assignment getWorkflowInitiatorAssignment(final Long userId) {
         Assignment wfInitiatorAssignment = null;
         if (userId != null) {
-            List<Assignment> assignmentList = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(userId);
-            for (final Assignment assignment : assignmentList) {
-                if (assignment.getDesignation().getName().equals(PropertyTaxConstants.JUNIOR_ASSISTANT)
+            final List<Assignment> assignmentList = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(userId);
+            for (final Assignment assignment : assignmentList)
+                if ((assignment.getDesignation().getName().equals(PropertyTaxConstants.JUNIOR_ASSISTANT)
                         || assignment.getDesignation().getName().equals(PropertyTaxConstants.SENIOR_ASSISTANT))
+                        && assignment.getEmployee().isActive()) {
                     wfInitiatorAssignment = assignment;
-            }
+                    break;
+                }
         }
         return wfInitiatorAssignment;
     }
-    
-    public String getCurrentHalfyearTax(HashMap<Installment, TaxCalculationInfo> instTaxMap, PropertyTypeMaster propTypeMstr) {
-        Installment currentInstall = getCurrentPeriodInstallment();
-        TaxCalculationInfo calculationInfo = instTaxMap.get(currentInstall);
-        BigDecimal annualValue = calculationInfo.getTotalNetARV();
-        BigDecimal totalPropertyTax = calculationInfo.getTotalTaxPayable();
+
+    public String getCurrentHalfyearTax(final HashMap<Installment, TaxCalculationInfo> instTaxMap,
+            final PropertyTypeMaster propTypeMstr) {
+        final Installment currentInstall = getCurrentPeriodInstallment();
+        final TaxCalculationInfo calculationInfo = instTaxMap.get(currentInstall);
+        final BigDecimal annualValue = calculationInfo.getTotalNetARV();
+        final BigDecimal totalPropertyTax = calculationInfo.getTotalTaxPayable();
         BigDecimal genTax = BigDecimal.ZERO;
         BigDecimal libCess = BigDecimal.ZERO;
         BigDecimal eduTax = BigDecimal.ZERO;
@@ -375,75 +372,75 @@ public class PropertyTaxCommonUtils {
         BigDecimal vacLandTax = BigDecimal.ZERO;
         BigDecimal sewrageTax = BigDecimal.ZERO;
         BigDecimal serviceCharges = BigDecimal.ZERO;
-        for (UnitTaxCalculationInfo unitTaxCalcInfo : calculationInfo.getUnitTaxCalculationInfos()) {
-            for (MiscellaneousTax miscTax : unitTaxCalcInfo.getMiscellaneousTaxes()) {
-                if (miscTax.getTaxName() == DEMANDRSN_CODE_GENERAL_TAX) {
+        for (final UnitTaxCalculationInfo unitTaxCalcInfo : calculationInfo.getUnitTaxCalculationInfos())
+            for (final MiscellaneousTax miscTax : unitTaxCalcInfo.getMiscellaneousTaxes())
+                if (miscTax.getTaxName() == DEMANDRSN_CODE_GENERAL_TAX)
                     genTax = genTax.add(miscTax.getTotalCalculatedTax());
-                } else if (miscTax.getTaxName() == DEMANDRSN_CODE_UNAUTHORIZED_PENALTY) {
+                else if (miscTax.getTaxName() == DEMANDRSN_CODE_UNAUTHORIZED_PENALTY)
                     unAuthPenalty = unAuthPenalty.add(miscTax.getTotalCalculatedTax());
-                } else if (miscTax.getTaxName() == DEMANDRSN_CODE_EDUCATIONAL_CESS) {
+                else if (miscTax.getTaxName() == DEMANDRSN_CODE_EDUCATIONAL_CESS)
                     eduTax = eduTax.add(miscTax.getTotalCalculatedTax());
-                } else if (miscTax.getTaxName() == DEMANDRSN_CODE_VACANT_TAX) {
+                else if (miscTax.getTaxName() == DEMANDRSN_CODE_VACANT_TAX)
                     vacLandTax = vacLandTax.add(miscTax.getTotalCalculatedTax());
-                } else if (miscTax.getTaxName() == DEMANDRSN_CODE_LIBRARY_CESS) {
+                else if (miscTax.getTaxName() == DEMANDRSN_CODE_LIBRARY_CESS)
                     libCess = libCess.add(miscTax.getTotalCalculatedTax());
-                } else if (miscTax.getTaxName() == DEMANDRSN_CODE_SEWERAGE_TAX) {
+                else if (miscTax.getTaxName() == DEMANDRSN_CODE_SEWERAGE_TAX)
                     sewrageTax = sewrageTax.add(miscTax.getTotalCalculatedTax());
-                } else if (miscTax.getTaxName() == DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES) {
+                else if (miscTax.getTaxName() == DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES)
                     serviceCharges = serviceCharges.add(miscTax.getTotalCalculatedTax());
-                }
-            }
-        }
-        String resultString = preparResponeString(propTypeMstr, annualValue, totalPropertyTax, vacLandTax, genTax, unAuthPenalty,
+        final String resultString = preparResponeString(propTypeMstr, annualValue, totalPropertyTax, vacLandTax, genTax,
+                unAuthPenalty,
                 eduTax, libCess, sewrageTax, serviceCharges);
         return resultString;
     }
 
-    private String preparResponeString(PropertyTypeMaster propTypeMstr, BigDecimal annualValue, BigDecimal totalPropertyTax,
-            BigDecimal vacLandTax, BigDecimal genTax, BigDecimal unAuthPenalty, BigDecimal eduTax, BigDecimal libCess,
-            BigDecimal sewrageTax, BigDecimal serviceCharges) {
-        StringBuilder resultString = new StringBuilder(200);
+    private String preparResponeString(final PropertyTypeMaster propTypeMstr, final BigDecimal annualValue,
+            final BigDecimal totalPropertyTax,
+            final BigDecimal vacLandTax, final BigDecimal genTax, final BigDecimal unAuthPenalty, final BigDecimal eduTax,
+            final BigDecimal libCess,
+            final BigDecimal sewrageTax, final BigDecimal serviceCharges) {
+        final StringBuilder resultString = new StringBuilder(200);
         resultString.append(
                 "Annual Rental Value=" + formatAmount(annualValue) + "~Total Tax=" + formatAmount(totalPropertyTax));
-        if (OWNERSHIP_TYPE_VAC_LAND.equalsIgnoreCase(propTypeMstr.getCode())) {
+        if (OWNERSHIP_TYPE_VAC_LAND.equalsIgnoreCase(propTypeMstr.getCode()))
             resultString.append("~Vacant Land Tax=" + formatAmount(vacLandTax));
-        } else {
-            resultString.append("~Property Tax=" + formatAmount(genTax) +"~Education Cess=" + formatAmount(eduTax));
-        }
+        else
+            resultString.append("~Property Tax=" + formatAmount(genTax) + "~Education Cess=" + formatAmount(eduTax));
         resultString.append("~Library Cess=" + formatAmount(libCess));
-        Boolean isCorporation = propertyTaxUtil.isCorporation();
-        if (isCorporation) {
+        final Boolean isCorporation = propertyTaxUtil.isCorporation();
+        if (isCorporation)
             resultString.append("~Sewrage Tax=" + formatAmount(sewrageTax));
-        }
-        if (isCorporation && propertyTaxUtil.isPrimaryServiceApplicable()) {
+        if (isCorporation && propertyTaxUtil.isPrimaryServiceApplicable())
             resultString.append("~Service Charges=" + formatAmount(serviceCharges));
-        }
-        if (!OWNERSHIP_TYPE_VAC_LAND.equalsIgnoreCase(propTypeMstr.getCode())) {
-            resultString.append("~Unauthorized Penalty="+ formatAmount(unAuthPenalty));
-        }
+        if (!OWNERSHIP_TYPE_VAC_LAND.equalsIgnoreCase(propTypeMstr.getCode()))
+            resultString.append("~Unauthorized Penalty=" + formatAmount(unAuthPenalty));
         return resultString.toString();
     }
-    
+
     public String formatAmount(BigDecimal tax) {
         tax = tax.setScale(0, RoundingMode.CEILING);
         return NumberUtil.formatNumber(tax);
     }
-    
+
     /**
      * Returns the day of month along with suffix for the last digit (1st, 2nd, .. , 13th, .. , 23rd)
      */
-    public String getDateWithSufix(int dayOfMonth) {
-        switch( (dayOfMonth<20) ? dayOfMonth : dayOfMonth%10 ) {
-            case 1 : return dayOfMonth+"st";
-            case 2 : return dayOfMonth+"nd";
-            case 3 : return dayOfMonth+"rd";
-            default : return dayOfMonth+"th";
+    public String getDateWithSufix(final int dayOfMonth) {
+        switch (dayOfMonth < 20 ? dayOfMonth : dayOfMonth % 10) {
+        case 1:
+            return dayOfMonth + "st";
+        case 2:
+            return dayOfMonth + "nd";
+        case 3:
+            return dayOfMonth + "rd";
+        default:
+            return dayOfMonth + "th";
         }
     }
-    
+
     /**
      * Returns whether the ULB is Corporation or not
-     * 
+     *
      * @return boolean
      */
     public Boolean isCorporation() {
