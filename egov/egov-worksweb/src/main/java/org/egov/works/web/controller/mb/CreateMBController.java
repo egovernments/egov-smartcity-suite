@@ -117,7 +117,7 @@ public class CreateMBController {
 
         workOrderEstimateService
                 .getContratorBillForWorkOrderEstimateAndBillType(mbHeader.getWorkOrderEstimate().getId(), jsonObject);
-        if (StringUtils.isBlank(workFlowAction) || WorksConstants.CREATE_AND_APPROVE.equalsIgnoreCase(workFlowAction))
+        if (StringUtils.isBlank(workFlowAction))
             validateMBDateToSkipWorkflow(mbHeader, jsonObject, errors);
         if (jsonObject.toString().length() > 2) {
             sendAJAXResponse(jsonObject.toString(), response);

@@ -43,7 +43,7 @@ $('#Save').click(function() {
 
 	document.getElementById("workFlowAction").value = "Save";
 	
-	removeApprovalMandatoryAttribue();
+	removeApprovalMandatoryAttribute();
 	$('#approvalComent').removeAttr('required');
 	
 	if($('#mbHeader').valid()) {
@@ -69,7 +69,7 @@ $('#CreateAndApprove').click(function() {
 
 	document.getElementById("workFlowAction").value = "";
 	
-	removeApprovalMandatoryAttribue();
+	removeApprovalMandatoryAttribute();
 	$('#approvalComent').removeAttr('required');
 	
 	if($('#mbHeader').valid()) {
@@ -111,7 +111,7 @@ $('#Forward').click(function() {
 		return false;
 	}
 	
-	addApprovalMandatoryAttribue();
+	addApprovalMandatoryAttribute();
 	$('#approvalComent').removeAttr('required');
 	
 	if($('#mbHeader').valid()) {
@@ -138,7 +138,7 @@ $('#Cancel').click(function() {
 
 	document.getElementById("workFlowAction").value = "Cancel";
 	
-	removeApprovalMandatoryAttribue();
+	removeApprovalMandatoryAttribute();
 	$('#approvalComent').attr('required', 'required');
 	
 	if($('#mbHeader').valid()) {
@@ -175,7 +175,7 @@ $('#Create\\ And\\ Approve').click(function() {
 	if(!flag) {
 		return false;
 	}
-	removeApprovalMandatoryAttribue();
+	removeApprovalMandatoryAttribute();
 	$('#approvalComent').removeAttr('required');
 	
 	if($('#mbHeader').valid()) {

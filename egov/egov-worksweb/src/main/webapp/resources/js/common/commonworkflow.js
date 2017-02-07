@@ -113,13 +113,13 @@ function callAlertForDesignation() {
 	}
 }
 
-function removeApprovalMandatoryAttribue() {
+function removeApprovalMandatoryAttribute() {
 	$('#approvalDepartment').removeAttr('required');
 	$('#approvalDesignation').removeAttr('required');
 	$('#approvalPosition').removeAttr('required');
 }
 
-function addApprovalMandatoryAttribue() {
+function addApprovalMandatoryAttribute() {
 	$('#approvalDepartment').attr('required', 'required');
 	$('#approvalDesignation').attr('required', 'required');
 	$('#approvalPosition').attr('required', 'required');

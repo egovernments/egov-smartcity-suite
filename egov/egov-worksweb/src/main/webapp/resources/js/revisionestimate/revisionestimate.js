@@ -1638,7 +1638,7 @@ function validateWorkFlowApprover(name) {
 	var flag = true;
 
 	if (button != null && button == 'Save') {
-		removeApprovalMandatoryAttribue();
+		removeApprovalMandatoryAttribute();
 		$('#approvalComent').removeAttr('required');
 		
 		flag = validateRevisionEstimate();
@@ -1647,17 +1647,17 @@ function validateWorkFlowApprover(name) {
 		$('#approvalComent').removeAttr('required');
 	}
 	if (button != null && button == 'Submit') {
-		addApprovalMandatoryAttribue();
+		addApprovalMandatoryAttribute();
 		$('#approvalComent').removeAttr('required');
 		
 		flag = validateRevisionEstimate();
 	}
 	if (button != null && button == 'Reject') {
-		removeApprovalMandatoryAttribue();
+		removeApprovalMandatoryAttribute();
 		$('#approvalComent').attr('required', 'required');
 	}
 	if (button != null && button == 'Cancel') {
-		removeApprovalMandatoryAttribue();
+		removeApprovalMandatoryAttribute();
 		$('#approvalComent').attr('required', 'required');
 		
 		flag = validateRevisionEstimate();
@@ -1677,7 +1677,7 @@ function validateWorkFlowApprover(name) {
 		return false;
 	}
 	if (button != null && button == 'Forward') {
-		addApprovalMandatoryAttribue();
+		addApprovalMandatoryAttribute();
 		flag = showHideApprovalDetails('Forward');
 		if(!flag)
 			return false;
@@ -1687,7 +1687,7 @@ function validateWorkFlowApprover(name) {
 	}
 	
 	if (button != null && button == 'Create And Approve') {
-		removeApprovalMandatoryAttribue();
+		removeApprovalMandatoryAttribute();
 		$('#approvalComent').removeAttr('required');
 		flag = showHideApprovalDetails('Create And Approve');
 		if(!flag)
@@ -2220,7 +2220,7 @@ function showHideApprovalDetails(workFlowAction) {
 		dataType: "json",
 		success: function (response) {
 			if(response) {
-				removeApprovalMandatoryAttribue();
+				removeApprovalMandatoryAttribute();
 				if(workFlowAction == 'Forward') {
 					bootbox.alert($('#errorAmountRuleApprove').val());
 					isValidAction = false;
@@ -2229,7 +2229,7 @@ function showHideApprovalDetails(workFlowAction) {
 				}
 				
 			} else {
-				addApprovalMandatoryAttribue();
+				addApprovalMandatoryAttribute();
 				if(workFlowAction == 'Create And Approve') {
 					bootbox.alert($('#errorAmountRuleForward').val());
 					isValidAction = false;

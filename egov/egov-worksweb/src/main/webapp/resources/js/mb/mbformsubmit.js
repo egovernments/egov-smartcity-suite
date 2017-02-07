@@ -52,7 +52,7 @@ function validateWorkFlowApprover(name) {
 	var flag = true;
 	
 	if (button != null && button == 'Save') {
-		removeApprovalMandatoryAttribue();
+		removeApprovalMandatoryAttribute();
 		$('#approvalComent').removeAttr('required');
 		
 		if($('#mbHeader').valid()) {
@@ -67,11 +67,11 @@ function validateWorkFlowApprover(name) {
 		$('#approvalComent').removeAttr('required');
 	}
 	if (button != null && button == 'Reject') {
-		removeApprovalMandatoryAttribue();
+		removeApprovalMandatoryAttribute();
 		$('#approvalComent').attr('required', 'required');
 	}
 	if (button != null && button == 'Cancel') {
-		removeApprovalMandatoryAttribue();
+		removeApprovalMandatoryAttribute();
 		$('#approvalComent').attr('required', 'required');
 		
 		if($("form").valid())
@@ -90,7 +90,7 @@ function validateWorkFlowApprover(name) {
 		return false;
 	}
 	if (button != null && button == 'Forward') {
-		addApprovalMandatoryAttribue();
+		addApprovalMandatoryAttribute();
 		$('#approvalComent').removeAttr('required');
 		
 		if($('#mbHeader').valid()) {
@@ -103,7 +103,7 @@ function validateWorkFlowApprover(name) {
 	}
 
 	if (button != null && button == 'Create And Approve') {
-		removeApprovalMandatoryAttribue();
+		removeApprovalMandatoryAttribute();
 		$('#approvalComent').removeAttr('required');
 		
 		if($('#mbHeader').valid()) {

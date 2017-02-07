@@ -235,6 +235,9 @@ public class MBHeaderService {
             createMBHeaderWorkflowTransition(savedMBHeader, approvalPosition, approvalComent, additionalRule,
                     workFlowAction);
 
+        if (WorksConstants.CREATE_AND_APPROVE.equalsIgnoreCase(workFlowAction))
+            savedMBHeader.setApprovedDate(new Date());
+
         savedMBHeader = mbHeaderRepository.save(savedMBHeader);
 
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, savedMBHeader,

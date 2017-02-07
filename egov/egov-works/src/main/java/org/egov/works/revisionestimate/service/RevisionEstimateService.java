@@ -251,12 +251,25 @@ public class RevisionEstimateService {
 
         mergeChangeQuantityActivities(revisionEstimate);
 
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
+                .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
+
+        if (WorksConstants.CREATE_AND_APPROVE.toString().equalsIgnoreCase(workFlowAction))
+            doBudgetoryAppropriation(workFlowAction, revisionEstimate);
+
         revisionEstimateRepository.save(revisionEstimate);
+
+        if (WorksConstants.CREATE_AND_APPROVE.toString().equalsIgnoreCase(workFlowAction)) {
+            createRevisionWorkOrder(workOrderEstimate, revisionEstimate);
+            revisionEstimate.getParent().setTotalIncludingRE(
+                    revisionEstimate.getParent().getTotalIncludingRE() + revisionEstimate.getWorkValue());
+        }
 
         createRevisionEstimateWorkflowTransition(revisionEstimate, approvalPosition, approvalComent, additionalRule,
                 workFlowAction);
 
         revisionEstimateRepository.save(revisionEstimate);
+
         return revisionEstimate;
     }
 
@@ -321,9 +334,7 @@ public class RevisionEstimateService {
 
         if (WorksConstants.APPROVE_ACTION.toString().equalsIgnoreCase(workFlowAction)
                 || WorksConstants.CREATE_AND_APPROVE.toString().equalsIgnoreCase(workFlowAction)) {
-            RevisionWorkOrder revisionWorkOrder = new RevisionWorkOrder();
-            revisionWorkOrder = createRevisionWorkOrder(updateRevisionEstimate, revisionWorkOrder, workOrderEstimate);
-            revisionWorkOrderService.create(revisionWorkOrder);
+            createRevisionWorkOrder(workOrderEstimate, updateRevisionEstimate);
             updateRevisionEstimate.getParent().setTotalIncludingRE(
                     updateRevisionEstimate.getParent().getTotalIncludingRE() + updateRevisionEstimate.getWorkValue());
         }
@@ -331,6 +342,13 @@ public class RevisionEstimateService {
         revisionEstimateRepository.save(updateRevisionEstimate);
 
         return updateRevisionEstimate;
+    }
+
+    private void createRevisionWorkOrder(final WorkOrderEstimate workOrderEstimate,
+            final RevisionAbstractEstimate updateRevisionEstimate) {
+        RevisionWorkOrder revisionWorkOrder = new RevisionWorkOrder();
+        revisionWorkOrder = createRevisionWorkOrder(updateRevisionEstimate, revisionWorkOrder, workOrderEstimate);
+        revisionWorkOrderService.create(revisionWorkOrder);
     }
 
     private RevisionWorkOrder createRevisionWorkOrder(final RevisionAbstractEstimate revisionEstimate,
@@ -1186,10 +1204,9 @@ public class RevisionEstimateService {
             revisionWorkOrderService.create(revisionWorkOrder);
         }
         if (!BudgetControlType.BudgetCheckOption.NONE.toString()
-                .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
+                .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
             lineEstimateService.releaseBudgetOnReject(revisionEstimate.getParent().getLineEstimateDetails(),
                     revisionEstimate.getEstimateValue().doubleValue(), null);
-        }
         revisionEstimate.getParent().setTotalIncludingRE(
                 revisionEstimate.getParent().getTotalIncludingRE() - revisionEstimate.getWorkValue());
         return revisionEstimateRepository.save(revisionEstimate);

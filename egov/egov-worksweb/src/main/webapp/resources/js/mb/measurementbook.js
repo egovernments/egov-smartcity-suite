@@ -2196,7 +2196,7 @@ function showHideApprovalDetails(workFlowAction) {
 		dataType: "json",
 		success: function (response) {
 			if(response) {
-				removeApprovalMandatoryAttribue();
+				removeApprovalMandatoryAttribute();
 				if(workFlowAction == 'Forward') {
 					bootbox.alert($('#errorAmountRuleApprove').val());
 					isValidAction = false;
@@ -2205,7 +2205,7 @@ function showHideApprovalDetails(workFlowAction) {
 				}
 				
 			} else {
-				addApprovalMandatoryAttribue();
+				addApprovalMandatoryAttribute();
 				if(workFlowAction == 'Create And Approve') {
 					bootbox.alert($('#errorAmountRuleForward').val());
 					isValidAction = false;
