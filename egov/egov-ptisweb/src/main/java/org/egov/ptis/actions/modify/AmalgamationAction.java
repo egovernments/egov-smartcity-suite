@@ -93,6 +93,9 @@ import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.viewer.ReportViewerUtil;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
@@ -133,13 +136,15 @@ import org.egov.ptis.master.service.StructureClassificationService;
 import org.egov.ptis.master.service.WallTypeService;
 import org.egov.ptis.master.service.WoodTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 
 @ParentPackage("egov")
 @ResultPath(value = "/WEB-INF/jsp")
 @Namespace("/amalgamation")
 @Results({ @Result(name = AmalgamationAction.NEW, location = "amalgamation/amalgamation-new.jsp"),
         @Result(name = AmalgamationAction.RESULT_ACK, location = "amalgamation/amalgamation-ack.jsp"),
-        @Result(name = AmalgamationAction.VIEW, location = "amalgamation/amalgamation-view.jsp") })
+        @Result(name = AmalgamationAction.VIEW, location = "amalgamation/amalgamation-view.jsp"),
+        @Result(name = AmalgamationAction.NOTICE, location = "amalgamation/amalgamation-notice.jsp")})
 public class AmalgamationAction extends PropertyTaxBaseAction {
 
     private static final long serialVersionUID = 1L;
@@ -150,6 +155,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private static final String PROPERTY_MODIFY_FINAL_REJECT_SUCCESS = "property.modify.final.reject.success";
     private static final String PROPERTY_MODIFY_APPROVE_SUCCESS = "property.modify.approve.success";
     private static final String PROPERTY_FORWARD_SUCCESS = "property.forward.success";
+    protected static final String NOTICE = "notice";
 
     private BasicProperty basicProp;
     private PropertyImpl oldProperty = new PropertyImpl();
@@ -181,6 +187,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private transient PropertyService propService;
     private Map<String, String> propTypeCategoryMap;
     private boolean allowEditDocument = Boolean.FALSE;
+    private String reportId;
+    private Boolean showAckBtn = Boolean.FALSE;
 
     @Autowired
     private transient PropertyPersistenceService basicPropertyService;
@@ -211,7 +219,9 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private transient StructureClassificationService structureClassificationService;
     @Autowired
     private transient PropertyOccupationService propertyOccupationService;
-
+    @Autowired
+    private ReportViewerUtil reportViewerUtil;
+    
     public AmalgamationAction() {
         super();
         propertyModel.setPropertyDetail(new BuiltUpProperty());
@@ -450,6 +460,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         setAmalgamationsForPersist();
         applyAuditingAndUpdateIndex();
         prepareAckMsg();
+        showAckBtn = Boolean.TRUE;
         addActionMessage(getText(PROPERTY_FORWARD_SUCCESS,
                 new String[] { propertyModel.getBasicProperty().getUpicNo() }));
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
@@ -912,6 +923,15 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         LOGGER.debug("reject: Property rejection ended");
         return RESULT_ACK;
     }
+    
+    @SkipValidation
+    @Action(value = "/amalgamation-printAck")
+    public String printAck() {
+        ReportOutput reportOutput = propertyTaxUtil
+                .generateCitizenCharterAcknowledgement(indexNumber, AMALGAMATION, APPLICATION_TYPE_AMALGAMATION);
+        reportId = reportViewerUtil.addReportToTempCache(reportOutput);
+        return NOTICE;
+    }
 
     /**
      * Prepares acknowledgement message
@@ -1206,6 +1226,18 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
 
     public void setAllowEditDocument(boolean allowEditDocument) {
         this.allowEditDocument = allowEditDocument;
+    }
+    
+    public String getReportId() {
+        return reportId;
+    }
+
+    public Boolean getShowAckBtn() {
+        return showAckBtn;
+    }
+
+    public void setShowAckBtn(Boolean showAckBtn) {
+        this.showAckBtn = showAckBtn;
     }
 
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-28T17:49:08 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-02-02T16:51:11 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="transferProperty_ack" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="20" uuid="90410d1d-7197-42e9-8dea-efbd3a8dbb85">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -72,8 +72,8 @@
 				<textElement verticalAlignment="Top">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<text><![CDATA[1. The applicant can contact the municipal commissioner, immediately if the Transfer of ownership proceeding is not given as indicated above on the date fixed.
-2. Compensation will be paid @ Rs. 50/- per day for the delay caused and towards the valuable time lost by the applicant, if the special notice is not given as indicated above in the date fixed.]]></text>
+				<text><![CDATA[1. The applicant can contact the municipal commissioner, immediately if the service is not delivered as indicated above on the date fixed.
+2. Compensation will be paid @ Rs. 50/- per day for the delay caused and towards the valuable time lost by the applicant, if the service is not delivered as indicated above in the date fixed.]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="42" y="23" width="257" height="17" uuid="f9da60e0-6979-4604-9117-30261b60ad1c"/>

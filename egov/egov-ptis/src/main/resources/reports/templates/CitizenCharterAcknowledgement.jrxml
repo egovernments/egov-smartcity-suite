@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-02-07T17:50:44 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CitizenCharterAcknowledgement" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="80" bottomMargin="80" uuid="b5f00baf-3b68-4ad5-a991-a489d1a08ca2">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="ackNo" class="java.lang.String"/>
+	<parameter name="serviceType" class="java.lang.String"/>
+	<parameter name="applicatantName" class="java.lang.String"/>
+	<parameter name="applicatantAddr" class="java.lang.String"/>
+	<parameter name="electionWard" class="java.lang.String"/>
+	<parameter name="asOnDate" class="java.lang.String"/>
+	<parameter name="dueDate" class="java.lang.String"/>
+	<parameter name="ulbName" class="java.lang.String"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="99" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="90" y="20" width="390" height="24" uuid="0fa0b415-7f9b-47ad-8a5b-5768fae81bd4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="208" y="60" width="140" height="16" uuid="0d55d48a-c1e7-4ecb-b7eb-b32925c29251"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Citizen Service Centre]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="210" y="44" width="130" height="16" uuid="fbf0d8a3-63af-4c48-a641-8387332f5bce"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Puraseva Centre]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="130" y="80" width="300" height="19" uuid="3a793414-80d5-45ed-b3fe-7dbe01d1bcbd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Receipt-cum-Acknowledgement No. "+$P{ackNo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="230" splitType="Stretch">
+			<staticText>
+				<reportElement x="80" y="10" width="80" height="20" uuid="e08edbac-710c-4ccb-bdfd-5541436be716"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Service Type :]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="160" y="10" width="220" height="20" uuid="756e1224-db73-4955-9fbc-a96e8d8b8849"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{serviceType}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="80" y="30" width="80" height="20" uuid="f026b242-85b3-4a23-8720-88bf5e350a62"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Name :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="50" width="80" height="20" uuid="7d035650-b5ce-478e-94b0-fa427b67fc14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Address :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="70" width="80" height="20" uuid="eed54228-d874-4aac-891c-3fab4e815da5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Election Ward :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="90" width="80" height="20" uuid="ab78c4a6-8d70-45ad-a1e5-c925d501bf91"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Date :]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="160" y="30" width="220" height="20" uuid="8abd5189-9b4f-4ae5-b8f5-07f3e7fa403b"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{applicatantName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="160" y="50" width="290" height="20" uuid="7e97b2a0-0a4d-4f8e-a903-f832dafdd512"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{applicatantAddr}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="160" y="70" width="220" height="20" uuid="4a847c3b-e160-49f4-91f1-516f3cc659c5"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{electionWard}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="160" y="90" width="120" height="20" uuid="1bb548af-7395-4be0-8979-6b481a8820e1"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{asOnDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="280" y="90" width="100" height="20" uuid="f3b4c42a-bcc6-411d-9935-1aad71facc7d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Due Date :]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="380" y="90" width="100" height="20" uuid="9b8029d8-f40f-4c5f-bb98-98731f1b6fe8"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{dueDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="345" y="189" width="180" height="15" uuid="5685733d-fcb4-480a-b8b2-00d4804c883f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Signature of the Counter Operator]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="102" splitType="Stretch">
+			<staticText>
+				<reportElement x="80" y="0" width="50" height="20" uuid="1e4ed91b-ace9-42c7-b495-119855da2db7"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom"/>
+				<text><![CDATA[Note :]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="80" y="20" width="445" height="27" uuid="34a7f027-a94b-4bde-a3e4-0a9ebf20e2b7"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["1.You can track the status of your application from "+$P{cityName}+".cdma.ap.gov.in"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="80" y="47" width="445" height="30" uuid="2f5399f6-2902-4f74-bab4-32e306a3c461"/>
+				<textElement textAlignment="Justified"/>
+				<text><![CDATA[2. If the service is not closed on or before the due date, Rs. 50/- will be paid for each day of delay as compensation.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="80" width="445" height="20" uuid="f4cfadc9-ae08-447d-a8ec-2a719419ca2d"/>
+				<text><![CDATA[3. Don’t consult any mediator/broker.]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+</jasperReport>

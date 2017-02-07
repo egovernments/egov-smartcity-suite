@@ -170,6 +170,7 @@ import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
+import org.egov.ptis.domain.entity.property.PtApplicationType;
 import org.egov.ptis.domain.entity.property.RoofType;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.entity.property.WallType;
@@ -182,8 +183,8 @@ import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepos
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
-import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.google.gson.GsonBuilder;
 
@@ -340,6 +341,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     @Autowired
     transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepository;
+    
+    @Autowired
+    @Qualifier("ptaxApplicationTypeService")
+    private PersistenceService<PtApplicationType, Long> ptaxApplicationTypeService;
 
     public ModifyPropertyAction() {
         super();
@@ -1519,24 +1524,26 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 (String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
 
-        final PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
         final Map<String, Object> reportParams = new HashMap<String, Object>();
-        ackBean.setOwnerName(basicProp.getFullOwnerName());
-        ackBean.setOwnerAddress(basicProp.getAddress().toString());
-        ackBean.setApplicationDate(new SimpleDateFormat("dd/MM/yyyy").format(basicProp.getCreatedDate()));
-        ackBean.setApplicationNo(propertyModel.getApplicationNo());
-        ackBean.setApprovedDate(new SimpleDateFormat("dd/MM/yyyy").format(propWF.getState().getCreatedDate()));
+        reportParams.put("ownerName", basicProp.getFullOwnerName());
+        reportParams.put("applicationDate", new SimpleDateFormat("dd/MM/yyyy").format(basicProp.getCreatedDate()));
+        reportParams.put("ownerAddress",basicProp.getAddress().toString());
+        reportParams.put("applicationNo", propertyModel.getApplicationNo());
+        reportParams.put("approvedDate", new SimpleDateFormat("dd/MM/yyyy").format(propWF.getState().getCreatedDate()));
         final Date noticeDueDate = DateUtils.add(propWF.getState().getCreatedDate(), Calendar.DAY_OF_MONTH, 15);
-        ackBean.setNoticeDueDate(noticeDueDate);
-        ackBean.setCreationReason(modifyRsn);
+        reportParams.put("noticeDueDate", new SimpleDateFormat("dd/MM/yyyy").format(noticeDueDate));
+        reportParams.put("creationReason", modifyRsn);
         reportParams.put("logoPath", imagePath);
         reportParams.put("cityName", cityName);
         reportParams.put("loggedInUsername", propertyTaxUtil.getLoggedInUser(getSession()).getName());
         ReportRequest reportInput = null;
-        if (modifyRsn.equals(PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION))
-            reportInput = new ReportRequest(GRP_ACK_TEMPLATE, ackBean, reportParams);
-        else
-            reportInput = new ReportRequest(MODIFY_ACK_TEMPLATE, ackBean, reportParams);
+        if (modifyRsn.equals(PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION)) {
+            reportParams.put("noOfDays",
+                    ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "REVISION_PETETION")
+                            .getResolutionTime().toString());
+            reportInput = new ReportRequest(GRP_ACK_TEMPLATE, reportParams, reportParams);
+        } else
+            reportInput = new ReportRequest(MODIFY_ACK_TEMPLATE, reportParams, reportParams);
         reportInput.setReportFormat(FileFormat.PDF);
         final ReportOutput reportOutput = reportService.createReport(reportInput);
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);

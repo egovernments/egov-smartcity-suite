@@ -1,46 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-05-02T14:50:14 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-02-07T17:59:33 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="createProperty_ack" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="20" uuid="f03713ef-53ed-45c0-b461-665772a871b1">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -51,6 +11,7 @@
 	<parameter name="logoPath" class="java.lang.String"/>
 	<parameter name="loggedInUsername" class="java.lang.String"/>
 	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="ackType" class="java.lang.String"/>
 	<field name="ownerName" class="java.lang.String"/>
 	<field name="ownerAddress" class="java.lang.String"/>
 	<field name="approvedDate" class="java.lang.String"/>
@@ -63,7 +24,7 @@
 	<title>
 		<band height="273" splitType="Stretch">
 			<staticText>
-				<reportElement x="123" y="28" width="390" height="31" uuid="85343d61-403c-488a-8c35-3b351144ffef"/>
+				<reportElement x="123" y="39" width="390" height="31" uuid="85343d61-403c-488a-8c35-3b351144ffef"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14" isBold="true" isItalic="false" isUnderline="true" isPdfEmbedded="true"/>
 				</textElement>
@@ -92,16 +53,23 @@
 				<textFieldExpression><![CDATA["	Property Tax assessment of Sri / Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+JRStringUtil.xmlEncode($F{ownerName})+"</style> with address <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerAddress}+"</style> is received on <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{approvedDate}+"</style>. The connected property tax special notice can be obtained on <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+DateUtils.getDefaultFormattedDate($F{noticeDueDate})+"</style> duly producing this receipt."]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="123" y="1" width="390" height="27" uuid="10795881-3533-4eef-84f4-e38f1b29a0ff"/>
+				<reportElement x="123" y="12" width="390" height="27" uuid="10795881-3533-4eef-84f4-e38f1b29a0ff"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font size="16" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
-				<reportElement x="41" y="1" width="60" height="60" uuid="771b8be2-e2c5-4158-8968-ef55dc437c0f"/>
+				<reportElement x="41" y="10" width="60" height="60" uuid="771b8be2-e2c5-4158-8968-ef55dc437c0f"/>
 				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
 			</image>
+			<textField>
+				<reportElement x="455" y="0" width="100" height="12" uuid="8dd54d6f-8aca-4bbe-9849-bff26d6d89b1"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ackType}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<summary>
@@ -139,14 +107,14 @@
 				<textElement>
 					<font fontName="SansSerif" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[1. The applicant can contact the municipal commissioner, immediately if the special notice is not given as indicated above on the date fixed. ]]></text>
+				<text><![CDATA[1. The applicant can contact the municipal commissioner, immediately if the service is not delivered as indicated above on the date fixed. ]]></text>
 			</staticText>
 			<staticText>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="70" y="121" width="460" height="47" uuid="797325a9-1e60-4ccf-984f-d7d778f164dc"/>
 				<textElement>
 					<font isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[2. Compensation will be paid @ Rs. 50/- per day for the delay caused and towards the valuable time lost by the applicant, if the special notice is not given as indicated above in the date fixed.]]></text>
+				<text><![CDATA[2. Compensation will be paid @ Rs. 50/- per day for the delay caused and towards the valuable time lost by the applicant, if the service is not delivered as indicated above in the date fixed.]]></text>
 			</staticText>
 		</band>
 	</summary>

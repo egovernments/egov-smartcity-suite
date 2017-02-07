@@ -209,7 +209,8 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
                 if(assignment != null)
                     approvalPosition = assignment.getPosition().getId();
             }
-
+            model.addAttribute("showAckBtn", Boolean.TRUE);
+            model.addAttribute("propertyId", property.getBasicProperty().getUpicNo());
             model.addAttribute(
                     "successMessage",
                     "Property demolition data saved successfully in the system and forwarded to "

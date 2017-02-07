@@ -39,41 +39,25 @@
   --%>
 
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ include file="/includes/taglibs.jsp"%>
+<%@ include file="/includes/taglibs.jsp" %>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-<head>
-<title>
-	<s:text name="lbl.amalgamation.title" />
-</title>
-</head>
-<body>
-	<s:form name="AmalgamationForm" theme="simple">
-		<s:push value="model">
-			<s:token />
-			<s:hidden name="modifyRsn" value="%{modifyRsn}"/>
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading" align="center">
-					<div class="panel-title text-center" style="text-align:center;">
-						<strong><s:property value="%{ackMessage}" /></strong>
-						<a href='../view/viewProperty-viewForm.action?propertyId=<s:property value="%{basicProp.upicNo}"/>'> 
-										<s:property value="%{basicProp.upicNo}" />
-									</a>
-					</div>
-				</div> 
-			</div>
-			<div class="row">
-				<div class="text-center">
-					<s:if test="%{showAckBtn}">
-							<a href="/ptis/amalgamation/amalgamation-printAck.action?indexNumber=<s:property value='%{basicProp.upicNo}'/>" class="btn btn-default">Generate Acknowledgment</a>
-					</s:if>
-					<input type="button" name="button2" id="button2"
-						value="Close" class="btn btn-default" onclick="window.close();" />
-				</div>
-			</div>
-		</s:push>
-	</s:form>
-</body>
+  <head>
+    <title><s:text name='BillAck'/></title>
+  </head>
+  
+  <body onload="refreshParentInbox();">
+  <s:form name="NoticeGenerationForm" theme="simple">
+	<iframe src="../reportViewer?reportId=<s:property value='reportId'/>" width="98%"
+		height="70%">
+	<p>Your browser does not support iframes.</p>
+	</iframe>
+	<br/>
+	<div class="buttonbottom">
+		<input name="buttonClose" type="button" class="button"	id="buttonClose" value="Close" onclick="window.close();" />&nbsp;
+	</div>
+  </s:form>
+  </body> 
 </html>

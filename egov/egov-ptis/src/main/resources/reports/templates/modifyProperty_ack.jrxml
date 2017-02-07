@@ -1,46 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-05-02T14:50:27 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-02-05T16:51:42 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="modifyProperty_ack" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f03713ef-53ed-45c0-b461-665772a871b1">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -48,34 +8,37 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infra.utils.*"/>
+	<import value="net.sf.jasperreports.engine.util.JRStringUtil"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="logoPath" class="java.lang.String"/>
 	<parameter name="loggedInUsername" class="java.lang.String"/>
+	<parameter name="ackType" class="java.lang.String"/>
 	<parameter name="cityName" class="java.lang.String"/>
-	<field name="ownerName" class="java.lang.String"/>
-	<field name="ownerAddress" class="java.lang.String"/>
-	<field name="approvedDate" class="java.lang.String"/>
-	<field name="noticeDueDate" class="java.util.Date"/>
-	<field name="applicationDate" class="java.lang.String"/>
-	<field name="applicationNo" class="java.lang.String"/>
-	<field name="creationReason" class="java.lang.String"/>
+	<parameter name="ownerName" class="java.lang.String"/>
+	<parameter name="applicationDate" class="java.lang.String"/>
+	<parameter name="applicationNo" class="java.lang.String"/>
+	<parameter name="approvedDate" class="java.lang.String"/>
+	<parameter name="noticeDueDate" class="java.lang.String"/>
+	<parameter name="creationReason" class="java.lang.String"/>
+	<parameter name="ownerAddress" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="325" splitType="Stretch">
+		<band height="323" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="29" y="172" width="278" height="20" uuid="cef5fce6-d30f-4c1a-83b8-792f33ab6d83"/>
 				<textElement markup="none">
 					<font size="11" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Application Number: "+$F{applicationNo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Application Number: "+$P{applicationNo}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="348" y="172" width="182" height="20" uuid="8059dcec-7361-4dfc-8c5d-012591fcd0d9"/>
 				<textElement textAlignment="Right" markup="none">
 					<font size="11" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Application Date: "+$F{applicationDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Application Date: "+$P{approvedDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="31" y="220" width="495" height="103" isPrintWhenDetailOverflows="true" uuid="2a6e61ac-efd7-496e-8f46-536043856e7f"/>
@@ -83,7 +46,7 @@
 					<font size="12" isPdfEmbedded="true"/>
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA["	This is to acknowledge that an application for " + ($F{creationReason}.equals("BIFURCATE") ? "Bifurcation" : "addition/alteration") + " has been received from Sri / Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerName}+"</style> with address <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerAddress}+"</style> is received on <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{approvedDate}+"</style>. This will be resolved within <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+DateUtils.getDefaultFormattedDate($F{noticeDueDate})+"</style>."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["	This is to acknowledge that an application for " + ($P{creationReason}.equals("BIFURCATE") ? "Bifurcation" : "addition/alteration") + " has been received from Sri / Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerName}+"</style> with address <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerAddress}+"</style> is received on <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{approvedDate}+"</style>. This will be resolved within <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{noticeDueDate}+"</style>."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="96" y="38" width="430" height="27" uuid="10795881-3533-4eef-84f4-e38f1b29a0ff"/>
@@ -105,7 +68,14 @@
 				<textElement textAlignment="Center" markup="none">
 					<font size="14" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Acknowledgement of " + ($F{creationReason}.equals("BIFURCATE") ? "Bifurcation" : "Addition/Alteration")]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Acknowledgement of " + ($P{creationReason}.equals("BIFURCATE") ? "Bifurcation" : "Addition/Alteration")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="88" height="10" isPrintWhenDetailOverflows="true" uuid="18e273ee-724f-450d-88ed-517f635a4803"/>
+				<textElement textAlignment="Left" markup="styled">
+					<font size="8" isBold="false" isItalic="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ackType}=="Party’s Copy"?"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Party’s Copy:-</style>":"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Office Copy:-</style>"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -144,14 +114,14 @@
 				<textElement>
 					<font fontName="SansSerif" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[1. The applicant can contact the municipal commissioner, immediately if the special notice is not given as indicated above on the date fixed. ]]></text>
+				<text><![CDATA[1. The applicant can contact the municipal commissioner, immediately if the service is not delivered as indicated above on the date fixed. ]]></text>
 			</staticText>
 			<staticText>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="59" y="192" width="467" height="36" uuid="797325a9-1e60-4ccf-984f-d7d778f164dc"/>
 				<textElement>
 					<font isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[2. Compensation will be paid @ Rs. 50/- per day for the delay caused and towards the valuable time lost by the applicant, if the special notice is not given as indicated above in the date fixed.]]></text>
+				<text><![CDATA[2. Compensation will be paid @ Rs. 50/- per day for the delay caused and towards the valuable time lost by the applicant, if the service is not delivered as indicated above in the date fixed.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="24" y="122" width="505" height="34" uuid="c66381bb-d3de-4a8d-9b01-afc2f12107dd"/>

@@ -41,6 +41,7 @@ package org.egov.ptis.client.util;
 
 import static java.math.BigDecimal.ROUND_HALF_UP;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADVANCE_COLLECTION_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMP_ACTUAL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMP_ENCODED_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_ISCORPORATION;
@@ -61,7 +62,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_S
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ADVANCE_COLLECTION_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
@@ -149,6 +149,7 @@ import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
@@ -159,6 +160,11 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.MoneyUtils;
 import org.egov.infstr.services.PersistenceService;
@@ -199,6 +205,7 @@ import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
+import org.egov.ptis.domain.entity.property.PtApplicationType;
 import org.egov.ptis.domain.entity.property.RebatePeriod;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.entity.property.VacancyRemissionDetails;
@@ -213,7 +220,6 @@ import org.egov.ptis.wtms.ConsumerConsumption;
 import org.egov.ptis.wtms.PropertyWiseConsumptions;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.joda.time.DateTime;
@@ -226,6 +232,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * @author malathi
  */
 public class PropertyTaxUtil {
+    private static final String SERVICE_TYPE = "serviceType";
+    private static final String ACK_NO = "ackNo";
+    private static final String CITY_NAME = "cityName";
+    private static final String ULB_NAME = "ulbName";
+    private static final String DUE_DATE = "dueDate";
+    private static final String AS_ON_DATE = "asOnDate";
+    private static final String ELECTION_WARD = "electionWard";
+    private static final String APPLICATANT_NAME = "applicatantName";
+    private static final String APPLICATANT_ADDR = "applicatantAddr";
     private static final Logger LOGGER = Logger.getLogger(PropertyTaxUtil.class);
 
     @Autowired
@@ -274,7 +289,13 @@ public class PropertyTaxUtil {
     private RebatePeriodService rebatePeriodService;
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
-
+    @Autowired
+    @Qualifier("ptaxApplicationTypeService")
+    private PersistenceService<PtApplicationType, Long> ptaxApplicationTypeService;
+    @Autowired
+    private ReportService reportService;
+    @Autowired
+    private ApplicationNumberGenerator applicationNumberGenerator;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -2580,4 +2601,27 @@ public class PropertyTaxUtil {
          return (d2-d1)/10000;
     }
 
+    public ReportOutput generateCitizenCharterAcknowledgement(final String propertyId, final String applicationType,
+            final String serviceType) {
+        ReportRequest reportInput;
+        Long resolutionTime;
+        final Map<String, Object> reportParams = new HashMap<>();
+        resolutionTime = ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, applicationType)
+              .getResolutionTime();
+        reportParams.put(DUE_DATE, sdf.format(DateUtils.add(new Date(), Calendar.DAY_OF_MONTH, resolutionTime.intValue())));
+        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
+        final StringBuilder queryString = new StringBuilder("from City");
+        final City city = (City) entityManager.createQuery(queryString.toString()).getSingleResult();
+        reportParams.put(APPLICATANT_ADDR, basicProperty.getAddress().toString());
+        reportParams.put(APPLICATANT_NAME, basicProperty.getFullOwnerName());
+        reportParams.put(ELECTION_WARD, basicProperty.getPropertyID().getElectionBoundary().getName());
+        reportParams.put(AS_ON_DATE, sdf.format(new Date()));
+        reportParams.put(ULB_NAME, city.getPreferences().getMunicipalityName());
+        reportParams.put(CITY_NAME, city.getName());
+        reportParams.put(ACK_NO, applicationNumberGenerator.generate());
+        reportParams.put(SERVICE_TYPE, serviceType);
+        reportInput = new ReportRequest("CitizenCharterAcknowledgement", reportParams, reportParams);
+        reportInput.setReportFormat(FileFormat.PDF);
+        return reportService.createReport(reportInput);
+    }
 }

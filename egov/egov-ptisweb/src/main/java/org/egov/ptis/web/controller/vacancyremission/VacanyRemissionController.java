@@ -48,6 +48,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_S
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -65,6 +66,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -79,6 +81,10 @@ import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.VacancyRemissionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -87,6 +93,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -96,6 +103,7 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping(value = "/vacancyremission")
 public class VacanyRemissionController extends GenericWorkFlowController {
 
+    private static final String VACANCY_REMISSION = "VACANCY_REMISSION";
     private static final String VACANCYREMISSION_FORM = "vacancyRemission-form";
     private static final String VACANCYREMISSION_SUCCESS = "vacancyRemission-success";
 
@@ -330,7 +338,8 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                     + " with application number : " + vacancyRemission.getApplicationNumber();
             model.addAttribute("successMessage", successMsg);
         }
-
+        model.addAttribute("showAckBtn", Boolean.TRUE);
+        model.addAttribute("propertyId", basicProperty.getUpicNo());
         if (loggedUserIsMeesevaUser)
             return "redirect:/vacancyremission/generate-meesevareceipt/"
                     + vacancyRemission.getBasicProperty().getUpicNo() + "?transactionServiceNumber="
@@ -367,6 +376,16 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                     applicationDocument.setFiles(propertyService.addToFileStore(applicationDocument.getFile()));
                 }
             }
+    }
+    
+    @RequestMapping(value = "/printAck/{assessmentNo}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<byte[]> printAck(final HttpServletRequest request, final Model model,
+            @PathVariable("assessmentNo") final String assessmentNo) {
+        ReportOutput reportOutput = propertyTaxUtil.generateCitizenCharterAcknowledgement(assessmentNo , VACANCY_REMISSION , NATURE_VACANCY_REMISSION);
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=CitizenCharterAcknowledgement.pdf");
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
 }

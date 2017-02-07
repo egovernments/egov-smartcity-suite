@@ -51,6 +51,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -66,6 +67,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -80,6 +82,10 @@ import org.egov.ptis.domain.entity.property.TaxExemptionReason;
 import org.egov.ptis.domain.service.exemption.TaxExemptionService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -89,6 +95,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -101,6 +108,7 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping(value = "/exemption")
 public class TaxExemptionController extends GenericWorkFlowController {
 
+    private static final String TAX_EXEMPTION = "TAX_EXEMPTION";
     protected static final String TAX_EXEMPTION_FORM = "taxExemption-form";
     protected static final String TAX_EXEMPTION_SUCCESS = "taxExemption-success";
     @Autowired
@@ -256,7 +264,8 @@ public class TaxExemptionController extends GenericWorkFlowController {
             } else
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
                         approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
-
+            model.addAttribute("showAckBtn", Boolean.TRUE);
+            model.addAttribute("propertyId", property.getBasicProperty().getUpicNo());
             model.addAttribute(
                     "successMessage",
                     "Property exemption data saved successfully in the system and forwarded to "
@@ -283,5 +292,16 @@ public class TaxExemptionController extends GenericWorkFlowController {
         if (outputFlashMap != null)
             outputFlashMap.put("url", request.getRequestURL());
         return redirect;
+    }
+    
+    @RequestMapping(value = "/printAck/{assessmentNo}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<byte[]> printAck(final HttpServletRequest request, final Model model,
+            @PathVariable("assessmentNo") final String assessmentNo) {
+        ReportOutput reportOutput =  propertyTaxUtil.generateCitizenCharterAcknowledgement(assessmentNo, TAX_EXEMPTION,
+                WFLOW_ACTION_NAME_EXEMPTION);
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=CitizenCharterAcknowledgement.pdf");
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 }

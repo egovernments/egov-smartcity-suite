@@ -1,52 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-
-<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2016-02-09T14:58:34 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-02-02T17:02:47 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="modifyProperty_ack" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f03713ef-53ed-45c0-b461-665772a871b1">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
+	<parameter name="noOfDays" class="java.lang.String"/>
 	<parameter name="logoPath" class="java.lang.String"/>
 	<parameter name="loggedInUsername" class="java.lang.String"/>
 	<parameter name="cityName" class="java.lang.String"/>
@@ -111,40 +72,68 @@
 	<summary>
 		<band height="254" splitType="Stretch">
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="381" y="35" width="143" height="20" uuid="d31d7dee-5624-433f-8c3e-6d2f46e453f9"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="381" y="60" width="143" height="20" uuid="d31d7dee-5624-433f-8c3e-6d2f46e453f9"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="11" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Signature]]></text>
 			</staticText>
 			<textField>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="381" y="55" width="143" height="20" uuid="e0d7c3e8-041b-46a6-96d6-6926a518bb3e"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="381" y="80" width="143" height="20" uuid="e0d7c3e8-041b-46a6-96d6-6926a518bb3e"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font size="11" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{loggedInUsername}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="268" y="75" width="256" height="20" uuid="9a1701d1-8007-420b-b784-12c7c88862ca"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="268" y="100" width="256" height="20" uuid="9a1701d1-8007-420b-b784-12c7c88862ca"/>
 				<textElement textAlignment="Right" markup="none">
 					<font size="11" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="31" y="0" width="495" height="29" uuid="6800bad8-eb65-4af3-962a-f4eae21d90d0"/>
-				<textElement>
-					<font isPdfEmbedded="true"/>
-				</textElement>
-				<text><![CDATA[]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="31" y="35" width="147" height="20" uuid="00cdaa6f-00a4-4718-8094-ae88dc30377f"/>
+				<reportElement x="31" y="60" width="147" height="20" uuid="00cdaa6f-00a4-4718-8094-ae88dc30377f"/>
 				<textElement>
 					<font size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Signature of receiver]]></text>
 			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="21" y="163" width="38" height="16" uuid="7ebb0350-fdaf-4160-8002-da8ec202ddab"/>
+				<textElement>
+					<font size="11" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Note:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="59" y="163" width="467" height="26" uuid="549903d8-b2bc-43f4-b333-616d87063be1"/>
+				<textElement>
+					<font fontName="SansSerif" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[1. The applicant can contact the municipal commissioner, immediately if the service is not delivered as indicated above on the date fixed. ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="59" y="192" width="467" height="36" uuid="3d2dedc2-9ebd-4b28-80e5-1ee7996ce89c"/>
+				<textElement>
+					<font isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[2. Compensation will be paid @ Rs. 50/- per day for the delay caused and towards the valuable time lost by the applicant, if the service is not delivered as indicated above in the date fixed.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="24" y="122" width="505" height="34" uuid="ec711a1e-2fe7-428e-84f9-65fee0d0791f"/>
+				<textElement>
+					<font isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="31" y="0" width="493" height="43" uuid="323d76d0-a467-4237-84d4-e2e48408c8c4"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top" markup="styled">
+					<font size="12" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["This will be resolved within<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{noOfDays}+"</style> days."]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>
