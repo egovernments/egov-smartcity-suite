@@ -291,9 +291,12 @@ public class CollectionIndexElasticSearchService {
                 propTypeQuery = propTypeQuery
                         .filter(QueryBuilders.matchQuery(CONSUMER_TYPE, collectionDetailsRequest.getPropertyType()));
 
-            if(PROPERTY_TAX_INDEX_NAME.equalsIgnoreCase(indexName) && 
-                    !DASHBOARD_PROPERTY_TYPE_BUILT_UP.equalsIgnoreCase(collectionDetailsRequest.getPropertyType()))
-                propTypeQuery = propTypeQuery.filter(QueryBuilders.matchQuery(IS_UNDER_COURTCASE, false));
+            if(!DASHBOARD_PROPERTY_TYPE_BUILT_UP.equalsIgnoreCase(collectionDetailsRequest.getPropertyType())){
+                if(PROPERTY_TAX_INDEX_NAME.equalsIgnoreCase(indexName))
+                    propTypeQuery = propTypeQuery.filter(QueryBuilders.matchQuery(IS_UNDER_COURTCASE, false));
+                else
+                    propTypeQuery = propTypeQuery.filter(QueryBuilders.matchQuery("conflict", 0));
+            }
         }
         return propTypeQuery;
     }
