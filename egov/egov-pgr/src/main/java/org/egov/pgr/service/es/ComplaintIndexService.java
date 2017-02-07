@@ -731,7 +731,8 @@ public class ComplaintIndexService {
                         responseDetail.setDepartmentName(hit[0].field("departmentName").getValue());
                         if (hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER) == null) {
                         } else
-                            hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).getValue();
+                            responseDetail.setFunctionaryMobileNumber(hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).getValue());
+                        responseDetail.setFunctionaryName(bucket.getKeyAsString());
                         satisfactionAverage = bucket.getAggregations().get("excludeZero");
                         final Avg groupByFieldAverageSatisfaction = satisfactionAverage.getBuckets().get(0).getAggregations()
                                 .get("groupByFieldSatisfactionAverage");
@@ -1234,10 +1235,16 @@ public class ComplaintIndexService {
             complaintSouce.setUlbName(hit[0].field("cityName").getValue());
             complaintSouce.setDistrictName(hit[0].field("cityDistrictName").getValue());
             complaintSouce.setWardName(hit[0].field("wardName").getValue());
-            complaintSouce.setFunctionaryName(hit[0].field(INITIAL_FUNCTIONARY_NAME).getValue());
+            if(hit[0].field("departmentName") != null){
+                complaintSouce.setDepartmentName(hit[0].field("departmentName").getValue());
+            }
+            if (hit[0].field(INITIAL_FUNCTIONARY_NAME) == null) {
+            } else{
+                complaintSouce.setFunctionaryName(hit[0].field(INITIAL_FUNCTIONARY_NAME).getValue());
+            }
             if (hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER) == null) {
             } else
-                hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).getValue();
+                complaintSouce.setFunctionaryMobileNumber(hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).getValue());
             CityIndex city;
             if (CITY_REGION_NAME.equals(groupByField))
                 complaintSouce.setRegionName(bucket.getKeyAsString());
