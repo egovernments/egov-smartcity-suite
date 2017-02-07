@@ -63,7 +63,8 @@ public class DailyBoardReportResults {
     private Integer statusId;
     private String assignDept;
     private Date nextDate;
-    private String officerIncharge;
+    private Long officerIncharge;
+    private String officerInChargeName;
 
     public Date getFromDate() {
         return fromDate;
@@ -89,11 +90,11 @@ public class DailyBoardReportResults {
         this.nextDate = nextDate;
     }
 
-    public String getOfficerIncharge() {
+    public Long getOfficerIncharge() {
         return officerIncharge;
     }
 
-    public void setOfficerIncharge(final String officerIncharge) {
+    public void setOfficerIncharge(final Long officerIncharge) {
         this.officerIncharge = officerIncharge;
     }
 
@@ -223,6 +224,14 @@ public class DailyBoardReportResults {
 
     public void setLegalCase(final LegalCase legalCase) {
         this.legalCase = legalCase;
+    }
+
+    public String getOfficerInChargeName() {
+        return officerInChargeName;
+    }
+
+    public void setOfficerInChargeName(String officerInChargeName) {
+        this.officerInChargeName = officerInChargeName;
     }
 
 }

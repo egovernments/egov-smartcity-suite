@@ -62,7 +62,7 @@ public class DailyBoardReportJsonAdapter implements JsonSerializer<DailyBoardRep
         jsonObject.addProperty("petitionerName", dailyboardresult.getLegalCase().getPetitionersNames());
         jsonObject.addProperty("respondantName", dailyboardresult.getLegalCase().getRespondantNames());
         jsonObject.addProperty("standingCouncil", dailyboardresult.getLegalCase().getOppPartyAdvocate());
-        jsonObject.addProperty("officerIncharge", dailyboardresult.getLegalCase().getOfficerIncharge().getName());
+        jsonObject.addProperty("officerIncharge", dailyboardresult.getOfficerInChargeName());
         jsonObject.addProperty("caseStatus", dailyboardresult.getCaseStatus());
         jsonObject.addProperty("nextDate", dailyboardresult.getLegalCase().getNextDate() == null ? ""
                 : DateUtils.getDefaultFormattedDate(dailyboardresult.getLegalCase().getNextDate()));
