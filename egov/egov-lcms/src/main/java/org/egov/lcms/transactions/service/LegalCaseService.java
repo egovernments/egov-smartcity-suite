@@ -43,6 +43,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.eis.repository.PositionMasterRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.lcms.masters.entity.AdvocateMaster;
 import org.egov.lcms.masters.service.AdvocateMasterService;
@@ -60,6 +64,8 @@ import org.egov.lcms.transactions.repository.PwrDocumentsRepository;
 import org.egov.lcms.transactions.repository.ReportStatusRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
+import org.egov.pims.commons.Position;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,6 +81,8 @@ public class LegalCaseService {
     private PwrDocumentsRepository pwrDocumentsRepository;
 
     @Autowired
+    private PositionMasterRepository positionMasterRepository;
+    @Autowired
     private AdvocateMasterService advocateMasterService;
 
     @Autowired
@@ -88,6 +96,13 @@ public class LegalCaseService {
 
     @Autowired
     private ReportStatusRepository reportStatusRepository;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
+    
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
     @Autowired
     public LegalCaseService(final LegalCaseRepository legalCaseRepository) {
@@ -109,8 +124,13 @@ public class LegalCaseService {
 
     @Transactional
     public LegalCase persist(LegalCase legalcase, final MultipartFile[] files) throws IOException {
-        if(null != legalcase.getOfficerIncharge() && legalcase.getOfficerIncharge().getId() ==null)
+        if (null != legalcase.getOfficerIncharge() && legalcase.getOfficerIncharge().getId() == null)
             legalcase.setOfficerIncharge(null);
+        else {
+            Position position = positionMasterRepository.findOne(legalcase.getOfficerIncharge().getId());
+            legalcase.setOfficerIncharge(position);
+            getCurrentSession().evict(position);
+        }
         legalcase.setCaseNumber(
                 legalcase.getCaseNumber() + (legalcase.getWpYear() != null ? "/" + legalcase.getWpYear() : ""));
         legalcase.setStatus(legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
@@ -143,8 +163,7 @@ public class LegalCaseService {
     @Transactional
     public void updateCounterAffidavitAndPwr(final LegalCase legalcase, final List<Pwr> pwrList) {
         /*
-         * final List<LegalCaseDepartment> legalcaseDetails = new
-         * ArrayList<LegalCaseDepartment>(0);
+         * final List<LegalCaseDepartment> legalcaseDetails = new ArrayList<LegalCaseDepartment>(0);
          */
         final List<Pwr> pwrListtemp = new ArrayList<Pwr>(0);
         final List<CounterAffidavit> caListtemp = new ArrayList<CounterAffidavit>(0);
@@ -161,19 +180,13 @@ public class LegalCaseService {
         legalcase.getCounterAffidavits().clear();
         legalcase.setCounterAffidavits(caListtemp);
         /*
-         * for (final LegalCaseDepartment legaldeptObj : legalDept) { String[]
-         * stremp = null; legaldeptObj.setLegalCase(legalcase); if
-         * (legaldeptObj.getPosition().getName() != null &&
-         * legaldeptObj.getPosition().getName().contains("@")) { stremp =
-         * legaldeptObj.getPosition().getName().split("@");
-         * legaldeptObj.setPosition(legalCaseUtil.getPositionByName(stremp[0]));
-         * } else {
-         * legaldeptObj.setPosition(legalCaseUtil.getPositionByName(legaldeptObj
-         * .getPosition().getName())); }
-         * legaldeptObj.setDepartment(legalCaseUtil.getDepartmentByName(
-         * legaldeptObj.getDepartment().getName()));
-         * legalcaseDetails.add(legaldeptObj); }
-         * legalcase.getLegalCaseDepartment().clear();
+         * for (final LegalCaseDepartment legaldeptObj : legalDept) { String[] stremp = null;
+         * legaldeptObj.setLegalCase(legalcase); if (legaldeptObj.getPosition().getName() != null &&
+         * legaldeptObj.getPosition().getName().contains("@")) { stremp = legaldeptObj.getPosition().getName().split("@");
+         * legaldeptObj.setPosition(legalCaseUtil.getPositionByName(stremp[0])); } else {
+         * legaldeptObj.setPosition(legalCaseUtil.getPositionByName(legaldeptObj .getPosition().getName())); }
+         * legaldeptObj.setDepartment(legalCaseUtil.getDepartmentByName( legaldeptObj.getDepartment().getName()));
+         * legalcaseDetails.add(legaldeptObj); } legalcase.getLegalCaseDepartment().clear();
          * legalcase.setLegalCaseDepartment(legalcaseDetails);
          */
 
@@ -363,4 +376,8 @@ public class LegalCaseService {
         return reportStatus;
     }
 
+/*    public Position getPostion(final Long positionId) {
+        final Position pos = positionMasterRepository.findOne(positionId);
+        return pos;
+    }*/
 }

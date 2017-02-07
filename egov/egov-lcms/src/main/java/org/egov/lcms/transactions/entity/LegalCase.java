@@ -77,6 +77,7 @@ import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
@@ -190,7 +191,7 @@ public class LegalCase extends AbstractAuditable {
     @Audited
     private String stampNumber;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "officerincharge")
     private Position officerIncharge;
 
