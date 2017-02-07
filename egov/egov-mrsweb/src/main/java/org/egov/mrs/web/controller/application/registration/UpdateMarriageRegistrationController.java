@@ -117,12 +117,15 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
     @RequestMapping(value = "/update-approved/{id}", method = RequestMethod.GET)
     public String editApprovedRegistration(@PathVariable final Long id, final Model model) {
         buildMrgRegistrationUpdateResult(id, model);
+        LOGGER.debug(".........finished build marriage registration for update........ " );
         return MRG_REGISTRATION_EDIT_APPROVED;
     }
 
     private void buildMrgRegistrationUpdateResult(final Long id, final Model model) {
+        LOGGER.debug("..........InsidebuildMrgRegistrationUpdateResult........ " +id);
         final MarriageRegistration marriageRegistration = marriageRegistrationService.get(id);
         if (!marriageRegistration.isLegacy()) {
+            LOGGER.debug("..........No legacy  entry........ " );
             final AppConfigValues allowValidation = marriageFeeService.getDaysValidationAppConfValue(
                     MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION);
             model.addAttribute("allowDaysValidation",
@@ -130,10 +133,12 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                             : "NO");
         } else
             model.addAttribute("allowDaysValidation", "NO");
+        LOGGER.debug(".........prepareDocumentsForView........ " );
         marriageRegistrationService.prepareDocumentsForView(marriageRegistration);
         marriageApplicantService.prepareDocumentsForView(marriageRegistration.getHusband());
         marriageApplicantService.prepareDocumentsForView(marriageRegistration.getWife());
         model.addAttribute("applicationHistory", marriageRegistrationService.getHistory(marriageRegistration));
+        LOGGER.debug(".........before prepareWorkFlowForNewMarriageRegistration........ " );
         prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
 
         marriageRegistration.getWitnesses().forEach(
@@ -142,6 +147,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                         if (witness.getPhotoFileStore() != null) {
                             final File file = fileStoreService.fetch(witness.getPhotoFileStore().getFileStoreId(),
                                     MarriageConstants.FILESTORE_MODULECODE);
+                            if(file!=null)
                             witness.setEncodedPhoto(Base64.getEncoder().encodeToString(
                                     FileCopyUtils.copyToByteArray(file)));
                         }
@@ -149,6 +155,8 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                         LOG.error("Error while preparing the document for view", e);
                     }
                 });
+        
+        LOGGER.debug(".........after prepare Witnesses........ " );
         model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
     }
 
