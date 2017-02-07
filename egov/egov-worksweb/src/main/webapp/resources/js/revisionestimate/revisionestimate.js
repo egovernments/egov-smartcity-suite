@@ -1678,7 +1678,7 @@ function validateWorkFlowApprover(name) {
 	}
 	if (button != null && button == 'Forward') {
 		addApprovalMandatoryAttribue();
-		flag = showHideAppravalDetails('Forward');
+		flag = showHideApprovalDetails('Forward');
 		if(!flag)
 			return false;
 		$('#approvalComent').removeAttr('required');
@@ -1689,7 +1689,7 @@ function validateWorkFlowApprover(name) {
 	if (button != null && button == 'Create And Approve') {
 		removeApprovalMandatoryAttribue();
 		$('#approvalComent').removeAttr('required');
-		flag = showHideAppravalDetails('Create And Approve');
+		flag = showHideApprovalDetails('Create And Approve');
 		if(!flag)
 			return false;
 		flag = validateRevisionEstimate();
@@ -2206,24 +2206,9 @@ function renderPDF() {
 	window.open("/egworks/revisionestimate/revisionagreementPDF/" + revisionEstimateId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
-function showHideAppravalDetails(workFlowAction) {
+function showHideApprovalDetails(workFlowAction) {
 	var isValidAction=true;
-	var nonTenderedTotal = $('#nonTenderedTotal').html();
-	var lumpSumTotal = $('#lumpSumTotal').html();
-	var reActivityTotal = $('#reActivityTotal').html();
-	if(nonTenderedTotal == '')
-		nonTenderedTotal = 0.0;
-	if(lumpSumTotal == '')
-		lumpSumTotal = 0.0;
-	if(reActivityTotal == '')
-		activityTotal = 0.0;
-
-	var workValue = parseFloat(parseFloat(nonTenderedTotal) + parseFloat(lumpSumTotal) + parseFloat(reActivityTotal)).toFixed(2);
-	var estimateValue =  parseFloat(workValue).toFixed(2);
-	if(!isNaN(estimateValue)) {
-		$('#amountRule').val(estimateValue);
-	}
-
+	var estimateValue =  $('#estimateValueTotal').html();
 	$.ajax({
 		url: "/egworks/revisionestimate/ajax-showhideappravaldetails",     
 		type: "GET",
