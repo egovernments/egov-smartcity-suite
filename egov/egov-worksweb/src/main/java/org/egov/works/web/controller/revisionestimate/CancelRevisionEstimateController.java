@@ -4,6 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
+import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.SearchRevisionEstimate;
 import org.egov.works.revisionestimate.service.RevisionEstimateService;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/revisionestimate")
 public class CancelRevisionEstimateController {
 
+    private static final String REVISIONESTIMATE_SUCCESS = "revisionEstimate-success";
     @Autowired
     private RevisionEstimateService revisionEstimateService;
 
@@ -31,6 +34,9 @@ public class CancelRevisionEstimateController {
     @Autowired
     @Qualifier("messageSource")
     private MessageSource messageSource;
+
+    @Autowired
+    private LineEstimateAppropriationService lineEstimateAppropriationService;
 
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
     public String cancelRevisionEstimateSearchForm(@ModelAttribute final SearchRevisionEstimate searchRevisionEstimate,
@@ -46,7 +52,7 @@ public class CancelRevisionEstimateController {
         final Long revisionEstimateId = Long.parseLong(request.getParameter("id"));
         final String cancellationReason = request.getParameter("cancellationReason");
         final String cancellationRemarks = request.getParameter("cancellationRemarks");
-        String message = "";
+        String message;
         RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(revisionEstimateId);
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
                 .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
@@ -54,32 +60,33 @@ public class CancelRevisionEstimateController {
         final String revisionEstimates = revisionEstimateService.getRevisionEstimatesGreaterThanCurrent(
                 revisionEstimate.getParent().getId(), revisionEstimate.getCreatedDate());
         if (!StringUtils.EMPTY.equals(revisionEstimates)) {
-            message = messageSource.getMessage("error.reexists.greaterthancreateddate",
-                    new String[] { revisionEstimates }, null);
-            return "revisionEstimate-success";
+            messageSource.getMessage("error.reexists.greaterthancreateddate", new String[] { revisionEstimates }, null);
+            return REVISIONESTIMATE_SUCCESS;
         } else {
             final String mbRefNumbers = revisionEstimateService.checkIfMBCreatedForREChangedQuantity(revisionEstimate,
                     workOrderEstimate);
             if (!StringUtils.EMPTY.equals(mbRefNumbers)) {
                 model.addAttribute("message",
                         messageSource.getMessage("error.re.mb.created", new String[] { mbRefNumbers }, null));
-                return "revisionEstimate-success";
+                return REVISIONESTIMATE_SUCCESS;
             } else {
                 message = revisionEstimateService.checkIfMBCreatedForREChangedQuantity(revisionEstimate,
                         workOrderEstimate);
-                if (!message.equals(""))
-                    return "revisionEstimate-success";
+                if (!StringUtils.EMPTY.equals(message))
+                    return REVISIONESTIMATE_SUCCESS;
             }
-
         }
-        message = messageSource.getMessage("msg.revisionestimate.cancelled",
-                new String[] { revisionEstimate.getEstimateNumber() }, null);
         revisionEstimate.setCancellationReason(cancellationReason);
         revisionEstimate.setCancellationRemarks(cancellationRemarks);
         revisionEstimate = revisionEstimateService.cancelRevisionEstimate(revisionEstimate);
+        final LineEstimateAppropriation lea = lineEstimateAppropriationService
+                .findLatestByLineEstimateDetails_EstimateNumber(revisionEstimate.getParent().getEstimateNumber());
+        message = messageSource.getMessage("msg.revisionestimate.cancelled",
+                new String[] { revisionEstimate.getEstimateNumber(), lea.getBudgetUsage().getAppropriationnumber() },
+                null);
         model.addAttribute("revisionEstimate", revisionEstimate);
         model.addAttribute("message", message);
-        return "revisionEstimate-success";
+        return REVISIONESTIMATE_SUCCESS;
     }
 
 }
