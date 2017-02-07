@@ -41,6 +41,10 @@
 package org.egov.tl.repository;
 
 import org.egov.tl.entity.FeeMatrix;
+import org.egov.tl.entity.FeeType;
+import org.egov.tl.entity.License;
+import org.egov.tl.entity.LicenseAppType;
+import org.egov.tl.entity.NatureOfBusiness;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
@@ -48,7 +52,14 @@ import org.hibernate.criterion.Restrictions;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public class FeeMatrixRepositoryImpl implements FeeMatrixRepositoryCustom {
 
@@ -57,7 +68,7 @@ public class FeeMatrixRepositoryImpl implements FeeMatrixRepositoryCustom {
 
     @Override
     public List<FeeMatrix> searchFeeMatrix(Long categoryId, Long subcategoryId, Long financialYearId) {
-        final Criteria feeMatrixCriteria = entityManager.unwrap(Session.class)
+        Criteria feeMatrixCriteria = entityManager.unwrap(Session.class)
                 .createCriteria(FeeMatrix.class, "feeMatrix")
                 .createAlias("feeMatrix.licenseCategory", "licenseCategory")
                 .createAlias("feeMatrix.subCategory", "subCategory")
@@ -74,4 +85,24 @@ public class FeeMatrixRepositoryImpl implements FeeMatrixRepositoryCustom {
                 .addOrder(Order.asc("natureOfBusiness.name"));
         return feeMatrixCriteria.list();
     }
+
+    @Override
+    public Optional<FeeMatrix> findFeeMatrix(License license, NatureOfBusiness natureOfBusiness,
+                                             FeeType feeType, LicenseAppType appType, Date effectiveDate) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<FeeMatrix> criteriaQuery = criteriaBuilder.createQuery(FeeMatrix.class);
+        Root<FeeMatrix> feeMatrixRoot = criteriaQuery.from(FeeMatrix.class);
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(criteriaBuilder.equal(feeMatrixRoot.get("natureOfBusiness"), natureOfBusiness));
+        predicates.add(criteriaBuilder.equal(feeMatrixRoot.get("licenseCategory"), license.getCategory()));
+        predicates.add(criteriaBuilder.equal(feeMatrixRoot.get("subCategory"), license.getTradeName()));
+        predicates.add(criteriaBuilder.equal(feeMatrixRoot.get("licenseAppType"), appType));
+        predicates.add(criteriaBuilder.equal(feeMatrixRoot.get("feeType"), feeType));
+        predicates.add(criteriaBuilder.lessThanOrEqualTo(feeMatrixRoot.get("effectiveFrom"), effectiveDate));
+        predicates.add(criteriaBuilder.greaterThanOrEqualTo(feeMatrixRoot.get("effectiveTo"), effectiveDate));
+        criteriaQuery.select(feeMatrixRoot).where(predicates.toArray(new Predicate[]{}));
+        return entityManager.createQuery(criteriaQuery).getResultList().stream().findFirst();
+    }
+
+
 }

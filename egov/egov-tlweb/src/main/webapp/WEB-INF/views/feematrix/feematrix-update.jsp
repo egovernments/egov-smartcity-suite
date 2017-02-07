@@ -56,18 +56,6 @@
                     </spring:hasBindErrors>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.natureofbusiness"/><span class="mandatory"></span>
-                        </label>
-                        <div class="col-sm-3 add-margin">
-                            <form:select path="natureOfBusiness" id="natureOfBusiness" cssClass="form-control" required="required"
-                                         cssErrorClass="form-control error">
-                                <form:option value="">
-                                    <spring:message code="lbl.select"/>
-                                </form:option>
-                                <form:options items="${natureOfBusinessList}" itemValue="id" itemLabel="name"/>
-                            </form:select>
-                        </div>
-                        <label class="col-sm-3 control-label">
                             <spring:message code="lbl.licenseapptype"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
@@ -77,6 +65,18 @@
                                     <spring:message code="lbl.select"/>
                                 </form:option>
                                 <form:options items="${licenseAppTypeList}" itemValue="id" itemLabel="name"/>
+                            </form:select>
+                        </div>
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.natureofbusiness"/><span class="mandatory"></span>
+                        </label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="natureOfBusiness" id="natureOfBusiness" cssClass="form-control" required="required"
+                                         cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                                <form:options items="${natureOfBusinessList}" itemValue="id" itemLabel="name"/>
                             </form:select>
                         </div>
                     </div>
@@ -163,7 +163,7 @@
                             <spring:message code="lbl.effective.from"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input id="effectiveFrom" path="effectiveFrom" class="datepicker form-control text-left" maxlength="10"/>
+                            <form:input id="effectiveFrom" path="effectiveFrom" class="form-control text-left" maxlength="10" readonly="true"/>
                         </div>
 
                         <label class="col-sm-3 control-label">
@@ -175,13 +175,13 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-12">
-                            <form:checkbox id="sameForPermanentAndTemporary" path="sameForPermanentAndTemporary"/>
-                            <label class="control-label" for="sameForPermanentAndTemporary">
+                            <form:checkbox id="sameForPermanentAndTemporary" path="sameForPermanentAndTemporary" cssClass="sameForPermanentAndTemporary display-hide"/>
+                            <label class="control-label sameForPermanentAndTemporary display-hide" for="sameForPermanentAndTemporary">
                                 &nbsp;&nbsp;<spring:message code="lbl.feematrix.use.same.perm.and.tmp"/>
                             </label>
                             <br/>
-                            <form:checkbox id="sameForNewAndRenew" path="sameForNewAndRenew"/>
-                            <label class="control-label" for="sameForNewAndRenew">
+                            <form:checkbox id="sameForNewAndRenew" path="sameForNewAndRenew" cssClass="sameForNewAndRenew display-hide"/>
+                            <label class="control-label sameForNewAndRenew display-hide" for="sameForNewAndRenew">
                                 &nbsp;&nbsp;<spring:message code="lbl.feematrix.use.same.new.and.renew"/>
                             </label>
                         </div>
@@ -206,7 +206,11 @@
                             <tbody>
                             <c:if test="${not empty feeMatrix.feeMatrixDetail}">
                                 <c:forEach items="${feeMatrix.feeMatrixDetail}" var="detail" varStatus="vs">
-                                    <tr data-create="no">
+                                    <c:set var="display" value="table-row"/>
+                                    <c:if test="${detail.markedForRemoval}">
+                                        <c:set var="display" value="none"/>
+                                    </c:if>
+                                    <tr style="display:${display}">
                                         <td>
                                             <form:input path="feeMatrixDetail[${vs.index}].uomFrom" value="${detail.uomFrom}"
                                                         cssClass="form-control fromRange patternvalidation fromvalue"

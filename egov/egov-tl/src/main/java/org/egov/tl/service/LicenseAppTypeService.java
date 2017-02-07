@@ -49,6 +49,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
+
 @Service
 @Transactional(readOnly = true)
 public class LicenseAppTypeService {
@@ -62,5 +64,9 @@ public class LicenseAppTypeService {
 
     public List<LicenseAppType> getLicenseAppTypes() {
         return licenseAppTypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    }
+
+    public LicenseAppType getNewLicenseAppType() {
+        return getLicenseAppTypeByName(NEW_LIC_APPTYPE);
     }
 }

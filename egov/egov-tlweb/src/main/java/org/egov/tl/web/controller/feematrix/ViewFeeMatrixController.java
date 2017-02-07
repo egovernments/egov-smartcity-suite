@@ -106,7 +106,7 @@ public class ViewFeeMatrixController {
 
         return new StringBuilder("{ \"data\":").
                 append(toJSON(
-                        feeMatrixService.searchFeeMatrix(categoryId, subcategoryId, financialYearId), FeeMatrix.class,
+                        feeMatrixService.getFeeMatrix(categoryId, subcategoryId, financialYearId), FeeMatrix.class,
                         FeeMatrixResponseAdaptor.class)).append("}").toString();
     }
 }

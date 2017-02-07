@@ -81,9 +81,11 @@ import com.google.gson.annotations.Expose;
 
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.PERMANENT_NATUREOFBUSINESS;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.STATUS_ACKNOLEDGED;
 import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
+import static org.egov.tl.utils.Constants.TEMP_NATUREOFBUSINESS;
 import static org.egov.tl.utils.Constants.WF_STATE_COMMISSIONER_APPROVED_STR;
 import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
 
@@ -540,5 +542,13 @@ public class License extends StateAware {
 
     public boolean isReNewApplication() {
         return getLicenseAppType() != null && RENEWAL_LIC_APPTYPE.equals(getLicenseAppType().getName());
+    }
+
+    public boolean isPermanent() {
+        return PERMANENT_NATUREOFBUSINESS.equals(getNatureOfBusiness().getName());
+    }
+
+    public boolean isTemporary() {
+        return TEMP_NATUREOFBUSINESS.equals(getNatureOfBusiness().getName());
     }
 }
