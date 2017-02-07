@@ -117,15 +117,15 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
     @RequestMapping(value = "/update-approved/{id}", method = RequestMethod.GET)
     public String editApprovedRegistration(@PathVariable final Long id, final Model model) {
         buildMrgRegistrationUpdateResult(id, model);
-        LOGGER.debug(".........finished build marriage registration for update........ " );
+        LOGGER.info(".........finished build marriage registration for update........ " );
         return MRG_REGISTRATION_EDIT_APPROVED;
     }
 
     private void buildMrgRegistrationUpdateResult(final Long id, final Model model) {
-        LOGGER.debug("..........InsidebuildMrgRegistrationUpdateResult........ " +id);
+        LOGGER.info("..........InsidebuildMrgRegistrationUpdateResult........ " +id);
         final MarriageRegistration marriageRegistration = marriageRegistrationService.get(id);
         if (!marriageRegistration.isLegacy()) {
-            LOGGER.debug("..........No legacy  entry........ " );
+            LOGGER.info("..........No legacy  entry........ " );
             final AppConfigValues allowValidation = marriageFeeService.getDaysValidationAppConfValue(
                     MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION);
             model.addAttribute("allowDaysValidation",
@@ -133,12 +133,12 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                             : "NO");
         } else
             model.addAttribute("allowDaysValidation", "NO");
-        LOGGER.debug(".........prepareDocumentsForView........ " );
+        LOGGER.info(".........prepareDocumentsForView........ " );
         marriageRegistrationService.prepareDocumentsForView(marriageRegistration);
         marriageApplicantService.prepareDocumentsForView(marriageRegistration.getHusband());
         marriageApplicantService.prepareDocumentsForView(marriageRegistration.getWife());
         model.addAttribute("applicationHistory", marriageRegistrationService.getHistory(marriageRegistration));
-        LOGGER.debug(".........before prepareWorkFlowForNewMarriageRegistration........ " );
+        LOGGER.info(".........before prepareWorkFlowForNewMarriageRegistration........ " );
         prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
 
         marriageRegistration.getWitnesses().forEach(
@@ -156,7 +156,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                     }
                 });
         
-        LOGGER.debug(".........after prepare Witnesses........ " );
+        LOGGER.info(".........after prepare Witnesses........ " );
         model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
     }
 
