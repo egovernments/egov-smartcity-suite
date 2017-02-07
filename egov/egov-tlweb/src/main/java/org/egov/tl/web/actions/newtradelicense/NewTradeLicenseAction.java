@@ -92,270 +92,270 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 @ParentPackage("egov")
-@Results({ @Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
-		@Result(name = Constants.ACKNOWLEDGEMENT, location = "newTradeLicense-acknowledgement.jsp"),
-		@Result(name = Constants.MESSAGE, location = "newTradeLicense-message.jsp"),
-		@Result(name = Constants.BEFORE_RENEWAL, location = "newTradeLicense-beforeRenew.jsp"),
-		@Result(name = Constants.PRINTACK, location = "newTradeLicense-printAck.jsp"),
-		@Result(name = Constants.ACKNOWLEDGEMENT_RENEW, location = "newTradeLicense-acknowledgement_renew.jsp") })
+@Results({@Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
+        @Result(name = Constants.ACKNOWLEDGEMENT, location = "newTradeLicense-acknowledgement.jsp"),
+        @Result(name = Constants.MESSAGE, location = "newTradeLicense-message.jsp"),
+        @Result(name = Constants.BEFORE_RENEWAL, location = "newTradeLicense-beforeRenew.jsp"),
+        @Result(name = Constants.PRINTACK, location = "newTradeLicense-printAck.jsp"),
+        @Result(name = Constants.ACKNOWLEDGEMENT_RENEW, location = "newTradeLicense-acknowledgement_renew.jsp")})
 public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private TradeLicense tradeLicense = new TradeLicense();
-	private List<LicenseDocumentType> documentTypes = new ArrayList<>();
-	private Map<String, String> ownerShipTypeMap;
-	private String mode;
-	private String message;
-	private String renewAppType;
-	@Autowired
-	@Qualifier("tradeLicenseService")
-	private transient TradeLicenseService tradeLicenseService;
+    private TradeLicense tradeLicense = new TradeLicense();
+    private List<LicenseDocumentType> documentTypes = new ArrayList<>();
+    private Map<String, String> ownerShipTypeMap;
+    private String mode;
+    private String message;
+    private String renewAppType;
+    @Autowired
+    @Qualifier("tradeLicenseService")
+    private transient TradeLicenseService tradeLicenseService;
 
-	@Autowired
-	@Qualifier("parentMessageSource")
-	private MessageSource licenseMessageSource;
+    @Autowired
+    @Qualifier("parentMessageSource")
+    private MessageSource licenseMessageSource;
 
-	@Autowired
-	private ReportService reportService;
+    @Autowired
+    private ReportService reportService;
 
-	public NewTradeLicenseAction() {
-		tradeLicense.setLicensee(new Licensee());
-	}
+    public NewTradeLicenseAction() {
+        tradeLicense.setLicensee(new Licensee());
+    }
 
-	@Override
-	@SkipValidation
-	@Action(value = "/newtradelicense/newTradeLicense-newForm")
-	public String newForm() {
-		tradeLicense.setApplicationDate(new Date());
-		return super.newForm();
-	}
+    @Override
+    @SkipValidation
+    @Action(value = "/newtradelicense/newTradeLicense-newForm")
+    public String newForm() {
+        tradeLicense.setApplicationDate(new Date());
+        return super.newForm();
+    }
 
-	@ValidationErrorPage(Constants.NEW)
-	@Action(value = "/newtradelicense/newTradeLicense-create")
-	public String create() {
-		return super.create(tradeLicense);
-	}
+    @ValidationErrorPage(Constants.NEW)
+    @Action(value = "/newtradelicense/newTradeLicense-create")
+    public String create() {
+        return super.create(tradeLicense);
+    }
 
-	@SkipValidation
-	@Action(value = "/newtradelicense/newtradelicense-printAck")
-	public String printAck() {
-		final HttpServletRequest request = ServletActionContext.getRequest();
-		final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-		reportId = reportViewerUtil.addReportToTempCache(
-				getReportParamsForAcknowdgement(tradeLicenseService.getLicenseById(tradeLicense.getId()), cityName));
-		return Constants.PRINTACK;
-	}
+    @SkipValidation
+    @Action(value = "/newtradelicense/newtradelicense-printAck")
+    public String printAck() {
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
+        reportId = reportViewerUtil.addReportToTempCache(
+                getReportParamsForAcknowdgement(tradeLicenseService.getLicenseById(tradeLicense.getId()), cityName));
+        return Constants.PRINTACK;
+    }
 
-	public ReportOutput getReportParamsForAcknowdgement(final TradeLicense license, final String cityName) {
-		final Map<String, Object> reportParams = new HashMap<>();
-		reportParams.put("municipality", cityName);
-		reportParams.put("wardName", license.getParentBoundary().getName());
-		reportParams.put("applicantName", license.getLicensee().getApplicantName());
-		reportParams.put("acknowledgementNo", license.getApplicationNumber());
-		final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		reportParams.put("currentDate", formatter.format(new Date()));
-		reportParams.put("licenceAddress", license.getAddress());
-		reportParams.put("dueDate", formatter.format(calculateDueDate(license)));
-		reportParams.put("Party's Copy", "Party's Copy");
-		reportParams.put("Office's Copy", "Office's Copy");
-		reportParams.put("ApplicationCentre", licenseMessageSource.getMessage("msg.application.centre",
-				new String[] { license.getApplicationNumber() }, Locale.getDefault()));
-		reportParams.put("appType", license.getLicenseAppType() != null
-				? NEW_LIC_APPTYPE.equals(license.getLicenseAppType().getName()) ? "New Trade" : "Renewal of Trade"
-				: "New");
+    public ReportOutput getReportParamsForAcknowdgement(final TradeLicense license, final String cityName) {
+        final Map<String, Object> reportParams = new HashMap<>();
+        reportParams.put("municipality", cityName);
+        reportParams.put("wardName", license.getParentBoundary().getName());
+        reportParams.put("applicantName", license.getLicensee().getApplicantName());
+        reportParams.put("acknowledgementNo", license.getApplicationNumber());
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        reportParams.put("currentDate", formatter.format(new Date()));
+        reportParams.put("licenceAddress", license.getAddress());
+        reportParams.put("dueDate", formatter.format(calculateDueDate(license)));
+        reportParams.put("Party's Copy", "Party's Copy");
+        reportParams.put("Office's Copy", "Office's Copy");
+        reportParams.put("ApplicationCentre", licenseMessageSource.getMessage("msg.application.centre",
+                new String[]{license.getApplicationNumber()}, Locale.getDefault()));
+        reportParams.put("appType", license.getLicenseAppType() != null
+                ? NEW_LIC_APPTYPE.equals(license.getLicenseAppType().getName()) ? "New Trade" : "Renewal of Trade"
+                : "New");
 
-		final ReportRequest reportInput = new ReportRequest("acknowledgement", license, reportParams);
+        final ReportRequest reportInput = new ReportRequest("acknowledgement", license, reportParams);
 
-		final HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.parseMediaType("application/pdf"));
-		headers.add("content-disposition", "inline;filename=Acknowledgement.pdf");
-		final ReportOutput reportOutput = reportService.createReport(reportInput);
-		return reportOutput;
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=Acknowledgement.pdf");
+        final ReportOutput reportOutput = reportService.createReport(reportInput);
+        return reportOutput;
 
-	}
+    }
 
-	public Date calculateDueDate(TradeLicense license) {
-		Date dueDate = new Date();
-		Date currentDate = new Date();
-		String slaNewTradeLicense = licenseMessageSource.getMessage("msg.newTradeLicense.sla",
-				new String[] { license.getApplicationNumber() }, Locale.getDefault());
-		String slaRenewTradeLicense = licenseMessageSource.getMessage("msg.renewTradeLicense.sla",
-				new String[] { license.getApplicationNumber() }, Locale.getDefault());
-		if (license.isNewApplication())
-			dueDate = DateUtils.addDays(currentDate, Integer.parseInt(slaNewTradeLicense));
-		else
-			dueDate = DateUtils.addDays(currentDate, Integer.parseInt(slaRenewTradeLicense));
-		return dueDate;
+    public Date calculateDueDate(TradeLicense license) {
+        Date dueDate = new Date();
+        Date currentDate = new Date();
+        String slaNewTradeLicense = licenseMessageSource.getMessage("msg.newTradeLicense.sla",
+                new String[]{license.getApplicationNumber()}, Locale.getDefault());
+        String slaRenewTradeLicense = licenseMessageSource.getMessage("msg.renewTradeLicense.sla",
+                new String[]{license.getApplicationNumber()}, Locale.getDefault());
+        if (license.isNewApplication())
+            dueDate = DateUtils.addDays(currentDate, Integer.parseInt(slaNewTradeLicense));
+        else
+            dueDate = DateUtils.addDays(currentDate, Integer.parseInt(slaRenewTradeLicense));
+        return dueDate;
 
-	}
+    }
 
-	@Override
-	@Action(value = "/newtradelicense/newTradeLicense-showForApproval")
-	@SkipValidation
-	public String showForApproval() throws IOException {
-		if (license().getState().getValue().equals(Constants.WF_LICENSE_CREATED)
-				|| license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR) && license()
-						.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE)) {
-			mode = Constants.ACK_MODE;
-			message = Constants.PENDING_COLLECTION_MSG;
-		} else if (license().getState().getValue().equals(Constants.WF_FIRST_LVL_FEECOLLECTED)
-				|| license().getState().getValue().equals(Constants.WF_SI_APPROVED))
-			mode = VIEW;
-		else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-			mode = Constants.EDIT_REJECT_MODE;
-		else if (license().getState().getValue().contains(Constants.WF_REVENUECLERK_APPROVED))
-			mode = Constants.EDIT_APPROVAL_MODE;
-		else if (license().getState().getValue().contains(Constants.WF_SECOND_LVL_FEECOLLECTED)
-				|| license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_APPROVED_CODE)
-						&& license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))
-			mode = Constants.DISABLE_APPROVER_MODE;
-		else if (licenseUtils.isDigitalSignEnabled()
-				&& license().getState().getValue().equals(Constants.DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED)
-				|| license().getState().getValue().equals(Constants.WF_DIGI_SIGNED)
-				|| license().getState().getValue().equals(Constants.WF_ACTION_DIGI_SIGN_COMMISSION_NO_COLLECTION))
-			mode = Constants.DISABLE_APPROVER_MODE;
-		List<Position> positionList = positionMasterService
-				.getPositionsForEmployee(securityUtils.getCurrentUser().getId(), new Date());
-		if (!positionList.isEmpty() && !positionList.contains(license().getState().getOwnerPosition())) {
-			ServletActionContext.getResponse().setContentType("text/html");
-			ServletActionContext.getResponse().getWriter()
-					.write("<center style='color:red;font-weight:bolder'>Workflow item is in "
-							+ license().getCurrentState().getOwnerPosition().getName() + " inbox !</center>");
-			return null;
-		}
-		return super.showForApproval();
-	}
+    @Override
+    @Action(value = "/newtradelicense/newTradeLicense-showForApproval")
+    @SkipValidation
+    public String showForApproval() throws IOException {
+        if (license().getState().getValue().equals(Constants.WF_LICENSE_CREATED)
+                || license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR) && license()
+                .getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE)) {
+            mode = Constants.ACK_MODE;
+            message = Constants.PENDING_COLLECTION_MSG;
+        } else if (license().getState().getValue().equals(Constants.WF_FIRST_LVL_FEECOLLECTED)
+                || license().getState().getValue().equals(Constants.WF_SI_APPROVED))
+            mode = VIEW;
+        else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
+            mode = Constants.EDIT_REJECT_MODE;
+        else if (license().getState().getValue().contains(Constants.WF_REVENUECLERK_APPROVED))
+            mode = Constants.EDIT_APPROVAL_MODE;
+        else if (license().getState().getValue().contains(Constants.WF_SECOND_LVL_FEECOLLECTED)
+                || license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_APPROVED_CODE)
+                && license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))
+            mode = Constants.DISABLE_APPROVER_MODE;
+        else if (licenseUtils.isDigitalSignEnabled()
+                && license().getState().getValue().equals(Constants.DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED)
+                || license().getState().getValue().equals(Constants.WF_DIGI_SIGNED)
+                || license().getState().getValue().equals(Constants.WF_ACTION_DIGI_SIGN_COMMISSION_NO_COLLECTION))
+            mode = Constants.DISABLE_APPROVER_MODE;
+        List<Position> positionList = positionMasterService
+                .getPositionsForEmployee(securityUtils.getCurrentUser().getId(), new Date());
+        if (!positionList.isEmpty() && !positionList.contains(license().getState().getOwnerPosition())) {
+            ServletActionContext.getResponse().setContentType("text/html");
+            ServletActionContext.getResponse().getWriter()
+                    .write("<center style='color:red;font-weight:bolder'>Workflow item is in "
+                            + license().getCurrentState().getOwnerPosition().getName() + " inbox !</center>");
+            return null;
+        }
+        return super.showForApproval();
+    }
 
-	@Override
-	@ValidationErrorPageExt(action = Constants.NEW, makeCall = true, toMethod = "prepareShowForApproval")
-	@Action(value = "/newtradelicense/newTradeLicense-approve")
-	public String approve() {
-		final BigDecimal newTradeAreWt = tradeLicense.getTradeArea_weight();
-		tradeLicense = tradeLicenseService.getLicenseById((Long) getSession().get("model.id"));
-		if (license().hasState() && license().getState().getValue().contains(Constants.WF_REVENUECLERK_APPROVED))
-			tradeLicense.setTradeArea_weight(newTradeAreWt);
-		if ("Submit".equals(workFlowAction) && mode.equalsIgnoreCase(VIEW)
-				&& tradeLicense.getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR)
-				&& !tradeLicense.isPaid() && !workFlowAction.equalsIgnoreCase(Constants.BUTTONREJECT)) {
-			prepareNewForm();
-			final ValidationError vr = new ValidationError("license.fee.notcollected", "license.fee.notcollected");
-			throw new ValidationException(Arrays.asList(vr));
-		}
-		return super.approve();
-	}
+    @Override
+    @ValidationErrorPageExt(action = Constants.NEW, makeCall = true, toMethod = "prepareShowForApproval")
+    @Action(value = "/newtradelicense/newTradeLicense-approve")
+    public String approve() {
+        final BigDecimal newTradeAreWt = tradeLicense.getTradeArea_weight();
+        tradeLicense = tradeLicenseService.getLicenseById((Long) getSession().get("model.id"));
+        if (license().hasState() && license().getState().getValue().contains(Constants.WF_REVENUECLERK_APPROVED))
+            tradeLicense.setTradeArea_weight(newTradeAreWt);
+        if ("Submit".equals(workFlowAction) && mode.equalsIgnoreCase(VIEW)
+                && tradeLicense.getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR)
+                && !tradeLicense.isPaid() && !workFlowAction.equalsIgnoreCase(Constants.BUTTONREJECT)) {
+            prepareNewForm();
+            final ValidationError vr = new ValidationError("license.fee.notcollected", "license.fee.notcollected");
+            throw new ValidationException(Arrays.asList(vr));
+        }
+        return super.approve();
+    }
 
-	@Override
-	@SkipValidation
-	@Action(value = "/newtradelicense/newTradeLicense-beforeRenew")
-	public String beforeRenew() throws IOException {
-		prepareNewForm();
-		setDocumentTypes(tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.NEW));
-		if (tradeLicense.getEgwStatus() != null
-				&& !tradeLicense.getEgwStatus().getCode()
-						.equalsIgnoreCase(Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE)
-				&& tradeLicense.isReNewApplication()) {
-			ServletActionContext.getResponse().setContentType("text/html");
-			ServletActionContext.getResponse().getWriter()
-					.write("<center style='color:red;font-weight:bolder'>Renewal workflow is in progress !</center>");
-			return null;
-		}
-		if (!tradeLicense.hasState() || "Closed".equals(tradeLicense.getCurrentState().getValue()))
-			currentState = "";
-		renewAppType = RENEWAL_LIC_APPTYPE;
-		return super.beforeRenew();
-	}
+    @Override
+    @SkipValidation
+    @Action(value = "/newtradelicense/newTradeLicense-beforeRenew")
+    public String beforeRenew() throws IOException {
+        prepareNewForm();
+        setDocumentTypes(tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.NEW));
+        if (tradeLicense.getEgwStatus() != null
+                && !tradeLicense.getEgwStatus().getCode()
+                .equalsIgnoreCase(Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE)
+                && tradeLicense.isReNewApplication()) {
+            ServletActionContext.getResponse().setContentType("text/html");
+            ServletActionContext.getResponse().getWriter()
+                    .write("<center style='color:red;font-weight:bolder'>Renewal workflow is in progress !</center>");
+            return null;
+        }
+        if (!tradeLicense.hasState() || "Closed".equals(tradeLicense.getCurrentState().getValue()))
+            currentState = "";
+        renewAppType = RENEWAL_LIC_APPTYPE;
+        return super.beforeRenew();
+    }
 
-	@Override
-	@ValidationErrorPageExt(action = Constants.BEFORE_RENEWAL, makeCall = true, toMethod = "prepareRenew")
-	@Action(value = "/newtradelicense/newTradeLicense-renewal")
-	public String renew() {
-		return super.renew();
-	}
+    @Override
+    @ValidationErrorPageExt(action = Constants.BEFORE_RENEWAL, makeCall = true, toMethod = "prepareRenew")
+    @Action(value = "/newtradelicense/newTradeLicense-renewal")
+    public String renew() {
+        return super.renew();
+    }
 
-	public void prepareRenew() {
-		prepareNewForm();
-	}
+    public void prepareRenew() {
+        prepareNewForm();
+    }
 
-	@Override
-	public void prepareNewForm() {
-		super.prepareNewForm();
-		if (license() != null && license().getId() != null)
-			tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-		setDocumentTypes(tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.NEW));
-		setOwnerShipTypeMap(Constants.getOwnershipTypes());
-		final List<Boundary> localityList = boundaryService
-				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE);
-		addDropdownData("localityList", localityList);
-		addDropdownData("tradeTypeList", tradeLicenseService.getAllNatureOfBusinesses());
-		addDropdownData("categoryList", licenseCategoryService.getCategories());
-		addDropdownData("uomList", unitOfMeasurementService.getAllActiveUOM());
-		addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList()
-				: licenseSubCategoryService.getSubCategoriesByCategory(tradeLicense.getCategory().getId()));
-		if (license() != null && license().getAgreementDate() != null)
-			setShowAgreementDtl(true);
-	}
+    @Override
+    public void prepareNewForm() {
+        super.prepareNewForm();
+        if (license() != null && license().getId() != null)
+            tradeLicense = tradeLicenseService.getLicenseById(license().getId());
+        setDocumentTypes(tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.NEW));
+        setOwnerShipTypeMap(Constants.getOwnershipTypes());
+        final List<Boundary> localityList = boundaryService
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE);
+        addDropdownData("localityList", localityList);
+        addDropdownData("tradeTypeList", tradeLicenseService.getAllNatureOfBusinesses());
+        addDropdownData("categoryList", licenseCategoryService.getCategories());
+        addDropdownData("uomList", unitOfMeasurementService.getAllActiveUOM());
+        addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList()
+                : licenseSubCategoryService.getSubCategoriesByCategory(tradeLicense.getCategory().getId()));
+        if (license() != null && license().getAgreementDate() != null)
+            setShowAgreementDtl(true);
+    }
 
-	@Override
-	public License getModel() {
-		return tradeLicense;
-	}
+    @Override
+    public License getModel() {
+        return tradeLicense;
+    }
 
-	public WorkflowBean getWorkflowBean() {
-		return workflowBean;
-	}
+    public WorkflowBean getWorkflowBean() {
+        return workflowBean;
+    }
 
-	public void setWorkflowBean(final WorkflowBean workflowBean) {
-		this.workflowBean = workflowBean;
-	}
+    public void setWorkflowBean(final WorkflowBean workflowBean) {
+        this.workflowBean = workflowBean;
+    }
 
-	@Override
-	protected TradeLicense license() {
-		return tradeLicense;
-	}
+    @Override
+    protected TradeLicense license() {
+        return tradeLicense;
+    }
 
-	@Override
-	protected AbstractLicenseService<TradeLicense> licenseService() {
-		return tradeLicenseService;
-	}
+    @Override
+    protected AbstractLicenseService<TradeLicense> licenseService() {
+        return tradeLicenseService;
+    }
 
-	public List<LicenseDocumentType> getDocumentTypes() {
-		return documentTypes;
-	}
+    public List<LicenseDocumentType> getDocumentTypes() {
+        return documentTypes;
+    }
 
-	public void setDocumentTypes(final List<LicenseDocumentType> documentTypes) {
-		this.documentTypes = documentTypes;
-	}
+    public void setDocumentTypes(final List<LicenseDocumentType> documentTypes) {
+        this.documentTypes = documentTypes;
+    }
 
-	public Map<String, String> getOwnerShipTypeMap() {
-		return ownerShipTypeMap;
-	}
+    public Map<String, String> getOwnerShipTypeMap() {
+        return ownerShipTypeMap;
+    }
 
-	public void setOwnerShipTypeMap(final Map<String, String> ownerShipTypeMap) {
-		this.ownerShipTypeMap = ownerShipTypeMap;
-	}
+    public void setOwnerShipTypeMap(final Map<String, String> ownerShipTypeMap) {
+        this.ownerShipTypeMap = ownerShipTypeMap;
+    }
 
-	public String getMode() {
-		return mode;
-	}
+    public String getMode() {
+        return mode;
+    }
 
-	public void setMode(final String mode) {
-		this.mode = mode;
-	}
+    public void setMode(final String mode) {
+        this.mode = mode;
+    }
 
-	@Override
-	public String getAdditionalRule() {
-		if (RENEWAL_LIC_APPTYPE.equals(renewAppType) || tradeLicense != null && tradeLicense.isReNewApplication())
-			return Constants.RENEW_ADDITIONAL_RULE;
-		else
-			return Constants.NEW_ADDITIONAL_RULE;
-	}
+    @Override
+    public String getAdditionalRule() {
+        if (RENEWAL_LIC_APPTYPE.equals(renewAppType) || tradeLicense != null && tradeLicense.isReNewApplication())
+            return Constants.RENEW_ADDITIONAL_RULE;
+        else
+            return Constants.NEW_ADDITIONAL_RULE;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public void setMessage(final String message) {
-		this.message = message;
-	}
+    public void setMessage(final String message) {
+        this.message = message;
+    }
 }

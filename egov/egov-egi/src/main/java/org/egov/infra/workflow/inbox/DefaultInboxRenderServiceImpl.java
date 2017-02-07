@@ -93,7 +93,7 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
                 .add(Restrictions.in("state.ownerPosition.id", owners))
                 .add(Restrictions.ne("state.status", StateStatus.ENDED))
                 .add(Restrictions.not(Restrictions.conjunction().add(Restrictions.eq("state.status", StateStatus.STARTED))
-                        .add(Restrictions.eq("createdBy.id", userId)))).addOrder(Order.desc("state.createdDate"))
+                        .add(Restrictions.eq("state.createdBy.id", userId)))).addOrder(Order.desc("state.createdDate"))
                         .list();
     }
 
@@ -103,7 +103,7 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
                 .setFetchMode("state", FetchMode.JOIN).createAlias("state", "state")
                 .setFlushMode(FlushMode.MANUAL).setReadOnly(true).setCacheable(true)
                 .add(Restrictions.eq("state.type", this.stateAwareType.getSimpleName()))
-                .add(Restrictions.in("state.ownerPosition.id", owners)).add(Restrictions.eq("createdBy.id", userId))
+                .add(Restrictions.in("state.ownerPosition.id", owners)).add(Restrictions.eq("state.createdBy.id", userId))
                 .add(Restrictions.eq("state.status", StateStatus.STARTED)).addOrder(Order.asc("state.createdDate"))
                 .list();
     }

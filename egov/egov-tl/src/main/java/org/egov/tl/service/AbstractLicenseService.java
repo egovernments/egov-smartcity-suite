@@ -50,9 +50,11 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -107,6 +109,12 @@ import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
 import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
 import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
+import static org.egov.tl.utils.Constants.CSCOPERATOR;
+import static org.egov.tl.utils.Constants.RENEWAL_NATUREOFWORK;
+import static org.egov.tl.utils.Constants.NEW_NATUREOFWORK;
+import static org.egov.tl.utils.Constants.RC_DESIGNATION;
+import static org.egov.tl.utils.Constants.JA_DESIGNATION;
+import static org.egov.tl.utils.Constants.PUBLIC_HEALTH_DEPT;
 
 @Transactional(readOnly = true)
 public abstract class AbstractLicenseService<T extends License> {
@@ -173,6 +181,11 @@ public abstract class AbstractLicenseService<T extends License> {
     @Autowired
     private LicenseUtils licenseUtils;
 
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private DesignationService designationService;
+
     public static BigDecimal percentage(BigDecimal base, BigDecimal pct) {
         return base.multiply(pct).divide(ONE_HUNDRED);
     }
@@ -199,7 +212,6 @@ public abstract class AbstractLicenseService<T extends License> {
     public void create(final T license, final WorkflowBean workflowBean) {
         Date fromRange = installmentDao.getInsatllmentByModuleForGivenDate(this.getModuleName(), new DateTime().toDate()).getFromDate();
         Date toRange = installmentDao.getInsatllmentByModuleForGivenDate(this.getModuleName(), new DateTime().plusYears(1).toDate()).getToDate();
-
         if (license.getCommencementDate().before(fromRange) || license.getCommencementDate().after(toRange))
             throw new ValidationException("TL-009", "TL-009");
         license.setLicenseAppType(getLicenseApplicationType());
@@ -208,10 +220,42 @@ public abstract class AbstractLicenseService<T extends License> {
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         processAndStoreDocument(license.getDocuments(), license);
-        transitionWorkFlow(license, workflowBean);
+        final String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
+        if (!currentUserRoles.contains(CSCOPERATOR))
+            transitionWorkFlow(license, workflowBean);
+        else
+            wfWithCscOperator(license, workflowBean);
         licenseRepository.save(license);
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
+    }
+
+    private void wfWithCscOperator(T license, WorkflowBean workflowBean) {
+        List<Assignment> assignmentList = assignmentService
+                .findAllAssignmentsByDeptDesigAndDates(departmentService.getDepartmentByName(PUBLIC_HEALTH_DEPT).getId(),
+                        designationService.getDesignationByName(JA_DESIGNATION).getId(), new Date());
+        if (assignmentList.isEmpty())
+            assignmentList = assignmentService
+                    .findAllAssignmentsByDeptDesigAndDates(departmentService.getDepartmentByName(PUBLIC_HEALTH_DEPT).getId(),
+                            designationService.getDesignationByName(RC_DESIGNATION).getId(), new Date());
+        if (!assignmentList.isEmpty()) {
+            Assignment wfAssignment = assignmentList.get(0);
+            final String natureOfWork = license.isReNewApplication()
+                    ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK;
+            final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), PUBLIC_HEALTH_DEPT,
+                    null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
+            if (license.isReNewApplication())
+                license.reinitiateTransition();
+            else
+                license.transition();
+            license.start().withSenderName(wfAssignment.getEmployee().getUsername() + DELIMITER_COLON + wfAssignment.getEmployee().getName())
+                    .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
+                    .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(wfAssignment.getPosition())
+                    .withNextAction(wfmatrix.getNextAction()).withInitiator(wfAssignment.getPosition());
+            license.setEgwStatus(
+                    egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
+        } else
+            throw new ValidationException("license.wf.initiator.not.defined", "license.wf.initiator.not.defined");
     }
 
     private BigDecimal raiseNewDemand(final T license) {
@@ -405,7 +449,7 @@ public abstract class AbstractLicenseService<T extends License> {
     public void renew(final T license, final WorkflowBean workflowBean) {
         license.setLicenseAppType(getLicenseApplicationTypeForRenew());
         final String natureOfWork = license.isReNewApplication()
-                ? Constants.RENEWAL_NATUREOFWORK : Constants.NEW_NATUREOFWORK;
+                ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK;
         final Assignment wfInitiator = this.assignmentService
                 .getPrimaryAssignmentForUser(this.securityUtils.getCurrentUser().getId());
         license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
@@ -414,13 +458,17 @@ public abstract class AbstractLicenseService<T extends License> {
         license.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
         license.setLicenseAppType(this.getLicenseApplicationTypeForRenew());
         final User currentUser = this.securityUtils.getCurrentUser();
-        final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
-                null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
-        license.reinitiateTransition().start()
-                .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
-                .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(wfInitiator.getPosition())
-                .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator.getPosition());
+        final String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
+        if (!currentUserRoles.contains(CSCOPERATOR)) {
+            final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
+                    null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
+            license.reinitiateTransition().start()
+                    .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
+                    .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
+                    .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(wfInitiator.getPosition())
+                    .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator.getPosition());
+        } else
+            wfWithCscOperator(license, workflowBean);
         this.licenseRepository.save(license);
         sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
@@ -472,7 +520,7 @@ public abstract class AbstractLicenseService<T extends License> {
         Position pos = null;
         Position wfInitiator = null;
         final String natureOfWork = license.isReNewApplication()
-                ? Constants.RENEWAL_NATUREOFWORK : Constants.NEW_NATUREOFWORK;
+                ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK;
         if (null != license.getId())
             wfInitiator = this.getWorkflowInitiator(license);
 
@@ -481,9 +529,6 @@ public abstract class AbstractLicenseService<T extends License> {
                 license.transition(true).end().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
-                if (license.isReNewApplication())
-                    license.setLicenseAppType(this.getLicenseApplicationType());
-
             } else {
                 final String stateValue = WORKFLOW_STATE_REJECTED;
                 license.transition(true).withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
@@ -714,7 +759,7 @@ public abstract class AbstractLicenseService<T extends License> {
     public BigDecimal recalculateLicenseFee(final LicenseDemand licenseDemand) {
         BigDecimal licenseFee = ZERO;
         for (final EgDemandDetails demandDetail : licenseDemand.getEgDemandDetails())
-            if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(LICENSE_FEE_TYPE))
+            if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(LICENSE_FEE_TYPE) && licenseDemand.getEgInstallmentMaster().equals(demandDetail.getEgDemandReason().getEgInstallmentMaster()))
                 licenseFee = licenseFee.add(demandDetail.getAmount());
         return licenseFee;
     }

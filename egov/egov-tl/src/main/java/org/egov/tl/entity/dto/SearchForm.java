@@ -48,6 +48,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.egov.tl.utils.Constants.CSCOPERATOR;
+
 public class SearchForm {
     private Long licenseId;
     private String applicationNumber;
@@ -96,13 +98,17 @@ public class SearchForm {
     private void addActions(final License license, final String userRoles) {
         final List<String> licenseActions = new ArrayList<>();
         licenseActions.add("View Trade");
-        licenseActions.add("Generate Demand Notice");
-        if (license.isLegacy() && !license.hasState())
-            licenseActions.add("Modify Legacy License");
-        if (license.getStatus() != null) {
-            addRoleSpecificActions(license, userRoles, licenseActions);
-            if (license.isStatusActive())
-                licenseActions.add("Closure");
+        if (!userRoles.contains(CSCOPERATOR)) {
+            licenseActions.add("Generate Demand Notice");
+            if (license.isLegacy() && !license.hasState())
+                licenseActions.add("Modify Legacy License");
+            if (license.getStatus() != null) {
+                addRoleSpecificActions(license, userRoles, licenseActions);
+                if (license.isStatusActive())
+                    licenseActions.add("Closure");
+            }
+        } else if (!license.isPaid() && license.getIsActive()) {
+            addRenewalOption(licenseActions, license.getState());
         }
         setActions(licenseActions);
     }
