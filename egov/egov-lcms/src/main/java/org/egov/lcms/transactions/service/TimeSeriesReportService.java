@@ -299,13 +299,13 @@ public class TimeSeriesReportService {
             queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as count ");
         else
             queryStr.append("select distinct legalcase  as  legalCase ");
-        queryStr.append(",legalcase.officerIncharge as aggregatedBy,");
+        queryStr.append(",position.name as aggregatedBy,");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
             queryStr.append(" to_char(legalcase.caseDate,'Mon') as month,");
         queryStr.append(" extract(year from legalcase.caseDate) as year ");
-        queryStr.append(" from LegalCase legalcase where");
+        queryStr.append(" from LegalCase legalcase,Position position where legalcase.officerIncharge=position.id and ");
         if (clickOnCount) {
-            queryStr.append(" legalcase.officerIncharge=:aggreagatedByValue ");
+            queryStr.append(" position.name=:aggreagatedByValue ");
             if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
                 queryStr.append(" and to_char(legalcase.caseDate,'Mon')=:month ");
             queryStr.append(" and extract(year from legalcase.caseDate)=:year ");
@@ -313,13 +313,13 @@ public class TimeSeriesReportService {
         }
 
         getAppendQuery(timeSeriesReportResults, queryStr);
-        queryStr.append(" group by legalcase.officerIncharge,");
+        queryStr.append(" group by position.name,");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
             queryStr.append(" to_char(legalcase.caseDate,'Mon'), ");
         if (clickOnCount)
             queryStr.append(" legalcase,");
         queryStr.append(" extract(year from legalcase.caseDate) ");
-        queryStr.append(" order by legalcase.officerIncharge ,");
+        queryStr.append(" order by position.name ,");
         if (timeSeriesReportResults.getPeriod().equals(LcmsConstants.AGG_MONTH))
             queryStr.append(" to_char(legalcase.caseDate,'Mon'), ");
         queryStr.append(" extract(year from legalcase.caseDate) ");

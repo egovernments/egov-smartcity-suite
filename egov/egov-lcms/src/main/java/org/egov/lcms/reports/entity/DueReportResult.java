@@ -53,10 +53,11 @@ public class DueReportResult {
     private Date hearingDate;
     private Date judgementImplDate;
     private String reportBy;
-    private String officialIncharge;
     private Boolean isStatusExcluded;
     private String caseStatus;
     private String petitionType;
+    private Long officerIncharge;
+    private String officerInChargeName;
 
     public String getCaseNumber() {
         return caseNumber;
@@ -126,14 +127,6 @@ public class DueReportResult {
 		this.reportBy = reportBy;
 	}
 
-	public String getOfficialIncharge() {
-		return officialIncharge;
-	}
-
-	public void setOfficialIncharge(String officialIncharge) {
-		this.officialIncharge = officialIncharge;
-	}
-
 	public Date getHearingDate() {
 		return hearingDate;
 	}
@@ -157,6 +150,22 @@ public class DueReportResult {
 	public void setPetitionType(String petitionType) {
 		this.petitionType = petitionType;
 	}
+
+    public Long getOfficerIncharge() {
+        return officerIncharge;
+    }
+
+    public void setOfficerIncharge(Long officerIncharge) {
+        this.officerIncharge = officerIncharge;
+    }
+
+    public String getOfficerInChargeName() {
+        return officerInChargeName;
+    }
+
+    public void setOfficerInChargeName(String officerInChargeName) {
+        this.officerInChargeName = officerInChargeName;
+    }
     
 
 }

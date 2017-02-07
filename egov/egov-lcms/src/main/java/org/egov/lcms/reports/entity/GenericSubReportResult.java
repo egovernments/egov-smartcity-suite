@@ -56,7 +56,7 @@ public class GenericSubReportResult {
     private Integer petitionTypeId;
     private String caseStatus;
     private Integer statusId;
-    private String officerIncharge;
+    private Long officerIncharge;
     private Date fromDate;
     private Date toDate;
     private String aggregatedByValue;
@@ -138,13 +138,6 @@ public class GenericSubReportResult {
         this.caseStatus = caseStatus;
     }
 
-    public String getOfficerIncharge() {
-        return officerIncharge;
-    }
-
-    public void setOfficerIncharge(final String officerIncharge) {
-        this.officerIncharge = officerIncharge;
-    }
 
     public String getCaseStatus() {
         return caseStatus;
@@ -239,6 +232,14 @@ public class GenericSubReportResult {
 
     public void setAggregatedBy(final String aggregatedBy) {
         this.aggregatedBy = aggregatedBy;
+    }
+
+    public Long getOfficerIncharge() {
+        return officerIncharge;
+    }
+
+    public void setOfficerIncharge(Long officerIncharge) {
+        this.officerIncharge = officerIncharge;
     }
 
 }

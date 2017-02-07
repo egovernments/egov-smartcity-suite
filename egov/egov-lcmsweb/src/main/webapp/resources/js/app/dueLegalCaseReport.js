@@ -69,6 +69,43 @@ jQuery(document).ready(function($) {
 
 		});
 	
+	  var assignPosition = new Bloodhound({
+			datumTokenizer : function(datum) {
+				return Bloodhound.tokenizers
+						.whitespace(datum.value);
+			},
+			queryTokenizer : Bloodhound.tokenizers.whitespace,
+			remote : {
+				url : '/lcms/ajax/getposition', 
+				replace : function(url, uriEncodedQuery) {
+					return url + '?positionName=' + uriEncodedQuery;
+
+				},
+				filter : function(data) {
+			
+					return $.map(data, function(value, key) {
+						
+						return {
+							name : value,
+							value : key
+						};
+						
+					});
+				}
+			}
+		});
+		
+		assignPosition.initialize();
+		var typeaheadobj = $('#positionName').typeahead({
+			hint: false,
+			highlight: false,
+			minLength: 1
+		},  {
+			displayKey : 'name',
+			source : assignPosition.ttAdapter()
+		});
+		
+		typeaheadWithEventsHandling(typeaheadobj, '#officerIncharge'); 
 });
 
 var oDataTable;

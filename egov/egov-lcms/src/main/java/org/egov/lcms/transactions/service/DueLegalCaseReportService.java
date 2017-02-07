@@ -67,12 +67,12 @@ public class DueLegalCaseReportService {
     public List<DueReportResult> getLegalCaseReport(final DueReportResult dueReportResult, final String reportType) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select  legalObj  as  legalCase ,courtmaster.name  as  courtName ,");
-        queryStr.append(" legalObj.status.code  as  caseStatus ");
+        queryStr.append(" legalObj.status.code  as  caseStatus,position.name as officerInChargeName ");
         if (reportType.equals(LcmsConstants.DUEEMPLOYEEHEARINGREPORT))
             queryStr.append(" ,empHearing.hearingDate  as  hearingDate ");
         if (reportType.equals(LcmsConstants.DUEJUDGEMENTIMPLPREPORT))
             queryStr.append(" ,judgementImpl.dateOfCompliance as judgementImplDate ");
-        queryStr.append(" from LegalCase legalObj,CourtMaster courtmaster,CaseTypeMaster casetypemaster,");
+        queryStr.append(" from LegalCase legalObj left join legalObj.officerIncharge position,CourtMaster courtmaster,CaseTypeMaster casetypemaster,");
         queryStr.append(" PetitionTypeMaster petmaster");
         if (reportType.equals(LcmsConstants.DUEEMPLOYEEHEARINGREPORT)
                 || reportType.equals(LcmsConstants.DUEJUDGEMENTIMPLPREPORT))
@@ -116,12 +116,12 @@ public class DueLegalCaseReportService {
 
         }
 
-        if (dueReportResult.getOfficialIncharge() != null)
-            queryStr.append(" and legalObj.officerIncharge =:officerIncharge ");
+        if (dueReportResult.getOfficerIncharge() != null)
+            queryStr.append(" and position.id =:officerIncharge ");
 
         if (!(reportType.equals(LcmsConstants.DUEEMPLOYEEHEARINGREPORT)
                 || reportType.equals(LcmsConstants.DUEJUDGEMENTIMPLPREPORT)))
-            getAppendQuery(dueReportResult, queryStr);
+        getAppendQuery(dueReportResult, queryStr);
 
         Query queryResult = getCurrentSession().createQuery(queryStr.toString());
         queryResult = setParametersToQuery(dueReportResult, queryResult, reportType);
@@ -146,8 +146,8 @@ public class DueLegalCaseReportService {
             statusCodeList.add(LcmsConstants.LEGALCASE_STATUS_JUDGMENT_IMPLIMENTED);
             queryResult.setParameterList("statusCodeList", statusCodeList);
         }
-        if (dueReportResult.getOfficialIncharge() != null)
-            queryResult.setString("officerIncharge", dueReportResult.getOfficialIncharge());
+        if (dueReportResult.getOfficerIncharge() != null)
+            queryResult.setLong("officerIncharge", dueReportResult.getOfficerIncharge());
 
         if (dueReportResult.getCaseFromDate() != null)
             queryResult.setDate("fromdate", dueReportResult.getCaseFromDate());

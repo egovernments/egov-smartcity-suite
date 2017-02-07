@@ -66,8 +66,8 @@
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.officerincharge" />:</label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control" maxlength="50"
-			id="officialIncharge" name="officialIncharge" />
+			  <input id="positionName" type="text" class="form-control typeahead" placeholder="" autocomplete="off" />
+               <input type="hidden" name="officerIncharge" id="officerIncharge"/>
 	</div>
 	<div class="col-sm-3 add-margin"></div>
 </div>

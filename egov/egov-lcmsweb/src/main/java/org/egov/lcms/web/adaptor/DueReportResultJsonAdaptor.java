@@ -63,7 +63,7 @@ public class DueReportResultJsonAdaptor implements JsonSerializer<DueReportResul
         jsonObject.addProperty("petitionerName", dueReportResult.getLegalCase().getPetitionersNames());
         jsonObject.addProperty("respondantName", dueReportResult.getLegalCase().getRespondantNames());
         jsonObject.addProperty("standingCouncil", dueReportResult.getLegalCase().getOppPartyAdvocate());
-        jsonObject.addProperty("officerIncharge", dueReportResult.getLegalCase().getOfficerIncharge().getName());
+        jsonObject.addProperty("officerIncharge", dueReportResult.getOfficerInChargeName());
         if(dueReportResult.getHearingDate() != null){
         jsonObject.addProperty("nextDate" ,DateUtils.getDefaultFormattedDate(dueReportResult.getHearingDate()));
         }

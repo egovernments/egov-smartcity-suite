@@ -119,13 +119,13 @@ public class GenericSubReportService {
         if (genericSubReportResultObj.getCaseStatus() != null)
             queryResult.setString("status", genericSubReportResultObj.getCaseStatus());
         if (genericSubReportResultObj.getOfficerIncharge() != null)
-            queryResult.setString("officerIncharge", genericSubReportResultObj.getOfficerIncharge());
+            queryResult.setLong("officerIncharge", genericSubReportResultObj.getOfficerIncharge());
         if (genericSubReportResultObj.getJudgmentTypeId() != null)
             queryResult.setInteger("judgmentType", genericSubReportResultObj.getJudgmentTypeId());
         if (StringUtils.isNotBlank(genericSubReportResultObj.getStandingCounsel()))
             queryResult.setString("standingCouncil", genericSubReportResultObj.getStandingCounsel());
         if (genericSubReportResultObj.getOfficerIncharge() != null)
-            queryResult.setString("officerIncharge", genericSubReportResultObj.getOfficerIncharge());
+            queryResult.setLong("officerIncharge", genericSubReportResultObj.getOfficerIncharge());
         if (genericSubReportResultObj.getCasecategoryId() != null)
             queryResult.setInteger("caseType", genericSubReportResultObj.getCasecategoryId());
         if (genericSubReportResultObj.getReportStatusId() != null)
@@ -146,7 +146,7 @@ public class GenericSubReportService {
         if (StringUtils.isNotBlank(genericSubReportResult.getStandingCounsel()))
             queryStr.append(" and legalcase.oppPartyAdvocate =:standingCouncil ");
         if (genericSubReportResult.getOfficerIncharge() != null)
-            queryStr.append(" and legalcase.officerIncharge =:officerIncharge ");
+            queryStr.append(" and position.id =:officerIncharge ");
         if (genericSubReportResult.getCaseStatus() != null)
             queryStr.append(" and egwStatus.code =:status ");
         if (genericSubReportResult.getCourtType() != null)
@@ -289,8 +289,8 @@ public class GenericSubReportService {
             queryStr.append(" SELECT COUNT(DISTINCT legalcase.id) as noOfCase ");
         else
             queryStr.append("select distinct legalcase  as  legalCase ");
-        queryStr.append(",legalcase.officerIncharge as aggregatedBy ");
-        queryStr.append("from LegalCase legalcase,EgwStatus egwStatus ");
+        queryStr.append(",position.name as aggregatedBy ");
+        queryStr.append("from LegalCase legalcase,EgwStatus egwStatus, Position position ");
         queryStr.append(" ,CourtMaster courtmaster ,CaseTypeMaster casetypemaster , PetitionTypeMaster petmaster ");
         if (genericSubReportResult.getJudgmentTypeId() != null)
             queryStr.append(" ,Judgment judgment ");
@@ -300,17 +300,18 @@ public class GenericSubReportService {
                 " where legalcase.courtMaster.id=courtmaster.id and legalcase.petitionTypeMaster.id=petmaster.id ");
         queryStr.append("  and legalcase.caseTypeMaster.id=casetypemaster.id  ");
         queryStr.append(" and  legalcase.status.id=egwStatus.id and egwStatus.moduletype =:moduleType ");
+        queryStr.append(" and  legalcase.officerIncharge=position.id ");
         if (genericSubReportResult.getJudgmentTypeId() != null)
             queryStr.append(" and legalcase.id = judgment.legalCase ");
         if (genericSubReportResult.getReportStatusId() != null)
             queryStr.append(" and legalcase.reportStatus.id=reportStatus.id ");
         if (clickOnCount)
-            queryStr.append("and  legalcase.officerIncharge=:aggreagatedByValue ");
+            queryStr.append("and position.name=:aggreagatedByValue ");
         getAppendQuery(genericSubReportResult, queryStr);
-        queryStr.append("group by legalcase.officerIncharge");
+        queryStr.append("group by position.name");
         if (clickOnCount)
             queryStr.append(" ,legalcase");
-        queryStr.append(" order by legalcase.officerIncharge");
+        queryStr.append(" order by position.name");
     }
 
     private void getAggregateQueryByJudgementOutcome(final GenericSubReportResult genericSubReportResult,
@@ -377,7 +378,7 @@ public class GenericSubReportService {
 
         queryStr.append("select distinct legalcase  as  legalCase ,courtmaster.name  as  courtName ,");
         queryStr.append(" egwStatus.code  as  caseStatus ");
-        queryStr.append(" from LegalCase legalcase,CourtMaster courtmaster,CaseTypeMaster casetypemaster,");
+        queryStr.append(" from LegalCase legalcase left join legalcase.officerIncharge position,CourtMaster courtmaster,CaseTypeMaster casetypemaster,");
         queryStr.append(" PetitionTypeMaster petmaster,EgwStatus egwStatus,ReportStatus reportStatus");
         if (genericSubReportResult.getJudgmentTypeId() != null)
             queryStr.append(" ,Judgment judgment ");
