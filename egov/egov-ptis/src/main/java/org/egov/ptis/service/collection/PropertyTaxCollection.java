@@ -39,13 +39,13 @@
  */
 package org.egov.ptis.service.collection;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ARREAR_DEMANDRSN_GLCODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.CHQ_BOUNCE_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_ADVANCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_PENALTY_FINES;
@@ -55,7 +55,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_ARREART
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_ARREARTAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_CURRENTTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.SECOND_REBATETAX_PERC;
@@ -66,8 +65,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_CH
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_DD;
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_REALIZATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_WITH_AMOUNT;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_ADVANCE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -113,6 +110,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -837,6 +835,12 @@ public class PropertyTaxCollection extends TaxCollection {
         }
         String revenueWard = (String) persistenceService.find("select bp.propertyID.ward.name from BasicPropertyImpl bp where bp.upicNo = ?",
                 reciptDetailList.get(0).getReceiptHeader().getConsumerCode());
+        
+        String courtCaseQuery = "select (case when exists (select assessmentno from egpt_courtcases where assessmentno=:assessmentNo) then 1 else 0 end)";
+        final Query query = persistenceService.getSession().createSQLQuery(courtCaseQuery);
+        query.setString("assessmentNo", reciptDetailList.get(0).getReceiptHeader().getConsumerCode());
+        int courtcase = (int) query.uniqueResult();
+        
         receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount);
         receiptAmountInfo.setLatePaymentCharges(latePaymentCharges);
         receiptAmountInfo.setArrearsAmount(arrearAmount);
@@ -844,6 +848,7 @@ public class PropertyTaxCollection extends TaxCollection {
         receiptAmountInfo.setArrearCess(arrearLibCess);
         receiptAmountInfo.setReductionAmount(rebateAmount);
         receiptAmountInfo.setRevenueWard(revenueWard);
+        receiptAmountInfo.setConflict(courtcase);
         return receiptAmountInfo;
     }
 
