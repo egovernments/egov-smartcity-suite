@@ -43,9 +43,7 @@ $('#Save').click(function() {
 
 	document.getElementById("workFlowAction").value = "Save";
 	
-	$('#approvalDepartment').removeAttr('required');
-	$('#approvalDesignation').removeAttr('required');
-	$('#approvalPosition').removeAttr('required');
+	removeApprovalMandatoryAttribue();
 	$('#approvalComent').removeAttr('required');
 	
 	if($('#mbHeader').valid()) {
@@ -71,9 +69,7 @@ $('#CreateAndApprove').click(function() {
 
 	document.getElementById("workFlowAction").value = "";
 	
-	$('#approvalDepartment').removeAttr('required');
-	$('#approvalDesignation').removeAttr('required');
-	$('#approvalPosition').removeAttr('required');
+	removeApprovalMandatoryAttribue();
 	$('#approvalComent').removeAttr('required');
 	
 	if($('#mbHeader').valid()) {
@@ -110,14 +106,12 @@ $('#Forward').click(function() {
 
 	document.getElementById("workFlowAction").value = "Forward";
 	
-	flag = showHideAppravalDetails("Forward");
+	flag = showHideApprovalDetails("Forward");
 	if(!flag) {
 		return false;
 	}
 	
-	$('#approvalDepartment').attr('required', 'required');
-	$('#approvalDesignation').attr('required', 'required');
-	$('#approvalPosition').attr('required', 'required');
+	addApprovalMandatoryAttribue();
 	$('#approvalComent').removeAttr('required');
 	
 	if($('#mbHeader').valid()) {
@@ -144,9 +138,7 @@ $('#Cancel').click(function() {
 
 	document.getElementById("workFlowAction").value = "Cancel";
 	
-	$('#approvalDepartment').removeAttr('required', 'required');
-	$('#approvalDesignation').removeAttr('required', 'required');
-	$('#approvalPosition').removeAttr('required', 'required');
+	removeApprovalMandatoryAttribue();
 	$('#approvalComent').attr('required', 'required');
 	
 	if($('#mbHeader').valid()) {
@@ -179,13 +171,11 @@ $('#Create\\ And\\ Approve').click(function() {
 
 	document.getElementById("workFlowAction").value = "Create And Approve";
 	
-	flag = showHideAppravalDetails("Create And Approve");
+	flag = showHideApprovalDetails("Create And Approve");
 	if(!flag) {
 		return false;
 	}
-	$('#approvalDepartment').removeAttr('required');
-	$('#approvalDesignation').removeAttr('required');
-	$('#approvalPosition').removeAttr('required');
+	removeApprovalMandatoryAttribue();
 	$('#approvalComent').removeAttr('required');
 	
 	if($('#mbHeader').valid()) {
@@ -194,21 +184,10 @@ $('#Create\\ And\\ Approve').click(function() {
 			return false;
 	}
 
-	var mbDate = $('#mbDate').data('datepicker').date;
-	var cutOffDate = $('#cutOffDate').val(); 
-	var cutOffDateDisplay = $('#cutOffDateDisplay').val();
-	if(cutOffDate != '' && $('#mbDate').val() != '') {
-	if(mbDate.getTime() > new Date(cutOffDate).getTime()) {
-		bootbox.alert($('#cuttoffdateerrormsg1').val() + ' ' +cutOffDateDisplay+ '.'+'</br>'+$('#cuttoffdateerrormsg2').val());
-		$('#mbDate').val('');
-		return false;
-	 }
-	}
-	
 	validateSORDetails();
 	
 	if($('#mbHeader').valid() && flag) {
-		submitForm("");
+		submitForm("Create And Approve");
 	}
 	else
 		return false;
