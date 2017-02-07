@@ -68,7 +68,6 @@ import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.lineestimate.entity.DocumentDetails;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.masters.service.ScheduleOfRateService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
@@ -140,7 +139,6 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         final AbstractEstimate abstractEstimate = getAbstractEstimate(abstractEstimateId);
         abstractEstimate.setEstimateValue(abstractEstimate.getEstimateValue().setScale(2, BigDecimal.ROUND_HALF_EVEN));
         splitSorAndNonSorActivities(abstractEstimate);
-        final LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
         abstractEstimate.setTempOverheadValues(abstractEstimate.getOverheadValues());
         abstractEstimate.setTempDeductionValues(abstractEstimate.getAbsrtractEstimateDeductions());
         abstractEstimate.setTempAssetValues(abstractEstimate.getAssetValues());
@@ -149,7 +147,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
                     messageSource.getMessage("msg.estimate.saved", new String[] { abstractEstimate.getEstimateNumber() }, null));
         model.addAttribute("defaultDepartmentId", worksUtils.getDefaultDepartmentId());
 
-        return loadViewData(model, request, abstractEstimate, lineEstimateDetails);
+        return loadViewData(model, request, abstractEstimate);
     }
 
     private void splitSorAndNonSorActivities(final AbstractEstimate abstractEstimate) {
@@ -222,7 +220,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
                 activity.setSchedule(scheduleOfRateService.getScheduleOfRateById(activity.getSchedule().getId()));
             model.addAttribute("removedActivityIds", removedActivityIds);
 
-            return loadViewData(model, request, abstractEstimate, abstractEstimate.getLineEstimateDetails());
+            return loadViewData(model, request, abstractEstimate);
         } else {
             if (null != workFlowAction)
                 updatedAbstractEstimate = estimateService.updateAbstractEstimateDetails(abstractEstimate, approvalPosition,
@@ -242,7 +240,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
     }
 
     private String loadViewData(final Model model, final HttpServletRequest request,
-            final AbstractEstimate abstractEstimate, final LineEstimateDetails lineEstimateDetails) {
+            final AbstractEstimate abstractEstimate) {
         WorkFlowMatrix wfmatrix = null;
         estimateService.setDropDownValues(model);
         model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());

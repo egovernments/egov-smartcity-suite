@@ -961,7 +961,7 @@ public class EstimateService {
         if (abstractEstimateForLoaSearchRequest != null) {
             if (abstractEstimateForLoaSearchRequest.getAdminSanctionNumber() != null)
                 queryStr.append(
-                        " and upper(estimate.lineEstimateDetails.lineEstimate.adminSanctionNumber) like upper(:adminSanctionNumber)");
+                        " and upper(estimate.adminSanctionNumber) like upper(:adminSanctionNumber)");
             if (abstractEstimateForLoaSearchRequest.getExecutingDepartment() != null)
                 queryStr.append(" and estimate.executingDepartment.id = :departmentId");
             if (abstractEstimateForLoaSearchRequest.getEstimateNumber() != null)
@@ -983,12 +983,12 @@ public class EstimateService {
                     " and exists (select off.id from OfflineStatus as off where off.objectId = estimate.id and off.objectType = :objectType and upper(off.egwStatus.code) = upper(:offStatus) )");
         else if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null
                 && abstractEstimateForLoaSearchRequest.getEgwStatus().equalsIgnoreCase(WorksConstants.APPROVED))
-            queryStr.append(" and estimate.lineEstimateDetails.lineEstimate.modeOfAllotment = :modeOfAllotment");
+            queryStr.append(" and estimate.modeOfAllotment = :modeOfAllotment");
         else
             queryStr.append(
-                    " and (exists (select off.id from OfflineStatus as off where off.objectId = estimate.id and off.objectType = :objectType and upper(off.egwStatus.code) = upper(:offStatus) ) or estimate.lineEstimateDetails.lineEstimate.modeOfAllotment = :modeOfAllotment)");
+                    " and (exists (select off.id from OfflineStatus as off where off.objectId = estimate.id and off.objectType = :objectType and upper(off.egwStatus.code) = upper(:offStatus) ) or estimate.modeOfAllotment = :modeOfAllotment)");
 
-        queryStr.append(" and estimate.lineEstimateDetails.lineEstimate.spillOverFlag = :spillOverFlag");
+        queryStr.append(" and estimate.spillOverFlag = :spillOverFlag");
 
         final Query query = setQueryParametersForCreateLOA(abstractEstimateForLoaSearchRequest, queryStr);
         abstractEstimates = query.getResultList();

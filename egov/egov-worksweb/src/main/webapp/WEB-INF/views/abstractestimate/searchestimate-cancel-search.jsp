@@ -47,6 +47,7 @@
 	</div>
 	<input id="confirm" type="hidden" value='<spring:message code="msg.cancel.estimate.confirm" />' />
 	<input id="errorLOACreated" type="hidden" value='<spring:message code="error.estimate.loa.created" />' />
+	<input type="hidden" id="lineEstimateRequired" value="${lineEstimateRequired }" />
 	<div class="panel-body">
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.abstractestimatenumber" /></label>
@@ -73,12 +74,21 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.lineestimateno" /></label>
-			<div class="col-sm-3 add-margin">
-				<form:input path="lineEstimateNumber" id="lineEstimateNumber" class="form-control"/>
-				<form:errors path="lineEstimateNumber" cssClass="add-margin error-msg" />
-			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.status" /></label>
+			<c:if test="${lineEstimateRequired }">
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.lineestimateno" /></label>
+				<div class="col-sm-3 add-margin">
+					<form:input path="lineEstimateNumber" id="lineEstimateNumber" class="form-control"/>
+					<form:errors path="lineEstimateNumber" cssClass="add-margin error-msg" />
+				</div>
+			</c:if>
+			<c:choose>
+				<c:when test="${lineEstimateRequired }">
+					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.status" /></label>
+				</c:when>
+				<c:otherwise>
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.status" /></label>
+				</c:otherwise>
+			</c:choose>
 			<div class="col-sm-3 add-margin">
 				<form:input path="status" id="status" class="form-control" value="APPROVED" readonly="true" />
 				<form:errors path="status" cssClass="add-margin error-msg" />

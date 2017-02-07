@@ -77,24 +77,35 @@ function callAjaxSearch() {
 				},
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)',row).html('<input type="radio" data="' + data.loaNumber + '" name="selectCheckbox" value="'+ data.id +'"/>');
-					if (data.estimateNumber != null)
-						$('td:eq(1)', row).html(
-								'<a href="javascript:void(0);" onclick="viewEstimate(\''
-										+ data.estimateId + '\')">'
-										+ data.estimateNumber + '</a>');
 					$('td:eq(3)',row).html(parseFloat(Math.round(data.estimateValue * 100) / 100).toFixed(2));
-					if (data.lineEstimateNumber != null)
-						$('td:eq(5)', row).html(
-								'<a href="javascript:void(0);" onclick="viewLineEstimate(\''
-										+ data.lineEstimateId + '\')">'
-										+ data.lineEstimateNumber + '</a>');
+					if($('#lineEstimateRequired').val() == 'false') {
+						$(row).on(
+								'click',
+								function() {
+									window.open('/egworks/abstractestimate/view/'
+											+ data.estimateId, '',
+											'width=800, height=600');
+								});
+					} else {
+						if (data.estimateNumber != null)
+							$('td:eq(1)', row).html(
+									'<a href="javascript:void(0);" onclick="viewEstimate(\''
+											+ data.estimateId + '\')">'
+											+ data.estimateNumber + '</a>');
+						if (data.lineEstimateNumber != null)
+							$('td:eq(5)', row).html(
+									'<a href="javascript:void(0);" onclick="viewLineEstimate(\''
+											+ data.lineEstimateId + '\')">'
+											+ data.lineEstimateNumber + '</a>');
+					}
+					
 					return row;
 				},
 				aaSorting : [],
 				columns : [ {
 					"data" : "","width": "2%"
 				}, {
-					"data" : "","autoWidth": "false"
+					"data" : "estimateNumber","autoWidth": "false"
 				}, {
 					"data" : "estimateDate","width": "6%"
 				}, {
@@ -106,6 +117,11 @@ function callAjaxSearch() {
 					"data" : "","autoWidth": "false"
 				} ]
 			});
+	
+	if($('#lineEstimateRequired').val() == 'false') {
+		var oTable = $('#resultTable').DataTable();
+		oTable.column(5).visible(false);
+	}
 }
 
 function viewLineEstimate(id) {

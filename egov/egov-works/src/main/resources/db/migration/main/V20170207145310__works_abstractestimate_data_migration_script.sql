@@ -1,0 +1,10 @@
+------------------START------------------
+update egw_abstractestimate as ae set ADMINSANCTIONNUMBER = (select le.ADMINSANCTIONNUMBER from egw_lineestimate as le, egw_lineestimate_details as led where led.lineestimate = le.id and led.id = ae.lineestimatedetails) where ae.lineestimatedetails is not null;
+update egw_abstractestimate as ae set ADMINSANCTIONDATE = (select le.ADMINSANCTIONDATE from egw_lineestimate as le, egw_lineestimate_details as led where led.lineestimate = le.id and led.id = ae.lineestimatedetails) where ae.lineestimatedetails is not null;
+update egw_abstractestimate as ae set ADMINSANCTIONBY = (select le.ADMINSANCTIONBY from egw_lineestimate as le, egw_lineestimate_details as led where led.lineestimate = le.id and led.id = ae.lineestimatedetails) where ae.lineestimatedetails is not null;
+update egw_abstractestimate as ae set COUNCILRESOLUTIONNUMBER = (select le.COUNCILRESOLUTIONNUMBER from egw_lineestimate as le, egw_lineestimate_details as led where led.lineestimate = le.id and led.id = ae.lineestimatedetails) where ae.lineestimatedetails is not null;
+update egw_abstractestimate as ae set COUNCILRESOLUTIONDATE = (select le.COUNCILRESOLUTIONDATE from egw_lineestimate as le, egw_lineestimate_details as led where led.lineestimate = le.id and led.id = ae.lineestimatedetails) where ae.lineestimatedetails is not null;
+update egw_abstractestimate as ae set grossamountbilled = (select led.grossamountbilled from egw_lineestimate_details as led where led.id = ae.lineestimatedetails) where ae.lineestimatedetails is not null;
+update egw_abstractestimate as ae set workordercreated = (select le.workordercreated from egw_lineestimate as le, egw_lineestimate_details as led where led.lineestimate = le.id and led.id = ae.lineestimatedetails) where ae.lineestimatedetails is not null;
+update egw_abstractestimate as ae set billscreated = (select le.billscreated from egw_lineestimate as le, egw_lineestimate_details as led where led.lineestimate = le.id and led.id = ae.lineestimatedetails) where ae.lineestimatedetails is not null;
+-------------------END-------------------

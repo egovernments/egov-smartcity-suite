@@ -47,6 +47,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.SearchRequestCancelEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,11 +73,15 @@ public class CancelAbstractEstimateController {
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
 
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
+
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
     public String showSearchEstimateForm(
             @ModelAttribute final SearchRequestCancelEstimate searchRequestCancelEstimate,
             final Model model) throws ApplicationException {
         model.addAttribute("searchRequestCancelEstimate", searchRequestCancelEstimate);
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
         return "searchestimates-cancel";
     }
 

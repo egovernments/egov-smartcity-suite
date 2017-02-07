@@ -56,8 +56,10 @@
 					<th><spring:message code="lbl.lineestimateno" /></th>
 				</tr>
 			</thead>
-			<tbody class="no-pointer">
-			</tbody>
+			<c:if test="${lineEstimateRequired }">
+				<tbody class="no-pointer">
+				</tbody>
+			</c:if>
 		</table>
 	</div>
 </div>

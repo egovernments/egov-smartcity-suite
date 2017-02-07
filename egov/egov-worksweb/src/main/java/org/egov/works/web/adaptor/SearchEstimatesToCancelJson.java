@@ -72,7 +72,10 @@ public class SearchEstimatesToCancelJson implements JsonSerializer<AbstractEstim
             jsonObject.addProperty("estimateId", abstractEstimate.getId());
             jsonObject.addProperty("estimateDate", sdf.format(abstractEstimate.getEstimateDate()));
             jsonObject.addProperty("estimateValue", abstractEstimate.getEstimateValue());
-            jsonObject.addProperty("winCode", abstractEstimate.getProjectCode().getCode());
+            if (abstractEstimate.getProjectCode() != null)
+                jsonObject.addProperty("winCode", abstractEstimate.getProjectCode().getCode());
+            else
+                jsonObject.addProperty("winCode", "");
             if (abstractEstimate.getLineEstimateDetails() != null) {
                 jsonObject.addProperty("lineEstimateNumber",
                         abstractEstimate.getLineEstimateDetails().getLineEstimate().getLineEstimateNumber());
