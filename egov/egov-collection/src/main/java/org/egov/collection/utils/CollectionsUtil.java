@@ -799,6 +799,7 @@ public class CollectionsUtil {
                         receiptAmountInfo.getInstallmentTo() != null ? receiptAmountInfo.getInstallmentTo() : "")
                 .withRevenueWard(receiptAmountInfo.getRevenueWard())
                 .withConsumerType(receiptHeader.getConsumerType() != null ? receiptHeader.getConsumerType() : "")
+                .withConflict(receiptAmountInfo.getConflict()!=null?receiptAmountInfo.getConflict():0)
                 .build();
         return collectionIndex;
     }

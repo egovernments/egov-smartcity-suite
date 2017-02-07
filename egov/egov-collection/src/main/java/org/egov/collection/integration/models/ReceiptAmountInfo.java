@@ -55,7 +55,7 @@ public class ReceiptAmountInfo {
     private String installmentTo;
     private BigDecimal reductionAmount = BigDecimal.ZERO;
     private String revenueWard;
-
+    private Integer conflict;
 
     public BigDecimal getArrearsAmount() {
         return arrearsAmount;
@@ -194,6 +194,14 @@ public class ReceiptAmountInfo {
 
     public void setRevenueWard(String revenueWard) {
         this.revenueWard = revenueWard;
+    }
+
+    public Integer getConflict() {
+        return conflict;
+    }
+
+    public void setConflict(Integer conflict) {
+        this.conflict = conflict;
     }
 
 }

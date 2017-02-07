@@ -151,6 +151,9 @@ public class CollectionDocument {
     
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String consumerType;
+    
+    @Field(type = FieldType.Integer)
+    private Integer conflict;
 
     public String getId() {
         return id;
@@ -398,5 +401,13 @@ public class CollectionDocument {
 
     public void setConsumerType(String consumerType) {
         this.consumerType = consumerType;
+    }
+
+    public Integer getConflict() {
+        return conflict;
+    }
+
+    public void setConflict(Integer conflict) {
+        this.conflict = conflict;
     }
 }

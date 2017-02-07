@@ -145,9 +145,11 @@ public class CollectionIndex extends AbstractAuditable {
     private String receiptCreator;
 
     private String revenueWard;
-    
+
     @Length(max = 100)
     private String consumerType;
+
+    private Integer conflict;
 
     @Override
     public Long getId() {
@@ -424,13 +426,21 @@ public class CollectionIndex extends AbstractAuditable {
     public void setRevenueWard(final String revenueWard) {
         this.revenueWard = revenueWard;
     }
-    
+
     public String getConsumerType() {
         return consumerType;
     }
 
-    public void setConsumerType(String consumerType) {
+    public void setConsumerType(final String consumerType) {
         this.consumerType = consumerType;
+    }
+
+    public Integer getConflict() {
+        return conflict;
+    }
+
+    public void setConflict(final Integer conflict) {
+        this.conflict = conflict;
     }
 
     public static CollectionIndexBuilder builder() {
@@ -462,6 +472,7 @@ public class CollectionIndex extends AbstractAuditable {
         private String status;
         private String consumercode;
         private String consumerType;
+        private Integer conflict;
 
         public CollectionIndex build() throws ApplicationRuntimeException {
             final CollectionIndex collectionIndex = new CollectionIndex();
@@ -489,6 +500,7 @@ public class CollectionIndex extends AbstractAuditable {
             collectionIndex.setChannel(channel);
             collectionIndex.setStatus(status);
             collectionIndex.setConsumerType(consumerType);
+            collectionIndex.setConflict(conflict);
             collectionIndex.validate();
             return collectionIndex;
         }
@@ -610,9 +622,14 @@ public class CollectionIndex extends AbstractAuditable {
             this.channel = channel;
             return this;
         }
-        
+
         public CollectionIndexBuilder withConsumerType(final String consumerType) {
             this.consumerType = consumerType;
+            return this;
+        }
+        
+        public CollectionIndexBuilder withConflict(final Integer conflict) {
+            this.conflict = conflict;
             return this;
         }
     }
@@ -631,6 +648,4 @@ public class CollectionIndex extends AbstractAuditable {
         if (getStatus() == null)
             throw new ApplicationRuntimeException("Receipt Status is mandatory");
     }
-
-    
 }
