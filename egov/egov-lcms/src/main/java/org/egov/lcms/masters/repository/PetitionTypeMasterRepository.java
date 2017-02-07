@@ -53,6 +53,6 @@ public interface PetitionTypeMasterRepository extends JpaRepository<PetitionType
 
     PetitionTypeMaster findByCode(String code);
 
-    List<PetitionTypeMaster> findByActiveTrueOrderByPetitionTypeAsc();
+    List<PetitionTypeMaster> findByActiveTrueOrderByOrderNumberAsc();
 
 }

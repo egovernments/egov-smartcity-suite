@@ -93,7 +93,7 @@ public class JudgmentTypeService {
     }
 
     public List<JudgmentType> getActiveJudgementTypes() {
-        return judgmentTypeRepository.findByActiveTrueOrderByNameAsc();
+        return judgmentTypeRepository.findByActiveTrueOrderByOrderNumberAsc();
     }
 
     public List<JudgmentType> search(final JudgmentType judgmentType) {

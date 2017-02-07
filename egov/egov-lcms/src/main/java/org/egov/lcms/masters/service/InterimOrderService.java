@@ -94,7 +94,7 @@ public class InterimOrderService {
     }
 
     public List<InterimOrder> getActiveInterimOrder() {
-        return interimOrderRepository.findByActiveTrueOrderByInterimOrderTypeAsc();
+        return interimOrderRepository.findByActiveTrueOrderByOrderNumberAsc();
     }
 
     public List<InterimOrder> search(final InterimOrder interimOrder) {
@@ -118,7 +118,7 @@ public class InterimOrderService {
                 predicates.add(cb.like(
                         cb.lower(interimorder
                                 .get(InterimOrder.getDeclaredSingularAttribute("interimOrderType", String.class))),
-                                interimOrderType));
+                        interimOrderType));
             }
             if (interimOrder.getCode() != null) {
                 final String code = "%" + interimOrder.getCode().toLowerCase() + "%";
