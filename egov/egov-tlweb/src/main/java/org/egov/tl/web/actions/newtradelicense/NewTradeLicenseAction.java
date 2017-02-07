@@ -170,13 +170,12 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=Acknowledgement.pdf");
-        final ReportOutput reportOutput = reportService.createReport(reportInput);
-        return reportOutput;
+        return reportService.createReport(reportInput);
 
     }
 
     public Date calculateDueDate(TradeLicense license) {
-        Date dueDate = new Date();
+        Date dueDate;
         Date currentDate = new Date();
         String slaNewTradeLicense = licenseMessageSource.getMessage("msg.newTradeLicense.sla",
                 new String[]{license.getApplicationNumber()}, Locale.getDefault());
