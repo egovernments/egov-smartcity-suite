@@ -66,7 +66,8 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-					<s:if test="%{showAckBtn}">
+					<s:if test="%{((model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_BILL_COLLECTOR_APPROVAL_PENDING) && !model.state.createdBy.name.equals('CSCUSER'))
+			||	model.state.lastModifiedBy.name.equals('CSCUSER')) && !wfInitiatorRejected}">
 							<a href="/ptis/amalgamation/amalgamation-printAck.action?indexNumber=<s:property value='%{basicProp.upicNo}'/>" class="btn btn-default">Generate Acknowledgment</a>
 					</s:if>
 					<input type="button" name="button2" id="button2"
