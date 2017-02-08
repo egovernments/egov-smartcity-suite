@@ -43,10 +43,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.egov.eis.repository.PositionMasterRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.lcms.masters.entity.AdvocateMaster;
 import org.egov.lcms.masters.service.AdvocateMasterService;
@@ -64,8 +60,6 @@ import org.egov.lcms.transactions.repository.PwrDocumentsRepository;
 import org.egov.lcms.transactions.repository.ReportStatusRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
-import org.egov.pims.commons.Position;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,8 +75,6 @@ public class LegalCaseService {
     private PwrDocumentsRepository pwrDocumentsRepository;
 
     @Autowired
-    private PositionMasterRepository positionMasterRepository;
-    @Autowired
     private AdvocateMasterService advocateMasterService;
 
     @Autowired
@@ -96,13 +88,6 @@ public class LegalCaseService {
 
     @Autowired
     private ReportStatusRepository reportStatusRepository;
-    
-    @PersistenceContext
-    private EntityManager entityManager;
-    
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
 
     @Autowired
     public LegalCaseService(final LegalCaseRepository legalCaseRepository) {
@@ -124,13 +109,6 @@ public class LegalCaseService {
 
     @Transactional
     public LegalCase persist(LegalCase legalcase, final MultipartFile[] files) throws IOException {
-        if (null != legalcase.getOfficerIncharge() && legalcase.getOfficerIncharge().getId() == null)
-            legalcase.setOfficerIncharge(null);
-        else {
-            Position position = positionMasterRepository.findOne(legalcase.getOfficerIncharge().getId());
-            legalcase.setOfficerIncharge(position);
-            getCurrentSession().evict(position);
-        }
         legalcase.setCaseNumber(
                 legalcase.getCaseNumber() + (legalcase.getWpYear() != null ? "/" + legalcase.getWpYear() : ""));
         legalcase.setStatus(legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
@@ -376,8 +354,4 @@ public class LegalCaseService {
         return reportStatus;
     }
 
-/*    public Position getPostion(final Long positionId) {
-        final Position pos = positionMasterRepository.findOne(positionId);
-        return pos;
-    }*/
 }
