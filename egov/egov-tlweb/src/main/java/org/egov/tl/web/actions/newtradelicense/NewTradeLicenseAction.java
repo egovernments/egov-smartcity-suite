@@ -114,10 +114,10 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     @Autowired
     @Qualifier("parentMessageSource")
-    private MessageSource licenseMessageSource;
+    private transient MessageSource licenseMessageSource;
 
     @Autowired
-    private ReportService reportService;
+    private transient ReportService reportService;
 
     public NewTradeLicenseAction() {
         tradeLicense.setLicensee(new Licensee());
@@ -140,16 +140,18 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @SkipValidation
     @Action(value = "/newtradelicense/newtradelicense-printAck")
     public String printAck() {
-        final HttpServletRequest request = ServletActionContext.getRequest();
-        final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
         reportId = reportViewerUtil.addReportToTempCache(
-                getReportParamsForAcknowdgement(tradeLicenseService.getLicenseById(tradeLicense.getId()), cityName));
+                getReportParamsForAcknowdgement(tradeLicenseService.getLicenseById(tradeLicense.getId())));
         return Constants.PRINTACK;
     }
 
-    public ReportOutput getReportParamsForAcknowdgement(final TradeLicense license, final String cityName) {
+    public ReportOutput getReportParamsForAcknowdgement(final TradeLicense license) {
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
+        final String city = request.getSession().getAttribute("cityname").toString();
         final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("municipality", cityName);
+        reportParams.put("cityname", city);
         reportParams.put("wardName", license.getParentBoundary().getName());
         reportParams.put("applicantName", license.getLicensee().getApplicantName());
         reportParams.put("acknowledgementNo", license.getApplicationNumber());
