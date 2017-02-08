@@ -135,7 +135,7 @@ public class ValidityService {
     }
 
     private void applyLicenseValidityBasedOnCustomValidity(License license, Validity validity) {
-        LocalDate nextExpiryDate = new LocalDate();
+        LocalDate nextExpiryDate = new LocalDate(license.getCommencementDate());
         if (validity.getYear() != null && validity.getYear() > 0)
             nextExpiryDate = nextExpiryDate.plusYears(validity.getYear());
         if (validity.getMonth() != null && validity.getMonth() > 0)
