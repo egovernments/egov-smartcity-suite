@@ -769,9 +769,8 @@ public class VacancyRemissionService {
         Assignment wfInitiator = null;
         final Assignment assgmnt = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(property
                 .getCreatedBy(), property.getState().getInitiatorPosition());
-        if (assgmnt != null)
-            if (assgmnt.getEmployee().isActive())
-                wfInitiator = assgmnt;
+        if (assgmnt != null && assgmnt.getEmployee().isActive())
+            wfInitiator = assgmnt;
         if (wfInitiator == null) {
             assignment = assignmentService.getAssignmentsForPosition(property.getState().getInitiatorPosition().getId(),
                     new Date());

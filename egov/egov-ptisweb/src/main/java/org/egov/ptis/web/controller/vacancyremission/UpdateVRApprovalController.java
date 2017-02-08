@@ -234,8 +234,8 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
         if (vacancyRemissionApproval.getState() != null) {
             loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
                     vacancyRemissionApproval.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
-            loggedInUserDesignation = !loggedInUserAssign.isEmpty()
-                    ? loggedInUserAssign.get(0).getDesignation().getName() : null;
+            if(!loggedInUserAssign.isEmpty())
+                loggedInUserDesignation = loggedInUserAssign.get(0).getDesignation().getName();
         }
         final List<StateHistory> history = vacancyRemissionApproval.getStateHistory();
         if (!history.isEmpty() && vacancyRemissionService.isRoOrCommissioner(loggedInUserDesignation))
