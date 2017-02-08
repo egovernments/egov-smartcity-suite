@@ -40,12 +40,14 @@
 package org.egov.egf.web.controller.expensebill;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.service.AccountdetailtypeService;
+import org.egov.commons.service.ChartOfAccountDetailService;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.billsubtype.service.EgBillSubTypeService;
@@ -89,6 +91,9 @@ public abstract class BaseBillController extends BaseVoucherController {
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
+    
+    @Autowired
+    private ChartOfAccountDetailService chartOfAccountDetailService;
 
     public BaseBillController(final AppConfigValueService appConfigValuesService) {
         super(appConfigValuesService);
@@ -220,6 +225,18 @@ public abstract class BaseBillController extends BaseVoucherController {
                     payeeDetail.setLastUpdatedTime(new Date());
                     details.getEgBillPaydetailes().add(payeeDetail);
                 }
+    }
+    
+    protected void validateSubledgeDetails(EgBillregister egBillregister) {
+        final List<EgBillPayeedetails> payeeDetails = new ArrayList<>();
+        for (final EgBillPayeedetails payeeDetail : egBillregister.getBillPayeedetails()) {
+            List<CChartOfAccountDetail> coaDetail = chartOfAccountDetailService
+                    .getByGlcodeId(payeeDetail.getEgBilldetailsId().getGlcodeid().longValue());
+            if (!coaDetail.isEmpty())
+                payeeDetails.add(payeeDetail);
+        }
+        egBillregister.getBillPayeedetails().clear();
+        egBillregister.setBillPayeedetails(payeeDetails);
     }
 
     protected void prepareBillDetailsForView(final EgBillregister egBillregister) {

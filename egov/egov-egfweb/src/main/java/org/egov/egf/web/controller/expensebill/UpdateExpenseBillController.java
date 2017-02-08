@@ -121,6 +121,7 @@ public class UpdateExpenseBillController extends BaseBillController {
         prepareWorkflow(model, egBillregister, new WorkflowContainer());
         egBillregister.getBillDetails().addAll(egBillregister.getEgBilldetailes());
         prepareBillDetailsForView(egBillregister);
+        validateSubledgeDetails(egBillregister);
         final List<CChartOfAccounts> expensePayableAccountList = chartOfAccountsService
                 .getNetPayableCodes();
         for (final EgBilldetails details : egBillregister.getBillDetails())
