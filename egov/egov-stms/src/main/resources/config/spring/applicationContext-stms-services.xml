@@ -61,4 +61,7 @@
     
     <bean id="seweargeApplicationWorkflowCustomDefaultImpl" class="org.egov.stms.transactions.workflow.ApplicationWorkflowCustomDefaultImpl" scope="prototype" />
      
+    <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+    	<property name="transactionManager" ref="transactionManager" />
+    </bean>
 </beans>

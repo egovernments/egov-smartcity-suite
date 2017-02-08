@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -54,6 +54,7 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
@@ -63,20 +64,29 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.stms.entity.SewerageDemandGenerationLog;
+import org.egov.stms.masters.entity.enums.SewerageProcessStatus;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageConnectionFee;
 import org.egov.stms.transactions.entity.SewerageDemandConnection;
 import org.egov.stms.transactions.entity.SewerageDemandDetail;
+import org.egov.stms.transactions.repository.SewerageDemandGenerationLogRepository;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @Transactional(readOnly = true)
 public class SewerageDemandService {
+    
+    private static final Logger LOGGER = Logger.getLogger(SewerageDemandService.class);
+    private static final String SUCCESSFUL = "Successful";
     @Autowired
     private InstallmentDao installmentDao;
 
@@ -85,9 +95,20 @@ public class SewerageDemandService {
 
     @Autowired
     private ModuleService moduleService;
+    @Autowired
+    protected SewerageApplicationDetailsService sewerageApplicationDetailsService;
 
     @PersistenceContext
     private EntityManager entityManager;
+    
+    @Autowired
+    private TransactionTemplate transactionTemplate;
+    
+    @Autowired
+    private SewerageDemandGenerationLogService stDemandGenerationLogService;
+    
+    @Autowired
+    private SewerageDemandGenerationLogRepository demandGenerationLogRepository;
 
     private final List<EgDemandDetails> detailList = new ArrayList<>();
 
@@ -618,6 +639,129 @@ public class SewerageDemandService {
                     getDemandReasonByCodeAndInstallment(SewerageTaxConstants.FEES_ADVANCE_CODE, nextInstallment.getId()),
                     amount));
         }
+    }
+    
+    /**
+     * 
+     * @param applicationDetails
+     * @param oldtaxReasonInstallment
+     * @param newtaxReasonInstallment
+     * @return
+     */
+    public EgDemand generateNextYearDemandForSewerage(SewerageApplicationDetails applicationDetails,
+            EgDemandReason oldtaxReasonInstallment,
+            EgDemandReason newtaxReasonInstallment) {
+
+        BigDecimal totalDemandAmount = BigDecimal.ZERO;
+        EgDemand demand = applicationDetails.getCurrentDemand();
+
+        Boolean taxFeeAlreadyExistInDemand = false;
+        EgDemandDetails oldTaxDemandDetail = null;
+
+        for (EgDemandDetails dmdDtl : demand.getEgDemandDetails()) {
+            // Assumption: tax amount is mandatory.
+            if (dmdDtl.getEgDemandReason().getId() == oldtaxReasonInstallment.getId()) {
+                oldTaxDemandDetail = dmdDtl;
+            }
+
+            if (dmdDtl.getEgDemandReason().getId() == newtaxReasonInstallment.getId()) {
+                taxFeeAlreadyExistInDemand = true;
+            }
+        }
+        // Copy last financial year sewerage tax
+        // if sewerage tax already present in new installment, then
+        // we are not updating.
+
+        if (!taxFeeAlreadyExistInDemand && oldTaxDemandDetail != null) {
+            demand.addEgDemandDetails(createDemandDetails(oldTaxDemandDetail.getAmount(), newtaxReasonInstallment,
+                    BigDecimal.ZERO));
+            totalDemandAmount = totalDemandAmount.add(oldTaxDemandDetail.getAmount());
+        }
+        demand.setEgInstallmentMaster(newtaxReasonInstallment.getEgInstallmentMaster());
+        demand.addBaseDemand(totalDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
+
+        return demand;
+    }
+
+    public Integer[] generateDemandForNextInstallment(final List<SewerageApplicationDetails> sewerageApplicationDetails,
+            List<Installment> previousInstallment, Installment sewerageDmdGenerationInstallment) {
+        Integer[] res;
+        int totalNoOfRecords = 0;
+        int noOfSuccessRecords = 0;
+        int noOfFailureRecords = 0;
+
+        LOGGER.info("*************************************** total records " + sewerageApplicationDetails.size());
+
+        if (!sewerageApplicationDetails.isEmpty()) {
+            EgDemandReason taxReasonOldInstallment = getDemandReasonByCodeAndInstallment(
+                    SewerageTaxConstants.FEES_SEWERAGETAX_CODE, previousInstallment.get(0).getId());
+
+            EgDemandReason taxReasonNewInstallment = getDemandReasonByCodeAndInstallment(
+                    SewerageTaxConstants.FEES_SEWERAGETAX_CODE, sewerageDmdGenerationInstallment.getId());
+
+            final TransactionTemplate txTemplate = new TransactionTemplate(transactionTemplate.getTransactionManager());
+            txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+            SewerageDemandGenerationLog demandGenerationLog;
+            demandGenerationLog = txTemplate.execute(result -> {
+                return stDemandGenerationLogService
+                        .createDemandGenerationLog(sewerageDmdGenerationInstallment.getFinYearRange());
+            });
+
+            for (SewerageApplicationDetails applicationDetails : sewerageApplicationDetails) {
+                LOGGER.info("*************************************** demand id " + applicationDetails.getCurrentDemand().getId());
+                Boolean status = false;
+
+                // get last year demand and add as current year.
+
+                try {
+                    status = txTemplate.execute(result -> {
+                        final SewerageDemandGenerationLog demandGenerationLogObj;
+                        LOGGER.info("SHSC Number ---> " + applicationDetails.getConnection().getShscNumber());
+                        generateNextYearDemandForSewerage(applicationDetails, taxReasonOldInstallment,
+                                taxReasonNewInstallment);
+                        sewerageApplicationDetailsService.updateSewerageApplicationDetails(applicationDetails);
+
+                        if (demandGenerationLog != null) {
+                            demandGenerationLogObj = demandGenerationLogRepository.findOne(demandGenerationLog.getId());
+                            stDemandGenerationLogService.createOrGetDemandGenerationLogDetail(demandGenerationLogObj,
+                                    applicationDetails, SewerageProcessStatus.COMPLETED, SUCCESSFUL);
+                        }
+
+                        return Boolean.TRUE;
+                    });
+                } catch (final Exception e) {
+                    status = txTemplate.execute(result -> {
+                        final SewerageDemandGenerationLog demandGenerationLogObj;
+                        if (demandGenerationLog != null) {
+                            demandGenerationLogObj = demandGenerationLogRepository.findOne(demandGenerationLog.getId());
+                            demandGenerationLogObj.setDemandGenerationStatus(SewerageProcessStatus.INCOMPLETE);
+                            stDemandGenerationLogService.createOrGetDemandGenerationLogDetail(demandGenerationLogObj,
+                                    applicationDetails, SewerageProcessStatus.INCOMPLETE, getErrorMessage(e));
+                        }
+                        LOGGER.error("Error in generating demand bill for SHSC Number ---> "
+                                + applicationDetails.getConnection().getShscNumber()
+                                + " and executeJob" + e);
+                        return Boolean.FALSE;
+                    });
+                }
+                noOfSuccessRecords = status ? noOfSuccessRecords + 1 : noOfSuccessRecords;
+                noOfFailureRecords = !status ? noOfFailureRecords + 1 : noOfFailureRecords;
+                totalNoOfRecords = noOfSuccessRecords + noOfFailureRecords;
+            }
+        }
+        res = new Integer[] { totalNoOfRecords, noOfSuccessRecords, noOfFailureRecords };
+        return res;
+    }
+
+    private String getErrorMessage(final Exception exception) {
+        String error;
+        if (exception instanceof ValidationException)
+            error = ((ValidationException) exception).getErrors().get(0).getMessage();
+        else {
+            error = "Error : " + exception;
+        }
+        return error;
     }
 
 }

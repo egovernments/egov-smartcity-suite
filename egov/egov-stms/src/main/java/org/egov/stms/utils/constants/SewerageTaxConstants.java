@@ -303,4 +303,6 @@ public class SewerageTaxConstants {
     public static final String APPLICATION_TYPE_NAME_CHANGEINCLOSETS = "Change In Closets";
     public static final String APPLICATION_TYPE_NAME_CLOSECONNECTION = "Close Sewerage Connection";
     public static final String GROUPBYFIELD = "groupByField";
+    
+    public static final String TOTALRESULTTOBEFETCH = "Number of Records used in next year demand generation";
 }
