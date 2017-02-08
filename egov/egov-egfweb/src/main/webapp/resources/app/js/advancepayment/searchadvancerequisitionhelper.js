@@ -41,36 +41,59 @@
 var $partyTypeId = 0;
 $(document).ready(function() {
 	$partyTypeId = $('#partyType').val();
-});
-var advanceRequisitionNumber = new Bloodhound(
-		{
-			datumTokenizer : function(datum) {
-				return Bloodhound.tokenizers.whitespace(datum.value);
-			},
-			queryTokenizer : Bloodhound.tokenizers.whitespace,
-			remote : {
-				url : '/EGF/common/ajaxarfnumbers-searcharf?advanceRequisitionNumber=%QUERY',
-				filter : function(data) {
-					return $.map(data, function(ct) {
-						return {
-							name : ct
-						};
-					});
+	
+	var advanceRequisitionNumber = new Bloodhound(
+			{
+				datumTokenizer : function(datum) {
+					return Bloodhound.tokenizers.whitespace(datum.value);
+				},
+				queryTokenizer : Bloodhound.tokenizers.whitespace,
+				remote : {
+					url : '/EGF/common/ajaxarfnumbers-searcharf?advanceRequisitionNumber=%QUERY',
+					filter : function(data) {
+						return $.map(data, function(ct) {
+							return {
+								name : ct
+							};
+						});
+					}
 				}
-			}
-		});
+			});
 
-advanceRequisitionNumber.initialize();
-var advanceRequisitionNumber_typeahead = $('#arfNumber').typeahead({
-	hint : true,
-	highlight : true,
-	minLength : 3
-}, {
-	displayKey : 'name',
-	source : advanceRequisitionNumber.ttAdapter()
-}).on('typeahead:selected', function(event, data) {
-	loadPartyType(data.name);
+	advanceRequisitionNumber.initialize();
+	
+	var advanceRequisitionNumber_typeahead = $('#arfNumber').typeahead({
+		hint : true,
+		highlight : true,
+		minLength : 3
+	}, {
+		displayKey : 'name',
+		source : advanceRequisitionNumber.ttAdapter()
+	}).on('typeahead:selected', function(event, data) {
+		loadPartyType(data.name);
+	});
+	
+	jQuery('#btnsearch').click(function(e) {
+
+		if (!validateFields())
+			return false
+		callAjaxSearch();
+	});
+	
+	
+	$('#btncreateadvancepay').click(
+			function(e) {
+				var advanceBillId = $('input[name=selectCheckbox]:checked').val();
+				if (advanceBillId == null) {
+					bootbox.alert($('#errorSelectBill').val());
+				} else {
+					window.location = "/EGF/advancepayment/newform?billId="
+							+ advanceBillId;
+				}
+			});
+
 });
+
 
 function loadPartyType(advanceRqnNumber) {
 	if (!advanceRqnNumber) {
@@ -105,12 +128,7 @@ function loadPartyType(advanceRqnNumber) {
 	}
 }
 
-jQuery('#btnsearch').click(function(e) {
 
-	if (!validateFields())
-		return false
-	callAjaxSearch();
-});
 
 function callAjaxSearch() {
 	drillDowntableContainer = jQuery("#resultTable");
@@ -206,14 +224,3 @@ function validateFields() {
 	}
 	return true;
 }
-
-$('#btncreateadvancepay').click(
-		function(e) {
-			var advanceBillId = $('input[name=selectCheckbox]:checked').val();
-			if (advanceBillId == null) {
-				bootbox.alert($('#errorSelectBill').val());
-			} else {
-				window.location = "/EGF/advancepayment/newform?billId="
-						+ advanceBillId;
-			}
-		});

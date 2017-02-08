@@ -45,17 +45,45 @@ $(document).ready(
 			var value = "cheque";
 			$("input[name=modeOfPayment][value=" + value + "]").attr('checked',
 					'checked');
-		});
+			
+			$('#bankbranch').change(
+					function() {
+						$bankAccountId = "";
+						$('#bankaccount').empty();
+						$('#bankaccount').append(
+								$('<option>').text('Select from below').attr('value', ''));
+						if ($('#bankbranch').val() != '')
+							loadBankAccounts($('#bankbranch').val(), $('#fundId').val());
+					});
+			$('#bankaccount').change(function() {
+				$bankAccountId = "";
+				if ($('#bankaccount').val() != '' && $('#bankaccount').val() != null)
+					loadBankBalance($('#bankaccount').val(), $('#voucherDate').val());
+			});
 
-$('#bankbranch').change(
-		function() {
-			$bankAccountId = "";
-			$('#bankaccount').empty();
-			$('#bankaccount').append(
-					$('<option>').text('Select from below').attr('value', ''));
-			if ($('#bankbranch').val() != '')
-				loadBankAccounts($('#bankbranch').val(), $('#fundId').val());
+			$('.btn-wf-primary').click(function() {
+				var button = $(this).attr('id');
+				if (!validate()) {
+					return false;
+				} else if (button != null && (button == 'Forward')) {
+					if (!validateWorkFlowApprover(button))
+						return false;
+					if (!$("form").valid())
+						return false;
+
+				} else if (button != null && (button == 'Create And Approve')) {
+					$('#approvalDepartment').removeAttr('required');
+					$('#approvalDesignation').removeAttr('required');
+					$('#approvalPosition').removeAttr('required');
+					$('#approvalComent').removeAttr('required');
+					if (!validateWorkFlowApprover(button))
+						return false;
+					return true
+				}
 		});
+			
+});
+
 
 function loadBankAccounts(bankBranchId, fundId) {
 	$.ajax({
@@ -85,12 +113,6 @@ function loadBankAccounts(bankBranchId, fundId) {
 			});
 }
 
-$('#bankaccount').change(function() {
-	$bankAccountId = "";
-	if ($('#bankaccount').val() != '' && $('#bankaccount').val() != null)
-		loadBankBalance($('#bankaccount').val(), $('#voucherDate').val());
-});
-
 function loadBankBalance(bankAccountId, voucherDate) {
 	$.ajax({
 		method : "GET",
@@ -114,26 +136,6 @@ function viewBill(billSourcePath) {
 	window.open(billSourcePath, '',
 			'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
-$('.btn-wf-primary').click(function() {
-	var button = $(this).attr('id');
-	if (!validate()) {
-		return false;
-	} else if (button != null && (button == 'Forward')) {
-		if (!validateWorkFlowApprover(button))
-			return false;
-		if (!$("form").valid())
-			return false;
-
-	} else if (button != null && (button == 'Create And Approve')) {
-		$('#approvalDepartment').removeAttr('required');
-		$('#approvalDesignation').removeAttr('required');
-		$('#approvalPosition').removeAttr('required');
-		$('#approvalComent').removeAttr('required');
-		if (!validateWorkFlowApprover(button))
-			return false;
-		return true
-	}
-});
 
 function validateWorkFlowApprover(name) {
 	document.getElementById("workFlowAction").value = name;

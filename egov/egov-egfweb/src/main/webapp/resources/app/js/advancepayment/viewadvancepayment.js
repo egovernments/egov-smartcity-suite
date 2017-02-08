@@ -37,6 +37,42 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
+$(document).ready(
+		function() {
+			$('.btn-primary').click(
+					function() {
+						var button = $(this).attr('id');
+						if (button != null && (button == 'Forward')) {
+							if (!validateWorkFlowApprover(button))
+								return false;
+							if (!$("form").valid())
+								return false;
+
+						} else if (button != null && (button == 'Create And Approve')) {
+							$('#approvalDepartment').removeAttr('required');
+							$('#approvalDesignation').removeAttr('required');
+							$('#approvalPosition').removeAttr('required');
+							$('#approvalComent').removeAttr('required');
+							if (!validateWorkFlowApprover(button))
+								return false;
+							return true
+						} else if (button != null
+								&& ((button == 'Reject') || (button == 'Cancel'))) {
+							var value = $('#approvalComent').val();
+							if (value == "") {
+								bootbox.alert("Please Enter Approver Remarks");
+								return false;
+							}
+							if (!validateWorkFlowApprover(button))
+								return false;
+							if (!$("form").valid())
+								return false;
+						} else if (button != null && ((button == 'Approve'))) {
+							document.getElementById("workFlowAction").value = button;
+						}
+					});
+		});
 function viewBillVoucher(billVoucherId) {
 	window.open('/EGF/voucher/preApprovedVoucher-loadvoucherview.action?vhid='
 			+ billVoucherId, '',
@@ -46,38 +82,6 @@ function viewBill(billSourcePath) {
 	window.open(billSourcePath, '',
 			'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
-$('.btn-primary').click(
-		function() {
-			var button = $(this).attr('id');
-			if (button != null && (button == 'Forward')) {
-				if (!validateWorkFlowApprover(button))
-					return false;
-				if (!$("form").valid())
-					return false;
-
-			} else if (button != null && (button == 'Create And Approve')) {
-				$('#approvalDepartment').removeAttr('required');
-				$('#approvalDesignation').removeAttr('required');
-				$('#approvalPosition').removeAttr('required');
-				$('#approvalComent').removeAttr('required');
-				if (!validateWorkFlowApprover(button))
-					return false;
-				return true
-			} else if (button != null
-					&& ((button == 'Reject') || (button == 'Cancel'))) {
-				var value = $('#approvalComent').val();
-				if (value == "") {
-					bootbox.alert("Please Enter Approver Remarks");
-					return false;
-				}
-				if (!validateWorkFlowApprover(button))
-					return false;
-				if (!$("form").valid())
-					return false;
-			} else if (button != null && ((button == 'Approve'))) {
-				document.getElementById("workFlowAction").value = button;
-			}
-		});
 
 function validateWorkFlowApprover(name) {
 	document.getElementById("workFlowAction").value = name;

@@ -98,7 +98,7 @@
 				code="lbl.payment.mode" /><span class="mandatory"></span> </label>
 		<div class="col-sm-3 add-margin">
 			<form:radiobuttons path="" id="modeOfPayment" name="modeOfPayment"
-				items="${modeOfPaymentMap}" required="required" />
+				items="${modeOfPaymentMap}" />
 			<input type="hidden" name="modeOfPayment" id="modeOfPayment"
 				value="${modeOfPayment}" />
 			<form:errors path="" cssClass="add-margin error-msg" />

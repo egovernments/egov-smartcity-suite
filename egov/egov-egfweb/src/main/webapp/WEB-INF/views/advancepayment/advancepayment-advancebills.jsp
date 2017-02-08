@@ -57,10 +57,10 @@
 					<th><spring:message code="lbl.bill.vouchernumber" /></th>
 					<th><spring:message code="lbl.bill.voucherdate" /></th>
 					<th><spring:message code="lbl.payeename" /></th>
-					<th><spring:message code="lbl.netamount" /></th>
-					<th><spring:message code="lbl.earlierpayment" /></th>
-					<th><spring:message code="lbl.payableamount" /></th>
-					<th><spring:message code="lbl.paymentamount" /></th>
+					<th class="text-right"><spring:message code="lbl.netamount" /></th>
+					<th class="text-right"><spring:message code="lbl.earlierpayment" /></th>
+					<th class="text-right"><spring:message code="lbl.payableamount" /></th>
+					<th class="text-right"><spring:message code="lbl.paymentamount" /></th>
 				</tr>
 
 			</thead>
@@ -87,18 +87,19 @@
 						</c:if></td>
 					<td>${egBillregister.egBillregistermis.voucherHeader.voucherDate}</td>
 					<td>${egBillregister.egBillregistermis.payto}</td>
-					<td>${egBillregister.billamount}</td>
-					<td>0.0</td>
-					<td>${egBillregister.billamount}</td>
-					<td>${egBillregister.billamount}</td>
+					<td class="text-right">${egBillregister.billamount}</td>
+					<td class="text-right">0.0</td>
+					<td class="text-right">${egBillregister.billamount}</td>
+					<td class="text-right">${egBillregister.billamount}</td>
 
 				</tr>
-				<tr>
-					<td style="text-align: right" colspan="8"><strong>Grand
-							Total</strong></td>
-					<td style="text-align: right">${egBillregister.billamount}</td>
-				</tr>
 			</tbody>
+			<tfoot>
+				<tr>
+					<td class="text-right" colspan="8">Total Amount</td>
+					<td class="text-right">${egBillregister.billamount}</td>
+				</tr>
+			</tfoot>
 		</table>
 	</div>
 </div>

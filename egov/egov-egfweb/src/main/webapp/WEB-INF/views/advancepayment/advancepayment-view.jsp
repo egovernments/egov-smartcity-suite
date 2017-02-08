@@ -47,13 +47,8 @@
 	modelAttribute="voucherHeader" id="voucherHeader"
 	class="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<div class="panel-title text-center" style="color: green;">
-		<c:out value="${message}" />
-		<br />
-	</div>
 	<spring:hasBindErrors name="voucherHeader">
-		<div class="alert alert-danger"
-			style="margin-top: 20px; margin-bottom: 10px;">
+		<div class="alert alert-danger">
 			<form:errors path="*" />
 			<br />
 		</div>
@@ -98,9 +93,5 @@
 </form:form>
 <script
 	src="<cdn:url value='/resources/app/js/advancepayment/viewadvancepayment.js?rnd=${app_release_no}'/>"></script>
-<script
-	src="<cdn:url value='/resources/app/js/common/helper.js?rnd=${app_release_no}'/>"></script>
-<script
-	src="<cdn:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

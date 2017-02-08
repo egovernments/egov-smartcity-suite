@@ -44,14 +44,13 @@
 	modelAttribute="searchAdvanceRequisition" id="arfsearchform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<div class="alert text-left" style="color: red;" id="errorMessage"
-		hidden="true"></div>
+	<div class="alert text-left error-msg" id="errorMessage" hidden="true"></div>
 	<input type="hidden"
 		value="<spring:message code="error.advancepayment.create.search" />"
 		id="errorSelectBill" />
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading">
-			<div class="panel-title" style="text-align: center;">
+			<div class="panel-title">
 				<spring:message code="title.search.advancerequisition" />
 			</div>
 		</div>
@@ -154,8 +153,6 @@
 <script
 	src="<cdn:url value='/resources/app/js/advancepayment/searchadvancerequisitionhelper.js?rnd=${app_release_no}'/>"></script>
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
-<link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
@@ -169,10 +166,3 @@
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-<script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
-	type="text/javascript"></script>
