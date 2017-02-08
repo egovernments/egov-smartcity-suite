@@ -207,6 +207,10 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                                     propertyTaxDetails.get(ARR_COLL_STR));
                             final BigDecimal currentWaterTaxDue = propertyService.getWaterTaxDues(
                                     basicProperty.getUpicNo(), request);
+                            
+                            model.addAttribute("assessementNo", basicProperty.getUpicNo());
+                            model.addAttribute("ownerName", basicProperty.getFullOwnerName());
+                            model.addAttribute("doorNo", basicProperty.getAddress().getHouseNoBldgApt());
                             model.addAttribute("currentPropertyTax", currentPropertyTax);
                             model.addAttribute("currentPropertyTaxDue", currentPropertyTaxDue);
                             model.addAttribute("arrearPropertyTaxDue", arrearPropertyTaxDue);
