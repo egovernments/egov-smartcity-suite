@@ -43,17 +43,24 @@ import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_ASSISTANT_FORWARDED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 
+import java.util.Date;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.VacancyRemissionService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +82,9 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
     private static final String APPROVAL_POS = "approvalPosition";
     private final VacancyRemissionService vacancyRemissionService;
     private final PropertyTaxUtil propertyTaxUtil;
+
+    @Autowired
+    private PropertyService propertyService;
 
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
@@ -122,7 +132,6 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
 
         String senderName = vacancyRemission.getCurrentState().getSenderName();
         assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
-        // currAsssignment.getDesignation().getName();
         senderName = senderName.substring(senderName.lastIndexOf(":") + 1);
         if (!resultBinder.hasErrors()) {
             String workFlowAction = "";
@@ -140,19 +149,16 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
                     && workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD))
                 approvalPosition = vacancyRemission.getState().getInitiatorPosition().getId();
             final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
+            if (!isWfReject(workFlowAction))
+                vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
+                        workFlowAction, propertyByEmployee);
 
-            vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
-                    workFlowAction, propertyByEmployee);
-
-            if (org.apache.commons.lang.StringUtils.isNotBlank(workFlowAction)
-                    && !workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE))
-                if (workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE))
+            if (isWfNotNoticeGen(workFlowAction))
+                if (isWfApprove(workFlowAction))
                     successMsg = "Vacancy Remission Approved Successfully in the System";
-                else if (workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT))
-                    successMsg = "Vacancy Remission rejected successfully and forwarded to : "
-                            + vacancyRemissionService.getInitiatorName(vacancyRemission);
-                else if (workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD)
-                        && vacancyRemission.getCurrentState().getNextAction().equals(WF_STATE_ASSISTANT_APPROVAL_PENDING))
+                else if (isWfReject(workFlowAction))
+                    successMsg = wfReject(vacancyRemission, workFlowAction, approvalPosition, approvalComent, propertyByEmployee);
+                else if (isWfForwardOrApprovalPending(vacancyRemission, workFlowAction))
                     successMsg = "Vacancy Remission Approved successfully and forwarded to : "
                             + vacancyRemissionService.getInitiatorName(vacancyRemission);
                 else
@@ -161,8 +167,7 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
                             + vacancyRemission.getApplicationNumber();
 
             model.addAttribute("successMessage", successMsg);
-            if (org.apache.commons.lang.StringUtils.isNotBlank(workFlowAction)
-                    && workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE)) {
+            if (isWfNoticeGen(workFlowAction)) {
                 final String pathVars = vacancyRemission.getBasicProperty().getUpicNo() + "," + senderName;
                 return "redirect:/vacancyremission/rejectionacknowledgement?pathVar=" + pathVars;
             } else
@@ -174,5 +179,55 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
             return VACANCYREMISSION_EDIT;
         }
 
+    }
+
+    private boolean isWfReject(final String workFlowAction) {
+        return workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT);
+    }
+
+    private boolean isWfApprove(final String workFlowAction) {
+        return workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE);
+    }
+
+    private boolean isWfNotNoticeGen(final String workFlowAction) {
+        return org.apache.commons.lang.StringUtils.isNotBlank(workFlowAction)
+                && !workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE);
+    }
+
+    private boolean isWfNoticeGen(final String workFlowAction) {
+        return org.apache.commons.lang.StringUtils.isNotBlank(workFlowAction)
+                && workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE);
+    }
+
+    private boolean isWfForwardOrApprovalPending(final VacancyRemission vacancyRemission, final String workFlowAction) {
+        return workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD)
+                && vacancyRemission.getCurrentState().getNextAction().equals(WF_STATE_ASSISTANT_APPROVAL_PENDING);
+    }
+
+    private String wfReject(final VacancyRemission vacancyRemission, final String workFlowAction, final Long approvalPosition,
+            final String approvalComent, final Boolean propertyByEmployee) {
+        String successMsg;
+        final User user = securityUtils.getCurrentUser();
+        String loggedInUserDesignation = "";
+        List<Assignment> loggedInUserAssign;
+        if (vacancyRemission.getState() != null) {
+            loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                    vacancyRemission.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
+            loggedInUserDesignation = !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName() : null;
+        }
+        Assignment wfInitiator = null;
+        final List<StateHistory> history = vacancyRemission.getStateHistory();
+        if (!history.isEmpty() && vacancyRemissionService.isRoOrCommissioner(loggedInUserDesignation))
+            wfInitiator = propertyService.getUserOnRejection(vacancyRemission);
+        else if (history.isEmpty() || !vacancyRemissionService.isRoOrCommissioner(loggedInUserDesignation))
+            wfInitiator = vacancyRemissionService.getWorkflowInitiator(vacancyRemission);
+        if (wfInitiator != null) {
+            successMsg = "Vacancy Remission rejected successfully and forwarded to : "
+                    + vacancyRemissionService.getInitiatorName(vacancyRemission);
+            vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
+                    workFlowAction, propertyByEmployee);
+        } else
+            successMsg = "Intiator is not active so can not do rejection ";
+        return successMsg;
     }
 }

@@ -56,6 +56,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY
 import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DIGITAL_SIGNATURE_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_ROLEFORNONEMPLOYEE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_SPECIALNOTICE_TEMPLATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_COMMISSIONER_FORWARD_PENDING;
@@ -91,7 +94,10 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -103,10 +109,12 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.enums.TransactionType;
@@ -184,6 +192,9 @@ public class VacancyRemissionService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     public VacancyRemission getApprovedVacancyRemissionForProperty(final String upicNo) {
         return vacancyRemissionRepository.findByUpicNo(upicNo);
@@ -406,8 +417,8 @@ public class VacancyRemissionService {
         return initiatorName;
     }
 
-    protected Assignment getWorkflowInitiator(final VacancyRemission vacancyRemission) {
-        Assignment wfInitiator = null;
+    public Assignment getWorkflowInitiator(final VacancyRemission vacancyRemission) {
+        Assignment wfInitiator;
         if (checkIfEmployee(vacancyRemission.getCreatedBy())) {
             if (vacancyRemission.getState() != null && vacancyRemission.getState().getInitiatorPosition() != null)
                 wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(
@@ -460,13 +471,14 @@ public class VacancyRemissionService {
                 && workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(vacancyRemissionApproval.getCreatedBy()
                     .getId());
-
         if (vacancyRemissionApproval.getId() != null
                 && workFlowAction
                         .equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE))
             wfInitiator = assignmentService
                     .getPrimaryAssignmentForUser(vacancyRemissionApproval.getVacancyRemission().getCreatedBy()
                             .getId());
+        if (wfInitiator == null)
+            wfInitiator = getWorkflowInitiatorAssignment(user.getId());
 
         if (null != approvalPosition && approvalPosition != 0) {
             assignment = assignmentService.getAssignmentsForPosition(approvalPosition, new Date())
@@ -483,11 +495,7 @@ public class VacancyRemissionService {
         }
 
         if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)
-                && (approverDesignation.equalsIgnoreCase(ASSISTANT_COMMISSIONER_DESIGN) ||
-                        approverDesignation.equalsIgnoreCase(DEPUTY_COMMISSIONER_DESIGN)
-                        || approverDesignation.equalsIgnoreCase(ADDITIONAL_COMMISSIONER_DESIGN)
-                        || approverDesignation.equalsIgnoreCase(ZONAL_COMMISSIONER_DESIGN) ||
-                        approverDesignation.equalsIgnoreCase(COMMISSIONER_DESGN)))
+                && isRoOrCommissioner(approverDesignation))
             if (vacancyRemissionApproval.getStatus().equals(VR_STATUS_APPROVED))
                 nextAction = DIGITAL_SIGNATURE_PENDING;
             else {
@@ -513,17 +521,19 @@ public class VacancyRemissionService {
             }
 
         } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
-            if (wfInitiator.getPosition().equals(vacancyRemissionApproval.getCurrentState().getOwnerPosition())) {
-                vacancyRemissionApproval.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withDateInfo(currentDate.toDate());
-                vacancyRemissionApproval.setStatus(VR_STATUS_REJECTED);
-                vacancyRemissionApproval.getVacancyRemission().getBasicProperty().setUnderWorkflow(FALSE);
-            } else {
-                vacancyRemissionApproval.setStatus(VR_STATUS_REJECTED);
-                vacancyRemissionApproval.transition().withSenderName(user.getName()).withComments(approvalComent)
-                        .withStateValue(WF_STATE_REJECTED).withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
-                        .withNextAction(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING);
-            }
+            if (wfInitiator != null)
+                if (wfInitiator.getPosition().equals(vacancyRemissionApproval.getCurrentState().getOwnerPosition())) {
+                    vacancyRemissionApproval.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                            .withComments(approvalComent).withDateInfo(currentDate.toDate());
+                    vacancyRemissionApproval.setStatus(VR_STATUS_REJECTED);
+                    vacancyRemissionApproval.getVacancyRemission().getBasicProperty().setUnderWorkflow(FALSE);
+                } else {
+                    vacancyRemissionApproval.setStatus(VR_STATUS_REJECTED);
+                    vacancyRemissionApproval.transition().withSenderName(user.getName()).withComments(approvalComent)
+                            .withStateValue(WF_STATE_REJECTED).withDateInfo(currentDate.toDate())
+                            .withOwner(wfInitiator.getPosition())
+                            .withNextAction(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING);
+                }
         } else {
             if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_FORWARD) && vacancyRemissionApproval.getStatus() == null)
                 vacancyRemissionApproval.setStatus(VR_STATUS_WORKFLOW);
@@ -542,8 +552,9 @@ public class VacancyRemissionService {
                         null, additionalRule, null, null);
                 vacancyRemissionApproval.transition().start().withSenderName(user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
-                        .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(NATURE_VACANCY_REMISSION);
-            } else if (vacancyRemissionApproval.getCurrentState().getNextAction().equalsIgnoreCase("END"))
+                        .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(NATURE_VACANCY_REMISSION)
+                        .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
+            } else if ("END".equalsIgnoreCase(vacancyRemissionApproval.getCurrentState().getNextAction()))
                 vacancyRemissionApproval.transition().end().withSenderName(user.getName())
                         .withComments(approvalComent).withDateInfo(currentDate.toDate());
             else {
@@ -555,26 +566,56 @@ public class VacancyRemissionService {
                         .withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(StringUtils.isNotBlank(nextAction) ? nextAction : wfmatrix.getNextAction());
 
-                if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
-                    final Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
-                    final Installment installmentFirstHalf = installmentMap.get(CURRENTYEAR_FIRST_HALF);
-                    final Installment installmentSecondHalf = installmentMap.get(CURRENTYEAR_SECOND_HALF);
-                    /*
-                     * If VR is done in 1st half, provide 50% rebate on taxes of the 2nd half
-                     */
-                    if (DateUtils.between(vacancyRemissionApproval.getVacancyRemission().getVacancyToDate(),
-                            installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate()))
-                        updateDemandDetailsWithRebate(vacancyRemissionApproval.getVacancyRemission(), installmentFirstHalf,
-                                installmentSecondHalf);
-                }
+                if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE))
+                    wFApprove(vacancyRemissionApproval);
 
             }
         }
         if (LOG.isDebugEnabled())
             LOG.debug(" WorkFlow Transition Completed  ...");
-
         vacancyRemissionApprovalRepository.save(vacancyRemissionApproval);
 
+    }
+
+    private void wFApprove(final VacancyRemissionApproval vacancyRemissionApproval) {
+        final Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+        final Installment installmentFirstHalf = installmentMap.get(CURRENTYEAR_FIRST_HALF);
+        final Installment installmentSecondHalf = installmentMap.get(CURRENTYEAR_SECOND_HALF);
+        /*
+         * If VR is done in 1st half, provide 50% rebate on taxes of the 2nd half
+         */
+        if (DateUtils.between(vacancyRemissionApproval.getVacancyRemission().getVacancyToDate(),
+                installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate()))
+            updateDemandDetailsWithRebate(vacancyRemissionApproval.getVacancyRemission(), installmentFirstHalf,
+                    installmentSecondHalf);
+    }
+
+    public boolean isRoOrCommissioner(final String loggedInUserDesignation) {
+        boolean isany;
+        if (!REVENUE_OFFICER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
+            isany = isCommissioner(loggedInUserDesignation);
+        else
+            isany = true;
+        return isany;
+    }
+
+    private boolean isCommissioner(final String loggedInUserDesignation) {
+        boolean isanyone;
+        if (!ASSISTANT_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
+                || !ADDITIONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
+            isanyone = isDeputyOrAbove(loggedInUserDesignation);
+        else
+            isanyone = true;
+        return isanyone;
+    }
+
+    private boolean isDeputyOrAbove(final String loggedInUserDesignation) {
+        boolean isanyone = false;
+        if (DEPUTY_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
+                || COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation)
+                || ZONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
+            isanyone = true;
+        return isanyone;
     }
 
     public User getLoggedInUser() {
@@ -681,4 +722,93 @@ public class VacancyRemissionService {
                 posId, user.getId(), new Date());
         return !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName() : null;
     }
+
+    /**
+     * API to get workflow initiator assignment in Property Tax.
+     *
+     * @return assignment
+     */
+    public Assignment getWorkflowInitiatorAssignment(final Long userId) {
+        Assignment wfInitiatorAssignment = null;
+        if (userId != null) {
+            final List<Assignment> assignmentList = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(userId);
+            for (final Assignment assignment : assignmentList)
+                if (assignment.getDesignation().getName().equals(PropertyTaxConstants.REVENUE_INSPECTOR_DESGN)
+                        && assignment.getEmployee().isActive()) {
+                    wfInitiatorAssignment = assignment;
+                    break;
+                }
+        }
+        return wfInitiatorAssignment;
+    }
+
+    public Assignment getWorkflowInitiator(final StateAware property) {
+        Assignment wfInitiator;
+        List<Assignment> assignment;
+        if (isEmployee(property.getCreatedBy())) {
+            if (isStateNotNull(property))
+                wfInitiator = getWfInitiatorIfStateNotNull(property);
+            else
+                wfInitiator = assignmentService.getPrimaryAssignmentForUser(property
+                        .getCreatedBy().getId());
+        } else if (property.getState().getInitiatorPosition() != null) {
+            assignment = assignmentService.getAssignmentsForPosition(property.getState().getInitiatorPosition().getId(),
+                    new Date());
+            wfInitiator = getActiveAssignment(assignment);
+            if (wfInitiator == null && !property.getStateHistory().isEmpty())
+                wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
+                        .getOwnerPosition().getId());
+        } else
+            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getState().getOwnerPosition()
+                    .getId());
+        return wfInitiator;
+    }
+
+    private Assignment getWfInitiatorIfStateNotNull(final StateAware property) {
+        List<Assignment> assignment;
+        Assignment wfInitiator = null;
+        final Assignment assgmnt = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(property
+                .getCreatedBy(), property.getState().getInitiatorPosition());
+        if (assgmnt != null)
+            if (assgmnt.getEmployee().isActive())
+                wfInitiator = assgmnt;
+        if (wfInitiator == null) {
+            assignment = assignmentService.getAssignmentsForPosition(property.getState().getInitiatorPosition().getId(),
+                    new Date());
+            wfInitiator = getActiveAssignment(assignment);
+        }
+        return wfInitiator;
+    }
+
+    private boolean isStateNotNull(final StateAware property) {
+        return property.getState() != null && property.getState().getInitiatorPosition() != null;
+    }
+
+    private Assignment getActiveAssignment(final List<Assignment> assignment) {
+        Assignment wfInitiator = null;
+        for (final Assignment assign : assignment)
+            if (assign.getEmployee().isActive()) {
+                wfInitiator = assign;
+                break;
+            }
+        return wfInitiator;
+    }
+
+    public Boolean isEmployee(final User user) {
+        for (final Role role : user.getRoles())
+            for (final AppConfigValues appconfig : getThirdPartyUserRoles())
+                if (role != null && role.getName().equals(appconfig.getValue()))
+                    return false;
+        return true;
+    }
+
+    public List<AppConfigValues> getThirdPartyUserRoles() {
+
+        final List<AppConfigValues> appConfigValueList = appConfigValuesService.getConfigValuesByModuleAndKey(
+                PTMODULENAME, PROPERTYTAX_ROLEFORNONEMPLOYEE);
+
+        return !appConfigValueList.isEmpty() ? appConfigValueList : null;
+
+    }
+
 }

@@ -333,8 +333,10 @@ public class PropertyTaxCommonUtils {
         if (user != null && position != null) {
             final List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date());
             for (final Assignment assignment : assignmentList)
-                if (position.getId() == assignment.getPosition().getId())
+                if (position.getId() == assignment.getPosition().getId() && assignment.getEmployee().isActive()) {
                     userAssignment = assignment;
+                    break;
+                }
         }
         return userAssignment;
     }
@@ -427,14 +429,14 @@ public class PropertyTaxCommonUtils {
      */
     public String getDateWithSufix(final int dayOfMonth) {
         switch (dayOfMonth < 20 ? dayOfMonth : dayOfMonth % 10) {
-            case 1:
-                return dayOfMonth + "st";
-            case 2:
-                return dayOfMonth + "nd";
-            case 3:
-                return dayOfMonth + "rd";
-            default:
-                return dayOfMonth + "th";
+        case 1:
+            return dayOfMonth + "st";
+        case 2:
+            return dayOfMonth + "nd";
+        case 3:
+            return dayOfMonth + "rd";
+        default:
+            return dayOfMonth + "th";
         }
     }
 
