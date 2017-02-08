@@ -56,10 +56,6 @@ import org.springframework.ui.Model;
 
 public class BasePaymentController extends BaseVoucherController {
 
-    public BasePaymentController(final AppConfigValueService appConfigValuesService) {
-        super(appConfigValuesService);
-    }
-
     @Autowired
     private BankBranchService bankBranchService;
     @Autowired
@@ -69,6 +65,10 @@ public class BasePaymentController extends BaseVoucherController {
 
     @Autowired
     protected AdvancePaymentService advancePaymentService;
+
+    public BasePaymentController(final AppConfigValueService appConfigValuesService) {
+        super(appConfigValuesService);
+    }
 
     public void prepare(final Model model) {
         super.setDropDownValues(model);

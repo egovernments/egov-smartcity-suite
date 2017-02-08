@@ -51,11 +51,11 @@ import org.springframework.stereotype.Repository;
 public interface AdvancePaymentRepository extends JpaRepository<EgAdvanceRequisition, Long> {
 
     @Query(" select ear from EgAdvanceRequisition as ear where upper(ear.advanceRequisitionNumber) like upper(:advanceRequisitionNumber) and ear.status.code=:status")
-    public List<EgAdvanceRequisition> findARFNumberToSearchAdvanceBill(
+    List<EgAdvanceRequisition> findARFNumberToSearchAdvanceBill(
             @Param("advanceRequisitionNumber") String advanceRequisitionNumber, @Param("status") String status);
 
-    public EgAdvanceRequisition findByAdvanceRequisitionNumber(String advanceRequisitionNumber);
+    EgAdvanceRequisition findByAdvanceRequisitionNumber(String advanceRequisitionNumber);
 
-    public EgAdvanceRequisition findByEgAdvanceReqMises_EgBillregister_Id(Long egBillRegisterId);
+    EgAdvanceRequisition findByEgAdvanceReqMises_EgBillregister_Id(Long egBillRegisterId);
 
 }

@@ -47,23 +47,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class MiscbilldetailService extends PersistenceService<Miscbilldetail, Long> {
 
-	
-	public MiscbilldetailService(Class<Miscbilldetail> type) {
-		super(type);
-	}
-	
-	public MiscbilldetailService()
-	{
-		this(Miscbilldetail.class);
-	}
+    public MiscbilldetailService(final Class<Miscbilldetail> type) {
+        super(type);
+    }
 
-	public Miscbilldetail findByBillvhId(Long id)
-	{
-	    return find("from Miscbilldetail where billVoucherHeader.id=? order by payVoucherHeader desc",id);
-	}
-	
-	public Miscbilldetail findByPayvhId(Long id)
-        {
-            return find("from Miscbilldetail where payVoucherHeader.id=?",id);
-        }
+    public MiscbilldetailService() {
+        this(Miscbilldetail.class);
+    }
+
+    public Miscbilldetail findByBillvhId(final Long id) {
+        return find("from Miscbilldetail where billVoucherHeader.id=? order by payVoucherHeader desc", id);
+    }
+
+    public Miscbilldetail findByPayvhId(final Long id) {
+        return find("from Miscbilldetail where payVoucherHeader.id=?", id);
+    }
 }

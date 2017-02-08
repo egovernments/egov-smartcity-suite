@@ -340,10 +340,10 @@ public class CancelVoucherAction extends BaseFormAction {
                 query.executeUpdate();
                 // for old vouchers when workflow was not implemented
                 if (voucherObj.getState() == null
-                        && (!voucherObj.getName().equals(FinancialConstants.JOURNALVOUCHER_NAME_GENERAL) && !voucherObj.getName().equals(FinancialConstants.JOURNALVOUCHER_NAME_ADVANCEJOURNAL)))
+                        && !voucherObj.getName().equalsIgnoreCase(FinancialConstants.JOURNALVOUCHER_NAME_GENERAL) && !voucherObj.getName().equalsIgnoreCase(FinancialConstants.JOURNALVOUCHER_NAME_ADVANCEJOURNAL))
                     cancelBill(selectedVhs[i]);
                 else if (voucherObj.getState() != null
-                        && (!voucherObj.getName().equals(FinancialConstants.JOURNALVOUCHER_NAME_GENERAL) && !voucherObj.getName().equals(FinancialConstants.JOURNALVOUCHER_NAME_ADVANCEJOURNAL)))
+                        && !voucherObj.getName().equalsIgnoreCase(FinancialConstants.JOURNALVOUCHER_NAME_GENERAL) && !voucherObj.getName().equalsIgnoreCase(FinancialConstants.JOURNALVOUCHER_NAME_ADVANCEJOURNAL))
                     cancelBill(selectedVhs[i]);
                 break;
             }

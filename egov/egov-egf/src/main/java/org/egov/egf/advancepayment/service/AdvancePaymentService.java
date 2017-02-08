@@ -53,11 +53,9 @@ import javax.persistence.Query;
 import org.apache.commons.lang.StringUtils;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
-import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgPartytype;
-import org.egov.commons.service.AccountdetailtypeService;
 import org.egov.commons.service.BankAccountService;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.advancepayment.SearchAdvanceRequisition;
@@ -130,9 +128,6 @@ public class AdvancePaymentService {
 
     @Autowired
     private CreateVoucher createVoucher;
-
-    @Autowired
-    private AccountdetailtypeService accountdetailtypeService;
 
     @Autowired
     private EgPartyTypeService egPartyTypeService;

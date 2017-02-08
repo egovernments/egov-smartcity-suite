@@ -246,10 +246,11 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
                 list();
     }
 
-    public  List<Bankaccount> getBankAccountsBranchId(final Integer bankBranchId, final Integer fundId, String[] accountType) {
-       return findAllBy(
+    public List<Bankaccount> getBankAccountsBranchId(final Integer bankBranchId, final Integer fundId, String[] accountType) {
+        return findAllBy(
                 "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.type in (?,?) "
-                        + "and ba.isactive=true order by ba.chartofaccounts.glcode", bankBranchId, fundId,
-                BankAccountType.valueOf(accountType[0]),BankAccountType.valueOf(accountType[1]));
+                        + "and ba.isactive=true order by ba.chartofaccounts.glcode",
+                bankBranchId, fundId,
+                BankAccountType.valueOf(accountType[0]), BankAccountType.valueOf(accountType[1]));
     }
 }
