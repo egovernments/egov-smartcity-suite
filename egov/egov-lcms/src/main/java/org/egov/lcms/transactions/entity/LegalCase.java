@@ -77,6 +77,7 @@ import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
@@ -192,6 +193,7 @@ public class LegalCase extends AbstractAuditable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "officerincharge")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Position officerIncharge;
 
     @NotNull
