@@ -230,10 +230,14 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     private Map<String, Object> getReportParamsForCertificate(final License license, final String districtName,
                                                               final String cityMunicipalityName) {
+    	
         final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("applicationnumber", license.getApplicationNumber());
         reportParams.put("applicantName", license.getLicensee().getApplicantName());
         reportParams.put("licencenumber", license.getLicenseNumber());
+        if(license.getState().getValue().equals(Constants.WF_FIRST_LVL_FEECOLLECTED)){
+        	reportParams.put("certificateType","provisional");
+        }
         reportParams.put("wardName", license.getBoundary().getName());
         reportParams.put("cscNumber", "");
         reportParams.put("nameOfEstablishment", license.getNameOfEstablishment());
