@@ -54,4 +54,9 @@ public class EgPartyTypeService extends PersistenceService<EgPartytype, Integer>
     public EgPartyTypeService(Class<EgPartytype> type) {
         super(type);
     }
+    
+    public EgPartytype findByCode(String partyType)
+    {
+        return find("from EgPartytype where upper(code)=?",partyType.toUpperCase());
+    }
 }

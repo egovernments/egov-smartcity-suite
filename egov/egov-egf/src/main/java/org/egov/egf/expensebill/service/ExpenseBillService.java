@@ -156,6 +156,10 @@ public class ExpenseBillService {
     public EgBillregister getByBillnumber(final String billNumber) {
         return expenseBillRepository.findByBillnumber(billNumber);
     }
+    
+    public EgBillregister getByVoucherHeaderId(final Long voucherId) {
+        return expenseBillRepository.findByEgBillregistermis_VoucherHeader_Id(voucherId);
+    }
 
     @Transactional
     public EgBillregister create(final EgBillregister egBillregister) {

@@ -630,5 +630,24 @@
 		<put-attribute name="page-title" value="lbl.search.bankaccount" cascade="true" />
 		<put-attribute name="body" value="/WEB-INF/views/bankaccount/bankaccount-search.jsp" />
 	</definition>
+	
+	<definition name="advancerequisition-search" extends="base_layout">
+		<put-attribute name="page-title" value="title.search.advancerequisition" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/advancepayment/advancerequisition-search.jsp" />
+	</definition>
+	<definition name="advancepayment-new" extends="base_layout">
+		<put-attribute name="page-title" value="title.advance.payment" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/advancepayment/advancepayment-new.jsp" />
+	</definition>
+	
+	<definition name="advancepayment-success" extends="base_layout">
+		<put-attribute name="page-title" value="title.advance.payment" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/advancepayment/advancepayment-success.jsp" />
+	</definition>
+	
+	<definition name="advancepayment-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.advance.payment" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/advancepayment/advancepayment-view.jsp" />
+	</definition>
 
 </tiles-definitions>

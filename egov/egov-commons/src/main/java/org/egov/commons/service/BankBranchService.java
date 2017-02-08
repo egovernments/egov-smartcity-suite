@@ -48,6 +48,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.commons.Bankbranch;
+import org.egov.commons.Fund;
+import org.egov.commons.utils.BankAccountType;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -62,7 +64,7 @@ public class BankBranchService extends PersistenceService<Bankbranch, Integer> {
     }
 
     public BankBranchService() {
-       super(Bankbranch.class);
+        super(Bankbranch.class);
     }
 
     public BankBranchService(final Class<Bankbranch> type) {
@@ -85,6 +87,13 @@ public class BankBranchService extends PersistenceService<Bankbranch, Integer> {
             }
         }
         return bankBranchList;
+    }
+
+    public List<Bankbranch> getBankBranchByFund(final Fund fund, final String[] typeOfAccount) {
+        return findAllBy(
+                "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund.id=? and isactive = true and type in (?,?) ) "
+                        + " and br.isactive=true and br.bank.isactive = true order by br.bank.name asc",
+                fund.getId(), BankAccountType.valueOf(typeOfAccount[0]),BankAccountType.valueOf(typeOfAccount[1]));
     }
 
 }

@@ -165,6 +165,7 @@ public class CreateVoucher {
 	private final static String SALBILL = "Salary";
 	private final static String PENSBILL = "Pension";
 	private final static String GRATBILL = "Gratuity";
+	private final static String ADVANCE = "Advance";
 	// messages
 	private final static String FUNDMISSINGMSG = "Fund is not used in Bill ,cannot create Voucher";
 	private static final String FAILED = "Transaction failed";
@@ -386,7 +387,10 @@ public class CreateVoucher {
 			} else if (expType.equalsIgnoreCase(GRATBILL)) {
 				name = "Gratuity Journal";
 				voucherSubType = FinancialConstants.CBILL_VOUCHERNO_TYPE;
-			} else {
+			} else if (expType.equalsIgnoreCase(ADVANCE)) {
+                            name = "Advance Journal";
+                            voucherSubType = FinancialConstants.JOURNALVOUCHER_NAME_ADVANCEJOURNAL;
+                        }else {
 				name = "JVGeneral";
 				voucherSubType = FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL;
 			}
@@ -1821,7 +1825,7 @@ public class CreateVoucher {
 	}
 
 	enum voucherSubTypeEnum {
-		JOURNALVOUCHER, CONTRA, RECEIPT, PAYMENT, PURCHASEJOURNAL, PENSIONJOURNAL, PURCHASE, WORKS, CONTRACTORJOURNAL, FIXEDASSETJOURNAL, FIXEDASSET, PENSION, WORKSJOURNAL, CONTINGENTJOURNAL, SALARY, SALARYJOURNAL, EXPENSE, EXPENSEJOURNAL, JVGENERAL;
+		JOURNALVOUCHER, CONTRA, RECEIPT, PAYMENT, PURCHASEJOURNAL, PENSIONJOURNAL, PURCHASE, WORKS, CONTRACTORJOURNAL, FIXEDASSETJOURNAL, FIXEDASSET, PENSION, WORKSJOURNAL, CONTINGENTJOURNAL, SALARY, SALARYJOURNAL, EXPENSE, EXPENSEJOURNAL, JVGENERAL,ADVANCEJOURNAL;
 	}
 
 	// we cannot provide enum for all names so we need to find a way
@@ -1897,6 +1901,9 @@ public class CreateVoucher {
 		case PENSION:
 			voucherNumberPrefix = FinancialConstants.PENBILL_VOUCHERNO_TYPE;
 			break;
+		case ADVANCEJOURNAL:
+                        voucherNumberPrefix = "AJV";
+                        break;
 		default: // if subtype is invalid then use type
 			if (voucherNumberPrefix == null)
 				voucherNumberPrefix = checkwithvouchertype(type);

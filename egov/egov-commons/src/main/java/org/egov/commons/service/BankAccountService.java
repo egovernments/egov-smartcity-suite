@@ -39,6 +39,14 @@
  */
 package org.egov.commons.service;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
@@ -46,14 +54,6 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.utils.BankAccountType;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Transactional(readOnly = true)
 public class BankAccountService extends PersistenceService<Bankaccount, Long> {
@@ -246,4 +246,10 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
                 list();
     }
 
+    public  List<Bankaccount> getBankAccountsBranchId(final Integer bankBranchId, final Integer fundId, String[] accountType) {
+       return findAllBy(
+                "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.type in (?,?) "
+                        + "and ba.isactive=true order by ba.chartofaccounts.glcode", bankBranchId, fundId,
+                BankAccountType.valueOf(accountType[0]),BankAccountType.valueOf(accountType[1]));
+    }
 }

@@ -87,7 +87,7 @@ function loadBankBranches(bankId){
 						{
 								selected="selected";
 						}
-						$('#bankbranchname').append($('<option '+ selected +'>').text(value.branchname).attr('itemValue', value.id));
+						$('#bankbranchname').append($('<option '+ selected +'>').text(value.branchname).attr('value', value.id));
 					});
 				});
 }

@@ -71,6 +71,7 @@ public interface FinancialConstants {
     public static final String STANDARD_EXPENDITURETYPE_PURCHASE = "Purchase";
     public static final String STANDARD_EXPENDITURETYPE_SALARY = "Salary";
     public static final String STANDARD_EXPENDITURETYPE_PENSION = "Pension";
+    public static final String STANDARD_EXPENDITURETYPE_ADVANCE = "Advance";
 
     public static final String BILLTYPE_FINAL_BILL = "Final Bill";
     public static final String BILLTYPE_PART_BILL = "Part Bill";
@@ -211,6 +212,7 @@ public interface FinancialConstants {
     public static final String JOURNALVOUCHER_NAME_PENSIONJOURNAL = "Pension Journal";
     public static final String JOURNALVOUCHER_NAME_LE_DEMAND = "LE-Demand-Voucher";
     public static final String JOURNALVOUCHER_NAME_RECEIPT_REVERSAL = "Receipt Reversal";
+    public static final String JOURNALVOUCHER_NAME_ADVANCEJOURNAL = "Advance Journal";
 
     public static final Integer REVERSALVOUCHERSTATUS = 2;
     public static final Integer REVERSEDVOUCHERSTATUS = 1;
@@ -344,6 +346,7 @@ public interface FinancialConstants {
     public static final String BUDGETDETAIL_VERIFIED_STATUS = "VERIFIED";
     public static final String WORKFLOWTYPE_EXPENSE_BILL_DISPLAYNAME = "Expense Bill";
     public static final String WORKFLOWTYPE_VOUCHER_DISPLAYNAME = "Voucher";
+    public static final String WORKFLOWTYPE_ADVANCE_PAYMENT_DISPLAYNAME = "Advance Payment";
 
     public static final String WORKFLOW_STATUS_CODE_REJECTED = "REJECTED";
     public static final String KEY_DATAENTRYCUTOFFDATE = "DataEntryCutOffDate";
@@ -365,4 +368,6 @@ public interface FinancialConstants {
     public static final String MANDATORY = "mandatory";
     public static final String WARNING = "warning";
     public static final String NONE = "none";
+    
+    public static final String MODE_OF_PAYMENT = "Mode of Payment";
 }

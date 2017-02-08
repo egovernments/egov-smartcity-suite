@@ -41,24 +41,30 @@ package org.egov.egf.web.controller.common;
 
 import static org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter.FACTORY;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
 import org.egov.commons.Accountdetailtype;
+import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFunction;
+import org.egov.commons.EgPartytype;
 import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.service.AccountdetailtypeService;
+import org.egov.commons.service.BankAccountService;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.service.FunctionService;
 import org.egov.commons.service.FundsourceService;
 import org.egov.commons.utils.EntityType;
+import org.egov.egf.advancepayment.service.AdvancePaymentService;
 import org.egov.egf.billsubtype.service.EgBillSubTypeService;
 import org.egov.egf.commons.bankbranch.service.CreateBankBranchService;
 import org.egov.egf.web.adaptor.ChartOfAccountsAdaptor;
@@ -69,6 +75,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.model.bills.EgBillSubType;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
+import org.egov.services.payment.PaymentService;
 import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -121,6 +128,15 @@ public class AjaxCommonController {
 
     @Autowired
     private AppConfigValueService appConfigValueService;
+
+    @Autowired
+    private AdvancePaymentService advancePaymentService;
+
+    @Autowired
+    private BankAccountService bankAccountService;
+
+    @Autowired
+    private PaymentService paymentService;
 
     @RequestMapping(value = "/getschemesbyfundid", method = RequestMethod.GET)
     @ResponseBody
@@ -266,4 +282,39 @@ public class AjaxCommonController {
         }
     }
 
+    @RequestMapping(value = "/ajaxarfnumbers-searcharf", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<String> getArfNumber(@RequestParam final String advanceRequisitionNumber) {
+        return advancePaymentService.getArfNumber(advanceRequisitionNumber);
+    }
+
+    @RequestMapping(value = "/getpartytypebyarfnumber", method = RequestMethod.GET)
+    @ResponseBody
+    public List<EgPartytype> getPartytype(@RequestParam("advanceRqnNumber") final String advanceRqnNumber)
+            throws ApplicationException {
+        return advancePaymentService.getPartytypeByArfNumber(advanceRqnNumber);
+    }
+
+    @RequestMapping(value = "/getaccountnobybranchidforpayment", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Bankaccount> getAccountnoForPayment(@RequestParam("bankBranchId") final String bankBranchId,
+            @RequestParam("fundId") final String fundId)
+            throws ApplicationException {
+        final String[] accountTypes = { FinancialConstants.TYPEOFACCOUNT_PAYMENTS,
+                FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS };
+        return bankAccountService.getBankAccountsBranchId(Integer.parseInt(bankBranchId), Integer.parseInt(fundId), accountTypes);
+    }
+
+    @RequestMapping(value = "/getaccountbalance", method = RequestMethod.GET)
+    @ResponseBody
+    public BigDecimal getAccountBalance(@RequestParam("bankAccountId") final String bankAccountId,
+            @RequestParam("voucherDate") final String voucherDate)
+            throws ApplicationException {
+        BigDecimal balance = BigDecimal.ZERO;
+        try {
+            balance = paymentService.getAccountBalance(bankAccountId, voucherDate, null, null, null);
+        } catch (final ParseException e) {
+        }
+        return balance;
+    }
 }

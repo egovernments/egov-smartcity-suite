@@ -37,33 +37,25 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.egf.advancepayment.repository;
 
-package org.egov.services.payment;
+import java.util.List;
 
-import org.egov.infstr.services.PersistenceService;
-import org.egov.model.bills.Miscbilldetail;
-import org.springframework.stereotype.Service;
+import org.egov.model.advance.EgAdvanceRequisition;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-@Service
-public class MiscbilldetailService extends PersistenceService<Miscbilldetail, Long> {
+@Repository
+public interface AdvancePaymentRepository extends JpaRepository<EgAdvanceRequisition, Long> {
 
-	
-	public MiscbilldetailService(Class<Miscbilldetail> type) {
-		super(type);
-	}
-	
-	public MiscbilldetailService()
-	{
-		this(Miscbilldetail.class);
-	}
+    @Query(" select ear from EgAdvanceRequisition as ear where upper(ear.advanceRequisitionNumber) like upper(:advanceRequisitionNumber) and ear.status.code=:status")
+    public List<EgAdvanceRequisition> findARFNumberToSearchAdvanceBill(
+            @Param("advanceRequisitionNumber") String advanceRequisitionNumber, @Param("status") String status);
 
-	public Miscbilldetail findByBillvhId(Long id)
-	{
-	    return find("from Miscbilldetail where billVoucherHeader.id=? order by payVoucherHeader desc",id);
-	}
-	
-	public Miscbilldetail findByPayvhId(Long id)
-        {
-            return find("from Miscbilldetail where payVoucherHeader.id=?",id);
-        }
+    public EgAdvanceRequisition findByAdvanceRequisitionNumber(String advanceRequisitionNumber);
+
+    public EgAdvanceRequisition findByEgAdvanceReqMises_EgBillregister_Id(Long egBillRegisterId);
+
 }

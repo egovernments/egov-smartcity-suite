@@ -647,6 +647,17 @@ public class BillRegisterReportAction extends SearchFormAction {
             }
 
             netAccountCode.put("Pension", penBillNetPayCodeList);
+            
+            final List<String> advanceBillNetPayCodeList = new ArrayList<String>();
+            final List<AppConfigValues> advanceBillNetPurpose = appConfigValueService.
+                    getConfigValuesByModuleAndKey("EGF", "advanceBillPurposeIds");
+            for (final AppConfigValues appConfigValues : advanceBillNetPurpose) {
+                coaQuery = "from CChartOfAccounts where purposeId in ( " + appConfigValues.getValue() + " )";
+                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).list();
+                for (final CChartOfAccounts chartOfAccounts : coaList)
+                    advanceBillNetPayCodeList.add(chartOfAccounts.getId().toString());
+            }
+            netAccountCode.put("Advance", advanceBillNetPayCodeList);
 
         } catch (final Exception e)
         {

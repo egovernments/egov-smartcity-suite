@@ -56,5 +56,7 @@ public interface ExpenseBillRepository extends JpaRepository<EgBillregister, Lon
     EgBillregister findByBillnumber(final String billNumber);
 
     List<EgBillregister> findByBillnumberContainingIgnoreCase(final String billNumber);
+    
+    EgBillregister findByEgBillregistermis_VoucherHeader_Id(final Long voucherId);
 
 }

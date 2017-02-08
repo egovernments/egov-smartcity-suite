@@ -42,6 +42,9 @@
  */
 package org.egov.egf.web.actions.payment;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -51,6 +54,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.egf.web.actions.voucher.BaseVoucherAction;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfig;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -71,8 +75,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @Results({
         @Result(name = "billpayment", type = "redirectAction", location = "payment-view", params = { "namespace",
                 "/payment", "paymentid", "${paymentid}" }),
-        @Result(name = "advancepayment", type = "redirectAction", location = "payment-advanceView", params = {
-                "namespace", "/payment", "paymentid", "${paymentid}" }),
+        @Result(name = "advancepayment", type = "redirect", location = "${url}"),
         @Result(name = "directbankpayment", type = "redirectAction", location = "directBankPayment-viewInboxItem", params = {
                 "namespace", "/payment", "paymentid", "${paymentid}" }),
         @Result(name = "remitRecovery", type = "redirectAction", location = "remitRecovery-viewInboxItem", params = {
@@ -90,6 +93,10 @@ public class BasePaymentAction extends BaseVoucherAction {
     private VoucherTypeForULB voucherTypeForULB;
     @Autowired
     AppConfigService appConfigService;
+    private Map<String, String> modeOfPaymentMap;
+    public static final String MDP_CHEQUE = FinancialConstants.MODEOFPAYMENT_CHEQUE;
+    public static final String MDP_RTGS = FinancialConstants.MODEOFPAYMENT_RTGS;
+    public static final String MDP_CASH = FinancialConstants.MODEOFPAYMENT_CASH;
 
     public void setEisCommonService(final EisCommonService eisCommonService) {
         this.eisCommonService = eisCommonService;
@@ -108,6 +115,7 @@ public class BasePaymentAction extends BaseVoucherAction {
 
     protected String action = "";
     protected String paymentid = "";
+    protected String url="";
     private final String BILLPAYMENT = "billpayment";
     private final String DIRECTBANKPAYMENT = "directbankpayment";
     private final String REMITTANCEPAYMENT = "remitRecovery";
@@ -150,7 +158,10 @@ public class BasePaymentAction extends BaseVoucherAction {
             if (arf != null)
                 result = "contractoradvancepayment";
             else
+            {
+                url="/advancepayment/view/"+paymentid;
                 result = "advancepayment";
+            }
         } else if (paymentheader.getVoucherheader().getName()
                 .equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_BILL)
                 || FinancialConstants.PAYMENTVOUCHER_NAME_SALARY
@@ -195,6 +206,57 @@ public class BasePaymentAction extends BaseVoucherAction {
             else if (NONE.equalsIgnoreCase(appValue))
                 bankBalanceCheck = appValue.toLowerCase();
         }
+    }
+
+    public void getPaymentModes(String paymentType) {
+        modeOfPaymentMap = new LinkedHashMap<>();
+        final AppConfig paymentModes = appConfigService.getAppConfigByModuleNameAndKeyName(
+                FinancialConstants.MODULE_NAME_APPCONFIG,
+                FinancialConstants.MODE_OF_PAYMENT);
+        if (paymentModes != null && !paymentModes.getConfValues().isEmpty()) {
+            for (final AppConfigValues appConfigValues : paymentModes.getConfValues())
+                if (appConfigValues.getValue().contains("|")) {
+                    final String[] appConfigValuesArray = appConfigValues.getValue().split("\\|");
+                    final String paymentName = appConfigValuesArray[0];
+                    if (paymentType.trim().equalsIgnoreCase(paymentName)) {
+                        if (!appConfigValuesArray[1].isEmpty() && appConfigValuesArray[1].contains(",")) {
+                            final String[] appCongifValue = appConfigValuesArray[1].split(",");
+                            for (final String value : appCongifValue) {
+                                modeOfPaymentwithAppConfig(value, paymentType);
+                            }
+                        } else if (!appConfigValuesArray[1].isEmpty()) {
+                            modeOfPaymentwithAppConfig(appConfigValuesArray[1], paymentType);
+                        }
+                    }
+                }
+        }
+        if (getModeOfPaymentMap().isEmpty()) {
+            modeOfPaymentWithOutAppConfig(paymentType);
+        }
+    }
+
+    public void modeOfPaymentWithOutAppConfig(String paymentType) {
+        if (paymentType.trim().equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE)) {
+            modeOfPaymentMap.put(MDP_CASH, getText("cash.consolidated.cheque"));
+        } else {
+            modeOfPaymentMap.put(MDP_CHEQUE, getText(MDP_CHEQUE));
+            modeOfPaymentMap.put(MDP_CASH, getText(MDP_CASH));
+            modeOfPaymentMap.put(MDP_RTGS, getText(MDP_RTGS));
+        }
+    }
+
+    public void modeOfPaymentwithAppConfig(String appCongifValue, String paymentType) {
+        if (paymentType.trim().equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE))
+            modeOfPaymentMap.put(MDP_CASH, getText("cash.consolidated.cheque"));
+        else {
+            if (appCongifValue.trim().equalsIgnoreCase(MDP_CHEQUE))
+                modeOfPaymentMap.put(MDP_CHEQUE, getText(MDP_CHEQUE));
+            if (appCongifValue.trim().equalsIgnoreCase(MDP_CASH))
+                modeOfPaymentMap.put(MDP_CASH, getText(MDP_CASH));
+            if (appCongifValue.trim().equalsIgnoreCase(MDP_RTGS))
+                modeOfPaymentMap.put(MDP_RTGS, getText(MDP_RTGS));
+        }
+
     }
 
     public String getAction() {
@@ -243,5 +305,20 @@ public class BasePaymentAction extends BaseVoucherAction {
 
     public void setBankBalanceCheck(final String bankBalanceCheck) {
         this.bankBalanceCheck = bankBalanceCheck;
+    }
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public Map<String, String> getModeOfPaymentMap() {
+        return modeOfPaymentMap;
+    }
+
+    public void setModeOfPaymentMap(Map<String, String> modeOfPaymentMap) {
+        this.modeOfPaymentMap = modeOfPaymentMap;
     }
 }

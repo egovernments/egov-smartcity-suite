@@ -37,33 +37,62 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.egf.advancepayment;
 
-package org.egov.services.payment;
+import java.util.Date;
 
-import org.egov.infstr.services.PersistenceService;
-import org.egov.model.bills.Miscbilldetail;
-import org.springframework.stereotype.Service;
+import org.egov.commons.Fund;
 
-@Service
-public class MiscbilldetailService extends PersistenceService<Miscbilldetail, Long> {
+public class SearchAdvanceRequisition {
 
-	
-	public MiscbilldetailService(Class<Miscbilldetail> type) {
-		super(type);
-	}
-	
-	public MiscbilldetailService()
-	{
-		this(Miscbilldetail.class);
-	}
+    private String arfNumber;
 
-	public Miscbilldetail findByBillvhId(Long id)
-	{
-	    return find("from Miscbilldetail where billVoucherHeader.id=? order by payVoucherHeader desc",id);
-	}
-	
-	public Miscbilldetail findByPayvhId(Long id)
-        {
-            return find("from Miscbilldetail where payVoucherHeader.id=?",id);
-        }
+    private String partyType;
+
+    private Date fromDate;
+
+    private Date toDate;
+
+    private Fund fund;
+
+    public String getArfNumber() {
+        return arfNumber;
+    }
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setArfNumber(final String arfNumber) {
+        this.arfNumber = arfNumber;
+    }
+
+    public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public void setToDate(final Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public Fund getFund() {
+        return fund;
+    }
+
+    public void setFund(final Fund fund) {
+        this.fund = fund;
+    }
+
+    public String getPartyType() {
+        return partyType;
+    }
+
+    public void setPartyType(final String partyType) {
+        this.partyType = partyType;
+    }
+
 }
