@@ -65,15 +65,12 @@ public class GenericSubReportResult {
     private Integer casecategoryId;
     private Integer courtId;
     private Integer judgmentTypeId;
-   
-
-   
 
     public Integer getCourtId() {
         return courtId;
     }
 
-    public void setCourtId(Integer courtId) {
+    public void setCourtId(final Integer courtId) {
         this.courtId = courtId;
     }
 
@@ -81,16 +78,15 @@ public class GenericSubReportResult {
         return judgmentTypeId;
     }
 
-    public void setJudgmentTypeId(Integer judgmentTypeId) {
+    public void setJudgmentTypeId(final Integer judgmentTypeId) {
         this.judgmentTypeId = judgmentTypeId;
     }
 
-  
     public Integer getCasecategoryId() {
         return casecategoryId;
     }
 
-    public void setCasecategoryId(Integer casecategoryId) {
+    public void setCasecategoryId(final Integer casecategoryId) {
         this.casecategoryId = casecategoryId;
     }
 
@@ -138,7 +134,6 @@ public class GenericSubReportResult {
         this.caseStatus = caseStatus;
     }
 
-
     public String getCaseStatus() {
         return caseStatus;
     }
@@ -159,13 +154,11 @@ public class GenericSubReportResult {
         this.toDate = toDate;
     }
 
-   
-
     public Integer getCourtType() {
         return courtType;
     }
 
-    public void setCourtType(Integer courtType) {
+    public void setCourtType(final Integer courtType) {
         this.courtType = courtType;
     }
 
@@ -185,12 +178,11 @@ public class GenericSubReportResult {
         this.petitionType = petitionType;
     }
 
-   
     public String getCaseCategory() {
         return caseCategory;
     }
 
-    public void setCaseCategory(String caseCategory) {
+    public void setCaseCategory(final String caseCategory) {
         this.caseCategory = caseCategory;
     }
 
@@ -198,7 +190,7 @@ public class GenericSubReportResult {
         return courtName;
     }
 
-    public void setCourtName(String courtName) {
+    public void setCourtName(final String courtName) {
         this.courtName = courtName;
     }
 
@@ -238,7 +230,7 @@ public class GenericSubReportResult {
         return officerIncharge;
     }
 
-    public void setOfficerIncharge(Long officerIncharge) {
+    public void setOfficerIncharge(final Long officerIncharge) {
         this.officerIncharge = officerIncharge;
     }
 

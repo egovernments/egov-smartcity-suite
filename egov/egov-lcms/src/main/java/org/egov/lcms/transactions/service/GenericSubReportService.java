@@ -378,7 +378,8 @@ public class GenericSubReportService {
 
         queryStr.append("select distinct legalcase  as  legalCase ,courtmaster.name  as  courtName ,");
         queryStr.append(" egwStatus.code  as  caseStatus ");
-        queryStr.append(" from LegalCase legalcase left join legalcase.officerIncharge position,CourtMaster courtmaster,CaseTypeMaster casetypemaster,");
+        queryStr.append(
+                " from LegalCase legalcase left join legalcase.officerIncharge position,CourtMaster courtmaster,CaseTypeMaster casetypemaster,");
         queryStr.append(" PetitionTypeMaster petmaster,EgwStatus egwStatus,ReportStatus reportStatus");
         if (genericSubReportResult.getJudgmentTypeId() != null)
             queryStr.append(" ,Judgment judgment ");

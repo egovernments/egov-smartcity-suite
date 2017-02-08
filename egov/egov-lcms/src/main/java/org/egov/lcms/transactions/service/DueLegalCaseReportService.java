@@ -72,7 +72,8 @@ public class DueLegalCaseReportService {
             queryStr.append(" ,empHearing.hearingDate  as  hearingDate ");
         if (reportType.equals(LcmsConstants.DUEJUDGEMENTIMPLPREPORT))
             queryStr.append(" ,judgementImpl.dateOfCompliance as judgementImplDate ");
-        queryStr.append(" from LegalCase legalObj left join legalObj.officerIncharge position,CourtMaster courtmaster,CaseTypeMaster casetypemaster,");
+        queryStr.append(
+                " from LegalCase legalObj left join legalObj.officerIncharge position,CourtMaster courtmaster,CaseTypeMaster casetypemaster,");
         queryStr.append(" PetitionTypeMaster petmaster");
         if (reportType.equals(LcmsConstants.DUEEMPLOYEEHEARINGREPORT)
                 || reportType.equals(LcmsConstants.DUEJUDGEMENTIMPLPREPORT))
@@ -121,7 +122,7 @@ public class DueLegalCaseReportService {
 
         if (!(reportType.equals(LcmsConstants.DUEEMPLOYEEHEARINGREPORT)
                 || reportType.equals(LcmsConstants.DUEJUDGEMENTIMPLPREPORT)))
-        getAppendQuery(dueReportResult, queryStr);
+            getAppendQuery(dueReportResult, queryStr);
 
         Query queryResult = getCurrentSession().createQuery(queryStr.toString());
         queryResult = setParametersToQuery(dueReportResult, queryResult, reportType);

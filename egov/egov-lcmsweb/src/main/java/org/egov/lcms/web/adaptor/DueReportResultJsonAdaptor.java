@@ -64,16 +64,13 @@ public class DueReportResultJsonAdaptor implements JsonSerializer<DueReportResul
         jsonObject.addProperty("respondantName", dueReportResult.getLegalCase().getRespondantNames());
         jsonObject.addProperty("standingCouncil", dueReportResult.getLegalCase().getOppPartyAdvocate());
         jsonObject.addProperty("officerIncharge", dueReportResult.getOfficerInChargeName());
-        if(dueReportResult.getHearingDate() != null){
-        jsonObject.addProperty("nextDate" ,DateUtils.getDefaultFormattedDate(dueReportResult.getHearingDate()));
-        }
-        else if(dueReportResult.getJudgementImplDate() != null){
-            jsonObject.addProperty("nextDate" ,DateUtils.getDefaultFormattedDate(dueReportResult.getJudgementImplDate()));
-        }
+        if (dueReportResult.getHearingDate() != null)
+            jsonObject.addProperty("nextDate", DateUtils.getDefaultFormattedDate(dueReportResult.getHearingDate()));
+        else if (dueReportResult.getJudgementImplDate() != null)
+            jsonObject.addProperty("nextDate", DateUtils.getDefaultFormattedDate(dueReportResult.getJudgementImplDate()));
         else
-        {
-            jsonObject.addProperty("nextDate",dueReportResult.getLegalCase().getCaseDate() == null ? "" : DateUtils.getDefaultFormattedDate(dueReportResult.getLegalCase().getCaseDate()));
-        }
+            jsonObject.addProperty("nextDate", dueReportResult.getLegalCase().getCaseDate() == null ? ""
+                    : DateUtils.getDefaultFormattedDate(dueReportResult.getLegalCase().getCaseDate()));
         return jsonObject;
     }
 
