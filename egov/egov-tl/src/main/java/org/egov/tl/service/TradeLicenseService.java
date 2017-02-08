@@ -44,6 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.service.CFinancialYearService;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.CityService;
@@ -52,10 +53,10 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
-import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
@@ -76,6 +77,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Comparator;
 
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
@@ -230,13 +233,13 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     private Map<String, Object> getReportParamsForCertificate(final License license, final String districtName,
                                                               final String cityMunicipalityName) {
-    	
+
         final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("applicationnumber", license.getApplicationNumber());
         reportParams.put("applicantName", license.getLicensee().getApplicantName());
         reportParams.put("licencenumber", license.getLicenseNumber());
-        if(license.getState().getValue().equals(Constants.WF_FIRST_LVL_FEECOLLECTED)){
-        	reportParams.put("certificateType","provisional");
+        if (license.getState().getValue().equals(Constants.WF_FIRST_LVL_FEECOLLECTED)) {
+            reportParams.put("certificateType", "provisional");
         }
         reportParams.put("wardName", license.getBoundary().getName());
         reportParams.put("cscNumber", "");
@@ -251,11 +254,18 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         if (ApplicationThreadLocals.getMunicipalityName().contains("Corporation"))
             reportParams.put("carporationulbType", Boolean.TRUE);
         reportParams.put("municipality", ApplicationThreadLocals.getMunicipalityName());
-        final LicenseDemand licenseDemand = license.getLicenseDemand();
-        final String startYear = toYearFormat(licenseDemand.getEgInstallmentMaster().getFromDate());
-        final String endYear = toYearFormat(licenseDemand.getEgInstallmentMaster().getToDate());
-        final String installMentYear = startYear + "-" + endYear;
-        reportParams.put("installMentYear", installMentYear);
+        String startYear;
+        String endYear;
+        Optional<EgDemandDetails> demandDetails = license.getCurrentDemand().getEgDemandDetails().stream().
+                sorted(Comparator.comparing(EgDemandDetails::getInstallmentEndDate).reversed()).
+                filter(demandDetail -> demandDetail.getAmount().subtract(demandDetail.getAmtCollected()).doubleValue() <= 0).findFirst();
+        if (demandDetails.isPresent()) {
+            startYear = toYearFormat(demandDetails.get().getInstallmentStartDate());
+            endYear = toYearFormat(demandDetails.get().getInstallmentEndDate());
+        } else
+            throw new ValidationException("License Fee is not paid", "License Fee is not paid");
+
+        reportParams.put("installMentYear", startYear + "-" + endYear);
         reportParams.put("applicationdate", getDefaultFormattedDate(license.getApplicationDate()));
         reportParams.put("demandUpdateDate", getDefaultFormattedDate(license.getCurrentDemand().getModifiedDate()));
         reportParams.put("demandTotalamt", license.getCurrentLicenseFee());
