@@ -1,47 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-02-02T16:51:11 -->
+<!-- 2017-02-08T17:55:22 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="transferProperty_ack" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="20" uuid="90410d1d-7197-42e9-8dea-efbd3a8dbb85">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
-	<field name="ulbName" class="java.lang.String"/>
-	<field name="municipalityName" class="java.lang.String"/>
-	<field name="propertyTransfer" class="java.lang.String"/>
-	<field name="applicationNo" class="java.lang.String"/>
-	<field name="receivedDate" class="java.lang.String"/>
-	<field name="ownerName" class="java.lang.String"/>
-	<field name="ownerAddress" class="java.lang.String"/>
-	<field name="noOfDays" class="java.lang.String"/>
-	<field name="ulbLogo" class="java.lang.String"/>
-	<field name="transferpropertyText" class="java.lang.String"/>
-	<field name="applicationType" class="java.lang.String"/>
-	<field name="transferpropertyTextEnd" class="java.lang.String"/>
+	<parameter name="ackType" class="java.lang.String"/>
+	<parameter name="ulbName" class="java.lang.String"/>
+	<parameter name="municipalityName" class="java.lang.String"/>
+	<parameter name="propertyTransfer" class="java.lang.String"/>
+	<parameter name="applicationNo" class="java.lang.String"/>
+	<parameter name="receivedDate" class="java.lang.String"/>
+	<parameter name="ownerName" class="java.lang.String"/>
+	<parameter name="ownerAddress" class="java.lang.String"/>
+	<parameter name="noOfDays" class="java.lang.String"/>
+	<parameter name="ulbLogo" class="java.lang.String"/>
+	<parameter name="transferpropertyText" class="java.lang.String"/>
+	<parameter name="applicationType" class="java.lang.String"/>
+	<parameter name="transferpropertyTextEnd" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="67" splitType="Stretch">
+		<band height="91" splitType="Stretch">
 			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
-				<reportElement x="39" y="4" width="60" height="60" uuid="a74eea19-efb6-47cf-8138-fd05dddcc1a9"/>
-				<imageExpression><![CDATA[$F{ulbLogo}]]></imageExpression>
+				<reportElement x="39" y="30" width="60" height="60" uuid="a74eea19-efb6-47cf-8138-fd05dddcc1a9"/>
+				<imageExpression><![CDATA[$P{ulbLogo}]]></imageExpression>
 			</image>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="123" y="7" width="355" height="26" uuid="0e2ded93-073e-4078-8caf-a3c8910ee077"/>
+				<reportElement x="123" y="33" width="355" height="26" uuid="0e2ded93-073e-4078-8caf-a3c8910ee077"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{municipalityName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{municipalityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="123" y="33" width="355" height="23" uuid="ed0322e9-56c6-44a1-8a51-3390dcb43468"/>
+				<reportElement x="123" y="59" width="355" height="23" uuid="ed0322e9-56c6-44a1-8a51-3390dcb43468"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Acknowledgement of Transfer of Ownership]]></text>
 			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="100" height="20" uuid="b568d697-bd8e-43e2-a92b-f37faf82f930"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ackType}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>
@@ -51,21 +59,21 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="12" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Application Date : "+$F{receivedDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Application Date : "+$P{receivedDate}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="262" y="221" width="211" height="20" uuid="b2546c69-d2ff-44a2-b1a3-84378eae6833"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font size="12" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["("+$F{municipalityName}+")"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["("+$P{municipalityName}+")"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="42" y="60" width="481" height="70" uuid="31f2c4a0-c30d-4844-95df-095199d692d8"/>
 				<textElement textAlignment="Justified" verticalAlignment="Top" markup="styled">
 					<font size="12" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["This is to acknowledge that an application for <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{applicationType}+"</style> has been received from Sri/Smt.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerName}+"</style> with address<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerAddress}+"</style> on<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{receivedDate}+"</style>. "]]></textFieldExpression>
+				<textFieldExpression><![CDATA["This is to acknowledge that an application for <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{applicationType}+"</style> has been received from Sri/Smt.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerName}+"</style> with address<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerAddress}+"</style> on<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{receivedDate}+"</style>. "]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="42" y="264" width="508" height="56" uuid="a3b0aacd-1949-4ffb-86df-8c987a1c6357"/>
@@ -80,7 +88,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="12" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Application No : "+$F{applicationNo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Application No : "+$P{applicationNo}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="42" y="244" width="43" height="27" uuid="a7502c52-065f-4748-a942-b8ebd6839039"/>
@@ -101,7 +109,7 @@
 				<textElement textAlignment="Justified" verticalAlignment="Top" markup="styled">
 					<font size="12" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["This will be resolved within<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{noOfDays}+"</style> days"+$F{transferpropertyText}+"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{transferpropertyTextEnd}+"</style>."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["This will be resolved within<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{noOfDays}+"</style> days"+$P{transferpropertyText}+"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{transferpropertyTextEnd}+"</style>."]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

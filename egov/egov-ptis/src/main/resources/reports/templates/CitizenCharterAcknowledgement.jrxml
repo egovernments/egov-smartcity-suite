@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-02-07T17:50:44 -->
+<!-- 2017-02-08T15:33:18 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CitizenCharterAcknowledgement" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="80" bottomMargin="80" uuid="b5f00baf-3b68-4ad5-a991-a489d1a08ca2">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="ackNo" class="java.lang.String"/>
@@ -12,6 +12,7 @@
 	<parameter name="dueDate" class="java.lang.String"/>
 	<parameter name="ulbName" class="java.lang.String"/>
 	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="ackType" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -47,6 +48,13 @@
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Receipt-cum-Acknowledgement No. "+$P{ackNo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="80" height="20" uuid="9775b2e4-2cf2-4bce-9f4a-b8964de0c013"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ackType}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

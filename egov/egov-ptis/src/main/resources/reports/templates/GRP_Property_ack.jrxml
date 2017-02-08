@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-02-02T17:02:47 -->
+<!-- 2017-02-08T17:16:21 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="modifyProperty_ack" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f03713ef-53ed-45c0-b461-665772a871b1">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -11,13 +11,14 @@
 	<parameter name="logoPath" class="java.lang.String"/>
 	<parameter name="loggedInUsername" class="java.lang.String"/>
 	<parameter name="cityName" class="java.lang.String"/>
-	<field name="ownerName" class="java.lang.String"/>
-	<field name="ownerAddress" class="java.lang.String"/>
-	<field name="approvedDate" class="java.lang.String"/>
-	<field name="noticeDueDate" class="java.util.Date"/>
-	<field name="applicationDate" class="java.lang.String"/>
-	<field name="applicationNo" class="java.lang.String"/>
-	<field name="creationReason" class="java.lang.String"/>
+	<parameter name="ownerName" class="java.lang.String"/>
+	<parameter name="applicationDate" class="java.lang.String"/>
+	<parameter name="applicationNo" class="java.lang.String"/>
+	<parameter name="approvedDate" class="java.lang.String"/>
+	<parameter name="noticeDueDate" class="java.lang.String"/>
+	<parameter name="creationReason" class="java.lang.String"/>
+	<parameter name="ownerAddress" class="java.lang.String"/>
+	<parameter name="ackType" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -28,14 +29,14 @@
 				<textElement markup="none">
 					<font size="11" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Application Number: "+$F{applicationNo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Application Number: "+$P{applicationNo}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="348" y="172" width="182" height="20" uuid="8059dcec-7361-4dfc-8c5d-012591fcd0d9"/>
 				<textElement textAlignment="Right" markup="none">
 					<font size="11" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Application Date: "+$F{applicationDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Application Date: "+$P{applicationDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="31" y="220" width="495" height="103" isPrintWhenDetailOverflows="true" uuid="2a6e61ac-efd7-496e-8f46-536043856e7f"/>
@@ -43,7 +44,7 @@
 					<font size="12" isPdfEmbedded="true"/>
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<textFieldExpression><![CDATA["	This is to acknowledge that an application for General Revision Petition has been received from Sri / Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerName}+"</style> with address <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerAddress}+"</style> is received on <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{approvedDate}+"</style>."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["	This is to acknowledge that an application for General Revision Petition has been received from Sri / Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerName}+"</style> with address <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerAddress}+"</style> is received on <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{approvedDate}+"</style>."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="96" y="38" width="430" height="27" uuid="10795881-3533-4eef-84f4-e38f1b29a0ff"/>
@@ -66,6 +67,13 @@
 					<font size="14" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Acknowledgement of General Revision Petition"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="100" height="20" uuid="d41e5ed6-8b27-48d4-84cf-e159be99c4ea"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ackType}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

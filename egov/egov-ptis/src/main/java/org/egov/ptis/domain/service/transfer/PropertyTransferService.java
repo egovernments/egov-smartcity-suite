@@ -384,7 +384,7 @@ public class PropertyTransferService {
         // ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, TRANSFER)
         // .getResolutionTime().toString());
 
-        final ReportRequest reportInput = new ReportRequest("transferProperty_ack", ackBean, reportParams);
+        final ReportRequest reportInput = new ReportRequest("mainTransferPropertyAck", ackBean, reportParams);
         reportInput.setReportFormat(FileFormat.PDF);
         return reportService.createReport(reportInput);
     }

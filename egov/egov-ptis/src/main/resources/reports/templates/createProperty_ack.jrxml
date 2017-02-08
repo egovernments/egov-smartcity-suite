@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-02-07T19:41:51 -->
+<!-- 2017-02-08T16:47:39 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="createProperty_ack" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="20" uuid="f03713ef-53ed-45c0-b461-665772a871b1">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -11,57 +11,65 @@
 	<parameter name="logoPath" class="java.lang.String"/>
 	<parameter name="loggedInUsername" class="java.lang.String"/>
 	<parameter name="cityName" class="java.lang.String"/>
-	<field name="ownerName" class="java.lang.String"/>
-	<field name="ownerAddress" class="java.lang.String"/>
-	<field name="approvedDate" class="java.lang.String"/>
-	<field name="noticeDueDate" class="java.util.Date"/>
-	<field name="applicationDate" class="java.lang.String"/>
-	<field name="applicationNo" class="java.lang.String"/>
+	<parameter name="ackType" class="java.lang.String"/>
+	<parameter name="ownerName" class="java.lang.String"/>
+	<parameter name="ownerAddress" class="java.lang.String"/>
+	<parameter name="approvedDate" class="java.lang.String"/>
+	<parameter name="noticeDueDate" class="java.util.Date"/>
+	<parameter name="applicationDate" class="java.lang.String"/>
+	<parameter name="applicationNo" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="273" splitType="Stretch">
+		<band height="284" splitType="Stretch">
 			<staticText>
-				<reportElement x="123" y="39" width="390" height="31" uuid="85343d61-403c-488a-8c35-3b351144ffef"/>
+				<reportElement x="123" y="65" width="390" height="31" uuid="85343d61-403c-488a-8c35-3b351144ffef"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14" isBold="true" isItalic="false" isUnderline="true" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[New Assessment Application Acknowledgement  ]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="29" y="97" width="278" height="20" uuid="cef5fce6-d30f-4c1a-83b8-792f33ab6d83"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="29" y="123" width="278" height="20" uuid="cef5fce6-d30f-4c1a-83b8-792f33ab6d83"/>
 				<textElement markup="none">
 					<font size="11" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Application Number: "+$F{applicationNo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Application Number: "+$P{applicationNo}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="338" y="97" width="192" height="20" uuid="8059dcec-7361-4dfc-8c5d-012591fcd0d9"/>
+				<reportElement stretchType="RelativeToTallestObject" x="338" y="123" width="192" height="20" uuid="8059dcec-7361-4dfc-8c5d-012591fcd0d9"/>
 				<textElement textAlignment="Right" markup="none">
 					<font size="11" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Application Date: "+$F{applicationDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Application Date: "+$P{applicationDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="31" y="145" width="499" height="103" isPrintWhenDetailOverflows="true" uuid="2a6e61ac-efd7-496e-8f46-536043856e7f"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="31" y="171" width="499" height="103" isPrintWhenDetailOverflows="true" uuid="2a6e61ac-efd7-496e-8f46-536043856e7f"/>
 				<textElement textAlignment="Justified" markup="styled">
 					<font fontName="SansSerif" size="11" isBold="false" isPdfEmbedded="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA["	Property Tax assessment of Sri / Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+JRStringUtil.xmlEncode($F{ownerName})+"</style> with address <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerAddress}+"</style> is received on <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{approvedDate}+"</style>. The connected property tax special notice can be obtained on <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+DateUtils.getDefaultFormattedDate($F{noticeDueDate})+"</style> duly producing this receipt."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["	Property Tax assessment of Sri / Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+JRStringUtil.xmlEncode($P{ownerName})+"</style> with address <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerAddress}+"</style> is received on <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{approvedDate}+"</style>. The connected property tax special notice can be obtained on <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+DateUtils.getDefaultFormattedDate($P{noticeDueDate})+"</style> duly producing this receipt."]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="123" y="12" width="390" height="27" uuid="10795881-3533-4eef-84f4-e38f1b29a0ff"/>
+				<reportElement x="123" y="38" width="390" height="27" uuid="10795881-3533-4eef-84f4-e38f1b29a0ff"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font size="16" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
-				<reportElement x="41" y="10" width="60" height="60" uuid="771b8be2-e2c5-4158-8968-ef55dc437c0f"/>
+				<reportElement x="41" y="36" width="60" height="60" uuid="771b8be2-e2c5-4158-8968-ef55dc437c0f"/>
 				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
 			</image>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="100" height="20" uuid="87f893c8-0ba7-4b3b-abc1-44e2ab88cdae"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ackType}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<summary>

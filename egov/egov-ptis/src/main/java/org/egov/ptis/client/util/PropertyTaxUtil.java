@@ -2620,8 +2620,9 @@ public class PropertyTaxUtil {
         reportParams.put(CITY_NAME, city.getName());
         reportParams.put(ACK_NO, applicationNumberGenerator.generate());
         reportParams.put(SERVICE_TYPE, serviceType);
-        reportInput = new ReportRequest("CitizenCharterAcknowledgement", reportParams, reportParams);
+        reportInput = new ReportRequest("MainCitizenCharterAcknowledgement", reportParams, reportParams);
         reportInput.setReportFormat(FileFormat.PDF);
+        reportInput.setPrintDialogOnOpenReport(true);
         return reportService.createReport(reportInput);
     }
 }

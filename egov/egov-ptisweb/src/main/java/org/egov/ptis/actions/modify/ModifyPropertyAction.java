@@ -226,8 +226,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private static final long serialVersionUID = 1L;
     private static final String BIFURCATION = "Bifurcation";
     private static final String RESULT_ERROR = "error";
-    private static final String MODIFY_ACK_TEMPLATE = "modifyProperty_ack";
-    private static final String GRP_ACK_TEMPLATE = "GRP_Property_ack";
+    private static final String MODIFY_ACK_TEMPLATE = "mainModifyPropertyAck";
+    private static final String GRP_ACK_TEMPLATE = "mainGRPPropertyAck";
     public static final String PRINT_ACK = "printAck";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
     public static final String MEESEVA_ERROR = "meesevaError";
