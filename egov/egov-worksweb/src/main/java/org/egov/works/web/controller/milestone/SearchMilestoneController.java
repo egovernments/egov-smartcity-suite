@@ -47,11 +47,11 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.masters.entity.MilestoneTemplate;
 import org.egov.works.milestone.entity.SearchRequestMilestone;
 import org.egov.works.milestone.entity.enums.MilestoneActivityStatus;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -67,7 +67,7 @@ public class SearchMilestoneController {
     private DepartmentService departmentService;
 
     @Autowired
-    private LineEstimateService lineEstimateService;
+    private WorksUtils worksUtils;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -82,7 +82,7 @@ public class SearchMilestoneController {
     public String showSearchMilestoneForm(@ModelAttribute final SearchRequestMilestone searchRequestMilestone,
             final Model model) throws ApplicationException {
         setDropDownValuesToTrackMilestone(model);
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             searchRequestMilestone.setDepartment(departments.get(0).getId());
         model.addAttribute("currentStatus", MilestoneActivityStatus.values());
@@ -108,7 +108,7 @@ public class SearchMilestoneController {
     public String searchMilestoneForm(@ModelAttribute final SearchRequestMilestone searchRequestMilestone,
             final Model model) throws ApplicationException {
         setDropDownValuesToSearchMilestone(model);
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             searchRequestMilestone.setDepartment(departments.get(0).getId());
         model.addAttribute("searchRequestMilestone", searchRequestMilestone);
@@ -120,7 +120,7 @@ public class SearchMilestoneController {
     public String searchTrackedMilestoneForm(@ModelAttribute final SearchRequestMilestone searchRequestMilestone,
             final Model model) throws ApplicationException {
         setDropDownValuesToSearchMilestone(model);
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             searchRequestMilestone.setDepartment(departments.get(0).getId());
         model.addAttribute("searchRequestMilestone", searchRequestMilestone);

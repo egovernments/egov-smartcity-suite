@@ -58,6 +58,7 @@ import org.egov.works.lineestimate.entity.LineEstimatesForAbstractEstimate;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.masters.service.NatureOfWorkService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -99,6 +100,9 @@ public class SearchLineEstimateController {
     @Autowired
     private WorksApplicationProperties worksApplicationProperties;
 
+    @Autowired
+    private WorksUtils worksUtils;
+
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String showSearchLineEstimateForLoa(@ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest,
             final Model model) throws ApplicationException {
@@ -115,7 +119,7 @@ public class SearchLineEstimateController {
             return "redirect:/abstractestimate/create";
         setDropDownValues(model);
         final List<User> lineEstimateCreatedByUsers = lineEstimateService.getLineEstimateCreatedByUsers();
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         lineEstimatesForAbstractEstimate.setSpillOverFlag(false);
         model.addAttribute("lineEstimatesForAbstractEstimate", lineEstimatesForAbstractEstimate);
         model.addAttribute("lineEstimateCreatedByUsers", lineEstimateCreatedByUsers);
@@ -131,7 +135,7 @@ public class SearchLineEstimateController {
             return "redirect:/abstractestimate/createspillover";
         setDropDownValues(model);
         final List<User> lineEstimateCreatedByUsers = lineEstimateService.getLineEstimateCreatedByUsers();
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         lineEstimatesForAbstractEstimate.setSpillOverFlag(true);
         model.addAttribute("lineEstimatesForAbstractEstimate", lineEstimatesForAbstractEstimate);
         model.addAttribute("lineEstimateCreatedByUsers", lineEstimateCreatedByUsers);
@@ -154,7 +158,7 @@ public class SearchLineEstimateController {
             @ModelAttribute final EstimatePhotographSearchRequest estimatePhotographSearchRequest,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         model.addAttribute("departments", departments);
         model.addAttribute("estimatePhotographSearchRequest", estimatePhotographSearchRequest);
         return "searchLineEstimateForEstimatePhotograph-form";

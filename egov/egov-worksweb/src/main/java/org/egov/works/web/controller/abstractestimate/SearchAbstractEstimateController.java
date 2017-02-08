@@ -60,7 +60,6 @@ import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.lineestimate.entity.DocumentDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
@@ -85,9 +84,6 @@ public class SearchAbstractEstimateController {
 
     @Autowired
     private SecurityUtils securityUtils;
-
-    @Autowired
-    private LineEstimateService lineEstimateService;
 
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
@@ -183,7 +179,7 @@ public class SearchAbstractEstimateController {
             @ModelAttribute final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest,
             final Model model) {
         setDropDownValues(model);
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         final List<Long> departmentIds = new ArrayList<Long>();
         if (departments != null)
             for (final Department department : departments)
@@ -234,7 +230,7 @@ public class SearchAbstractEstimateController {
                     && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.CREATED_STATUS)
                     && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.RESUBMITTED_STATUS))
                 newEgwStatuses.add(egwStatus);
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         final List<Long> departmentIds = new ArrayList<Long>();
         if (departments != null)
             for (final Department department : departments)
@@ -249,7 +245,7 @@ public class SearchAbstractEstimateController {
 
     @RequestMapping(value = "/searchestimateform", method = RequestMethod.GET)
     public String showSearchEstimateForm(@RequestParam("typeOfWork") final Long typeOfWorkId, final Model model) {
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         final List<Long> departmentIds = new ArrayList<Long>();
         if (departments != null)
             for (final Department department : departments)

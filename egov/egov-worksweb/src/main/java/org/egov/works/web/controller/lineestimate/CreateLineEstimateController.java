@@ -161,7 +161,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         setDropDownValues(model);
         model.addAttribute("lineEstimate", lineEstimate);
 
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             lineEstimate.setExecutingDepartment(departments.get(0));
         if (lineEstimate.getState() != null && lineEstimate.getState().getNextAction() != null)
@@ -187,7 +187,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request,
             @RequestParam String workFlowAction) throws ApplicationException, IOException {
         setDropDownValues(model);
-        validateLineEstimate(lineEstimate,errors);
+        validateLineEstimate(lineEstimate, errors);
         validateBudgetHead(lineEstimate, errors);
         lineEstimateService.validateLineEstimateDetails(lineEstimate, errors);
 
@@ -253,7 +253,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
-        model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
+        model.addAttribute("departments", worksUtils.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("workCategory", WorkCategory.values());
         model.addAttribute("beneficiary", Beneficiary.values());
         model.addAttribute("modeOfAllotment", modeOfAllotmentService.findAll());
@@ -406,7 +406,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         return message;
     }
 
-    private void validateLineEstimate(LineEstimate lineEstimate, BindingResult errors) {
+    private void validateLineEstimate(final LineEstimate lineEstimate, final BindingResult errors) {
         if (!lineEstimateService.getLineEstimateHiddenFields().contains("subject") && lineEstimate.getSubject() == null)
             errors.reject("error.subject.required", "error.subject.required");
         if (!lineEstimateService.getLineEstimateHiddenFields().contains("description")

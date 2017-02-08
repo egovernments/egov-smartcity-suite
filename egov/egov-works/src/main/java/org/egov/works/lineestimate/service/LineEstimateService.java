@@ -44,7 +44,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -62,7 +61,6 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
@@ -628,21 +626,6 @@ public class LineEstimateService {
         return lineEstimateRepository.getLineEstimateCreatedByUsers(LineEstimateStatus.TECHNICAL_SANCTIONED.toString());
     }
 
-    public List<Department> getUserDepartments(final User currentUser) {
-        final List<Assignment> assignments = assignmentService.findByEmployeeAndGivenDate(currentUser.getId(),
-                new Date());
-        final List<Department> uniqueDepartmentList = new ArrayList<Department>();
-        Department prevDepartment = new Department();
-        final Iterator iterator = assignments.iterator();
-        while (iterator.hasNext()) {
-            final Assignment assignment = (Assignment) iterator.next();
-            if (!assignment.getDepartment().getName().equals(prevDepartment.getName()))
-                uniqueDepartmentList.add(assignment.getDepartment());
-            prevDepartment = assignment.getDepartment();
-        }
-        return uniqueDepartmentList;
-    }
-
     public LineEstimateDetails findByEstimateNumber(final String estimateNumber) {
         return lineEstimateDetailsRepository.findByEstimateNumberAndLineEstimate_Status_CodeEquals(estimateNumber,
                 LineEstimateStatus.TECHNICAL_SANCTIONED.toString());
@@ -1025,9 +1008,8 @@ public class LineEstimateService {
 
     public void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {
         BigDecimal estimateAmount = BigDecimal.ZERO;
-        for (final LineEstimateDetails led : lineEstimate.getTempLineEstimateDetails()) {
+        for (final LineEstimateDetails led : lineEstimate.getTempLineEstimateDetails())
             estimateAmount = estimateAmount.add(led.getEstimateAmount());
-        }
         final List<AppConfigValues> nominationLimit = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_NOMINATION_AMOUNT);
         final AppConfigValues value = nominationLimit.get(0);

@@ -154,7 +154,7 @@ public class CreateSpillOverLineEstimateController {
                         ? Boolean.TRUE : Boolean.FALSE);
         setDropDownValues(model);
 
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             lineEstimate.setExecutingDepartment(departments.get(0));
         model.addAttribute("lineEstimate", lineEstimate);
@@ -292,7 +292,7 @@ public class CreateSpillOverLineEstimateController {
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
-        model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
+        model.addAttribute("departments", worksUtils.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("workCategory", WorkCategory.values());
         model.addAttribute("beneficiary", Beneficiary.values());
         model.addAttribute("modeOfAllotment", modeOfAllotmentService.findAll());
@@ -364,8 +364,7 @@ public class CreateSpillOverLineEstimateController {
             for (final ValidationError error : e.getErrors())
                 throw new ApplicationRuntimeException(error.getKey());
             /*
-             * for (final ValidationError error : e.getErrors())
-             * errors.reject(error.getMessage());
+             * for (final ValidationError error : e.getErrors()) errors.reject(error.getMessage());
              */
         }
     }

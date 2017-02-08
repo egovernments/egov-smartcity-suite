@@ -44,9 +44,9 @@ import java.util.List;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.entity.SearchRequestMBHeader;
 import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -65,7 +65,7 @@ public class SearchMBHeaderController {
     private MBHeaderService mBHeaderService;
 
     @Autowired
-    private LineEstimateService lineEstimateService;
+    private WorksUtils worksUtils;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -74,7 +74,7 @@ public class SearchMBHeaderController {
     public String showSearchWorkOrder(@ModelAttribute final SearchRequestMBHeader searchRequestMBHeader,
             final Model model) {
         setDropDownValues(model);
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             searchRequestMBHeader.setDepartment(departments.get(0).getId());
         model.addAttribute("egwStatus", mBHeaderService.getMBHeaderStatus());

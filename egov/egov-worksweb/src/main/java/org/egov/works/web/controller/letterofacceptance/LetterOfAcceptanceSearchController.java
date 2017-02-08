@@ -52,8 +52,8 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptanceForRE;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -70,7 +70,7 @@ public class LetterOfAcceptanceSearchController {
     private DepartmentService departmentService;
 
     @Autowired
-    private LineEstimateService lineEstimateService;
+    private WorksUtils worksUtils;
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
@@ -116,7 +116,7 @@ public class LetterOfAcceptanceSearchController {
     public String searchMilestone(@ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             searchRequestLetterOfAcceptance.setDepartmentName(departments.get(0).getId());
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
@@ -128,7 +128,7 @@ public class LetterOfAcceptanceSearchController {
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final Model model)
             throws ApplicationException {
         setDropDownValues(model);
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             searchRequestLetterOfAcceptance.setDepartmentName(departments.get(0).getId());
         model.addAttribute("departments", departments);

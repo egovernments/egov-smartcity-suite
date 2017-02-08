@@ -50,6 +50,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
@@ -854,6 +855,10 @@ public class WorkProgressRegisterService {
 
     public WorkProgressRegister getWorkProgressRegisterByLineEstimateDetailsId(final LineEstimateDetails led) {
         return workProgressRegisterRepository.findByLineEstimateDetails(led);
+    }
+
+    public WorkProgressRegister getWorkProgressRegisterByAbstractEstimate(final AbstractEstimate abstractEstimate) {
+        return workProgressRegisterRepository.findByAbstractEstimate(abstractEstimate);
     }
 
     public List<ContractorWiseAbstractSearchResult> searchContractorWiseAbstractReport(

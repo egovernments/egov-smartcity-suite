@@ -47,6 +47,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -416,4 +417,18 @@ public class WorksUtils {
         return null;
     }
 
+    public List<Department> getUserDepartments(final User currentUser) {
+        final List<Assignment> assignments = assignmentService.findByEmployeeAndGivenDate(currentUser.getId(),
+                new Date());
+        final List<Department> uniqueDepartmentList = new ArrayList<Department>();
+        Department prevDepartment = new Department();
+        final Iterator iterator = assignments.iterator();
+        while (iterator.hasNext()) {
+            final Assignment assignment = (Assignment) iterator.next();
+            if (!assignment.getDepartment().getName().equals(prevDepartment.getName()))
+                uniqueDepartmentList.add(assignment.getDepartment());
+            prevDepartment = assignment.getDepartment();
+        }
+        return uniqueDepartmentList;
+    }
 }

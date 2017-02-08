@@ -50,8 +50,8 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.contractorbill.entity.SearchRequestContractorBill;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -67,7 +67,7 @@ public class SearchContractorBillController {
     private DepartmentService departmentService;
 
     @Autowired
-    private LineEstimateService lineEstimateService;
+    private WorksUtils worksUtils;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -80,7 +80,7 @@ public class SearchContractorBillController {
             @ModelAttribute final SearchRequestContractorBill searchRequestContractorBill,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             searchRequestContractorBill.setDepartment(departments.get(0).getId());
         model.addAttribute("searchRequestContractorBill", searchRequestContractorBill);

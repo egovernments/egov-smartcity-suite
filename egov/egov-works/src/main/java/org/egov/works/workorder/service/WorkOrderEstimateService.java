@@ -238,6 +238,12 @@ public class WorkOrderEstimateService {
                         WorksConstants.CANCELLED_STATUS);
     }
 
+    public WorkOrderEstimate getWorkOrderByEstimateNumber(final String estimateNumber) {
+        return workOrderEstimateRepository
+                .findByEstimate_EstimateNumberAndWorkOrder_EgwStatus_codeNotLike(estimateNumber,
+                        WorksConstants.CANCELLED_STATUS);
+    }
+
     public List<String> findWorkOrderForRE(final String workOrderNo) {
         final List<String> workOrderNumbers = workOrderEstimateRepository.findWorkOrderNumbersToCreateRE(
                 "%" + workOrderNo + "%", WorksConstants.APPROVED,

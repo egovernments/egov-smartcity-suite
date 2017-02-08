@@ -48,8 +48,8 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.abstractestimate.entity.EstimatePhotographSearchRequest;
 import org.egov.works.abstractestimate.service.EstimateService;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.masters.service.NatureOfWorkService;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -62,7 +62,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class SearchEstimatePhotographController {
 
     @Autowired
-    private LineEstimateService lineEstimateService;
+    private WorksUtils worksUtils;
 
     @Autowired
     private DepartmentService departmentService;
@@ -81,7 +81,7 @@ public class SearchEstimatePhotographController {
             final Model model) throws ApplicationException {
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         final List<User> aeCreatedByUsers = estimateService.getCreatedByForEstimatePhotograph();
         model.addAttribute("departments", departments);
         model.addAttribute("aeCreatedByUsers", aeCreatedByUsers);

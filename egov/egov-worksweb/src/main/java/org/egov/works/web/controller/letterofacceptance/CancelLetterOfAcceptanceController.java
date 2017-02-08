@@ -53,7 +53,6 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.revisionestimate.service.RevisionWorkOrderService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
@@ -74,9 +73,6 @@ public class CancelLetterOfAcceptanceController {
 
     private static final String ERROR_MESSAGE = "errorMessage";
     private static final String LETTEROFACCEPTANCE_SUCCESS = "letterofacceptance-success";
-
-    @Autowired
-    private LineEstimateService lineEstimateService;
 
     @Autowired
     private LetterOfAcceptanceService letterOfAcceptanceService;
@@ -105,7 +101,7 @@ public class CancelLetterOfAcceptanceController {
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final Model model)
             throws ApplicationException {
         model.addAttribute("departments", departmentService.getAllDepartments());
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             searchRequestLetterOfAcceptance.setDepartmentName(departments.get(0).getId());
         final List<EgwStatus> egwStatuses = egwStatusHibernateDAO.getStatusByModule(WorksConstants.WORKORDER);

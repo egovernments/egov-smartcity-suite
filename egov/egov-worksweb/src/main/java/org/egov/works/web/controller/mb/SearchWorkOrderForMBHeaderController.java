@@ -52,7 +52,6 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
@@ -66,9 +65,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping(value = "/workorder/searchform")
 public class SearchWorkOrderForMBHeaderController extends GenericWorkFlowController {
-
-    @Autowired
-    private LineEstimateService lineEstimateService;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -86,11 +82,11 @@ public class SearchWorkOrderForMBHeaderController extends GenericWorkFlowControl
     public String showSearchWorkOrder(
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final Model model) {
 
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             searchRequestLetterOfAcceptance.setDepartmentName(departments.get(0).getId());
         searchRequestLetterOfAcceptance.setEgwStatus(WorksConstants.WO_STATUS_WOCOMMENCED.toUpperCase());
-        model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
+        model.addAttribute("departments", worksUtils.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
         final MBHeader mbHeader = new MBHeader();
         final WorkflowContainer workflowContainer = new WorkflowContainer();

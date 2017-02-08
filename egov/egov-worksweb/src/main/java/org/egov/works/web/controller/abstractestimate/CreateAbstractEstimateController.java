@@ -68,7 +68,6 @@ import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateDetailService;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.masters.service.ScheduleOfRateService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
@@ -125,9 +124,6 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     private WorksApplicationProperties worksApplicationProperties;
 
     @Autowired
-    private LineEstimateService lineEstimateService;
-
-    @Autowired
     private SecurityUtils securityUtils;
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
@@ -167,7 +163,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     private void loadViewData(final Model model, final AbstractEstimate abstractEstimate,
             final LineEstimateDetails lineEstimateDetails) {
         estimateService.setDropDownValues(model);
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Department> departments = worksUtils.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             abstractEstimate.setExecutingDepartment(departments.get(0));
 
@@ -269,7 +265,8 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             for (final Activity activity : abstractEstimate.getSorActivities())
                 activity.setSchedule(scheduleOfRateService.getScheduleOfRateById(activity.getSchedule().getId()));
             estimateService.loadModelValues(abstractEstimate.getLineEstimateDetails(), model, abstractEstimate);
-            abstractEstimate.setProjectCode(abstractEstimate.getLineEstimateDetails().getProjectCode());
+            if (abstractEstimate.getLineEstimateDetails() != null)
+                abstractEstimate.setProjectCode(abstractEstimate.getLineEstimateDetails().getProjectCode());
             loadViewData(model, abstractEstimate, abstractEstimate.getLineEstimateDetails());
             model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));

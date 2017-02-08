@@ -66,6 +66,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.model.budget.BudgetGroup;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
@@ -206,6 +207,10 @@ public class WorkProgressRegister extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ledid")
     private LineEstimateDetails lineEstimateDetails;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "aeid")
+    private AbstractEstimate abstractEstimate;
 
     @Length(max = 50)
     private String lineEstimateStatus;
@@ -694,7 +699,7 @@ public class WorkProgressRegister extends AbstractAuditable {
     public void setBOQExists(final boolean bOQExists) {
         this.bOQExists = bOQExists;
     }
-    
+
     public String getAdminSanctionBy() {
         return adminSanctionBy;
     }
@@ -703,4 +708,11 @@ public class WorkProgressRegister extends AbstractAuditable {
         this.adminSanctionBy = adminSanctionBy;
     }
 
+    public AbstractEstimate getAbstractEstimate() {
+        return abstractEstimate;
+    }
+
+    public void setAbstractEstimate(final AbstractEstimate abstractEstimate) {
+        this.abstractEstimate = abstractEstimate;
+    }
 }

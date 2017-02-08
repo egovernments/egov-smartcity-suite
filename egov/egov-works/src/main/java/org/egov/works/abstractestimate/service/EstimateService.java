@@ -108,13 +108,11 @@ import org.egov.works.abstractestimate.repository.AbstractEstimateRepository;
 import org.egov.works.autonumber.EstimateNumberGenerator;
 import org.egov.works.autonumber.TechnicalSanctionNumberGenerator;
 import org.egov.works.config.properties.WorksApplicationProperties;
-import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.lineestimate.service.WorkIdentificationNumberGenerator;
 import org.egov.works.masters.entity.EstimateTemplate;
 import org.egov.works.masters.service.ModeOfAllotmentService;
@@ -127,6 +125,7 @@ import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate.RevisionE
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -162,9 +161,6 @@ public class EstimateService {
 
     @Autowired
     private WorksUtils worksUtils;
-
-    @Autowired
-    private LetterOfAcceptanceService letterOfAcceptanceService;
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
@@ -219,9 +215,6 @@ public class EstimateService {
     private FinancialYearDAO financialYearDAO;
 
     @Autowired
-    private LineEstimateService lineEstimateService;
-
-    @Autowired
     private UOMService uomService;
 
     @Autowired
@@ -245,6 +238,9 @@ public class EstimateService {
 
     @Autowired
     private ModeOfAllotmentService modeOfAllotmentService;
+
+    @Autowired
+    private WorkOrderEstimateService workOrderEstimateService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -614,16 +610,26 @@ public class EstimateService {
         return workProgressRegister != null ? workProgressRegister.getTotalBillPaidSoFar() : BigDecimal.ZERO;
     }
 
+    public BigDecimal getPaymentsReleasedForAbstractEstimate(final AbstractEstimate abstractEstimate) {
+        final WorkProgressRegister workProgressRegister = workProgressRegisterService
+                .getWorkProgressRegisterByAbstractEstimate(abstractEstimate);
+        return workProgressRegister != null ? workProgressRegister.getTotalBillPaidSoFar() : BigDecimal.ZERO;
+    }
+
     public void loadModelValues(final LineEstimateDetails lineEstimateDetails, final Model model,
             final AbstractEstimate abstractEstimate) {
+        WorkOrderEstimate workOrderEstimate = null;
+        BigDecimal paymentsReleased = null;
         if (lineEstimateDetails != null) {
-            model.addAttribute("paymentsReleasedSoFar", getPaymentsReleasedForLineEstimate(lineEstimateDetails));
-            model.addAttribute("workOrder",
-                    letterOfAcceptanceService.getWorkOrderByEstimateNumber(lineEstimateDetails.getEstimateNumber()));
-        } else {
-            model.addAttribute("paymentsReleasedSoFar", BigDecimal.ZERO);
-            model.addAttribute("workOrder", null);
-        }
+            paymentsReleased = getPaymentsReleasedForLineEstimate(lineEstimateDetails);
+            workOrderEstimate = workOrderEstimateService.getWorkOrderByEstimateNumber(lineEstimateDetails.getEstimateNumber());
+        } else if (abstractEstimate.getId() != null) {
+            paymentsReleased = getPaymentsReleasedForAbstractEstimate(abstractEstimate);
+            workOrderEstimate = workOrderEstimateService.getWorkOrderByEstimateNumber(abstractEstimate.getEstimateNumber());
+        } else
+            paymentsReleased = BigDecimal.ZERO;
+        model.addAttribute("workOrder", workOrderEstimate != null ? workOrderEstimate.getWorkOrder() : null);
+        model.addAttribute("paymentsReleasedSoFar", paymentsReleased);
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);
         final AppConfigValues value = values.get(0);
@@ -1187,7 +1193,7 @@ public class EstimateService {
             model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
         }
         model.addAttribute("schemes", schemeService.findAll());
-        model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
+        model.addAttribute("departments", worksUtils.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("typeOfWork",
                 typeOfWorkService.getActiveTypeOfWorksByPartyType(WorksConstants.PARTY_TYPE_CONTRACTOR));
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
