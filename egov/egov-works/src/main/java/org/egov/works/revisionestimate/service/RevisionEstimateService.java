@@ -78,8 +78,7 @@ import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.abstractestimate.repository.ActivityRepository;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
-import org.egov.works.lineestimate.service.LineEstimateDetailService;
-import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.lineestimate.service.EstimateAppropriationService;
 import org.egov.works.masters.service.ScheduleCategoryService;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBDetailsService;
@@ -176,12 +175,6 @@ public class RevisionEstimateService {
     private RevisionWorkOrderService revisionWorkOrderService;
 
     @Autowired
-    private LineEstimateService lineEstimateService;
-
-    @Autowired
-    private LineEstimateDetailService lineEstimateDetailService;
-
-    @Autowired
     private WorkOrderMeasurementSheetService workOrderMeasurementSheetService;
 
     @Autowired
@@ -195,6 +188,9 @@ public class RevisionEstimateService {
 
     @Autowired
     private ScriptService scriptService;
+
+    @Autowired
+    private EstimateAppropriationService estimateAppropriationService;
 
     @Autowired
     public RevisionEstimateService(final RevisionEstimateRepository revisionEstimateRepository) {
@@ -276,8 +272,8 @@ public class RevisionEstimateService {
     private void doBudgetoryAppropriation(final String workFlowAction, final RevisionAbstractEstimate revisionEstimate) {
         final List<Long> budgetheadid = new ArrayList<Long>();
         budgetheadid.add(revisionEstimate.getParent().getLineEstimateDetails().getLineEstimate().getBudgetHead().getId());
-        final boolean flag = lineEstimateDetailService.checkConsumeEncumbranceBudget(
-                revisionEstimate.getParent().getLineEstimateDetails(),
+        final boolean flag = estimateAppropriationService.checkConsumeEncumbranceBudgetForEstimate(
+                revisionEstimate,
                 worksUtils.getFinancialYearByDate(new Date()).getId(),
                 revisionEstimate.getEstimateValue().doubleValue(),
                 budgetheadid);
@@ -1207,7 +1203,7 @@ public class RevisionEstimateService {
         }
         if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                 .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
-            lineEstimateService.releaseBudgetOnReject(revisionEstimate.getParent().getLineEstimateDetails(),
+            estimateAppropriationService.releaseBudgetOnRejectForEstimate(revisionEstimate,
                     revisionEstimate.getEstimateValue().doubleValue(), null);
         revisionEstimate.getParent().setTotalIncludingRE(
                 revisionEstimate.getParent().getTotalIncludingRE() - revisionEstimate.getWorkValue());

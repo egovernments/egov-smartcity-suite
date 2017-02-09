@@ -75,7 +75,14 @@
 	<input type="hidden" name="locationAppConfig" id="locationAppConfig" value="${isLocationDetailsRequired}"/>
 	<input type="hidden" id="isEstimateDeductionGrid" value="${isEstimateDeductionGrid}" >
 	<form:hidden path="spillOverFlag" value="${abstractEstimate.spillOverFlag }" id="spillOverFlag" />
-	<div class="new-page-header"><spring:message code="lbl.createae" /></div> 
+	<c:choose>
+		<c:when test="${abstractEstimate.spillOverFlag }">
+			<div class="new-page-header"><spring:message code="lbl.createspilloverae" /></div>
+		</c:when>
+		<c:otherwise>
+			<div class="new-page-header"><spring:message code="lbl.createae" /></div>
+		</c:otherwise>
+	</c:choose>
 	
 	<div class="panel-title text-center" style="color: green;">
 		<c:out value="${message}" /><br />

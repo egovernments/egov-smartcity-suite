@@ -256,8 +256,18 @@
         <put-attribute name="body" value="/WEB-INF/views/lineestimate/searchle-estimate-search.jsp"/>
     </definition>
     
+    <definition name="searchLineEstimateForSpilloverEstimate-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.createspilloverae" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/lineestimate/searchle-estimate-search.jsp"/>
+    </definition>
+    
     <definition name="newAbstractEstimate-form" extends="base_layout">
         <put-attribute name="page-title" value="lbl.createae" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/abstractestimate/newabstractestimate-form.jsp"/>
+   	</definition>
+   	
+   	<definition name="newAbstractEstimate-spilloverform" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.createspilloverae" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/abstractestimate/newabstractestimate-form.jsp"/>
    	</definition>
 

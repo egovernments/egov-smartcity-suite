@@ -4,8 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
-import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
-import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
+import org.egov.works.lineestimate.entity.EstimateAppropriation;
+import org.egov.works.lineestimate.service.EstimateAppropriationService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.SearchRevisionEstimate;
 import org.egov.works.revisionestimate.service.RevisionEstimateService;
@@ -36,7 +36,7 @@ public class CancelRevisionEstimateController {
     private MessageSource messageSource;
 
     @Autowired
-    private LineEstimateAppropriationService lineEstimateAppropriationService;
+    private EstimateAppropriationService estimateAppropriationService;
 
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
     public String cancelRevisionEstimateSearchForm(@ModelAttribute final SearchRevisionEstimate searchRevisionEstimate,
@@ -79,10 +79,11 @@ public class CancelRevisionEstimateController {
         revisionEstimate.setCancellationReason(cancellationReason);
         revisionEstimate.setCancellationRemarks(cancellationRemarks);
         revisionEstimate = revisionEstimateService.cancelRevisionEstimate(revisionEstimate);
-        final LineEstimateAppropriation lea = lineEstimateAppropriationService
-                .findLatestByLineEstimateDetails_EstimateNumber(revisionEstimate.getParent().getEstimateNumber());
+        final EstimateAppropriation estimateAppropriation = estimateAppropriationService
+                .findLatestByAbstractEstimate(revisionEstimate.getId());
         message = messageSource.getMessage("msg.revisionestimate.cancelled",
-                new String[] { revisionEstimate.getEstimateNumber(), lea.getBudgetUsage().getAppropriationnumber() },
+                new String[] { revisionEstimate.getEstimateNumber(),
+                        estimateAppropriation.getBudgetUsage().getAppropriationnumber() },
                 null);
         model.addAttribute("revisionEstimate", revisionEstimate);
         model.addAttribute("message", message);

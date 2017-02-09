@@ -78,7 +78,14 @@
 	<input type="hidden" id="defaultDepartmentId" value="${defaultDepartmentId }" />
 	<form:hidden path="" name="removedActivityIds" id="removedActivityIds" value="" class="form-control table-input hidden-input"/>
 	<input type="hidden" id="isEstimateDeductionGrid" value="${isEstimateDeductionGrid}">
-	<div class="new-page-header"><spring:message code="lbl.viewae" /></div>
+	<c:choose>
+		<c:when test="${abstractEstimate.spillOverFlag }">
+			<div class="new-page-header"><spring:message code="lbl.viewspilloverae" /></div>
+		</c:when>
+		<c:otherwise>
+			<div class="new-page-header"><spring:message code="lbl.viewae" /></div>
+		</c:otherwise>
+	</c:choose>
 	<form:hidden path="spillOverFlag" value="${abstractEstimate.spillOverFlag }" id="spillOverFlag" />
 	<input type="hidden" name="lineEstimateRequired" id="lineEstimateRequired" value="${lineEstimateRequired }"/>
 

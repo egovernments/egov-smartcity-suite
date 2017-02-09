@@ -264,7 +264,8 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             model.addAttribute("designations", designations);
 
         }
-        if (!abstractEstimate.getEstimateTechnicalSanctions().isEmpty() && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionBy() != null) {
+        if (!abstractEstimate.getEstimateTechnicalSanctions().isEmpty()
+                && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionBy() != null) {
             final Designation designation = assignmentService.findByEmployeeAndGivenDate(
                     abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionBy().getId(), new Date()).get(0)
                     .getDesignation();
@@ -349,7 +350,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString())
                 || abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString())) {
             model.addAttribute(WorksConstants.MODE, WorksConstants.EDIT);
-            return "newAbstractEstimate-form";
+            return abstractEstimate.isSpillOverFlag() ? "newAbstractEstimate-spilloverform" : "newAbstractEstimate-form";
         } else {
             model.addAttribute(WorksConstants.MODE, "workflowView");
             model.addAttribute("amountRule", abstractEstimate.getEstimateValue());

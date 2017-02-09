@@ -113,8 +113,8 @@ public class LineEstimateDetails extends AbstractAuditable {
     @JoinColumn(name = "projectCode")
     private ProjectCode projectCode;
 
-    @OneToMany(mappedBy = "lineEstimateDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = LineEstimateAppropriation.class)
-    private List<LineEstimateAppropriation> lineEstimateAppropriations = new ArrayList<LineEstimateAppropriation>(0);
+    @OneToMany(mappedBy = "lineEstimateDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = EstimateAppropriation.class)
+    private List<EstimateAppropriation> lineEstimateAppropriations = new ArrayList<EstimateAppropriation>(0);
 
     @OrderBy("id")
     @OneToMany(mappedBy = "lineEstimateDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = EstimatePhotographs.class)
@@ -210,11 +210,11 @@ public class LineEstimateDetails extends AbstractAuditable {
         this.projectCode = projectCode;
     }
 
-    public List<LineEstimateAppropriation> getLineEstimateAppropriations() {
+    public List<EstimateAppropriation> getLineEstimateAppropriations() {
         return lineEstimateAppropriations;
     }
 
-    public void setLineEstimateAppropriations(final List<LineEstimateAppropriation> lineEstimateAppropriations) {
+    public void setLineEstimateAppropriations(final List<EstimateAppropriation> lineEstimateAppropriations) {
         this.lineEstimateAppropriations = lineEstimateAppropriations;
     }
 

@@ -91,19 +91,23 @@ public class SearchLetterOfAcceptanceForOfflineStatusJsonAdaptor implements Json
                         .getEstimate().getLineEstimateDetails().getEstimateNumber());
             else
                 jsonObject.addProperty("estimateNumber", workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0)
-                        .getEstimate().getLineEstimateDetails().getEstimateNumber());
+                        .getEstimate().getEstimateNumber());
 
             if (workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails() != null)
                 jsonObject.addProperty("nameOfWork", workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate()
                         .getLineEstimateDetails().getNameOfWork());
             else
-                jsonObject.addProperty("nameOfWork", workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate()
-                        .getLineEstimateDetails().getNameOfWork());
+                jsonObject.addProperty("nameOfWork",
+                        workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getName());
 
             final List<OfflineStatus> offlinestatusses = offlineStatusService
                     .getOfflineStatusByObjectIdAndType(workOrderEstimate.getWorkOrder().getId(), WorksConstants.WORKORDER);
-            jsonObject.addProperty("lineEstimateId", workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate()
-                    .getLineEstimateDetails().getLineEstimate().getId());
+            if (workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails() != null)
+                jsonObject.addProperty("lineEstimateId",
+                        workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate()
+                                .getLineEstimateDetails().getLineEstimate().getId());
+            else
+                jsonObject.addProperty("lineEstimateId", "");
             jsonObject.addProperty("workOrderAmount", workOrderEstimate.getWorkOrder().getWorkOrderAmount());
 
             jsonObject.addProperty("id", workOrderEstimate.getWorkOrder().getId());

@@ -67,13 +67,13 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationConstant;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.lineestimate.entity.EstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimate;
-import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
-import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
+import org.egov.works.lineestimate.service.EstimateAppropriationService;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.masters.service.LineEstimateUOMService;
 import org.egov.works.masters.service.ModeOfAllotmentService;
@@ -131,7 +131,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     private SecurityUtils securityUtils;
 
     @Autowired
-    private LineEstimateAppropriationService lineEstimateAppropriationService;
+    private EstimateAppropriationService estimateAppropriationService;
 
     @Autowired
     private BoundaryService boundaryService;
@@ -357,7 +357,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             final List<String> basMessages = new ArrayList<String>();
             Integer count = 1;
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-                final LineEstimateAppropriation lea = lineEstimateAppropriationService
+                final EstimateAppropriation lea = estimateAppropriationService
                         .findLatestByLineEstimateDetails_EstimateNumber(led.getEstimateNumber());
                 final String tempMessage = messageSource.getMessage("msg.lineestimatedetails.budgetsanction.success",
                         new String[] { count.toString(), led.getEstimateNumber(),

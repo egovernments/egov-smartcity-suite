@@ -55,7 +55,7 @@
 		<table class="table table-bordered" id="tblestimate">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.administrativesanctionnumber"/><c:if test="${mode != 'view' && nextStatus == 'TECHNICAL_SANCTIONED' }"><span class="mandatory"></span></c:if></th>
+					<th><spring:message code="lbl.administrativesanctionnumber"/><c:if test="${mode != 'view' }"><span class="mandatory"></span></c:if></th>
 					<c:if test="${mode == 'view' && abstractEstimate.egwStatus.code == 'APPROVED' }">
 						<th><spring:message code="lbl.adminsanctiondate"/></th>	
 						<th><spring:message code="lbl.adminsanctionauthority"/></th>
@@ -66,25 +66,29 @@
 			</thead>
 			<tbody>
 				<tr>
-					<c:if test="${mode != 'view' && nextStatus == 'APPROVED' }">
+					<c:if test="${mode != 'view' }">
 						<td>
 							<form:input path="adminSanctionNumber" id="adminSanctionNumber" class="form-control table-input text-left" maxlength="32" required="required" onclick="validateadminSanctionNumber();"/>
 							<form:errors path="adminSanctionNumber" cssClass="add-margin error-msg" />
 						</td>
+						<td>
+							<form:input path="councilResolutionNumber" id="councilResolutionNumber" name="councilResolutionNumber" required="required" value="${councilResolutionNumber}" data-errormsg="Council Resolution Number of the work is mandatory!" data-idx="0" data-optional="0" class="form-control table-input" onclick="validatecouncilResolutionNumber();" maxlength="32"/>
+							<form:errors path="councilResolutionNumber" cssClass="add-margin error-msg" />
+						</td>
+						<td>
+							<form:input path="councilResolutionDate" id="councilResolutionDate" name="councilResolutionDate" required="required" value="${councilResolutionDate}" data-errormsg="Council Resolution Date of the work is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" />
+							<form:errors path="councilResolutionDate" cssClass="add-margin error-msg" />
+						</td>
 					</c:if>
-					<c:if test="${mode == 'view' && abstractEstimate.egwStatus.code == 'APPROVED' }">
+					<c:if test="${mode == 'view' }">
 						<td><c:out default="N/A" value="${abstractEstimate.adminSanctionNumber }"></c:out></td>
-						<td><fmt:formatDate value="${abstractEstimate.adminSanctionDate}" pattern="dd/MM/yyyy" /></td>
-						<td><c:out default="N/A" value="${abstractEstimate.adminSanctionBy }"></c:out></td>							
+						<c:if test="${abstractEstimate.egwStatus.code == 'APPROVED' }">
+							<td><fmt:formatDate value="${abstractEstimate.adminSanctionDate}" pattern="dd/MM/yyyy" /></td>
+							<td><c:out default="N/A" value="${abstractEstimate.adminSanctionBy }"></c:out></td>
+						</c:if>
+						<td><c:out default="N/A" value="${abstractEstimate.councilResolutionNumber }"></c:out></td>
+						<td><c:out default="N/A" value="${abstractEstimate.councilResolutionDate }"></c:out></td>
 					</c:if>
-					<td>
-						<form:input path="councilResolutionNumber" id="councilResolutionNumber" name="councilResolutionNumber" required="required" value="${councilResolutionNumber}" data-errormsg="Council Resolution Number of the work is mandatory!" data-idx="0" data-optional="0" class="form-control table-input" onclick="validatecouncilResolutionNumber();" maxlength="32"/>
-						<form:errors path="councilResolutionNumber" cssClass="add-margin error-msg" />
-					</td>
-					<td>
-						<form:input path="councilResolutionDate" id="councilResolutionDate" name="councilResolutionDate" required="required" value="${councilResolutionDate}" data-errormsg="Council Resolution Date of the work is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" />
-						<form:errors path="councilResolutionDate" cssClass="add-margin error-msg" />
-					</td>
 				</tr>
 			</tbody>
 		</table>

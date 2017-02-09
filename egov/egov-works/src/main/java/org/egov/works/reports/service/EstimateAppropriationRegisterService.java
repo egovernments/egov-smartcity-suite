@@ -59,9 +59,11 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.services.budget.BudgetGroupService;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.BudgetFolioDetail;
+import org.egov.works.lineestimate.entity.EstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
+import org.egov.works.lineestimate.service.EstimateAppropriationService;
 import org.egov.works.reports.entity.EstimateAppropriationRegisterSearchRequest;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,14 +84,14 @@ public class EstimateAppropriationRegisterService {
     private BudgetGroupService budgetGroupService;
 
     @Autowired
-    private LineEstimateDetailsRepository lineEstimateDetailsRepository;
+    private FinancialYearHibernateDAO financialYearHibernateDAO;
+
+    @Autowired
+    private EstimateAppropriationService estimateAppropriationService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
-
-    @Autowired
-    private FinancialYearHibernateDAO financialYearHibernateDAO;
 
     @SuppressWarnings("unchecked")
     public Map<String, List> searchEstimateAppropriationRegister(
@@ -191,17 +193,28 @@ public class EstimateAppropriationRegisterService {
             final BudgetFolioDetail budgetFolioDetail = new BudgetFolioDetail();
             budgetFolioDetail.setSrlNo(srlNo++);
 
-            final List<LineEstimateDetails> leds = lineEstimateDetailsRepository
-                    .findByEstimateNumberContainingIgnoreCase(budgetUsage.getReferenceNumber());
-            final LineEstimateDetails led = leds.isEmpty() ? null : leds.get(0);
-            if (led != null) {
-                budgetFolioDetail.setEstimateNo(led.getEstimateNumber());
-                budgetFolioDetail.setNameOfWork(led.getNameOfWork());
-                budgetFolioDetail.setWorkValue(led.getEstimateAmount().doubleValue());
-                budgetFolioDetail.setEstimateDate(sdf.format(led.getLineEstimate().getLineEstimateDate()));
-                if (led.getProjectCode() != null)
-                    budgetFolioDetail.setWorkIdentificationNumber(led.getProjectCode().getCode());
-
+            final EstimateAppropriation estimateAppropriation = estimateAppropriationService
+                    .findLatestByBudgetUsage(budgetUsage.getId());
+            if (estimateAppropriation != null && estimateAppropriation.getLineEstimateDetails() != null) {
+                final LineEstimateDetails led = estimateAppropriation.getLineEstimateDetails();
+                if (led != null) {
+                    budgetFolioDetail.setEstimateNo(led.getEstimateNumber());
+                    budgetFolioDetail.setNameOfWork(led.getNameOfWork());
+                    budgetFolioDetail.setWorkValue(led.getEstimateAmount().doubleValue());
+                    budgetFolioDetail.setEstimateDate(sdf.format(led.getLineEstimate().getLineEstimateDate()));
+                    if (led.getProjectCode() != null)
+                        budgetFolioDetail.setWorkIdentificationNumber(led.getProjectCode().getCode());
+                }
+            } else if (estimateAppropriation != null && estimateAppropriation.getAbstractEstimate() != null) {
+                final AbstractEstimate ae = estimateAppropriation.getAbstractEstimate();
+                budgetFolioDetail.setEstimateNo(ae.getEstimateNumber());
+                budgetFolioDetail.setNameOfWork(ae.getName());
+                budgetFolioDetail.setWorkValue(ae.getWorkValue());
+                budgetFolioDetail.setEstimateDate(sdf.format(ae.getEstimateDate()));
+                if (ae.getProjectCode() != null)
+                    budgetFolioDetail.setWorkIdentificationNumber(ae.getProjectCode().getCode());
+                else if (ae.getParent() != null)
+                    budgetFolioDetail.setWorkIdentificationNumber(ae.getParent().getProjectCode().getCode());
             }
 
             budgetFolioDetail.setBudgetApprNo(budgetUsage.getAppropriationnumber());

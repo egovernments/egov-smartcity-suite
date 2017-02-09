@@ -62,7 +62,6 @@ import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
@@ -234,15 +233,15 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
             grossBillAmount = 0.0;
         if (revisedWorkOrderAmount >= 0 && workOrder.getPercentageSign().equals("-")) {
             if (abstractEstimate != null
-                    && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag())
+                    && abstractEstimate.isSpillOverFlag())
                 balanceAmount = workOrder.getWorkOrderAmount() - grossBillAmount - revisedValue
-                        - abstractEstimate.getLineEstimateDetails().getGrossAmountBilled().doubleValue();
+                        - abstractEstimate.getGrossAmountBilled().doubleValue();
             else
                 balanceAmount = workOrder.getWorkOrderAmount() - grossBillAmount - revisedValue;
             if (balanceAmount < 0) {
                 if (abstractEstimate != null
-                        && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag())
-                    grossBillAmount += abstractEstimate.getLineEstimateDetails().getGrossAmountBilled().doubleValue();
+                        && abstractEstimate.isSpillOverFlag())
+                    grossBillAmount += abstractEstimate.getGrossAmountBilled().doubleValue();
 
                 resultBinder.rejectValue(
                         "", "error.modify.loa.appropriation.amount", new String[] {
@@ -263,8 +262,7 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
         } else {
             WorkOrder savedWorkOrder = null;
             try {
-                final LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
-                savedWorkOrder = letterOfAcceptanceService.update(workOrder, lineEstimateDetails, revisedValue,
+                savedWorkOrder = letterOfAcceptanceService.update(workOrder, abstractEstimate, revisedValue,
                         revisedWorkOrderAmount);
             } catch (final ValidationException e) {
                 final List<Long> budgetheadid = new ArrayList<Long>();

@@ -88,11 +88,8 @@ import org.egov.works.letterofacceptance.entity.WorkOrderHistory;
 import org.egov.works.letterofacceptance.repository.LetterOfAcceptanceRepository;
 import org.egov.works.letterofacceptance.repository.WorkOrderHistoryRepository;
 import org.egov.works.lineestimate.entity.DocumentDetails;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
-import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
-import org.egov.works.lineestimate.service.LineEstimateDetailService;
-import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.lineestimate.service.EstimateAppropriationService;
 import org.egov.works.masters.entity.ContractorDetail;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
@@ -148,16 +145,10 @@ public class LetterOfAcceptanceService {
     private LineEstimateDetailsRepository lineEstimateDetailsRepository;
 
     @Autowired
-    private LineEstimateService lineEstimateService;
-
-    @Autowired
-    private LineEstimateDetailService lineEstimateDetailService;
-
-    @Autowired
     private AppConfigValueService appConfigValuesService;
 
     @Autowired
-    private LineEstimateAppropriationService lineEstimateAppropriationService;
+    private EstimateAppropriationService estimateAppropriationService;
 
     @Autowired
     private WorkOrderHistoryRepository workOrderHistoryRepository;
@@ -825,7 +816,7 @@ public class LetterOfAcceptanceService {
     }
 
     @Transactional
-    public WorkOrder update(final WorkOrder workOrder, final LineEstimateDetails lineEstimateDetails,
+    public WorkOrder update(final WorkOrder workOrder, final AbstractEstimate abstractEstimate,
             final Double appropriationAmount, final Double revisedWorkOrderAmount) throws ValidationException {
         final WorkOrderHistory history = new WorkOrderHistory();
         history.setWorkOrder(workOrder);
@@ -842,8 +833,8 @@ public class LetterOfAcceptanceService {
                     .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
 
                 final List<Long> budgetheadid = new ArrayList<Long>();
-                budgetheadid.add(lineEstimateDetails.getLineEstimate().getBudgetHead().getId());
-                final boolean flag = lineEstimateDetailService.checkConsumeEncumbranceBudget(lineEstimateDetails,
+                budgetheadid.add(abstractEstimate.getFinancialDetails().get(0).getBudgetGroup().getId());
+                final boolean flag = estimateAppropriationService.checkConsumeEncumbranceBudgetForEstimate(abstractEstimate,
                         worksUtils.getFinancialYearByDate(new Date()).getId(), appropriationAmount, budgetheadid);
 
                 if (!flag)
@@ -852,9 +843,9 @@ public class LetterOfAcceptanceService {
         } else if (workOrder.getPercentageSign().equals("-"))
             if (appropriationAmount > 0 && !BudgetControlType.BudgetCheckOption.NONE.toString()
                     .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
-                final String appropriationNumber = lineEstimateAppropriationService
-                        .generateBudgetAppropriationNumber(lineEstimateDetails);
-                lineEstimateService.releaseBudgetOnReject(lineEstimateDetails, appropriationAmount,
+                final String appropriationNumber = estimateAppropriationService
+                        .generateBudgetAppropriationNumber(abstractEstimate.getEstimateDate());
+                estimateAppropriationService.releaseBudgetOnRejectForEstimate(abstractEstimate, appropriationAmount,
                         appropriationNumber);
 
             }

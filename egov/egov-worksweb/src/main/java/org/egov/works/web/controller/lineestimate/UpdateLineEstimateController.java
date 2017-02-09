@@ -72,13 +72,13 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.lineestimate.entity.EstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimate;
-import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
-import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
+import org.egov.works.lineestimate.service.EstimateAppropriationService;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.masters.service.LineEstimateUOMService;
 import org.egov.works.masters.service.ModeOfAllotmentService;
@@ -146,7 +146,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     private BudgetControlTypeService budgetControlTypeService;
 
     @Autowired
-    private LineEstimateAppropriationService lineEstimateAppropriationService;
+    private EstimateAppropriationService estimateAppropriationService;
 
     @Autowired
     private TypeOfWorkService typeOfWorkService;
@@ -428,7 +428,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString()) ||
                 lineEstimate.getStatus().getCode().equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString())) {
             model.addAttribute("fieldsRequiredMap", lineEstimateService.getWorkFlowLevelFields(lineEstimate));
-            final LineEstimateAppropriation lineEstimateAppropriation = lineEstimateAppropriationService
+            final EstimateAppropriation lineEstimateAppropriation = estimateAppropriationService
                     .findLatestByLineEstimateDetails_EstimateNumber(
                             lineEstimate.getLineEstimateDetails().get(0).getEstimateNumber());
             model.addAttribute("budgetAppropriationDate", lineEstimateAppropriation.getBudgetUsage().getUpdatedTime());

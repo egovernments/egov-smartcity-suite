@@ -602,8 +602,9 @@ public class EstimateService {
     }
 
     public AbstractEstimate getAbstractEstimateByEstimateNumberAndStatus(final String estimateNumber) {
-        return abstractEstimateRepository.findByLineEstimateDetails_EstimateNumberAndEgwStatus_codeEquals(
+        final List<AbstractEstimate> abstractEstimates = abstractEstimateRepository.findByEstimateNumberAndEgwStatus_codeEquals(
                 estimateNumber, AbstractEstimate.EstimateStatus.APPROVED.toString());
+        return !abstractEstimates.isEmpty() ? abstractEstimates.get(0) : null;
     }
 
     public AbstractEstimate getAbstractEstimateByLineEstimateDetailsForCancelLineEstimate(final Long id) {

@@ -40,12 +40,12 @@
 package org.egov.works.autonumber.impl;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.works.autonumber.BudgetAppropriationNumberGenerator;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,9 +61,9 @@ public class BudgetAppropriationNumberGeneratorImpl implements BudgetAppropriati
 
     @Override
     @Transactional
-    public String getNextNumber(final LineEstimateDetails lineEstimateDetails) {
+    public String getNextNumber(final Date estimateDate) {
         final CFinancialYear cFinancialYear = financialYearHibernateDAO
-                .getFinYearByDate(lineEstimateDetails.getLineEstimate().getLineEstimateDate());
+                .getFinYearByDate(estimateDate);
         final String sequenceName = "SEQ_LINEESTIMATEAPPROPRIATION_NUMBER";
         Serializable sequenceNumber;
         sequenceNumber = applicationSequenceNumberGenerator.getNextSequence(sequenceName);

@@ -47,7 +47,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
+import org.egov.works.lineestimate.service.EstimateAppropriationService;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.MilestoneActivity;
 import org.egov.works.milestone.entity.SearchRequestMilestone;
@@ -84,7 +84,7 @@ public class MilestoneService {
     }
 
     @Autowired
-    private LineEstimateAppropriationService lineEstimateAppropriationService;
+    private EstimateAppropriationService estimateAppropriationService;
 
     public List<Milestone> getMilestoneByWorkOrderEstimateId(final Long id) {
         return milestoneRepository.findByWorkOrderEstimate_Id(id);
@@ -183,7 +183,7 @@ public class MilestoneService {
     @Transactional
     public Milestone create(final Milestone milestone) throws IOException {
         if (milestone.getState() == null)
-            milestone.setStatus(lineEstimateAppropriationService.getStatusByModuleAndCode(WorksConstants.MILESTONE_MODULE_KEY,
+            milestone.setStatus(estimateAppropriationService.getStatusByModuleAndCode(WorksConstants.MILESTONE_MODULE_KEY,
                     Milestone.MilestoneStatus.APPROVED.toString()));
         for (final MilestoneActivity activity : milestone.getActivities())
             activity.setMilestone(milestone);
@@ -195,7 +195,7 @@ public class MilestoneService {
     public Milestone update(final Milestone milestone) {
         for (final TrackMilestone tm : milestone.getTrackMilestone()) {
             tm.setMilestone(milestone);
-            tm.setStatus(lineEstimateAppropriationService.getStatusByModuleAndCode(WorksConstants.TRACK_MILESTONE_MODULE_KEY,
+            tm.setStatus(estimateAppropriationService.getStatusByModuleAndCode(WorksConstants.TRACK_MILESTONE_MODULE_KEY,
                     Milestone.MilestoneStatus.APPROVED.toString()));
             if (tm.getApprovedDate() == null)
                 tm.setApprovedDate(new Date());
@@ -226,10 +226,10 @@ public class MilestoneService {
 
     @Transactional
     public Milestone cancel(final Milestone milestone) {
-        milestone.setStatus(lineEstimateAppropriationService.getStatusByModuleAndCode(WorksConstants.MILESTONE_MODULE_KEY,
+        milestone.setStatus(estimateAppropriationService.getStatusByModuleAndCode(WorksConstants.MILESTONE_MODULE_KEY,
                 WorksConstants.CANCELLED_STATUS));
         for (final TrackMilestone tm : milestone.getTrackMilestone())
-            tm.setStatus(lineEstimateAppropriationService.getStatusByModuleAndCode(WorksConstants.TRACK_MILESTONE_MODULE_KEY,
+            tm.setStatus(estimateAppropriationService.getStatusByModuleAndCode(WorksConstants.TRACK_MILESTONE_MODULE_KEY,
                     WorksConstants.CANCELLED_STATUS));
         return milestoneRepository.save(milestone);
     }

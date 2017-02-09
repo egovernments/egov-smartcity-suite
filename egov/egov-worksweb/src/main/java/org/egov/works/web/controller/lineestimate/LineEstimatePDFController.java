@@ -57,8 +57,8 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.infra.web.utils.WebUtils;
+import org.egov.works.lineestimate.entity.EstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimate;
-import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
@@ -130,8 +130,8 @@ public class LineEstimatePDFController {
             BigDecimal totalAmount = BigDecimal.ZERO;
 
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-                final List<LineEstimateAppropriation> leas = led.getLineEstimateAppropriations();
-                for (final LineEstimateAppropriation lea : leas)
+                final List<EstimateAppropriation> leas = led.getLineEstimateAppropriations();
+                for (final EstimateAppropriation lea : leas)
                     basNos += lea.getBudgetUsage().getAppropriationnumber() + ", ";
                 totalAmount = totalAmount.add(led.getEstimateAmount());
             }

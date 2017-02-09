@@ -39,15 +39,23 @@
  */
 package org.egov.works.lineestimate.repository;
 
-import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
+import org.egov.works.lineestimate.entity.EstimateAppropriation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface LineEstimateAppropriationRepository extends JpaRepository<LineEstimateAppropriation, Long> {
-    LineEstimateAppropriation findById(final Long id);
+public interface EstimateAppropriationRepository extends JpaRepository<EstimateAppropriation, Long> {
+    EstimateAppropriation findById(final Long id);
 
-    @Query("from LineEstimateAppropriation lep where lep.budgetUsage.id=(select max(budgetUsage.id) from LineEstimateAppropriation lep1 where lep1.lineEstimateDetails.estimateNumber=?)")
-    LineEstimateAppropriation findLatestByLineEstimateDetails_EstimateNumber(final String estimateNumber);
+    @Query("from EstimateAppropriation ep where ep.budgetUsage.id=(select max(budgetUsage.id) from EstimateAppropriation ep1 where ep1.lineEstimateDetails.estimateNumber=?)")
+    EstimateAppropriation findLatestByLineEstimateDetails_EstimateNumber(final String estimateNumber);
+
+    @Query("from EstimateAppropriation ep where ep.budgetUsage.id=(select max(budgetUsage.id) from EstimateAppropriation ep1 where ep1.abstractEstimate.estimateNumber=?)")
+    EstimateAppropriation findLatestByAbstractEstimate_EstimateNumber(final String estimateNumber);
+    
+    @Query("from EstimateAppropriation ep where ep.budgetUsage.id=(select max(budgetUsage.id) from EstimateAppropriation ep1 where ep1.abstractEstimate.id=?)")
+    EstimateAppropriation findLatestByAbstractEstimate_Id(final Long abstractEstimateId);
+    
+    EstimateAppropriation findByBudgetUsage_Id(final Long budgetUsageId);
 }

@@ -61,10 +61,10 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.service.ActivityService;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
+import org.egov.works.lineestimate.entity.EstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimate;
-import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
+import org.egov.works.lineestimate.service.EstimateAppropriationService;
 import org.egov.works.masters.service.ScheduleOfRateService;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
@@ -112,7 +112,7 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
     private BudgetDetailsDAO budgetDetailsDAO;
 
     @Autowired
-    private LineEstimateAppropriationService lineEstimateAppropriationService;
+    private EstimateAppropriationService estimateAppropriationService;
 
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
@@ -363,7 +363,7 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
             message = messageSource.getMessage("msg.revisionestimate.cancel",
                     new String[] { revisionEstimate.getEstimateNumber() }, null);
         else if (RevisionEstimateStatus.APPROVED.toString().equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode())) {
-            final LineEstimateAppropriation lea = lineEstimateAppropriationService
+            final EstimateAppropriation lea = estimateAppropriationService
                     .findLatestByLineEstimateDetails_EstimateNumber(revisionEstimate.getParent().getEstimateNumber());
             message = messageSource.getMessage("msg.revisionestimate.approved",
                     new String[] { revisionEstimate.getEstimateNumber(), lea.getBudgetUsage().getAppropriationnumber() }, null);

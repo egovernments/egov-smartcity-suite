@@ -52,23 +52,27 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.model.budget.BudgetUsage;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 
 @Entity
-@Table(name = "EGW_LINEESTIMATE_APPROPRIATION")
-@SequenceGenerator(name = LineEstimateAppropriation.SEQ_EGW_LINEESTIMATE_APPROPRIATION, sequenceName = LineEstimateAppropriation.SEQ_EGW_LINEESTIMATE_APPROPRIATION, allocationSize = 1)
-public class LineEstimateAppropriation extends AbstractAuditable {
+@Table(name = "EGW_ESTIMATE_APPROPRIATION")
+@SequenceGenerator(name = EstimateAppropriation.SEQ_EGW_ESTIMATE_APPROPRIATION, sequenceName = EstimateAppropriation.SEQ_EGW_ESTIMATE_APPROPRIATION, allocationSize = 1)
+public class EstimateAppropriation extends AbstractAuditable {
 
     private static final long serialVersionUID = -6631492431676743631L;
-    public static final String SEQ_EGW_LINEESTIMATE_APPROPRIATION = "SEQ_EGW_LINEESTIMATE_APPROPRIATION";
+    public static final String SEQ_EGW_ESTIMATE_APPROPRIATION = "SEQ_EGW_ESTIMATE_APPROPRIATION";
 
     @Id
-    @GeneratedValue(generator = SEQ_EGW_LINEESTIMATE_APPROPRIATION, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_EGW_ESTIMATE_APPROPRIATION, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lineEstimateDetails")
     private LineEstimateDetails lineEstimateDetails;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "abstractestimate")
+    private AbstractEstimate abstractEstimate;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -81,6 +85,14 @@ public class LineEstimateAppropriation extends AbstractAuditable {
 
     public void setLineEstimateDetails(final LineEstimateDetails lineEstimateDetails) {
         this.lineEstimateDetails = lineEstimateDetails;
+    }
+
+    public AbstractEstimate getAbstractEstimate() {
+        return abstractEstimate;
+    }
+
+    public void setAbstractEstimate(final AbstractEstimate abstractEstimate) {
+        this.abstractEstimate = abstractEstimate;
     }
 
     public BudgetUsage getBudgetUsage() {

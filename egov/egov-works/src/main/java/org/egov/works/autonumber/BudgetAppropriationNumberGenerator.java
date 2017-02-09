@@ -40,13 +40,14 @@
 
 package org.egov.works.autonumber;
 
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import java.util.Date;
+
 import org.springframework.stereotype.Service;
 
 @Service
 public interface BudgetAppropriationNumberGenerator {
 
-    String getNextNumber(final LineEstimateDetails lineEstimateDetails);
+    String getNextNumber(final Date estimateDate);
 
     String generateCancelledBudgetAppropriationNumber(final String appropriationNumber);
 

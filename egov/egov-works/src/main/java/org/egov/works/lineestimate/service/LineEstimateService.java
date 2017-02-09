@@ -54,7 +54,6 @@ import javax.persistence.Query;
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.egf.budget.model.BudgetControlType;
 import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.entity.Assignment;
@@ -72,24 +71,20 @@ import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.model.budget.BudgetUsage;
 import org.egov.pims.commons.Position;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.EstimatePhotographSearchRequest;
 import org.egov.works.abstractestimate.service.EstimateService;
-import org.egov.works.autonumber.BudgetAppropriationNumberGenerator;
 import org.egov.works.autonumber.EstimateNumberGenerator;
 import org.egov.works.autonumber.LineEstimateNumberGenerator;
 import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
-import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimatesForAbstractEstimate;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
-import org.egov.works.lineestimate.repository.LineEstimateAppropriationRepository;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.lineestimate.repository.LineEstimateRepository;
 import org.egov.works.utils.WorksConstants;
@@ -123,8 +118,6 @@ public class LineEstimateService {
 
     private final LineEstimateDetailsRepository lineEstimateDetailsRepository;
 
-    private final LineEstimateAppropriationRepository lineEstimateAppropriationRepository;
-
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;
 
@@ -146,9 +139,6 @@ public class LineEstimateService {
 
     @Autowired
     private PositionMasterService positionMasterService;
-
-    @Autowired
-    private BudgetDetailsDAO budgetDetailsDAO;
 
     @Autowired
     private LineEstimateDetailService lineEstimateDetailService;
@@ -174,17 +164,18 @@ public class LineEstimateService {
     @Autowired
     private WorksApplicationProperties worksApplicationProperties;
 
+    @Autowired
+    private EstimateAppropriationService estimateAppropriationService;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
     @Autowired
     public LineEstimateService(final LineEstimateRepository lineEstimateRepository,
-            final LineEstimateDetailsRepository lineEstimateDetailsRepository,
-            final LineEstimateAppropriationRepository lineEstimateAppropriationRepository) {
+            final LineEstimateDetailsRepository lineEstimateDetailsRepository) {
         this.lineEstimateRepository = lineEstimateRepository;
         this.lineEstimateDetailsRepository = lineEstimateDetailsRepository;
-        this.lineEstimateAppropriationRepository = lineEstimateAppropriationRepository;
     }
 
     public LineEstimate getLineEstimateById(final Long id) {
@@ -592,7 +583,7 @@ public class LineEstimateService {
                 appropriationAmount = led.getEstimateAmount();
 
             if (appropriationAmount.compareTo(BigDecimal.ZERO) == 1) {
-                final boolean flag = lineEstimateDetailService.checkConsumeEncumbranceBudget(led,
+                final boolean flag = estimateAppropriationService.checkConsumeEncumbranceBudget(led,
                         worksUtils.getFinancialYearByDate(new Date()).getId(), appropriationAmount.doubleValue(), budgetheadid);
 
                 if (!flag)
@@ -694,64 +685,6 @@ public class LineEstimateService {
                 WorksConstants.CANCELLED_STATUS);
     }
 
-    public boolean releaseBudgetOnReject(final LineEstimateDetails lineEstimateDetails, Double budgApprAmnt,
-            String appropriationnumber) throws ValidationException {
-
-        final LineEstimateAppropriation lineEstimateAppropriation = lineEstimateAppropriationRepository
-                .findLatestByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
-        final List<Long> budgetheadid = new ArrayList<Long>();
-        budgetheadid.add(lineEstimateDetails.getLineEstimate().getBudgetHead().getId());
-        BudgetUsage budgetUsage = null;
-        final boolean flag = false;
-
-        if (lineEstimateAppropriation != null) {
-            if (budgApprAmnt == null)
-                budgApprAmnt = lineEstimateAppropriation.getBudgetUsage().getConsumedAmount();
-
-            if (appropriationnumber == null)
-                appropriationnumber = lineEstimateAppropriation.getBudgetUsage().getAppropriationnumber();
-            final BudgetAppropriationNumberGenerator b = beanResolver
-                    .getAutoNumberServiceFor(BudgetAppropriationNumberGenerator.class);
-            budgetUsage = budgetDetailsDAO.releaseEncumbranceBudget(
-                    lineEstimateAppropriation.getBudgetUsage() == null ? null
-                            : b.generateCancelledBudgetAppropriationNumber(appropriationnumber),
-                    lineEstimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(), Integer.valueOf(11),
-                    lineEstimateAppropriation.getLineEstimateDetails().getEstimateNumber(),
-                    Integer.parseInt(lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate()
-                            .getExecutingDepartment().getId().toString()),
-                    lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFunction() == null ? null
-                            : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFunction()
-                                    .getId(),
-                    null,
-                    lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getScheme() == null ? null
-                            : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getScheme().getId(),
-                    lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getSubScheme() == null ? null
-                            : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getSubScheme()
-                                    .getId(),
-                    lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getWard() == null ? null
-                            : Integer.parseInt(lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate()
-                                    .getWard().getId().toString()),
-                    lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getBudgetHead() == null ? null
-                            : budgetheadid,
-                    lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFund() == null ? null
-                            : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFund().getId(),
-                    budgApprAmnt);
-
-            if (lineEstimateAppropriation.getLineEstimateDetails() != null)
-                persistBudgetReleaseDetails(lineEstimateDetails, budgetUsage);
-        }
-        return flag;
-    }
-
-    private void persistBudgetReleaseDetails(final LineEstimateDetails lineEstimateDetails,
-            final BudgetUsage budgetUsage) {
-        LineEstimateAppropriation lineEstimateAppropriation = null;
-        lineEstimateAppropriation = lineEstimateAppropriationRepository
-                .findLatestByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
-        lineEstimateAppropriation.setBudgetUsage(budgetUsage);
-        lineEstimateAppropriationRepository.save(lineEstimateAppropriation);
-    }
-
     @Transactional
     public LineEstimate createSpillOver(final LineEstimate lineEstimate, final MultipartFile[] files)
             throws IOException {
@@ -850,7 +783,7 @@ public class LineEstimateService {
         if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                 .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
-                releaseBudgetOnReject(led, null, null);
+                estimateAppropriationService.releaseBudgetOnReject(led, null, null);
 
         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
             final Long id = led.getId();

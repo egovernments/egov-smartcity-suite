@@ -186,8 +186,8 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
         validateInput(workOrder, resultBinder);
         validateWorkOrderFileDate(workOrder, resultBinder, abstractEstimate);
 
-        if (abstractEstimate != null && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag()
-                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isWorkOrderCreated())
+        if (abstractEstimate != null && abstractEstimate.isSpillOverFlag()
+                && abstractEstimate.isWorkOrderCreated())
             validateSpillOverInput(workOrder, resultBinder);
 
         if (resultBinder.hasErrors()) {
@@ -216,9 +216,9 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
             final WorkOrderEstimate workOrderEstimate = letterOfAcceptanceService.createWorkOrderEstimate(workOrder);
 
             if (abstractEstimate != null
-                    && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag()
-                    && !abstractEstimate.getLineEstimateDetails().getLineEstimate().isWorkOrderCreated()
-                    || !abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag()) {
+                    && abstractEstimate.isSpillOverFlag()
+                    && !abstractEstimate.isWorkOrderCreated()
+                    || !abstractEstimate.isSpillOverFlag()) {
                 final LetterOfAcceptanceNumberGenerator l = beanResolver
                         .getAutoNumberServiceFor(LetterOfAcceptanceNumberGenerator.class);
                 final String workOrderNumber = l.getNextNumber(workOrderEstimate);
@@ -230,8 +230,8 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
             String pathVars = "";
 
             if (abstractEstimate != null
-                    && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag()
-                    && abstractEstimate.getLineEstimateDetails().getLineEstimate().isWorkOrderCreated())
+                    && abstractEstimate.isSpillOverFlag()
+                    && abstractEstimate.isWorkOrderCreated())
                 pathVars = savedWorkOrder.getId().toString();
             else
                 pathVars = worksUtils.getPathVars(savedWorkOrder.getEgwStatus(), savedWorkOrder.getState(),

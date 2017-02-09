@@ -157,7 +157,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         model.addAttribute("cuttOffDate", worksUtils.getCutOffDate());
         model.addAttribute("currFinDate", worksUtils.getFinancialYearByDate(new Date()).getStartingDate());
 
-        return "newAbstractEstimate-form";
+        return "newAbstractEstimate-spilloverform";
     }
 
     private void loadViewData(final Model model, final AbstractEstimate abstractEstimate,
@@ -280,7 +280,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             model.addAttribute("approvedByValue", request.getParameter("approvedBy"));
             model.addAttribute(WorksConstants.ADDITIONAL_RULE,
                     cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
-            return "newAbstractEstimate-form";
+            return abstractEstimate.isSpillOverFlag() ? "newAbstractEstimate-spilloverform" : "newAbstractEstimate-form";
         } else {
             if (abstractEstimate.getState() == null)
                 if (WorksConstants.FORWARD_ACTION.equals(workFlowAction))

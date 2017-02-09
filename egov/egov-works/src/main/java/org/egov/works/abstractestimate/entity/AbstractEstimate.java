@@ -88,6 +88,7 @@ import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.lineestimate.entity.EstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
@@ -318,8 +319,8 @@ public class AbstractEstimate extends StateAware implements Auditable {
     private List<MultiYearEstimate> multiYearEstimates = new ArrayList<MultiYearEstimate>(0);
 
     @OrderBy("id")
-    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AbstractEstimateAppropriation.class)
-    private List<AbstractEstimateAppropriation> abstractEstimateAppropriations = new ArrayList<AbstractEstimateAppropriation>(
+    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = EstimateAppropriation.class)
+    private List<EstimateAppropriation> estimateAppropriations = new ArrayList<EstimateAppropriation>(
             0);
 
     @OrderBy("id")
@@ -711,13 +712,13 @@ public class AbstractEstimate extends StateAware implements Auditable {
         return createdDate;
     }
 
-    public List<AbstractEstimateAppropriation> getAbstractEstimateAppropriations() {
-        return abstractEstimateAppropriations;
+    public List<EstimateAppropriation> getEstimateAppropriations() {
+        return estimateAppropriations;
     }
 
-    public void setAbstractEstimateAppropriations(
-            final List<AbstractEstimateAppropriation> abstractEstimateAppropriations) {
-        this.abstractEstimateAppropriations = abstractEstimateAppropriations;
+    public void setEstimateAppropriations(
+            final List<EstimateAppropriation> estimateAppropriations) {
+        this.estimateAppropriations = estimateAppropriations;
     }
 
     public AbstractEstimate getParent() {
