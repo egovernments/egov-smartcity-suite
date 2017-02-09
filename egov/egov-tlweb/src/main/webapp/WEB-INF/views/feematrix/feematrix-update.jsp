@@ -60,7 +60,7 @@
                         </label>
                         <div class="col-sm-3 add-margin">
                             <form:select path="licenseAppType" id="licenseAppType" cssClass="form-control" required="required"
-                                         cssErrorClass="form-control error">
+                                         cssErrorClass="form-control error" disabled="true">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
                                 </form:option>
@@ -72,7 +72,7 @@
                         </label>
                         <div class="col-sm-3 add-margin">
                             <form:select path="natureOfBusiness" id="natureOfBusiness" cssClass="form-control" required="required"
-                                         cssErrorClass="form-control error">
+                                         cssErrorClass="form-control error" disabled="true">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
                                 </form:option>
@@ -87,7 +87,7 @@
                         </label>
                         <div class="col-sm-3 add-margin">
                             <form:select path="licenseCategory" id="licenseCategory" cssClass="form-control" required="required"
-                                         cssErrorClass="form-control error">
+                                         cssErrorClass="form-control error" disabled="true">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
                                 </form:option>
@@ -99,7 +99,7 @@
                         </label>
                         <div class="col-sm-3 add-margin">
                             <form:select path="subCategory" id="subCategory" cssClass="form-control select2" required="required"
-                                         cssErrorClass="form-control error select2">
+                                         cssErrorClass="form-control error select2" disabled="true">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
                                 </form:option>
@@ -113,7 +113,7 @@
                         </label>
                         <div class="col-sm-3 add-margin">
                             <form:select path="feeType" id="feeType" cssClass="form-control" required="required"
-                                         cssErrorClass="form-control error">
+                                         cssErrorClass="form-control error" disabled="true">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
                                 </form:option>
@@ -124,7 +124,7 @@
                         </label>
                         <div class="col-sm-3 add-margin">
                             <form:select path="unitOfMeasurement" id="unitOfMeasurement" cssClass="form-control" required="required"
-                                         cssErrorClass="form-control error" readonly="true">
+                                         cssErrorClass="form-control error" disabled="true">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
                                 </form:option>
@@ -137,7 +137,7 @@
                             <spring:message code="lbl.rateType"/>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input id="rateType" path="" class="form-control text-left" maxlength="32" readonly="true"/>
+                            <form:input id="rateType" path="" class="form-control text-left" maxlength="32" disabled="true"/>
                         </div>
 
                         <label class="col-sm-3 control-label">
@@ -145,17 +145,12 @@
                         </label>
                         <div class="col-sm-3 add-margin">
                             <form:select path="financialYear" id="financialYear" cssClass="form-control" required="required"
-                                         cssErrorClass="form-control error">
+                                         cssErrorClass="form-control error" disabled="true">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
                                 </form:option>
                                 <form:options items="${financialYears}" itemValue="id" itemLabel="finYearRange"/>
                             </form:select>
-                            <c:forEach items="${financialYears}" var="finYear">
-                                <fmt:formatDate value="${finYear.startingDate}" pattern="dd/MM/yyyy" var="startdate"/>
-                                <fmt:formatDate value="${finYear.endingDate}" pattern="dd/MM/yyyy" var="enddate"/>
-                                <input type="hidden" id="fin${finYear.id}" value="${startdate}-${enddate}">
-                            </c:forEach>
                         </div>
                     </div>
                     <div class="form-group">
@@ -163,27 +158,14 @@
                             <spring:message code="lbl.effective.from"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input id="effectiveFrom" path="effectiveFrom" class="form-control text-left" maxlength="10" readonly="true"/>
+                            <form:input id="effectiveFrom" path="effectiveFrom" class="form-control text-left" maxlength="10" disabled="true"/>
                         </div>
 
                         <label class="col-sm-3 control-label">
                             <spring:message code="lbl.effective.to"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input id="effectiveTo" path="effectiveTo" class="datepicker form-control text-left" maxlength="10"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-12">
-                            <form:checkbox id="sameForPermanentAndTemporary" path="sameForPermanentAndTemporary" cssClass="sameForPermanentAndTemporary display-hide"/>
-                            <label class="control-label sameForPermanentAndTemporary display-hide" for="sameForPermanentAndTemporary">
-                                &nbsp;&nbsp;<spring:message code="lbl.feematrix.use.same.perm.and.tmp"/>
-                            </label>
-                            <br/>
-                            <form:checkbox id="sameForNewAndRenew" path="sameForNewAndRenew" cssClass="sameForNewAndRenew display-hide"/>
-                            <label class="control-label sameForNewAndRenew display-hide" for="sameForNewAndRenew">
-                                &nbsp;&nbsp;<spring:message code="lbl.feematrix.use.same.new.and.renew"/>
-                            </label>
+                            <form:input id="effectiveTo" path="effectiveTo" class="form-control text-left" maxlength="10" disabled="true"/>
                         </div>
                     </div>
                     <div class="panel-heading">

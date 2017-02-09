@@ -40,23 +40,6 @@
 
 $(document).ready(function () {
 
-    $("#natureOfBusiness").change(function () {
-        if ($("#natureOfBusiness option:selected").text() == 'Permanent')
-            $(".sameForPermanentAndTemporary").show();
-        else
-            $(".sameForPermanentAndTemporary").hide();
-    });
-
-    $("#licenseAppType").change(function () {
-        if ($("#licenseAppType option:selected").text() == 'New')
-            $(".sameForNewAndRenew").show();
-        else
-            $(".sameForNewAndRenew").hide();
-    });
-
-    $("#natureOfBusiness").trigger('change');
-    $("#licenseAppType").trigger('change');
-
     $('#feeType').click(function () {
         if ($('#subCategory').val() == "") {
             bootbox.alert("Please Choose Sub Category");
@@ -330,6 +313,12 @@ $(document).ready(function () {
     $('#resultTable').on('click', 'tbody tr td.details-control', function () {
         var tr = $(this).closest('tr');
         var row = oTable.row(tr);
+        var collapsed=$(this).find('i').hasClass('fa-plus-circle');
+        $(this).find('i').removeClass('fa-minus-circle');
+        $(this).find('i').addClass('fa-plus-circle');
+        if(collapsed)
+            $(this).find('i').toggleClass('fa-plus-circle fa-lg fa-minus-circle fa-lg')
+
         if (row.child.isShown()) {
             row.child.hide();
             tr.removeClass('shown');

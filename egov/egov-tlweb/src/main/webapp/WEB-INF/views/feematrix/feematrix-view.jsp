@@ -142,19 +142,6 @@
                             <form:input readonly="true" id="effectiveTo" path="effectiveTo" class="form-control text-left" maxlength="10"/>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <div class="col-sm-12">
-                            <form:checkbox id="sameForPermanentAndTemporary" disabled="true" path="sameForPermanentAndTemporary" cssClass="sameForPermanentAndTemporary display-hide"/>
-                            <label class="control-label sameForPermanentAndTemporary display-hide" for="sameForPermanentAndTemporary">
-                                &nbsp;&nbsp;<spring:message code="lbl.feematrix.use.same.perm.and.tmp"/>
-                            </label>
-                            <br/>
-                            <form:checkbox id="sameForNewAndRenew" disabled="true" path="sameForNewAndRenew" cssClass="sameForNewAndRenew display-hide"/>
-                            <label class="control-label sameForNewAndRenew display-hide" for="sameForNewAndRenew">
-                                &nbsp;&nbsp;<spring:message code="lbl.feematrix.use.same.new.and.renew"/>
-                            </label>
-                        </div>
-                    </div>
                     <div class="panel-heading">
                         <div class="col-md-12 panel-title text-left">
                             <spring:message code="lbl.fee.details"/>

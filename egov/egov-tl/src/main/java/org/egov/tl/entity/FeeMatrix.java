@@ -42,6 +42,7 @@ package org.egov.tl.entity;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.CompareDates;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 
 import javax.persistence.CascadeType;
@@ -71,6 +72,7 @@ import java.util.Objects;
 @SequenceGenerator(name = FeeMatrix.SEQ, sequenceName = FeeMatrix.SEQ, allocationSize = 1)
 @CompositeUnique(fields = {"natureOfBusiness", "licenseCategory", "subCategory", "licenseAppType",
         "financialYear", "feeType", "unitOfMeasurement"}, enableDfltMsg = true, message = "{feematrix.exist}")
+@CompareDates(fromDate = "effectiveFrom", toDate = "effectiveTo", message = "{feematrix.effective.date.range}")
 public class FeeMatrix extends AbstractAuditable {
     public static final String SEQ = "seq_egtl_feematrix";
     private static final long serialVersionUID = 3119126267277124321L;
@@ -121,10 +123,6 @@ public class FeeMatrix extends AbstractAuditable {
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date effectiveTo;
-
-    private boolean sameForNewAndRenew;
-
-    private boolean sameForPermanentAndTemporary;
 
     @Valid
     @OrderBy("uomFrom")
@@ -224,22 +222,6 @@ public class FeeMatrix extends AbstractAuditable {
 
     public void setEffectiveTo(final Date effectiveTo) {
         this.effectiveTo = effectiveTo;
-    }
-
-    public boolean isSameForNewAndRenew() {
-        return sameForNewAndRenew;
-    }
-
-    public void setSameForNewAndRenew(final boolean sameForNewAndRenew) {
-        this.sameForNewAndRenew = sameForNewAndRenew;
-    }
-
-    public boolean isSameForPermanentAndTemporary() {
-        return sameForPermanentAndTemporary;
-    }
-
-    public void setSameForPermanentAndTemporary(final boolean sameForPermanentAndTemporary) {
-        this.sameForPermanentAndTemporary = sameForPermanentAndTemporary;
     }
 
     @Override

@@ -171,19 +171,7 @@
                         </label>
                         <div class="col-sm-3 add-margin">
                             <form:input id="effectiveTo" path="effectiveTo" class="datepicker form-control text-left" maxlength="10"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-12">
-                            <form:checkbox id="sameForPermanentAndTemporary" path="sameForPermanentAndTemporary" cssClass="sameForPermanentAndTemporary display-hide"/>
-                            <label class="control-label sameForPermanentAndTemporary display-hide" for="sameForPermanentAndTemporary">
-                                &nbsp;&nbsp;<spring:message code="lbl.feematrix.use.same.perm.and.tmp"/>
-                            </label>
-                            <br/>
-                            <form:checkbox id="sameForNewAndRenew" path="sameForNewAndRenew" cssClass="sameForNewAndRenew display-hide"/>
-                            <label class="control-label sameForNewAndRenew display-hide" for="sameForNewAndRenew">
-                                &nbsp;&nbsp;<spring:message code="lbl.feematrix.use.same.new.and.renew"/>
-                            </label>
+                            <form:errors path="effectiveTo" cssClass="add-margin error-msg"/>
                         </div>
                     </div>
                     <div class="panel-heading">

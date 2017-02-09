@@ -45,9 +45,7 @@ import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.FeeMatrixDetail;
 import org.egov.tl.entity.FeeType;
 import org.egov.tl.entity.License;
-import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
-import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.repository.FeeMatrixRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -96,16 +94,16 @@ public class FeeMatrixService<T extends License> {
 
     public List<FeeMatrixDetail> getLicenseFeeDetails(T license, Date effectiveDate) {
         List<FeeMatrixDetail> licenseFeeDetails = new ArrayList<>();
-        for (LicenseSubCategoryDetails licenseSubCategoryDetail : license.getTradeName().getLicenseSubCategoryDetails()) {
-            Optional<FeeMatrix> feeMatrix = getFeeMatrix(license, licenseSubCategoryDetail.getFeeType(), effectiveDate);
-            if (!feeMatrix.isPresent())
-                throw new ValidationException("TL-002", "TL-002");
-            Optional<FeeMatrixDetail> feeMatrixDetail = feeMatrix.get().getFeeMatrixDetail().
-                    parallelStream().filter(detail -> license.getTradeArea_weight().intValue() > detail.getUomFrom()
-                    && license.getTradeArea_weight().intValue() <= detail.getUomTo()).findFirst();
-            if (!feeMatrixDetail.isPresent())
-                throw new ValidationException("TL-003", "TL-003");
-            licenseFeeDetails.add(feeMatrixDetail.get());
+        for (LicenseSubCategoryDetails subcategoryDetail : license.getTradeName().getLicenseSubCategoryDetails()) {
+            FeeMatrix feeMatrix = getFeeMatrix(license, subcategoryDetail.getFeeType(), effectiveDate).
+                    orElseThrow(() -> new ValidationException("TL-002", "TL-002"));
+            FeeMatrixDetail feeMatrixDetail = feeMatrix.getFeeMatrixDetail().
+                    parallelStream().
+                    filter(detail -> license.getTradeArea_weight().intValue() > detail.getUomFrom()
+                            && license.getTradeArea_weight().intValue() <= detail.getUomTo()).
+                    findFirst().
+                    orElseThrow(() -> new ValidationException("TL-003", "TL-003"));
+            licenseFeeDetails.add(feeMatrixDetail);
         }
 
         return licenseFeeDetails;
@@ -125,34 +123,25 @@ public class FeeMatrixService<T extends License> {
         return feeMatrix;
     }
 
-    private Optional<FeeMatrix> getFeeMatrixForRenew(final License license, final FeeType feeType, final Date effectiveDate) {
+    private Optional<FeeMatrix> getFeeMatrixForRenew(License license, FeeType feeType, Date effectiveDate) {
         Optional<FeeMatrix> feeMatrix = getFeeMatrixForTemporaryLicense(license, feeType, effectiveDate);
         if (!feeMatrix.isPresent()) {
-            LicenseAppType newLicenseAppType = licenseAppTypeService.getNewLicenseAppType();
             feeMatrix = feeMatrixRepository.findFeeMatrix(license, license.getNatureOfBusiness(), feeType,
-                    newLicenseAppType, effectiveDate);
-            feeMatrix = feeMatrix.isPresent() && feeMatrix.get().isSameForNewAndRenew() ? feeMatrix : Optional.empty();
+                    licenseAppTypeService.getNewLicenseAppType(), effectiveDate);
         }
 
-        if (!feeMatrix.isPresent()) {
-            NatureOfBusiness natureOfBusiness = natureOfBusinessService.getPermanentBusinessNature();
-            LicenseAppType newLicenseAppType = licenseAppTypeService.getNewLicenseAppType();
-            feeMatrix = feeMatrixRepository.findFeeMatrix(license, natureOfBusiness, feeType,
-                    newLicenseAppType, effectiveDate);
-            feeMatrix = feeMatrix.isPresent() && feeMatrix.get().isSameForPermanentAndTemporary() &&
-                    feeMatrix.get().isSameForNewAndRenew() ? feeMatrix : Optional.empty();
+        if (!feeMatrix.isPresent() && license.isTemporary()) {
+            feeMatrix = feeMatrixRepository.findFeeMatrix(license, natureOfBusinessService.getPermanentBusinessNature(),
+                    feeType, licenseAppTypeService.getNewLicenseAppType(), effectiveDate);
         }
         return feeMatrix;
     }
 
     private Optional<FeeMatrix> getFeeMatrixForTemporaryLicense(License license, FeeType feeType, Date effectiveDate) {
         Optional<FeeMatrix> feeMatrix = Optional.empty();
-        if (license.isTemporary()) {
-            NatureOfBusiness natureOfBusiness = natureOfBusinessService.getPermanentBusinessNature();
-            feeMatrix = feeMatrixRepository.findFeeMatrix(license, natureOfBusiness, feeType,
-                    license.getLicenseAppType(), effectiveDate);
-            feeMatrix = feeMatrix.isPresent() && feeMatrix.get().isSameForPermanentAndTemporary() ? feeMatrix : Optional.empty();
-        }
+        if (license.isTemporary())
+            feeMatrix = feeMatrixRepository.findFeeMatrix(license, natureOfBusinessService.getPermanentBusinessNature(),
+                    feeType, license.getLicenseAppType(), effectiveDate);
         return feeMatrix;
     }
 }

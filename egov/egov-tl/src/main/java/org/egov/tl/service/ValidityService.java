@@ -122,20 +122,20 @@ public class ValidityService {
 
     private void applyValidityToLegacyLicense(License license, Validity validity) {
         license.getCurrentDemand().getEgDemandDetails().stream().
-                sorted(Comparator.comparing(EgDemandDetails::getInstallmentEndDate)).
                 filter(demandDetail -> demandDetail.getAmount().subtract(demandDetail.getAmtCollected()).doubleValue() <= 0).
-                forEach(demandDetail -> {
-                            if (validity.isBasedOnFinancialYear()) {
+                max(Comparator.comparing(EgDemandDetails::getInstallmentEndDate)).
+                ifPresent(demandDetail -> {
+                            if (validity.isBasedOnFinancialYear())
                                 license.setDateOfExpiry(demandDetail.getInstallmentEndDate());
-                            } else {
+                            else
                                 applyLicenseValidityBasedOnCustomValidity(license, validity);
-                            }
                         }
                 );
     }
 
     private void applyLicenseValidityBasedOnCustomValidity(License license, Validity validity) {
-        LocalDate nextExpiryDate = new LocalDate(license.getCommencementDate());
+        LocalDate nextExpiryDate = new LocalDate(license.isNewApplication() ? license.getCommencementDate() :
+                license.getCurrentDemand().getEgInstallmentMaster().getFromDate());
         if (validity.getYear() != null && validity.getYear() > 0)
             nextExpiryDate = nextExpiryDate.plusYears(validity.getYear());
         if (validity.getMonth() != null && validity.getMonth() > 0)
@@ -146,5 +146,4 @@ public class ValidityService {
             nextExpiryDate = nextExpiryDate.plusDays(validity.getDay());
         license.setDateOfExpiry(nextExpiryDate.toDate());
     }
-
 }
