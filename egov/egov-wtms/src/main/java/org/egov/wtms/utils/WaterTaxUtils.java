@@ -477,6 +477,7 @@ public class WaterTaxUtils {
             } else {
                 final Position posObjToClerk = positionMasterService
                         .getCurrentPositionForUser(waterConnectionDetails.getCreatedBy().getId());
+                if(posObjToClerk!=null)
                 approverPosition = posObjToClerk.getId();
             }
         }
