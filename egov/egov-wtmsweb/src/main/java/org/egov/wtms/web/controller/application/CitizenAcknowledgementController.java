@@ -47,6 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.WordUtils;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -81,6 +82,9 @@ public class CitizenAcknowledgementController {
     
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
+    
+    @Autowired
+    private CityService cityService;
   
 
     @Autowired
@@ -118,6 +122,9 @@ public class CitizenAcknowledgementController {
             
             else 
             	reportParams.put("applicationDueDate",null);
+            
+            String districtName=(String) session.getAttribute("districtName");
+            reportParams.put("cityUrl", ((!cityService.findAll().isEmpty()?cityService.findAll().get(0).getName().toLowerCase():districtName.toLowerCase())+ ".cdma.ap.gov.in"));
             reportParams.put("applicationType",
                     WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()).toString());
             reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
