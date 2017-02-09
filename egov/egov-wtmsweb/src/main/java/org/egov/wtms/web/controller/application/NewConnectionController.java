@@ -187,8 +187,8 @@ public class NewConnectionController extends GenericConnectionController {
             final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
             final BindingResult errors) {
         final String sourceChannel = request.getParameter("Source");
-     //   validatePropertyID(waterConnectionDetails, resultBinder);
-        //waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails, resultBinder);
+        validatePropertyID(waterConnectionDetails, resultBinder);
+        waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails, resultBinder);
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         int i = 0;
         final String documentRequired = waterTaxUtils.documentRequiredForBPLCategory();
@@ -284,6 +284,7 @@ public class NewConnectionController extends GenericConnectionController {
         } else if (assignObj == null && approvalPosition != null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
         nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
+        
         final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
                 + waterTaxUtils.getApproverName(approvalPosition) + ","
                 + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
@@ -292,7 +293,7 @@ public class NewConnectionController extends GenericConnectionController {
             return "redirect:/application/generate-meesevareceipt?transactionServiceNumber="
                     + waterConnectionDetails.getApplicationNumber();
         else
-            return "redirect:/application/application-success?pathVars=" + pathVars;
+            return "redirect:/application/citizeenAcknowledgement?pathVars=" + waterConnectionDetails.getApplicationNumber();
 
         // return "redirect:/application/application-success?pathVars=" +
         // pathVars;

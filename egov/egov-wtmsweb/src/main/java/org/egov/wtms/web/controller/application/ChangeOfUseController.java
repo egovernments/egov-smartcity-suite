@@ -231,7 +231,7 @@ public class ChangeOfUseController extends GenericConnectionController {
                 + waterTaxUtils.getApproverName(approvalPosition) + ","
                 + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
                 + (nextDesign != null ? nextDesign : "");
-        return "redirect:/application/application-success?pathVars=" + pathVars;
+        return "redirect:/application/citizeenAcknowledgement?pathVars=" + changeOfUse.getApplicationNumber();
     }
 
     private void loadBasicData(final Model model, final WaterConnectionDetails parentConnectionDetails,
