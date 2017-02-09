@@ -680,15 +680,16 @@ public class RecoveryNoticeService {
         reportParams.put(DOOR_NO, basicProperty.getAddress().getHouseNoBldgApt() == null ? NOT_AVAILABLE
                 : basicProperty.getAddress().getHouseNoBldgApt());
         reportParams.put(LOCATION, basicProperty.getAddress().getAreaLocalitySector() == null ? NOT_AVAILABLE
-                : basicProperty.getAddress().getAreaLocalitySector());
+                : basicProperty.getAddress().getAreaLocalitySector().trim());
         reportParams.put(CITY_NAME, city.getPreferences().getMunicipalityName() == null ? NOT_AVAILABLE
                 : city.getPreferences().getMunicipalityName());
         reportParams.put(FINANCIAL_YEAR, currFinYear.getFinYearRange());
-        final BigDecimal totalTaxDue = getTotalPropertyTaxDue(basicProperty);
+        final BigDecimal totalTaxDue = getTotalPropertyTaxDueIncludingPenalty(basicProperty);
         reportParams.put(TOTAL_TAX_DUE, String.valueOf(totalTaxDue));
         reportParams.put(REPORT_DATE, new SimpleDateFormat("dd/MM/yyyy").format(asOnDate));
         reportParams.put(NOTICE_NUMBER, noticeNo);
         reportParams.put(TAX_DUE_IN_WORDS, NumberUtil.amountInWords(totalTaxDue));
+        reportParams.put(CONSUMER_ID, basicProperty.getUpicNo());
         prepareDemandBillDetails(reportParams, basicProperty);
         final String cityGrade = city.getGrade();
         if (StringUtils.isNotBlank(cityGrade)
