@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2017-01-16T13:00:40 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-02-09T11:12:04 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -21,6 +21,7 @@
 	<parameter name="demandUpdateDate" class="java.lang.String"/>
 	<parameter name="carporationulbType" class="java.lang.String"/>
 	<parameter name="subCategory" class="java.lang.String"/>
+	<parameter name="certificateType" class="java.lang.String"/>
 	<parameter name="appType" class="java.lang.String"/>
 	<parameter name="currentDate" class="java.lang.String">
 		<parameterDescription><![CDATA[]]></parameterDescription>
@@ -196,7 +197,7 @@
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="3" y="126" width="547" height="55" isPrintWhenDetailOverflows="true" uuid="930aede7-4365-4911-88d2-8fa7e13183ae">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<printWhenExpression><![CDATA[$P{licencenumber} == null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{certificateType}.equals("provisional")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="10" isBold="false"/>

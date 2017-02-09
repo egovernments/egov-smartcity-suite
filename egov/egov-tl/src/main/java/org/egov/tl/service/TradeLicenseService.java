@@ -246,6 +246,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("district", districtName);
         reportParams.put("category", license.getCategory().getName());
         reportParams.put("subCategory", license.getTradeName().getName());
+		if (license.getState().getValue().equals(Constants.WF_FIRST_LVL_FEECOLLECTED)) {
+			reportParams.put("certificateType", "provisional");
+		}
         reportParams.put("appType", license.isNewApplication() ? "New Trade" : "Renewal");
         reportParams.put("currentDate", currentDateToDefaultDateFormat());
         if (ApplicationThreadLocals.getMunicipalityName().contains("Corporation"))
