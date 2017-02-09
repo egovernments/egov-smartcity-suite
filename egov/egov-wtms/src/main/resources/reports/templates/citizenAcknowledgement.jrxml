@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReconnacknowlgementNotice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e9770880-71cf-4aae-a82f-c57adc04545e">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="192"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="cityName" class="java.lang.String"/>
@@ -79,7 +79,7 @@
 				<textElement markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{applicationType}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{applicationType}!=null?$P{applicationType}:"N/A"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="195" y="134" width="224" height="20" uuid="bfd375c4-667c-4ae6-a81b-8edace799cb6">
@@ -89,7 +89,7 @@
 				<textElement markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{applicantName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{applicantName}!=null?$P{applicantName}:"N/A"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="9" y="134" width="186" height="20" uuid="d1695749-b6db-4308-a037-5572d42e4fbc"/>
@@ -106,7 +106,7 @@
 				<textElement markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{address}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{address}!=null?$P{address}:"N/A"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="9" y="159" width="186" height="20" uuid="d628ed69-a4eb-4d0e-97ca-c73d9b244897"/>
@@ -123,7 +123,7 @@
 				<textElement markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{electionWard}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{electionWard}!=null?$P{electionWard}:"N/A"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="9" y="186" width="186" height="20" uuid="589323d1-ad1c-4f1b-936d-db367acad127"/>
@@ -147,7 +147,7 @@
 				<textElement markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{applicationDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{applicationDate}!=null?$P{applicationDate}:"N/A"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="405" y="219" width="147" height="20" uuid="571c97d0-1636-4391-9fef-8b1400bf2c99">
@@ -157,7 +157,7 @@
 				<textElement markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{applicationDueDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{applicationDueDate}!=null?$P{applicationDueDate}:"N/A"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="311" y="218" width="94" height="20" uuid="97b7f5db-8029-4bdc-a015-c1f7415ae3f4"/>
