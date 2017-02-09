@@ -428,8 +428,10 @@ public class WaterTaxUtils {
                     if (userrole.getName().equals(WaterTaxConstants.ROLE_SUPERUSER)) {
                         final Position positionuser = getZonalLevelClerkForLoggedInUser(
                                 waterConnectionDetails.getConnection().getPropertyIdentifier());
+                        if(positionuser!=null){
                         approverPosition = positionuser.getId();
                         break;
+                        }
                     }
             } else {
                 for (final StateHistory stateHistory : stateHistoryList)
@@ -467,8 +469,10 @@ public class WaterTaxUtils {
                     if (userrole.getName().equals(WaterTaxConstants.ROLE_SUPERUSER)) {
                         final Position positionuser = getZonalLevelClerkForLoggedInUser(
                                 waterConnectionDetails.getConnection().getPropertyIdentifier());
+                        if(positionuser!=null){
                         approverPosition = positionuser.getId();
                         break;
+                        }
                     }
             } else {
                 final Position posObjToClerk = positionMasterService
