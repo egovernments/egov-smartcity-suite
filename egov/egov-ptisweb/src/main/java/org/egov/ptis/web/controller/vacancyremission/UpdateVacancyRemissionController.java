@@ -82,7 +82,7 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
     private static final String APPROVAL_POS = "approvalPosition";
     private final VacancyRemissionService vacancyRemissionService;
     private final PropertyTaxUtil propertyTaxUtil;
-    private static final String PROPERTY_MODIFY_REJECT_FAILURE = "property.modify.reject.failure";
+    private static final String PROPERTY_MODIFY_REJECT_FAILURE = "Initiator is not active so can not do rejection with the Assessment number :";
     
     @Autowired
     private PropertyService propertyService;

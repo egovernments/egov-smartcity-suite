@@ -83,7 +83,7 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
 
     protected static final String VRAPPROVAL_EDIT = "vacancyRemissionApproval-edit";
     private static final String APPROVAL_POS = "approvalPosition";
-    private static final String PROPERTY_MODIFY_REJECT_FAILURE = "property.modify.reject.failure";
+    private static final String PROPERTY_MODIFY_REJECT_FAILURE = "Initiator is not active so can not do rejection with the Assessment number :";
 
     private final VacancyRemissionService vacancyRemissionService;
 

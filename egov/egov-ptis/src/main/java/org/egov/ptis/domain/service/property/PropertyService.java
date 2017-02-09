@@ -2740,7 +2740,7 @@ public class PropertyService {
         Assignment wfInitiator=null;
         Assignment assgmnt=propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(property
                 .getCreatedBy(),property.getState().getInitiatorPosition());
-            if(assgmnt.getEmployee().isActive())
+        if(assgmnt != null && assgmnt.getEmployee().isActive())
            wfInitiator = assgmnt;
         if(wfInitiator==null){
           assignment=assignmentService.getAssignmentsForPosition(property.getState().getInitiatorPosition().getId(), new Date());

@@ -936,7 +936,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             } else
                 setAckMessage(getText(PROPERTY_MODIFY_REJECT_SUCCESS, new String[] { getModifyReasonString(), username }));
         } else
-            setAckMessage(PROPERTY_MODIFY_REJECT_FAILURE);
+            setAckMessage(getText(PROPERTY_MODIFY_REJECT_FAILURE));
     }
 
     private boolean isAssistantOrRIApprovalPending() {

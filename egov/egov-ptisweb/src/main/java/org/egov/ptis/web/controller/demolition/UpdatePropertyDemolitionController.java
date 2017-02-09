@@ -108,7 +108,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     public static final String VIEW = "view";
     private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String SUCCESSMESSAGE = "successMessage";
-    private static final String PROPERTY_MODIFY_REJECT_FAILURE = "property.modify.reject.failure";
+    private static final String PROPERTY_MODIFY_REJECT_FAILURE = "Initiator is not active so can not do rejection with the Assessment number :";
     
     PropertyDemolitionService propertyDemolitionService;
 

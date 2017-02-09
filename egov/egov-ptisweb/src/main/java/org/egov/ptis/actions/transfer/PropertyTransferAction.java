@@ -471,7 +471,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 setAckMessage("Transfer of ownership data rejected successfuly and forwarded to : ");
             setAssessmentNoMessage(" with assessment number : ");
         } else
-            setAckMessage(PROPERTY_MODIFY_REJECT_FAILURE);
+            setAckMessage(getText(PROPERTY_MODIFY_REJECT_FAILURE));
         return ACK;
     }
 
