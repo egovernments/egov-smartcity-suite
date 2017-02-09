@@ -1703,7 +1703,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 objection.getProperty().getPropertyDetail()
                         .getWoodType() != null ? objection.getProperty().getPropertyDetail().getWoodType().getId()
                                 : null,
-                null, null, null, null);
+                null, null, null, null, null);
 
     }
 

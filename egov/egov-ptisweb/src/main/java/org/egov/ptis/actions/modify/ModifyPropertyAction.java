@@ -1278,7 +1278,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 northBoundary, propTypeId,
                 null != basicProp.getPropertyID() ? String.valueOf(basicProp.getPropertyID().getZone().getId()) : "",
                 propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId, modifyRsn, propCompletionDate, vacantLandPlotAreaId,
-                layoutApprovalAuthorityId);
+                layoutApprovalAuthorityId, null);
         validateApproverDetails();
         if (!propertyByEmployee && null != basicProp) {
             final Assignment assignment = propService.isCscOperator(securityUtils.getCurrentUser())

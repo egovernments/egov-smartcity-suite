@@ -136,8 +136,10 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
+import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
@@ -289,7 +291,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             final String northBoundary, final String propTypeId, final String zoneId, final String propOccId,
             final Long floorTypeId, final Long roofTypeId, final Long wallTypeId, final Long woodTypeId,
             final String modifyRsn, final Date propCompletionDate, final Long vacantLandPlotAreaId,
-            final Long layoutApprovalAuthorityId) {
+            final Long layoutApprovalAuthorityId, final DocumentTypeDetails documentTypeDetails) {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into validateProperty");
@@ -304,8 +306,12 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
                     "from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
             if (propTypeMstr != null) {
+                Date regDocDate = null;
                 final PropertyDetail propertyDetail = property.getPropertyDetail();
-                final Date regDocDate = property.getBasicProperty().getRegdDocDate();
+                if (documentTypeDetails != null)
+                    regDocDate = documentTypeDetails.getDocumentName()
+                            .equals(PropertyTaxConstants.DOCUMENT_NAME_REGD_DOCUMENT)
+                                    ? documentTypeDetails.getDocumentDate() : null;
                 if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
                     if (null != propertyDetail)
                         validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary,
@@ -928,6 +934,32 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 propertyTaxDetailsMap.put("totalTax", totalTax);
             propertyTaxDetailsMap.put("totalTax", totalTax);
         }
+    }
+    
+    public void validateDocumentDetails(DocumentTypeDetails documentTypeDetails) {
+        if (documentTypeDetails.getDocumentName() == null || "-1".equals(documentTypeDetails.getDocumentName()))
+            addActionError(getText("mandatory.doctype"));
+        else {
+            validateDocumentNumberAndDate(documentTypeDetails);
+            if (PropertyTaxConstants.DOCUMENT_NAME_PATTA_CERTIFICATE.equals(documentTypeDetails.getDocumentName())
+                    && documentTypeDetails.getProceedingNo().isEmpty())
+                addActionError(getText("mandatory.dtd.procno"));
+            if (PropertyTaxConstants.DOCUMENT_NAME_PATTA_CERTIFICATE.equals(documentTypeDetails.getDocumentName())
+                    && documentTypeDetails.getProceedingDate() == null)
+                addActionError(getText("mandatory.dtd.procdate"));
+            if (PropertyTaxConstants.DOCUMENT_NAME_DECREE_BY_CIVILCOURT.equals(documentTypeDetails.getDocumentName())
+                    && documentTypeDetails.getCourtName().isEmpty())
+                addActionError(getText("mandatory.dtd.courtname"));
+        }
+    }
+
+    public void validateDocumentNumberAndDate(DocumentTypeDetails documentTypeDetails) {
+        if (!PropertyTaxConstants.DOCUMENT_NAME_NOTARY_DOCUMENT.equals(documentTypeDetails.getDocumentName())
+                && documentTypeDetails.getDocumentNo().isEmpty())
+            addActionError(getText("mandatory.dtd.no"));
+        if (!PropertyTaxConstants.DOCUMENT_NAME_NOTARY_DOCUMENT.equals(documentTypeDetails.getDocumentName())
+                && documentTypeDetails.getDocumentDate() == null)
+            addActionError(getText("mandatory.dtd.date"));
     }
 
     public WorkflowBean getWorkflowBean() {

@@ -82,6 +82,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.repository.UserRepository;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
@@ -94,12 +95,14 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.CategoryDao;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Category;
+import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.PropertyDepartment;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.domain.model.MutationFeeDetails;
 import org.egov.ptis.domain.repository.PropertyDepartmentRepository;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
@@ -122,7 +125,8 @@ import org.springframework.http.MediaType;
         @Result(name = "checkExistingCategory", location = "ajaxCommon-checkExistingCategory.jsp"),
         @Result(name = "usage", location = "ajaxCommon-usage.jsp"),
         @Result(name = "calculateMutationFee", location = "ajaxCommon-calculateMutationFee.jsp"),
-        @Result(name = "propDepartment", location = "ajaxcommon-propdepartment.jsp")})
+        @Result(name = "propDepartment", location = "ajaxcommon-propdepartment.jsp"),
+        @Result(name = "defaultcitizen", location = "ajaxcommon-citizenfordoctype.jsp")})
 public class AjaxCommonAction extends BaseFormAction implements ServletResponseAware {
 
     private static final String AJAX_RESULT = "AJAX_RESULT";
@@ -136,6 +140,8 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     private static final String AREA = "area";
     private static final String RESULT_CHECK_EXISTING_CATEGORY = "checkExistingCategory";
     private static final String RESULT_MUTATION_FEE = "calculateMutationFee";
+    private static final String DEFAULT_CITIZEN_NAME = "The Holder Of The Premises";
+    
     private Long zoneId;
     private Long wardId;
     private Long areaId;
@@ -174,6 +180,9 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     private BigDecimal departmentValue;
     private BigDecimal mutationFee = BigDecimal.ZERO;
     private List<PropertyDepartment> propertyDepartmentList;
+    private List<DocumentType> assessmentDocumentList;
+    private String assessmentDocumentType = "";
+    private User defaultCitizen;
     
     @Autowired
     private CategoryDao categoryDAO;
@@ -192,7 +201,11 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     @Autowired
     private BoundaryTypeService boundaryTypeService;
     @Autowired
-    private PropertyDepartmentRepository propertyDepartmentRepository;
+    private transient PropertyDepartmentRepository propertyDepartmentRepository;
+    @Autowired
+    private transient PropertyService propService;
+    @Autowired
+    private transient UserRepository userRepository;
 
     @Override
     public Object getModel() {
@@ -533,7 +546,22 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
         setPropertyDepartmentList(propertyDepartmentList);
         return "propDepartment";
     }
+    
+    @Actions({ @Action(value = "/ajaxcommon-defaultcitizen-fordoctype"),
+            @Action(value = "/public/ajaxcommon-defaultcitizen-fordoctype") })
+    public String getDefaultCitizenForDoctype() {
 
+        if (assessmentDocumentType != null) {
+            final User user = userRepository.findByUsername(DEFAULT_CITIZEN_NAME);
+            defaultCitizen.setName(user.getName());
+            defaultCitizen.setMobileNumber(user.getMobileNumber());
+            defaultCitizen.setGender(user.getGender());
+            defaultCitizen.setGuardian(user.getGuardian());
+            defaultCitizen.setGuardianRelation(user.getGuardianRelation());
+        }
+        return "defaultcitizen";
+    }
+    
     public Long getZoneId() {
         return zoneId;
     }
@@ -831,29 +859,29 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
         this.assessmentNo = assessmentNo;
     }
 
-	public BigDecimal getPartyValue() {
-		return partyValue;
-	}
+    public BigDecimal getPartyValue() {
+        return partyValue;
+    }
 
-	public void setPartyValue(BigDecimal partyValue) {
-		this.partyValue = partyValue;
-	}
+    public void setPartyValue(BigDecimal partyValue) {
+        this.partyValue = partyValue;
+    }
 
-	public BigDecimal getDepartmentValue() {
-		return departmentValue;
-	}
+    public BigDecimal getDepartmentValue() {
+        return departmentValue;
+    }
 
-	public void setDepartmentValue(BigDecimal departmentValue) {
-		this.departmentValue = departmentValue;
-	}
+    public void setDepartmentValue(BigDecimal departmentValue) {
+        this.departmentValue = departmentValue;
+    }
 
-	public BigDecimal getMutationFee() {
-		return mutationFee;
-	}
+    public BigDecimal getMutationFee() {
+        return mutationFee;
+    }
 
-	public void setMutationFee(BigDecimal mutationFee) {
-		this.mutationFee = mutationFee;
-	}
+    public void setMutationFee(BigDecimal mutationFee) {
+        this.mutationFee = mutationFee;
+    }
 
     public List<PropertyDepartment> getPropertyDepartmentList() {
         return propertyDepartmentList;
@@ -861,6 +889,30 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
 
     public void setPropertyDepartmentList(List<PropertyDepartment> propertyDepartmentList) {
         this.propertyDepartmentList = propertyDepartmentList;
+    }
+
+    public List<DocumentType> getAssessmentDocumentList() {
+        return assessmentDocumentList;
+    }
+
+    public void setAssessmentDocumentList(List<DocumentType> assessmentDocumentList) {
+        this.assessmentDocumentList = assessmentDocumentList;
+    }
+
+    public String getAssessmentDocumentType() {
+        return assessmentDocumentType;
+    }
+
+    public void setAssessmentDocumentType(String assessmentDocumentType) {
+        this.assessmentDocumentType = assessmentDocumentType;
+    }
+
+    public User getDefaultCitizen() {
+        return defaultCitizen;
+    }
+
+    public void setDefaultCitizen(User defaultCitizen) {
+        this.defaultCitizen = defaultCitizen;
     }
 
 }

@@ -93,6 +93,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
@@ -126,6 +129,7 @@ import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.client.service.calculator.APTaxCalculator;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -292,6 +296,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private Long vacantLandPlotAreaId;
     private Long layoutApprovalAuthorityId;
     private boolean allowEditDocument = Boolean.FALSE;
+    private List<DocumentType> assessmentDocumentTypes = new ArrayList<>();
+    private List<String> assessmentDocumentNames;
+    private transient DocumentTypeDetails documentTypeDetails = new DocumentTypeDetails();
 
     @Autowired
     private transient PropertyDepartmentRepository propertyDepartmentRepository;
@@ -301,6 +308,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     @Autowired
     private transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepository;
+    
+    @PersistenceContext
+    private transient EntityManager entityManager; 
 
     public CreatePropertyAction() {
         super();
@@ -394,7 +404,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (loggedUserIsMeesevaUser && property.getMeesevaApplicationNumber() != null)
             basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
-
+        propService.processAndStoreDocument(property.getAssessmentDocuments());
         if (!loggedUserIsMeesevaUser)
             basicPropertyService.persist(basicProperty);
         else {
@@ -405,6 +415,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         }
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         setBasicProp(basicProperty);
+        propService.saveDocumentTypeDetails(basicProperty, getDocumentTypeDetails());
         setAckMessage("Property Data Saved Successfully in the System and forwarded to : ");
         setApplicationNoMessage(" with application number : ");
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
@@ -513,6 +524,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     setBlockId(boundaryService.getBoundaryById(area.getId()).getId());
                     setBlockName(area.getName());
                 }
+            }
+            try {
+                final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
+                query.setParameter(1, basicProp.getId());
+                setDocumentTypeDetails((DocumentTypeDetails) query.getSingleResult());
+            } catch (Exception e) {
+                LOGGER.error("No Document type details present for Basicproperty " + e);
             }
         }
     }
@@ -647,8 +665,18 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             property.getPropertyDetail().setLayoutPermitNo(null);
             property.getPropertyDetail().setLayoutPermitDate(null);
         }
+        if (getDocumentTypeDetails().getDocumentName().equals(PropertyTaxConstants.DOCUMENT_NAME_NOTARY_DOCUMENT))
+            property.getPropertyDetail().setStructure(true);
+        else
+            property.getPropertyDetail().setStructure(false);
+        if (property.getAssessmentDocuments() != null) {
+            propService.clearOldDocumentAttachments(property.getAssessmentDocuments(), getDocumentTypeDetails());
+            propService.processAndStoreDocument(property.getAssessmentDocuments());
+        }
         property.setBasicProperty(basicProp);
         propService.updateReferenceBasicProperty(basicProp, getParentIndex());
+        if (basicProp != null)
+            propService.updateDocumentTypeDetails(basicProp, getDocumentTypeDetails());
     }
 
     private void updatePropertyId(final BasicProperty basicProperty) {
@@ -792,6 +820,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         }
 
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE);
+        assessmentDocumentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE_ASMT_DOC);
         final List<FloorType> floorTypeList = getPersistenceService().findAllBy("from FloorType order by name");
         final List<RoofType> roofTypeList = getPersistenceService().findAllBy("from RoofType order by name");
         final List<WallType> wallTypeList = getPersistenceService().findAllBy("from WallType order by name");
@@ -890,6 +919,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         setLayoutApprovalAuthorityList(layoutApprovalAuthorityRepository.findAll());
         addDropdownData("vacantLandPlotAreaList", vacantLandPlotAreaList);
         addDropdownData("layoutApprovalAuthorityList", layoutApprovalAuthorityList);
+        setAssessmentDocumentNames(PropertyTaxConstants.ASSESSMENT_DOCUMENT_NAMES);
+        addDropdownData("assessmentDocumentNameList", assessmentDocumentNames);
         super.prepare();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("prepare: PropTypeList: " + (propTypeList != null ? propTypeList : "NULL") + ", PropOccuList: "
@@ -976,6 +1007,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         LOGGER.debug("Entered into changePropertyDetail, Property is Vacant land");
 
         final PropertyDetail propertyDetail = property.getPropertyDetail();
+        if(getDocumentTypeDetails().getDocumentName().equals(PropertyTaxConstants.DOCUMENT_NAME_NOTARY_DOCUMENT))
+            propertyDetail.setStructure(true);
         final VacantProperty vacantProperty = new VacantProperty(propertyDetail.getSitalArea(),
                 propertyDetail.getTotalBuiltupArea(), propertyDetail.getCommBuiltUpArea(),
                 propertyDetail.getPlinthArea(), propertyDetail.getCommVacantLand(), propertyDetail.getNonResPlotArea(),
@@ -1142,12 +1175,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                             .equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING))
                 addActionError(getText("mandatory.doorNo"));
 
-        // if (!property.getPropertyDetail().isStructure()) {
-        if (null == property.getBasicProperty().getRegdDocDate())
-            addActionError(getText("mandatory.regdocdate"));
-        if (StringUtils.isBlank(property.getBasicProperty().getRegdDocNo()))
-            addActionError(getText("mandatory.regdocno"));
-
         if (electionWardId == null || electionWardId == -1)
             addActionError(getText("mandatory.election.ward"));
         for (final PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfoProxy())
@@ -1181,7 +1208,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         validateProperty(property, areaOfPlot, dateOfCompletion, eastBoundary, westBoundary, southBoundary,
                 northBoundary, propTypeId, null != zoneId && zoneId != -1 ? String.valueOf(zoneId) : "", propOccId,
                 floorTypeId, roofTypeId, wallTypeId, woodTypeId, null, null, vacantLandPlotAreaId,
-                layoutApprovalAuthorityId);
+                layoutApprovalAuthorityId, getDocumentTypeDetails());
 
         if (isBlank(pinCode))
             addActionError(getText("mandatory.pincode"));
@@ -1241,6 +1268,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (propTypeMstr.getCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT)
                 && propertyDepartmentId == null)
             addActionError(getText("mandatory.property.department"));
+        validateDocumentDetails(getDocumentTypeDetails());
     }
 
     @SkipValidation
@@ -2029,5 +2057,29 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     public void setAllowEditDocument(final boolean allowEditDocument) {
         this.allowEditDocument = allowEditDocument;
+    }
+    
+    public List<DocumentType> getAssessmentDocumentTypes() {
+        return assessmentDocumentTypes;
+    }
+
+    public void setAssessmentDocumentTypes(List<DocumentType> assessmentDocumentTypes) {
+        this.assessmentDocumentTypes = assessmentDocumentTypes;
+    }
+
+    public List<String> getAssessmentDocumentNames() {
+        return assessmentDocumentNames;
+    }
+
+    public void setAssessmentDocumentNames(List<String> assessmentDocumentNames) {
+        this.assessmentDocumentNames = assessmentDocumentNames;
+    }
+
+    public DocumentTypeDetails getDocumentTypeDetails() {
+        return documentTypeDetails;
+    }
+
+    public void setDocumentTypeDetails(DocumentTypeDetails documentTypeDetails) {
+        this.documentTypeDetails = documentTypeDetails;
     }
 }

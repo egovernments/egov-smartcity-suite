@@ -302,7 +302,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
                 setTaxDueErrorMsg(getText("taxdues.error.msg", new String[] { PROPERTY_TRANSFER }));
                 return REJECT_ON_TAXDUE;
-            } else {
+            }
+            if (basicproperty.getActiveProperty().getPropertyDetail().isStructure()) {
+                addActionError(getText("error.superstruc.prop.notallowed"));
+                return COMMON_FORM;
+            }
+                 
+            else {
                 loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
                 if (loggedUserIsMeesevaUser)
                     if (getMeesevaApplicationNumber() == null) {

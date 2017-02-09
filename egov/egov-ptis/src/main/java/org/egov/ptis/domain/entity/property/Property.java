@@ -205,5 +205,9 @@ public interface Property extends Auditable {
     public void setAmalgamationOwnersProxy(List<AmalgamationOwner> amalgamationOwnersProxy);
 
     public void addAmalgamationOwners(AmalgamationOwner ownerInfo);
-
+    
+    public List<Document> getAssessmentDocuments();
+    
+    public void setAssessmentDocuments(List<Document> assessmentDocumentsProxy);
+    
 }

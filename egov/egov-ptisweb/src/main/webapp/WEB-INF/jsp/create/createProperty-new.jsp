@@ -82,6 +82,11 @@
 					<tr>
 						<%@  include file="createPropertyForm.jsp"%>
 					</tr>
+					<s:if test="%{!assessmentDocumentTypes.isEmpty()}">
+						<tr>
+							<%@ include file="document-typedetails-form.jsp"%>
+						</tr>
+					</s:if>
 					<s:if test="%{!documentTypes.isEmpty()}">
 						<tr>
 							<%@ include file="../common/DocumentUploadForm.jsp"%>

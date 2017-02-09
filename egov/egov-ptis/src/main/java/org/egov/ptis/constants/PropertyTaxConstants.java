@@ -66,6 +66,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.google.common.collect.ImmutableList;
+
 public interface PropertyTaxConstants {
 
     public static final String APPCONFIG_ISCORPORATION = "IS_CORPORATION";
@@ -1676,4 +1678,18 @@ public interface PropertyTaxConstants {
             add(VALUATION_CERTIFICATE);
         }
     };
+    public static final List<String> ASSESSMENT_DOCUMENT_NAMES = ImmutableList.of("Patta Certificate (Issued by Revenue Department)",
+            "Registered Will Document", "Un-registered Will Document", "Decree by Civil Court", "Un-registered Document / Notary document", "Registered Document");
+    public static final String DOCUMENT_TYPE_PATTA_CERTIFICATE = "Patta Certificate";
+    public static final String DOCUMENT_TYPE_MRO_PROCEEDINGS = "MRO Proceedings";
+    public static final String DOCUMENT_TYPE_WILL_DEED = "Will Deed";
+    public static final String DOCUMENT_TYPE_DECREE_DOCUMENT = "Decree Document";
+    public static final String DOCUMENT_TYPE_REGD_DOCUMENT = "Registered Document";
+    public static final String DOCUMENT_TYPE_PHOTO_PROPERTY_HOLDER  = "Photo of Property With Holder";
+    public static final String DOCUMENT_NAME_REGD_DOCUMENT = "Registered Document";
+    public static final String DOCUMENT_NAME_PATTA_CERTIFICATE = "Patta Certificate (Issued by Revenue Department)";
+    public static final String DOCUMENT_NAME_REGD_WILL_DOCUMENT = "Registered Will Document";
+    public static final String DOCUMENT_NAME_UNREGD_WILL_DOCUMENT = "Un-registered Will Document";
+    public static final String DOCUMENT_NAME_DECREE_BY_CIVILCOURT = "Decree by Civil Court";
+    public static final String DOCUMENT_NAME_NOTARY_DOCUMENT = "Un-registered Document / Notary document";
 }

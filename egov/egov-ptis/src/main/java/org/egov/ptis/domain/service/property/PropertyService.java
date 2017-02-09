@@ -121,6 +121,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -186,6 +187,7 @@ import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
+import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.Apartment;
@@ -314,7 +316,11 @@ public class PropertyService {
     
     @Autowired
     private LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepository;
-
+    
+    @Autowired
+    @Qualifier("documentTypeDetailsService")
+    private PersistenceService<DocumentTypeDetails, Long> documentTypeDetailsService;
+    
     /**
      * Creates a new property if property is in transient state else updates persisted property
      *
@@ -3465,6 +3471,58 @@ public class PropertyService {
     public String getDesignationForPositionAndUser(Long positionId,Long userId) {
         List<Assignment> assignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(positionId, userId, new Date());
         return (!assignment.isEmpty()) ? assignment.get(0).getDesignation().getName() : null; 
+    }
+    
+    @Transactional
+    public void saveDocumentTypeDetails(BasicProperty basicProperty, DocumentTypeDetails documentTypeDetails){
+        documentTypeDetails.setBasicPropertyId(basicProperty.getId());
+        documentTypeDetailsService.persist(documentTypeDetails);
+    }
+    
+    @Transactional
+    public void updateDocumentTypeDetails(BasicProperty basicProperty, DocumentTypeDetails documentTypeDetails){
+        documentTypeDetails.setBasicPropertyId(basicProperty.getId());
+        documentTypeDetailsService.update(documentTypeDetails);
+    }
+    
+    public void clearOldDocumentAttachments(List<Document> documents, DocumentTypeDetails documentTypeDetails){
+        List<DocumentType> excludedDocumentTypes = excludeOldDocumentAttachments(documentTypeDetails);
+        documents.forEach(document -> {
+            if (excludedDocumentTypes.contains(document.getType())
+                    && !document.getFiles().isEmpty())
+                    document.getFiles().clear();
+        });
+    }
+    
+    public List<DocumentType> excludeOldDocumentAttachments(DocumentTypeDetails documentTypeDetails){
+        List<DocumentType> documentTypes = getDocumentTypesForTransactionType(TransactionType.CREATE_ASMT_DOC);
+        Iterator<DocumentType> documentTypeIterator = documentTypes.iterator();
+        while(documentTypeIterator.hasNext()){
+            DocumentType dt = documentTypeIterator.next();
+            if(documentTypeDetails.getDocumentName().equals(PropertyTaxConstants.DOCUMENT_NAME_PATTA_CERTIFICATE)){
+                if(dt.getName().equals(PropertyTaxConstants.DOCUMENT_TYPE_PATTA_CERTIFICATE) || dt.getName().equals(PropertyTaxConstants.DOCUMENT_TYPE_MRO_PROCEEDINGS))
+                    documentTypeIterator.remove();
+            }
+            else if(documentTypeDetails.getDocumentName().equals(PropertyTaxConstants.DOCUMENT_NAME_REGD_WILL_DOCUMENT) ||
+                    documentTypeDetails.getDocumentName().equals(PropertyTaxConstants.DOCUMENT_NAME_UNREGD_WILL_DOCUMENT) ){
+                if(dt.getName().equals(PropertyTaxConstants.DOCUMENT_TYPE_WILL_DEED))
+                    documentTypeIterator.remove();
+            }
+            else if(documentTypeDetails.getDocumentName().equals(PropertyTaxConstants.DOCUMENT_NAME_DECREE_BY_CIVILCOURT)){
+                if(dt.getName().equals(PropertyTaxConstants.DOCUMENT_TYPE_DECREE_DOCUMENT))
+                    documentTypeIterator.remove();
+            }
+            else if(documentTypeDetails.getDocumentName().equals(PropertyTaxConstants.DOCUMENT_NAME_REGD_DOCUMENT)){
+                if(dt.getName().equals(PropertyTaxConstants.DOCUMENT_TYPE_REGD_DOCUMENT))
+                    documentTypeIterator.remove();
+            }
+            else{
+                if(dt.getName().equals(PropertyTaxConstants.DOCUMENT_TYPE_PHOTO_PROPERTY_HOLDER))
+                    documentTypeIterator.remove();
+            }
+        }
+        return documentTypes;
+        
     }
     
     public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
