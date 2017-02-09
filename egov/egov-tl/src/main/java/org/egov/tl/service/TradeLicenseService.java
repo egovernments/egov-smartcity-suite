@@ -231,46 +231,50 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         }
     }
 
-    private Map<String, Object> getReportParamsForCertificate(final License license, final String districtName,
-                                                              final String cityMunicipalityName) {
+	private Map<String, Object> getReportParamsForCertificate(final License license, final String districtName,
+			final String cityMunicipalityName) {
 
-        final Map<String, Object> reportParams = new HashMap<>();
-        reportParams.put("applicationnumber", license.getApplicationNumber());
-        reportParams.put("applicantName", license.getLicensee().getApplicantName());
-        reportParams.put("licencenumber", license.getLicenseNumber());
-        reportParams.put("wardName", license.getBoundary().getName());
-        reportParams.put("cscNumber", "");
-        reportParams.put("nameOfEstablishment", license.getNameOfEstablishment());
-        reportParams.put("licenceAddress", license.getAddress());
-        reportParams.put("municipality", cityMunicipalityName);
-        reportParams.put("district", districtName);
-        reportParams.put("category", license.getCategory().getName());
-        reportParams.put("subCategory", license.getTradeName().getName());
-		if (license.getState().getValue().equals(Constants.WF_FIRST_LVL_FEECOLLECTED)) {
+		final Map<String, Object> reportParams = new HashMap<>();
+		reportParams.put("applicationnumber", license.getApplicationNumber());
+		reportParams.put("applicantName", license.getLicensee().getApplicantName());
+		reportParams.put("licencenumber", license.getLicenseNumber());
+		reportParams.put("wardName", license.getBoundary().getName());
+		reportParams.put("cscNumber", "");
+		reportParams.put("nameOfEstablishment", license.getNameOfEstablishment());
+		reportParams.put("licenceAddress", license.getAddress());
+		reportParams.put("municipality", cityMunicipalityName);
+		reportParams.put("district", districtName);
+		reportParams.put("category", license.getCategory().getName());
+		reportParams.put("subCategory", license.getTradeName().getName());
+
+		if (license.getState() != null && license.getState().getValue().equals(Constants.WF_FIRST_LVL_FEECOLLECTED)) {
 			reportParams.put("certificateType", "provisional");
 		}
-        reportParams.put("appType", license.isNewApplication() ? "New Trade" : "Renewal");
-        reportParams.put("currentDate", currentDateToDefaultDateFormat());
-        if (ApplicationThreadLocals.getMunicipalityName().contains("Corporation"))
-            reportParams.put("carporationulbType", Boolean.TRUE);
-        reportParams.put("municipality", ApplicationThreadLocals.getMunicipalityName());
-        String startYear;
-        String endYear;
-        Optional<EgDemandDetails> demandDetails = license.getCurrentDemand().getEgDemandDetails().stream().
-                sorted(Comparator.comparing(EgDemandDetails::getInstallmentEndDate).reversed()).
-                filter(demandDetail -> demandDetail.getAmount().subtract(demandDetail.getAmtCollected()).doubleValue() <= 0).findFirst();
-        if (demandDetails.isPresent()) {
-            startYear = toYearFormat(demandDetails.get().getInstallmentStartDate());
-            endYear = toYearFormat(demandDetails.get().getInstallmentEndDate());
-        } else
-            throw new ValidationException("License Fee is not paid", "License Fee is not paid");
 
-        reportParams.put("installMentYear", startYear + "-" + endYear);
-        reportParams.put("applicationdate", getDefaultFormattedDate(license.getApplicationDate()));
-        reportParams.put("demandUpdateDate", getDefaultFormattedDate(license.getCurrentDemand().getModifiedDate()));
-        reportParams.put("demandTotalamt", license.getCurrentLicenseFee());
-        return reportParams;
-    }
+		reportParams.put("appType", license.isNewApplication() ? "New Trade" : "Renewal");
+		reportParams.put("currentDate", currentDateToDefaultDateFormat());
+		if (ApplicationThreadLocals.getMunicipalityName().contains("Corporation"))
+			reportParams.put("carporationulbType", Boolean.TRUE);
+		reportParams.put("municipality", ApplicationThreadLocals.getMunicipalityName());
+		String startYear;
+		String endYear;
+		Optional<EgDemandDetails> demandDetails = license.getCurrentDemand().getEgDemandDetails().stream()
+				.sorted(Comparator.comparing(EgDemandDetails::getInstallmentEndDate).reversed())
+				.filter(demandDetail -> demandDetail.getAmount().subtract(demandDetail.getAmtCollected())
+						.doubleValue() <= 0)
+				.findFirst();
+		if (demandDetails.isPresent()) {
+			startYear = toYearFormat(demandDetails.get().getInstallmentStartDate());
+			endYear = toYearFormat(demandDetails.get().getInstallmentEndDate());
+		} else
+			throw new ValidationException("License Fee is not paid", "License Fee is not paid");
+
+		reportParams.put("installMentYear", startYear + "-" + endYear);
+		reportParams.put("applicationdate", getDefaultFormattedDate(license.getApplicationDate()));
+		reportParams.put("demandUpdateDate", getDefaultFormattedDate(license.getCurrentDemand().getModifiedDate()));
+		reportParams.put("demandTotalamt", license.getCurrentLicenseFee());
+		return reportParams;
+	}
 
     public List<String> getTradeLicenseForGivenParam(final String paramValue, final String paramType) {
         List<String> licenseList = new ArrayList<>();
