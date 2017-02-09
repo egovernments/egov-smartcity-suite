@@ -108,7 +108,8 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     public static final String VIEW = "view";
     private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String SUCCESSMESSAGE = "successMessage";
-
+    private static final String PROPERTY_MODIFY_REJECT_FAILURE = "property.modify.reject.failure";
+    
     PropertyDemolitionService propertyDemolitionService;
 
     @Autowired
@@ -314,7 +315,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
             isNotrejection = false;
         }
         if (isNotrejection)
-            model.addAttribute(SUCCESSMESSAGE, "Intiator is not active so can not do rejection. ");
+            model.addAttribute(SUCCESSMESSAGE,PROPERTY_MODIFY_REJECT_FAILURE+property.getBasicProperty().getUpicNo());
     }
 
     private String loggedInUserDesignation(final PropertyImpl propertyImpl, final User user) {

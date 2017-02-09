@@ -105,7 +105,8 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     public static final String VIEW = "view";
     private static final String SUCCESSMESSAGE = "successMessage";
     private static final String TAXEXEMPTIONREASON = "taxExemptedReason";
-
+    private static final String PROPERTY_MODIFY_REJECT_FAILURE = "property.modify.reject.failure";
+    
     private final TaxExemptionService taxExemptionService;
 
     @Autowired
@@ -282,7 +283,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
             isNotToReject = false;
         }
         if (isNotToReject)
-            successMessage = "Intiator is not active so can not do rejection. ";
+            successMessage = PROPERTY_MODIFY_REJECT_FAILURE+property.getBasicProperty().getUpicNo();
         return successMessage;
     }
 

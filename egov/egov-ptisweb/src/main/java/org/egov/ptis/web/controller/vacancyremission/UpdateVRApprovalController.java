@@ -83,6 +83,7 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
 
     protected static final String VRAPPROVAL_EDIT = "vacancyRemissionApproval-edit";
     private static final String APPROVAL_POS = "approvalPosition";
+    private static final String PROPERTY_MODIFY_REJECT_FAILURE = "property.modify.reject.failure";
 
     private final VacancyRemissionService vacancyRemissionService;
 
@@ -255,7 +256,7 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
                         + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
             }
         } else
-            successMsg = "Intiator is not active so can not do rejection";
+            successMsg = PROPERTY_MODIFY_REJECT_FAILURE+vacancyRemissionApproval.getVacancyRemission().getBasicProperty().getUpicNo();
         return successMsg;
     }
 }

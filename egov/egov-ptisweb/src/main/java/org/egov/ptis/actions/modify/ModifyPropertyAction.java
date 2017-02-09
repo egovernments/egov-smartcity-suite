@@ -220,6 +220,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private static final String PROPERTY_FORWARD_SUCCESS = "property.forward.success";
     private static final String TAXDUES_ERROR_MSG = "taxdues.error.msg";
     private static final String WF_PENDING_MSG = "wf.pending.msg";
+    private static final String PROPERTY_MODIFY_REJECT_FAILURE = "property.modify.reject.failure";
     private static final String PROPERTY_ALTER_ADDITION = "Property Alter/Addition";
     private static final String PROPERTY_BIFURCATION = "Property Bifurcation";
     private static final String PROPERTY_GENERAL_REVISION_PETITION = "Property General Revision Petition";
@@ -935,7 +936,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             } else
                 setAckMessage(getText(PROPERTY_MODIFY_REJECT_SUCCESS, new String[] { getModifyReasonString(), username }));
         } else
-            setAckMessage("Intiator is not active so can not do rejection with the assessmnet number : ");
+            setAckMessage(PROPERTY_MODIFY_REJECT_FAILURE);
     }
 
     private boolean isAssistantOrRIApprovalPending() {

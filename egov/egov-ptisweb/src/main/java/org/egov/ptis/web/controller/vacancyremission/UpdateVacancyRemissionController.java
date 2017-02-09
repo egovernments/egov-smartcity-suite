@@ -82,7 +82,8 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
     private static final String APPROVAL_POS = "approvalPosition";
     private final VacancyRemissionService vacancyRemissionService;
     private final PropertyTaxUtil propertyTaxUtil;
-
+    private static final String PROPERTY_MODIFY_REJECT_FAILURE = "property.modify.reject.failure";
+    
     @Autowired
     private PropertyService propertyService;
 
@@ -227,7 +228,7 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
             vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
                     workFlowAction, propertyByEmployee);
         } else
-            successMsg = "Intiator is not active so can not do rejection ";
-        return successMsg;
+            successMsg = PROPERTY_MODIFY_REJECT_FAILURE+vacancyRemission.getBasicProperty().getUpicNo();
+        return successMsg;   
     }
 }

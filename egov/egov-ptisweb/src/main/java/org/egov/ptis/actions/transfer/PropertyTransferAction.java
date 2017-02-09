@@ -177,7 +177,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public static final String REDIRECT_SUCCESS = "redirect-success";
     public static final String COLLECT_FEE = "collect-fee";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
-
+    private static final String PROPERTY_MODIFY_REJECT_FAILURE = "property.modify.reject.failure";
+    
     // Form Binding Model
     private PropertyMutation propertyMutation = new PropertyMutation();
 
@@ -470,7 +471,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 setAckMessage("Transfer of ownership data rejected successfuly and forwarded to : ");
             setAssessmentNoMessage(" with assessment number : ");
         } else
-            setAckMessage("Intiator is not active so can not do rejection with the assessmnet number : ");
+            setAckMessage(PROPERTY_MODIFY_REJECT_FAILURE);
         return ACK;
     }
 
