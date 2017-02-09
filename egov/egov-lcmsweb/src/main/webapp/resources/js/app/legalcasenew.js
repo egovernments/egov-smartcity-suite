@@ -155,7 +155,7 @@ $(document).ready(function(){
 		},
 		queryTokenizer : Bloodhound.tokenizers.whitespace,
 		remote : {
-			url : '/lcms/ajax/getpositionEmployee',
+			url : '/lcms/ajax/getposition', 
 			replace : function(url, uriEncodedQuery) {
 				return url + '?positionName=' + uriEncodedQuery;
 
@@ -175,7 +175,7 @@ $(document).ready(function(){
 	});
 	
 	assignPosition.initialize();
-	var typeaheadobj = $('#positionEmpName').typeahead({
+	var typeaheadobj = $('#positionName').typeahead({
 		hint: false,
 		highlight: false,
 		minLength: 1
@@ -184,7 +184,7 @@ $(document).ready(function(){
 		source : assignPosition.ttAdapter()
 	});
 	
-	typeaheadWithEventsHandling(typeaheadobj, '#positionEmpId'); 
+	typeaheadWithEventsHandling(typeaheadobj, '#positionId'); 
 });
 function validCaseRecievingAndFillingRange(start, end) {
     var startDate = Date.parse(start);
@@ -508,4 +508,3 @@ $('#btnclose').click(function(){
 	});
 	
 });
-

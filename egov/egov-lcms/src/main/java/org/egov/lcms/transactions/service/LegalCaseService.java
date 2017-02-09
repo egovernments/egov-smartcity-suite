@@ -141,8 +141,7 @@ public class LegalCaseService {
     @Transactional
     public void updateCounterAffidavitAndPwr(final LegalCase legalcase, final List<Pwr> pwrList) {
         /*
-         * final List<LegalCaseDepartment> legalcaseDetails = new
-         * ArrayList<LegalCaseDepartment>(0);
+         * final List<LegalCaseDepartment> legalcaseDetails = new ArrayList<LegalCaseDepartment>(0);
          */
         final List<Pwr> pwrListtemp = new ArrayList<Pwr>(0);
         final List<CounterAffidavit> caListtemp = new ArrayList<CounterAffidavit>(0);
@@ -159,19 +158,13 @@ public class LegalCaseService {
         legalcase.getCounterAffidavits().clear();
         legalcase.setCounterAffidavits(caListtemp);
         /*
-         * for (final LegalCaseDepartment legaldeptObj : legalDept) { String[]
-         * stremp = null; legaldeptObj.setLegalCase(legalcase); if
-         * (legaldeptObj.getPosition().getName() != null &&
-         * legaldeptObj.getPosition().getName().contains("@")) { stremp =
-         * legaldeptObj.getPosition().getName().split("@");
-         * legaldeptObj.setPosition(legalCaseUtil.getPositionByName(stremp[0]));
-         * } else {
-         * legaldeptObj.setPosition(legalCaseUtil.getPositionByName(legaldeptObj
-         * .getPosition().getName())); }
-         * legaldeptObj.setDepartment(legalCaseUtil.getDepartmentByName(
-         * legaldeptObj.getDepartment().getName()));
-         * legalcaseDetails.add(legaldeptObj); }
-         * legalcase.getLegalCaseDepartment().clear();
+         * for (final LegalCaseDepartment legaldeptObj : legalDept) { String[] stremp = null;
+         * legaldeptObj.setLegalCase(legalcase); if (legaldeptObj.getPosition().getName() != null &&
+         * legaldeptObj.getPosition().getName().contains("@")) { stremp = legaldeptObj.getPosition().getName().split("@");
+         * legaldeptObj.setPosition(legalCaseUtil.getPositionByName(stremp[0])); } else {
+         * legaldeptObj.setPosition(legalCaseUtil.getPositionByName(legaldeptObj .getPosition().getName())); }
+         * legaldeptObj.setDepartment(legalCaseUtil.getDepartmentByName( legaldeptObj.getDepartment().getName()));
+         * legalcaseDetails.add(legaldeptObj); } legalcase.getLegalCaseDepartment().clear();
          * legalcase.setLegalCaseDepartment(legalcaseDetails);
          */
 

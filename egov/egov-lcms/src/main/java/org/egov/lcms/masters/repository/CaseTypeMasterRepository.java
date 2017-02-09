@@ -49,6 +49,7 @@ import org.springframework.stereotype.Repository;
 public interface CaseTypeMasterRepository extends JpaRepository<CaseTypeMaster, Long> {
 
     CaseTypeMaster findByCode(String code);
-    List<CaseTypeMaster> findByActiveTrueOrderByCaseTypeAsc();
+
+    List<CaseTypeMaster> findByActiveTrueOrderByOrdernumberAsc();
 
 }

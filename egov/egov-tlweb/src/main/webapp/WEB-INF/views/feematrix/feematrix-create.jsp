@@ -56,18 +56,6 @@
                     </spring:hasBindErrors>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.natureofbusiness"/><span class="mandatory"></span>
-                        </label>
-                        <div class="col-sm-3 add-margin">
-                            <form:select path="natureOfBusiness" id="natureOfBusiness" cssClass="form-control" required="required"
-                                         cssErrorClass="form-control error">
-                                <form:option value="">
-                                    <spring:message code="lbl.select"/>
-                                </form:option>
-                                <form:options items="${natureOfBusinessList}" itemValue="id" itemLabel="name"/>
-                            </form:select>
-                        </div>
-                        <label class="col-sm-3 control-label">
                             <spring:message code="lbl.licenseapptype"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
@@ -77,6 +65,18 @@
                                     <spring:message code="lbl.select"/>
                                 </form:option>
                                 <form:options items="${licenseAppTypeList}" itemValue="id" itemLabel="name"/>
+                            </form:select>
+                        </div>
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.natureofbusiness"/><span class="mandatory"></span>
+                        </label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="natureOfBusiness" id="natureOfBusiness" cssClass="form-control" required="required"
+                                         cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                                <form:options items="${natureOfBusinessList}" itemValue="id" itemLabel="name"/>
                             </form:select>
                         </div>
                     </div>
@@ -163,7 +163,7 @@
                             <spring:message code="lbl.effective.from"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input id="effectiveFrom" path="effectiveFrom" class="datepicker form-control text-left" maxlength="10"/>
+                            <form:input id="effectiveFrom" path="effectiveFrom" class="form-control text-left" maxlength="10" readonly="true"/>
                         </div>
 
                         <label class="col-sm-3 control-label">
@@ -175,13 +175,13 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-12">
-                            <form:checkbox id="sameForPermanentAndTemporary" path="sameForPermanentAndTemporary"/>
-                            <label class="control-label" for="sameForPermanentAndTemporary">
+                            <form:checkbox id="sameForPermanentAndTemporary" path="sameForPermanentAndTemporary" cssClass="sameForPermanentAndTemporary display-hide"/>
+                            <label class="control-label sameForPermanentAndTemporary display-hide" for="sameForPermanentAndTemporary">
                                 &nbsp;&nbsp;<spring:message code="lbl.feematrix.use.same.perm.and.tmp"/>
                             </label>
                             <br/>
-                            <form:checkbox id="sameForNewAndRenew" path="sameForNewAndRenew"/>
-                            <label class="control-label" for="sameForNewAndRenew">
+                            <form:checkbox id="sameForNewAndRenew" path="sameForNewAndRenew" cssClass="sameForNewAndRenew display-hide"/>
+                            <label class="control-label sameForNewAndRenew display-hide" for="sameForNewAndRenew">
                                 &nbsp;&nbsp;<spring:message code="lbl.feematrix.use.same.new.and.renew"/>
                             </label>
                         </div>
@@ -207,19 +207,21 @@
                             <c:choose>
                                 <c:when test="${not empty feeMatrix.feeMatrixDetail}">
                                     <c:forEach items="${feeMatrix.feeMatrixDetail}" var="feeMatrixDetail" varStatus="vs">
-                                        <tr data-create="yes">
-                                            <td><input type="hidden" name="feeMatrixDetail[${vs.index}]" class="detailId" value="${feeMatrixDetail.id}"/>
+                                        <tr class="dynamicInput">
+                                            <td>
                                                 <input type="text" name="feeMatrixDetail[${vs.index}].uomFrom" value="${feeMatrixDetail.uomFrom}"
                                                        class="form-control fromRange patternvalidation fromvalue"
                                                        pattern="-?\d*" data-pattern="numerichyphen" data-fromto="from"
                                                        maxlength="8" readonly="readonly" required="required"/>
                                             </td>
-                                            <td><input type="text" name="feeMatrixDetail[${vs.index}].uomTo" value="${feeMatrixDetail.uomTo}"
+                                            <td>
+                                                <input type="text" name="feeMatrixDetail[${vs.index}].uomTo" value="${feeMatrixDetail.uomTo}"
                                                        class="form-control patternvalidation tovalue"
                                                        pattern="-?\d*" data-pattern="numerichyphen" data-fromto="to"
                                                        maxlength="8" required="required"/>
                                             </td>
-                                            <td><input type="text" name="feeMatrixDetail[${vs.index}].amount" value="${feeMatrixDetail.amount}"
+                                            <td>
+                                                <input type="text" name="feeMatrixDetail[${vs.index}].amount" value="${feeMatrixDetail.amount}"
                                                        class="form-control patternvalidation" data-pattern="number" maxlength="8" required="required"/>
                                             </td>
                                             <td><span class="add-padding"><i class="fa fa-trash delete-row" aria-hidden="true"></i></span></td>
@@ -227,23 +229,25 @@
                                     </c:forEach>
                                 </c:when>
                                 <c:otherwise>
-                                    <tr data-create="yes">
-                                        <td><input type="hidden" name="feeMatrixDetail[0].id" class="detailId"/>
+                                    <tr>
+                                        <td>
                                             <input type="text" name="feeMatrixDetail[0].uomFrom" value="0"
                                                    class="form-control patternvalidation fromvalue"
                                                    pattern="-?\d*" data-pattern="numerichyphen" data-fromto="from"
                                                    required="required" readonly="readonly"/>
                                         </td>
-                                        <td><input type="text" name="feeMatrixDetail[0].uomTo"
+                                        <td>
+                                            <input type="text" name="feeMatrixDetail[0].uomTo"
                                                    class="form-control patternvalidation tovalue"
                                                    pattern="-?\d*" data-pattern="numerichyphen" data-fromto="to"
                                                    required="required"/>
                                         </td>
-                                        <td><input type="text" name="feeMatrixDetail[0].amount"
+                                        <td>
+                                            <input type="text" name="feeMatrixDetail[0].amount"
                                                    class="form-control patternvalidation"
                                                    data-pattern="number" required="required"/>
                                         </td>
-                                        <td><span class="add-padding"><i class="fa fa-trash delete-row" aria-hidden="true"></i></span></td>
+                                        <td><span class="add-padding"><i class="fa fa-trash delete-row" data-func="add" aria-hidden="true"></i></span></td>
                                     </tr>
                                 </c:otherwise>
                             </c:choose>

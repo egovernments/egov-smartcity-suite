@@ -219,6 +219,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private String assessmentNo;
     private String wfErrorMsg;
     private BigDecimal currentPropertyTax;
+    private String propertyOwner;
+    private String houseNo;
     private BigDecimal currentPropertyTaxFirstHalf;
     private BigDecimal currentPropertyTaxSecondHalf;
     private BigDecimal currentPropertyTaxDue;
@@ -292,6 +294,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             final Map<String, BigDecimal> currentTaxAndDue = propertyService.getCurrentTaxAndBalance(propertyTaxDetails,
                     new Date());
             currentPropertyTax = currentTaxAndDue.get(CURR_DMD_STR);
+            propertyOwner = basicproperty.getFullOwnerName();
+            houseNo= basicproperty.getAddress().getHouseNoBldgApt();
             currentPropertyTaxDue = currentTaxAndDue.get(CURR_BAL_STR);
             arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
             currentWaterTaxDue = propertyService.getWaterTaxDues(assessmentNo);
@@ -1247,5 +1251,20 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     public void setAllowEditDocument(final boolean allowEditDocument) {
         this.allowEditDocument = allowEditDocument;
+    }
+    public String getPropertyOwner() {
+        return propertyOwner;
+    }
+
+    public void setPropertyOwner(String propertyOwner) {
+        this.propertyOwner = propertyOwner;
+    }
+
+    public String getHouseNo() {
+        return houseNo;
+    }
+
+    public void setHouseNo(String houseNo) {
+        this.houseNo = houseNo;
     }
 }

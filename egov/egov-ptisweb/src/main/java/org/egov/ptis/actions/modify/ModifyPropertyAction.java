@@ -40,6 +40,7 @@
 package org.egov.ptis.actions.modify;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ALTERATION_OF_ASSESSMENT;
@@ -50,6 +51,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFU
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.BIFURCATION_OF_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILL_COLLECTOR_DESGN;
@@ -60,6 +62,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_AMALGAMATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_BIFURCATE_PROPERTY;
@@ -95,9 +98,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -127,6 +131,7 @@ import org.egov.commons.Area;
 import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -165,6 +170,7 @@ import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
+import org.egov.ptis.domain.entity.property.PtApplicationType;
 import org.egov.ptis.domain.entity.property.RoofType;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.entity.property.WallType;
@@ -177,8 +183,8 @@ import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepos
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
-import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.google.gson.GsonBuilder;
 
@@ -220,8 +226,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private static final long serialVersionUID = 1L;
     private static final String BIFURCATION = "Bifurcation";
     private static final String RESULT_ERROR = "error";
-    private static final String MODIFY_ACK_TEMPLATE = "modifyProperty_ack";
-    private static final String GRP_ACK_TEMPLATE = "GRP_Property_ack";
+    private static final String MODIFY_ACK_TEMPLATE = "mainModifyPropertyAck";
+    private static final String GRP_ACK_TEMPLATE = "mainGRPPropertyAck";
     public static final String PRINT_ACK = "printAck";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
     public static final String MEESEVA_ERROR = "meesevaError";
@@ -329,12 +335,16 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     transient ReportViewerUtil reportViewerUtil;
     @Autowired
     transient APTaxCalculator taxCalculator;
-    
+
     @Autowired
     transient VacantLandPlotAreaRepository vacantLandPlotAreaRepository;
-    
+
     @Autowired
     transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepository;
+    
+    @Autowired
+    @Qualifier("ptaxApplicationTypeService")
+    private PersistenceService<PtApplicationType, Long> ptaxApplicationTypeService;
 
     public ModifyPropertyAction() {
         super();
@@ -600,9 +610,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         LOGGER.debug("Exiting from view");
         return VIEW;
     }
-    
+
     private void isEligibleForDocEdit() {
-        String nextAction = propertyModel.getState().getNextAction();
+        final String nextAction = propertyModel.getState().getNextAction();
         if (WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING.equals(nextAction)
                 || WF_STATE_ASSISTANT_APPROVAL_PENDING.equals(nextAction))
             setAllowEditDocument(Boolean.TRUE);
@@ -665,15 +675,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             if (propTypeMstr.getType().equals(OWNERSHIP_TYPE_VAC_LAND_STR))
                 addActionError(getText("error.nonVacantToVacant"));
         if (hasErrors())
-            if (StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT)
-                    || StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)
-                    || getModel().getState().getNextAction() != null && getModel().getState().getNextAction()
-                            .equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)
+            if (isAssistantOrRIApprovalPending()
                     || !propertyByEmployee)
                 return NEW;
-            else if (StringUtils.containsIgnoreCase(userDesignationList, BILL_COLLECTOR_DESGN)
-                    || StringUtils.containsIgnoreCase(userDesignationList, COMMISSIONER_DESGN)
-                    || StringUtils.containsIgnoreCase(userDesignationList, REVENUE_OFFICER_DESGN))
+            else if (isCommissionerRoOrBillCollector())
                 return VIEW;
         try {
             modifyBasicProp(getDocNumber());
@@ -731,14 +736,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         LOGGER.debug("Entered into forwardView");
         validateApproverDetails();
         if (hasErrors())
-            if (StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT)
-                    || StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)
-                    || getModel().getState().getNextAction() != null && getModel().getState().getNextAction()
-                            .equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING))
+            if (isAssistantOrRIApprovalPending())
                 return NEW;
-            else if (StringUtils.containsIgnoreCase(userDesignationList, BILL_COLLECTOR_DESGN)
-                    || StringUtils.containsIgnoreCase(userDesignationList, COMMISSIONER_DESGN)
-                    || StringUtils.containsIgnoreCase(userDesignationList, REVENUE_OFFICER_DESGN))
+            else if (isCommissionerRoOrBillCollector())
                 return VIEW;
         propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
                 Long.valueOf(getModelId()));
@@ -849,14 +849,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         LOGGER.debug("reject: Property rejection started");
         if (isBlank(approverComments)) {
             addActionError(getText("property.workflow.remarks"));
-            if (StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT)
-                    || StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)
-                    || getModel().getState().getNextAction() != null && getModel().getState().getNextAction()
-                            .equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING))
+            if (isAssistantOrRIApprovalPending())
                 return NEW;
-            else if (StringUtils.containsIgnoreCase(userDesignationList, BILL_COLLECTOR_DESGN)
-                    || StringUtils.containsIgnoreCase(userDesignationList, COMMISSIONER_DESGN)
-                    || StringUtils.containsIgnoreCase(userDesignationList, REVENUE_OFFICER_DESGN))
+            else if (isCommissionerRoOrBillCollector())
                 return VIEW;
         }
         propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
@@ -869,22 +864,85 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         final BasicProperty basicProperty = propertyModel.getBasicProperty();
         setBasicProp(basicProperty);
         LOGGER.debug("reject: BasicProperty: " + basicProperty);
-        transitionWorkFlow(propertyModel);
-        propService.updateIndexes(propertyModel, getApplicationType());
-        propertyImplService.update(propertyModel);
-        setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
-        final String username = getInitiator();
-        final Assignment wfInitiator = propService.getWorkflowInitiator(propertyModel);
-        if (wfInitiator.getEmployee().getUsername().equals(securityUtils.getCurrentUser().getUsername())) {
-            wfInitiatorRejected = Boolean.TRUE;
-            setAckMessage(getText(PROPERTY_MODIFY_FINAL_REJECT_SUCCESS, new String[] { getModifyReasonString() }));
-        } else
-            setAckMessage(getText(PROPERTY_MODIFY_REJECT_SUCCESS, new String[] { getModifyReasonString(), username }));
 
+        final User user = securityUtils.getCurrentUser();
+        String loggedInUserDesignation = "";
+        List<Assignment> loggedInUserAssign;
+        if (propertyModel.getState() != null) {
+            loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                    propertyModel.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
+            loggedInUserDesignation = !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName() : null;
+        }
+        Assignment wfInitiator;
+        if (isRoOrCommissioner(loggedInUserDesignation))
+            wfInitiator = propService.getUserOnRejection(propertyModel);
+        else
+            wfInitiator = propService.getWorkflowInitiator(propertyModel);
+        if (wfInitiator != null) {
+            transitionWorkFlow(propertyModel);
+            propService.updateIndexes(propertyModel, getApplicationType());
+            propertyImplService.update(propertyModel);
+            setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
+        }
+        final String username = getInitiator();
+
+        getAckMsg(username, wfInitiator);
         buildEmailandSms(propertyModel, getApplicationType());
         LOGGER.debug("reject: BasicProperty: " + getBasicProp() + "AckMessage: " + getAckMessage());
         LOGGER.debug("reject: Property rejection ended");
         return RESULT_ACK;
+    }
+
+    private boolean isCommissionerRoOrBillCollector() {
+        return StringUtils.containsIgnoreCase(userDesignationList, BILL_COLLECTOR_DESGN)
+                || StringUtils.containsIgnoreCase(userDesignationList, COMMISSIONER_DESGN)
+                || StringUtils.containsIgnoreCase(userDesignationList, REVENUE_OFFICER_DESGN);
+    }
+
+    private boolean isRoOrCommissioner(final String loggedInUserDesignation) {
+        boolean isany;
+        if (!REVENUE_OFFICER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
+            isany = isCommissioner(loggedInUserDesignation);
+        else
+            isany = true;
+        return isany;
+    }
+
+    private boolean isCommissioner(final String loggedInUserDesignation) {
+        boolean isanyone;
+        if (!ASSISTANT_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
+                || !ADDITIONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
+            isanyone = isDeputyOrAbove(loggedInUserDesignation);
+        else
+            isanyone = true;
+        return isanyone;
+    }
+
+    private boolean isDeputyOrAbove(final String loggedInUserDesignation) {
+        boolean isanyone = false;
+        if (DEPUTY_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
+                || COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation)
+                || ZONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
+            isanyone = true;
+        return isanyone;
+    }
+
+    private void getAckMsg(final String username, final Assignment wfInitiator) {
+        if (wfInitiator != null) {
+            if (wfInitiator.getEmployee().getUsername().equals(securityUtils.getCurrentUser().getUsername())) {
+                wfInitiatorRejected = Boolean.TRUE;
+                setAckMessage(getText(PROPERTY_MODIFY_FINAL_REJECT_SUCCESS, new String[] { getModifyReasonString() }));
+            } else
+                setAckMessage(getText(PROPERTY_MODIFY_REJECT_SUCCESS, new String[] { getModifyReasonString(), username }));
+        } else
+            setAckMessage("Intiator is not active so can not do rejection with the assessmnet number : ");
+    }
+
+    private boolean isAssistantOrRIApprovalPending() {
+        return StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT)
+                || StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)
+                || getModel().getState().getNextAction() != null && getModel().getState().getNextAction()
+                        .equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING);
     }
 
     @Override
@@ -970,7 +1028,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                         "From PropertyUsage where isResidential = false order by usageName");
 
         addDropdownData("UsageList", usageList);
-        setVacantLandPlotAreaList(vacantLandPlotAreaRepository.findAll()); 
+        setVacantLandPlotAreaList(vacantLandPlotAreaRepository.findAll());
         setLayoutApprovalAuthorityList(layoutApprovalAuthorityRepository.findAll());
         addDropdownData("vacantLandPlotAreaList", vacantLandPlotAreaList);
         addDropdownData("layoutApprovalAuthorityList", layoutApprovalAuthorityList);
@@ -1219,7 +1277,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         validateProperty(propertyModel, areaOfPlot, dateOfCompletion, eastBoundary, westBoundary, southBoundary,
                 northBoundary, propTypeId,
                 null != basicProp.getPropertyID() ? String.valueOf(basicProp.getPropertyID().getZone().getId()) : "",
-                propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId, modifyRsn, propCompletionDate, vacantLandPlotAreaId, 
+                propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId, modifyRsn, propCompletionDate, vacantLandPlotAreaId,
                 layoutApprovalAuthorityId);
         validateApproverDetails();
         if (!propertyByEmployee && null != basicProp) {
@@ -1466,24 +1524,26 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 (String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
 
-        final PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
         final Map<String, Object> reportParams = new HashMap<String, Object>();
-        ackBean.setOwnerName(basicProp.getFullOwnerName());
-        ackBean.setOwnerAddress(basicProp.getAddress().toString());
-        ackBean.setApplicationDate(new SimpleDateFormat("dd/MM/yyyy").format(basicProp.getCreatedDate()));
-        ackBean.setApplicationNo(propertyModel.getApplicationNo());
-        ackBean.setApprovedDate(new SimpleDateFormat("dd/MM/yyyy").format(propWF.getState().getCreatedDate()));
+        reportParams.put("ownerName", basicProp.getFullOwnerName());
+        reportParams.put("applicationDate", new SimpleDateFormat("dd/MM/yyyy").format(basicProp.getCreatedDate()));
+        reportParams.put("ownerAddress",basicProp.getAddress().toString());
+        reportParams.put("applicationNo", propertyModel.getApplicationNo());
+        reportParams.put("approvedDate", new SimpleDateFormat("dd/MM/yyyy").format(propWF.getState().getCreatedDate()));
         final Date noticeDueDate = DateUtils.add(propWF.getState().getCreatedDate(), Calendar.DAY_OF_MONTH, 15);
-        ackBean.setNoticeDueDate(noticeDueDate);
-        ackBean.setCreationReason(modifyRsn);
+        reportParams.put("noticeDueDate", new SimpleDateFormat("dd/MM/yyyy").format(noticeDueDate));
+        reportParams.put("creationReason", modifyRsn);
         reportParams.put("logoPath", imagePath);
         reportParams.put("cityName", cityName);
         reportParams.put("loggedInUsername", propertyTaxUtil.getLoggedInUser(getSession()).getName());
         ReportRequest reportInput = null;
-        if (modifyRsn.equals(PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION))
-            reportInput = new ReportRequest(GRP_ACK_TEMPLATE, ackBean, reportParams);
-        else
-            reportInput = new ReportRequest(MODIFY_ACK_TEMPLATE, ackBean, reportParams);
+        if (modifyRsn.equals(PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION)) {
+            reportParams.put("noOfDays",
+                    ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "REVISION_PETETION")
+                            .getResolutionTime().toString());
+            reportInput = new ReportRequest(GRP_ACK_TEMPLATE, reportParams, reportParams);
+        } else
+            reportInput = new ReportRequest(MODIFY_ACK_TEMPLATE, reportParams, reportParams);
         reportInput.setReportFormat(FileFormat.PDF);
         final ReportOutput reportOutput = reportService.createReport(reportInput);
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
@@ -2247,7 +2307,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         return propertyDepartmentId;
     }
 
-    public void setPropertyDepartmentId(Long propertyDepartmentId) {
+    public void setPropertyDepartmentId(final Long propertyDepartmentId) {
         this.propertyDepartmentId = propertyDepartmentId;
     }
 
@@ -2255,7 +2315,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         return vacantLandPlotAreaId;
     }
 
-    public void setVacantLandPlotAreaId(Long vacantLandPlotAreaId) {
+    public void setVacantLandPlotAreaId(final Long vacantLandPlotAreaId) {
         this.vacantLandPlotAreaId = vacantLandPlotAreaId;
     }
 
@@ -2263,7 +2323,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         return layoutApprovalAuthorityId;
     }
 
-    public void setLayoutApprovalAuthorityId(Long layoutApprovalAuthorityId) {
+    public void setLayoutApprovalAuthorityId(final Long layoutApprovalAuthorityId) {
         this.layoutApprovalAuthorityId = layoutApprovalAuthorityId;
     }
 
@@ -2271,7 +2331,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         return vacantLandPlotAreaList;
     }
 
-    public void setVacantLandPlotAreaList(List<VacantLandPlotArea> vacantLandPlotAreaList) {
+    public void setVacantLandPlotAreaList(final List<VacantLandPlotArea> vacantLandPlotAreaList) {
         this.vacantLandPlotAreaList = vacantLandPlotAreaList;
     }
 
@@ -2279,15 +2339,15 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         return layoutApprovalAuthorityList;
     }
 
-    public void setLayoutApprovalAuthorityList(List<LayoutApprovalAuthority> layoutApprovalAuthorityList) {
+    public void setLayoutApprovalAuthorityList(final List<LayoutApprovalAuthority> layoutApprovalAuthorityList) {
         this.layoutApprovalAuthorityList = layoutApprovalAuthorityList;
     }
-    
+
     public boolean isAllowEditDocument() {
         return allowEditDocument;
     }
 
-    public void setAllowEditDocument(boolean allowEditDocument) {
+    public void setAllowEditDocument(final boolean allowEditDocument) {
         this.allowEditDocument = allowEditDocument;
     }
 }

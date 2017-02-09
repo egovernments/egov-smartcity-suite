@@ -56,17 +56,17 @@
                            cssClass="form-horizontal form-groups-bordered">
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.natureofbusiness"/><span class="mandatory"></span>
-                        </label>
-                        <div class="col-sm-3 add-margin">
-                            <form:input path="natureOfBusiness.name" id="natureOfBusiness" cssClass="form-control" readonly="true" required="required"
-                                        cssErrorClass="form-control error"/>
-                        </div>
-                        <label class="col-sm-3 control-label">
                             <spring:message code="lbl.licenseapptype"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
                             <form:input path="licenseAppType.name" id="licenseAppType" cssClass="form-control" readonly="true" required="required"
+                                        cssErrorClass="form-control error"/>
+                        </div>
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.natureofbusiness"/><span class="mandatory"></span>
+                        </label>
+                        <div class="col-sm-3 add-margin">
+                            <form:input path="natureOfBusiness.name" id="natureOfBusiness" cssClass="form-control" readonly="true" required="required"
                                         cssErrorClass="form-control error"/>
                         </div>
                     </div>
@@ -144,13 +144,13 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-12">
-                            <form:checkbox id="sameForPermanentAndTemporary" disabled="true" path="sameForPermanentAndTemporary"/>
-                            <label class="control-label" for="sameForPermanentAndTemporary">
+                            <form:checkbox id="sameForPermanentAndTemporary" disabled="true" path="sameForPermanentAndTemporary" cssClass="sameForPermanentAndTemporary display-hide"/>
+                            <label class="control-label sameForPermanentAndTemporary display-hide" for="sameForPermanentAndTemporary">
                                 &nbsp;&nbsp;<spring:message code="lbl.feematrix.use.same.perm.and.tmp"/>
                             </label>
                             <br/>
-                            <form:checkbox id="sameForNewAndRenew" disabled="true" path="sameForNewAndRenew"/>
-                            <label class="control-label" for="sameForNewAndRenew">
+                            <form:checkbox id="sameForNewAndRenew" disabled="true" path="sameForNewAndRenew" cssClass="sameForNewAndRenew display-hide"/>
+                            <label class="control-label sameForNewAndRenew display-hide" for="sameForNewAndRenew">
                                 &nbsp;&nbsp;<spring:message code="lbl.feematrix.use.same.new.and.renew"/>
                             </label>
                         </div>
@@ -204,3 +204,11 @@
         </div>
     </div>
 </div>
+<script>
+    if ('${feeMatrix.licenseAppType.name}' == 'New') {
+        $(".sameForNewAndRenew").show();
+    }
+    if ('${feeMatrix.natureOfBusiness.name}' == 'Permanent') {
+        $(".sameForPermanentAndTemporary").show();
+    }
+</script>

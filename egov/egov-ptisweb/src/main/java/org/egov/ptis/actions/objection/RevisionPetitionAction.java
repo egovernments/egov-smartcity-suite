@@ -191,6 +191,7 @@ import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 
 /**
  * @author pradeep
@@ -209,6 +210,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
         @Result(name = RevisionPetitionAction.MEESEVA_ERROR, location = "common/meeseva-errorPage.jsp") })
 public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
+    private static final String GENERAL_REVISION_PETETION = "GENERAL_REVISION_PETETION";
+    private static final String REVISION_PETETION = "REVISION_PETETION";
     protected static final String DIGITAL_SIGNATURE_REDIRECTION = "digitalSignatureRedirection";
     private static final long serialVersionUID = 1L;
     protected static final String COMMON_FORM = "commonForm";
@@ -308,6 +311,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private String meesevaApplicationNumber;
     private String wfType;
     private boolean allowEditDocument = Boolean.FALSE;
+    private Boolean showAckBtn = Boolean.FALSE;
 
     public RevisionPetitionAction() {
 
@@ -463,6 +467,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_OBJECTED_STR));
         objection.getBasicProperty().setUnderWorkflow(Boolean.TRUE);
         objection.setType(getWfType());
+        propertyId = objection.getBasicProperty().getUpicNo();
+        showAckBtn = Boolean.TRUE;
         updateStateAndStatus(objection);
         if (NATURE_OF_WORK_RP.equalsIgnoreCase(wfType))
             addActionMessage(getText("objection.success") + objection.getObjectionNumber());
@@ -1723,6 +1729,24 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             setPropTypeCategoryMap(Collections.emptyMap());
     }
 
+    @Action(value = "/revPetition-printAck")
+    public String printAck() {
+        String serviceType;
+        String applicationType;
+        ReportOutput reportOutput;
+        if (NATURE_OF_WORK_RP.equalsIgnoreCase(wfType)) {
+            serviceType = REVISION_PETITION;
+            applicationType = REVISION_PETETION;
+        } else {
+            serviceType = GENERAL_REVISION_PETITION;
+            applicationType = GENERAL_REVISION_PETETION;
+        }
+        reportOutput = propertyTaxUtil
+                .generateCitizenCharterAcknowledgement(propertyId, applicationType, serviceType);
+        reportId = reportViewerUtil.addReportToTempCache(reportOutput);
+        return NOTICE;
+    }
+    
     public List<Floor> getFloorDetails() {
         return new ArrayList<Floor>(objection.getBasicProperty().getProperty().getPropertyDetail().getFloorDetails());
     }
@@ -2099,5 +2123,13 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     public void setAllowEditDocument(final boolean allowEditDocument) {
         this.allowEditDocument = allowEditDocument;
+    }
+
+    public Boolean getShowAckBtn() {
+        return showAckBtn;
+    }
+
+    public void setShowAckBtn(Boolean showAckBtn) {
+        this.showAckBtn = showAckBtn;
     }
 }

@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
  * government organizations.
  *
- * Copyright (C) <2015> eGovernments Foundation
+ * Copyright (C) <2017> eGovernments Foundation
  *
  * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
  *
@@ -82,6 +82,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.ValidationException;
 
+import org.egov.commons.Installment;
 import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemand;
 import org.egov.eis.entity.Assignment;
@@ -119,7 +120,10 @@ import org.egov.stms.transactions.entity.SewerageDemandConnection;
 import org.egov.stms.transactions.repository.SewerageApplicationDetailsRepository;
 import org.egov.stms.transactions.workflow.ApplicationWorkflowCustomDefaultImpl;
 import org.egov.stms.utils.SewerageTaxUtils;
+import org.egov.stms.utils.constants.SewerageTaxConstants;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -594,6 +598,10 @@ public class SewerageApplicationDetailsService {
         return modelParams;
     }
 
+    public SewerageApplicationDetails updateSewerageApplicationDetails(final SewerageApplicationDetails sewerageApplicationDetails)
+    {
+        return sewerageApplicationDetailsRepository.saveAndFlush(sewerageApplicationDetails);
+    }
     @Transactional
     public SewerageApplicationDetails updateSewerageApplicationDetails(
             final SewerageApplicationDetails sewerageApplicationDetails, final Long approvalPosition,
@@ -867,7 +875,7 @@ public class SewerageApplicationDetailsService {
             updateIndexes(sewerageApplicationDetails.getParent());
         updateIndexes(sewerageApplicationDetails);
 
-        // TODO support sms and email for close connection
+        // support sms and email for close connection
         if (APPLICATION_STATUS_CLOSERSANCTIONED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
                 && APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction) ||
                 APPLICATION_STATUS_CREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()) ||
@@ -953,6 +961,25 @@ public class SewerageApplicationDetailsService {
 
     public String isConnectionExistsForProperty(final String propertyId) {
         return checkConnectionPresentForProperty(propertyId);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Transactional
+    public List<SewerageApplicationDetails> findActiveSewerageApplnsByCurrentInstallmentAndNumberOfResultToFetch(
+            Installment installment,
+            int noOfResultToFetch) {
+
+        final Criteria sewerageCriteria = entityManager.unwrap(Session.class)
+                .createCriteria(SewerageApplicationDetails.class, "sewerageDetails")
+                .createAlias("sewerageDetails.demandConnections", "demandConnections")
+                .createAlias("demandConnections.demand", "demand");
+        sewerageCriteria.add(Restrictions.eq("demand.isHistory", SewerageTaxConstants.DEMANDISHISTORY));
+        sewerageCriteria.add(Restrictions.eq("sewerageDetails.isActive", true));
+        if (installment != null)
+            sewerageCriteria.add(Restrictions.eq("demand.egInstallmentMaster.id", installment.getId()));
+        sewerageCriteria.setMaxResults(noOfResultToFetch);
+        sewerageCriteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return sewerageCriteria.list();
     }
 
 }

@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -37,31 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.stms.transactions.repository;
 
-package org.egov.tl.service;
+import org.egov.stms.entity.SewerageDemandGenerationLogDetail;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import org.egov.tl.entity.FeeMatrix;
-import org.egov.tl.entity.FeeMatrixDetail;
-import org.egov.tl.repository.FeeMatrixDetailRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+public interface SewerageDemandGenerationLogDetailRepository extends JpaRepository<SewerageDemandGenerationLogDetail, Long> {
 
-import java.math.BigDecimal;
-import java.util.Optional;
-
-@Service
-@Transactional(readOnly = true)
-public class FeeMatrixDetailService {
-
-    private final FeeMatrixDetailRepository feeMatrixDetailRepository;
-
-    @Autowired
-    public FeeMatrixDetailService(final FeeMatrixDetailRepository feeMatrixDetailRepository) {
-        this.feeMatrixDetailRepository = feeMatrixDetailRepository;
-    }
-
-    public Optional<FeeMatrixDetail> findByLicenseFeeByRange(FeeMatrix feeMatrix, BigDecimal uom) {
-        return feeMatrixDetailRepository.findFeeDetailList(feeMatrix, uom.intValue());
-    }
+    SewerageDemandGenerationLogDetail findByDemandGenerationLogIdAndSewerageApplicationDetailsId(Long logId,
+            Long sewerageApplnId);
 }

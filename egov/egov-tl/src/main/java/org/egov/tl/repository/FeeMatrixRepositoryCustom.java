@@ -41,10 +41,19 @@
 package org.egov.tl.repository;
 
 import org.egov.tl.entity.FeeMatrix;
+import org.egov.tl.entity.FeeType;
+import org.egov.tl.entity.License;
+import org.egov.tl.entity.LicenseAppType;
+import org.egov.tl.entity.NatureOfBusiness;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public interface FeeMatrixRepositoryCustom {
 
     List<FeeMatrix> searchFeeMatrix(Long categoryId, Long subcategoryId, Long financialYearId);
+
+    Optional<FeeMatrix> findFeeMatrix(License license, NatureOfBusiness natureOfBusiness, FeeType feeType,
+                                      LicenseAppType appType, Date effectiveDate);
 }

@@ -49,6 +49,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
@@ -104,6 +105,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         return Constants.VIEW;
     }
 
+    @ValidationErrorPage("report")
     @Action(value = "/viewtradelicense/viewTradeLicense-generateCertificate")
     public String generateCertificate() {
         setLicenseIdIfServletRedirect();
@@ -212,13 +214,12 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                 String nextDesgn = !assignments.isEmpty() ? assignments.get(0).getDesignation().getName() : "";
                 final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
                 addActionMessage(this.getText("license.closure.sent") + " " + nextDesgn + " - " + userName);
-            }
-            else if (workflowBean.getWorkFlowAction().contains(Constants.BUTTONREJECT)) {
+            } else if (workflowBean.getWorkFlowAction().contains(Constants.BUTTONREJECT)) {
                 if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED)) {
                     List<Assignment> assignments = assignmentService.getAssignmentsForPosition(license().getState().getInitiatorPosition().getId());
                     final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
-                    addActionMessage(this.getText("license.closure.rejectedfirst") + (" "+license().getState().getInitiatorPosition().getDeptDesig().getDesignation().getName() + " - ") + " " + userName);
-                } else addActionMessage(this.getText("license.closure.rejected") + " "+license().getLicenseNumber());
+                    addActionMessage(this.getText("license.closure.rejectedfirst") + (" " + license().getState().getInitiatorPosition().getDeptDesig().getDesignation().getName() + " - ") + " " + userName);
+                } else addActionMessage(this.getText("license.closure.rejected") + " " + license().getLicenseNumber());
 
 
             } else

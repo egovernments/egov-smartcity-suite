@@ -114,8 +114,6 @@ public class FeeMatrix extends AbstractAuditable {
     @JoinColumn(name = "unitOfMeasurement")
     private UnitOfMeasurement unitOfMeasurement;
 
-    private String uniqueNo;
-
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date effectiveFrom;
@@ -204,14 +202,6 @@ public class FeeMatrix extends AbstractAuditable {
         this.feeMatrixDetail = feeMatrixDetail;
     }
 
-    public String getUniqueNo() {
-        return uniqueNo;
-    }
-
-    public void setUniqueNo(final String uniqueNo) {
-        this.uniqueNo = uniqueNo;
-    }
-
     public CFinancialYear getFinancialYear() {
         return financialYear;
     }
@@ -250,26 +240,6 @@ public class FeeMatrix extends AbstractAuditable {
 
     public void setSameForPermanentAndTemporary(final boolean sameForPermanentAndTemporary) {
         this.sameForPermanentAndTemporary = sameForPermanentAndTemporary;
-    }
-
-    public String generateAndSetUniqueNumber() {
-        final StringBuilder sb = new StringBuilder();
-        if (natureOfBusiness != null)
-            sb.append(natureOfBusiness.getId());
-        if (licenseAppType != null)
-            sb.append("-" + licenseAppType.getId());
-        if (licenseCategory != null)
-            sb.append("-" + licenseCategory.getId());
-        if (subCategory != null)
-            sb.append("-" + subCategory.getId());
-        if (feeType != null)
-            sb.append("-" + feeType.getId());
-        if (unitOfMeasurement != null)
-            sb.append("-" + unitOfMeasurement.getId());
-        if (financialYear != null)
-            sb.append("-" + financialYear.getId());
-        this.setUniqueNo(sb.toString());
-        return this.getUniqueNo();
     }
 
     @Override

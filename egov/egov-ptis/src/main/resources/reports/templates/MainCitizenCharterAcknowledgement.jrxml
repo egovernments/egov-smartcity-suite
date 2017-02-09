@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-02-08T15:31:08 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MainCitizenCharterAcknowledgement" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" uuid="e22c3271-0383-48fc-a071-c0d1bcf2acb9">
+	<import value="org.egov.infra.reporting.util.*"/>
+	<parameter name="ackNo" class="java.lang.String"/>
+	<parameter name="serviceType" class="java.lang.String"/>
+	<parameter name="applicatantName" class="java.lang.String"/>
+	<parameter name="applicatantAddr" class="java.lang.String"/>
+	<parameter name="electionWard" class="java.lang.String"/>
+	<parameter name="asOnDate" class="java.lang.String"/>
+	<parameter name="dueDate" class="java.lang.String"/>
+	<parameter name="ulbName" class="java.lang.String"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="87" splitType="Stretch">
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="18" width="550" height="62" uuid="f6eda4d1-8019-4d5a-8f30-91d2e422daa6"/>
+				<subreportParameter name="applicatantName">
+					<subreportParameterExpression><![CDATA[$P{applicatantName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ackNo">
+					<subreportParameterExpression><![CDATA[$P{ackNo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="serviceType">
+					<subreportParameterExpression><![CDATA[$P{serviceType}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="applicatantAddr">
+					<subreportParameterExpression><![CDATA[$P{applicatantAddr}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="electionWard">
+					<subreportParameterExpression><![CDATA[$P{electionWard}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="asOnDate">
+					<subreportParameterExpression><![CDATA[$P{asOnDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="dueDate">
+					<subreportParameterExpression><![CDATA[$P{dueDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ulbName">
+					<subreportParameterExpression><![CDATA[$P{ulbName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cityName">
+					<subreportParameterExpression><![CDATA[$P{cityName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ackType">
+					<subreportParameterExpression><![CDATA["Party's Copy"]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("CitizenCharterAcknowledgement.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<summary>
+		<band height="93" splitType="Stretch">
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="20" width="550" height="60" uuid="890c481d-c6ce-43d1-bc2f-545770d88ebf"/>
+				<subreportParameter name="applicatantName">
+					<subreportParameterExpression><![CDATA[$P{applicatantName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ackNo">
+					<subreportParameterExpression><![CDATA[$P{ackNo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="serviceType">
+					<subreportParameterExpression><![CDATA[$P{serviceType}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="applicatantAddr">
+					<subreportParameterExpression><![CDATA[$P{applicatantAddr}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="electionWard">
+					<subreportParameterExpression><![CDATA[$P{electionWard}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="asOnDate">
+					<subreportParameterExpression><![CDATA[$P{asOnDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="dueDate">
+					<subreportParameterExpression><![CDATA[$P{dueDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ulbName">
+					<subreportParameterExpression><![CDATA[$P{ulbName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cityName">
+					<subreportParameterExpression><![CDATA[$P{cityName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ackType">
+					<subreportParameterExpression><![CDATA["Office Copy"]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("CitizenCharterAcknowledgement.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -37,15 +37,12 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.stms.masters.entity.enums;
 
-package org.egov.tl.repository;
-
-import org.egov.tl.entity.FeeMatrix;
-import org.egov.tl.entity.FeeMatrixDetail;
-
-import java.util.Optional;
-
-public interface FeeMatrixDetailRepositoryCustom {
-
-    Optional<FeeMatrixDetail> findFeeDetailList(FeeMatrix feeMatrix, Integer uom);
+public enum SewerageProcessStatus {
+    INPROGRESS, COMPLETED, INCOMPLETE;
+    @Override
+    public String toString() {
+        return this.name().toLowerCase();
+    }
 }

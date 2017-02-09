@@ -73,10 +73,9 @@
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.officerincharge" />:</label>
 						<div class="col-sm-3 add-margin">
-							<form:input class="form-control" maxlength="50"
-								id="officerIncharge" path="officerIncharge" />
-							<form:errors path="officerIncharge"
-								cssClass="add-margin error-msg" />
+							 <input id="positionName" type="text" class="form-control typeahead" placeholder="" autocomplete="off" />
+                       		 <form:hidden path="officerIncharge" id="positionId"/>
+                        	<form:errors path="officerIncharge" cssClass="add-margin error-msg" />
 						</div>
 					</div>
 

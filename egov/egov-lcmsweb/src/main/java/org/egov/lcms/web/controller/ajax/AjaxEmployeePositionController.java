@@ -75,6 +75,20 @@ public class AjaxEmployeePositionController {
         return positionEmployeeMap;
     }
 
+    @RequestMapping(value = "/ajax/getposition", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Map<Long, String> getPosition(
+            @ModelAttribute("employeeBean") @RequestParam final String positionName) {
+        final Map<Long, String> positionEmployeeMap = new HashMap<Long, String>();
+        String posEmpName;
+        final List<Assignment> assignmentList = assignmentService
+                .getAllAssignmentsByPositionNameForGivenRange(positionName);
+        for (final Assignment assign : assignmentList) {
+            posEmpName = assign.getPosition().getName().concat("@").concat(assign.getEmployee().getUsername());
+            positionEmployeeMap.put(assign.getPosition().getId(), posEmpName);
+        }
+        return positionEmployeeMap;
+    }
+    
     @RequestMapping(value = "ajax/getemployeeNames", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Map<Long, String> getEmployeeForDeptAndDesig(
             @ModelAttribute("employeeBean") @RequestParam final String employeeName) {

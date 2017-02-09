@@ -1,0 +1,5 @@
+INSERT INTO eg_roleaction(actionid, roleid) values ((select id from eg_action where name = 'Exemption Ack'), (Select id from eg_role where name='CSC Operator'));
+INSERT INTO eg_roleaction(actionid, roleid) values ((select id from eg_action where name = 'Vacancy Remission Ack'), (Select id from eg_role where name='CSC Operator'));
+INSERT INTO eg_roleaction(actionid, roleid) values ((select id from eg_action where name = 'Demolition Ack'), (Select id from eg_role where name='CSC Operator'));
+INSERT INTO eg_roleaction(actionid, roleid) values ((select id from eg_action where name = 'Amalgamation Ack'), (Select id from eg_role where name='CSC Operator'));
+INSERT INTO eg_roleaction(actionid, roleid) values ((select id from eg_action where name = 'RP GRP Ack'), (Select id from eg_role where name='CSC Operator'));

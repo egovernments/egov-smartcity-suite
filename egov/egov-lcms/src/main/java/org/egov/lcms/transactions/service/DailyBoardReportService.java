@@ -69,13 +69,16 @@ public class DailyBoardReportService {
             final DailyBoardReportResults dailyBoardReportResults) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select distinct legalObj  as  legalCase ,courtmaster.name  as  courtName ,petmaster.petitionType as petitionType,");
-        queryStr.append(" egwStatus.description  as  caseStatus ");
-        queryStr.append(" from LegalCase legalObj,CourtMaster courtmaster,CaseTypeMaster casetypemaster,");
-        queryStr.append(" PetitionTypeMaster petmaster,EgwStatus egwStatus");
+        queryStr.append(" egwStatus.description  as  caseStatus, position.name as officerInChargeName ");
+        queryStr.append(" from LegalCase legalObj left join legalObj.officerIncharge position, CourtMaster courtmaster,CaseTypeMaster casetypemaster,");
+        queryStr.append(" PetitionTypeMaster petmaster,EgwStatus egwStatus ");     
+      /*  if(dailyBoardReportResults.getOfficerIncharge() != null)
+            queryStr.append(" ,Position position ");*/
         queryStr.append(" where legalObj.courtMaster.id=courtmaster.id and ");
         queryStr.append( " legalObj.caseTypeMaster.id=casetypemaster.id and legalObj.petitionTypeMaster.id=petmaster.id and ");
         queryStr.append(" legalObj.status.id=egwStatus.id and egwStatus.moduletype =:moduleType ");
-
+        if(dailyBoardReportResults.getOfficerIncharge() != null)
+            queryStr.append(" and legalObj.officerIncharge.id=position.id ");
         getAppendQuery(dailyBoardReportResults, queryStr);
         Query queryResult = getCurrentSession().createQuery(queryStr.toString());
         queryResult = setParameterToQuery(dailyBoardReportResults, queryResult);
@@ -92,8 +95,8 @@ public class DailyBoardReportService {
             queryResult.setString("caseNumber", dailyBoardReportObj.getCaseNumber() + "%");
         if (dailyBoardReportObj.getCourtId() != null)
             queryResult.setInteger("court", dailyBoardReportObj.getCourtId());
-        if (StringUtils.isNotBlank(dailyBoardReportObj.getOfficerIncharge()))
-            queryResult.setString("officerIncharge", dailyBoardReportObj.getOfficerIncharge());
+        if (dailyBoardReportObj.getOfficerIncharge()!= null)
+            queryResult.setLong("officerIncharge", dailyBoardReportObj.getOfficerIncharge());   
         if (dailyBoardReportObj.getCasecategory() != null)
             queryResult.setInteger("casetype", dailyBoardReportObj.getCasecategory());
         if (StringUtils.isNotBlank(dailyBoardReportObj.getStandingCouncil()))
@@ -133,8 +136,8 @@ public class DailyBoardReportService {
             queryStr.append(" and petmaster.id =:petiontionType ");
         if (dailyBoardReportObj.getNextDate() != null)
             queryStr.append(" and legalObj.nextDate=:DateUtils.getDefaultFormattedDate(nextDate)");
-        if (StringUtils.isNotBlank(dailyBoardReportObj.getOfficerIncharge()))
-            queryStr.append(" and legalObj.officerIncharge =:officerIncharge ");
+        if (dailyBoardReportObj.getOfficerIncharge() != null)
+            queryStr.append(" and position.id =:officerIncharge ");
 
     }
 

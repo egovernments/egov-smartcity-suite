@@ -45,6 +45,7 @@ import org.egov.lcms.transactions.entity.LegalCase;
 
 public class DueReportResult {
     private String caseNumber;
+
     private String lcNumber;
     private Date caseFromDate;
     private LegalCase legalCase;
@@ -53,10 +54,11 @@ public class DueReportResult {
     private Date hearingDate;
     private Date judgementImplDate;
     private String reportBy;
-    private String officialIncharge;
     private Boolean isStatusExcluded;
     private String caseStatus;
     private String petitionType;
+    private Long officerIncharge;
+    private String officerInChargeName;
 
     public String getCaseNumber() {
         return caseNumber;
@@ -71,38 +73,41 @@ public class DueReportResult {
     }
 
     public Date getCaseFromDate() {
-		return caseFromDate;
-	}
+        return caseFromDate;
+    }
 
-	public void setCaseFromDate(Date caseFromDate) {
-		this.caseFromDate = caseFromDate;
-	}
+    public void setCaseFromDate(final Date caseFromDate) {
+        this.caseFromDate = caseFromDate;
+    }
 
-	public Date getCaseToDate() {
-		return caseToDate;
-	}
+    public Date getCaseToDate() {
+        return caseToDate;
+    }
 
-	public void setCaseToDate(Date caseToDate) {
-		this.caseToDate = caseToDate;
-	}
+    public void setCaseToDate(final Date caseToDate) {
+        this.caseToDate = caseToDate;
+    }
 
-	public void setLcNumber(final String lcNumber) {
+    public void setLcNumber(final String lcNumber) {
         this.lcNumber = lcNumber;
     }
-	public String getCourtName() {
-		return courtName;
-	}
 
-	public void setCourtName(String courtName) {
-		this.courtName = courtName;
-	}
-	public String getCaseStatus() {
+    public String getCourtName() {
+        return courtName;
+    }
+
+    public void setCourtName(final String courtName) {
+        this.courtName = courtName;
+    }
+
+    public String getCaseStatus() {
         return caseStatus;
     }
 
     public void setCaseStatus(final String caseStatus) {
         this.caseStatus = caseStatus;
     }
+
     public Boolean getIsStatusExcluded() {
         return isStatusExcluded;
     }
@@ -110,53 +115,61 @@ public class DueReportResult {
     public void setIsStatusExcluded(final Boolean isStatusExcluded) {
         this.isStatusExcluded = isStatusExcluded;
     }
+
     public LegalCase getLegalCase() {
-		return legalCase;
-	}
+        return legalCase;
+    }
 
-	public void setLegalCase(LegalCase legalCase) {
-		this.legalCase = legalCase;
-	}
+    public void setLegalCase(final LegalCase legalCase) {
+        this.legalCase = legalCase;
+    }
 
-	public String getReportBy() {
-		return reportBy;
-	}
+    public String getReportBy() {
+        return reportBy;
+    }
 
-	public void setReportBy(String reportBy) {
-		this.reportBy = reportBy;
-	}
+    public void setReportBy(final String reportBy) {
+        this.reportBy = reportBy;
+    }
 
-	public String getOfficialIncharge() {
-		return officialIncharge;
-	}
+    public Date getHearingDate() {
+        return hearingDate;
+    }
 
-	public void setOfficialIncharge(String officialIncharge) {
-		this.officialIncharge = officialIncharge;
-	}
+    public void setHearingDate(final Date hearingDate) {
+        this.hearingDate = hearingDate;
+    }
 
-	public Date getHearingDate() {
-		return hearingDate;
-	}
+    public Date getJudgementImplDate() {
+        return judgementImplDate;
+    }
 
-	public void setHearingDate(Date hearingDate) {
-		this.hearingDate = hearingDate;
-	}
+    public void setJudgementImplDate(final Date judgementImplDate) {
+        this.judgementImplDate = judgementImplDate;
+    }
 
-	public Date getJudgementImplDate() {
-		return judgementImplDate;
-	}
+    public String getPetitionType() {
+        return petitionType;
+    }
 
-	public void setJudgementImplDate(Date judgementImplDate) {
-		this.judgementImplDate = judgementImplDate;
-	}
+    public void setPetitionType(final String petitionType) {
+        this.petitionType = petitionType;
+    }
 
-	public String getPetitionType() {
-		return petitionType;
-	}
+    public Long getOfficerIncharge() {
+        return officerIncharge;
+    }
 
-	public void setPetitionType(String petitionType) {
-		this.petitionType = petitionType;
-	}
-    
+    public void setOfficerIncharge(final Long officerIncharge) {
+        this.officerIncharge = officerIncharge;
+    }
+
+    public String getOfficerInChargeName() {
+        return officerInChargeName;
+    }
+
+    public void setOfficerInChargeName(final String officerInChargeName) {
+        this.officerInChargeName = officerInChargeName;
+    }
 
 }

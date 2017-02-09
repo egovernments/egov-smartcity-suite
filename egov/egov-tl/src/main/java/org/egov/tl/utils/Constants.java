@@ -157,6 +157,7 @@ public final class Constants {
     public static final String SIGNED_DOCUMENT_PREFIX = "SN/";
     public static final String ROLE_COMMISSIONERDEPARTEMNT = "Health";
     public static final String PERMANENT_NATUREOFBUSINESS = "Permanent";
+    public static final String TEMP_NATUREOFBUSINESS = "Temporary";
     public static final String RENEWAL_NATUREOFWORK = "Renewal of Trade License";
     public static final String NEW_NATUREOFWORK = "New Trade License";
     public static final String WF_FIRST_LVL_FEECOLLECTED = "First level fee collected";
@@ -185,8 +186,13 @@ public final class Constants {
     public static final String GENERATE_CERTIFICATE = "tl_generateCertificate";
     public static final String CLOSURE_ADDITIONAL_RULE = "CLOSURELICENSE";
     public static final String CITY_GRADE_CORPORATION = "Corp";
-    public static final String TL_LICENSE_ACT_CORPORATION =  "Trade license Act corporation";
+    public static final String TL_LICENSE_ACT_CORPORATION = "Trade license Act corporation";
     public static final String TL_LICENSE_ACT_DEFAULT = "Trade license Act Muncipalities";
+    public static final String CSCOPERATOR = "CSC Operator";
+    public static final String PRINTACK = "printAck";
+    public static final String PUBLIC_HEALTH_DEPT = "PUBLIC HEALTH AND SANITATION";
+    public static final String JA_DESIGNATION = "Junior Assistant";
+    public static final String RC_DESIGNATION = "Revenue Clerk";
     private static final Map<String, String> OWNERSHIP_TYPE = new HashMap<>();
 
     static {
@@ -200,11 +206,10 @@ public final class Constants {
     }
 
     private Constants() {
-        //only invariants
+        // only invariants
     }
 
-    public static Map<String, String>  getOwnershipTypes() {
+    public static Map<String, String> getOwnershipTypes() {
         return Collections.unmodifiableMap(OWNERSHIP_TYPE);
     }
 }
-

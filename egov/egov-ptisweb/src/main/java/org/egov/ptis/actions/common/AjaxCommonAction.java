@@ -495,8 +495,10 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     	if(documentValue.compareTo(BigDecimal.ZERO) > 0){
     		BigDecimal excessDocValue = BigDecimal.ZERO;
     		BigDecimal multiplicationFactor = BigDecimal.ZERO;
-    		MutationFeeDetails mutationFeeDetails = (MutationFeeDetails) getPersistenceService().find("from MutationFeeDetails where lowLimit <= ? and (highLimit is null OR highLimit >= ?)", documentValue,documentValue);
-    		if(mutationFeeDetails != null){
+                MutationFeeDetails mutationFeeDetails = (MutationFeeDetails) getPersistenceService().find(
+                    "from MutationFeeDetails where lowLimit <= ? and (highLimit is null OR highLimit >= ?) and toDate > now()",
+                    documentValue, documentValue);
+            if(mutationFeeDetails != null){
     			if(mutationFeeDetails.getFlatAmount() != null && mutationFeeDetails.getFlatAmount().compareTo(BigDecimal.ZERO) > 0){
     				if(mutationFeeDetails.getIsRecursive().toString().equalsIgnoreCase("N")){
     					mutationFee = mutationFeeDetails.getFlatAmount();

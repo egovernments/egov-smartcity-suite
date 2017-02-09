@@ -71,7 +71,7 @@ import org.springframework.validation.BindingResult;
 public class PropertyPersistenceService extends PersistenceService<BasicProperty, Long> {
 
     private static final Logger LOGGER = Logger.getLogger(PropertyPersistenceService.class);
-    private static final String CREATE_ACK_TEMPLATE = "createProperty_ack";
+    private static final String CREATE_ACK_TEMPLATE = "mainCreatePropertyAck";
     @Autowired
     private UserService userService;
     @Autowired

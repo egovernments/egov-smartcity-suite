@@ -40,6 +40,23 @@
 
 $(document).ready(function () {
 
+    $("#natureOfBusiness").change(function () {
+        if ($("#natureOfBusiness option:selected").text() == 'Permanent')
+            $(".sameForPermanentAndTemporary").show();
+        else
+            $(".sameForPermanentAndTemporary").hide();
+    });
+
+    $("#licenseAppType").change(function () {
+        if ($("#licenseAppType option:selected").text() == 'New')
+            $(".sameForNewAndRenew").show();
+        else
+            $(".sameForNewAndRenew").hide();
+    });
+
+    $("#natureOfBusiness").trigger('change');
+    $("#licenseAppType").trigger('change');
+
     $('#feeType').click(function () {
         if ($('#subCategory').val() == "") {
             bootbox.alert("Please Choose Sub Category");
@@ -61,7 +78,7 @@ $(document).ready(function () {
         var toDate = finRange[1].split("/");
         var effectiveFrom = new Date(frmDate[2], parseInt(frmDate[1]) - 1, parseInt(frmDate[0]));
         var effectiveTo = new Date(toDate[2], parseInt(toDate[1]) - 1, parseInt(toDate[0]));
-        $("#effectiveFrom").datepicker('setDate', effectiveFrom);
+        $("#effectiveFrom").val(finRange[0]);
         $("#effectiveTo").datepicker('setDate', effectiveTo);
     });
 
@@ -131,7 +148,7 @@ $(document).ready(function () {
                     obj['text'] = data[i]['name'];
                     results.push(obj);
                 });
-                select2initialize($("#subCategory"),results,false);
+                select2initialize($("#subCategory"), results, false);
             },
 
             error: function () {
@@ -151,10 +168,16 @@ $(document).ready(function () {
         } else {
             bootbox.confirm("Do you want to delete this fee data ? ", function (result) {
                 if (result) {
-                    if (obj.closest('tr').data('create') == 'yes')
+
+                    if (obj.data('func')) {
                         obj.closest('tr').remove();
-                    else
-                        obj.closest('tr').hide().find('input.markedForRemoval').val('true');
+                    } else {
+                        if (obj.closest('tr').hasClass('dynamicInput'))
+                            obj.closest('tr').remove();
+                        else
+                            obj.closest('tr').hide().find('input.markedForRemoval').val('true');
+
+                    }
                 }
             });
         }
@@ -187,9 +210,12 @@ $(document).ready(function () {
                     });
                 });
                 $('#result tbody').append(newRow);
+                $('#result tbody tr:last').addClass('dynamicInput');
                 var prev_tovalue = $('#result tbody tr:eq(' + (rowCount - 1) + ')').find('input.tovalue').val();
-                $('#result tbody tr:last').find('input').val('');
-                $('#result tbody tr:last').find('input.fromvalue').val(prev_tovalue);
+                var currentRowObj = $('#result tbody tr:last');
+                currentRowObj.find('input').val('');
+                currentRowObj.find('input.fromvalue').val(prev_tovalue);
+                currentRowObj.find('input.markedForRemoval').val('false');
                 patternvalidation();
             }
         });

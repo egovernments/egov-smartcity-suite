@@ -50,6 +50,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.egov.tl.utils.Constants.PERMANENT_NATUREOFBUSINESS;
+
 
 @Service
 @Transactional(readOnly = true)
@@ -78,5 +80,9 @@ public class NatureOfBusinessService {
 
     public NatureOfBusiness getNatureOfBusinessByName(String name) {
         return natureOfBusinessRepository.findByName(name);
+    }
+
+    public NatureOfBusiness getPermanentBusinessNature() {
+        return getNatureOfBusinessByName(PERMANENT_NATUREOFBUSINESS);
     }
 }

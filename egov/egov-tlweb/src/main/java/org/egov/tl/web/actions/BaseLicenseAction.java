@@ -40,6 +40,21 @@
 
 package org.egov.tl.web.actions;
 
+import static org.egov.tl.utils.Constants.APPROVE_PAGE;
+import static org.egov.tl.utils.Constants.CSCOPERATOR;
+import static org.egov.tl.utils.Constants.GENERATE_CERTIFICATE;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -89,19 +104,6 @@ import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.tl.utils.Constants.APPROVE_PAGE;
-import static org.egov.tl.utils.Constants.GENERATE_CERTIFICATE;
-
 @ParentPackage("egov")
 @Results({
         @Result(name = "collection", type = "redirectAction", location = "licenseBillCollect", params = {"namespace",
@@ -125,6 +127,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     protected String roleName;
     protected String reportId;
     protected boolean showAgreementDtl;
+    private boolean hasCscOperatorRole;
+
     @Autowired
     protected transient LicenseUtils licenseUtils;
     @Autowired
@@ -166,7 +170,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @Qualifier("feeTypeService")
     private transient FeeTypeService feeTypeService;
     @Autowired
-    private transient ReportViewerUtil reportViewerUtil;
+    protected transient ReportViewerUtil reportViewerUtil;
 
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
@@ -186,6 +190,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         populateWorkflowBean();
         licenseService().create(license, workflowBean);
         addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
+        setHasCscOperatorRole(
+                securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR) ? true : false);
         return Constants.ACKNOWLEDGEMENT;
     }
 
@@ -216,7 +222,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     }
 
     private String redirectToPrintCertificate() {
-        reportId = reportViewerUtil.addReportToTempCache(reportService.createReport(tradeLicenseService.prepareReportInputData(license())));
+        reportId = reportViewerUtil.addReportToTempCache(
+                reportService.createReport(tradeLicenseService.prepareReportInputData(license())));
         return "report";
     }
 
@@ -224,12 +231,14 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         final HttpServletRequest request = ServletActionContext.getRequest();
         final String cityMunicipalityName = (String) request.getSession().getAttribute("citymunicipalityname");
         final String districtName = (String) request.getSession().getAttribute("districtName");
-        ReportOutput reportOutput = tradeLicenseService.prepareReportInputDataForDig(license(), districtName, cityMunicipalityName);
+        ReportOutput reportOutput = tradeLicenseService.prepareReportInputDataForDig(license(), districtName,
+                cityMunicipalityName);
 
         if (reportOutput != null) {
             String fileName = Constants.SIGNED_DOCUMENT_PREFIX + license().getApplicationNumber() + ".pdf";
             final InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
-            final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf", Constants.FILESTORE_MODULECODE);
+            final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
+                    Constants.FILESTORE_MODULECODE);
             license().setDigiSignedCertFileStoreId(fileStore.getFileStoreId());
             licenseService().save(license());
             setFileStoreIds(fileStore.getFileStoreId());
@@ -262,6 +271,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         populateWorkflowBean();
         licenseService().renew(license(), workflowBean);
         addActionMessage(this.getText("license.renew.submission.succesful") + license().getLicenseNumber());
+        setHasCscOperatorRole(
+                securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR) ? true : false);
         return Constants.ACKNOWLEDGEMENT_RENEW;
     }
 
@@ -327,7 +338,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     }
 
     /**
-     * should be called from the second level only Approve will not end workflow instead it sends to the creator in approved state
+     * should be called from the second level only Approve will not end workflow
+     * instead it sends to the creator in approved state
      */
     public void processWorkflow(final String processType) {
         populateWorkflowBean();
@@ -337,7 +349,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONAPPROVE)) {
             addActionMessage(this.getText("license.approved.success"));
         } else if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONFORWARD)) {
-            List<Assignment> assignments = assignmentService.getAssignmentsForPosition(workflowBean.getApproverPositionId());
+            List<Assignment> assignments = assignmentService
+                    .getAssignmentsForPosition(workflowBean.getApproverPositionId());
             String nextDesgn = !assignments.isEmpty() ? assignments.get(0).getDesignation().getName() : "";
             final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
             addActionMessage(this.getText("license.sent") + " " + nextDesgn + " - " + userName);
@@ -349,6 +362,10 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     private void rejectActionMessage() {
         User user = getInitiatorUserObj();
+        if (user != null && user.getRoles().toString().contains(CSCOPERATOR)) {
+            List<Assignment> assignments = assignmentService.getAssignmentsForPosition(license().getState().getInitiatorPosition().getId());
+            user = assignments.get(0).getEmployee();
+        }
         if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED)) {
             Position creatorPosition = license().getState().getInitiatorPosition();
             addActionMessage(this.getText("license.rejectedfirst") + (creatorPosition.getDeptDesig().getDesignation().getName() + " - ")
@@ -415,8 +432,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     public boolean isCurrent(final EgDemandDetails dd) {
         boolean isCurrent = false;
-        final Installment currInstallment = licenseUtils.getCurrInstallment(dd.getEgDemandReason()
-                .getEgDemandReasonMaster().getEgModule());
+        final Installment currInstallment = licenseUtils
+                .getCurrInstallment(dd.getEgDemandReason().getEgDemandReasonMaster().getEgModule());
         if (currInstallment.getId().intValue() == dd.getEgDemandReason().getEgInstallmentMaster().getId().intValue())
             isCurrent = true;
         return isCurrent;
@@ -481,6 +498,14 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     public void setTradeLicenseSmsAndEmailService(final TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService) {
         this.tradeLicenseSmsAndEmailService = tradeLicenseSmsAndEmailService;
+    }
+
+    public boolean isHasCscOperatorRole() {
+        return hasCscOperatorRole;
+    }
+
+    public void setHasCscOperatorRole(boolean hasCscOperatorRole) {
+        this.hasCscOperatorRole = hasCscOperatorRole;
     }
 
 }

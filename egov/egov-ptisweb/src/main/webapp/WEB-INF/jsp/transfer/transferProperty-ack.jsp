@@ -82,7 +82,8 @@
 						</tr>
 					</table>
 					<div class="buttonbottom" align="center">
-					<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_ASSISTANT_APPROVED.equalsIgnoreCase(model.state.value)}">
+					<s:if test="%{(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_ASSISTANT_APPROVED.equalsIgnoreCase(model.state.value) && !model.state.createdBy.name.equals('CSCUSER'))
+					||	model.state.lastModifiedBy.name.equals('CSCUSER')}">
 					    <s:if test="%{initiatorIsActive}">
 						<input type="button" name="button2" id="button2" value="Generate Acknowledgement" class="buttonsubmit" onclick="printAcknowledgement()" />
 						</s:if>

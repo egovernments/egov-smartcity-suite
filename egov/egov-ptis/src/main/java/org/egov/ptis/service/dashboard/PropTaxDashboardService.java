@@ -228,15 +228,12 @@ public class PropTaxDashboardService {
     public CollectionDetails getCollectionIndexDetails(CollectionDetailsRequest collectionDetailsRequest) {
         CollectionDetails collectionIndexDetails = new CollectionDetails();
         List<CollTableData> collIndexData;
-        List<CollectionTrend> collectionTrends = new ArrayList<>();
         collectionIndexElasticSearchService.getCompleteCollectionIndexDetails(collectionDetailsRequest,
                 collectionIndexDetails);
         propertyTaxElasticSearchIndexService.getConsolidatedDemandInfo(collectionDetailsRequest,
                 collectionIndexDetails);
-        if (!DASHBOARD_PROPERTY_TYPE_COURTCASES.equalsIgnoreCase(collectionDetailsRequest.getPropertyType())){
-            collectionTrends = collectionIndexElasticSearchService
+        List<CollectionTrend> collectionTrends = collectionIndexElasticSearchService
                     .getMonthwiseCollectionDetails(collectionDetailsRequest);
-        }
         if (StringUtils.isNotBlank(collectionDetailsRequest.getType()) && collectionDetailsRequest.getType()
                 .equalsIgnoreCase(PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE))
             collIndexData = collectionIndexElasticSearchService

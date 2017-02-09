@@ -50,6 +50,6 @@ public interface CourtTypeMasterRepository extends JpaRepository<CourtTypeMaster
 
     CourtTypeMaster findByCode(String code);
 
-    List<CourtTypeMaster> findByActiveTrueOrderByCourtTypeAsc();
+    List<CourtTypeMaster> findByActiveTrueOrderByOrderNumberAsc();
 
 }

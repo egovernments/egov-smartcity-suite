@@ -64,7 +64,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
-@RequestMapping("/feematrix")
+@RequestMapping("/feematrix/create")
 public class CreateFeeMatrixController {
 
     @Autowired
@@ -107,12 +107,12 @@ public class CreateFeeMatrixController {
         return new FeeMatrix();
     }
 
-    @RequestMapping(value = "create", method = GET)
+    @RequestMapping(method = GET)
     public String newForm() {
         return "feematrix-create";
     }
 
-    @RequestMapping(value = "create", method = POST)
+    @RequestMapping(method = POST)
     public String create(@ModelAttribute @Valid FeeMatrix feeMatrix, BindingResult bindingResult, RedirectAttributes responseAttribs) {
         if (bindingResult.hasErrors())
             return "feematrix-create";

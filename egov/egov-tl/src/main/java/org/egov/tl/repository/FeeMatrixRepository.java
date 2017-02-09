@@ -48,5 +48,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FeeMatrixRepository extends FeeMatrixRepositoryCustom, JpaRepository<FeeMatrix, Long> {
 
-    FeeMatrix findByUniqueNo(String uniqueNo);
 }
