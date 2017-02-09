@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReconnacknowlgementNotice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e9770880-71cf-4aae-a82f-c57adc04545e">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="92"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="cityName" class="java.lang.String"/>
@@ -37,24 +37,11 @@
 					<font size="10" isBold="false" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[Note:
-   1.	 	You can track the status of your application from <ulbname>.cdma.ap.gov.in
-   2.		If the service is not closed on or before the due date, Rs. 50/- will be paid for each day of delay as 	compe nsation.
-   3.		Don’t consult any mediator/broker.
+   1.	You can track the status of your application from <ulbname>.cdma.ap.gov.in
+   2.	If the service is not closed on or before the due date, Rs. 50/- will be paid for each day of delay as 	compe nsation.
+   3.	Don’t consult any mediator/broker.
 
 ]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="22" y="407" width="533" height="119" uuid="7761e25c-bfcb-436b-a2e8-92ec9274392e"/>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font size="10" isBold="false" pdfFontName="Times-Roman"/>
-				</textElement>
-				<text><![CDATA[  [1]	-	Acknowledgement No. in the format of ULBCode-Year-Serial No.[Serial No. is a 6 digit no. which will starts from 1 when a new Calendar Year Starts]  Eg: 1021-2017-000001
-  [2]	-	Service Eg: Title Transfer or New Tap Connection
-  [3]	-	Name of the Applicant
-  [4]	-	Address of the Applicant
-  [5]	-	Election Ward
-  [6]	-	Date on which the application is received [current date]
-  [7]	-	Due Date on which the application is supposed to be disposed as per SLA]]></text>
 			</staticText>
 			<line>
 				<reportElement x="6" y="326" width="542" height="1" uuid="49c954ea-9536-4708-9720-04a72da145d4">
@@ -200,7 +187,7 @@
 				<textElement textAlignment="Center">
 					<font size="11" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Receipt-cum-Acknowledgement No."+($P{applicationNumber}!=null?$P{applicationNumber}:"")]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Receipt-cum-Acknowledgement No. "+($P{applicationNumber}!=null?$P{applicationNumber}:"")]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
