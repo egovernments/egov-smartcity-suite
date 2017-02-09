@@ -114,18 +114,24 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         return MRG_REGISTRATION_EDIT;
     }
 
-    @RequestMapping(value = "/update-approved/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/modify-approved/{id}", method = RequestMethod.GET)
     public String editApprovedRegistration(@PathVariable final Long id, final Model model) {
         buildMrgRegistrationUpdateResult(id, model);
-        LOGGER.info(".........finished build marriage registration for update........ " );
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info(".........finished build marriage registration for update........ ");
+        }
         return MRG_REGISTRATION_EDIT_APPROVED;
     }
 
     private void buildMrgRegistrationUpdateResult(final Long id, final Model model) {
-        LOGGER.info("..........InsidebuildMrgRegistrationUpdateResult........ " +id);
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("..........InsidebuildMrgRegistrationUpdateResult........ " + id);
+        }
         final MarriageRegistration marriageRegistration = marriageRegistrationService.get(id);
         if (!marriageRegistration.isLegacy()) {
-            LOGGER.info("..........No legacy  entry........ " );
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("..........No legacy  entry........ ");
+            }
             final AppConfigValues allowValidation = marriageFeeService.getDaysValidationAppConfValue(
                     MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION);
             model.addAttribute("allowDaysValidation",
@@ -133,12 +139,16 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                             : "NO");
         } else
             model.addAttribute("allowDaysValidation", "NO");
-        LOGGER.info(".........prepareDocumentsForView........ " );
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info(".........prepareDocumentsForView........ ");
+        }
         marriageRegistrationService.prepareDocumentsForView(marriageRegistration);
         marriageApplicantService.prepareDocumentsForView(marriageRegistration.getHusband());
         marriageApplicantService.prepareDocumentsForView(marriageRegistration.getWife());
         model.addAttribute("applicationHistory", marriageRegistrationService.getHistory(marriageRegistration));
-        LOGGER.info(".........before prepareWorkFlowForNewMarriageRegistration........ " );
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info(".........before prepareWorkFlowForNewMarriageRegistration........ ");
+        }
         prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
 
         marriageRegistration.getWitnesses().forEach(
@@ -155,8 +165,9 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                         LOG.error("Error while preparing the document for view", e);
                     }
                 });
-        
-        LOGGER.info(".........after prepare Witnesses........ " );
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info(".........after prepare Witnesses........ ");
+        }
         model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
     }
 
@@ -278,23 +289,35 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
      */ 
     @RequestMapping(value = "/digiSignWorkflow")
     public String digiSignTransitionWorkflow(final HttpServletRequest request, final Model model) throws IOException {
-        LOGGER.debug("..........Inside Digital Signature Transition : Registration........");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("..........Inside Digital Signature Transition : Registration........");
+        }
         final String fileStoreIds = request.getParameter("fileStoreId");
-        LOGGER.debug("........fileStoreIds.........."+fileStoreIds);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("........fileStoreIds.........." + fileStoreIds);
+        }
         final String[] fileStoreIdArr = fileStoreIds.split(",");
-        LOGGER.debug("........fileStoreIdArr.........."+fileStoreIdArr.length);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("........fileStoreIdArr.........." + fileStoreIdArr.length);
+        }
         final HttpSession session = request.getSession();
         final String approvalComent = (String) session.getAttribute(MarriageConstants.APPROVAL_COMMENT);
         //Gets the digitally signed applicationNo and its filestoreid from session
         final Map<String, String> appNoFileStoreIdsMap = (Map<String, String>) session
                 .getAttribute(MarriageConstants.FILE_STORE_ID_APPLICATION_NUMBER);
-        LOGGER.debug("........appNoFileStoreIdsMap....size......"+appNoFileStoreIdsMap.size());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("........appNoFileStoreIdsMap....size......" + appNoFileStoreIdsMap.size());
+        }
         MarriageRegistration marriageRegistrationObj = null;
         WorkflowContainer workflowContainer;
         for (final String fileStoreId : fileStoreIdArr) {
-            LOGGER.debug("........Inside for loop......");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("........Inside for loop......");
+            }
             final String applicationNumber = appNoFileStoreIdsMap.get(fileStoreId);
-            LOGGER.debug("........applicationNumber......"+applicationNumber);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("........applicationNumber......" + applicationNumber);
+            }
             if (null != applicationNumber && !applicationNumber.isEmpty()) {
                 workflowContainer = new WorkflowContainer();
                 workflowContainer.setApproverComments(approvalComent);
@@ -304,7 +327,9 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                 marriageRegistrationService.digiSignCertificate(marriageRegistrationObj, workflowContainer, request);
             }
         }
-        LOGGER.debug("........outside for loop......");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("........outside for loop......");
+        }
         final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(marriageRegistrationObj
                 .getCreatedBy().getId());
         final String message = messageSource.getMessage("msg.digisign.success.registration", new String[] { wfInitiator
@@ -312,7 +337,9 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         model.addAttribute("successMessage", message);
         model.addAttribute("objectType", MarriageCertificateType.REGISTRATION.toString());
         model.addAttribute("fileStoreId", fileStoreIdArr.length == 1 ? fileStoreIdArr[0] : "");
-        LOGGER.debug("..........END of Digital Signature Transition : Registration........");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("..........END of Digital Signature Transition : Registration........");
+        }
         return "mrdigitalsignature-success";
     }
 
@@ -341,7 +368,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
      * @param errors
      * @return
      */
-    @RequestMapping(value = "/update-approved", method = RequestMethod.POST)
+    @RequestMapping(value = "/modify-approved", method = RequestMethod.POST)
     public String modifyRegisteredApplication(@RequestParam final Long id,
             @ModelAttribute final MarriageRegistration registration, final Model model,
             final HttpServletRequest request, final BindingResult errors) {
@@ -380,7 +407,8 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
      * @throws IOException
      */
     @RequestMapping(value = "/viewCertificate/{id}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> viewMarriageRegistrationReport(@PathVariable final Long id, final HttpSession session,
+    @ResponseBody
+    public ResponseEntity<byte[]> viewMarriageRegistrationReport(@PathVariable final Long id, final HttpSession session,
             final HttpServletRequest request) throws IOException {
         return marriageUtils.viewReport(id, MarriageCertificateType.REGISTRATION.toString(), session, request);
     }

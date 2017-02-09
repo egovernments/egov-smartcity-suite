@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -57,7 +57,7 @@ $('.mobileno-field').blur( function () {
 		
 		
 	}
-	else {
+	else {						
 		$('#txt-venuelabel').show();
 		$('#txt-venue').show();
 		
@@ -91,6 +91,7 @@ $('#txt-dateOfMarriage').datepicker()
     	}
     	else{
     		bootbox.alert('Invalid date!');
+    		$('#txt-dateOfMarriage').val('');
     	}
 });
 
@@ -231,13 +232,8 @@ function showMarriageFee()
 						'registrationUnitId' : $('#select-registrationunit').val()
 						}
 				}).done(function(value) {
-										/*if (value == 0)
-											$('#ttxt-zone').val('');
-										else*/
-					console.log(value);
-					
 					$('#txt-zoneid').val(value.id);
-											$('#txt-zone').val(value.name);
+					$('#txt-zone').val(value.name);
 				
 				});
 			}

@@ -41,7 +41,7 @@
 
 $(document).ready( function () {
 	
-	var updateurl='/mrs/registration/update-approved/';
+	var updateurl='/mrs/registration/modify-approved/';
 
 	
 	$('#btnregistrationsearch').click( function () {
