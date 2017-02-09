@@ -1,49 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-12-05T16:48:03 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReconnacknowlgementNotice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e9770880-71cf-4aae-a82f-c57adc04545e">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="190"/>
+	<property name="ireport.y" value="192"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="cityName" class="java.lang.String"/>
@@ -110,7 +69,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Service Type        :]]></text>
+				<text><![CDATA[Service Type        ]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="195" y="108" width="224" height="20" uuid="dd2d3a96-0d6a-42dc-a682-2b4371674305">
@@ -137,7 +96,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Name                 :]]></text>
+				<text><![CDATA[Name                 ]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="195" y="159" width="224" height="20" uuid="8892ecb2-bea4-41d4-b267-03479c2e3b9e">
@@ -154,7 +113,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Address              :]]></text>
+				<text><![CDATA[Address              ]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="195" y="186" width="224" height="20" uuid="709a70a6-e950-46b5-a973-1c83517284e5">
@@ -171,14 +130,14 @@
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Electin Ward        :]]></text>
+				<text><![CDATA[Election Ward        ]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="9" y="218" width="94" height="20" uuid="6bc61c6c-9d19-4b2c-94c9-5086a6471c79"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Date    :]]></text>
+				<text><![CDATA[Date    ]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="102" y="218" width="136" height="20" uuid="7856c745-944c-44bd-b9bc-e6e8cf6300d5">
@@ -191,7 +150,7 @@
 				<textFieldExpression><![CDATA[$P{applicationDate}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="364" y="219" width="147" height="20" uuid="571c97d0-1636-4391-9fef-8b1400bf2c99">
+				<reportElement x="405" y="219" width="147" height="20" uuid="571c97d0-1636-4391-9fef-8b1400bf2c99">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
@@ -201,11 +160,11 @@
 				<textFieldExpression><![CDATA[$P{applicationDueDate}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="270" y="218" width="94" height="20" uuid="97b7f5db-8029-4bdc-a015-c1f7415ae3f4"/>
+				<reportElement x="311" y="218" width="94" height="20" uuid="97b7f5db-8029-4bdc-a015-c1f7415ae3f4"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Due Date   :]]></text>
+				<text><![CDATA[Due Date   ]]></text>
 			</staticText>
 			<line>
 				<reportElement x="9" y="100" width="542" height="1" uuid="2a4e4959-5d21-4510-b3b2-8ba1989bf942">
