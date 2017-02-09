@@ -194,6 +194,8 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             model.addAttribute(WorksConstants.ADDITIONAL_RULE,
                     cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
         }
+        model.addAttribute("amountRule",
+                abstractEstimate.getEstimateValue() != null ? abstractEstimate.getEstimateValue() : BigDecimal.ZERO);
         prepareWorkflow(model, abstractEstimate, workflowContainer);
         List<String> validActions = Collections.emptyList();
         validActions = customizedWorkFlowService.getNextValidActions(abstractEstimate.getStateType(),
@@ -243,6 +245,8 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         estimateService.validateActivities(abstractEstimate, bindErrors);
         estimateService.validateOverheads(abstractEstimate, bindErrors);
         estimateService.validateBudgetHead(abstractEstimate, bindErrors);
+        if (!abstractEstimate.isSpillOverFlag())
+            estimateService.validateWorkflowActionButton(abstractEstimate, bindErrors, additionalRule, workFlowAction);
 
         // Added server side validation for selected abstract estimate created flag
         if (abstractEstimate.getLineEstimateDetails() != null

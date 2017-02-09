@@ -205,6 +205,9 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             estimateService.validateActivities(abstractEstimate, errors);
             estimateService.validateOverheads(abstractEstimate, errors);
             estimateService.validateBudgetHead(abstractEstimate, errors);
+            if (!abstractEstimate.isSpillOverFlag())
+                estimateService.validateWorkflowActionButton(abstractEstimate, errors, additionalRule, workFlowAction);
+
             if (!estimateService.checkForDuplicateAccountCodesInEstimateDeductions(abstractEstimate))
                 errors.reject("error.abstractestimate.duplicate.accountcodes",
                         "error.abstractestimate.duplicate.accountcodes");
@@ -261,7 +264,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             model.addAttribute("designations", designations);
 
         }
-        if (!abstractEstimate.getEstimateTechnicalSanctions().isEmpty()) {
+        if (!abstractEstimate.getEstimateTechnicalSanctions().isEmpty() && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionBy() != null) {
             final Designation designation = assignmentService.findByEmployeeAndGivenDate(
                     abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionBy().getId(), new Date()).get(0)
                     .getDesignation();
@@ -289,7 +292,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
                     abstractEstimate.getEstimateValue(), workflowContainer.getAdditionalRule(),
                     abstractEstimate.getCurrentState().getValue(),
                     abstractEstimate.getCurrentState().getNextAction());
-            if (wfmatrix != null)
+            if (wfmatrix != null && wfmatrix.getNextStatus() != null)
                 model.addAttribute("nextStatus", wfmatrix.getNextStatus().toUpperCase());
         }
         prepareWorkflow(model, abstractEstimate, workflowContainer);

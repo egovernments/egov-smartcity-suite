@@ -79,6 +79,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationException;
@@ -242,6 +243,9 @@ public class EstimateService {
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
 
+    @Autowired
+    private ScriptService scriptService;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -270,16 +274,19 @@ public class EstimateService {
         mergeSorAndNonSorActivities(abstractEstimate);
         final AbstractEstimate abstractEstimateFromDB = getAbstractEstimateByEstimateNumber(
                 abstractEstimate.getEstimateNumber());
+
+        if (abstractEstimate.isSpillOverFlag())
+            for (final EstimateTechnicalSanction ets : abstractEstimate.getEstimateTechnicalSanctions())
+                ets.setAbstractEstimate(abstractEstimate);
+
         if (abstractEstimateFromDB == null)
             newAbstractEstimate = saveNewAbstractEstimate(abstractEstimate);
         else
             newAbstractEstimate = updateAbstractEstimate(abstractEstimateFromDB, abstractEstimate);
 
-        if (newAbstractEstimate.isSpillOverFlag()) {
-            for (final EstimateTechnicalSanction ets : newAbstractEstimate.getEstimateTechnicalSanctions())
-                ets.setAbstractEstimate(newAbstractEstimate);
-            setProjectCode(newAbstractEstimate);
-            createAccountDetailKey(newAbstractEstimate.getProjectCode());
+        if (abstractEstimate.isSpillOverFlag()) {
+            setProjectCode(abstractEstimate);
+            createAccountDetailKey(abstractEstimate.getProjectCode());
         }
 
         createAbstractEstimateWorkflowTransition(newAbstractEstimate, approvalPosition, approvalComent,
@@ -733,7 +740,7 @@ public class EstimateService {
 
         updatedAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
 
-        abstractEstimateStatusChange(updatedAbstractEstimate, workFlowAction);
+        abstractEstimateStatusChange(updatedAbstractEstimate, workFlowAction, additionalRule);
 
         createAbstractEstimateWorkflowTransition(updatedAbstractEstimate, approvalPosition, approvalComent,
                 additionalRule, workFlowAction);
@@ -810,45 +817,24 @@ public class EstimateService {
         abstractEstimate.getEstimateTechnicalSanctions().add(estimateTechnicalSanction);
     }
 
-    public void abstractEstimateStatusChange(final AbstractEstimate abstractEstimate, final String workFlowAction) {
-        if (null != abstractEstimate && null != abstractEstimate.getEgwStatus()
-                && null != abstractEstimate.getEgwStatus().getCode())
-            if (workFlowAction.equals(WorksConstants.SAVE_ACTION))
-                abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                        EstimateStatus.NEW.toString()));
-            else if (EstimateStatus.NEW.toString().equalsIgnoreCase(abstractEstimate.getEgwStatus().getCode())
-                    && !(workFlowAction.equalsIgnoreCase(WorksConstants.CREATE_AND_APPROVE)
-                            || workFlowAction.equals(WorksConstants.CANCEL_ACTION)))
-                abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                        EstimateStatus.CREATED.toString()));
-
-            else if (workFlowAction.equals(WorksConstants.REJECT_ACTION))
-                abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                        EstimateStatus.REJECTED.toString()));
-
-            else if (workFlowAction.equals(WorksConstants.CANCEL_ACTION))
-                abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                        EstimateStatus.CANCELLED.toString()));
-
-            else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString())
-                    && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
-                abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                        EstimateStatus.RESUBMITTED.toString()));
-
-            else if (abstractEstimate.getState() != null
-                    && (workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE)
-                            || workFlowAction.equalsIgnoreCase(WorksConstants.CREATE_AND_APPROVE)))
-                abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                        EstimateStatus.APPROVED.toString()));
-
-            else if ((abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString())
-                    || abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CHECKED.toString())
-                    || abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.RESUBMITTED.toString()))
-                    && abstractEstimate.getState() != null
-                    && workFlowAction.equalsIgnoreCase(WorksConstants.SUBMIT_ACTION))
-                abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                        EstimateStatus.CHECKED.toString()));
-
+    public void abstractEstimateStatusChange(final AbstractEstimate abstractEstimate, final String workFlowAction,
+            final String additionalRule) {
+        if (null != abstractEstimate && workFlowAction.equals(WorksConstants.SAVE_ACTION))
+            abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
+                    EstimateStatus.NEW.toString()));
+        else if (null != abstractEstimate && workFlowAction.equals(WorksConstants.REJECT_ACTION))
+            abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
+                    EstimateStatus.REJECTED.toString()));
+        else if (workFlowAction.equals(WorksConstants.CANCEL_ACTION))
+            abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
+                    EstimateStatus.CANCELLED.toString()));
+        else if (null != abstractEstimate && null != abstractEstimate.getState()) {
+            final WorkFlowMatrix wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
+                    abstractEstimate.getEstimateValue(), additionalRule,
+                    abstractEstimate.getCurrentState().getValue(), abstractEstimate.getState().getNextAction());
+            abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
+                    wfmatrix.getNextStatus().toUpperCase()));
+        }
     }
 
     public void createAbstractEstimateWorkflowTransition(final AbstractEstimate abstractEstimate,
@@ -1706,4 +1692,21 @@ public class EstimateService {
         adk.setAccountdetailtype(accountdetailtype);
         accountdetailkeyHibernateDAO.create(adk);
     }
+
+    @SuppressWarnings("unchecked")
+    public void validateWorkflowActionButton(final AbstractEstimate abstractEstimate,
+            final BindingResult bindErrors,
+            final String additionalRule, final String workFlowAction) {
+        final Map<String, Object> map = new HashMap<String, Object>();
+
+        map.putAll((Map<String, Object>) scriptService.executeScript(WorksConstants.ABSTRACTESTIMATE_APPROVALRULES,
+                ScriptService.createContext("estimateValue", abstractEstimate.getEstimateValue(),
+                        "cityGrade", additionalRule)));
+        final boolean validateWorkflowButton = (boolean) map.get("createAndApproveFieldsRequired");
+        if (validateWorkflowButton && WorksConstants.FORWARD_ACTION.toString().equalsIgnoreCase(workFlowAction))
+            bindErrors.reject("error.create.approve", "error.create.approve");
+        else if (!validateWorkflowButton && WorksConstants.CREATE_AND_APPROVE.toString().equalsIgnoreCase(workFlowAction))
+            bindErrors.reject("error.forward.approve", "error.forward.approve");
+    }
+
 }

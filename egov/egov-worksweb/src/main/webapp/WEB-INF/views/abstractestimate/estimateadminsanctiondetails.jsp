@@ -66,7 +66,7 @@
 			</thead>
 			<tbody>
 				<tr>
-					<c:if test="${mode != 'view' && nextStatus == 'TECHNICAL_SANCTIONED' }">
+					<c:if test="${mode != 'view' && nextStatus == 'APPROVED' }">
 						<td>
 							<form:input path="adminSanctionNumber" id="adminSanctionNumber" class="form-control table-input text-left" maxlength="32" required="required" onclick="validateadminSanctionNumber();"/>
 							<form:errors path="adminSanctionNumber" cssClass="add-margin error-msg" />
