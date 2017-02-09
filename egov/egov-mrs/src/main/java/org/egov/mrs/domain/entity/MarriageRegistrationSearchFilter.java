@@ -42,7 +42,8 @@ package org.egov.mrs.domain.entity;
 
 public class MarriageRegistrationSearchFilter {
     
-    private String registrationNo;
+    private String applicationNo;
+	private String registrationNo;
     private String husbandName;
     private String wifeName;
     private String dateOfMarriage;
@@ -85,5 +86,11 @@ public class MarriageRegistrationSearchFilter {
     public void setDateOfMarriage(String dateOfMarriage) {
         this.dateOfMarriage = dateOfMarriage;
     }
+	public String getApplicationNo() {
+		return applicationNo;
+	}
+	public void setApplicationNo(String applicationNo) {
+		this.applicationNo = applicationNo;
+	}
     
 }

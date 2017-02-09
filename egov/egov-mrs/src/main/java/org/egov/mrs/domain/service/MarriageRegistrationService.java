@@ -541,23 +541,28 @@ public class MarriageRegistrationService {
     private void buildReIssueSearchCriteria(final MarriageRegistrationSearchFilter mrSearchFilter, final Criteria criteria)
             throws ParseException {
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        criteria.createAlias("reIssue.registration", "registration");
         if (mrSearchFilter.getRegistrationNo() != null)
-            criteria.createAlias("reIssue.registration", "registration").add(
+            criteria.add(
                     Restrictions.ilike("registration.registrationNo", mrSearchFilter.getRegistrationNo(),
                             MatchMode.ANYWHERE));
+        if (mrSearchFilter.getApplicationNo() != null)
+        	 criteria.add(
+                    Restrictions.ilike("reIssue.applicationNo", mrSearchFilter.getApplicationNo(),
+                             MatchMode.ANYWHERE));
         if (mrSearchFilter.getHusbandName() != null)
-            criteria.createAlias("reIssue.registration.husband", "husband").add(
+            criteria.createAlias("registration.husband", "husband").add(
                     Restrictions.ilike("husband.name.fullname", mrSearchFilter.getHusbandName(), MatchMode.ANYWHERE));
         if (mrSearchFilter.getWifeName() != null)
-            criteria.createAlias("reIssue.registration.wife", "wife").add(
+            criteria.createAlias("registration.wife", "wife").add(
                     Restrictions.ilike("wife.name.fullname", mrSearchFilter.getWifeName(), MatchMode.ANYWHERE));
         if (mrSearchFilter.getApplicationDate() != null)
             criteria.add(Restrictions.between("reIssue.applicationDate", sdf.parse(mrSearchFilter.getApplicationDate()),
                     org.apache.commons.lang3.time.DateUtils.addDays(sdf.parse(mrSearchFilter.getApplicationDate()), 1)));
         if (mrSearchFilter.getDateOfMarriage() != null)
-            criteria.createAlias("reIssue.registration", "registration").add(
+            criteria.add(
                     Restrictions.between("registration.dateOfMarriage", sdf.parse(mrSearchFilter.getDateOfMarriage()),
-                            org.apache.commons.lang3.time.DateUtils.addDays(sdf.parse(mrSearchFilter.getDateOfMarriage()), 0)));
+                          org.apache.commons.lang3.time.DateUtils.addDays(sdf.parse(mrSearchFilter.getDateOfMarriage()), 0)));
     }
 
     private void buildMarriageRegistrationSearchCriteria(final MarriageRegistration registration, final Criteria criteria)
