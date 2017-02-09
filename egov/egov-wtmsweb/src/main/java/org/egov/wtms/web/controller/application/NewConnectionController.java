@@ -236,7 +236,7 @@ public class NewConnectionController extends GenericConnectionController {
         if (applicationByOthers != null && applicationByOthers.equals(true)) {
             final Position userPosition = waterTaxUtils
                     .getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier());
-            if (userPosition != null) {
+            if (userPosition == null) {
                 model.addAttribute("validateIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
                 final WorkflowContainer workflowContainer = new WorkflowContainer();
                 workflowContainer.setAdditionalRule(waterConnectionDetails.getApplicationType().getCode());
