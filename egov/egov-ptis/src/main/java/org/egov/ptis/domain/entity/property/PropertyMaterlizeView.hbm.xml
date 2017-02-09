@@ -96,6 +96,8 @@
 		<property name="duePeriod" column="DUEPERIOD" />
 		<property name="advance" column="ADVANCE"/>
 		<property name="oldMuncipalNum" column="OLDMUNCIPALNUMBER" />
+		<property name="rebate" column="REBATE"/>
+		<property name="adjustment" column="ADJUSTMENT"/>
 		
 		<set name="instDmdColl" table="EGPT_MV_INST_DEM_COLL" order-by="id_installment" >
             <key>
