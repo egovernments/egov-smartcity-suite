@@ -84,6 +84,7 @@ public class MarriageRegDataEntryController extends MarriageRegistrationControll
 
         final String appNo = marriageRegistrationService.createDataEntryMrgRegistration(marriageRegistration);
         model.addAttribute("ackNumber", appNo);
+        model.addAttribute("registrationNo", marriageRegistration.getRegistrationNo());
         return "registration-ack";
     }
 
