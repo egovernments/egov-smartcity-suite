@@ -599,7 +599,9 @@ public class MBHeaderService {
                         .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE).withNatureOfTask(natureOfwork);
         } else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0))
-                    && !WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction))
+                    && !WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)
+                    && !WorksConstants.APPROVE_ACTION.toString().equalsIgnoreCase(workFlowAction)
+                    && !WorksConstants.CREATE_AND_APPROVE.equalsIgnoreCase(workFlowAction))
                 pos = positionMasterService.getPositionById(approvalPosition);
             if (null == mbHeader.getState()) {
                 wfmatrix = mbHeaderWorkflowService.getWfMatrix(mbHeader.getStateType(), null, mbHeader.getMbAmount(),

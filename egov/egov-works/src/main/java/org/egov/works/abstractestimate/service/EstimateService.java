@@ -872,7 +872,9 @@ public class EstimateService {
                         .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE).withNatureOfTask(natureOfwork);
         } else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0))
-                    && !WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction))
+                    && !WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)
+                    && !WorksConstants.APPROVE_ACTION.toString().equalsIgnoreCase(workFlowAction)
+                    && !WorksConstants.CREATE_AND_APPROVE.equalsIgnoreCase(workFlowAction))
                 pos = positionMasterService.getPositionById(approvalPosition);
             if (null == abstractEstimate.getState()) {
                 wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,

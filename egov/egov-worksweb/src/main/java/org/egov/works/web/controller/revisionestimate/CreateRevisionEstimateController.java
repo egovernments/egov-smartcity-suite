@@ -46,6 +46,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.egf.budget.model.BudgetControlType;
 import org.egov.egf.budget.service.BudgetControlTypeService;
@@ -342,7 +343,7 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
 
     private String getMessageByStatus(final RevisionAbstractEstimate revisionEstimate, final String approverName,
             final String nextDesign) {
-        String message = "";
+        String message = StringUtils.EMPTY;
         if (RevisionEstimateStatus.NEW.toString().equals(revisionEstimate.getEgwStatus().getCode()))
             message = messageSource.getMessage("msg.revisionestimate.saved",
                     new String[] { revisionEstimate.getEstimateNumber() }, null);
@@ -359,7 +360,7 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
             message = messageSource.getMessage("msg.revisionestimate.rejected",
                     new String[] { revisionEstimate.getEstimateNumber(), approverName, nextDesign }, null);
         else if (RevisionEstimateStatus.CANCELLED.toString().equals(revisionEstimate.getEgwStatus().getCode()))
-            message = messageSource.getMessage("msg.revisionestimate.cancelled",
+            message = messageSource.getMessage("msg.revisionestimate.cancel",
                     new String[] { revisionEstimate.getEstimateNumber() }, null);
         else if (RevisionEstimateStatus.APPROVED.toString().equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode())) {
             final LineEstimateAppropriation lea = lineEstimateAppropriationService
