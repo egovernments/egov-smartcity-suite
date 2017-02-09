@@ -534,6 +534,23 @@
        			 		</table>        
        			 --%>
        			                    <%-- <jsp:include page="../workflow/commonWorkflowMatrix.jsp" /> --%>
+       			                    
+       			                    	<s:if test="%{currentDesignation != null && currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}"> 
+					<div id="workflowCommentsDiv" align="center">
+						<table width="100%">
+							<tr>
+								 <td width="25%" class="${approverEvenCSS}">&nbsp;</td> 
+								<td class="${approverEvenCSS}" width="13%"><s:text name="wf.approver.remarks"/>:</td>
+								<td class="${approverEvenTextCSS}"><textarea
+										id="approverComments" name="approverComments" rows="2"
+										value="#approverComments" cols="35"></textarea></td>
+								<td class="${approverEvenCSS}">&nbsp;</td>
+								<td width="10%" class="${approverEvenCSS}">&nbsp;</td>
+								<td class="${approverEvenCSS}">&nbsp;</td>
+							</tr>
+						</table>
+					</div>
+				</s:if>
 									</div>
 								</s:else>
 							</div>
