@@ -81,9 +81,7 @@ public class CitizenAcknowledgementController {
     
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
+  
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
@@ -99,6 +97,9 @@ public class CitizenAcknowledgementController {
 
     private ResponseEntity<byte[]> generateReport(final WaterConnectionDetails waterConnectionDetails,
             final HttpSession session) {
+    	   ReportRequest reportInput = null;
+    	   ReportOutput reportOutput = null;
+    	   Map<String, Object> reportParams = new HashMap<String, Object>();
         if (waterConnectionDetails != null) {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(

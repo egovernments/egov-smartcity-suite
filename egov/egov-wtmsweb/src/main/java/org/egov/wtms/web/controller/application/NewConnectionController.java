@@ -236,7 +236,9 @@ public class NewConnectionController extends GenericConnectionController {
         if (applicationByOthers != null && applicationByOthers.equals(true)) {
             final Position userPosition = waterTaxUtils
                     .getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier());
-            if (userPosition == null) {
+            if (userPosition != null) {
+            	 approvalPosition = userPosition.getId();
+            } else{
                 model.addAttribute("validateIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
                 final WorkflowContainer workflowContainer = new WorkflowContainer();
                 workflowContainer.setAdditionalRule(waterConnectionDetails.getApplicationType().getCode());
@@ -249,8 +251,7 @@ public class NewConnectionController extends GenericConnectionController {
                         "err.validate.connection.user.mapping");
                 model.addAttribute("noJAORSAMessage" ,"No JA/SA exists to forward the application.");
                 return "newconnection-form";
-            } else
-                approvalPosition = userPosition.getId();
+            }
 
         }
 

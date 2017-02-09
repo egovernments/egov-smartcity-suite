@@ -199,7 +199,9 @@ public class AdditionalConnectionController extends GenericConnectionController 
         if (applicationByOthers != null && applicationByOthers.equals(true)) {
             final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(addConnection.getConnection()
                     .getPropertyIdentifier());
-            if (userPosition == null) {
+            if (userPosition != null) {
+                approvalPosition = userPosition.getId();
+            } else{
                 final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
                         .getActiveConnectionDetailsByConnection(addConnection.getConnection());
                 loadBasicDetails(addConnection, model, parentConnectionDetails);
@@ -213,8 +215,8 @@ public class AdditionalConnectionController extends GenericConnectionController 
                         "err.validate.connection.user.mapping");
                 model.addAttribute("noJAORSAMessage" ,"No JA/SA exists to forward the application.");
                 return "addconnection-form";
-            } else
-                approvalPosition = userPosition.getId();
+            
+            }
         }
 
         waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComment,
