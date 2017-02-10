@@ -379,7 +379,9 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
             return MRG_REGISTRATION_EDIT_APPROVED;
         }
         marriageRegistrationService.updateRegistration(registration);
-        model.addAttribute("message", messageSource.getMessage("msg.update.registration", null, null));
+
+        model.addAttribute("message", messageSource.getMessage("msg.update.registration", new String[] {
+                registration.getApplicationNo(), registration.getRegistrationNo() }, null));
         return MRG_REGISTRATION_SUCCESS;
     }
 

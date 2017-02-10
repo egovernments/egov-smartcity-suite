@@ -43,6 +43,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -377,17 +378,29 @@ public class MarriageCertificateService {
     @SuppressWarnings("unchecked")
     public List<MarriageCertificate> searchMarriageCertificates(final MarriageCertificate certificate) {
         final Criteria criteria = getCurrentSession().createCriteria(MarriageCertificate.class, "certificate");
-
-        if (certificate.getCertificateType() != null
-                && MarriageCertificateType.REGISTRATION.toString().equals(certificate.getCertificateType().toString()))
+        List<MarriageCertificate> certificateResultList = new ArrayList<>();
+        if (certificate.getRegistration().getRegistrationNo() != null) {
             criteria.createAlias("certificate.registration", "registration");
-        else if (certificate.getCertificateType() != null
-                && MarriageCertificateType.REISSUE.toString().equals(certificate.getCertificateType().toString()))
-            criteria.createAlias("certificate.reIssue", "reIssue");
+            criteria.add(
+                    Restrictions.eq("registration.registrationNo", certificate.getRegistration().getRegistrationNo().trim()));
+        }
+        buildSearchCriteriaForMrgCertificate(certificate, criteria);
+        certificateResultList.addAll(criteria.list());
+        // To fetch reissue certificate details along with registration certificate details when searching 
+        // using registration number
+        if (certificate.getRegistration().getRegistrationNo() != null) {
+            final Criteria criteriaForReissue = getCurrentSession().createCriteria(MarriageCertificate.class, "cert");
+            criteriaForReissue.createAlias("cert.reIssue", "reIssue").createAlias("reIssue.registration", "reg");
+            criteriaForReissue
+                    .add(Restrictions.eq("reg.registrationNo", certificate.getRegistration().getRegistrationNo().trim()));
+            buildSearchCriteriaForMrgCertificate(certificate, criteriaForReissue);
+            certificateResultList.addAll(criteriaForReissue.list());
+        }
 
-        if (certificate.getRegistration() != null && certificate.getRegistration().getRegistrationNo() != null)
-            criteria.add(Restrictions.ilike("registration.registrationNo",
-                    certificate.getRegistration().getRegistrationNo().trim(), MatchMode.ANYWHERE));
+        return certificateResultList;
+    }
+
+    private void buildSearchCriteriaForMrgCertificate(final MarriageCertificate certificate, final Criteria criteria) {
         if (certificate.getCertificateNo() != null)
             criteria.add(Restrictions.ilike("certificateNo", certificate.getCertificateNo().trim(), MatchMode.ANYWHERE));
         if (certificate.getCertificateType() != null)
@@ -400,11 +413,10 @@ public class MarriageCertificateService {
                     marriageRegistrationReportsService.resetToDateTimeStamp(certificate.getToDate())));
         if (certificate.getFrequency() != null && "LATEST".equalsIgnoreCase(certificate.getFrequency()))
             criteria.addOrder(Order.desc("createdDate"));
-        return criteria.list();
     }
 
     public MarriageCertificate findById(final long id) {
         return marriageCertificateRepository.findOne(id);
     }
-
+    
 }
