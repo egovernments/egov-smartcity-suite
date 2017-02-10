@@ -596,5 +596,28 @@
         <put-attribute name="body" value="/WEB-INF/views/master/schedulecategory/schedulecategory-modify.jsp"/>
     </definition>
     
+    <definition name="contractorclass-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.createcontractorclass" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/contractorclass/contractorclass-new.jsp"/>
+    </definition>
     
+    <definition name="contractorclass-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.searchcontractorclass" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/contractorclass/contractorclass-search.jsp"/>
+    </definition>
+    
+    <definition name="contractorclass-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.viewcontractorclass" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/contractorclass/contractorclass-success.jsp"/>
+    </definition>
+    
+    <definition name="contractorclass-modify" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.modifycontractorclass" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/contractorclass/contractorclass-modify.jsp"/>
+    </definition>
+    
+    <definition name="contractorclass-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.viewcontractorclass" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/contractorclass/contractorclass-success.jsp"/>
+    </definition>
 </tiles-definitions>

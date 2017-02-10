@@ -38,53 +38,27 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ include file="/includes/taglibs.jsp" %>
-<html>  
-	<head>  
-    	<title><s:text name="contractor.grade.master.title" /></title>
-    	<script src="<cdn:url value='/resources/js/contractorgrade.js?rnd=${app_release_no}'/>"></script> 
-	</head>  
-	<body>
-	
-		<div class="new-page-header">
-			<s:if test="%{mode == 'edit'}">
-				<s:text name="contractor.grade.header.modify" />
-			</s:if><s:else>
-				<s:text name="contractor.grade.header" />
-			</s:else>
-		</div>
-		
-    	<s:if test="%{hasErrors()}">
-        	<div class="alert alert-danger">
-          		<s:actionerror/>
-          		<s:fielderror/>
-        	</div>
-    	</s:if>
-    	
-		<s:if test="%{hasActionMessages()}">
-			<div class="alert alert-success">
-				 <a href="#" style="font-size:21px;" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-				<s:actionmessage theme="simple" escape="false"/>
-			</div>
-		</s:if>
-   
-		<s:form action="contractorGrade-save" theme="simple" name="contractorGrade" id="contractorGrade" cssClass="form-horizontal form-groups-bordered">
-			<s:token/>
-			<s:hidden name="model.id" />
-			<s:hidden name="id" />
-			<s:hidden name="mode" />
-			<%@ include file='contractorgrade-form.jsp'%>
-				<div class="row">
-					<div class="col-xs-12 text-center buttonholdersearch">
-						<s:if test="%{id == null}">
-							<s:submit value="Save" method="save" cssClass="btn btn-primary" id="saveButton" name="button" onclick="return validateContractorGradeFormAndSubmit();"/>&nbsp;
-						</s:if><s:else>
-							<s:submit value="Modify" method="save" cssClass="btn btn-primary" id="modifyButton" name="button" onclick="return validateContractorGradeFormAndSubmit();"/>&nbsp;
-						</s:else>
-						
-						<input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();" />
-				     </div>
-				</div>
-		</s:form> 
-	</body>
-</html>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<div class="row display-hide report-section">
+	<div class="col-md-12 table-header text-left">
+		<spring:message code="title.searchresult" />
+	</div>
+	<div class="col-md-12 form-group report-table-container">
+		<table class="table table-bordered table-hover"
+			id="resultTable">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.slno" /></th>
+					<th><spring:message code="lbl.contractorclass" /></th>
+					<th><spring:message code="lbl.description" /></th>
+					<th><spring:message code="lbl.contractorclass.minamount" /></th>
+					<th><spring:message code="lbl.contractorclass.maxamount" /></th>
+					<c:if test="${mode != 'view'}"> 
+						<th><spring:message code="lbl.modify" /></th>
+					</c:if>
+				</tr>
+			</thead>
+		</table>
+	</div>
+</div>

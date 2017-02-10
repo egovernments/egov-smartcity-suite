@@ -38,4 +38,27 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ include file='contractorgrade-new.jsp'%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
+<div class="page-container" id="page-container">
+		<div class="new-page-header" id="successMessage">
+			<c:if test="${ mode != 'view' && mode != 'edit'}">
+				${createSuccess }
+			</c:if>
+			<c:if test = "${ mode == 'edit'}">
+				${modifySuccess }
+			</c:if>
+		</div>
+			<jsp:include page="contractorclass-commonview.jsp" />
+		<div class="col-sm-12 text-center">
+			<div class="row">
+				<c:if test="${ mode != 'view' && mode != 'edit'}">
+					<input type="submit" name="create" Class="btn btn-primary" value="Create New Contractor Class" id="CREATE" name="button" onclick="createNewContractorClass();" />
+				</c:if>
+				<input type="submit" name="closeButton" id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+			</div>
+		</div>
+		
+</div>
+<script
+	src="<cdn:url value='/resources/js/master/contractorclass.js?rnd=${app_release_no}'/>"></script>

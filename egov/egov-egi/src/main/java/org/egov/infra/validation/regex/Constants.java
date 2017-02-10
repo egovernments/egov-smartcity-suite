@@ -74,4 +74,5 @@ public class Constants {
     public static final String ALLTYPESOFALPHABETS_WITHMIXEDCHAR = "[A-Za-z-_ ]+";
     public static final String ALPHANUMERICWITHSPECIALCHAR = "[0-9a-zA-Z-& :,/.()@]+";
     
+    public static final String ALPHABETSWITHHYPHENSLASHSPACE = "[A-Za-z-/ ]+";
 }

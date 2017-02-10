@@ -41,18 +41,19 @@
 package org.egov.works.masters.service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.commons.ContractorClassSearchRequest;
 import org.egov.commons.ContractorGrade;
-import org.egov.infstr.search.SearchQuery;
-import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.works.masters.repository.ContractorGradeRepository;
-import org.egov.works.utils.WorksConstants;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -69,8 +70,7 @@ public class ContractorGradeService {
     private ContractorGradeRepository contractorGradeRepository;
 
     public ContractorGrade getContractorGradeById(final Long contractorGradeId) {
-        final ContractorGrade contractorGrade = contractorGradeRepository.findOne(contractorGradeId);
-        return contractorGrade;
+        return contractorGradeRepository.findOne(contractorGradeId);
     }
 
     public List<ContractorGrade> getAllContractorGrades() {
@@ -82,35 +82,42 @@ public class ContractorGradeService {
         return contractorGradeRepository.save(contractorGrade);
     }
 
-    public SearchQuery prepareSearchQuery(final Map<String, Object> criteriaMap) {
-        final StringBuffer contractorGradeSql = new StringBuffer(100);
-        String contractorGradeStr = "";
-        final List<Object> paramList = new ArrayList<Object>();
-        contractorGradeSql.append(" from ContractorGrade cg");
-        final String grade = (String) criteriaMap.get(WorksConstants.GRADE);
-        final Double minAmount = (Double) criteriaMap.get(WorksConstants.MIN_AMOUNT);
-        final Double maxAmount = (Double) criteriaMap.get(WorksConstants.MAX_AMOUNT);
-        if (grade != null && !grade.trim().equals("") || minAmount != -1 || maxAmount != -1)
-            contractorGradeSql.append(" where 1=1");
-
-        if (grade != null && !grade.trim().equals("")) {
-            contractorGradeSql.append(" and UPPER(cg.grade) like ?");
-            paramList.add("%" + grade.trim().toUpperCase() + "%");
+    public List<ContractorGrade> searchContractorClassToView(
+            final ContractorClassSearchRequest contractorClassSearchRequest) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ContractorGrade.class)
+                .addOrder(Order.asc("createdDate"));
+        if (contractorClassSearchRequest != null) {
+            if (contractorClassSearchRequest.getContractorClass() != null)
+                criteria.add(Restrictions.eq("grade", contractorClassSearchRequest.getContractorClass()));
+            if (contractorClassSearchRequest.getMinAmount() != null)
+                criteria.add(Restrictions.eq("minAmount", new BigDecimal(contractorClassSearchRequest.getMinAmount())));
+            if (contractorClassSearchRequest.getMaxAmount() != null)
+                criteria.add(Restrictions.eq("maxAmount", new BigDecimal(contractorClassSearchRequest.getMaxAmount())));
         }
 
-        if (minAmount != -1) {
-            contractorGradeSql.append(" and cg.minAmount = ?");
-            paramList.add(BigDecimal.valueOf(minAmount));
-        }
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
 
-        if (maxAmount != -1) {
-            contractorGradeSql.append(" and cg.maxAmount = ?");
-            paramList.add(BigDecimal.valueOf(maxAmount));
-        }
-        contractorGradeSql.append(" group by cg.id");
-        contractorGradeStr = contractorGradeSql.toString();
-        final String countQuery = "select count(*) " + contractorGradeStr;
-        return new SearchQueryHQL(contractorGradeStr, countQuery, paramList);
+    @Transactional
+    public ContractorGrade update(final ContractorGrade contractorGrade) {
+        return contractorGradeRepository.save(contractorGrade);
+    }
+
+    public List<String> getAllContractorMinAmounts() {
+        return contractorGradeRepository.findByContractorClassMinAmount();
+    }
+
+    public List<String> getAllContractorMaxAmounts() {
+        return contractorGradeRepository.findByContractorClassMaxAmount();
+    }
+
+    public ContractorGrade getByMinAndMaxAmount(final BigDecimal minAmount, final BigDecimal maxAmount) {
+        return contractorGradeRepository.findByMinAndMaxAmount(minAmount, maxAmount);
+    }
+
+    public ContractorGrade getByContractorClass(final String grade) {
+        return contractorGradeRepository.findByGrade(grade);
     }
 
 }

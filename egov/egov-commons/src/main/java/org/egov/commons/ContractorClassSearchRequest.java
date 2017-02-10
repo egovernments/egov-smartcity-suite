@@ -37,29 +37,36 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.masters.repository;
+package org.egov.commons;
 
-import java.math.BigDecimal;
-import java.util.List;
+public class ContractorClassSearchRequest {
 
-import org.egov.commons.ContractorGrade;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+    private String contractorClass;
+    private String minAmount;
+    private String maxAmount;
 
-@Repository
-public interface ContractorGradeRepository extends JpaRepository<ContractorGrade, Long> {
+    public String getContractorClass() {
+        return contractorClass;
+    }
 
-    @Query("select distinct(cg) from ContractorGrade as cg where cg.minAmount = :minAmount and cg.maxAmount = :maxAmount")
-    public ContractorGrade findByMinAndMaxAmount(@Param("minAmount") final BigDecimal minAmount,
-            @Param("maxAmount") final BigDecimal maxAmount);
+    public void setContractorClass(final String contractorClass) {
+        this.contractorClass = contractorClass;
+    }
 
-    public ContractorGrade findByGrade(final String grade);
+    public String getMinAmount() {
+        return minAmount;
+    }
 
-    @Query("select distinct(cg.minAmount) from ContractorGrade as cg order by cg.minAmount")
-    public List<String> findByContractorClassMinAmount();
+    public void setMinAmount(final String minAmount) {
+        this.minAmount = minAmount;
+    }
 
-    @Query("select distinct(cg.maxAmount) from ContractorGrade as cg order by cg.maxAmount")
-    public List<String> findByContractorClassMaxAmount();
+    public String getMaxAmount() {
+        return maxAmount;
+    }
+
+    public void setMaxAmount(final String maxAmount) {
+        this.maxAmount = maxAmount;
+    }
+
 }

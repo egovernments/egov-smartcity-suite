@@ -37,29 +37,50 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.masters.repository;
+package org.egov.works.web.controller.masters;
 
-import java.math.BigDecimal;
 import java.util.List;
 
+import org.egov.commons.ContractorClassSearchRequest;
 import org.egov.commons.ContractorGrade;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.egov.works.masters.service.ContractorGradeService;
+import org.egov.works.web.adaptor.SearchContractorClassJsonAdaptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-@Repository
-public interface ContractorGradeRepository extends JpaRepository<ContractorGrade, Long> {
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-    @Query("select distinct(cg) from ContractorGrade as cg where cg.minAmount = :minAmount and cg.maxAmount = :maxAmount")
-    public ContractorGrade findByMinAndMaxAmount(@Param("minAmount") final BigDecimal minAmount,
-            @Param("maxAmount") final BigDecimal maxAmount);
+@Controller
+@RequestMapping(value = "/masters")
+public class AjaxContractorClassController {
 
-    public ContractorGrade findByGrade(final String grade);
+    @Autowired
+    private ContractorGradeService contractorGradeService;
 
-    @Query("select distinct(cg.minAmount) from ContractorGrade as cg order by cg.minAmount")
-    public List<String> findByContractorClassMinAmount();
+    @Autowired
+    private SearchContractorClassJsonAdaptor searchContractorClassJsonAdaptor;
 
-    @Query("select distinct(cg.maxAmount) from ContractorGrade as cg order by cg.maxAmount")
-    public List<String> findByContractorClassMaxAmount();
+    @RequestMapping(value = "/ajaxsearch-contractorclass", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String ajaxSearchContractorClassToView(final Model model,
+            @ModelAttribute final ContractorClassSearchRequest contractorClassSearchRequest) {
+        final List<ContractorGrade> searchResultList = contractorGradeService
+                .searchContractorClassToView(contractorClassSearchRequest);
+        return new StringBuilder("{ \"data\":").append(toSearchContractorClassResultJson(searchResultList)).append("}")
+                .toString();
+    }
+
+    public Object toSearchContractorClassResultJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(ContractorGrade.class, searchContractorClassJsonAdaptor)
+                .create();
+        return gson.toJson(object);
+    }
+
 }

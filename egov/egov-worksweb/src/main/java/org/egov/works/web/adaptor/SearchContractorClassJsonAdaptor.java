@@ -37,29 +37,34 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.masters.repository;
 
-import java.math.BigDecimal;
-import java.util.List;
+package org.egov.works.web.adaptor;
+
+import java.lang.reflect.Type;
 
 import org.egov.commons.ContractorGrade;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
-@Repository
-public interface ContractorGradeRepository extends JpaRepository<ContractorGrade, Long> {
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-    @Query("select distinct(cg) from ContractorGrade as cg where cg.minAmount = :minAmount and cg.maxAmount = :maxAmount")
-    public ContractorGrade findByMinAndMaxAmount(@Param("minAmount") final BigDecimal minAmount,
-            @Param("maxAmount") final BigDecimal maxAmount);
+@Component
+public class SearchContractorClassJsonAdaptor implements JsonSerializer<ContractorGrade> {
 
-    public ContractorGrade findByGrade(final String grade);
+    @Override
+    public JsonElement serialize(final ContractorGrade contractorGrade, final Type type,
+            final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (contractorGrade != null) {
+            jsonObject.addProperty("grade", contractorGrade.getGrade());
+            jsonObject.addProperty("description", contractorGrade.getDescription());
+            jsonObject.addProperty("minamount", contractorGrade.getMinAmount());
+            jsonObject.addProperty("maxamount", contractorGrade.getMaxAmount());
+            jsonObject.addProperty("id", contractorGrade.getId());
+        }
+        return jsonObject;
+    }
 
-    @Query("select distinct(cg.minAmount) from ContractorGrade as cg order by cg.minAmount")
-    public List<String> findByContractorClassMinAmount();
-
-    @Query("select distinct(cg.maxAmount) from ContractorGrade as cg order by cg.maxAmount")
-    public List<String> findByContractorClassMaxAmount();
 }

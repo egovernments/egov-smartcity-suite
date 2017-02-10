@@ -37,29 +37,32 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.masters.repository;
-
-import java.math.BigDecimal;
-import java.util.List;
+package org.egov.works.web.controller.masters;
 
 import org.egov.commons.ContractorGrade;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.works.masters.service.ContractorGradeService;
+import org.egov.works.utils.WorksConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-@Repository
-public interface ContractorGradeRepository extends JpaRepository<ContractorGrade, Long> {
+@Controller
+@RequestMapping(value = "/masters")
+public class ViewContractorClassController {
 
-    @Query("select distinct(cg) from ContractorGrade as cg where cg.minAmount = :minAmount and cg.maxAmount = :maxAmount")
-    public ContractorGrade findByMinAndMaxAmount(@Param("minAmount") final BigDecimal minAmount,
-            @Param("maxAmount") final BigDecimal maxAmount);
+    @Autowired
+    private ContractorGradeService contractorGradeService;
 
-    public ContractorGrade findByGrade(final String grade);
+    @RequestMapping(value = "/contractorclass-viewcontractorclass/{id}", method = RequestMethod.GET)
+    public String viewContractorClass(@PathVariable final String id, final Model model) throws ApplicationException {
+        final ContractorGrade contractorGrade = contractorGradeService.getContractorGradeById(Long.parseLong(id));
+        model.addAttribute("contractorGrade", contractorGrade);
+        model.addAttribute(WorksConstants.MODE, WorksConstants.VIEW);
+        return "contractorclass-view";
+    }
 
-    @Query("select distinct(cg.minAmount) from ContractorGrade as cg order by cg.minAmount")
-    public List<String> findByContractorClassMinAmount();
-
-    @Query("select distinct(cg.maxAmount) from ContractorGrade as cg order by cg.maxAmount")
-    public List<String> findByContractorClassMaxAmount();
 }
