@@ -46,6 +46,14 @@
 		<td colspan="2">
 			<div class="headingsmallbg">Documents</div>
 		</td>
+		<td colspan="2">
+			<div class="headingsmallbg" style="text-align: right;">
+				<s:if test="%{showTaxCalcBtn}">
+					<input type="button" name="calculateTax" id="calculateTax"
+						value="Show Tax" class="buttonsubmit" />
+				</s:if>
+			</div>
+		</td>
 	</tr>
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
@@ -126,101 +134,12 @@
 			</div>
 		</td>
 	</tr>
-	<tr>
-		<td colspan="5">
-			<table class="tablebottom doctable" id="nameTable" width="100%"
-				border="0" cellpadding="0" cellspacing="0">
-				<tbody>
-					<tr>
-						<th class="bluebgheadtd"><s:text name="doctable.sno" /></th>
-						<th class="bluebgheadtd"><s:text name="doctable.doctype" /></th>
-						<th class="bluebgheadtd"><s:text name="upload.file" /></th>
-					</tr>
-					<s:iterator value="assessmentDocumentTypes" status="status"
-						var="documentType">
-						<s:set value="name.replace(' ', '_')" var="docId" />
-						<s:set value="%{name.replace(' ', '_')+'_Idx'}" var="docIdIndex" />
-						<tr id="<s:property value="#docId" />">
-							<td class="blueborderfortd" style="text-align: left"
-								id="<s:property value="#docIdIndex" />"><span class="bold"><s:property
-										value="#status.index + 1" /></span></td>
-							<td class="blueborderfortd" style="text-align: left"><s:property
-									value="name" /> <s:if test="mandatory">
-									<span class="mandatory1">*</span>
-								</s:if></td>
-							<td class="blueborderfortd" style="text-align: left"><s:if
-									test="%{assessmentDocuments.isEmpty()}">
-									<s:hidden name="assessmentDocuments[%{#status.index}].type.id"
-										value="%{id}"></s:hidden>
-									<s:if test="mandatory">
-										<s:file name="assessmentDocuments[%{#status.index}].uploads"
-											value="%{assessmentDocuments[#status.index].uploads}"
-											cssClass="button" required="true" />
-									</s:if>
-									<s:else>
-										<s:file name="assessmentDocuments[%{#status.index}].uploads"
-											value="%{assessmentDocuments[#status.index].uploads}"
-											cssClass="button" />
-									</s:else>
-								</s:if> <s:elseif
-									test="%{assessmentDocuments[#status.index].files.isEmpty()}">
-									<s:if
-										test="%{assessmentDocuments[#status.index].id == null || assessmentDocuments[#status.index].type == null}">
-										<s:hidden name="assessmentDocuments[%{#status.index}].type.id"
-											value="%{id}"></s:hidden>
-									</s:if>
-									<s:hidden name="assessmentDocuments[%{#status.index}].id" />
-									<s:if test="mandatory">
-										<s:file name="assessmentDocuments[%{#status.index}].uploads"
-											value="%{assessmentDocuments[#status.index].uploads}"
-											cssClass="button" required="true" />
-									</s:if>
-									<s:else>
-										<s:file name="assessmentDocuments[%{#status.index}].uploads"
-											value="%{assessmentDocuments[#status.index].uploads}"
-											cssClass="button" />
-									</s:else>
-								</s:elseif> <s:else>
-									<s:iterator value="%{assessmentDocuments[#status.index].files}">
-										<s:hidden name="assessmentDocuments[%{#status.index}].id" />
-										<s:if test="%{allowEditDocument}">
-											<s:file name="assessmentDocuments[%{#status.index}].uploads"
-												value="%{assessmentDocuments[#status.index].uploads}"
-												cssClass="button" />
-											<a
-												href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
-												<s:property value="%{fileName}" />
-											</a>
-										</s:if>
-										<s:else>
-											<a
-												href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
-												<s:property value="%{fileName}" />
-											</a>
-										</s:else>
-									</s:iterator>
-								</s:else></td>
-						</tr>
-					</s:iterator>
-				</tbody>
-			</table>
-		</td>
-	</tr>
 </table>
 
 <script>
 	jQuery(document).ready(function() {
 		documentTypeEdit();
 	});
-	function serialNoToggle(dropdownvalue){
-		documentTypeToggle(dropdownvalue);
-		 if (dropdownvalue.indexOf('Certificate') == -1 && dropdownvalue != 'select'){
-			jQuery('#Decree_Document_Idx').html('<span class="bold"><s:property value="1" /></span>');
-			jQuery('#Will_Deed_Idx').html('<span class="bold"><s:property value="1" /></span>');
-			jQuery('#Registered_Document_Idx').html('<span class="bold"><s:property value="1" /></span>');
-			jQuery('#Photo_of_Property_With_Holder_Idx').html('<span class="bold"><s:property value="1" /></span>');
-		}
-	}
 </script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/javascript/documentdetails.js?rnd=${app_release_no}'/>"></script>

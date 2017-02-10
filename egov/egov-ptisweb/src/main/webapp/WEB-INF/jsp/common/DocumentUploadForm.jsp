@@ -48,113 +48,127 @@
 				<s:text name="docsectiontitle" />
 			</div>
 		</td>
-		<td colspan="2">
-			<div class="headingsmallbg" style="text-align: right;">
-				<s:if
-					test="%{showTaxCalcBtn}">
-					<input type="button" name="calculateTax" id="calculateTax"
-						value="Show Tax" class="buttonsubmit" />
-				</s:if>
-			</div>
-		</td>
 	</tr>
 
 	<tr>
 		<td colspan="5">
-			<table class="tablebottom doctable" id="nameTable" width="100%" border="0" cellpadding="0" cellspacing="0">
+			<table class="tablebottom doctable" id="nameTable" width="100%"
+				border="0" cellpadding="0" cellspacing="0">
 				<tbody>
 					<tr>
 						<th class="bluebgheadtd"><s:text name="doctable.sno" /></th>
 						<th class="bluebgheadtd"><s:text name="doctable.doctype" /></th>
 						<th class="bluebgheadtd"><s:text name="upload.file" /></th>
 					</tr>
-					<s:iterator value="documentTypes" status="status" var="documentType">
+					<s:iterator value="documentTypes" status="status"
+						var="documentType">
 						<tr>
-							<td class="blueborderfortd" style="text-align: left">
-								<span class="bold"><s:property value="#status.index + 1"/></span>
-							</td>
-							<td class="blueborderfortd" style="text-align: left">
-								<s:property value="name" /><s:if test="mandatory"><span class="mandatory1">*</span></s:if>
-							</td>
-							<td class="blueborderfortd" style="text-align: left">
-								<s:if test="%{documents.isEmpty()}">
-									<s:hidden name="documents[%{#status.index}].type.id" value="%{id}"></s:hidden>
-					       			<s:if test="mandatory">
-										<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button validateDocs" required="true"/>
-									</s:if>
-									<s:else>
-										<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button"/>
-									</s:else>
-								</s:if>
-								<s:elseif test="%{documents[#status.index].files.isEmpty()}">
-									<s:if test="%{documents[#status.index].id == null || documents[#status.index].type == null}">
-										<s:hidden name="documents[%{#status.index}].type.id" value="%{id}"></s:hidden>
-									</s:if>
-									<s:hidden name="documents[%{#status.index}].id"/>
+							<td class="blueborderfortd" style="text-align: left"><span
+								class="bold"><s:property value="#status.index + 1" /></span></td>
+							<td class="blueborderfortd" style="text-align: left"><s:property
+									value="name" />
+								<s:if test="mandatory">
+									<span class="mandatory1">*</span>
+								</s:if></td>
+							<td class="blueborderfortd" style="text-align: left"><s:if
+									test="%{documents.isEmpty()}">
+									<s:hidden name="documents[%{#status.index}].type.id"
+										value="%{id}"></s:hidden>
 									<s:if test="mandatory">
-										<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button validateDocs" required="true"/>
+										<s:file name="documents[%{#status.index}].uploads"
+											value="%{documents[#status.index].uploads}"
+											cssClass="button validateDocs" required="true" />
 									</s:if>
 									<s:else>
-										<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button"/>
+										<s:file name="documents[%{#status.index}].uploads"
+											value="%{documents[#status.index].uploads}" cssClass="button" />
 									</s:else>
-								</s:elseif>
-								<s:else>
+								</s:if> <s:elseif test="%{documents[#status.index].files.isEmpty()}">
+									<s:if
+										test="%{documents[#status.index].id == null || documents[#status.index].type == null}">
+										<s:hidden name="documents[%{#status.index}].type.id"
+											value="%{id}"></s:hidden>
+									</s:if>
+									<s:hidden name="documents[%{#status.index}].id" />
+									<s:if test="mandatory">
+										<s:file name="documents[%{#status.index}].uploads"
+											value="%{documents[#status.index].uploads}"
+											cssClass="button validateDocs" required="true" />
+									</s:if>
+									<s:else>
+										<s:file name="documents[%{#status.index}].uploads"
+											value="%{documents[#status.index].uploads}" cssClass="button" />
+									</s:else>
+								</s:elseif> <s:else>
 									<s:iterator value="%{documents[#status.index].files}">
-										<s:hidden name="documents[%{#status.index}].id"/>
+										<s:hidden name="documents[%{#status.index}].id" />
 										<s:if test="%{allowEditDocument}">
-											<s:file name="documents[%{#status.index}].uploads" value="%{documents[#status.index].uploads}" cssClass="button"/>
-											<a href="javascript:viewDocument('<s:property value="fileStoreId"/>')"> 
-					 							<s:property value="%{fileName}"/>
-					 						</a>
+											<s:file name="documents[%{#status.index}].uploads"
+												value="%{documents[#status.index].uploads}"
+												cssClass="button" />
+											<a
+												href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
+												<s:property value="%{fileName}" />
+											</a>
 										</s:if>
 										<s:else>
-											<a href="javascript:viewDocument('<s:property value="fileStoreId"/>')"> 
-					 							<s:property value="%{fileName}"/>
-											</a> 
+											<a
+												href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
+												<s:property value="%{fileName}" />
+											</a>
 										</s:else>
-									</s:iterator>	
-								</s:else>
-							</td>
+									</s:iterator>
+								</s:else></td>
 						</tr>
+						<s:set value="%{#status.index + 1}" var="OldMaxIndex" />
 					</s:iterator>
+					<s:if test="%{!assessmentDocumentTypes.isEmpty()}">
+						<tr>
+							<%@ include file="../create/doctype-attachments-form.jsp"%>
+						</tr>
+					</s:if>
 				</tbody>
 			</table>
 		</td>
 	</tr>
 </table>
-
 <script>
 	function viewDocument(fileStoreId) {
-		var sUrl = "/egi/downloadfile?fileStoreId="+fileStoreId+"&moduleName=PTIS";
-		window.open(sUrl,"window",'scrollbars=yes,resizable=no,height=400,width=400,status=yes');	
+		var sUrl = "/egi/downloadfile?fileStoreId=" + fileStoreId
+				+ "&moduleName=PTIS";
+		window.open(sUrl, "window",
+				'scrollbars=yes,resizable=no,height=400,width=400,status=yes');
 	}
 
-	jQuery(".doctable input:file").change(function (){
-	     var fileName = jQuery(this).val();
-	     var fileInput = jQuery(this);
-	   	 var maxSize = 2097152; //file size  in bytes(2MB)
-		 var inMB = maxSize/1024/1024;
-		 if(fileInput.get(0).files.length){
-			var fileSize = this.files[0].size; // in bytes
-			if(fileSize > maxSize){
-				bootbox.alert('File size should not exceed '+ inMB +' MB!');
-				fileInput.replaceWith(fileInput.val('').clone(true));
-				return false;
-				}			
-			}
-	     if(fileName)
-	     {
-	       jQuery(this).after("<a href='javascript:void(0);' onclick='clearSelectedFile(this);' class='fileclear'><span class='tblactionicon delete'><i class='fa fa-times-circle'></i></span></a>"); 
-	     }else{
-	       if(jQuery(this).next().is("span"))
-		   {
-	    	   jQuery(this).next().remove();
-		   }
-	     }
-	});
+	jQuery(".doctable input:file")
+			.change(
+					function() {
+						var fileName = jQuery(this).val();
+						var fileInput = jQuery(this);
+						var maxSize = 2097152; //file size  in bytes(2MB)
+						var inMB = maxSize / 1024 / 1024;
+						if (fileInput.get(0).files.length) {
+							var fileSize = this.files[0].size; // in bytes
+							if (fileSize > maxSize) {
+								bootbox.alert('File size should not exceed '
+										+ inMB + ' MB!');
+								fileInput.replaceWith(fileInput.val('').clone(
+										true));
+								return false;
+							}
+						}
+						if (fileName) {
+							jQuery(this)
+									.after(
+											"<a href='javascript:void(0);' onclick='clearSelectedFile(this);' class='fileclear'><span class='tblactionicon delete'><i class='fa fa-times-circle'></i></span></a>");
+						} else {
+							if (jQuery(this).next().is("span")) {
+								jQuery(this).next().remove();
+							}
+						}
+					});
 
-	function clearSelectedFile(obj)
-	{
+	function clearSelectedFile(obj) {
 		jQuery(obj).parent().find('input:file').val('');
 		jQuery(obj).remove();
 	}

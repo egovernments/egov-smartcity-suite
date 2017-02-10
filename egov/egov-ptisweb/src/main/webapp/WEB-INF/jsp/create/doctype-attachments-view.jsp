@@ -41,79 +41,29 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-	<tr>
-		<td colspan="5">
-			<div class="headingsmallbg">
-				<s:text name="" />
-				Documents
-			</div>
-		</td>
+<s:iterator value="assessmentDocumentTypes" status="status"
+	var="documentType">
+	<s:set value="name.replace(' ', '_')" var="docId" />
+	<s:set value="%{name.replace(' ', '_')+'_Idx'}" var="docIdIndex" />
+	<tr id="<s:property value="#docId" />">
+		<td class="blueborderfortd" style="text-align: center"
+			id="<s:property value="#docIdIndex" />"><span class="bold"><s:property
+					value="#status.index + #OldMaxIndex + 1" /></span></td>
+		<td class="blueborderfortd" style="text-align: left"><span
+			class="bold"><s:property value="%{name}" /></span></td>
+		<td class="blueborderfortd" style="text-align: center"><s:if
+				test="%{assessmentDocuments.isEmpty() || assessmentDocuments[#status.index].files.isEmpty()}">
+				<span class="bold">N/A</span>
+			</s:if> <s:else>
+				<s:iterator value="%{assessmentDocuments[#status.index].files}">
+					<a
+						href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
+						<s:property value="%{fileName}" />
+					</a>
+				</s:iterator>
+			</s:else></td>
 	</tr>
-	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%">
-			<div class="documentType">
-				<s:text name="lbl.doctype"></s:text>
-				:
-			</div>
-		</td>
-		<td class="greybox" width="">
-			<div class="documentType">
-				<span class="bold"><s:property
-						value="%{documentTypeDetails.documentName}" default="N/A" /></span>
-			</div>
-
-		</td>
-	</tr>
-	<tr class="docNoDate">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox" id="docNoLabel"><s:text name="">No</s:text> :</td>
-		<td class="greybox"><span class="bold"><s:property
-					value="%{documentTypeDetails.documentNo}" default="N/A" /></span></td>
-		<td class="greybox" id="docDateLabel"><s:text name="">Date</s:text>
-			:</td>
-		<td class="greybox"><s:date
-				name="documentTypeDetails.documentDate" var="docDate"
-				format="dd/MM/yyyy" /> <span class="bold"><s:property
-					value="%{#docDate}" default="N/A" /></span></td>
-	</tr>
-	<div>
-		<tr class="proceeding">
-			<td class="greybox">&nbsp;</td>
-			<td class="greybox"><s:text name="lbl.dtd.procno"></s:text> :</td>
-			<td class="greybox"><span class="bold"><s:property
-						value="%{documentTypeDetails.proceedingNo}" default="N/A" /></span></td>
-			<td class="greybox"><s:text name="lbl.dtd.procdate"></s:text> :</td>
-			<td class="greybox"><s:date
-					name="documentTypeDetails.proceedingDate" var="proceedingDate"
-					format="dd/MM/yyyy" /> <span class="bold"><s:property
-						value="%{#proceedingDate}" default="N/A" /></span></td>
-		</tr>
-	</div>
-	<tr>
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><div class="courtName">
-				<s:text name="lbl.dtd.courtname"></s:text>
-				:
-			</div></td>
-		<td class="greybox"><div class="courtName">
-				<span class="bold"><s:property
-						value="%{documentTypeDetails.courtName}" default="N/A" /></span>
-			</div></td>
-		<td class="greybox" align="left">
-			<div class="signed">
-				<s:text name="lbl.dtd.signed"></s:text>
-			</div>
-		</td>
-		<td class="greybox">
-			<div class="signed">
-				<span class="bold"><s:property
-						value="%{documentTypeDetails.signed}" /></span>
-			</div>
-		</td>
-	</tr>
-</table>
+</s:iterator>
 <script>
 jQuery(document).ready(function() {
 	documentTypeView();
@@ -123,6 +73,17 @@ function documentTypeView() {
 	var dropdownvalue = '<s:property value="%{documentTypeDetails.documentName}"/>';
 	serialNoToggle(dropdownvalue);
 }
+
+function serialNoToggle(dropdownvalue){
+	documentTypeToggle(dropdownvalue);
+	 if (dropdownvalue.indexOf('Certificate') == -1 && dropdownvalue != 'select'){
+		jQuery('#Decree_Document_Idx').html('<span class="bold"><s:property value="#OldMaxIndex + 1" /></span>');
+		jQuery('#Will_Deed_Idx').html('<span class="bold"><s:property value="#OldMaxIndex + 1" /></span>');
+		jQuery('#Registered_Document_Idx').html('<span class="bold"><s:property value="#OldMaxIndex + 1" /></span>');
+		jQuery('#Photo_of_Property_With_Holder_Idx').html('<span class="bold"><s:property value="#OldMaxIndex + 1" /></span>');
+	}
+}
+
 </script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/javascript/documentdetails.js?rnd=${app_release_no}'/>"></script>
