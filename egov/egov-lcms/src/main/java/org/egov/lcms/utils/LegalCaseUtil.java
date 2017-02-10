@@ -72,8 +72,6 @@ import org.egov.lcms.transactions.repository.LegalCaseRepository;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -111,10 +109,6 @@ public class LegalCaseUtil {
 
     @Autowired
     private MessagingService messagingService;
-
-    @Autowired
-    @Qualifier("parentMessageSource")
-    private MessageSource wcmsMessageSource;
 
     @Autowired
     private LegalCaseInterimOrderRepository legalCaseInterimOrderRepository;
@@ -203,15 +197,6 @@ public class LegalCaseUtil {
     public void sendSMSOnLegalCase(final String mobileNumber, final String smsBody) {
         messagingService.sendSMS(mobileNumber, smsBody);
     }
-
-    /*
-     * public String getEmployeeMobileNumber(final Hearings hearings,final
-     * Employee employee) { Assignment assignment = null; if
-     * (hearings.getTempEmplyeeHearing() != null && employee!=null) assignment =
-     * assignmentService.getPrimaryAssignmentForEmployeeByToDate(employee.getId(
-     * ), new Date()); return assignment != null ?
-     * assignment.getEmployee().getMobileNumber() : ""; }
-     */
 
     public String getOfficerInchargeName(final LegalCase legalcase) {
         Assignment assignment = null;
