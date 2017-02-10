@@ -192,6 +192,12 @@ public class PropertyTaxIndex {
     @Field(type = FieldType.Double)
     private Double advance;
     
+    @Field(type = FieldType.Double)
+    private Double rebate;
+    
+    @Field(type = FieldType.Double)
+    private Double adjustment;
+    
     public String getConsumerCode() {
         return consumerCode;
     }
@@ -558,5 +564,21 @@ public class PropertyTaxIndex {
 
     public void setAdvance(Double advance) {
         this.advance = advance;
+    }
+
+    public Double getRebate() {
+        return rebate;
+    }
+
+    public void setRebate(Double rebate) {
+        this.rebate = rebate;
+    }
+
+    public Double getAdjustment() {
+        return adjustment;
+    }
+
+    public void setAdjustment(Double adjustment) {
+        this.adjustment = adjustment;
     }
 }

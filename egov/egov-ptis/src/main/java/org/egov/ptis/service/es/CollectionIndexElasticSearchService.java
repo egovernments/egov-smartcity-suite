@@ -80,6 +80,7 @@ import org.egov.ptis.bean.dashboard.CollTableData;
 import org.egov.ptis.bean.dashboard.CollectionDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.CollectionTrend;
+import org.egov.ptis.bean.dashboard.DCBDetails;
 import org.egov.ptis.bean.dashboard.ReceiptTableData;
 import org.egov.ptis.bean.dashboard.ReceiptsTrend;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -259,6 +260,8 @@ public class CollectionIndexElasticSearchService {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_CODE, collectionDetailsRequest.getUlbCode()));
         if (StringUtils.isNotBlank(collectionDetailsRequest.getPropertyType())) 
             boolQuery = queryForPropertyType(collectionDetailsRequest, boolQuery, indexName);
+        if(PROPERTY_TAX_INDEX_NAME.equalsIgnoreCase(indexName) && StringUtils.isNotBlank(collectionDetailsRequest.getUsageType()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("propertyUsage", collectionDetailsRequest.getUsageType()));
 
         return boolQuery;
     }
@@ -484,7 +487,7 @@ public class CollectionIndexElasticSearchService {
                 toDate, PROPERTY_TAX_INDEX_NAME, TOTAL_DEMAND, aggregationField);
         // For fetching individual demands
         StringTerms individualDmdDetails = getIndividualDemands(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME,
-                aggregationField);
+                aggregationField, false);
         Map<String, Map<String, BigDecimal>> demandDivisionMap = new HashMap<>();
         prepareIndividualDemandsMap(individualDmdDetails, demandDivisionMap);
         
@@ -945,16 +948,33 @@ public class CollectionIndexElasticSearchService {
      * @return StringTerms
      */
     public StringTerms getIndividualDemands(CollectionDetailsRequest collectionDetailsRequest,
-            String indexName, String aggregationField) {
+            String indexName, String aggregationField, boolean isForMis) {
+        AggregationBuilder aggregation;
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, indexName);
         boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_ACTIVE, true))
                 .filter(QueryBuilders.matchQuery(IS_EXEMPTED, false));
-
-        AggregationBuilder aggregation = AggregationBuilders.terms(BY_CITY).field(aggregationField).size(120)
-                .subAggregation(AggregationBuilders.sum("arrear_dmd").field("arrearDemand"))
-                .subAggregation(AggregationBuilders.sum("curr_dmd").field("annualDemand"))
-                .subAggregation(AggregationBuilders.sum("arrear_interest_dmd").field("arrearInterestDemand"))
-                .subAggregation(AggregationBuilders.sum("curr_interest_dmd").field("currentInterestDemand"));
+        
+        if(isForMis)
+            aggregation = AggregationBuilders.terms(BY_CITY).field(aggregationField).size(120)
+                    .subAggregation(AggregationBuilders.sum("arrear_dmd").field("arrearDemand"))
+                    .subAggregation(AggregationBuilders.sum("curr_dmd").field("annualDemand"))
+                    .subAggregation(AggregationBuilders.sum("arrear_interest_dmd").field("arrearInterestDemand"))
+                    .subAggregation(AggregationBuilders.sum("curr_interest_dmd").field("currentInterestDemand"))
+                    .subAggregation(AggregationBuilders.sum("total_dmd").field("totalDemand"))
+                    .subAggregation(AggregationBuilders.sum("adjustment").field("adjustment"))
+                    .subAggregation(AggregationBuilders.sum("arrear_coll").field("arrearCollection"))
+                    .subAggregation(AggregationBuilders.sum("curr_coll").field("annualCollection"))
+                    .subAggregation(AggregationBuilders.sum("arrear_interest_coll").field("arrearInterestCollection"))
+                    .subAggregation(AggregationBuilders.sum("curr_interest_coll").field("currentInterestCollection"))
+                    .subAggregation(AggregationBuilders.sum("advance").field("advance"))
+                    .subAggregation(AggregationBuilders.sum("rebate").field("rebate"))
+                    .subAggregation(AggregationBuilders.sum("total_coll").field("totalCollection"));
+        else
+            aggregation = AggregationBuilders.terms(BY_CITY).field(aggregationField).size(120)
+                    .subAggregation(AggregationBuilders.sum("arrear_dmd").field("arrearDemand"))
+                    .subAggregation(AggregationBuilders.sum("curr_dmd").field("annualDemand"))
+                    .subAggregation(AggregationBuilders.sum("arrear_interest_dmd").field("arrearInterestDemand"))
+                    .subAggregation(AggregationBuilders.sum("curr_interest_dmd").field("currentInterestDemand"));
 
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName).withQuery(boolQuery)
                 .addAggregation(aggregation).build();

@@ -44,7 +44,6 @@ import static java.lang.String.format;
 import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_PT;
 import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_WTMS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_PROPERTY_TYPE_COURTCASES;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS;
 
@@ -73,6 +72,7 @@ import org.egov.ptis.bean.dashboard.CollectionDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.CollectionStats;
 import org.egov.ptis.bean.dashboard.CollectionTrend;
+import org.egov.ptis.bean.dashboard.DCBDetails;
 import org.egov.ptis.bean.dashboard.PropertyTaxDefaultersRequest;
 import org.egov.ptis.bean.dashboard.ReceiptTableData;
 import org.egov.ptis.bean.dashboard.ReceiptsTrend;
@@ -303,4 +303,12 @@ public class PropTaxDashboardService {
         return propertyTaxElasticSearchIndexService.getTopDefaulters(propertyTaxDefaultersRequest);
     }
 
+    /**
+     * Provides city wise DCB details
+     * @param collectionDetailsRequest
+     * @return
+     */
+    public List<DCBDetails> getDCBDetails(CollectionDetailsRequest collectionDetailsRequest) {
+        return propertyTaxElasticSearchIndexService.getDCBDetails(collectionDetailsRequest);
+    }
 }

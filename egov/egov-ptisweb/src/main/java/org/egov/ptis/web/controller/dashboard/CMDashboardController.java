@@ -45,11 +45,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.ptis.bean.dashboard.CollReceiptDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
+import org.egov.ptis.bean.dashboard.DCBDetails;
 import org.egov.ptis.bean.dashboard.PropertyTaxDefaultersRequest;
 import org.egov.ptis.bean.dashboard.StateCityInfo;
 import org.egov.ptis.bean.dashboard.TaxDefaulters;
@@ -255,6 +257,28 @@ public class CMDashboardController {
         collectionDetailsRequest.setToDate(toDate);
         collectionDetailsRequest.setType(type);
         collectionDetailsRequest.setPropertyType(propertyType);
+    }
+    
+    /**
+     * Provides citywise DCB details across all ULBs for MIS Reports
+     * @return response JSON
+     * @throws IOException
+     */
+    @RequestMapping(value = "/citywisedcb", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody public List<DCBDetails> getDCBDetailsForMIS(@RequestParam("regionName") String regionName, @RequestParam("districtName") String districtName,
+            @RequestParam("ulbGrade") String ulbGrade, @RequestParam("ulbCode") String ulbCode, @RequestParam("fromDate") String fromDate,
+            @RequestParam("toDate") String toDate, @RequestParam("type") String type, @RequestParam("propertyType") String propertyType, 
+            @RequestParam("usageType") String usageType) throws IOException {
+        CollectionDetailsRequest collectionDetailsRequest = new CollectionDetailsRequest();
+        populateCollectionDetailsRequest(collectionDetailsRequest, regionName, districtName, ulbGrade, ulbCode, fromDate, toDate,
+                type, propertyType);
+        if(StringUtils.isNotBlank(usageType))
+            collectionDetailsRequest.setUsageType(usageType);
+        Long startTime = System.currentTimeMillis();
+        List<DCBDetails> dcbDetails = propTaxDashboardService.getDCBDetails(collectionDetailsRequest);
+        Long timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug("Time taken to serve targetmis is : " + timeTaken + " (millisecs)");
+        return dcbDetails;
     }
 
 }

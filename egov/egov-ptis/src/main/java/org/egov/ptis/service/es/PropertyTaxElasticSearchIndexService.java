@@ -65,6 +65,7 @@ import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.bean.dashboard.CollectionDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
+import org.egov.ptis.bean.dashboard.DCBDetails;
 import org.egov.ptis.bean.dashboard.PropertyTaxDefaultersRequest;
 import org.egov.ptis.bean.dashboard.TaxDefaulters;
 import org.egov.ptis.bean.dashboard.TaxPayerDetails;
@@ -99,6 +100,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class PropertyTaxElasticSearchIndexService {
 
+    private static final String REBATE_STR = "rebate";
+    private static final String TOTAL_COLL_STR = "totalColl";
+    private static final String ADVANCE_COLL_STR = "advanceColl";
+    private static final String CURRENT_INT_COLL = "currentIntColl";
+    private static final String ARREAR_INT_COLL = "arrearIntColl";
+    private static final String CURRENT_COLL_STR = "currentColl";
+    private static final String ARREAR_COLL_STR = "arrearColl";
+    private static final String TOTAL_DMD_STR = "totalDmd";
+    private static final String CURRENT_INT_DMD = "currentIntDmd";
+    private static final String ARREAR_INT_DMD = "arrearIntDmd";
+    private static final String CURRENT_DMD = "currentDmd";
+    private static final String ARREAR_DMD = "arrearDmd";
     private static final String CURR_INTEREST_DMD = "curr_interest_dmd";
     private static final String ARREAR_INTEREST_DMD = "arrear_interest_dmd";
     private static final String CURR_DMD = "curr_dmd";
@@ -803,6 +816,129 @@ public class PropertyTaxElasticSearchIndexService {
         }
     }
     
-    
+    /**
+     * Prepares DCB Details
+     * @param individualDmdDetails
+     * @param demandDivisionMap
+     */
+    private void prepareDCBDetailsMap(StringTerms individualDmdDetails,
+            Map<String, Map<String, BigDecimal>> demandDivisionMap) {
+        Map<String, BigDecimal> individualDmdMap;
+        Sum arrearDmd;
+        Sum currentDmd;
+        Sum arrearInterestDmd;
+        Sum currentInterestDmd;
+        Sum totalDmd;
+        Sum adjustment;
+        Sum arrearColl;
+        Sum currentColl;
+        Sum arrearInterestColl;
+        Sum currentInterestColl;
+        Sum advanceColl;
+        Sum rebate;
+        Sum totalColl;
+        
+        if (individualDmdDetails != null) {
+            for (Terms.Bucket entry : individualDmdDetails.getBuckets()) {
+                individualDmdMap = new HashMap<>();
+                arrearDmd = entry.getAggregations().get("arrear_dmd");
+                currentDmd = entry.getAggregations().get("curr_dmd");
+                arrearInterestDmd = entry.getAggregations().get("arrear_interest_dmd");
+                currentInterestDmd = entry.getAggregations().get("curr_interest_dmd");   
+                totalDmd = entry.getAggregations().get("total_dmd");   
+                adjustment = entry.getAggregations().get("adjustment");   
+                arrearColl = entry.getAggregations().get("arrear_coll");   
+                currentColl = entry.getAggregations().get("curr_coll");   
+                arrearInterestColl = entry.getAggregations().get("arrear_interest_coll");   
+                currentInterestColl = entry.getAggregations().get("curr_interest_coll");
+                advanceColl = entry.getAggregations().get("advance");
+                rebate = entry.getAggregations().get("rebate");
+                totalColl = entry.getAggregations().get("total_coll");
+                
+                individualDmdMap.put(ARREAR_DMD,
+                        BigDecimal.valueOf(arrearDmd.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                individualDmdMap.put(CURRENT_DMD,
+                        BigDecimal.valueOf(currentDmd.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                individualDmdMap.put(ARREAR_INT_DMD,
+                        BigDecimal.valueOf(arrearInterestDmd.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                individualDmdMap.put(CURRENT_INT_DMD,
+                        BigDecimal.valueOf(currentInterestDmd.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                individualDmdMap.put(TOTAL_DMD_STR,
+                        BigDecimal.valueOf(totalDmd.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                individualDmdMap.put("adjustment",
+                        BigDecimal.valueOf(adjustment.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                individualDmdMap.put(ARREAR_COLL_STR,
+                        BigDecimal.valueOf(arrearColl.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                individualDmdMap.put(CURRENT_COLL_STR,
+                        BigDecimal.valueOf(currentColl.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                individualDmdMap.put(ARREAR_INT_COLL,
+                        BigDecimal.valueOf(arrearInterestColl.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                individualDmdMap.put(CURRENT_INT_COLL,
+                        BigDecimal.valueOf(currentInterestColl.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                individualDmdMap.put(ADVANCE_COLL_STR,
+                        BigDecimal.valueOf(advanceColl.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                individualDmdMap.put(REBATE_STR,
+                        BigDecimal.valueOf(rebate.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                individualDmdMap.put(TOTAL_COLL_STR,
+                        BigDecimal.valueOf(totalColl.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                
+                demandDivisionMap.put(String.valueOf(entry.getKey()), individualDmdMap);
+            }
+        }
+    }
 
+    /**
+     * Provides citywise DCB details
+     * @param collectionDetailsRequest
+     * @return list
+     */
+    public List<DCBDetails> getDCBDetails(CollectionDetailsRequest collectionDetailsRequest) {
+        List<DCBDetails> dcbDetailsList = new ArrayList<>();
+        DCBDetails dCBDetails;
+        String name;
+        Map<String, Map<String, BigDecimal>> demandDivisionMap = new HashMap<>();
+        Map<String, BigDecimal> assessmentsCountMap = collectionIndexElasticSearchService.getCollectionAndDemandCountResults(collectionDetailsRequest,
+                null, null, PROPERTY_TAX_INDEX_NAME, "consumerCode", "cityName");
+        StringTerms individualDmdDetails = collectionIndexElasticSearchService.getIndividualDemands(collectionDetailsRequest,
+                PROPERTY_TAX_INDEX_NAME,"cityName", true);
+        prepareDCBDetailsMap(individualDmdDetails, demandDivisionMap);
+        for (Map.Entry<String, Map<String, BigDecimal>> entry : demandDivisionMap.entrySet()) {
+            dCBDetails = new DCBDetails();
+            name = entry.getKey();
+            dCBDetails.setUlbName(name);
+            if (!assessmentsCountMap.isEmpty() && assessmentsCountMap.get(name) != null)
+                dCBDetails.setTotalAssessments(assessmentsCountMap.get(name) == null ? BigDecimal.ZERO : assessmentsCountMap.get(name));
+
+            dCBDetails.setArrearDemand(demandDivisionMap.get(name).get(ARREAR_DMD) == null ? BigDecimal.ZERO
+                    : demandDivisionMap.get(name).get(ARREAR_DMD));
+            dCBDetails.setArrearPenalty(demandDivisionMap.get(name).get(ARREAR_INT_DMD) == null ? BigDecimal.ZERO
+                    : demandDivisionMap.get(name).get(ARREAR_INT_DMD));
+            dCBDetails.setCurrentDemand(demandDivisionMap.get(name).get(CURRENT_DMD) == null ? BigDecimal.ZERO
+                    : demandDivisionMap.get(name).get(CURRENT_DMD));
+            dCBDetails.setCurrentPenalty(demandDivisionMap.get(name).get(CURRENT_INT_DMD) == null ? BigDecimal.ZERO
+                    : demandDivisionMap.get(name).get(CURRENT_INT_DMD));
+            dCBDetails.setTotalDemand(demandDivisionMap.get(name).get(TOTAL_DMD_STR) == null ? BigDecimal.ZERO
+                    : demandDivisionMap.get(name).get(TOTAL_DMD_STR));
+            dCBDetails.setAdjustment(BigDecimal.ZERO);
+            dCBDetails.setArrearColl(demandDivisionMap.get(name).get(ARREAR_COLL_STR) == null ? BigDecimal.ZERO
+                    : demandDivisionMap.get(name).get(ARREAR_COLL_STR));
+            dCBDetails.setCurrentColl(demandDivisionMap.get(name).get(CURRENT_COLL_STR) == null ? BigDecimal.ZERO
+                    : demandDivisionMap.get(name).get(CURRENT_COLL_STR));
+            dCBDetails.setArrearPenaltyColl(demandDivisionMap.get(name).get(ARREAR_INT_COLL) == null ? BigDecimal.ZERO
+                    : demandDivisionMap.get(name).get(ARREAR_INT_COLL));
+            dCBDetails.setCurrentPenaltyColl(demandDivisionMap.get(name).get(CURRENT_INT_COLL) == null ? BigDecimal.ZERO
+                    : demandDivisionMap.get(name).get(CURRENT_INT_COLL));
+            dCBDetails.setAdvanceColl(demandDivisionMap.get(name).get(ADVANCE_COLL_STR) == null ? BigDecimal.ZERO
+                    : demandDivisionMap.get(name).get(ADVANCE_COLL_STR));
+            dCBDetails.setRebate(demandDivisionMap.get(name).get(REBATE_STR) == null ? BigDecimal.ZERO
+                    : demandDivisionMap.get(name).get(REBATE_STR));
+            dCBDetails.setTotalColl(demandDivisionMap.get(name).get(TOTAL_COLL_STR) == null ? BigDecimal.ZERO
+                    : demandDivisionMap.get(name).get(TOTAL_COLL_STR));
+            if(dCBDetails.getTotalDemand().compareTo(BigDecimal.ZERO)>0)
+                dCBDetails.setPercentage((dCBDetails.getTotalColl().multiply(BIGDECIMAL_100)).divide(dCBDetails.getTotalDemand(), BigDecimal.ROUND_HALF_EVEN));
+            
+            dcbDetailsList.add(dCBDetails);
+        }
+        return dcbDetailsList;
+    }
 }
