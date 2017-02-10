@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-02-08T17:16:21 -->
+<!-- 2017-02-09T15:36:05 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="modifyProperty_ack" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f03713ef-53ed-45c0-b461-665772a871b1">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -78,7 +78,7 @@
 		</band>
 	</title>
 	<summary>
-		<band height="254" splitType="Stretch">
+		<band height="258" splitType="Stretch">
 			<staticText>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="381" y="60" width="143" height="20" uuid="d31d7dee-5624-433f-8c3e-6d2f46e453f9"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -142,6 +142,11 @@
 				</textElement>
 				<textFieldExpression><![CDATA["This will be resolved within<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{noOfDays}+"</style> days."]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="59" y="228" width="467" height="30" uuid="aebbe37c-aa06-4f1e-990f-c8bcae8e22b5"/>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[3. Application will be processed only after payment of prescribed fee, wherever applicable and SLA period for the service will start from the date of payment.]]></text>
+			</staticText>
 		</band>
 	</summary>
 </jasperReport>

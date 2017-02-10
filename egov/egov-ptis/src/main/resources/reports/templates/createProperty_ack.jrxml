@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-02-08T16:47:39 -->
+<!-- 2017-02-10T16:52:39 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="createProperty_ack" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="20" uuid="f03713ef-53ed-45c0-b461-665772a871b1">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -110,11 +110,13 @@
 				<text><![CDATA[1. The applicant can contact the municipal commissioner, immediately if the service is not delivered as indicated above on the date fixed. ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="70" y="121" width="460" height="47" uuid="797325a9-1e60-4ccf-984f-d7d778f164dc"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="70" y="124" width="460" height="96" uuid="797325a9-1e60-4ccf-984f-d7d778f164dc"/>
 				<textElement>
 					<font isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[2. Compensation will be paid @ Rs. 50/- per day for the delay caused and towards the valuable time lost by the applicant, if the service is not delivered as indicated above in the date fixed.]]></text>
+				<text><![CDATA[2. Compensation will be paid @ Rs. 50/- per day for the delay caused and towards the valuable time lost by the applicant, if the service is not delivered as indicated above in the date fixed.
+
+3. Application will be processed only after payment of prescribed fee, wherever applicable and SLA period for the service will start from the date of payment.]]></text>
 			</staticText>
 		</band>
 	</summary>
