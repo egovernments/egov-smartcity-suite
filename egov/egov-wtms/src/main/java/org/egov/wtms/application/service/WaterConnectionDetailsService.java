@@ -375,7 +375,7 @@ public class WaterConnectionDetailsService {
                     HistoryMap.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
                             ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
                 } else if (null != owner && null != owner.getDeptDesig()) {
-                    user = eisCommonService.getUserForPosition(owner.getId(), new Date());
+                    user = eisCommonService.getUserForPosition(owner.getId(),  stateHistory.getLastModifiedDate());
                     HistoryMap.put("user",
                             null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
                     HistoryMap.put("department", null != owner.getDeptDesig().getDepartment()
