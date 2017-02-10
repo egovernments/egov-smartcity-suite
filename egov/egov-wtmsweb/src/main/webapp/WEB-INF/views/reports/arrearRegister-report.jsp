@@ -66,7 +66,7 @@
 								<label for="field-1" class="col-sm-3 control-label"><spring:message
 										code="lbl.ward" /></label>
 								<div class="col-sm-3 add-margin">
-									<form:select name="ward" id="ward" path="ward"
+									<form:select name="ward" id="ward" path="ward" required="required"
 										cssClass="form-control" cssErrorClass="form-control error">
 										<form:option value="">
 									--select--
@@ -80,7 +80,7 @@
 								<label for="field-1" class="col-sm-3 control-label">Zone
 										</label>
 								<div class="col-sm-3 add-margin">
-									<form:select name="zone" id="zone" path="zone"
+									<form:select name="zone" id="zone" path="zone" required="required"
 										cssClass="form-control" cssErrorClass="form-control error">
 										<form:option value="">
 									--select--
@@ -94,7 +94,7 @@
 								<label for="field-1" class="col-sm-3 control-label"><spring:message
 										code="lbl.block" /></label>
 								<div class="col-sm-3 add-margin">
-									<form:select name="block" id="block" path="block"
+									<form:select name="block" id="block" path="block" required="required"
 										cssClass="form-control" cssErrorClass="form-control error">
 										<form:option value="">
 									--select--
@@ -109,7 +109,7 @@
 								<label for="field-1" class="col-sm-3 control-label"><spring:message
 										code="lbl.locality" /></label>
 								<div class="col-sm-3 add-margin">
-									<form:select name="localitys" id="localitys" path=""
+									<form:select name="localitys" id="localitys" path="" required="required"
 										cssClass="form-control" cssErrorClass="form-control error">
 										<form:option value="">
 									--select--
@@ -125,7 +125,7 @@
 					<div class="row">
 
 						<div class="text-center">
-							<button type="button" id="drilldownReportSearch"
+							<button type="button" id="11cd"
 								class="btn btn-primary">Search</button>
 							<a href="javascript:void(0)" class="btn btn-default"
 								onclick="self.close()"> <spring:message code="lbl.close" /></a>
@@ -133,27 +133,189 @@
 					</div>
 			</div>
 			</form:form>
-			<div class="row display-hide report-section">
-				<div id="baseRegister-header"
-					class="col-md-12 table-header text-left">
-					<fmt:formatDate value="${currDate}" var="currDate"
-						pattern="dd-MM-yyyy" />
-					<div class="col-md-6 col-xs-6 table-header">
-						<spring:message code="lbl.drilldownReport.resultHeader" />
-						:
-						<c:out value="${currDate}"></c:out>
-					</div>
-				</div>
+				
 
 				<div class="col-md-12 form-group">
-					<table
-						class="table table-bordered datatable dt-responsive table-hover"
-						id="drilldownReport-table">
 					
+						
+      <table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered">
+                  <thead>
+					
+					<tr>
+						<th>
+							<div align="center">
+						IndexNumber
+						    </div>
+					
+							
+						</th>
+						<th>
+							<div align="center">
+						Applicant Name
+						    </div>
+					
+							
+						</th>
+						
+						<th>
+							<div align="center">
+						Door NUmber
+						    </div>
+					
+							
+						</th>
+						<th>
+						   <div align="center">
+					InstallmentDesc
+						    </div>
+							
+						</th>
+						<th>
+						   <div align="center">
+					ArrearDemand
+						    </div>
+							
+						</th>
+						
+						<th>
+						   <div align="center">
+					ArrearCollection
+						    </div>
+							
+						</th>
+						
+						<th>
+						   <div align="center">
+					TotaArrearDemand
+						    </div>
+							
+						</th>
+				
+					</tr>
+					</thead>
+					<tbody>
+					<c:forEach var="receipt" items="${arrearReportInfoList}" >
+					<tr>
+							<td >
+								<div align="center">
+								<c:out value="${receipt.indexNumber}" />
+								</div>
+							</td>
+							<td>
+								<div align="center">
+								<c:out value="${receipt.ownerName}" />
+								</div>
+							</td>
+							<td>
+								<div align="center">
+								<c:out value="${receipt.houseNo}" />
+								</div>
+							</td>
+							 
+							<c:forEach var="subreportdata" items="${receipt.propertyWiseArrearInfoList}" varStatus="loop">
+							
+							
+							<c:choose>
+							  <c:when test="${loop.index eq 0}">
+							    	<td>
+								<div align="center">
+								<c:out value="${subreportdata.arrearInstallmentDesc}" />
+								</div>
+								</td>
+								
+								<td>
+									<div align="center">
+								<c:out value="${subreportdata.waterCharge}" />
+								</div>
+								</td>
+								
+								<td>
+									<div align="center">
+								<c:out value="${subreportdata.waterChargeColl}" />
+								</div>
+								</td>
+								<td>
+									<div align="center">
+								<c:out value="${subreportdata.totalArrearTax}" />
+								</div>
+								</td>
+								
+								</tr>
+							  </c:when>
+							  
+							  <c:when test="${loop.index eq 0}">
+							    	<td>
+								<div align="center">
+								<c:out value="${subreportdata.arrearInstallmentDesc}" />
+								</div>
+								</td>
+								
+								<td>
+									<div align="center">
+								<c:out value="${subreportdata.waterCharge}" />
+								</div>
+								</td>
+								
+								<td>
+									<div align="center">
+								<c:out value="${subreportdata.waterChargeColl}" />
+								</div>
+								</td>
+								<td>
+									<div align="center">
+								<c:out value="${subreportdata.totalArrearTax}" />
+								</div>
+								</td>
+								
+								</tr>
+							  </c:when>
+							  
+							  <c:otherwise>
+							    
+							    <tr>
+							    
+							        <td colspan="3"></td>
+							    
+								    <td>
+									<div align="center">
+									<c:out value="${subreportdata.arrearInstallmentDesc}" />
+									</div>
+									</td>
+									
+									<td>
+										<div align="center">
+									<c:out value="${subreportdata.waterCharge}" />
+									</div>
+									</td>
+									
+									<td>
+										<div align="center">
+									<c:out value="${subreportdata.waterChargeColl}" />
+									</div>
+									</td>
+									<td>
+										<div align="center">
+									<c:out value="${subreportdata.totalArrearTax}" />
+									</div>
+									</td>
+								
+								</tr>
+							    
+							  </c:otherwise>
+							</c:choose>
+							
+							
+						
+							</c:forEach>
+							
+					
+						</c:forEach> 	
+						</tbody>
 					</table>
-				</div>
-			</div>
-		</div>
+    
+    
+     </div>
+     </div>
 	</div>
 </div>
 

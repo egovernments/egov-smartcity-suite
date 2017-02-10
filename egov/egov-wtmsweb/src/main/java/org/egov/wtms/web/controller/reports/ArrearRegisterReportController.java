@@ -118,18 +118,23 @@ public class ArrearRegisterReportController {
         model.addAttribute("currDate", new Date());
         return "arrearRegister-report";
     }
-
-    @ExceptionHandler(Exception.class)
     @RequestMapping(value = "/arrearReport", method = RequestMethod.POST)
-    public @ResponseBody void springPaginationDataTablesUpdate(final HttpServletRequest request,
-            final @ModelAttribute ArrearRegisterReport reportHealperObj, final HttpSession session,
-            final HttpServletResponse response) throws IOException {
+    public  String springPaginationDataTablesUpdate(final HttpServletRequest request,
+            final @ModelAttribute ArrearRegisterReport reportHealperObj, final HttpSession session,final Model model
+            ,final HttpServletResponse response) throws IOException {
         final List<ArrearRegisterReport> propertyWiseInfoList = new ArrayList<ArrearRegisterReport>();
+        final List<ArrearReportInfo> arrearReportInfoList = new ArrayList<ArrearReportInfo>();
         new ArrearReportInfo();
         final List<WaterChargeMaterlizeView> propertyViewList = arrearRegisterReportService
                 .prepareQueryforArrearRegisterReport(null, null);
 
-        for (final WaterChargeMaterlizeView propMatView : propertyViewList)
+        for (final WaterChargeMaterlizeView propMatView : propertyViewList){
+        
+        	ArrearReportInfo arrearReportInfoObj=new ArrearReportInfo();
+        	arrearReportInfoObj.setBasicPropId(propMatView.getConnectiondetailsid());
+        	arrearReportInfoObj.setIndexNumber(propMatView.getHscno());
+        	arrearReportInfoObj.setOwnerName(propMatView.getUsername());
+        	arrearReportInfoObj.setHouseNo(propMatView.getHouseno());
             // If there is only one Arrear Installment
             if (propMatView.getInstDmdColl().size() == 1) {
                 final InstDmdCollResponse currIDCMatView = propMatView.getInstDmdColl().iterator().next();
@@ -156,18 +161,24 @@ public class ArrearRegisterReportController {
                             propertyWiseInfoList.add(propertyWiseInfoTotal);
                             unitList.add(propertyWiseInfo.getArrearInstallmentDesc());
                             propertyWiseInfoTotal = propertyWiseInfo;
-                            propertyWiseInfoTotal.setIndexNumber("");
-                            propertyWiseInfoTotal.setOwnerName("");
-                            propertyWiseInfoTotal.setHouseNo("");
+                           
                         }
                     } // end of if - null condition
                     else
                         propertyWiseInfoList.add(propertyWiseInfoTotal);
                 }
             }
-        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern())
-                .create().toJson(propertyWiseInfoList) + "}", response.getWriter());
+            //System.out.println(propertyWiseInfoList.size());
+            arrearReportInfoObj.getPropertyWiseArrearInfoList().addAll(propertyWiseInfoList);
+            arrearReportInfoList.add(arrearReportInfoObj);
+           // System.out.println(arrearReportInfoObj.getPropertyWiseArrearInfoList().size());
 
+        }
+       /* IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern())
+                .create().toJson(arrearReportInfoList) + "}", response.getWriter());*/
+        model.addAttribute("arrearReportInfoList", arrearReportInfoList);
+        model.addAttribute("reportHelper", reportHealperObj);
+        return "arrearRegister-report";
     }
 
     /**
@@ -192,8 +203,8 @@ public class ArrearRegisterReportController {
      * @return
      */
     private ArrearRegisterReport preparePropertyWiseInfo(final InstDmdCollResponse currInstDmdColMatView) {
-        ArrearRegisterReport propertyWiseInfo;
-        propertyWiseInfo = preparePropInfo(new WaterChargeMaterlizeView());
+         ArrearRegisterReport propertyWiseInfo = new ArrearRegisterReport();
+      //  propertyWiseInfo = preparePropInfo(currInstDmdColMatView.getWaterMatView());
         final Double totalTax = currInstDmdColMatView.getWaterCharge();
 
         propertyWiseInfo.setArrearInstallmentDesc(currInstDmdColMatView.getInstallment().getDescription());
