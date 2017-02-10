@@ -39,17 +39,21 @@
  */
 package org.egov.lcms.utils;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.lcms.transactions.entity.AppealDocuments;
 import org.egov.lcms.transactions.entity.BipartisanDetails;
@@ -68,6 +72,8 @@ import org.egov.lcms.transactions.repository.LegalCaseRepository;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,9 +102,19 @@ public class LegalCaseUtil {
 
     @Autowired
     private JudgmentRepository judgmentRepository;
-    
+
     @Autowired
-    private  JudgmentImplRepository judgmentImplRepository;
+    private JudgmentImplRepository judgmentImplRepository;
+
+    @Autowired
+    private AssignmentService assignmentService;
+
+    @Autowired
+    private MessagingService messagingService;
+
+    @Autowired
+    @Qualifier("parentMessageSource")
+    private MessageSource wcmsMessageSource;
 
     @Autowired
     private LegalCaseInterimOrderRepository legalCaseInterimOrderRepository;
@@ -132,7 +148,8 @@ public class LegalCaseUtil {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public List<LegalCaseUploadDocuments> getLegalCaseDocumentList(final LegalCase legalcase) {
-        final List<LegalCaseUploadDocuments> legalDoc = legalCaseRepository.getLegalCaseUploadDocumentList(legalcase.getId());
+        final List<LegalCaseUploadDocuments> legalDoc = legalCaseRepository
+                .getLegalCaseUploadDocumentList(legalcase.getId());
         return legalDoc;
     }
 
@@ -167,10 +184,41 @@ public class LegalCaseUtil {
         return pwrDoc;
 
     }
-    
+
     public List<AppealDocuments> getAppealDocumentList(final JudgmentImpl judgmentImpl) {
-        final List<AppealDocuments> appealDoc = judgmentImplRepository.getAppealDocumentList(judgmentImpl.getAppeal().get(0).getId());
+        final List<AppealDocuments> appealDoc = judgmentImplRepository
+                .getAppealDocumentList(judgmentImpl.getAppeal().get(0).getId());
         return appealDoc;
 
     }
+
+    public String getOfficerInchargeMobileNumber(final LegalCase legalcase) {
+        Assignment assignment = null;
+        if (legalcase != null)
+            assignment = assignmentService
+                    .getPrimaryAssignmentForPositionAndDate(legalcase.getOfficerIncharge().getId(), new Date());
+        return assignment != null ? assignment.getEmployee().getMobileNumber() : "";
+    }
+
+    public void sendSMSOnLegalCase(final String mobileNumber, final String smsBody) {
+        messagingService.sendSMS(mobileNumber, smsBody);
+    }
+
+    /*
+     * public String getEmployeeMobileNumber(final Hearings hearings,final
+     * Employee employee) { Assignment assignment = null; if
+     * (hearings.getTempEmplyeeHearing() != null && employee!=null) assignment =
+     * assignmentService.getPrimaryAssignmentForEmployeeByToDate(employee.getId(
+     * ), new Date()); return assignment != null ?
+     * assignment.getEmployee().getMobileNumber() : ""; }
+     */
+
+    public String getOfficerInchargeName(final LegalCase legalcase) {
+        Assignment assignment = null;
+        if (legalcase != null)
+            assignment = assignmentService
+                    .getPrimaryAssignmentForPositionAndDate(legalcase.getOfficerIncharge().getId(), new Date());
+        return assignment != null ? assignment.getEmployee().getName() : "";
+    }
+
 }

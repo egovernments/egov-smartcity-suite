@@ -76,6 +76,11 @@ public class HearingsService {
 
     @Autowired
     private LegalCaseUtil legalCaseUtil;
+    
+    
+    @Autowired
+    private LegalCaseSmsService legalCaseSmsService;
+
 
     @Transactional
     public Hearings persist(final Hearings hearings) {
@@ -86,6 +91,7 @@ public class HearingsService {
         hearings.getLegalCase().setStatus(statusObj);
         final ReportStatus reportStatus=null;
         hearings.getLegalCase().setReportStatus(reportStatus);
+        legalCaseSmsService.sendSmsToHearingEmployee(hearings);
         return hearingsRepository.save(hearings);
     }
 

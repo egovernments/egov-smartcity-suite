@@ -82,6 +82,9 @@ public class LegalCaseService {
 
     @Autowired
     private FileStoreService fileStoreService;
+    
+    @Autowired
+    private LegalCaseSmsService legalCaseSmsService;
 
     @Autowired
     private LegalCaseUploadDocumentsRepository legalCaseUploadDocumentsRepository;
@@ -117,6 +120,7 @@ public class LegalCaseService {
         updateNextDate(legalcase, legalcase.getPwrList());
         setLegalCaseReportStatus(legalcase, legalcase.getPwrList());
         final LegalCase savedlegalcase = legalCaseRepository.save(legalcase);
+        legalCaseSmsService.sendSmsToOfficerIncharge(legalcase);
         final List<LegalCaseUploadDocuments> documentDetails = getLegalcaseUploadDocumentDetails(savedlegalcase, files);
         if (!documentDetails.isEmpty()) {
             savedlegalcase.setLegalCaseUploadDocuments(documentDetails);
