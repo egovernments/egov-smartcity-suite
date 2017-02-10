@@ -52,14 +52,14 @@ import org.springframework.stereotype.Repository;
 public interface ContractorGradeRepository extends JpaRepository<ContractorGrade, Long> {
 
     @Query("select distinct(cg) from ContractorGrade as cg where cg.minAmount = :minAmount and cg.maxAmount = :maxAmount")
-    public ContractorGrade findByMinAndMaxAmount(@Param("minAmount") final BigDecimal minAmount,
+    ContractorGrade findByMinAndMaxAmount(@Param("minAmount") final BigDecimal minAmount,
             @Param("maxAmount") final BigDecimal maxAmount);
 
-    public ContractorGrade findByGrade(final String grade);
+    ContractorGrade findByGrade(final String grade);
 
     @Query("select distinct(cg.minAmount) from ContractorGrade as cg order by cg.minAmount")
-    public List<String> findByContractorClassMinAmount();
+    List<String> findByContractorClassMinAmount();
 
     @Query("select distinct(cg.maxAmount) from ContractorGrade as cg order by cg.maxAmount")
-    public List<String> findByContractorClassMaxAmount();
+    List<String> findByContractorClassMaxAmount();
 }
