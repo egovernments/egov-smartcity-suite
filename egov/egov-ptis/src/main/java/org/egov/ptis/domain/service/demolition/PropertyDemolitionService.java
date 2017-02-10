@@ -47,6 +47,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLIENT_SPEC
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_BAL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESIGNATIONS;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
@@ -74,6 +75,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_AP
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 
 import java.math.BigDecimal;
@@ -444,6 +446,9 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             final String designation = approverDesignation.split(" ")[0];
             if (designation.equalsIgnoreCase(COMMISSIONER_DESGN))
                 nextAction = WF_STATE_COMMISSIONER_APPROVAL_PENDING;
+            else if (REVENUE_OFFICER_DESGN.equalsIgnoreCase(approverDesignation)) {
+                nextAction = WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
+            }
             else
                 nextAction = new StringBuilder().append(designation).append(" ")
                         .append(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
@@ -489,9 +494,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
 
     private boolean isDeputyOrAbove(final String loggedInUserDesignation) {
         boolean isanyone = false;
-        if (DEPUTY_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
-                || COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation)
-                || ZONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
+        if (COMMISSIONER_DESIGNATIONS.contains(loggedInUserDesignation))
             isanyone = true;
         return isanyone;
     }
