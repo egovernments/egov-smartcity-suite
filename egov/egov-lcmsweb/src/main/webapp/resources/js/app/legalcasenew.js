@@ -178,7 +178,7 @@ $(document).ready(function(){
 	var typeaheadobj = $('#positionName').typeahead({
 		hint: false,
 		highlight: false,
-		minLength: 1
+		minLength: 3
 	},  {
 		displayKey : 'name',
 		source : assignPosition.ttAdapter()
