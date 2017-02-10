@@ -208,8 +208,11 @@ public class EstimateAppropriationRegisterService {
             } else if (estimateAppropriation != null && estimateAppropriation.getAbstractEstimate() != null) {
                 final AbstractEstimate ae = estimateAppropriation.getAbstractEstimate();
                 budgetFolioDetail.setEstimateNo(ae.getEstimateNumber());
-                budgetFolioDetail.setNameOfWork(ae.getName());
-                budgetFolioDetail.setWorkValue(ae.getWorkValue());
+                if (ae.getParent() == null)
+                    budgetFolioDetail.setNameOfWork(ae.getName());
+                else
+                    budgetFolioDetail.setNameOfWork(ae.getParent().getName());
+                budgetFolioDetail.setWorkValue(ae.getEstimateValue().doubleValue());
                 budgetFolioDetail.setEstimateDate(sdf.format(ae.getEstimateDate()));
                 if (ae.getProjectCode() != null)
                     budgetFolioDetail.setWorkIdentificationNumber(ae.getProjectCode().getCode());

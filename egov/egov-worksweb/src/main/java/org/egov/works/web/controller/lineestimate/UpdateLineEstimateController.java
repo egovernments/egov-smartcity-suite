@@ -429,8 +429,8 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                 lineEstimate.getStatus().getCode().equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString())) {
             model.addAttribute("fieldsRequiredMap", lineEstimateService.getWorkFlowLevelFields(lineEstimate));
             final EstimateAppropriation lineEstimateAppropriation = estimateAppropriationService
-                    .findLatestByLineEstimateDetails_EstimateNumber(
-                            lineEstimate.getLineEstimateDetails().get(0).getEstimateNumber());
+                    .findLatestByLineEstimateDetails(
+                            lineEstimate.getLineEstimateDetails().get(0));
             model.addAttribute("budgetAppropriationDate", lineEstimateAppropriation.getBudgetUsage().getUpdatedTime());
         }
 

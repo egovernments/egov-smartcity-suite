@@ -43,18 +43,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.commons.EgwStatus;
-import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.autonumber.BudgetAppropriationNumberGenerator;
 import org.egov.works.lineestimate.entity.EstimateAppropriation;
+import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.repository.EstimateAppropriationRepository;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
+import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -65,9 +66,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class EstimateAppropriationService {
 
     private final LineEstimateDetailsRepository lineEstimateDetailsRepository;
-
-    @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Autowired
     private EstimateAppropriationRepository estimateAppropriationRepository;
@@ -107,27 +105,21 @@ public class EstimateAppropriationService {
         return lineEstimateDetailsRepository.findOne(id);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
-    public EgwStatus getStatusByModuleAndCode(final String moduleType, final String code) {
-        return egwStatusHibernateDAO.getStatusByModuleAndCode(moduleType, code);
+    public EstimateAppropriation findLatestByLineEstimateDetails(final LineEstimateDetails lineEstimateDetails) {
+        return estimateAppropriationRepository
+                .findLatestByLineEstimateDetails(lineEstimateDetails);
     }
 
-    // @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
-    public EstimateAppropriation findLatestByLineEstimateDetails_EstimateNumber(final String estimateNumber) {
+    public EstimateAppropriation findLatestByAbstractEstimate(final AbstractEstimate abstractEstimate) {
         return estimateAppropriationRepository
-                .findLatestByLineEstimateDetails_EstimateNumber(estimateNumber);
+                .findLatestByAbstractEstimate(abstractEstimate);
     }
 
-    public EstimateAppropriation findLatestByAbstractEstimateEstimateNumber(final String estimateNumber) {
-        return estimateAppropriationRepository
-                .findLatestByAbstractEstimate_EstimateNumber(estimateNumber);
-    }
-    
     public EstimateAppropriation findLatestByAbstractEstimate(final Long abstractEstimateId) {
         return estimateAppropriationRepository
                 .findLatestByAbstractEstimate_Id(abstractEstimateId);
     }
-    
+
     public EstimateAppropriation findLatestByBudgetUsage(final Long budgetUsageId) {
         return estimateAppropriationRepository
                 .findByBudgetUsage_Id(budgetUsageId);
@@ -143,28 +135,28 @@ public class EstimateAppropriationService {
     }
 
     @Transactional
-    public boolean checkConsumeEncumbranceBudget(final LineEstimateDetails lineEstimateDetails, final Long finyrId,
+    public boolean checkConsumeEncumbranceBudgetForLineEstimate(final LineEstimateDetails lineEstimateDetails, final Long finyrId,
             final double budgApprAmnt, final List<Long> budgetheadid) {
         final boolean flag = true;
         BudgetUsage budgetUsage = null;
+        final LineEstimate lineEstimate = lineEstimateDetails.getLineEstimate();
         budgetUsage = budgetDetailsDAO.consumeEncumbranceBudget(
-                generateBudgetAppropriationNumber(lineEstimateDetails.getLineEstimate().getLineEstimateDate()),
+                generateBudgetAppropriationNumber(lineEstimate.getLineEstimateDate()),
                 finyrId,
                 Integer.valueOf(11),
                 lineEstimateDetails.getEstimateNumber(),
-                Integer.parseInt(lineEstimateDetails.getLineEstimate().getExecutingDepartment().getId().toString()),
-                lineEstimateDetails.getLineEstimate().getFunction() == null ? null : lineEstimateDetails.getLineEstimate()
+                Integer.parseInt(lineEstimate.getExecutingDepartment().getId().toString()),
+                lineEstimate.getFunction() == null ? null : lineEstimate
                         .getFunction().getId(),
                 null,
-                lineEstimateDetails.getLineEstimate().getScheme() == null ? null : lineEstimateDetails.getLineEstimate()
+                lineEstimate.getScheme() == null ? null : lineEstimate
                         .getScheme().getId(),
-                lineEstimateDetails.getLineEstimate().getSubScheme() == null ? null : lineEstimateDetails.getLineEstimate()
+                lineEstimate.getSubScheme() == null ? null : lineEstimate
                         .getSubScheme().getId(),
-                lineEstimateDetails.getLineEstimate().getWard() == null ? null : Integer.parseInt(lineEstimateDetails
-                        .getLineEstimate().getWard().getId().toString()),
+                lineEstimate.getWard() == null ? null : Integer.parseInt(lineEstimate.getWard().getId().toString()),
                 budgetheadid,
-                lineEstimateDetails.getLineEstimate().getFund() == null ? null
-                        : lineEstimateDetails.getLineEstimate().getFund()
+                lineEstimate.getFund() == null ? null
+                        : lineEstimate.getFund()
                                 .getId(),
                 budgApprAmnt);
         if (budgetUsage != null)
@@ -180,74 +172,52 @@ public class EstimateAppropriationService {
             final AbstractEstimate abstractEstimate, final BudgetUsage budgetUsage) {
         EstimateAppropriation lineEstimateAppropriation = null;
         if (lineEstimateDetails != null)
-            lineEstimateAppropriation = findLatestByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
+            lineEstimateAppropriation = findLatestByLineEstimateDetails(lineEstimateDetails);
         else
-            lineEstimateAppropriation = findLatestByAbstractEstimateEstimateNumber(abstractEstimate.getEstimateNumber());
+            lineEstimateAppropriation = findLatestByAbstractEstimate(abstractEstimate);
 
         if (lineEstimateAppropriation != null)
             lineEstimateAppropriation.setBudgetUsage(budgetUsage);
         else {
             lineEstimateAppropriation = new EstimateAppropriation();
-            lineEstimateAppropriation.setLineEstimateDetails(lineEstimateDetails);
-            lineEstimateAppropriation.setAbstractEstimate(abstractEstimate);
+            if (lineEstimateDetails != null)
+                lineEstimateAppropriation.setLineEstimateDetails(lineEstimateDetails);
+            else
+                lineEstimateAppropriation.setAbstractEstimate(abstractEstimate);
             lineEstimateAppropriation.setBudgetUsage(budgetUsage);
         }
         estimateAppropriationRepository.save(lineEstimateAppropriation);
     }
-    
+
     @Transactional
-    public boolean checkConsumeEncumbranceBudgetForEstimate(final AbstractEstimate abstractEstimate, final Long finyrId,
+    public boolean checkConsumeEncumbranceBudgetForAbstractEstimate(final AbstractEstimate abstractEstimate, final Long finyrId,
             final double budgApprAmnt, final List<Long> budgetheadid) {
         final boolean flag = true;
         BudgetUsage budgetUsage = null;
-        if (abstractEstimate.getParent() == null)
-            budgetUsage = budgetDetailsDAO.consumeEncumbranceBudget(
-                    generateBudgetAppropriationNumber(abstractEstimate.getEstimateDate()),
-                    finyrId,
-                    Integer.valueOf(11),
-                    abstractEstimate.getEstimateNumber(),
-                    Integer.parseInt(abstractEstimate.getExecutingDepartment().getId().toString()),
-                    abstractEstimate.getFinancialDetails().get(0).getFunction() == null ? null
-                            : abstractEstimate.getFinancialDetails().get(0)
-                                    .getFunction().getId(),
-                    null,
-                    abstractEstimate.getFinancialDetails().get(0).getScheme() == null ? null
-                            : abstractEstimate.getFinancialDetails().get(0)
-                                    .getScheme().getId(),
-                    abstractEstimate.getFinancialDetails().get(0).getSubScheme() == null ? null
-                            : abstractEstimate.getFinancialDetails().get(0)
-                                    .getSubScheme().getId(),
-                    abstractEstimate.getWard() == null ? null : Integer.parseInt(abstractEstimate
-                            .getWard().getId().toString()),
-                    budgetheadid,
-                    abstractEstimate.getFinancialDetails().get(0).getFund() == null ? null
-                            : abstractEstimate.getFinancialDetails().get(0).getFund()
-                                    .getId(),
-                    budgApprAmnt);
-        else
-            budgetUsage = budgetDetailsDAO.consumeEncumbranceBudget(
-                    generateBudgetAppropriationNumber(abstractEstimate.getEstimateDate()),
-                    finyrId,
-                    Integer.valueOf(11),
-                    abstractEstimate.getEstimateNumber(),
-                    Integer.parseInt(abstractEstimate.getParent().getExecutingDepartment().getId().toString()),
-                    abstractEstimate.getParent().getFinancialDetails().get(0).getFunction() == null ? null
-                            : abstractEstimate.getParent().getFinancialDetails().get(0)
-                                    .getFunction().getId(),
-                    null,
-                    abstractEstimate.getParent().getFinancialDetails().get(0).getScheme() == null ? null
-                            : abstractEstimate.getParent().getFinancialDetails().get(0)
-                                    .getScheme().getId(),
-                    abstractEstimate.getParent().getFinancialDetails().get(0).getSubScheme() == null ? null
-                            : abstractEstimate.getParent().getFinancialDetails().get(0)
-                                    .getSubScheme().getId(),
-                    abstractEstimate.getParent().getWard() == null ? null : Integer.parseInt(abstractEstimate.getParent()
-                            .getWard().getId().toString()),
-                    budgetheadid,
-                    abstractEstimate.getParent().getFinancialDetails().get(0).getFund() == null ? null
-                            : abstractEstimate.getParent().getFinancialDetails().get(0).getFund()
-                                    .getId(),
-                    budgApprAmnt);
+        final FinancialDetail financialDetail = abstractEstimate.getFinancialDetails().get(0);
+        budgetUsage = budgetDetailsDAO.consumeEncumbranceBudget(
+                generateBudgetAppropriationNumber(abstractEstimate.getEstimateDate()),
+                finyrId,
+                Integer.valueOf(11),
+                abstractEstimate.getEstimateNumber(),
+                Integer.parseInt(abstractEstimate.getExecutingDepartment().getId().toString()),
+                financialDetail.getFunction() == null ? null
+                        : financialDetail
+                                .getFunction().getId(),
+                null,
+                financialDetail.getScheme() == null ? null
+                        : financialDetail
+                                .getScheme().getId(),
+                financialDetail.getSubScheme() == null ? null
+                        : financialDetail
+                                .getSubScheme().getId(),
+                abstractEstimate.getWard() == null ? null : Integer.parseInt(abstractEstimate
+                        .getWard().getId().toString()),
+                budgetheadid,
+                financialDetail.getFund() == null ? null
+                        : financialDetail.getFund()
+                                .getId(),
+                budgApprAmnt);
 
         if (budgetUsage != null)
             persistBudgetAppropriationDetails(null, abstractEstimate, budgetUsage);
@@ -256,13 +226,53 @@ public class EstimateAppropriationService {
 
         return flag;
     }
-    
+
+    @Transactional
+    public boolean checkConsumeEncumbranceBudgetForRevisionEstimate(final RevisionAbstractEstimate revisionAbstractEstimate,
+            final Long finyrId,
+            final double budgApprAmnt, final List<Long> budgetheadid) {
+        final boolean flag = true;
+        BudgetUsage budgetUsage = null;
+        final FinancialDetail financialDetail = revisionAbstractEstimate.getParent().getFinancialDetails().get(0);
+        budgetUsage = budgetDetailsDAO.consumeEncumbranceBudget(
+                generateBudgetAppropriationNumber(revisionAbstractEstimate.getEstimateDate()),
+                finyrId,
+                Integer.valueOf(11),
+                revisionAbstractEstimate.getEstimateNumber(),
+                Integer.parseInt(revisionAbstractEstimate.getParent().getExecutingDepartment().getId().toString()),
+                financialDetail.getFunction() == null ? null
+                        : financialDetail
+                                .getFunction().getId(),
+                null,
+                financialDetail.getScheme() == null ? null
+                        : financialDetail
+                                .getScheme().getId(),
+                financialDetail.getSubScheme() == null ? null
+                        : financialDetail
+                                .getSubScheme().getId(),
+                revisionAbstractEstimate.getParent().getWard() == null ? null
+                        : Integer.parseInt(revisionAbstractEstimate.getParent()
+                                .getWard().getId().toString()),
+                budgetheadid,
+                financialDetail.getFund() == null ? null
+                        : financialDetail.getFund()
+                                .getId(),
+                budgApprAmnt);
+
+        if (budgetUsage != null)
+            persistBudgetAppropriationDetails(null, revisionAbstractEstimate, budgetUsage);
+        else
+            return false;
+
+        return flag;
+    }
+
     @Transactional
     public boolean releaseBudgetOnReject(final LineEstimateDetails lineEstimateDetails, Double budgApprAmnt,
             String appropriationnumber) throws ValidationException {
 
         final EstimateAppropriation lineEstimateAppropriation = estimateAppropriationRepository
-                .findLatestByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
+                .findLatestByLineEstimateDetails(lineEstimateDetails);
         final List<Long> budgetheadid = new ArrayList<Long>();
         budgetheadid.add(lineEstimateDetails.getLineEstimate().getBudgetHead().getId());
         BudgetUsage budgetUsage = null;
@@ -308,13 +318,13 @@ public class EstimateAppropriationService {
         }
         return flag;
     }
-    
+
     @Transactional
     public boolean releaseBudgetOnRejectForEstimate(final AbstractEstimate abstractEstimate, Double budgApprAmnt,
             String appropriationnumber) throws ValidationException {
 
         final EstimateAppropriation estimateAppropriation = estimateAppropriationRepository
-                .findLatestByAbstractEstimate_EstimateNumber(abstractEstimate.getEstimateNumber());
+                .findLatestByAbstractEstimate(abstractEstimate);
         final List<Long> budgetheadid = new ArrayList<Long>();
         budgetheadid.add(abstractEstimate.getParent().getFinancialDetails().get(0).getBudgetGroup().getId());
         BudgetUsage budgetUsage = null;
@@ -361,22 +371,31 @@ public class EstimateAppropriationService {
                         estimateAppropriation.getAbstractEstimate().getEstimateNumber(),
                         Integer.parseInt(estimateAppropriation.getAbstractEstimate().getParent()
                                 .getExecutingDepartment().getId().toString()),
-                        estimateAppropriation.getAbstractEstimate().getParent().getFinancialDetails().get(0).getFunction() == null ? null
-                                : estimateAppropriation.getAbstractEstimate().getParent().getFinancialDetails().get(0).getFunction()
+                        estimateAppropriation.getAbstractEstimate().getParent().getFinancialDetails().get(0).getFunction() == null
+                                ? null
+                                : estimateAppropriation.getAbstractEstimate().getParent().getFinancialDetails().get(0)
+                                        .getFunction()
                                         .getId(),
                         null,
-                        estimateAppropriation.getAbstractEstimate().getParent().getFinancialDetails().get(0).getScheme() == null ? null
-                                : estimateAppropriation.getAbstractEstimate().getParent().getFinancialDetails().get(0).getScheme().getId(),
-                        estimateAppropriation.getAbstractEstimate().getParent().getFinancialDetails().get(0).getSubScheme() == null ? null
-                                : estimateAppropriation.getAbstractEstimate().getParent().getFinancialDetails().get(0).getSubScheme()
+                        estimateAppropriation.getAbstractEstimate().getParent().getFinancialDetails().get(0).getScheme() == null
+                                ? null
+                                : estimateAppropriation.getAbstractEstimate().getParent().getFinancialDetails().get(0).getScheme()
                                         .getId(),
+                        estimateAppropriation.getAbstractEstimate().getParent().getFinancialDetails().get(0)
+                                .getSubScheme() == null ? null
+                                        : estimateAppropriation.getAbstractEstimate().getParent().getFinancialDetails().get(0)
+                                                .getSubScheme()
+                                                .getId(),
                         estimateAppropriation.getAbstractEstimate().getParent().getWard() == null ? null
                                 : Integer.parseInt(estimateAppropriation.getAbstractEstimate().getParent()
                                         .getWard().getId().toString()),
-                        estimateAppropriation.getAbstractEstimate().getParent().getFinancialDetails().get(0).getBudgetGroup() == null ? null
-                                : budgetheadid,
-                        estimateAppropriation.getAbstractEstimate().getParent().getFinancialDetails().get(0).getFund() == null ? null
-                                : estimateAppropriation.getAbstractEstimate().getParent().getFinancialDetails().get(0).getFund().getId(),
+                        estimateAppropriation.getAbstractEstimate().getParent().getFinancialDetails().get(0)
+                                .getBudgetGroup() == null ? null
+                                        : budgetheadid,
+                        estimateAppropriation.getAbstractEstimate().getParent().getFinancialDetails().get(0).getFund() == null
+                                ? null
+                                : estimateAppropriation.getAbstractEstimate().getParent().getFinancialDetails().get(0).getFund()
+                                        .getId(),
                         budgApprAmnt);
 
             if (budgetUsage != null)
@@ -386,17 +405,17 @@ public class EstimateAppropriationService {
         }
         return flag;
     }
-    
+
     @Transactional
     private void persistBudgetReleaseDetails(final LineEstimateDetails lineEstimateDetails,
             final AbstractEstimate abstractEstimate, final BudgetUsage budgetUsage) {
         EstimateAppropriation lineEstimateAppropriation = null;
         if (lineEstimateDetails != null)
             lineEstimateAppropriation = estimateAppropriationRepository
-                    .findLatestByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
+                    .findLatestByLineEstimateDetails(lineEstimateDetails);
         else
             lineEstimateAppropriation = estimateAppropriationRepository
-                    .findLatestByAbstractEstimate_EstimateNumber(abstractEstimate.getEstimateNumber());
+                    .findLatestByAbstractEstimate(abstractEstimate);
         lineEstimateAppropriation.setBudgetUsage(budgetUsage);
         estimateAppropriationRepository.save(lineEstimateAppropriation);
     }

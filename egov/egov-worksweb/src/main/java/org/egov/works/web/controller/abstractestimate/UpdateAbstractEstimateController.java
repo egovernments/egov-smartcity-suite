@@ -48,6 +48,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.egf.budget.model.BudgetControlType;
+import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -58,6 +60,7 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.utils.ApplicationConstant;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
@@ -125,6 +128,9 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<AbstractEstimate> abstractEstimateWorkflowService;
+
+    @Autowired
+    private BudgetControlTypeService budgetControlTypeService;
 
     @ModelAttribute
     public AbstractEstimate getAbstractEstimate(@PathVariable final String abstractEstimateId) {
@@ -218,6 +224,14 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             }
         }
 
+        if (!BudgetControlType.BudgetCheckOption.NONE.toString()
+                .equalsIgnoreCase(budgetControlTypeService.getConfigValue())
+                && !worksApplicationProperties.lineEstimateRequired()
+                && (WorksConstants.CREATE_AND_APPROVE.equals(workFlowAction)
+                        || WorksConstants.APPROVE_ACTION.equals(workFlowAction)))
+            estimateService.validateBudgetAmount(abstractEstimate,
+                    errors);
+
         if (errors.hasErrors()) {
             for (final Activity activity : abstractEstimate.getSorActivities())
                 activity.setSchedule(scheduleOfRateService.getScheduleOfRateById(activity.getSchedule().getId()));
@@ -226,8 +240,15 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             return loadViewData(model, request, abstractEstimate);
         } else {
             if (null != workFlowAction)
-                updatedAbstractEstimate = estimateService.updateAbstractEstimateDetails(abstractEstimate, approvalPosition,
-                        approvalComment, additionalRule, workFlowAction, files, removedActivityIds);
+                try {
+                    updatedAbstractEstimate = estimateService.updateAbstractEstimateDetails(abstractEstimate, approvalPosition,
+                            approvalComment, additionalRule, workFlowAction, files, removedActivityIds);
+                } catch (final ValidationException e) {
+                    final String errorMessage = messageSource.getMessage("error.budgetappropriation.insufficient.amount",
+                            new String[] {}, null);
+                    model.addAttribute("message", errorMessage);
+                    return abstractEstimate.isSpillOverFlag() ? "newAbstractEstimate-spilloverform" : "newAbstractEstimate-form";
+                }
             redirectAttributes.addFlashAttribute("abstractEstimate", updatedAbstractEstimate);
 
             if (updatedAbstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()))

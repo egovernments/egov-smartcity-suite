@@ -358,7 +358,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             Integer count = 1;
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
                 final EstimateAppropriation lea = estimateAppropriationService
-                        .findLatestByLineEstimateDetails_EstimateNumber(led.getEstimateNumber());
+                        .findLatestByLineEstimateDetails(led);
                 final String tempMessage = messageSource.getMessage("msg.lineestimatedetails.budgetsanction.success",
                         new String[] { count.toString(), led.getEstimateNumber(),
                                 lea.getBudgetUsage().getAppropriationnumber() },

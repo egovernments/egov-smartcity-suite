@@ -63,7 +63,7 @@ public class CancelRevisionEstimateController {
             messageSource.getMessage("error.reexists.greaterthancreateddate", new String[] { revisionEstimates }, null);
             return REVISIONESTIMATE_SUCCESS;
         } else {
-            final String mbRefNumbers = revisionEstimateService.checkIfMBCreatedForREChangedQuantity(revisionEstimate,
+            final String mbRefNumbers = revisionEstimateService.checkIfMBCreatedForRENonTenderedLumpSum(revisionEstimate,
                     workOrderEstimate);
             if (!StringUtils.EMPTY.equals(mbRefNumbers)) {
                 model.addAttribute("message",

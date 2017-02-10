@@ -48,7 +48,7 @@
 		</div>
 		<div>
 		       <spring:hasBindErrors name="abstractEstimate">
-				    <div class="alert alert-danger col-md-10 col-md-offset-1">
+				    <div class="col-md-10 col-md-offset-1">
 						<form:errors path="*" cssClass="error-msg add-margin" /><br/>
 				   </div>
 	          </spring:hasBindErrors>

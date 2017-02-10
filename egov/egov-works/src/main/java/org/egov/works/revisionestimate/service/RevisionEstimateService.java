@@ -271,8 +271,8 @@ public class RevisionEstimateService {
 
     private void doBudgetoryAppropriation(final String workFlowAction, final RevisionAbstractEstimate revisionEstimate) {
         final List<Long> budgetheadid = new ArrayList<Long>();
-        budgetheadid.add(revisionEstimate.getParent().getLineEstimateDetails().getLineEstimate().getBudgetHead().getId());
-        final boolean flag = estimateAppropriationService.checkConsumeEncumbranceBudgetForEstimate(
+        budgetheadid.add(revisionEstimate.getParent().getFinancialDetails().get(0).getBudgetGroup().getId());
+        final boolean flag = estimateAppropriationService.checkConsumeEncumbranceBudgetForRevisionEstimate(
                 revisionEstimate,
                 worksUtils.getFinancialYearByDate(new Date()).getId(),
                 revisionEstimate.getEstimateValue().doubleValue(),
@@ -1083,8 +1083,6 @@ public class RevisionEstimateService {
         query.append(" AND aep.id = woe.abstractestimate_id ");
         query.append(" AND woe.workorder_id = wo.id ");
         query.append(" AND aec.status = status.id AND status.code =:restatus ");
-        query.append(
-                " AND exists (select wo.id from egw_mb_header mbh ,egw_status mbstatus where mbh.status_id = mbstatus.id and mbstatus.code = 'CANCELLED')");
         query.append(filterConditions.toString());
         return query.toString();
     }

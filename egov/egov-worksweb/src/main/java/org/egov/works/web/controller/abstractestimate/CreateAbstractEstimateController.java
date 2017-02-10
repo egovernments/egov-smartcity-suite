@@ -49,6 +49,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.egf.budget.model.BudgetControlType;
+import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
@@ -58,6 +60,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationConstant;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.pims.commons.Designation;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
@@ -65,8 +68,10 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.config.properties.WorksApplicationProperties;
+import org.egov.works.lineestimate.entity.EstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.lineestimate.service.EstimateAppropriationService;
 import org.egov.works.lineestimate.service.LineEstimateDetailService;
 import org.egov.works.masters.service.ScheduleOfRateService;
 import org.egov.works.utils.WorksConstants;
@@ -125,6 +130,12 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
 
     @Autowired
     private SecurityUtils securityUtils;
+
+    @Autowired
+    private BudgetControlTypeService budgetControlTypeService;
+
+    @Autowired
+    private EstimateAppropriationService estimateAppropriationService;
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String showAbstractEstimateForm(@ModelAttribute("abstractEstimate") final AbstractEstimate abstractEstimate,
@@ -227,7 +238,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             final RedirectAttributes redirectAttributes, final Model model, final BindingResult bindErrors,
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request,
             @RequestParam String workFlowAction) throws IOException {
-
+        AbstractEstimate savedAbstractEstimate;
         Long approvalPosition = 0l;
         String approvalComment = "";
         String additionalRule = "";
@@ -265,6 +276,13 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
                 bindErrors.reject("error.sor.nonsor.required", "error.sor.nonsor.required");
             estimateService.validateLocationDetails(abstractEstimate, bindErrors);
         }
+
+        if (!BudgetControlType.BudgetCheckOption.NONE.toString()
+                .equalsIgnoreCase(budgetControlTypeService.getConfigValue())
+                && !worksApplicationProperties.lineEstimateRequired()
+                && WorksConstants.CREATE_AND_APPROVE.equals(workFlowAction))
+            estimateService.validateBudgetAmount(abstractEstimate,
+                    bindErrors);
         if (bindErrors.hasErrors()) {
             for (final Activity activity : abstractEstimate.getSorActivities())
                 activity.setSchedule(scheduleOfRateService.getScheduleOfRateById(activity.getSchedule().getId()));
@@ -295,8 +313,15 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
                     abstractEstimate.setEgwStatus(egwStatusHibernateDAO
                             .getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE, EstimateStatus.NEW.toString()));
 
-            final AbstractEstimate savedAbstractEstimate = estimateService.createAbstractEstimate(abstractEstimate,
-                    files, approvalPosition, approvalComment, additionalRule, workFlowAction);
+            try {
+                savedAbstractEstimate = estimateService.createAbstractEstimate(abstractEstimate,
+                        files, approvalPosition, approvalComment, additionalRule, workFlowAction);
+            } catch (final ValidationException e) {
+                final String errorMessage = messageSource.getMessage("error.budgetappropriation.insufficient.amount",
+                        new String[] {}, null);
+                model.addAttribute("message", errorMessage);
+                return abstractEstimate.isSpillOverFlag() ? "newAbstractEstimate-spilloverform" : "newAbstractEstimate-form";
+            }
 
             if (EstimateStatus.NEW.toString().equals(savedAbstractEstimate.getEgwStatus().getCode()))
                 return "redirect:/abstractestimate/update/" + savedAbstractEstimate.getId() + "?mode=save";
@@ -369,14 +394,25 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             message = messageSource.getMessage("msg.estimate.resubmitted",
                     new String[] { approverName, nextDesign, abstractEstimate.getEstimateNumber() }, null);
         else if (EstimateStatus.APPROVED.toString().equals(abstractEstimate.getEgwStatus().getCode())
-                && !WorksConstants.WF_STATE_REJECTED.equals(abstractEstimate.getState().getValue()))
-            message = messageSource.getMessage("msg.estimate.techsanctioned",
-                    new String[] { abstractEstimate.getEstimateNumber(),
-                            abstractEstimate.getEstimateTechnicalSanctions()
-                                    .get(abstractEstimate.getEstimateTechnicalSanctions().size() - 1)
-                                    .getTechnicalSanctionNumber() },
-                    null);
-        else if (abstractEstimate.getState() != null
+                && !WorksConstants.WF_STATE_REJECTED.equals(abstractEstimate.getState().getValue())) {
+            if (!worksApplicationProperties.lineEstimateRequired()) {
+                final EstimateAppropriation lea = estimateAppropriationService
+                        .findLatestByAbstractEstimate(abstractEstimate);
+                message = messageSource.getMessage("msg.estimate.techsanctioned.budget.appropriation",
+                        new String[] { abstractEstimate.getEstimateNumber(),
+                                abstractEstimate.getEstimateTechnicalSanctions()
+                                        .get(abstractEstimate.getEstimateTechnicalSanctions().size() - 1)
+                                        .getTechnicalSanctionNumber(),
+                                lea.getBudgetUsage().getAppropriationnumber() },
+                        null);
+            } else
+                message = messageSource.getMessage("msg.estimate.techsanctioned",
+                        new String[] { abstractEstimate.getEstimateNumber(),
+                                abstractEstimate.getEstimateTechnicalSanctions()
+                                        .get(abstractEstimate.getEstimateTechnicalSanctions().size() - 1)
+                                        .getTechnicalSanctionNumber() },
+                        null);
+        } else if (abstractEstimate.getState() != null
                 && WorksConstants.WF_STATE_REJECTED.equals(abstractEstimate.getState().getValue()))
             message = messageSource.getMessage("msg.estimate.rejected",
                     new String[] { abstractEstimate.getEstimateNumber(), approverName, nextDesign }, null);

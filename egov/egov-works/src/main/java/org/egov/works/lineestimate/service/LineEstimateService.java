@@ -583,7 +583,7 @@ public class LineEstimateService {
                 appropriationAmount = led.getEstimateAmount();
 
             if (appropriationAmount.compareTo(BigDecimal.ZERO) == 1) {
-                final boolean flag = estimateAppropriationService.checkConsumeEncumbranceBudget(led,
+                final boolean flag = estimateAppropriationService.checkConsumeEncumbranceBudgetForLineEstimate(led,
                         worksUtils.getFinancialYearByDate(new Date()).getId(), appropriationAmount.doubleValue(), budgetheadid);
 
                 if (!flag)

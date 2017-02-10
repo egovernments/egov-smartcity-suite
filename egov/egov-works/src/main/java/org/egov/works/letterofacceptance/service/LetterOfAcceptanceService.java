@@ -834,7 +834,8 @@ public class LetterOfAcceptanceService {
 
                 final List<Long> budgetheadid = new ArrayList<Long>();
                 budgetheadid.add(abstractEstimate.getFinancialDetails().get(0).getBudgetGroup().getId());
-                final boolean flag = estimateAppropriationService.checkConsumeEncumbranceBudgetForEstimate(abstractEstimate,
+                final boolean flag = estimateAppropriationService.checkConsumeEncumbranceBudgetForAbstractEstimate(
+                        abstractEstimate,
                         worksUtils.getFinancialYearByDate(new Date()).getId(), appropriationAmount, budgetheadid);
 
                 if (!flag)

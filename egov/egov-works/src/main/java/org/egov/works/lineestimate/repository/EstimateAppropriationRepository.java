@@ -39,7 +39,9 @@
  */
 package org.egov.works.lineestimate.repository;
 
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.lineestimate.entity.EstimateAppropriation;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -48,14 +50,14 @@ import org.springframework.stereotype.Repository;
 public interface EstimateAppropriationRepository extends JpaRepository<EstimateAppropriation, Long> {
     EstimateAppropriation findById(final Long id);
 
-    @Query("from EstimateAppropriation ep where ep.budgetUsage.id=(select max(budgetUsage.id) from EstimateAppropriation ep1 where ep1.lineEstimateDetails.estimateNumber=?)")
-    EstimateAppropriation findLatestByLineEstimateDetails_EstimateNumber(final String estimateNumber);
+    @Query("from EstimateAppropriation ep where ep.budgetUsage.id=(select max(budgetUsage.id) from EstimateAppropriation ep1 where ep1.lineEstimateDetails=?)")
+    EstimateAppropriation findLatestByLineEstimateDetails(final LineEstimateDetails lineEstimateDetails);
 
-    @Query("from EstimateAppropriation ep where ep.budgetUsage.id=(select max(budgetUsage.id) from EstimateAppropriation ep1 where ep1.abstractEstimate.estimateNumber=?)")
-    EstimateAppropriation findLatestByAbstractEstimate_EstimateNumber(final String estimateNumber);
-    
+    @Query("from EstimateAppropriation ep where ep.budgetUsage.id=(select max(budgetUsage.id) from EstimateAppropriation ep1 where ep1.abstractEstimate=?)")
+    EstimateAppropriation findLatestByAbstractEstimate(final AbstractEstimate abstractEstimate);
+
     @Query("from EstimateAppropriation ep where ep.budgetUsage.id=(select max(budgetUsage.id) from EstimateAppropriation ep1 where ep1.abstractEstimate.id=?)")
     EstimateAppropriation findLatestByAbstractEstimate_Id(final Long abstractEstimateId);
-    
+
     EstimateAppropriation findByBudgetUsage_Id(final Long budgetUsageId);
 }

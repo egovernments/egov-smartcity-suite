@@ -50,6 +50,7 @@ import org.egov.works.abstractestimate.service.ProjectCodeService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -73,10 +74,10 @@ public class LineEstimateDetailService {
     private ProjectCodeService projectCodeService;
 
     @Autowired
-    private EstimateAppropriationService estimateAppropriationService;
+    private WorkIdentificationNumberGenerator workIdentificationNumberGenerator;
 
     @Autowired
-    private WorkIdentificationNumberGenerator workIdentificationNumberGenerator;
+    private WorksUtils worksUtils;
 
     @Autowired
     public LineEstimateDetailService(final LineEstimateDetailsRepository lineEstimateDetailsRepository) {
@@ -122,7 +123,7 @@ public class LineEstimateDetailService {
         projectCode.setCodeName(lineEstimateDetails.getNameOfWork());
         projectCode.setDescription(lineEstimateDetails.getNameOfWork());
         projectCode.setActive(true);
-        projectCode.setEgwStatus(estimateAppropriationService.getStatusByModuleAndCode(
+        projectCode.setEgwStatus(worksUtils.getStatusByModuleAndCode(
                 ProjectCode.class.getSimpleName(), WorksConstants.DEFAULT_PROJECTCODE_STATUS));
         projectCodeService.applyAuditing(projectCode);
         projectCodeService.persist(projectCode);

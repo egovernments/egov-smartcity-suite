@@ -71,7 +71,10 @@ import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.commons.service.TypeOfWorkService;
 import org.egov.commons.service.UOMService;
+import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
+import org.egov.egf.budget.model.BudgetControlType;
+import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
@@ -79,9 +82,11 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -114,6 +119,7 @@ import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
+import org.egov.works.lineestimate.service.EstimateAppropriationService;
 import org.egov.works.lineestimate.service.WorkIdentificationNumberGenerator;
 import org.egov.works.masters.entity.EstimateTemplate;
 import org.egov.works.masters.service.ModeOfAllotmentService;
@@ -246,6 +252,15 @@ public class EstimateService {
     @Autowired
     private ScriptService scriptService;
 
+    @Autowired
+    private EstimateAppropriationService estimateAppropriationService;
+
+    @Autowired
+    private BudgetControlTypeService budgetControlTypeService;
+
+    @Autowired
+    private BudgetDetailsDAO budgetDetailsDAO;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -279,6 +294,12 @@ public class EstimateService {
             for (final EstimateTechnicalSanction ets : abstractEstimate.getEstimateTechnicalSanctions())
                 ets.setAbstractEstimate(abstractEstimate);
 
+        if (!BudgetControlType.BudgetCheckOption.NONE.toString()
+                .equalsIgnoreCase(budgetControlTypeService.getConfigValue())
+                && !worksApplicationProperties.lineEstimateRequired()
+                && WorksConstants.CREATE_AND_APPROVE.equals(workFlowAction))
+            doBudgetoryAppropriation(workFlowAction, abstractEstimate);
+
         if (abstractEstimateFromDB == null)
             newAbstractEstimate = saveNewAbstractEstimate(abstractEstimate);
         else
@@ -303,6 +324,46 @@ public class EstimateService {
         abstractEstimateRepository.save(newAbstractEstimate);
         return newAbstractEstimate;
 
+    }
+
+    private void doBudgetoryAppropriation(final String workFlowAction, final AbstractEstimate abstractEstimate) {
+        final List<Long> budgetheadid = new ArrayList<Long>();
+        budgetheadid.add(abstractEstimate.getFinancialDetails().get(0).getBudgetGroup().getId());
+        final boolean flag = estimateAppropriationService.checkConsumeEncumbranceBudgetForAbstractEstimate(
+                abstractEstimate,
+                worksUtils.getFinancialYearByDate(new Date()).getId(),
+                abstractEstimate.getEstimateValue().doubleValue(),
+                budgetheadid);
+
+        if (!flag)
+            throw new ValidationException(org.apache.commons.lang.StringUtils.EMPTY,
+                    "error.budgetappropriation.insufficient.amount");
+    }
+
+    public void validateBudgetAmount(final AbstractEstimate abstractEstimate, final BindingResult errors) {
+        final List<Long> budgetheadid = new ArrayList<Long>();
+        final FinancialDetail financialDetail = abstractEstimate.getFinancialDetails().get(0);
+        budgetheadid.add(financialDetail.getBudgetGroup().getId());
+
+        try {
+            final BigDecimal budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
+                    worksUtils.getFinancialYearByDate(new Date()).getId(),
+                    Integer.parseInt(abstractEstimate.getExecutingDepartment().getId().toString()),
+                    financialDetail.getFunction().getId(), null,
+                    financialDetail.getScheme() == null ? null
+                            : Integer.parseInt(financialDetail.getScheme().getId().toString()),
+                    financialDetail.getSubScheme() == null ? null
+                            : Integer.parseInt(financialDetail.getSubScheme().getId().toString()),
+                    null, budgetheadid, Integer.parseInt(financialDetail.getFund().getId().toString()));
+
+            if (BudgetControlType.BudgetCheckOption.MANDATORY.toString()
+                    .equalsIgnoreCase(budgetControlTypeService.getConfigValue())
+                    && budgetAvailable.compareTo(abstractEstimate.getEstimateValue()) == -1)
+                errors.reject("error.budgetappropriation.insufficient.amount", null);
+        } catch (final ValidationException e) {
+            for (final ValidationError error : e.getErrors())
+                throw new ApplicationRuntimeException(error.getKey());
+        }
     }
 
     private AbstractEstimate saveNewAbstractEstimate(final AbstractEstimate abstractEstimate) {
@@ -738,6 +799,13 @@ public class EstimateService {
                 worksUtils.persistDocuments(documentDetails);
             }
         }
+
+        if (!BudgetControlType.BudgetCheckOption.NONE.toString()
+                .equalsIgnoreCase(budgetControlTypeService.getConfigValue())
+                && !worksApplicationProperties.lineEstimateRequired()
+                && (WorksConstants.CREATE_AND_APPROVE.equals(workFlowAction)
+                        || WorksConstants.APPROVE_ACTION.equals(workFlowAction)))
+            doBudgetoryAppropriation(workFlowAction, abstractEstimate);
 
         updatedAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
 
