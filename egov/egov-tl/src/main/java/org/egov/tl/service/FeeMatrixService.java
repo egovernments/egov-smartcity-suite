@@ -54,6 +54,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -95,15 +96,19 @@ public class FeeMatrixService<T extends License> {
     public List<FeeMatrixDetail> getLicenseFeeDetails(T license, Date effectiveDate) {
         List<FeeMatrixDetail> licenseFeeDetails = new ArrayList<>();
         for (LicenseSubCategoryDetails subcategoryDetail : license.getTradeName().getLicenseSubCategoryDetails()) {
-            FeeMatrix feeMatrix = getFeeMatrix(license, subcategoryDetail.getFeeType(), effectiveDate).
-                    orElseThrow(() -> new ValidationException("TL-002", "TL-002"));
-            FeeMatrixDetail feeMatrixDetail = feeMatrix.getFeeMatrixDetail().
+            Optional<FeeMatrix> feeMatrix = getFeeMatrix(license, subcategoryDetail.getFeeType(), effectiveDate);
+            if (!feeMatrix.isPresent())
+                throw new ValidationException("TL-002", "TL-002");
+
+            Optional<FeeMatrixDetail> feeMatrixDetail = feeMatrix.get().getFeeMatrixDetail().
                     parallelStream().
+                    filter(Objects::nonNull).
                     filter(detail -> license.getTradeArea_weight().intValue() > detail.getUomFrom()
                             && license.getTradeArea_weight().intValue() <= detail.getUomTo()).
-                    findFirst().
-                    orElseThrow(() -> new ValidationException("TL-003", "TL-003"));
-            licenseFeeDetails.add(feeMatrixDetail);
+                    findFirst();
+            if (!feeMatrixDetail.isPresent())
+                throw new ValidationException("TL-003", "TL-003");
+            licenseFeeDetails.add(feeMatrixDetail.get());
         }
 
         return licenseFeeDetails;
