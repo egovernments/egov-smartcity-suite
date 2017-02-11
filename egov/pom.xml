@@ -167,7 +167,7 @@
         <struts2-jquery-version>3.7.1</struts2-jquery-version>
         <xstream-version>1.4.9</xstream-version>
         <xpp3-version>1.1.4c</xpp3-version>
-        <spring-version>4.3.4.RELEASE</spring-version>
+        <spring-version>4.3.5.RELEASE</spring-version>
         <spring-session-version>1.2.2.RELEASE</spring-session-version>
         <spring-data-jpa-version>1.10.5.RELEASE</spring-data-jpa-version>
         <spring-data-jpa-envers-version>1.0.5.RELEASE</spring-data-jpa-envers-version>
