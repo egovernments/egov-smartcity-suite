@@ -51,6 +51,7 @@ public class AdvertisementTaxConstants {
     public static final String SERVICE_CODE = "ADTAX";
     public static final String COLL_RECEIPTDETAIL_DESC_PREFIX = "Collection";
     public static final String PENALTYCALCULATIONREQUIRED = "Penalty Calculation required";
+    public static final String SERVICETAXANDCESSCOLLECTIONREQUIRED =  "Service Tax And Cess Collection required";
     public static final String TOTALRESULTTOBEFETCH = "Number of Records used in next year demand generation";
     public static final String CALCULATESORBYUNIT = "Calculate SOR By Unit";
     public static final String DEMANDREASON_PENALTY = "Penalty";
