@@ -46,7 +46,6 @@ import java.util.List;
 
 public class ValidationException extends RuntimeException {
 
-    private static final long serialVersionUID = 1L;
     private final List<ValidationError> errors;
 
     public ValidationException(final List<ValidationError> errors) {
@@ -57,12 +56,12 @@ public class ValidationException extends RuntimeException {
         this.errors = Arrays.asList(errors);
     }
 
-    public List<ValidationError> getErrors() {
-        return errors;
+    public ValidationException(final String key, final String defaultMsg, final String... args) {
+        errors = new ArrayList<>();
+        errors.add(new ValidationError(key, defaultMsg, args));
     }
 
-    public ValidationException(final String key, final String defaultMsg, final String... args) {
-        errors = new ArrayList<ValidationError>();
-        errors.add(new ValidationError(key, defaultMsg, args));
+    public List<ValidationError> getErrors() {
+        return errors;
     }
 }
