@@ -54,10 +54,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.wtms.application.entity.InstDmdCollResponse;
 import org.egov.wtms.application.entity.WaterChargeMaterlizeView;
@@ -67,13 +65,9 @@ import org.egov.wtms.reports.entity.ArrearReportInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/reports/arrear")
@@ -85,8 +79,6 @@ public class ArrearRegisterReportController {
     @Autowired
     private ArrearRegisterReportService arrearRegisterReportService;
 
-    @Autowired
-    private ApplicationProperties applicationProperties;
 
     @ModelAttribute("zones")
     public List<Boundary> zones() {
@@ -125,8 +117,20 @@ public class ArrearRegisterReportController {
         final List<ArrearRegisterReport> propertyWiseInfoList = new ArrayList<ArrearRegisterReport>();
         final List<ArrearReportInfo> arrearReportInfoList = new ArrayList<ArrearReportInfo>();
         new ArrearReportInfo();
+        Long strZoneNum = null;
+        Long strWardNum = null;
+        Long strLocalityNum = null;
+        
+        if (reportHealperObj.getZone()!= null)
+        	strZoneNum =Long.valueOf(reportHealperObj.getZone());
+        
+        if (reportHealperObj.getWard() != null)
+            strWardNum =Long.valueOf(reportHealperObj.getWard());
+        if (reportHealperObj.getLocality() != null)
+        	strLocalityNum =Long.valueOf(reportHealperObj.getLocality());
+        
         final List<WaterChargeMaterlizeView> propertyViewList = arrearRegisterReportService
-                .prepareQueryforArrearRegisterReport(null, null);
+                .prepareQueryforArrearRegisterReport(strZoneNum,strWardNum,strLocalityNum);
 
         for (final WaterChargeMaterlizeView propMatView : propertyViewList){
         
@@ -168,14 +172,11 @@ public class ArrearRegisterReportController {
                         propertyWiseInfoList.add(propertyWiseInfoTotal);
                 }
             }
-            //System.out.println(propertyWiseInfoList.size());
+            
             arrearReportInfoObj.getPropertyWiseArrearInfoList().addAll(propertyWiseInfoList);
             arrearReportInfoList.add(arrearReportInfoObj);
-           // System.out.println(arrearReportInfoObj.getPropertyWiseArrearInfoList().size());
 
         }
-       /* IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern())
-                .create().toJson(arrearReportInfoList) + "}", response.getWriter());*/
         model.addAttribute("arrearReportInfoList", arrearReportInfoList);
         model.addAttribute("reportHelper", reportHealperObj);
         return "arrearRegister-report";

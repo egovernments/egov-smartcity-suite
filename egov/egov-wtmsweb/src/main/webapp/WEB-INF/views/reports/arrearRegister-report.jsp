@@ -62,22 +62,8 @@
 							</div>
 						</div>
 						<div class="panel-body custom-form">
-							<div class="form-group">
-								<label for="field-1" class="col-sm-3 control-label"><spring:message
-										code="lbl.ward" /></label>
-								<div class="col-sm-3 add-margin">
-									<form:select name="ward" id="ward" path="ward" required="required"
-										cssClass="form-control" cssErrorClass="form-control error">
-										<form:option value="">
-									--select--
-								</form:option>
-										<form:options items="${wards}" itemValue="id" itemLabel="name" />
-									</form:select>
-								</div>
-
-							</div>
-							<div class="form-group">
-								<label for="field-1" class="col-sm-3 control-label">Zone
+						<div class="form-group">
+								<label for="field-1" class="col-sm-3 control-label">Zone<span class="mandatory"></span>
 										</label>
 								<div class="col-sm-3 add-margin">
 									<form:select name="zone" id="zone" path="zone" required="required"
@@ -89,6 +75,21 @@
 									</form:select>
 								</div>
 						</div>
+							<div class="form-group">
+								<label for="field-1" class="col-sm-3 control-label"><spring:message
+										code="lbl.ward" /><span class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin">
+									<form:select name="ward" id="ward" path="ward" required="required"
+										cssClass="form-control" cssErrorClass="form-control error">
+										<form:option value="">
+									--select--
+								</form:option>
+										<form:options items="${wards}" itemValue="id" itemLabel="name" />
+									</form:select>
+								</div>
+
+							</div>
+							
 						<div class="panel-body custom-form">
 							<div class="form-group">
 								<label for="field-1" class="col-sm-3 control-label"><spring:message

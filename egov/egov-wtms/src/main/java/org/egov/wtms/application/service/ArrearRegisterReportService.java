@@ -58,76 +58,61 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ArrearRegisterReportService {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+	@PersistenceContext
+	private EntityManager entityManager;
 
-    @Autowired
-    private ConnectionDemandService connectionDemandService;
+	@Autowired
+	private ConnectionDemandService connectionDemandService;
 
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
+	public Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
 
-    public List<WaterChargeMaterlizeView> prepareQueryforArrearRegisterReport(final Long wardId, final Long areaId) {
-        // Get current installment
-        final Installment currentInst = connectionDemandService
-                .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
-        final StringBuilder query = new StringBuilder();
-        List<WaterChargeMaterlizeView> propertyViewList;
+	public List<WaterChargeMaterlizeView> prepareQueryforArrearRegisterReport(final Long zoneId, final Long wardId,
+			final Long locality) {
+		// Get current installment
+		final Installment currentInst = connectionDemandService
+				.getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
+		final StringBuilder query = new StringBuilder();
+		List<WaterChargeMaterlizeView> propertyViewList;
 
-        query.append(
-                "select distinct pmv  from WaterChargeMaterlizeView pmv,InstDmdCollResponse idc,Installment instmallment where "
-                        + "pmv.connectiondetailsid = idc.waterMatView.connectiondetailsid and pmv.connectionstatus = 'ACTIVE'"
-                        + " and idc.installment.id =instmallment.id  " + " and instmallment.fromDate not between  ('"
-                        + currentInst.getFromDate() + "') and ('" + currentInst.getToDate() + "') ");
+		query.append(
+				"select distinct pmv  from WaterChargeMaterlizeView pmv,InstDmdCollResponse idc,Installment instmallment where "
+						+ "pmv.connectiondetailsid = idc.waterMatView.connectiondetailsid and pmv.connectionstatus = 'ACTIVE'"
+						+ " and idc.installment.id =instmallment.id  " + " and instmallment.fromDate not between  ('"
+						+ currentInst.getFromDate() + "') and ('" + currentInst.getToDate() + "') ");
 
-        // Query that retrieves all the properties that has arrears.
-        /*
-         * query.append(
-         * "select distinct pmv  as \"hscno\" from egwtr_mv_dcb_view pmv,egwtr_mv_inst_dem_coll idc,EG_INSTALLMENT_MASTER instmallment where "
-         * +
-         * "pmv.connectiondetailsid = idc.connectiondetailsid and pmv.connectionstatus = 'ACTIVE'"
-         * + " and idc.id_installment =instmallment.id  " +
-         * " and instmallment.start_date not between  ('" +
-         * currentInst.getFromDate() + "') and ('" + currentInst.getToDate() +
-         * "') ");
-         */
+		query.append(" and pmv.hscno= :hscno ");
+		if (locality != null && locality != -1)
+			query.append(" and pmv.locality= :locality ");
 
-        /*--
-         * if (localityId != null && localityId != -1) query.append(
-         * " and pmv.locality.id= :localityId ");
-         */
-        /*
-         * if (zoneId != null && zoneId != -1) query.append(
-         * " and pmv.zone.id= :zoneId ");
-         */
-        /*
-         * if (wardId != null && wardId != -1) query.append(
-         * "  and pmv.ward.id= :wardId "); if (areaId != null && areaId != -1)
-         * query.append("  and pmv.block.id= :areaId ");
-         */
+		if (zoneId != null && zoneId != -1)
+			query.append(" and pmv.zoneid= :zoneId ");
 
-         query.append(" order by pmv.connectiondetailsid ");
-        final Query qry = getCurrentSession().createQuery(query.toString());
-        //qry.setMaxResults(100);
-        propertyViewList = qry.list();
-        /*
-         * if (localityId != null && localityId != -1)
-         * qry.setParameter("localityId", localityId); if (zoneId != null &&
-         * zoneId != -1) qry.setParameter("zoneId", zoneId);
-         */
-        /*
-         * if (wardId != null && wardId != -1) qry.setParameter("wardId",
-         * wardId); if (areaId != null && areaId != -1)
-         * qry.setParameter("areaId", areaId);
-         */
+		if (wardId != null && wardId != -1)
+			query.append("  and pmv.wardid= :wardId ");
 
-        // propertyViewList=finalQuery.list();
-        /*
-         * propertyViewList = qry
-         * .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY).
-         * list();
-         */
-        return propertyViewList;
-    }
+		query.append(" order by pmv.connectiondetailsid ");
+		final Query qry = getCurrentSession().createQuery(query.toString());
+		// qry.setMaxResults(100);
+
+		qry.setParameter("hscno", "1016000022");
+		if (locality != null && locality != -1)
+			qry.setParameter("locality", locality);
+
+		if (zoneId != null && zoneId != -1)
+			qry.setParameter("zoneId", zoneId);
+
+		if (wardId != null && wardId != -1)
+			qry.setParameter("wardId", wardId);
+
+		/*
+		 * if (areaId != null && areaId != -1) qry.setParameter("areaId",
+		 * areaId);
+		 */
+
+		propertyViewList = qry.list();
+
+		return propertyViewList;
+	}
 }
