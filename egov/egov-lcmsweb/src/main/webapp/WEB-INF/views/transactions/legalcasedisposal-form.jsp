@@ -45,7 +45,6 @@
 					<div class="panel-title">Close case</div>
 				</div>
 				<div class="panel-body">
-					<div class="form-group"></div>
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-left"><spring:message
 								code="lbl.disposaldate" /> :<span class="mandatory"></span> </label>

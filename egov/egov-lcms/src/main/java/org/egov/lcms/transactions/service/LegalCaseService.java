@@ -120,7 +120,7 @@ public class LegalCaseService {
         updateNextDate(legalcase, legalcase.getPwrList());
         setLegalCaseReportStatus(legalcase, legalcase.getPwrList());
         final LegalCase savedlegalcase = legalCaseRepository.save(legalcase);
-        legalCaseSmsService.sendSmsToOfficerIncharge(legalcase);
+        legalCaseSmsService.sendSmsToOfficerInchargeForLegalCase(legalcase);
         final List<LegalCaseUploadDocuments> documentDetails = getLegalcaseUploadDocumentDetails(savedlegalcase, files);
         if (!documentDetails.isEmpty()) {
             savedlegalcase.setLegalCaseUploadDocuments(documentDetails);
@@ -133,6 +133,8 @@ public class LegalCaseService {
     public LegalCase update(final LegalCase legalcase, final MultipartFile[] files) throws IOException {
         updateCounterAffidavitAndPwr(legalcase, legalcase.getPwrList());
         final LegalCase savedCaAndPwr = legalCaseRepository.save(legalcase);
+        legalCaseSmsService.sendSmsToOfficerInchargeForCounterAffidavit(legalcase.getCounterAffidavits());
+        legalCaseSmsService.sendSmsToOfficerInchargeForPWR(legalcase.getPwrList());
         final List<PwrDocuments> documentDetails = getPwrDocumentDetails(savedCaAndPwr, files);
         if (!documentDetails.isEmpty()) {
             savedCaAndPwr.getPwrList().get(0).setPwrDocuments(documentDetails);

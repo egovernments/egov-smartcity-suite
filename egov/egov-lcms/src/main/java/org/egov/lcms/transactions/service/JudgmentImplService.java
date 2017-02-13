@@ -79,6 +79,9 @@ public class JudgmentImplService {
 
     @Autowired
     private FileStoreService fileStoreService;
+    
+    @Autowired
+    private LegalCaseSmsService legalCaseSmsService;
 
     @Autowired
     public JudgmentImplService(final JudgmentImplRepository judgmentImplRepository) {
@@ -113,6 +116,7 @@ public class JudgmentImplService {
         final ReportStatus reportStatus=null;
         judgmentImpl.getJudgment().getLegalCase().setReportStatus(reportStatus);
         judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getDateOfCompliance());
+        legalCaseSmsService.sendSmsToOfficerInchargeForJudgmentImpl(judgmentImpl);
         legalCaseService.save(judgmentImpl.getJudgment().getLegalCase());
 
     }

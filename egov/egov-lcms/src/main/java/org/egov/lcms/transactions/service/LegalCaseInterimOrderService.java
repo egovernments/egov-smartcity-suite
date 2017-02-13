@@ -76,6 +76,9 @@ public class LegalCaseInterimOrderService {
     private FileStoreService fileStoreService;
 
     @Autowired
+    private LegalCaseSmsService legalCaseSmsService;
+
+    @Autowired
     private LCInterimOrderDocumentsRepository lCInterimOrderDocumentsRepository;
 
     @Autowired
@@ -89,15 +92,17 @@ public class LegalCaseInterimOrderService {
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_INTERIMSTAY_STATUS);
         legalCaseInterimOrder.getLegalCase().setStatus(statusObj);
-        final ReportStatus reportStatus=null;
+        final ReportStatus reportStatus = null;
         legalCaseInterimOrder.getLegalCase().setReportStatus(reportStatus);
         updateNextDate(legalCaseInterimOrder, legalCaseInterimOrder.getLegalCase());
         final LegalCaseInterimOrder savedlcInterimOrder = legalCaseInterimOrderRepository.save(legalCaseInterimOrder);
+        legalCaseSmsService.sendSmsToOfficerInchargeInterimOrder(legalCaseInterimOrder);
         final List<LcInterimOrderDocuments> documentDetails = getDocumentDetails(savedlcInterimOrder, files);
         if (!documentDetails.isEmpty()) {
             savedlcInterimOrder.setLcInterimOrderDocuments(documentDetails);
             persistDocuments(documentDetails);
         }
+
         return savedlcInterimOrder;
         /* legalCaseRepository.save(legalCaseInterimOrder.getLegalCase()); */
     }

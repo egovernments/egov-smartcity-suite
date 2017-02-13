@@ -91,6 +91,7 @@ public class HearingsService {
         hearings.getLegalCase().setStatus(statusObj);
         final ReportStatus reportStatus=null;
         hearings.getLegalCase().setReportStatus(reportStatus);
+        legalCaseSmsService.sendSmsToOfficerInchargeForHearings(hearings);
         legalCaseSmsService.sendSmsToHearingEmployee(hearings);
         return hearingsRepository.save(hearings);
     }

@@ -74,6 +74,9 @@ public class JudgmentService {
     private FileStoreService fileStoreService;
 
     @Autowired
+    private LegalCaseSmsService legalCaseSmsService;
+
+    @Autowired
     private JudgmentDocumentsRepository judgmentDocumentsRepository;
 
     @Autowired
@@ -86,9 +89,10 @@ public class JudgmentService {
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_JUDGMENT);
         judgment.getLegalCase().setStatus(statusObj);
-        final ReportStatus reportStatus=null;
+        final ReportStatus reportStatus = null;
         judgment.getLegalCase().setReportStatus(reportStatus);
         final Judgment savedjudgment = judgmentRepository.save(judgment);
+        legalCaseSmsService.sendSmsToOfficerInchargeForJudgment(judgment);
         final List<JudgmentDocuments> documentDetails = getDocumentDetails(savedjudgment, files);
         if (!documentDetails.isEmpty()) {
             savedjudgment.setJudgmentDocuments(documentDetails);

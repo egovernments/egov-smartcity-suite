@@ -54,17 +54,18 @@
 	</div>
 	</div>
 	</div>
-</form:form>
-<div class="form-group">
-	<div class="text-center">
-		<button type="submit" name="submit" id="buttonid"
-			class="btn btn-primary" value="Save">
-			<spring:message code="lbl.save" />
-		</button>
-		<button type='button' class='btn btn-default' id="btnclose">
-			<spring:message code='lbl.close' />
+	<div class="form-group">
+		<div class="text-center">
+			<button type="submit" name="submit" id="buttonid"
+				class="btn btn-primary" value="Save">
+				<spring:message code="lbl.save" />
+			</button>
+			<button type='button' class='btn btn-default' id="btnclose">
+				<spring:message code='lbl.close' />
+		</div>
 	</div>
-</div>
+</form:form>
+
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <link rel="stylesheet"

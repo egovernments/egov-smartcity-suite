@@ -61,6 +61,9 @@ public class LegalCaseDisposalService {
 
     @Autowired
     private LegalCaseUtil legalCaseUtil;
+    
+    @Autowired
+    private LegalCaseSmsService legalCaseSmsService;
 
     @Transactional
     public LegalCaseDisposal persist(final LegalCaseDisposal legalCaseDisposal) {
@@ -70,6 +73,7 @@ public class LegalCaseDisposalService {
         legalCaseDisposal.getLegalCase().setStatus(statusObj);
         final ReportStatus reportStatus=null;
         legalCaseDisposal.getLegalCase().setReportStatus(reportStatus);
+        legalCaseSmsService.sendSmsToOfficerInchargeForCloseCase(legalCaseDisposal);
         return legalCaseDisposalRepository.save(legalCaseDisposal);
     }
 
