@@ -89,6 +89,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/registration")
 public class UpdateMarriageRegistrationController extends MarriageRegistrationController {
 
+    private static final String PENDING_ACTIONS = "pendingActions";
     private static final String MARRIAGE_REGISTRATION = "marriageRegistration";
     private static final Logger LOG = Logger.getLogger(UpdateMarriageRegistrationController.class);
     private static final String MRG_REGISTRATION_EDIT = "registration-correction";
@@ -176,16 +177,17 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         //Set pending actions based on digitalsignature configuration value
         if (registration.getStatus().getCode().equalsIgnoreCase(MarriageConstants.APPROVED))
             if (marriageUtils.isDigitalSignEnabled()) {
-                model.addAttribute("pendingActions", MarriageConstants.WFLOW_PENDINGACTION_DIGISIGNPENDING);
+                model.addAttribute(PENDING_ACTIONS, MarriageConstants.WFLOW_PENDINGACTION_DIGISIGNPENDING);
                 workFlowContainer.setPendingActions(MarriageConstants.WFLOW_PENDINGACTION_DIGISIGNPENDING);
             } else {
-                model.addAttribute("pendingActions", MarriageConstants.WFLOW_PENDINGACTION_PRINTCERTIFICATE);
+                model.addAttribute(PENDING_ACTIONS, MarriageConstants.WFLOW_PENDINGACTION_PRINTCERTIFICATE);
                 workFlowContainer.setPendingActions(MarriageConstants.WFLOW_PENDINGACTION_PRINTCERTIFICATE);
             }
         workFlowContainer.setAdditionalRule(MarriageConstants.ADDITIONAL_RULE_REGISTRATION);
         prepareWorkflow(model, registration, workFlowContainer);
         model.addAttribute("additionalRule", MarriageConstants.ADDITIONAL_RULE_REGISTRATION);
         model.addAttribute("stateType", registration.getClass().getSimpleName());
+        model.addAttribute("isDigitalSignEnabled", marriageUtils.isDigitalSignEnabled());
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
@@ -227,13 +229,13 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                 //If digital signature is configured, after approve appl shld remain in commissioner inbox for digital signature
                 // otherwise gets fwded to creator for print certificate.
                 if (marriageUtils.isDigitalSignEnabled()) {
-                    model.addAttribute("pendingActions", MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN);
+                    model.addAttribute(PENDING_ACTIONS, MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN);
                     workflowContainer.setPendingActions(MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN);
                     marriageRegistrationService.approveRegistration(marriageRegistration, workflowContainer);
                     message = messageSource.getMessage("msg.approved.registration",
                             new String[] { marriageRegistration.getRegistrationNo() }, null);
                 } else {
-                    model.addAttribute("pendingActions", MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT);
+                    model.addAttribute(PENDING_ACTIONS, MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT);
                     workflowContainer.setPendingActions(MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT);
                     marriageRegistrationService.approveRegistration(marriageRegistration, workflowContainer);
                     message = messageSource.getMessage(

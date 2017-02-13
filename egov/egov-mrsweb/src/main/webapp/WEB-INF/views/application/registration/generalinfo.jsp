@@ -270,10 +270,10 @@
 	<jsp:include page="applicantinfo.jsp">
 		<jsp:param value="subheading.wife.info" name="header" />
 	</jsp:include>
-	<c:if
-		test="${(marriageRegistration.status.code =='APPROVED' && pendingActions == 'Certificate Print Pending') 
-		 || marriageRegistration.status.code =='DIGITALSIGNED'
-		 || currentState == 'DATAENTRY' || marriageRegistration.status.code =='REGISTERED'}">
+
+		<c:if test="${isDigitalSignEnabled ne true && (marriageRegistration.status.code =='APPROVED' && pendingActions == 'Certificate Print Pending') 
+		 || marriageRegistration.status.code =='APPROVED' || marriageRegistration.status.code =='DIGITALSIGNED' || currentState == 'DATAENTRY' }">
+		
 		<div class="form-group">
 			<label class="col-sm-3 control-label"> <spring:message
 					code="lbl.serial.no" /><span class="mandatory"></span>
@@ -290,11 +290,36 @@
 			</label>
 			<div class="col-sm-3">
 				<form:input path="pageNo" id="txt-pageNo" type="text"
-					class="exclude_readonly_input form-control low-width  patternvalidation"
+					class="exclude_readonly_input form-control low-width  patternvalidation "
 					data-pattern="number" maxlength="12" placeholder=""
 					autocomplete="off" required="required" />
 				<form:errors path="pageNo" cssClass="add-margin error-msg" />
 			</div>
 		</div>
-	</c:if>
+		</c:if>
+		<c:if test="${isDigitalSignEnabled eq true && marriageRegistration.status.code =='CREATED'}">
+			<div class="form-group">
+			<label class="col-sm-3 control-label validate-madatory"> <spring:message
+					code="lbl.serial.no" /> <span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3">
+				<form:input path="serialNo" id="txt-serialNo" type="text"
+					class=" form-control low-width patternvalidation addremovemandatory"
+					data-pattern="number" maxlength="12" placeholder=""
+					autocomplete="off" />
+				<form:errors path="serialNo" cssClass="add-margin error-msg" />
+			</div>
+			<label class="col-sm-2 control-label validate-madatory"> <spring:message
+					code="lbl.page.no" /> <span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3">
+				<form:input path="pageNo" id="txt-pageNo" type="text"
+					class="form-control low-width  patternvalidation addremovemandatory"
+					data-pattern="number" maxlength="12" placeholder=""
+					autocomplete="off" />
+				<form:errors path="pageNo" cssClass="add-margin error-msg" />
+			</div>
+		</div>
+		</c:if>
+	
 </div>

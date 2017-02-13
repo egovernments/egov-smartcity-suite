@@ -40,6 +40,9 @@
 
 $(document).ready( function () {
 	
+	// remove mandatory (*) on form load for serial no and page no
+	$('.validate-madatory').find("span").removeClass( "mandatory" );
+	
 	//Added to avoid submitting parent form on Preview button click
 	//Used to preview certificate in case of Digital signture
 	$("#Preview").toggleClass('btn-primary btn-default');
@@ -58,7 +61,7 @@ $(document).ready( function () {
 			$("#txt-placeofmrg").removeAttr("disabled", "disabled");
 		}
 		
-	});
+	});   
 	
 	//default currentdate in create screen
 	if($('#registrationStatus').val()=="")
@@ -68,7 +71,15 @@ $(document).ready( function () {
 		$('#txt-dateOfMarriage').attr('disabled', 'disabled');
 	}
 	// make form elements disabled at final level of workflow (with and without digital signature)	
-	if($('#registrationStatus').val()=='APPROVED' || $('#registrationStatus').val()=='DIGITALSIGNED'){
+	if(($('#registrationStatus').val()=='APPROVED' && $('#pendingActions').val()=='Digital Signature Pending') || $('#registrationStatus').val()=='DIGITALSIGNED'){
+		$(':input').attr('readonly','readonly');
+		$('#form-updateregistration select').attr('disabled', 'true'); 
+		$(':checkbox[readonly="readonly"]').click(function() {
+			return false;
+			});
+		$(".file-ellipsis.upload-file").attr('disabled', 'disabled'); 
+		$('#approvalComent').removeAttr('readonly');
+	} else if($('#registrationStatus').val()=='APPROVED' && $('#pendingActions').val()=='Certificate Print Pending'){
 		$(':input').attr('readonly','readonly');
 		$('#form-updateregistration select').attr('disabled', 'true'); 
 		$(':checkbox[readonly="readonly"]').click(function() {
@@ -186,11 +197,7 @@ $(document).ready( function () {
 	
 	// New Marriage Registration Screen
 	$('#Forward').click(function(e){
-		if($('form').valid()){
-			
-		}else{
-			e.preventDefault();
-		}
+		validateForm(e);
 	});
 	
 	//To render all marriage registration images from second level
@@ -348,14 +355,32 @@ $(".btn-primary").click(function(e) {
 	}
 	
 		 if(action == 'Print Certificate') { 
-			 if($('form').valid()){
-					
-				}else{
-					e.preventDefault();
-				}
+			 validateForm(e);
+		 }
+		 
+		 if(action == 'Approve') {
+			 validateMandatoryOnApprove(action);
+			 validateForm(e);
 		 }
 });
 
+function validateMandatoryOnApprove(action) {
+	if (action == 'Approve') {
+		$('.validate-madatory').find("span").addClass("mandatory");
+		$('.addremovemandatory').attr("required", "true");
+	} else {
+		$('.validate-madatory').find("span").removeClass("mandatory");
+		$('.addremovemandatory').removeattr("required", "true");
+	}
+}
+
+function validateForm(e) {
+	if ($('form').valid()) {
+		// if valid submit the form
+	} else {
+		e.preventDefault();
+	}
+}
 $('#txt-serialNo').blur(function(){
 	validateSerialNumber();
 });
