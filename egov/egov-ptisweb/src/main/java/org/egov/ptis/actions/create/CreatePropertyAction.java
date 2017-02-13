@@ -41,11 +41,15 @@ package org.egov.ptis.actions.create;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
@@ -66,6 +70,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_NEWPR
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_DEMAND_INACTIVE;
@@ -81,6 +86,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APP
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
 import java.io.IOException;
@@ -114,6 +120,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.Address;
@@ -206,7 +213,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private static final String UNIT_RATE_ERROR = "unitrate.error";
     private static final String USAGE_LIST = "UsageList";
     private static final String EXEMPTED_REASON_LIST = "taxExemptedList";
-
+    private static final String PROPERTY_CREATE_REJECT_FAILURE = "Initiator is not active so can not do rejection with application number ";
+    
     transient Logger LOGGER = Logger.getLogger(getClass());
     private PropertyImpl property = new PropertyImpl();
     @Autowired
@@ -610,12 +618,33 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             if (hasErrors())
                 return RESULT_VIEW;
         }
-        transitionWorkFlow(property);
+        final User user = securityUtils.getCurrentUser();
+        String loggedInUserDesignation = "";
+        List<Assignment> loggedInUserAssign;
+        if (property.getState() != null) {
+            loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                    property.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
+            loggedInUserDesignation = !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName() : null;
+        }
+        Assignment wfInitiator;
+        if (isRoOrCommissioner(loggedInUserDesignation))
+            wfInitiator = propService.getUserOnRejection(property);
+        else
+            wfInitiator = propService.getWorkflowInitiator(property);
+        if (!WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
+            transitionWorkFlow(property);
 
         if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
             return approve();
-        else if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
+        else if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)){
+         if(wfInitiator!=null){
+            transitionWorkFlow(property);   
             return reject();
+         }else{
+             setAckMessage(getText(PROPERTY_CREATE_REJECT_FAILURE));
+             return RESULT_ACK;
+         }
+        }
 
         basicProp.setUnderWorkflow(true);
         basicPropertyService.applyAuditing(property.getState());
@@ -2081,5 +2110,32 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     public void setDocumentTypeDetails(DocumentTypeDetails documentTypeDetails) {
         this.documentTypeDetails = documentTypeDetails;
+    }
+    private boolean isRoOrCommissioner(final String loggedInUserDesignation) {
+        boolean isany;
+        if (!REVENUE_OFFICER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
+            isany = isCommissioner(loggedInUserDesignation);
+        else
+            isany = true;
+        return isany;
+    }
+
+    private boolean isCommissioner(final String loggedInUserDesignation) {
+        boolean isanyone;
+        if (!ASSISTANT_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
+                || !ADDITIONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
+            isanyone = isDeputyOrAbove(loggedInUserDesignation);
+        else
+            isanyone = true;
+        return isanyone;
+    }
+
+    private boolean isDeputyOrAbove(final String loggedInUserDesignation) {
+        boolean isanyone = false;
+        if (DEPUTY_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
+                || COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation)
+                || ZONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
+            isanyone = true;
+        return isanyone;
     }
 }
