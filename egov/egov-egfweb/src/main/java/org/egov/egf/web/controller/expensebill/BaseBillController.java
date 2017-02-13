@@ -92,9 +92,6 @@ public abstract class BaseBillController extends BaseVoucherController {
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
     
-    @Autowired
-    private ChartOfAccountDetailService chartOfAccountDetailService;
-
     public BaseBillController(final AppConfigValueService appConfigValuesService) {
         super(appConfigValuesService);
     }
@@ -227,18 +224,6 @@ public abstract class BaseBillController extends BaseVoucherController {
                 }
     }
     
-    protected void validateSubledgeDetails(EgBillregister egBillregister) {
-        final List<EgBillPayeedetails> payeeDetails = new ArrayList<>();
-        for (final EgBillPayeedetails payeeDetail : egBillregister.getBillPayeedetails()) {
-            List<CChartOfAccountDetail> coaDetail = chartOfAccountDetailService
-                    .getByGlcodeId(payeeDetail.getEgBilldetailsId().getGlcodeid().longValue());
-            if (!coaDetail.isEmpty())
-                payeeDetails.add(payeeDetail);
-        }
-        egBillregister.getBillPayeedetails().clear();
-        egBillregister.setBillPayeedetails(payeeDetails);
-    }
-
     protected void prepareBillDetailsForView(final EgBillregister egBillregister) {
         for (final EgBilldetails details : egBillregister.getBillDetails()) {
             details.setChartOfAccounts(chartOfAccountsService.findById(details.getGlcodeid().longValue(), false));

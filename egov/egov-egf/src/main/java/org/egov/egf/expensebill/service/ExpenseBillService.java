@@ -40,6 +40,7 @@
 package org.egov.egf.expensebill.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -47,6 +48,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.script.ScriptContext;
 
+import org.egov.commons.CChartOfAccountDetail;
+import org.egov.commons.service.ChartOfAccountDetailService;
 import org.egov.commons.service.CheckListService;
 import org.egov.commons.service.FundService;
 import org.egov.egf.autonumber.ExpenseBillNumberGenerator;
@@ -66,6 +69,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.models.EgChecklists;
+import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.pims.commons.Position;
 import org.egov.services.masters.SchemeService;
@@ -138,6 +142,9 @@ public class ExpenseBillService {
 
     @Autowired
     private FundService fundService;
+
+    @Autowired
+    private ChartOfAccountDetailService chartOfAccountDetailService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -348,6 +355,19 @@ public class ExpenseBillService {
     private String getNextBillNumber(final EgBillregister bill) {
         final ExpenseBillNumberGenerator b = beanResolver.getAutoNumberServiceFor(ExpenseBillNumberGenerator.class);
         return b.getNextNumber(bill);
+    }
+
+    public void validateSubledgeDetails(EgBillregister egBillregister) {
+        final List<EgBillPayeedetails> payeeDetails = new ArrayList<>();
+        for (final EgBillPayeedetails payeeDetail : egBillregister.getBillPayeedetails()) {
+            CChartOfAccountDetail coaDetail = chartOfAccountDetailService
+                    .getByGlcodeIdAndDetailTypeId(payeeDetail.getEgBilldetailsId().getGlcodeid().longValue(),
+                            payeeDetail.getAccountDetailTypeId().intValue());
+            if (coaDetail != null)
+                payeeDetails.add(payeeDetail);
+        }
+        egBillregister.getBillPayeedetails().clear();
+        egBillregister.setBillPayeedetails(payeeDetails);
     }
 
     public void createExpenseBillRegisterWorkflowTransition(final EgBillregister egBillregister,

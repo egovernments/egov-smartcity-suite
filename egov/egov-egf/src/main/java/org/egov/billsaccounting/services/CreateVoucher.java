@@ -88,6 +88,7 @@ import org.egov.commons.dao.SubSchemeHibernateDAO;
 import org.egov.commons.dao.VoucherHeaderDAO;
 import org.egov.commons.exception.NoSuchObjectException;
 import org.egov.commons.exception.TooManyValuesException;
+import org.egov.commons.service.ChartOfAccountDetailService;
 import org.egov.dao.bills.EgBillRegisterHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.dao.budget.BudgetUsageHibernateDAO;
@@ -269,6 +270,9 @@ public class CreateVoucher {
 	private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
 	@Autowired
 	private FiscalPeriodHibernateDAO fiscalPeriodHibernateDAO;
+	
+	@Autowired
+	private ChartOfAccountDetailService chartOfAccountDetailService;
 
 	public CreateVoucher() {
 		if (LOGGER.isDebugEnabled())
@@ -526,25 +530,29 @@ public class CreateVoucher {
 				detailMap.put(VoucherConstant.GLCODE, glcode);
 				accountdetails.add(detailMap);
 				subLedgerlist = egBilldetails.getEgBillPaydetailes();
-				for (final EgBillPayeedetails egBillPayeedetails : subLedgerlist) {
-					subledgertDetailMap = new HashMap<String, Object>();
-					subledgertDetailMap
-							.put(VoucherConstant.DEBITAMOUNT,
-									egBillPayeedetails.getDebitAmount() == null ? BigDecimal.ZERO
-											: egBillPayeedetails
-													.getDebitAmount());
-					subledgertDetailMap
-							.put(VoucherConstant.CREDITAMOUNT,
-									egBillPayeedetails.getCreditAmount() == null ? BigDecimal.ZERO
-											: egBillPayeedetails
-													.getCreditAmount());
-					subledgertDetailMap.put(VoucherConstant.DETAILTYPEID,
-							egBillPayeedetails.getAccountDetailTypeId());
-					subledgertDetailMap.put(VoucherConstant.DETAILKEYID,
-							egBillPayeedetails.getAccountDetailKeyId());
-					subledgertDetailMap.put(VoucherConstant.GLCODE, glcode);
-					subledgerDetails.add(subledgertDetailMap);
-				}
+                                for (final EgBillPayeedetails egBillPayeedetails : subLedgerlist) {
+                                    subledgertDetailMap = new HashMap<>();
+                                    if (chartOfAccountDetailService.getByGlcodeIdAndDetailTypeId(
+                                            egBillPayeedetails.getEgBilldetailsId().getGlcodeid().longValue(),
+                                            egBillPayeedetails.getAccountDetailTypeId().intValue()) != null) {
+                                        subledgertDetailMap
+                                                .put(VoucherConstant.DEBITAMOUNT,
+                                                        egBillPayeedetails.getDebitAmount() == null ? BigDecimal.ZERO
+                                                                : egBillPayeedetails
+                                                                        .getDebitAmount());
+                                        subledgertDetailMap
+                                                .put(VoucherConstant.CREDITAMOUNT,
+                                                        egBillPayeedetails.getCreditAmount() == null ? BigDecimal.ZERO
+                                                                : egBillPayeedetails
+                                                                        .getCreditAmount());
+                                        subledgertDetailMap.put(VoucherConstant.DETAILTYPEID,
+                                                egBillPayeedetails.getAccountDetailTypeId());
+                                        subledgertDetailMap.put(VoucherConstant.DETAILKEYID,
+                                                egBillPayeedetails.getAccountDetailKeyId());
+                                        subledgertDetailMap.put(VoucherConstant.GLCODE, glcode);
+                                        subledgerDetails.add(subledgertDetailMap);
+                                    }
+                                }
 			}
 			vh = createPreApprovedVoucher(headerDetails, accountdetails,
 					subledgerDetails);
