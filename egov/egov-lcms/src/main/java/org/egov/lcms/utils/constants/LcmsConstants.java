@@ -39,6 +39,8 @@
  */
 package org.egov.lcms.utils.constants;
 
+import java.text.SimpleDateFormat;
+
 public class LcmsConstants {
 	public static final String MODULE_TYPE_LEGALCASE = "Legal Case";
 	public static final String FILESTORE_MODULECODE = "LCMS";
@@ -220,5 +222,8 @@ public class LcmsConstants {
 	public static final String CODE_REPORTSTATUS_COUNTERFILED = "COUNTER_FILED";
         public static final String CODE_REPORTSTATUS_PWRPENDING = "PWR_PENDING";
         public static final String CODE_REPORTSTATUS_DCAPENDING = "DCA_PENDING";
+        
+        public static final String DATE_FORMAT_DDMMYYYY = "dd-MM-yyyy";
+        public static final SimpleDateFormat DATEFORMATTER_DD_MM_YYYY = new SimpleDateFormat(DATE_FORMAT_DDMMYYYY );
 
 }

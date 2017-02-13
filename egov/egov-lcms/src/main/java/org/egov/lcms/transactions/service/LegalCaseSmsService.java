@@ -40,7 +40,6 @@
  */
 package org.egov.lcms.transactions.service;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -85,18 +84,18 @@ public class LegalCaseSmsService {
     }
 
     public void getSmsForLegalCase(final LegalCase legalcase, final String mobileNo) {
-        String smsMsg = null;
-        smsMsg = SmsBodyByCodeAndArgsWithTypeForLegalcase("msg.createlegalcase.sms", legalcase);
+        final String smsMsg = smsBodyByCodeAndArgsWithTypeForLegalcase("msg.createlegalcase.sms", legalcase);
 
         if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
             legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
 
     }
 
-    public String SmsBodyByCodeAndArgsWithTypeForLegalcase(final String code, final LegalCase legalcase) {
-        String smsMsg = "";
-        smsMsg = messageSource.getMessage(code, new String[] { legalCaseUtil.getOfficerInchargeName(legalcase),
-                legalcase.getCaseNumber(), legalcase.getPetitionersNames(), legalcase.getRespondantNames() }, null);
+    public String smsBodyByCodeAndArgsWithTypeForLegalcase(final String code, final LegalCase legalcase) {
+        final String smsMsg = messageSource.getMessage(code,
+                new String[] { legalCaseUtil.getOfficerInchargeName(legalcase), legalcase.getCaseNumber(),
+                        legalcase.getPetitionersNames(), legalcase.getRespondantNames() },
+                null);
         return smsMsg;
     }
 
@@ -109,22 +108,22 @@ public class LegalCaseSmsService {
 
     public void getSmsForHearingsEmployee(final Hearings hearings, final Employee employee) {
         final String mobileNo = employee.getMobileNumber();
-        String smsMsg = null;
-        if (LcmsConstants.LEGALCASE_HEARING_STATUS.equalsIgnoreCase(hearings.getLegalCase().getStatus().getCode()))
-            smsMsg = SmsBodyByCodeAndArgsWithTypeForHearings("msg.hearingemployee.sms", hearings, employee);
+        if (LcmsConstants.LEGALCASE_HEARING_STATUS.equalsIgnoreCase(hearings.getLegalCase().getStatus().getCode())) {
+            final String smsMsg = smsBodyByCodeAndArgsWithTypeForHearingsEmployee("msg.hearingemployee.sms", hearings,
+                    employee);
 
-        if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
-            legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
+            if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
+                legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
+        }
 
     }
 
-    public String SmsBodyByCodeAndArgsWithTypeForHearings(final String code, final Hearings hearings,
+    public String smsBodyByCodeAndArgsWithTypeForHearingsEmployee(final String code, final Hearings hearings,
             final Employee employee) {
-        String smsMsg = "";
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        smsMsg = messageSource.getMessage(code,
+        final String smsMsg = messageSource.getMessage(code,
                 new String[] { employee.getName(), hearings.getLegalCase().getCaseNumber(),
-                        formatter.format(hearings.getHearingDate()).toString(), hearings.getPurposeofHearings() },
+                        LcmsConstants.DATEFORMATTER_DD_MM_YYYY.format(hearings.getHearingDate()).toString(),
+                        hearings.getPurposeofHearings() },
                 null);
         return smsMsg;
     }
@@ -143,23 +142,21 @@ public class LegalCaseSmsService {
     }
 
     public void getSmsForInterimOrder(final LegalCaseInterimOrder legalCaseInterimOrder, final String mobileNo) {
-        String smsMsg = null;
-        smsMsg = SmsBodyByCodeAndArgsWithTypeForInterimOrder("msg.interimorder.sms", legalCaseInterimOrder);
+        final String smsMsg = smsBodyByCodeAndArgsWithTypeForInterimOrder("msg.interimorder.sms",
+                legalCaseInterimOrder);
 
         if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
             legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
 
     }
 
-    public String SmsBodyByCodeAndArgsWithTypeForInterimOrder(final String code,
+    public String smsBodyByCodeAndArgsWithTypeForInterimOrder(final String code,
             final LegalCaseInterimOrder legalCaseInterimOrder) {
-        String smsMsg = "";
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        smsMsg = messageSource.getMessage(code,
+        final String smsMsg = messageSource.getMessage(code,
                 new String[] { legalCaseUtil.getOfficerInchargeName(legalCaseInterimOrder.getLegalCase()),
                         legalCaseInterimOrder.getLegalCase().getCaseNumber(),
                         legalCaseInterimOrder.getInterimOrder().getInterimOrderType(),
-                        formatter.format(legalCaseInterimOrder.getIoDate()).toString() },
+                        LcmsConstants.DATEFORMATTER_DD_MM_YYYY.format(legalCaseInterimOrder.getIoDate()).toString() },
                 null);
         return smsMsg;
     }
@@ -176,20 +173,18 @@ public class LegalCaseSmsService {
     }
 
     public void getSmsForHearings(final Hearings hearings, final String mobileNo) {
-        String smsMsg = null;
-        smsMsg = SmsBodyByCodeAndArgsWithTypeForHearings("msg.hearing.sms", hearings);
+        final String smsMsg = smsBodyByCodeAndArgsWithTypeForHearings("msg.hearing.sms", hearings);
 
         if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
             legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
 
     }
 
-    public String SmsBodyByCodeAndArgsWithTypeForHearings(final String code, final Hearings hearings) {
-        String smsMsg = "";
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        smsMsg = messageSource.getMessage(code,
+    public String smsBodyByCodeAndArgsWithTypeForHearings(final String code, final Hearings hearings) {
+        final String smsMsg = messageSource.getMessage(code,
                 new String[] { legalCaseUtil.getOfficerInchargeName(hearings.getLegalCase()),
-                        hearings.getLegalCase().getCaseNumber(), formatter.format(hearings.getHearingDate()).toString(),
+                        hearings.getLegalCase().getCaseNumber(),
+                        LcmsConstants.DATEFORMATTER_DD_MM_YYYY.format(hearings.getHearingDate()).toString(),
                         hearings.getPurposeofHearings() },
                 null);
         return smsMsg;
@@ -207,22 +202,19 @@ public class LegalCaseSmsService {
     }
 
     public void getSmsForJudgment(final Judgment judgment, final String mobileNo) {
-        String smsMsg = null;
-        smsMsg = SmsBodyByCodeAndArgsWithTypeForJudgment("msg.judgment.sms", judgment);
+        final String smsMsg = smsBodyByCodeAndArgsWithTypeForJudgment("msg.judgment.sms", judgment);
 
         if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
             legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
 
     }
 
-    public String SmsBodyByCodeAndArgsWithTypeForJudgment(final String code, final Judgment judgment) {
-        String smsMsg = "";
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        smsMsg = messageSource.getMessage(code,
-                new String[] { legalCaseUtil.getOfficerInchargeName(judgment.getLegalCase()),
-                        judgment.getLegalCase().getCaseNumber(), judgment.getJudgmentType().getName(),
-                        judgment.getImplementByDate() == null ? ""
-                                : formatter.format(judgment.getImplementByDate()).toString() },
+    public String smsBodyByCodeAndArgsWithTypeForJudgment(final String code, final Judgment judgment) {
+        final String smsMsg = messageSource.getMessage(code, new String[] {
+                legalCaseUtil.getOfficerInchargeName(judgment.getLegalCase()), judgment.getLegalCase().getCaseNumber(),
+                judgment.getJudgmentType().getName(),
+                judgment.getImplementByDate() == null ? ""
+                        : LcmsConstants.DATEFORMATTER_DD_MM_YYYY.format(judgment.getImplementByDate()).toString() },
                 null);
         return smsMsg;
     }
@@ -241,36 +233,35 @@ public class LegalCaseSmsService {
     }
 
     public void getSmsForJudgmentImpl(final JudgmentImpl judgmentImpl, final String mobileNo) {
-        String smsMsg = null;
-        if (judgmentImpl.getJudgmentImplIsComplied().toString().equals("YES"))
-            smsMsg = SmsBodyByCodeAndArgsWithTypeForJudgmentImplIsCompliedYes("msg.judgmentimpliscompliedyes.sms",
-                    judgmentImpl);
-        else if (judgmentImpl.getJudgmentImplIsComplied().toString().equals("NO"))
-            smsMsg = SmsBodyByCodeAndArgsWithTypeForJudgmentImplIsCompliedNo("msg.judgmentimpliscompliedno.sms",
-                    judgmentImpl);
+        if (judgmentImpl.getJudgmentImplIsComplied().toString().equals("YES")) {
+            final String smsMsg = smsBodyByCodeAndArgsWithTypeForJudgmentImplIsCompliedYes(
+                    "msg.judgmentimpliscompliedyes.sms", judgmentImpl);
+            if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
+                legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
+        } else if (judgmentImpl.getJudgmentImplIsComplied().toString().equals("NO")) {
+            final String smsMsg = smsBodyByCodeAndArgsWithTypeForJudgmentImplIsCompliedNo(
+                    "msg.judgmentimpliscompliedno.sms", judgmentImpl);
 
-        if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
-            legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
+            if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
+                legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
+        }
 
     }
 
-    public String SmsBodyByCodeAndArgsWithTypeForJudgmentImplIsCompliedYes(final String code,
+    public String smsBodyByCodeAndArgsWithTypeForJudgmentImplIsCompliedYes(final String code,
             final JudgmentImpl judgmentImpl) {
-        String smsMsg = "";
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        smsMsg = messageSource.getMessage(code,
+        final String smsMsg = messageSource.getMessage(code,
                 new String[] { legalCaseUtil.getOfficerInchargeName(judgmentImpl.getJudgment().getLegalCase()),
                         judgmentImpl.getJudgment().getLegalCase().getCaseNumber(),
                         judgmentImpl.getJudgmentImplIsComplied().toString(),
-                        formatter.format(judgmentImpl.getDateOfCompliance()).toString() },
+                        LcmsConstants.DATEFORMATTER_DD_MM_YYYY.format(judgmentImpl.getDateOfCompliance()).toString() },
                 null);
         return smsMsg;
     }
 
-    public String SmsBodyByCodeAndArgsWithTypeForJudgmentImplIsCompliedNo(final String code,
+    public String smsBodyByCodeAndArgsWithTypeForJudgmentImplIsCompliedNo(final String code,
             final JudgmentImpl judgmentImpl) {
-        String smsMsg = "";
-        smsMsg = messageSource.getMessage(code,
+        final String smsMsg = messageSource.getMessage(code,
                 new String[] { legalCaseUtil.getOfficerInchargeName(judgmentImpl.getJudgment().getLegalCase()),
                         judgmentImpl.getJudgment().getLegalCase().getCaseNumber(),
                         judgmentImpl.getJudgmentImplIsComplied().toString(),
@@ -292,22 +283,19 @@ public class LegalCaseSmsService {
     }
 
     public void getSmsForCloseCase(final LegalCaseDisposal legalCaseDisposal, final String mobileNo) {
-        String smsMsg = null;
-        smsMsg = SmsBodyByCodeAndArgsWithTypeForCloseCase("msg.closecase.sms", legalCaseDisposal);
+        final String smsMsg = smsBodyByCodeAndArgsWithTypeForCloseCase("msg.closecase.sms", legalCaseDisposal);
 
         if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
             legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
 
     }
 
-    public String SmsBodyByCodeAndArgsWithTypeForCloseCase(final String code,
+    public String smsBodyByCodeAndArgsWithTypeForCloseCase(final String code,
             final LegalCaseDisposal legalCaseDisposal) {
-        String smsMsg = "";
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        smsMsg = messageSource.getMessage(code,
+        final String smsMsg = messageSource.getMessage(code,
                 new String[] { legalCaseUtil.getOfficerInchargeName(legalCaseDisposal.getLegalCase()),
-                        legalCaseDisposal.getLegalCase().getCaseNumber(),
-                        formatter.format(legalCaseDisposal.getDisposalDate()).toString() },
+                        legalCaseDisposal.getLegalCase().getCaseNumber(), LcmsConstants.DATEFORMATTER_DD_MM_YYYY
+                                .format(legalCaseDisposal.getDisposalDate()).toString() },
                 null);
         return smsMsg;
     }
@@ -323,12 +311,13 @@ public class LegalCaseSmsService {
     }
 
     public void getSmsForCounterAffidavit(final List<CounterAffidavit> counterAffidavit, final String mobileNo) {
-        String smsMsg = null;
+        String smsMsg = "";
         if (counterAffidavit.get(0).getCounterAffidavitDueDate() != null)
-            smsMsg = SmsBodyByCodeAndArgsWithTypeForCounterAffidavitwithSubmissionDate(
+            smsMsg = smsBodyByCodeAndArgsWithTypeForCounterAffidavitwithSubmissionDate(
                     "msg.counteraffidavitsubmissiondate.sms", counterAffidavit);
+
         if (counterAffidavit.get(0).getCounterAffidavitApprovalDate() != null)
-            smsMsg = SmsBodyByCodeAndArgsWithTypeForCounterAffidavitwithApprovalDate(
+            smsMsg = smsBodyByCodeAndArgsWithTypeForCounterAffidavitwithApprovalDate(
                     "msg.counteraffidavitapprovaldate.sms", counterAffidavit);
 
         if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
@@ -336,26 +325,25 @@ public class LegalCaseSmsService {
 
     }
 
-    public String SmsBodyByCodeAndArgsWithTypeForCounterAffidavitwithSubmissionDate(final String code,
+    public String smsBodyByCodeAndArgsWithTypeForCounterAffidavitwithSubmissionDate(final String code,
             final List<CounterAffidavit> counterAffidavit) {
-        String smsMsg = "";
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        smsMsg = messageSource.getMessage(code,
-                new String[] { legalCaseUtil.getOfficerInchargeName(counterAffidavit.get(0).getLegalCase()),
-                        counterAffidavit.get(0).getLegalCase().getCaseNumber(),
-                        formatter.format(counterAffidavit.get(0).getCounterAffidavitDueDate()).toString() },
-                null);
+        final String smsMsg = messageSource
+                .getMessage(code,
+                        new String[] { legalCaseUtil.getOfficerInchargeName(counterAffidavit.get(0).getLegalCase()),
+                                counterAffidavit.get(0).getLegalCase().getCaseNumber(),
+                                LcmsConstants.DATEFORMATTER_DD_MM_YYYY
+                                        .format(counterAffidavit.get(0).getCounterAffidavitDueDate()).toString() },
+                        null);
         return smsMsg;
     }
 
-    public String SmsBodyByCodeAndArgsWithTypeForCounterAffidavitwithApprovalDate(final String code,
+    public String smsBodyByCodeAndArgsWithTypeForCounterAffidavitwithApprovalDate(final String code,
             final List<CounterAffidavit> counterAffidavit) {
-        String smsMsg = "";
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        smsMsg = messageSource
+        final String smsMsg = messageSource
                 .getMessage(code,
                         new String[] { legalCaseUtil.getOfficerInchargeName(counterAffidavit.get(0).getLegalCase()),
-                                counterAffidavit.get(0).getLegalCase().getCaseNumber(), formatter
+                                counterAffidavit.get(0).getLegalCase().getCaseNumber(),
+                                LcmsConstants.DATEFORMATTER_DD_MM_YYYY
                                         .format(counterAffidavit.get(0).getCounterAffidavitApprovalDate()).toString() },
                         null);
         return smsMsg;
@@ -371,35 +359,31 @@ public class LegalCaseSmsService {
     }
 
     public void getSmsForPWR(final List<Pwr> pwr, final String mobileNo) {
-        String smsMsg = null;
+        String smsMsg = "";
         if (pwr.get(0).getPwrDueDate() != null)
-            smsMsg = SmsBodyByCodeAndArgsWithTypeForPwrWithSubmissionDate("msg.pwrwithsubmissiondate.sms", pwr);
+            smsMsg = smsBodyByCodeAndArgsWithTypeForPwrWithSubmissionDate("msg.pwrwithsubmissiondate.sms", pwr);
         if (pwr.get(0).getPwrApprovalDate() != null)
-            smsMsg = SmsBodyByCodeAndArgsWithTypeForPwrwithApprovalDate("msg.pwrwithapprovaldate.sms", pwr);
+            smsMsg = smsBodyByCodeAndArgsWithTypeForPwrwithApprovalDate("msg.pwrwithapprovaldate.sms", pwr);
 
         if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
             legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
 
     }
 
-    public String SmsBodyByCodeAndArgsWithTypeForPwrWithSubmissionDate(final String code, final List<Pwr> pwr) {
-        String smsMsg = "";
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        smsMsg = messageSource.getMessage(code,
+    public String smsBodyByCodeAndArgsWithTypeForPwrWithSubmissionDate(final String code, final List<Pwr> pwr) {
+        final String smsMsg = messageSource.getMessage(code,
                 new String[] { legalCaseUtil.getOfficerInchargeName(pwr.get(0).getLegalCase()),
                         pwr.get(0).getLegalCase().getCaseNumber(),
-                        formatter.format(pwr.get(0).getPwrDueDate()).toString() },
+                        LcmsConstants.DATEFORMATTER_DD_MM_YYYY.format(pwr.get(0).getPwrDueDate()).toString() },
                 null);
         return smsMsg;
     }
 
-    public String SmsBodyByCodeAndArgsWithTypeForPwrwithApprovalDate(final String code, final List<Pwr> pwr) {
-        String smsMsg = "";
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        smsMsg = messageSource.getMessage(code,
+    public String smsBodyByCodeAndArgsWithTypeForPwrwithApprovalDate(final String code, final List<Pwr> pwr) {
+        final String smsMsg = messageSource.getMessage(code,
                 new String[] { legalCaseUtil.getOfficerInchargeName(pwr.get(0).getLegalCase()),
-                        pwr.get(0).getLegalCase().getCaseNumber(),
-                        formatter.format(pwr.get(0).getPwrApprovalDate()).toString() },
+                        pwr.get(0).getLegalCase().getCaseNumber(), LcmsConstants.DATEFORMATTER_DD_MM_YYYY
+                                .format(pwr.get(0).getPwrApprovalDate()).toString() },
                 null);
         return smsMsg;
     }
