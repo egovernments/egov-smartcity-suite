@@ -41,6 +41,7 @@ package org.egov.mrs.web.controller.application.registration;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,7 +76,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -109,13 +109,13 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
     
     private static final Logger LOGGER = Logger.getLogger(UpdateMarriageRegistrationController.class);
 
-    @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/update/{id}", method = GET)
     public String showRegistration(@PathVariable final Long id, final Model model) {
         buildMrgRegistrationUpdateResult(id, model);
         return MRG_REGISTRATION_EDIT;
     }
 
-    @RequestMapping(value = "/modify-approved/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/modify-approved/{id}", method = GET)
     public String editApprovedRegistration(@PathVariable final Long id, final Model model) {
         buildMrgRegistrationUpdateResult(id, model);
         if (LOGGER.isInfoEnabled()) {
@@ -158,9 +158,9 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                         if (witness.getPhotoFileStore() != null) {
                             final File file = fileStoreService.fetch(witness.getPhotoFileStore().getFileStoreId(),
                                     MarriageConstants.FILESTORE_MODULECODE);
-                            if(file!=null)
-                            witness.setEncodedPhoto(Base64.getEncoder().encodeToString(
-                                    FileCopyUtils.copyToByteArray(file)));
+                            if (file != null)
+                                witness.setEncodedPhoto(Base64.getEncoder().encodeToString(
+                                        FileCopyUtils.copyToByteArray(file)));
                         }
                     } catch (final IOException e) {
                         LOG.error("Error while preparing the document for view", e);
@@ -190,7 +190,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         model.addAttribute("isDigitalSignEnabled", marriageUtils.isDigitalSignEnabled());
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/update", method = POST)
     public String updateRegistration(final WorkflowContainer workflowContainer,
             @ModelAttribute final MarriageRegistration marriageRegistration, final Model model,
             final HttpServletRequest request, final BindingResult errors) throws IOException {
@@ -354,7 +354,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
     public void downloadRegDigiSignedCertificate(final HttpServletRequest request, final HttpServletResponse response) {
         final String signedFileStoreId = request.getParameter("signedFileStoreId");
         try {
-          marriageUtils.downloadSignedCertificate(signedFileStoreId, response);
+            marriageUtils.downloadSignedCertificate(signedFileStoreId, response);
         } catch (final ApplicationRuntimeException ex) {
             throw new ApplicationRuntimeException("Exception while downloading file : " + ex);
         }
@@ -370,7 +370,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
      * @param errors
      * @return
      */
-    @RequestMapping(value = "/modify-approved", method = RequestMethod.POST)
+    @RequestMapping(value = "/modify-approved", method = POST)
     public String modifyRegisteredApplication(@RequestParam final Long id,
             @ModelAttribute final MarriageRegistration registration, final Model model,
             final HttpServletRequest request, final BindingResult errors) {
@@ -397,8 +397,9 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         MarriageRegistration registration = null;
         if (serialNo != null && serialNo != "")
             registration = marriageRegistrationService.findBySerialNo(serialNo);
-        if (registration != null)
+        if (registration != null){
             return true;
+        } 
         return false;
     }
 
@@ -410,7 +411,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
      * @return
      * @throws IOException
      */
-    @RequestMapping(value = "/viewCertificate/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/viewCertificate/{id}", method = GET)
     @ResponseBody
     public ResponseEntity<byte[]> viewMarriageRegistrationReport(@PathVariable final Long id, final HttpSession session,
             final HttpServletRequest request) throws IOException {
