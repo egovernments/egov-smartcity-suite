@@ -106,6 +106,8 @@ public class ReportViewer extends HttpServlet {
         } catch (Exception e) {
             LOGGER.error("Invalid report id [{}]", reportId, e);
             renderHtml(resp, "Report can not be rendered");
+        } finally {
+            reportViewerUtil.removeReportOutputFromCache(reportId);
         }
     }
 

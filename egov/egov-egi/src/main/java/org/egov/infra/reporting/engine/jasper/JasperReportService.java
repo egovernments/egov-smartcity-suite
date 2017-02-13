@@ -165,7 +165,7 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
             jrc.setValue(JRHibernateQueryExecuterFactory.PROPERTY_HIBERNATE_FIELD_MAPPING_DESCRIPTIONS, false);
             JasperPrint jasperPrint = JasperFillManager.getInstance(jrc).fill(getTemplate(reportInput.getReportTemplate()), reportParams);
             return new ReportOutput(exportReport(reportInput, jasperPrint), reportInput);
-        } catch (Exception e) {
+        } catch (JRException | IOException e) {
             LOGGER.error(EXCEPTION_IN_REPORT_CREATION, e);
             throw new ApplicationRuntimeException(EXCEPTION_IN_REPORT_CREATION, e);
         }

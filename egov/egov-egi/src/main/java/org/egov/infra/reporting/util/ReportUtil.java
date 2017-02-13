@@ -50,6 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -100,11 +101,15 @@ public final class ReportUtil {
     }
 
     public static Properties loadReportConfig() {
-        Properties reportProps = new Properties();
+        Properties reportProps = null;
         try {
-            reportProps.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(REPORT_CONFIG_FILE));
+            InputStream configStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(REPORT_CONFIG_FILE);
+            if (configStream != null) {
+                reportProps = new Properties();
+                reportProps.load(configStream);
+            }
             return reportProps;
-        } catch (Exception e) {
+        } catch (IOException e) {
             LOGGER.warn("Exception while loading report configuration file [{}]", REPORT_CONFIG_FILE, e);
             return null;
         }
@@ -113,7 +118,7 @@ public final class ReportUtil {
     public static Object fetchFromDBSql(Connection connection, String sqlQuery) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery);
              ResultSet resultSet = statement.executeQuery()) {
-            return resultSet != null && resultSet.next() ? resultSet.getString(1) : null;
+            return resultSet.next() ? resultSet.getString(1) : null;
         } catch (SQLException e) {
             String errMsg = "Exception while executing query [" + sqlQuery + "]";
             LOGGER.error(errMsg, e);

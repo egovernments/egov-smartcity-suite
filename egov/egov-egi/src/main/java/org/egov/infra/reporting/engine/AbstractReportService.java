@@ -165,7 +165,7 @@ public abstract class AbstractReportService<T> implements ReportService {
                     LOGGER.error(errMsg);
                     throw new ApplicationRuntimeException(errMsg);
                 }
-            } catch (Exception e) {
+            } catch (ApplicationRuntimeException e) {
                 String errMsg = "Exception in getting report template [" + templateName + "]";
                 LOGGER.error(errMsg, e);
                 throw new ApplicationRuntimeException(errMsg, e);
@@ -190,7 +190,7 @@ public abstract class AbstractReportService<T> implements ReportService {
         private ReportRequest reportInput;
         private ReportOutput reportOutput;
 
-        public JdbcReportWork(ReportRequest reportInput) {
+        JdbcReportWork(ReportRequest reportInput) {
             this.reportInput = reportInput;
         }
 
