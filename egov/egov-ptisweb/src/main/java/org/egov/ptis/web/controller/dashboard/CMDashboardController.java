@@ -41,7 +41,9 @@
 package org.egov.ptis.web.controller.dashboard;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -57,6 +59,7 @@ import org.egov.ptis.bean.dashboard.StateCityInfo;
 import org.egov.ptis.bean.dashboard.TaxDefaulters;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.bean.dashboard.TotalCollectionStats;
+import org.egov.ptis.bean.dashboard.UlbWiseDemandCollection;
 import org.egov.ptis.service.dashboard.PropTaxDashboardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -265,20 +268,43 @@ public class CMDashboardController {
      * @throws IOException
      */
     @RequestMapping(value = "/citywisedcb", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody public List<DCBDetails> getDCBDetailsForMIS(@RequestParam("regionName") String regionName, @RequestParam("districtName") String districtName,
+    @ResponseBody public Map<String, List<DCBDetails>> getDCBDetailsForMIS(@RequestParam("regionName") String regionName, @RequestParam("districtName") String districtName,
             @RequestParam("ulbGrade") String ulbGrade, @RequestParam("ulbCode") String ulbCode, @RequestParam("fromDate") String fromDate,
             @RequestParam("toDate") String toDate, @RequestParam("type") String type, @RequestParam("propertyType") String propertyType, 
             @RequestParam("usageType") String usageType) throws IOException {
         CollectionDetailsRequest collectionDetailsRequest = new CollectionDetailsRequest();
         populateCollectionDetailsRequest(collectionDetailsRequest, regionName, districtName, ulbGrade, ulbCode, fromDate, toDate,
                 type, propertyType);
+        Map<String, List<DCBDetails>> citywiseDCBDetails = new HashMap<>();
         if(StringUtils.isNotBlank(usageType))
             collectionDetailsRequest.setUsageType(usageType);
         Long startTime = System.currentTimeMillis();
         List<DCBDetails> dcbDetails = propTaxDashboardService.getDCBDetails(collectionDetailsRequest);
+        citywiseDCBDetails.put("citywiseDCB", dcbDetails);
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve targetmis is : " + timeTaken + " (millisecs)");
-        return dcbDetails;
+        LOGGER.debug("Time taken to serve citywisedcb is : " + timeTaken + " (millisecs)");
+        return citywiseDCBDetails;
+    }
+    
+    /**
+     * Provides collection analysis data across all ULBs for MIS Reports
+     * @return response JSON
+     * @throws IOException
+     */
+    @RequestMapping(value = "/collectionanalysis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody public Map<String, List<UlbWiseDemandCollection>> getCollectionAnalysisForMIS(@RequestParam("regionName") String regionName, @RequestParam("districtName") String districtName,
+            @RequestParam("ulbGrade") String ulbGrade, @RequestParam("ulbCode") String ulbCode, @RequestParam("fromDate") String fromDate,
+            @RequestParam("toDate") String toDate, @RequestParam("type") String type, @RequestParam("propertyType") String propertyType, 
+            @RequestParam("intervalType") String intervalType) throws IOException {
+        CollectionDetailsRequest collectionDetailsRequest = new CollectionDetailsRequest();
+        populateCollectionDetailsRequest(collectionDetailsRequest, regionName, districtName, ulbGrade, ulbCode, fromDate, toDate,
+                type, propertyType);
+        Map<String, List<UlbWiseDemandCollection>> collectionAnalysis = new HashMap<>();
+        Long startTime = System.currentTimeMillis();
+        collectionAnalysis.put("collectionAnalysis", propTaxDashboardService.getCollectionAnalysisData(collectionDetailsRequest, intervalType));
+        Long timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug("Time taken to serve collectionanalysis is : " + timeTaken + " (millisecs)");
+        return collectionAnalysis;
     }
 
 }

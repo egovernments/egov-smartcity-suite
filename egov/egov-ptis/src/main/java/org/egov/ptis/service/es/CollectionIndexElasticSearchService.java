@@ -80,9 +80,10 @@ import org.egov.ptis.bean.dashboard.CollTableData;
 import org.egov.ptis.bean.dashboard.CollectionDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.CollectionTrend;
-import org.egov.ptis.bean.dashboard.DCBDetails;
+import org.egov.ptis.bean.dashboard.DemandCollectionMIS;
 import org.egov.ptis.bean.dashboard.ReceiptTableData;
 import org.egov.ptis.bean.dashboard.ReceiptsTrend;
+import org.egov.ptis.bean.dashboard.UlbWiseDemandCollection;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.es.BillCollectorIndex;
 import org.elasticsearch.action.search.SearchResponse;
@@ -1028,7 +1029,7 @@ public class CollectionIndexElasticSearchService {
         for (int count = 0; count <= 2; count++) {
             monthwiseColl = new LinkedHashMap<>();
             Aggregations collAggr = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate,
-                    toDate);
+                    toDate, false, null);
             Histogram dateaggs = collAggr.get(DATE_AGG);
 
             for (Histogram.Bucket entry : dateaggs.getBuckets()) {
@@ -1123,27 +1124,41 @@ public class CollectionIndexElasticSearchService {
      * @return SearchResponse
      */
     private Aggregations getMonthwiseCollectionsForConsecutiveYears(CollectionDetailsRequest collectionDetailsRequest,
-            Date fromDate, Date toDate) {
+            Date fromDate, Date toDate, boolean isForMISReports, String intervalType) {
+        AggregationBuilder aggregationBuilder;
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME);
         boolQuery = boolQuery.filter(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                 .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
                 .mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
-        AggregationBuilder monthAggregation = AggregationBuilders.dateHistogram(DATE_AGG).field(RECEIPT_DATE)
+        //In case of MIS APIs, grouping will be done based on interval type
+        if(isForMISReports){
+            DateHistogramInterval interval = null;
+            if(StringUtils.isNotBlank(intervalType)){
+                if("month".equalsIgnoreCase(intervalType))
+                    interval = DateHistogramInterval.MONTH;
+                else if("week".equalsIgnoreCase(intervalType))
+                    interval = DateHistogramInterval.WEEK;
+                else if("day".equalsIgnoreCase(intervalType))
+                    interval = DateHistogramInterval.DAY;
+            }
+            aggregationBuilder = AggregationBuilders.terms(BY_CITY).field("cityName")
+                    .subAggregation(AggregationBuilders.dateHistogram(DATE_AGG).field(RECEIPT_DATE)
+                    .interval(interval)
+                    .subAggregation(AggregationBuilders.sum("current_total").field(TOTAL_AMOUNT)));
+        }
+        else
+            aggregationBuilder = AggregationBuilders.dateHistogram(DATE_AGG).field(RECEIPT_DATE)
                 .interval(DateHistogramInterval.MONTH)
                 .subAggregation(AggregationBuilders.sum("current_total").field(TOTAL_AMOUNT));
 
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME)
                 .withQuery(boolQuery)
-                .addAggregation(monthAggregation).build();
+                .addAggregation(aggregationBuilder).build();
 
-        Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl, new ResultsExtractor<Aggregations>() {
-            @Override
-            public Aggregations extract(SearchResponse response) {
-                return response.getAggregations();
-            }
-        });
-        return collAggr;
+        return elasticsearchTemplate.query(searchQueryColl,
+                response -> response.getAggregations());
     }
+    
 
     /**
      * Provides receipts count
@@ -1719,6 +1734,103 @@ public class CollectionIndexElasticSearchService {
 
         ValueCount aggr = collCountAggr.get("assessment_count");
         return Long.valueOf(aggr.getValue());
+    }
+    
+    /**
+     * Provides city wise collection details
+     * @param collectionDetailsRequest
+     * @param intervalType
+     * @return List
+     */
+    public List<UlbWiseDemandCollection> getCollectionsForInterval(CollectionDetailsRequest collectionDetailsRequest,
+            String intervalType) {
+        List<DemandCollectionMIS> demandCollectionMISList;
+        Date fromDate = null;
+        Date toDate = null;
+        Date dateForMonth;
+        String[] dateArr;
+        Integer month;
+        Sum aggregateSum;
+        CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
+        Date finYearStartDate = financialYear.getStartingDate();
+        Date finYearEndDate = financialYear.getEndingDate();
+        Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
+        String monthName;
+        Map<String, BigDecimal> monthwiseColl;
+        Map<String, Map<String, BigDecimal>> yearwiseMonthlyCollMap = new HashMap<>();
+        List<UlbWiseDemandCollection> citywiseCollList = new ArrayList<>();
+        UlbWiseDemandCollection ulbwiseDC;
+        DemandCollectionMIS demandCollMIS;
+        /**
+         * For month-wise collections between the date ranges if dates are sent in the request, consider fromDate and toDate+1 ,
+         * else calculate from current year start date till current date+1 day
+         */
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
+                && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
+            fromDate = DateUtils.getDate(collectionDetailsRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
+            toDate = DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
+                    1);
+        }
+
+        Long startTime = System.currentTimeMillis();
+        Aggregations collAggr = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate,
+                toDate, true, intervalType);
+        StringTerms cityaggr = collAggr.get(BY_CITY);
+        for (Terms.Bucket cityDetailsentry : cityaggr.getBuckets()) {
+            String ulbName = cityDetailsentry.getKeyAsString();
+            monthwiseColl = new LinkedHashMap<>();
+            Histogram dateaggs = cityDetailsentry.getAggregations().get(DATE_AGG);
+            for (Histogram.Bucket entry : dateaggs.getBuckets()) {
+                dateArr = entry.getKeyAsString().split("T");
+                dateForMonth = DateUtils.getDate(dateArr[0], DATE_FORMAT_YYYYMMDD);
+                month = Integer.valueOf(dateArr[0].split("-", 3)[1]);
+                monthName = monthValuesMap.get(month);
+                aggregateSum = entry.getAggregations().get("current_total");
+                // If the total amount is greater than 0 and the month belongs
+                // to respective financial year, add values to the map
+                if (DateUtils.between(dateForMonth, finYearStartDate, finYearEndDate)
+                        && BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
+                                .compareTo(BigDecimal.ZERO) > 0) {
+                    monthwiseColl.put(monthName,
+                            BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                }
+            }
+            yearwiseMonthlyCollMap.put(ulbName, monthwiseColl);
+        }
+        Long timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug("Time taken by getMonthwiseCollectionsForConsecutiveYears() is : "
+                + timeTaken + MILLISECS);
+
+        startTime = System.currentTimeMillis();
+        Map<String, BigDecimal> monthCollMap;
+        for (Map.Entry<String, Map<String, BigDecimal>> citywise : yearwiseMonthlyCollMap.entrySet()) {
+            ulbwiseDC = new UlbWiseDemandCollection();
+            demandCollectionMISList = new ArrayList<>();
+            monthCollMap = new LinkedHashMap<>();
+            ulbwiseDC.setUlbName(citywise.getKey());
+            for (Map.Entry<String, BigDecimal> monthlyMap : citywise.getValue().entrySet()) {
+                monthCollMap.put(monthlyMap.getKey(), monthlyMap.getValue());
+            }
+            //Checking for collection of all months 
+            for (Map.Entry<Integer, String> finYearMonth : DateUtils.getAllFinancialYearMonthsWithFullNames().entrySet()) {
+                demandCollMIS = new DemandCollectionMIS();
+                if (monthCollMap.get(finYearMonth.getValue()) == null) {
+                    demandCollMIS.setName(finYearMonth.getValue());
+                    demandCollMIS.setCollection(BigDecimal.ZERO);
+                } else {
+                    demandCollMIS.setName(finYearMonth.getValue());
+                    demandCollMIS.setCollection(monthCollMap.get(finYearMonth.getValue()));
+                }
+                demandCollectionMISList.add(demandCollMIS);
+            }
+            ulbwiseDC.setDemandCollectionMISDetails(demandCollectionMISList);
+            citywiseCollList.add(ulbwiseDC);
+        }
+
+        timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug(
+                "Time taken setting values in getCollectionsForInterval() is : " + timeTaken + MILLISECS);
+        return citywiseCollList;
     }
 
 }
