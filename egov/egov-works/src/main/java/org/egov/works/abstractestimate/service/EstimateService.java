@@ -294,16 +294,16 @@ public class EstimateService {
             for (final EstimateTechnicalSanction ets : abstractEstimate.getEstimateTechnicalSanctions())
                 ets.setAbstractEstimate(abstractEstimate);
 
+        if (abstractEstimateFromDB == null)
+            newAbstractEstimate = saveNewAbstractEstimate(abstractEstimate);
+        else
+            newAbstractEstimate = updateAbstractEstimate(abstractEstimateFromDB, abstractEstimate);
+
         if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                 .equalsIgnoreCase(budgetControlTypeService.getConfigValue())
                 && !worksApplicationProperties.lineEstimateRequired()
                 && WorksConstants.CREATE_AND_APPROVE.equals(workFlowAction))
             doBudgetoryAppropriation(workFlowAction, abstractEstimate);
-
-        if (abstractEstimateFromDB == null)
-            newAbstractEstimate = saveNewAbstractEstimate(abstractEstimate);
-        else
-            newAbstractEstimate = updateAbstractEstimate(abstractEstimateFromDB, abstractEstimate);
 
         if (abstractEstimate.isSpillOverFlag()) {
             setProjectCode(abstractEstimate);
@@ -881,7 +881,11 @@ public class EstimateService {
         estimateTechnicalSanction.setTechnicalSanctionDate(new Date());
         final TechnicalSanctionNumberGenerator tsng = beanResolver
                 .getAutoNumberServiceFor(TechnicalSanctionNumberGenerator.class);
-        estimateTechnicalSanction.setTechnicalSanctionNumber(tsng.getNextNumber(abstractEstimate));
+        if (!abstractEstimate.isSpillOverFlag())
+            estimateTechnicalSanction.setTechnicalSanctionNumber(tsng.getNextNumber(abstractEstimate));
+        else
+            estimateTechnicalSanction.setTechnicalSanctionNumber(
+                    abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionNumber());
         abstractEstimate.getEstimateTechnicalSanctions().clear();
         abstractEstimate.getEstimateTechnicalSanctions().add(estimateTechnicalSanction);
     }

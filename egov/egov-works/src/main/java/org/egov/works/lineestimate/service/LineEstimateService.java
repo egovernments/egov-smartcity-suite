@@ -328,7 +328,7 @@ public class LineEstimateService {
             filterConditions.append(" and lineEstimate.createdBy.id =:createdBy ");
         if (lineEstimatesForAbstractEstimate.getWorkIdentificationNumber() != null)
             filterConditions.append(" and upper(projectCode.code) =:projectCode ");
-        filterConditions.append(" and lineEstimate.spillOverFlag =:spillOverFlag ");
+        filterConditions.append(" and lineEstimate.abstractEstimateCreated =:spillOverFlag ");
 
         // Getting LineEstimateDetails where LineEstimate status is
         // ADMINISTRATIVE_SANCTIONED or TECHNICAL_SANCTIONED and

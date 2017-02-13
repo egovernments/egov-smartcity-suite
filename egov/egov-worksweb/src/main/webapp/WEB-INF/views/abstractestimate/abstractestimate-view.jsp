@@ -143,7 +143,7 @@
 				<%@ include file="abstractestimate-viewassetdetails.jsp"%>
 			</div>
 			<div class="text-center">
-				<c:if test="${!workflowHistory.isEmpty()}">
+				<c:if test="${!workflowHistory.isEmpty() && !abstractEstimate.spillOverFlag}">
 						<jsp:include page="../common/commonworkflowhistory-view.jsp"></jsp:include>
 				</c:if>
 				<c:choose>

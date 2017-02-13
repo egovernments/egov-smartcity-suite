@@ -54,11 +54,7 @@
 						class="mandatory"></span></th>
 					<th><spring:message code="lbl.technicalsanctiondate" /><span
 						class="mandatory"></span></th>
-					<th><spring:message code="lbl.technical.authority" />
-						<c:if test="${(abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true) }">
-							<span class="mandatory"></span>
-						</c:if>
-					</th>
+					<th><spring:message code="lbl.technical.authority" /></th>
 					<th><spring:message code="lbl.authority" /></th>
 				</tr>
 			</thead>
@@ -83,33 +79,16 @@
 							path="estimateTechnicalSanctions[0].technicalSanctionDate"
 							cssClass="add-margin error-msg" /></td>
 					<td>
-						<c:choose>
-							<c:when test="${(abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true) }">
-								<select name="designation"
-									id="designation" data-first-option="false" class="form-control"
-									required="required">
-										<option value="">
-											<spring:message code="lbl.select" />
-										</option>
-										<options items="${designations}" itemValue="id" itemLabel="name" />
-										<c:forEach items="${designations}" var="designation">
-											<option value="${designation.id }">${designation.name }</option>
-										</c:forEach>
-								</select>
-							</c:when>
-							<c:otherwise>
-								<select name="designation"
-									id="designation" data-first-option="false" class="form-control">
-										<option value="">
-											<spring:message code="lbl.select" />
-										</option>
-										<options items="${designations}" itemValue="id" itemLabel="name" />
-										<c:forEach items="${designations}" var="designation">
-											<option value="${designation.id }">${designation.name }</option>
-										</c:forEach>
-								</select>
-							</c:otherwise>
-						</c:choose>
+						<select name="designation"
+							id="designation" data-first-option="false" class="form-control">
+								<option value="">
+									<spring:message code="lbl.select" />
+								</option>
+								<options items="${designations}" itemValue="id" itemLabel="name" />
+								<c:forEach items="${designations}" var="designation">
+									<option value="${designation.id }">${designation.name }</option>
+								</c:forEach>
+						</select>
 						<input type="hidden" id="designationValue"
 							value="${designation }" /></td>
 					<td><input type="hidden" id="authorityValue"
