@@ -57,92 +57,71 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 
-/**
- * Report viewer servlet - displays a report in the browser setting appropriate content type
- */
 public class ReportViewer extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	private static final Logger LOGGER = LoggerFactory.getLogger(ReportViewer.class);
+    private static final long serialVersionUID = -8123054583553229608L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReportViewer.class);
+    private static final String REPORT_ERROR_CONTENT = "<html><body><b>ERROR: %s!</b></body></html>";
 
-	@Autowired
-	private ReportViewerUtil reportViewerUtil;
+    @Autowired
+    private transient ReportViewerUtil reportViewerUtil;
 
+    @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
 
-	@Override
-	protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-		doPost(req, resp);
-	}
-
-	@Override
-	protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-		final String reportId = req.getParameter(ReportConstants.REQ_PARAM_REPORT_ID);
-		try {
-            ReportOutput reportOutput = reportViewerUtil.getReportOutputFormCache(reportId);
-            renderReport(resp, reportOutput);
-		} catch (final Exception e) {
-			LOGGER.error("Invalid report id [" + reportId + "]", e);
-            throw new ApplicationRuntimeException("Error occurred while generating report", e);
-		} finally {
-			reportViewerUtil.removeReportOutputFromCache(reportId);
-		}
-	}
-
-	/**
-	 * Render the report to browser by setting appropriate content type
-	 * @param resp HTTP response object
-	 * @param reportOutput Report output object to be rendered
-	 */
-	private void renderReport(final HttpServletResponse resp, final ReportOutput reportOutput) {
-		if (reportOutput == null) {
-			renderHtml(resp, "<html><body><b>ERROR: Report output not available!</b></body></html>");
-			return;
-		}
-
-		final FileFormat reportFormat = reportOutput.getReportFormat();
-		if (reportFormat == null) {
-			renderHtml(resp, "<html><body><b>ERROR: Report format not available!</b></body></html>");
-			return;
-		}
-
-		final byte[] reportData = reportOutput.getReportOutputData();
-		if (reportData == null) {
-			renderHtml(resp, "<html><body><b>ERROR: Report data not available!</b></body></html>");
-			return;
-		}
-
-		renderReport(resp, reportData, reportFormat);
-	}
-
-    /**
-     * Renders given html content to the response
-     * @param resp Http Servlet Response object
-     * @param htmContent HTML content to be rendered
-     */
-    private void renderHtml(final HttpServletResponse resp, final String htmContent) {
-        renderReport(resp, htmContent.getBytes(), FileFormat.HTM);
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        renderReport(resp, req);
     }
 
-	/**
-	 * Renders given report data in given format to the browser
-	 * @param resp The HTTP Servlet response object
-	 * @param reportData Report data as byte array
-	 * @param reportFormat Report format
-	 */
-	private void renderReport(final HttpServletResponse resp, final byte[] reportData, final FileFormat reportFormat) {
-		try (BufferedOutputStream outputStream = new BufferedOutputStream(resp.getOutputStream());) {
-			// Render report data to browser
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        renderReport(resp, req);
+    }
+
+    private void renderReport(HttpServletResponse resp, HttpServletRequest request) {
+        String reportId = request.getParameter(ReportConstants.REQ_PARAM_REPORT_ID);
+        try {
+            ReportOutput reportOutput = reportViewerUtil.getReportOutputFormCache(reportId);
+            if (reportOutput == null) {
+                renderHtml(resp, "Report output not available");
+                return;
+            }
+
+            FileFormat reportFormat = reportOutput.getReportFormat();
+            if (reportFormat == null) {
+                renderHtml(resp, "Report format not available");
+                return;
+            }
+
+            byte[] reportData = reportOutput.getReportOutputData();
+            if (reportData == null) {
+                renderHtml(resp, "Report data not available");
+                return;
+            }
+
+            renderReport(resp, reportData, reportFormat);
+        } catch (Exception e) {
+            LOGGER.error("Invalid report id [{}]", reportId, e);
+            renderHtml(resp, "Report can not be rendered");
+        }
+    }
+
+    private void renderHtml(HttpServletResponse resp, String htmContent) {
+        renderReport(resp, String.format(REPORT_ERROR_CONTENT, htmContent).getBytes(), FileFormat.HTM);
+    }
+
+    private void renderReport(HttpServletResponse resp, byte[] reportData, FileFormat reportFormat) {
+        try (BufferedOutputStream outputStream = new BufferedOutputStream(resp.getOutputStream());) {
             resp.setHeader(ReportConstants.HTTP_HEADER_CONTENT_DISPOSITION, ReportViewerUtil.getContentDisposition(reportFormat));
             resp.setContentType(ReportViewerUtil.getContentType(reportFormat));
             resp.setContentLength(reportData.length);
-			outputStream.write(reportData);
-		} catch (final Exception e) {
-			final String errMsg = "Exception in rendering report with format [" + reportFormat + "]!";
-			LOGGER.error(errMsg, e);
-			throw new ApplicationRuntimeException(errMsg, e);
-		}
-	}
+            outputStream.write(reportData);
+        } catch (Exception e) {
+            LOGGER.error("Exception in rendering report with format [{}]!", e);
+            throw new ApplicationRuntimeException("Error occurred in report viewer", e);
+        }
+    }
 }

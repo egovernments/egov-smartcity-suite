@@ -46,39 +46,40 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.EnumMap;
 import java.util.UUID;
 
-/**
- * Utility methods related to report viewing
- */
 @Service
 public class ReportViewerUtil {
-	private static final Map<FileFormat, String> contentTypes = getContentTypes();
+    private static final EnumMap<FileFormat, String> contentTypes = getContentTypes();
 
-	@Autowired
-	private ApplicationCacheManager applicationCacheManager;
+    @Autowired
+    private ApplicationCacheManager applicationCacheManager;
 
-	/**
-	 * @return Array of content types in appropriate order. This order is same as the order of file formats present in the FileFormat enumeration
-	 */
-	private static Map<FileFormat, String> getContentTypes() {
-		final Map<FileFormat, String> contentTypes = new HashMap<FileFormat, String>();
-		contentTypes.put(FileFormat.PDF, "application/pdf");
-		contentTypes.put(FileFormat.XLS, "application/vnd.ms-excel");
-		contentTypes.put(FileFormat.RTF, "application/rtf");
-		contentTypes.put(FileFormat.HTM, "text/html");
-		contentTypes.put(FileFormat.TXT, "text/plain");
-		contentTypes.put(FileFormat.CSV, "text/plain");
-		return contentTypes;
-	}
+    private static EnumMap<FileFormat, String> getContentTypes() {
+        EnumMap<FileFormat, String> contentTypes = new EnumMap<>(FileFormat.class);
+        contentTypes.put(FileFormat.PDF, "application/pdf");
+        contentTypes.put(FileFormat.XLS, "application/vnd.ms-excel");
+        contentTypes.put(FileFormat.RTF, "application/rtf");
+        contentTypes.put(FileFormat.HTM, "text/html");
+        contentTypes.put(FileFormat.TXT, "text/plain");
+        contentTypes.put(FileFormat.CSV, "text/plain");
+        return contentTypes;
+    }
 
-	public String addReportToTempCache(final ReportOutput reportOutput) {
-		String reportId = UUID.randomUUID().toString();
-		applicationCacheManager.put(reportId, reportOutput);
-		return reportId;
-	}
+    public static String getContentType(FileFormat fileFormat) {
+        return contentTypes.get(fileFormat);
+    }
+
+    public static String getContentDisposition(FileFormat fileFormat) {
+        return "inline; filename=report." + fileFormat.toString();
+    }
+
+    public String addReportToTempCache(ReportOutput reportOutput) {
+        String reportId = UUID.randomUUID().toString();
+        applicationCacheManager.put(reportId, reportOutput);
+        return reportId;
+    }
 
     public ReportOutput getReportOutputFormCache(String reportOutputCacheKey) {
         return applicationCacheManager.get(reportOutputCacheKey, ReportOutput.class);
@@ -87,20 +88,4 @@ public class ReportViewerUtil {
     public void removeReportOutputFromCache(String reportOutputCacheKey) {
         applicationCacheManager.remove(reportOutputCacheKey);
     }
-
-	/**
-	 * @param fileFormat File format which content type is to be returned
-	 * @return content type string for given file format. This can be set in the "Content-type" http header while rendering a file in browser
-	 */
-	public static String getContentType(final FileFormat fileFormat) {
-		return contentTypes.get(fileFormat);
-	}
-
-	/**
-	 * @param fileFormat File format for which content disposition is to be returned
-	 * @return content type string for given file format. This can be set in the "Content-disposition" http header while rendering a file in browser
-	 */
-	public static String getContentDisposition(final FileFormat fileFormat) {
-		return "inline; filename=report." + fileFormat.toString();
-	}
 }

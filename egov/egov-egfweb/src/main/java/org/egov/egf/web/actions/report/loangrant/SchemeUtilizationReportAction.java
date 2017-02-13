@@ -327,7 +327,7 @@ public class SchemeUtilizationReportAction extends LoanGrantBaseAction {
         paramMap.put("toDate", toDate);
         paramMap.put("ulbName", getUlbName());
         paramMap.put("fundingAgencyResultList", fundingAgencyResultList);
-        paramMap.put("SchemeUtilization_fundingAgency", ReportUtil.getTemplateAsStream("SchemeUtilization_fundingAgency.jasper"));
+        paramMap.put("SchemeUtilization_fundingAgency", ReportUtil.reportTemplateAsStream("SchemeUtilization_fundingAgency.jasper"));
 
         return paramMap;
     }
