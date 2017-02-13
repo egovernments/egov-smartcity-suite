@@ -46,9 +46,9 @@
 <input type="hidden" id="estimateAdminSanctionDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${abstractEstimate.approvedDate}" pattern="dd/MM/yyyy"/>' />
 <input type="hidden" id="errorFileDate" value="<spring:message code='error.loa.filedate'/>">
 <input type="hidden" id="errorWorkOrderDate" value="<spring:message code='error.loa.workorderdate'/>">
-<input type="hidden" id="spillOverFlag" value="${abstractEstimate.lineEstimateDetails.lineEstimate.spillOverFlag }">
-<input type="hidden" id="workOrderCreated" value="${abstractEstimate.lineEstimateDetails.lineEstimate.workOrderCreated }">
-<input type="hidden" id="modeOfEntrustment" value="${abstractEstimate.lineEstimateDetails.lineEstimate.modeOfAllotment }">
+<input type="hidden" id="spillOverFlag" value="${abstractEstimate.spillOverFlag }">
+<input type="hidden" id="workOrderCreated" value="${abstractEstimate.workOrderCreated }">
+<input type="hidden" id="modeOfEntrustment" value="${abstractEstimate.modeOfAllotment }">
 <input type="hidden" id="nominationName" value="${nominationName}">
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.file.no" /><span class="mandatory"></span></label>
@@ -98,13 +98,13 @@
 
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.dateofagreement" />
-		<c:if test="${abstractEstimate.lineEstimateDetails.lineEstimate.spillOverFlag && abstractEstimate.lineEstimateDetails.lineEstimate.workOrderCreated }">
+		<c:if test="${abstractEstimate.spillOverFlag && abstractEstimate.workOrderCreated }">
 			<span class="mandatory"></span>
 		</c:if>
 	</label>
 	<div class="col-sm-3 add-margin">
 		<c:choose>
-			<c:when test="${abstractEstimate.lineEstimateDetails.lineEstimate.spillOverFlag && abstractEstimate.lineEstimateDetails.lineEstimate.workOrderCreated }">
+			<c:when test="${abstractEstimate.spillOverFlag && abstractEstimate.workOrderCreated }">
 				<form:input path="workOrderDate" id="workOrderDate" type="text" class="form-control datepicker" data-date-end-date="0d" required="required"/>
 			</c:when>
 			<c:otherwise>

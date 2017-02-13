@@ -62,7 +62,7 @@
 		<input type="text" class="form-control" id="department" value="${abstractEstimate.executingDepartment.name}" disabled>
 	</div>
 </div>
-<c:if test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.spillOverFlag && abstractEstimate.lineEstimateDetails.lineEstimate.workOrderCreated }">
+<c:if test="${abstractEstimate.spillOverFlag && abstractEstimate.workOrderCreated }">
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.loanumber" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">

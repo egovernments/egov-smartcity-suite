@@ -90,7 +90,7 @@
 			<jsp:include page="../common/commonworkflowhistory-view.jsp"></jsp:include>
 		</c:if>
 		<c:choose>
-			<c:when test="${abstractEstimate.lineEstimateDetails!=null && abstractEstimate.lineEstimateDetails.lineEstimate.spillOverFlag && abstractEstimate.lineEstimateDetails.lineEstimate.workOrderCreated }">
+			<c:when test="${abstractEstimate.spillOverFlag && abstractEstimate.workOrderCreated }">
 			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 				<div class="col-sm-12 text-center">
 					<form:button type="submit" name="submit" id="save" class="btn btn-primary" value="Save" ><spring:message code="lbl.save"/></form:button>

@@ -359,7 +359,7 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
                     new String[] { revisionEstimate.getEstimateNumber() }, null);
         else if (RevisionEstimateStatus.APPROVED.toString().equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode())) {
             final EstimateAppropriation lea = estimateAppropriationService
-                    .findLatestByAbstractEstimate(revisionEstimate.getParent());
+                    .findLatestByAbstractEstimate(revisionEstimate);
             message = messageSource.getMessage("msg.revisionestimate.approved",
                     new String[] { revisionEstimate.getEstimateNumber(), lea.getBudgetUsage().getAppropriationnumber() }, null);
         } else if (RevisionEstimateStatus.CHECKED.toString().equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode()))

@@ -67,6 +67,7 @@ import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchReques
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchResult;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.EstimateTemplateSearchRequest;
+import org.egov.works.abstractestimate.entity.SearchAbstractEstimate;
 import org.egov.works.abstractestimate.entity.SearchRequestCancelEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.masters.entity.EstimateTemplate;
@@ -80,6 +81,7 @@ import org.egov.works.masters.service.ScheduleOfRateService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.adaptor.AbstractEstimateForLOAJsonAdaptor;
 import org.egov.works.web.adaptor.AbstractEstimateForOfflineStatusJsonAdaptor;
+import org.egov.works.web.adaptor.AbstractEstimateJsonAdaptor;
 import org.egov.works.web.adaptor.CopyEstimateJsonAdaptor;
 import org.egov.works.web.adaptor.EstimateActivityJsonAdaptor;
 import org.egov.works.web.adaptor.EstimateTemplateActivityJsonAdaptor;
@@ -146,6 +148,9 @@ public class AjaxAbstractEstimateController {
 
     @Autowired
     private ScriptService scriptService;
+
+    @Autowired
+    private AbstractEstimateJsonAdaptor abstractEstimateJsonAdaptor;
 
     public Object toSearchAbstractEstimateForLOAResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
@@ -394,6 +399,24 @@ public class AjaxAbstractEstimateController {
                 ScriptService.createContext("estimateValue", amountRule,
                         "cityGrade", additionalRule)));
         return (boolean) map.get("createAndApproveFieldsRequired");
+    }
+
+    @RequestMapping(value = "/ajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchAbstractEstimates(
+            @ModelAttribute final SearchAbstractEstimate searchAbstractEstimate, final Model model) {
+        final List<AbstractEstimate> abstractEstimates = estimateService.searchAbstractEstimates(searchAbstractEstimate);
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toJson(abstractEstimates))
+                .append("}").toString();
+        return result;
+    }
+
+    public Object toJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class,
+                abstractEstimateJsonAdaptor).create();
+        final String json = gson.toJson(object);
+        return json;
     }
 
 }

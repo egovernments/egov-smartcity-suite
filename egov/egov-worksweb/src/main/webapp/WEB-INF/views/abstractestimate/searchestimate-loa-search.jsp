@@ -45,6 +45,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 		<form:form name="abstractEstimateSearchForm" role="form" action="" modelAttribute="abstractEstimateForLoaSearchRequest" id="abstractEstimatesearchform" class="form-horizontal form-groups-bordered">
+			<input type="hidden" name="lineEstimateRequired" id="lineEstimateRequired" value="${lineEstimateRequired }"/>
 			<div class="row">
 				<div class="col-md-12">
 					<div class="panel panel-primary" data-collapsed="0">
@@ -88,11 +89,13 @@
 									</form:select>
 									<form:errors path="abstractEstimateCreatedBy" cssClass="add-margin error-msg" />
 								</div>
+								<c:if test="${lineEstimateRequired }">
 								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.proceedingnumber" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:input path="adminSanctionNumber" id="adminSanctionNumber" class="form-control" placeholder="Type first 3 letters of Proceeding Number"/>
 									<form:errors path="adminSanctionNumber" cssClass="add-margin error-msg" />
 								</div>
+								</c:if>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right"><spring:message code="lbl.status" /></label>

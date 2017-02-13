@@ -250,10 +250,10 @@ public class RevisionEstimateService {
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
                 .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
 
+        revisionEstimateRepository.save(revisionEstimate);
+
         if (WorksConstants.CREATE_AND_APPROVE.toString().equalsIgnoreCase(workFlowAction))
             doBudgetoryAppropriation(workFlowAction, revisionEstimate);
-
-        revisionEstimateRepository.save(revisionEstimate);
 
         if (WorksConstants.CREATE_AND_APPROVE.toString().equalsIgnoreCase(workFlowAction)) {
             createRevisionWorkOrder(workOrderEstimate, revisionEstimate);

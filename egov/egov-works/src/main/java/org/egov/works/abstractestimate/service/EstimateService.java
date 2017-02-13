@@ -305,7 +305,7 @@ public class EstimateService {
                 && WorksConstants.CREATE_AND_APPROVE.equals(workFlowAction))
             doBudgetoryAppropriation(workFlowAction, abstractEstimate);
 
-        if (abstractEstimate.isSpillOverFlag()) {
+        if (abstractEstimate.isSpillOverFlag() || !worksApplicationProperties.lineEstimateRequired()) {
             setProjectCode(abstractEstimate);
             createAccountDetailKey(abstractEstimate.getProjectCode());
         }
@@ -1122,7 +1122,8 @@ public class EstimateService {
             result.setNameOfWork(ae.getName());
             if (ae.getApprovedBy() != null)
                 result.setAdminSanctionBy(ae.getApprovedBy().getName());
-            result.setWorkIdentificationNumber(ae.getProjectCode().getCode());
+            if (ae.getProjectCode() != null)
+                result.setWorkIdentificationNumber(ae.getProjectCode().getCode());
             abstractEstimateForLoaSearchResults.add(result);
         }
         return abstractEstimateForLoaSearchResults;
@@ -1481,25 +1482,31 @@ public class EstimateService {
     }
 
     public List<String> getApprovedEstimateNumbersForCreateLOA(final String estimateNumber) {
+        final List<AppConfigValues> nominationName = getNominationName();
         final List<String> estimateNumbers = abstractEstimateRepository.findEstimateNumbersToCreateLOA(
                 "%" + estimateNumber + "%", EstimateStatus.APPROVED.toString(), WorksConstants.CANCELLED_STATUS,
-                WorksConstants.ABSTRACTESTIMATE, OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
+                WorksConstants.ABSTRACTESTIMATE, OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString(),
+                !nominationName.isEmpty() ? nominationName.get(0).getValue() : "");
         return estimateNumbers;
     }
 
     public List<String> getApprovedAdminSanctionNumbersForCreateLOA(final String adminSanctionNumber) {
+        final List<AppConfigValues> nominationName = getNominationName();
         final List<String> adminSanctionNumbers = abstractEstimateRepository.findAdminSanctionNumbersToCreateLOA(
                 "%" + adminSanctionNumber + "%", EstimateStatus.APPROVED.toString(), WorksConstants.CANCELLED_STATUS,
-                WorksConstants.ABSTRACTESTIMATE, OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
+                WorksConstants.ABSTRACTESTIMATE, OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString(),
+                !nominationName.isEmpty() ? nominationName.get(0).getValue() : "");
         return adminSanctionNumbers;
     }
 
     public List<String> getApprovedWorkIdentificationNumbersForCreateLOA(final String workIdentificationNumber) {
+        final List<AppConfigValues> nominationName = getNominationName();
         final List<String> workIdentificationNumbers = abstractEstimateRepository
                 .findWorkIdentificationNumbersToCreateLOA("%" + workIdentificationNumber + "%",
                         EstimateStatus.APPROVED.toString(), WorksConstants.CANCELLED_STATUS,
                         WorksConstants.ABSTRACTESTIMATE,
-                        OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
+                        OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString(),
+                        !nominationName.isEmpty() ? nominationName.get(0).getValue() : "");
         return workIdentificationNumbers;
     }
 

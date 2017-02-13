@@ -135,8 +135,8 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(@ModelAttribute("workOrder") WorkOrder workOrder, final Model model,
             final HttpServletRequest request) {
-        if (request.getParameter("mode") != null)
-            model.addAttribute("mode", request.getParameter("mode"));
+        if (request.getParameter(WorksConstants.MODE) != null)
+            model.addAttribute(WorksConstants.MODE, request.getParameter(WorksConstants.MODE));
         final String estimateNumber = request.getParameter("estimateNumber");
         final AbstractEstimate abstractEstimate = estimateService
                 .getAbstractEstimateByEstimateNumberAndStatus(estimateNumber);
@@ -148,9 +148,7 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
 
         model.addAttribute("documentDetails", workOrder.getDocumentDetails());
         model.addAttribute("abstractEstimate", abstractEstimate);
-        if (!(abstractEstimate.getLineEstimateDetails() != null
-                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag()
-                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isWorkOrderCreated()))
+        if (!(abstractEstimate.isSpillOverFlag() && abstractEstimate.isWorkOrderCreated()))
             workOrder.setWorkOrderDate(new Date());
 
         model.addAttribute("workOrder", workOrder);

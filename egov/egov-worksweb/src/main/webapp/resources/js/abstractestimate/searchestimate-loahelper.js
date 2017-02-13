@@ -105,9 +105,15 @@ function callAjaxSearch() {
 					$('td:eq(1)',row).html(index+1);
 					if(data.estimateNumber != null)
 						$('td:eq(2)',row).html('<a href="javascript:void(0);" onclick="openAbstractEstimate(\''+ data.aeId +'\')">' + data.estimateNumber + '</a>');
-					if(data.adminSanctionNumber != null)
-						$('td:eq(7)',row).html('<a href="javascript:void(0);" onclick="openLineEstimate(\''+ data.leId +'\')">' + data.adminSanctionNumber + '</a>');
-					$('td:eq(8)',row).html(parseFloat(Math.round(data.estimateAmount * 100) / 100).toFixed(2));
+					
+					if($('#lineEstimateRequired').val() == 'false') {
+						$('td:eq(7)',row).html(parseFloat(Math.round(data.estimateAmount * 100) / 100).toFixed(2));
+					} else {
+						if(data.adminSanctionNumber != null)
+							$('td:eq(7)',row).html('<a href="javascript:void(0);" onclick="openLineEstimate(\''+ data.leId +'\')">' + data.adminSanctionNumber + '</a>');
+						$('td:eq(8)',row).html(parseFloat(Math.round(data.estimateAmount * 100) / 100).toFixed(2));
+					}
+						
 					$('#btncreateloa').show();
 					return row;
 				},
@@ -124,6 +130,11 @@ function callAjaxSearch() {
 					"data" : "", "sClass" : "text-right", "sType" : "decimal"
 					}]				
 				});
+		if($('#lineEstimateRequired').val() == 'false') {
+			var oTable = $('#resultTable').DataTable();
+			oTable.column(8).visible(false);
+		}
+
 			}
 
 function openLineEstimate(id) {

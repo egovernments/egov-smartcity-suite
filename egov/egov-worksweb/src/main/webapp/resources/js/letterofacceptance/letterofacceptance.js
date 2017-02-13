@@ -196,9 +196,11 @@ $(document).ready(function(){
 			  }
 			  return stringValue;
 			}
-	 var defaultDepartmentId = $("#defaultDepartmentId").val();
-	if(defaultDepartmentId != "")
-		$("#approvalDepartment").val(defaultDepartmentId);
+		var defaultDepartmentId = $("#defaultDepartmentId").val();
+		if(defaultDepartmentId != "") {
+			$("#approvalDepartment").val(defaultDepartmentId);
+			$('#approvalDepartment').trigger('change');
+		}
 });
 
 function setTenderFinalizedPerSignInBOQ(tenderFinalizedPercentage) {
@@ -223,15 +225,11 @@ function validateWorkFlowApprover(name) {
 		$('#approvalComent').removeAttr('required');
 	}
 	if (button != null && button == 'Reject') {
-		$('#approvalDepartment').removeAttr('required');
-		$('#approvalDesignation').removeAttr('required');
-		$('#approvalPosition').removeAttr('required');
+		removeApprovalMandatoryAttribute();
 		$('#approvalComent').attr('required', 'required');
 	}
 	if (button != null && button == 'Cancel') {
-		$('#approvalDepartment').removeAttr('required');
-		$('#approvalDesignation').removeAttr('required');
-		$('#approvalPosition').removeAttr('required');
+		removeApprovalMandatoryAttribute();
 		$('#approvalComent').attr('required', 'required');
 		
 		if($("form").valid())
@@ -252,9 +250,7 @@ function validateWorkFlowApprover(name) {
 		
 	}
 	if (button != null && button == 'Forward') {
-		$('#approvalDepartment').attr('required', 'required');
-		$('#approvalDesignation').attr('required', 'required');
-		$('#approvalPosition').attr('required', 'required');
+		addApprovalMandatoryAttribute();
 		$('#approvalComent').removeAttr('required');
 		flag = validateFileDate();
 		if(!$("form").valid())

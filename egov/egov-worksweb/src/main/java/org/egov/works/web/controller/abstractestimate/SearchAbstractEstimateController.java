@@ -197,6 +197,7 @@ public class SearchAbstractEstimateController {
                     .equalsIgnoreCase(OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString()))
                 newEgwStatuses.add(egwStatus);
         model.addAttribute("egwStatus", newEgwStatuses);
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
 
         return "searchAbstractEstimateForLoa-search";
     }
