@@ -252,10 +252,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String beforeRenew() throws IOException {
         prepareNewForm();
         setDocumentTypes(tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.NEW));
-        if (tradeLicense.getEgwStatus() != null
-                && !tradeLicense.getEgwStatus().getCode()
-                .equalsIgnoreCase(Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE)
-                && tradeLicense.isReNewApplication()) {
+        if (!tradeLicense.stateIsEnded()) {
             ServletActionContext.getResponse().setContentType("text/html");
             ServletActionContext.getResponse().getWriter()
                     .write("<center style='color:red;font-weight:bolder'>Renewal workflow is in progress !</center>");
