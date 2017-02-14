@@ -73,7 +73,10 @@ $('#baseRegisterReportSearch').click(function(e){
 				}
 			},
 			"columns" : [
-                          { "data" : "consumerNo", "title": "New Consumer Number"},
+                          { "data" : "consumerNo", "title": "New Consumer Number", 
+                        	  "render": function ( data, type, full, meta ) {
+									return '<a href="/wtms/viewDcb/consumerCodeWis/'+data+'" target="_blank">'+data+'</a>';
+								    } },
                           { "data" : "oldConsumerNo", "title": "Old Consumer Number"},
 						  { "data" : "assessmentNo" , "title": "Assessment Number"},  
 						  { "data" : "ownerName", "title": "Owner Name"},

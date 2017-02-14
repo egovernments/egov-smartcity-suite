@@ -110,7 +110,9 @@ jQuery(document).ready(function() {
 								else return "";
 					    	}
 						},
-						{title: 'Consumer Number', data: 'consumerCode'},
+						{title: 'Consumer Number', data: 'consumerCode', "render": function ( data, type, full, meta ) {
+							return '<a href="/wtms/viewDcb/consumerCodeWis/'+data+'" target="_blank">'+data+'</a>';
+					    }},
 						{title: 'Consumer Name', data: 'consumerName'},
 						{title: 'Paid At', data: 'channel'},
 						{title: 'Payment mode', data: 'paymentMode'},

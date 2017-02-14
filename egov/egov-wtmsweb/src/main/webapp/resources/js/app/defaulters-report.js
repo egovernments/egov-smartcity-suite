@@ -160,7 +160,10 @@ function loadingReport() {
 							{
 								"data" : "hscNo",
 								"title" : "H.S.C NO",
-								"sortable" : false
+								"render": function ( data, type, full, meta ) {
+									return '<a href="/wtms/viewDcb/consumerCodeWis/'+data+'" target="_blank">'+data+'</a>';
+								    }
+								
 							},
 							{
 								"data" : "ownerName",
