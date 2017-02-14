@@ -178,7 +178,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public static final String COLLECT_FEE = "collect-fee";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
     private static final String PROPERTY_MODIFY_REJECT_FAILURE = "property.modify.reject.failure";
-    
+
     // Form Binding Model
     private PropertyMutation propertyMutation = new PropertyMutation();
 
@@ -296,7 +296,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                     new Date());
             currentPropertyTax = currentTaxAndDue.get(CURR_DMD_STR);
             propertyOwner = basicproperty.getFullOwnerName();
-            houseNo= basicproperty.getAddress().getHouseNoBldgApt();
+            houseNo = basicproperty.getAddress().getHouseNoBldgApt();
             currentPropertyTaxDue = currentTaxAndDue.get(CURR_BAL_STR);
             arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
             currentWaterTaxDue = propertyService.getWaterTaxDues(assessmentNo);
@@ -308,7 +308,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 addActionError(getText("error.superstruc.prop.notallowed"));
                 return COMMON_FORM;
             }
-                 
+
             else {
                 loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
                 if (loggedUserIsMeesevaUser)
@@ -452,7 +452,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 || REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(loggedInUserDesignation))
             wfInitiator = transferOwnerService.getWorkflowInitiator(propertyMutation);
 
-        if (wfInitiator != null) {
+        if (wfInitiator != null || JUNIOR_ASSISTANT.equalsIgnoreCase(loggedInUserDesignation)) {
             transitionWorkFlow(propertyMutation);
             transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
             buildSMS(propertyMutation);
@@ -1259,11 +1259,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public void setAllowEditDocument(final boolean allowEditDocument) {
         this.allowEditDocument = allowEditDocument;
     }
+
     public String getPropertyOwner() {
         return propertyOwner;
     }
 
-    public void setPropertyOwner(String propertyOwner) {
+    public void setPropertyOwner(final String propertyOwner) {
         this.propertyOwner = propertyOwner;
     }
 
@@ -1271,7 +1272,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         return houseNo;
     }
 
-    public void setHouseNo(String houseNo) {
+    public void setHouseNo(final String houseNo) {
         this.houseNo = houseNo;
     }
 }
