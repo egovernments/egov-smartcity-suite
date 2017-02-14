@@ -77,12 +77,11 @@ public class ArrearRegisterReportService {
 		List<WaterChargeMaterlizeView> propertyViewList;
 
 		query.append(
-				"select distinct pmv  from WaterChargeMaterlizeView pmv,InstDmdCollResponse idc,Installment instmallment where "
+				"select distinct pmv  from WaterChargeMaterlizeView pmv,InstDmdCollResponse idc where "
 						+ "pmv.connectiondetailsid = idc.waterMatView.connectiondetailsid and pmv.connectionstatus = 'ACTIVE'"
-						+ " and idc.installment.id =instmallment.id  " + " and instmallment.fromDate not between  ('"
-						+ currentInst.getFromDate() + "') and ('" + currentInst.getToDate() + "') ");
+						+ " and idc.installment.fromDate not between  ('"
+                + currentInst.getFromDate() + "') and ('" + currentInst.getToDate() + "') ");
 
-		query.append(" and pmv.hscno= :hscno ");
 		if (locality != null && locality != -1)
 			query.append(" and pmv.locality= :locality ");
 
@@ -96,7 +95,6 @@ public class ArrearRegisterReportService {
 		final Query qry = getCurrentSession().createQuery(query.toString());
 		// qry.setMaxResults(100);
 
-		qry.setParameter("hscno", "1016000022");
 		if (locality != null && locality != -1)
 			qry.setParameter("locality", locality);
 
