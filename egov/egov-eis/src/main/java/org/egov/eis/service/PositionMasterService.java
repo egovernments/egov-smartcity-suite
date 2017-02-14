@@ -200,10 +200,9 @@ public class PositionMasterService {
 
 	public Position getCurrentPositionForUser(final Long userId) {
 		final Assignment assign = assignmentService.getPrimaryAssignmentForEmployee(userId);
-		if (assign != null)
-			return assign.getPosition();
-		else
-			return null;
+        if (assign != null)
+            return assign.getPosition();
+        return null;
 	}
 
     /**
