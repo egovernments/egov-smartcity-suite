@@ -153,9 +153,7 @@ public class UpdateContractorBillController extends BaseContractorBillController
             throws ApplicationException, IOException {
 
         String mode = StringUtils.EMPTY;
-        ;
         String workFlowAction = StringUtils.EMPTY;
-        ;
         ContractorBillRegister updatedContractorBillRegister = null;
         Boolean isEditable = false;
         String additionalRule = StringUtils.EMPTY;

@@ -416,7 +416,7 @@ public class ContractorBillRegisterService {
             WorkFlowMatrix wfmatrix = null;
             if (null == contractorBillRegister.getState()) {
                 wfmatrix = contractorBillRegisterWorkflowService.getWfMatrix(contractorBillRegister.getStateType(),
-                        additionalRule, contractorBillRegister.getBillamount(), additionalRule, currState, null);
+                        null, contractorBillRegister.getBillamount(), additionalRule, currState, null);
                 contractorBillRegister.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
                         .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
