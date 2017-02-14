@@ -41,11 +41,17 @@
 package org.egov.adtax.service.penalty;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
+import org.egov.adtax.entity.AdvertisementAdditionalTaxRate;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
+import org.egov.demand.model.EgDemandDetails;
 
 public interface AdvertisementAdditionalTaxCalculator {
 
     Map<String, BigDecimal> getAdditionalTaxes(AdvertisementPermitDetail advPermitDetail);
+
+    BigDecimal getAdditionalTaxAmountByPassingDemandDetailAndAdditionalTaxes(AdvertisementPermitDetail advPermitDetail, EgDemandDetails demandDtl,
+            List<AdvertisementAdditionalTaxRate> additionalTaxRates);
 }

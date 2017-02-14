@@ -135,7 +135,7 @@ public class AgencyWiseCollectionService {
 
                     }
                 // GET PENALTY AMOUNT FOR ADVERTISEMENT PERMITS
-                penaltyReasons = advertisementPenaltyCalculator.getPenaltyByInstallment(advertisementPermitDetail);
+                penaltyReasons = advertisementPenaltyCalculator.getPenaltyOnAdditionalTaxByInstallment(advertisementPermitDetail);
 
                 // Add or update penalty
                 if (penaltyReasons != null && penaltyReasons.size() > 0)

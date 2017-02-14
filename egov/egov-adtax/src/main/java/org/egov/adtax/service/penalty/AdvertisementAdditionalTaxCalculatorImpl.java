@@ -135,4 +135,27 @@ public class AdvertisementAdditionalTaxCalculatorImpl implements AdvertisementAd
         return totalTaxableAmount;
     }
 
+    @Override
+    public BigDecimal getAdditionalTaxAmountByPassingDemandDetailAndAdditionalTaxes(final AdvertisementPermitDetail advPermitDetail, final EgDemandDetails demandDtl,
+            final List<AdvertisementAdditionalTaxRate> additionalTaxRates) {
+        BigDecimal totalTaxableAmount = BigDecimal.ZERO;
+        final Map<String, BigDecimal> additionalTaxes = new HashMap<String, BigDecimal>();
+
+        if (serviceTaxAndCessCalculationRequired()) {
+            for (final AdvertisementAdditionalTaxRate taxRates : additionalTaxRates)
+                additionalTaxes.put(taxRates.getReasonCode(), taxRates.getPercentage());
+
+            for (final AdvertisementAdditionalTaxRate taxRates : additionalTaxRates)
+                if (demandDtl.getBalance().compareTo(BigDecimal.ZERO) > 0
+                        && (!AdvertisementTaxConstants.DEMANDREASON_PENALTY.equalsIgnoreCase(demandDtl
+                                .getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()) ||
+                                !additionalTaxes.containsKey(demandDtl
+                                        .getEgDemandReason().getEgDemandReasonMaster().getCode())))
+                    totalTaxableAmount = totalTaxableAmount.add(demandDtl.getBalance()
+                            .multiply(taxRates.getPercentage())
+                            .divide(BigDecimal.valueOf(100)).setScale(4, BigDecimal.ROUND_HALF_UP));
+        }
+        return totalTaxableAmount;
+    }
+
 }

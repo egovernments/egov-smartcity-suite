@@ -138,7 +138,7 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
             }
 
         final Map<Installment, BigDecimal> penaltyReasons = advertisementPenaltyCalculator
-                .getPenaltyByInstallment(advBillable.getAdvertisement().getActiveAdvertisementPermit());
+                .getPenaltyOnAdditionalTaxByInstallment(advBillable.getAdvertisement().getActiveAdvertisementPermit());
 
         if (penaltyReasons != null && penaltyReasons.size() > 0) {
 
