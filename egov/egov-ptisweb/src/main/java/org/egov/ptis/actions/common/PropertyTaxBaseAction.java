@@ -308,7 +308,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             if (propTypeMstr != null) {
                 Date regDocDate = null;
                 final PropertyDetail propertyDetail = property.getPropertyDetail();
-                if (documentTypeDetails != null)
+                if (documentTypeDetails != null && documentTypeDetails.getDocumentName() != null)
                     regDocDate = documentTypeDetails.getDocumentName()
                             .equals(PropertyTaxConstants.DOCUMENT_NAME_REGD_DOCUMENT)
                                     ? documentTypeDetails.getDocumentDate() : null;

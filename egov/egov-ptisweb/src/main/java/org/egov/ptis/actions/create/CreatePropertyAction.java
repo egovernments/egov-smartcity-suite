@@ -1297,7 +1297,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (propTypeMstr.getCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT)
                 && propertyDepartmentId == null)
             addActionError(getText("mandatory.property.department"));
-        validateDocumentDetails(getDocumentTypeDetails());
+        if (upicNo == null || "".equals(upicNo))
+            validateDocumentDetails(getDocumentTypeDetails());
     }
 
     @SkipValidation
