@@ -146,8 +146,13 @@ public class DefaultersWTReportController {
         else
             foundRows = defaultersWTReportService.getTotalCount(fromAmount, toAmount, ward);
         String result = null;
+        int count=Integer.valueOf(request.getParameter("start"));
         for (final DefaultersReport dd : defaultersreportlist)
+        {
+        	count = count+1;
             dd.setDuePeriodFrom(getDuePeriodFrom(dd.getDemandId()));
+            dd.setSlNo(count);
+        }
         result = new StringBuilder("{ \"draw\":").append(request.getParameter("draw")).append(", \"recordsTotal\":")
                 .append(foundRows).append(", \"recordsFiltered\":").append(foundRows).append(", \"data\":")
                 .append(toJSON(defaultersreportlist, DefaultersReport.class, DefaultersReportAdaptor.class)).append("}")
