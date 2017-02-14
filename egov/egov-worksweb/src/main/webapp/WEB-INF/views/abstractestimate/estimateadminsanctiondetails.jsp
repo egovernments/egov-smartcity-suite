@@ -60,8 +60,8 @@
 						<th><spring:message code="lbl.adminsanctiondate"/></th>	
 						<th><spring:message code="lbl.adminsanctionauthority"/></th>
 					</c:if>
-					<th><spring:message code="lbl.councilresolutionnumber"/><span class="mandatory"></th>
-					<th><spring:message code="lbl.councilresolutiondate"/><span class="mandatory"></th>
+					<th><spring:message code="lbl.councilresolutionnumber"/><c:if test="${mode != 'view' }"><span class="mandatory"></span></c:if></th>
+					<th><spring:message code="lbl.councilresolutiondate"/><c:if test="${mode != 'view' }"><span class="mandatory"></span></c:if></th>
 				</tr>
 			</thead>
 			<tbody>

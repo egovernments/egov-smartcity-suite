@@ -77,6 +77,7 @@ import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.abstractestimate.repository.ActivityRepository;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.lineestimate.service.EstimateAppropriationService;
 import org.egov.works.masters.service.ScheduleCategoryService;
@@ -191,6 +192,9 @@ public class RevisionEstimateService {
 
     @Autowired
     private EstimateAppropriationService estimateAppropriationService;
+
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     @Autowired
     public RevisionEstimateService(final RevisionEstimateRepository revisionEstimateRepository) {
@@ -853,6 +857,7 @@ public class RevisionEstimateService {
         model.addAttribute("workOrderEstimate", workOrderEstimate);
         model.addAttribute("scheduleCategories", scheduleCategoryService.getAllScheduleCategories());
         model.addAttribute("stateType", revisionEstimate.getClass().getSimpleName());
+        model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
     }
 
     public void revisionEstimateStatusChange(final RevisionAbstractEstimate revisionEstimate,

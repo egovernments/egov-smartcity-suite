@@ -151,13 +151,13 @@
 			    <spring:message code="lbl.latitude" />
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<form:input path="latitude" name="latitude" id="latitude" class="form-control disablefield" />
+			<form:input path="latitude" name="latitude" id="latitude" class="form-control disablefield readonlyfield" />
 			</div>
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.longitude" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="longitude" id="longitude" name="longitude" class="form-control disablefield" />
+				<form:input path="longitude" id="longitude" name="longitude" class="form-control disablefield readonlyfield" />
 			</div>
 		</div>
 		<div class="form-group">

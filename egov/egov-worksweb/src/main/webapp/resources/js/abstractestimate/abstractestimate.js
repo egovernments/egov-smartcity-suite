@@ -60,6 +60,7 @@ $(document).ready(function(){
 	if($('#lineEstimateRequired').val() == 'true') {
 		$('.disablefield').attr('disabled', 'disabled');
 	}
+	$('.readonlyfield').attr('disabled', 'disabled');
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$ExceptionalUOMs = $('#exceptionaluoms').val();  
 	$schemeId = $('#schemeValue').val();

@@ -55,16 +55,15 @@
 					<div class="panel-body">
 						<div class="row add-border">
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.estimateno" /> : </div> 
-							<c:if test="${revisionEstimate.parent.lineEstimateDetails != null}">
 							<div class="col-md-2 col-xs-6 add-margin view-content">
 								<a href='javascript:void(0)' onclick="viewEstimate('<c:out value="${revisionEstimate.parent.id}"/>')">
-									<c:out value="${revisionEstimate.parent.lineEstimateDetails.estimateNumber}"></c:out>
+									<c:out value="${revisionEstimate.parent.estimateNumber}"></c:out>
 								</a>
-							</div></c:if>
+							</div>
 							<input type="hidden" name="mode" value="${mode}" id="mode"/>
+							<c:if test="${revisionEstimate.parent.lineEstimateDetails != null && lineEstimateRequired == true}">
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.lineestimateno" /> :
 							</div> 
-							<c:if test="${revisionEstimate.parent.lineEstimateDetails != null}">
 							<div class="col-md-2 col-xs-6 add-margin view-content">
 								<a href='javascript:void(0)' onclick="viewLineEstimate('<c:out value="${revisionEstimate.parent.lineEstimateDetails.lineEstimate.id}"/>')">
 								<c:out value="${revisionEstimate.parent.lineEstimateDetails.lineEstimate.lineEstimateNumber}"/></a>
@@ -76,9 +75,11 @@
 						</div>
 						
 						<div class="row add-border">
+						<c:if test="${revisionEstimate.parent.lineEstimateDetails != null && lineEstimateRequired}">
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.adminsanctionestimatamount" /> : </div> 
 							<div class="col-md-2 col-xs-6 add-margin view-content">&#8377 <fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
 							minFractionDigits="2" value="${revisionEstimate.parent.lineEstimateDetails.estimateAmount}" /></div>
+							</c:if>
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.loano" /> : </div>
 							<div class="col-md-2 col-xs-6 add-margin view-content">
 								<a href="javascript:void(0)" onclick='viewLOA(<c:out value="${workOrderEstimate.workOrder.id }"/>)'>

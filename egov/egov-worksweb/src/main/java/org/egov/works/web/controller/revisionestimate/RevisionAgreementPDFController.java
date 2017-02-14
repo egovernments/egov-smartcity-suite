@@ -48,6 +48,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.reporting.engine.ReportConstants;
@@ -151,11 +152,9 @@ public class RevisionAgreementPDFController {
             reportParams.put("accountNo", revisionworkOrder.getContractor().getBankaccount() != null
                     ? revisionworkOrder.getContractor().getBankaccount() : "");
             reportParams.put("subject", originalEstimate.getName());
-            if (originalEstimate.getLineEstimateDetails() != null)
-                reportParams.put("modeOfAllotment",
-                        originalEstimate.getLineEstimateDetails().getLineEstimate().getModeOfAllotment().toString());
-            else
-                reportParams.put("modeOfAllotment", "");
+            reportParams.put("modeOfAllotment",
+                    !StringUtils.isBlank(originalEstimate.getModeOfAllotment().toString())
+                            ? originalEstimate.getModeOfAllotment().toString() : StringUtils.EMPTY);
             reportParams.put("agreementAmount", df.format(revisionworkOrder.getWorkOrderAmount()));
             reportParams.put("WINCode", originalEstimate.getProjectCode().getCode());
             reportParams.put("amountOfEstimate",
