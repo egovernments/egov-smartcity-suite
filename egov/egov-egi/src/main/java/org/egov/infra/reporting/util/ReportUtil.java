@@ -83,7 +83,7 @@ public final class ReportUtil {
         return ApplicationThreadLocals.getMunicipalityName();
     }
 
-    public static InputStream reportTemplateAsStream(String templateName) {
+    public static InputStream getTemplateAsStream(String templateName) {
         InputStream fileInputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(
                 String.format(TENANT_REPORT_FILE_PATH, ApplicationThreadLocals.getTenantID(), templateName));
         if (fileInputStream == null)

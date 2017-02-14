@@ -775,7 +775,7 @@ public class FundFlowAction extends BaseFormAction {
     private Map<String, Object> getParamMap() {
         final Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("FundFlowReport_paymentDetailsJasper", ReportUtil
-                .reportTemplateAsStream("FundFlowReport_paymentDetails.jasper"));
+                .getTemplateAsStream("FundFlowReport_paymentDetails.jasper"));
         // paramMap.put("FundFlowReport_paymentDetailsJasper",
         // this.getClass().getResourceAsStream("/reports/templates/FundFlowReport_paymentDetails.jasper"));
 

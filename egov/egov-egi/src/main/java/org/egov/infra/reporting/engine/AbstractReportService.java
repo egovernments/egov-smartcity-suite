@@ -158,7 +158,7 @@ public abstract class AbstractReportService<T> implements ReportService {
 
         if (reportTemplate == null) {
             try {
-                reportTemplate = loadTemplate(ReportUtil.reportTemplateAsStream(templateName + getTemplateExtension()));
+                reportTemplate = loadTemplate(ReportUtil.getTemplateAsStream(templateName + getTemplateExtension()));
                 this.templateCache.put(ApplicationThreadLocals.getTenantID() + templateName, reportTemplate);
                 if (reportTemplate == null) {
                     String errMsg = "Report template [" + templateName + "] could not be loaded";
