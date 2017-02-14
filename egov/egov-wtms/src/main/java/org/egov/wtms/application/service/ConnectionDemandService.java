@@ -770,11 +770,15 @@ public class ConnectionDemandService {
         if (installment == null) {
             installment = getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
             InstallemntStartDate = new Date();
-        } else if (reconnInSameInstallment)
+        } 
+        if(reconnInSameInstallment==null)
+        	 InstallemntStartDate = installment.getFromDate();	
+       else if (reconnInSameInstallment!=null && reconnInSameInstallment)
             InstallemntStartDate = installment.getFromDate();
         else
             InstallemntStartDate = waterConnectionDetails.getReconnectionApprovalDate();
         double totalWaterRate = 0;
+        
         final WaterRatesDetails waterRatesDetails = getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
         final int noofmonths = DateUtils.noOfMonths(InstallemntStartDate, installment.getToDate());
         if (null != waterRatesDetails) {
