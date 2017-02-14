@@ -335,21 +335,5 @@
 		<form:errors path="remarks" cssClass="add-margin error-msg" />
 	</div>
 </div>
-<%-- <div class="form-group">
-	<label class="col-sm-3 control-label text-right"><font size="2"><spring:message
-				code="lbl.mesg.document" /></font>:</label>
-	<div class="col-sm-3 add-margin">
-
-		<input type="file" id="file" name="legalCaseDocuments[0].files"
-			class="file-ellipsis upload-file">
-
-		<form:errors path="legalCaseDocuments[0].files"
-			cssClass="add-margin error-msg" />
-		<div class="add-margin  text-left">
-			<font size="2"> <spring:message code="lbl.mesg.document" />
-			</font>
-		</div>
-	</div>
-</div> --%>
 <div id="legalCaseUploadDocuments"></div>
 <input type="hidden" id="mode"  name="mode" value="${mode}" />

@@ -61,7 +61,7 @@ public class LegalCaseDisposalService {
 
     @Autowired
     private LegalCaseUtil legalCaseUtil;
-    
+
     @Autowired
     private LegalCaseSmsService legalCaseSmsService;
 
@@ -71,9 +71,10 @@ public class LegalCaseDisposalService {
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_CLOSED);
         legalCaseDisposal.getLegalCase().setStatus(statusObj);
-        final ReportStatus reportStatus=null;
+        final ReportStatus reportStatus = null;
         legalCaseDisposal.getLegalCase().setReportStatus(reportStatus);
         legalCaseSmsService.sendSmsToOfficerInchargeForCloseCase(legalCaseDisposal);
+        legalCaseSmsService.sendSmsToStandingCounselForCloseCase(legalCaseDisposal);
         return legalCaseDisposalRepository.save(legalCaseDisposal);
     }
 

@@ -79,7 +79,7 @@ public class JudgmentImplService {
 
     @Autowired
     private FileStoreService fileStoreService;
-    
+
     @Autowired
     private LegalCaseSmsService legalCaseSmsService;
 
@@ -113,10 +113,11 @@ public class JudgmentImplService {
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_JUDGMENT_IMPLIMENTED);
         judgmentImpl.getJudgment().getLegalCase().setStatus(statusObj);
-        final ReportStatus reportStatus=null;
+        final ReportStatus reportStatus = null;
         judgmentImpl.getJudgment().getLegalCase().setReportStatus(reportStatus);
         judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getDateOfCompliance());
         legalCaseSmsService.sendSmsToOfficerInchargeForJudgmentImpl(judgmentImpl);
+        legalCaseSmsService.sendSmsToStandingCounselForJudgmentImpl(judgmentImpl);
         legalCaseService.save(judgmentImpl.getJudgment().getLegalCase());
 
     }

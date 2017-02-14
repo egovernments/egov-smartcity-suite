@@ -76,11 +76,9 @@ public class HearingsService {
 
     @Autowired
     private LegalCaseUtil legalCaseUtil;
-    
-    
+
     @Autowired
     private LegalCaseSmsService legalCaseSmsService;
-
 
     @Transactional
     public Hearings persist(final Hearings hearings) {
@@ -89,10 +87,11 @@ public class HearingsService {
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_HEARING_STATUS);
         hearings.getLegalCase().setStatus(statusObj);
-        final ReportStatus reportStatus=null;
+        final ReportStatus reportStatus = null;
         hearings.getLegalCase().setReportStatus(reportStatus);
         legalCaseSmsService.sendSmsToOfficerInchargeForHearings(hearings);
         legalCaseSmsService.sendSmsToHearingEmployee(hearings);
+        legalCaseSmsService.sendSmsToStandingCounselForHearings(hearings);
         return hearingsRepository.save(hearings);
     }
 

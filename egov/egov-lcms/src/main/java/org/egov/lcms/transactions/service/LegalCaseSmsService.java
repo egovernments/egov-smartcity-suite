@@ -50,6 +50,7 @@ import org.egov.lcms.transactions.entity.Hearings;
 import org.egov.lcms.transactions.entity.Judgment;
 import org.egov.lcms.transactions.entity.JudgmentImpl;
 import org.egov.lcms.transactions.entity.LegalCase;
+import org.egov.lcms.transactions.entity.LegalCaseAdvocate;
 import org.egov.lcms.transactions.entity.LegalCaseDisposal;
 import org.egov.lcms.transactions.entity.LegalCaseInterimOrder;
 import org.egov.lcms.transactions.entity.Pwr;
@@ -73,10 +74,10 @@ public class LegalCaseSmsService {
     @Autowired
     private LegalCaseUtil legalCaseUtil;
 
+    // Send SMS Notification to OfficerIncharge For Legalcase
     public void sendSmsToOfficerInchargeForLegalCase(final LegalCase legalcase) {
         if (legalcase.getOfficerIncharge() != null && legalcase.getOfficerIncharge().getName() != null) {
             final String mobileNumber = legalCaseUtil.getOfficerInchargeMobileNumber(legalcase);
-            // SMS for legalcase
             if (LcmsConstants.LEGALCASE_STATUS_CREATED.equalsIgnoreCase(legalcase.getStatus().getCode()))
                 getSmsForLegalCase(legalcase, mobileNumber);
 
@@ -99,6 +100,7 @@ public class LegalCaseSmsService {
         return smsMsg;
     }
 
+    // Send SMS Notification to the Employee Added in Hearing Screen
     public void sendSmsToHearingEmployee(final Hearings hearings) {
         if (hearings.getTempEmplyeeHearing() != null && !hearings.getTempEmplyeeHearing().isEmpty())
             for (final EmployeeHearing hearingEmp : hearings.getTempEmplyeeHearing())
@@ -128,6 +130,7 @@ public class LegalCaseSmsService {
         return smsMsg;
     }
 
+    // Send SMS Notification to OfficerIncharge For InterimOrder
     public void sendSmsToOfficerInchargeInterimOrder(final LegalCaseInterimOrder legalCaseInterimOrder) {
         if (legalCaseInterimOrder.getLegalCase().getOfficerIncharge() != null
                 && legalCaseInterimOrder.getLegalCase().getOfficerIncharge().getName() != null) {
@@ -161,6 +164,7 @@ public class LegalCaseSmsService {
         return smsMsg;
     }
 
+    // Send SMS Notification to OfficerIncharge For Hearings
     public void sendSmsToOfficerInchargeForHearings(final Hearings hearings) {
         if (hearings.getLegalCase().getOfficerIncharge() != null
                 && hearings.getLegalCase().getOfficerIncharge().getName() != null) {
@@ -190,6 +194,7 @@ public class LegalCaseSmsService {
         return smsMsg;
     }
 
+    // Send SMS Notification to OfficerIncharge For Judgment
     public void sendSmsToOfficerInchargeForJudgment(final Judgment judgment) {
         if (judgment.getLegalCase().getOfficerIncharge() != null
                 && judgment.getLegalCase().getOfficerIncharge().getName() != null) {
@@ -202,23 +207,38 @@ public class LegalCaseSmsService {
     }
 
     public void getSmsForJudgment(final Judgment judgment, final String mobileNo) {
-        final String smsMsg = smsBodyByCodeAndArgsWithTypeForJudgment("msg.judgment.sms", judgment);
+        String smsMsg = "";
+        if (judgment.getImplementByDate() != null)
+            smsMsg = smsBodyByCodeAndArgsWithTypeForJudgmentWithImplementDate("msg.judgmentwithimplementdate.sms",
+                    judgment);
+        else
+            smsMsg = smsBodyByCodeAndArgsWithTypeForJudgmentWithoutImplementDate("msg.judgmentwithoutimplementDate.sms",
+                    judgment);
 
         if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
             legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
 
     }
 
-    public String smsBodyByCodeAndArgsWithTypeForJudgment(final String code, final Judgment judgment) {
-        final String smsMsg = messageSource.getMessage(code, new String[] {
-                legalCaseUtil.getOfficerInchargeName(judgment.getLegalCase()), judgment.getLegalCase().getCaseNumber(),
-                judgment.getJudgmentType().getName(),
-                judgment.getImplementByDate() == null ? ""
-                        : LcmsConstants.DATEFORMATTER_DD_MM_YYYY.format(judgment.getImplementByDate()).toString() },
+    public String smsBodyByCodeAndArgsWithTypeForJudgmentWithImplementDate(final String code, final Judgment judgment) {
+        final String smsMsg = messageSource.getMessage(code,
+                new String[] { legalCaseUtil.getOfficerInchargeName(judgment.getLegalCase()),
+                        judgment.getLegalCase().getCaseNumber(), judgment.getJudgmentType().getName(),
+                        LcmsConstants.DATEFORMATTER_DD_MM_YYYY.format(judgment.getImplementByDate()).toString() },
                 null);
         return smsMsg;
     }
 
+    public String smsBodyByCodeAndArgsWithTypeForJudgmentWithoutImplementDate(final String code,
+            final Judgment judgment) {
+        final String smsMsg = messageSource.getMessage(code,
+                new String[] { legalCaseUtil.getOfficerInchargeName(judgment.getLegalCase()),
+                        judgment.getLegalCase().getCaseNumber(), judgment.getJudgmentType().getName() },
+                null);
+        return smsMsg;
+    }
+
+    // Send SMS Notification to OfficerIncharge For JudgmentImpl
     public void sendSmsToOfficerInchargeForJudgmentImpl(final JudgmentImpl judgmentImpl) {
         if (judgmentImpl.getJudgment().getLegalCase().getOfficerIncharge() != null
                 && judgmentImpl.getJudgment().getLegalCase().getOfficerIncharge().getName() != null) {
@@ -233,18 +253,16 @@ public class LegalCaseSmsService {
     }
 
     public void getSmsForJudgmentImpl(final JudgmentImpl judgmentImpl, final String mobileNo) {
-        if (judgmentImpl.getJudgmentImplIsComplied().toString().equals("YES")) {
-            final String smsMsg = smsBodyByCodeAndArgsWithTypeForJudgmentImplIsCompliedYes(
-                    "msg.judgmentimpliscompliedyes.sms", judgmentImpl);
-            if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
-                legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
-        } else if (judgmentImpl.getJudgmentImplIsComplied().toString().equals("NO")) {
-            final String smsMsg = smsBodyByCodeAndArgsWithTypeForJudgmentImplIsCompliedNo(
-                    "msg.judgmentimpliscompliedno.sms", judgmentImpl);
+        String smsMsg = "";
+        if (judgmentImpl.getJudgmentImplIsComplied().toString().equals("YES"))
+            smsMsg = smsBodyByCodeAndArgsWithTypeForJudgmentImplIsCompliedYes("msg.judgmentimpliscompliedyes.sms",
+                    judgmentImpl);
+        else if (judgmentImpl.getJudgmentImplIsComplied().toString().equals("NO"))
+            smsMsg = smsBodyByCodeAndArgsWithTypeForJudgmentImplIsCompliedNo("msg.judgmentimpliscompliedno.sms",
+                    judgmentImpl);
 
-            if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
-                legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
-        }
+        if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
+            legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
 
     }
 
@@ -270,6 +288,7 @@ public class LegalCaseSmsService {
         return smsMsg;
     }
 
+    // Send SMS Notification to OfficerIncharge For CloseCase
     public void sendSmsToOfficerInchargeForCloseCase(final LegalCaseDisposal legalCaseDisposal) {
         if (legalCaseDisposal.getLegalCase().getOfficerIncharge() != null
                 && legalCaseDisposal.getLegalCase().getOfficerIncharge().getName() != null) {
@@ -300,6 +319,7 @@ public class LegalCaseSmsService {
         return smsMsg;
     }
 
+    // Send SMS Notification to OfficerIncharge For CA
     public void sendSmsToOfficerInchargeForCounterAffidavit(final List<CounterAffidavit> counterAffidavit) {
         if (counterAffidavit.get(0).getLegalCase().getOfficerIncharge() != null
                 && counterAffidavit.get(0).getLegalCase().getOfficerIncharge().getName() != null) {
@@ -349,6 +369,7 @@ public class LegalCaseSmsService {
         return smsMsg;
     }
 
+    // Send SMS Notification to OfficerIncharge For Pwr
     public void sendSmsToOfficerInchargeForPWR(final List<Pwr> pwr) {
         if (pwr.get(0).getLegalCase().getOfficerIncharge() != null
                 && pwr.get(0).getLegalCase().getOfficerIncharge().getName() != null) {
@@ -385,6 +406,266 @@ public class LegalCaseSmsService {
                         pwr.get(0).getLegalCase().getCaseNumber(), LcmsConstants.DATEFORMATTER_DD_MM_YYYY
                                 .format(pwr.get(0).getPwrApprovalDate()).toString() },
                 null);
+        return smsMsg;
+    }
+
+    // Send SMS TO Add Standing Counsel
+    public void sendSmsToStandingCounsel(final LegalCaseAdvocate legalCaseAdvocate) {
+        if (legalCaseAdvocate.getAdvocateMaster() != null && legalCaseAdvocate.getAdvocateMaster().getName() != null) {
+            final String mobileNumber = legalCaseAdvocate.getAdvocateMaster().getMobileNumber();
+            getSmsForStandingCounsel(legalCaseAdvocate, mobileNumber);
+        }
+
+    }
+
+    public void getSmsForStandingCounsel(final LegalCaseAdvocate legalCaseAdvocate, final String mobileNo) {
+        final String smsMsg = smsBodyByCodeAndArgsWithTypeForStandingCounsel("msg.standingcounsel.sms",
+                legalCaseAdvocate);
+
+        if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
+            legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
+
+    }
+
+    public String smsBodyByCodeAndArgsWithTypeForStandingCounsel(final String code,
+            final LegalCaseAdvocate legalCaseAdvocate) {
+        final String smsMsg = messageSource.getMessage(code,
+                new String[] { legalCaseAdvocate.getAdvocateMaster().getName(),
+                        legalCaseAdvocate.getLegalCase().getCaseNumber(),
+                        legalCaseAdvocate.getLegalCase().getPetitionersNames(),
+                        legalCaseAdvocate.getLegalCase().getRespondantNames() },
+                null);
+        return smsMsg;
+    }
+
+    // Send SMS Notification to StandingCounsel For Hearings
+    public void sendSmsToStandingCounselForHearings(final Hearings hearings) {
+        if (hearings.getLegalCase().getLegalCaseAdvocates() != null
+                && !hearings.getLegalCase().getLegalCaseAdvocates().isEmpty()) {
+            final String mobileNumber = hearings.getLegalCase().getLegalCaseAdvocates().get(0).getAdvocateMaster()
+                    .getMobileNumber();
+            getSmsForStandingCounselForHearings(hearings, mobileNumber);
+
+        }
+
+    }
+
+    public void getSmsForStandingCounselForHearings(final Hearings hearings, final String mobileNo) {
+        final String smsMsg = smsBodyByCodeAndArgsWithTypeForStandingCounselForHearings(
+                "msg.standingcounselforhearings.sms", hearings);
+
+        if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
+            legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
+
+    }
+
+    public String smsBodyByCodeAndArgsWithTypeForStandingCounselForHearings(final String code,
+            final Hearings hearings) {
+        final String smsMsg = messageSource.getMessage(code,
+                new String[] { hearings.getLegalCase().getLegalCaseAdvocates().get(0).getAdvocateMaster().getName(),
+                        hearings.getLegalCase().getCaseNumber(),
+                        LcmsConstants.DATEFORMATTER_DD_MM_YYYY.format(hearings.getHearingDate()).toString(),
+                        hearings.getPurposeofHearings() },
+                null);
+        return smsMsg;
+    }
+
+    // Send SMS Notification to StandingCounsel For InterimOrder
+    public void sendSmsToStandingCounselForInterimOrder(final LegalCaseInterimOrder legalCaseInterimOrder) {
+        if (legalCaseInterimOrder.getLegalCase().getLegalCaseAdvocates() != null
+                && !legalCaseInterimOrder.getLegalCase().getLegalCaseAdvocates().isEmpty()) {
+            final String mobileNumber = legalCaseInterimOrder.getLegalCase().getLegalCaseAdvocates().get(0)
+                    .getAdvocateMaster().getMobileNumber();
+            getSmsToStandingCounselForInterimOrder(legalCaseInterimOrder, mobileNumber);
+
+        }
+
+    }
+
+    public void getSmsToStandingCounselForInterimOrder(final LegalCaseInterimOrder legalCaseInterimOrder,
+            final String mobileNo) {
+        final String smsMsg = smsBodyByCodeAndArgsWithTypeToStandingCounselForInterimOrder(
+                "msg.standingcounselforinterimorder.sms", legalCaseInterimOrder);
+
+        if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
+            legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
+
+    }
+
+    public String smsBodyByCodeAndArgsWithTypeToStandingCounselForInterimOrder(final String code,
+            final LegalCaseInterimOrder legalCaseInterimOrder) {
+        final String smsMsg = messageSource.getMessage(code,
+                new String[] {
+                        legalCaseInterimOrder.getLegalCase().getLegalCaseAdvocates().get(0).getAdvocateMaster()
+                                .getName(),
+                        legalCaseInterimOrder.getLegalCase().getCaseNumber(),
+                        legalCaseInterimOrder.getInterimOrder().getInterimOrderType(),
+                        LcmsConstants.DATEFORMATTER_DD_MM_YYYY.format(legalCaseInterimOrder.getIoDate()).toString() },
+                null);
+        return smsMsg;
+    }
+
+    // Send SMS Notification to StandingCounsel For Judgment
+    public void sendSmsToStandingCounselForJudgment(final Judgment judgment) {
+        if (judgment.getLegalCase().getLegalCaseAdvocates() != null
+                && !judgment.getLegalCase().getLegalCaseAdvocates().isEmpty()) {
+            final String mobileNumber = judgment.getLegalCase().getLegalCaseAdvocates().get(0).getAdvocateMaster()
+                    .getMobileNumber();
+            getSmsToStandingCounselForJudgment(judgment, mobileNumber);
+        }
+
+    }
+
+    public void getSmsToStandingCounselForJudgment(final Judgment judgment, final String mobileNo) {
+        String smsMsg = "";
+        if (judgment.getImplementByDate() != null)
+            smsMsg = smsBodyByCodeAndArgsWithTypeToStandingCounselForJudgmentWithImplementDate(
+                    "msg.standingcounselforjudgmentwithimplementdate.sms", judgment);
+        else
+            smsMsg = smsBodyByCodeAndArgsWithTypeToStandingCounselForJudgmentWithoutImplementDate(
+                    "msg.standingcounselforjudgmentwithoutimplementdate.sms", judgment);
+
+        if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
+            legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
+
+    }
+
+    public String smsBodyByCodeAndArgsWithTypeToStandingCounselForJudgmentWithImplementDate(final String code,
+            final Judgment judgment) {
+        final String smsMsg = messageSource
+                .getMessage(code,
+                        new String[] {
+                                judgment.getLegalCase().getLegalCaseAdvocates().get(0).getAdvocateMaster().getName(),
+                                judgment.getLegalCase().getCaseNumber(), judgment.getJudgmentType().getName(),
+
+                                LcmsConstants.DATEFORMATTER_DD_MM_YYYY.format(judgment.getImplementByDate())
+                                        .toString() },
+                        null);
+        return smsMsg;
+    }
+
+    public String smsBodyByCodeAndArgsWithTypeToStandingCounselForJudgmentWithoutImplementDate(final String code,
+            final Judgment judgment) {
+        final String smsMsg = messageSource
+                .getMessage(code,
+                        new String[] {
+                                judgment.getLegalCase().getLegalCaseAdvocates().get(0).getAdvocateMaster().getName(),
+                                judgment.getLegalCase().getCaseNumber(), judgment.getJudgmentType().getName() },
+                        null);
+        return smsMsg;
+    }
+
+    // Send SMS Notification to StandingCounsel For JudgmentImpl
+    public void sendSmsToStandingCounselForJudgmentImpl(final JudgmentImpl judgmentImpl) {
+        if (judgmentImpl.getJudgment().getLegalCase().getLegalCaseAdvocates() != null
+                && !judgmentImpl.getJudgment().getLegalCase().getLegalCaseAdvocates().isEmpty()) {
+            final String mobileNumber = judgmentImpl.getJudgment().getLegalCase().getLegalCaseAdvocates().get(0)
+                    .getAdvocateMaster().getMobileNumber();
+            getSmsToStandingCounselForJudgmentImpl(judgmentImpl, mobileNumber);
+        }
+    }
+
+    public void getSmsToStandingCounselForJudgmentImpl(final JudgmentImpl judgmentImpl, final String mobileNo) {
+        String smsMsg = "";
+        if (judgmentImpl.getJudgmentImplIsComplied().toString().equals("YES"))
+            smsMsg = smsBodyByCodeAndArgsWithTypeToStandingCounselForJudgmentImplIsCompliedYes(
+                    "msg.standingcounselforjudgmentimpliscompliedyes.sms", judgmentImpl);
+        else if (judgmentImpl.getJudgmentImplIsComplied().toString().equals("NO"))
+            smsMsg = smsBodyByCodeAndArgsWithTypeToStandingCounselForJudgmentImplIsCompliedNo(
+                    "msg.standingcounseljudgmentimpliscompliedno.sms", judgmentImpl);
+
+        if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
+            legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
+
+    }
+
+    public String smsBodyByCodeAndArgsWithTypeToStandingCounselForJudgmentImplIsCompliedYes(final String code,
+            final JudgmentImpl judgmentImpl) {
+        final String smsMsg = messageSource.getMessage(code,
+                new String[] {
+                        judgmentImpl.getJudgment().getLegalCase().getLegalCaseAdvocates().get(0).getAdvocateMaster()
+                                .getName(),
+                        judgmentImpl.getJudgment().getLegalCase().getCaseNumber(),
+                        judgmentImpl.getJudgmentImplIsComplied().toString(),
+                        LcmsConstants.DATEFORMATTER_DD_MM_YYYY.format(judgmentImpl.getDateOfCompliance()).toString() },
+                null);
+        return smsMsg;
+    }
+
+    public String smsBodyByCodeAndArgsWithTypeToStandingCounselForJudgmentImplIsCompliedNo(final String code,
+            final JudgmentImpl judgmentImpl) {
+        final String smsMsg = messageSource.getMessage(code,
+                new String[] {
+                        judgmentImpl.getJudgment().getLegalCase().getLegalCaseAdvocates().get(0).getAdvocateMaster()
+                                .getName(),
+                        judgmentImpl.getJudgment().getLegalCase().getCaseNumber(),
+                        judgmentImpl.getJudgmentImplIsComplied().toString(),
+                        judgmentImpl.getImplementationFailure().toString() },
+                null);
+        return smsMsg;
+    }
+
+    // Send SMS Notification to StandingCounsel For CloseCase
+    public void sendSmsToStandingCounselForCloseCase(final LegalCaseDisposal legalCaseDisposal) {
+        if (legalCaseDisposal.getLegalCase().getLegalCaseAdvocates() != null
+                && !legalCaseDisposal.getLegalCase().getLegalCaseAdvocates().isEmpty()) {
+            final String mobileNumber = legalCaseDisposal.getLegalCase().getLegalCaseAdvocates().get(0)
+                    .getAdvocateMaster().getMobileNumber();
+            getSmsToStandingCounselForCloseCase(legalCaseDisposal, mobileNumber);
+        }
+
+    }
+
+    public void getSmsToStandingCounselForCloseCase(final LegalCaseDisposal legalCaseDisposal, final String mobileNo) {
+        final String smsMsg = smsBodyByCodeAndArgsWithTypeToStandingCounselForCloseCase(
+                "msg.standingcounselforclosecase.sms", legalCaseDisposal);
+
+        if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
+            legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
+
+    }
+
+    public String smsBodyByCodeAndArgsWithTypeToStandingCounselForCloseCase(final String code,
+            final LegalCaseDisposal legalCaseDisposal) {
+        final String smsMsg = messageSource.getMessage(code,
+                new String[] {
+                        legalCaseDisposal.getLegalCase().getLegalCaseAdvocates().get(0).getAdvocateMaster().getName(),
+                        legalCaseDisposal.getLegalCase().getCaseNumber(),
+                        LcmsConstants.DATEFORMATTER_DD_MM_YYYY.format(legalCaseDisposal.getDisposalDate()).toString() },
+                null);
+        return smsMsg;
+    }
+
+    // Send SMS Notification to StandingCounsel For CA
+    public void sendSmsToStandingCounselForCounterAffidavit(final List<CounterAffidavit> counterAffidavit) {
+        if (counterAffidavit.get(0).getLegalCase().getLegalCaseAdvocates() != null
+                && !counterAffidavit.get(0).getLegalCase().getLegalCaseAdvocates().isEmpty()) {
+            final String mobileNumber = counterAffidavit.get(0).getLegalCase().getLegalCaseAdvocates().get(0)
+                    .getAdvocateMaster().getMobileNumber();
+            getSmsToStandingCounselForCA(counterAffidavit, mobileNumber);
+        }
+
+    }
+
+    public void getSmsToStandingCounselForCA(final List<CounterAffidavit> counterAffidavit, final String mobileNo) {
+
+        final String smsMsg = smsBodyByCodeAndArgsWithTypeToStandingCounselForCA("msg.standingcounseltoca.sms",
+                counterAffidavit);
+
+        if (StringUtils.isNotBlank(mobileNo) && StringUtils.isNotBlank(smsMsg))
+            legalCaseUtil.sendSMSOnLegalCase(mobileNo, smsMsg);
+
+    }
+
+    public String smsBodyByCodeAndArgsWithTypeToStandingCounselForCA(final String code,
+            final List<CounterAffidavit> counterAffidavit) {
+        final String smsMsg = messageSource
+                .getMessage(code,
+                        new String[] {
+                                counterAffidavit.get(0).getLegalCase().getLegalCaseAdvocates().get(0)
+                                        .getAdvocateMaster().getName(),
+                                counterAffidavit.get(0).getLegalCase().getCaseNumber() },
+                        null);
         return smsMsg;
     }
 

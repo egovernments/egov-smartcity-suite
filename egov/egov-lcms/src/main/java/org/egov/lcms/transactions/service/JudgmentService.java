@@ -93,6 +93,7 @@ public class JudgmentService {
         judgment.getLegalCase().setReportStatus(reportStatus);
         final Judgment savedjudgment = judgmentRepository.save(judgment);
         legalCaseSmsService.sendSmsToOfficerInchargeForJudgment(judgment);
+        legalCaseSmsService.sendSmsToStandingCounselForJudgment(judgment);
         final List<JudgmentDocuments> documentDetails = getDocumentDetails(savedjudgment, files);
         if (!documentDetails.isEmpty()) {
             savedjudgment.setJudgmentDocuments(documentDetails);

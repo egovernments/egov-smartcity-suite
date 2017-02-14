@@ -82,7 +82,7 @@ public class LegalCaseService {
 
     @Autowired
     private FileStoreService fileStoreService;
-    
+
     @Autowired
     private LegalCaseSmsService legalCaseSmsService;
 
@@ -135,6 +135,7 @@ public class LegalCaseService {
         final LegalCase savedCaAndPwr = legalCaseRepository.save(legalcase);
         legalCaseSmsService.sendSmsToOfficerInchargeForCounterAffidavit(legalcase.getCounterAffidavits());
         legalCaseSmsService.sendSmsToOfficerInchargeForPWR(legalcase.getPwrList());
+        legalCaseSmsService.sendSmsToStandingCounselForCounterAffidavit(legalcase.getCounterAffidavits());
         final List<PwrDocuments> documentDetails = getPwrDocumentDetails(savedCaAndPwr, files);
         if (!documentDetails.isEmpty()) {
             savedCaAndPwr.getPwrList().get(0).setPwrDocuments(documentDetails);
@@ -147,7 +148,8 @@ public class LegalCaseService {
     @Transactional
     public void updateCounterAffidavitAndPwr(final LegalCase legalcase, final List<Pwr> pwrList) {
         /*
-         * final List<LegalCaseDepartment> legalcaseDetails = new ArrayList<LegalCaseDepartment>(0);
+         * final List<LegalCaseDepartment> legalcaseDetails = new
+         * ArrayList<LegalCaseDepartment>(0);
          */
         final List<Pwr> pwrListtemp = new ArrayList<Pwr>(0);
         final List<CounterAffidavit> caListtemp = new ArrayList<CounterAffidavit>(0);
@@ -164,13 +166,19 @@ public class LegalCaseService {
         legalcase.getCounterAffidavits().clear();
         legalcase.setCounterAffidavits(caListtemp);
         /*
-         * for (final LegalCaseDepartment legaldeptObj : legalDept) { String[] stremp = null;
-         * legaldeptObj.setLegalCase(legalcase); if (legaldeptObj.getPosition().getName() != null &&
-         * legaldeptObj.getPosition().getName().contains("@")) { stremp = legaldeptObj.getPosition().getName().split("@");
-         * legaldeptObj.setPosition(legalCaseUtil.getPositionByName(stremp[0])); } else {
-         * legaldeptObj.setPosition(legalCaseUtil.getPositionByName(legaldeptObj .getPosition().getName())); }
-         * legaldeptObj.setDepartment(legalCaseUtil.getDepartmentByName( legaldeptObj.getDepartment().getName()));
-         * legalcaseDetails.add(legaldeptObj); } legalcase.getLegalCaseDepartment().clear();
+         * for (final LegalCaseDepartment legaldeptObj : legalDept) { String[]
+         * stremp = null; legaldeptObj.setLegalCase(legalcase); if
+         * (legaldeptObj.getPosition().getName() != null &&
+         * legaldeptObj.getPosition().getName().contains("@")) { stremp =
+         * legaldeptObj.getPosition().getName().split("@");
+         * legaldeptObj.setPosition(legalCaseUtil.getPositionByName(stremp[0]));
+         * } else {
+         * legaldeptObj.setPosition(legalCaseUtil.getPositionByName(legaldeptObj
+         * .getPosition().getName())); }
+         * legaldeptObj.setDepartment(legalCaseUtil.getDepartmentByName(
+         * legaldeptObj.getDepartment().getName()));
+         * legalcaseDetails.add(legaldeptObj); }
+         * legalcase.getLegalCaseDepartment().clear();
          * legalcase.setLegalCaseDepartment(legalcaseDetails);
          */
 
@@ -258,6 +266,7 @@ public class LegalCaseService {
             legalCaseAdvocatetemp.setOrderDateJunior(legalCaseAdvocate.getOrderDateJunior());
             legalCaseAdvocatetemp.setOrderNumberJunior(legalCaseAdvocate.getOrderNumberJunior());
             legalCaseAdvocate.getLegalCase().getLegalCaseAdvocates().add(legalCaseAdvocatetemp);
+            legalCaseSmsService.sendSmsToStandingCounsel(legalCaseAdvocatetemp);
 
         } else {
             legalCaseAdvocate.setAdvocateMaster(advocateName);
@@ -265,7 +274,9 @@ public class LegalCaseService {
             legalCaseAdvocate.setSeniorAdvocate(seniorLegalMaster);
             legalCaseAdvocate.setIsActive(Boolean.TRUE);
             legalCaseAdvocate.getLegalCase().getLegalCaseAdvocates().add(legalCaseAdvocate);
+            legalCaseSmsService.sendSmsToStandingCounsel(legalCaseAdvocate);
         }
+
         return legalCaseRepository.save(legalCaseAdvocate.getLegalCase());
 
     }

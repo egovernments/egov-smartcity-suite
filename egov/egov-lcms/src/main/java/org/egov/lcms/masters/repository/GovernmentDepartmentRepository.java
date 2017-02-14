@@ -49,7 +49,9 @@ import org.springframework.stereotype.Repository;
 public interface GovernmentDepartmentRepository extends JpaRepository<GovernmentDepartment, java.lang.Long> {
 
     GovernmentDepartment findByCode(String code);
+
     GovernmentDepartment findByName(String name);
+
     List<GovernmentDepartment> findByActiveTrueOrderByNameAsc();
 
 }
