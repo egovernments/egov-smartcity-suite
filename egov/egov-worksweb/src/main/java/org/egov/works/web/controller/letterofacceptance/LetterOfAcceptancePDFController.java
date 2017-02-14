@@ -51,6 +51,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -94,17 +95,16 @@ public class LetterOfAcceptancePDFController {
     protected FileStoreService fileStoreService;
 
     @RequestMapping(value = "/letterOfAcceptancePDF/{letterOfAcceptanceId}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> generateLineEstimatePDF(final HttpServletRequest request,
+    public @ResponseBody ResponseEntity<byte[]> generateLOAPDF(final HttpServletRequest request,
             @PathVariable("letterOfAcceptanceId") final Long id, final HttpSession session) throws IOException {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(id);
-        return generateReport(workOrder, request, session);
+        return generateReport(workOrder, request);
     }
 
-    private ResponseEntity<byte[]> generateReport(final WorkOrder workOrder, final HttpServletRequest request,
-            final HttpSession session) {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+    private ResponseEntity<byte[]> generateReport(final WorkOrder workOrder, final HttpServletRequest request) {
+        final Map<String, Object> reportParams = new HashMap<>();
         ReportRequest reportInput = null;
-        ReportOutput reportOutput = null;
+        ReportOutput reportOutput;
 
         if (workOrder != null) {
             final AbstractEstimate estimate = workOrder.getWorkOrderEstimates().get(0).getEstimate();
@@ -136,11 +136,8 @@ public class LetterOfAcceptancePDFController {
             reportParams.put("accountNo", workOrder.getContractor().getBankaccount() != null
                     ? workOrder.getContractor().getBankaccount() : "");
             reportParams.put("subject", estimate.getName());
-            if (estimate.getLineEstimateDetails() != null)
-                reportParams.put("modeOfAllotment",
-                        estimate.getLineEstimateDetails().getLineEstimate().getModeOfAllotment().toString());
-            else
-                reportParams.put("modeOfAllotment", "");
+            reportParams.put("modeOfAllotment", StringUtils.isNotBlank(estimate.getModeOfAllotment())
+                    ? estimate.getModeOfAllotment() : StringUtils.EMPTY);
             reportParams.put("agreementAmount", df.format(workOrder.getWorkOrderAmount()));
             reportParams.put("emd", df.format(workOrder.getEmdAmountDeposited()));
             reportParams.put("asd", df.format(workOrder.getSecurityDeposit()));
@@ -153,15 +150,13 @@ public class LetterOfAcceptancePDFController {
             reportParams.put("tenderFinalizedPercentage", workOrder.getTenderFinalizedPercentage());
             reportParams.put("currDate", sdf.format(new Date()));
             reportParams.put("workValue", estimate.getWorkValue());
-            String technicalSanctionByDesignation = org.apache.commons.lang.StringUtils.EMPTY;
+            String technicalSanctionByDesignation = StringUtils.EMPTY;
             if (!estimate.getEstimateTechnicalSanctions().isEmpty() && estimate.getEstimateTechnicalSanctions()
                     .get(estimate.getEstimateTechnicalSanctions().size() - 1).getTechnicalSanctionBy() != null)
-                technicalSanctionByDesignation = worksUtils
-                        .getUserDesignation(estimate.getEstimateTechnicalSanctions()
-                                .get(estimate.getEstimateTechnicalSanctions().size() - 1).getTechnicalSanctionBy());
+                technicalSanctionByDesignation = worksUtils.getUserDesignation(estimate.getEstimateTechnicalSanctions()
+                        .get(estimate.getEstimateTechnicalSanctions().size() - 1).getTechnicalSanctionBy());
             else
-                technicalSanctionByDesignation = worksUtils
-                        .getUserDesignation(estimate.getCreatedBy());
+                technicalSanctionByDesignation = worksUtils.getUserDesignation(estimate.getCreatedBy());
             reportParams.put("technicalSanctionByDesignation", technicalSanctionByDesignation);
             reportInput = new ReportRequest(LETTEROFACCEPTANCEPDF, workOrder.getContractor(), reportParams);
 

@@ -59,29 +59,15 @@
 			    <spring:message code="lbl.election.ward" /><c:if test="${abstractEstimate.lineEstimateDetails == null }"><span class="mandatory"></span></c:if>
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<form:hidden path="ward" class="form-control" name="ward" value="${abstractEstimate.lineEstimateDetails.lineEstimate.ward.id}"/>
-			<c:choose>
-				<c:when test="${abstractEstimate.lineEstimateDetails != null }">
-					<c:choose>
-						<c:when test="${abstractEstimate.lineEstimateDetails.lineEstimate.ward.boundaryType.name.toUpperCase() == 'CITY'}">
-							<form:input id="wardInput" path=""  value="${abstractEstimate.lineEstimateDetails.lineEstimate.ward.name}" class="form-control disablefield" type="text" required="required"/>
-						</c:when>
-						<c:otherwise>
-							<form:input id="wardInput" path="" value="${abstractEstimate.lineEstimateDetails.lineEstimate.ward.boundaryNum}" class="form-control disablefield" type="text" required="required"/>
-						</c:otherwise>
-					</c:choose>
-				</c:when>
-				<c:otherwise>
-					<c:choose>
-						<c:when test="${abstractEstimate.ward.boundaryType.name.toUpperCase() == 'CITY'}">
-							<form:input id="wardInput" path=""  value="${abstractEstimate.ward.name}" class="form-control disablefield" type="text" required="required"/>
-						</c:when>
-						<c:otherwise>
-							<form:input id="wardInput" path="" value="${abstractEstimate.ward.boundaryNum}" class="form-control disablefield" type="text" required="required"/>
-						</c:otherwise>
-					</c:choose>
-				</c:otherwise>
-			</c:choose>
+			<form:hidden path="ward" class="form-control" name="ward" value="${abstractEstimate.ward.id}"/>
+				<c:choose>
+					<c:when test="${abstractEstimate.ward.boundaryType.name.toUpperCase() == 'CITY'}">
+						<form:input id="wardInput" path=""  value="${abstractEstimate.ward.name}" class="form-control disablefield" type="text" required="required"/>
+					</c:when>
+					<c:otherwise>
+						<form:input id="wardInput" path="" value="${abstractEstimate.ward.boundaryNum}" class="form-control disablefield" type="text" required="required"/>
+					</c:otherwise>
+				</c:choose>
 			</div>
 		</div>
 		

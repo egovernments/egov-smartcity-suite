@@ -510,7 +510,7 @@ public class EstimateService {
         abstractEstimateFromDB.setParentCategory(newAbstractEstimate.getParentCategory());
         abstractEstimateFromDB.setCategory(newAbstractEstimate.getCategory());
         abstractEstimateFromDB.setExecutingDepartment(newAbstractEstimate.getExecutingDepartment());
-        abstractEstimateFromDB.setProjectCode(newAbstractEstimate.getLineEstimateDetails().getProjectCode());
+        abstractEstimateFromDB.setProjectCode(newAbstractEstimate.getProjectCode());
         abstractEstimateFromDB.setLineEstimateDetails(newAbstractEstimate.getLineEstimateDetails());
         abstractEstimateFromDB.setEgwStatus(newAbstractEstimate.getEgwStatus());
         abstractEstimateFromDB.setApprovedBy(newAbstractEstimate.getApprovedBy());
@@ -1112,7 +1112,7 @@ public class EstimateService {
         for (final AbstractEstimate ae : abstractEstimates) {
             final AbstractEstimateForLoaSearchResult result = new AbstractEstimateForLoaSearchResult();
             if (ae.getLineEstimateDetails() != null) {
-                result.setAdminSanctionNumber(ae.getLineEstimateDetails().getLineEstimate().getAdminSanctionNumber());
+                result.setAdminSanctionNumber(ae.getAdminSanctionNumber());
                 result.setLeId(ae.getLineEstimateDetails().getLineEstimate().getId());
             }
             result.setAeId(ae.getId());

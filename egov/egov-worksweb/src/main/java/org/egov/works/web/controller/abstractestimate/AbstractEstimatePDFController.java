@@ -53,6 +53,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -152,6 +153,8 @@ public class AbstractEstimatePDFController {
                 reportParams.put("measurementExists", Boolean.FALSE);
                 reportParams.put("activities", activities);
             }
+            reportParams.put("adminSanctionNumber", StringUtils.isNotBlank(abstractEstimate.getAdminSanctionNumber())
+                    ? abstractEstimate.getAdminSanctionNumber() : StringUtils.EMPTY);
         }
 
         reportParams.put("currDate", sdf.format(new Date()));
