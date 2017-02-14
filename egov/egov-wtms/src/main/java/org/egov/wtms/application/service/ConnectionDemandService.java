@@ -771,7 +771,7 @@ public class ConnectionDemandService {
             installment = getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
             InstallemntStartDate = new Date();
         } 
-        if(reconnInSameInstallment==null)
+        if(installment !=null && reconnInSameInstallment==null)
         	 InstallemntStartDate = installment.getFromDate();	
        else if (reconnInSameInstallment!=null && reconnInSameInstallment)
             InstallemntStartDate = installment.getFromDate();
