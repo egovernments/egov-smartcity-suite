@@ -198,10 +198,13 @@ public class PositionMasterService {
         return positionList;
     }
 
-    public Position getCurrentPositionForUser(final Long userId) {
-        final Assignment assign = assignmentService.getPrimaryAssignmentForEmployee(userId);
-        return assign.getPosition();
-    }
+	public Position getCurrentPositionForUser(final Long userId) {
+		final Assignment assign = assignmentService.getPrimaryAssignmentForEmployee(userId);
+		if (assign != null)
+			return assign.getPosition();
+		else
+			return null;
+	}
 
     /**
      * Returns the superior employee position
