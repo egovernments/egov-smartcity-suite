@@ -55,8 +55,10 @@ import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.pims.commons.Position;
@@ -117,6 +119,9 @@ public class UpdateContractorBillController extends BaseContractorBillController
     @Autowired
     private ChartOfAccountsService chartOfAccountsService;
 
+    @Autowired
+    private CityService cityService;
+
     @ModelAttribute
     public ContractorBillRegister getContractorBillRegister(@PathVariable final String contractorBillRegisterId) {
         final ContractorBillRegister contractorBillRegister = contractorBillRegisterService
@@ -147,13 +152,18 @@ public class UpdateContractorBillController extends BaseContractorBillController
             final HttpServletRequest request, @RequestParam("file") final MultipartFile[] files)
             throws ApplicationException, IOException {
 
-        String mode = "";
-        String workFlowAction = "";
+        String mode = StringUtils.EMPTY;
+        ;
+        String workFlowAction = StringUtils.EMPTY;
+        ;
         ContractorBillRegister updatedContractorBillRegister = null;
         Boolean isEditable = false;
+        String additionalRule = StringUtils.EMPTY;
+        if (request.getParameter(WorksConstants.ADDITIONAL_RULE) != null)
+            additionalRule = request.getParameter(WorksConstants.ADDITIONAL_RULE);
 
-        if (request.getParameter("mode") != null)
-            mode = request.getParameter("mode");
+        if (request.getParameter(WorksConstants.MODE) != null)
+            mode = request.getParameter(WorksConstants.MODE);
 
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
@@ -236,7 +246,7 @@ public class UpdateContractorBillController extends BaseContractorBillController
         } else {
             if (null != workFlowAction)
                 updatedContractorBillRegister = contractorBillRegisterService.updateContractorBillRegister(
-                        contractorBillRegister, approvalPosition, approvalComment, null, workFlowAction, mode, files);
+                        contractorBillRegister, approvalPosition, approvalComment, additionalRule, workFlowAction, mode, files);
 
             redirectAttributes.addFlashAttribute("contractorBillRegister", updatedContractorBillRegister);
 
@@ -391,14 +401,16 @@ public class UpdateContractorBillController extends BaseContractorBillController
                             .equalsIgnoreCase(position.getDeptDesig().getDesignation().getCode())))
                 isEditable = true;
         }
-
+        workflowContainer.setAdditionalRule((String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+        model.addAttribute(WorksConstants.ADDITIONAL_RULE,
+                cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
         workflowContainer.setAmountRule(contractorBillRegister.getBillamount());
         prepareWorkflow(model, contractorBillRegister, workflowContainer);
         if (contractorBillRegister.getState() != null
                 && contractorBillRegister.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED) || isEditable)
-            model.addAttribute("mode", "edit");
+            model.addAttribute(WorksConstants.MODE, WorksConstants.EDIT);
         else
-            model.addAttribute("mode", "view");
+            model.addAttribute(WorksConstants.MODE, WorksConstants.VIEW);
 
         model.addAttribute("isBillEditable", isEditable);
 

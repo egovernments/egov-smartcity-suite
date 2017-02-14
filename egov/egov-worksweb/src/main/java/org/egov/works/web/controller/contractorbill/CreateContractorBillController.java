@@ -48,6 +48,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.service.ChartOfAccountsService;
@@ -56,7 +57,9 @@ import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBilldetails;
@@ -134,6 +137,9 @@ public class CreateContractorBillController extends BaseContractorBillController
     @Autowired
     private ChartOfAccountsService chartOfAccountsService;
 
+    @Autowired
+    private CityService cityService;
+
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(
             @ModelAttribute("contractorBillRegister") final ContractorBillRegister contractorBillRegister,
@@ -147,9 +153,18 @@ public class CreateContractorBillController extends BaseContractorBillController
         model.addAttribute("documentDetails", contractorBillRegister.getDocumentDetails());
         model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
         model.addAttribute("woeId", woeId);
-        prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
+        final WorkflowContainer workflowContainer = new WorkflowContainer();
+        workflowContainer.setAmountRule(
+                contractorBillRegister.getBillamount() != null ? contractorBillRegister.getBillamount() : BigDecimal.ZERO);
+        model.addAttribute("amountRule",
+                contractorBillRegister.getBillamount() != null ? contractorBillRegister.getBillamount() : BigDecimal.ZERO);
+        workflowContainer.setAdditionalRule((String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+        workflowContainer.setPendingActions(StringUtils.EMPTY);
+        model.addAttribute(WorksConstants.ADDITIONAL_RULE,
+                cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+        prepareWorkflow(model, contractorBillRegister, workflowContainer);
         contractorBillRegister.setBilldate(new Date());
-        model.addAttribute("mode", "new");
+        model.addAttribute(WorksConstants.MODE, "new");
         model.addAttribute("mbHeaders", mBHeaderService.getMBHeaderBasedOnBillDate(workOrderEstimate.getId(),
                 contractorBillRegister.getBilldate()));
         // TODO: remove this condition to check if spillover
@@ -222,7 +237,9 @@ public class CreateContractorBillController extends BaseContractorBillController
     public String create(@ModelAttribute("contractorBillRegister") ContractorBillRegister contractorBillRegister,
             final Model model, final BindingResult resultBinder, final HttpServletRequest request,
             @RequestParam String workFlowAction, @RequestParam("file") final MultipartFile[] files) throws IOException {
-
+        String additionalRule = StringUtils.EMPTY;
+        if (request.getParameter(WorksConstants.ADDITIONAL_RULE) != null)
+            additionalRule = request.getParameter(WorksConstants.ADDITIONAL_RULE);
         final String woeId = request.getParameter("woeId");
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
                 .getWorkOrderEstimateById(Long.valueOf(woeId));
@@ -264,8 +281,15 @@ public class CreateContractorBillController extends BaseContractorBillController
             model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
             model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
-            prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
-            model.addAttribute("mode", "new");
+            final WorkflowContainer workflowContainer = new WorkflowContainer();
+            workflowContainer.setAmountRule(
+                    contractorBillRegister.getBillamount() != null ? contractorBillRegister.getBillamount() : BigDecimal.ZERO);
+            workflowContainer
+                    .setAdditionalRule((String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+            model.addAttribute(WorksConstants.ADDITIONAL_RULE,
+                    cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY));
+            prepareWorkflow(model, contractorBillRegister, workflowContainer);
+            model.addAttribute(WorksConstants.MODE, "new");
             final OfflineStatus offlineStatus = offlineStatusService.getOfflineStatusByObjectIdAndObjectTypeAndStatus(
                     workOrderEstimate.getWorkOrder().getId(), WorksConstants.WORKORDER,
                     OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
@@ -276,7 +300,7 @@ public class CreateContractorBillController extends BaseContractorBillController
             model.addAttribute("mbHeaders", mBHeaderService.getMBHeaderBasedOnBillDate(workOrderEstimate.getId(),
                     contractorBillRegister.getBilldate()));
 
-            model.addAttribute("mode", "edit");
+            model.addAttribute(WorksConstants.MODE, WorksConstants.EDIT);
 
             model.addAttribute("billDetailsMap",
                     contractorBillRegisterService.getBillDetailsMap(contractorBillRegister, model));
@@ -307,7 +331,7 @@ public class CreateContractorBillController extends BaseContractorBillController
             ContractorBillRegister savedContractorBillRegister = null;
             try {
                 savedContractorBillRegister = contractorBillRegisterService.create(contractorBillRegister, files,
-                        approvalPosition, approvalComment, null, workFlowAction);
+                        approvalPosition, approvalComment, additionalRule, workFlowAction);
 
             } catch (final ValidationException e) {
                 // TODO: Used ApplicationRuntimeException for time being since

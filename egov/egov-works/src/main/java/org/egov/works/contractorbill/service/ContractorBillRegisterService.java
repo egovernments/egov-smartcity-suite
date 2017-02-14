@@ -410,12 +410,13 @@ public class ContractorBillRegisterService {
                     .withOwner(wfInitiator.getPosition()).withNextAction("").withNatureOfTask(natureOfwork);
         } else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0))
-                    && !WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction))
+                    && !WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)
+                    && !WorksConstants.APPROVE_ACTION.toString().equalsIgnoreCase(workFlowAction))
                 pos = positionMasterService.getPositionById(approvalPosition);
             WorkFlowMatrix wfmatrix = null;
             if (null == contractorBillRegister.getState()) {
                 wfmatrix = contractorBillRegisterWorkflowService.getWfMatrix(contractorBillRegister.getStateType(),
-                        null, null, additionalRule, currState, null);
+                        additionalRule, contractorBillRegister.getBillamount(), additionalRule, currState, null);
                 contractorBillRegister.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
                         .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);

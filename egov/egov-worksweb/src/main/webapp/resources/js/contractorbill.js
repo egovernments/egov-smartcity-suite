@@ -71,10 +71,7 @@ $(document).ready(function(){
 	
 	var currentState = $('#currentState').val();
 	if(currentState == 'Created') {
-		
-		$('#approvalDepartment').removeAttr('required');
-		$('#approvalDesignation').removeAttr('required');
-		$('#approvalPosition').removeAttr('required');
+		removeApprovalMandatoryAttribute();
 	}
 		
 	function replaceBillTypeChar() { 
@@ -205,9 +202,7 @@ $(document).ready(function(){
 		if(button != 'createandapprove') {
 		  return validateWorkFlowApprover(button);
 		} else {
-			$('#approvalDepartment').removeAttr('required');
-			$('#approvalDesignation').removeAttr('required');
-			$('#approvalPosition').removeAttr('required');
+			removeApprovalMandatoryAttribute();
 			$('#approvalComent').removeAttr('required');
 		}
 	});
@@ -228,22 +223,16 @@ $(document).ready(function(){
 		var approverPosId = document.getElementById("approvalPosition");
 		var button = document.getElementById("workFlowAction").value;
 		if (button != null && button == 'Submit') {
-			$('#approvalDepartment').attr('required', 'required');
-			$('#approvalDesignation').attr('required', 'required');
-			$('#approvalPosition').attr('required', 'required');
+			addApprovalMandatoryAttribute();
 			if($('#isBillEditable').val() != 'true')
 				$('#approvalComent').removeAttr('required');
 		}
 		if (button != null && button == 'Reject') {
-			$('#approvalDepartment').removeAttr('required');
-			$('#approvalDesignation').removeAttr('required');
-			$('#approvalPosition').removeAttr('required');
+			removeApprovalMandatoryAttribute();
 			$('#approvalComent').attr('required', 'required');
 		}
 		if (button != null && button == 'Cancel') {
-			$('#approvalDepartment').removeAttr('required');
-			$('#approvalDesignation').removeAttr('required');
-			$('#approvalPosition').removeAttr('required');
+			removeApprovalMandatoryAttribute();
 			$('#approvalComent').attr('required', 'required');
 			$('.creditGlcode').removeAttr('required');
 			$('.creditAmount').removeAttr('required');
@@ -264,9 +253,7 @@ $(document).ready(function(){
 			return false;
 		}
 		if (button != null && button == 'Forward') {
-			$('#approvalDepartment').attr('required', 'required');
-			$('#approvalDesignation').attr('required', 'required');
-			$('#approvalPosition').attr('required', 'required');
+			addApprovalMandatoryAttribute();
 			$('#approvalComent').removeAttr('required');
 			if(!$("form").valid())
 			{
@@ -274,6 +261,7 @@ $(document).ready(function(){
 			}
 		}
 		if (button != null && button == 'Approve') {
+			removeApprovalMandatoryAttribute();
 			$('#approvalComent').removeAttr('required');
 		}
 		if(validateDeductionGrids()) {
@@ -420,6 +408,10 @@ function calculateNetPayableAmount(){
 	});
 	$('#netPayableAmount').val(roundTo(debitAmount-totalDeductionAmount));
 	validateNetPayableAmount();
+	if(!isNaN($("#netPayableAmount").val()))
+		$('#amountRule').val($("#netPayableAmount").val());
+	$('#approvalDepartment').trigger('change');
+
 }	
 
 function validateMBPageNumbers() { 
