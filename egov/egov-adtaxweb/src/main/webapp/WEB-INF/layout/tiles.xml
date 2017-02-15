@@ -329,4 +329,11 @@
     	<put-attribute name="page-title" value="title.adtax.viewdemandstatus" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/demand/adtax-demand-status-view.jsp"/>
     </definition>
+    
+    <definition name="hoarding-ack" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.hoarding.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-ack.jsp"/>
+    </definition>
+    
+  
 </tiles-definitions>

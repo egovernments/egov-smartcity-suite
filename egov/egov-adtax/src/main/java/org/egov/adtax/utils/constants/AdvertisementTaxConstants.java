@@ -113,5 +113,13 @@ public class AdvertisementTaxConstants {
     public static final String PENDINGAMOUNT = "Pending Amount";
     public static final String TOTALCOLLECTION = " Total Collection";
     public static final String PERMIT_STATUS_PAYMENTPENDING="ADTAXAMTPAYMENTPENDING";
+    
+    //CSC operator related constants
+    public static final String ADTAX_ROLEFORNONEMPLOYEE = "ADTAXROLEFORNONEMPLOYEE";
+    public static final String CSC_OPERATOR_ROLE = "CSC Operator";
+    public static final String ADTAX_WORKFLOWDESIGNATION_FOR_CSCOPERATOR = "ADTAXDESIGNATIONFORCSCOPERATORWORKFLOW";
+    public static final String ADTAX_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR = "ADTAXDEPARTMENTFORCSCOPERATORWORKFLOW";
+    public static final String ADTAX_WORKFLOWDESIGNATION = "ADTAXDESIGNATIONFORWORKFLOW";
+    public static final String ADTAX_WORKFLOWDEPARTEMENT = "ADTAXDEPARTMENTFORWORKFLOW";
 
 }
