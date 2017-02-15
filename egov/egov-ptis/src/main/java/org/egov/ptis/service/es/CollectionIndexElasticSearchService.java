@@ -40,6 +40,7 @@
 
 package org.egov.ptis.service.es;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_PT;
 import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_VLT;
 import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_WTMS;
@@ -62,6 +63,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_EWSHS;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -136,14 +138,12 @@ public class CollectionIndexElasticSearchService {
     private static final String IS_UNDER_COURTCASE = "isUnderCourtcase";
     private static final String CONSUMER_TYPE = "consumerType";
     private static final String LATE_PAYMENT_CHARGES = "latePaymentCharges";
-    private static final String INTEREST = "interest";
     private static final String CURR_CESS = "curr_cess";
     private static final String ARREAR_CESS_CONST = "arrear_cess";
     private static final String CURR_AMOUNT = "curr_amount";
     private static final String ARREAR_AMOUNT_CONST = "arrear_amount";
     private static final String CURRENT_DMD = "currentDmd";
     private static final String ARREAR_DMD = "arrearDmd";
-    private static final String INTEREST_AMOUNT = "interestAmount";
     private static final String CURRENT_CESS = "currentCess";
     private static final String ARREAR_CESS = "arrearCess";
     private static final String CURRENT_AMOUNT = "currentAmount";
@@ -1105,6 +1105,94 @@ public class CollectionIndexElasticSearchService {
                 collTrendsList.add(collTrend);
             }
         }
+    }
+
+    /**
+     * Provides week wise DCB details across all ULBs
+     * @param collectionDetailsRequest
+     * @param intervalType
+     * @return list
+     */
+    public List<UlbWiseDemandCollection> getWeekwiseDCBDetailsAcrossCities(final CollectionDetailsRequest collectionDetailsRequest,
+            final String intervalType) {
+        UlbWiseDemandCollection udc;
+        DemandCollectionMIS wdc;
+        List<DemandCollectionMIS> weeklyDCBList;
+        final List<UlbWiseDemandCollection> ulbWiseDetails = new ArrayList<>();
+        Date fromDate;
+        Date toDate;
+        String weekName;
+        Sum aggregateSum;
+        Map<String, Object[]> weekwiseColl = new LinkedHashMap<>();
+        final Map<String, Map<String, Object[]>> yearwiseWeeklyCollMap = new HashMap<>();
+        final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
+                && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
+            fromDate = DateUtils.getDate(collectionDetailsRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
+            toDate = DateUtils.addDays(
+                    DateUtils.getDate(collectionDetailsRequest.getToDate(), DATE_FORMAT_YYYYMMDD),
+                    1);
+        } else {
+            fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
+            toDate = DateUtils.addDays(new Date(), 1);
+        }
+
+        final Map<String, BigDecimal> totalDemandMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
+                toDate, PROPERTY_TAX_INDEX_NAME, TOTAL_DEMAND, "cityName");
+        final Aggregations collAggr = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate,
+                toDate, true, intervalType);
+        final StringTerms cityaggr = collAggr.get(BY_CITY);
+        BigDecimal totalDemand = BigDecimal.ZERO;
+        BigDecimal weeklyDemand = BigDecimal.ZERO;
+        int noOfWeeks = 1;
+        Object[] demandCollValues;
+        for (final Terms.Bucket cityDetailsentry : cityaggr.getBuckets()) {
+            weekwiseColl = new LinkedHashMap<>();
+            final String ulbName = cityDetailsentry.getKeyAsString();
+            noOfWeeks = 0;
+            totalDemand = totalDemandMap.get(ulbName);
+
+            if (totalDemand == null)
+                totalDemand = BigDecimal.ZERO;
+            final Histogram dateaggs = cityDetailsentry.getAggregations().get(DATE_AGG);
+            for (final Histogram.Bucket entry : dateaggs.getBuckets()) {
+                if (noOfWeeks == 0)
+                    noOfWeeks = 1;
+                demandCollValues = new Object[53];
+                entry.getKeyAsString().split("T");
+                weeklyDemand = totalDemand.divide(BigDecimal.valueOf(52), BigDecimal.ROUND_HALF_UP)
+                        .multiply(BigDecimal.valueOf(noOfWeeks));
+                weekName = "Week " + noOfWeeks;
+                aggregateSum = entry.getAggregations().get("current_total");
+                if (BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
+                        .compareTo(BigDecimal.ZERO) > 0) {
+                    demandCollValues[0] = BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
+                    demandCollValues[1] = weeklyDemand;
+                    weekwiseColl.put(weekName, demandCollValues);
+                }
+                noOfWeeks++;
+            }
+            yearwiseWeeklyCollMap.put(ulbName, weekwiseColl);
+        }
+        for (final Map.Entry<String, Map<String, Object[]>> entry : yearwiseWeeklyCollMap.entrySet()) {
+            udc = new UlbWiseDemandCollection();
+            udc.setUlbName(entry.getKey());
+            weeklyDCBList = new ArrayList<>();
+            for (final Map.Entry<String, Object[]> weeklyMap : entry.getValue().entrySet()) {
+                wdc = new DemandCollectionMIS();
+                wdc.setName(weeklyMap.getKey());
+                wdc.setCollection(new BigDecimal(weeklyMap.getValue()[0].toString()));
+                wdc.setDemand(new BigDecimal(weeklyMap.getValue()[1].toString()));
+                if (wdc.getDemand().compareTo(BigDecimal.ZERO) > 0)
+                    wdc.setPercent(wdc.getCollection().divide(wdc.getDemand(), 2, RoundingMode.CEILING).multiply(BIGDECIMAL_100));
+
+                weeklyDCBList.add(wdc);
+            }
+            udc.setDemandCollectionMISDetails(weeklyDCBList);
+            ulbWiseDetails.add(udc);
+        }
+        return ulbWiseDetails;
+
     }
 
     private void setCollTrends(CollectionTrend collTrend,

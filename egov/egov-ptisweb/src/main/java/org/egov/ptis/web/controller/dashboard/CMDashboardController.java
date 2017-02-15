@@ -41,6 +41,7 @@
 package org.egov.ptis.web.controller.dashboard;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +54,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.ptis.bean.dashboard.CollReceiptDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
-import org.egov.ptis.bean.dashboard.DCBDetails;
+import org.egov.ptis.bean.dashboard.MISDCBDetails;
 import org.egov.ptis.bean.dashboard.PropertyTaxDefaultersRequest;
 import org.egov.ptis.bean.dashboard.StateCityInfo;
 import org.egov.ptis.bean.dashboard.TaxDefaulters;
@@ -268,24 +269,37 @@ public class CMDashboardController {
      * @throws IOException
      */
     @RequestMapping(value = "/citywisedcb", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody public Map<String, List<DCBDetails>> getDCBDetailsForMIS(@RequestParam("regionName") String regionName, @RequestParam("districtName") String districtName,
-            @RequestParam("ulbGrade") String ulbGrade, @RequestParam("ulbCode") String ulbCode, @RequestParam("fromDate") String fromDate,
-            @RequestParam("toDate") String toDate, @RequestParam("type") String type, @RequestParam("propertyType") String propertyType, 
-            @RequestParam("usageType") String usageType) throws IOException {
+    @ResponseBody
+    public MISDCBDetails getDCBDetailsForMIS(@RequestParam("regionName") String regionName,
+            @RequestParam("districtName") String districtName,
+            @RequestParam("ulbGrade") String ulbGrade, @RequestParam("ulbCode") String ulbCode,
+            @RequestParam("fromDate") String fromDate,
+            @RequestParam("toDate") String toDate, @RequestParam("type") String type,
+            @RequestParam("propertyType") String propertyType,
+            @RequestParam("usageType") String usageType, @RequestParam("intervalType") String intervalType)
+            throws IOException {
         CollectionDetailsRequest collectionDetailsRequest = new CollectionDetailsRequest();
         populateCollectionDetailsRequest(collectionDetailsRequest, regionName, districtName, ulbGrade, ulbCode, fromDate, toDate,
                 type, propertyType);
-        Map<String, List<DCBDetails>> citywiseDCBDetails = new HashMap<>();
-        if(StringUtils.isNotBlank(usageType))
+        MISDCBDetails misDCBDetails = new MISDCBDetails();
+        List<UlbWiseDemandCollection> intervalwiseDCBDetails = new ArrayList<>();
+        if (StringUtils.isNotBlank(usageType))
             collectionDetailsRequest.setUsageType(usageType);
         Long startTime = System.currentTimeMillis();
-        List<DCBDetails> dcbDetails = propTaxDashboardService.getDCBDetails(collectionDetailsRequest);
-        citywiseDCBDetails.put("citywiseDCB", dcbDetails);
+        if (StringUtils.isBlank(intervalType))
+            misDCBDetails.setDcbDetails(propTaxDashboardService.getDCBDetails(collectionDetailsRequest));
+        else {
+            if ("week".equalsIgnoreCase(intervalType))
+                intervalwiseDCBDetails = propTaxDashboardService.getWeekwiseDCBDetails(collectionDetailsRequest, intervalType);
+            
+            misDCBDetails.setUlbDcbDetails(intervalwiseDCBDetails);
+        }
+
         Long timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken to serve citywisedcb is : " + timeTaken + " (millisecs)");
-        return citywiseDCBDetails;
+        return misDCBDetails;
     }
-    
+
     /**
      * Provides collection analysis data across all ULBs for MIS Reports
      * @return response JSON

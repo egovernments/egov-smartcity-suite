@@ -319,7 +319,20 @@ public class PropTaxDashboardService {
      * @param intervalType
      * @return list
      */
-    public List<UlbWiseDemandCollection> getCollectionAnalysisData(CollectionDetailsRequest collectionDetailsRequest, String intervalType){
+    public List<UlbWiseDemandCollection> getCollectionAnalysisData(CollectionDetailsRequest collectionDetailsRequest,
+            String intervalType) {
         return collectionIndexElasticSearchService.getCollectionsForInterval(collectionDetailsRequest, intervalType);
     }
+
+    /**
+     * Provides week wise DCB details for all cities
+     * @param collectionDetailsRequest
+     * @param intervalType
+     * @return list
+     */
+    public List<UlbWiseDemandCollection> getWeekwiseDCBDetails(CollectionDetailsRequest collectionDetailsRequest,
+            String intervalType) {
+        return collectionIndexElasticSearchService.getWeekwiseDCBDetailsAcrossCities(collectionDetailsRequest, intervalType);
+    }
+
 }
