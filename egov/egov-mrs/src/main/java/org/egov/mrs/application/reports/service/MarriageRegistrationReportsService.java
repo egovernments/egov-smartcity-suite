@@ -69,6 +69,8 @@ import org.egov.mrs.domain.enums.MaritalStatus;
 import org.egov.mrs.domain.enums.MarriageCertificateType;
 import org.egov.mrs.entity.es.MarriageRegistrationIndex;
 import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
+import org.egov.mrs.masters.entity.MarriageReligion;
+import org.egov.mrs.masters.service.ReligionService;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -132,6 +134,9 @@ public class MarriageRegistrationReportsService {
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
+    
+    @Autowired
+    private ReligionService religionService;
 
     private Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -786,16 +791,29 @@ public class MarriageRegistrationReportsService {
         final SimpleDateFormat formatter = new SimpleDateFormat(YYYY_MM_DD);
         final Date fromDate = formatter.parse(year + "/" + 1 + "/" + 1);
         final Date toDate = formatter.parse(year + "/" + 12 + "/" + 31);
+        // when we select ALL as religion(wife and husband) in drop down passing value as 0 as assumption to that,
+        // and checking condition and get result.
         if (null != registration.getHusband().getReligion()
-                && registration.getHusband().getReligion().getId() != null)
+                && registration.getHusband().getReligion().getId() != null
+                && registration.getHusband().getReligion().getId() != 0) {
             criteria.createAlias(MARRIAGE_REGISTRATION_DOT_HUSBAND, HUSBAND)
                     .add(Restrictions.eq("husband.religion.id", registration
                             .getHusband().getReligion().getId()));
+        } else {
+            List<String> mrgReligionNames = getReligionNames();
+            criteria.createAlias(MARRIAGE_REGISTRATION_DOT_HUSBAND, HUSBAND).createAlias("husband.religion", "husreligion")
+                    .add(Restrictions.in("husreligion.name", mrgReligionNames.toArray(new String[mrgReligionNames.size()])));
+        }
         if (null != registration.getWife().getReligion()
-                && registration.getWife().getReligion().getId() != null)
+                && registration.getWife().getReligion().getId() != null && registration.getWife().getReligion().getId() != 0) {
             criteria.createAlias(MARRIAGE_REGISTRATION_DOT_WIFE, WIFE).add(
                     Restrictions.eq("wife.religion.id", registration.getWife()
                             .getReligion().getId()));
+        } else {
+            List<String> mrgReligionNames = getReligionNames();
+            criteria.createAlias(MARRIAGE_REGISTRATION_DOT_WIFE, WIFE).createAlias("wife.religion", "wifereligion")
+                    .add(Restrictions.in("wifereligion.name", mrgReligionNames.toArray(new String[mrgReligionNames.size()])));
+        }
         if (null != fromDate)
             criteria.add(Restrictions.ge(
                     MARRIAGE_REGISTRATION_APPLICATION_DATE, resetFromDateTimeStamp(fromDate)));
@@ -814,8 +832,19 @@ public class MarriageRegistrationReportsService {
                 && registration.getMarriageRegistrationUnit().getId() != null)
             criteria.add(Restrictions.eq(MARRIAGE_REGISTRATION_UNIT_DOT_ID,
                     registration.getMarriageRegistrationUnit().getId()));
-
+        criteria.add(Restrictions.in(STATUS_DOT_CODE,
+                new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString(),
+                        MarriageRegistration.RegistrationStatus.REGISTERED.toString() }));
         return criteria.list();
+    }
+
+    private List<String> getReligionNames() {
+        List<String> religionNameList = new ArrayList<>();
+        List<MarriageReligion> marriageReligions = religionService.findAll();
+        for (MarriageReligion marriageReligion : marriageReligions) {
+            religionNameList.add(marriageReligion.getName());
+        }
+        return religionNameList;
     }
 
     @SuppressWarnings("unchecked")

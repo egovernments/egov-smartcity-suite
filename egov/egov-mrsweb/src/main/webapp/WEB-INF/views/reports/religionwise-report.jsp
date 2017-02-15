@@ -61,14 +61,17 @@
 							<div class="row">
 								<div class="form-group">
 									<label for="field-1" class="col-sm-2 control-label"><spring:message
-											code="lbl.husband.religion" /> <span class="mandatory"></span></label>
+											code="lbl.husband.religion" /> </label>
 									<div class="col-sm-3 add-margin">
-										<form:select path="husband.religion.id" id="husband.religion"
+										<form:select path="husband.religion.id" id="husband"
 											cssClass="form-control" cssErrorClass="form-control error"
-											data-toggle="popover" data-trigger="focus" required="required"
+											data-toggle="popover" data-trigger="focus" 
 											data-content="${helptext}">
 											<form:option value="">
 												<spring:message code="lbl.default.option" />
+											</form:option>
+											<form:option value="0">
+												ALL
 											</form:option>
 											<form:options items="${religions}" itemValue="id"
 												itemLabel="name" />
@@ -82,12 +85,15 @@
 											code="lbl.wife.religion" />
 									</label>
 									<div class="col-sm-3 add-margin">
-										<form:select path="wife.religion.id" id="wife.religion"
+										<form:select path="wife.religion.id" id="wife"
 											cssClass="form-control" cssErrorClass="form-control error"
 											data-toggle="popover" data-trigger="focus"
 											data-content="${helptext}">
 											<form:option value="">
 												<spring:message code="lbl.default.option" />
+											</form:option>
+											<form:option value="0">
+												ALL
 											</form:option>
 											<form:options items="${religions}" itemValue="id"
 												itemLabel="name" />
