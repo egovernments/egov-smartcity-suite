@@ -39,6 +39,7 @@
  */
 
 package org.egov.ptis.web.controller.dashboard;
+import static org.egov.ptis.constants.PropertyTaxConstants. DASHBOARD_GROUPING_ULBWISE;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -320,5 +321,31 @@ public class CMDashboardController {
         LOGGER.debug("Time taken to serve collectionanalysis is : " + timeTaken + " (millisecs)");
         return collectionAnalysis;
     }
+    
+    /**
+     * API provides Daily Target information across all cities
+     * @param collectionDetailsRequest
+     * @return CollectionDetails
+     */
+    @RequestMapping(value = "/dailytarget", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public CollectionDetails getDailyTargetDetails(
+            @RequestParam("regionName") String regionName, @RequestParam("districtName") String districtName,
+            @RequestParam("ulbGrade") String ulbGrade, @RequestParam("ulbCode") String ulbCode,
+            @RequestParam("fromDate") String fromDate,
+            @RequestParam("toDate") String toDate, @RequestParam("type") String type,
+            @RequestParam("propertyType") String propertyType)
+            throws IOException {
+        CollectionDetailsRequest collectionDetailsRequest = new CollectionDetailsRequest();
+        populateCollectionDetailsRequest(collectionDetailsRequest, regionName, districtName, ulbGrade, ulbCode, fromDate, toDate,
+                DASHBOARD_GROUPING_ULBWISE, propertyType);
+        Long startTime = System.currentTimeMillis();
+        CollectionDetails collectionDetails= propTaxDashboardService.getDailyTarget(collectionDetailsRequest);
+        Long timeTaken = System.currentTimeMillis() - startTime;
+        if(LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken to serve dailytarget is : " + timeTaken + " (millisecs)");
+        return collectionDetails;
+    }
+
+    
 
 }

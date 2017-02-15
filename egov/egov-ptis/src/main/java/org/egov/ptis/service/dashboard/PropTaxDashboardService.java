@@ -334,5 +334,16 @@ public class PropTaxDashboardService {
             String intervalType) {
         return collectionIndexElasticSearchService.getWeekwiseDCBDetailsAcrossCities(collectionDetailsRequest, intervalType);
     }
-
+    
+    /**
+     * API provides Daily Target information across all cities
+     * @param collectionDetailsRequest
+     * @return CollectionDetails
+     */
+    public CollectionDetails getDailyTarget(CollectionDetailsRequest collectionDetailsRequest) {
+        CollectionDetails collectionIndexDetails = new CollectionDetails();
+        collectionIndexDetails
+                .setResponseDetails(collectionIndexElasticSearchService.getResponseTableData(collectionDetailsRequest));
+        return collectionIndexDetails;
+    }
 }
