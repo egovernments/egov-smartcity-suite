@@ -1,3 +1,24 @@
+delete from eg_appconfig_values where key_id in (select id from eg_appconfig  where KEY_NAME in('ADTAXROLEFORNONEMPLOYEE','ADTAXDESIGNATIONFORCSCOPERATORWORKFLOW','ADTAXDEPARTMENTFORCSCOPERATORWORKFLOW','ADTAXDEPARTMENTFORWORKFLOW','ADTAXDESIGNATIONFORWORKFLOW'));
+
+delete from eg_appconfig  where KEY_NAME in ('ADTAXROLEFORNONEMPLOYEE','ADTAXDESIGNATIONFORCSCOPERATORWORKFLOW','ADTAXDEPARTMENTFORCSCOPERATORWORKFLOW','ADTAXDEPARTMENTFORWORKFLOW','ADTAXDESIGNATIONFORWORKFLOW');
+
+delete from eg_wf_matrix where  currentstate='Third Party operator created';
+
+delete from EG_ROLEACTION where ROLEID = (select id from eg_role where name ='CSC Operator') and actionid in (select id FROM eg_action  WHERE name
+ in( 'CreateHoarding','AjaxSubCategories','calculateTaxAmount','Load Block By Ward','AjaxGetPropertyassessmentDetails','AjaxApproverByDesignationAndDepartment','AjaxDesignationsByDepartment','HoardingSuccess'));
+
+
+delete from eg_roleaction  where actionid  in (select id from eg_action where name in ('Hoarding Success Acknowledgement','Print Hoarding Success Acknowledgement')) and roleid in (select id from eg_role where name in('Super User','CSC Operator'));
+
+
+delete from eg_feature_role where feature  =(select id FROM eg_feature WHERE name ='Create Advertisement') and role=(select id from eg_role where name = 'CSC Operator');
+
+delete from eg_feature_action where ACTION = (select id FROM eg_action  WHERE name = 'Hoarding Success Acknowledgement') and FEATURE=(select id FROM eg_feature WHERE name = 'Create Advertisement');
+
+delete from eg_feature_action where ACTION = (select id FROM eg_action  WHERE name = 'Print Hoarding Success Acknowledgement') and FEATURE=(select id FROM eg_feature WHERE name = 'Create Advertisement');
+
+delete from eg_action where name in ('Hoarding Success Acknowledgement','Print Hoarding Success Acknowledgement');
+
 ----------------------------- app config value to identify Non-Employee for adtax-----------------
 
 INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, VERSION, MODULE ) VALUES (nextval('SEQ_EG_APPCONFIG'), 'ADTAXROLEFORNONEMPLOYEE', 'roles for advertisement tax workflow',0, (select id from eg_module where name='Advertisement Tax')); 
@@ -39,10 +60,6 @@ INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role whe
 INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where name ='CSC Operator') ,(select id FROM eg_action  WHERE name = 'Load Block By Ward'));
 
 INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where name ='CSC Operator') ,(select id FROM eg_action  WHERE name = 'calculateTaxAmount'));
-
-INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where name ='CSC Operator') ,(select id FROM eg_action  WHERE name = 'AjaxDesignationsByDepartment'));
-
-INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where name ='CSC Operator') ,(select id FROM eg_action  WHERE name = 'AjaxApproverByDesignationAndDepartment'));
 
 INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) values ((select id from eg_role where name ='CSC Operator') ,(select id FROM eg_action  WHERE name = 'HoardingSuccess'));
 
