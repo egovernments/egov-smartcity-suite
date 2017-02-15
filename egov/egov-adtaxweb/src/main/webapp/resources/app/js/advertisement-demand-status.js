@@ -40,50 +40,101 @@
 
 jQuery(document).ready(function($) {
 
-	$('#submit').click(function(e){
-		if($("#adtaxdemandstatussearchform").valid()){
-		jQuery('.report-section').removeClass('display-hide');
-			$("#resultTable").dataTable({
-				ajax : {
-					url : "/adtax/advertisement/demand-status",      
-					type: "POST",
-					beforeSend : function() {
-						$('.loader-class').modal('show', {
-							backdrop : 'static'
-						});
-					},
-					"data" : getFormData(jQuery('form')),
-					complete : function() {
-						$('.loader-class').modal('hide');
-					}
-				},
-				
-				"bDestroy" : true,
-				"autoWidth": false,
-				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",				"columns" : [{  "data" : "financialyear"} ,
-							{  "data" : "noOfSuccess",
-								"render" : function(data, type, row){
-									return '<a onclick="openPopup(\'/adtax/advertisement/demand-status-records-view/'
-									+"0"+"~"+row.financialyear+'\')" href = javascript:void(0);">'
-									+row.noOfSuccess
-									+'</a>';
-								}
-							
-							} ,
-							{  "data" : "noOfFailure",
-								"render" : function(data, type, row){
-									return '<a onclick="openPopup(\'/adtax/advertisement/demand-status-records-view/'
-									+"1"+"~"+row.financialyear+'\')" href = javascript:void(0);">'
-									+row.noOfFailure
-									+'</a>';
-								}
-							},
-							
-								]		
+	$('#submit').click(function(){			
+		$("#demandresultTable").dataTable({
+			 "bInfo" : false,
+			   "bPaginate": false,
+			    "bLengthChange": false,
+			    fnDrawCallback: function (settings) {
+			    	if(settings.fnRecordsDisplay() > 0){
+			    		$("#showhide").show();
+			    	}
+			    	else
+			    	{
+			    	      $("#showhide").hide();
+			        }
+			        },
+			    
+			ajax : {
+				url : "/adtax/advertisement/demand-batch",      
+				type: "POST",
+				beforeSend : function() {					
+					$('.loader-class').modal('show', {
+						backdrop : 'static'
 					});
-	}
+				},
+				"data" : getFormData(jQuery('form')),
+				complete : function() {
+					
+					$('.loader-class').modal('hide');
+				}	
+			},
+			
+			"bDestroy" : true,
+			"autoWidth": false,
+			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l>>",			
+			"columns" : [
+						{  "data" : "jobname",
+			             
+						},
+						{
+							
+							"data":"status",
+						},
+						
+						
+						{
+							"data":"createdDate"
+						}
+						
+							]		
+				});
+			
+		if($("#adtaxdemandstatussearchform").valid()){
+		
+			jQuery('.report-section').removeClass('display-hide');
+		$("#resultTable").dataTable({
+			ajax : {
+				url : "/adtax/advertisement/demand-status",      
+				type: "POST",
+				beforeSend : function() {
+					$('.loader-class').modal('show', {
+						backdrop : 'static'
+					});
+				},
+				"data" : getFormData(jQuery('form')),
+				complete : function() {
+					$('.loader-class').modal('hide');
+				}
+			},
+			
+			"bDestroy" : true,
+			"autoWidth": false,
+			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",				"columns" : [{  "data" : "financialyear"} ,
+						{  "data" : "noOfSuccess",
+							"render" : function(data, type, row){
+								return '<a onclick="openPopup(\'/adtax/advertisement/demand-status-records-view/'
+								+"0"+"~"+row.financialyear+'\')" href = javascript:void(0);">'
+								+row.noOfSuccess
+								+'</a>';
+							}
+						
+						} ,
+						{  "data" : "noOfFailure",
+							"render" : function(data, type, row){
+								return '<a onclick="openPopup(\'/adtax/advertisement/demand-status-records-view/'
+								+"1"+"~"+row.financialyear+'\')" href = javascript:void(0);">'
+								+row.noOfFailure
+								+'</a>';
+							}
+						},
+						
+							]		
+				});
+		}
 			
 	});
+	
 });
 
 function openPopup(url){
