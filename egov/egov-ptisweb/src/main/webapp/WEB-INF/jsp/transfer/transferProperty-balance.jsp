@@ -79,7 +79,7 @@
 						<s:text name="CurrentTax" />
 					</div>
 					<div class="col-md-3 col-xs-3 add-margin view-content">
-						<span class="bold"><s:text name="rs"/>
+						<span class="bold">
 						<s:text name="rs"/> <s:property default="N/A" value="%{currentPropertyTax}" /></span>
 					</div>
 					<div class="col-md-3 col-xs-3 add-margin">
