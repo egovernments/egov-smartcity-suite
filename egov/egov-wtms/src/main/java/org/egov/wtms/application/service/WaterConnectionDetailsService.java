@@ -674,11 +674,12 @@ public class WaterConnectionDetailsService {
         else
             wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                     additionalRule, waterConnectionDetails.getCurrentState().getValue(), null);
-        if(waterConnectionDetails.getStatus().getCode()
-                .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN))
-        {
-            approvalPosition = waterTaxUtils.getApproverPosition(WaterTaxConstants.JUNIOR_OR_SENIOR_ASSISTANT_DESIGN_REVENUE_CLERK,
-                    waterConnectionDetails);   
+        
+        if (waterConnectionDetails.getStatus().getCode()
+                .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN)) {
+            approvalPosition = waterTaxUtils.getApproverPosition(
+                    WaterTaxConstants.JUNIOR_OR_SENIOR_ASSISTANT_DESIGN_REVENUE_CLERK,
+                    waterConnectionDetails);
         }
         if (waterConnectionDetails != null && waterConnectionDetails.getStatus() != null
                 && waterConnectionDetails.getStatus().getCode() != null)
