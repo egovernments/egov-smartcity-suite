@@ -390,7 +390,8 @@ public class WaterConnectionDetailsService {
     @Transactional
     public WaterConnectionDetails updateWaterConnection(final WaterConnectionDetails waterConnectionDetails,
             final Long approvalPosition, final String approvalComent, String additionalRule,
-            final String workFlowAction, final String mode, final ReportOutput reportOutput, final String sourceChannel)
+            final String workFlowAction, final
+            String mode, final ReportOutput reportOutput, final String sourceChannel)
             throws ValidationException {
         applicationStatusChange(waterConnectionDetails, workFlowAction, mode, sourceChannel);
         if (WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING
@@ -666,14 +667,19 @@ public class WaterConnectionDetailsService {
                                                 .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS)
                                         || waterConnectionDetails.getStatus().getCode()
                                                 .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONINPROGRESS)
-                                        || waterConnectionDetails.getStatus().getCode()
-                                                .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN))))
+                                        )))
             wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                     additionalRule, waterConnectionDetails.getCurrentState().getValue(), null, null,
                     loggedInUserDesignation);
         else
             wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                     additionalRule, waterConnectionDetails.getCurrentState().getValue(), null);
+        if(waterConnectionDetails.getStatus().getCode()
+                .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN))
+        {
+            approvalPosition = waterTaxUtils.getApproverPosition(WaterTaxConstants.JUNIOR_OR_SENIOR_ASSISTANT_DESIGN_REVENUE_CLERK,
+                    waterConnectionDetails);   
+        }
         if (waterConnectionDetails != null && waterConnectionDetails.getStatus() != null
                 && waterConnectionDetails.getStatus().getCode() != null)
             if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)
@@ -684,8 +690,6 @@ public class WaterConnectionDetailsService {
                     approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
                             waterConnectionDetails);
             else if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_APPROVED)
-                    || WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN
-                            .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                     || !"".equals(workFlowAction) && workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
                             && waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINITIATED)

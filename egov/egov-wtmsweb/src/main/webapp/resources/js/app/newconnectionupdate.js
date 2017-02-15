@@ -63,11 +63,20 @@ $(document)
 						$('#approvalDesignation').removeAttr('required');
 						$(".show-row").hide();
 						$("#Forward").hide();
-						$("#Reject").hide();
-						$('#approverDetailHeading').hide();
+						//$("#Reject").hide();
+						//$('#approverDetailHeading').hide();
 						return false;
 
 					}
+					if (currentstate == 'Rejected'
+						&& status == 'ESTIMATIONNOTICEGENERATED') {
+					$('#approvalDepartment').removeAttr('required');
+					$('#approvalDesignation').removeAttr('required');
+					$(".show-row").hide();
+					$("#Forward").hide();
+					return false;
+
+				}
 
 					if (status == 'DIGITALSIGNATUREPENDING' || status=='CLOSUREDIGSIGNPENDING' || status=='RECONNDIGSIGNPENDING') {
 						$("#Approve").hide();

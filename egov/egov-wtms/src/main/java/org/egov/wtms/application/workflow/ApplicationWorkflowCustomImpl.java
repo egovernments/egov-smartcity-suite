@@ -46,6 +46,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.egov.demand.model.EgDemand;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
@@ -60,9 +61,11 @@ import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.entity.WaterDemandConnection;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionSmsAndEmailService;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.service.es.WaterChargeDocumentService;
 import org.egov.wtms.utils.PropertyExtnUtils;
@@ -89,6 +92,9 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
 
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
 
     @Autowired
     private AssignmentService assignmentService;
@@ -157,6 +163,19 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.equals(userAssignment)) {
                 waterConnectionDetails.setConnectionStatus(ConnectionStatus.INACTIVE);
+                if(waterConnectionDetails.getStatus()!=null && waterConnectionDetails.getStatus().getCode()
+                        .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN))
+                {
+                    final EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+                    if (demand != null) {
+                        WaterDemandConnection waterDemandConnection = waterDemandConnectionService
+                                .findByWaterConnectionDetailsAndDemand(waterConnectionDetails, demand);
+                        demand.setIsHistory("Y");
+                        demand.setModifiedDate(new Date());
+                        waterDemandConnection.setDemand(demand);
+                        waterDemandConnectionService.updateWaterDemandConnection(waterDemandConnection);
+                    }
+                }
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_CANCELLED, WaterTaxConstants.MODULETYPE));
                 waterConnectionDetails.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
