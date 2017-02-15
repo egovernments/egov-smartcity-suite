@@ -174,6 +174,15 @@ $(document)
 															.val(),
 													'applicationDate' : $(
 															"#registrationDate")
+															.val(),
+													'marriageRegistrationUnit' : $(
+															"#select-registrationunit")
+															.val(),
+													'fromDate' : $(
+															"#fromDate")
+															.val(),
+													'toDate' : $(
+															"#toDate")
 															.val()
 												}
 											},

@@ -547,9 +547,9 @@ public class MarriageRegistrationService {
                     Restrictions.ilike("registration.registrationNo", mrSearchFilter.getRegistrationNo(),
                             MatchMode.ANYWHERE));
         if (mrSearchFilter.getApplicationNo() != null)
-        	 criteria.add(
+            criteria.add(
                     Restrictions.ilike("reIssue.applicationNo", mrSearchFilter.getApplicationNo(),
-                             MatchMode.ANYWHERE));
+                            MatchMode.ANYWHERE));
         if (mrSearchFilter.getHusbandName() != null)
             criteria.createAlias("registration.husband", "husband").add(
                     Restrictions.ilike("husband.name.fullname", mrSearchFilter.getHusbandName(), MatchMode.ANYWHERE));
@@ -562,7 +562,15 @@ public class MarriageRegistrationService {
         if (mrSearchFilter.getDateOfMarriage() != null)
             criteria.add(
                     Restrictions.between("registration.dateOfMarriage", sdf.parse(mrSearchFilter.getDateOfMarriage()),
-                          org.apache.commons.lang3.time.DateUtils.addDays(sdf.parse(mrSearchFilter.getDateOfMarriage()), 0)));
+                            org.apache.commons.lang3.time.DateUtils.addDays(sdf.parse(mrSearchFilter.getDateOfMarriage()), 0)));
+        if (mrSearchFilter.getFromDate() != null)
+            criteria.add(Restrictions.ge("reIssue.applicationDate",
+                    marriageRegistrationReportsService.resetFromDateTimeStamp(mrSearchFilter.getFromDate())));
+        if (mrSearchFilter.getToDate() != null)
+            criteria.add(Restrictions.le("reIssue.applicationDate",
+                    marriageRegistrationReportsService.resetToDateTimeStamp(mrSearchFilter.getToDate())));
+        if (mrSearchFilter.getMarriageRegistrationUnit() != null)
+            criteria.add(Restrictions.eq("marriageRegistrationUnit.id", mrSearchFilter.getMarriageRegistrationUnit()));
     }
 
     private void buildMarriageRegistrationSearchCriteria(final MarriageRegistration registration, final Criteria criteria)

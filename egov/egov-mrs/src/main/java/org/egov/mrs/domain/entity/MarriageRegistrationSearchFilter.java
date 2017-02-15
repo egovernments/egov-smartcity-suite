@@ -39,58 +39,99 @@
  */
 package org.egov.mrs.domain.entity;
 
+import java.util.Date;
 
 public class MarriageRegistrationSearchFilter {
-    
+
     private String applicationNo;
-	private String registrationNo;
+    private String registrationNo;
     private String husbandName;
     private String wifeName;
     private String dateOfMarriage;
     private String applicationDate;
     private String marriageRegistrationType;
-    
+    private Date fromDate;
+    private Date toDate;
+    private Long marriageRegistrationUnit;
+
     public String getRegistrationNo() {
         return registrationNo;
     }
+
     public void setRegistrationNo(String registrationNo) {
         this.registrationNo = registrationNo;
     }
+
     public String getHusbandName() {
         return husbandName;
     }
+
     public void setHusbandName(String husbandName) {
         this.husbandName = husbandName;
     }
+
     public String getWifeName() {
         return wifeName;
     }
+
     public void setWifeName(String wifeName) {
         this.wifeName = wifeName;
     }
+
     public String getApplicationDate() {
         return applicationDate;
     }
+
     public void setApplicationDate(String applicationDate) {
         this.applicationDate = applicationDate;
     }
+
     public String getMarriageRegistrationType() {
         return marriageRegistrationType;
     }
+
     public void setMarriageRegistrationType(String marriageRegistrationType) {
         this.marriageRegistrationType = marriageRegistrationType;
     }
+
     public String getDateOfMarriage() {
         return dateOfMarriage;
     }
+
     public void setDateOfMarriage(String dateOfMarriage) {
         this.dateOfMarriage = dateOfMarriage;
     }
-	public String getApplicationNo() {
-		return applicationNo;
-	}
-	public void setApplicationNo(String applicationNo) {
-		this.applicationNo = applicationNo;
-	}
-    
+
+    public String getApplicationNo() {
+        return applicationNo;
+    }
+
+    public void setApplicationNo(String applicationNo) {
+        this.applicationNo = applicationNo;
+    }
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public Long getMarriageRegistrationUnit() {
+        return marriageRegistrationUnit;
+    }
+
+    public void setMarriageRegistrationUnit(Long marriageRegistrationUnit) {
+        this.marriageRegistrationUnit = marriageRegistrationUnit;
+    }
+
 }
