@@ -178,6 +178,8 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     private List<DocumentType> assessmentDocumentList;
     private String assessmentDocumentType = "";
     private User defaultCitizen;
+    private BigDecimal extentOfSite;
+    private BigDecimal plingthArea;
 
     @Autowired
     private transient CategoryDao categoryDAO;
@@ -546,6 +548,25 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
         return "defaultcitizen";
     }
 
+    @Actions({
+            @Action(value = "/ajaxCommon-isAppurTenant"),
+            @Action(value = "/public/ajaxCommon-isAppurTenant") })
+    public void isAppurTenant() throws IOException {
+        final JSONObject jsonObject = new JSONObject();
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        if (extentOfSite != null && plingthArea != null) {
+            final BigDecimal triplePlingthArea = plingthArea.multiply(BigDecimal.valueOf(3));
+            final BigDecimal permissableArea = triplePlingthArea.compareTo(BigDecimal.valueOf(1000)) < 0 ? triplePlingthArea
+                    : BigDecimal.valueOf(1000);
+            final BigDecimal landArea = extentOfSite.subtract(permissableArea);
+            jsonObject.put("isAppurTenantLand", landArea.compareTo(BigDecimal.ZERO) > 0);
+            jsonObject.put("extentAppartenauntLand", permissableArea);
+            jsonObject.put("vacantLandArea", landArea);
+        } else
+            jsonObject.put("isAppurTenantLand", Boolean.FALSE);
+        IOUtils.write(jsonObject.toString(), response.getWriter());
+    }
+
     public Long getZoneId() {
         return zoneId;
     }
@@ -887,4 +908,11 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
         this.defaultCitizen = defaultCitizen;
     }
 
+    public BigDecimal getExtentOfSite() {
+        return extentOfSite;
+    }
+
+    public void setExtentOfSite(final BigDecimal extentOfSite) {
+        this.extentOfSite = extentOfSite;
+    }
 }

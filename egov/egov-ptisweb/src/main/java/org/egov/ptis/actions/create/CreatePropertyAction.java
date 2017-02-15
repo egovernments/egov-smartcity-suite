@@ -276,6 +276,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     private String reportId;
     private boolean approved;
+    private boolean floorDetailsEntered;
 
     private transient BasicProperty basicProp;
     @Autowired
@@ -2138,5 +2139,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 || ZONAL_COMMISSIONER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
             isanyone = true;
         return isanyone;
+    }
+    
+    public boolean isFloorDetailsEntered() {
+        return floorDetailsEntered;
+    }
+
+    public void setFloorDetailsEntered(boolean floorDetailsEntered) {
+        this.floorDetailsEntered = floorDetailsEntered;
     }
 }
