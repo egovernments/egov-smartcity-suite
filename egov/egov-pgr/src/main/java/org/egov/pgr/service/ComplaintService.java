@@ -547,7 +547,7 @@ public class ComplaintService {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint")
                 .createAlias("complaint.state", "state").createAlias("complaint.status", "status");
         criteria.add(Restrictions.in("status.name", pendingStatus));
-        criteria.add(Restrictions.eq("complaint.assignee", positionMasterService.getCurrentPositionForUser(user.getId())));
+        criteria.add(Restrictions.in("complaint.assignee", positionMasterService.getPositionsForEmployee(user.getId(),new Date())));
         return criteria.list();
     }
 
