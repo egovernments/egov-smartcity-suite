@@ -44,8 +44,14 @@ import java.util.List;
 import org.egov.commons.Scheme;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 public class SchemeService extends PersistenceService<Scheme, Integer> {
+
+    @Autowired
+    @Qualifier("persistenceService")
+    protected PersistenceService persistenceService;
 
     public SchemeService() {
         super(Scheme.class);
@@ -62,4 +68,7 @@ public class SchemeService extends PersistenceService<Scheme, Integer> {
         return query.list();
     }
 
+    public Scheme findByCode(final String code) {
+        return (Scheme) persistenceService.find(" from Scheme where code = ? ", code);
+    }
 }

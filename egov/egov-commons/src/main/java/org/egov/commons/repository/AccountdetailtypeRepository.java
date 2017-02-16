@@ -59,6 +59,8 @@ public interface AccountdetailtypeRepository extends JpaRepository<Accountdetail
 
     public List<Accountdetailtype> findByDescriptionContainingIgnoreCase(String description);
 
+    public Accountdetailtype findByDescription(String description);
+
     public List<Accountdetailtype> findByFullQualifiedName(String fullQualifiedName);
 
     @Query("select distinct(adt) from Accountdetailtype adt where adt.id in (select coad.detailTypeId from CChartOfAccountDetail coad where coad.glCodeId in (select coa.id from CChartOfAccounts coa where  coa.id =:glcodeId))")
