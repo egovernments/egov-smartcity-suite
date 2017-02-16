@@ -404,6 +404,10 @@ public class AssignmentService {
         return assignmentRepository.getUsersByDesignations(designationNames);
     }
 
+    public Set<User> getUsersByDesignationsAndCurrentDate(final String[] designationNames) {
+        return assignmentRepository.getUsersByDesignationsAndCurrentDate(designationNames);
+    }
+    
     public Set<Role> getRolesForExpiredAssignmentsByEmpId(final Long empId) {
         return assignmentRepository.getRolesForExpiredAssignmentsByEmpId(empId);
     }

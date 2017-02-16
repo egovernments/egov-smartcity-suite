@@ -134,7 +134,7 @@ public class WorkOrderController {
             final String doorno[] = assessmentDetails.getPropertyAddress().split(",");
             String ownerName = "";
             double total = 0;
-            final Set<User> users = assignmentService.getUsersByDesignations(WaterTaxConstants.DESG_COMM);
+            final Set<User> users = assignmentService.getUsersByDesignationsAndCurrentDate(WaterTaxConstants.DESG_COMM);
             String commissionerName = "";
             for (final User user : users)
                 commissionerName = user.getName();
