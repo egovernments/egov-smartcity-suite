@@ -1910,23 +1910,14 @@ public class CollectionIndexElasticSearchService {
      */
     public List<UlbWiseDemandCollection> getCollectionsForInterval(CollectionDetailsRequest collectionDetailsRequest,
             String intervalType) {
-        List<DemandCollectionMIS> demandCollectionMISList;
         Date fromDate = null;
         Date toDate = null;
-        Date dateForMonth;
-        String[] dateArr;
-        Integer month;
-        Sum aggregateSum;
         CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
         Date finYearStartDate = financialYear.getStartingDate();
         Date finYearEndDate = financialYear.getEndingDate();
         Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
-        String monthName;
-        Map<String, BigDecimal> monthwiseColl;
-        Map<String, Map<String, BigDecimal>> yearwiseMonthlyCollMap = new HashMap<>();
+        Map<String, Map<String, BigDecimal>> intervalwiseCollMap = new HashMap<>();
         List<UlbWiseDemandCollection> citywiseCollList = new ArrayList<>();
-        UlbWiseDemandCollection ulbwiseDC;
-        DemandCollectionMIS demandCollMIS;
         /**
          * For month-wise collections between the date ranges if dates are sent in the request, consider fromDate and toDate+1 ,
          * else calculate from current year start date till current date+1 day
@@ -1942,6 +1933,43 @@ public class CollectionIndexElasticSearchService {
         Aggregations collAggr = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate,
                 toDate, true, intervalType);
         StringTerms cityaggr = collAggr.get(BY_CITY);
+        if("month".equalsIgnoreCase(intervalType))
+            prepareMonthlyCollMap(finYearStartDate, finYearEndDate, monthValuesMap, intervalwiseCollMap, cityaggr);
+        else if("week".equalsIgnoreCase(intervalType))
+            prepareWeeklyCollMap(intervalwiseCollMap, cityaggr);
+        
+        Long timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug("Time taken by getMonthwiseCollectionsForConsecutiveYears() is : "
+                + timeTaken + MILLISECS);
+
+        startTime = System.currentTimeMillis();
+        if("month".equalsIgnoreCase(intervalType))
+            setCollDetailsForIntervalType(intervalwiseCollMap, citywiseCollList, DateUtils.getAllFinancialYearMonthsWithFullNames(), intervalType);
+        else if("week".equalsIgnoreCase(intervalType))
+            setCollDetailsForIntervalType(intervalwiseCollMap, citywiseCollList, getWeeksInMonth(), intervalType);
+        
+        timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug(
+                "Time taken setting values in getCollectionsForInterval() is : " + timeTaken + MILLISECS);
+        return citywiseCollList;
+    }
+
+    /**
+     * Prepares month wise collection map  
+     * @param finYearStartDate
+     * @param finYearEndDate
+     * @param monthValuesMap
+     * @param yearwiseMonthlyCollMap
+     * @param cityaggr
+     */
+    private void prepareMonthlyCollMap(Date finYearStartDate, Date finYearEndDate, Map<Integer, String> monthValuesMap,
+            Map<String, Map<String, BigDecimal>> yearwiseMonthlyCollMap, StringTerms cityaggr) {
+        Date dateForMonth;
+        String[] dateArr;
+        Integer month;
+        Sum aggregateSum;
+        String monthName;
+        Map<String, BigDecimal> monthwiseColl;
         for (Terms.Bucket cityDetailsentry : cityaggr.getBuckets()) {
             String ulbName = cityDetailsentry.getKeyAsString();
             monthwiseColl = new LinkedHashMap<>();
@@ -1963,40 +1991,120 @@ public class CollectionIndexElasticSearchService {
             }
             yearwiseMonthlyCollMap.put(ulbName, monthwiseColl);
         }
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getMonthwiseCollectionsForConsecutiveYears() is : "
-                + timeTaken + MILLISECS);
-
-        startTime = System.currentTimeMillis();
-        Map<String, BigDecimal> monthCollMap;
-        for (Map.Entry<String, Map<String, BigDecimal>> citywise : yearwiseMonthlyCollMap.entrySet()) {
+    }
+    
+    /**
+     * Prepares weekwise collection map
+     * @param intervalwiseCollMap
+     * @param cityaggr
+     */
+    private void prepareWeeklyCollMap(Map<String, Map<String, BigDecimal>> intervalwiseCollMap, StringTerms cityaggr) {
+        String weekName;
+        int noOfWeeks;
+        String ulbName;
+        Sum aggregateSum;
+        Map<String, BigDecimal> weekwiseColl;
+        for (final Terms.Bucket cityDetailsentry : cityaggr.getBuckets()) {
+            weekwiseColl = new LinkedHashMap<>();
+            ulbName = cityDetailsentry.getKeyAsString();
+            noOfWeeks = 0;
+            Histogram dateaggs = cityDetailsentry.getAggregations().get(DATE_AGG);
+            for (Histogram.Bucket entry : dateaggs.getBuckets()) {
+                if (noOfWeeks == 0)
+                    noOfWeeks = 1;
+                weekName = "Week " + noOfWeeks;
+                aggregateSum = entry.getAggregations().get("current_total");
+                if (BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
+                        .compareTo(BigDecimal.ZERO) > 0) {
+                    weekwiseColl.put(weekName, BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                }
+                noOfWeeks++;
+            }
+            intervalwiseCollMap.put(ulbName, weekwiseColl);
+        }
+    }
+    
+    /**
+     * Sets collection details for each type of interval type
+     * @param collectionMap
+     * @param citywiseCollList
+     * @param intervalNamesMap
+     */
+    private void setCollDetailsForIntervalType(Map<String, Map<String, BigDecimal>> collectionMap,
+            List<UlbWiseDemandCollection> citywiseCollList, Map<Integer, String> intervalNamesMap, String intervalType) {
+        List<DemandCollectionMIS> demandCollectionMISList;
+        UlbWiseDemandCollection ulbwiseDC;
+        DemandCollectionMIS demandCollMIS;
+        Map<String, BigDecimal> intervalTypeCollMap;
+        int intervalCount;
+        Map<String, Integer> finYearMonths = getMonthNumberByNames();
+        for (Map.Entry<String, Map<String, BigDecimal>> citywise : collectionMap.entrySet()) {
+            intervalCount = 0;
             ulbwiseDC = new UlbWiseDemandCollection();
             demandCollectionMISList = new ArrayList<>();
-            monthCollMap = new LinkedHashMap<>();
+            intervalTypeCollMap = new LinkedHashMap<>();
             ulbwiseDC.setUlbName(citywise.getKey());
-            for (Map.Entry<String, BigDecimal> monthlyMap : citywise.getValue().entrySet()) {
-                monthCollMap.put(monthlyMap.getKey(), monthlyMap.getValue());
+            for (Map.Entry<String, BigDecimal> intervalMap : citywise.getValue().entrySet()) {
+                intervalTypeCollMap.put(intervalMap.getKey(), intervalMap.getValue());
             }
             //Checking for collection of all months 
-            for (Map.Entry<Integer, String> finYearMonth : DateUtils.getAllFinancialYearMonthsWithFullNames().entrySet()) {
+            for (Map.Entry<Integer, String> intervalName : intervalNamesMap.entrySet()) {
+                if(intervalCount == 0)
+                    intervalCount = 1;
                 demandCollMIS = new DemandCollectionMIS();
-                if (monthCollMap.get(finYearMonth.getValue()) == null) {
-                    demandCollMIS.setName(finYearMonth.getValue());
+                if (intervalTypeCollMap.get(intervalName.getValue()) == null) {
+                    demandCollMIS.setName(intervalName.getValue());
                     demandCollMIS.setCollection(BigDecimal.ZERO);
                 } else {
-                    demandCollMIS.setName(finYearMonth.getValue());
-                    demandCollMIS.setCollection(monthCollMap.get(finYearMonth.getValue()));
+                    demandCollMIS.setName(intervalName.getValue());
+                    demandCollMIS.setCollection(intervalTypeCollMap.get(intervalName.getValue()));
                 }
+                //Fetch the month number based on the month name
+                if("month".equalsIgnoreCase(intervalType))
+                    demandCollMIS.setIntervalCount(finYearMonths.get(intervalName.getValue()));
+                else if("week".equalsIgnoreCase(intervalType))
+                    demandCollMIS.setIntervalCount(intervalCount);
+                
                 demandCollectionMISList.add(demandCollMIS);
+                intervalCount++;
             }
             ulbwiseDC.setDemandCollectionMISDetails(demandCollectionMISList);
             citywiseCollList.add(ulbwiseDC);
         }
-
-        timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug(
-                "Time taken setting values in getCollectionsForInterval() is : " + timeTaken + MILLISECS);
-        return citywiseCollList;
     }
-
+    
+    /**
+     * Gets all weeks in a month
+     * @return all weeks
+     */
+    public Map<Integer, String> getWeeksInMonth() {
+        final Map<Integer, String> weeksMap = new HashMap<>();
+        weeksMap.put(1, "Week 1");
+        weeksMap.put(2, "Week 2");
+        weeksMap.put(3, "Week 3");
+        weeksMap.put(4, "Week 4");
+        weeksMap.put(5, "Week 5");
+        return weeksMap;
+    }
+    
+    /**
+     * Provides a map of month names and month number 
+     * @return map
+     */
+    private Map<String, Integer> getMonthNumberByNames() {
+        final Map<String, Integer> monthMap = new HashMap<>();
+        monthMap.put("January", 1);
+        monthMap.put("Feburary", 2);
+        monthMap.put("March", 3);
+        monthMap.put("April", 4);
+        monthMap.put("May", 5);
+        monthMap.put("June", 6);
+        monthMap.put("July", 7);
+        monthMap.put("August", 8);
+        monthMap.put("September", 9);
+        monthMap.put("October", 10);
+        monthMap.put("November", 11);
+        monthMap.put("December", 12);
+        return monthMap;
+    }
 }

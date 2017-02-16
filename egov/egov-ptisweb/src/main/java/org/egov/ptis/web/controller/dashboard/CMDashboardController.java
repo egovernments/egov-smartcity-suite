@@ -62,7 +62,9 @@ import org.egov.ptis.bean.dashboard.TaxDefaulters;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.bean.dashboard.TotalCollectionStats;
 import org.egov.ptis.bean.dashboard.UlbWiseDemandCollection;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.service.dashboard.PropTaxDashboardService;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -324,15 +326,31 @@ public class CMDashboardController {
     @ResponseBody public Map<String, List<UlbWiseDemandCollection>> getCollectionAnalysisForMIS(@RequestParam("regionName") String regionName, @RequestParam("districtName") String districtName,
             @RequestParam("ulbGrade") String ulbGrade, @RequestParam("ulbCode") String ulbCode, @RequestParam("fromDate") String fromDate,
             @RequestParam("toDate") String toDate, @RequestParam("type") String type, @RequestParam("propertyType") String propertyType, 
-            @RequestParam("intervalType") String intervalType) throws IOException {
+            @RequestParam("intervalType") String intervalType, @RequestParam("month") String month, @RequestParam("year") String year) 
+                    throws IOException {
         CollectionDetailsRequest collectionDetailsRequest = new CollectionDetailsRequest();
+        
+        if(StringUtils.isNotBlank(intervalType)){
+            if("week".equalsIgnoreCase(intervalType)){
+                //Prepare the start date based on the month number and year
+                String monthStartDateStr = year.concat("-").concat(month).concat("-").concat("01");
+                LocalDate monthStDate = new LocalDate(monthStartDateStr);
+                //Fetch the start date of the 1st week of the month and the last day of the month
+                LocalDate weekStart = monthStDate.dayOfWeek().withMinimumValue();
+                LocalDate endOfMonth = monthStDate.dayOfMonth().withMaximumValue();
+                fromDate = weekStart.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
+                toDate = endOfMonth.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
+            }
+        }
         populateCollectionDetailsRequest(collectionDetailsRequest, regionName, districtName, ulbGrade, ulbCode, fromDate, toDate,
                 type, propertyType);
+
         Map<String, List<UlbWiseDemandCollection>> collectionAnalysis = new HashMap<>();
         Long startTime = System.currentTimeMillis();
         collectionAnalysis.put("collectionAnalysis", propTaxDashboardService.getCollectionAnalysisData(collectionDetailsRequest, intervalType));
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve collectionanalysis is : " + timeTaken + " (millisecs)");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken to serve collectionanalysis is : " + timeTaken + " (millisecs)");
         return collectionAnalysis;
     }
     
@@ -359,5 +377,7 @@ public class CMDashboardController {
             LOGGER.debug("Time taken to serve dailytarget is : " + timeTaken + " (millisecs)");
         return collectionDetails;
     }
+
+    
 
 }

@@ -47,6 +47,7 @@ public class DemandCollectionMIS {
     private BigDecimal collection = BigDecimal.ZERO;
     private BigDecimal demand = BigDecimal.ZERO;
     private BigDecimal percent = BigDecimal.ZERO;
+    private int intervalCount = 0;
 
     public String getName() {
         return name;
@@ -78,6 +79,14 @@ public class DemandCollectionMIS {
 
     public void setPercent(BigDecimal percent) {
         this.percent = percent;
+    }
+
+    public int getIntervalCount() {
+        return intervalCount;
+    }
+
+    public void setIntervalCount(int intervalCount) {
+        this.intervalCount = intervalCount;
     }
 
 }
