@@ -41,13 +41,14 @@
 package org.egov.pgr.service;
 
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.RoleService;
@@ -89,13 +90,15 @@ import javax.validation.ValidationException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Comparator;
+import java.util.Optional;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.egov.pgr.entity.enums.ComplaintStatus.FORWARDED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.PROCESSING;
@@ -106,15 +109,15 @@ import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REGISTERED;
 import static org.egov.pgr.utils.constants.PGRConstants.DATE;
 import static org.egov.pgr.utils.constants.PGRConstants.DELIMITER_COLON;
 import static org.egov.pgr.utils.constants.PGRConstants.DEPT;
+import static org.egov.pgr.utils.constants.PGRConstants.ESCALATEDSTATUS;
+import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
 import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
 import static org.egov.pgr.utils.constants.PGRConstants.STATUS;
+import static org.egov.pgr.utils.constants.PGRConstants.SYSTEMUSER;
 import static org.egov.pgr.utils.constants.PGRConstants.UPDATEDBY;
 import static org.egov.pgr.utils.constants.PGRConstants.UPDATEDUSERTYPE;
 import static org.egov.pgr.utils.constants.PGRConstants.USER;
 import static org.egov.pgr.utils.constants.PGRConstants.USERTYPE;
-import static org.egov.pgr.utils.constants.PGRConstants.SYSTEMUSER;
-import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
-import static org.egov.pgr.utils.constants.PGRConstants.ESCALATEDSTATUS;
 
 @Service
 @Transactional(readOnly = true)
@@ -349,8 +352,9 @@ public class ComplaintService {
         } else if (!state.getLastModifiedBy().getType().equals(UserType.EMPLOYEE))
             map.put(UPDATEDBY, complaint.getComplainant().getName());
         else
-            map.put(UPDATEDBY, state.getSenderName() != null ? state.getSenderName()
-                    : state.getLastModifiedBy().getUsername() + DELIMITER_COLON + state.getLastModifiedBy().getName());
+            map.put(UPDATEDBY, defaultIfBlank(state.getSenderName(),
+                    new StringBuilder().append(state.getLastModifiedBy().getUsername()).
+                            append(DELIMITER_COLON).append(state.getLastModifiedBy().getName()).toString()));
         map.put(UPDATEDUSERTYPE, state.getLastModifiedBy().getType());
 
         final Position ownerPosition = state.getOwnerPosition();
@@ -359,15 +363,17 @@ public class ComplaintService {
             map.put(USER, user.getUsername() + DELIMITER_COLON + user.getName());
             map.put(USERTYPE, user.getType());
             Department department = eisCommonService.getDepartmentForUser(user.getId());
-            map.put(DEPT, department != null ? department.getName() : EMPTY);
+            map.put(DEPT, defaultString(department.getName()));
         } else if (ownerPosition != null && ownerPosition.getDeptDesig() != null) {
-            final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(ownerPosition.getId(),
-                    new Date());
-            map.put(USER, null != assignmentList.get(0).getEmployee()
-                    ? assignmentList.get(0).getEmployee().getUsername() + DELIMITER_COLON + assignmentList.get(0).getEmployee().getName() + DELIMITER_COLON
-                    + ownerPosition.getDeptDesig().getDesignation().getName()
-                    : NOASSIGNMENT + DELIMITER_COLON + ownerPosition.getName());
-            map.put(USERTYPE, !assignmentList.isEmpty() ? assignmentList.get(0).getEmployee().getType() : EMPTY);
+            List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(ownerPosition.getId(), new Date());
+            Optional<Employee> employee = !assignmentList.isEmpty() ? Optional.ofNullable(assignmentList.get(0).getEmployee()) : Optional.empty();
+            map.put(USER, employee.isPresent()
+                    ? new StringBuilder().append(employee.get().getUsername()).append(DELIMITER_COLON).
+                    append(employee.get().getName()).append(DELIMITER_COLON).
+                    append(ownerPosition.getDeptDesig().getDesignation().getName()).toString()
+                    : new StringBuilder().append(NOASSIGNMENT).append(DELIMITER_COLON).
+                    append(ownerPosition.getName()).toString());
+            map.put(USERTYPE, employee.isPresent() ? employee.get().getType() : EMPTY);
             map.put(DEPT, ownerPosition.getDeptDesig().getDepartment().getName());
         }
         historyTable.add(map);
@@ -547,7 +553,7 @@ public class ComplaintService {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint")
                 .createAlias("complaint.state", "state").createAlias("complaint.status", "status");
         criteria.add(Restrictions.in("status.name", pendingStatus));
-        criteria.add(Restrictions.in("complaint.assignee", positionMasterService.getPositionsForEmployee(user.getId(),new Date())));
+        criteria.add(Restrictions.in("complaint.assignee", positionMasterService.getPositionsForEmployee(user.getId(), new Date())));
         return criteria.list();
     }
 
