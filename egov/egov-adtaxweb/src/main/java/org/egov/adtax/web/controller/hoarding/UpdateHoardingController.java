@@ -120,7 +120,7 @@ public class UpdateHoardingController extends HoardingControllerSupport {
             @RequestParam String workFlowAction) {
 
         validateHoardingDocsOnUpdate(advertisementPermitDetail, resultBinder, redirAttrib);
-
+        validateAdvertisementDetails(advertisementPermitDetail, resultBinder);
         if (resultBinder.hasErrors()) {
             workFlowContainer = new WorkflowContainer();
 
